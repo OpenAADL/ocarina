@@ -1,0 +1,32 @@
+package A 
+public
+
+process P 
+end P;
+
+system S 
+end S;
+
+system implementation S.first
+subcomponents
+  P1 : process P;
+end S.first;
+end A;
+
+package B 
+public
+
+with A; 
+renames A::all;
+
+--  T renames system A::S;
+
+process implementation P.final
+end P.final;
+
+system implementation S.final extends S.first
+subcomponents 
+  P1 : refined to process P.final;
+end S.final;
+
+end B;

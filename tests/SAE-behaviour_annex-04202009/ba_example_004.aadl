@@ -1,0 +1,18 @@
+--  Behaviour Annex 2.9 example (4)
+--  Annex X.5 Mode Transition Behavior Specification
+
+package Test
+public
+
+  modes
+   OK: initial mode;
+   KO: mode;
+  annex behavior_specification {**
+   transitions
+    minor : OK -[ on mode transition p1.minorFailure ]->
+            KO { recoveryAction! };
+    major : OK -[ on mode transition (p1.minorFailure and p2.minorFailure) ]->
+            KO; { emergencyAction! };
+  **};
+
+end Test;

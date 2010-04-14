@@ -1,0 +1,29 @@
+-- test for parsing Import declaration in package
+
+package Pack::Toimport
+public 
+   data mydata
+   end mydata;
+
+end Pack::Toimport;
+
+property set mypropertyset is
+  A_Protocol: enumeration (read_only, 
+                           write_only, 
+                           read_write) 
+  => read_write
+  applies to (memory);
+end mypropertyset; 
+
+package Pack::Test
+  public
+    with pack::toimport;	
+    with mypropertyset;
+
+    data position
+    end position;
+
+    data commands
+    end commands;
+
+end Pack::Test;

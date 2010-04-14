@@ -1,0 +1,4 @@
+Success0: no
+Output0: CircularExtension.aadl.out
+Keywords: osate aadlv1
+Cmd0: ocarina CircularExtension.aadl

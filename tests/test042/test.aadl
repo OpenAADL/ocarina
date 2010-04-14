@@ -1,0 +1,242 @@
+--  Regression test for ticket 47
+--  Ocarina must check qualified reference 
+--  in connections subclause
+
+package PartitionedSystemExample
+
+public
+
+with ARINC653;
+
+data integer
+end integer;
+
+data ordercmd
+end ordercmd;
+
+data protected_data
+properties
+   Concurrency_Control_Protocol => Protected_Access;
+   ARINC653::Queueing_Discipline => FIFO;
+end protected_data;
+
+
+-- Now, declare the virtual processors that model
+-- partition runtime.
+
+virtual processor partition1_rt
+properties
+      Scheduling_Protocol => (EARLIEST_DEADLINE_FIRST_PROTOCOL);
+end partition1_rt;
+
+virtual processor implementation partition1_rt.impl
+end partition1_rt.impl;
+
+virtual processor partition2_rt
+properties
+      Scheduling_Protocol => (RATE_MONOTONIC_PROTOCOL);
+end partition2_rt;
+
+virtual processor implementation partition2_rt.impl
+end partition2_rt.impl;
+
+subprogram  sensor_temperature_spg
+end         sensor_temperature_spg;
+
+subprogram  sensor_receiveinput_spg
+end         sensor_receiveinput_spg;
+
+subprogram  commandboard_receiveinput_spg
+end         commandboard_receiveinput_spg; 
+
+subprogram  commandboard_printinfos_spg
+end         commandboard_printinfos_spg;
+
+
+-- Threads for the first partition
+
+thread sensor_temperature_thread
+features
+   tempout: out data port integer;
+   order: in event data port ordercmd;
+properties
+   Initialize_Entrypoint => classifier (PartitionedSystemExample::sensor_temperature_spg);
+   Priority => 42;
+   Source_Stack_Size => 100 Kbyte;
+   Period => 20 ms;
+   Compute_Execution_Time => 10 ms .. 12 ms;
+   Deadline => 40 ms;
+   ARINC653::HM_Errors => (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request);
+   ARINC653::HM_Actions => (Process_Stop_And_Reinit, Process_Stop_And_Reinit, Ignore, Ignore);
+end sensor_temperature_thread;
+
+thread implementation   sensor_temperature_thread.impl
+end                     sensor_temperature_thread.impl;
+
+thread sensor_receiveinput_thread
+features
+   commandin: in event data port integer;
+   order: out event data port ordercmd;
+properties
+   Initialize_Entrypoint => classifier (PartitionedSystemExample::sensor_receiveinput_spg);
+   Priority => 10;
+   Source_Stack_Size => 100 Kbyte;
+   Period => 20 ms;
+   Compute_Execution_Time => 8 ms .. 10 ms;
+   Deadline => 40 ms;
+   ARINC653::HM_Errors => (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request);
+   ARINC653::HM_Actions => (Process_Stop_And_Reinit, Process_Stop_And_Reinit, Process_Stop_And_Reinit, Process_Stop_And_Reinit);
+end sensor_receiveinput_thread;
+
+thread implementation   sensor_receiveinput_thread.impl
+end                     sensor_receiveinput_thread.impl;
+
+--  Threads for the second partition
+
+thread commandboard_receiveinput_thread
+features
+   temp: in data port integer;
+   tempavg : requires data access integer;
+   newavg: out event port;
+   need_semaphore : requires data access protected_data;
+properties
+   Initialize_Entrypoint => classifier (PartitionedSystemExample::commandboard_receiveinput_spg);
+   Priority => 42;
+   Source_Stack_Size => 100 Kbyte;
+   Period => 20 ms;
+   Compute_Execution_Time => 5 ms .. 7 ms;
+   Deadline => 40 ms;
+   ARINC653::HM_Errors => (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request);
+   ARINC653::HM_Actions => (Process_Stop_And_Reinit, Process_Stop, Process_Stop, Process_Stop);
+end commandboard_receiveinput_thread;
+
+thread commandboard_printinfos_thread
+features
+   ordersensor: out event data port integer;
+   tempavg : requires data access integer;
+   newavg: in event port;
+   need_semaphore : requires data access protected_data;
+properties
+   Initialize_Entrypoint => classifier (PartitionedSystemExample::commandboard_printinfos_spg);
+   Priority => 43;
+   Source_Stack_Size => 100 Kbyte;
+   Period => 20 ms;
+   Compute_Execution_Time => 2 ms .. 6 ms;
+   Deadline => 40 ms;
+   ARINC653::HM_Errors => (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request);
+   ARINC653::HM_Actions => (Process_Stop_And_Reinit, Process_Stop_And_Reinit, Process_Stop_And_Reinit, Process_Stop_And_Reinit);
+end commandboard_printinfos_thread;
+
+-- Now, declare process that model partition address space
+
+process partition1_process
+features
+   queueingin: in event data port integer {Queue_Size => 4;
+                                           ARINC653::Timeout => 5ms; 
+                                           ARINC653::Queueing_Discipline => FIFO;};
+   --  In the context of a event data port, the ARINC653::Timeout property
+   --  is the timeout we used in the APEX functions.
+   --  More, the Queue_Size property is used to compute the size of the queue
+   --  of the port.
+   --  Finally, the Queue_Processing_Protocol indicates how you handle queuing
+   --  data and how data are classified in the queue.
+   samplingout: out data port integer;
+end partition1_process;
+
+process implementation partition1_process.impl
+subcomponents
+   temperature : thread sensor_temperature_thread.impl;
+   order       : thread sensor_receiveinput_thread.impl;
+connections
+   bufferconnectionexample: port order.order -> temperature.order;
+   port queueingin -> order.commandin;
+   port temperature.tempout -> samplingout;
+end partition1_process.impl;
+
+process partition2_process
+features
+   queueingout: out event data port integer {ARINC653::Timeout => 10ms;};
+   --  In the context of a event data port, the ARINC653::Timeout property
+   --  is the timeout we used in the APEX functions. 
+   samplingin: in data port integer {ARINC653::Sampling_Refresh_Period => 10ms;};
+   --  The ARINC653::Timeout apply only to in data port. It is the refresh
+   --  period for sampling ports.
+end partition2_process;
+
+process implementation partition2_process.impl
+subcomponents
+   receiver   : thread commandboard_receiveinput_thread;
+   printer    :  thread commandboard_printinfos_thread;
+   sem        : data protected_data;
+   blackboard : data integer;
+connections
+   --  example of intra-partition communication with data ports (blackboards)
+   blackboardconnection1: data access blackboard -> printer.tempavg;
+   blackboardconnection2: data access blackboard -> receiver.tempavg;
+   --  example of intra-partition communication with event port (events)
+   eventconnectionexample: port receiver.newavg -> printer.newavg;
+   port printer.ordersensor -> queueingout;
+   port samplingin -> receiver.temp;
+   data access sem -> receiver.need_semaphore {ARINC653::Timeout => 20 ms;};
+   data access sem -> printer.need_semaphore {ARINC653::Timeout => 10 ms;};
+end partition2_process.impl;
+
+-- Main runtime
+
+processor powerpc
+end powerpc;
+
+processor implementation powerpc.impl
+subcomponents
+   part1:   virtual processor partition1_rt.impl;
+   part2:   virtual processor partition2_rt.impl;
+properties
+   ARINC653::Module_Major_Frame => 50ms;
+   ARINC653::Partition_Slots => (10ms, 10ms, 30ms);
+   ARINC653::Slots_Allocation => (reference (part1), reference (part2), reference (part1));
+   ARINC653::HM_Errors => (Power_Fail);
+   ARINC653::HM_Actions => (Module_Restart);
+end powerpc.impl;
+
+
+-- Memory
+memory partition1_memory
+properties
+   Base_Address => 0;
+end partition1_memory;
+
+memory partition2_memory
+properties
+   Base_Address => 100;
+end partition2_memory;
+
+memory main_memory
+end main_memory;
+
+memory implementation main_memory.impl
+subcomponents
+   part1mem: memory partition1_memory;
+   part2mem: memory partition2_memory;
+end main_memory.impl;
+
+system arincsystem
+end arincsystem;
+
+system implementation arincsystem.impl
+subcomponents
+   mem            : memory main_memory.impl;
+   cpu            : processor powerpc.impl;
+   partition1_pr  : process partition1_process.impl;
+   partition2_pr  : process partition2_process.impl;
+connections
+   samplingconnection: port partition1_pr.samplingout -> partition2_pr.samplingin;
+   queueingconnection: port partition2_pr.queueingout -> partition1_pr.queueingin;
+properties
+   Actual_Processor_Binding => (reference (cpu.part1)) applies to partition1_pr;
+   Actual_Processor_Binding => (reference (cpu.part2)) applies to partition2_pr;
+   Actual_Memory_Binding => (reference (mem.part1mem)) applies to partition1_pr;
+   Actual_Memory_Binding => (reference (mem.part2mem)) applies to partition2_pr;
+end arincsystem.impl;
+
+
+end PartitionedSystemExample;

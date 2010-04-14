@@ -1,0 +1,92 @@
+package t16
+public
+
+system system_t16_one
+ features
+  e1: out event port;
+ flows
+  src: flow source e1;
+end system_t16_one;
+
+process process_t16
+ features
+  e1: out event port;
+ flows
+  f1: flow source e1;
+end process_t16;
+
+system implementation system_t16_one.i
+ subcomponents
+  p1: process process_t16;
+ connections
+  c1: port p1.e1->e1;
+ flows
+  src: flow source p1.f1->c1->e1;
+end system_t16_one.i;
+
+process process_t16_sink
+ features
+  e1: in event port;
+ flows
+  f1: flow sink e1;
+end process_t16_sink;
+
+
+system system_t16_two
+ features
+  e1: in event port;
+ flows
+  snk: flow sink e1;
+end system_t16_two;
+
+system implementation system_t16_two.i
+ subcomponents
+  p1: process process_t16_sink;
+ connections
+  c1: port e1->p1.e1;
+ flows
+  snk: flow sink e1->c1->p1.f1;
+end system_t16_two.i;
+
+process process_t16_path
+ features
+  e1: in event port;
+  e2: out event port;
+ flows
+  f1: flow path e1->e2;
+end process_t16_path;
+
+system system_t16_three
+ features
+  e1: in event port;
+  e2: out event port;
+ flows
+  path1: flow path e1->e2;
+end system_t16_three;
+
+system implementation system_t16_three.i
+ subcomponents
+  p1: process process_t16_path;
+ connections
+  c1: port e1->p1.e1;
+  c2: port p1.e2->e2;
+ flows
+  path1: flow path e1->c1->p1.f1->c2->e2;
+end system_t16_three.i;
+
+system system_t16
+end system_t16;
+
+system implementation system_t16.i
+ subcomponents
+  s1: system system_t16_one;
+  s2: system system_t16_two;
+  s3: system system_t16_three;
+ connections
+  c1: port s1.e1->s3.e1;
+  c2: port s3.e2->s2.e1;
+ flows
+  f1: end to end flow s1.src->c1->s3.path1->c2->s2.snk;
+end system_t16.i;
+
+end t16;

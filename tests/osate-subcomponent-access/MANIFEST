@@ -1,0 +1,4 @@
+Success0: no
+Keywords: osate aadlv1
+Cmd0: ocarina SubcomponentAccess.aadl
+Output0: SubcomponentAccess.aadl.out

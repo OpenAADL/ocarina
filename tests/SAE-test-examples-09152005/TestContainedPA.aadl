@@ -1,0 +1,41 @@
+property set PS is 
+  p: list of aadlinteger => (0) applies to (all);
+end PS;
+
+package Test
+  public
+    system S
+      properties
+        PS::p +=> 1;
+    end S;
+    
+    system implementation S.I
+    end S.I;
+    
+    system T
+    end T;
+    
+    system implementation T.I
+      subcomponents
+        subS: system S.I {
+        	PS::p +=> 2;
+        };
+      properties
+        PS::p => 100;
+    end T.I;
+    
+    system U
+    end U;
+    
+    system implementation U.I
+      subcomponents 
+        subT: system T.I {
+        	PS::P => 3 applies to subS;
+        	PS::p +=> 101;
+        };
+        subT2: system T.I {
+        	-- Bad: uses append
+        	PS::p +=> (1, 2, 3) applies to subS;
+        };
+    end U.I;
+end Test;

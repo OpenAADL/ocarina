@@ -1,0 +1,142 @@
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 8.1 Ports
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+package Nav_Types public
+   data GPS properties Source_data_Size => 30 B; end GPS;
+   data INS properties Source_data_Size => 20 B; end INS;
+   data Position_ECEF properties Source_data_Size => 30 B; end Position_ECEF;
+   data Position_NED properties Source_data_Size => 30 B; end Position_NED;
+end Nav_Types ;
+process Blended_Navigation 
+features
+   GPS_Data : in data port Nav_Types::GPS ;
+   INS_Data : in data port Nav_Types::INS ;
+   Position_ECEF : out data port Nav_Types::Position_ECEF ;
+   Position_NED : out data port Nav_Types::Position_NED ;
+end Blended_Navigation ;
+
+process implementation Blended_Navigation.Simple 
+subcomponents
+    Integrate : thread ;
+    Navigate : thread ;
+end Blended_Navigation.Simple ;
+
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 8.2 Port groups
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+port group GPSbasic_socket 
+features
+	Wakeup: in event port;
+	Observation: out data port GPSLib::position;
+end GPSbasic_socket ;
+
+port group GPSbasic_plug 
+features
+	WakeupEvent: out event port;
+	ObservationData: in data port GPSLib::position;
+-- the features must match in same order with opposite direction
+inverse of GPSbasic_socket
+end GPSbasic_plug;
+
+port group MyGPS_plug
+-- second port group as inverse of the original
+-- no chaining in inverse and no pairwise inverse references are allowed 
+inverse of GPSbasic_socket
+end MyGPS_plug;
+
+
+port group GPSextended_socket extends GPSbasic_socket 
+features
+	Signal: out event port;
+	Cmd: in data port GPSLib::commands;  
+end GPSextended_socket;
+
+process Satellite_position 
+features
+	position:   port group GPSBasic_socket;
+end Satellite_position;
+
+process GPS_System
+features
+	position: port group GPSbasic_plug;
+end GPS_System;
+
+system implementation Satellite.others
+subcomponents
+    SatPos: process Satellite_position;
+    MyGPS: process GPS_System;
+connections
+    port group Satpos.position -> MyGPS.position;
+end Satellite.others;
+
+-- missing from draft
+system satellite
+end satellite;
+
+package GPSLib
+public
+	data position
+	end position;
+
+	data commands
+	end commands;
+end GPSLib;
+
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 8.5 Subcomponent access
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- missing from draft
+system simple
+end simple;
+
+system implementation simple.impl
+subcomponents
+    A: process pp.i;
+    B: process qq.i;
+connections
+    data access A.dataset -> B.reqdataset;
+end simple.impl;
+
+process pp
+features
+    Dataset: provides data access dataset_type;
+end pp;
+
+process implementation pp.i
+subcomponents
+    Share1: data dataset_type;
+connections
+    data access Share1 -> Dataset;
+end pp.i;
+
+process qq
+features
+    Reqdataset: requires data access dataset_type;
+end qq;
+
+process implementation qq.i
+subcomponents
+    Q: thread rr;
+connections
+    data access Reqdataset -> Q.req1;
+end qq.i;
+
+thread rr
+features
+    Req1: requires data access dataset_type;
+end rr;
+
+-- missing in draft
+data dataset_type
+end dataset_type;
+
+
+
+

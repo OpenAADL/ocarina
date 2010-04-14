@@ -1,0 +1,88 @@
+SUPPORTED RUNTIME,                    PO_QOS_ADA,PO_HI_ADA,PO_HI_C,POK_C,Comment
+
+
+STANDARD PROPERTY SET
+
+Activate Deadline, 
+Activate Entrypoint, 
+Activate Execution Time,
+Active Thread Handling Protocol,
+Active Thread Queue Handling Protocol,
+Actual Connection Binding,
+Actual Memory Binding,
+Actual Processor Binding ,                   x,x,x,x,
+Actual Subprogram Call,
+Allowed Connection Protocol, 
+Client Subprogram Execution Time, 
+Compute Deadline,
+Compute Entrypoint Call Sequence (AADLV2)     , ,x, ,
+Compute Entrypoint Source Text   (AADLV2)     , ,x, ,
+Compute Execution Time,                       , ,x, ,
+Concurrency Control Protocol,  
+Deactivate Deadline,
+Deactivate Entrypoint, 
+Deactivate Execution Time, 
+Deadline, 
+Dispatch Protocol,                           x,x,x, , Periodic/Sporadic
+Finalize Deadline, 
+Finalize Entrypoint,  
+Finalize Execution Time, 
+Initialize Deadline, 
+Initialize Entrypoint, 
+Initialize Execution Time, 
+Load Deadline,
+Load Time,
+Not Collocated, 
+Period,                                      x,x,x,x      
+Provided Access,
+Queue Processing Protocol,
+Queue Size,                                   , , ,x 
+Recover Deadline,
+Recover Execution Time, 
+Required Access,
+Runtime Protection, 
+Server Subprogram Call Binding,
+Source Code Size,
+Source Data Size,                             , , ,x,
+Source Heap Size  
+Source Language,                             x, ,x, , 
+Source Name,                                  , , ,x,
+Source Stack Size, 
+Source Text,                                  , , ,x 
+Synchronized Component,                       , , , , 
+Type Source Name,                             , , , , 
+
+
+DATA MODELING
+
+Base_Type,                                    , , , , 
+Code_Set,                                     , , , , 
+Data_Digits,                                  , , , , 
+Data_Scale,                                   , , , , 
+Data_Representation,                          , , , , 
+Dimension,                                    , , , , 
+Element_Names,                                , , , , 
+Enumerators,                                  , , , , 
+IEEE754_Precision,                            , , , , 
+Initial_Value,                                , , , , 
+Integer_Range,                                , , , , 
+Measurement_Unit,                             , , , , 
+Number_Representation,                        , , , , 
+Real_Range,                                   , , , , 
+
+
+POK
+
+Security_Level,                               , , , ,
+Handler,                                      , , , , 
+Needed_Memory_Size,                           , , ,x
+Scheduler,                                    , , ,x 
+Slots,                                        , , ,x
+Major_Frame,                                  , , ,x 
+Slots_Allocation,                             , , ,x 
+Recovery_Errors,                              , , , , 
+Recovery_Actions,                             , , , , 
+BSP,                                          , , ,x 
+Architecture,                                 , , ,x 
+Refresh_Time,                                 , , ,x 
+Source_Location,                              , , ,x 

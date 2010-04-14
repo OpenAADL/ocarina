@@ -1,0 +1,22 @@
+system s
+  features
+    o: out data port ;
+end s;
+
+system t
+  features
+    o: out data port ;
+end t;
+
+-- bad: featur o used as destination in more than one connection in the same mode
+system implementation t.i
+  subcomponents
+    one: system s in modes (m1, m2);
+    two: system s in modes (m2);
+  connections
+    a: data port one.o -> o in modes (m1, m2);
+    b: data port two.o -> o in modes (m2);
+  modes
+    m1: initial mode;
+    m2: mode;
+end t.i;

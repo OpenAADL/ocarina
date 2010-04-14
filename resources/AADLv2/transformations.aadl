@@ -1,0 +1,39 @@
+--  Transformations property set
+--
+--  Mon Feb 16 15:27:39 CET 2009
+
+--  Property set for the transfo package
+
+property set Transformations is
+
+  Call_Sequence_Period: inherit Time
+  applies to (subprogram);
+
+  Priority : aadlinteger 0 .. 255
+  applies to (subprogram);
+
+  Source_Name : aadlstring 
+  applies to (subprogram);
+
+  Fusion_Occurred : aadlboolean
+  applies to (thread);
+
+  Priority_Shifter : aadlboolean
+  applies to (data);
+
+  Deadline : inherit Time
+  applies to (subprogram);
+
+  No_Optimization : aadlboolean
+  applies to (process, thread);
+  --  Forbid optimization for the targeted component
+
+  Scheduler_Name : aadlstring
+  applies to (thread);
+  --  Name of the package containing the thread schedule
+
+  Original_Name : aadlstring
+  applies to (thread);
+  --  Original name of the thread
+
+end Transformations;

@@ -1,0 +1,62 @@
+-- good
+port group small_mixed
+  features
+    a: in data port;
+    b: out data port;
+end small_mixed;
+
+-- good
+port group small_out
+  features
+    c: out data port;
+    d: out data port;
+end small_out;
+
+-- bad: not all features have the same direction
+port group bad
+  features
+    e: out data port;
+    f: in event port;
+  properties
+    Aggregate_Data_Port => true;
+end bad;
+
+-- good: features are all out
+port group good
+  features
+    g: out data port ;
+    h: out data port ;
+  properties
+    Aggregate_Data_Port => true;
+end good;
+
+-- bad: referenced port group has wrong direction
+port group bad_ref
+  features
+    z: out data port;
+    y: out data port;
+    x: port group small_mixed;
+  properties
+    Aggregate_Data_Port => true;
+end bad_ref;
+
+-- good: referenced port group is compatible
+port group good_ref
+  features
+    z: out data port;
+    y: out data port;
+    x: port group small_out;
+  properties
+    Aggregate_Data_Port => true;
+end good_ref;
+
+-- bad: not all data ports
+port group bad_not_data
+  features
+    q: in event port;
+    r: in data port;
+  properties
+    Aggregate_Data_Port => true;
+end bad_not_data;
+
+

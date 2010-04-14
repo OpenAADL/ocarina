@@ -1,0 +1,148 @@
+package Test_01
+public
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Hello_Spg_1
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_1";
+end Hello_Spg_1;
+
+subprogram Hello_Spg_2
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_2";
+end Hello_Spg_2;
+
+-------------
+-- Threads --
+-------------
+
+thread Task
+end Task;
+
+thread implementation Task.impl_1
+calls
+   MyCalls : {
+      P_Spg : subprogram Hello_Spg_1;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 1000ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 1000 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_1;
+
+thread implementation Task.impl_2
+calls
+   MyCall : {
+     P_Spg : subprogram Hello_Spg_2;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 500ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 500 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_2;
+
+---------------
+-- Processor --
+---------------
+
+processor cpurm
+end cpurm;
+
+processor implementation cpurm.impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end cpurm.impl;
+
+---------------
+-- Processes --
+---------------
+
+process node_a
+end node_a;
+
+process implementation node_a.impl
+subcomponents
+   Task1 : thread Task.impl_1;
+   Task2 : thread Task.impl_2;
+
+annex real_specification {**
+
+--  test extern subprogram calls in variable declaration
+
+theorem test_env_subtheorem_call_no_parameter
+
+foreach e in Processor_Set do
+
+  var x := compute sub_theorem_1;
+
+  check (x = 2.0);
+end;
+
+--  test literal parameter passing in sub-theorems
+
+theorem test_env_subtheorem_call_one_parameter
+foreach e in Processor_Set do
+  var x := compute sub_theorem_2 (e, 2);
+  check (x = 2.0);
+end;
+
+--  test multiple literal parameters passing in sub-theorems
+
+theorem test_env_subtheorem_call_multiple_parameters
+foreach e in Processor_Set do
+  a_set := {p in Process_Set | Is_Bound_To (p, e)};
+  var y := 3;
+  var x := compute sub_theorem_3 (a_set, y, 1);
+  check (x = 4.0);
+end;
+
+--  test domain passing in sub-theorems
+
+theorem  test_env_subtheorem_call_with_domain
+foreach e in Processor_Set do
+  a_set := {p in Process_Set | Is_Bound_To (p, e)};
+  var y := 1;
+  var x := compute sub_theorem_4 (a_set, y);
+  check (x = 2.0);
+end;
+
+--  test global variable declaration and access
+
+theorem test_env_subtheorem_call_global_variable
+foreach e in Processor_Set do
+  a_set := {p in Process_Set | Is_Bound_To (p, e)};
+  global y := 1;
+  var x := compute sub_theorem_5 (a_set);
+  check (x = 1.0);
+end;
+
+
+**};
+
+end node_a.impl;
+
+------------
+-- System --
+------------
+
+system rma 
+end rma;
+
+system implementation rma.ERC32
+subcomponents
+   node_a : process node_a.impl;
+   cpu_rm : processor cpurm.impl;
+properties
+   Actual_Processor_Binding => (reference (cpu_rm)) applies to node_a;
+end rma.ERC32;
+
+end Test_01;

@@ -1,0 +1,3 @@
+ModeTransitionPorts.aadl:32:11: out_event (entity reference)  points to port out_event (port spec) , which is not an IN nor INOUT event port
+ModeTransitionPorts.aadl:35:11: sub.in_event (entity reference)  points to subcomponent port in_event (port spec) , which is not an OUT nor INOUT event port
+Cannot analyze AADL specifications

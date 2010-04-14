@@ -1,0 +1,65 @@
+package test
+public
+
+virtual bus secret_layer
+end secret_layer;
+
+virtual bus unclassified_layer
+end unclassified_layer;
+
+data mydata
+end mydata;
+
+data implementation mydata.impl
+end mydata.impl;
+
+thread mythread
+features
+  myd : requires data access mydata.impl;
+properties
+  dispatch_protocol => periodic;
+  period => 1000 ms;
+end mythread;
+
+thread implementation mythread.impl
+properties
+  Allowed_Processor_Binding_Class => (classifier (test::unclassified_layer));
+end mythread.impl;
+
+thread implementation mythread.impl2
+properties
+  Allowed_Processor_Binding_Class => (classifier (test::secret_layer));
+end mythread.impl2;
+
+processor mycpu
+end mycpu;
+
+processor implementation mycpu.impl
+end mycpu.impl;
+
+process myprocess
+end myprocess;
+
+process implementation myprocess.impl
+subcomponents
+  th : thread mythread.impl;
+  th2 : thread mythread.impl2;
+  myd : data mydata.impl;
+connections
+  data access myd -> th.myd;
+  data access myd -> th2.myd;
+end myprocess.impl;
+
+
+system mysystem
+end mysystem;
+
+system implementation mysystem.impl
+subcomponents
+  thecpu: processor mycpu.impl;
+  pr1 : process myprocess.impl;
+properties
+  Actual_Processor_Binding => (reference (thecpu)) applies to pr1;
+end mysystem.impl;
+
+end test;

@@ -1,0 +1,21 @@
+-- test to see that both mode transitions and modes are acceptable
+-- and the order of modes and transitions can be arbitrary.
+-- Also includes a test of a mode transition of a mode to itself.
+-- This should report an error (see paragraph 897 of V0.994)
+
+system s1
+features
+	p1 : in event port;
+end s1;
+
+system implementation s1.i1
+subcomponents
+	ss1 : system s1 in modes (m1, m2);
+connections
+	c1 : event port p1 -> ss1.p1 in modes (m1, (m1 -> m2), m2);
+modes
+	m1 : initial mode;
+	m2 : mode;
+	m1 -[p1]-> m2;
+	m2 -[p1]-> m2;
+end s1.i1;

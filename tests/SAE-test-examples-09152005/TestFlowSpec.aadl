@@ -1,0 +1,63 @@
+-- Tests for looking up property values of flow specs.
+-- Meant to be exhaustive for the cases involving flow specs.
+
+property set MyProperties is
+  -- Property with a default value
+  prop1: aadlstring => "default" applies to (flow);
+  prop2: inherit aadlstring applies to (flow, system);
+  prop3: inherit aadlstring applies to (flow, system);
+end MyProperties;
+
+package TestFlowSpec
+  public
+    system InOut
+      features
+        input: in data port ;
+        output: out data port ;
+      
+      flows
+        -- get prop1 from default, prop2 locally, prop3 inherited
+        -- prop1 => "default", prop2 => "local", prop3 "from InOut"
+        InOut: flow path input -> output { MyProperties::prop2 => "local"; };
+
+        -- get prop1 locally, prop2 default, prop3 local
+        -- prop1 => "local", prop2 => not present, prop3 => "local"
+        InOnly: flow sink input 
+          { MyProperties::prop1 => "local"; MyProperties::prop3 => "local"; };
+
+      properties
+        MyProperties::prop3 => "from InOut";
+    end InOut;
+
+    system InOutRefined extends InOut
+      flows
+        -- prop1 => "local", prop2 => not present, prop3 => "from refinement"
+        InOnly: refined to flow sink 
+          { MyProperties::prop3 => "from refinement"; };
+    end InOutRefined;
+
+    system InOutRefined2 extends InOutRefined
+      flows
+        -- prop1 => "local", prop2 => "from refinement2", prop3 => "from refinement"
+        InOnly: refined to flow sink
+          { MyProperties::prop2 => "from refinement2"; };
+    end InOutRefined2;
+
+    system InOut2 extends InOut
+      features
+        input2: in data port ;
+        output2: out data port ;
+      
+      flows
+        -- get prop1 from default, prop2 default, prop3 from container
+        -- prop1 => "default", prop2 => not present, prop3 => "from InOut2" 
+        Sink2: flow sink input2;
+      
+        -- Override local inheritance
+        -- prop1 => "local", prop2 => not present, prop3 => "from InOut2"
+        OutOnly: flow source output2 { MyProperties::prop1 => "local"; };
+      
+      properties
+        MyProperties::prop3 => "from InOut2";
+    end InOut2;
+end TestFlowSpec;

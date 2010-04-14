@@ -1,0 +1,87 @@
+-- this example was used to test that the name resolver resolves names correctly
+-- the validation is to check that the references are filled in correctly in the Aadl Object model
+
+-- these are tests access to classifiers declared in the public & private section of packages
+package P
+	public
+		data p_pub_dt
+		end p_pub_dt;
+
+	-- the public part can refer to an item declared in the private part
+	-- in this case the public declaration extends the private one.
+	
+	-- we can name it without qualifier since it is in the same package
+		data ext_pub_dt1 extends p_priv_dt
+		end ext_pub_dt1;
+	-- we can also qualify it with the package name	
+		data ext_pub_dt2 extends P::p_priv_dt
+		end ext_pub_dt2;
+		
+	private
+		data p_priv_dt
+		end p_priv_dt;
+	-- the private part is able to refer to classifiers declared in the public section
+	-- both with and without package qualification	
+		data ext_p_pub_dt extends p_pub_dt
+		end ext_p_pub_dt;
+
+		data ext_explicit_p_pub_dt extends P::p_pub_dt
+		end ext_explicit_p_pub_dt;
+	-- it can also refer to other classifiers declared in the private section
+		data ext_p_priv_dt extends p_priv_dt
+		end ext_p_priv_dt;
+end P;
+
+-- package Q is declared with the public and private section in separate package declarations
+-- This is legal and represents a single package
+package Q
+	public
+	-- we are extending a component type from the public section of another package
+		data q_pub_dt extends P::p_pub_dt
+		end q_pub_dt;
+
+	-- the standard allows public declarations to refer to private classifiers
+	-- So this example is legal.
+	-- In this case we make the implementation public, while the type is private.
+	-- This does not seem to make sense and should not be allowed
+        data implementation q_priv_dt.publicimpl
+        end q_priv_dt.publicimpl;
+
+	-- We are extending a publically declared implementation.
+	-- This is ok         
+        data implementation q_priv_dt.i2 extends q_priv_dt.publicimpl
+        end q_priv_dt.i2;
+end Q;
+        
+package Q
+	private
+		data q_priv_dt
+		end q_priv_dt;
+end Q;
+
+-- now we are in the anonymous name space
+data dt
+end dt;
+
+-- here the classifier reference without package qualification refers to another classifier in the anonymous name space
+data dte extends dt
+end dte;
+
+-- We can extend a classifier that exists in the public section of a package
+data spec_ext_q_pub_dt extends Q::q_pub_dt
+end spec_ext_q_pub_dt;
+
+data implementation dt.i1
+end dt.i1;
+-- an implementation extension without package qualification
+data implementation dt.i2 extends dt.i1
+end dt.i2;
+
+-- a package implementation extension of a classifier in the public section of a package
+data implementation dt.i3 extends Q::q_priv_dt.publicimpl
+end dt.i3;
+
+-- we are trying to extend a classifier from a private package section
+-- this is NOT legal	
+data ext_pub_dt2 extends P::p_priv_dt
+end ext_pub_dt2;

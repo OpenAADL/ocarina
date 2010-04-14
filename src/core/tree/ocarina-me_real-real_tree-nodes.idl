@@ -1,0 +1,197 @@
+// REAL Tree
+
+module Ocarina::ME_REAL::REAL_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef long  Name_Id;
+  typedef long  Value_Id;
+  typedef octet Operator_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  interface Node_Id {
+    Node_Id  Next_Node;        // Link nodes together
+  };
+
+  interface Identifier : Node_Id {
+    Name_Id   Name;
+  };
+
+  interface List_Id {
+    Node_Id  First_Node;
+    Node_Id  Last_Node;
+  }; 
+
+  interface Node_Container : Node_Id {
+    Node_Id  Item;
+  };
+
+  /**********************/
+  /* Set-relative nodes */
+  /**********************/
+
+  //  Element of a set
+  interface Element : Node_Id { 
+    Node_Id   Identifier;
+    Value_Id  Element_Type;
+    Node_Id   Set_Reference;    //  reference on (unique) owner set 
+  };
+
+  interface Set : Node_Id {
+    Node_Id    Identifier;
+    Value_Id   Set_Type;
+    Node_Id    Annotation;
+    Node_Id    Set_Expression;
+    Value_Id   Predefined_Type;
+    Value_Id   Dependant;
+  };
+
+  interface Set_Reference : Identifier {
+    Node_Id    Referenced_Set;     //  an existing set
+    Value_Id   Predefined_Type;
+  };
+
+ interface Value_Node : Node_Id {
+    Value_Id Item_Val;
+  };
+    
+  /******************/
+  /* Language nodes */
+  /******************/
+
+  interface Variable : Node_Id {
+    Node_Id    Identifier;
+    Value_Id   Var_Value;
+    Value_Id   Var_Type;
+  };
+
+  interface Theorem_Reference : Node_Id {
+    Name_Id   Theorem_Name;
+    Node_Id   Related_Theorem;
+  };
+
+  interface Var_Reference : Identifier {
+    Node_Id    Referenced_Var;  //  an existing variable
+    Value_Id   Returned_Type;
+  };
+
+  interface Variable_Declaration : Node_Id {
+    Node_Id    Var_Ref;    //  var_reference
+    Value_Id   Is_Global;  //  0 => false, 1 => true
+  };
+
+  interface Variable_Decl_Compute : Theorem_Reference {
+    Node_Id    Var_Ref;     //  var_reference
+    List_Id    True_params; //  (opt) sub-theorem arguments
+    Node_Id    Domain;      //  (opt) set or node_id
+    List_Id    Parameters;  //  (opt) list of value_id
+    Value_Id   Is_Global;   //  0 => false, 1 => true
+  };
+
+  interface Variable_Decl_Expression : Variable_Declaration {
+    Node_Id    Return_Expr;  //  Return expression
+  };
+
+  interface Literal : Node_Id {
+    Value_Id    Value;
+    Value_Id    Returned_Type;
+  };
+
+  interface Parametrized_Identifier : Node_Id {
+    Node_Id     Identifier;
+    Value_Id    Code;
+    List_Id     Parameters;  // Literal, Set, Element, Variable or expression
+  };
+
+  interface Expression : Node_Id {
+    Node_Id     Right_Expr;  //  either an Expression, *_Expression, Set_Reference,
+    Node_Id     Left_Expr;   //  Selection_Subprogram_Call, Check_Subprogram_Call, 
+                             //  or a litteral
+    Operator_Id Operator;
+  };
+
+  //  after 'in'
+  // sub-expressions are either Set_Expressions or Set_References
+  interface Set_Expression : Expression {
+    Value_Id  Set_Type;  //  expression return type
+  };
+
+  interface Check_Subprogram_Call : Parametrized_Identifier {
+    List_Id   Referenced_Sets;
+    List_Id   True_Parameters;
+    Value_Id  Variable_Position; 
+    //  Only for selection subprograms
+    //  tells whether the variable is the first argument (value 1)
+    //  or the second one (value 2)
+    //  initial value is 0
+
+    Value_Id  Returned_Type;
+  };
+
+  //  After 'check' and between parenthesis
+  interface Check_Expression : Expression {
+    Value_Id  Returned_Type;
+  };
+
+  interface Ternary_Expression : Check_Expression {
+    Node_Id   Third_Expr;
+  };
+
+  interface Return_Expression : Node_Id {
+    Node_Id   Check_Expression;
+    Value_Id  Range_Function;  // function to be applied to the resulting set
+  };
+
+  interface Range_Declaration : Node_Id {
+    Node_Id   Variable_Ref;   //  Var_Reference
+    Node_Id   Range_Variable; //  Element
+    Node_Id   Range_Set;      //  Set_Expression
+  };
+
+  interface Local_Variable_Definition : Element {
+    Node_Id   In_Set;  //  Set_Expression or Set_Reference
+  };
+
+  interface Set_Declaration : Set_Reference {
+    Node_Id   Parametrized_Expr;
+    Node_Id   Corresponding_Element;
+    Node_Id   Selection_Expression;
+    Node_Id   Local_Variable;  //  Var_Reference
+    Node_Id   Local_Set;       //  Set_Reference
+    Node_Id   Local_Set_Expression;
+    Value_Id  Dependant;       // the set refers to the global range variable
+  };
+
+  interface Required_Theorem : Theorem_Reference {
+  };
+
+  interface Theorem : Node_Id {
+    Node_Id   Identifier;
+    Node_Id   Range_Declaration;
+    List_Id   Declarations;      //  sets and variables declarations
+    List_Id   Required_Theorems;
+    Node_Id   Check_Expression;
+    Node_Id   Return_Expression;
+    List_Id   Used_Set;          //  actual set declaration (Set)
+    List_Id   Used_Var;          //  list of globally-visible variables
+    List_Id   Local_Var;         //  list of local variables
+    Node_Id   Related_Entity;    //  corresponding AADL entity
+  };
+
+  interface Root_Node : Node_Id {
+    List_Id   Theorems;
+  };
+
+  /**********************/
+  /*   Annotation node  */
+  /**********************/
+
+  interface Annotation : Node_Id {
+    Value_Id  Index;
+  };
+};

@@ -1,0 +1,35 @@
+--  verify hardware adequacy to software
+
+property set RTOS_Properties is
+
+  Max_Mutexes_Number : aadlinteger applies to (processor);
+  Max_Processes_Number : aadlinteger applies to (processor);
+  Max_Connections_Number : aadlinteger applies to (processor);
+
+
+  Criticity_type : type aadlinteger 1 .. 5;
+  Criticity      : criticity_type applies to (thread, process);
+  --  Processes and threads criticality
+
+  Subprogram_Type : type enumeration
+   (pure,
+    nonpure);
+
+  Actual_Subprogram_Type : Subprogram_Type applies to (subprogram);
+
+  Utilization : aadlreal applies to (thread);
+
+  po_enter : Time applies to (system, processor);
+  po_exit : Time applies to (system, processor);
+  Wcet_entry : time applies to (system, processor);
+  Delay_Until : time applies to (system, processor);
+  --  FIXME
+
+  Memory_Size : Size applies to (memory);
+  --  Memory size 
+
+  Access_Bandwidth : Data_Volume applies to (bus);
+  --  Bandwith
+
+end RTOS_Properties;
+

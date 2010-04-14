@@ -1,0 +1,58 @@
+--  Testing some classifier properties
+
+processor CPU
+end CPU;
+
+processor implementation CPU.Sparc
+end CPU.Sparc;
+
+processor implementation CPU.PPC
+end CPU.PPC;
+
+processor implementation CPU.x86
+end CPU.x86;
+
+processor implementation CPU.ARM
+end CPU.ARM;
+
+process Prog
+end Prog;
+
+process implementation Prog.Sparc
+properties
+  Allowed_Processor_Binding_Class => (processor CPU.Sparc);
+end Prog.Sparc;
+
+process implementation Prog.PPC
+properties
+  Allowed_Processor_Binding_Class => (processor CPU.PPC);
+end Prog.PPC;
+
+process implementation Prog.x86
+properties
+  Allowed_Processor_Binding_Class => (processor CPU.x86);
+end Prog.x86;
+
+process implementation Prog.ARM
+properties
+  Allowed_Processor_Binding_Class => (processor CPU.ARM);
+end Prog.ARM;
+
+process implementation Prog.Universal_Binary
+properties
+  Allowed_Processor_Binding_Class => (processor CPU.PPC, processor CPU.x86);
+end Prog.Universal_Binary;
+
+system Universal_Binary_procs
+end Universal_Binary_procs;
+
+system implementation Universal_Binary_Procs.i
+subcomponents
+  PPC_Proc : processor CPU.PPC;
+  x86_Proc : processor CPU.x86;
+end Universal_Binary_Procs.i;
+
+process implementation Prog.Universal_Binary_Variant
+properties
+  Allowed_Processor_Binding_Class => (system Universal_Binary_Procs.i);
+end Prog.Universal_Binary_Variant;

@@ -1,0 +1,40 @@
+system S
+  features
+    in_event: in event port ;
+    in_out_event: in out event port ;
+    out_event: out event port;
+end S;
+
+system T
+  features
+    in_event: in event port ;
+    in_out_event: in out event port ;
+    out_event: out event port;
+end T;
+
+system implementation S.I 
+  subcomponents
+    sub: system T;
+  modes
+    m1: initial mode ;
+    m2: mode ;
+    m3: mode ;
+    m4: mode ;
+    m5: mode ;
+    m6: mode ;
+    m7: mode ;
+    
+    -- good: in event
+    m1 -[ in_event ]-> m2;
+    -- good: in/out event
+    m1 -[ in_out_event ]-> m3;
+    -- bad: out event
+    m1 -[ out_event ]-> m4;
+    
+    -- bad: in event of subcomponent
+    m1 -[ sub.in_event ]-> m5;
+    -- good: in/out event of subcomponent
+    m1 -[ sub.in_out_event ]-> m6;
+    -- good: out event of subcomponent
+    m1 -[ sub.out_event ]-> m7;
+end S.I;

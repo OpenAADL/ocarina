@@ -1,0 +1,21 @@
+all.aadl:195:07: warning: layer_topsecret references a component type
+all.aadl:196:07: warning: layer_secret references a component type
+all.aadl:197:07: warning: layer_unclassified references a component type
+all.aadl:195:07: warning: layer_topsecret references a component type
+all.aadl:196:07: warning: layer_secret references a component type
+all.aadl:197:07: warning: layer_unclassified references a component type
+ocarina: Total: 0 error and 6 warnings
+pok_security execution
+requirement : one_security_level_by_memory
+theorem one_security_level_by_memory is: TRUE
+requirement : bell_lapadula
+theorem bell_lapadula is: TRUE
+requirement : biba
+theorem biba is: TRUE
+requirement : mils_1
+theorem mils_1 is: TRUE
+requirement : mils_2
+theorem mils_2 is: TRUE
+requirement : scheduling_1
+theorem scheduling_1 is: TRUE
+theorem pok_security is: TRUE

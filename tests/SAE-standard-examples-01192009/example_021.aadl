@@ -1,0 +1,49 @@
+-- test  8.6 Data Components Access draft-01192009
+
+package Example
+
+-- add for test
+public
+
+data dataset_type
+end dataset_type;
+-- end add
+
+system simple
+end simple;
+
+system implementation simple.impl
+subcomponents
+A: process pp.i;
+B: process qq.i;
+connections
+data access A.dataset -> B.Reqdataset;
+end simple.impl;
+
+process pp
+features
+Dataset: provides data access dataset_type;
+end pp;
+
+process implementation pp.i
+subcomponents
+Share1: data dataset_type;
+-- other subcomponent declarations
+connections
+data access Share1 <-> Dataset;
+end pp.i;
+process qq
+features
+Reqdataset: requires data access dataset_type;
+end qq;
+process implementation qq.i
+subcomponents
+Q: thread rr;
+connections
+data access Reqdataset <-> Q.Req1;
+end qq.i;
+thread rr
+features
+Req1: requires data access dataset_type;
+end rr;
+end Example;

@@ -1,0 +1,91 @@
+-- from AADL v0.99 pp.146 -- 154
+
+package gps
+public
+	data signal_data
+	end signal_data;
+
+	data position
+	end position;
+
+	data implementation position.radial
+	end position.radial;
+
+	data implementation position.cartesian
+	end position.cartesian;
+end gps;
+
+process foo
+features	
+	Initcmd : in event port;
+	Signal : in data port gps::signal_data;
+	Result1 : out data port gps::position.radial;
+	Result2 : out data port gps::position.cartesian;
+	Status : out event port;
+flows
+	--  Two flows split from the same input
+	Flow1 : flow path signal -> result1;
+	Flow2 : flow path signal -> result2;
+	--  An input is consumed by process foo through its initcmd port
+	Flow3 : flow sink initcmd;
+	--  An output is generated (produced) by process foo and made
+	--  available through its port Status
+	Flow4 : flow source Status;
+end foo;
+
+thread bar
+features
+	p1 : in data port gps::signal_data;
+	p2 : out data port gps::position.radial;
+	p3 : out event port;
+flows
+	fs1 : flow path p1 -> p2;
+	fs2 : flow source p3;
+end bar;
+
+thread implementation bar.basic
+end bar.basic;
+
+thread baz
+features
+	p1 : in data port gps::position.radial;
+	p2 : out data port gps::position.radial;
+	reset : in event port;
+flows
+	fs1 : flow path p1 -> p2;
+	fsink : flow sink reset;
+end baz;
+
+thread implementation baz.basic
+end baz.basic;
+
+process implementation foo.basic
+subcomponents	
+	A : thread bar.basic;
+	--  bar has a flow path fs1 from port p1 to p2
+	--  bar has a flow source fs2 to p3
+	B : thread baz.basic;
+	C : thread baz.basic;
+	--  baz has a flow path fs1 
+	--  baz has a flow sink fsink
+connections
+	conn1 : data port signal -> A.p1;
+	conn3 : data port C.p2 -> result1;
+	conn4 : data port A.p2 -> C.p1;
+	conn5 : event port A.p3 -> Status;
+	conn6 : event port A.p3 -> C.reset;
+	connToThread : event port initcmd -> C.reset;
+flows
+	Flow1 : flow path
+		signal -> conn1 -> A.fs1 -> conn4 -> C.fs1 -> conn3 -> result1;
+	Flow3 : flow sink initcmd -> connToThread -> C.fsink;
+	--  a flow source may start in a subcomponent,
+	--  i.e;, the first named element us a flow source
+	Flow4 : flow source A.fs2 -> conn5 -> status;
+	--  an end-to-end flow from a source to a sink
+	ETE1 : end to end flow
+               A.fs2 -> conn6 -> C.fsink;
+	--  an end-to-end flow where the end points are not sources or sinks
+        ETE2 : end to end flow
+               A.fs1 -> conn4 -> c.fs1;
+end foo.basic;

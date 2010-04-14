@@ -1,0 +1,23 @@
+--  For each processor/OS, check whether associated processes have a
+--  number of mutexes (ie. protected data) equal or less than the
+--  maximum allowed
+
+theorem Mutexes
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  Protected_Data_Set := {x in Data_Set | 
+                                  Is_Subcomponent_Of (x, Proc_Set) and 
+                                  (Property_Exists 
+                                    (x, "Concurrency_Control_Protocol") 
+                                    and 
+                                       (Get_Property_Value 
+                                         (x, "Concurrency_Control_Protocol") 
+                                         = "Protected_Access"))};
+
+  check (Get_Property_Value (e, "RTOS_Properties::Max_Mutexes_Number") >= 
+          Cardinal (Protected_Data_Set));
+
+end Mutexes;

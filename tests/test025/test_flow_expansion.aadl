@@ -1,0 +1,116 @@
+system inner
+features
+  p: out data port ;
+flows
+  src: flow source p;
+end inner;
+
+system outer
+features
+  output1: out data port ;
+flows 
+  outsrc1: flow source output1;
+end outer;
+
+system outer2 extends outer
+features
+  output2: out data port ;
+flows 
+  outsrc2: flow source output2;
+end outer2;
+
+system outer3 extends outer2
+end outer3;
+
+system implementation outer.basic
+modes
+  m1: initial mode;
+  m2: mode;
+  m3: mode;
+end outer.basic;
+
+system implementation outer2.basic
+subcomponents
+  sub1: system inner in modes (m1);
+connections
+  c1: data port sub1.p -> output1 in modes (m1);
+flows
+  outsrc1: flow source output1 in modes (m2);
+  outsrc1: flow source sub1.src -> c1 -> output1;
+modes
+  m1: initial mode;
+  m2: mode;
+  m3: mode;
+end outer2.basic;
+
+system implementation outer3.basic
+subcomponents
+  sub1: system inner in modes (m1);
+connections
+  c1: data port sub1.p -> output1 in modes (m1);
+  c2: data port sub1.p -> output2 in modes (m1);
+flows
+  outsrc1: flow source output1 in modes (m2);
+  outsrc1: flow source sub1.src -> c1 -> output1;
+  outsrc2: flow source output2 in modes (m2);
+  outsrc2: flow source sub1.src -> c2 -> output2;
+modes
+  m1: initial mode;
+  m2: mode;
+  m3: mode;
+end outer3.basic;
+
+system implementation outer2.ext extends outer.basic
+subcomponents
+  sub1: system inner in modes (m1);
+connections
+  c1: data port sub1.p -> output1 in modes (m1);
+flows
+  outsrc1: flow source output1 in modes (m2);
+  outsrc1: flow source sub1.src -> c1 -> output1;
+end outer2.ext;
+
+system implementation outer3.ext extends outer2.ext
+connections
+  c2: data port sub1.p -> output2 in modes (m1);
+flows
+  outsrc2: flow source output2 in modes (m2);
+  outsrc2: flow source sub1.src -> c2 -> output2;
+end outer3.ext;
+
+system implementation outer2.ext2 extends outer2.ext
+subcomponents
+  sub2: system inner in modes (m1);
+end outer2.ext2;
+
+system implementation outer2.ext3 extends outer2.ext2
+end outer2.ext3;
+
+system implementation outer2.ext4 extends outer2.ext3
+end outer2.ext4;
+
+system outer4 extends outer3
+features
+  output3: out data port;
+flows 
+  outsrc3: flow source output3;
+end outer4;
+
+system outer5 extends outer4
+end outer5;
+
+system outer6 extends outer5
+end outer6;
+
+system implementation outer6.ext extends outer2.ext4
+connections
+  c2: data port sub1.p -> output2 in modes (m1);
+  c3: data port sub2.p -> output3 in modes (m1);
+flows
+  outsrc2: flow source output2 in modes (m2);
+  outsrc2: flow source sub1.src -> c2 -> output2;
+  outsrc3: flow source output3 in modes (m2);
+  outsrc3: flow source sub2.src -> c3 -> output3;
+end outer6.ext;
+
+

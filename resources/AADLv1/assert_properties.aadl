@@ -1,0 +1,195 @@
+--  This AADL property set defines properties to be used to describe
+--  the different views that form the ASSERT process.
+
+property set ASSERT_Properties is
+
+----------------------------
+-- Types and enumerations --
+----------------------------
+
+Max_Priority_Value : constant aadlinteger => 28;
+--  Parametric example of maximum priority
+
+--  Priority and Interrupt Priority are contiguous intervals
+
+Min_Interrupt_Priority : constant aadlinteger => 29;
+Max_Interrupt_Priority : constant aadlinteger => 31;
+--  Maximum and minimum interrupt priority
+
+Priority_Type : type aadlinteger 0 .. value (Max_Priority_Value);
+--  We must define a property type to be able to reference it
+
+Priority : Priority_Type applies to
+  (thread,
+   thread group,
+   process);
+
+Interrupt_Priority :  aadlinteger
+  value(Min_Interrupt_Priority) .. value (Max_Interrupt_Priority) applies to
+    (thread,
+     thread group,
+     process);
+
+Criticality_Level_Type : type enumeration (A, B, C, D, E);
+-- Criticality levels
+
+Transmission_Type : type enumeration
+  (simplex,
+   half_duplex,
+   full_duplex);
+--  Message transmission kind
+
+Freq_Units : type units (
+    Hz,
+    KHz    => Hz  * 1000,
+    MHz    => KHz * 1000,
+    GHz    => MHz * 1000);
+--  Frequency units
+
+Max_Frequency : constant aadlinteger Freq_Units => 1000 GHz;
+--  Maximal Frequency
+
+Frequency : type aadlinteger 0 Hz .. value (Max_Frequency) units Freq_Units;
+--  Frequency of a processor
+
+---------------
+-- Partition --
+---------------
+
+Criticality : Criticality_Level_Type applies to (process, system);
+Local_Scheduling_Policy : Supported_Scheduling_Protocols 
+  applies to (process, system);
+Time_Budget : aadlinteger applies to (process, system);
+Budget_Replenishment_Period : Time applies to (process, system);
+Storage_Budget : Size applies to (process, system);
+--  XXX replace this with Source_Code_Size ?
+
+------------
+-- RCM VM --
+------------
+
+Min_Priority : Priority_Type applies to (processor);
+Max_Priority : Priority_Type applies to (processor);
+--Min_Interrupt_Priority : Priority_Type applies to (processor);
+--Max_Interrupt_Priority : Priority_Type applies to (processor);
+
+--   To express the Global scheduling policy, we use the standard
+--   property Global_Scheduler_Policy of type
+--   Supported_Scheduling_Protocols.
+
+Longest_Critical_Section : Time applies to (processor);
+
+--  To describe the clock period we use the standard property
+--  Clock_Period of standard type Time.
+
+Periodic_Clock_Interrupt_Period : Time applies to (processor);
+Periodic_Clock_Handler : Time applies to (processor);
+Demanded_Clock_Handler : Time applies to (processor);
+Interrupt_Handler : Time applies to (processor);
+External_Interrupt : Time applies to (processor);
+Wakeup_Jitter : Time applies to (processor);
+Ready : Time applies to (processor);
+Select : Time applies to (processor);
+Context_Switch  : Time applies to (processor);
+Signal : Time applies to (processor);
+Suspension_Call  : Time applies to (processor);
+Wait_Call  : Time applies to (processor);
+Priority_Raising  : Time applies to (processor);
+Priority_Lowering  : Time applies to (processor);
+Barrier_Evaluation  : Time applies to (processor);
+Budget_Replenishment_Overhead : Time applies to (processor);
+Budget_Exhausted_Recovery_Call : Time applies to (processor);
+
+-------------
+-- Devices --
+-------------
+
+-- Processor
+
+Processor_Speed : Frequency applies to (processor);
+--  XXX to be replaced with AADLv2 property
+
+-- Interconnection
+
+--  To express the message size bounds we use the standard property
+--  Allowed_Message_Size which is a range of standard type Size.
+
+--  To describe the propagation delay and the transmission time on a
+--  bus, we use the standard properties Propagation_Delay and
+--  Transmission_Time.
+
+Interconnection_Speed_Factor : aadlreal applies to (bus);
+Transmission_Kind : Transmission_Type applies to (bus);
+
+Bandwidth : Data_Volume applies to (bus);
+
+-- Networking  protocol
+
+-- Memory
+
+Memory_Size : Size applies to (memory);
+
+Access_Time : Time applies to (memory);
+Access_Bandwidth : Data_Volume applies to (bus);
+
+---------------------------
+-- Deployment Properties --
+---------------------------
+
+--  To express the binding of an AP-Level container to a processor, we
+--  use the standard property Actual_Processor_Binding.
+
+--  To express the binding of a connection between a couple of
+--  (provided, required) interfaces of two AP-Level containers to a
+--  bus, a processor or a device, we use the standard property
+--  Actual_Connection_Binding.
+
+--  To express the binding of an AP-level container to a particular
+--  memory, we use the standard property Actual_Memory_Binding.
+
+--------------------------------------------
+-- Properties relative to the RCM grammar --
+--------------------------------------------
+
+ASN1_types: type enumeration
+    (asequenceof,
+     asequence,
+     aenumerated,
+     aset,
+     asetof,
+     ainteger,
+     aboolean,
+     areal,
+     achoice,
+     aoctetstring);
+     
+         
+ASN1_Basic_Type : ASN1_types applies to (data);
+
+APLC_Binding : list of aadlstring applies to (process);
+
+RCMoperation:  classifier(subprogram) applies to (event port, event data port);
+
+RCMoperationKind_list: type enumeration 
+  (cyclic, 
+   sporadic, 
+   variator, 
+   protected, 
+   transaction, 
+   barrier, 
+   unprotected, 
+   deferred, 
+   immediate, 
+   any);
+
+RCMoperationKind: RCMoperationKind_list 
+  applies to (server subprogram, event port, event data port);
+
+RCMceiling: aadlinteger 
+  applies to (server subprogram, event port, event data port);
+
+RCMperiod: Time applies to (server subprogram, event port, event data port);
+
+RCMpartition: reference (system) applies to (system);
+
+end ASSERT_Properties;

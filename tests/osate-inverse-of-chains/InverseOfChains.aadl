@@ -1,0 +1,17 @@
+port group a
+  features
+    x: in data port;
+    y: out data port;
+end a;
+
+-- good
+port group b
+  inverse of a
+end b;
+
+-- bad: b is an inverse of a already.
+port group c
+  inverse of
+   b
+end c;
+

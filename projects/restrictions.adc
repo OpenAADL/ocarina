@@ -1,0 +1,18 @@
+-------------------------------------------------
+-- Ada restrictions to be supported by Ocarina --
+-------------------------------------------------
+
+--  pragma Restrictions (No_Obsolescent_Features);        -- 13.12 (4)
+--  Disabled for now
+
+pragma Restriction_Warnings (No_Direct_Boolean_Operators);    -- GNAT specific
+--  For the use of "and then" and "or else" in boolean operations
+
+pragma Initialize_Scalars;
+
+pragma Profile_Warnings (Ravenscar);
+pragma Restrictions (No_Task_Allocators);
+pragma Restrictions (No_Protected_Types);
+pragma Restrictions (No_Fixed_Point);
+pragma Restrictions (No_Wide_Characters);
+pragma Restrictions (No_Implicit_Heap_Allocations);

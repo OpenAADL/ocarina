@@ -1,0 +1,16 @@
+-- test for parsing package
+
+package toto::titi::tata
+   public
+   	process tutu
+   	end tutu;
+   private
+   	process tete
+   	end tete;
+end toto::titi::tata;
+
+package toto
+end toto;
+
+package toto::titi
+end toto::titi;

@@ -1,0 +1,43 @@
+-- test 10.3 End-To-End Flows draft-01192009
+
+-- add for test
+package Test
+public
+-- end add
+
+-- This is an AADL fragment
+-- process foo is declared in the previous section
+process implementation foo.basic
+subcomponents
+A: thread bar.basic;
+-- bar has a flow path fs1 from p1 to p2
+-- bar has a flow source fs2 to p3
+B: thread baz.basic;
+-- baz has a flow path fs1
+-- baz has a flow sink fsink
+connections
+conn1: port signal -> A.p1;
+conn2: port A.p2 -> result1;
+conn3: port B.p2 -> result2;
+conn4: port A.p2 -> B.p1;
+conn5: port A.p3 -> Status;
+conn6: port A.p3 -> B.reset;
+connToThread: port initcmd -> C.reset;
+flows
+Flow1: flow path
+signal -> conn1 -> A.fs1 -> conn2 -> result1;
+Flow3: flow sink initcmd -> connToThread -> C.fsink;
+-- a flow source may start in a subcomponent,
+-- i.e., the first named element is a flow source
+Flow4: flow source A.fs2 -> connect5 -> status;
+-- an end-to-end flow from a source to a sink
+ETE1: end to end flow
+A.fs2 -> conn6 -> B.fsink;
+-- an end-to-end flow where the end points are not sources or sinks
+ETE2: end to end flow
+A.fs1 -> conn4 -> B.fs1;
+end foo.basic;
+
+-- add for test
+end Test;
+-- end add

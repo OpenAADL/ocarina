@@ -1,0 +1,49 @@
+--  Example with subprograms
+
+data input
+end input;
+
+data output
+end output;
+
+data intermediate
+end intermediate;
+
+subprogram top_level
+features
+  input : in parameter input;
+  output : out parameter output;
+end top_level;
+
+subprogram first_subprogram
+features
+  input : in parameter input;
+  output : out parameter intermediate;
+end first_subprogram;
+
+subprogram middle_subprogram
+features
+  input : in parameter intermediate;
+  output : out parameter intermediate;
+end middle_subprogram;
+
+subprogram last_subprogram
+features
+  input : in parameter intermediate;
+  output : out parameter output;
+end last_subprogram;
+
+subprogram implementation top_level.implem
+calls 
+{
+one : subprogram first_subprogram;
+two : subprogram middle_subprogram;
+three : subprogram last_subprogram;
+};
+
+connections
+  parameter input -> one.input;
+  parameter one.output -> two.input;
+  parameter two.output -> three.input;
+  parameter three.output -> output;
+end top_level.implem;

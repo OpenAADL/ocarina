@@ -1,0 +1,5 @@
+example_019.aadl:26:24:  (property term) does not point to anything or to something unreachable
+example_019.aadl:26:36:  (property term) does not point to anything or to something unreachable
+example_019.aadl:27:26:  (property term) does not point to anything or to something unreachable
+example_019.aadl:27:38:  (property term) does not point to anything or to something unreachable
+Cannot analyze AADL specifications

@@ -1,0 +1,277 @@
+package Shared
+public
+  with RTOS_Properties;
+with Deployment;
+with Data_Model;
+
+data message
+properties 
+  Data_Model::data_representation => integer;
+  source_data_size => 1 Bytes;
+  Deployment::Priority => 2;
+end message;
+
+data internal_data
+properties
+  Data_Model::data_representation => integer;
+  Deployment::Priority => 2;
+end internal_data;
+
+data shared_data
+features
+  method : requires subprogram access update;
+properties
+  Deployment::Priority => 2;
+  source_data_size => 2 Bytes;
+  Concurrency_Control_Protocol => Priority_Ceiling;
+end shared_data;
+
+data implementation shared_data.i
+subcomponents
+  Field : data internal_data;
+
+end shared_data.i;
+
+subprogram update
+features
+  this : requires data access shared_data.i;
+  I    : in parameter message; 
+properties
+  source_language => Ada95;
+  source_name => "Repository.Update";
+  source_stack_size => 3 KByte;
+end update;
+
+subprogram transmit_message
+features
+  msg_in  : in parameter message;
+  msg_out : out parameter message;
+  mem     : requires data access shared_data.i;
+properties
+  source_language => Ada95;
+  source_name => "Repository.Transmit_Message";
+  source_data_size => 1 Bytes;
+  source_code_size => 1 KByte;
+  source_stack_size => 3 KByte;
+  RTOS_Properties::Actual_Subprogram_Type => pure;
+end transmit_message;
+
+memory a_ram
+properties
+  RTOS_Properties::Memory_Size => 4000 KByte;
+  memory_Protocol => read_write;
+end a_ram;
+
+bus net
+ properties
+   RTOS_Properties::Access_Bandwidth => 2 Bytesps;
+end net;
+
+bus implementation net.impl
+end net.impl;
+
+processor a_processor
+properties
+  deployment::location => "127.0.0.1";
+  RTOS_Properties::Max_Mutexes_Number => 1;
+  RTOS_Properties::max_processes_number => 3;
+  RTOS_Properties::Max_Connections_Number => 2;
+end a_processor;
+--  verify hardware adequacy to software
+
+system shared   
+end shared;
+
+
+system implementation shared.impl
+subcomponents
+  sn : process sender_node.simple {deployment::port_number => 3200;};
+  tr : process transmitter_node.complex {deployment::port_number => 4001;};
+  proc_1 : processor a_processor;
+  proc_2 : processor a_processor;
+  ram   : memory a_ram;
+  ram_2 : memory a_ram;
+  a_bus : bus net.impl;
+connections
+  cnx_1 : port sn.msg_out -> tr.msg_in;
+  cnx_2 : port tr.msg_out -> sn.msg_in;
+properties
+  actual_processor_binding => (reference (proc_1)) applies to sn;
+  actual_processor_binding => (reference (proc_2)) applies to tr;
+
+  actual_memory_binding => (reference (ram)) applies to proc_1;
+  actual_memory_binding => (reference (ram_2)) applies to proc_2;
+
+  actual_connection_binding => (reference (a_bus)) applies to cnx_1;
+  actual_connection_binding => (reference (a_bus)) applies to cnx_2;
+
+  deployment::protocol => iiop;
+  RTOS_Properties::PO_Exit => 1 ns;
+  RTOS_Properties::PO_Enter => 1 ns;
+  RTOS_Properties::Wcet_entry => 1 ns;
+   annex real_specification {**
+
+      theorem resources
+
+        foreach s in system_set do
+
+          requires (
+	            Connections
+		    and Memory_Size
+		    and Mutexes
+		    and Latency);
+
+        check (1 = 1);
+
+      end resources;
+
+   **};
+
+end shared.impl;
+
+--  subprograms
+
+subprogram send_message
+features
+  msg_out : out parameter message;
+properties
+  source_language => Ada95;
+  source_name     => "Repository_Main.Send_Message";
+  source_data_size => 256 Bytes;
+  source_code_size => 100 KByte;
+  source_stack_size => 1 KByte;
+
+end send_message;
+
+subprogram receive_message
+features
+  msg_in : in parameter message;
+properties
+  source_language => Ada95;
+  source_name     => "Repository_Main.Receive_Message";
+  source_data_size => 512 Bytes;
+  source_code_size => 6 KByte;
+  source_stack_size => 2 KByte;
+end receive_message;
+
+--  sender threads
+
+thread sender
+features
+  msg_out : out event data port message;
+properties
+  Dispatch_Protocol => Periodic;
+  compute_execution_time => 1 ms .. 2 ms;
+  Deactivate_Execution_Time => 1 ms .. 1 ms;
+  Period => 1000 Ms;
+  source_stack_size => 6 KByte;
+  source_data_size => 1 KByte;
+  source_code_size => 5 KByte;
+  RTOS_Properties::Criticity => 4;
+  RTOS_Properties::Utilization => 0.6;
+  Deployment::priority => 1;
+end sender;
+
+thread implementation sender.simple
+calls My_Calls :  {
+  sp1 : subprogram send_message;
+};
+connections
+  parameter sp1.msg_out -> msg_out;
+end sender.simple;
+
+--  receiver threads
+
+thread receiver
+features
+  msg_in : in event data port message;
+properties
+  Dispatch_Protocol => Aperiodic;
+  compute_execution_time => 1 ms .. 2 ms;
+  source_data_size => 2 KByte;
+  source_code_size => 10 KByte;
+  source_stack_size => 12 KByte;
+  RTOS_Properties::Criticity => 1;
+  RTOS_Properties::Utilization => 0.8;
+  deployment::priority => 1;
+end receiver;
+
+thread implementation receiver.simple
+calls My_Calls : {
+  sp1 : subprogram receive_message;
+};
+connections
+  parameter msg_in -> sp1.msg_in;
+end receiver.simple;
+
+--  transmitter threads
+
+thread transmitter
+features
+  mem : requires data access shared_data.i;
+  msg_in : in event data port message;
+  msg_out : out event data port message;
+properties
+  Dispatch_Protocol => Aperiodic;
+  compute_execution_time => 1 ms .. 2 ms;
+  source_data_size => 2 KByte;
+  source_code_size => 5 KByte;
+  Deployment::priority => 1;
+  source_stack_size => 7 KByte;
+  RTOS_Properties::Criticity => 3;
+  RTOS_Properties::Utilization => 0.7;
+end transmitter;
+
+thread implementation transmitter.simple
+calls My_Calls : {
+  sp1 : subprogram transmit_message;
+  };
+connections
+  parameter msg_in -> sp1.msg_in;
+  parameter sp1.msg_out -> msg_out;
+  data access mem -> sp1.mem;
+end transmitter.simple;
+
+--  transmitter processes
+
+process transmitter_node
+features
+  msg_in : in event data port message;
+  msg_out : out event data port message;
+properties
+  Load_Time => 1 ms .. 3 ms;
+end transmitter_node;
+
+process implementation transmitter_node.complex
+subcomponents
+  th1 : thread transmitter.simple;
+  th2 : thread transmitter.simple;
+  sh_mem : data shared_data.i;
+connections
+  c1 : port msg_in -> th1.msg_in;
+  c2 : port th1.msg_out -> th2.msg_in;
+  c3 : port th2.msg_out -> msg_out;
+  data access sh_mem -> th1.mem;
+  data access sh_mem -> th2.mem;
+end transmitter_node.complex;
+
+--  sender processes
+
+process sender_node
+features
+  msg_in : in event data port message;
+  msg_out : out event data port message;
+properties
+  Load_Time => 1 ms .. 2 ms;
+end sender_node;
+
+process implementation sender_node.simple
+subcomponents
+  th1 : thread sender.simple;
+  th2 : thread receiver.simple;
+connections
+  port msg_in -> th2.msg_in;
+  port th1.msg_out -> msg_out;
+end sender_node.simple;
+
+end Shared;

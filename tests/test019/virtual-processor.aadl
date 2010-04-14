@@ -1,0 +1,68 @@
+
+package Test
+public
+
+subprogram toto
+end toto;
+
+
+thread p
+end p;
+
+thread implementation p.impl
+calls 
+
+titi : {
+   toto_call : subprogram toto;
+};
+
+end p.impl;
+
+process a
+properties
+   Runtime_Protection => true;
+end a;
+
+
+process implementation a.impl
+subcomponents
+   t : thread p.impl;
+end a.impl;
+
+
+virtual processor myvirtproc
+end myvirtproc;
+
+virtual processor implementation myvirtproc.impl1
+properties
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end myvirtproc.impl1;
+
+virtual processor implementation myvirtproc.impl2
+properties
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end myvirtproc.impl2;
+
+
+
+processor myproc
+end myproc;
+
+processor implementation myproc.impl
+subcomponents
+   vp1 : virtual processor myvirtproc.impl1;
+   vp2 : virtual processor myvirtproc.impl2;
+properties
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end myproc.impl;
+
+system mysystem
+end mysystem;
+
+system implementation mysystem.impl
+subcomponents
+   pa : process a.impl;
+   cpu : processor myproc.impl;
+end mysystem.impl;
+
+end Test;

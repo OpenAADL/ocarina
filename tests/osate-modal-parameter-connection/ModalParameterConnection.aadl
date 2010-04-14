@@ -1,0 +1,42 @@
+subprogram sub1
+  features
+    output: out parameter ;
+end sub1;
+
+subprogram sub2
+  features
+    input: in parameter ;
+end sub2;
+
+thread t
+  features
+    input: in data port ;
+end t;
+
+thread implementation t.i
+  calls
+    normal: {
+      call1: subprogram sub1 ;
+      call2: subprogram sub2 ;
+    } in modes (m1);
+  
+    bad1: {
+      call3: subprogram sub1 ;
+    } in modes (m2);
+    
+    bad2: {
+      call4: subprogram sub2 ;
+    } in modes (m3);
+    
+  connections 
+    -- good: both in same mode
+    parameter call1.output -> call2.input in modes (m1);
+    
+    -- bad: calls come from call sequences in different modes    
+    parameter call3.output -> call4.input in modes (m2);
+
+  modes 
+    m1: initial mode;
+    m2: mode;
+    m3: mode;
+end t.i;

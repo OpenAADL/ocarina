@@ -1,0 +1,20 @@
+-- test 4.8 Annex subclauses draft-01192009
+
+-- add for test
+package Test
+public 
+-- end add
+
+thread Collect_Samples
+features
+Input_Sample : in data port Sampling::Sample;
+Output_Average : out data port Sampling::Sample;
+annex Error_Model {**
+Model => Transient_Fault_Model;
+Occurrence => 10e-4 poisson applies to Transient_Fault;
+**};
+end Collect_Samples;
+
+-- add for test
+end Test;
+-- end add

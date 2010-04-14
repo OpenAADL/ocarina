@@ -1,0 +1,2 @@
+testpublicprivate.aadl:86:01: ext_pub_dt2 (component type)  extends something that does not exist
+Cannot analyze AADL specifications

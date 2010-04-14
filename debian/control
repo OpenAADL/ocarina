@@ -1,0 +1,14 @@
+Source: ocarina
+Section: x11
+Priority: extra
+Maintainer: Julien Delange <julien.delange@telecom-paristech.fr>
+Build-Depends: debhelper (>= 5), autotools-dev, gnat-4.3
+Standards-Version: 3.7.2
+
+Package: ocarina
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: AADL manipulation program
+ Ocarina is used to manipulate and check AADL program.
+ It can generate code using middleware such as PolyORB,
+ PolyORB-HI or PolyORB-HI-C.

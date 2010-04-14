@@ -1,0 +1,128 @@
+-- Tests for looking up property values in component types.
+-- Meant to be exhaustive for the cases involving component types.
+
+property set MyProperties
+  is
+    -- Property with a default value
+    prop1: aadlinteger => 0 applies to (data);
+      
+    -- Property with out a default value
+    prop2: aadlstring applies to (data);
+end MyProperties;
+
+-- Package with a public and private section.  To test
+-- lookup of properties that fallback on the package-level
+-- property declarations
+package PackageTest
+public
+  -- Property prop1 is defined in the public section,
+  -- get the value from there. 
+  -- prop1 => -10, prop2 => "from public"
+  data PublicType
+  end PublicType;
+  
+  properties
+    MyProperties::prop1 => -10;
+    MyProperties::prop2 => "from public";
+
+private
+  -- Property prop1 is defined in the private section,
+  -- get the value from there.  Get value of prop2 
+  -- from the public section
+  -- Should have prop1 => -5, prop2 => "from public"
+  data PrivateType
+  end PrivateType;
+	
+  properties
+    MyProperties::prop1 => -5;
+end PackageTest;
+
+
+-- Test that private properties not picked up in pbulic section
+package PackageTest2
+public
+  -- Should ignore the prop2 definition from the private
+  -- section.  Prop1 => 0, prop2 => not present.
+  data PublicType
+  end PublicType;
+
+private
+  -- Prop1 => 0, prop2 => "from private".
+  data PrivateType
+  end PrivateType;
+
+  properties
+    MyProperties::prop2 => "from private";
+end PackageTest2;
+
+
+-- Package that contains a "properties" section
+package MyPackage
+public
+  -- Explicitly declares a property value for prop1
+  -- No value for prop2
+  -- Should have prop1 => 5, prop2 => "package default"
+  data RootType
+    properties
+      MyProperties::prop1 => 5;
+  end RootType;
+  
+  -- Explicitly declare a property value for prop1
+  -- Explicitly declare a property value for prop2
+  -- Should have prop1 => 10, prop2 => "foo"
+  data ChildType1 extends RootType
+    properties
+      MyProperties::prop1 => 10;
+      MyProperties::prop2 => "foo";
+  end ChildType1;
+  
+  -- Does not redeclare a value for prop1
+  -- Does not declare a value for prop2
+  -- Should have prop1 => 5, prop2 => "package default"
+  data ChildType2 extends RootType
+  end ChildType2;
+
+  -- Does not declare any property values
+  -- Should have prop1 => -5, prop2 => "package default"
+  data RootType2
+  end RootType2;
+
+  -- Properties 
+  properties
+    MyProperties::prop1 => -5;
+    MyProperties::prop2 => "package default";
+end MyPackage;
+
+
+-- Package that does not contain a "properties" section
+package MyPackage2
+public
+  -- Explicitly declares a property value for prop1
+  -- No value for prop2
+  -- Should have prop1 => 5, prop2 => not present
+  data RootType
+    properties
+      MyProperties::prop1 => 5;
+  end RootType;
+  
+  -- Explicitly declare a property value for prop1
+  -- Explicitly declare a property value for prop2
+  -- Should have prop1 => 10, prop2 => "foo"
+  data ChildType1 extends RootType
+    properties
+      MyProperties::prop1 => 10;
+      MyProperties::prop2 => "foo";
+  end ChildType1;
+  
+  -- Does not redeclare a value for prop1
+  -- Does not declare a value for prop2
+  -- Should have prop1 => 5, prop2 => not present
+  data ChildType2 extends RootType
+  end ChildType2;
+
+  -- Does not declare any property values
+  -- Should have prop1 => 0, prop2 => not present
+  data RootType2
+  end RootType2;
+end MyPackage2;
+

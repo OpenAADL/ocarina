@@ -1,0 +1,20 @@
+test.aadl:20:04: ARINC653::Queueing_Discipline (property association) does not point to anything
+test.aadl:20:34:  (property term) does not point to anything or to something unreachable
+test.aadl:69:27:  (property term) does not point to anything or to something unreachable
+test.aadl:70:28:  (property term) does not point to anything or to something unreachable
+test.aadl:70:52:  (property term) does not point to anything or to something unreachable
+test.aadl:87:27:  (property term) does not point to anything or to something unreachable
+test.aadl:88:28:  (property term) does not point to anything or to something unreachable
+test.aadl:88:52:  (property term) does not point to anything or to something unreachable
+test.aadl:88:77:  (property term) does not point to anything or to something unreachable
+test.aadl:88:102:  (property term) does not point to anything or to something unreachable
+test.aadl:109:27:  (property term) does not point to anything or to something unreachable
+test.aadl:110:28:  (property term) does not point to anything or to something unreachable
+test.aadl:126:27:  (property term) does not point to anything or to something unreachable
+test.aadl:127:28:  (property term) does not point to anything or to something unreachable
+test.aadl:127:52:  (property term) does not point to anything or to something unreachable
+test.aadl:127:77:  (property term) does not point to anything or to something unreachable
+test.aadl:127:102:  (property term) does not point to anything or to something unreachable
+test.aadl:136:44: ARINC653::Queueing_Discipline (property association) does not point to anything
+test.aadl:136:74:  (property term) does not point to anything or to something unreachable
+Cannot analyze AADL specifications

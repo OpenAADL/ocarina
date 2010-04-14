@@ -1,0 +1,8 @@
+package t3
+public
+system public_system_t3
+end public_system_t3;
+private
+system private_system_t3
+end private_system_t3;
+end t3;

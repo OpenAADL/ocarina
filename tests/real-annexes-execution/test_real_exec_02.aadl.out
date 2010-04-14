@@ -1,0 +1,47 @@
+test_real_exec_02.aadl:81:04: warning: obj references a component type
+ocarina: Total: 0 error and 1 warning
+set_declaration_is_bound_to execution
+theorem set_declaration_is_bound_to is: TRUE
+
+set_declaration_is_connected_to execution
+theorem set_declaration_is_connected_to is: TRUE
+
+set_declaration_is_subcomponent_of execution
+theorem set_declaration_is_subcomponent_of is: TRUE
+
+set_declaration_is_accessed_by execution
+theorem set_declaration_is_accessed_by is: TRUE
+
+set_declaration_is_accessing_to execution
+theorem set_declaration_is_accessing_to is: TRUE
+
+set_declaration_is_called_by_1 execution
+theorem set_declaration_is_called_by_1 is: TRUE
+
+set_declaration_is_called_by_2 execution
+theorem set_declaration_is_called_by_2 is: TRUE
+
+set_declaration_is_connecting_to execution
+theorem set_declaration_is_connecting_to is: TRUE
+
+set_declaration_is_passing_through execution
+theorem set_declaration_is_passing_through is: TRUE
+
+set_declaration_is_predecessor_of execution
+theorem set_declaration_is_predecessor_of is: TRUE
+
+set_declaration_compare_property_value execution
+theorem set_declaration_compare_property_value is: TRUE
+
+set_declaration_set_composition execution
+theorem set_declaration_set_composition is: TRUE
+
+set_declaration_and_operator execution
+theorem set_declaration_and_operator is: TRUE
+
+set_declaration_or_operator execution
+theorem set_declaration_or_operator is: TRUE
+
+set_declaration_predefined_sets execution
+theorem set_declaration_predefined_sets is: TRUE
+

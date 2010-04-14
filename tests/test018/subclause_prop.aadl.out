@@ -1,0 +1,3 @@
+subclause_prop.aadl:16:06: parsing Property_Association or Contained_Property_Association, token ';' is expected, found token '}'
+subclause_prop.aadl:11:01: parsing Subcomponents, list is empty
+Cannot parse AADL specifications

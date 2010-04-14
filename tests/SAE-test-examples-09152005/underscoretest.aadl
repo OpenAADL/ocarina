@@ -1,0 +1,23 @@
+-- these are uses of underscores that are not legal
+-- BAD: the first is a leading underscore
+system _foo
+end _foo;
+
+
+-- BAD: this is a trailing underscore. 
+system ss_
+features
+p1: in event port;
+p2: out event port;
+flows
+-- dot at end of port name
+-- double underscore in flow name skips to end of model
+  mine_yours : flow sink p1; 
+end ss_;
+
+-- BAD: a double underscore
+system sss__i
+features
+p1: out event port;
+p2: in event port;
+end sss__i;

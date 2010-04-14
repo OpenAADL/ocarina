@@ -1,0 +1,126 @@
+#! @PYTHON@
+# -*-encoding: utf-8 -*-
+
+# This script reads two AADL files and diffs them.
+
+import sys
+import re
+import string
+
+if len (sys.argv) < 3:
+    print "usage:", sys.argv[0], "file1 file2"
+
+file1, file2 = open (sys.argv[1]), open (sys.argv[2])
+text1, text2 = file1.read(), file2.read()
+com1, com2 = 0, 0
+differences = 0
+
+# get rid of the comments
+words1 = re.sub (re.compile("--.*\n"), "", text1)
+words2 = re.sub (re.compile("--.*\n"), "", text2)
+words1 = re.sub (re.compile("--.*$"), "", words1)
+words2 = re.sub (re.compile("--.*$"), "", words2)
+
+# Remove statements such as "features none;"
+words1 = re.sub (re.compile ("[a-z]+\s+none;"), "", words1)
+words2 = re.sub (re.compile ("[a-z]+\s+none;"), "", words2)
+
+# split the aadl descriptions
+statements1 = words1.split(";")
+statements2 = words2.split(";")
+
+while com1 < len (statements1) and com2 < len (statements2):
+    # pre processing
+    statements1[com1] = re.sub (re.compile ("\s+"), " ", statements1[com1])
+    statements2[com2] = re.sub (re.compile ("\s+"), " ", statements2[com2])
+
+    statements1[com1] = re.sub (re.compile ("\( +"), "(", statements1[com1])
+    statements1[com1] = re.sub (re.compile (" +\)"), ")", statements1[com1])
+    statements2[com2] = re.sub (re.compile ("\( +"), "(", statements2[com2])
+    statements2[com2] = re.sub (re.compile (" +\)"), ")", statements2[com2])
+
+
+    statements1[com1] = re.sub (re.compile (" +\("), "(", statements1[com1])
+    statements1[com1] = re.sub (re.compile ("\) +"), ")", statements1[com1])
+    statements2[com2] = re.sub (re.compile (" +\("), "(", statements2[com2])
+    statements2[com2] = re.sub (re.compile ("\) +"), ")", statements2[com2])
+
+    statements1[com1] = re.sub (re.compile ("{ +"), "{", statements1[com1])
+    statements1[com1] = re.sub (re.compile (" +}"), "}", statements1[com1])
+    statements2[com2] = re.sub (re.compile ("{ +"), "{", statements2[com2])
+    statements2[com2] = re.sub (re.compile (" +}"), "}", statements2[com2])
+
+    statements1[com1] = re.sub (re.compile ("(^ | $)"), "", statements1[com1])
+    statements2[com2] = re.sub (re.compile ("(^ | $)"), "", statements2[com2])
+
+    statements1[com1] = re.sub (re.compile ("-\[ +"), "-[", statements1[com1])
+    statements1[com1] = re.sub (re.compile (" +\]->"),
+                                "]->", statements1[com1])
+    statements2[com2] = re.sub (re.compile ("-\[ +"), "-[", statements2[com2])
+    statements2[com2] = re.sub (re.compile (" +\]->"), "]->",
+                                statements2[com2])
+
+    statements1[com1] = re.sub (re.compile (" *(?P<car>[-:+*]) *"), "\g<car>",
+                               statements1[com1])
+    statements2[com2] = re.sub (re.compile (" *(?P<car>[-:+*]) *"), "\g<car>",
+                               statements2[com2])
+
+    statements1[com1] = re.sub (re.compile (" *-> *"), "->",
+                               statements1[com1])
+    statements2[com2] = re.sub (re.compile (" *-> *"), "->",
+                               statements2[com2])
+
+    statements1[com1] = re.sub (re.compile (" *\.\. *"), "..",
+                                statements1[com1])
+    statements2[com2] = re.sub (re.compile (" *\.\. *"), "..",
+                                statements2[com2])
+
+    statements1[com1] = re.sub (re.compile ("\+(?P<expr>(value)|[0-9])"),
+                                "\g<expr>", statements1[com1])
+    statements2[com2] = re.sub (re.compile ("\+(?P<expr>(value)|[0-9])"),
+                                "\g<expr>", statements2[com2])
+
+    statements1[com1] = re.sub (re.compile (" *=> *"), "=>",
+                               statements1[com1])
+    statements2[com2] = re.sub (re.compile (" *=> *"), "=>",
+                               statements2[com2])
+
+    statements1[com1] = re.sub (re.compile (" *, *"), ",",
+                               statements1[com1])
+    statements2[com2] = re.sub (re.compile (" *, *"), ",",
+                               statements2[com2])
+
+    # check if the statements are different
+    if string.lower (statements1 [com1]) != string.lower (statements2 [com2]):
+        print "Difference at pos", com1, com2, ":"
+        print '1<', statements1[com1], '<1'
+        print '2>', statements2[com2], '>2'
+        print
+        differences += 1
+
+    com1 += 1
+    com2 += 1
+
+# at the end, we flush remaining statements
+if com1 < len (statements1):
+    print sys.argv[1], "has extra statements:" 
+    while com1 < len (statements1):
+        print '1[', statements1[com1].strip(), ']1'
+        differences += 1
+        com1 += 1
+
+if com2 < len (statements2):
+    print sys.argv[2], "has extra statements:" 
+    while com2 < len (statements2):
+        print '2[', statements2[com2].strip(), ']2'
+        differences += 1
+        com2 += 1
+
+
+print sys.argv[1], "and", sys.argv[2], "have been compared",
+if differences == 0:
+    print "and are identical"
+else:
+    print "and have", differences, "differences"
+
+sys.exit (differences)

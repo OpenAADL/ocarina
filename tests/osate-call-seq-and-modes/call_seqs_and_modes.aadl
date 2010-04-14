@@ -1,0 +1,37 @@
+subprogram sub1
+end sub1;
+
+subprogram sub2
+end sub2;
+
+subprogram sub3
+end sub3;
+
+thread t
+end t;
+
+thread implementation t.i
+  calls
+    good: {
+      g1: subprogram sub1;
+      g2: subprogram sub2;
+    } in modes (m1);
+    bad: {
+      b1: subprogram sub3;
+    } in modes (m2);
+    ugly: {
+      u1: subprogram sub2;
+    } in modes (m3);
+  modes
+    m1: initial mode;
+    m2: mode;
+    m3: mode;
+end t.i;
+
+-- bad: call sequence worse in the same mode as call sequence ugly
+thread implementation t.j extends t.i
+  calls
+    worse: {
+      w1: subprogram sub2;
+    } in modes (m3);
+end t.j;

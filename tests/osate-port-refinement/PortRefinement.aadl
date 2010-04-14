@@ -1,0 +1,34 @@
+subprogram sub1
+end sub1;
+
+subprogram implementation sub1.basic
+end sub1.basic;
+
+
+subprogram sub2 extends sub1
+end sub2;
+
+data d
+  features
+    s: subprogram sub1;
+    t: subprogram sub1;
+end d;
+
+data d2 extends d
+  features
+    -- bad: classifier changes
+    s: refined to subprogram sub2;
+    -- good: classifier given an implementation
+    t: refined to subprogram sub1.basic;
+end d2;
+
+device dev
+  features
+    output: out data port d;
+end dev;
+
+device dev2 extends dev
+  features
+    -- bad: data type of port changes
+    output: refined to in data port d2;
+end dev2;

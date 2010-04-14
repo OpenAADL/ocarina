@@ -1,0 +1,37 @@
+-- bad: self extension
+device dev1 extends dev1
+end dev1;
+
+-- good: checking of dev1 breaks the loop
+device dev2 extends dev1
+end dev2;
+
+-- bad: cyclic extension between dev3 and dev4
+device dev3 extends dev4
+end dev3;
+
+-- good: error reported on dev3
+device dev4 extends dev3
+end dev4;
+
+system s
+end s;
+
+-- bad: cycle between s.i and s.j
+system implementation s.i extends s.j
+end s.i;
+
+-- good: error reported on s.i
+system implementation s.j extends s.i
+end s.j;
+
+-- bad: cycle between pgt and pgt2
+port group pgt extends pgt2
+  features
+end pgt;
+
+-- good: error reported on pgt
+port group pgt2 extends pgt2
+  features
+end pgt2;
+

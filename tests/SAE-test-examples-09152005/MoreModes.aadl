@@ -1,0 +1,41 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set PS is
+  p: aadlinteger applies to (data);
+end PS;
+
+package Foo
+  public
+    data T
+    end T;
+    
+    data U
+    end U;
+    
+    data V
+    end V;
+    
+    system S
+    end S;
+    
+    system implementation S.I
+      subcomponents
+        -- 1 in m1, non-existent elsewhere
+        s1: data T { PS::p => 1; } in modes (M1);
+        -- 2 in m2, non-existent elsewhere
+        s1: data U { PS::p => 2; } in modes (M2);
+        --  ENST: This is illegal AADL. Subcomponents identifiers 
+        --        must be unique in the immediate scope regardless
+        --        their "in mode" clause.
+        -- 3 in m1, m2; non-existent elsewhere
+        s2: data V { PS::p => 3; } in modes (M1, M2);
+        -- 4 in m1, m3; 5 in m2, m4
+        s3: data V { PS::p => 4 in modes (M1, M3);
+        	         PS::p => 5 in modes (M2, M4); };
+      modes
+        M1: initial mode;
+        M2: mode;
+        M3: mode;
+        M4: mode;
+    end S.I;
+end Foo;

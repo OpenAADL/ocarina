@@ -1,0 +1,551 @@
+/*****************************************************************************
+**                                                                          **
+**                           OCARINA COMPONENTS                             **
+**                                                                          **
+**                  OCARINA.ME_BEHAVIOR.BEHAVIOR_TREE.NODES                 **
+**                                                                          **
+**               Copyright (C) 2004-2009, GET-Telecom Paris.                **
+**                                                                          **
+** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
+** it under terms of the GNU General Public License as published by the     **
+** Free Software Foundation; either version 2, or (at your option) any      **
+** later version. Ocarina is distributed  in  the  hope  that it will be    **
+** useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General **
+** Public License for more details. You should have received  a copy of the **
+** GNU General Public License distributed with Ocarina; see file COPYING.   **
+** If not, write to the Free Software Foundation, 51 Franklin Street, Fifth **
+** Floor, Boston, MA 02111-1301, USA.                                       **
+**                                                                          **
+** As a special exception,  if other files  instantiate  generics from this **
+** unit, or you link  this unit with other files  to produce an executable, **
+** this  unit  does not  by itself cause  the resulting  executable to be   **
+** covered  by the  GNU  General  Public  License. This exception does not  **
+** however invalidate  any other reasons why the executable file might be   **
+** covered by the GNU Public License.                                       **
+**                                                                          **
+**                 Ocarina is maintained by the Ocarina team                **
+**                       (ocarina-users@listes.enst.fr)                     **
+**                                                                          **
+*****************************************************************************/
+
+module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef long  Name_Id;
+  typedef long  Value_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  //  Node_Id:
+  //    Node type from which all the other node types derive.
+  //
+  //  * Next_Node:
+  //    Any node can be part of a container. Thus, the container
+  //    includes a list of nodes. Next_Node designates the next node
+  //    in the list of the container. It is forbidden to define
+  //    another attribute to point to a "next" node.
+
+  interface Node_Id {
+    Node_Id  Next_Node;
+  };
+
+  //  List_Id:
+  //    List type used to represent the entities contained in a
+  //    container.
+  //
+  //  * First_Node, Last_Node:
+  //    First and last nodes of a unidirectional list.
+
+  interface List_Id {
+    Node_Id  First_Node;
+    Node_Id  Last_Node;
+  };
+
+  interface Behavior_Entity : Node_Id {
+    Node_Id  BE_Container;   //  Behavior entity container, hierarchic parent
+    Node_Id  Next_Entity;    // Used to build list of elements
+  };
+
+  interface Named_Behavior_Entity : Behavior_Entity {
+    Node_Id  Identifier;
+  };
+
+  interface Identifier : Behavior_Entity {
+    Name_Id  Name;
+    Name_Id  Display_Name;
+    Node_Id  Corresponding_Entity;
+    Node_Id  Scope_Entity;           // not use
+    Node_Id  Homonym;                // not use
+  };
+
+/**********************************************************************
+ ** These following interfaces file describe the Behavior tree.      **
+ **********************************************************************/
+
+/*******************************
+ ** 3. Behavior specification **
+ *******************************/
+
+  //  behavior_annex ::=
+  //    [ variables { behavior_variable }+ ]
+  //    [ states { behavior_state }+ ]
+  //    [ transitions { behavior_transition }+ ]
+
+  interface Behavior_Annex : Behavior_Entity {
+    List_Id  Variables;
+    List_Id  States;
+    List_Id  Transitions;
+  };
+
+  //  behavior_variable ::=
+  //    local_variable_identifier { , local_variable_identifier }*
+  //      [ : data_unique_component_classifier_reference ] ;
+
+  //  unique_component_classifier_reference ::= <core AADL rule>
+
+  interface Component_Classifier_Ref : Behavior_Entity {
+    List_Id  Package_Name;
+    Node_Id  Component_Type;
+    Node_Id  Component_Impl;
+
+    Node_Id  Full_Identifier;  // ex: package::comp_type.comp_impl
+  };
+
+  interface Behavior_Variable : Behavior_Entity {
+    List_Id  Identifiers;      // list of variable_identifier
+    Node_Id  Classifier_Ref;   // data unique component classifier reference
+  };
+
+
+  //  behavior_state ::=
+  //    behavior_state_identifier { , behavior_state_identifier }*
+  //        : behavior_state_kind state;
+
+  //  behavior_state_kind ::=
+  //    [ initial ] [ complete ] [ final ]
+
+  interface Behavior_State : Behavior_Entity {
+    List_Id  Identifiers;
+    octet    State_Kind;
+  };
+
+
+  //  behavior_transition ::=
+  //    execution_behavior_transition | mode_transition
+
+  interface Behavior_Transition : Behavior_Entity {
+    Node_Id Transition;
+  };
+
+  //  execution_behavior_transition ::=
+  //    [ transition_identifier [ [ behavior_transition_priority ] : ]
+  //        source_state_identifier { , source_state_identifier }*
+  //           -[ [ behavior_condition ] ]->
+  //        destination_state_identifier [ { behavior_actions } ] ;
+
+  //  behavior_transition_priority ::= numeral
+  
+  interface Execution_Behavior_Transition : Behavior_Entity {
+    List_Id  Sources;
+    Node_Id  Destination;  // fixme only one destination ?
+    Node_Id  Behavior_Condition;
+    List_Id  Behavior_Actions;
+
+    Node_Id  Behavior_Transition_Idt;
+    Node_Id  Behavior_Transition_Priority; 
+  };
+
+
+  //  behavior_condition ::=
+  //    execute_condition | dispatch_condition
+
+  interface Behavior_Condition : Behavior_Entity {
+    Node_Id  Condition;
+  };
+
+
+  //  execute_condition ::= logical_value_expression
+  
+  //  interface Execute_Condition : Behavior_Entity {
+  //    Node_Id  Logical_Expression;
+  //  };
+  //  fixme: for execute condition in Behavior_Condition see logical_expression
+  
+
+  //  mode_transition ::=
+  //    mode_transition_identifier :
+  //        source_mode_identifier 
+  //          –[ mode_transition_condition ]->
+  //        destination_mode_identifier [ { behavior_actions } ] ;
+
+  interface  Mode_Transition : Behavior_Entity {
+    Node_Id  Source;
+    Node_Id  Destination;
+    Node_Id  Mode_Transition_Condition;
+    List_Id  Behavior_Actions;
+  };
+  //  Behavior_Entity has a field identifier, here it represents 
+  //  mode_transition_identifier
+
+
+
+/***********************************************
+ ** 4. Thread Dispatch Behavior Specification **
+ ***********************************************/
+
+  //  dispatch_condition ::=
+  //    on dispatch dispatch_logical_expression [ frozen frozen_ports ]
+
+  //  dispatch_logical_expression ::=
+  //    dispatch_trigger { or dispatch_trigger }*
+
+  //  frozen_ports ::=
+  //    in_port_identifier { , in_port_identifier }*
+
+  interface Dispatch_Condition : Behavior_Entity {
+    List_Id  Dispatch_Logical_Expressions;
+    List_Id  Frozen_Ports;
+  };
+
+
+  //  dispatch_trigger ::=
+  //    dispatch_trigger_conjunction 
+  //  | timeout [ behavior_time ] 
+  //  | stop 
+  //  | abort
+
+  interface Dispatch_Trigger : Behavior_Entity {
+    Node_Id  Dispatch_Trigger_Conjunction;
+    octet    Trigger_Kind;  // timeout, stop or abort
+    Node_Id  Behavior_Time; 
+  };
+
+
+  //  dispatch_trigger_conjunction ::=
+  //    dispatch_trigger_event          --  fixme : todo, add in 2.9
+  //    ( dispatch_trigger_event { and dispatch_trigger_event } * )
+  //  | numeral [ ormore | orless ]
+  //      ( dispatch_trigger_event { , dispatch_trigger_event } * )
+
+  //  dispatch_trigger_event ::=
+  //    in_event_port_identifier
+  //  | in_event_data_port_identifier
+  //  | in_event_data_port_identifier ( ( value_constant | others ) )
+  //                                    --  fixme : todo, add in 2.9
+  //  | provides_subprogram_access_identifier
+
+  interface Dispatch_Trigger_Conjunction : Behavior_Entity {
+    Node_Id  Dispatch_Trigger_Event;
+    List_Id  Dispatch_Trigger_Events;
+    Node_Id  Numeral;
+    boolean  Is_Ormore;
+    boolean  Is_Orless;
+  };
+
+  interface Identifier_With_Value : Identifier {
+    boolean  Is_Others;
+    Node_Id  Value_Constant;
+  };
+  
+
+
+/***********************************************
+ ** 5. Mode Transition Behavior Specification **
+ ***********************************************/
+
+  //  mode_transition_condition ::=
+  //    on mode transition mode_transition_logical_expression
+
+
+  //  mode_transition_logical_expression ::=
+  //    mode_transition { or mode_transition }*
+
+  //  mode_transition_conjunction ::=
+  //    ( mode_transition_trigger { and mode_transition_trigger_event } * )
+
+
+  //  mode_transition_trigger ::= <defined in core AADL>
+
+
+
+/*********************************
+ ** 7. Behavior Action Language **
+ *********************************/
+
+  interface Logical_Expression : Behavior_Entity { };
+
+  // behavior_actions ::= { behavior_action { ; behavior_action }*
+
+  //  behavior_action ::= 
+  //    basic_action ;
+  //  | if ( logical_expression ) behavior_actions
+  //    { elsif ( logical_expression ) behavior_actions
+  //    [ else behavior_actions ]
+  //    end if
+  //  | for ( loop_variable_identifier in range ) 
+  //           { behavior_actions }
+  //  | while ( logical_expression ) { behavior_actions }
+
+  interface Behavior_Action : Behavior_Entity {
+    Node_Id  Action;
+  };
+  //  fixme : homogenize syntax
+
+
+  interface Conditional_Statement : Behavior_Entity {
+    Node_Id  Logical_Expr;
+    List_Id  Behavior_Actions;
+  };
+  //  fixme : this node is define by us not in the draft
+
+
+  interface If_Cond_Struct : Behavior_Entity {
+    Node_Id  If_Statement;    //  node kind is Conditional_Statement
+    Node_Id  Elsif_Statement;  //  i.e
+    Node_Id  Else_Statement;  //  i.e
+  };
+
+  interface For_Cond_Struct : Behavior_Entity {
+    Node_Id  Var_Identifier;
+    Node_Id  In_Range;
+    List_Id  Behavior_Actions;
+  };
+
+  interface While_Cond_Struct : Behavior_Entity {
+    Node_Id  While_Statement;  // node kind is Conditional_Statement
+  };
+
+
+  //  range ::=
+  //    integer_range
+  //  | event_data_port_id
+  //  | array_data_component_reference
+
+  interface Range : Behavior_Entity {
+    Node_Id  Entity;  //  kind of entity is K_Id or K_Integer_Range
+                      //  or K_Data_Component_Reference
+  };
+
+
+  //  basic_action ::=
+  //    assignment_action
+  //  | communication_action
+  //  | timed_action 
+
+  //  assignment_action::=
+  //    target := value_expression | any
+
+  //  target ::=
+  //    local_variable_id 
+  //  | outgoing_port_id
+  //  | outgoing_parameter_id 
+  //  | data_component_reference
+  
+  interface Assignment_Action : Behavior_Entity {
+    Node_Id  Target;
+    Node_Id  Value_Expression;
+
+    boolean  Is_Any;
+  };
+
+
+  //  communication_action ::=
+  //    required_subprogram_access_id ! [( subprogram_parameter_list )]
+  //  | subprogram_classifier_id ! [ ( subprogram_parameter_list ) ]
+  //  | output_port_identifier ! [ ( value_expression ) ] --  fixme : todo, 2.9
+  //  | input_port_identifier >>
+  //  | input_port_identifier ? [ ( target ) ]
+
+  //  subprogram_parameter_list ::=
+  //    parameter_label { , parameter_label } *
+  
+  interface Communication_Action : Behavior_Entity {
+    Node_Id  Identifier;
+    List_Id  Subprogram_Parameter_List;
+    Node_Id  Target;
+
+    octet    Comm_Kind; // ! , ? , >>
+  };
+
+
+  //  timed_action ::=
+  //    computation ( behavior_time [ , behavior_time [ , distribution ] ] )
+  //  | delay ( behavior_time [ , behavior_time [ , distribution ] ] )
+
+  //  distribution ::= fixed | normal | poisson | random
+  
+  interface Timed_Action : Behavior_Entity {
+    boolean  Is_Computation; // if not it is delay
+    Node_Id  Fst_Behavior_Time;
+    Node_Id  Scd_Behavior_Time;
+
+    octet    Distrib_Kind;
+  };
+
+
+  //  parameter_label ::=
+  //    in_parameter_value_expression | out_parameter_target
+
+  interface Parameter_Label : Behavior_Entity {
+    Node_Id  Parameter;
+  };
+
+
+  //  data_component_reference ::=
+  //    | data_subcomponent_identifier [ . data_subcomponent_identifier ]
+  //    | data_access_feature_identifier [ . data_subcomponent_identifier ]
+  //  fixme : add list_id identifiers in others interfaces
+
+  interface Data_Component_Reference : Behavior_Entity {
+    List_Id  Identifiers;
+  };
+
+
+  //  id ::= identifier { [ integer_value_holder ] }*
+
+  interface Id : Named_Behavior_Entity {
+    Node_Id  Int_Value_Holder;
+  };
+
+
+
+/*************************************
+ ** 8. Behavior Expression Language **
+ *************************************/
+
+  //  value_holder ::=
+  //    incoming_port_id
+  //  | incoming_port_id ? [ ( target ) ]
+  //  | subprogram_parameter_id
+  //  | local_variable_id
+  //  | data_component_reference
+  //  | port_id ’ count
+  //  | port_id ’ fresh
+
+  interface Value_Holder : Behavior_Entity {
+    Node_Id  Identifier;  // kind K_Identifier or K_Data_Component_Reference
+    Node_Id  Target;      // kind K_Identifier or K_Data_Component_Reference
+
+    boolean  Is_Count;
+    boolean  Is_Fresh;
+    boolean  Is_Interrogative;
+  };
+
+
+  //  value_expression ::=
+  //    relation { logical_operator relation}*
+
+  interface Value_Expression : Behavior_Entity {
+    List_Id  Relations;
+  };
+
+ 
+  //  relation ::=
+  //    boolean_value |
+  //    simple_expression [relational_operator simple_expression]
+
+  interface Relation : Behavior_Entity {
+    boolean  Boolean_Value;
+    List_Id  Simple_Exprs;
+  };
+
+  //  simple_expression ::=
+  //    [unary_adding_operator] term {binary_adding_operator term}*
+
+  interface Simple_Expression : Behavior_Entity {
+    List_Id  Term_And_Operator;
+  };
+  
+
+  //  term ::= factor {multiplying_operator factor}*
+
+  interface Term : Behavior_Entity {
+    List_Id  Factors;
+  };
+
+
+  //  factor ::= primary [** primary] | abs primary | not primary
+
+  //  primary ::=
+  //    value_holder | numeric_literal | string_literal | boolean_literal |
+  //    property_constant | (value_expression)
+
+  interface Factor : Behavior_Entity {
+    boolean  Is_Abs;
+    boolean  Is_Not;
+
+    Node_Id  Lower_Primary;
+    Node_Id  Upper_Primary;  //  **
+  };
+
+
+  //  property_constant ::=
+  //    [ property_set_identifier :: ] property_constant_identifier
+
+  interface Property_Constant : Named_Behavior_Entity {
+    Node_Id  Property_Set;
+  };
+  
+
+  //  -- operators in increasing order of precedence
+  //  logical_operator ::= and | or | xor | cand | cor
+
+  //  relational_operator ::=  =       | !=    | <   | <= | > | >=
+
+  //  binary_adding_operator ::=     +    | -    | &
+
+  //  unary_adding_operator ::=    +     | -
+
+  //  multiplying_operator ::=   *      | /     | mod | rem
+
+  //  highest_precedence_operator ::=       **   | abs | not
+
+  interface Operator : Behavior_Entity {
+    octet  Operator_Category;
+  };
+
+
+  //  boolean_literal ::= true | false
+
+  interface Boolean_Literal : Node_Id {
+    boolean  Is_True;  //  if not false
+  };
+
+
+  //  integer_range ::= integer_value .. integer_value
+
+  interface Integer_Range : Behavior_Entity {
+    Node_Id  Lower_Int_Val;
+    Node_Id  Upper_Int_Val;
+  };
+
+
+  // integer_value ::=
+  //   integer_value_holder
+  // | integer_numerical_literal
+  // | integer_property_constant
+
+  interface Integer_Value : Behavior_Entity {
+    Node_Id  Entity;
+  };
+
+
+  // behavior_time ::= integer_value unit_identifier
+
+  interface Behavior_Time : Behavior_Entity {
+    Node_Id  Integer_Value;
+    Node_Id  Unit_Identifier;
+  };
+
+  // Add by Telecom ParisTech
+  interface Literal : Behavior_Entity {
+    Value_Id  Value;
+  };
+
+};

@@ -1,0 +1,11 @@
+t14.aadl:44:02: bus_t14 (component type) cannot have subpprovided (subcomponent access)  as a feature
+t14.aadl:45:02: bus_t14 (component type) cannot have subpgprovided (subcomponent access)  as a feature
+t14.aadl:93:02: memory_t14 (component type) cannot have port1 (port spec)  as a feature
+t14.aadl:94:02: memory_t14 (component type) cannot have port2 (port spec)  as a feature
+t14.aadl:276:02: virtualbus_t14 (component type) cannot have e1 (port spec)  as a feature
+t14.aadl:277:02: virtualbus_t14 (component type) cannot have e2 (port spec)  as a feature
+t14.aadl:278:02: virtualbus_t14 (component type) cannot have sp1 (subcomponent access)  as a feature
+t14.aadl:279:02: virtualbus_t14 (component type) cannot have sp2 (subcomponent access)  as a feature
+t14.aadl:280:02: virtualbus_t14 (component type) cannot have spg1 (subcomponent access)  as a feature
+t14.aadl:281:02: virtualbus_t14 (component type) cannot have spg2 (subcomponent access)  as a feature
+Cannot analyze AADL specifications

@@ -1,0 +1,3 @@
+example_014.aadl:14:32: parsing Property_Expression, not allowed in aadl v2
+example_014.aadl:13:01: parsing Properties, list is empty
+Cannot parse AADL specifications

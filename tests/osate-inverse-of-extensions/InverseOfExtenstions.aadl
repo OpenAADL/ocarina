@@ -1,0 +1,40 @@
+port group a
+  features
+    x: in data port ;
+    y: out data port ;
+end a;
+
+-- good
+port group invA
+  inverse of a
+end invA;
+
+-- bad: cannot extend an inverse port group
+port group bad extends invA
+  features
+    w: out data port ;
+end bad;
+
+
+-- good
+port group b extends a
+  features
+    z: out data port ;
+end b;
+
+-- good (inverse of b, but not declared so)
+port group invB
+  features
+    x: out data port ;
+    y: in data port ;
+    z: in data port ;
+end invB;
+
+
+-- bad: extensions cannot be inverse of
+port group c extends b
+  inverse of invB
+end c;
+
+
+  

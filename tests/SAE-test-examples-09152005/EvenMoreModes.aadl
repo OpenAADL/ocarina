@@ -1,0 +1,39 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set PS is
+  p: aadlinteger applies to (system);
+end PS;
+
+package P
+  public
+    -- p => not present
+    system Inner
+    end Inner;
+    
+    -- p => 1 in m1, 2 in m2, 3 in m3
+    system implementation Inner.Impl
+      modes
+        M1: initial mode;
+        M2: mode;
+        M3: mode;
+      properties
+        PS::p => 1 in modes (M1);
+        PS::p => 2 in modes (M2);
+        PS::p => 3 in modes (M3);
+    end Inner.Impl;
+    
+    -- p => 100
+    system Outer
+      properties
+        PS::p => 100;
+    end Outer;
+    
+    -- p => 100
+    system implementation Outer.Impl
+      -- Point here is that the modes that inner depends on come from
+      -- Inner.Impl and not from Outer.Impl
+      subcomponents
+        -- p => 1 in m1, 2 in m2, 3 in m3
+        inner: system Inner.Impl;
+    end Outer.Impl;
+end P;

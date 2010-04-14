@@ -1,0 +1,50 @@
+% -*- coding: utf-8 -*-
+
+\label {theorems}
+
+\paragraph{}
+A requierement or constraint can be describe in a \real{} 
+\textit{theorem}. A theorem is a named entity which can be compared 
+to a subprogram, which can return either a boolean value (if it 
+finish with a \textit{verification expression}) or a real value (if it 
+finish with a \textit{return expression}). It can be called directly 
+by our parser/interpreter, or called by other theorems, eventually 
+with parameters.
+
+\subsubsection {Sub-theorem calls}
+
+A theorem can be called by another theorem by two ways :
+\begin{itemize}
+\item using the keyword \texttt{compute};
+\item using the keyword \texttt{requires};
+\end{itemize}
+In the first case, the theorem called (ie. the \textit{subtheorem})
+must return a numeric (real or integer) value. Otherwise, it must 
+return a boolean value.
+
+\subsubsection {Parameters}
+
+While called with \texttt{compute}, a subtheorem can be assigned 
+parameters of any types, and a domain (a set or an element). Assigning 
+a domain will overwrite the local set. In the subtheorem, the 
+parameters can be accessed with \texttt{argv\_i}, where \texttt{i} is 
+the number of teh parameter, up to 10. 
+
+Note that using a parameter in an expression will make pre-execution 
+analysis impossible, as parameter type are only known at run time.
+
+\subsubsection {Contextued theorems}
+
+The normal way to define a theorem is a REAL file. Nevertheless, this 
+only allows to run theorems on the whole model, or on all components
+verifiying a given expression of the model. In some case, such 
+solution is not acceptable, for it could be needed to run a theorem
+on all the instances of a component and no others. It is the case when 
+some components have unique limitations (eg., heterogenous hardware
+components).
+
+In order to address this issue, a theorem can be defined within an 
+\aadl{} component annex. In this case, the \textit{local set} will 
+contains all instances of this component. Whenever a contextued theorem
+call another theorem with the \texttt{requires} keyword, the subtheorem 
+inherit the caller local set.

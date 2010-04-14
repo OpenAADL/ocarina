@@ -1,0 +1,4 @@
+Cmd0: ocarina test_package_err.aadl
+Output0: test_package_err.aadl.out
+Success0: no
+Keywords: 

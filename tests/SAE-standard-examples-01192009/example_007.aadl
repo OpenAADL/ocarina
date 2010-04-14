@@ -1,0 +1,53 @@
+-- test 4.7 Prototypes draft-01192009
+
+-- add for test
+package Test
+public 
+-- end add
+
+-- a generic component interface with one in and one out port
+abstract flowComponent
+prototypes
+dt: data;
+incoming: in feature;
+features
+insignal: in feature incoming;
+outsignal: out data port dt;
+end flowComponent;
+-- a dual redundant component pattern
+abstract implementation flowComponent.primaryBackup
+prototypes
+control: abstract flowComponent;
+subcomponents
+primary: abstract control;
+backup:abstract control;
+connections
+inprimary: insignal -> primary.insignal;
+inbackup: insignal -> backup.insignal;
+outprimary: port primary.outsignal -> outsignal;
+outbackup: port backup.outsignal -> outsignal;
+modes
+Primarymode: initial mode;
+Backupmode: mode;
+end flowComponent.primaryBackup;
+data signal
+end signal;
+data implementation signal.unit16
+end signal.unit16;
+-- a controller to be realized as dual redundant system
+process controller extends flowComponent ( dt => data signal.unit16,
+incoming => event data port signal.unit16 )
+end controller;
+-- the dual redundant controller system interface
+system DualRedundantController extends
+flowComponent (dt => data signal.unit16),
+incoming => event data port signal.unit16)
+end DualRedundantController;
+-- the dual redundant instance of the controller
+system implementation DualRedundantController.PrimaryBackup
+extends flowComponent.primaryBackup (control => process controller)
+end DualRedundantController.PrimaryBackup;
+
+-- add for test
+end Test;
+-- end add

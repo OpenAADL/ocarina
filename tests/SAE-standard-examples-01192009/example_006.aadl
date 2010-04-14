@@ -1,0 +1,35 @@
+-- test 4.6 Abstract Components draft-01192009
+
+-- add for test
+package Test
+public 
+-- end add
+
+abstract car
+end car;
+abstract implementation car.generic
+subcomponents
+PowerTrain: abstract power_train;
+ExhaustSystem: abstract exhaust_system;
+end car.generic;
+abstract power_train
+features
+exhaustoutput: requires bus access Manifold;
+end power_train;
+abstract exhaust_system
+features
+exhaustManifold: provides bus access Manifold;
+end exhaust_system;
+-- runtime architecture
+system carRT extends car
+end carRT;
+system implementation carRT.impl
+extends car.generic
+subcomponents
+PowerTrain : refined to process power_train;
+ExhaustSystem : refined to process exhaust_system;
+end carRT.impl;
+
+-- add for test
+end Test;
+-- end add

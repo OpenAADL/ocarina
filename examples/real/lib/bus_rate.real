@@ -1,0 +1,15 @@
+--  Compute whether the connection is bound with a physical bus that
+--  is large enough to prevent message queuing
+
+theorem Buses_Rate
+
+foreach e in Bus_Set do
+  
+  Cnx_Set(e) := {x in Connection_Set | Is_Bound_To (x, e)};
+
+  Connected_Data_Set := {x in Data_Set | Is_Accessed_By (x, Cnx_Set)};
+
+  check (Get_Property_Value (e, "ASSERT_Properties::Access_Bandwidth") >= 
+   	 Sum (Get_Property_Value (Connected_Data_Set, "source_data_size")));
+
+end;

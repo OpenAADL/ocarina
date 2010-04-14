@@ -1,0 +1,18 @@
+SAMPLE_NAME = $(subst examples/,,$(subdir))
+SAMPLE_DIR  = ${shell $(CYGPATH_U) '$(prefix)/examples/ocarina/$(SAMPLE_NAME)'}
+
+install-exec-local:
+
+install-data-local:
+	$(INSTALL) -d $(DESTDIR)$(SAMPLE_DIR)
+	if [ -r $(srcdir)/README ]; then \
+	  $(INSTALL_DATA) $(srcdir)/README $(DESTDIR)$(SAMPLE_DIR); \
+	fi
+	for f in $(EXTRA_DIST); do \
+	  $(INSTALL_DATA) $$f $(DESTDIR)$(SAMPLE_DIR); \
+	done
+
+debug-makefile:
+	@echo "SAMPLE_NAME    = $(SAMPLE_NAME)"
+	@echo "SAMPLE_NAME    = $(OCARINA_PREFIX)"
+	@echo "SAMPLE_DIR     = $(SAMPLE_DIR)"

@@ -1,0 +1,22 @@
+--  Example with properties
+
+property set Toto is
+
+prop1 : aadlinteger applies to (all);
+
+end Toto;
+
+system Sys1
+properties
+  Toto::prop1 => 4;
+end Sys1;
+
+system Sys2
+end Sys2;
+
+system implementation Sys1.impl
+subcomponents
+  sys : system Sys2 {Toto::prop1 => 5;};
+properties
+  Toto::prop1 => 6;
+end Sys1.impl;

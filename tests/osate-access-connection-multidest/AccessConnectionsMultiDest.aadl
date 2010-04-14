@@ -1,0 +1,40 @@
+data d
+end d;
+
+data DB
+  features 
+    shared: provides data access d;
+end DB;
+
+process P
+  features
+    needs: requires data access d;
+end P;
+
+system S
+end S;
+
+-- Bad: has proc.needs as a connection destination more than once in single mode
+system implementation S.basic
+  subcomponents
+    db1: data DB;
+    db2: data DB;
+    proc: process P;
+  connections
+    c1: data access db1.shared -> proc.needs;
+    c2: data access db2.shared -> proc.needs;
+end S.basic;
+
+-- Good: proc.needs used in multiple modes
+system implementation S.modal
+  subcomponents
+    db1: data DB in modes (m1);
+    db2: data DB in modes (m2);
+    proc: process P;
+  connections
+    c1: data access db1.shared -> proc.needs in modes (m1);
+    c2: data access db2.shared -> proc.needs in modes (m2);
+  modes
+    m1: initial mode;
+    m2: mode;
+end S.modal;

@@ -1,0 +1,36 @@
+package t10
+public
+
+feature group featuregroup_t10
+end featuregroup_t10;
+
+data data_type_t10
+end data_type_t10;
+
+subprogram subprogramtype_t10
+end subprogramtype_t10;
+
+subprogram group subprogramgrouptype_t10
+end subprogramgrouptype_t10;
+
+bus bustype_t10
+end bustype_t10;
+
+abstract abstract_t10
+features
+ fg: feature group featuregroup_t10;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port5: in event data port;
+ dataprovided: provides data access data_type_t10;
+ datarequired: requires data access data_type_t10;
+ subpprovided: provides subprogram access subprogramtype_t10;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t10;
+ subpgrequired: requires subprogram group access;
+ busprovided: provides bus access bustype_t10;
+ busrequired: requires bus access;
+end abstract_t10;
+end t10;

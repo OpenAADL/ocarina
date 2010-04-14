@@ -1,0 +1,3 @@
+TestContainedPAuniqueness.aadl:32:10: "PS::P" conflicts with declaration at line 30
+TestContainedPAuniqueness.aadl:44:10: "PS::P" conflicts with declaration at line 42
+Cannot analyze AADL specifications

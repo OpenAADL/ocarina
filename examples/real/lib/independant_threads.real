@@ -1,0 +1,19 @@
+
+theorem Independance
+
+foreach e in Data_Set do
+
+  --  actually this set is either one-element or empty
+
+  protected_data :=  {d in Data_Set | (d = e) and
+                           (Property_Exists (d, "Concurrency_Control_Protocol")
+                           and  (Get_Property_Value 
+                               (d, "Concurrency_Control_Protocol")
+	                          = "Priority_Ceiling"))};
+
+  accessor_threads := {t in Thread_Set | 
+                          Is_Accessing_To (t, protected_data)};
+
+  check (Cardinal (accessor_threads) <= 1);
+
+end Independance;

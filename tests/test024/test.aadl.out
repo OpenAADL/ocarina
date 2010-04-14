@@ -1,0 +1,7 @@
+test.aadl:21:33: GPSLib::position (entity reference) qualified reference name not found in 'with' statements of Sat (package specification) 
+test.aadl:21:33: GPSLib::position (entity reference) qualified reference name not found in 'with' statements of Sat (package specification) 
+test.aadl:27:36: GPSLib::position (entity reference) qualified reference name not found in 'with' statements of Sat (package specification) 
+test.aadl:27:36: GPSLib::position (entity reference) qualified reference name not found in 'with' statements of Sat (package specification) 
+test.aadl:38:24: GPSLib::commands (entity reference) qualified reference name not found in 'with' statements of Sat (package specification) 
+test.aadl:38:24: GPSLib::commands (entity reference) qualified reference name not found in 'with' statements of Sat (package specification) 
+Cannot analyze AADL specifications

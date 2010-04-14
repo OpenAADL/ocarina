@@ -1,0 +1,16 @@
+To compile and install Ocarina, just type:
+
+./configure [options]
+make
+make install
+
+type ./configure --help to get the list of possible options.
+
+If you modify source files, build Ocarina after a checkout or make
+distclean, or the directory hierarchy of the source files, you should
+re-generate autoconf and automake files (configure, Makefile.in...);
+to do this, from the main directory, run:
+
+./support/reconfig
+
+For more details, please refer to Ocarina's documentation.

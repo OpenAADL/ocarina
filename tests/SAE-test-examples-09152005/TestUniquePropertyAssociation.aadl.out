@@ -1,0 +1,4 @@
+TestUniquePropertyAssociation.aadl:9:05: "ps::prop" conflicts with declaration at line 7
+TestUniquePropertyAssociation.aadl:24:06: "ps::prop" conflicts with declaration at line 22
+TestUniquePropertyAssociation.aadl:46:05: "ps::prop" conflicts with declaration at line 44
+Cannot analyze AADL specifications

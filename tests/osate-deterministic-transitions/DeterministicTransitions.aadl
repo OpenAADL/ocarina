@@ -1,0 +1,30 @@
+system S 
+  features
+    p1: in event port ;
+    p2: in event port ;
+end S;
+
+system implementation S.I
+  modes
+    m1: initial mode ;
+    m2: mode ;
+    m3: mode ;
+    
+    -- bad: p1 used twice with source m1    
+    m1 -[ p1 ]-> m2;
+    m1 -[ p1 ]-> m3;
+end S.i;
+
+system implementation S.a
+  modes
+    m1: initial mode ;
+    m2: mode ;
+    m1 -[ p1 ]-> m2;
+end S.a;
+
+system implementation s.b extends s.a
+  modes
+    m3: mode ;
+    -- bad: p1 already used with m1 in ancestor
+    m1 -[ p1 ]-> m3;
+end s.b;

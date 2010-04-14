@@ -1,0 +1,41 @@
+-- Tests for looking up property values of features.
+-- Meant to be exhaustive for the cases involving features.
+
+property set MyProperties is
+  -- Property with a default value
+  prop1: aadlinteger => 0 applies to (data port);
+      
+  -- Property with out a default value
+  prop2: inherit aadlstring applies to (data port, system);
+end MyProperties;
+
+package TestFeature
+  public
+    -- Locally setting properties, getting default values, and inherit
+    -- foo.prop1 should be the default value
+    -- foo.prop2 should be from the container
+    -- bar.prop1 is locally set
+    -- bar.prop2 is from the the container
+    system Type1
+      features
+        -- prop1 => 0, prop2 => "from Type1"
+        foo: in data port ;
+        -- prop1 => 5, prop2 => "from Type1"
+        bar: out data port { MyProperties::prop1 => 5; };
+      properties
+        MyProperties::prop2 => "from Type1";
+    end Type1;
+
+    -- Setting properties by refinement, and inheriting properties from the 
+    -- closest type of the container
+    system Type2 extends Type1
+      features
+        -- prop1 => 10, prop2 => "local"
+        foo: refined to in data port { MyProperties::prop1 => 10; MyProperties::prop2 => "local"; };
+        -- prop1 => 5, prop2 => "from Type2"
+        bar: refined to out data port ;
+      properties
+        MyProperties::prop2 => "from Type2";
+    end Type2;
+end TestFeature;
+

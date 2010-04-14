@@ -1,0 +1,9 @@
+TestQueueSize.aadl:7:10: Queue_Size cannot apply to in1
+TestQueueSize.aadl:8:10: Overflow_Handling_Protocol cannot apply to in1
+TestQueueSize.aadl:9:10: Queue_Processing_Protocol cannot apply to in1
+TestQueueSize.aadl:10:10: Dequeue_Protocol cannot apply to in1
+TestQueueSize.aadl:29:10: Queue_Size cannot apply to out1
+TestQueueSize.aadl:30:10: Overflow_Handling_Protocol cannot apply to out1
+TestQueueSize.aadl:31:10: Queue_Processing_Protocol cannot apply to out1
+TestQueueSize.aadl:32:10: Dequeue_Protocol cannot apply to out1
+Cannot analyze AADL specifications

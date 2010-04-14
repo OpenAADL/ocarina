@@ -1,0 +1,56 @@
+package runtime
+public
+   with POK;
+   with layers;
+
+   virtual processor partition
+   properties
+      POK::Scheduler => RR;
+   end partition;
+
+   virtual processor implementation partition.i
+   end partition.i;
+
+   processor pok_kernel
+   properties
+      POK::Architecture => x86;
+      POK::BSP => x86_qemu;
+   end pok_kernel;
+
+   device separation_netif
+   features
+      the_bus: requires bus access separation_bus.i;
+   end separation_netif;
+
+   device implementation separation_netif.i
+   end separation_netif.i;
+
+   processor implementation pok_kernel.impl
+   subcomponents
+      runtime_secret       : virtual processor partition.i
+                  {Provided_Virtual_Bus_Class => (classifier (layers::secret));};
+      runtime_topsecret    : virtual processor partition.i
+                  {Provided_Virtual_Bus_Class => (classifier (layers::top_secret));};
+      runtime_unclassified : virtual processor partition.i
+                  {Provided_Virtual_Bus_Class => (classifier (layers::unclassified));};
+      runtime_netif : virtual processor partition.i
+                  {Provided_Virtual_Bus_Class => (classifier (layers::unclassified), classifier (layers::top_secret), classifier (layers::secret));};
+   properties
+      POK::Major_Frame => 1500ms;
+      POK::Scheduler => static;
+      POK::Slots => (500ms, 500ms, 500ms);
+      POK::Slots_Allocation => ( reference (runtime_secret), reference (runtime_topsecret), reference (runtime_unclassified));
+   end pok_kernel.impl;
+
+   bus separation_bus
+   end separation_bus;
+
+   bus implementation separation_bus.i
+   subcomponents
+      layer_topsecret      : virtual bus layers::top_secret;
+      layer_secret         : virtual bus layers::secret;
+      layer_unclassified   : virtual bus layers::unclassified;
+   end separation_bus.i;
+end runtime;
+
+

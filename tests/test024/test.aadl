@@ -1,0 +1,59 @@
+-- test for parsing features
+-- feature group
+
+package GPSLib
+  public
+    data position
+    end position;
+
+    data commands
+    end commands;
+end GPSLib;
+
+package Sat
+public
+  system Satellite
+  end Satellite;
+
+  feature group GPSbasic_socket
+  features              
+     Wakeup: in event port;
+     Observation: out data port GPSLib::position;
+  end GPSbasic_socket;
+
+  feature group GPSbasic_plug
+  features
+     WakeupEvent: out event port;
+     ObservationData: in data port GPSLib::position;
+     inverse of GPSbasic_socket
+  end GPSbasic_plug;
+
+  feature group MyGPS_plug
+     inverse of GPSbasic_socket
+  end MyGPS_plug;
+
+  feature group GPSextended_socket extends GPSbasic_socket
+  features
+     Signal: out event port;
+     Cmd: in data port GPSLib::commands;
+  end GPSextended_socket;
+
+  process Satellite_position
+  features
+      position: feature group GPSBasic_socket;
+  end Satellite_position;
+
+  process GPS_System
+  features
+     position: feature group inverse of GPSbasic_socket;
+  end GPS_System;
+
+  system implementation Satellite.others
+  subcomponents
+     SatPos: process Satellite_position;
+     MyGPS: process GPS_System;
+  connections
+     feature group Satpos.position -> MyGPS.position;
+  end Satellite.others;
+
+end Sat;

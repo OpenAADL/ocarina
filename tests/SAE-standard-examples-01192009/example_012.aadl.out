@@ -1,0 +1,5 @@
+example_012.aadl:10:01: Received_Prime (port spec) points to Integer_Type (entity reference), which is not of an adequate kind
+example_012.aadl:10:01: Received_Prime (port spec) does not point to anything or to something unreachable
+example_012.aadl:16:01: Received_Prime (port spec) points to Integer_Type (entity reference), which is not of an adequate kind
+example_012.aadl:16:01: Received_Prime (port spec) does not point to anything or to something unreachable
+Cannot analyze AADL specifications

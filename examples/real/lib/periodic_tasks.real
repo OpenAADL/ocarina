@@ -1,0 +1,11 @@
+-- All the tasks are either periodic or sporadic
+--  Must be verified in order to comply to RAVENSCAR norm
+
+theorem task_periodicity
+
+foreach t in Thread_Set do
+
+   check ((Get_Property_Value (t, "Dispatch_Protocol") <> "Aperiodic") and
+          (Get_Property_Value (t, "Dispatch_Protocol") <> "Background"));
+
+end task_periodicity;

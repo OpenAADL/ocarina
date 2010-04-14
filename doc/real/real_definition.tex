@@ -1,0 +1,24 @@
+% Support syntax highlighting for REAL
+
+\lstdefinelanguage{real}
+{morekeywords={theorem, foreach, in, do, check, end, requires, |},
+   morekeywords= {and, or, not}, 
+   morekeywords= {if, then, else}, 
+   morekeywords= {T_Data, T_Subprogram, T_Subprogram_Call, T_Sequence_Call, T_Thread, T_Threadgroup, T_Process, T_Memory, T_Processor, T_Bus, T_Connection, T_Device, T_System},
+  morecomment=[l]{--},
+}
+
+% Layout for listings
+
+\lstset{language=real,
+        basicstyle=\scriptsize\sffamily,
+        aboveskip=.1cm, % \smallskipamount, % \bigskipamount,
+        belowskip=.1cm, % \smallskipamount, % \bigskipamount,
+        abovecaptionskip=.1cm, % \smallskipamount, % \medskipamount,
+        belowcaptionskip=.1cm, % \smallskipamount, % \bigskipamount,
+        xleftmargin=.0cm,
+        captionpos=b,
+        tabsize=3,
+        numberstyle=\tiny, 
+        frame=single,
+        }

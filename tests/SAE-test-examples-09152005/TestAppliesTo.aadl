@@ -1,0 +1,2702 @@
+property set PS is
+  dataProp: aadlinteger applies to (data);
+  subprogramProp: aadlinteger applies to (subprogram);
+  threadProp: aadlinteger applies to (thread);
+  threadGroupProp: aadlinteger applies to (thread group);
+  processProp: aadlinteger applies to (process);
+  memoryProp: aadlinteger applies to (memory);
+  processorProp: aadlinteger applies to (processor);
+  busProp: aadlinteger applies to (bus);
+  deviceProp: aadlinteger applies to (device);
+  systemProp: aadlinteger applies to (system);
+  
+  modeProp: aadlinteger applies to (mode);
+  
+  portGroupProp: aadlinteger applies to (port group);
+  
+  flowProp: aadlinteger applies to (flow);
+  
+  portProp: aadlinteger applies to (port);
+  eventPortProp: aadlinteger applies to (event port);
+  dataPortProp: aadlinteger applies to (data port);
+  eventDataPortProp: aadlinteger applies to (event data port);
+  parameterProp: aadlinteger applies to (parameter);
+  
+  serverSubprogramProp: aadlinteger applies to (server subprogram);
+  
+  connectionsProp: aadlinteger applies to (connections);
+  portGroupConnectionProp: aadlinteger applies to (port group connections);
+  portConnectionProp: aadlinteger applies to (port connections);
+  eventDataPortConnection: aadlinteger applies to (event data port connections);
+  eventPortConnection: aadlinteger applies to (event port connections);
+  dataPortConnection: aadlinteger applies to (data port connections);
+  accessConnection: aadlinteger applies to (access connections);
+  parameterConnection: aadlinteger applies to (parameter connections);
+  
+  dataAccessProp: access aadlinteger applies to (data);
+  busAccessProp: access aadlinteger applies to (bus);
+end PS;
+
+package TEST
+  public
+    port group PG2
+      features
+    end PG2;
+
+    port group PG
+      features
+        dataPortF: in out data port {
+          -- good
+          PS::portProp => 0;
+          PS::dataPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::eventPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+        eventDataPortF: out event data port {
+          -- good
+          PS::portProp => 0;
+          PS::eventDataPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+        eventPortF: out event port {
+          -- good
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        portGroupF: port group PG2 {
+          -- good
+          PS::portGroupProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      properties
+        -- okay
+        PS::portGroupProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+        PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end PG;
+
+    data D
+      features
+        subprogramF: subprogram {
+          -- good
+          PS::subprogramProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      properties
+        -- okay
+        PS::dataProp => 0;
+        PS::dataAccessProp => 0;
+        -- the rest are bad
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::busAccessProp => 0;
+    end D;
+
+    data implementation D.Impl
+      refines type
+        subprogramF: refined to subprogram {
+          -- good
+          PS::subprogramProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      properties
+        -- okay
+        PS::dataProp => 0;
+        PS::dataAccessProp => 0;
+        -- the rest are bad
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+        PS::parameterConnection => 0;
+        PS::busAccessProp => 0;
+    end D.Impl;
+
+    subprogram Sub
+      features
+        parameterF: in parameter {
+          -- good
+          PS::parameterProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      properties
+        -- okay
+        PS::subprogramProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end Sub;
+
+    subprogram implementation Sub.Impl
+      refines type
+        parameterF: refined to in parameter {
+          -- good
+          PS::parameterProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      properties
+        -- okay
+        PS::subprogramProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end Sub.Impl;
+
+    thread T
+      features
+        serverSubprogramF: server subprogram {
+          -- good
+          PS::subprogramProp => 0;
+          PS::serverSubprogramProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        
+      properties
+        -- okay
+        PS::threadProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end T;
+
+    thread implementation T.Impl
+      refines type
+        serverSubprogramF: refined to server subprogram {
+          -- good
+          PS::subprogramProp => 0;
+          PS::serverSubprogramProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      calls 
+        {
+          first: subprogram Sub {
+            -- okay
+            PS::subprogramProp => 0;
+            -- the rest are bad
+            PS::dataProp => 0;
+            PS::threadProp => 0;
+            PS::threadGroupProp => 0;
+            PS::processProp => 0;
+            PS::memoryProp => 0;
+            PS::processorProp => 0;
+            PS::busProp => 0;
+            PS::deviceProp => 0;
+            PS::systemProp => 0;
+            PS::modeProp => 0;
+            PS::portGroupProp => 0;
+            PS::flowProp => 0;
+            PS::portProp => 0;
+            PS::eventPortProp => 0;
+            PS::dataPortProp => 0;
+            PS::eventDataPortProp => 0;
+            PS::parameterProp => 0;
+            PS::serverSubprogramProp => 0;
+            PS::connectionsProp => 0;
+            PS::portGroupConnectionProp => 0;
+            PS::portConnectionProp => 0;
+            PS::eventDataPortConnection => 0;
+            PS::eventPortConnection => 0;
+            PS::dataPortConnection => 0;
+            PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+            PS::dataAccessProp => 0;
+            PS::busAccessProp => 0;
+          };
+        };
+
+      properties
+        -- okay
+        PS::threadProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end T.Impl;
+
+    thread group TG
+      properties
+        -- okay
+        PS::threadGroupProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end TG;
+
+    thread group implementation TG.Impl
+      properties
+        -- okay
+        PS::threadGroupProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end TG.Impl;
+
+    process P
+      properties
+        -- okay
+        PS::processProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end P;
+
+    process implementation P.Impl
+      subcomponents
+        threadSC: thread T {
+          -- good
+          PS::threadProp => 0;
+          -- these are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+        threadGroupSC: thread group TG {
+          -- good
+          PS::threadGroupProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      properties
+        -- okay
+        PS::processProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end P.Impl;
+
+    memory M
+      properties
+        -- okay
+        PS::memoryProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end M;
+    
+    memory implementation M.Impl
+      properties
+        -- okay
+        PS::memoryProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end M.Impl;
+
+    processor Proc
+      properties
+        -- okay
+        PS::processorProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end Proc;
+
+    processor implementation Proc.Impl
+      properties
+        -- okay
+        PS::processorProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end Proc.Impl;
+
+    bus B
+      properties
+        -- okay
+        PS::busProp => 0;
+        PS::busAccessProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+    end B;
+
+    bus implementation B.impl
+      properties
+        -- okay
+        PS::busProp => 0;
+        PS::busAccessProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::deviceProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+    end B.impl;
+
+    device Dev
+      properties
+        -- okay
+        PS::deviceProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end Dev;
+
+    device implementation Dev.Impl
+      properties
+        -- okay
+        PS::deviceProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::systemProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end Dev.Impl;
+
+    system S
+      features
+        portGroupF: port group PG {
+          -- good
+          PS::portGroupProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        dataPortF: in data port {
+          -- good
+          PS::portProp => 0;
+          PS::dataPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::eventPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        eventDataPortF: out event data port {
+          -- good
+          PS::portProp => 0;
+          PS::eventDataPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        eventPortF: in event port {
+          -- good
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        reqDataAccessF: requires data access {
+          -- good
+          PS::dataAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::busAccessProp => 0;
+        };
+        proDataAccessF: provides data access {
+          -- good
+          PS::dataAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::busAccessProp => 0;
+        };
+        reqBusAccessF: requires bus access {
+          -- good
+          PS::busAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+        };
+        proBusAccessF: provides bus access {
+          -- good
+          PS::busAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+        };
+      
+      flows
+        fsink: flow sink dataPortF {
+          -- good
+          PS::flowProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        fsource: flow source eventDataPortF {
+          -- good
+          PS::flowProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        fpath: flow path dataPortF -> eventDataPortF {
+          -- good
+          PS::flowProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      properties
+        -- okay
+        PS::systemProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end S;
+
+    system implementation S.impl
+      refines type
+        portGroupF: refined to port group PG {
+          -- good
+          PS::portGroupProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        dataPortF: refined to in data port {
+          -- good
+          PS::portProp => 0;
+          PS::dataPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::eventPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        eventDataPortF: refined to out event data port {
+          -- good
+          PS::portProp => 0;
+          PS::eventDataPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        eventPortF: refined to in event port {
+          -- good
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        reqDataAccessF: refined to requires data access {
+          -- good
+          PS::dataAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::busAccessProp => 0;
+        };
+        proDataAccessF: refined to provides data access {
+          -- good
+          PS::dataAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::busAccessProp => 0;
+        };
+        reqBusAccessF: refined to requires bus access {
+          -- good
+          PS::busAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+        };
+        proBusAccessF: refined to provides bus access {
+          -- good
+          PS::busAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+        };
+
+      subcomponents
+        dataSC: data D {
+          -- good
+          PS::dataProp => 0;
+          ps::dataAccessProp => 0;
+          -- the rest are bad
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          ps::busAccessProp => 0;
+        };
+        
+        processSC: process P {
+          -- good
+          PS::processProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        
+        processorSC: processor Proc {
+          -- good
+          PS::processorProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        
+        memorySC: memory M {
+          -- good
+          PS::memoryProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        
+        busSC: bus B {
+          -- good
+          PS::busProp => 0;
+          PS::busAccessProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+        };
+        
+        deviceSC: device Dev {
+          -- good
+          PS::deviceProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        
+        systemSC: system S {
+          -- good
+          PS::systemProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+        proc1: processor p1 ;
+        proc2: processor p2 ;
+        system2: system s2 ;
+
+      connections
+        c1: data port proc1.output -> system2.input;
+        c2: data port system2.output -> proc2.input;
+
+      flows
+        fsink: flow sink dataPortF {
+          -- good
+          PS::flowProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        fsource: flow source eventDataPortF {
+          -- good
+          PS::flowProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        fpath: flow path dataPortF -> eventDataPortF {
+          -- good
+          PS::flowProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        endToEnd: end to end flow
+          proc1.outFlow -> c1 -> system2.mypath -> c2 -> proc2.inFlow {
+          -- good
+          PS::flowProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+
+      modes
+        myMode: initial mode {
+          -- good
+          PS::modeProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+              
+      properties
+        -- okay
+        PS::systemProp => 0;
+        -- the rest are bad
+        PS::dataProp => 0;
+        PS::subprogramProp => 0;
+        PS::threadProp => 0;
+        PS::threadGroupProp => 0;
+        PS::processProp => 0;
+        PS::memoryProp => 0;
+        PS::processorProp => 0;
+        PS::busProp => 0;
+        PS::deviceProp => 0;
+        PS::modeProp => 0;
+        PS::portGroupProp => 0;
+        PS::flowProp => 0;
+        PS::portProp => 0;
+        PS::eventPortProp => 0;
+        PS::dataPortProp => 0;
+        PS::eventDataPortProp => 0;
+        PS::parameterProp => 0;
+        PS::serverSubprogramProp => 0;
+        PS::connectionsProp => 0;
+        PS::portGroupConnectionProp => 0;
+        PS::portConnectionProp => 0;
+        PS::eventDataPortConnection => 0;
+        PS::eventPortConnection => 0;
+        PS::dataPortConnection => 0;
+        PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+        PS::dataAccessProp => 0;
+        PS::busAccessProp => 0;
+    end S.impl;
+    
+    system s2 
+      features
+        input: in data port ;
+        output: out data port ;
+      flows
+        mypath: flow path input -> output;
+    end s2;
+
+    processor p1
+      features
+        output: out data port ;
+      flows
+        outFlow: flow source output ;
+    end p1;
+
+    processor p2
+      features
+        input: in data port ;
+      flows
+        inFlow: flow sink input ;
+    end p2;
+
+    -- all of these associations are okay
+    properties
+      PS::dataProp => 0;
+      PS::subprogramProp => 0;
+      PS::threadProp => 0;
+      PS::threadGroupProp => 0;
+      PS::processProp => 0;
+      PS::memoryProp => 0;
+      PS::processorProp => 0;
+      PS::busProp => 0;
+      PS::deviceProp => 0;
+      PS::systemProp => 0;
+      PS::modeProp => 0;
+      PS::portGroupProp => 0;
+      PS::flowProp => 0;
+      PS::portProp => 0;
+      PS::eventPortProp => 0;
+      PS::dataPortProp => 0;
+      PS::eventDataPortProp => 0;
+      PS::parameterProp => 0;
+      PS::serverSubprogramProp => 0;
+      PS::connectionsProp => 0;
+      PS::portGroupConnectionProp => 0;
+      PS::portConnectionProp => 0;
+      PS::eventDataPortConnection => 0;
+      PS::eventPortConnection => 0;
+      PS::dataPortConnection => 0;
+      PS::accessConnection => 0;
+      PS::parameterConnection => 0;
+      PS::dataAccessProp => 0;
+      PS::busAccessProp => 0;
+  
+  private
+    system privateS
+    end privateS;
+
+    -- all of these associations are okay
+    properties
+      PS::dataProp => 0;
+      PS::subprogramProp => 0;
+      PS::threadProp => 0;
+      PS::threadGroupProp => 0;
+      PS::processProp => 0;
+      PS::memoryProp => 0;
+      PS::processorProp => 0;
+      PS::busProp => 0;
+      PS::deviceProp => 0;
+      PS::systemProp => 0;
+      PS::modeProp => 0;
+      PS::portGroupProp => 0;
+      PS::flowProp => 0;
+      PS::portProp => 0;
+      PS::eventPortProp => 0;
+      PS::dataPortProp => 0;
+      PS::eventDataPortProp => 0;
+      PS::parameterProp => 0;
+      PS::serverSubprogramProp => 0;
+      PS::connectionsProp => 0;
+      PS::portGroupConnectionProp => 0;
+      PS::portConnectionProp => 0;
+      PS::eventDataPortConnection => 0;
+      PS::eventPortConnection => 0;
+      PS::dataPortConnection => 0;
+      PS::accessConnection => 0;  
+          PS::parameterConnection => 0;
+      PS::dataAccessProp => 0;
+      PS::busAccessProp => 0;
+end TEST;
+
+
+package TestConnections
+  public
+    port group PGsrc
+      features
+    end PG;
+
+    port group PGsink
+      inverse of PGsrc
+    end PG;
+
+    system S1
+      features
+        src: port group PGsrc ;
+        dataOut: out data port ;
+        eventOut: out event port ;
+        eventDataOut: out event data port ;
+        
+        providedData: provides data access ;
+    end S1;
+
+    system S2
+      features
+        snk: port group PGsink ;
+        dataIn: in data port ;
+        eventIn: in event port ;
+        eventDataIn: in event data port ;
+        
+        requiredData: requires data access ;
+        requiredBus: requires bus access ;
+    end S2;
+
+    system S3
+    end S3;
+    
+    system implementation S3.Impl
+      subcomponents
+        system1: system s1 ;
+        system2: system s2 ;
+        theBus: bus ;
+        
+      connections
+        pgConnection: port group system1.src -> system2.snk {
+          -- okay
+          PS::connectionsProp => 0;
+          PS::portGroupConnectionProp => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        dataConnection: data port system1.dataOut -> system2.dataIn {
+          -- okay
+          PS::connectionsProp => 0;
+          PS::portConnectionProp => 0;
+          PS::dataPortConnection => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        eventConnection: event port system1.eventOut -> system2.eventIn {
+          -- okay
+          PS::connectionsProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventPortConnection => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        eventDataConnection: event data port system1.eventDataOut -> system2.eventDataIn {
+          -- okay
+          PS::connectionsProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        dataAccessConnection: data access system1.providedData -> system2.requiredData {
+          -- okay
+          PS::connectionsProp => 0;
+          PS::accessConnection => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventPortConnection => 0;
+          PS::eventDataPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        busAccessConnection: bus access theBus -> system2.requiredBus {
+          -- okay
+          PS::connectionsProp => 0;
+          PS::accessConnection => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventPortConnection => 0;
+          PS::eventDataPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::parameterConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+    end S3.Impl;
+    
+    subprogram Subroutine
+      features
+        input: in parameter ;
+        output: out parameter ;
+    end Subroutine;
+    
+    thread T
+      features
+        input: in data port ;
+        output: out data port ;
+    end T;
+    
+    thread implementation T.Impl
+      calls {
+        myCall: subprogram Subroutine;
+      };
+      
+      connections
+        inParam: parameter input -> myCall.input {
+          -- okay
+          PS::connectionsProp => 0;
+          PS::parameterConnection => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+        outParam: parameter myCall.output -> output {
+          -- okay
+          PS::connectionsProp => 0;
+          PS::parameterConnection => 0;
+          -- the rest are bad
+          PS::dataProp => 0;
+          PS::subprogramProp => 0;
+          PS::threadProp => 0;
+          PS::threadGroupProp => 0;
+          PS::processProp => 0;
+          PS::memoryProp => 0;
+          PS::processorProp => 0;
+          PS::busProp => 0;
+          PS::deviceProp => 0;
+          PS::systemProp => 0;
+          PS::modeProp => 0;
+          PS::portGroupProp => 0;
+          PS::flowProp => 0;
+          PS::portProp => 0;
+          PS::eventPortProp => 0;
+          PS::dataPortProp => 0;
+          PS::eventDataPortProp => 0;
+          PS::parameterProp => 0;
+          PS::serverSubprogramProp => 0;
+          PS::portGroupConnectionProp => 0;
+          PS::portConnectionProp => 0;
+          PS::eventDataPortConnection => 0;
+          PS::eventPortConnection => 0;
+          PS::dataPortConnection => 0;
+          PS::accessConnection => 0;
+          PS::dataAccessProp => 0;
+          PS::busAccessProp => 0;
+        };
+    end T.Impl;    
+end TestConnections;
+

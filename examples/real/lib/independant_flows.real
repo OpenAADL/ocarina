@@ -1,0 +1,11 @@
+
+theorem Independance_2
+
+foreach d in Data_Set do
+
+  accessor_flows := {f in End_To_End_Flows_Set | 
+                          Is_Passing_Through (f, d)};
+
+  check (Cardinal (accessor_flows) <= 1);
+
+end Independance_2;

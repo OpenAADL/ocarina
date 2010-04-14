@@ -1,0 +1,53 @@
+-- test 8.2 Feature Groups and Feature Group Types draft-01192009
+
+package GPS_Interface
+-- add for test
+public
+  with GPSLib;
+-- end add
+
+feature group GPSbasic_socket
+features
+Wakeup: in event port;
+Observation: out data port GPSLib::position;
+end GPSbasic_socket;
+feature group GPSbasic_plug
+features
+WakeupEvent: out event port;
+ObservationData: in data port GPSLib::position;
+-- the features must match in same order with opposite direction
+inverse of GPSbasic_socket
+end GPSbasic_plug;
+feature group MyGPS_plug
+-- second feature group as inverse of the original
+-- no chaining in inverse and
+-- no pairwise inverse references are allowed
+inverse of GPSbasic_socket
+end MyGPS_plug;
+feature group GPSextended_socket extends GPSbasic_socket
+features
+Signal: out event port;
+Cmd: in data port GPSLib::commands;
+end GPSextended_socket;
+process Satellite_position
+features
+position: feature group GPSBasic_socket;
+end Satellite_position;
+process GPS_System
+features
+position: feature group inverse of GPSbasic_socket;
+end GPS_System;
+
+-- add for test
+system Satellite
+end Satellite;
+-- end add;
+
+system implementation Satellite.others
+subcomponents
+SatPos: process Satellite_position;
+MyGPS: process GPS_System;
+connections
+feature group Satpos.position -> MyGPS.position;
+end Satellite.others;
+end GPS_Interface;

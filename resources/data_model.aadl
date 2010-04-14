@@ -1,0 +1,90 @@
+-- This property set conforms to the Data Modeling annex, v15 (20090609).
+
+property set Data_Model is
+
+   Base_Type : list of classifier ( data ) applies to ( data );
+   --  The Base_Type property specifies the base type of a data
+   --  component type. The classifiers being referenced are those
+   --  defined in the Base_Types package or from user defined
+   --  packages.
+
+   Code_Set : aadlinteger applies to ( data );
+   --  The Code_Set property is used to specify the code set used to
+   --  represent a wide character or wide string. The value applied is
+   --  the registered value affected and defined in the ``OSF
+   --  character and Code Set Registry'' by the OSF. This document is
+   --  available at http://www.opengroup.org/dce/info/.
+
+   Data_Digits : aadlinteger applies to ( data );
+   --  The Data_Digits property specifies the total number of digits
+   --  of the fixed point type.
+
+   Data_Scale : aadlinteger applies to ( data );
+   --  The Data_Scale property defines the scale of the fixed point
+   --  types (10**(-scale) is the precision).
+
+   Data_Representation : enumeration
+     (Array, Boolean, Character, Enum, Float, 
+      Fixed, Integer, String, Struct, Union) 
+      applies to ( data );
+   --  The Data_Representation property may be used to specify the
+   --  representation of simple or composite data types within the
+   --  programming language source code.
+   --  Note: An implementation is allowed to support only a subset of
+   --  these structures.
+   
+   Dimension : list of aadlinteger applies to ( data );
+   --  The Dimension property is used to specify the dimensions of a
+   --  multi-dimensional array, ordered.  This property shall be used
+   --  in conjunction with the Data_Representation property.
+
+   Element_Names : list of aadlstring applies to ( data );
+   --  The Element_Names provides the names of a struct or union
+   --  members in order of appearance as defined by the Base_Type
+   --  property.
+   
+   Enumerators : list of aadlstring applies to ( data );
+   --  The Enumerators provides the list of enumeration litterals
+   --  attached to an enumeration data component.
+
+   IEEE754_Precision : enumeration ( Simple, Double ) applies to ( data );
+   --  The IEEE754_Precision property indicates, for a float data
+   --  component type, the precision used. This property is derived
+   --  from the notion of precision per the 754-1985 IEEE Standard for
+   --  Binary Floating-Point Arithmetic.
+
+   Initial_Value : list of aadlstring applies to ( data, port, parameter );
+   --  Initial_Value specifies a list of initial values for a data
+   --  component or port in string form. For a subprogram parameter,
+   --  it defines a default value.
+
+   --  It can be used to represent initial values other than strings
+   --  as string.  This (list of) string is interpreted by the source
+   --  language processor.  In this case, consistency of the initial
+   --  values with the data type of the data component is not checked
+   --  by the core AADL language processor.
+
+   Integer_Range : range of aadlinteger applies to ( data, port, parameter );
+   --  Integer_Range specifies a range of integer values that apply to
+   --  the data component.  This property is used to represent integer
+   --  range constraints on data that is of some integer type.
+
+   Measurement_Unit : aadlstring applies to ( data, port, parameter );
+   --  The Measurement_Unit property specifies the measurement unit of
+   --  the data being communicated.
+
+   Number_Representation : enumeration (Signed, Unsigned) applies to ( data );
+   --  Number_Representation specifies whether an integer data
+   --  component is signed or unsigned.
+
+   Real_Range: range of aadlreal applies to ( data, port, parameter );
+   --  Real_Range specifies a range of real values that apply to the
+   --  data component.  This property is used to represent real range
+   --  constraints on data that is of some real type.
+
+   Representation : list of aadlstring applies to ( data ); 
+   -- Representation specifies the actual representation of
+   -- enumerators value.
+
+end Data_Model;
+

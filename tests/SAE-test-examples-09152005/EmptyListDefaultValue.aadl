@@ -1,0 +1,8 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set PS is
+  prop: list of aadlinteger => () applies to (all);
+end PS;
+
+system S
+end S;

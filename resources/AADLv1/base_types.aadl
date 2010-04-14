@@ -1,0 +1,102 @@
+package Base_Types
+public
+  
+  data Boolean
+  properties 
+    Data_Model::Data_Representation => Boolean;
+  end Boolean;
+  
+  data Integer
+  properties
+    Data_Model::Data_Representation => Integer;
+  end Integer;
+  
+  -- Signed integer of various byte sizes
+  
+  data int8 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 1 B;
+  end int8;
+  
+  data int16 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 2 B;
+  end int16;
+  
+  data int32 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 4 B;
+  end int32;
+  
+  data int64 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 8 B;
+  end int64;
+  
+  -- Unsigned integer of various byte sizes
+  
+  data uint8 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 1 B;
+  end uint8;
+  
+  data uint16 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 2 B;
+  end uint16;
+  
+  data uint32 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 4 B;
+  end uint32;
+  
+  data uint64 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 8 B;
+  end uint64;
+  
+  data Natural extends Integer
+  properties 
+    Data_Model::Integer_Range => 0 .. 10;
+  end Natural;
+  
+  data Float 
+  properties
+    Data_Model::Data_Representation => Float;
+  end Float;
+  
+  data Single extends Float
+  properties
+    Data_Model::IEEE754_Precision => Simple;
+  end Single;
+  
+  data Double extends Float
+  properties
+    Data_Model::IEEE754_Precision => Double;
+  end Double;
+  
+  data Character
+  properties
+    Data_Model::Data_Representation => Character;
+  end Character;
+  
+  data String
+  properties
+    Data_Model::Data_Representation => String;
+  end String;
+  
+  data Buffer 
+  properties
+    Data_Model::Data_Representation => Array;
+    Data_Model::Base_Type => (data Base_Types::uint8);
+  end Buffer;
+  
+end Base_Types;

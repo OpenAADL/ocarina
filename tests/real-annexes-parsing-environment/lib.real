@@ -1,0 +1,38 @@
+--  Subtheorem without parameters
+
+theorem sub_theorem_1
+
+foreach e in System_Set do
+
+  return (2.0);
+
+end;
+
+--  Subtheorem with 1 parameter
+
+theorem sub_theorem_2
+foreach e in System_Set do
+  return (argv_0);
+end;
+
+--  Subtheorem with 2 parameters
+
+theorem sub_theorem_3
+foreach e in Local_Set do
+  return (Msum (argv_0 + argv_1));
+end;
+
+--  Subtheorem with 1 parameter + domain inheritance (local_set)
+
+theorem sub_theorem_4
+foreach e in Local_Set do
+  return (First (get_property_value (e, "Load_Time")) + argv_0);
+end;
+
+--  Subtheorem with global variable access
+
+theorem sub_theorem_5
+foreach e in Local_Set do
+  return (y);
+end;
+

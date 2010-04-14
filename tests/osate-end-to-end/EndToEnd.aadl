@@ -1,0 +1,48 @@
+system pass1
+  features
+    output: out data port ;
+  flows
+    src: flow source output;
+end pass1;
+
+system pass2
+  features
+    output: out data port ;
+    input: in data port ;
+  flows
+    src: flow source output;
+    snk: flow sink input;
+    fp: flow path input -> output;
+end pass2;
+
+system pass3
+  features
+    input: in data port ;
+    output: out event port;
+  flows 
+    snk: flow sink input;
+    src: flow source output;
+end pass3;
+
+system S
+end S;
+
+system implementation S.i
+  subcomponents
+    a: system pass1;
+    b: system pass2;
+    c: system pass3;
+  connections
+    c1: data port a.output -> b.input;
+    c2: data port b.output -> c.input;
+  flows
+    g: end to end flow
+      a.src -> 
+      c1 ->
+      -- seeded error: this should be b.fp
+      b.snk ->
+      -- bad: b.snk is not a flow path, cannot have c2 next
+      c2 ->
+      c.snk;
+end S.i;
+

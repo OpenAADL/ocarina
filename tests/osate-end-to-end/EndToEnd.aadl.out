@@ -1,0 +1,2 @@
+EndToEnd.aadl:43:07: b.snk (entity reference)  points to snk (flow spec)  which should be a flow path
+Cannot analyze AADL specifications

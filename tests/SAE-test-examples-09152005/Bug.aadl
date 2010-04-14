@@ -1,0 +1,4 @@
+property set PS is
+  t: type aadlinteger;
+  const100: constant PS::t => 7.0;
+end PS;

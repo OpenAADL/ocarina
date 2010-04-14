@@ -1,0 +1,112 @@
+-- Tests for looking up property values of subprogram subcomponents.
+-- Meant to be exhaustive for the cases involving subprogram subcomponents.
+
+property set MyProperties is
+  -- Property with a default value
+  prop1: aadlinteger applies to (subprogram);
+  prop2: inherit aadlinteger => 1 applies to (subprogram, thread);
+
+  prop1_expected: aadlinteger applies to (subprogram);
+  prop2_expected: inherit aadlinteger applies to (subprogram, thread);
+end MyProperties;
+
+package TestSubprogramSubcomponents
+  public
+    -- prop1 => 7, prop2 => 1
+    subprogram Sub
+      properties
+        MyProperties::prop1 => 7;
+        MyProperties::prop1_expected => 7;
+        MyProperties::prop2_expected => 1;
+    end Sub;
+  
+    -- prop1 => 7, prop2 => 3
+    subprogram implementation Sub.One
+      properties
+        MyProperties::prop1_expected => 7;
+        MyProperties::prop2 => 3;
+        MyProperties::prop2_expected => 3;
+    end Sub.One;
+  
+    -- prop1 => 10, prop2 => 1
+    subprogram implementation Sub.Two
+      properties
+        MyProperties::prop1 => 10;
+        MyProperties::prop1_expected => 10;
+        MyProperties::prop2_expected => 1;
+    end Sub.Two;
+
+    data MyData
+      features
+        -- prop1 => 7, prop2 => 1
+        sub: subprogram Sub
+          { MyProperties::prop1_expected => 7;
+            MyProperties::prop2_expected => 1; };
+        -- prop1 => 7; prop2 => 9
+        sub0: subprogram Sub.One
+          { MyProperties::prop1_expected => 7;
+            MyProperties::prop2 => 9;
+            MyProperties::prop2_expected => 9; };
+    end MyData;
+
+    thread T
+      properties
+        MyProperties::prop2_expected => 1;
+    end T;
+
+    thread implementation T.A
+      calls
+      {
+      	-- prop1 => 7, prop2 => 100
+        first: subprogram Sub
+          { MyProperties::prop1_expected => 7;
+            MyProperties::prop2_expected => 100; };
+        -- prop1 => 7, prop2 => 3
+        second: subprogram Sub.One
+          { MyProperties::prop1_expected => 7;
+            MyProperties::prop2_expected => 3; };
+        -- prop1 => 10, prop2 => 42
+        third: subprogram Sub.Two
+          { MyProperties::prop1_expected => 10;
+            MyProperties::prop2 => 42;
+            MyProperties::prop2_expected => 42; };
+      };
+      
+      properties
+        MyProperties::prop2 => 100;
+        MyProperties::prop2_expected => 100;
+    end T.A;
+    
+    thread implementation T.B
+      calls 
+      {
+      	-- prop1 => 7, prop2 => 200
+      	first0: subprogram Sub
+          { MyProperties::prop1_expected => 7;
+            MyProperties::prop2_expected => 200; };
+      	-- prop1 => 7, prop2 => 200
+      	second0: subprogram Sub
+          { MyProperties::prop1_expected => 7;
+            MyProperties::prop2_expected => 200; };
+      } in modes (m1);
+      {
+      	--prop1 => 10, prop2 => 99
+      	third0: subprogram Sub.Two
+      	  { MyProperties::prop1_expected => 10;
+      	    MyProperties::prop2 => 99;
+      	    MyProperties::prop2_expected => 99; };
+      	--prop1 => 7, prop2 => 9
+      	fourth0: subprogram MyData.sub0
+          { MyProperties::prop1_expected => 7;
+            MyProperties::prop2_expected => 9; };
+      } in modes (m2);
+
+      modes
+        m1: initial mode;
+        m2: mode;
+        
+      properties
+        MyProperties::prop2 => 200;
+        MyProperties::prop2_expected => 200;
+    end T.B;
+end TestSubprogramSubcomponents;

@@ -1,0 +1,71 @@
+-- this test method checks to see if inverses of inverses etc. are checked correctly
+-- they need to be inverse for subcomponent port group connections
+-- they need to be the same for up and down connections
+-- all of the test below are expected to pass.
+port group pgt
+features
+e1: in event port;
+e2: out event port;
+pg : port group pgt1;
+end pgt;
+
+port group pgt1
+features
+e3: in event port;
+e4: out event port;
+end pgt1;
+
+port group pgtinv
+inverse of pgt
+end pgtinv;
+
+port group pgt1inv
+inverse of pgt1
+end pgt1inv;
+
+thread t1
+features 
+pg1: port group pgt1;
+end t1;
+
+thread t2
+features
+pg3: port group pgt1inv;
+end t2;
+
+process p1 
+features 
+pg2: port group pgt;
+end p1;
+
+process implementation p1.impl
+subcomponents
+	tt1: thread t1;
+connections
+	port group tt1.pg1 -> pg2.pg;
+end p1.impl;
+
+process p2 
+features 
+pg4: port group pgtinv;
+end p2;
+
+process implementation p2.impl
+subcomponents
+	tt2: thread t2;
+connections
+-- inverse to inverse going down
+	port group pg4.pg -> tt2.pg3;
+end p2.impl;
+
+system sys
+end sys;
+
+system implementation sys.i
+subcomponents
+	pp1: process p1.impl;
+	pp2: process p2.impl;
+connections
+	port group pp1.pg2 -> pp2.pg4;
+end sys.i;
+

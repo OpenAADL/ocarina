@@ -1,0 +1,184 @@
+package t12
+public
+
+abstract abstract_t12
+prototypes
+ datatype: data;
+end abstract_t12;
+
+abstract abstract_e_t12 extends abstract_t12 ( datatype => data data_t12)
+prototypes
+ threadtype: thread;
+end abstract_e_t12;
+
+abstract implementation abstract_t12.i
+prototypes
+ datatype: data;
+subcomponents
+ d: data datatype;
+end abstract_t12.i;
+
+abstract implementation abstract_e_t12.i extends abstract_t12.i( datatype => data data_t12)
+prototypes
+ threadtype: thread;
+end abstract_e_t12.i;
+
+bus bus_t12
+prototypes
+ datatype: data;
+end bus_t12;
+
+bus bus_e_t12 extends bus_t12( datatype => data data_t12)
+end bus_e_t12;
+
+bus implementation  bus_t12.i
+end bus_t12.i;
+
+bus implementation  bus_e_t12.i extends bus_t12.i
+end bus_e_t12.i;
+
+data data_t12
+end data_t12;
+
+data data_e_t12 extends data_t12
+end data_e_t12;
+
+data implementation data_t12.i
+end data_t12.i;
+
+data implementation data_e_t12.i extends data_t12.i
+end data_e_t12.i;
+
+device device_t12
+end device_t12;
+
+device device_e_t12 extends device_t12
+end device_e_t12;
+
+device implementation device_t12.i
+end device_t12.i;
+
+device implementation device_e_t12.i extends device_t12.i
+end device_e_t12.i;
+
+memory memory_t12
+end memory_t12;
+
+memory memory_e_t12 extends memory_t12
+end memory_e_t12;
+
+memory implementation memory_t12.i
+end memory_t12.i;
+
+memory implementation memory_e_t12.i extends memory_t12.i
+end memory_e_t12.i;
+
+process process_t12
+end process_t12;
+
+process process_e_t12 extends process_t12
+end process_e_t12;
+
+process implementation process_t12.i
+end process_t12.i;
+
+process implementation process_e_t12.i extends process_t12.i
+end process_e_t12.i;
+
+processor processor_t12
+end processor_t12;
+
+processor processor_e_t12 extends processor_t12
+end processor_e_t12;
+
+processor implementation processor_t12.i
+end processor_t12.i;
+
+processor implementation processor_e_t12.i extends processor_t12.i
+end processor_e_t12.i;
+
+subprogram subprogram_t12
+end subprogram_t12;
+
+subprogram subprogram_e_t12 extends subprogram_t12
+end subprogram_e_t12;
+
+subprogram implementation subprogram_t12.i
+end subprogram_t12.i;
+
+subprogram implementation subprogram_e_t12.i extends subprogram_t12.i
+end subprogram_e_t12.i;
+
+subprogram group subprogramgroup_t12
+end subprogramgroup_t12;
+
+subprogram group subprogramgroup_e_t12 extends subprogramgroup_t12
+end subprogramgroup_e_t12;
+
+subprogram group implementation subprogramgroup_t12.i
+end subprogramgroup_t12.i;
+
+subprogram group implementation subprogramgroup_e_t12.i extends subprogramgroup_t12.i
+end subprogramgroup_e_t12.i;
+
+system system_t12
+end system_t12;
+
+system system_e_t12 extends system_t12
+end system_e_t12;
+
+system implementation system_t12.i
+end system_t12.i;
+
+system implementation system_e_t12.i extends system_t12.i
+end system_e_t12.i;
+
+thread thread_t12
+end thread_t12;
+
+thread thread_e_t12 extends thread_t12
+end thread_e_t12;
+
+thread implementation thread_t12.i
+end thread_t12.i;
+
+thread implementation thread_e_t12.i extends thread_t12.i
+end thread_e_t12.i;
+
+thread group threadgroup_t12
+end threadgroup_t12;
+
+thread group threadgroup_e_t12 extends threadgroup_t12
+end threadgroup_e_t12;
+
+thread group implementation threadgroup_t12.i
+end threadgroup_t12.i;
+
+thread group implementation threadgroup_e_t12.i extends threadgroup_t12.i
+end threadgroup_e_t12.i;
+
+virtual bus virtualbus_t12
+end virtualbus_t12;
+
+virtual bus virtualbus_e_t12 extends virtualbus_t12
+end virtualbus_e_t12;
+
+virtual bus implementation virtualbus_t12.i
+end virtualbus_t12.i;
+
+virtual bus implementation virtualbus_e_t12.i extends virtualbus_t12.i
+end virtualbus_e_t12.i;
+
+virtual processor virtualprocessor_t12
+end virtualprocessor_t12;
+
+virtual processor virtualprocessor_e_t12 extends virtualprocessor_t12
+end virtualprocessor_e_t12;
+
+virtual processor implementation virtualprocessor_t12.i
+end virtualprocessor_t12.i;
+
+virtual processor implementation virtualprocessor_e_t12.i extends virtualprocessor_t12.i
+end virtualprocessor_e_t12.i;
+
+end t12;

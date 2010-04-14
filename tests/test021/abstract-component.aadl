@@ -1,0 +1,40 @@
+package Test
+public
+
+  abstract car
+  end car;
+
+  bus Manifold
+  end Manifold;
+
+  abstract implementation car.generic
+  subcomponents
+    PowerTrain: abstract power_train;
+    ExhaustSystem: abstract exhaust_system;
+  end car.generic;
+
+  abstract power_train
+  features
+    exhaustoutput: requires bus access Manifold;
+  end power_train;
+
+  abstract exhaust_system
+  features
+    exhaustManifold: provides bus access Manifold;
+  end exhaust_system;
+
+  abstract implementation exhaust_system.sporty
+  end exhaust_system.sporty;
+
+  -- runtime architecture
+
+  system carext extends car
+  end carext;
+
+  system implementation carext.impl extends car.generic
+  subcomponents
+      powertrain : refined to process power_train;
+      exhaustsystem : refined to process exhaust_system;
+  end carext.impl;
+
+end Test;

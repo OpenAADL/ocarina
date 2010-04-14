@@ -1,0 +1,38 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set PS is 
+  p: list of aadlinteger applies to (system);
+end PS;
+
+package TEST
+  public
+    system S
+    end S;
+    
+    system T
+    end T;
+    -- p => (1) in (m1, m2)
+    -- p => (2) in (m3)
+    system implementation T.I
+      modes
+        m1: initial mode;
+        m2: mode;
+        m3: mode;
+      properties
+        PS::p => (1) in modes (m1, m2);
+        PS::p => (2) in modes (m3);
+    end T.I;
+    
+    -- p => ()
+    system implementation S.I
+      subcomponents
+        sc: system T.I
+          { PS::p +=> (3) in modes (N, O);
+          	PS::p +=> (4) in modes (P, Q); };
+      modes 
+        N: initial mode;
+        O: mode;
+        P: mode;
+        Q: mode;
+    end S.I;
+end TEST;

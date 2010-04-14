@@ -1,0 +1,72 @@
+--------------------------------------------------
+-- CODING GUIDELINES for the Ocarina tool suite --
+--------------------------------------------------
+
+--  $Id: CODING_GUIDELINES 4768 2008-10-23 09:32:50Z zalila $
+
+The Ada 95 Quality & Style Guide and the GNAT coding style have to be
+respected. The GNAT coding style is available at:
+
+ - http://gcc.gnu.org/onlinedocs/gnat-style/
+
+Each file should start with the standard Ocarina copyright header,
+then a blank line, then a comment that documents its purpose, followed
+by a blank line. The Ocarina copyright header might be adapted for
+copyrighted specs or code from third party.
+
+If a package body needs to explicitly execute some code for its
+initialization, this MUST NOT be done in the elaboration code.
+Instead, a parameterless procedure Initialize must be declared
+containing the necessary initialization code, and this procedure
+should be called by the corresponding module initialization routine.
+
+The code shall not produce warnings when compiled with -gnatwa -gnaty.
+Any use of pragma Warnings (Off) shall be documented by a comment. In
+other words, './configure --enable-debug && make' shall terminate
+successfully.
+
+Usage of Ada 2005 features is allowed provided that all the Ada
+compilers listed in the Ocarina documentation can still compile it.
+
+Copyright headers should be up to date whenever necessary, using the
+script /support/update_headers.sh:
+
+- Copyright date information is either 
+  - x where x is year of code's creation,
+  - y - z where y is year of code's creation and z is year of last
+    modification, if y /= z.
+
+By code's creation, we mean the date the code was first created and
+checked in in Ocarina repository. If packages are renamed, merged,
+copyright years must remain consistent with package content.
+
+- Some packages require specific adjustments to take into account
+  references to other projects (e.g. GNAT components)
+
+Always update (or create if necessary) README file for each example.
+
+Any modification to NEWS must be propagated to the Ocarina User's
+guide to ensure consistency.
+
+Any commented code is prohibited unless a reasonable comment message
+justifies its presence.
+
+Before any commit, check that 'make distcheck' runs successfully. Make
+distcheck verifies:
+
+ - the testsuite runs successfully (In case the testsuite files are
+   present)
+ - all the examples compile AND RUN successfully.
+ - the source package installs and uninstalls correctly and is
+   self-contained.
+
+Commit messages must be clear and must explain 'why' (and not 'how')
+all the changes have been made. When a mistake is found in the commit
+message after the commit is sent, the message can be corrected by
+issuing the following command:
+
+%/> svn propedit --revprop svn:log -r <revision number> . (the
+ trailing 'dot' is the last element of the command)
+
+After that, an editor with the old message opens. It can be fixed and
+validated.

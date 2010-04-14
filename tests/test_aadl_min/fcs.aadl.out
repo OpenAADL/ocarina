@@ -1,0 +1,488 @@
+fcs.aadl:395:69: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
+The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:396:55: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
+The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:403:69: Warning: Allowed_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:90:03 is a list.
+The value of Allowed_Connection_Binding has been converted into a list.
+fcs.aadl:404:71: Warning: Allowed_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:90:03 is a list.
+The value of Allowed_Connection_Binding has been converted into a list.
+fcs.aadl:405:67: Warning: Allowed_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:90:03 is a list.
+The value of Allowed_Connection_Binding has been converted into a list.
+fcs.aadl:406:72: Warning: Allowed_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:90:03 is a list.
+The value of Allowed_Connection_Binding has been converted into a list.
+fcs.aadl:550:49: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
+The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:551:71: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
+The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:554:67: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
+The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:556:67: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
+The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:557:67: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
+The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:87:02: warning: Airspeed references a component type
+fcs.aadl:88:02: warning: Altitude references a component type
+fcs.aadl:68:02: warning: Degs references a component type
+fcs.aadl:69:02: warning: Mins references a component type
+fcs.aadl:70:02: warning: Secs references a component type
+fcs.aadl:508:02: warning: Dev_Bus references a component type
+fcs.aadl:509:02: warning: Mem_Bus references a component type
+fcs.aadl:346:02: warning: Dev_Bus references a component type
+fcs.aadl:347:02: warning: Mem_Bus references a component type
+fcs.aadl:278:02: warning: D_AP_Airspeed references a component type
+fcs.aadl:279:02: warning: D_AP_Altitude references a component type
+fcs.aadl:354:02: warning: GPS_Loc references a component type
+fcs.aadl:356:02: warning: INS_Loc references a component type
+fcs.aadl:359:02: warning: Engine_RPM_Controller references a component type
+fcs.aadl:360:02: warning: Aileron_Controller references a component type
+fcs.aadl:361:02: warning: Rudder_Controller references a component type
+fcs.aadl:362:02: warning: Elevator_Controller references a component type
+fcs.aadl:542:02: warning: LAN references a component type
+ocarina: Total: 0 error and 18 warnings
+
+
+package Nav_Types
+public
+
+  data Integer
+  properties
+    Source_Data_Size => 32 bits;
+
+  end Integer;
+
+  subprogram Get_Integer
+  features
+    Result : out parameter Integer;
+
+  end Get_Integer;
+
+  subprogram Set_Integer
+  features
+    Int : in parameter Integer;
+
+  end Set_Integer;
+
+  data Lat_Long
+  features
+    Get_Degs : subprogram Get_Integer;
+    Set_Degs : subprogram Set_Integer;
+    Get_Mins : subprogram Get_Integer;
+    Set_Mins : subprogram Set_Integer;
+    Get_Secs : subprogram Get_Integer;
+    Set_Secs : subprogram Set_Integer;
+
+  end Lat_Long;
+
+  data implementation Lat_Long.Generic
+  subcomponents
+    Degs : data Integer;
+    Mins : data Integer;
+    Secs : data Integer;
+
+  end Lat_Long.Generic;
+
+  data Position
+  end Position;
+
+  data implementation Position.Simple
+  subcomponents
+    Latitude : data Lat_Long.Generic;
+    Longitude : data Lat_Long.Generic;
+
+  end Position.Simple;
+
+  data implementation Position.GPS extends Position.Simple
+  subcomponents
+    Airspeed : data Integer;
+    Altitude : data Integer;
+
+  end Position.GPS;
+
+  data NEMA_Stream_Element
+  end NEMA_Stream_Element;
+
+  data implementation NEMA_Stream_Element.Generic
+  properties
+    Source_Data_Size => 8 bits;
+
+  end NEMA_Stream_Element.Generic;
+
+end Nav_Types;
+
+bus Memory_Bus
+end Memory_Bus;
+
+bus Device_Bus
+end Device_Bus;
+
+device GPS
+features
+  Position_Output : out data port Nav_Types::NEMA_Stream_Element.Generic;
+  Error_Out : out event port;
+  Connector_Bus : requires bus access Device_Bus;
+
+end GPS;
+
+device INS
+features
+  Position_Output : out data port Nav_Types::Position.Simple;
+  Connector_Bus : requires bus access Device_Bus;
+
+end INS;
+
+device Actuator
+features
+  Input : in data port Nav_Types::Integer;
+  Connector_Bus : requires bus access Device_Bus;
+
+end Actuator;
+
+bus LAN_Bus
+end LAN_Bus;
+
+memory RAM
+features
+  Mem_Bus : requires bus access Memory_Bus;
+
+end RAM;
+
+memory implementation RAM.Generic
+properties
+  Word_Size => 8 bits;
+
+end RAM.Generic;
+
+processor PowerPC
+features
+  Mem_Bus : requires bus access Memory_Bus;
+  Dev_Bus : requires bus access Device_Bus;
+
+end PowerPC;
+
+processor implementation PowerPC.G4
+properties
+  Scheduling_Protocol => (rate_monotonic_protocol);
+
+end PowerPC.G4;
+
+thread GPS_Sampling_Thread
+features
+  Position_Input : in data port Nav_Types::NEMA_Stream_Element.Generic;
+  Position_Output : out data port Nav_Types::Position.GPS;
+
+end GPS_Sampling_Thread;
+
+thread implementation GPS_Sampling_Thread.PowerPC_G4
+properties
+  Period => 20 ms;
+
+end GPS_Sampling_Thread.PowerPC_G4;
+
+thread INS_Sampling_Thread
+features
+  Position_Input : in data port Nav_Types::Position.Simple;
+  Position_Output : out data port Nav_Types::Position.Simple;
+
+end INS_Sampling_Thread;
+
+thread implementation INS_Sampling_Thread.PowerPC_G4
+properties
+  Period => 20 ms;
+
+end INS_Sampling_Thread.PowerPC_G4;
+
+thread Sensor_Fusion_Thread
+features
+  GPS_Position_Input : in data port Nav_Types::Position.GPS;
+  INS_Position_Input : in data port Nav_Types::Position.Simple;
+  Position_Output : out data port Nav_Types::Position.Simple;
+  Altitude_Output : out data port Nav_Types::Integer;
+  Airspeed_Output : out data port Nav_Types::Integer;
+
+end Sensor_Fusion_Thread;
+
+thread implementation Sensor_Fusion_Thread.PowerPC_G4
+properties
+  Period => 20 ms;
+
+end Sensor_Fusion_Thread.PowerPC_G4;
+
+thread Autopilot_Compute_Thread
+features
+  Position_Input : in data port Nav_Types::Position.Simple;
+  Altitude_Input : in data port Nav_Types::Integer;
+  Airspeed_Input : in data port Nav_Types::Integer;
+  Delta_Roll_Output : out data port Nav_Types::Integer;
+  Delta_Yaw_Output : out data port Nav_Types::Integer;
+  Delta_Pitch_Output : out data port Nav_Types::Integer;
+  Engine_RPM_Output : out data port Nav_Types::Integer;
+
+end Autopilot_Compute_Thread;
+
+thread implementation Autopilot_Compute_Thread.PowerPC_G4
+properties
+  Period => 50 ms;
+
+end Autopilot_Compute_Thread.PowerPC_G4;
+
+thread Autopilot_Modify_Parameters_Thread
+features
+  AP_Position_Input : in event data port Nav_Types::Position.GPS;
+
+end Autopilot_Modify_Parameters_Thread;
+
+thread implementation Autopilot_Modify_Parameters_Thread.PowerPC_G4
+properties
+  Dispatch_Protocol => background;
+
+end Autopilot_Modify_Parameters_Thread.PowerPC_G4;
+
+process Nav_Control_Process
+features
+  GPS_Position_Input : in data port Nav_Types::NEMA_Stream_Element.Generic;
+  GPS_Error : in event port;
+  INS_Position_Input : in data port Nav_Types::Position.Simple;
+  AP_Position_Input : in event data port Nav_Types::Position.GPS;
+  AP_Toggle : in event port;
+  Position_Output : out data port Nav_Types::Position.Simple;
+  Airspeed_Output : out data port Nav_Types::Integer;
+  Altitude_Output : out data port Nav_Types::Integer;
+  Delta_Roll_Output : out data port Nav_Types::Integer;
+  Delta_Yaw_Output : out data port Nav_Types::Integer;
+  Delta_Pitch_Output : out data port Nav_Types::Integer;
+  Engine_RPM_Output : out data port Nav_Types::Integer;
+
+end Nav_Control_Process;
+
+process implementation Nav_Control_Process.PowerPC_G4
+subcomponents
+  T_GPS_Reader : thread GPS_Sampling_Thread.PowerPC_G4
+
+    in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+  T_AP_Compute : thread Autopilot_Compute_Thread.PowerPC_G4
+
+    in modes (GPS_UP_AP_UP);
+  T_AP_Params : thread Autopilot_Modify_Parameters_Thread.PowerPC_G4;
+  T_Sensor_Fusion : thread Sensor_Fusion_Thread.PowerPC_G4
+
+    in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+  T_INS_Reader : thread INS_Sampling_Thread.PowerPC_G4;
+  D_AP_Destination : data Nav_Types::Position.Simple;
+  D_AP_Airspeed : data Nav_Types::Integer;
+  D_AP_Altitude : data Nav_Types::Integer;
+
+connections
+  data port GPS_Position_Input -> T_GPS_Reader.Position_Input
+    in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+  data port INS_Position_Input -> T_INS_Reader.Position_Input;
+  data port T_GPS_Reader.Position_Output -> T_Sensor_Fusion.GPS_Position_Input
+    in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+  data port T_INS_Reader.Position_Output -> T_Sensor_Fusion.INS_Position_Input
+    in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+  data port T_INS_Reader.Position_Output -> Position_Output
+    in modes (GPS_DOWN);
+  data port T_Sensor_Fusion.Position_Output -> Position_Output
+    in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+  data port T_Sensor_Fusion.Altitude_Output -> Altitude_Output
+    in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+  data port T_Sensor_Fusion.Airspeed_Output -> Airspeed_Output
+    in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+  data port T_AP_Compute.Delta_Roll_Output -> Delta_Roll_Output
+    in modes (GPS_UP_AP_UP);
+  data port T_AP_Compute.Delta_Yaw_Output -> Delta_Yaw_Output
+    in modes (GPS_UP_AP_UP);
+  data port T_AP_Compute.Delta_Pitch_Output -> Delta_Pitch_Output
+    in modes (GPS_UP_AP_UP);
+  data port T_AP_Compute.Engine_RPM_Output -> Engine_RPM_Output
+    in modes (GPS_UP_AP_UP);
+  event data port AP_Position_Input -> T_AP_Params.AP_Position_Input;
+
+modes
+  GPS_UP_AP_DOWN : initial mode;
+  GPS_UP_AP_UP : mode;
+  GPS_DOWN : mode;
+  GPS_UP_AP_DOWN -[ AP_Toggle ]-> GPS_UP_AP_UP;
+  GPS_UP_AP_DOWN -[ GPS_Error ]-> GPS_DOWN;
+  GPS_UP_AP_UP -[ GPS_Error ]-> GPS_DOWN;
+
+end Nav_Control_Process.PowerPC_G4;
+
+system Nav_Autopilot_System
+features
+  AP_Toggle : in event port;
+  AP_Position_Input : in event data port Nav_Types::Position.GPS;
+  Position_Output : out data port Nav_Types::Position.Simple;
+  Airspeed_Output : out data port Nav_Types::Integer;
+  Altitude_Output : out data port Nav_Types::Integer;
+  Network : requires bus access LAN_Bus;
+
+end Nav_Autopilot_System;
+
+system implementation Nav_Autopilot_System.PowerPC_G4
+subcomponents
+  Proc : processor PowerPC.G4;
+  Mem : memory RAM.Generic;
+  Dev_Bus : bus Device_Bus;
+  Mem_Bus : bus Memory_Bus;
+  P_Nav_Con : process Nav_Control_Process.PowerPC_G4;
+  GPS_Loc : device GPS;
+  INS_Loc : device INS;
+  Engine_RPM_Controller : device Actuator;
+  Aileron_Controller : device Actuator;
+  Rudder_Controller : device Actuator;
+  Elevator_Controller : device Actuator;
+
+connections
+  bus access Mem_Bus -> Proc.Mem_Bus;
+  bus access Mem_Bus -> Mem.Mem_Bus;
+  bus access Dev_Bus -> Proc.Dev_Bus;
+  bus access Dev_Bus -> GPS_Loc.Connector_Bus;
+  bus access Dev_Bus -> INS_Loc.Connector_Bus;
+  bus access Dev_Bus -> Engine_RPM_Controller.Connector_Bus;
+  bus access Dev_Bus -> Aileron_Controller.Connector_Bus;
+  bus access Dev_Bus -> Rudder_Controller.Connector_Bus;
+  bus access Dev_Bus -> Elevator_Controller.Connector_Bus;
+  event data port AP_Position_Input -> P_Nav_Con.AP_Position_Input;
+  event port AP_Toggle -> P_Nav_Con.AP_Toggle;
+  data port P_Nav_Con.Position_Output -> Position_Output;
+  data port P_Nav_Con.Airspeed_Output -> Airspeed_Output;
+  data port P_Nav_Con.Altitude_Output -> Altitude_Output;
+  data port GPS_Loc.Position_Output -> P_Nav_Con.GPS_Position_Input
+    {Actual_Connection_Binding => reference Dev_Bus;};
+  event port GPS_Loc.Error_Out -> P_Nav_Con.GPS_Error
+    {Actual_Connection_Binding => reference Dev_Bus;};
+  data port INS_Loc.Position_Output -> P_Nav_Con.INS_Position_Input;
+  data port P_Nav_Con.Delta_Roll_Output -> Aileron_Controller.Input
+    {Allowed_Connection_Binding => reference Dev_Bus;};
+  data port P_Nav_Con.Delta_Pitch_Output -> Elevator_Controller.Input
+    {Allowed_Connection_Binding => reference Dev_Bus;};
+  data port P_Nav_Con.Delta_Yaw_Output -> Rudder_Controller.Input
+    {Allowed_Connection_Binding => reference Dev_Bus;};
+  data port P_Nav_Con.Engine_RPM_Output -> Engine_RPM_Controller.Input
+    {Allowed_Connection_Binding => reference Dev_Bus;};
+
+properties
+  Actual_Processor_Binding => reference Proc
+    applies to P_Nav_Con;
+  Actual_Memory_Binding => reference Mem
+    applies to P_Nav_Con;
+
+end Nav_Autopilot_System.PowerPC_G4;
+
+thread Screen_Display_Thread
+features
+  Current_Position_Input : in data port Nav_Types::Position.Simple;
+  Current_Airspeed_Input : in data port Nav_Types::Integer;
+  Current_Altitude_Input : in data port Nav_Types::Integer;
+  AP_Toggle : in event port;
+  AP_Position_Input : in event data port Nav_Types::Position.GPS;
+
+end Screen_Display_Thread;
+
+thread implementation Screen_Display_Thread.PowerPC_G4
+properties
+  Period => 50 ms;
+
+end Screen_Display_Thread.PowerPC_G4;
+
+thread Pilot_Input_Thread
+features
+  AP_Toggle : out event port;
+  AP_Position_Output : out event data port Nav_Types::Position.GPS;
+
+end Pilot_Input_Thread;
+
+thread implementation Pilot_Input_Thread.PowerPC_G4
+properties
+  Dispatch_Protocol => background;
+
+end Pilot_Input_Thread.PowerPC_G4;
+
+process HCI_Process
+features
+  Current_Position_Input : in data port Nav_Types::Position.Simple;
+  Current_Airspeed_Input : in data port Nav_Types::Integer;
+  Current_Altitude_Input : in data port Nav_Types::Integer;
+  AP_Toggle : out event port;
+  AP_Position_Output : out event data port Nav_Types::Position.GPS;
+
+end HCI_Process;
+
+process implementation HCI_Process.PowerPC_G4
+subcomponents
+  T_Screen_Disp : thread Screen_Display_Thread.PowerPC_G4;
+  T_Pilot_Input : thread Pilot_Input_Thread.PowerPC_G4;
+
+connections
+  event port T_Pilot_Input.AP_Toggle -> AP_Toggle;
+  event data port T_Pilot_Input.AP_Position_Output -> AP_Position_Output;
+  event port T_Pilot_Input.AP_Toggle -> T_Screen_Disp.AP_Toggle;
+  event data port T_Pilot_Input.AP_Position_Output -> T_Screen_Disp.AP_Position_Input;
+  data port Current_Position_Input -> T_Screen_Disp.Current_Position_Input;
+  data port Current_Airspeed_Input -> T_Screen_Disp.Current_Airspeed_Input;
+  data port Current_Altitude_Input -> T_Screen_Disp.Current_Altitude_Input;
+
+end HCI_Process.PowerPC_G4;
+
+system HCI_System
+features
+  AP_Toggle : out event port;
+  AP_Position_Output : out event data port Nav_Types::Position.GPS;
+  Current_Position_Input : in data port Nav_Types::Position.Simple;
+  Current_Airspeed_Input : in data port Nav_Types::Integer;
+  Current_Altitude_Input : in data port Nav_Types::Integer;
+  Network : requires bus access LAN_Bus;
+
+end HCI_System;
+
+system implementation HCI_System.PowerPC_G4
+subcomponents
+  Proc : processor PowerPC.G4;
+  Mem : memory RAM.Generic;
+  Dev_Bus : bus Device_Bus;
+  Mem_Bus : bus Memory_Bus;
+  P_HCI : process HCI_Process.PowerPC_G4;
+
+connections
+  bus access Mem_Bus -> Proc.Mem_Bus;
+  bus access Dev_Bus -> Proc.Dev_Bus;
+  bus access Mem_Bus -> Mem.Mem_Bus;
+  event port P_HCI.AP_Toggle -> AP_Toggle;
+  event data port P_HCI.AP_Position_Output -> AP_Position_Output;
+  data port Current_Position_Input -> P_HCI.Current_Position_Input;
+  data port Current_Airspeed_Input -> P_HCI.Current_Airspeed_Input;
+  data port Current_Altitude_Input -> P_HCI.Current_Altitude_Input;
+
+properties
+  Actual_Processor_Binding => reference Proc
+    applies to P_HCI;
+  Actual_Memory_Binding => reference Mem
+    applies to P_HCI;
+
+end HCI_System.PowerPC_G4;
+
+system Flight_System
+end Flight_System;
+
+system implementation Flight_System.Generic
+subcomponents
+  S_HCI : system HCI_System.PowerPC_G4;
+  S_NAP : system Nav_Autopilot_System.PowerPC_G4;
+  LAN : bus LAN_Bus;
+
+connections
+  bus access LAN -> S_HCI.Network;
+  bus access LAN -> S_NAP.Network;
+  event port S_HCI.AP_Toggle -> S_NAP.AP_Toggle
+    {Actual_Connection_Binding => reference LAN;};
+  event data port S_HCI.AP_Position_Output -> S_NAP.AP_Position_Input
+    {Actual_Connection_Binding => reference LAN;};
+  data port S_NAP.Position_Output -> S_HCI.Current_Position_Input
+    {Actual_Connection_Binding => reference LAN;};
+  data port S_NAP.Airspeed_Output -> S_HCI.Current_Airspeed_Input
+    {Actual_Connection_Binding => reference LAN;};
+  data port S_NAP.Altitude_Output -> S_HCI.Current_Altitude_Input
+    {Actual_Connection_Binding => reference LAN;};
+
+end Flight_System.Generic;
+

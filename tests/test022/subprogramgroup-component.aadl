@@ -1,0 +1,14 @@
+-- test minimal for parsing 
+-- subprogram group component
+
+package Test
+public
+
+  subprogram group mathlib
+  features
+     matrixMultiply: provides subprogram access ;
+     matrixAdd: provides subprogram access ;
+     vectorAdd: requires subprogram access ;
+  end mathlib;
+
+end Test;

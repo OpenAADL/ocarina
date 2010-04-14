@@ -1,0 +1,21 @@
+property set PS is
+  enum: type enumeration (a, b, c);
+  enum2: type enumeration (a, b, c);
+  
+  e_const: constant PS::enum => b;
+  e_list_const: constant list of PS::enum => (c, a, b);
+  
+  e_prop: list of PS::enum applies to (all);
+  e_prop2: PS::enum2 applies to (all);
+end PS;
+
+package Test
+  public
+    system S
+      properties
+        -- Should have value (c, a, b, c, a, b)
+        PS::e_prop => (c, a, value(PS::e_const), value(PS::e_list_const));
+        -- BAD: different types
+        PS::e_prop2 => value(PS::e_const);
+    end S;
+end Test;

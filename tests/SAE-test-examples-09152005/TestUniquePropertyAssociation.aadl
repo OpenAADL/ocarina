@@ -1,0 +1,48 @@
+property set ps is
+  prop: aadlinteger => 0 applies to (all);
+end ps;
+
+system s
+  properties
+    ps::prop => 1;
+    -- illegal, association already made
+    ps::prop => 2;
+end s;
+
+system T
+end T;
+
+system implementation s.i
+  subcomponents
+    sub1: system t {
+    	-- good
+    	ps::prop => 3; 
+    };
+    sub2: system t {
+    	ps::prop => 4;
+    	-- illegal, assocation already made
+    	ps::prop => 5;
+    };
+    sub3: system t {
+    	ps::prop => 5 in modes (m1);
+    	ps::prop => 6 in modes (m2);
+    };
+    sub4: system t {
+    	ps::prop => 7 in modes (m1);
+    	ps::prop => 8;
+    };
+    sub5: system t {
+    	ps::prop => 9 in modes (m1);
+    	ps::prop => 10 in modes (m2);
+    	-- "else" clause, but unused because only have 2 modes
+    	ps::prop => 11;
+    };
+  modes
+    m1: initial mode;
+    m2: mode;
+  properties
+    ps::prop => 12 in modes (m1, m2);
+    -- illegal
+    ps::prop => 12 in modes (m1);
+end s.i;
+

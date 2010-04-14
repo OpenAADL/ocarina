@@ -1,0 +1,252 @@
+Cmd0: ocarina Bug.aadl
+Success0: yes
+
+Cmd1: ocarina CircularRefs.aadl
+Success1: yes
+
+Cmd2: ocarina ConstantPropertyAssoc.aadl
+Success2: yes
+
+
+Cmd3: ocarina ConstantsWithUnits.aadl
+Success3: no
+Output3: ConstantsWithUnits.aadl.out
+
+Cmd4: ocarina EmptyListDefaultValue.aadl
+Success4: yes
+
+Cmd5 : ocarinaEvenMoreModes.aadl
+Success5: yes
+
+Cmd6: ocarina FunnyModes.aadl
+Success6: yes
+
+Cmd7: ocarina IgnoresAppliesTo.aadl
+Success7: yes
+
+Cmd8: ocarina IndirectValueInModes.aadl
+Success8: yes
+
+Cmd9: ocarina ModalComponents.aadl
+Success9: yes
+
+Cmd10: ocarina ModalSubComponents.aadl
+Success10: yes
+
+Cmd11: ocarina MoreModes.aadl
+Success11: no
+Output11: MoreModes.aadl.out
+
+Cmd12: ocarina MultipleModes-ModalSubComponents.aadl
+Success12: yes
+
+Cmd13: ocarina MultipleModes.aadl
+Success13: yes
+
+Cmd14: ocarina NotABug.aadl
+Success14: yes
+
+Cmd15: ocarina NumValues.aadl
+Success15: yes
+
+Cmd16: ocarina PetersBug.aadl
+Success16: no
+Output16: PetersBug.aadl.out
+
+Cmd17: ocarina PetersBug2.aadl
+Success17: yes
+
+Cmd18: ocarina PropTests.aadl
+Success18: yes
+
+Cmd19: ocarina SignsAndReferences.aadl
+Success19: no
+Output19: SignsAndReferences.aadl.out
+
+Cmd20: ocarina Test.aadl
+Success20: yes
+
+Cmd21: ocarina TestAccess.aadl
+Success21: yes
+
+Cmd22: ocarina TestAccessAssociations.aadl
+Success22: no
+Output22: TestAccessAssociations.aadl.out
+
+Cmd23: ocarina TestAppliesTo.aadl
+Success23: no
+Output23: TestAppliesTo.aadl.out
+
+Cmd24: ocarina TestAppliesToClassifier.aadl
+Success24: no
+Output24: TestAppliesToClassifier.aadl.out
+
+Cmd25: ocarina TestBooleanConstants.aadl
+Success25: yes
+
+Cmd26: ocarina TestComponentImpl.aadl
+Success26: yes
+
+Cmd27: ocarina TestComponentType-Lists.aadl
+Success27: yes
+
+Cmd28: ocarina TestComponentType-Lists2.aadl
+Success28: yes
+
+Cmd29: ocarina TestComponentType-Lists3.aadl
+Success29: yes
+
+Cmd30: ocarina TestComponentType.aadl
+Success30: yes
+
+Cmd31: ocarina TestComputeEntryPoint.aadl
+Success31: yes
+
+Cmd32: ocarina TestConnection.aadl
+Success32: yes
+
+Cmd33: ocarina TestConstantDefns.aadl
+Success33: yes
+
+Cmd34: ocarina TestContainedPA.aadl
+Success34: yes
+
+Cmd35: ocarina TestContainedPAuniqueness.aadl
+Success35: no
+Output35: TestContainedPAuniqueness.aadl.out
+
+Cmd36: ocarina TestDefaultEmptyList.aadl
+Success36: yes
+
+Cmd37: ocarina TestDefaultValues.aadl
+Success37: no
+Output37: TestDefaultValues.aadl.out
+
+Cmd38: ocarina TestEnumConstants.aadl
+Success38: yes
+
+Cmd39: ocarina TestFeature.aadl
+Success39: yes
+
+Cmd40: ocarina TestFlowSequence.aadl
+Success40: yes
+
+Cmd41: ocarina TestFlowSpec.aadl
+Success41: yes
+
+Cmd42: ocarina TestInModes.aadl
+Success42: yes
+
+Cmd43: ocarina TestMaxAadlInteger.aadl
+Success43: yes
+
+Cmd44: ocarina TestMode.aadl
+Success44: yes
+
+Cmd45: ocarina TestNumericResolver.aadl
+Success45: no
+Output45: TestNumericResolver.aadl.out
+
+Cmd46: ocarina TestPeriodic.aadl
+Success46: yes
+
+Cmd47: ocarina TestPortGroupType.aadl
+Success47: no
+
+Cmd48: ocarina TestProp.aadl
+Success48: yes
+
+Cmd49: ocarina TestPropertyAssocs.aadl
+Success49: no
+Output49: TestPropertyAssocs.aadl.out
+
+Cmd50: ocarina TestQueueSize.aadl
+Success50: no
+Output50: TestQueueSize.aadl.out
+
+Cmd51: ocarina TestRangeConstants.aadl
+Success51: yes
+
+Cmd52: ocarina TestRanges.aadl
+Success52: yes
+
+Cmd53: ocarina TestRangesWithReferences.aadl
+Success53: no
+Output53: TestRangesWithReferences.aadl.out
+
+Cmd54: ocarina TestReferences.aadl
+Success54: yes
+
+Cmd55: ocarina TestRefinesType.aadl
+Success55: yes
+
+Cmd56: ocarina TestScalarIssues.aadl
+Success56: no
+Output56: TestScalarIssues.aadl.out
+
+Cmd57: ocarina TestServerSubprogram.aadl
+Success57: yes
+
+Cmd58: ocarina TestSubComponents.aadl
+Success58: yes
+
+Cmd59: ocarina TestSubcomponent2.aadl
+Success59: yes
+
+Cmd60: ocarina TestSubprogramAsFeature.aadl
+Success60: yes
+
+Cmd61: ocarina TestSubprogramSubcomponents.aadl
+Success61: yes
+
+Cmd62: ocarina TestUniquePropertyAssociation.aadl
+Success62: no
+Output62: TestUniquePropertyAssociation.aadl.out
+
+Cmd63: ocarina TestUnits.aadl
+Success63: no
+Output63: TestUnits.aadl.out
+
+Cmd64: ocarina ValueModes.aadl
+Success64: yes
+
+Cmd65: ocarina expandsemanticconnections.aadl
+Success65: no
+
+Cmd66: ocarina flowtest.aadl
+Success66: yes
+
+Cmd67: ocarina subprogramouteventtest.aadl
+Success67: no
+Output67: subprogramouteventtest.aadl.out
+
+Cmd68: ocarina testconnections.aadl
+Success68: no
+
+Cmd69: ocarina testpgtinverse.aadl
+Success69: no
+
+Cmd70: ocarina testportgroups.aadl
+Success70: yes
+
+Cmd71: ocarina testpropertyconstant.aadl
+Success71: yes
+
+Cmd72: ocarina testpublicprivate.aadl
+Success72: no
+Output72: testpublicprivate.aadl.out
+
+Cmd73: ocarina testrange.aadl
+Success73: no
+Output73: testrange.aadl.out
+
+Cmd74: ocarina testsubcomp.aadl
+Success74: yes
+
+Cmd75: ocarina testtyperefs.aadl
+Success75: yes
+
+Cmd76: ocarina underscoretest.aadl
+Success76: no
+Output76: underscoretest.aadl.out
+

@@ -1,0 +1,41 @@
+system inner
+  features
+    input: in data port ;
+    output: out data port ;
+  flows
+    f: flow path input -> output;
+end inner;
+
+system outer
+  features 
+    x: in data port ;
+    y: out data port ;
+  flows
+    ff: flow path x -> y;
+    ff2: flow path x -> y;
+end outer;
+
+system implementation outer.basic
+  subcomponents
+    sub: system inner;
+  connections
+    c1: data port x -> sub.input;
+    c2: data port sub.output -> y;
+  flows
+    -- bad: src of c2 is not x
+    -- bad: dest of c2 is not sub.input
+    -- bad: src of c1 is not sub.output
+    -- bad: dest of c1 is not y
+    -- should be x -> c1 -> sub.f -> c2 -> y;
+    ff: flow path x -> c2 -> sub.f -> c1 -> y;
+    
+    -- also bad
+    -- bad: y is not the source of the flow specification
+    -- bad: x is not the dest of the flow specification
+    ff2: flow path y -> c1 -> sub.f -> c2 -> x;
+
+    -- ENST
+    -- also bad
+    -- bad: no flow spec corresponding to ff3
+    ff3: flow path x -> c1 -> sub.f -> c2 -> y;
+end outer.basic;

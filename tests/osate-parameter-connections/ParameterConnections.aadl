@@ -1,0 +1,362 @@
+subprogram sub
+  features
+    in_param: in parameter ;
+    out_param: out parameter ;
+    in_out_param: in out parameter ;
+end sub;
+
+thread t
+  features
+    in_data: in data port ;
+    out_data: out data port ;
+    in_out_data: in out data port ;
+    
+    in_event_data: in event data port ;
+    out_event_data: out event data port ;
+    in_out_event_data: in out event data port ;
+    
+    in_event: in event port ;
+    out_event: out event port ;
+    in_out_event: in out event port ;
+end t;
+
+thread implementation t.i
+  calls
+    cs1: {
+      call1: subprogram sub ;
+      call2: subprogram sub ;
+      call3: subprogram sub ;
+      call4: subprogram sub ;
+      call5: subprogram sub ;
+      call6: subprogram sub ;
+      call7: subprogram sub ;
+      call8: subprogram sub ;
+      call9: subprogram sub ;
+    };
+    
+  connections
+    -- good: in data to in param
+    parameter in_data -> call1.in_param;
+    -- bad: in data to out param
+    parameter in_data -> call1.out_param;
+    -- good: in data to in/out param
+    parameter in_data -> call1.in_out_param;
+    
+    -- bad: out data to in param
+    parameter out_data -> call2.in_param;
+    -- bad: out data to out param
+    parameter out_data -> call2.out_param;
+    -- bad: out data to in/out param
+    parameter out_data -> call2.in_out_param;
+    
+    -- good: in/out data to in param
+    parameter in_out_data -> call3.in_param;
+    -- bad: in/out data to out param
+    parameter in_out_data -> call3.out_param;
+    -- good: in/out data to in/out param
+    parameter in_out_data -> call3.in_out_param;
+    
+    -- good: in event data to in param
+    parameter in_event_data -> call4.in_param;
+    -- bad: in event data to out param
+    parameter in_event_data -> call4.out_param;
+    -- good: in event data to in/out param
+    parameter in_event_data -> call4.in_out_param;
+    
+    -- bad: out event data to in param
+    parameter out_event_data -> call5.in_param;
+    -- bad: out event data to out param
+    parameter out_event_data -> call5.out_param;
+    -- bad: out event data to in/out param
+    parameter out_event_data -> call5.in_out_param;
+    
+    -- good: in/out event data to in param
+    parameter in_out_event_data -> call6.in_param;
+    -- bad: in/out event data to out param
+    parameter in_out_event_data -> call6.out_param;
+    -- good: in/out event data to in/out param
+    parameter in_out_event_data -> call6.in_out_param;
+
+    -- bad: event to param
+    parameter in_event -> call7.in_param ;
+    -- bad: event to param
+    parameter in_event -> call7.out_param ;
+    -- bad: event to param
+    parameter in_event -> call7.in_out_param ;
+
+    -- bad: event to param
+    parameter out_event -> call8.in_param ;
+    -- bad: event to param
+    parameter out_event -> call8.out_param ;
+    -- bad: event to param
+    parameter out_event -> call8.in_out_param ;
+
+    -- bad: event to param
+    parameter in_out_event -> call9.in_param ;
+    -- bad: event to param
+    parameter in_out_event -> call9.out_param ;
+    -- bad: event to param
+    parameter in_out_event -> call9.in_out_param ;
+end t.i;
+
+thread implementation t.j
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- bad: in data cannot be dest
+    parameter call.out_param -> in_data ;
+    -- good: in/out param to out data
+    parameter call.in_out_param -> out_data ;
+    -- bad: in param cannot be source
+    parameter call.in_param -> in_out_data ;
+end t.j;
+
+thread implementation t.k
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- good: out to out
+    parameter call.out_param -> out_data ;
+    -- good: in/out to in/out
+    parameter call.in_out_param -> in_out_data ;
+    -- bad: in cannot be src, in cannot be dest
+    parameter call.in_param -> in_event_data ;
+end t.k;
+
+thread implementation t.l
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- good: out to in/out
+    parameter call.out_param -> in_out_data ;
+    -- bad: in cannot be dest
+    parameter call.in_out_param -> in_event_data ;
+    -- bad: in cannot be source
+    parameter call.in_param -> out_event_data ;
+end t.l;
+
+thread implementation t.m
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- bad: in cannot be dest,
+    parameter call.out_param -> in_event_data ;
+    -- good: in/out to out
+    parameter call.in_out_param -> out_event_data ;
+    -- bad: in cannot src
+    parameter call.in_param -> in_out_event_data ;
+end t.m;
+    
+thread implementation t.n
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- good: out to out
+    parameter call.out_param -> out_event_data ;
+    -- good in/out to in/out
+    parameter call.in_out_param -> in_out_event_data ;
+    -- bad: in cannot be src, in cannot be dest, event cannot be dest
+    parameter call.in_param -> in_event ;
+end t.n;
+    
+thread implementation t.o
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- good: out to in/out
+    parameter call.out_param -> in_out_event_data ;
+    -- bad: in cannot be dest, event cannot be dest
+    parameter call.in_out_param -> in_event ;
+    -- bad: in cannot be src, event cannot be dest
+    parameter call.in_param -> out_event ;
+end t.o;
+
+thread implementation t.p
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- bad: in cannot be dest, event cannot be dest
+    parameter call.out_param -> in_event ;
+    -- bad: event cannot be dest
+    parameter call.in_out_param -> out_event ;
+    -- bad: in cannot be src, event cannot be dest
+    parameter call.in_param -> in_out_event ;
+end t.p;
+
+thread implementation t.q
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- bad: event cannot be dest
+    parameter call.out_param -> out_event ;
+    -- bad: event cannot be dest
+    parameter call.in_out_param -> in_out_event ;
+    -- bad: in cannot be src, in cannot be dest
+    parameter call.in_param -> in_data ;
+end t.q;
+
+thread implementation t.r
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+    
+  connections
+    -- bad: event cannot be dest
+    parameter call.out_param -> in_out_event ;
+    -- bad: in cannot be dest
+    parameter call.in_out_param -> in_data ;
+    -- bad: in cannot be src
+    parameter call.in_param -> out_data ;
+end t.r;
+
+
+
+subprogram implementation sub.a
+  calls
+    normal: {
+      call1: subprogram sub ;
+      call2: subprogram sub ;
+      call3: subprogram sub ;
+    };
+  
+  connections
+    -- good: in to in
+    parameter in_param -> call1.in_param ;
+    -- bad: call.out_param cannot be a dest
+    parameter in_param -> call1.out_param ;
+    -- bood: in to in/out
+    parameter in_param -> call1.in_out_param ;
+
+    -- bad: out_param cannot be source
+    parameter out_param -> call2.in_param ;
+    -- bad: out_param cannot be source, call.out_param cannot be a dest
+    parameter out_param -> call2.out_param ;
+    -- bad: out_param cannot be source
+    parameter out_param -> call2.in_out_param ;
+
+    -- good: in/out to in
+    parameter in_out_param -> call2.in_param ;
+    -- bad: call.out_param cannot be a dest
+    parameter in_out_param -> call2.out_param ;
+    -- good: in/out to in/out
+    parameter in_out_param -> call2.in_out_param ;
+end sub.a;
+
+subprogram implementation sub.b
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+  
+  connections
+    -- bad: call.in_param cannot be src, in_param cannot be dest
+    parameter call.in_param -> in_param;
+    -- good: out to out
+    parameter call.out_param -> out_param;
+    -- good: in/out to in/out
+    parameter call.in_out_param -> in_out_param;
+end sub.b;
+
+subprogram implementation sub.c
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+  
+  connections
+    -- bad: call.in_param cannot be src
+    parameter call.in_param -> out_param;
+    -- good: out to in/out
+    parameter call.out_param -> in_out_param;
+    -- bad: in_param cannot be dest
+    parameter call.in_out_param -> in_param;
+end sub.c;
+
+subprogram implementation sub.d
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+  
+  connections
+    -- bad: call.in_param cannot be src
+    parameter call.in_param -> in_out_param;
+    -- bad: in_param cannot be dest
+    parameter call.out_param -> in_param;
+    -- good: in/out to out
+    parameter call.in_out_param -> out_param;
+end sub.d;
+
+
+thread tt
+end tt;
+
+thread implementation tt.a
+  calls
+    normal: {
+      call1: subprogram sub ;
+      call2: subprogram sub ;
+    };
+  connections
+    -- bad: call1.in_param cannot be src
+    parameter call1.in_param -> call2.in_param ;
+    -- bad: call2.out_param cannot be dest
+    parameter call1.out_param -> call2.out_param ;
+    -- good: in/out to in/out
+    parameter call1.in_out_param -> call2.in_out_param ;
+end tt.a;
+
+thread implementation tt.b
+  calls
+    normal: {
+      call1: subprogram sub ;
+      call2: subprogram sub ;
+    };
+  connections
+    -- good: out to in
+    parameter call1.out_param -> call2.in_param ;
+    -- bad: call2.out_param cannot be dest
+    parameter call1.in_out_param -> call2.out_param ;
+    -- bad: call1.in_param cannot be src
+    parameter call1.in_param -> call2.in_out_param ;
+end tt.b;
+
+thread implementation tt.c
+  calls
+    normal: {
+      call1: subprogram sub ;
+      call2: subprogram sub ;
+    };
+  connections
+    -- good: in/out to in
+    parameter call1.in_out_param -> call2.in_param ;
+    -- bad: call1.in_param cannot be src, call2.out_param cannot be dest
+    parameter call1.in_param -> call2.out_param ;
+    -- good: out to in/out
+    parameter call1.out_param -> call2.in_out_param ;
+end tt.c;

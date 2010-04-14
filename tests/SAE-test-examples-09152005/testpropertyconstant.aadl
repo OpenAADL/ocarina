@@ -1,0 +1,29 @@
+-- everything should pass
+-- this example was used to test that the name resolver resolves names correctly
+-- the validation is to check that the references are filled in correctly in the Aadl Object model
+
+-- these are all legal property constant declarations
+property set PS1 is
+	myenum: type enumeration (SUSANNE, LUTZ, DOMINIK);
+	myint: type aadlinteger;
+	myintrange: type range of aadlinteger;
+end PS1;
+
+property set PS2 is
+	myreal: type aadlreal units (m);
+	myrealrange: type range of aadlreal;
+
+	c_int: constant aadlinteger => 42;
+	c_real: constant aadlreal PS3::myunits => 42.0 m;
+	c_string: constant aadlstring => "Hello world!";
+	c_bool: constant aadlboolean => FALSE;
+	c_enum: constant PS1::myenum => DOMINIK;
+	c_myint: constant PS1::myint => 12;
+	c_myintrange: constant PS1::myintrange => 1..10 delta 1;
+	c_myreal: constant PS2::myreal => 12.0 m;
+	c_myrealrange: constant PS2::myrealrange => 0.0..25.0 delta 1.0;
+end PS2;
+
+property set PS3 is
+	myunits: type units (cm, m => cm * 100);
+end PS3;

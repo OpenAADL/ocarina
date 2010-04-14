@@ -1,0 +1,94 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set MyProperties
+  is
+    my_enum: type enumeration (a, b, c);
+    
+    my_list_prop: list of aadlinteger applies to (data);
+    my_list_prop2: list of aadlinteger applies to (data);
+    my_list_prop3: list of aadlinteger applies to (data);
+    
+    my_prop: aadlinteger applies to (data);
+    my_bool_prop: aadlboolean applies to (data);
+    my_enum_prop: list of my_enum => (c, b, a) applies to (data);
+    my_2nd_bool_prop: aadlboolean applies to (data);
+    my_3rd_bool_prop: aadlboolean applies to (data);
+    bool_list_prop: list of aadlboolean applies to (data);
+    
+    int_const: constant aadlinteger => 42;
+    list_const: constant list of aadlinteger => (1, 2, 3);
+end MyProperties;
+
+package Test
+  public
+    data ListTest
+      properties
+        MyProperties::my_list_prop =>
+          (value(MyProperties::my_list_prop2),
+           value(MyProperties::my_list_prop3));
+    end ListTest;
+  
+    data ListTest2 extends ListTest
+      properties
+        MyProperties::my_list_prop2 => (1, 2, 3);
+    end ListTest2;
+  
+    data ListTest3 extends ListTest
+      properties
+        MyProperties::my_list_prop3 => (4, 5, 6);
+    end ListTest3;
+  
+    data ListTest4 extends ListTest3
+      properties
+        MyProperties::my_list_prop2 => (1, 2, 3);
+    end ListTest4;
+  
+  
+    data IndirectTest
+      properties
+        MyProperties::my_3rd_bool_prop => value(MyProperties::my_2nd_bool_prop);
+        MyProperties::my_2nd_bool_prop => value(MyProperties::my_bool_prop);
+        MyProperties::my_bool_prop => not true;
+    end IndirectTest;
+    
+    data Type1
+      properties
+        MyProperties::my_list_prop => (value(MyProperties::int_const));
+        MyProperties::my_2nd_bool_prop => not value(MyProperties::my_bool_prop);
+        MyProperties::bool_list_prop =>
+          (value(MyProperties::my_bool_prop) and true,
+           true and value(MyProperties::my_bool_prop),
+           false and value(MyProperties::my_bool_prop));
+    end Type1;
+    
+    data Type2 extends Type1
+      properties
+        MyProperties::my_bool_prop => false;
+        MyProperties::my_list_prop +=> value(MyProperties::list_const);
+    end Type2;
+      
+      
+  
+  
+    data Foo
+      properties
+        MyProperties::my_list_prop => (value(MyProperties::list_const), value(MyProperties::int_const));
+        MyProperties::my_enum_prop => (a, c);
+        MyProperties::my_bool_prop => not true;
+        MyProperties::my_2nd_bool_prop => not value(MyProperties::my_bool_prop);
+        MyProperties::my_prop => value (MyProperties::int_const);
+ --     MyProperties::my_list_prop => value (MyProperties::string_list_const);
+ 
+        MyProperties::bool_list_prop =>
+          (true and true,
+          true and false,
+          false and true,
+          false and false,
+          true or true,
+          true or false,
+          false or true,
+          false or false,
+          not true,
+          not false);
+    end Foo;
+end Test;

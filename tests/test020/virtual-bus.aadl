@@ -1,0 +1,23 @@
+package Test
+public
+
+bus ethernet
+end ethernet;
+
+
+virtual bus ip_tcp
+end ip_tcp;
+
+virtual bus http
+end http;
+
+processor powerpc
+end powerpc;
+
+
+processor implementation powerpc.linux
+subcomponents
+   ip_tcp : virtual bus ip_tcp;
+end powerpc.linux;
+
+end Test;

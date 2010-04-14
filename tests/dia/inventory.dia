@@ -1,0 +1,949 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dia:diagram xmlns:dia="http://www.lysator.liu.se/~alla/dia/">
+  <dia:diagramdata>
+    <dia:attribute name="background">
+      <dia:color val="#ffffff"/>
+    </dia:attribute>
+    <dia:attribute name="pagebreak">
+      <dia:color val="#000099"/>
+    </dia:attribute>
+    <dia:attribute name="paper">
+      <dia:composite type="paper">
+        <dia:attribute name="name">
+          <dia:string>#A4#</dia:string>
+        </dia:attribute>
+        <dia:attribute name="tmargin">
+          <dia:real val="2.8222000598907471"/>
+        </dia:attribute>
+        <dia:attribute name="bmargin">
+          <dia:real val="2.8222000598907471"/>
+        </dia:attribute>
+        <dia:attribute name="lmargin">
+          <dia:real val="2.8222000598907471"/>
+        </dia:attribute>
+        <dia:attribute name="rmargin">
+          <dia:real val="2.8222000598907471"/>
+        </dia:attribute>
+        <dia:attribute name="is_portrait">
+          <dia:boolean val="true"/>
+        </dia:attribute>
+        <dia:attribute name="scaling">
+          <dia:real val="1"/>
+        </dia:attribute>
+        <dia:attribute name="fitto">
+          <dia:boolean val="false"/>
+        </dia:attribute>
+      </dia:composite>
+    </dia:attribute>
+    <dia:attribute name="grid">
+      <dia:composite type="grid">
+        <dia:attribute name="width_x">
+          <dia:real val="1"/>
+        </dia:attribute>
+        <dia:attribute name="width_y">
+          <dia:real val="1"/>
+        </dia:attribute>
+        <dia:attribute name="visible_x">
+          <dia:int val="1"/>
+        </dia:attribute>
+        <dia:attribute name="visible_y">
+          <dia:int val="1"/>
+        </dia:attribute>
+        <dia:composite type="color"/>
+      </dia:composite>
+    </dia:attribute>
+    <dia:attribute name="color">
+      <dia:color val="#d8e5e5"/>
+    </dia:attribute>
+    <dia:attribute name="guides">
+      <dia:composite type="guides">
+        <dia:attribute name="hguides"/>
+        <dia:attribute name="vguides"/>
+      </dia:composite>
+    </dia:attribute>
+  </dia:diagramdata>
+  <dia:layer name="Arrière-plan" visible="true">
+    <dia:object type="AADL - Device" version="0" id="O0">
+      <dia:attribute name="obj_pos">
+        <dia:point val="2.1,1.7"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="0.95,0.55;5.25,4.65"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="2.1,1.7"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="2"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="1.8"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="2.1,1.7"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="0.95,0.55;5.25,4.65"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="2.1,1.7"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="2"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="1.8"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="2.6,2.75"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections"/>
+    </dia:object>
+    <dia:object type="AADL - Thread Group" version="0" id="O1">
+      <dia:attribute name="obj_pos">
+        <dia:point val="5.65,1.25"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="4.5,0.1;13.65,5.2"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="5.65,1.25"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="6.8499999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.7999999999999998"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="5.65,1.25"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="4.5,0.1;13.65,5.2"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="5.65,1.25"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="6.8499999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.7999999999999998"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="6.15,2.3"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections"/>
+    </dia:object>
+    <dia:object type="AADL - Subprogram" version="0" id="O2">
+      <dia:attribute name="obj_pos">
+        <dia:point val="14.35,2"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="13.2,0.85;23.1,4.95"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="14.35,2"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="7.5999999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="1.8"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="14.35,2"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="13.2,0.85;23.1,4.95"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="14.35,2"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="7.5999999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="1.8"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="0.25,1"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections"/>
+    </dia:object>
+    <dia:object type="AADL - System" version="0" id="O3">
+      <dia:attribute name="obj_pos">
+        <dia:point val="2.1,5.5"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="0.95,4.35;12.3,9.35"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="2.1,5.5"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="9.0500000000000007"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.6999999999999993"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="2.1,5.5"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="0.95,4.35;12.3,9.35"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="2.1,5.5"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="9.0500000000000007"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.6999999999999993"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="2.6,6.55"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections"/>
+    </dia:object>
+    <dia:object type="AADL - Bus" version="0" id="O4">
+      <dia:attribute name="obj_pos">
+        <dia:point val="13.2,6.95"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="12.05,5.8;25.75,9.9"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="13.2,6.95"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="11.400000000000002"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="1.8"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="13.2,6.95"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="12.05,5.8;25.75,9.9"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="13.2,6.95"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="11.400000000000002"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="1.8"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="18.9,7.95"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections"/>
+    </dia:object>
+    <dia:object type="AADL - Memory" version="0" id="O5">
+      <dia:attribute name="obj_pos">
+        <dia:point val="1.15,10.4"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="-2.22045e-16,9.25;9.65,13.7"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="1.15,10.4"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="7.3499999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.1500000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="1.15,10.4"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="-2.22045e-16,9.25;9.65,13.7"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="1.15,10.4"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="7.3499999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.1500000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="1.65,11.88"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections"/>
+    </dia:object>
+    <dia:object type="AADL - Processor" version="0" id="O6">
+      <dia:attribute name="obj_pos">
+        <dia:point val="11.35,10.35"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="10.2,9.2;25.4,13.55"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="11.35,10.35"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="12.9"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.0500000000000007"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="11.35,10.35"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="10.2,9.2;25.4,13.55"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="11.35,10.35"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="12.9"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.0500000000000007"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="11.85,11.4"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections">
+        <dia:point val="16.45,10.35"/>
+      </dia:attribute>
+    </dia:object>
+    <dia:object type="AADL - Data" version="0" id="O7">
+      <dia:attribute name="obj_pos">
+        <dia:point val="-0.6,16.15"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="-1.75,15;14.7,25.6"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="-0.6,16.15"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="14.149999999999999"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="8.2999999999999989"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="-0.6,16.15"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="-1.75,15;14.7,25.6"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="-0.6,16.15"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="14.149999999999999"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="8.2999999999999989"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="-0.1,17.2"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports">
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="8.23512,24.45"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="9"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="5.54317,16.15"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="10"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="5.40512,24.45"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="11"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="4.65,16.15"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="12"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="10.0988,24.45"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="13"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="11.6173,16.15"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="14"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="7.65,16.15"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="15"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="6.02634,16.15"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="16"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="6.64756,16.15"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="17"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="9.2015,16.15"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="18"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="7.19976,24.45"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="19"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="aadlport">
+          <dia:attribute name="point">
+            <dia:point val="7.47585,24.45"/>
+          </dia:attribute>
+          <dia:attribute name="port_type">
+            <dia:enum val="20"/>
+          </dia:attribute>
+          <dia:attribute name="port_declaration">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_connections">
+        <dia:point val="9.4776,16.15"/>
+        <dia:point val="13.55,16.15"/>
+      </dia:attribute>
+    </dia:object>
+    <dia:object type="AADL - Thread" version="0" id="O8">
+      <dia:attribute name="obj_pos">
+        <dia:point val="14.25,13.9"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="13.1,12.75;24.85,18.6"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="14.25,13.9"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="9.4499999999999993"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="3.5499999999999989"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="14.25,13.9"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="13.1,12.75;24.85,18.6"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="14.25,13.9"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="9.4499999999999993"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="3.5499999999999989"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="16.64,14.95"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections"/>
+    </dia:object>
+    <dia:object type="AADL - Process" version="0" id="O9">
+      <dia:attribute name="obj_pos">
+        <dia:point val="0.2,20.1"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="-0.95,18.95;5.8,23.05"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="0.2,20.1"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="4.4500000000000002"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="1.8"/>
+      </dia:attribute>
+      <dia:attribute name="obj_pos">
+        <dia:point val="0.2,20.1"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="-0.95,18.95;5.8,23.05"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="0.2,20.1"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="4.4500000000000002"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="1.8"/>
+      </dia:attribute>
+      <dia:attribute name="declaration">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="0" name="Helvetica"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="1.59,21.15"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="aadlbox_ports"/>
+      <dia:attribute name="aadlbox_connections"/>
+      <dia:childnode parent="O7"/>
+    </dia:object>
+    <dia:object type="Standard - Line" version="0" id="O10">
+      <dia:attribute name="obj_pos">
+        <dia:point val="11.6173,16.35"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="10.0406,16.2108;12.1181,24.7082"/>
+      </dia:attribute>
+      <dia:attribute name="conn_endpoints">
+        <dia:point val="11.6173,16.35"/>
+        <dia:point val="10.0988,24.65"/>
+      </dia:attribute>
+      <dia:attribute name="numcp">
+        <dia:int val="1"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow">
+        <dia:enum val="10"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_length">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_width">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O7" connection="10"/>
+        <dia:connection handle="1" to="O7" connection="8"/>
+      </dia:connections>
+    </dia:object>
+    <dia:object type="Standard - Line" version="0" id="O11">
+      <dia:attribute name="obj_pos">
+        <dia:point val="5.40512,23.95"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="4.91144,16.2879;7.71212,24.1396"/>
+      </dia:attribute>
+      <dia:attribute name="conn_endpoints">
+        <dia:point val="5.40512,23.95"/>
+        <dia:point val="7.65,16.35"/>
+      </dia:attribute>
+      <dia:attribute name="numcp">
+        <dia:int val="1"/>
+      </dia:attribute>
+      <dia:attribute name="line_style">
+        <dia:enum val="1"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow">
+        <dia:enum val="22"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_length">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_width">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O7" connection="5"/>
+        <dia:connection handle="1" to="O7" connection="12"/>
+      </dia:connections>
+    </dia:object>
+    <dia:object type="Standard - BezierLine" version="0" id="O12">
+      <dia:attribute name="obj_pos">
+        <dia:point val="16.45,10.35"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="4.58115,8.57382;16.8129,16.0189"/>
+      </dia:attribute>
+      <dia:attribute name="bez_points">
+        <dia:point val="16.45,10.35"/>
+        <dia:point val="11.1287,5.80001"/>
+        <dia:point val="12.3787,11.15"/>
+        <dia:point val="4.65,15.95"/>
+      </dia:attribute>
+      <dia:attribute name="corner_types">
+        <dia:enum val="0"/>
+        <dia:enum val="0"/>
+      </dia:attribute>
+      <dia:attribute name="line_style">
+        <dia:enum val="4"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow">
+        <dia:enum val="22"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_length">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_width">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O6" connection="0"/>
+        <dia:connection handle="3" to="O7" connection="6"/>
+      </dia:connections>
+    </dia:object>
+  </dia:layer>
+</dia:diagram>

@@ -1,0 +1,183 @@
+package t13
+public
+abstract abstract_t13
+end abstract_t13;
+
+abstract abstract_o_t13
+end abstract_o_t13;
+
+abstract implementation abstract_t13.i
+subcomponents
+d1:data data_t13;
+s1: subprogram subprogram_t13;
+sg1: subprogram group subprogramgroup_t13;
+t1: thread thread_t13;
+tg1: thread group threadgroup_t13;
+ps1: process process_t13;
+pr1: processor processor_t13;
+vpr1: virtual processor virtualprocessor_t13;
+mem1: memory memory_t13;
+bus1: bus bus_t13;
+vbus1: virtual bus virtualbus_t13;
+dev1: device device_t13;
+sys1: system system_t13;
+abs1: abstract abstract_o_t13;
+end abstract_t13.i;
+
+bus bus_t13
+end bus_t13;
+
+bus implementation  bus_t13.i
+subcomponents
+ vb1: virtual bus virtualbus_t13;
+ ab1: abstract abstract_o_t13;
+end bus_t13.i;
+
+data data_t13
+end data_t13;
+
+data data_o_t13
+end data_o_t13;
+
+data implementation data_t13.i
+subcomponents
+ d1: data data_o_t13;
+ ab1: abstract abstract_o_t13;
+end data_t13.i;
+
+device device_t13
+end device_t13;
+
+device implementation device_t13.i
+subcomponents
+ b1: bus bus_t13;
+ ab1: abstract abstrat_o_t13;
+end device_t13.i;
+
+memory memory_t13
+end memory_t13;
+
+memory memory_o_t13
+end memory_o_t13;
+
+memory implementation memory_t13.i
+subcomponents
+ sc1: memory memory_o_t13;
+ b1: bus bus_t13;
+ abs1: abstract abstract_t13;
+end memory_t13.i;
+
+process process_t13
+end process_t13;
+
+process implementation process_t13.i
+subcomponents
+ d1: data data_t13;
+ sp1: subprogram subprogram_t13;
+ spg1: subprogram group subprogramgroup_t13;
+ t1: thread thread_t13;
+ tg1: thread group threadgroup_t13;
+ abs1: abstract abstract_t13;
+end process_t13.i;
+
+processor processor_t13
+end processor_t13;
+
+processor implementation processor_t13.i
+subcomponents
+ m1: memory memory_t13;
+ b1: bus bus_t13;
+ vp: virtual processor virtualprocessor_t13;
+ vb: virtual bus virtualbus_t13;
+ ab: abstract abstract_t13;
+end processor_t13.i;
+
+subprogram subprogram_t13
+end subprogram_t13;
+
+subprogram implementation subprogram_t13.i
+subcomponents
+ d: data data_t13;
+ a: abstract abstract_t13;
+end subprogram_t13.i;
+
+subprogram group subprogramgroup_t13
+end subprogramgroup_t13;
+
+subprogram group implementation subprogramgroup_t13.i
+subcomponents
+ s: subprogram subprogram_t13;
+end subprogramgroup_t13.i;
+
+system system_t13
+end system_t13;
+
+system implementation system_t13.i
+subcomponents
+d1:data data_t13;
+s1: subprogram subprogram_t13;
+sg1: subprogram group subprogramgroup_t13;
+ps1: process process_t13;
+pr1: processor processor_t13;
+vpr1: virtual processor virtualprocessor_t13;
+mem1: memory memory_t13;
+bus1: bus bus_t13;
+vbus1: virtual bus virtualbus_t13;
+dev1: device device_t13;
+sys1: system system_t13;
+abs1: abstract abstract_o_t13;
+end system_t13.i;
+
+thread thread_t13
+end thread_t13;
+
+thread implementation thread_t13.i
+subcomponents
+ d: data data_t13;
+ sp: subprogram subprogram_t13;
+ spg: subprogram group subprogramgroup_t13;
+ a: abstract abstract_t13;
+end thread_t13.i;
+
+thread group threadgroup_t13
+end threadgroup_t13;
+
+thread group threadgroup_o_t13
+end threadgroup_o_t13;
+
+thread group implementation threadgroup_t13.i
+subcomponents
+ d: data data_t13;
+ sp: subprogram subprogram_t13;
+ spg: subprogram group subprogramgroup_t13;
+ t: thread thread_t13;
+ tg: thread group threadgroup_o_t13;
+ a: abstract abstract_t13;
+end threadgroup_t13.i;
+
+virtual bus virtualbus_t13
+end virtualbus_t13;
+
+virtual bus virtualbus_o_t13
+end virtualbus_o_t13;
+
+virtual bus implementation virtualbus_t13.i
+subcomponents
+ vb: virtual bus virtualbus_o_t13;
+ a: abstract abstract_o_t13;
+end virtualbus_t13.i;
+
+virtual processor virtualprocessor_t13
+end virtualprocessor_t13;
+
+virtual processor virtualprocessor_o_t13
+end virtualprocessor_o_t13;
+
+virtual processor implementation virtualprocessor_t13.i
+subcomponents
+ vp: virtual processor virtualprocessor_o_t13;
+ vb: virtual bus virtualbus_o_t13;
+ a: abstract abstract_o_t13;
+end virtualprocessor_t13.i;
+
+end t13;

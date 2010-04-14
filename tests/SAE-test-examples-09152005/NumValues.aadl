@@ -1,0 +1,30 @@
+property set PS is
+  ic: constant aadlinteger => 1;
+  rc: constant aadlreal => 10.0;
+  intrange: type range of aadlinteger -value(PS::ic)
+       .. +value(PS::ic);
+  realrange: type range of aadlreal -value(PS::rc)
+       .. +value(PS::rc);
+  
+  int: aadlinteger => value(PS::ic) applies to (all);
+  real: aadlreal applies to (all);
+  foo: range of aadlinteger 
+         -value(PS::ic) 
+           .. +value(PS::ic) =>
+             -value(PS::ic) ..
+               +value(PS::ic) applies to (all);
+  bar: range of aadlreal 
+         -value(PS::rc) 
+           .. +value(PS::rc) =>
+             -value(PS::rc) ..
+               +value(PS::rc) applies to (all);
+end PS;
+
+package Test
+  public
+    system S
+      properties
+        PS::int => value(PS::ic);
+        PS::real => value(PS::rc);
+    end S;
+end Test;

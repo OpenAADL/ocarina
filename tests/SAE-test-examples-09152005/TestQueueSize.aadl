@@ -1,0 +1,50 @@
+package TestQueueSize
+  public
+    system S
+      features
+        -- BAD: Doesn't apply to data ports
+        in1: in data port {
+        	Queue_Size => 1;
+        	Overflow_Handling_Protocol => Dropnewest;
+        	Queue_Processing_Protocol => FIFO;
+        	Dequeue_Protocol => OneItem;
+        };
+        -- Good
+        in2: in event port {
+        	Queue_Size => 1;
+        	Overflow_Handling_Protocol => Dropnewest;
+        	Queue_Processing_Protocol => FIFO;
+        	Dequeue_Protocol => OneItem;
+        };
+        -- Good
+        in3: in event data port {
+        	Queue_Size => 1;
+        	Overflow_Handling_Protocol => Dropnewest;
+        	Queue_Processing_Protocol => FIFO;
+        	Dequeue_Protocol => OneItem;
+        };
+
+		-- Bad: doesn't apply to data ports 
+        out1: out data port {
+        	Queue_Size => 1;
+        	Overflow_Handling_Protocol => Dropnewest;
+        	Queue_Processing_Protocol => FIFO;
+        	Dequeue_Protocol => OneItem;
+        };
+        -- Bad: OUT event port
+        out2: out event port {
+        	Queue_Size => 1;
+        	Overflow_Handling_Protocol => Dropnewest;
+        	Queue_Processing_Protocol => FIFO;
+        	Dequeue_Protocol => OneItem;
+        };
+        -- Bad: OUT event data port
+        out3: out event data port {
+        	Queue_Size => 1;
+        	Overflow_Handling_Protocol => Dropnewest;
+        	Queue_Processing_Protocol => FIFO;
+        	Dequeue_Protocol => OneItem;
+        };
+    end S;
+end TestQueueSize;
+

@@ -1,0 +1,22 @@
+-- test 6.5 Virtual Buses draft-01192009
+
+package Hardware
+-- add for test
+public
+-- end add
+
+bus Ethernet
+end Ethernet;
+virtual bus IP_TCP
+end IP_TCP;
+virtual bus HTTP
+properties
+  Allowed_Bus_Binding_Class => virtual bus IP_TCP;
+end HTTP;
+processor PowerPC
+end PowerPC;
+processor implementation PowerPC.Linux
+subcomponents
+IP_TCP: virtual bus IP_TCP;
+end PowerPC.Linux;
+end Hardware;

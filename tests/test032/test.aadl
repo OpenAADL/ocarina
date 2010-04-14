@@ -1,0 +1,9 @@
+
+package Test
+public
+  data dt
+    modes
+      Mymode : initial mode;
+  end dt;
+
+end Test;

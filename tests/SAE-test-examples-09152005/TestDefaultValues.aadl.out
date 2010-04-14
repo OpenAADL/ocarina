@@ -1,0 +1,5 @@
+TestDefaultValues.aadl:158:26:  (signed aadlnumber)  is not a unit literal but  (property type)  is a unit type
+TestDefaultValues.aadl:160:26:  (signed aadlnumber)  and  (property type)  have incompatible unit types
+TestDefaultValues.aadl:190:28:  (signed aadlnumber)  is not a unit literal but  (property type)  is a unit type
+TestDefaultValues.aadl:192:28:  (signed aadlnumber)  and  (property type)  have incompatible unit types
+Cannot analyze AADL specifications

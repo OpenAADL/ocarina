@@ -1,0 +1,44 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set MyProperties is
+  my_list_property: list of aadlinteger => (0)
+    applies to (data);
+end MyProperties;
+
+package MyPackage
+  public
+    -- Build on the property value inherited from the package properties
+    -- (not the default value!)
+    -- Should have (-5, 5)
+    data MyDataType
+      properties
+        MyProperties::my_list_property +=> 5;
+    end MyDataType;
+
+    -- Build on the property value inherited from super type
+    -- should have (-5, 5, 10)
+    data MyExtendedDataType extends MyDataType
+      properties
+        MyProperties::my_list_property +=> 10;
+    end MyExtendedDataType;
+    
+    properties
+      MyProperties::my_list_property => -5;
+end MyPackage;
+
+package MyPackage2
+  public
+    -- Build on the property value inherited from default value
+    -- (not the default value!)
+    -- Should have (0, 5)
+    data MyDataType2
+      properties
+        MyProperties::my_list_property +=> 5;
+    end MyDataType2;
+
+    -- Should have (0, 5, 10)
+    data MyExtendedDataType2 extends MyDataType2
+      properties
+        MyProperties::my_list_property +=> 10;
+    end MyExtendedDataType2;
+end MyPackage2;

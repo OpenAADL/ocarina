@@ -1,0 +1,67 @@
+port group senderoutput
+features
+	data1: out data port integer;
+	data2: out data port integer;
+end senderoutput;
+
+port group outersenderoutput
+features
+	data3: out data port integer;
+	pg2: port group senderoutput;
+end outersenderoutput;
+
+port group outerreceiverinput
+inverse of outersenderoutput
+end outerreceiverinput;
+
+data integer
+end integer;
+
+port group receiverinput
+inverse of senderoutput
+end receiverinput;
+
+thread sender
+features
+	myout: port group outersenderoutput;
+end sender;
+
+thread receiver
+features
+	myin: port group outerreceiverinput; --  XXX was receiverinput;
+end receiver;
+
+process insubsys
+features
+	myin: port group outerreceiverinput;
+end insubsys;
+
+process implementation insubsys.i
+subcomponents
+	t2: thread receiver;
+connections
+	conn1: port group myin -> t2.myin;
+end insubsys.i;
+
+process outsubsys
+features
+	myout: port group outersenderoutput;
+end outsubsys;
+
+process implementation outsubsys.i
+subcomponents
+	t1: thread sender;
+connections
+	conn1: port group t1.myout -> myout;
+end outsubsys.i;
+
+system sys
+end sys;
+
+system implementation sys.i
+subcomponents
+	so: process outsubsys.i;
+	si: process insubsys.i;
+connections
+	conn3: port group so.myout -> si.myin;
+end sys.i;

@@ -1,0 +1,24 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set PS is
+  p: inherit aadlinteger => 0 applies to (system);
+end PS;
+
+package TEST
+  public
+    system Inner
+    end Inner;
+
+    system S
+    end S;
+
+    system implementation S.I
+      subcomponents
+        -- p => 1
+        sc1: system Inner;
+        -- p => 1 (my view), p => 0 (v.99 spec)
+        sc2: system ;
+      properties
+        PS::p => 1;
+    end S.I;
+end TEST;

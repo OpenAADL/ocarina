@@ -1,0 +1,89 @@
+-- test 5.1 Data draft-01192009
+-- ocarina -aadlv2 -g aadl example_009.aadl base_types.aadl data_model.aadl
+
+package personnel
+public
+-- add for test
+with base_types;
+-- end add
+
+data Person
+end Person;
+
+data Personnel_record
+-- Methods are not required, but when provided act as access methods
+features
+-- a method on the data type
+-- subprogram type for signature
+update_address: provides subprogram access update_address;
+end Personnel_record;
+
+data implementation Personnel_record.others
+subcomponents
+-- here we declare the internal structure of the data type
+-- One field is defined in terms of another type;
+-- the type name is sufficient, it defaults to others.
+-- the package Base_Types is defined in the Data Model Annex document.
+-- It provides data component classifiers for common data types.
+Name : data Base_Types::String;
+Home_address : data retep::relief::Address;
+end Personnel_record.others;
+
+data Personnel_database
+end Personnel_database;
+
+data implementation Personnel_database.oracle
+end Personnel_database.oracle;
+
+subprogram update_address
+features
+person: in out parameter Personnel_record;
+street :in parameter Base_Types::String;
+city: in parameter Base_Types::String;
+end update_address;
+
+-- use of a data type as port type.
+thread SEI_Personnel_addition
+features
+new_person: in event data port Personnel_record;
+SEI_personnel: requires data access Personnel_database.oracle;
+properties
+Dispatch_Protocol => aperiodic;
+end SEI_Personnel_addition;
+
+end personnel;
+
+package retep::relief
+public
+
+data Address
+features
+-- a subprogram access feature without parameter detail
+getStreet : provides subprogram access;
+getCity : provides subprogram access;
+end Address;
+
+data implementation Address.others
+properties
+Sourcee_Data_Size => 512 Bytes;
+end Address.others;
+end retep::relief;
+
+-- The implementation is shown as a private declaration
+-- The public and the private part of a package are separate AADL specifications
+package retep::relief
+private
+
+-- add for test
+with base_types;
+-- end add
+
+data implementation Address.others
+subcomponents
+street : data Base_Types::String;
+streetnumber: data Base_Types::Integer;
+city: data Base_Types::String;
+zipcode: data Base_Types::Integer;
+end Address.others;
+
+end retep::relief;

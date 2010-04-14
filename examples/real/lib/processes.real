@@ -1,0 +1,13 @@
+--  For each processor/OS, check whether their is less associated
+--  processes than the maximum allowed.
+
+theorem Processes
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  check (Get_Property_Value (e, "RTOS_Properties::Max_Processes_Number") >= 
+         Cardinal (Proc_Set));
+
+end;

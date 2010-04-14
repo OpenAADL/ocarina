@@ -1,0 +1,3 @@
+test.aadl:13:01: parsing Package_Specification, token 'public' or 'private' is expected, found keyword 'end'
+test.aadl:16:01: parsing Package_Specification, token 'public' or 'private' is expected, found keyword 'end'
+Cannot parse AADL specifications

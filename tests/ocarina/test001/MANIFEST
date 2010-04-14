@@ -1,0 +1,4 @@
+OCARINA_FLAGS=-V
+Cmd0: ocarina -V
+Success0: yes
+Keywords: 

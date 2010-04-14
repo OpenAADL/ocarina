@@ -1,0 +1,84 @@
+-- Tests for looking up property values in SubComponents.
+-- Meant to be exhaustive for the cases involving SubComponents.
+-- Depends upon the lookup for component impls and component types
+-- working correctly, although it does not exhaustively test them.
+
+property set MyProperties is
+  -- Non inherit property
+  prop1: aadlinteger applies to (data);
+      
+  -- An inheritable property
+  prop2: inherit aadlstring => "default" applies to (data);
+end MyProperties;
+
+package Basic
+  public
+    -- prop1 => not present, prop2 => "default"
+    data Other
+    end Other;
+  
+    -- prop1 => 100, prop2 => "default"
+    data Integer
+      properties
+        MyProperties::prop1 => 100;
+    end Integer;
+  
+    -- prop1 => 105, prop2 => "default"
+    data implementation Integer.SmallInt
+      properties
+        MyProperties::prop1 => 105;
+    end Integer.SmallInt;
+end Basic;
+
+package MyPackage
+  public
+    -- Explict value for prop1, but not for prop2
+    -- Should have prop1 => not present, prop2 => "default"
+    data RootType
+    end RootType;
+  
+    -- Test setting the property directly on the subcomponent
+    -- prop1 => not present, prop2 => "default"
+    data implementation RootType.Impl1
+      subcomponents
+        -- prop1 => 1, prop2 => "default"
+        data1: data Basic::Integer { MyProperties::prop1 => 1; };
+        -- prop1 => 2, prop2 => "default"
+        data2: data Basic::Integer { MyProperties::prop1 => 2; };
+        -- prop1 =>3, prop2 => "default"
+        data3: data Basic::Integer { MyProperties::prop1 => 3; };
+    end RootType.Impl1;
+  
+    -- Test overriding the property setting via refinment (data1)
+    -- Test inheriting the property setting when refined (data2)
+    -- Test not doing anything (data3) [not visible here]
+    -- prop1 => not present, prop2 => "default"
+    data implementation RootType.Impl2 extends RootType.Impl1
+      subcomponents
+        -- prop1 => -1, prop2 => "default"
+        data1: refined to data Basic::Integer { MyProperties::prop1 => -1; };
+        -- prop1 -> 2, prop2 => "foo"
+        data2: refined to data Basic::Integer.SmallInt { MyProperties::prop2 => "foo"; };
+    end RootType.Impl2;
+  
+    -- Get subcomponent property values from the subcomponent's
+    -- implementation/type.  Also test out INHERIT properties.
+    -- "prop1" is not an INHERIT property, and therefore, data1.prop1
+    -- should not inherit it's value from the containing implementation.
+    -- But data1 and data2 should inherit their prop2 value from
+    -- the containing implementation.
+    -- prop1 => not present, prop2 => "default"
+    data implementation RootType.Impl3
+      subcomponents
+        -- prop1 => not present, prop2 => "from container"
+        data1: data ; 
+        -- prop1 => 100, prop2 => "from container"
+        data2: data Basic::Integer;
+        -- prop1 => 105, prop2 => "local"
+        data3: data Basic::Integer.SmallInt { MyProperties::prop2 => "local"; };
+      properties
+        MyProperties::prop1 => 200;
+        MyProperties::prop2 => "from container";
+    end RootType.Impl3;
+end MyPackage;
+

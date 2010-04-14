@@ -1,0 +1,12 @@
+test.aadl:17:18: basic::string (entity reference) qualified reference name not found in 'with' statements of Test (package specification) 
+test.aadl:18:26: sei::Address (entity reference) qualified reference name not found in 'with' statements of Test (package specification) 
+test.aadl:30:27: basic::string (entity reference) qualified reference name not found in 'with' statements of Test (package specification) 
+test.aadl:31:25: basic::string (entity reference) qualified reference name not found in 'with' statements of Test (package specification) 
+test.aadl:51:06: new_person (port spec) points to Personnel_record (entity reference), which is not of an adequate kind
+test.aadl:51:06: new_person (port spec) does not point to anything or to something unreachable
+test.aadl:52:06: SEI_personnel (subcomponent access) does not point to anything or to something unreachable
+test.aadl:74:21: basic::string (entity reference) qualified reference name not found in 'with' statements of sei (package specification) 
+test.aadl:75:26: basic::int (entity reference) qualified reference name not found in 'with' statements of sei (package specification) 
+test.aadl:76:18: basic::string (entity reference) qualified reference name not found in 'with' statements of sei (package specification) 
+test.aadl:77:21: basic::int (entity reference) qualified reference name not found in 'with' statements of sei (package specification) 
+Cannot analyze AADL specifications

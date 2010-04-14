@@ -1,0 +1,2 @@
+underscoretest.aadl:3:01: parsing Component_Type, an identifier is expected, found token '_'
+Cannot parse AADL specifications

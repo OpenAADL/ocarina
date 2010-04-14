@@ -1,0 +1,15 @@
+--  All *shared* components comply to PCP
+--  Must be verified in order to comply to RAVENSCAR norm
+
+theorem all_pcp
+
+foreach d in Data_Set do
+
+   accessor_threads := {t in Thread_Set | Is_Accessing_To (t, d)};
+
+   check (Cardinal (accessor_threads) <= 1 or
+          (Property_Exists (d, "Concurrency_Control_Protocol") and 
+             (Get_Property_Value (d, "Concurrency_Control_Protocol") =
+              "Priority_Ceiling")));
+
+end all_pcp;

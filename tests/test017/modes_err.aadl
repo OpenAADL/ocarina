@@ -1,0 +1,80 @@
+property set Mode_Properties is
+
+   Dummy_Mode_Property : aadlstring applies to (mode);
+
+end Mode_Properties;
+
+
+----------
+-- Data --
+----------
+
+data Simple_Type
+end Simple_Type;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Handle_Message
+features
+  M : in parameter Simple_Type;
+end Handle_Message;
+
+subprogram implementation Handle_Message.Normal
+end Handle_Message.Normal;
+
+subprogram implementation Handle_Message.Emergency
+end Handle_Message.Emergency;
+
+subprogram implementation Handle_Message.Lazy
+end Handle_Message.Lazy;
+
+subprogram Driver_Spg
+end Driver_Spg;
+
+-------------
+-- Threads --
+-------------
+
+thread Worker
+features
+  Work_Normally      : in event port;
+  Emergency_Occurred : in event port;
+  Everything_Is_Cool : in event port;
+  Message            : in data port Simple_Type;
+end Worker;
+
+thread implementation Worker.Impl
+calls
+  Seq_Normal : { 
+    Normal_Spg : subprogram Handle_Message.Normal; 
+  } in modes (Normal_Mode);
+
+  Seq_Emergency : { 
+    Emergency_Spg : subprogram Handle_Message.Emergency; 
+  } in modes (Emergency_Mode);
+
+  Seq_Lazy : { 
+    Lazy_Spg : subprogram Handle_Message.Lazy; 
+  } in modes (Lazy_Mode);
+connections
+  parameter Message -> Normal_Spg.M;
+  parameter Message -> Emergency_Spg.M;
+  parameter Message -> Lazy_Spg.M;
+modes
+  Normal_Mode    : initial mode 
+    {Mode_Properties::Dummy_Mode_Property => "initial mode"
+      in modes (Normal_Mode);};
+  Emergency_Mode : mode;
+  Lazy_Mode      : mode
+    {Mode_Properties::Dummy_Mode_Property => "lazy mode";};
+  
+  Normal_Mode,    Lazy_Mode      -[Emergency_Occurred]-> Emergency_Mode;
+  Normal_Mode,    Emergency_Mode -[Everything_Is_Cool]-> Lazy_Mode;
+  Emergency_Mode, Lazy_Mode      -[Work_Normally     ]-> Normal_Mode;
+properties
+  Mode_Properties::Dummy_Mode_Property => "Emergency mode" 
+    applies to Emergency_Mode in modes (Normal_Mode);
+end Worker.Impl;
+

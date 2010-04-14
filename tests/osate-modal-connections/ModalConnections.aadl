@@ -1,0 +1,24 @@
+system sys1
+  features
+    output: out data port ;
+end sys1;
+
+system sys2
+  features
+    input: in data port ;
+end sys2;
+
+system s
+end s;
+
+system implementation s.i
+  subcomponents 
+    x: system sys1 in modes (m1);
+    y: system sys2 in modes (m2);
+  connections
+    -- bad: src and dest do not exist in the same modes
+    c1: data port x.output -> y.input;
+  modes
+    m1: initial mode;
+    m2: mode;
+end s.i;

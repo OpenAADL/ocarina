@@ -1,0 +1,31 @@
+--  Behaviour Annex 2.9 example (1)
+--  Annex X.3 Behavior specification
+
+package Test
+public
+
+ data number
+ end number;
+
+ subprogram mul
+  features
+   x : in parameter number;
+   y : in parameter number;
+   z : out parameter number;
+ end mul;
+
+ subprogram cube
+  features
+   x : in parameter number;
+   y : out parameter number;
+   mul : requires subprogram access mul;
+
+   annex behavior_specification {**
+    variables 
+       tmp;
+    states s  : initial final state;
+    transitions t : s -[ ]-> s { mul!(x,x,tmp); mul!(tmp,x,y) };
+   **};
+  end cube;
+
+end Test;

@@ -1,0 +1,84 @@
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 5.2 Subprogram component
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+data matrix
+end matrix;
+
+subprogram Matrix_delta
+features
+    A: in parameter matrix;
+    B: in parameter matrix;
+    result: out parameter matrix;
+end Matrix_delta;
+
+subprogram Interpret_result
+features
+    A: in parameter matrix;
+    result: out parameter weather_forecast;
+end Interpret_result;
+
+data weather_DB
+features
+    getCurrent: subprogram getCurrent;
+    getFuture: subprogram getFuture;
+end weather_DB;
+
+subprogram getCurrent
+features
+    result: out parameter Matrix;
+end getCurrent ;
+
+subprogram getFuture
+-- a subprogram whose source text contains a raise_event service call
+-- the subprogram also has access to shared data
+features
+    date: in parameter date;
+    result: out parameter Matrix;
+    bad_date: out event port;
+    wdb: requires data access weather_DB;
+end getFuture ;
+
+thread Predict_Weather
+features
+    target_date: in event data port date;
+    prediction: out event data port weather_forecast;
+    past_date: out event port;
+    weather_database: requires data access weather_DB;
+end Predict_Weather;
+
+thread implementation Predict_Weather.others
+calls {
+    -- subprogram call on a data component subprogram feature
+    -- out parameter is not resolved, but will be identified by user of value
+    current: subprogram weather_DB.getCurrent;
+
+    -- subprogram call on a data component subprogram feature with port value
+    -- as additional parameter. Event is mapped to thread event    
+    future: subprogram weather_DB.getFuture;
+
+    -- in parameter actuals are out parameter values of previous calls
+    -- they are identified by the call name and the out parameter name
+    diff: subprogram Matrix_delta;
+
+    -- call with out parameter value resolved to be passed on through a port
+    interpret: subprogram Interpret_result;
+  };
+  connections
+    parameter target_date -> future.date;
+    event port future.bad_date -> past_date;
+    parameter current.result -> diff.A;
+    parameter future.result -> diff.B;
+    parameter diff.result -> interpret.A;
+    parameter interpret.result -> prediction;
+    data access weather_database -> future.wdb;
+end Predict_Weather.others;
+
+-- not in draft
+
+data date
+end date;
+
+data weather_forecast
+end weather_forecast;

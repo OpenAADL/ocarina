@@ -1,0 +1,65 @@
+package TestComputeEntryPoint
+  public
+    -- Bad: Compute_Entrypoint has no default value
+    thread T
+      properties
+        Period => 1 ms;
+    end T;
+    
+    -- Good:
+    thread implementation T.I
+      properties
+        Compute_Entrypoint => "a";
+    end T.I;
+    
+    -- Bad: compute entry point needs a value in mode B
+    thread implementation T.I2
+      modes
+        A: initial mode;
+        B: mode;
+      properties 
+        Compute_Entrypoint => "b" in modes (A);
+    end T.I2;
+    
+    process P
+    end P;
+    
+    process implementation P.I
+      subcomponents
+        TT1: thread T.I;
+        TT2: thread T.I2;
+    end P.I;
+    
+    system S
+    end S;
+    
+    system implementation S.I
+      subcomponents
+        Proc: process P.I;
+    end S.I;
+end TestComputeEntryPoint;
+
+
+property set Aadl_Properties
+   is
+      Compute_Entrypoint           : aadlstring
+      applies to (thread, subprogram, event port, event data port);
+      ----------------------------------------------------
+      Period                       : Time
+      applies to (thread, device);
+      ----------------------------------------------------
+      Time                         : type aadlinteger 0 Ns .. value(Max_Time) units Time_Units;
+      
+      Time_Units : type units (
+      Ns,
+      Us                           => Ns  * 1000,
+      Ms                           => Us  * 1000,
+      Sec                          => Ms  * 1000,
+      Min                          => Sec * 60,
+      Hr                           => Min * 60);
+end Aadl_Properties;
+
+property set AADL_Project
+   is
+      Max_Time: constant aadlinteger Time_Units => 1000 Hr;
+end AADL_Project;

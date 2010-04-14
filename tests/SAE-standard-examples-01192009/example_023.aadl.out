@@ -1,0 +1,3 @@
+example_023.aadl:22:26: parsing Record_Term_Element, token '=>' is expected, found token ','
+example_023.aadl:20:01: parsing Connections, list is empty
+Cannot parse AADL specifications

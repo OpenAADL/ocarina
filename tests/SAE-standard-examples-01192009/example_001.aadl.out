@@ -1,0 +1,4 @@
+example_001.aadl:5:01:  (package name) is not a package or a property set visible or existing
+example_001.aadl:5:27: Safety_Properties (identifier) is not a package or a property set visible or existing
+example_001.aadl:10:43: Avionics::DataTypes::AirData (identifier) is not visible
+Cannot analyze AADL specifications

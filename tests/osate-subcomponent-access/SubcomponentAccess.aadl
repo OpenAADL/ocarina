@@ -1,0 +1,11 @@
+data D
+end D;
+
+system S
+  features
+    -- bad: cannot use a data classifier for a bus access
+    shared: provides bus access D.I;
+end S;
+
+data implementation D.I
+end D.i;

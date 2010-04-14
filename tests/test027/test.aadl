@@ -1,0 +1,27 @@
+-- test for parsing Import declaration in package
+
+package Satellite
+  public
+    with Security::Verification::Position ;
+    with Control::Target;
+    with Command::Launcher;
+    
+
+    Pos   renames package Security::Verification::Position ;
+    Proc1 renames process Control::Target::Proc.Impl ;
+    renames feature group thefeature ;
+    renames Command::Launcher::all ;
+    renames Foo::all;
+
+    data position
+    end position;
+
+    data commands
+    end commands;
+
+  private
+    with Error::Abort ;
+
+    data value
+    end value;
+end Satellite;

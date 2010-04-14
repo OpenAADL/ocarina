@@ -1,0 +1,134 @@
+
+--  For each memory component, check that all its bindings
+--  share the same security level
+
+theorem One_Security_Level_By_Memory
+
+    foreach m in memory_set do   
+
+      P := {x in Process_Set | is_bound_to (x, m)};
+
+      VP := {x in Virtual_Processor_Set | is_bound_to (P, x)};
+
+      B := {x in Virtual_Bus_Set | is_provided_class (VP, x)}; 
+
+    check (all_equals (property (B, "POK::Security_Level")));
+
+end One_Security_Level_By_Memory;
+
+--  Bell-Lapadula model : the higher security level of a sender 
+--  partition is less or equal than the lower security level of the
+--  receiver partitions
+
+theorem bell_lapadula
+
+    foreach p_src in process_set do   
+
+      VP1 := {x in Virtual_Processor_Set | is_bound_to (p_src, x)};
+
+      B_Src := {x in Virtual_Bus_Set | is_provided_class (VP1, x)};
+
+      P_Dest := {x in Process_Set | Is_Connected_To (p_src, x)};
+
+      VP2 := {x in Virtual_Processor_Set | is_bound_to (P_Dest, x)};
+
+      B_Dst := {x in Virtual_Bus_Set | is_provided_class (VP2, x)};
+
+    check (Cardinal (P_Dest) = 0 or  
+            (max (property (B_Src, "POK::Security_Level")) <= 
+             min (property (B_Dst, "POK::Security_Level"))));
+
+end bell_lapadula;
+
+--  Biba model : the lower security level of a sender partition is 
+--  more or equal than the higher security level of the receiver 
+--  partitions
+
+theorem biba
+
+    foreach p_src in process_set do   
+
+      VP1 := {x in Virtual_Processor_Set | is_bound_to (p_src, x)};
+
+      B_Src := {x in Virtual_Bus_Set | is_provided_class (VP1, x)};
+
+      P_Dest := {x in Process_Set | Is_Connected_To (p_src, x)};
+
+      VP2 := {x in Virtual_Processor_Set | is_bound_to (P_Dest, x)};
+
+      B_Dst := {x in Virtual_Bus_Set | is_provided_class (VP2, x)};
+
+    check (Cardinal (P_Dest) = 0 or  
+            (min (property (B_Src, "POK::Security_Level")) >=
+             max (property (B_Dst, "POK::Security_Level"))));
+end biba;
+
+--  MILS model (1) : if two partitions are connected, their security 
+--  levels are identicals
+
+theorem MILS_1
+
+    foreach p_src in process_set do   
+
+      VP1 := {x in Virtual_Processor_Set | is_bound_to (p_src, x)};
+
+      B_Src := {x in Virtual_Bus_Set | is_provided_class (VP1, x)};
+
+      P_Dest := {x in Process_Set | Is_Connected_To (p_src, x)};
+
+      VP2 := {x in Virtual_Processor_Set | is_bound_to (P_Dest, x)};
+
+      B_Dst := {x in Virtual_Bus_Set | is_provided_class (VP2, x)};
+
+    check (Cardinal (P_Dest) = 0 or  
+            ((max (property (B_Src, "POK::Security_Level")) = 
+              max (property (B_Dst, "POK::Security_Level"))) and
+             (min (property (B_Src, "POK::Security_Level")) = 
+              min (property (B_Dst, "POK::Security_Level")))));
+end MILS_1;
+
+--  MILS model (1) : if two partitions are connected, the 
+--  security level associated to the connections is identical 
+--  to their security level
+
+theorem MILS_2
+
+    foreach p_src in process_set do
+
+      VP1 := {x in Virtual_Processor_Set | is_bound_to (p_src, x)};
+
+      B_Src := {x in Virtual_Bus_Set | is_provided_class (VP1, x)};
+
+      Cnx := {x in Connection_Set | is_accessing_to (p_src, x)};
+
+      P_Dest := {x in Process_Set | is_accessing_to (x, Cnx)};
+
+      VP2 := {x in Virtual_Processor_Set | is_bound_to (P_Dest, x)};
+
+      B_Dst := {x in Virtual_Bus_Set | is_provided_class (VP2, x)};
+
+      B_Cnx := {x in Virtual_Bus_Set | is_bound_to (Cnx, x)};
+
+    check (Cardinal (Cnx) = 0 or  
+            ((max (property (B_Src, "POK::Security_Level")) = 
+              max (property (B_Dst, "POK::Security_Level"))) and
+             (min (property (B_Src, "POK::Security_Level")) = 
+              min (property (B_Dst, "POK::Security_Level")))) and 
+             ((min (property (B_Dst, "POK::Security_Level")) =
+               min (property (B_Cnx, "POK::Security_Level"))) and
+              (max (property (B_Dst, "POK::Security_Level")) =
+               max (property (B_Cnx, "POK::Security_Level")))));
+end MILS_2;
+
+--  Scheduling (1) :  ensure that the sum of assignated slots frames
+--  does not exceed the processor major_frame
+
+theorem scheduling_1
+
+    foreach cpu in processor_set do
+
+    check (float (property (cpu, "POK::Major_Frame")) = 
+           sum (property (cpu, "POK::Slots")));
+
+end scheduling_1;
+

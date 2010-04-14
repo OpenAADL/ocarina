@@ -1,0 +1,16 @@
+property set PS is
+  prop: aadlinteger applies to (system);
+end PS;
+
+system s
+  properties
+    PS::prop => constant 0;
+end s;
+
+system t extends s
+  properties
+    -- illegal, but unchecked
+    PS::prop => 1;
+end t;
+
+    

@@ -1,0 +1,71 @@
+data Position_Type
+end Position_Type;
+
+
+
+process Gps_Sender
+features
+    Position: out data port Position_Type;
+    -- if connected secondary position information is used to recalibrate
+    SecondaryPosition: in data port Position_Type { Required_Connection => false; };
+end Gps_Sender ;
+
+process implementation Gps_Sender.Basic
+end Gps_Sender.Basic;
+
+process implementation Gps_Sender.Secure
+end Gps_Sender.Secure;
+
+process GPS_Health_Monitor
+features
+	Backup_Stopped: out event port;
+	Main_Stopped: out event port;
+	All_Ok: out event port;
+
+	Run_Secure: out event port;
+	Run_Normal: out event port;
+end GPS_Health_Monitor;
+
+system Gps
+features
+    Position: out data port Position_Type;
+	Init_Done: in event port;
+end Gps ;
+
+system implementation Gps.Dual
+subcomponents
+    Main_Gps: process Gps_Sender.Basic in modes (Dualmode, Mainmode);
+    Backup_Gps: process Gps_Sender.Basic in modes (Dualmode, Backupmode);
+    Monitor: process GPS_Health_Monitor;
+connections
+    data port Main_Gps.Position -> Position in modes (Dualmode, Mainmode);
+    data port Backup_Gps.Position -> Position in modes (Backupmode);
+    data port Backup_Gps.Position -> Main_Gps.SecondaryPosition in modes (Dualmode);
+modes
+    Initialize: initial mode;
+    Dualmode : mode ;
+	Mainmode : mode; 
+    Backupmode: mode;
+    Initialize -[ Init_Done ]-> Dualmode;
+    Dualmode -[ Monitor.Backup_Stopped ]-> Mainmode;
+    Dualmode -[ Monitor.Main_Stopped ]-> Backupmode;
+    Mainmode, Backupmode -[ Monitor.All_Ok ]-> Dualmode;
+end Gps.Dual ;
+
+system implementation Gps.Secure extends Gps.dual
+subcomponents
+    Secure_Gps: process Gps_Sender.Secure in modes ( Securemode);
+connections
+    data port Secure_Gps.Position -> Position in modes (Securemode);
+modes
+    Securemode: mode;
+    SingleSecuremode: mode;
+    Dualmode -[ Monitor.Run_Secure ]-> Securemode;
+    Securemode -[ Monitor.Run_Normal ]-> Dualmode;
+    Securemode -[ Monitor.Backup_Stopped ]-> SingleSecuremode;
+    SingleSecuremode -[ Monitor.Run_Normal ]-> Mainmode;
+    Securemode -[ Monitor.Main_Stopped ]-> Backupmode;
+end Gps.Secure ;
+
+
+

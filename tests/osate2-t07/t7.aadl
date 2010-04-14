@@ -1,0 +1,6 @@
+package t7
+public
+new_feature_name renames feature group pkg::old_feature_name;
+system system_t7
+end system_t7;
+end t7;

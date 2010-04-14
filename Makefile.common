@@ -1,0 +1,73 @@
+# The use of ADA_PROJECT_PATH="..." is incompatible with the use of
+# the -aP gnatmake flag.
+
+if HAS_GNATMAKE_APDIR
+INIT_ADA_PROJECT_PATH =
+if HAS_XMLADA
+AP_FLAGS = ${addprefix -aP, $(XMLADA_PRJ) $(top_srcdir)/projects $(top_builddir)/projects}
+else
+AP_FLAGS = ${addprefix -aP, $(top_srcdir)/projects $(top_builddir)/projects}
+endif
+else
+if HAS_XMLADA
+INIT_ADA_PROJECT_PATH = ADA_PROJECT_PATH="$(XMLADA_PRJ)$(PATH_SEP)$(top_srcdir)/projects$(PATH_SEP)$(top_builddir)/projects$(PATH_SEP)$$ADA_PROJECT_PATH"
+else
+INIT_ADA_PROJECT_PATH = ADA_PROJECT_PATH="$(top_srcdir)/projects$(PATH_SEP)$(top_builddir)/projects$(PATH_SEP)$$ADA_PROJECT_PATH"
+endif
+AP_FLAGS =
+endif
+
+# The absolute source and build dire, depending on the platform
+
+PL_DEP_ABS_SRC_DIR = ${shell $(CYGPATH_W) "@abs_top_srcdir@/src"}
+PL_DEP_ABS_BUILD_DIR = ${shell $(CYGPATH_W) "@abs_top_builddir@/src"}
+
+# The absolute path to the XMLAda project directory, depending on the
+# platform
+
+XMLADA_PRJ = ${shell $(CYGPATH_W) "@XMLADA_PROJECT@"}
+
+# Some common rules to fetch Ada specs and bodies
+
+# If the Ada specs and bodies have to be generated from Pseudo-IDL
+# descriptions, we deduce their name from the P-IDL file name and we
+# remove the source directory prefix because they would be located in
+# the build directory.
+
+PIDL_SPECS=${shell find $(srcdir) -name '*.idl' 2> /dev/null}
+TREE_SPECS=${patsubst $(srcdir)/%, %, $(PIDL_SPECS:.idl=.ads)}
+TREE_BODIES=${patsubst $(srcdir)/%, %, $(PIDL_SPECS:.idl=.adb)}
+
+# Retrieve all other Ada specs and bodies.
+
+BRUTE_ADA_SPECS=${shell find . $(srcdir) -name '*.ads' | grep -v 'b~' 2> /dev/null}
+BRUTE_ADA_BODIES=${shell find . $(srcdir) -name '*.adb' | grep -v 'b~' 2> /dev/null}
+
+# The purpose of the sort is to remove duplicates.
+
+ADA_SPECS = ${sort $(TREE_SPECS) $(BRUTE_ADA_SPECS)}
+ADA_BODIES = ${sort $(TREE_BODIES) $(BRUTE_ADA_BODIES)}
+
+# Common rule to install Ada sources and libraries (Requires $(alidir)
+# to be defined in the including make file)
+
+adadir = $(includedir)/ocarina
+alidir = $(libdir)/ocarina
+
+install-ada-libs:
+	$(INSTALL) -d $(DESTDIR)$(adadir)
+	$(INSTALL) -d $(DESTDIR)$(alidir)
+	for f in $(ADA_SPECS) $(ADA_BODIES); do \
+	  $(INSTALL) -m 444 $$f $(DESTDIR)$(adadir); \
+	done
+	for f in libs/*.ali; do \
+	  $(INSTALL) -m 444 $$f $(DESTDIR)$(alidir); \
+	done
+	$(INSTALL) -d $(DESTDIR)$(libdir)
+	for f in libs/lib*; do \
+	  $(INSTALL) -m 444 $$f $(DESTDIR)$(libdir); \
+	done
+
+uninstall-ada-libs:
+	rm -rf $(DESTDIR)$(adadir) $(DESTDIR)$(alidir)
+	rm -f $(DESTDIR)$(libdir)/libocarina*

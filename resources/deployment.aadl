@@ -1,0 +1,48 @@
+property set Deployment is
+
+  Allowed_Transport_APIs : type enumeration
+    (BSD_Sockets,
+     SpaceWire);
+  -- Supported transport API
+
+  Transport_API : Deployment::Allowed_Transport_APIs applies to (bus);
+  --  Transport API of a bus
+
+  Location : aadlstring applies to (processor, device);
+  --  Processor IP address (BSD_Sockets specific)
+
+  Port_Number : aadlinteger applies to (process, device);
+  --  IP port number of a process (BSD_Sockets specific)
+
+  Process_ID : aadlinteger applies to (process);
+  --  Process identifier (SpaceWire specific)
+
+  Channel_Address : aadlinteger applies to (process);
+  --  Communication channel address (SpaceWire specific)
+
+  Protocol_Type : type enumeration (iiop, diop);
+  --  Supported communication protocols
+  Protocol : Deployment::Protocol_Type applies to (system);
+
+  Allowed_Execution_Platform : type enumeration
+   (Native,        -- Native platforms (GNU/Linux, Solaris, Windows...)
+    LEON_RTEMS,    -- LEON2 board or tsim-leon (RTEMS)
+    LEON_ORK,      -- LEON2 board or tsim-leon (ORK)
+    LEON_GNAT,     -- LEON2 board or qemu (GNATPRO/HI-E)
+    ERC32_ORK,     -- ERC32 board or tsim-erc32 (ORK)
+    ARM_DSLINUX,   -- Nintendo DS (tm) (DSLinux)
+    ARM_N770,      -- Nokia N770 (tm)
+    MARTE_OS       -- MaRTE OS
+    );
+  --  Supported platforms
+
+  Execution_Platform : Deployment::Allowed_Execution_Platform 
+    applies to (processor);
+  --  Execution platform of a processor
+
+  Priority_Type : type aadlinteger 0 .. 255;
+ 
+  Priority : Deployment::Priority_Type applies to (data, thread);
+  --  Thread and data component priority
+
+end Deployment;

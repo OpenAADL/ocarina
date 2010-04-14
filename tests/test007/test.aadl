@@ -1,0 +1,51 @@
+-- test for properties
+
+property set Toto is
+  titi : type aadlinteger units PropSet::Length_Unit;
+  tata : constant aadlinteger => 4;
+end Toto;
+
+property set PropSet is
+   OnOff : type aadlboolean;
+   PropStr : type aadlstring;
+   Color : type enumeration (blue, red, green, black);
+   Length_Unit : type units (mm, cm => mm * 10, m => cm * 100, km => m * 1000);
+   Car_Length : type aadlreal 1.5 .. 4.5 units (meter);
+   Speed_Range : type range of aadlinteger -value (toto::tata) .. 250 units (kph);
+
+   Pro_Class : type classifier (thread group, thread, bus, device, subprogram);
+   Pro_Ref   : type reference (thread, thread group, connections, server subprogram);
+
+   NameProp1 : access inherit aadlinteger 1 .. 10 applies to (
+      mode, port group, event data port, event data port connections,
+      port group connections, access connections
+      );
+
+   NameProp2 : access units (mm, cm => mm * 10, m => cm * 100, km => m * 1000)
+      applies to ( all );
+   NameProp3 : inherit list of enumeration (blue, yellow, black) applies to (all);
+   NameProp4 : toto::titi applies to (all);
+   NameProp5 : Pro_Class applies to (processor);
+   NameProp6 : aadlinteger units Length_Unit applies to (all);
+
+   Const1 : constant aadlstring => "ToTo";
+   Const2 : constant list of aadlinteger => ();
+   Const3 : constant list of aadlreal => (1.1, 2.2, 3.3);
+   Days : constant list of aadlstring =>
+      ("Monday", "Tuesday", "Wednesday", "Thursday",
+       "Friday", "Saturday", "Sunday");
+
+-- v0.994 tests
+
+   Toto : constant list of aadlinteger km => (
+      10 km, 20 km, 30 km, 10 m, 1.12 cm
+      );
+
+   Tata : constant list of titi::Range_Test => (
+      - 10 km .. 12 km delta 1 km,
+      - value (toto::titi) .. 10 m delta 1 cm,
+      red, blue, greeen,
+      "here is a string"
+      );
+
+end PropSet;

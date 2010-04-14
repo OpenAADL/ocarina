@@ -1,0 +1,5 @@
+TestRangesWithReferences.aadl:18:06: when evaluating the value of PS::p1, the value (PT_INTEGER) is not conformant with declaration at TestRangesWithReferences.aadl:10:03 (PT_INTEGER)
+TestRangesWithReferences.aadl:24:06: when evaluating the value of PS::p1, the value (PT_INTEGER) is not conformant with declaration at TestRangesWithReferences.aadl:10:03 (PT_INTEGER)
+TestRangesWithReferences.aadl:25:06: when evaluating the value of PS::p1, the value (PT_INTEGER) is not conformant with declaration at TestRangesWithReferences.aadl:10:03 (PT_INTEGER)
+TestRangesWithReferences.aadl:31:11: when evaluating the value of PS::p1, the value (PT_INTEGER) is not conformant with declaration at TestRangesWithReferences.aadl:10:03 (PT_INTEGER)
+Cannot analyze AADL specifications

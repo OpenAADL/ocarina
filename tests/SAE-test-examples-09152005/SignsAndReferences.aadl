@@ -1,0 +1,38 @@
+property set PS is
+  intProp: aadlinteger applies to (all);
+  realProp: aadlreal applies to (all);
+  intListProp: list of aadlinteger applies to (all);
+  stringProp: aadlstring applies to (all);
+  
+  
+  intC: constant aadlinteger => 1;
+  realC: constant aadlreal => 1.0;
+  
+  intListC: constant list of aadlinteger => (1, 2);
+  
+  stringC: constant aadlstring => "string";
+  
+  -- bad: cannot ref a property here
+  rangetype: type range of aadlinteger 
+    -value(PS::intC) .. 
+    value(PS::intProp); -- bad line
+end PS;
+
+system s
+  properties
+    -- good
+    PS::intProp => -value(PS::intC);
+    -- good
+    PS::realProp => -value(PS::realC);
+    -- bad: signed list
+    PS::intListProp => -value(PS::intListC);
+    -- bad: signed non-numeric type
+    PS::stringProp => -value(PS::stringC);
+end s;
+
+system t
+  properties
+    PS::intProp => 1;
+    -- bad: signed property reference
+    PS::intListProp => (-value(PS::intProp), 2);
+end t;

@@ -1,0 +1,44 @@
+-- test on pages 123-124 v0.99
+
+system implementation simple.impl
+   subcomponents
+      A: process pp.i;
+      B: process qq.i;
+   connections
+      data access A.dataset -> B.reqdataset;
+end simple.impl;
+
+process pp
+   features
+      Dataset: provides data access dataset_type;
+end pp;
+
+process implementation pp.i
+   subcomponents
+      Share1: data dataset_type;
+   connections
+      data access Share1 -> Dataset;
+end pp.i;
+
+process qq
+   features
+      Reqdataset: requires data access dataset_type;
+end qq;
+
+process implementation qq.i
+   subcomponents
+      Q: thread rr;
+   connections
+      data access Reqdataset -> Q.req1;
+end qq.i;
+
+thread rr
+   features
+      Req1: requires data access dataset_type;
+end rr;
+
+system simple
+end simple;
+
+data dataset_type
+end dataset_type;

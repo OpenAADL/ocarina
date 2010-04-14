@@ -1,0 +1,57 @@
+SUBDIRS = support doc tools projects src resources projects-distrib examples
+AUTOMAKE_OPTIONS = no-dependencies
+ACLOCAL_AMFLAGS = -I support
+CLEANFILES = config-stamp
+
+EXTRA_DIST = $(top_srcdir)/Makefile.common
+
+# Default testing behavior. Can be overridden by the user
+MAKE_TESTS        = yes
+CLEAR_AT_TEST_END = yes
+
+test-suite: test-suite-internal
+
+test-suite-internal:
+	@if test '$(MAKE_TESTS)' = yes; then \
+	  if test -x '$(top_srcdir)/autotest.sh'; then \
+	    PATH="$(DESTDIR)$(bindir):$$PATH" \
+	    && path_conv="@CYGPATH_W@" path_sep="@PATH_SEP@" \
+	       $(top_srcdir)/autotest.sh --tests \
+	    && (test '$(CLEAR_AT_TEST_END)' = yes \
+	        && clear \
+	        && echo "TESTSUITE SUCCESSFULLY PASSED" \
+	        && echo "TESTED: `which ocarina`" \
+                && sleep 5 || true) || exit 1;\
+	  fi; \
+	  if test -x '$(top_srcdir)/../autotest.sh'; then \
+	    PATH="$(DESTDIR)$(bindir):$$PATH" \
+	    && path_conv="@CYGPATH_W@" path_sep="@PATH_SEP@" \
+	       $(top_srcdir)/../autotest.sh --tests \
+	    && (test '$(CLEAR_AT_TEST_END)' = yes \
+	        && clear \
+	        && echo "TESTSUITE SUCCESSFULLY PASSED" \
+	        && echo "TESTED: `which ocarina`"\
+	        && sleep 5 || true) || exit 1;\
+	  fi; \
+	fi
+
+tests::
+	@$(MAKE) test-suite-internal "MAKE_TESTS=yes" "CLEAR_AT_TEST_END=no"
+
+examples::
+	@$(MAKE) -C resources/runtime maybe-check-runtimes
+
+check-local: install
+	@$(MAKE) test-suite
+	@$(MAKE) -C resources/runtime maybe-check-runtimes
+
+STRIP = "@abs_top_srcdir@/support/strip_wrapper.sh"
+
+install-exec-local:
+	$(INSTALL) -d $(DESTDIR)$(bindir)
+	$(INSTALL) -d $(DESTDIR)$(datadir)
+	$(INSTALL_SCRIPT) ocarina-config $(DESTDIR)$(bindir)
+	$(INSTALL_DATA) $(srcdir)/ChangeLog $(DESTDIR)$(datadir)/doc/ocarina/ChangeLog_ocarina
+
+uninstall-local:
+	rm -f $(DESTDIR)$(bindir)/ocarina-config

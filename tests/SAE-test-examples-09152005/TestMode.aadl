@@ -1,0 +1,56 @@
+-- Tests for looking up property values of modes.
+-- Meant to be exhaustive for the cases involving modes.
+
+property set MyProperties is
+  -- Property with a default value
+  prop1: list of aadlinteger applies to (mode);
+  prop3: inherit list of aadlinteger applies to (mode, system);
+  prop2: inherit aadlinteger => 1 applies to (mode, system);
+end MyProperties;
+
+package TestModes
+  public
+    system S
+    end S;
+
+    -- Test getting default value of propery (prop2)
+    -- Test directly setting value of property (prop1)
+    system implementation S.A
+      modes
+        -- should have prop1 => (100), prop2 => 1, prop3 => (-1, 1)
+        X: initial mode
+          { MyProperties::prop1 +=> (100);
+            MyProperties::prop3 +=> (1); };
+      properties
+        MyProperties::prop3 => (-1);
+    end S.A;
+  
+    -- Test property refinement 
+    system implementation S.A2 extends S.A
+      modes
+        -- prop1 => (100,101), prop2 => 10, prop3 => (-1, 0, 1, 2)
+        X: refined to mode
+          { MyProperties::prop1 +=> (101); 
+            MyProperties::prop3 +=> (2); };
+      properties
+        MyProperties::prop2 => 10;
+        MyProperties::prop3 +=> (0);        
+    end S.A2;
+  
+    -- Test inheriting property value from container
+    system implementation S.B
+      modes
+        -- should have prop1 => (), prop2 => 42
+        Y: initial mode;
+      properties
+        MyProperties::prop2 => 42;
+    end S.B;
+  
+    -- Test inheriting property value from
+    -- container via extension
+    system implementation S.C extends S.B
+      modes
+        -- should have Z.prop1 => (1, 2, 3), Z.prop2 => 42
+        Z: mode { MyProperties::prop1 => (1, 2, 3); };
+    end S.C;
+end TestModes;

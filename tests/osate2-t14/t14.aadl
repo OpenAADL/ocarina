@@ -1,0 +1,315 @@
+package t14
+public
+abstract abstract_t14
+end abstract_t14;
+
+abstract abstract_o_t14
+features
+ fg: feature group featuregroup_t14;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t14;
+ datarequired: requires data access data_type_t14;
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t14;
+ subpgrequired: requires subprogram group access;
+ busprovided: provides bus access bustype_t14;
+ busrequired: requires bus access;
+end abstract_o_t14;
+
+abstract implementation abstract_t14.i
+subcomponents
+d1:data data_t14;
+s1: subprogram subprogram_t14;
+sg1: subprogram group subprogramgroup_t14;
+t1: thread thread_t14;
+tg1: thread group threadgroup_t14;
+ps1: process process_t14;
+pr1: processor processor_t14;
+vpr1: virtual processor virtualprocessor_t14;
+mem1: memory memory_t14;
+bus1: bus bus_t14;
+vbus1: virtual bus virtualbus_t14;
+dev1: device device_t14;
+sys1: system system_t14;
+abs1: abstract abstract_o_t14;
+end abstract_t14.i;
+
+bus bus_t14
+features
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t14;
+ busrequired: requires bus access;
+end bus_t14;
+
+bus implementation  bus_t14.i
+subcomponents
+ vb1: virtual bus virtualbus_t14;
+ ab1: abstract abstract_o_t14;
+end bus_t14.i;
+
+data data_t14
+features
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subprequired: requires subprogram access;
+ subpgrequired: requires subprogram group access;
+end data_t14;
+
+data data_o_t14
+end data_o_t14;
+
+data implementation data_t14.i
+subcomponents
+ d1: data data_o_t14;
+ ab1: abstract abstract_o_t14;
+end data_t14.i;
+
+device device_t14
+features
+ fg: feature group featuregroup_t14;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t14;
+ busprovided: provides bus access bustype_t14;
+ busrequired: requires bus access;
+end device_t14;
+
+device implementation device_t14.i
+subcomponents
+ b1: bus bus_t14;
+ ab1: abstract abstrat_o_t14;
+end device_t14.i;
+
+memory memory_t14
+features
+ port1: in event port;
+ port2: out event port;
+ busprovided: provides bus access bustype_t14;
+ busrequired: requires bus access;
+end memory_t14;
+
+memory memory_o_t14
+end memory_o_t14;
+
+memory implementation memory_t14.i
+subcomponents
+ sc1: memory memory_o_t14;
+ b1: bus bus_t14;
+ abs1: abstract abstract_t14;
+end memory_t14.i;
+
+process process_t14
+features
+ fg: feature group featuregroup_t14;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t14;
+ datarequired: requires data access data_type_t14;
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t14;
+ subpgrequired: requires subprogram group access;
+end process_t14;
+
+process implementation process_t14.i
+subcomponents
+ d1: data data_t14;
+ sp1: subprogram subprogram_t14;
+ spg1: subprogram group subprogramgroup_t14;
+ t1: thread thread_t14;
+ tg1: thread group threadgroup_t14;
+ abs1: abstract abstract_t14;
+end process_t14.i;
+
+processor processor_t14
+features
+ fg: feature group featuregroup_t14;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t14;
+ busprovided: provides bus access bustype_t14;
+ busrequired: requires bus access;
+end processor_t14;
+
+processor implementation processor_t14.i
+subcomponents
+ m1: memory memory_t14;
+ b1: bus bus_t14;
+ vp: virtual processor virtualprocessor_t14;
+ vb: virtual bus virtualbus_t14;
+ ab: abstract abstract_t14;
+end processor_t14.i;
+
+subprogram subprogram_t14
+features
+ fg: feature group featuregroup_t14;
+ port2: out event port;
+ port4: out event data port;
+ datarequired: requires data access data_type_t14;
+ subprequired: requires subprogram access;
+ subpgrequired: requires subprogram group access;
+ param: in parameter data_t14;
+end subprogram_t14;
+
+subprogram implementation subprogram_t14.i
+subcomponents
+ d: data data_t14;
+ a: abstract abstract_t14;
+end subprogram_t14.i;
+
+subprogram group subprogramgroup_t14
+features
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subprequired: requires subprogram access;
+ subpgrequired: requires subprogram group access;
+end subprogramgroup_t14;
+
+subprogram group implementation subprogramgroup_t14.i
+subcomponents
+ s: subprogram subprogram_t14;
+end subprogramgroup_t14.i;
+
+system system_t14
+features
+ fg: feature group featuregroup_t14;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t14;
+ datarequired: requires data access data_type_t14;
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t14;
+ subpgrequired: requires subprogram group access;
+ busprovided: provides bus access bustype_t14;
+ busrequired: requires bus access;
+end system_t14;
+
+system implementation system_t14.i
+subcomponents
+d1:data data_t14;
+s1: subprogram subprogram_t14;
+sg1: subprogram group subprogramgroup_t14;
+ps1: process process_t14;
+pr1: processor processor_t14;
+vpr1: virtual processor virtualprocessor_t14;
+mem1: memory memory_t14;
+bus1: bus bus_t14;
+vbus1: virtual bus virtualbus_t14;
+dev1: device device_t14;
+sys1: system system_t14;
+abs1: abstract abstract_o_t14;
+end system_t14.i;
+
+thread thread_t14
+features
+ fg: feature group featuregroup_t14;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t14;
+ datarequired: requires data access data_type_t14;
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t14;
+ subpgrequired: requires subprogram group access;
+end thread_t14;
+
+thread implementation thread_t14.i
+subcomponents
+ d: data data_t14;
+ sp: subprogram subprogram_t14;
+ spg: subprogram group subprogramgroup_t14;
+ a: abstract abstract_t14;
+end thread_t14.i;
+
+thread group threadgroup_t14
+features
+ fg: feature group featuregroup_t14;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t14;
+ datarequired: requires data access data_type_t14;
+ subpprovided: provides subprogram access subprogramtype_t14;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t14;
+ subpgrequired: requires subprogram group access;
+end threadgroup_t14;
+
+thread group threadgroup_o_t14
+end threadgroup_o_t14;
+
+thread group implementation threadgroup_t14.i
+subcomponents
+ d: data data_t14;
+ sp: subprogram subprogram_t14;
+ spg: subprogram group subprogramgroup_t14;
+ t: thread thread_t14;
+ tg: thread group threadgroup_o_t14;
+ a: abstract abstract_t14;
+end threadgroup_t14.i;
+
+virtual bus virtualbus_t14
+features
+ e1: in event port;
+ e2: out event port;
+ sp1: provides subprogram access subprogram_t14;
+ sp2: requires subprogram access subprogram_t14;
+ spg1: provides subprogram group access subprogramgroup_t14;
+ spg2: requires subprogram group access subprogramgroup_t14;
+end virtualbus_t14;
+
+virtual bus virtualbus_o_t14
+end virtualbus_o_t14;
+
+virtual bus implementation virtualbus_t14.i
+subcomponents
+ vb: virtual bus virtualbus_o_t14;
+ a: abstract abstract_t14;
+end virtualbus_t14.i;
+
+virtual processor virtualprocessor_t14
+features
+ fg: feature group featuregroup_t14;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ sp: provides subprogram access subprogram_t14;
+ spg1: provides subprogram group access subprogramgroup_t14;
+end virtualprocessor_t14;
+
+virtual processor virtualprocessor_o_t14
+end virtualprocessor_o_t14;
+
+virtual processor implementation virtualprocessor_t14.i
+subcomponents
+ vp: virtual processor virtualprocessor_o_t14;
+ vb: virtual bus virtualbus_t14;
+ a: abstract abstract_t14;
+end virtualprocessor_t14.i;
+
+end t14;

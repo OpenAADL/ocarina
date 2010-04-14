@@ -1,0 +1,27 @@
+--  Check whether all protected data priority are higher than the
+--  maximum priority of the threads accessing to it, and all from the
+--  same processor.
+
+theorem PCP
+
+foreach e in Data_Set do
+
+  -- Set of the threads that acceed to the protected data
+
+  accessor_threads := {t in Thread_Set | 
+                         Is_Accessed_By (t, e)};
+
+  -- Set of the processor(s) that the accessor_threads are bound to
+
+  threads_processors := {p in Processor_Set | 
+                         Is_Bound_To (accessor_threads, p)};
+
+  check ((((not Property_Exists (e, "Concurrency_Control_Protocol")) or
+           (Get_Property_Value (e, "Concurrency_Control_Protocol") <>
+           "Protected_Access")) or
+	  (Get_Property_Value (e, "ARAO::Priority") >=
+            Max (Get_Property_Value 
+                  (accessor_threads, "ARAO::Priority"))))
+           and Cardinal (threads_processors) <= 1);
+
+end PCP;

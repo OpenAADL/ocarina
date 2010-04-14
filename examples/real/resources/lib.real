@@ -1,0 +1,106 @@
+--  Compute whether the connection is bound with a physical bus that
+--  is large enough to prevent message queuing
+
+theorem Buses_Rate
+
+foreach e in Bus_Set do
+  
+  Cnx_Set(e) := {x in Connection_Set | Is_Bound_To (x, e)};
+
+  Connected_Data_Set := {x in Data_Set | Is_Accessed_By (x, Cnx_Set)};
+
+  check (Get_Property_Value (e, "ASSERT_Properties::Access_Bandwidth") >= 
+   	 Sum (Get_Property_Value (Connected_Data_Set, "source_data_size")));
+
+end;
+
+-------------------------------------------------------------------------------
+--  For each processor/OS, check whether associated processes have a
+--  number of connections equal or less than the maximum allowed
+
+theorem Connections
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  Cnx_Set := {x in Process_Set | Is_Connected_To (x, Proc_Set)};
+
+  check (Get_Property_Value (e, "RTOS_Properties::Max_Connections_Number") >= 
+         Cardinal (Cnx_Set));
+
+end;
+
+-------------------------------------------------------------------------------
+--  Check for each processor whether the RAM consumed by all processor
+--  threads' is smaller than the sum of the processor memories size
+
+theorem Memory_Size
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  Threads := {x in Thread_Set | Is_Subcomponent_Of (x, Proc_Set)};
+
+  Mem_Set(e) := {x in Memory_Set | Is_Bound_To (x, e)};
+
+  check (Sum (Get_Property_Value 
+              (Mem_Set, "RTOS_Properties::Memory_Size")) > 
+         Sum (Get_Property_Value (Threads, "source_stack_size")));
+ 
+end;
+
+-------------------------------------------------------------------------------
+--  For each processor/OS, check whether associated processes have a
+--  number of mutexes (ie. protected data) equal or less than the
+--  maximum allowed
+
+theorem Mutexes
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  Protected_Data_Set := {x in Data_Set | 
+                                  Is_Subcomponent_Of (x, Proc_Set) and 
+                                  (Property_Exists 
+                                    (x, "Concurrency_Control_Protocol") 
+                                    and 
+                                       (Get_Property_Value 
+                                         (x, "Concurrency_Control_Protocol") 
+                                         = "Protected_Access"))};
+
+  check (Get_Property_Value (e, "RTOS_Properties::Max_Mutexes_Number") >= 
+          Cardinal (Protected_Data_Set));
+
+end Mutexes;
+
+-------------------------------------------------------------------------------
+--  Checks whether the latency is below the user-specified max latency
+
+--  In order to actually work, we need to detect user-specified flows
+--  and match them to actual flows
+ 
+theorem Latency
+
+foreach f in End_To_End_Flows_Set do
+
+  crossed_buses := {b in Bus_Set | 
+                      Is_Passing_Through (f, b)};
+
+  crossed_threads := {t in Thread_Set | 
+                      Is_Passing_Through (f, t)}; 
+
+  --  This theorem is valid only in the (simple) case where their 
+  --  is no message queuing
+
+  requires (buses_rate);
+
+  check (int (Sum (Last (Get_Property_Value 
+               (crossed_threads, 
+                "Subprogram_Execution_Time"))))
+         <= int (Last (Get_Property_Value (f, "Expected_Latency"))));
+          
+end Latency;
+

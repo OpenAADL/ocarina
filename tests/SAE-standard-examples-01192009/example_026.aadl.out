@@ -1,0 +1,17 @@
+example_026.aadl:31:13: signal (entity reference) does not point to anything
+example_026.aadl:31:23: A.p1 (entity reference) does not point to anything
+example_026.aadl:32:13: A.p2 (entity reference) does not point to anything
+example_026.aadl:32:21: B.p1 (entity reference) does not point to anything
+example_026.aadl:33:13: B.p2 (entity reference) does not point to anything
+example_026.aadl:33:21: result2 (entity reference) does not point to anything
+example_026.aadl:34:13: A.p2 (entity reference) does not point to anything
+example_026.aadl:34:21: result1 (entity reference) does not point to anything
+example_026.aadl:35:13: A.p3 (entity reference) does not point to anything
+example_026.aadl:35:21: status (entity reference) does not point to anything
+example_026.aadl:36:20: initcmd (entity reference) does not point to anything
+example_026.aadl:36:31: B.reset (entity reference) does not point to anything
+example_026.aadl:38:01: Flow1 (flow implementation)  does not have a corresponding flow spec
+example_026.aadl:40:01: Flow2 (flow implementation)  does not have a corresponding flow spec
+example_026.aadl:43:01: Flow3 (flow implementation)  does not have a corresponding flow spec
+example_026.aadl:46:01: Flow4 (flow implementation)  does not have a corresponding flow spec
+Cannot analyze AADL specifications

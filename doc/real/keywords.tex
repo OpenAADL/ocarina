@@ -1,0 +1,152 @@
+\paragraph{}
+This section explains all keywords meaning and usage.
+
+\subsubsection {in}
+\paragraph{}
+Usage :\\
+$<$Element\_Name\_A$>$ \textbf{in} \textit{Set\_Expression}\\
+
+\paragraph{}
+Defines the element Element\_Name\_A as being an element of the 
+set resulting in Set\_Expression.\\
+An element of a set can be declared in two moment : 
+\begin {itemize}
+\item when declaring verification range~\ref{range}, in which case 
+this element will be used as a variable either in the buffer set 
+definition or in the actual verification~\ref{verif};
+\item when defining a set with the syntax x \textbf{in} E 
+\textbf{|} \textit {f (x)}, where f (x) is a selection function 
+as defined below~\ref {selection_function}, and E is a defined set.
+\end {itemize}
+
+\subsubsection {| (such as)}
+\paragraph{}
+Usage :\\
+$<$Element\_Name\_A$>$ \textbf{in} $<$Set\_Name\_A$>$ \textbf{|} $<$Selection\_Expression\_A$>$
+
+\paragraph{}
+Defines the set Set\_Name\_A as formed from the elements verifying the Selection\_Expression\_A. Note that one of the parameters of the Selection\_Expression\_A must actually be an element of $<$Set\_Name\_A$>$.
+
+\subsubsection {foreach}
+\paragraph{}
+Usage :\\
+\textbf {foreach} $<$Element\_Name\_A$>$ \textbf{in} \textit{Set\_Expression} \textbf{do}\\
+
+\paragraph{}
+Used in order to describe the iteration of a verification (ie. 
+verification range~\ref {range}) on all elements of Set\_Name\_A.
+
+\subsubsection {theorem}
+\paragraph{}
+Usage :\\
+\textbf {theorem} [$<$Theorem\_Name$>$]
+
+\paragraph{}
+The theorem keyword is used to name a verification. It also
+declare the begining of this verification. Naming is optional, 
+but theorem keyword is not.
+
+\subsubsection {end}
+\paragraph{}
+Usage :\\
+\textbf {end} [$<$Theorem\_Name$>$];
+
+\paragraph{}
+The end keyword is used to signal a verification end. 
+Optionnaly, it can be followed by theorem's name.\\
+Note that the actual theorem declaration end with a 
+semicolon.
+
+\subsubsection {do}
+\paragraph{}
+Usage :\\
+\textbf {foreach} $<$Element\_Name\_A$>$ \textbf{in} \textit{Set\_Expression} \textbf{do}\\
+
+\paragraph{}
+End of range declaration.
+
+\paragraph{}
+The end keyword is used to signal a verification end. 
+Optionnaly, it can be followed by theorem's name.\\
+Note that the actual theorem declaration end with a 
+semicolon.
+
+\subsubsection {check}
+\paragraph{}
+Usage :\\
+\textbf {check} (\textit{Expression});
+
+\paragraph{}
+The check keyword is used to signal the actual verification 
+operation. It must be followed by a boolean expression within 
+parenthesis.\\
+
+\subsubsection {return}
+\paragraph{}
+Usage :\\
+\textbf {return} (\textit{Return\_Expression});
+
+\paragraph{}
+The return operation allows to return a real value from the 
+set evaluation. It can replace the check operation. It must 
+be followed by a real or integer expression within parenthesis.\\
+Note that a return expression can only be used with a mono-value
+range set, or aggregated with an aggregation function.
+
+\subsubsection {requires}
+
+\label {requires_kw}
+
+\paragraph{}
+Usage :\\
+\textbf {requires} (\textit{Theorem\_Name});
+
+\paragraph{}
+The \textit{requires} optional keyword is used to defines a 
+theorem as being required to be true in order to test the main 
+theorem. Note that only context-free theorem can be declared as 
+required.\\
+When a theorem is called using the declared, the actual context 
+(ie. the \textit{Local} set), is inherited from the caller 
+theorem. As mutually-recursive loop are not detected at analysis 
+time, \textit{requires} should not be used in a context-free 
+theorem without extrem caution.
+
+
+\subsubsection {compute}
+
+\label {compute_kw}
+
+\paragraph{}
+Usage :\\
+\textbf {compute} \textit{Sub\_Theorem\_Call};
+
+\paragraph{}
+The \textit{compute} keyword is used to call a sub-theorem
+and return the value it computed. It is used in theorem and 
+global variables definition (cf.~\ref{variable_def}). The 
+theorem must be known (ie. specified ina REAL file).
+
+\subsubsection {global}
+
+\label {global_kw}
+
+\paragraph{}
+Usage :\\
+\textbf {global} \textit{$<$variable\_name$>$} $:=$ \textit{variable\_definition};
+
+\paragraph{}
+The \textit{global} keyword is used to define a global scope 
+variable (cf.~\ref{variable_def}).
+
+\subsubsection {var}
+
+\label {global_kw}
+
+\paragraph{}
+Usage :\\
+\textbf {var} \textit{$<$variable\_name$>$} $:=$ \textit{variable\_definition};
+
+\paragraph{}
+The \textit{var} keyword is used to define a theorem scope 
+variable (cf.~\ref{variable_def}).

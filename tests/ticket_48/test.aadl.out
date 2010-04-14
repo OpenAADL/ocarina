@@ -1,0 +1,3 @@
+test.aadl:24:82: parsing Subcomponent, token <identifier> or '}' is expected, found keyword 'properties'
+test.aadl:24:04: parsing Component_Implementation, unexpected identifier 'part2'
+Cannot parse AADL specifications

@@ -1,0 +1,23 @@
+--  Check weither the largest thread (in terms of RAM consumption) is still
+--  smaller than the biggest RAM available.
+
+theorem Stack_Size
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | 
+                 Is_Bound_To (x, e)};
+
+  Threads := {x in Thread_Set | 
+                 Is_Subcomponent_Of (x, Proc_Set)};
+
+  Mem_Set(e) := {x in Memory_Set |
+                 Is_Bound_To (x, e) 
+	         and (Property_Exists (x, "Memory_Protocol")
+                      and (Get_Property_Value (x, "Memory_Protocol")
+                           = "read_write"))};
+
+  check (Max (Get_Property_Value (Mem_Set, "ASSERT_Properties::Memory_Size")) > 
+         Max (Get_Property_Value (Threads, "Source_Stack_Size")));
+ 
+end Stack_Size;

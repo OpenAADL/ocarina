@@ -1,0 +1,27 @@
+data D
+end D;
+
+data E
+end E;
+
+data implementation d.i
+end d.i;
+
+system S
+  features 
+    i: in data port d.i;
+end S;
+
+system T
+  features
+    i: in data port d;
+end T;
+
+system implementation S.I
+  subcomponents
+    t: system T;
+    
+  connections
+    -- bad: classifier mismatch on the ports
+    c: data port i -> t.i;
+end S.I;

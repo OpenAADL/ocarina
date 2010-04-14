@@ -1,0 +1,2 @@
+PetersBug.aadl:15:26: when evaluating the value of peter::SecurityLevel, the value (PT_FLOAT) is not conformant with declaration at PetersBug.aadl:2:07 (PT_INTEGER)
+Cannot analyze AADL specifications

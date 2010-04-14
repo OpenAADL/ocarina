@@ -1,0 +1,33 @@
+property set PS is
+  nine: constant aadlinteger => 9;
+  ten: constant aadlinteger => 10;
+  eleven: constant aadlinteger => 11;
+  twelve: constant aadlinteger => 12;
+  
+  boundedint: type aadlinteger -value(PS::ten) .. value(PS::eleven);
+  rangetype: type range of PS::boundedint;
+  
+  p1: list of PS::boundedint applies to (all);
+  p1a: list of PS::boundedint applies to (all);
+  p2: list of ps::rangetype applies to (all);
+end PS;
+
+system s
+  properties
+    PS::p1 => (
+    	-11, --bad
+    	-10, --good
+    	-9, --good
+    	9, --good
+    	10, --good
+    	11, --good
+    	12, --bad
+    	-value(PS::eleven), --bad
+    	-value(PS::ten), --good
+    	-value(PS::nine), --good
+    	value(PS::nine), --good
+    	value(PS::ten), --good
+    	value(PS::eleven), --good
+    	value(PS::twelve) --bad
+    );
+end s;

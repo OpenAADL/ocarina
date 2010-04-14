@@ -1,0 +1,40 @@
+-- everything should pass
+-- this example was used to test that the name resolver resolves names correctly
+-- the validation is to check that the references are filled in correctly in the Aadl Object model
+
+-- use of data classifier in data component and in features
+system S
+end S;
+
+system implementation S.i
+	subcomponents
+		pr: process P.i1;
+		da: data DT.i1;
+end S.i;
+
+process P
+	features
+		p: out event data port DT.i2;
+		d1: requires data access DT.i1;
+end P;
+
+process implementation P.i1
+	subcomponents
+		t1: thread T;
+		t2: thread T;
+end P.i1;
+
+thread T
+	features
+		pd: in data port DT;
+		qd: out data port DT;
+end T;
+
+data DT
+end DT;
+
+data implementation DT.i1
+end DT.i1;
+
+data implementation DT.i2
+end DT.i2;

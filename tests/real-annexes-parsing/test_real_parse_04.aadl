@@ -1,0 +1,162 @@
+package RMAAadl
+public
+  with Deployment;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Hello_Spg_1
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_1";
+end Hello_Spg_1;
+
+subprogram Hello_Spg_2
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_2";
+end Hello_Spg_2;
+
+-------------
+-- Threads --
+-------------
+
+thread Task
+end Task;
+
+thread implementation Task.impl_1
+calls
+   MyCalls : {
+      P_Spg : subprogram Hello_Spg_1;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 1000ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 1000 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_1;
+
+thread implementation Task.impl_2
+calls
+   MyCall : {
+     P_Spg : subprogram Hello_Spg_2;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 500ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 500 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_2;
+
+---------------
+-- Processor --
+---------------
+
+processor cpurm
+properties
+  Deployment::Execution_Platform => ERC32_ORK;
+end cpurm;
+
+processor implementation cpurm.impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end cpurm.impl;
+
+---------------
+-- Processes --
+---------------
+
+process node_a
+end node_a;
+
+process implementation node_a.impl
+subcomponents
+   Task1 : thread Task.impl_1;
+   Task2 : thread Task.impl_2;
+
+annex real_specification {**
+
+--  tests the Max verification function with the Get_Property_Value function 
+--  access
+
+theorem check_expression_max
+
+foreach e in Process_Set do
+
+   New_Set(e) := {x in Thread_Set | Is_Subcomponent_Of (x, e)};
+
+   check (Max (Get_Property_Value (New_Set, "Period")) = 1000.0);
+end;
+
+--  tests the Sum verification function with the Get_Property_Value function 
+--  access
+
+theorem  check_expression_sum
+
+foreach e in Process_Set do
+
+   New_Set(e) := {x in Thread_Set | Is_Subcomponent_Of (x, e)};
+
+   check (Sum (Get_Property_Value (New_Set, "Period")) = 1500.0);
+end;
+
+--  tests 'not' operator on check expressions
+
+theorem check_expression_not
+
+foreach e in Processor_Set do
+
+  check (not (2 = 3));
+end;
+
+--  tests parsing and interpretation of (complex) check expression when 
+--  using verification functions as leaf with implicit priorities (ie. no
+--  parenthesis in one sub-expression)
+
+
+theorem check_expression_complex
+
+foreach e in Processor_Set do
+
+  Test_Set := {p in Process_Set | Is_Bound_To (p, e)};
+
+  check (((2 = 3) or (2 = 2)) and Cardinal (Test_Set) > 0);
+end;
+
+--  tests the 'Last' and 'First' verification functions on range 
+--  property values
+
+theorem check_expression_range
+
+foreach e in Thread_Set do
+
+       check (Last
+                (Get_Property_Value 
+                   (e, "Compute_Execution_Time")) 
+	      > (First
+                  (Get_Property_Value 
+                    (e, "Compute_Execution_Time"))));
+end;
+
+**};
+end node_a.impl;
+
+------------
+-- System --
+------------
+
+system rma 
+end rma;
+
+system implementation rma.ERC32
+subcomponents
+   node_a : process node_a.impl;
+   cpu_rm : processor cpurm.impl;
+properties
+   Actual_Processor_Binding => (reference (cpu_rm)) applies to node_a;
+end rma.ERC32;
+
+end RMAAadl;

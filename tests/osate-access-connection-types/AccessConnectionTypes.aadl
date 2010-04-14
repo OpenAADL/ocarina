@@ -1,0 +1,30 @@
+data d
+end d;
+
+data implementation d.a
+end d.a;
+
+data implementation d.b
+end d.b;
+
+data DB
+  features 
+    shared: provides data access d.a;
+end DB;
+
+process P
+  features
+    needs: requires data access d.b;
+end P;
+
+system S
+end S;
+
+system implementation S.basic
+  subcomponents
+    theDB: data DB;
+    proc: process P;
+  connections
+    -- bad: data classifiers of the two features are not identical
+    data access theDB.shared -> proc.needs;
+end S.basic;

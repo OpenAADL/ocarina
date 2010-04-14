@@ -1,0 +1,18 @@
+--  This test ckech that error handling in subclause properties are 
+--  correct.
+
+thread T
+end T;
+
+process P
+end P;
+
+Process implementation P.Impl
+subcomponents
+   Th : thread T
+     {Dispatch_Protocol => Periodic;
+      Period            => 200 Ms
+      --  BAD: Semi-colon missing
+     };
+end P.Impl;
+

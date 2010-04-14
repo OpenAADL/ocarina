@@ -1,0 +1,312 @@
+/*****************************************************************************
+**                                                                          **
+**                           OCARINA COMPONENTS                             **
+**                                                                          **
+**                  OCARINA.ME_AADL.AADL_INSTANCES.NODES                    **
+**                                                                          **
+**               Copyright (C) 2004-2008, GET-Telecom Paris.                **
+**                                                                          **
+** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
+** it under terms of the GNU General Public License as published by the     **
+** Free Software Foundation; either version 2, or (at your option) any      **
+** later version. Ocarina is distributed  in  the  hope  that it will be    **
+** useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General **
+** Public License for more details. You should have received  a copy of the **
+** GNU General Public License distributed with Ocarina; see file COPYING.   **
+** If not, write to the Free Software Foundation, 51 Franklin Street, Fifth **
+** Floor, Boston, MA 02111-1301, USA.                                       **
+**                                                                          **
+** As a special exception,  if other files  instantiate  generics from this **
+** unit, or you link  this unit with other files  to produce an executable, **
+** this  unit  does not  by itself cause  the resulting  executable to be   **
+** covered  by the  GNU  General  Public  License. This exception does not  **
+** however invalidate  any other reasons why the executable file might be   **
+** covered by the GNU Public License.                                       **
+**                                                                          **
+**                 Ocarina is maintained by the Ocarina team                **
+**                       (ocarina-users@listes.enst.fr)                     **
+**                                                                          **
+*****************************************************************************/
+
+module Ocarina::ME_AADL::AADL_Instances::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef long Name_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  //  Node_Id:
+  //    Node type from which all the other node types derive.
+  //
+  //  * Next_Node:
+  //    Any node can be part of a container. Thus, the container
+  //    includes a list of nodes. Next_Node designates the next node
+  //    in the list of the container. It is forbidden to define
+  //    another attribute to point to a "next" node.
+
+  interface Node_Id {
+    Node_Id  Next_Node;
+  };
+
+  //  List_Id:
+  //    List type used to represent the entities contained in a
+  //    container.
+  //
+  //  * First_Node, Last_Node:
+  //    First and last nodes of a unidirectional list.
+
+  interface List_Id {
+    Node_Id  First_Node;
+    Node_Id  Last_Node;
+  };
+
+  interface AADL_Entity : Node_Id {
+    Node_Id  Next_Entity;// Used by the Ocarina core to build
+    // list of elements
+  };
+
+  interface Named_AADL_Entity : AADL_Entity {
+    Node_Id  Identifier;
+  };
+
+  interface Identifier : Node_Id {
+    Name_Id  Name;
+    Name_Id  Display_Name;
+    Node_Id  Corresponding_Entity;
+    Node_Id  Scope_Entity;
+    Node_Id  Homonym;
+    boolean  Visible;
+    Node_Id  Backend_Node;
+  };
+
+/**********************************************************************
+ ** These following interfaces file describe the AADL instance tree.  **
+ ** The instance tree describes how the nodes of the AADL syntax      ** 
+ ** tree have been linked toghether to form a particular model        **
+ ** (an instance).                                                    **
+ **********************************************************************/
+
+  //   Node_Container:
+  //
+  //      
+
+  interface Node_Container : Node_Id {
+    Node_Id  Item;
+    Node_Id  Extra_Item;
+  };
+
+  // Architecture_Instance:
+  //
+  //    Root node of the AADL instance tree.
+  //
+  //    * Root_System:
+  //
+  //       Instance of the sytem that describes the whole application.
+
+
+  interface Architecture_Instance : Node_Id {
+    Node_Id  Root_System;
+
+    List_Id  Namespaces;
+    Node_Id  Unnamed_Namespace;
+    /* The unnamed namespace and the other namespaces contain the
+     * instantiations of the subprograms and data components
+     * (encapsulated in "node containers"). */
+  };
+
+  interface Entity_Instance : Named_AADL_Entity {
+    Node_Id  Corresponding_Declaration;
+    // Points the corresponding AADL declaration node
+  };
+
+  interface Entity_Reference_Instance : AADL_Entity {
+    List_Id  Path;
+    // list of node_containers representing the component hierarchy of
+    // the entity reference.
+  };
+
+  interface Declaration_Instance : Entity_Instance {
+    List_Id  Properties;
+  };
+  //  Also used for modes
+
+  /* A component instance corresponds to a root system, a data
+   * component declaration, a subprogram call or to a subclause
+   * (subcomponent process, subcomponent thread, subcomponent data,
+   * subcomponent bus, port, parameter). 
+   *
+   * Note: two subcomponents having the same component type leads to
+   * the creation of two different instances because they may have
+   * different properties. 
+   */
+
+  interface Component_Instance : Declaration_Instance {
+    boolean  Is_Private;
+    // for components that are in packages instances
+
+    List_Id  Features;
+    List_Id  Subcomponents;
+    List_Id  Modes;
+    List_Id  Mode_transitions;
+    List_Id  Connections;
+    List_Id  Calls;
+    List_Id  Flows;
+    List_Id  Annexes;
+    Node_Id  Parent_Subcomponent;
+    // Points to the AADL subcomponent instance this component has
+    // been instantiated from.
+
+    Node_Id  Namespace;
+    // The namespace of the corresponding declaration of the
+    // component.
+  };
+
+  interface Subcomponent_Instance : Entity_Instance {
+    Node_Id  Parent_Component;
+    // The container parent AADL component.
+
+    Node_Id  Corresponding_Instance;
+    // The corresponding AADL component instance whose parent
+    // subcomponent is this node.
+
+    List_Id  Destinations;
+    //  If this is provided subcomponent, contains all the subclauses
+    //  this subcomponent is provided to.
+
+    Node_Id  In_Modes;
+    // The modes this subcomponent instance is valid on
+  };
+
+  interface Namespace_Instance : Entity_Instance {
+    List_Id  Declarations;
+  };
+
+  interface Feature_Instance : Declaration_Instance {
+    Node_Id  Parent_Component;
+
+    List_Id  Sources;
+    //  If this is an IN feature, contains all the features that
+    //  are connected to this port
+
+    List_Id  Destinations;
+    //  If this is an OUT feature, contains all the features this
+    //  port is connected to.
+  };
+
+  interface Port_Spec_Instance : Feature_Instance {
+    boolean  Is_In;
+    boolean  Is_Out;
+    boolean  Is_Event;
+    boolean  Is_Data;
+    Node_Id  Corresponding_Instance;
+    // If this is a data port, points to the corresponding data
+    // component instance.
+  };
+
+  interface Feature_Group_Spec_Instance : Feature_Instance {
+    List_Id  Features;
+    // Port list
+  };
+
+  interface Subprogram_Spec_Instance : Feature_Instance {
+    boolean  Is_Server;
+    Node_Id  Corresponding_Instance;
+  };
+
+  interface Parameter_Instance : Feature_Instance {
+    boolean  Is_In;
+    boolean  Is_Out;
+    Node_Id  Corresponding_Instance;
+    // The corresponding Data component instance
+  };
+
+  interface Subcomponent_Access_Instance : Feature_Instance {
+    boolean  Is_Provided;
+    // If True => 'provides access' otherwise 'requires access'
+
+    boolean  Is_Data;
+    Node_Id  Corresponding_Instance;
+    // The corresponding bus or data component instance
+  };
+
+  interface Call_Sequence_Instance : Entity_Instance {
+    Node_Id  Parent_Component;
+    List_Id  Subprogram_Calls;
+    Node_Id  In_Modes;
+  };
+
+  interface Call_Instance : Entity_Instance {
+    Node_Id  Parent_Sequence;
+    // The container call sequence
+
+    Node_Id  Corresponding_Instance;
+    // The corresponding subprogram component instance
+
+    List_Id  Path;
+    // A list of node containers that contains:
+    // - The instance which owns the method
+    // - An identifier of the subprogram feature name
+    // In case of a classical subprogram call, this list is empty
+  };
+
+  interface Mode_Instance : Declaration_Instance {
+    Node_Id  Parent_Component;
+    //  The component instance that contains this mode
+
+    boolean  Is_Initial;
+    //  True iff the mode and initial mode for the component
+  };
+
+  interface Mode_Transition_Instance : Entity_Instance {
+    Node_Id  Parent_Component;
+    //  The component instance that contains this mode transition
+
+    List_Id  Source_Modes;
+    //  List of node containers to the mode instances that are
+    //  source of the transition
+
+    List_Id  Triggers;
+    //  List of references to the port instances that trigger the
+    //  transition.
+
+    Node_Id  Destination_Mode;
+    //  Reference instance to the mode that
+  };
+ 
+  interface Connection_Instance : Declaration_Instance {
+    Node_Id  Source;
+    // Entity_reference_instance
+
+    Node_Id  Destination;
+    // Entity_reference_instance
+
+    Node_Id  Associated_Type;
+    Node_Id  Parent_Component;
+    Node_Id  In_Modes;
+  };
+
+  interface Property_Association_Instance : Entity_Instance {
+    Node_Id  Property_Name;	// Entity_Reference
+    boolean  Is_Additive_Association;
+    boolean  Is_Constant;
+
+    boolean  Is_Private;	// for packages
+    boolean  Is_Access;
+      // if Is_Access = TRUE ----> Access_Property_Association
+    Node_Id  Property_Association_Type;
+    Node_Id  Property_Association_Value;
+
+    List_Id  Applies_To_Prop;
+    // if Present (Applies_To_Prop) ----> Contained_Property_Association
+
+    Node_Id  In_Binding;
+    Node_Id  In_Modes;
+  };
+
+};

@@ -1,0 +1,30 @@
+package Sampling 
+public 
+
+data Sample 
+  properties
+    Source_Data_Size => 16 Bytes; 
+end Sample; 
+
+data Sample_Set 
+  properties 
+    Source_Data_Size => 1 MByte; 
+end Sample_Set;
+
+data implementation Sample_Set.impl 
+  subcomponents 
+    Data_Set: data Sample [][]; 
+end Sample_Set.impl;
+
+data Dynamic_Sample_Set extends Sample_Set 
+end Dynamic_Sample_Set; 
+
+data implementation Dynamic_Sample_Set.impl extends Sample_Set.impl 
+  subcomponents
+    Data_Set: refined to data Sample [256][256]; 
+
+  properties 
+    Source_Data_Size => 8 Bytes applies to Data_Set [1 .. 16][1 .. 16]; 
+end Dynamic_Sample_Set.impl; 
+
+end Sampling;

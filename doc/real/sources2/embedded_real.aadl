@@ -1,0 +1,28 @@
+subprogram watch
+features
+  data_in : requires data access shared_data.i;
+properties
+  source_language => Ada95;
+annex 
+  min_req {**  
+   theorem subprogram_requierements
+
+   foreach t in Thread_Set do
+
+      Called := {l in Local_Set | Is_Calling (t, l)}
+
+      check ((Cardinal (Called) = 0) or
+             ((Get_Property_Value (t, "ARAO::Priority") = 4)
+               and (Get_Property_Value (t, "Period") = 500)));
+ 
+   end subprogram_requierements;  
+  **};
+end watch;
+
+thread implementation Watcher.impl 
+calls {
+  sp : suprogram watch;
+};
+connections
+  data access mem -> sp.data_in;
+end Watcher.impl;

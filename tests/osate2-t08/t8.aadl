@@ -1,0 +1,6 @@
+package t8
+public
+renames thread pkg::old_classifier_name;
+system system_t8
+end system_t8;
+end t8;

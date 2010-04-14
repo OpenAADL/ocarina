@@ -1,0 +1,8 @@
+theorem Only_Periodic_Thread
+
+foreach e in Thread_Set do
+
+  check (Get_Property_Value (e, "Dispatch_Protocol") = 
+         "periodic");
+
+end Only_Periodic_Thread;

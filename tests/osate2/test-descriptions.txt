@@ -1,0 +1,74 @@
+Filename	Description
+------------------------------------------------------------------
+t1		package with a single public section and 
+		one empty system inside
+
+------------------------------------------------------------------
+t2		package with a single private section and 
+		one empty system inside
+
+------------------------------------------------------------------
+t3		package with one public and one private section
+		with one empty system each
+
+------------------------------------------------------------------
+t4		package with a single public section with an
+		import declaration
+
+------------------------------------------------------------------
+t5		package with a single public section with a
+		package alias declaration
+
+------------------------------------------------------------------
+t6		package with a single public section with 
+		a classifier alias declaration
+
+------------------------------------------------------------------
+t7		package with a single public section with
+		a feature group alias declaration
+
+------------------------------------------------------------------
+t8		package with single public section with
+		a classifier alias declaration that does not
+		contain a new name
+
+------------------------------------------------------------------
+t9		package with a single public section with one
+		empty definition for each of the component 
+		categories and one implementation
+
+------------------------------------------------------------------
+t10		package with a single public section with
+		one abstract type all possible features
+
+------------------------------------------------------------------
+t11		package with a single public section with
+		one empty definition for each of the component
+		categories and one implementation. Each of these
+		definitions have an extension
+
+------------------------------------------------------------------
+t12		package with single public section with
+		one empty definition for each of the component
+		categories and one implementation. Each of these
+		definitions have an extension and two prototypes
+	
+------------------------------------------------------------------
+t13		package with single public section with one
+		implementation of each category and one subcomponent
+		of each possible category
+
+------------------------------------------------------------------
+t14		package with single public section with
+		one implementation of each category and one
+		subcomponens of each possible category and one
+		feature for each.
+
+------------------------------------------------------------------
+t15		package with single public section with
+		one connection connection of each type.
+
+------------------------------------------------------------------
+t16		package with single public section with one
+		flow spec and one flow implementation that is 
+		possible.

@@ -1,0 +1,8 @@
+FlowImpls.aadl:30:24: c2 (entity reference)  points to a connection whose source is not pointing to the previous element in the flow
+FlowImpls.aadl:30:24: c2 (entity reference)  points to a connection whose destination is not pointing to the next element in the flow
+FlowImpls.aadl:30:39: c1 (entity reference)  points to a connection whose source is not pointing to the previous element in the flow
+FlowImpls.aadl:30:39: c1 (entity reference)  points to a connection whose destination is not pointing to the next element in the flow
+FlowImpls.aadl:35:05: ff2 (flow implementation)  and its corresponding flow spec have different sources
+FlowImpls.aadl:35:05: ff2 (flow implementation)  and its corresponding flow spec have different sinks
+FlowImpls.aadl:40:05: ff3 (flow implementation)  does not have a corresponding flow spec
+Cannot analyze AADL specifications

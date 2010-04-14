@@ -1,0 +1,47 @@
+system s
+end s;
+
+-- bad: doesn't contain an initial mode
+system implementation s.i
+  modes
+    m1: mode;
+    m2: mode;
+end s.i;
+
+-- good has initial mode
+system implementation s.j
+  modes
+    m1: initial mode;
+    m2: mode;
+end s.j;
+
+-- good has initial mode because it extends system with initial mode
+system implementation s.k extends s.j
+  modes
+    m3: mode;
+end s.k;
+
+-- good: no modes
+system implementation s.a
+end s.a;
+
+-- bad: missing initial mode; super impl has no modes
+system implementation s.b extends s.a
+  modes
+    m: mode;
+end s.b;
+
+-- bad: contains more than one initial mode
+system implementation s.c
+  modes
+    m1: initial mode;
+    m2: initial mode;
+end s.c;
+
+-- bad: more than one initial mode
+system implementation s.d extends s.j
+  modes
+    z: initial mode;
+end s.d;
+
+

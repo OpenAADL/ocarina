@@ -1,0 +1,9 @@
+-- This test checks for unique names in features
+-- It should report an error that the feature f has been defined previously
+
+device d
+  features 
+    f: out data port;
+    f: in data port;
+end d;
+

@@ -1,0 +1,109 @@
+\renewcommand{\theequation}{\arabic{equation}}
+\addtocounter{equation}{1}
+{
+\parindent 0pt
+
+\begin{grammar}
+[(colon){::=}]
+[(semicolon)$|$]
+[(comma){}]
+[(period){~\xspace (\theequation)\addtocounter{equation}{1}}]
+[(quote){\begin{bf}}{\end{bf}}]
+[(nonterminal){$\langle$}{$\rangle$}]
+
+theorem\_declaration:
+\textbf {theorem} $[$\textit{theorem\_identifier}$]$,
+\textit{range\_definition},
+\{ \textit{set\_declaration} \},
+$[$\textit{required\_definition}$]$,
+\textit{verification\_expression} | \textit{evaluation\_expression},
+\textbf {end} $[$\textit{theorem\_identifier}$]$,
+range\_definition: "foreach" \textit{element\_identifier} "in"
+\textit{set\_expression} "do".\\
+\\
+set\_declaration: \textit {set\_identifier}
+\textit{affectation\_operator} \textit{braces\_opener}
+\textit{element\_binding} "|" \textit{selection\_expression}
+\textit{braces\_closer}.\\
+\\
+element\_binding: \{ \textit{element\_identifier} "in"
+\textit{set\_expression} \}.\\
+\\
+selection\_expression: \textit{selection\_expression}
+\{\textit{boolean\_operator} \textit{selection\_relation}\} ; 
+\textit{generic\_expression}.\\
+\\
+selection\_relation: \textit{selection\_relation\_identifier} "(" \{
+\textit{selection\_relation\_parameter} \} ")".\\
+\\
+selection\_relation\_identifier: "Is\_Subcomponent\_Of" ;
+"Is\_Bound\_To" ; "Is\_Connected\_To" ; "Compare\_Property\_Value" ;
+"Is\_Called\_By" ; "Is\_Calling" ; "Is\_Accessed\_By" ; "Is\_Connecting\_To" ;
+"Is\_Accessing\_To".\\
+\\
+selection\_relation\_parameter: \textit{literal} ;
+\textit{set\_identifier} ; \textit{element\_identifier}.\\
+\\
+required\_definition: "requires" "(" \textit{theorem\_identifier}
+\{"," \textit{theorem\_identifier}\} ")".\\
+\\
+verification\_expression: \textbf {check} "("
+\textit{verification\_sub\_expression} \textit{comparison\_operator}
+\textit{verification\_sub\_expression}")".\\
+\\
+evaluation\_expression: \textbf {return} "("
+[\textit{aggregation\_function\_identifier} "("]
+\textit{verification\_sub\_expression}")"[")"].\\
+\\
+generic\_expression: \textit{literal} ; \textit
+{verification\_function\_call} ;
+\textit{generic\_expression} \textit{generic\_operator} 
+\textit{generic\_expression} ; \textit{ternary\_expression}.\\
+\\
+set\_expression: \textit{set\_identifier} ; \textit{set\_expression}
+\textit{set\_operator} \textit{set\_expression}.\\
+\\
+ternary\_expression: \textbf{if} \textit{generic\_expression} \textbf{then} \textit{generic\_expression} \textbf{else} \textit{generic\_expression}.\\
+\\
+verification\_function\_call:
+\textit{verification\_function\_identifier} "(" \{
+\textit{verification\_function\_parameter} \} ")".\\
+\\
+verification\_function\_parameter: \textit{literal} ;
+\textit{set\_identifier} ; \textit{element\_identifier} ; \textit
+{verification\_function\_identifier}.\\
+\\
+aggregation\_function\_identifier : "MSum", "MMax".\\
+\\
+verification\_function\_identifier: "Cardinal" ; "Sum" ; "Max" ;
+"Min" ; "Product" ; "GCD" ; "LCM" ; "Get\_Property\_Value" ; 
+"Property" ; "Property\_Exists" ; "Exists" ; "System" ; "First" ; 
+"Last" ; "Head" ; "Queue" ; "List" ; "Size".\\
+\\
+set\_operator: "+" ; "*" ; "/".\\
+\\
+theorem\_identifier: '<'string'>'.\\
+\\
+set\_identifier: '<'string'>'.\\
+\\
+element\_identifier: '<'string'>'.\\
+\\
+generic\_operator: \textit{comparison\_operator} ;
+\textit{boolean\_operator} ; "+" ; "-" ; "*" ; "/" ; "**".\\
+\\
+boolean\_operator: \textbf {and} $[$\textbf {not}$]$ ; \textbf {or}.\\
+\\
+comparison\_operator: "$\greaterthan$" ; "$\greaterthan=$" ;
+"$\lessthan=$" ; "$\lessthan$"; "$=$" ; "$\lessthan\greaterthan$".\\
+\\
+literal: \textit{boolean\_literal} ; \textit{string\_literal} ;
+\textit{numeric\_literal}.\\
+\\
+affectation\_operator: ":=".\\
+\\
+braces\_opener: "$\{$".\\
+\\
+braces\_closer: "$\}$".\\
+
+\end{grammar}
+}

@@ -1,0 +1,178 @@
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+--  AADL Examples AADL_V0.99 -- 15may04
+ 
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 4  COMPONENT AND PACKAGES
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 4.1 AADL Specifications
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 4.2 Packages
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 4.3 Component Types
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+system File_System
+   features
+      -- access to a data component
+      Root                         : requires data access Filesystem::Directory.Hashed;
+end File_System;
+ 
+-------------------------------------------------------
+process Application
+   features
+      -- a data out port
+      Result                       : out data port App::Result_Type;
+      Home                         : requires data access Filesystem::Directory.Hashed;
+end Application;
+ 
+ --- not in draft document
+ package FileSystem 
+ public
+ 	data Directory
+ 	end Directory;
+ 	data implementation Directory.Hashed
+ 	end Directory.Hashed;
+ end FileSystem;
+ 
+ package App 
+ public
+ 	data Result_Type
+ 	end Result_Type;
+end App;
+
+ 
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 4.4 Component Implementations
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+thread Drivermodelogic
+   features
+      Breakpetalpressed            : in  data port Bool_Type;
+      Clutchpetalpressed           : in  data port Bool_Type;
+      Activate                     : in  data port Bool_Type;
+      Cancel                       : in  data port Bool_Type;
+      Onnotoff                     : in  data port Bool_Type;
+      Cruiseactive                 : out data port Bool_Type;
+end Drivermodelogic;
+-------------------------------------------------------
+-- Two implementations whose source texts use different variable
+-- names for their cruise active port
+ 
+thread implementation Drivermodelogic.Simulink
+   refines type
+      Cruiseactive                 : refined to out data port Bool_Type
+      { Source_Name                => "CruiseControlActive"; } ;
+   properties
+      Dispatch_Protocol            => Periodic;
+      Period                       => 10 Ms;
+end Drivermodelogic.Simulink;
+-------------------------------------------------------
+thread implementation Drivermodelogic.C
+   refines type
+      Cruiseactive                 : refined to out data port Bool_Type
+      { Source_Name                => "CCActive"; } ;
+   properties
+      Dispatch_Protocol            => Periodic;
+      Period                       => 10 Ms;
+end Drivermodelogic.C;
+
+data Bool_Type
+end Bool_Type;
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 4.5 Subcomponents
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+package Sampling
+public
+data Sample
+   properties
+      Source_Data_Size             => 16 B;
+end Sample;
+ 
+data Sample_Set
+   properties
+      Source_Data_Size             => 1 Mb;
+end Sample_Set;
+ 
+data Dynamic_Sample_Set extends Sample_Set
+end Dynamic_Sample_Set;
+end Sampling;
+-------------------------------------------------------
+
+thread Init_Samples 
+features
+    OrigSet : requires data access Sampling::Sample_Set ;
+    SampleSet : requires data access Sampling::Sample_Set ;
+end Init_Samples ;
+ 
+thread Collect_Samples 
+features
+    Input_Sample : in event data port Sampling::Sample;
+    SampleSet : requires data access Sampling::Sample_Set ;
+end Collect_Samples ;
+
+thread implementation Collect_Samples.Batch_Update 
+refines type
+    Input_Sample: refined to in event data port Sampling::Sample 
+    { Source_Name => "InSample"; } 
+    ;
+end Collect_Samples.Batch_Update ;
+
+thread Distribute_Samples 
+features
+    SampleSet : requires data access Sampling::Sample_Set ;
+    UpdatedSamples : out event data port Sampling::Sample;
+end Distribute_Samples ;
+
+process Sample_Manager 
+features
+    Input_Sample: in event data port Sampling::Sample;
+    External_Samples: requires data access Sampling::Sample_Set;
+    Result_Sample: out event data port Sampling::Sample;
+end Sample_Manager ;
+
+process implementation Sample_Manager.Slow_Update 
+subcomponents
+    Samples: data Sampling::Sample_Set;
+    Init_Thread : thread Init_Samples;
+    -- the required access is resolved to a subcomponent declaration
+    Collect_Samples: thread Collect_Samples.Batch_Update;
+    Distribute: thread Distribute_Samples ;
+
+connections
+    data access Samples -> Init_Thread.SampleSet;
+    data access External_Samples -> Init_Thread.OrigSet;
+    data access Samples -> Collect_Samples.SampleSet;
+    event data port Input_Sample -> Collect_Samples.Input_Sample;
+    data access Samples -> Distribute.SampleSet;
+    event data port Distribute.UpdatedSamples -> Result_Sample;
+end Sample_Manager.Slow_Update ;
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 4.6 Annex Subclauses and Specifications
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+thread Collect_Samples2
+-- changed name since it was declared before
+   features
+      Input_Sample                 : in  data port Sampling::Sample;
+      Output_Average               : out data port Sampling::Sample;
+ 
+      annex Assert
+      {**
+      pre 0 < Input_Sample.Getvalue() < Maxvalue;
+      post 0 < Output_Sample.Getvalue() < Maxvalue;
+      **};
+end Collect_Samples2;
+ 
+
+ 

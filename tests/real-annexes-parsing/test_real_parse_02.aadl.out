@@ -1,0 +1,284 @@
+
+
+
+
+
+
+
+property set Deployment is
+  Allowed_Transport_APIs : type enumeration (BSD_Sockets, SpaceWire);
+
+  Transport_API : Deployment::Allowed_Transport_APIs
+    applies to (bus);
+
+  Location : aadlstring
+    applies to (processor, device);
+
+  Port_Number : aadlinteger
+    applies to (process, device);
+
+  Process_ID : aadlinteger
+    applies to (process);
+
+  Channel_Address : aadlinteger
+    applies to (process);
+
+  Protocol_Type : type enumeration (iiop, diop);
+
+  Protocol : Deployment::Protocol_Type
+    applies to (system);
+
+  Allowed_Execution_Platform : type enumeration (Native, LEON_RTEMS, LEON_ORK, LEON_GNAT, ERC32_ORK, ARM_DSLINUX, ARM_N770, MARTE_OS);
+
+  Execution_Platform : Deployment::Allowed_Execution_Platform
+    applies to (processor);
+
+  Priority_Type : type aadlinteger 0 .. 255;
+
+  Priority : Deployment::Priority_Type
+    applies to (data, thread);
+
+end Deployment;
+
+package RMAAadl
+public
+  with Deployment;
+
+  subprogram Hello_Spg_1
+  properties
+    source_language => Ada95;
+    source_name => "Hello.Hello_Spg_1";
+
+  end Hello_Spg_1;
+
+  subprogram Hello_Spg_2
+  properties
+    source_language => Ada95;
+    source_name => "Hello.Hello_Spg_2";
+
+  end Hello_Spg_2;
+
+  thread Task
+  end Task;
+
+  thread implementation Task.impl_1
+  calls
+    MyCalls :
+    {P_Spg : subprogram Hello_Spg_1;}
+;
+
+  properties
+    Dispatch_Protocol => periodic;
+    Period => 1000 ms;
+    Compute_Execution_time => 0 ms .. 3 ms;
+    Deadline => 1000 ms;
+    Source_Stack_Size => 13952 Bytes;
+
+  end Task.impl_1;
+
+  thread implementation Task.impl_2
+  calls
+    MyCall :
+    {P_Spg : subprogram Hello_Spg_2;}
+;
+
+  properties
+    Dispatch_Protocol => periodic;
+    Period => 500 ms;
+    Compute_Execution_time => 0 ms .. 3 ms;
+    Deadline => 500 ms;
+    Source_Stack_Size => 13952 Bytes;
+
+  end Task.impl_2;
+
+  processor cpurm
+  properties
+    Deployment::Execution_Platform => ERC32_ORK;
+
+  end cpurm;
+
+  processor implementation cpurm.impl
+  properties
+    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+
+  end cpurm.impl;
+
+  process node_a
+  end node_a;
+
+  process implementation node_a.impl
+  subcomponents
+    Task1 : thread Task.impl_1;
+    Task2 : thread Task.impl_2;
+
+    annex real_specification {**
+
+--  set_declaration_is_bound_to
+
+theorem set_declaration_is_bound_to
+foreach e in processor_set do
+
+proc_set(e) := { x in process_set |
+is_bound_to(x, e)};
+
+check ((cardinal(Proc_Set) = 1));
+end set_declaration_is_bound_to;
+
+
+--  set_declaration_is_connected_to
+
+theorem set_declaration_is_connected_to
+foreach e in process_set do
+
+cnx_set := { x in process_set |
+is_connected_to(x, e)};
+
+check ((cardinal(Cnx_Set) >= 1));
+end set_declaration_is_connected_to;
+
+
+--  set_declaration_is_subcomponent_of
+
+theorem set_declaration_is_subcomponent_of
+foreach e in process_set do
+
+threads := { x in thread_set |
+is_connected_to(x, e)};
+
+check ((cardinal(threads) >= 1));
+end set_declaration_is_subcomponent_of;
+
+
+--  set_declaration_is_accessed_by
+
+theorem set_declaration_is_accessed_by
+foreach e in data_set do
+
+accessors := { t in thread_set |
+is_accessed_by(e, t)};
+
+check ((cardinal(accessors) >= 0));
+end set_declaration_is_accessed_by;
+
+
+--  set_declaration_is_accessing_to
+
+theorem set_declaration_is_accessing_to
+foreach e in data_set do
+
+accessors := { t in thread_set |
+is_accessing_to(t, e)};
+
+check ((cardinal(accessors) >= 0));
+end set_declaration_is_accessing_to;
+
+
+--  set_declaration_is_called_by
+
+theorem set_declaration_is_called_by
+foreach e in subprogram_set do
+
+callers(e) := { t in thread_set |
+is_called_by(e, t)};
+
+check ((cardinal(Callers) >= 0));
+end set_declaration_is_called_by;
+
+
+--  set_declaration_is_connecting_to
+
+theorem set_declaration_is_connecting_to
+foreach e in thread_set do
+
+cnx_threads(e) := { t in thread_set |
+is_connecting_to(e, t)};
+
+check ((cardinal(Cnx_threads) >= 0));
+end set_declaration_is_connecting_to;
+
+
+--  set_declaration_compare_property_value
+
+theorem set_declaration_compare_property_value
+foreach e in processor_set do
+
+pure_subprograms := { p in subprogram_set |
+(property_exists(p, "source_language") and
+(get_property_value(p, "source_language") = "ada95"))};
+
+check ((cardinal(Pure_Subprograms) > 0));
+end set_declaration_compare_property_value;
+
+
+--  set_declaration_set_composition
+
+theorem set_declaration_set_composition
+foreach e in processor_set do
+
+proc_set(e) := { x in process_set |
+is_bound_to(x, e)};
+new_set := { x in data_set |
+is_subcomponent_of(x, Proc_Set)};
+
+check ((cardinal(New_Set) >= 0));
+end set_declaration_set_composition;
+
+
+--  set_declaration_and_operator
+
+theorem set_declaration_and_operator
+foreach e in process_set do
+
+protected_data := { x in data_set |
+(is_subcomponent_of(x, e) and
+(property_exists(x, "concurrency_control_protocol") and
+(get_property_value(x, "concurrency_control_protocol") = "protected_access")))};
+
+check ((cardinal(Protected_Data) >= 0));
+end set_declaration_and_operator;
+
+
+--  set_declaration_or_operator
+
+theorem set_declaration_or_operator
+foreach e in thread_set do
+
+a_set := { x in data_set |
+(is_subcomponent_of(x, e) or
+is_accessed_by(x, e))};
+
+check ((cardinal(a_set) >= 0));
+end set_declaration_or_operator;
+
+
+--  set_declaration_predefined_sets
+
+theorem set_declaration_predefined_sets
+foreach e in processor_set do
+
+var x := 
+return (cardinal(thread_set));
+
+check ((x = 2));
+end set_declaration_predefined_sets;
+
+
+    **};
+  end node_a.impl;
+
+  system rma
+  end rma;
+
+  system implementation rma.ERC32
+  subcomponents
+    node_a : process node_a.impl;
+    cpu_rm : processor cpurm.impl;
+
+  properties
+    Actual_Processor_Binding => (reference ( cpu_rm ))
+      applies to node_a;
+
+  end rma.ERC32;
+
+end RMAAadl;
+

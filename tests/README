@@ -1,0 +1,42 @@
+Search a test
+-------------
+make search key=mykeyword
+example : make search key=aadlv2
+
+=======================================================================
+Perform a test
+--------------
+make test name=testname
+example : make test name=test001
+
+=======================================================================
+Add a test
+----------
+
+1. Create a directory
+
+2. Put your files into this directory
+
+3. You must provide a list of primitives
+	Cmd        : the command to execute
+	Output     : the trace file if there is something after the execution of 
+	             your command
+	Success    : yes or no , depends if the command must run successfully
+	DiffSource : file or directory. If you use an output (with Output
+	             directive) and compare the output of the command with it,
+					 you traditionally use the output of the command (stdout/stderr).
+					 If you want to use another source of diff, you can provide
+					 the file or the directory with DiffSource
+
+	You can provide several commands to execute. Consequently,
+	you must provide the number after the directive. For example :
+	Cmd0: ocarina test.aadl
+	Success0: yes
+	Cmd1: gnatmake test.adb
+	Success1: no
+	Output1: test.adb.trace
+
+	The trace must contain the content of stdout and stderr. Typically,
+	we have it using command args > tracefile 2>&1
+
+4. Add the directory to TestList.mk 

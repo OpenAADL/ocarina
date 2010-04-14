@@ -1,0 +1,146 @@
+-- Test that "in modes" clauses of property associations are contained
+-- within the "in modes" of their component
+
+property set PS is
+  prop: aadlinteger applies to (flow, connections, subprogram, system);
+end PS;
+
+system S
+  features
+    incoming: in data port ;
+    outgoing: out data port ;
+    
+  flows
+    InOut1: flow path incoming -> outgoing;
+    InOut2: flow path incoming -> outgoing;
+    InOut3: flow path incoming -> outgoing;
+    InOut4: flow path incoming -> outgoing;
+    InOut5: flow path incoming -> outgoing;
+
+end S;
+
+system T
+end T;
+
+system implementation S.Impl
+  subcomponents
+     -- Good
+    sub1: system T {
+    	PS::prop => 1 in modes (N);
+    } in modes (M, N);
+    -- Bad {N} not subset of {M}
+    sub2: system T {
+    	PS::prop => 2 in modes (M);
+    } in modes (N);
+    -- Bad {M, O} not subset of {M, N}
+    sub3: system T {
+    	PS::prop => 3 in modes (M, N);
+    } in modes (M, O);
+    -- Good
+    sub4: system T {
+    	PS::prop => 4 in modes (O);
+    };
+    -- Good
+    sub5: system T {
+    	PS::prop => 5;
+    };
+    
+  connections
+    -- Good
+    conn1: data port incoming -> outgoing {
+    	PS::prop => 1 in modes (N);
+    } in modes (M, N);
+    -- Bad {N} not subset of {M}
+    conn2: data port incoming -> outgoing {
+    	PS::prop => 2 in modes (M);
+    } in modes (N);
+    -- Bad {M, O} not subset of {M, N}
+    conn3: data port incoming -> outgoing {
+    	PS::prop => 3 in modes (M, N);
+    } in modes (M, O);
+    -- Good
+    conn4: data port incoming -> outgoing {
+    	PS::prop => 4 in modes (O);
+    };
+    -- Good
+    conn5: data port incoming -> outgoing {
+    	PS::prop => 5;
+    };
+
+  flows
+    -- Good
+    InOut1: flow path incoming  -> outgoing {
+    	PS::prop => 1 in modes (N);
+    } in modes (M, N);
+    -- Bad {N} not subset of {M}
+    InOut2: flow path incoming  -> outgoing {
+    	PS::prop => 2 in modes (M);
+    } in modes (N);
+    -- Bad {M, O} not subset of {M, N}
+    InOut3: flow path incoming  -> outgoing {
+    	PS::prop => 3 in modes (M, N);
+    } in modes (M, O);
+    -- Good
+    InOut4: flow path incoming  -> outgoing {
+    	PS::prop => 4 in modes (O);
+    };
+    -- Good
+    InOut5: flow path incoming  -> outgoing {
+    	PS::prop => 5;
+    };
+    
+  modes
+    M: initial mode;
+    N: mode;
+    O: mode;
+end S.Impl;
+
+subprogram Sub
+end Sub;
+
+
+thread MyThread
+end MyThread;
+
+thread implementation MyThread.Impl
+  calls
+    -- Good
+    seq1: {
+    	call1: subprogram Sub {
+    		PS::prop => 1 in modes (N);
+    	};
+    } in modes (M, N);
+    
+   -- Bad {N} not subset of {M}
+    seq2: {
+    	call2: subprogram Sub {
+    		PS::prop => 2 in modes (M);
+    	};
+    } in modes (N);
+    
+    -- Bad {M, O} not subset of {M, N}
+    seq3: {
+    	call3: subprogram Sub {
+    		PS::prop => 3 in modes (M, N);
+    	};
+    } in modes (M, O);
+    
+    -- Good
+    seq4: {
+    	call4: subprogram Sub {
+    		PS::prop => 4 in modes (O);
+    	};
+    };
+    
+    -- Good
+    seq5: {
+    	call5: subprogram Sub {
+    		PS::prop => 5;
+    	};
+    };
+    
+  modes
+    M: initial mode;
+    N: mode;
+    O: mode;
+end MyThread.Impl;

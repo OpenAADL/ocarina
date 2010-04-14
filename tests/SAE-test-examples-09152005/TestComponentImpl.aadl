@@ -1,0 +1,53 @@
+-- Tests for looking up property values in component implementations.
+-- Meant to be exhaustive for the cases involving component implementations.
+-- Depends upon the lookup for component types working correctly, although
+-- it does not exhaustively test component types.
+
+property set MyProperties
+  is
+    -- Property with a default value
+    prop1: aadlinteger => 0 applies to (data);
+      
+    -- Property with out a default value
+    prop2: aadlstring applies to (data);
+end MyProperties;
+
+
+
+package MyPackage
+public
+  -- Explict value for prop1, but not for prop2
+  -- Should have prop1 => 5, prop2 => not present
+  data RootType
+    properties
+      MyProperties::prop1 => 5;
+  end RootType;
+  
+  -- Test setting property value locally (prop2)
+  -- Test getting property value from type (prop1)
+  -- Should have prop1 => 5, prop2 => "foo"
+  data implementation RootType.Impl1
+    properties
+      MyProperties::prop2 => "foo";
+  end RootType.Impl1;
+  
+  -- Test getting the property value from the super implementation
+  -- Should have prop1 => 5, prop2 => "foo"
+  data implementation RootType.Impl2 extends RootType.Impl1
+  end RootType.Impl2;
+  
+  -- Override the property values from the super type
+  -- Should have prop1 => 10, prop2 => "bar"
+  data ChildType1 extends RootType
+    properties
+      MyProperties::prop1 => 10;
+      MyProperties::prop2 => "bar";
+  end ChildType1;
+  
+  -- Properties in super implementations should have precedence
+  -- over properties in super types.
+  -- Shouldh have prop1 => 10, prop2 => "foo"
+  data implementation ChildType1.Impl3 extends RootType.Impl1
+  end ChildType1.Impl3;
+end MyPackage;
+

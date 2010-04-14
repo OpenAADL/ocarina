@@ -1,0 +1,14 @@
+HELP	print this message
+ANALYZE	analyse model
+INSTANTIATE	instantiate model
+GENERATE	generate code
+LOAD	load and parse file given as argument
+STATUS	print configuration
+FUSION	fusion threads
+MOVE	move a thread
+OPTIMIZE	optimize model, using greedy algorithm
+BRUTE_OPTIMIZE	optimize model, using brute force
+VERSION	print Ocarina version information
+QUIT	quit this shell
+syntax error
+cannot find file test.aadl

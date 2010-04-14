@@ -1,0 +1,3 @@
+MultiRefinement.aadl:11:05: "f" conflicts with declaration at line 9
+MultiRefinement.aadl:18:05: "f" conflicts with declaration at line 16
+Cannot analyze AADL specifications

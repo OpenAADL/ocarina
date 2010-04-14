@@ -1,0 +1,4 @@
+test_package_err.aadl:9:23:  (signed aadlnumber)  and  (property type)  have incompatible unit types
+test_package_err.aadl:24:23:  (signed aadlnumber)  and  (property type)  have incompatible unit types
+test_package_err.aadl:34:23:  (signed aadlnumber)  and  (property type)  have incompatible unit types
+Cannot analyze AADL specifications

@@ -1,0 +1,13 @@
+-- BAD: defnes public section of package Test twice
+
+package Test
+  public 
+    data D
+    end D;
+end Test;
+
+package Test
+  public 
+    data D
+    end D;
+end Test;

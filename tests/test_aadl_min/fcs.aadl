@@ -1,0 +1,559 @@
+-- This is a small yet functional AADL system that models an aircraft's
+-- flight control system. It is intended to be used with the tutorial.
+-- Although it is a simplistic model, yet we have tried to incorporate
+-- almost all constructs of AADL into it. Notable absentees are:
+-- 1) Port groups
+-- 2) Thread groups
+-- 3) Component refinements
+-- 4) Flows
+-- This example is a scaled-down version of fs.aadl, which was the original
+-- model furnished with the tutorial. But according to user feedback, that
+-- was too complex, so we trimmed it down to create this one.
+--
+-- Structure:
+-- The system is composed of two subsystems, Nav_Autopilot and HCI.
+-- Nav_Autopilot includes the GPS, and a computer. One process runs on it.
+-- T_GPS_Reader thread reads the current position from the GPS and passes
+-- it on to HCI and (if autopilot is on) the T_AP_Compute thread. The HCI
+-- subsystem is another computer. It has one process which contains the
+-- T_Screen_Disp and T_Pilot_Input threads. T_Screen_Disp displays the
+-- current aircraft position on a moving-map display and associated other
+-- info related to autopilot. T_Pilot_Input thread takes pilot options
+-- related to autopilot and sends them to Nav_Autopilot system and
+-- T_Screen_Disp thread.
+--
+-- Author: Elie Najm, Irfan Hamid
+-- Email: najm@enst.fr, hamid@enst.fr
+-- Copyright: Ecole Nationale Superieure des Telecommunications
+-------------------------------------------------------------------------------
+
+package Nav_Types
+public
+-- Define floating point and integer types
+-- Note that we just specify the width, not the representation for data types
+-- E.g.: We don't say that we are using the IEEE floating point representation
+data Float
+properties
+	Source_Data_Size => 32 bits;
+end Float;
+
+data Integer
+properties
+	Source_Data_Size => 32 bits;
+end Integer;
+
+subprogram Get_Integer
+features
+	Result : out parameter Integer;
+end Get_Integer;
+
+subprogram Set_Integer
+features
+	Int : in parameter Integer;
+end Set_Integer;
+
+-- The Lat_Long type is a data structure for storing latitudes or longitudes
+data Lat_Long
+features
+	Get_Degs : subprogram Get_Integer;
+	Set_Degs : subprogram Set_Integer;
+	Get_Mins : subprogram Get_Integer;
+	Set_Mins : subprogram Set_Integer;
+	Get_Secs : subprogram Get_Integer;
+	Set_Secs : subprogram Set_Integer;
+end Lat_Long;
+
+data implementation Lat_Long.Generic
+subcomponents
+	Degs : data Integer;
+	Mins : data Integer;
+	Secs : data Integer;
+end Lat_Long.Generic;
+
+-- The Position type specifies a position
+data Position
+end Position;
+
+-- This data type represents the position
+data implementation Position.Simple
+subcomponents
+	Latitude : data Lat_Long.Generic;
+	Longitude : data Lat_Long.Generic;
+end Position.Simple;
+
+-- The data type that represents GPS sensor data
+data implementation Position.GPS extends Position.Simple
+subcomponents
+	Airspeed : data Integer;
+	Altitude : data Integer;
+end Position.GPS;
+
+data NEMA_Stream_Element
+end NEMA_Stream_Element;
+
+data implementation NEMA_Stream_Element.Generic
+properties
+	Source_Data_Size => 8 bits;
+end NEMA_Stream_Element.Generic;
+
+end Nav_Types;
+
+-- We model a simple 32bit data bus that links processors and memories
+bus Memory_Bus
+end Memory_Bus;
+
+-- We model another bus that connects our devices to the processor
+bus Device_Bus
+end Device_Bus;
+
+-- GPS gives data as Position.GPS, error event and requires bus access
+device GPS
+features
+	Position_Output : out data port Nav_Types::NEMA_Stream_Element.Generic;
+	Error_Out : out event port;
+	Connector_Bus : requires bus access Device_Bus;
+end GPS;
+
+-- <Addition>
+device INS
+features
+	Position_Output : out data port Nav_Types::Position.Simple;
+	Connector_Bus : requires bus access Device_Bus;
+end INS;
+-- </Addition>
+
+-- Actuator takes integer input, requires bus access to connect to computer
+device Actuator
+features
+	-- Model the interface for the actuator, it has the following requirements
+	-- 	1) It must accept a Nav_Types::Integer as input
+	-- 	2) It must have access to a Device_Bus (model this as a required access)
+	Input : in data port Nav_Types::Integer;
+	Connector_Bus : requires bus access Device_Bus;
+end Actuator;
+
+-- We model a simple LAN that connects our 2 computers together
+bus LAN_Bus
+end LAN_Bus;
+
+-- We model the RAM to bind our processes and threads
+memory RAM
+features
+	-- The RAM needs access to a bus to connect it to the processor
+	Mem_Bus : requires bus access Memory_Bus;
+end RAM;
+
+-- We specify a 1 byte word size
+memory implementation RAM.Generic
+properties
+	Word_Size => 8 bits;
+end RAM.Generic;
+
+-- We model a processor (the Apple G4)
+processor PowerPC
+features
+	-- Again needs a bus to connect it to the RAM
+	Mem_Bus : requires bus access Memory_Bus;
+	-- Needs access to bus that connects all the devices to the processor
+	Dev_Bus : requires bus access Device_Bus;
+end PowerPC;
+
+-- AADL processor = microprocessor + scheduler
+processor implementation PowerPC.G4
+properties
+	Scheduling_Protocol => (RATE_MONOTONIC_PROTOCOL);
+end PowerPC.G4;
+
+-- This thread gets the data from the GPS
+thread GPS_Sampling_Thread
+features
+	Position_Input : in data port Nav_Types::NEMA_Stream_Element.Generic;
+	Position_Output : out data port Nav_Types::Position.GPS;
+end GPS_Sampling_Thread;
+
+thread implementation GPS_Sampling_Thread.PowerPC_G4
+properties
+	-- The GPS gives us data once every 20 milliseconds
+	Period => 20 ms;
+end GPS_Sampling_Thread.PowerPC_G4;
+
+-- <Addition>
+thread INS_Sampling_Thread
+features
+	Position_Input : in data port Nav_Types::Position.Simple;
+	Position_Output : out data port Nav_Types::Position.Simple;
+end INS_Sampling_Thread;
+
+thread implementation INS_Sampling_Thread.PowerPC_G4
+properties
+	-- The GPS gives us data once every 20 milliseconds
+	Period => 20 ms;
+end INS_Sampling_Thread.PowerPC_G4;
+
+thread Sensor_Fusion_Thread
+features
+	GPS_Position_Input : in data port Nav_Types::Position.GPS;
+	INS_Position_Input : in data port Nav_Types::Position.Simple;
+	Position_Output : out data port Nav_Types::Position.Simple;
+	Altitude_Output : out data port Nav_Types::Integer;
+	Airspeed_Output : out data port Nav_Types::Integer;	
+end Sensor_Fusion_Thread;
+
+thread implementation Sensor_Fusion_Thread.PowerPC_G4
+properties
+	Period => 20 ms;
+end Sensor_Fusion_Thread.PowerPC_G4;
+-- </Addition>
+
+-- Compute the course based on current position and autopilot destination
+thread Autopilot_Compute_Thread
+features
+	-- <Change>
+	Position_Input : in data port Nav_Types::Position.Simple;
+	Altitude_Input : in data port Nav_Types::Integer;
+	Airspeed_Input : in data port Nav_Types::Integer;
+	-- </Change>
+	
+	-- Actuator outputs
+	Delta_Roll_Output : out data port Nav_Types::Integer;
+	Delta_Yaw_Output : out data port Nav_Types::Integer;
+	Delta_Pitch_Output : out data port Nav_Types::Integer;
+	Engine_RPM_Output : out data port Nav_Types::Integer;
+end Autopilot_Compute_Thread;
+
+thread implementation Autopilot_Compute_Thread.PowerPC_G4
+properties
+	-- Actuators can only take commands once every 50 milliseconds
+	Period => 50 ms;
+end Autopilot_Compute_Thread.PowerPC_G4;
+
+-- Wait for pilot input to come from HCI system, modify internal DS
+thread Autopilot_Modify_Parameters_Thread
+features
+	AP_Position_Input : in event data port Nav_Types::Position.GPS;
+end Autopilot_Modify_Parameters_Thread;
+
+thread implementation Autopilot_Modify_Parameters_Thread.PowerPC_G4
+properties
+	-- Event based thread
+	Dispatch_Protocol => Background;
+end Autopilot_Modify_Parameters_Thread.PowerPC_G4;
+
+process Nav_Control_Process
+features
+	GPS_Position_Input : in data port Nav_Types::NEMA_Stream_Element.Generic;
+	GPS_Error : in event port;
+	-- <Addition>
+	INS_Position_Input : in data port Nav_Types::Position.Simple;
+	-- </Addition>
+	
+	-- Ports for connections to the HCI system
+	-- <Change>
+	AP_Position_Input : in event data port Nav_Types::Position.GPS;
+	AP_Toggle : in event port;
+	Position_Output : out data port Nav_Types::Position.Simple;
+	Airspeed_Output : out data port Nav_Types::Integer;
+	Altitude_Output : out data port Nav_Types::Integer;
+	-- </Change>
+	
+	-- Actuator outputs
+	Delta_Roll_Output : out data port Nav_Types::Integer;
+	Delta_Yaw_Output : out data port Nav_Types::Integer;
+	Delta_Pitch_Output : out data port Nav_Types::Integer;
+	Engine_RPM_Output : out data port Nav_Types::Integer;
+end Nav_Control_Process;
+
+process implementation Nav_Control_Process.PowerPC_G4
+subcomponents
+	T_GPS_Reader : thread GPS_Sampling_Thread.PowerPC_G4 in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+	T_AP_Compute : thread Autopilot_Compute_Thread.PowerPC_G4 in modes (GPS_UP_AP_UP);
+	T_AP_Params : thread Autopilot_Modify_Parameters_Thread.PowerPC_G4;
+	-- <Addition>
+	T_Sensor_Fusion : thread Sensor_Fusion_Thread.PowerPC_G4 in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+	T_INS_Reader : thread INS_Sampling_Thread.PowerPC_G4;
+	-- </Addition>
+	
+	-- The internal data that will store the autopilot settings
+	D_AP_Destination : data Nav_Types::Position.Simple;
+	D_AP_Airspeed : data Nav_Types::Integer;
+	D_AP_Altitude : data Nav_Types::Integer;
+	
+connections
+	-- Declare all the connections:
+		-- 1) The delegation connections:
+			-- a) Between the GPS input port to the process and the thread that reads it
+			-- b) Between the GPS input thread and the process output port (for further transport to the HCI system)
+			-- c) Between the autopilot course computation thread and the process ports that will transport the data to the actuators
+			-- d) Between the process and the autopilot parameter thread to pass on the parameters as recieved from the HCI system
+		-- 2) The sibling connections among subcomponents:
+			-- a) Between the GPS reader thread and the autopilot course computation thread
+	-- NOTE: These connections will not be enabled in all modes, you must specify which connection is active in which mode
+	-- <Change>
+	data port GPS_Position_Input -> T_GPS_Reader.Position_Input in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+	data port INS_Position_Input -> T_INS_Reader.Position_Input;
+	data port T_GPS_Reader.Position_Output -> T_Sensor_Fusion.GPS_Position_Input in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+	data port T_INS_Reader.Position_Output -> T_Sensor_Fusion.INS_Position_Input in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+	data port T_INS_Reader.Position_Output -> Position_Output in modes (GPS_DOWN);
+	data port T_Sensor_Fusion.Position_Output -> Position_Output in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+	data port T_Sensor_Fusion.Altitude_Output -> Altitude_Output in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);
+	data port T_Sensor_Fusion.Airspeed_Output -> Airspeed_Output in modes (GPS_UP_AP_UP, GPS_UP_AP_DOWN);	
+	-- </Change>
+	
+	-- Flight control actuators are only connected when (GPS + autopilot) on
+	data port T_AP_Compute.Delta_Roll_Output -> Delta_Roll_Output in modes (GPS_UP_AP_UP);
+	data port T_AP_Compute.Delta_Yaw_Output -> Delta_Yaw_Output in modes (GPS_UP_AP_UP);
+	data port T_AP_Compute.Delta_Pitch_Output -> Delta_Pitch_Output in modes (GPS_UP_AP_UP);
+	data port T_AP_Compute.Engine_RPM_Output -> Engine_RPM_Output in modes (GPS_UP_AP_UP);
+	
+	event data port AP_Position_Input -> T_AP_Params.AP_Position_Input;
+	
+modes
+	-- The system starts with GPS working and autopilot off
+	GPS_UP_AP_DOWN : initial mode;
+	GPS_UP_AP_UP : mode;
+	-- Autopilot cannot work without GPS
+	GPS_DOWN : mode;
+	
+	-- Transitions
+	-- Specify the transitions between modes, use the following syntax:
+	-- <INITIAL_MODE> -[ <EVENT> ]-> <FINAL_MODE>
+	GPS_UP_AP_DOWN -[ AP_Toggle ]-> GPS_UP_AP_UP;
+	GPS_UP_AP_DOWN -[ GPS_Error ]-> GPS_DOWN;
+	GPS_UP_AP_UP -[ GPS_Error ]-> GPS_DOWN;
+end Nav_Control_Process.PowerPC_G4;
+	
+-- Reads GPS data, sends control signals to the control surfaces
+system Nav_Autopilot_System
+features
+	-- For communication with the HCI system
+	AP_Toggle : in event port;
+	AP_Position_Input : in event data port Nav_Types::Position.GPS;
+	-- <Change>
+	Position_Output : out data port Nav_Types::Position.Simple;
+	Airspeed_Output : out data port Nav_Types::Integer;
+	Altitude_Output : out data port Nav_Types::Integer;
+	-- </Change>
+	
+	-- We require access to the LAN
+	Network : requires bus access LAN_Bus;
+end Nav_Autopilot_System;
+
+system implementation Nav_Autopilot_System.PowerPC_G4
+subcomponents
+	-- Declare all needed subcomponents of the system
+	Proc : processor PowerPC.G4;
+	Mem : memory RAM.Generic;
+	Dev_Bus : bus Device_Bus;
+	Mem_Bus : bus Memory_Bus;
+
+	-- We create the process and bind it to the processor and memory
+	-- Binding is inherited property so all contained threads are bound also
+	P_Nav_Con : process Nav_Control_Process.PowerPC_G4;
+
+	-- The GPS device is part of this system
+	GPS_Loc : device GPS;
+	-- <Addition>
+	INS_Loc : device INS;
+			
+	-- Declare that we have four actuators for controlling the aircraft's ailerons, elevators, rudder and engine
+	Engine_RPM_Controller : device Actuator;
+	Aileron_Controller : device Actuator;
+	Rudder_Controller : device Actuator;
+	Elevator_Controller : device Actuator;
+		
+connections
+	-- All required bus access connections must be fulfilled
+	bus access Mem_Bus -> Proc.Mem_Bus;
+	bus access Mem_Bus -> Mem.Mem_Bus;
+	bus access Dev_Bus -> Proc.Dev_Bus;
+	
+	-- Attach the GPS to the Device_Bus
+	bus access Dev_Bus -> GPS_Loc.Connector_Bus;
+	-- <Addition>
+	bus access Dev_Bus -> INS_Loc.Connector_Bus;
+	-- </Addition>
+	
+	-- Here we connect the device bus to the actuators
+	-- As we attached the GPS to the device bus, do the same for the four actuators
+	bus access Dev_Bus -> Engine_RPM_Controller.Connector_Bus;
+	bus access Dev_Bus -> Aileron_Controller.Connector_Bus;
+	bus access Dev_Bus -> Rudder_Controller.Connector_Bus;
+	bus access Dev_Bus -> Elevator_Controller.Connector_Bus;
+	
+	-- Connect ports coming from the other subsystem (HCI)
+	event data port AP_Position_Input -> P_Nav_Con.AP_Position_Input;
+	event port AP_Toggle -> P_Nav_Con.AP_Toggle;
+	
+	-- Connect the position port going to the other subsystem (HCI)
+	data port P_Nav_Con.Position_Output -> Position_Output;
+	-- <Addition>
+	data port P_Nav_Con.Airspeed_Output -> Airspeed_Output;
+	data port P_Nav_Con.Altitude_Output -> Altitude_Output;
+	-- </Addition>
+	
+	-- Connect the GPS device to the software ports
+	data port GPS_Loc.Position_Output -> P_Nav_Con.GPS_Position_Input {Actual_Connection_Binding => reference Dev_Bus;};
+	event port GPS_Loc.Error_Out -> P_Nav_Con.GPS_Error {Actual_Connection_Binding => reference Dev_Bus;};
+	-- <Addition>
+	data port INS_Loc.Position_Output -> P_Nav_Con.INS_Position_Input;
+	-- </Addition>
+	
+	-- Connect the actuator control signals to the actuators
+	-- They are connected over the device bus of the system (use properties as above)
+	data port P_Nav_Con.Delta_Roll_Output -> Aileron_Controller.Input {Allowed_Connection_Binding => reference Dev_Bus;};
+	data port P_Nav_Con.Delta_Pitch_Output -> Elevator_Controller.Input {Allowed_Connection_Binding => reference Dev_Bus;};
+	data port P_Nav_Con.Delta_Yaw_Output -> Rudder_Controller.Input {Allowed_Connection_Binding => reference Dev_Bus;};
+	data port P_Nav_Con.Engine_RPM_Output -> Engine_RPM_Controller.Input {Allowed_Connection_Binding => reference Dev_Bus;};
+	
+properties
+	-- Bind P_Nav_Con to the processor Proc and the memory Mem (using properties of course)
+	Actual_Processor_Binding => reference Proc applies to P_Nav_Con;
+	Actual_Memory_Binding => reference Mem applies to P_Nav_Con;
+end Nav_Autopilot_System.PowerPC_G4;
+
+-- This thread creates and displays the output on the MFD for the pilot
+thread Screen_Display_Thread
+features
+	-- Get current position from the Nav system
+	Current_Position_Input : in data port Nav_Types::Position.Simple;
+	-- <Addition>
+	Current_Airspeed_Input : in data port Nav_Types::Integer;
+	Current_Altitude_Input : in data port Nav_Types::Integer;
+	-- </Altitude>
+	
+	-- Get pilot choices on autopilot settings from the pilot input thread
+	-- Pilot should be able to see current info on autopilot settings
+	AP_Toggle : in event port;
+	AP_Position_Input : in event data port Nav_Types::Position.GPS;
+end Screen_Display_Thread;
+
+thread implementation Screen_Display_Thread.PowerPC_G4
+properties
+	-- Update dislay once every 50ms
+	Period => 50 ms;
+end Screen_Display_Thread.PowerPC_G4;
+
+-- This thread gets the input from the pilot
+thread Pilot_Input_Thread
+features
+	AP_Toggle : out event port;
+	AP_Position_Output : out event data port Nav_Types::Position.GPS;
+end Pilot_Input_Thread;
+
+thread implementation Pilot_Input_Thread.PowerPC_G4
+properties
+	-- Background thread, fires only when the pilot inputs something
+	Dispatch_Protocol => Background;
+end Pilot_Input_Thread.PowerPC_G4;
+
+-- This process contains both the display and the pilot input threads
+process HCI_Process
+features
+	-- Get the nav info from the Nav system
+	Current_Position_Input : in data port Nav_Types::Position.Simple;
+	-- <Addition>
+	Current_Airspeed_Input : in data port Nav_Types::Integer;
+	Current_Altitude_Input : in data port Nav_Types::Integer;
+	-- </Altitude>
+	
+	-- Send pilot settings for autopilot to the Nav system
+	AP_Toggle : out event port;
+	AP_Position_Output : out event data port Nav_Types::Position.GPS;
+end HCI_Process;
+
+process implementation HCI_Process.PowerPC_G4
+subcomponents
+	T_Screen_Disp : thread Screen_Display_Thread.PowerPC_G4;
+	T_Pilot_Input : thread Pilot_Input_Thread.PowerPC_G4;
+	
+connections
+	-- Send out AP data to the process so it can be sent to the Nav system
+	event port T_Pilot_Input.AP_Toggle -> AP_Toggle;
+	event data port T_Pilot_Input.AP_Position_Output -> AP_Position_Output;
+
+	-- Send all AP data to Screen_Display_Thread as well for display on MFD
+	event port T_Pilot_Input.AP_Toggle -> T_Screen_Disp.AP_Toggle;
+	event data port T_Pilot_Input.AP_Position_Output -> T_Screen_Disp.AP_Position_Input;
+	
+	-- Get nav data from HCI systemand send to Screen_Display_Thread
+	data port Current_Position_Input -> T_Screen_Disp.Current_Position_Input;
+	-- <Addition>
+	data port Current_Airspeed_Input -> T_Screen_Disp.Current_Airspeed_Input;
+	data port Current_Altitude_Input -> T_Screen_Disp.Current_Altitude_Input;
+	-- </Addition>
+end HCI_Process.PowerPC_G4;
+
+-- This is the Human Computer Interface system
+system HCI_System
+features
+	-- Send pilot choices on autopilot settings to the Nav system
+	AP_Toggle : out event port;
+	AP_Position_Output : out event data port Nav_Types::Position.GPS;
+	
+	-- Get navigation data from the Nav system for displaying
+	Current_Position_Input : in data port Nav_Types::Position.Simple;
+	-- <Addition>
+	Current_Airspeed_Input : in data port Nav_Types::Integer;
+	Current_Altitude_Input : in data port Nav_Types::Integer;
+	-- </Addition>
+	
+	-- We require access to the LAN
+	Network : requires bus access LAN_Bus;
+end HCI_System;
+
+system implementation HCI_System.PowerPC_G4
+subcomponents
+	Proc : processor PowerPC.G4;
+	Mem : memory RAM.Generic;
+	Dev_Bus : bus Device_Bus;
+	Mem_Bus : bus Memory_Bus;
+	-- Binding is inherited, so all contained threads bound also
+	P_HCI : process HCI_Process.PowerPC_G4;
+	
+connections
+	bus access Mem_Bus -> Proc.Mem_Bus;
+	bus access Dev_Bus -> Proc.Dev_Bus;
+	bus access Mem_Bus -> Mem.Mem_Bus;
+	
+	-- Connect the autopilot settings to the system outputs
+	event port P_HCI.AP_Toggle -> AP_Toggle;
+	event data port P_HCI.AP_Position_Output -> AP_Position_Output;
+	
+	-- Connect the system inputs to the process inputs for nav data
+	data port Current_Position_Input -> P_HCI.Current_Position_Input;
+	-- <Addition>
+	data port Current_Airspeed_Input -> P_HCI.Current_Airspeed_Input;
+	data port Current_Altitude_Input -> P_HCI.Current_Altitude_Input;
+	-- </Addition>
+
+properties
+	Actual_Processor_Binding => reference Proc applies to P_HCI;
+	Actual_Memory_Binding => reference Mem applies to P_HCI;
+end HCI_System.PowerPC_G4;
+
+-- The complete flight control system, this is what we would instantiate
+system Flight_System
+end Flight_System;
+
+system implementation Flight_System.Generic
+subcomponents
+	S_HCI : system HCI_System.PowerPC_G4;
+	S_NAP : system Nav_Autopilot_System.PowerPC_G4;
+	LAN : bus LAN_Bus;
+	
+connections
+	-- Connect the two subsystems (S_HCI and S_NAP) together using the LAN
+	bus access LAN -> S_HCI.Network;
+	bus access LAN -> S_NAP.Network;
+		
+	-- Autopilot configuration data travelling over the lan from HCI to Nav
+	event port S_HCI.AP_Toggle -> S_NAP.AP_Toggle {Actual_Connection_Binding => reference LAN;};
+	event data port S_HCI.AP_Position_Output -> S_NAP.AP_Position_Input {Actual_Connection_Binding => reference LAN;};
+	
+	-- Navigation data travelling over the lan from Nav to HCI
+	data port S_NAP.Position_Output -> S_HCI.Current_Position_Input {Actual_Connection_Binding => reference LAN;};
+	-- <Addition>
+	data port S_NAP.Airspeed_Output -> S_HCI.Current_Airspeed_Input {Actual_Connection_Binding => reference LAN;};
+	data port S_NAP.Altitude_Output -> S_HCI.Current_Altitude_Input {Actual_Connection_Binding => reference LAN;};
+	-- </Addition>
+end Flight_System.Generic;

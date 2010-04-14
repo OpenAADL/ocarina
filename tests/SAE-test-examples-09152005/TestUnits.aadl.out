@@ -1,0 +1,8 @@
+TestUnits.aadl:24:39:  (signed aadlnumber)  is not a unit literal but  (real type)  is a unit type
+TestUnits.aadl:24:46:  (signed aadlnumber)  is not a unit literal but  (real type)  is a unit type
+TestUnits.aadl:27:46:  (signed aadlnumber)  is not a unit literal but  (integer type)  is a unit type
+TestUnits.aadl:27:51:  (signed aadlnumber)  is not a unit literal but  (integer type)  is a unit type
+TestUnits.aadl:34:29:  (signed aadlnumber)  is not a unit literal but  (property type)  is a unit type
+TestUnits.aadl:34:34:  (signed aadlnumber)  is not a unit literal but  (property type)  is a unit type
+TestUnits.aadl:36:49:  (signed aadlnumber)  is not a unit literal but  (property type)  is a unit type
+Cannot analyze AADL specifications

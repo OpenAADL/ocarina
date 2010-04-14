@@ -1,0 +1,15 @@
+REAL examples
+-------------
+
+This directory contains examples of models that can be analysed using
+the REAL annex.
+
+* lib: set of theorems from REAL User's Guide
+* resources: test for different resources accounting procedures
+* safety
+* security: test for some security rules, like BIBA, Bell Lapadula
+
+To test models, simply run
+
+    ocarina -f -aadlv2 -g real_theorem -real_lib lib.real *.aadl
+

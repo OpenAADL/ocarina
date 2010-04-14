@@ -1,0 +1,2 @@
+test_flow_refinement_err.aadl:31:03: outSrc2 (identifier) does not refines anything
+Cannot analyze AADL specifications

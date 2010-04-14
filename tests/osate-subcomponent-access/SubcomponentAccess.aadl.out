@@ -1,0 +1,2 @@
+SubcomponentAccess.aadl:7:05: shared (subcomponent access) points to D.I (component implementation), which is not of an adequate kind
+Cannot analyze AADL specifications

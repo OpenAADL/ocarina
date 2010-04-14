@@ -1,0 +1,7 @@
+example_017.aadl:13:16:  (property term) does not point to anything or to something unreachable
+example_017.aadl:13:23:  (signed aadlnumber)  is a unit literal but  (property type)  is not a unit type
+example_017.aadl:13:32:  (signed aadlnumber)  is a unit literal but  (property type)  is not a unit type
+example_017.aadl:15:17:  (property term) does not point to anything or to something unreachable
+example_017.aadl:15:29:  (signed aadlnumber)  is a unit literal but  (property type)  is not a unit type
+example_017.aadl:15:38:  (signed aadlnumber)  is a unit literal but  (property type)  is not a unit type
+Cannot analyze AADL specifications

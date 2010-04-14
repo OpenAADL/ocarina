@@ -1,0 +1,9 @@
+package types
+public
+   with Data_Model;
+
+   data integer
+   properties
+      Data_Model::Data_Representation => integer;
+   end integer;
+end types;

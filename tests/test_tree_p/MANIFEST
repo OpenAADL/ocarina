@@ -1,0 +1,4 @@
+OCARINA_FLAGS=-d
+Cmd0: ocarina -d test.aadl
+Output0: test.aadl.out
+Success0: yes

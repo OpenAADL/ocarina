@@ -1,0 +1,54 @@
+--  Property set containing the configuration properties of Ocarina.
+--  This property set is not intended to be used by the AADL model of
+--  an application, but, by the AADL model of its scenario.
+
+property set Ocarina_Config is
+
+  Generator_Type : type enumeration
+   (PolyORB_QoS_Ada,
+    PolyORB_HI_Ada,
+    PolyORB_HI_C,
+    PolyORB_HI_RTSJ,
+    POK_C,
+    Petri_Nets);
+
+  Generator : Ocarina_Config::Generator_Type applies to (system);
+  --  The code generator that will be used for the current application
+
+  AADL_Files : list of aadlstring applies to (system);
+  --  List of the AADL source files used by the current application
+
+  Data_Model          : constant aadlstring => "Data_Model";
+  Deployment          : constant aadlstring => "Deployment";
+  Cheddar_Properties  : constant aadlstring => "Cheddar_Properties";
+  POK_Properties      : constant aadlstring => "pok_properties";
+  ARINC653_Properties : constant aadlstring => "arinc653_properties";
+  ASSERT_Properties   : constant aadlstring => "ASSERT_Properties";
+  --  List of the predefined NON STANDARD property sets that can be used
+  --  by an AADL application.
+
+  Needed_Property_Sets : list of aadlstring applies to (system); 
+  --  The actual property sets needed by one particular application.
+  --  This avoid to parse systematically all the predefined non
+  --  standard property sets. The user can also give the name of a
+  --  custom property set (which may be used by many AADL models),
+  --  provided that the value of the string matches exactly the base
+  --  name (without the .aadl suffix and in a case-sensitive manner)
+  --  the user property sey file name and provided that this property
+  --  set file is located in the same directory as the Ocarina
+  --  non-standard property sets.
+
+  Root_System_Name : aadlstring applies to (system);
+  --  If present, indicates the name of the root of the instance tree
+
+  AADL_Version_Type : type enumeration (AADLv1, AADLv2);
+
+  AADL_Version : Ocarina_Config::AADL_Version_Type applies to (system);
+  --  AADL version of the model
+
+  Referencial_Files : list of aadlstring applies to (system);
+  --  The list of referencial files used to compute the regression test
+
+  Timeout_Property : Time applies to (system);
+  --  The timeout used to stop an execution
+end Ocarina_Config;

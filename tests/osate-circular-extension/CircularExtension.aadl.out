@@ -1,0 +1,9 @@
+CircularExtension.aadl:2:01: component type creates a circular extension 
+CircularExtension.aadl:2:01: component type creates a circular extension 
+CircularExtension.aadl:10:01: component type creates a circular extension 
+CircularExtension.aadl:14:01: component type creates a circular extension 
+CircularExtension.aadl:21:01: component implementation creates a circular extension 
+CircularExtension.aadl:25:01: component implementation creates a circular extension 
+CircularExtension.aadl:34:01: feature group type creates a circular extension 
+CircularExtension.aadl:34:01: feature group type creates a circular extension 
+Cannot analyze AADL specifications

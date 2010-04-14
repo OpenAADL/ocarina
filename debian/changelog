@@ -1,0 +1,12 @@
+ocarina (4165-1) unstable; urgency=low
+
+  * Fix error when building the package
+
+ -- Julien Delange <julien.delange@telecom-paristech.fr>  Mon, 10 Mar 2008 13:01:28 +0100
+
+ocarina (4155-1) unstable; urgency=low
+
+  * Initial release 
+
+ -- Julien Delange <julien.delange@telecom-paristech.fr>  Mon, 03 Mar 2008 13:01:28 +0100
+

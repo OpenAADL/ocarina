@@ -1,0 +1,4 @@
+AADL_VERSION=-aadlv2
+Cmd0: ocarina -aadlv2 test.aadl
+Success0: no
+Keywords: aadlv2

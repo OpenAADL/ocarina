@@ -1,0 +1,16 @@
+package subprograms
+public
+   with types;
+
+   subprogram receive_value
+   features
+      incoming : in parameter types::integer;
+   end receive_value;
+
+
+   subprogram send_value
+   features
+      outgoing : out parameter types::integer;
+   end send_value;
+
+end subprograms;

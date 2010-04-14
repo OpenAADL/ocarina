@@ -1,0 +1,30 @@
+Cannot find language error_model
+test.aadl:21:18: warning: negative exponent in integer literal
+
+
+
+
+
+
+
+package Annex_Parsing
+public
+  data Sample
+    annex Error_Model none
+      in modes (mode1, mode2);
+  end Sample;
+
+  thread Collect_Samples
+  features
+    Input_Sample : in data port Sample;
+    Output_Average : out data port Sample;
+
+    annex Error_Model {**
+
+   Model => Transient_Fault_Model;
+
+   Occurrence => 10e-4 poisson applies to Transient_Fault;
+       **};
+  end Collect_Samples;
+
+end Annex_Parsing;

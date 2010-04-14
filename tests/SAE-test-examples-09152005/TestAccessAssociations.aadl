@@ -1,0 +1,21 @@
+property set PS is
+  accessProp: access aadlinteger applies to (data);
+  dataProp: aadlinteger applies to (data);
+end PS;
+
+package Test
+  public
+    data D
+      features
+        f1: requires data access {
+          PS::accessProp => access 0;
+          -- Doubly wrong: must have access modifier, prop doesn't apply
+          PS::dataProp => 0;
+        };
+    
+      properties
+        PS::dataProp => 1;
+        -- Doubly wrong: shouldn't have access modifier, prop doesn't apply
+        PS::accessProp => access 1;
+    end D;
+end Test;

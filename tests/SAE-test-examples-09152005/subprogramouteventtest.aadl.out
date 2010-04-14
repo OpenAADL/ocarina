@@ -1,0 +1,2 @@
+subprogramouteventtest.aadl:11:09: NoStart (component type) cannot have nogoodStart (port spec)  as a feature
+Cannot analyze AADL specifications

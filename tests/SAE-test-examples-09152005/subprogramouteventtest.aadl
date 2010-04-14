@@ -1,0 +1,12 @@
+-- subprograms should be able to have out event ports
+-- this should be correct
+subprogram Start
+    features
+        endStart : out event port;
+end Start;
+
+-- in event ports should not be allowed
+subprogram NoStart
+    features
+        nogoodStart : in event port;
+end NoStart;

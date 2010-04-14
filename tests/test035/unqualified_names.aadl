@@ -1,0 +1,11 @@
+property set Bug is
+
+  Type_1 : type enumeration (e1, e2, e3);
+
+  Property_1 : Type_1 applies to (data);
+  --  Non qualified property names in the same property 
+  --  set must be supported
+
+  Property_2 : Bug::Type_1 applies to (data);
+
+end Bug;

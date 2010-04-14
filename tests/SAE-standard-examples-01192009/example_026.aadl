@@ -1,0 +1,51 @@
+-- test 10.2 Flows Implementations draft-01192009
+
+-- add for test
+package Test
+public
+
+process foo
+end foo;
+
+thread bar end bar;
+thread baz end baz;
+
+thread implementation bar.basic
+end bar.basic;
+
+thread implementation baz.basic
+end baz.basic;
+-- end add
+
+-- This is an AADL fragement
+-- process foo is declared in the previous section
+process implementation foo.basic
+subcomponents
+A: thread bar.basic;
+-- bar has a flow path fs1 from port p1 to p2
+-- bar has a flow source fs2 to p3
+B: thread baz.basic;
+-- baz has a flow path fs1 from port p1 to p2
+-- baz has a flow sink fsink in port reset
+connections
+conn1: port signal -> A.p1;
+conn2: port A.p2 -> B.p1;
+conn3: port B.p2 -> result2;
+conn4: port A.p2 -> result1;
+conn6: port A.p3 -> status;
+connToThread: port initcmd -> B.reset;
+flows
+Flow1: flow path
+signal -> conn1 -> A.fs1 -> conn4 -> result1;
+Flow2: flow path
+signal -> conn1 -> A.fs1 -> conn2 ->
+B.fs1 -> conn3 -> result2;
+Flow3: flow sink initcmd -> connToThread -> C.fsink;
+-- a flow source may start in a subcomponent,
+-- i.e., the first named element is a flow source
+Flow4: flow source A.fs2 -> conn6 -> status;
+end foo.basic;
+
+-- add for test
+end Test;
+-- end add

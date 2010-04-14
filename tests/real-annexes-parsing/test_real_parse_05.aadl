@@ -1,0 +1,198 @@
+package RMAAadl
+public
+  with Deployment;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Hello_Spg_1
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_1";
+end Hello_Spg_1;
+
+subprogram Hello_Spg_2
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_2";
+end Hello_Spg_2;
+
+-------------
+-- Threads --
+-------------
+
+thread Task
+end Task;
+
+thread implementation Task.impl_1
+calls
+   MyCalls : {
+      P_Spg : subprogram Hello_Spg_1;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 1000ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 1000 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_1;
+
+thread implementation Task.impl_2
+calls
+   MyCall : {
+     P_Spg : subprogram Hello_Spg_2;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 500ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 500 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_2;
+
+---------------
+-- Processor --
+---------------
+
+processor cpurm
+properties
+  Deployment::Execution_Platform => ERC32_ORK;
+end cpurm;
+
+processor implementation cpurm.impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end cpurm.impl;
+
+---------------
+-- Processes --
+---------------
+
+process node_a
+end node_a;
+
+process implementation node_a.impl
+subcomponents
+   Task1 : thread Task.impl_1;
+   Task2 : thread Task.impl_2;
+
+annex real_specification {**
+
+--  test variable definition with literal
+
+theorem variables_basis
+
+foreach e in Processor_Set do
+  
+  var bla := 2;
+
+  check (bla = 2);
+
+end;
+
+--  test variable definition with non-parenthezed expression
+
+theorem variables_with_expression
+
+foreach e in Processor_Set do
+  
+  var bla := 2 + 1;
+
+  check (bla = 3);
+
+end;
+
+--  test variable definition with parenthezed expression
+--  and dependant variables definitions
+
+theorem variables_dependant
+
+foreach e in Processor_Set do
+  
+  var x1 := 1;
+
+  var x2 := (2 + x1);
+
+  check (x2 = 3);
+
+end;
+
+--  test variable definition with parenthezed expression
+--  with references to user-defined sets
+
+theorem variables_set_dependants
+
+foreach e in Processor_Set do
+ 
+  a_set := {x in Process_Set | Is_Bound_To (x, e)};
+
+  var x2 := (2 + Cardinal (a_set));
+
+  check (x2 = 3);
+end;
+
+
+--  Tests the iterative expression with expressions and subprograms
+
+theorem variables_iterative_expressions
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  Threads := {x in Thread_Set | Is_Subcomponent_Of (x, Proc_Set)};
+
+  var y := Max (Expr (Threads, t,
+                   (2 * (First
+                      (Get_Property_Value  
+                        (t, "Compute_Execution_Time"))))));
+  check (y = 3.0);
+end;
+
+--  Tests the imbricated iterative expressions
+
+theorem variables_imbricated_iterative_expressions
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  Threads := {x in Thread_Set | Is_Subcomponent_Of (x, Proc_Set)};
+
+  --  result should be 6 or 8
+
+  var y := Max (Expr (Threads, t,
+                   ((2 * Max (Expr (proc_set, p,
+                        (Last
+                          (Get_Property_Value  
+                            (p, "Load_Time"))))))
+                      + Last 
+                         (Get_Property_Value  
+                           (t, "Compute_Execution_Time")))));
+
+  check ((y = 6.0) or (y = 8.0));
+end;
+
+
+
+**};
+
+end node_a.impl;
+
+------------
+-- System --
+------------
+
+system rma 
+end rma;
+
+system implementation rma.ERC32
+subcomponents
+   node_a : process node_a.impl;
+   cpu_rm : processor cpurm.impl;
+properties
+   Actual_Processor_Binding => (reference (cpu_rm)) applies to node_a;
+end rma.ERC32;
+
+end RMAAadl;

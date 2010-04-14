@@ -1,0 +1,258 @@
+--******************************************************
+--  AADL Standard AADL_V2.0
+--   Appendix A (normative)
+--   Predeclared Property Sets
+--   Deployment_Properties
+--   07Juin08
+--******************************************************
+
+property set Deployment_Properties is
+  ----------------------------------------------------
+  ----------------------------------------------------
+
+  Device_Driver: classifier (abstract) applies to (device);
+
+  Allowed_Processor_Binding_Class:
+         inherit list of classifier (processor, 
+                                     virtual processor, 
+                                     system)
+  applies to (thread, 
+              thread group, 
+              process, 
+              system, 
+              virtual processor,
+              device);
+  ----------------------------------------------------
+
+  Allowed_Processor_Binding: 
+         inherit list of reference (processor, 
+                                    virtual processor,
+                                    system)
+  applies to (thread, 
+              thread group, 
+              process, 
+              system, 
+              virtual processor,
+              device);
+  ----------------------------------------------------
+
+  Actual_Processor_Binding: 
+        inherit list of reference (processor, 
+                                   virtual processor)
+  applies to (thread, 
+              thread group, 
+              process, 
+              system, 
+              virtual processor,
+              device);
+  ----------------------------------------------------
+
+  Allowed_Memory_Binding_Class:
+         inherit list of classifier (memory, 
+                                     system,
+                                     processor)
+  applies to (thread, 
+              thread group, 
+              process, 
+              system, 
+              device, 
+              data, 
+              data port,
+              event data port,
+              subprogram,
+              processor);
+  ----------------------------------------------------
+
+  Allowed_Memory_Binding: 
+         inherit list of reference (memory, 
+                                    system,
+                                    processor)
+  applies to (thread, 
+              thread group, 
+              process, 
+              system, 
+              device, 
+              data, 
+              data port,
+              event data port,
+              subprogram,
+              processor);
+  ----------------------------------------------------
+
+  Actual_Memory_Binding: 
+        inherit list of reference (memory)
+  applies to (thread, 
+              thread group,
+              process,
+              system,
+              processor,
+              device,
+              data,
+              data port,
+              event data port, 
+              feature group, 
+              subprogram);
+  ----------------------------------------------------
+
+  Allowed_Connection_Binding_Class:
+         inherit list of classifier(processor, 
+                                    virtual processor, 
+                                    bus, 
+                                    virtual bus,
+                                    device, 
+                                    memory)
+  applies to (port, 
+              connection, 
+              thread, 
+              thread group, 
+              process, 
+              system,
+              virtual bus);
+  ----------------------------------------------------
+
+  Allowed_Connection_Binding: 
+         inherit list of reference (processor, 
+                                    virtual processor, 
+                                    bus, 
+                                    virtual bus, 
+                                    device, 
+                                    memory)
+  applies to (port, 
+              connection, 
+              thread group, 
+              process, 
+              system, 
+              virtual bus);
+  ----------------------------------------------------
+
+  Actual_Connection_Binding: 
+        inherit list of reference (processor, 
+                                   virtual processor,
+                                   bus,
+                                   virtual bus,
+                                   device,
+                                   memory)
+  applies to (port,
+              connection,
+              thread group,
+              process,
+              system,
+              virtual bus);
+  ----------------------------------------------------
+
+  Allowed_Subprogram_Call: 
+         list of reference (subprogram)
+  applies to (subprogram);
+  ----------------------------------------------------
+
+  Actual_Subprogram_Call: reference (subprogram)
+  applies to (subprogram);
+  ----------------------------------------------------
+
+  Allowed_Subprogram_Call_Binding:
+         inherit list of reference (bus, 
+                                    processor,
+                                    device)
+  applies to (subprogram,
+              thread,
+              thread group,
+              process,
+              system);
+  ----------------------------------------------------
+
+  Actual_Subprogram_Call_Binding: 
+        inherit list of reference (bus, 
+                                   processor,
+                                   memory, 
+                                   device)
+  applies to (subprogram);
+  ----------------------------------------------------
+
+  Provided_Virtual_Bus_Class : 
+          inherit list of classifier (virtual bus)
+  applies to (bus, 
+              virtual bus, 
+              processor, 
+              virtual processor, 
+              device,
+              system);
+  ----------------------------------------------------
+
+  Provided_Connection_Quality_Of_Service : 
+          inherit list of Supported_Connection_QoS
+  applies to (bus, 
+              virtual bus, 
+              processor,
+              virtual processor,
+              system);
+  ----------------------------------------------------
+
+  Required_Connection_Quality_Of_Service : 
+          inherit list of Supported_Connection_QoS
+  applies to (port,
+              connection,
+              virtual bus);
+  ----------------------------------------------------
+
+  Allowed_Connection_Type: 
+         list of enumeration (Sampled_Data_Connection,
+                              Immediate_Data_Connection,
+                              Delayed_Data_Connection, 
+                              Event_Data_Connection,
+                              Event_Connection,
+                              Data_Access_Connection,
+                              Remote_Subprogram_Call)
+  applies to (bus, device);
+  ----------------------------------------------------
+
+  Allowed_Dispatch_Protocol: 
+         list of Supported_Dispatch_Protocols
+  applies to (processor);
+  ----------------------------------------------------
+
+  Allowed_Period: list of Time_Range
+  applies to (processor, system);
+  ----------------------------------------------------
+
+  Not_Collocated: 
+     list of reference (data, 
+                        thread, 
+                        process, 
+                        system, 
+                        connection)
+  applies to (data, 
+              thread, 
+              process, 
+              system, 
+              connection);
+  ----------------------------------------------------
+
+  Allowed_Physical_Access: 
+         list of classifier ( device, 
+                              processor, 
+                              memory, 
+                              bus)
+  applies to (bus);
+  ----------------------------------------------------
+
+  Memory_Protocol: enumeration (read_only, 
+                                write_only, 
+                                read_write) 
+  => read_write
+  applies to (memory);
+  ----------------------------------------------------
+
+  Priority_Map: list of Priority_Mapping
+  applies to (processor);
+  ----------------------------------------------------
+
+  Priority_Mapping: type record (
+                          Aadl_Priority: aadlinteger;
+                          RTOS_Priority: aadlinteger;);
+  ----------------------------------------------------
+
+  Priority_Range: range of aadlinteger
+  applies to (processor);
+  ----------------------------------------------------
+  ----------------------------------------------------
+end Deployment_Properties;

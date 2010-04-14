@@ -1,0 +1,25 @@
+data D end D;
+data E end E;
+
+port group pg
+  features
+    a: in event port ;
+    b: out event port ;
+    c: in data port D ;
+    d: out data port E ;
+    e: in event data port D ;
+    f: out event data port E ;
+end pg;
+
+port group pg2
+  features
+    z: out event port ;
+    y: in event port ;
+    x: out data port D ;
+    w: in data port E ;
+    v: out event data port D ;
+    u: out event data port E ;
+    -- bad: extra stuff here
+    extra: in data port ;
+  inverse of pg
+end pg2;

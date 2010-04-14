@@ -1,0 +1,10 @@
+How to install Textmate plugin for an AADL support ?
+----------------------------------------------------
+
+Copy AADL.tmbundle directory into your $HOME/Library/Application Support/TextMate/Bundles/.
+The following command will do that :
+mkdir -p $HOME/Library/Application Support/TextMate/Bundles/ && cp -r AADL.tmbundle
+$HOME/Library/Application Support/TextMate/Bundles/
+
+If you have an access to ocarina's repository, you can also use 
+the installation script located in this directory.

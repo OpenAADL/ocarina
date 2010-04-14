@@ -1,0 +1,7 @@
+theorem Thread_Range_Set
+
+foreach e in Thread_Set do
+
+   --  Here is theorem code
+
+end Thread_Range_Set;

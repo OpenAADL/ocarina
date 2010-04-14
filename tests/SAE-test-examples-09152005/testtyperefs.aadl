@@ -1,0 +1,18 @@
+-- everything should pass
+-- this example was used to test that the name resolver resolves names correctly
+-- the validation is to check that the references are filled in correctly in the Aadl Object model
+
+-- handle the extends reference
+
+thread dt
+features 
+p1: in event port;
+p2: out event port;
+end dt;
+
+thread dte extends dt
+features
+p3: in out event port;
+end dte;
+
+

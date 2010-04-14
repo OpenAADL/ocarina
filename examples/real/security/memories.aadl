@@ -1,0 +1,21 @@
+package memories
+public
+
+   memory memory_segment
+   end memory_segment;
+
+   memory implementation memory_segment.i
+   end memory_segment.i;
+
+   memory main_memory
+   end main_memory;
+
+   memory implementation main_memory.i
+   subcomponents
+      topsecret       : memory memory_segment.i;
+      secret          : memory memory_segment.i;
+      unclassified    : memory memory_segment.i;
+      driver          : memory memory_segment.i;
+   end main_memory.i;
+
+end memories;

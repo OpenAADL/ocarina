@@ -1,0 +1,172 @@
+package t11
+public
+
+abstract abstract_t11
+end abstract_t11;
+
+abstract abstract_e_t11 extends abstract_t11
+end abstract_e_t11;
+
+abstract implementation abstract_t11.i
+end abstract_t11.i;
+
+abstract implementation abstract_e_t11.i extends abstract_t11.i
+end abstract_e_t11.i;
+
+bus bus_t11
+end bus_t11;
+
+bus bus_e_t11 extends bus_t11
+end bus_e_t11;
+
+bus implementation  bus_t11.i
+end bus_t11.i;
+
+bus implementation  bus_e_t11.i extends bus_t11.i
+end bus_e_t11.i;
+
+data data_t11
+end data_t11;
+
+data data_e_t11 extends data_t11
+end data_e_t11;
+
+data implementation data_t11.i
+end data_t11.i;
+
+data implementation data_e_t11.i extends data_t11.i
+end data_e_t11.i;
+
+device device_t11
+end device_t11;
+
+device device_e_t11 extends device_t11
+end device_e_t11;
+
+device implementation device_t11.i
+end device_t11.i;
+
+device implementation device_e_t11.i extends device_t11.i
+end device_e_t11.i;
+
+memory memory_t11
+end memory_t11;
+
+memory memory_e_t11 extends memory_t11
+end memory_e_t11;
+
+memory implementation memory_t11.i
+end memory_t11.i;
+
+memory implementation memory_e_t11.i extends memory_t11.i
+end memory_e_t11.i;
+
+process process_t11
+end process_t11;
+
+process process_e_t11 extends process_t11
+end process_e_t11;
+
+process implementation process_t11.i
+end process_t11.i;
+
+process implementation process_e_t11.i extends process_t11.i
+end process_e_t11.i;
+
+processor processor_t11
+end processor_t11;
+
+processor processor_e_t11 extends processor_t11
+end processor_e_t11;
+
+processor implementation processor_t11.i
+end processor_t11.i;
+
+processor implementation processor_e_t11.i extends processor_t11.i
+end processor_e_t11.i;
+
+subprogram subprogram_t11
+end subprogram_t11;
+
+subprogram subprogram_e_t11 extends subprogram_t11
+end subprogram_e_t11;
+
+subprogram implementation subprogram_t11.i
+end subprogram_t11.i;
+
+subprogram implementation subprogram_e_t11.i extends subprogram_t11.i
+end subprogram_e_t11.i;
+
+subprogram group subprogramgroup_t11
+end subprogramgroup_t11;
+
+subprogram group subprogramgroup_e_t11 extends subprogramgroup_t11
+end subprogramgroup_e_t11;
+
+subprogram group implementation subprogramgroup_t11.i
+end subprogramgroup_t11.i;
+
+subprogram group implementation subprogramgroup_e_t11.i extends subprogramgroup_t11.i
+end subprogramgroup_e_t11.i;
+
+system system_t11
+end system_t11;
+
+system system_e_t11 extends system_t11
+end system_e_t11;
+
+system implementation system_t11.i
+end system_t11.i;
+
+system implementation system_e_t11.i extends system_t11.i
+end system_e_t11.i;
+
+thread thread_t11
+end thread_t11;
+
+thread thread_e_t11 extends thread_t11
+end thread_e_t11;
+
+thread implementation thread_t11.i
+end thread_t11.i;
+
+thread implementation thread_e_t11.i extends thread_t11.i
+end thread_e_t11.i;
+
+thread group threadgroup_t11
+end threadgroup_t11;
+
+thread group threadgroup_e_t11 extends threadgroup_t11
+end threadgroup_e_t11;
+
+thread group implementation threadgroup_t11.i
+end threadgroup_t11.i;
+
+thread group implementation threadgroup_e_t11.i extends threadgroup_t11.i
+end threadgroup_e_t11.i;
+
+virtual bus virtualbus_t11
+end virtualbus_t11;
+
+virtual bus virtualbus_e_t11 extends virtualbus_t11
+end virtualbus_e_t11;
+
+virtual bus implementation virtualbus_t11.i
+end virtualbus_t11.i;
+
+virtual bus implementation virtualbus_e_t11.i extends virtualbus_t11.i
+end virtualbus_e_t11.i;
+
+virtual processor virtualprocessor_t11
+end virtualprocessor_t11;
+
+virtual processor virtualprocessor_e_t11 extends virtualprocessor_t11
+end virtualprocessor_e_t11;
+
+virtual processor implementation virtualprocessor_t11.i
+end virtualprocessor_t11.i;
+
+virtual processor implementation virtualprocessor_e_t11.i extends virtualprocessor_t11.i
+end virtualprocessor_e_t11.i;
+
+end t11;

@@ -1,0 +1,3 @@
+TestInModes.aadl:54:05: This connection is a duplication of the connection declared at line 50
+TestInModes.aadl:58:05: This connection is a duplication of the connection declared at line 50
+Cannot analyze AADL specifications

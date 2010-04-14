@@ -1,0 +1,28 @@
+--  This example shows the possibility to use
+--  aadl model in annex (parsing only)
+
+package ModelAADL
+public
+
+ data Sample
+ end Sample;
+	
+ thread Collect_Samples
+ features
+
+  Input_Sample : in data port Sample;
+  Output_Average : out data port Sample;
+
+ annex aadl_annex {**
+  package AnnexAADL
+  public
+    data Sample_Type
+    end Sample_Type;
+
+    data Another_Data
+    end Another_Data;
+  end AnnexAADL;
+ **};
+
+ end Collect_Samples;
+end ModelAADL;

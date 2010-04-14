@@ -1,0 +1,55 @@
+-- Tests for looking up property values in component types.
+-- Meant to be exhaustive for the cases involving component types.
+
+property set MyProperties is
+  -- Property with a default value
+  prop1: list of aadlinteger => (0) applies to (connections);
+  prop2: inherit aadlinteger applies to (connections, system);
+end MyProperties;
+
+package Basic
+  public
+    data Integer
+    end Integer;
+end Basic;
+
+package TestConnections
+  public
+    system S
+      features
+        input: in data port Basic::Integer;
+        output: out data port Basic::Integer;
+      properties
+        MyProperties::prop2 => -100;
+    end S;
+  
+    -- Test getting the default value as well as setting the value directly
+    -- on prop1 (by using the append operator).  Also test inheriting the
+    -- value from the container for prop2.
+    system implementation S.I1
+      connections
+        -- Should have prop1 => (0, 1), prop2 => -100
+        port1: data port input -> output 
+          { MyProperties::prop1 +=> 1; };
+    end S.I1;
+  
+    -- part 1 of test of refining a connection from higher up
+    system implementation S.I3 extends S.I1
+  end S.I3;
+  
+    -- part 2 of test of refining a connnection from higher up
+    system implementation S.I4 extends S.I3
+      connections
+        -- Should have prop1 => (0, 1), prop2 => 37
+        port1: refined to data port
+          { MyProperties::prop2 => 37; };
+    end S.I4;
+  
+    -- Test refining a property value
+    system implementation S.I2 extends S.I1
+      connections
+        -- Should have prop1 => (0, 1), prop2 => 0
+        port1: refined to data port
+          { MyProperties::prop2 => 0; };
+    end S.I2;
+end TestConnections;

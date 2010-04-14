@@ -1,0 +1,321 @@
+package t17
+public
+abstract abstract_t17
+ features
+  port1: in event port;
+end abstract_t17;
+
+abstract abstract_o_t17
+features
+ fg: feature group featuregroup_t17;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t17;
+ datarequired: requires data access data_type_t17;
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t17;
+ subpgrequired: requires subprogram group access;
+ busprovided: provides bus access bustype_t17;
+ busrequired: requires bus access;
+end abstract_o_t17;
+
+abstract implementation abstract_t17.i
+subcomponents
+d1:data data_t17;
+s1: subprogram subprogram_t17;
+sg1: subprogram group subprogramgroup_t17;
+t1: thread thread_t17;
+tg1: thread group threadgroup_t17;
+ps1: process process_t17;
+pr1: processor processor_t17;
+vpr1: virtual processor virtualprocessor_t17;
+mem1: memory memory_t17;
+bus1: bus bus_t17;
+vbus1: virtual bus virtualbus_t17;
+dev1: device device_t17;
+sys1: system system_t17;
+abs1: abstract abstract_o_t17;
+modes
+ m1: initial mode;
+ m2: mode;
+-- t1: m1-[port1]->m2;
+end abstract_t17.i;
+
+bus bus_t17
+features
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t17;
+ busrequired: requires bus access;
+end bus_t17;
+
+bus implementation  bus_t17.i
+subcomponents
+ vb1: virtual bus virtualbus_t17;
+ ab1: abstract abstract_o_t17;
+end bus_t17.i;
+
+data data_t17
+features
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subprequired: requires subprogram access;
+ subpgrequired: requires subprogram group access;
+end data_t17;
+
+data data_o_t17
+end data_o_t17;
+
+data implementation data_t17.i
+subcomponents
+ d1: data data_o_t17;
+ ab1: abstract abstract_o_t17;
+end data_t17.i;
+
+device device_t17
+features
+ fg: feature group featuregroup_t17;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t17;
+ busprovided: provides bus access bustype_t17;
+ busrequired: requires bus access;
+end device_t17;
+
+device implementation device_t17.i
+subcomponents
+ b1: bus bus_t17;
+ ab1: abstract abstrat_o_t17;
+end device_t17.i;
+
+memory memory_t17
+features
+ port1: in event port;
+ port2: out event port;
+ busprovided: provides bus access bustype_t17;
+ busrequired: requires bus access;
+end memory_t17;
+
+memory memory_o_t17
+end memory_o_t17;
+
+memory implementation memory_t17.i
+subcomponents
+ sc1: memory memory_o_t17;
+ b1: bus bus_t17;
+ abs1: abstract abstract_t17;
+end memory_t17.i;
+
+process process_t17
+features
+ fg: feature group featuregroup_t17;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t17;
+ datarequired: requires data access data_type_t17;
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t17;
+ subpgrequired: requires subprogram group access;
+end process_t17;
+
+process implementation process_t17.i
+subcomponents
+ d1: data data_t17;
+ sp1: subprogram subprogram_t17;
+ spg1: subprogram group subprogramgroup_t17;
+ t1: thread thread_t17;
+ tg1: thread group threadgroup_t17;
+ abs1: abstract abstract_t17;
+end process_t17.i;
+
+processor processor_t17
+features
+ fg: feature group featuregroup_t17;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t17;
+ busprovided: provides bus access bustype_t17;
+ busrequired: requires bus access;
+end processor_t17;
+
+processor implementation processor_t17.i
+subcomponents
+ m1: memory memory_t17;
+ b1: bus bus_t17;
+ vp: virtual processor virtualprocessor_t17;
+ vb: virtual bus virtualbus_t17;
+ ab: abstract abstract_t17;
+end processor_t17.i;
+
+subprogram subprogram_t17
+features
+ fg: feature group featuregroup_t17;
+ port2: out event port;
+ port4: out event data port;
+ datarequired: requires data access data_type_t17;
+ subprequired: requires subprogram access;
+ subpgrequired: requires subprogram group access;
+ param: in parameter data_t17;
+end subprogram_t17;
+
+subprogram implementation subprogram_t17.i
+subcomponents
+ d: data data_t17;
+ a: abstract abstract_t17;
+end subprogram_t17.i;
+
+subprogram group subprogramgroup_t17
+features
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subprequired: requires subprogram access;
+ subpgrequired: requires subprogram group access;
+end subprogramgroup_t17;
+
+subprogram group implementation subprogramgroup_t17.i
+subcomponents
+ s: subprogram subprogram_t17;
+end subprogramgroup_t17.i;
+
+system system_t17
+features
+ fg: feature group featuregroup_t17;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t17;
+ datarequired: requires data access data_type_t17;
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t17;
+ subpgrequired: requires subprogram group access;
+ busprovided: provides bus access bustype_t17;
+ busrequired: requires bus access;
+end system_t17;
+
+system implementation system_t17.i
+subcomponents
+d1:data data_t17;
+s1: subprogram subprogram_t17;
+sg1: subprogram group subprogramgroup_t17;
+ps1: process process_t17;
+pr1: processor processor_t17;
+vpr1: virtual processor virtualprocessor_t17;
+mem1: memory memory_t17;
+bus1: bus bus_t17;
+vbus1: virtual bus virtualbus_t17;
+dev1: device device_t17;
+sys1: system system_t17;
+abs1: abstract abstract_o_t17;
+end system_t17.i;
+
+thread thread_t17
+features
+ fg: feature group featuregroup_t17;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t17;
+ datarequired: requires data access data_type_t17;
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t17;
+ subpgrequired: requires subprogram group access;
+end thread_t17;
+
+thread implementation thread_t17.i
+subcomponents
+ d: data data_t17;
+ sp: subprogram subprogram_t17;
+ spg: subprogram group subprogramgroup_t17;
+ a: abstract abstract_t17;
+end thread_t17.i;
+
+thread group threadgroup_t17
+features
+ fg: feature group featuregroup_t17;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ dataprovided: provides data access data_type_t17;
+ datarequired: requires data access data_type_t17;
+ subpprovided: provides subprogram access subprogramtype_t17;
+ subprequired: requires subprogram access;
+ subpgprovided: provides subprogram group access subprogramgrouptype_t17;
+ subpgrequired: requires subprogram group access;
+end threadgroup_t17;
+
+thread group threadgroup_o_t17
+end threadgroup_o_t17;
+
+thread group implementation threadgroup_t17.i
+subcomponents
+ d: data data_t17;
+ sp: subprogram subprogram_t17;
+ spg: subprogram group subprogramgroup_t17;
+ t: thread thread_t17;
+ tg: thread group threadgroup_o_t17;
+ a: abstract abstract_t17;
+end threadgroup_t17.i;
+
+virtual bus virtualbus_t17
+features
+ e1: in event port;
+ e2: out event port;
+ sp1: provides subprogram access subprogram_t17;
+ sp2: requires subprogram access subprogram_t17;
+ spg1: provides subprogram group access subprogramgroup_t17;
+ spg2: requires subprogram group access subprogramgroup_t17;
+end virtualbus_t17;
+
+virtual bus virtualbus_o_t17
+end virtualbus_o_t17;
+
+virtual bus implementation virtualbus_t17.i
+subcomponents
+ vb: virtual bus virtualbus_o_t17;
+ a: abstract abstract_t17;
+end virtualbus_t17.i;
+
+virtual processor virtualprocessor_t17
+features
+ fg: feature group featuregroup_t17;
+ port1: in event port;
+ port2: out event port;
+ port3: in out event port;
+ port4: in data port;
+ port4: in event data port;
+ sp: provides subprogram access subprogram_t17;
+ spg1: provides subprogram group access subprogramgroup_t17;
+end virtualprocessor_t17;
+
+virtual processor virtualprocessor_o_t17
+end virtualprocessor_o_t17;
+
+virtual processor implementation virtualprocessor_t17.i
+subcomponents
+ vp: virtual processor virtualprocessor_o_t17;
+ vb: virtual bus virtualbus_t17;
+ a: abstract abstract_t17;
+end virtualprocessor_t17.i;
+
+end t17;

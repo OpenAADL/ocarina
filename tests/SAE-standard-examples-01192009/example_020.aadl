@@ -1,0 +1,105 @@
+-- test 8.4 Subprogram and Subprogram Group Access draft-01192009
+
+-- a remote procedure call from one thread to another thread
+package RemoteCallExample
+public
+
+-- add for test
+system simple
+end simple;
+-- end add
+
+system implementation simple.impl
+subcomponents
+A: process caller_P.i;
+B: process remote_P.i;
+connections
+subprogram access A.DoCalc -> B.DoCalc;
+end simple.impl;
+
+process remote_P
+features
+DoCalc: provides subprogram access Calc;
+end remote_P;
+
+process implementation remote_P.i
+subcomponents
+t1: thread Remote;
+-- other subcomponent declarations
+connections
+subprogram access t1.MyCalc -> DoCalc;
+end remote_P.i;
+
+thread Remote
+features
+MyCalc: provides subprogram access Calc;
+end Remote;
+
+process caller_P
+features
+DoCalc: requires subprogram access Calc;
+end caller_P;
+
+process implementation caller_P.i
+subcomponents
+Q: thread caller;
+connections
+subprogram access DoCalc -> Q.MyCalc;
+end caller_P.i;
+
+thread caller
+features
+MyCalc: requires subprogram access Calc;
+end caller;
+end RemoteCallExample;
+
+-- A Printer Server Example
+package PrinterServerExample
+public
+
+process printers
+features
+printonServer: provides subprogram access print;
+mainPrinter: in event port;
+backupPrinter: in event port;
+end printers;
+
+process implementation printers.threaded
+subcomponents
+A : thread printer in modes ( modeA );
+B : thread printer in modes ( modeB );
+connections
+printtoA: subprogram access A.print -> printonServer in modes (modeA);
+printtoB: subprogram access B.print -> printonServer in modes (modeB);
+modes
+modeA: initial mode;
+modeB: mode;
+modeA -[ backupPrinter ]-> modeB;
+modeB -[ mainPrinter ]-> modeA;
+end printers.threaded;
+
+thread printer
+features
+print : provides subprogram access print;
+end printer;
+
+subprogram print
+features
+filetoprint: in parameter file;
+end print;
+
+data file
+end file;
+
+system ApplicationSystem
+end ApplicationSystem;
+
+system implementation ApplicationSystem.default
+subcomponents
+app: process ApplicationSystem;
+printserver: process PrintServer;
+connections
+subprogram access printserver.print -> app.print;
+end ApplicationSystem.default;
+
+end PrinterServerExample;

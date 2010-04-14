@@ -1,0 +1,210 @@
+\paragraph{}
+In order to illustrate the previous definitions, let review 
+some examples of verifications :
+
+\subsection {Maximum mutexes number}
+
+\paragraph{}
+Some OS have a maximum number of mutexes that they can 
+support simultanously. This example checks whether this limit 
+is trepassed or not for each kernel (ie. \textit{processor 
+instance}).
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting[language=real]{mutexes.real}
+
+\subsection {Minimum buses rate}
+
+\paragraph{}
+Insuffisant bus rate according to actual communications can 
+lead to stalling, breaking determinism in communication time.
+This example checks whether the bus size is suffisant in 
+order to perform all communications.
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting{bus_rate.real}
+
+\subsection {Maximum processes number}
+
+\paragraph{}
+Some OS have a maximum number of processes that they can run
+simultanously. This example checks whether this limit 
+is trepassed or not for each kernel (ie. \textit{processor 
+instance}).
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting[language=real]{processes.real}
+
+\subsection {Maximum connections number}
+
+\paragraph{}
+Some OS have a maximum number of connections that they can 
+manage simultanously. This example checks whether this limit 
+is trepassed or not for each kernel (ie. \textit{processor 
+instance}).
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting[language=real]{connections.real}
+
+\paragraph{}
+Note that in this case, the final set (\textit{Cnx\_Set}) contains
+only processes instances, not connections instances. Nevertheless,
+it contains as much processes instances than connections does exist,
+so the final verification make sense.
+
+\subsection {Minimum RAM size}
+
+\paragraph{}
+Insuffisant RAM according to actual stack usage will 
+lead to memory shortage, which will either break 
+application determinism in communication time or stop 
+the application.\\
+This example checks whether the largest RAM size is 
+suffisant in order to place the whole application stack.
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting{stack_size.real}
+
+\subsection {Minimum memory size}
+
+\paragraph{}
+Insuffisant RAM according to actual stack usage will 
+lead to memory shortage, which will either break 
+application determinism in communication time or stop 
+the application.\\
+This example checks whether the total memory size is 
+suffisant in order to 
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting{memory_size.real}
+
+\subsection {Unique call}
+
+\paragraph{}
+When accessing to global variables, subprogram should be restricted to be called by
+multiples threads.
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting{unique_call.real}
+
+\subsection {PCP}
+
+\paragraph{}
+A condition to PCP schedulling possibility is that the priority 
+of a data component protected is the superior or equal to any 
+of the thread which access it.
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting{pcp.real}
+
+\subsection {ARINC security}
+
+\paragraph{}
+A condition to ARINC security is that the criticity
+of a task is the can't be inferior to the task it is 
+connected to.
+
+\subsubsection {Verification query}
+\paragraph{}
+\lstinputlisting{arinc_secure.real}
+
+\subsection {RMA scheduling possibility}
+
+\paragraph{}
+In order to be sure a system is schedulable with RMA, it must comply
+to the equation~\cite{LiuLayland73} :
+
+$$
+\sum_{i=1}^{m} \frac{C_{i}}{T_{i}} <= m (2^{\frac{1}{m}} - 1)
+$$
+
+Where \textit{m} is the number of threads to schedule. Note that all 
+thread must be independant (ie. no protected data must be accessed 
+by more than one thread).
+
+\subsubsection {Verification query}
+\paragraph{}
+The main theorem is :
+\lstinputlisting{rma.real}
+
+\subsection {Ravenscar conditions}
+
+The Ravenscar Profile~\cite{Ravenscar03} targets real-time and
+critical systems. It is a subset of the Ada language that restricts
+concurrency constructs that prevent schedulability analysis. In
+particular, strong restrictions are put on communication and runtime
+constructs such as \textit{tasks, rendezvous} and \textit{protected
+  objects}. Basically, this profile forbids any dynamic and
+non-deterministic features in concurrent programming. It has also been
+adapted for RTSJ~\ref{}.
+
+To be Ravenscar-compliant, the code must comply to the following
+properties~:
+
+\begin{itemize}
+\item \textit{No aperiodic tasks} : Threads are either sporadic or
+  periodic, scheduled by the \texttt{FIFO\_Within\_Priorities} policy.
+
+\item \textit{PCP-consistent} : concurrent access to shared data uses
+  the Priority Ceiling Protocol~\cite{SRL90}
+\end{itemize}
+
+Other restrictions are more specific to the code being used, and
+cannot be checked at model level (e.g. use of time-related functions).
+
+
+\subsubsection {Absence of aperiodic tasks}
+
+The first step toward writing a REAL theorem is to map the
+code-related statement in the AADL model. The statement is
+natural~: the \texttt{Dispatch\_Protocol} AADL standard property
+defined the nature of the thread. Hence, verifying whether tasks are
+periodic or sporadic is the same as verifying if threads have the
+property \texttt{Dispatch\_Protocol} set to \texttt{Sporadic} or
+\texttt{Periodic}.
+
+\paragraph{}
+\lstinputlisting[caption=Task Periodicity, label=periodic_tasks]{periodic_tasks.real}
+
+\subsubsection {PCP-Compliance}
+
+For a model to be compliant with PCP hypothesis, one has to check two
+conditions:
+
+\begin{itemize}
+\item Shared data components use the PCP concurrency control
+  mechanism;
+
+\item No data component following PCP has an accessor thread whose
+  priority is superior to the ceiling priority and all those threads
+  are hosted by the same processor.
+\end{itemize}
+
+The first condition is equivalent to assessing that if more than
+one thread access a data component instance (ie. the same data
+component instance is provided to those threads), then the data
+component instance must have the
+\texttt{Concurrency\_Control\_Protocol} set to
+\texttt{priority\_ceiling}.
+
+The second condition states: all threads accessing a data must have
+a priority (ie. user-defined property \texttt{Priority}) which is less
+than the priority of the accessed data. Furthermore, all threads must
+be on the same processor.
+
+The theorem is split in two parts: the theorem in Listing~\ref{all_pcp}
+checks whether PCP has been declared for all shared data; the second
+one (listing~\ref{PCP}) checks whether conditions for PCP are present.
+
+\lstinputlisting[caption=Shared data access, label=all_pcp]
+{all_pcp.real}
+
+\lstinputlisting[caption=PCP, label=PCP]{pcp.real}

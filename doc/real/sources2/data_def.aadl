@@ -1,0 +1,8 @@
+data shared_data
+properties
+  Concurrency_Control_Protocol => Protected_Access;
+  ARAO::Priority => 5;
+end shared_data;
+
+data implementation shared_data.i
+end shared_data.i;

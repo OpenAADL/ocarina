@@ -1,0 +1,140 @@
+property set PS is
+  prop1: aadlinteger applies to (system pack1::S);
+  prop2: aadlinteger applies to (system pack1::S.I);
+  prop3: aadlinteger => 100 applies to (system);
+end PS;
+
+package pack1
+  public 
+    -- not a system
+    data D
+      properties
+        -- bad
+        PS::prop1 => 1;
+        -- bad
+        PS::prop2 => 2;
+        -- bad
+        PS::prop3 => 3;
+    end D;
+
+    -- descendent of S
+    system S
+      properties
+        -- good
+        PS::prop1 => 1;
+        -- bad
+        PS::prop2 => 2;
+        -- good
+        PS::prop3 => 3;
+    end S;
+  
+    -- descendent of S
+    system S2 extends S
+      properties
+        -- good
+        PS::prop1 => 1;
+        -- bad
+        PS::prop2 => 2;
+        -- good
+        PS::prop3 => 3;
+    end S2;
+    
+    -- not a descendent of S
+    system T
+      properties
+        -- bad
+        PS::prop1 => 1;
+        -- bad
+        PS::prop2 => 2;
+        -- good
+        PS::prop3 => 3;
+    end T;
+  
+    -- not a descendent of S
+    system implementation T.I
+      subcomponents
+        -- not a descendent of S
+        Foo: system {
+        	-- bad
+        	PS::prop1 => 1;
+        	-- bad
+        	PS::prop2 => 2;
+            -- good
+            PS::prop3 => 3;
+        };
+        -- descendent of S, not of S.I
+        Bar: system S {
+        	-- good
+        	PS::prop1 => 1;
+        	-- bad
+        	PS::prop2 => 2;
+            -- good
+            PS::prop3 => 3;
+        };
+        -- descendent of S, S.I
+        Baz: system S.I {
+        	-- good
+        	PS::prop1 => 1;
+         	-- good
+        	PS::prop2 => 2;
+            -- good
+            PS::prop3 => 3;
+        };
+    end T.I;
+  
+    -- descendent of S, descendent of S.I
+    system implementation S.I
+      properties
+        -- good
+        PS::prop1 => 1;
+        -- good
+        PS::prop2 => 2;      
+        -- good
+        PS::prop3 => 3;
+    end S.I;
+  
+    -- descendent of S, descendent of S.I
+    system implementation S.J extends S.I
+      properties
+        -- good
+        PS::prop1 => 1;
+        -- good
+        PS::prop2 => 2;      
+        -- good
+        PS::prop3 => 3;
+    end S.J;
+end pack1;
+
+package pack2
+  public 
+    system S
+      properties
+        -- bad
+        PS::prop1 => 1;
+        -- bad
+        PS::prop2 => 2;
+        -- good
+        PS::prop3 => 3;
+    end S;
+  
+    system T
+      properties
+        -- bad
+        PS::prop1 => 1;
+        -- bad
+        PS::prop2 => 2;
+        -- good
+        PS::prop3 => 3;
+    end T;
+  
+    system implementation S.I
+      properties
+        -- bad
+        PS::prop1 => 1;
+        -- bad
+        PS::prop2 => 2;      
+        -- good
+        PS::prop3 => 3;
+    end S.I;
+end pack2;
+

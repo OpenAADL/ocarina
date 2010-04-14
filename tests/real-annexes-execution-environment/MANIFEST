@@ -1,0 +1,2 @@
+AADL_VERSION=-aadlv2
+OCARINA_FLAGS=-q -g real_theorem -real_lib lib.real

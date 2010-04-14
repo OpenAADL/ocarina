@@ -1,0 +1,4 @@
+Protected_Data_Set := 
+ {x in Data_Set | 
+       Compare_Property_Value 
+         (x, "Concurrency_Control_Protocol", "Protected_Access")}

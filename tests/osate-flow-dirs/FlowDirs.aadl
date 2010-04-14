@@ -1,0 +1,53 @@
+subprogram sub
+  features
+    p: in parameter ;
+    q: out parameter ;
+    r: in out parameter ;
+  flows
+    f1: flow path p -> q;
+    f2: flow path p -> r;
+    f3: flow path r -> q;
+    -- bad: flow from out to in param
+    f4: flow path q -> p;
+    
+    -- bad: in param as source
+    src1: flow source p;
+    src2: flow source q;
+    src3: flow source r;
+    
+    dest1: flow sink p;
+    -- bad: out param as sink
+    dest2: flow sink q;
+    dest3: flow sink r;
+end sub;
+
+system s
+  features
+    p: in event port ;
+    q: out event port ;
+    r: in out event port ;
+    pg1: port group ;
+    pg2: port group ;
+  flows
+    f1: flow path p -> q;
+    f2: flow path p -> r;
+    f3: flow path r -> q;
+    -- bad: path from own out to own in
+    f4: flow path q -> p;
+    
+    f5: flow path pg1 -> pg2;
+    f6: flow path pg2 -> pg1;
+    
+    -- bad: in port as source
+    src1: flow source p;
+    src2: flow source q;
+    src3: flow source r;
+    src4: flow source pg1;
+    
+    dest1: flow sink p;
+    -- bad: out port as sink
+    dest2: flow sink q;
+    dest3: flow sink r;
+    dest4: flow sink pg1;
+end s;
+

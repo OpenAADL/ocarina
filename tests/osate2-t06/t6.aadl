@@ -1,0 +1,6 @@
+package t6
+public
+new_classifier_name renames thread pkg::old_classifier_name;
+system system_t6
+end system_t6;
+end t6;

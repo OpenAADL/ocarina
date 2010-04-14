@@ -1,0 +1,18 @@
+--  Check whether a subprogram which is not a pure subprogram is
+--  called by no more than one thread
+
+theorem Unique_Call
+
+foreach e in Subprogram_Set do
+
+  Callers(e) := {t in Thread_Set | 
+                       Is_Called_By (e, t) and
+                         ((not Property_Exists
+                         (e, "RTOS_Properties::Actual_Subprogram_Type"))
+                          or (Get_Property_Value
+                             (e, "RTOS_Properties::Actual_Subprogram_Type")
+                              <> "pure"))};
+
+  check (Cardinal (Callers) <= 1);
+
+end Unique_Call;

@@ -1,0 +1,31 @@
+#!/bin/sh
+
+if [ $# = 0 ]; then
+    echo "Usage: $0 <keyword file> [<keyword substitution file>]"
+    exit 1
+fi
+
+SOURCE=$1
+if [ $# = 2 ]; then
+   TARGET=$2
+else
+   TARGET=`basename ${SOURCE} .kw`.sed
+fi
+
+rm -f ${TARGET}; touch ${TARGET}
+
+# THE ORDER OF THE SUBSTITUTIONS IS IMPORTANT !
+
+echo "s/\([^@]\)@\([^@]\)/\1@@\2/g"                      >> ${TARGET}
+echo "s/@@/@@@@/g"                                       >> ${TARGET}
+echo "s/_@_/_@@_/g"                                      >> ${TARGET}
+echo "s/{/\@{/g"                                         >> ${TARGET}
+echo "s/}/\@}/g"                                         >> ${TARGET}
+echo "s/-- \(.*\)$/-- @i{\1}/"                           >> ${TARGET}
+echo "s/\([^-][^-][^\"]*\)\"\([^\"]*\)\"/\1\"@i{\2}\"/g" >> ${TARGET}
+
+for kw in `cat ${SOURCE}`; do
+    echo "s/^\([^-]* \)${kw}/\1@b{${kw}}/g"              >> ${TARGET}
+    echo "s/^\( *\)${kw} /\1@b{${kw}} /g"                >> ${TARGET}
+    echo "s/^${kw}$/@b{${kw}}/g"                         >> ${TARGET}
+done

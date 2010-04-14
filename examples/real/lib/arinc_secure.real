@@ -1,0 +1,15 @@
+--  Check a condition of ARINC security :
+--  for any thread, all threads which send it messages must have an
+--  equal or less criticity
+
+theorem ARINC_Secure
+
+foreach e in Thread_Set do
+
+   Cnx_threads(e) := {t in Thread_Set | Is_Connecting_To (e, t)};
+
+   check (Get_Property_Value (e, "RTOS_Properties::criticity") >=
+           Max (Get_Property_Value 
+                    (Cnx_threads, "RTOS_Properties::criticity")));
+
+end ARINC_Secure;

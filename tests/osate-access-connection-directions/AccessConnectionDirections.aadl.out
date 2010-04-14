@@ -1,0 +1,5 @@
+AccessConnectionDirections.aadl:35:05: b2 (subcomponent)  and needsBus (subcomponent access)  do not have compatible directions
+AccessConnectionDirections.aadl:37:05: d2 (subcomponent)  and needsData (subcomponent access)  do not have compatible directions
+AccessConnectionDirections.aadl:82:05: needsBus (subcomponent access)  and givesBus (subcomponent access)  do not have compatible directions
+AccessConnectionDirections.aadl:84:05: needsData (subcomponent access)  and givesData (subcomponent access)  do not have compatible directions
+Cannot analyze AADL specifications

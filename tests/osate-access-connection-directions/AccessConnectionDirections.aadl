@@ -1,0 +1,90 @@
+system needy
+  features
+    needsBus: requires bus access;
+    needsData: requires data access;
+end needy;
+
+system giver
+  features 
+    givesBus: provides bus access ;
+    givesData: provides data access ;
+end giver;
+
+system needyGiver
+  features
+    needsBus: requires bus access ;
+    needsData: requires data access ;
+    givesBus: provides bus access ;
+    givesData: provides data access ;
+end needyGiver;
+
+system implementation needyGiver.i
+  subcomponents
+    b1: bus b;
+    d1: data d;
+    b2: bus b;
+    d2: data d;
+    
+  connections
+    -- good
+    bus access b1 -> givesBus;
+    -- good
+    data access d1 -> givesData;
+    
+    -- bad
+    bus access b2 -> needsBus;
+    -- bad
+    data access d2 -> needsData;
+end needyGiver.i;
+
+system implementation needyGiver.j
+  subcomponents
+    n: system needy;
+    g: system giver;
+    
+  connections
+    -- 
+    bus access needsBus -> n.needsBus;
+    bus access g.givesBus -> givesBus;
+    data access needsData -> n.needsData;
+    data access g.givesData -> givesData;
+end needyGiver.j;
+
+
+data D
+end D;
+
+bus B
+end B;
+
+system S
+end S;
+
+system implementation s.i
+  subcomponents 
+    n: system needy;
+    g: system giver;
+    
+    badN: system needy;
+    badG: system giver;
+    
+    b: bus B;
+    d: data D;
+    n2: system needy;
+    
+  connections
+    -- good
+    bus access g.givesBus -> n.needsBus;
+    -- good
+    data access g.givesData -> n.needsData;
+    
+    -- bad
+    bus access badN.needsBus -> badG.givesBus;
+    -- bad
+    data access badN.needsData -> badG.givesData;
+    
+    --good
+    bus access b -> n2.needsBus;
+    -- good
+    data access d -> n2.needsData;
+end s.i;

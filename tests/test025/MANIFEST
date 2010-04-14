@@ -1,0 +1,9 @@
+Cmd0: ocarina test_flow_connection_refinements.aadl
+Success0: yes
+Cmd1: ocarina test_flow_expansion.aadl
+Success1: yes
+Cmd2: ocarina test_flow_implementation_err.aadl
+Output2: test_flow_implementation_err.aadl.out
+Cmd3: ocarina test_flow_refinement_err.aadl
+Output3: test_flow_refinement_err.aadl.out
+Keywords: refinement

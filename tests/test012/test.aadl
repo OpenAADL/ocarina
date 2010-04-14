@@ -1,0 +1,49 @@
+package toTo::taTa
+public
+  thread implementation test.test2
+  end test.test2;
+  
+  thread test
+  end test;
+  
+  process test1
+  end test1;
+  
+  process test2
+  end test2;
+  
+  system test3 extends test4
+  end test3;
+  
+private
+  system test4
+  end test4;
+  
+--  system implementation test2.test2
+--  end test2.test2;
+  
+--  thread group implementation test1.test2
+--  end test1.test2;
+  
+  processor titi2 extends toto::titi
+  end titi2;
+  
+end toto::tata;
+
+package titi
+private
+  thread implementation test.test1
+  end test.test1;
+  
+  thread test
+  end test;
+end titi;
+
+package toto
+private
+  processor titi
+  end titi;
+end toto;
+
+thread test extends toto::tata::test
+end test;

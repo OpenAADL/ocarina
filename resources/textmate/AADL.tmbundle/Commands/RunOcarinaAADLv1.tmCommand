@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string># just to remind you of some useful environment variables
+# see Help / Environment Variables for the full list
+# echo File: "$TM_FILEPATH"
+# echo Word: "$TM_CURRENT_WORD"
+# echo Selection: "$TM_SELECTED_TEXT"
+
+ocarina -aadlv1 $TM_FILEPATH `ocarina-config --prefix`/share/ocarina/AADLv1/Cheddar_Properties.aadl  `ocarina-config --prefix`/share/ocarina/AADLv1/deployment.aadl `ocarina-config --prefix`/share/ocarina/AADLv1/data_model.aadl
+
+if test  $? -eq  0; then echo "&lt;h1&gt;File successfully parsed&lt;/h1&gt;" ; fi</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>@P</string>
+	<key>name</key>
+	<string>RunOcarinaAADLv1</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>source.aadl</string>
+	<key>uuid</key>
+	<string>4F35CDEE-BCD8-4BD4-8084-4625112D8E48</string>
+</dict>
+</plist>

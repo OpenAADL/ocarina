@@ -1,0 +1,60 @@
+-- Test of boolean constants and boolean types.  Shows that 
+-- a boolean is a boolean is a boolean.  User-declared types
+-- that are boolean are the same as primitive boolean types.  
+-- That is, bt, bt2, and aadlboolean are interchangable below.
+-- Values from one type can be assigned to another.  In particular,
+-- this is necessary so that properties of type bt and bt2 can be
+-- used with the boolean operators.
+
+property set PS is
+  bt: type aadlboolean;
+  bt2: type aadlboolean;
+  
+  bool_const: constant aadlboolean => false;
+  
+  bt_prop: ps::bt applies to (all);
+  bt2_prop: ps::bt2 applies to (all);
+  bool_prop: aadlboolean applies to (all);
+  
+  bt_prop2: ps::bt => true applies to (all);
+  bt2_prop2: ps::bt2 => false applies to (all);
+  bool_prop2: aadlboolean => true applies to (all);
+end PS;
+
+package Test
+  public
+    system S1
+      properties
+        PS::bt_prop => value(ps::bt_prop2);
+        PS::bt2_prop => value(ps::bt_prop2);
+        PS::bool_prop => value(ps::bt_prop2);
+    end S1;
+    
+    system S2
+      properties
+        PS::bt_prop => value(ps::bt2_prop2);
+        PS::bt2_prop => value(ps::bt2_prop2);
+        PS::bool_prop => value(ps::bt2_prop2);
+    end S2;
+    
+    system S3
+      properties
+        PS::bt_prop => value(ps::bool_prop2);
+        PS::bt2_prop => value(ps::bool_prop2);
+        PS::bool_prop => value(ps::bool_prop2);
+    end S3;
+    
+    system S10
+      properties
+        PS::bt_prop => true;
+        PS::bt2_prop => value(ps::bt_prop) or false;
+        PS::bool_prop => false and value(ps::bt2_prop);
+    end S10;
+    
+    system S20
+      properties
+        PS::bt_prop => value(ps::bool_const);
+        PS::bt2_prop => value(ps::bool_const);
+        PS::bool_prop => value(ps::bool_const);
+    end S20;
+end Test;

@@ -1,0 +1,836 @@
+--    This package defines the major subsystems of an avionics system
+--    Each subsystem is defined with resource budgets and flow specifications with latency
+--    Each subsystem is considered to be a partition
+package AppSubSystems
+public
+  process WarningAnnunciationManager
+    properties
+      SEI::MIPSBudget => 350.0 MIPS;
+      SEI::RAMBudget => 350.0 KB;
+  end WarningAnnunciationManager;
+  
+  process DisplayManager
+    features
+      DMToDisplay: port group AppTypes::PageReturn;
+      DMToPCM: port group AppTypes::PageRequest;
+    flows
+      cmd_request: flow path DMToDisplay -> DMToPCM {
+        Latency => 10 Ms;
+        };
+      show_page: flow path DMToPCM -> DMToDisplay {
+        Latency => 50 Ms;
+        };
+    properties
+      SEI::Partition_Latency => 50 Ms;
+      SEI::Is_Partition => true;
+      SEI::SecurityLevel => 3;
+      SEI::MIPSBudget => 1200.0 MIPS;
+      SEI::RAMBudget => 150.0 KB;
+      SEI::ROMBudget => 50.0 KB;
+  end DisplayManager;
+  
+  process PageContentManager
+    features
+      PCMToDM: port group AppTypes::PageReturn;
+      PCMToFM: port group AppTypes::PageRequest;
+    flows
+      cmd_request: flow path PCMToDM -> PCMToFM {
+        Latency => 10 Ms;
+        };
+      show_page: flow path PCMToFM -> PCMToDM {
+        Latency => 50 Ms;
+        };
+    properties
+      SEI::Partition_Latency => 50 Ms;
+      SEI::Is_Partition => true;
+      SEI::SecurityLevel => 4;
+      SEI::MIPSBudget => 500.0 MIPS;
+      SEI::RAMBudget => 350.0 KB;
+  end PageContentManager;
+  
+  process FlightManager
+    features
+      FMToPCM: port group AppTypes::PageReturn;
+      FMToFD: port group AppTypes::PageRequest;
+      FMIn: port group AppTypes::FMInData;
+      FMOut: port group AppTypes::FMOutData;
+    flows
+      cmd_request: flow path FMToPCM -> FMToFD {
+        Latency => 10 Ms;
+        };
+      show_page: flow path FMToFD -> FMToPCM {
+        Latency => 25 Ms;
+        };
+    properties
+      SEI::Partition_Latency => 50 Ms;
+      SEI::Is_Partition => true;
+      SEI::MIPSBudget => 1350.0 MIPS;
+      SEI::RAMBudget => 1350.0 KB;
+  end FlightManager;
+  
+  process FlightDirector
+    features
+      FDToFM: port group AppTypes::PageReturn;
+    flows
+      process_page_request: flow path FDToFM -> FDToFM {
+        Latency => 50 Ms;
+        };
+    properties
+      SEI::Partition_Latency => 50 Ms;
+      SEI::Is_Partition => true;
+      SEI::MIPSBudget => 450.0 MIPS;
+      SEI::RAMBudget => 750.0 KB;
+  end FlightDirector;
+end AppSubSystems;
+--      This package defines the avionics system
+--      The system implementations represent a progression of the system model
+--      each with increasing fidelity.
+package AppSystems
+public
+  system EmbeddedApp
+    features
+      BusAccess1: requires bus access HardwareParts::EtherSwitch;
+    properties
+      SEI::reference_processor => processor HardwareParts::Xeon.solo;
+  end EmbeddedApp;
+  
+  --      This system declaration defines the system as a part list
+  --      The subsystems are declared in terms of subsystem classifiers without implementation details
+  --      The subsystems are specified without any connections
+  system implementation EmbeddedApp.SubSystemParts
+    subcomponents
+      PilotDisplay: device HardwareParts::MFD;
+      WAM: process AppSubSystems::WarningAnnunciationManager;
+      DM: process AppSubSystems::DisplayManager ;
+      PCM: process AppSubSystems::PageContentManager ;
+      FM: process Flightmanager::FlightManager;
+      FD: process AppSubSystems::FlightDirector;
+  end EmbeddedApp.SubSystemParts;
+  
+  --      This system declaration defines the system as consisting of subsystems
+  --      and connections between the subsystems
+  --      The subsystems are declared in terms of subsystem classifiers without implementation details
+  --      The connections have bandwidth budgets specified
+  --      This implementation is an elaboration of the SubSystemParts implementation
+  --      by adding connections to the implementation
+  system implementation EmbeddedApp.Topology
+    extends EmbeddedApp.SubSystemParts
+    connections
+      BusAccessConnection1: bus access BusAccess1 -> PilotDisplay.Switch;
+      DisplayDM: port group PilotDisplay.DisplayToDM -> DM.DMToDisplay {
+        SEI::BandWidthBudget => 10.0 Mbps;
+        };
+      DMPCM: port group DM.DMToPCM -> PCM.PCMToDM {
+        SEI::BandWidthBudget => 20.0 Mbps;
+        };
+      PCMFM: port group PCM.PCMToFM -> FM.FMToPCM {
+        SEI::BandWidthBudget => 15.0 Mbps;
+        };
+      FMFD: port group FM.FMToFD -> FD.FDToFM {
+        SEI::BandWidthBudget => 40.0 Mbps;
+        };
+  end EmbeddedApp.Topology;
+  
+  --      This system implementation is declared as an extension of the system implementation
+  --      with subsystems and their connections.  It illustrates the use of extends to associate
+  --      end-to-end flows with the system.  This could have also been done through elaboration
+  --      by adding the end-to-end flow into the previous implementation
+  --      The end-to-end flow specifies the expected end-to-end flow latency
+  system implementation EmbeddedApp.CommandFlow
+    extends EmbeddedApp.Topology
+    flows
+      get_new_page: end to end flow PilotDisplay.Menu_Entry_Selected -> DisplayDM -> DM.cmd_request
+         -> DMPCM -> PCM.cmd_request
+         -> PCMFM -> FM.cmd_request
+         -> FMFD -> FD.process_page_request
+         -> FMFD -> FM.show_page
+         -> PCMFM -> PCM.show_page
+         -> DMPCM -> DM.show_page
+         -> DisplayDM -> PilotDisplay.Show_Page
+         {
+          Latency => 350 Ms;
+          };
+  end EmbeddedApp.CommandFlow;
+  
+  --      This system implementation is a refinement of the previous system implementation
+  --      It elaborates the flight manager into a thread-based implementation with a shared data access model  
+  system implementation EmbeddedApp.Legacy
+    extends EmbeddedApp.CommandFlow
+    subcomponents
+      FM: refined to process Flightmanager::FlightManager.shareddata;
+  end EmbeddedApp.Legacy;
+  
+  --      This system implementation is a refinement of the previous system implementation
+  --      It elaborates the flight manager into a flow-based thread implementation with a periodic IO thread
+  --      The periodic IO thread performs cross-partition communication at the beginning of a frame  
+  system implementation EmbeddedApp.FlightManagerPIO
+    extends EmbeddedApp.CommandFlow
+    subcomponents
+      FM: refined to process Flightmanager::FlightManager.PIO;
+  end EmbeddedApp.FlightManagerPIO;
+  
+  --      This system implementation is a refinement of the previous system implementation
+  --      It elaborates the flight manager into a flow-based thread implementation without a periodic IO thread
+  system implementation EmbeddedApp.FlightManagernoPIO
+    extends EmbeddedApp.CommandFlow
+    subcomponents
+      FM: refined to process Flightmanager::FlightManager.noPIO;
+  end EmbeddedApp.FlightManagernoPIO;
+end AppSystems;
+--   This package contains the data types used in the Avionics System example
+package AppTypes
+public
+  --   a port group type that is used in the specification of a system in terms of its subsystems
+  --   The port group type may initially be declared without providing the ports that make up the port group
+  port group PageRequest
+    features
+      request: out data port PageRequestCmd;
+      page: in data port PageContent;
+  end PageRequest;
+  
+  port group PageReturn
+    inverse of PageRequest
+  end PageReturn;
+  
+  data PageRequestCmd
+  end PageRequestCmd;
+  
+  data MenuCmd
+  end MenuCmd;
+  
+  data PageContent
+  end PageContent;
+  
+  data PageImage
+  end PageImage;
+  
+  data NavSignalData
+  end NavSignalData;
+  
+  data NavSensorData
+  end NavSensorData;
+  
+  data NavData
+  end NavData;
+  
+  data FuelFlowData
+  end FuelFlowData;
+  
+  data GuidanceData
+  end GuidanceData;
+  
+  data FPData
+  end FPData;
+  
+  data PerformanceData
+  end PerformanceData;
+  
+  port group FMInData
+    features
+      fuelFlow: in data port FuelFlowData;
+      navSignal: in data port NavSignalData;
+  end FMInData;
+  
+  port group FMInDataInv
+    inverse of FMInData
+  end FMInDataInv;
+  
+  port group FMOutData
+    features
+      guidanceOut: out data port GuidanceData;
+      fpDataOut: out data port FPData;
+      navDataOut: out data port NavData;
+  end FMOutData;
+  
+  port group FMOutDataInv
+    inverse of FMOutData
+  end FMOutDataInv;
+  
+  data SharedData
+  end SharedData;
+end AppTypes;
+package Flightmanager
+--      This package elaborates the Flight Manager as a thread-based implementation
+--      This implementation performs all communication within the flight manager partition through ports and connections.
+--      The threads of the flight manager have no priority assignment and are assumed to be scheduled fixed-priority preemptively according to RMA.
+--      The threads have execution time specified, which can be used to determine schedulability of the flight manager.
+--      The threads have flow specifications such that the flow specification latency used for the subsystem latency analysis can be validated by the latency from the flight manager implementation.
+--      An OSATE analysis plug-in can identify bindings of threads to processors and perform scheduling analysis to determine whether the binding is realistic.
+--      The thread execution times have values such that the threads are not schedulable on a single "slow" processor or even a dual-core processor
+--      The thread set is schedulable in a two processor system
+public
+  --      this declaration makes the flight manager type visible in this package
+  process FlightManager
+    extends AppSubSystems::FlightManager
+  end FlightManager;
+  
+  --      this implementation is port-connection based and does not utilize a periodic IO thread
+  process implementation FlightManager.noPIO
+    subcomponents
+      NSP: thread NavigationSensorProcessing;
+      INav: thread IntegratedNavigation;
+      GP: thread GuidanceProcessing;
+      FPP: thread FlightPlanProcessing;
+      APC: thread AircraftPerformanceCalculation;
+      pageFeed: thread HandlePageRequest;
+    connections
+      navsensorconn: data port NSP.navSensorDataToIN -> INav.navSensorDataFromNSP;
+      navdataconn1: data port INav.navDataToGPAPC -> GP.navDataFromIN;
+      navdataconn2: data port INav.navDataToGPAPC -> APC.navDataFromIN;
+      guidanceconn1: data port GP.guidanceToFPP -> FPP.guidanceFromGP;
+      performancedataconn: data port APC.perfDataToFPP ->> FPP.perfDataFromAPC;
+      fpdataconn1: data port FPP.fpDataToGPAPC ->> GP.fpDataFromFPP;
+      fpdataconn2: data port FPP.fpDataToGPAPC -> APC.fpDataFromFPP;
+      fuelflowconn: data port FMIn.fuelFlow -> APC.fuelFlow;
+      navsignalconn: data port FMIn.navSignal -> NSP.navSignalDataFromSensor;
+      navdataconn3: data port INav.navDataToGPAPC -> FMOut.navDataOut;
+      guidanceconn2: data port GP.guidanceToFPP -> FMOut.guidanceOut;
+      fpdataconn3: data port FPP.fpDataToGPAPC -> FMOut.fpDataOut;
+      inPageRequest: data port FMToPCM.request -> pageFeed.New_Page_Request_From_PCM;
+      outPageRequest: data port pageFeed.New_Page_Request_To_FD -> FMToFD.request;
+      inPageContent: data port FMToFD.page -> pageFeed.New_Page_Content_from_FD;
+      outPageContent: data port pageFeed.New_Page_Content_To_PCM -> FMToPCM.page;
+    flows
+      cmd_request: flow path FMToPCM -> inPageRequest -> pageFeed.passThroughRequest
+         -> outPageRequest -> FMToFD;
+      show_page: flow path FMToFD -> inPageContent -> pageFeed.passThroughPage
+         -> outPageContent -> FMToPCM;
+  end FlightManager.noPIO;
+  
+  --      This implementation utilizes a periodic IO thread to perform the communication with other partitions
+  --      This IO is performed as part of the application code
+  --      This adds extra latency to the cross-partition communication
+  process implementation FlightManager.PIO
+    subcomponents
+      NSP: thread NavigationSensorProcessing;
+      INav: thread IntegratedNavigation;
+      GP: thread GuidanceProcessing;
+      FPP: thread FlightPlanProcessing;
+      APC: thread AircraftPerformanceCalculation;
+      pageFeed: thread HandlePageRequest;
+      PerIO: thread PeriodicIO;
+    connections
+      navsensorconn: data port NSP.navSensorDataToIN -> INav.navSensorDataFromNSP;
+      navdataconn1: data port INav.navDataToGPAPC -> GP.navDataFromIN;
+      navdataconn2: data port INav.navDataToGPAPC -> APC.navDataFromIN;
+      guidanceconn1: data port GP.guidanceToFPP -> FPP.guidanceFromGP;
+      performancedataconn: data port APC.perfDataToFPP ->> FPP.perfDataFromAPC;
+      fpdataconn1: data port FPP.fpDataToGPAPC ->> GP.fpDataFromFPP;
+      fpdataconn2: data port FPP.fpDataToGPAPC -> APC.fpDataFromFPP;
+      inflow: port group FMIn -> PerIO.fromOutside;
+      outflow: port group PerIO.toOutside -> FMOut;
+      fuelflowconn: data port PerIO.fuelFlow -> APC.fuelFlow;
+      navsignalconn: data port PerIO.navSignal -> NSP.navSignalDataFromSensor;
+      navdataconn3: data port INav.navDataToGPAPC ->> PerIO.navDataOut;
+      guidanceconn2: data port GP.guidanceToFPP ->> PerIO.guidanceOut;
+      fpdataconn3: data port FPP.fpDataToGPAPC ->> PerIO.fpDataOut;
+      inPageRequestPIO: data port FMToPCM.request -> PerIO.New_Page_Request_From_PCM;
+      inPageRequest: data port PerIO.New_Page_Request_To_PageFeed -> pageFeed.New_Page_Request_From_PCM;
+      outPageRequest: data port pageFeed.New_Page_Request_To_FD ->> PerIO.New_Page_Request_From_PageFeed;
+      outPageRequestPIO: data port PerIO.New_Page_Request_To_FD -> FMToFD.request;
+      inPageContentPIO: data port FMToFD.page -> PerIO.New_Page_Content_from_FD;
+      inPageContent: data port PerIO.New_Page_Content_To_PageFeed -> pageFeed.New_Page_Content_from_FD;
+      outPageContentPIO: data port PerIO.New_Page_Content_To_PCM -> FMToPCM.page;
+      outPageContent: data port pageFeed.New_Page_Content_To_PCM ->> PerIO.New_Page_Content_From_PageFeed;
+    flows
+      cmd_request: flow path FMToPCM -> inPageRequestPIO -> PerIO.passInRequest
+         -> inPageRequest -> pageFeed.passThroughRequest
+         -> outPageRequest -> PerIO.passOutRequest
+         -> outPageRequestPIO -> FMToFD;
+      show_page: flow path FMToFD -> inPageContentPIO -> PerIO.passInContent
+         -> inPageContent -> pageFeed.passThroughPage
+         -> outPageContent -> PerIO.passOutContent
+         -> outPageContentPIO -> FMToPCM;
+  end FlightManager.PIO;
+  
+  --      the components of the flight manager
+  thread NavigationSensorProcessing
+    features
+      navSignalDataFromSensor: in data port AppTypes::NavSignalData;
+      navSensorDataToIN: out data port AppTypes::NavSensorData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 50 Ms;
+      Compute_Execution_Time => 5 Ms .. 15 Ms;
+      SEI::RAMBudget => 250.0 KB;
+  end NavigationSensorProcessing;
+  
+  thread IntegratedNavigation
+    features
+      navSensorDataFromNSP: in data port AppTypes::NavSensorData;
+      navDataToGPAPC: out data port AppTypes::NavData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 100 Ms;
+      Compute_Execution_Time => 10 Ms .. 40 Ms;
+      SEI::RAMBudget => 250.0 KB;
+  end IntegratedNavigation;
+  
+  thread GuidanceProcessing
+    features
+      navDataFromIN: in data port AppTypes::NavData;
+      fpDataFromFPP: in data port AppTypes::FPData;
+      guidanceToFPP: out data port AppTypes::GuidanceData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 50 Ms;
+      Compute_Execution_Time => 8 Ms .. 30 Ms;
+      SEI::RAMBudget => 250.0 KB;
+  end GuidanceProcessing;
+  
+  thread FlightPlanProcessing
+    features
+      guidanceFromGP: in data port AppTypes::GuidanceData;
+      perfDataFromAPC: in data port AppTypes::PerformanceData;
+      fpDataToGPAPC: out data port AppTypes::FPData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 200 Ms;
+      Compute_Execution_Time => 10 Ms .. 30 Ms;
+      SEI::RAMBudget => 250.0 KB;
+  end FlightPlanProcessing;
+  
+  thread AircraftPerformanceCalculation
+    features
+      fpDataFromFPP: in data port AppTypes::FPData;
+      navDataFromIN: in data port AppTypes::NavData;
+      fuelFlow: in data port AppTypes::FuelFlowData;
+      perfDataToFPP: out data port AppTypes::PerformanceData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 500 Ms;
+      Compute_Execution_Time => 1 Ms .. 100 Ms;
+      SEI::RAMBudget => 250.0 KB;
+  end AircraftPerformanceCalculation;
+  
+  thread PeriodicIO
+    features
+      fromOutside: port group AppTypes::FMInData;
+      fuelFlow: out data port AppTypes::FuelFlowData;
+      navSignal: out data port AppTypes::NavSignalData;
+      guidanceOut: in data port AppTypes::GuidanceData;
+      fpDataOut: in data port AppTypes::FPData;
+      navDataOut: in data port AppTypes::NavData;
+      toOutside: port group AppTypes::FMOutData;
+      New_Page_Request_From_PCM: in data port AppTypes::PageRequestCmd;
+      New_Page_Request_To_PageFeed: out data port AppTypes::PageRequestCmd;
+      New_Page_Request_From_PageFeed: in data port AppTypes::PageRequestCmd;
+      New_Page_Request_To_FD: out data port AppTypes::PageRequestCmd;
+      New_Page_Content_from_FD: in data port AppTypes::PageContent;
+      New_Page_Content_To_PageFeed: out data port AppTypes::PageContent;
+      New_Page_Content_From_PageFeed: in data port AppTypes::PageContent;
+      New_Page_Content_To_PCM: out data port AppTypes::PageContent;
+    flows
+      passInRequest: flow path New_Page_Request_From_PCM -> New_Page_Request_To_PageFeed;
+      passOutRequest: flow path New_Page_Request_From_PageFeed -> New_Page_Request_To_FD;
+      passInContent: flow path New_Page_Content_from_FD -> New_Page_Content_To_PageFeed;
+      passOutContent: flow path New_Page_Content_From_PageFeed -> New_Page_Content_To_PCM;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 50 Ms;
+      Compute_Execution_Time => 1 Ms .. 1 Ms;
+      SEI::RAMBudget => 50.0 KB;
+  end PeriodicIO;
+  
+  thread HandlePageRequest
+    features
+      New_Page_Request_From_PCM: in data port AppTypes::PageRequestCmd;
+      New_Page_Content_To_PCM: out data port AppTypes::PageContent;
+      New_Page_Request_To_FD: out data port AppTypes::PageRequestCmd;
+      New_Page_Content_from_FD: in data port AppTypes::PageContent;
+    flows
+      passThroughRequest: flow path New_Page_Request_From_PCM -> New_Page_Request_To_FD;
+      passThroughPage: flow path New_Page_Content_from_FD -> New_Page_Content_To_PCM;
+    properties
+      Dispatch_Protocol => Periodic;
+      Compute_Execution_Time => 1 Ms .. 1 Ms;
+      Period => 50 Ms;
+      SEI::RAMBudget => 40.0 KB;
+  end HandlePageRequest;
+  
+  --      The following implementation performs all communication within the flight manager partition through a shared data area.
+  --      The threads of the flight manager have explicitly assigned priority.
+  --      Priority assignment achieves the desired flow of data between threads without explictly modeling it.
+  --      When bound to a processor with preemptive scheduling the priority assignment results in priority inversion.
+  --      An OSATE analysis plug-in can identify this priority inversion.
+  process implementation FlightManager.shareddata
+    subcomponents
+      NSP: thread NavigationSensorProcessingShared;
+      INav: thread IntegratedNavigationShared;
+      GP: thread GuidanceProcessingShared;
+      FPP: thread FlightPlanProcessingShared;
+      APC: thread AircraftPerformanceCalculationShared;
+      PerIO: thread PeriodicIOShared;
+      sharedData: data AppTypes::SharedData;
+    connections
+      sharedNSP: data access sharedData -> NSP.sharedDataArea;
+      sharedINav: data access sharedData -> INav.sharedDataArea;
+      sharedGP: data access sharedData -> GP.sharedDataArea;
+      sharedFPP: data access sharedData -> FPP.sharedDataArea;
+      sharedAPC: data access sharedData -> APC.sharedDataArea;
+      sharedPerIO: data access sharedData -> PerIO.sharedDataArea;
+  end FlightManager.shareddata;
+  
+  --      the components of the flight manager
+  thread NavigationSensorProcessingShared
+    features
+      sharedDataArea: requires data access AppTypes::SharedData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 50 Ms;
+      Compute_Execution_Time => 1 Ms .. 1 Ms;
+      SEI::Priority => 2;
+  end NavigationSensorProcessingShared;
+  
+  thread IntegratedNavigationShared
+    features
+      sharedDataArea: requires data access AppTypes::SharedData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 100 Ms;
+      Compute_Execution_Time => 1 Ms .. 1 Ms;
+      SEI::Priority => 3;
+  end IntegratedNavigationShared;
+  
+  thread GuidanceProcessingShared
+    features
+      sharedDataArea: requires data access AppTypes::SharedData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 50 Ms;
+      Compute_Execution_Time => 1 Ms .. 1 Ms;
+      SEI::Priority => 4;
+  end GuidanceProcessingShared;
+  
+  thread FlightPlanProcessingShared
+    features
+      sharedDataArea: requires data access AppTypes::SharedData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 200 Ms;
+      Compute_Execution_Time => 1 Ms .. 1 Ms;
+      SEI::Priority => 5;
+  end FlightPlanProcessingShared;
+  
+  thread AircraftPerformanceCalculationShared
+    features
+      sharedDataArea: requires data access AppTypes::SharedData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 500 Ms;
+      Compute_Execution_Time => 1 Ms .. 1 Ms;
+      SEI::Priority => 6;
+  end AircraftPerformanceCalculationShared;
+  
+  thread PeriodicIOShared
+    features
+      sharedDataArea: requires data access AppTypes::SharedData;
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 50 Ms;
+      Compute_Execution_Time => 1 Ms .. 1 Ms;
+      SEI::Priority => 1;
+  end PeriodicIOShared;
+end Flightmanager;
+--    This package contains hardware components
+--    The hardware components have resource capacity properties
+--    These property values are used in resoruce budget analysis
+--    The multi-function display also includes a flow specification with a latency value
+package HardwareParts
+public
+  memory RAM
+    properties
+      Word_Count => 128000;
+      SEI::RAMCapacity => 1.0 MB;
+  end RAM;
+  
+  memory ROM
+    properties
+      Word_Count => 256;
+      SEI::ROMCapacity => 100.0 KB;
+  end ROM;
+  
+  bus EtherSwitch
+    properties
+      SEI::PowerCapacity => 350.0 mW;
+      SEI::BandWidthCapacity => 100.0 Mbps;
+  end EtherSwitch;
+  
+  processor Xeon
+    features
+      HS: requires bus access EtherSwitch {
+        SEI::PowerBudget => access 75.0 mW;
+        };
+      Power: requires bus access PowerSupply.V9_0 {
+        SEI::PowerBudget => access 5.0 W;
+        };
+  end Xeon;
+  
+  processor implementation Xeon.solo
+    subcomponents
+      MemBank1: memory RAM;
+      Membank2: memory ROM;
+    properties
+      SEI::cycle_time => 1000 ps;
+      SEI::MIPSCapacity => 1000.0 MIPS;
+  end Xeon.solo;
+  
+  processor implementation Xeon.dualcore
+    subcomponents
+      MemBank1: memory RAM;
+      Membank2: memory ROM;
+    properties
+      SEI::cycle_time => 500 ps;
+      SEI::MIPSCapacity => 2000.0 MIPS;
+  end Xeon.dualcore;
+  
+  device MFD
+    features
+      Switch: requires bus access EtherSwitch;
+      DisplayToDM: port group AppTypes::PageRequest;
+    flows
+      Menu_Entry_Selected: flow source DisplayToDM {
+        Latency => 5 Ms;
+        };
+      Show_Page: flow sink DisplayToDM {
+        Latency => 10 Ms;
+        };
+  end MFD;
+  
+  bus LAN
+  end LAN;
+  
+  bus PowerSupply
+    properties
+      SEI::PowerCapacity => 10.0 W;
+  end PowerSupply;
+  
+  bus implementation PowerSupply.V9_0
+  end PowerSupply.V9_0;
+  
+  bus implementation PowerSupply.V4_5
+  end PowerSupply.V4_5;
+end HardwareParts;
+--    This package defines a collection of hardware platforms
+--    The hardware platform provides access to a bus such that a device
+--    in the application system can be connected to the platform
+--    The platforms differ in the number of processors
+package HardwarePlatform
+public
+  system ComputingPlatform
+    features
+      BusAccess1: provides bus access HardwareParts::EtherSwitch;
+  end ComputingPlatform;
+  
+  --    a platform with three dual core processors as a parts specification
+  system implementation ComputingPlatform.ThreeProcessorParts
+    subcomponents
+      MissionProcessor1: processor HardwareParts::Xeon.dualcore;
+      MissionProcessor2: processor HardwareParts::Xeon.dualcore;
+      Switch: bus HardwareParts::EtherSwitch;
+      MissionProcessor3: processor HardwareParts::Xeon.dualcore;
+  end ComputingPlatform.ThreeProcessorParts;
+  
+  --    a platform with a single "slow" processor (a single core Xeon)  
+  system implementation ComputingPlatform.SlowProcessor
+    subcomponents
+      MissionProcessor1: processor HardwareParts::Xeon.solo;
+      Switch: bus HardwareParts::EtherSwitch;
+    connections
+      ba1: bus access Switch -> MissionProcessor1.HS;
+      BusAccessConnection1: bus access Switch -> BusAccess1;
+  end ComputingPlatform.SlowProcessor;
+  
+  --    a platform with a single processor (a dual core Xeon)  
+  system implementation ComputingPlatform.OneProcessor
+    subcomponents
+      MissionProcessor1: processor HardwareParts::Xeon.dualcore;
+      Switch: bus HardwareParts::EtherSwitch;
+    connections
+      ba1: bus access Switch -> MissionProcessor1.HS;
+      BusAccessConnection1: bus access Switch -> BusAccess1;
+  end ComputingPlatform.OneProcessor;
+  
+  --    a platform with two dual core processors  
+  system implementation ComputingPlatform.TwoProcessor
+    subcomponents
+      MissionProcessor1: processor HardwareParts::Xeon.solo;
+      MissionProcessor2: processor HardwareParts::Xeon.solo;
+      Switch: bus HardwareParts::EtherSwitch;
+      MainPowerSupply: bus HardwareParts::PowerSupply.V9_0;
+    connections
+      BusAccessConnection5: bus access MainPowerSupply -> MissionProcessor1.Power;
+      ba1: bus access Switch -> MissionProcessor1.HS;
+      ba2: bus access Switch -> MissionProcessor2.HS;
+      BusAccessConnection1: bus access Switch -> BusAccess1;
+  end ComputingPlatform.TwoProcessor;
+  
+  --    a platform with three dual core processors  
+  system implementation ComputingPlatform.ThreeProcessor
+    subcomponents
+      MissionProcessor1: processor HardwareParts::Xeon.dualcore;
+      MissionProcessor2: processor HardwareParts::Xeon.dualcore;
+      MissionProcessor3: processor HardwareParts::Xeon.dualcore;
+      Switch: bus HardwareParts::EtherSwitch;
+      MainPowerSupply: bus HardwareParts::PowerSupply.V9_0;
+    connections
+      BusAccessConnection3: bus access Switch -> MissionProcessor3.HS;
+      BusAccessConnection5: bus access MainPowerSupply -> MissionProcessor1.Power;
+      ba1: bus access Switch -> MissionProcessor1.HS;
+      ba2: bus access Switch -> MissionProcessor2.HS;
+      BusAccessConnection1: bus access Switch -> BusAccess1;
+      BusAccessConnection2: bus access MainPowerSupply -> MissionProcessor2.Power;
+      BusAccessConnection4: bus access MainPowerSupply -> MissionProcessor3.Power;
+  end ComputingPlatform.ThreeProcessor;
+end HardwarePlatform;
+package SystemConfigurations
+public
+  system mysystem
+  end mysystem;
+  
+  --     a system with the application as a parts list of subsystems with resource budgets
+  --     and a platform with hardware parts with resource capacities
+  system implementation mysystem.parts
+    subcomponents
+      Platform: system HardwarePlatform::ComputingPlatform.ThreeProcessorParts;
+      ApplicationSystem: system AppSystems::EmbeddedApp.SubSystemParts;
+  end mysystem.parts;
+  
+  --     the same system of parts with subsystems allocated to processors
+  --     This may be an initial allocation or an allocation specified as part of requirements
+  --     Given such an allocation we can analyze whether the budgets of the llocated subsystems exceed the capacity of the processor
+  system implementation mysystem.allocatedparts
+    extends mysystem.parts
+    properties
+      Actual_Processor_Binding =>  reference platform.missionprocessor1 applies to ApplicationSystem.DM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor1 applies to ApplicationSystem.PCM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor2 applies to ApplicationSystem.FM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor2 applies to ApplicationSystem.FD;
+      Actual_Processor_Binding =>  reference platform.missionprocessor3 applies to ApplicationSystem.WAM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor2.membank1 applies to ApplicationSystem.FD;
+      Actual_Memory_Binding =>  reference platform.missionprocessor2.membank1 applies to ApplicationSystem.FM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor1.membank1 applies to ApplicationSystem.PCM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor1.membank1 applies to ApplicationSystem.DM;
+  end mysystem.allocatedparts;
+  
+  --     the system of subsystems with cross-subsystem communication specified
+  --     This allows for network bandwidth analysis
+  --     without allocation of subsystems to processors the bandwidth analysis
+  --     has to assume that all cross-subsystem communication goes over the network
+  system implementation mysystem.communication
+    subcomponents
+      Platform: system HardwarePlatform::ComputingPlatform.ThreeProcessor;
+      ApplicationSystem: system AppSystems::EmbeddedApp.Topology;
+    connections
+      BusAccessConnection1: bus access Platform.BusAccess1 -> ApplicationSystem.BusAccess1;
+  end mysystem.communication;
+  
+  --     the system with subsystems and their communication
+  --     the subsystems are allocated to processors; only those cross-subsystem connections
+  --     that communicate across processors are considered to produce load on the network
+  system implementation mysystem.allocatedcommunication
+    extends mysystem.communication
+    properties
+      Actual_Processor_Binding =>  reference platform.missionprocessor1 applies to ApplicationSystem.DM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor1 applies to ApplicationSystem.PCM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor2 applies to ApplicationSystem.FM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor2 applies to ApplicationSystem.FD;
+      Actual_Processor_Binding =>  reference platform.missionprocessor3 applies to ApplicationSystem.WAM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor2.membank1 applies to ApplicationSystem.FD;
+      Actual_Memory_Binding =>  reference platform.missionprocessor2.membank1 applies to ApplicationSystem.FM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor1.membank1 applies to ApplicationSystem.PCM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor1.membank1 applies to ApplicationSystem.DM;
+      Actual_Connection_Binding =>  reference platform.switch applies to ApplicationSystem.FMFD;
+  end mysystem.allocatedcommunication;
+  
+  --     this system uses the applicaiton system with a end-to-end flow specification
+  --     this allows for end-to-end flow latency analysis at the subsystem (partition) level
+  system implementation mysystem.cmdflow
+    subcomponents
+      Platform: system HardwarePlatform::ComputingPlatform.ThreeProcessor;
+      ApplicationSystem: system AppSystems::EmbeddedApp.CommandFlow;
+    connections
+      BusAccessConnection1: bus access Platform.BusAccess1 -> ApplicationSystem.BusAccess1;
+    properties
+      Actual_Processor_Binding =>  reference platform.missionprocessor1 applies to ApplicationSystem.DM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor1 applies to ApplicationSystem.PCM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor2 applies to ApplicationSystem.FM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor2 applies to ApplicationSystem.FD;
+      Actual_Processor_Binding =>  reference platform.missionprocessor3 applies to ApplicationSystem.WAM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor2.membank1 applies to ApplicationSystem.FD;
+      Actual_Memory_Binding =>  reference platform.missionprocessor2.membank1 applies to ApplicationSystem.FM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor1.membank1 applies to ApplicationSystem.PCM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor1.membank1 applies to ApplicationSystem.DM;
+      Actual_Connection_Binding =>  reference platform.switch applies to ApplicationSystem.FMFD;
+  end mysystem.cmdflow;
+  
+  --     this system has the legacy flight manager implementation
+  --     this allows for priority inversion analysis
+  --     that analysis assumes that the threads are bound to a processor
+  system implementation mysystem.legacy
+    subcomponents
+      Platform: system HardwarePlatform::ComputingPlatform.ThreeProcessor;
+      ApplicationSystem: system AppSystems::EmbeddedApp.Legacy;
+    connections
+      BusAccessConnection1: bus access Platform.BusAccess1 -> ApplicationSystem.BusAccess1;
+    properties
+      Actual_Processor_Binding =>  reference platform.missionprocessor1 applies to ApplicationSystem.DM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor1 applies to ApplicationSystem.PCM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor2 applies to ApplicationSystem.FM;
+      Actual_Processor_Binding =>  reference platform.missionprocessor2 applies to ApplicationSystem.FD;
+      Actual_Processor_Binding =>  reference platform.missionprocessor3 applies to ApplicationSystem.WAM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor2.membank1 applies to ApplicationSystem.FD;
+      Actual_Memory_Binding =>  reference platform.missionprocessor2.membank1 applies to ApplicationSystem.FM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor1.membank1 applies to ApplicationSystem.PCM;
+      Actual_Memory_Binding =>  reference platform.missionprocessor1.membank1 applies to ApplicationSystem.DM;
+      Actual_Connection_Binding =>  reference platform.switch applies to ApplicationSystem.FMFD;
+  end mysystem.legacy;
+  
+  --     This system has the avionics system with the thread-based flight manager implementation that includes the periodic IO thread
+  --     This system implementation can be used for resoruce allocation & scheduling (binpacking) analysis as well as latency analysis
+  --     In case of end-to-end latency the actual latency should be larger than the latency analyzed a the subsystem level or without periodic IO.
+  --     This is due to the fact that Periodic IO is executed at the application level and delays data by one frame.
+  --     For resource allocation the platform can be changed to OneProcessor, or TwoProcessor.
+  system implementation mysystem.FMPIO
+    subcomponents
+      --     platform options: SlowProcessor(Solo), OneProcessor(Duo), TwoProcessor, ThreeProcessor
+      Platform: system HardwarePlatform::ComputingPlatform.SlowProcessor;
+      ApplicationSystem: system AppSystems::EmbeddedApp.FlightManagerPIO;
+    connections
+      BusAccessConnection1: bus access Platform.BusAccess1 -> ApplicationSystem.BusAccess1;
+  end mysystem.FMPIO;
+  
+  system implementation mysystem.FMnoPIO
+    subcomponents
+      Platform: system HardwarePlatform::ComputingPlatform.ThreeProcessor;
+      ApplicationSystem: system AppSystems::EmbeddedApp.FlightManagernoPIO;
+    connections
+      BusAccessConnection1: bus access Platform.BusAccess1 -> ApplicationSystem.BusAccess1;
+  end mysystem.FMnoPIO;
+end SystemConfigurations;
+property set SEI is
+  SecurityLevel: inherit aadlinteger  applies to (thread, thread group, process, system);
+  SafetyCriticality  : aadlinteger applies to (thread, thread group, process, system);
+  StreamMissRate: aadlreal  applies to (port);
+  Priority: aadlinteger  applies to (thread);
+  Partition_Latency: Time => 50 Ms applies to (system, process);
+  Is_Partition: aadlboolean  => false applies to (system, process);
+  reference_cycle_time: constant Time=> 5000 ps;
+  cycle_time: Time => 5000 ps applies to (processor);
+  reference_processor:  classifier(processor) applies to (thread, thread group, process, system, device);
+  MIPSCapacity: aadlreal  units SEI::Processor_Speed_Units applies to (processor, system);
+  MIPSBudget: aadlreal  units SEI::Processor_Speed_Units applies to (thread, thread group, process, system);
+  RAMCapacity: aadlreal  units Size_Units applies to (memory, system);
+  RAMBudget: aadlreal  units Size_Units applies to (thread, thread group, process, system);
+  ROMCapacity: aadlreal  units Size_Units applies to (memory, system);
+  ROMBudget: aadlreal  units Size_Units applies to (thread, thread group, process, system);
+  PowerCapacity: aadlreal  units SEI::Power_Units applies to (bus, system);
+  PowerBudget: access aadlreal  units SEI::Power_Units applies to (bus);
+  BandWidthCapacity: aadlreal  units SEI::Data_Volume_Units applies to (bus, system);
+  BandWidthBudget: aadlreal  units SEI::Data_Volume_Units applies to (connections);
+  RAMActual: aadlreal  units Size_Units applies to (thread, thread group, process, system);
+  ROMActual: aadlreal  units Size_Units applies to (thread, thread group, process, system);
+  Processor_Speed_Units: type units (KIPS, MIPS => KIPS * 1000, GIPS => MIPS * 1000);
+  Power_Units: type units (mW, W => mW * 1000, KW => W * 1000);
+  Data_Volume_Units: type units (bitsps, Bps => bitsps * 8, Kbps => Bps * 1000, Mbps => Kbps * 1000, Gbps => Mbps * 1000);
+end SEI;

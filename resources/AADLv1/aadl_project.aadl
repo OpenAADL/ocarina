@@ -1,0 +1,134 @@
+--******************************************************
+--   AADL Standard AADL_V1.0
+--  Appendix A (normative)
+--  Predeclared Property Sets
+--  03Nov04
+--  Revised 14May06
+--******************************************************
+
+property set AADL_Project is
+
+  Default_Active_Thread_Handling_Protocol : constant
+     Supported_Active_Thread_Handling_Protocols => abort;
+  -- one of the choices of Supported_Active_Thread_Handling_Protocols.
+
+  Supported_Active_Thread_Handling_Protocols: type enumeration
+    (abort,
+     complete_one_flush_queue,
+     complete_one_transfer_queue,
+     complete_one_preserve_queue,
+     complete_all);
+  -- a subset may be supported.
+
+  Supported_Connection_Protocols: type enumeration
+    (HTTP,
+     HTTPS,
+     UDP,
+     IP_TCP);
+  -- The following are example protocols.
+  -- (HTTP, HTTPS, UDP, IP_TPC);
+
+  Supported_Concurrency_Control_Protocols: type enumeration
+    (NoneSpecified,
+     Read_Only,
+     Protected_Access,
+     Priority_Ceiling);
+  -- phf : NoneSpecified instead of None
+  -- The following are example concurrency control protocols.
+  -- (Interrupt_Masking, Maximum_Priority, Priority_Inheritance,
+  --  Priority_Ceiling)
+
+  Supported_Dispatch_Protocols: type enumeration
+    (Periodic,
+     Aperiodic,
+     Sporadic,
+     Hybrid,
+     Background);
+  -- The following are protocols for which the semantics are defined.
+  -- (Periodic, Sporadic, Aperiodic, Hybrid, Background);
+
+  Supported_Hardware_Source_Languages: type enumeration
+    (VHDL);
+  -- The following is an example hardware description language.
+  -- (VHDL)
+
+  -- phf A26: added
+  Supported_Queue_Processing_Protocols: type enumeration
+    (FIFO);
+  -- The Supported_Queue_Processing_Protocols property enumeration
+  -- type specifies the set of queue processing protocols that are
+  -- supported.
+
+  Supported_Scheduling_Protocols: type enumeration
+    (PARAMETRIC_PROTOCOL,
+     EARLIEST_DEADLINE_FIRST_PROTOCOL,
+     LEAST_LAXITY_FIRST_PROTOCOL,
+     RATE_MONOTONIC_PROTOCOL,
+     DEADLINE_MONOTONIC_PROTOCOL,
+     ROUND_ROBIN_PROTOCOL,
+     TIME_SHARING_BASED_ON_WAIT_TIME_PROTOCOL,
+     POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL,
+     D_OVER_PROTOCOL,
+     MAXIMUM_URGENCY_FIRST_BASED_ON_LAXITY_PROTOCOL,
+     MAXIMUM_URGENCY_FIRST_BASED_ON_DEADLINE_PROTOCOL,
+     TIME_SHARING_BASED_ON_CPU_USAGE_PROTOCOL,
+     NO_SCHEDULING_PROTOCOL,
+     HIERARCHICAL_CYCLIC_PROTOCOL,
+     HIERARCHICAL_ROUND_ROBIN_PROTOCOL,
+     HIERARCHICAL_FIXED_PRIORITY_PROTOCOL,
+     HIERARCHICAL_PARAMETRIC_PROTOCOL);
+  -- The following are example scheduling protocols.
+  -- (RMS, EDF, Sporadicserver, SlackServer, ARINC653)
+
+  Supported_Source_Languages: type enumeration
+    (Ada95,
+     Ada,     -- alias for Ada95
+     Ada05,   -- alias for Ada95
+     ASN1,
+     C,
+     Lustre,
+     Lustre5, -- alias for Lustre
+     Lustre6, -- alias for Lustre
+     RTSJ,    -- Real Time Specification for Java
+     SCADE6,  -- alias for Lustre
+     SDL,
+     Simulink,
+     Simulink_6_5);
+  -- The following are example software source languages.
+  -- ( Ada95, C, Simulink_6_5 )
+
+  Max_Aadlinteger: constant aadlinteger => 2#1#e32;
+
+  Max_Base_Address: constant aadlinteger => 512;
+
+  Max_Memory_Size: constant aadlinteger Size_Units => 2#1#e32 B;
+
+  Max_Queue_Size: constant aadlinteger => 512;
+
+  Max_Thread_Limit: constant aadlinteger => 32;
+
+  Max_Time: constant aadlinteger Time_Units => 1000 hr;
+
+  Max_Urgency: constant aadlinteger => 12;
+
+  Max_Word_Count: constant aadlinteger => 2#1#e32;
+
+  Max_Word_Space: constant aadlinteger => 64;
+
+  Size_Units	: type units (
+    Bits,
+    B     => Bits  * 8,
+    KB    => B     * 1000,
+    MB    => KB    * 1000,
+    GB    => MB    * 1000);
+
+  Time_Units : type units (
+    ps,
+    Ns    => ps  * 1000,
+    Us    => Ns  * 1000,
+    Ms    => Us  * 1000,
+    Sec   => Ms  * 1000,
+    Min   => Sec * 60,
+    Hr    => Min * 60);
+
+end AADL_Project;

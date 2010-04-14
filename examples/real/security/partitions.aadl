@@ -1,0 +1,31 @@
+package partitions
+public
+   with threads;
+   with types;
+
+   process process_sender
+   features
+      outgoing : out data port types::integer;
+   end process_sender;
+
+   process implementation process_sender.i
+   subcomponents
+      thr : thread threads::send_value.impl;
+   connections
+      port thr.outgoing_value -> outgoing;
+   end process_sender.i;
+
+
+   process process_receiver
+   features
+      incoming : in data port types::integer;
+   end process_receiver;
+
+   process implementation process_receiver.i
+   subcomponents
+      thr : thread threads::receive_value.impl;
+   connections
+      port incoming -> thr.incoming_value;
+   end process_receiver.i;
+
+end partitions;

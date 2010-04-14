@@ -1,0 +1,481 @@
+/*****************************************************************************
+**                                                                          **
+**                           OCARINA COMPONENTS                             **
+**                                                                          **
+**        O C A R I N A . B A C K E N D S . C _ T R E E . N O D E S         **
+**                                                                          **
+**               Copyright (C) 2007-2008, GET-Telecom Paris.                **
+**                                                                          **
+** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
+** it under terms of the GNU General Public License as published by the     **
+** Free Software Foundation; either version 2, or (at your option) any      **
+** later version. Ocarina is distributed  in  the  hope  that it will be    **
+** useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General **
+** Public License for more details. You should have received  a copy of the **
+** GNU General Public License distributed with Ocarina; see file COPYING.   **
+** If not, write to the Free Software Foundation, 51 Franklin Street, Fifth **
+** Floor, Boston, MA 02111-1301, USA.                                       **
+**                                                                          **
+** As a special exception,  if other files  instantiate  generics from this **
+** unit, or you link  this unit with other files  to produce an executable, **
+** this  unit  does not  by itself cause  the resulting  executable to be   **
+** covered  by the  GNU  General  Public  License. This exception does not  **
+** however invalidate  any other reasons why the executable file might be   **
+** covered by the GNU Public License.                                       **
+**                                                                          **
+**                 Ocarina is maintained by the Ocarina team                **
+**                       (ocarina-users@listes.enst.fr)                     **
+**                                                                          **
+*****************************************************************************/
+
+module Ocarina::Backends::C_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef octet   Operator_Id;
+  typedef long    Name_Id;
+  typedef long    Value_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  interface Node_Id {
+    Node_Id    Next_Node;
+    Node_Id    Frontend_Node;
+  };
+
+  interface Definition : Node_Id {
+    Node_Id    Defining_Identifier;
+  };
+
+  interface List_Id {
+    Node_Id    First_Node;
+    Node_Id    Last_Node;
+  };
+
+  interface Defining_Identifier : Node_Id {
+    Name_Id    Name;
+    Node_Id    Corresponding_Node;
+    Node_Id    Compile_Unit;
+    boolean    Is_Pointer; 
+  };
+
+  interface Ifdef_Clause : Node_Id {
+    Node_Id    Clause;
+    List_Id    Then_Statements;
+    List_Id    Else_Statements;
+    boolean    Negation;
+  };
+
+  interface Include_Clause : Node_Id {
+    Node_Id    Header_Name;
+    boolean    Is_Local; 
+  };
+
+  interface Includes : List_Id {};
+
+  interface Declaration_List : List_Id {};
+
+  interface Header_List : List_Id {};
+
+  interface Statement_List : List_Id {};
+
+  interface Parameter_List : List_Id {};
+
+  interface Enumeration_Literals : List_Id {};
+
+  interface Element_List : List_Id {};
+
+  interface Label_List : List_Id {};
+
+  interface Alternatives_List : List_Id {};
+
+  interface Sources : List_Id {};
+
+  interface Headers : List_Id {};
+
+  interface Array_Values : Node_Id {
+    List_Id    Values;
+  };
+
+  interface Array_Value : Definition {
+    Node_Id    Array_Item;
+  };
+
+  /* Interfaces for the PolyORB-HI module */
+
+  interface HI_Distributed_Application : Node_Id {
+    Name_Id    Name;
+    List_Id    Units;
+    List_Id    HI_Nodes;
+  };
+
+  interface HI_Node : Node_Id {
+    Name_Id    Name;
+    List_Id    Units;
+    Node_Id    Distributed_Application;
+  };
+
+  interface Header_File : Definition {
+    Node_Id    Distributed_Application_Unit;
+    List_Id    Included_Headers;
+    List_Id    Declarations;
+  };
+
+  interface Source_File : Definition {
+    Node_Id    Distributed_Application_Unit;
+    List_Id    Included_Headers;
+    List_Id    Declarations;
+  };
+
+  /* Units that gather all the generated packages */
+
+  interface API_Unit : Node_Id {
+   /* Whatever the distributed application kind is, a main function
+      is required for each node */
+    List_Id    Sources;
+    List_Id    Headers;
+    Node_Id    Entity;
+  };
+
+  /* This is the root node of the packages generated specifically for
+     an PolyORB-HI Distributed application */
+
+  interface HI_Unit : API_Unit {
+    Node_Id    Main_Source;
+    Node_Id    Main_Header;
+    Node_Id    Activity_Source;
+    Node_Id    Activity_Header;
+    Node_Id    Marshallers_Source;
+    Node_Id    Marshallers_Header;
+    Node_Id    Request_Source;
+    Node_Id    Request_Header;
+    Node_Id    Types_Header;
+    Node_Id    Types_Source;
+    Node_Id    Deployment_Header;
+    Node_Id    Deployment_Source;
+    Node_Id    Naming_Source;
+    Node_Id    Naming_Header;
+    Node_Id    Subprograms_Source;
+    Node_Id    Subprograms_Header;
+  };
+  
+  interface Parameter_Specification : Definition {
+    Node_Id    Parameter_Type;
+  };
+
+  interface Parameter_Profile : List_Id {};
+
+  /*
+   * tf myfunc (arg1, arg2, ..., argN);
+   */
+  interface Function_Specification : Definition {
+    List_Id    Parameters;
+    Node_Id    Return_Type;
+    Node_Id    Compile_Unit;
+  };
+  
+  /*
+   * int myfunc (int arg1 , char arg2)
+   * {
+   *    ...
+   *    return (value);
+   * }
+   */
+  interface Function_Implementation : Node_Id {
+    Node_Id    Specification;
+    List_Id    Declarations;
+    List_Id    Statements;
+    Node_Id    Compile_Unit;
+  };
+      
+  /*
+   * myfunc (arg1, arg2);
+   */
+  interface Call_Profile : Definition {
+    List_Id    Parameters;
+  };
+
+  interface Macro_Call : Definition {
+    List_Id    Parameters;
+  };
+
+
+  /*
+   * Example : 
+   *           - typedef int my_integer;
+   *           - typedef struct{....} my_type;
+   */
+  interface Full_Type_Declaration : Definition {
+    Node_Id    Type_Definition;
+    Node_Id    Type_Name;
+  };
+
+  /****************/
+  /* Statetements */
+  /****************/
+
+  interface Block_Statement : Definition {
+    List_Id    Declarative_Part;
+    List_Id    Statements;
+  };
+
+  interface If_Statement : Node_Id {
+    Node_Id    Condition;
+    List_Id    Statements;
+    List_Id    Else_Statements;
+  };
+
+  interface Assignment_Statement : Definition {
+    Node_Id    Expression;
+  };
+
+  interface Return_Statement : Node_Id {
+    Node_Id    Expression;
+  };
+
+  interface For_Statement : Definition {
+    Node_Id    Pre_Cond;
+    Node_Id    Condition;
+    Node_Id    Post_Cond;
+    List_Id    Statements;
+  };
+
+  interface While_Statement : Node_Id {
+    Node_Id    Condition;
+    List_Id    Statements;
+  };
+
+  /*
+   * Switch_Statement interface is used to generate
+   * a switch instruction with all possibilities.
+   * The Alternatives member should contain Switch_Alternative
+   * interfaces which contain all possible alternatives
+   * Generated code will look like :
+   * switch (Expression)
+   * {
+   *     Switch_Alternative_1
+   *     Switch_Alternative_2
+   * }
+   */
+  interface Switch_Statement : Node_Id {
+    Node_Id    Expression;
+    List_Id    Alternatives;
+  };
+
+  /*
+   * A switch alternative is used in switch statement
+   * and contain possible values for the switch expression
+   * Generated code will look like :
+   * label1: label2: .... labelN:
+   * {
+   *   statement1;
+   *   statement2;
+   *   ...
+   *   statementN;
+   * }
+   */
+  interface Switch_Alternative : Node_Id {
+    List_Id    Labels;
+    List_Id    Statements;
+  };
+
+  /*
+   * break statement for switch alternative
+   * Only generate the "break" keyword
+   */
+  interface Break_Statement : Node_Id {
+  };
+
+  /*
+   * As break, the Continue_Statement interface
+   * only generate the "continue" keyword
+   */
+  interface Continue_Statement : Node_Id {
+  };
+  
+  interface C_Comment : Definition {
+    boolean     Has_Header_Spaces;
+  };
+
+  interface Define_Statement : Definition {
+    Node_Id     Defined_Value;
+  };
+
+  /*
+   * Array_Declaration is used to generate
+   * code like myarray[3]
+   * or myarray[mysize];
+   */
+  interface Array_Declaration : Definition {
+    Node_Id     Array_Size;
+  };
+
+  /**************/
+  /* Aggregates */
+  /**************/
+
+  /*
+   * Struct_Aggregate interface is used
+   * to generated code like 
+   * struct struct_name {
+   * member_type member1;
+   * member_type member2;
+   * }
+   */
+  interface Struct_Aggregate : Definition {
+    List_Id    Struct_Members;
+  };
+
+  /*
+   * Used to generate Union, generated code looks like
+   * the Struct_Aggregate 
+   */
+  interface Union_Aggregate : Definition {
+    List_Id    Union_Members;
+  };
+
+  /*
+   * The list of Enum_Aggregate contains
+   * Expressions or Identifier
+   */
+  interface Enum_Aggregate : Node_Id {
+    List_Id    Enum_Members;
+  };
+
+  /* Definition is used in functions to 
+   * declare variables
+   * Generated code looks like :
+   * used_type  variable_name;
+   */
+  interface Variable_Declaration : Definition {
+    Node_Id    Used_Type;
+  };
+  
+  /*
+   * Member_Declaration is used in unions
+   * or structures
+   */
+  interface Member_Declaration : Definition {
+    Node_Id    Used_Type;
+  };
+
+  /*
+   * Member_Designator is used to used member
+   * of struct/union/enum
+   * Generate code like : mystruct.member
+   */
+  interface Member_Designator : Definition {
+    Node_Id    Aggregate_Name;
+    boolean    Is_Pointer;
+  };
+
+  /****************/
+  /* Object nodes */
+  /****************/
+
+  interface Macro_Declaration: Definition {
+    Node_Id    Expression;
+  };
+
+  interface Literal : Node_Id {
+    Value_Id   Value;
+  };
+ 
+
+  interface Expression : Node_Id {
+    Operator_Id Operator;
+    Node_Id     Left_Expression;
+    Node_Id     Right_Expression;
+  };
+
+  /* Type Casting */
+  interface Type_Conversion : Node_Id {
+    Node_Id   Subtype_Mark;
+    Node_Id   Expression;
+  };
+
+  /**************/
+  /* Base types */
+  /**************/
+
+  interface Base_Type {
+    Name_Id    Image;
+  };
+
+  interface Pointer_Type {
+    Node_Id    Used_Type;
+  };
+
+  interface Constant_Type {
+    Node_Id    Used_Type;
+  };
+
+  /*
+   * Use to generate &expression
+   * For example &myvariable
+   *          or &(table + 4)
+   */
+  interface Variable_Address : Node_Id {
+    Node_Id    Expression;
+  };
+
+  interface Extern_Entity_Declaration : Node_Id {
+    Node_Id    Entity;
+  };
+
+  interface _Float           : Base_Type {};
+  interface _Int             : Base_Type {};
+  interface _Char            : Base_Type {};
+  interface _Short           : Base_Type {};
+  interface _Void            : Base_Type {};
+  interface _Pointed_Char    : Base_Type {};
+
+  /* Common Tree bindings */
+  interface Tree_Bindings : Node_Id {
+    /* Units */
+    Node_Id    Main_Node;
+    
+    /* Entities */
+    Node_Id    Type_Definition_Node;
+    Node_Id    Feature_Subprogram_Node;
+    Node_Id    Subprogram_Node;
+  };  
+  
+  interface HI_Tree_Bindings : Tree_Bindings {
+    /* Units */
+    
+    Node_Id    Internals_Node;
+    Node_Id    System_Time_Node;
+    Node_Id    Marshaller_Node;
+    Node_Id    Unmarshaller_Node;
+    Node_Id    Activity_Node;
+    Node_Id    Functions_Node;
+    Node_Id    Types_Node;
+    Node_Id    Object_Node;
+    Node_Id    Handlers_Node;
+    Node_Id    Global_Port_Node;
+    Node_Id    Local_Port_Node;
+    Node_Id    Request_Node;
+    Node_Id    Deployment_Node;
+    Node_Id    Entities_Node;
+    Node_Id    Servers_Node;
+    Node_Id    Naming_Node;
+    List_Id    Processes;
+
+    /* Entities */
+
+    Node_Id    Request_Type_Node;
+    Node_Id    Job_Node;
+    Node_Id    Stub_Node;
+    Node_Id    Enumerator_Node;
+    Node_Id    Process_Request_Node;
+    Node_Id    Marshall_Request_Node;
+    Node_Id    Unmarshall_Request_Node;
+    Node_Id    Default_Value_Node;
+  };
+};

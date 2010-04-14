@@ -1,0 +1,13 @@
+system implementation RMA.Impl_Ada
+properties
+  Source_Text +=> ("software_ada.aadl");
+  --  Note that this is an additive property
+  --  association.
+  
+  Ocarina_Config::Generator => PolyORB_HI_Ada;
+  --  The code generator
+
+  Ocarina_Config::Root_System_Name => "RMA.Ada";
+  --  The name of the root of the instance tree (optional if there is
+  --  one unique eligible root system).
+end RMA.Impl_Ada;

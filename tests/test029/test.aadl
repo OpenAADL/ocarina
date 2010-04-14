@@ -1,0 +1,10 @@
+-- test for parsing AADLv2 property set and "with" statement
+
+property set Myproperties is
+  with programming_properties, thread_properties ;
+  with General_properties ;
+
+   Dist_Units: type units (
+    m, 
+    km  => m  * 1000);
+end Myproperties;

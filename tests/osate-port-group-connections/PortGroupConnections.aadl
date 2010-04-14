@@ -1,0 +1,29 @@
+port group pg
+  features
+end pg;
+
+port group pg2
+  inverse of pg
+end pg2;
+
+system inner
+  features
+    input: port group pg;
+    output: port group pg2;
+end inner;
+
+system outer
+  features 
+    inp: port group pg ;
+    outp: port group pg2 ;
+end outer;
+
+system implementation outer.i
+  subcomponents
+    sub1: system inner;
+    sub2: system inner;
+  connections
+    port group sub1.output -> sub2.input;
+    port group inp -> sub1.input;
+    port group sub2.output -> outp;
+end outer.i;

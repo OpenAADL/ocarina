@@ -1,0 +1,11 @@
+data d end D;
+
+thread t
+  features
+    -- bad: predeclared feature
+    Dispatch: in event port;
+    -- bad: predeclared feature
+    Complete: out event port;
+    -- bad: predeclared feature
+    Error: out event port;
+end t;

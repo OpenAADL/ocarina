@@ -1,0 +1,2 @@
+example_027.aadl:10:01: foo.basic (component implementation)  implements a component type that does not exist
+Cannot analyze AADL specifications

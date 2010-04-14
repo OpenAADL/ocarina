@@ -1,0 +1,676 @@
+/*****************************************************************************
+**                                                                          **
+**                           OCARINA COMPONENTS                             **
+**                                                                          **
+**      O C A R I N A . B A C K E N D S . A D A _ T R E E . N O D E S       **
+**                                                                          **
+**               Copyright (C) 2006-2008, GET-Telecom Paris.                **
+**                                                                          **
+** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
+** it under terms of the GNU General Public License as published by the     **
+** Free Software Foundation; either version 2, or (at your option) any      **
+** later version. Ocarina is distributed  in  the  hope  that it will be    **
+** useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General **
+** Public License for more details. You should have received  a copy of the **
+** GNU General Public License distributed with Ocarina; see file COPYING.   **
+** If not, write to the Free Software Foundation, 51 Franklin Street, Fifth **
+** Floor, Boston, MA 02111-1301, USA.                                       **
+**                                                                          **
+** As a special exception,  if other files  instantiate  generics from this **
+** unit, or you link  this unit with other files  to produce an executable, **
+** this  unit  does not  by itself cause  the resulting  executable to be   **
+** covered  by the  GNU  General  Public  License. This exception does not  **
+** however invalidate  any other reasons why the executable file might be   **
+** covered by the GNU Public License.                                       **
+**                                                                          **
+**                 Ocarina is maintained by the Ocarina team                **
+**                       (ocarina-users@listes.enst.fr)                     **
+**                                                                          **
+*****************************************************************************/
+
+module Ocarina::Backends::Ada_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef octet   Mode_Id;
+  typedef octet   Operator_Id;
+  typedef long    Name_Id;
+  typedef long    Value_Id;
+
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  interface Node_Id {
+    Node_Id    Next_Node;
+    Node_Id    Frontend_Node;
+  };
+
+  interface Definition : Node_Id {
+    Node_Id    Defining_Identifier;
+    // Of kind Defining_Identifier
+
+    Node_Id    Parent;
+  };
+
+  interface List_Id {
+    Node_Id    First_Node;
+    Node_Id    Last_Node;
+  };
+
+  interface Defining_Identifier : Node_Id {
+    Name_Id    Name;
+    Node_Id    Corresponding_Node;
+    // Points to the node whose Defining_Ddentifier is the current one
+    // (generally a Definition or one of its child interfaces). If D
+    // is a Definition (or one of its child interfaces) and I is its
+    // Defining_Identifier, then Corresponding_Node (I) = D.
+
+    Node_Id    Parent_Unit_Name;
+    // Also of kind Defining_Identifier. Used to build fully qualified
+    // names. If the current node is Y and its Parent_Unit_Name is X,
+    // then the result is the fully qualified name X.Y
+  };
+
+  interface Designator : Node_Id {
+    boolean    Is_All;
+    Node_Id    Defining_Identifier;
+    Node_Id    Parent_Unit_Name;
+  };
+
+  interface Attribute_Designator : Defining_Identifier {
+    Node_Id    Prefix;
+  };
+
+  /* --  EXPLICIT_DEREFERENCE ::= NAME . all */
+
+  interface Explicit_Dereference : Node_Id {
+    Node_Id   Prefix;
+  };
+
+
+  /*****************/
+  /* Package nodes */
+  /*****************/
+
+  interface Used_Type : Node_Id {
+    Node_Id    The_Used_Entity;
+  };
+
+  interface Declaration_List : List_Id {
+  };
+
+  interface Statement_List : List_Id {
+  };
+
+  interface Withed_Package : Definition {
+    boolean    Used;
+    boolean    Warnings_Off;
+    boolean    Elaborated;
+  };
+
+  interface Used_Package : Used_Type {
+  };
+
+  interface Withed_Packages : List_Id {
+  };
+
+  interface Package_Headers : List_Id {
+  };
+
+  interface Package_Specification : Node_Id {
+    Node_Id    Package_Declaration;
+    List_Id    SPARK_Own_Annotations;
+    List_Id    Withed_Packages;
+    List_Id    Visible_Part;
+    List_Id    Private_Part;
+    boolean    Is_Runtime_Package;
+    boolean    Is_Subunit_Package;
+    boolean    Is_Instantiated_Package;
+    Node_Id    Package_Instantiation;
+    List_Id    Package_Headers;
+  };
+
+  interface Package_Implementation : Node_Id {
+    Node_Id    Package_Declaration;
+    List_Id    Withed_Packages;
+    List_Id    Declarations;
+    List_Id    Statements;
+    List_Id    Package_Initialization;
+    List_Id    Package_Headers;
+  };
+
+  interface Package_Declaration : Definition {
+    Node_Id    Distributed_Application_Unit;
+    Node_Id    Package_Specification;
+    Node_Id    Package_Implementation;
+    boolean    Has_Custom_File_Name;
+    Name_Id    File_Name;
+  };
+
+  interface Main_Subprogram_Implementation : Definition {
+    Node_Id    Distributed_Application_Unit;
+    Node_Id    Subprogram_Specification;
+    Node_Id    Subprogram_Implementation;
+    boolean    Has_Custom_File_Name;
+    Name_Id    File_Name;
+  };
+
+  interface Packages : List_Id {};
+
+  /* The interfaces below are usful to handle the directory hierarchy
+     of the distributed application */
+
+  /* Interfaces for the PolyORB-QoS Module */
+
+  interface QoS_Distributed_Application : Node_Id {
+    Name_Id    Name;
+    List_Id    QoS_Nodes;
+  };
+
+  interface QoS_Node : Node_Id {
+    Name_Id    Name;
+    List_Id    Units;
+    Node_Id    Distributed_Application;
+  };
+
+  /* Interfaces for the PolyORB-HI module */
+
+  interface HI_Distributed_Application : Node_Id {
+    Name_Id    Name;
+    List_Id    Units;
+    List_Id    HI_Nodes;
+  };
+
+  interface HI_Node : Node_Id {
+    Name_Id    Name;
+    List_Id    Units;
+    Node_Id    Distributed_Application;
+  };
+
+  /* Units that gather all the generated packages */
+
+  interface API_Unit : Node_Id {
+   /* Whatever the distributed application kind is, a main subprogram
+      is required for each node */
+    Node_Id Main_Subprogram;
+
+    List_Id    Packages;
+    Node_Id    Entity;
+  };
+
+  /* This is the root node of the packages generated specifically for
+     an PolyORB-QoS Distributed application */
+
+  interface QoS_Unit : API_Unit {
+    Node_Id    Helpers_Package;
+    Node_Id    Servants_Package;
+    Node_Id    Parameters_Package;
+    Node_Id    Obj_Adapters_Package;
+    Node_Id    Setup_Package;
+    Node_Id    Namespaces_Package;
+  };
+
+  /* This is the root node of the packages generated specifically for
+     an PolyORB-HI Distributed application */
+
+  interface HI_Unit : API_Unit {
+    Node_Id    Marshallers_Package;
+    Node_Id    Activity_Package;
+    Node_Id    Subprograms_Package;
+    Node_Id    Transport_Package;
+    Node_Id    Types_Package;
+    Node_Id    Deployment_Package;
+    Node_Id    Naming_Package;
+  };
+
+  /********************/
+  /* Subprogram nodes */
+  /********************/
+
+  interface Parameter_Specification : Definition {
+    Mode_Id    Parameter_Mode;
+    Node_Id    Parameter_Type;
+    Node_Id    Expression;
+  };
+
+  interface Parameter_Profile : List_Id {};
+
+  interface Subprogram_Specification : Definition {
+    List_Id    Withed_Packages;
+    List_Id    Parameter_Profile;
+    Node_Id    Return_Type;
+    Node_Id    Renamed_Entity;
+    Node_Id    Instantiated_Entity;
+    Node_Id    Main_Subprogram_Unit;
+    List_Id    Package_Headers;
+  };
+
+  /* Subprogram Body */
+
+  interface Subprogram_Implementation : Node_Id {
+    List_Id    Withed_Packages;
+    Node_Id    Specification;
+    List_Id    Declarations;
+    List_Id    Statements;
+    Node_Id    Main_Subprogram_Unit;
+    List_Id    Package_Headers;
+  };
+
+  interface Subprogram_Call : Definition {
+    List_Id    Actual_Parameter_Part;
+  };
+
+  interface Parameter_Association : Node_Id{
+    Node_Id    Selector_Name;
+    Node_Id    Actual_Parameter;
+  };
+
+  /* SELECTED_COMPONENT ::= PREFIX . SELECTOR_NAME */
+
+  interface Selected_Component : Node_Id {
+     Node_Id  Prefix;
+     Node_Id  Selector_Name;
+  };
+
+
+  interface Full_Type_Declaration : Definition {
+    Node_Id    Type_Definition;
+    Node_Id    Discriminant_Spec;
+    boolean    Is_Subtype;
+  };
+
+  /*  ATTRIBUTE_DEFINITION_CLAUSE ::=
+   *    for LOCAL_NAME'ATTRIBUTE_DESIGNATOR use EXPRESSION;
+   *  | for LOCAL_NAME'ATTRIBUTE_DESIGNATOR use NAME;
+   */
+
+  interface Attribute_Definition_Clause : Definition {
+    Name_Id  Attribute_Designator;
+    Node_Id  Expression;
+  };
+
+  interface Enumeration_Literals : List_Id {};
+
+  interface Enumeration_Type_Definition : Node_Id {
+    List_Id    Enumeration_Literals;
+  };
+
+  /*  ENUMERATION_REPRESENTATION_CLAUSE ::=
+   *    for first_subtype_LOCAL_NAME use ENUMERATION_AGGREGATE;
+   *
+   *  ENUMERATION_AGGREGATE ::= ARRAY_AGGREGATE
+   */
+
+  interface Enumeration_Representation_Clause : Definition {
+      Node_Id Array_Aggregate;
+  };
+
+  interface Decimal_Type_Definition : Node_Id {
+    Node_Id    Scale;
+    Value_Id   Total;
+  };
+
+  /**************/
+  /* Aggregates */
+  /**************/
+
+  interface Record_Aggregate : Node_Id {
+    List_Id    Component_Association_List;
+  };
+
+  interface Component_Association : Definition {
+    Node_Id    Expression;
+  };
+
+  /********************/
+  /* Protected Object */
+  /********************/
+
+  interface Protected_Object_Spec : Definition {
+    List_Id    Visible_Part;
+    List_Id    Private_Part;
+    boolean    Is_Type;
+  };
+
+  interface Protected_Object_Body : Definition {
+    List_Id    Statements;
+  };
+
+  /****************/
+  /* Statetements */
+  /****************/
+
+  interface Block_Statement : Definition {
+    List_Id    Declarative_Part;
+    List_Id    Statements;
+    List_Id    Exception_Handler;
+  };
+
+  interface Elsif_Statement : Node_Id {
+    Node_Id    Condition;
+    List_Id    Then_Statements;
+  };
+ 
+  interface If_Statement : Node_Id {
+    Node_Id    Condition;
+    List_Id    Then_Statements;
+    List_Id    Elsif_Statements;
+    List_Id    Else_Statements;
+  };
+
+   interface Exit_When_Statement : Node_Id {
+    Node_Id    Condition;
+   };
+ 
+
+  interface Assignment_Statement : Definition {
+    Node_Id    Expression;
+  };
+
+  interface Delay_Statement : Node_Id {
+    boolean    Is_Until;
+    Node_Id    Expression;
+  };
+
+  interface Return_Statement : Node_Id {
+    Node_Id    Expression;
+  };
+
+  interface For_Statement : Definition {
+    Node_Id    Range_Constraint;
+    List_Id    Statements;
+  };
+
+  interface Loop_Statement : Node_Id {
+    List_Id    Statements;
+  };
+
+  interface Case_Statement_Alternative : Node_Id {
+    List_Id    Discret_Choice_List;
+    List_Id    Statements;
+  };
+
+  interface Case_Statement : Node_Id {
+    Node_Id    Expression;
+    List_Id    Case_Statement_Alternatives;
+  };
+
+  interface Case_Label : Node_Id {
+    Node_Id    Expression;
+    Value_Id   Value;
+  };
+
+  interface Pragma_Statement : Definition {
+    List_Id    Argument_List;
+  };
+
+  interface Null_Statement : Node_Id {};
+
+  /***************/
+  /* Other nodes */
+  /***************/
+
+  interface Package_Instantiation : Definition {
+    Node_Id      Generic_Package;
+    List_Id      Parameter_List;
+  };
+
+  interface Raise_Statement : Node_Id {
+    Node_Id      Raised_Error;
+  };
+
+  interface Ada_Comment : Definition {
+    boolean     Has_Header_Spaces;
+  };
+
+  /**************/
+  /* Type nodes */
+  /**************/
+
+  interface Access_Type_Definition : Node_Id {
+    boolean    Is_All;
+    boolean    Is_Constant;
+    boolean    Is_Not_Null;
+    Node_Id    Subtype_Indication;
+  };
+
+  interface Derived_Type_Definition : Definition {
+    boolean    Is_Private_Extention;
+    boolean    Is_Abstract_Type;
+    Node_Id    Subtype_Indication;
+    Node_Id    Record_Extension_Part;
+    boolean    Is_Subtype;
+  };
+
+  interface Record_Type_Definition : Node_Id {
+    boolean    Is_Abstract_Type;
+    boolean    Is_Tagged_Type;
+    boolean    Is_Limited_Type;
+    Node_Id    Record_Definition;
+  };
+
+  interface Private_Type_Definition : Node_Id {
+  };
+
+  interface Component_Declaration : Definition {
+    Node_Id    Subtype_Indication;
+    Node_Id    Expression;
+    boolean    Aliased_Present;
+  };
+
+  interface Component_List : List_Id {};
+
+  interface Record_Definition : Node_Id {
+    List_Id    Component_List;
+  };
+
+  interface Range_Constraints : List_Id {};
+
+  /* Example: type T is array (1 .. 10, 2 .. 30) of Float;
+              type T is array (Integer range 1 .. 10) of Float;
+              type T is array (Integer'Range) of Float;
+              type T is array (1 .. 5) of aliased boolean; */
+
+  interface Array_Type_Definition : Node_Id {
+    List_Id    Range_Constraints;
+    // The list of the range constraints
+
+    Node_Id    Component_Definition;
+    // The array element type
+
+    boolean    Aliased_Present;
+    // The element type is aliased
+  };
+
+  /* Example: 1 .. 10, Natural range 2 .. 5, Boolean'Range */
+
+  interface Range_Constraint : Node_Id {
+    Node_Id    First;
+    Node_Id    Last;
+    Node_Id    Index_Type;
+  };
+
+  interface Variant_List : List_Id {};
+
+  interface Variant_Part : Node_Id {
+    List_Id    Variants;
+    Node_Id    Discriminant;
+  };
+
+  interface Discrete_Choice_List : List_Id {};
+
+  interface Variant : Node_Id {
+    List_Id    Discrete_Choices;
+    List_Id    Component_List;
+  };
+
+  /****************/
+  /* Object nodes */
+  /****************/
+
+  interface Object_Declaration: Definition {
+    boolean    Constant_Present;
+    boolean    Aliased_Present;
+    Node_Id    Object_Definition;
+    Node_Id    Expression;
+    Node_Id    Renamed_Entity;
+    Node_Id    Discriminant_Spec;
+  };
+
+  interface Literal : Node_Id {
+    Value_Id   Value;
+    Node_Id    Parent_Designator;
+  };
+
+  /* Example : 1 => 3, others => ' ' */
+  interface Element_Association : Node_Id {
+    Node_Id    Index;     // If No_Node, then 'others'
+    Node_Id    Expression;
+  };
+
+  interface Element_List : List_Id {};
+
+  interface Array_Aggregate : Node_Id {
+    List_Id     Elements;
+    //  A list of literal or element associations
+  };
+
+  interface Indexed_Component : Node_Id {
+    Node_Id    Prefix;
+    List_Id    Expressions;
+  };
+
+  interface Exception_Declaration : Definition {
+    Node_Id    Renamed_Entity;
+  };
+
+  interface Expression : Node_Id {
+    Operator_Id Operator;
+    Node_Id     Left_Expr;
+    Node_Id     Right_Expr;
+  };
+
+  interface Qualified_Expression : Node_Id {
+    Node_Id    Subtype_Mark;
+    Node_Id    Aggregate;
+  };
+
+  /* Type Casting */
+
+  interface Type_Conversion : Node_Id {
+    Node_Id   Subtype_Mark;
+    // The type to which we Cast
+
+    Node_Id   Expression;
+    // The expression being casted
+  };
+
+
+  interface Object_Instantiation : Node_Id {
+    Node_Id    Qualified_Expression;
+  };
+
+
+  /*********************/
+  /* SPARK Annotations */
+  /*********************/
+  interface Annotation_list : List_Id {
+  };
+
+  interface SPARK_Own_Annotation : Node_Id {
+    Node_Id    Variable;
+    Mode_Id    Own_Mode;
+    boolean    Is_Initialized;
+    boolean    Is_Protected;
+  };
+
+  /**************/
+  /* Base types */
+  /**************/
+
+  interface Base_Type {
+    Name_Id    Image;
+  };
+  interface _Boolean : Base_Type {};
+  interface _Float : Base_Type {};
+  interface Integer : Base_Type {};
+  interface _String : Base_Type {};
+  interface Wide_String : Base_Type {};
+  interface Character : Base_Type {};
+  interface Wide_Character : Base_Type {};
+
+  /* Common Tree bindings */
+  interface Tree_Bindings : Node_Id {
+    /* Units */
+
+    Node_Id    Main_Node;
+
+    /* Entities */
+
+    Node_Id    Type_Definition_Node;
+    Node_Id    Feature_Subprogram_Node;
+    Node_Id    Subprogram_Node;
+  };
+
+  interface QoS_Tree_Bindings : Tree_Bindings {
+    /* Units */
+
+    Node_Id    Helpers_Node;
+    Node_Id    Servants_Node;
+    Node_Id    Parameters_Node;
+    Node_Id    Obj_Adapters_Node;
+    Node_Id    Setup_Node;
+    Node_Id    Namespaces_Node;
+
+    /* Entities */
+
+    Node_Id    TypeCode_Node;
+    Node_Id    From_Any_Node;
+    Node_Id    To_Any_Node;
+    Node_Id    Initialize_Node;
+    Node_Id    Thread_Controller_Node;
+    Node_Id    Execute_Servant_Node;
+    Node_Id    Put_Node;
+    Node_Id    Push_Back_Node;
+    Node_Id    Get_Node;
+    Node_Id    Package_Node;
+    Node_Id    Reference_Node;
+    Node_Id    Set_Node;
+    Node_Id    Build_Node;
+  };
+
+  interface HI_Tree_Bindings : Tree_Bindings {
+    /* Units */
+
+    Node_Id    Marshallers_Node;
+    Node_Id    Activity_Node;
+    Node_Id    Subprograms_Node;
+    Node_Id    Types_Node;
+    Node_Id    Transport_Node;
+    Node_Id    Deployment_Node;
+    Node_Id    Naming_Node;
+
+    /* Entities */
+
+    Node_Id    Job_Node;
+    Node_Id    Enumerator_Node;
+    Node_Id    Marshall_Node;
+    Node_Id    Unmarshall_Node;
+    Node_Id    Port_Interface_Node;
+    Node_Id    Port_Enumeration_Node;
+    Node_Id    Deliver_Node;
+    Node_Id    Send_Node;
+    Node_Id    Put_Value_Node;
+    Node_Id    Get_Value_Node;
+    Node_Id    Get_Count_Node;
+    Node_Id    Next_Value_Node;
+    Node_Id    Store_Received_Message_Node;
+    Node_Id    Default_Value_Node;
+    Node_Id    Object_Node;
+  };
+};

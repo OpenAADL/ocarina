@@ -1,0 +1,21 @@
+package layers
+public
+   with POK;
+
+   virtual bus unclassified
+   properties
+      POK::security_level => 1;
+   end unclassified;
+
+   virtual bus secret
+   properties
+      POK::security_level => 8;
+   end secret;
+
+   virtual bus top_secret
+   properties
+      POK::security_level => 10;
+   end top_secret;
+end layers;
+
+

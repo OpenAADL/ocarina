@@ -1,0 +1,4 @@
+Success0: no
+Keywords: osate aadlv1
+Cmd0: ocarina FlowImpls.aadl
+Output0: FlowImpls.aadl.out

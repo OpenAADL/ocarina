@@ -1,0 +1,145 @@
+\label{check_function}
+
+\paragraph{}
+
+\texttt{Verification functions} are functions which can be called 
+within the \texttt{verification expression}. Their is two kinds of 
+verification functions :
+\begin {itemize}
+\item \texttt{set-based functions}, which always takes a set or
+element as first parameter, and can have others parameters 
+(usually literal). They always returns a value or a list of values. 
+eg : Cardinal, Get\_Property\_Value, Property\_Exists;
+\item \texttt{value manipulation functions}, where the single 
+parameter is a value or a list of values, and which returns another 
+value.
+\end {itemize}
+
+\subsubsection {Property\_Exists}
+
+\textit {Property\_Exists} takes two parameters, an element
+or a set and a string literal. If the first argument is an 
+element, then it returns true if the specified property is 
+defined on this element, and else in the other case.
+If the first argument is a set, it returns true if all the
+the specified property is defined on all the elements of the 
+set. The \textit{Exists} function is an alias of \textit 
+{Property\_Exists}.
+ 
+\subsubsection {Get\_Property\_Value}
+
+\textit {Get\_Property\_Value} takes two parameters, an element
+or a set and a string literal. It returns the either the value 
+of the property whose name is the second parameter in the node 
+designed by the first parameter, if the first parameter is an
+element, or a a list of values which are the results of the 
+application of \textit {Get\_Property\_Value} on each element
+of the set. The \textit {Property} function is an alias of the
+\textit {Get\_Property\_Value} function.
+
+This is currently the only way to produce a list of values.
+
+\subsubsection {Cardinal}
+
+\textit {Cardinal} takes a set as parameter. It returns the 
+set cardinal (ie. an integer).
+
+\subsubsection {First}
+
+\textit{First} is a function which cann be applied on a range or on a 
+list of range. It returns respectively a float element (even if the 
+actual value of the AADL range term was an integer) or a list of
+floats, which are the lower bounds of each range of the list.
+
+Whenever called on a empty list, it returns another empty list. 
+However, when called on a nil argument, it returns an error and
+the theorem is therefore considered false.
+
+\subsubsection {Last}
+
+\textit{Last} is a function which can be applied on a range or on a 
+list of range. It returns respectively a float element (even if the 
+actual value of the AADL range term was an integer) or a list of
+floats, which are the Upper bounds of each range of the list.
+
+Whenever called on a empty list, it returns another empty list. 
+However, when called on a nil argument, it returns an error and
+the theorem is therefore considered false.
+
+\subsubsection {List}
+
+\textit{List} is a function which can be applied on a set of 
+literals, or on a REAL \textit{Set}. In the first case, it
+build a list that contains the values given as paremeters. In 
+the second case, it build a list of \textit{Elements} which are 
+the set's elements.
+
+\subsubsection {Size}
+
+\textit{Size} is a function which can be applied on any kind of list. 
+It returns the number of elements in the list (an integer value).
+
+\subsubsection {Head}
+
+\textit{Head} is a function which can be applied on any kind of list. 
+It returns the first element of the list (ie. on a list of integers, 
+it will return an interger).
+
+Whenever called on a empty list, it returns an error and the theorem 
+is therefore considered false. Thus, test should be done using a 
+ternary expression and the \textit{Size} function on the list.
+
+\subsubsection {Queue}
+
+\textit{Queue} is a function which can be applied on any kind of list. 
+It returns the list without the first element.
+
+Whenever called on a empty list, it returns an error and the theorem 
+is therefore considered false. Thus, test should be done using a 
+ternary expression and the \textit{Size} function on the list.
+
+ \subsubsection {Max}
+
+\textit {Max} is a function which can be applied on a list of 
+floats or integers as parameter. It always return a float which 
+is the highest value found. Note that the only way to produce 
+the list is currently to call the Get\_Property\_Value on a list.
+ 
+\subsubsection {Min}
+
+\textit {Min} is a function which can be applied on a list of 
+floats or integers as parameter. It always return a float which 
+is the lowest value found. Note that the only way to produce the 
+list is currently to call the Get\_Property\_Value on a list.
+ 
+\subsubsection {Sum}
+
+\textit {Sum} is a function which can be applied on a list of 
+floats or integers as parameter. It always return a float which 
+is the sum of all the values found. Note that the only way to 
+produce the list is currently to call the Get\_Property\_Value 
+on a list.
+
+\subsubsection {Product}
+
+\textit {Product} is a function which can be applied on a list 
+of floats or integers as parameter. It always return a float 
+which is the product of all the values found. Note that the 
+only way to produce the list is currently to call the 
+Get\_Property\_Value on a list.
+
+\subsubsection {GCD}
+
+\textit {GCD} is a function which can be applied on a list of 
+floats or integers as parameter. It always return a float 
+which is the Greatest Common Divisor of all the values 
+found. Note that the only way to produce the list is 
+currently to call the Get\_Property\_Value on a list.
+
+\subsubsection {LCM}
+
+\textit {LCM} is a function which can be applied on a list of 
+floats or integers as parameter. It always return a float 
+which is the Lowest Common Multiple of all the values 
+found. Note that the only way to produce the list is 
+currently to call the Get\_Property\_Value on a list.

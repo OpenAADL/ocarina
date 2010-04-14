@@ -1,0 +1,26 @@
+process P_1
+features
+  Input_1 : in data port;
+  Input_2 : in data port;
+end P_1;
+
+process P_2
+features
+  Output_1 : out data port;
+  Output_2 : out data port;
+end P_2;
+
+system S
+end S;
+
+system implementation S.Impl
+subcomponents
+  Sender   : process P_2;
+  Receiver : process P_1;
+connections
+  Cnx_1 : data port Sender.Output_1 -> Receiver.Input_1;
+  Cnx_2 : data port Sender.Output_2 -> Receiver.Input_2;
+  Cnx_3 : data port Sender.Output_1 -> Receiver.Input_1;
+  --  Bad: duplicate of Cnx_1
+end S.Impl;
+

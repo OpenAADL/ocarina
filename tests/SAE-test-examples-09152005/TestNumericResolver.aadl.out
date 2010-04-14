@@ -1,0 +1,24 @@
+TestNumericResolver.aadl:33:28: warning: too long number, digit ignored
+TestNumericResolver.aadl:33:28: warning: exponent too big
+TestNumericResolver.aadl:33:28: warning: too long number, digit ignored
+TestNumericResolver.aadl:33:28: warning: exponent too big
+TestNumericResolver.aadl:33:28: warning: too long number, digit ignored
+TestNumericResolver.aadl:33:28: warning: exponent too big
+TestNumericResolver.aadl:33:28: warning: too long number, digit ignored
+TestNumericResolver.aadl:33:28: warning: exponent too big
+TestNumericResolver.aadl:36:06: parsing Single_Valued_Property_Constant, token ';' is expected, found token ':'
+TestNumericResolver.aadl:50:32: warning: value too big
+TestNumericResolver.aadl:54:33: warning: value too big
+TestNumericResolver.aadl:56:31: warning: too long number, digit ignored
+TestNumericResolver.aadl:58:31: warning: negative exponent in integer literal
+TestNumericResolver.aadl:60:31: warning: exponent too big
+TestNumericResolver.aadl:62:32: warning: exponent too big
+TestNumericResolver.aadl:64:32: warning: exponent too big
+TestNumericResolver.aadl:77:34: numeric base 0 is too small, must be at least 2
+TestNumericResolver.aadl:77:36: numeric base 0 is too small, must be at least 2
+TestNumericResolver.aadl:79:34: numeric base 1 is too small, must be at least 2
+TestNumericResolver.aadl:79:36: numeric base 0 is too small, must be at least 2
+TestNumericResolver.aadl:85:34: numeric base 37 is too big, must be at most 16
+TestNumericResolver.aadl:87:34: digit 'C' is invalid in base  12
+TestNumericResolver.aadl:91:34: warning: negative exponent in integer literal
+Cannot parse AADL specifications

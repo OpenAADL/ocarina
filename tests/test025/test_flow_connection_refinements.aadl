@@ -1,0 +1,34 @@
+system inner
+features
+  p: out data port ;
+flows
+  src: flow source p;
+end inner;
+
+system outer
+  features
+    output: out data port ;
+  flows 
+    outSrc: flow source output;
+end outer;
+
+system implementation outer.basic
+subcomponents
+  sub1: system inner in modes (m1);
+connections
+  c1: data port sub1.p -> output in modes (m1);
+flows
+  outSrc: flow source output in modes (m2);
+  outSrc: flow source sub1.src -> c1 -> output;
+modes
+  m1: initial mode;
+  m2: mode;
+  m3: mode;
+end outer.basic;
+
+system implementation outer.ref extends outer.basic
+connections
+  c1: refined to data port {Connection_Protocol => HTTP;} in modes (m2);
+flows
+  outSrc: refined to flow source {Actual_Latency => 5 Ms;};
+end outer.ref;

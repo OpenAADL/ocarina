@@ -1,0 +1,13 @@
+system implementation RMA.Impl_C
+properties
+  Ocarina_Config::AADL_Files +=> ("software_c.aadl");
+  --  Note that this is an additive property
+  --  association.
+  
+  Ocarina_Config::Generator => PolyORB_HI_C;
+  --  The code generator
+
+  Ocarina_Config::Root_System_Name => "RMA.C";
+  --  The name of the root of the instance tree (optional if there is
+  --  one unique eligible root system).
+end RMA.Impl_C;

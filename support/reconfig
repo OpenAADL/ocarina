@@ -1,0 +1,12 @@
+#! /bin/sh
+
+rm -f aclocal.m4 support/libtool.m4 configure
+
+echo "Running aclocal"
+aclocal -I support
+
+echo "Running autoconf"
+autoconf
+
+echo "Running automake"
+automake --add-missing --copy

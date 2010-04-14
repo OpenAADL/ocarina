@@ -1,0 +1,28 @@
+--  Behaviour Annex 2.9 example (5)
+--  Annex X.7 Behavior Action Language
+
+package Test
+public
+  with Base_Types;
+
+
+  subprogram addition
+   features
+    x: in parameter Base_types::integer;
+    y: in parameter Base_types::integer;
+    r: out parameter Base_types::integer;
+    ovf: out parameter Base_types::boolean;
+  end addition;
+
+  subprogram implementation addition.default
+   annex behavior_specification {**
+    states
+     s0 : initial state;
+     s1 : final state;
+    transitions
+     regular: s0 -[ ]-> s1 { r := x + y ; ovf := false };
+     overflow: s0 -[ ]-> s1 { r := 0; ovf := true };
+   **};
+  end addition.default;
+
+end Test;

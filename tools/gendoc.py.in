@@ -1,0 +1,166 @@
+#! @PYTHON@
+
+# -*- coding: utf-8 -*- 
+
+# This script produces DocBook and LaTeX documentations from an Ada specification
+# file (extension .ads).
+# Thomas Vergnaud <thomas.vergnaud@enst.fr>
+
+import os.path
+import sys
+import re
+
+comment_text = re.compile ("((?:^\s*$)|(?:\s*--.*)+)\n\n")
+package_comment_text = re.compile ("---+\n(?:.*\n)*---+\n[^-]*((?:\s*--.*)+)")
+comment_mark = re.compile ("^\s*--  ", re.MULTILINE)
+pack_name = re.compile ("package (.*) is")
+subprog_decl = re.compile ("^\s*((procedure|function)\s+(\w+)\s*(\([^)]+\))?\s*(?:return\s+([^;]+))?[^;]*;)", re.MULTILINE)
+subprog_param = re.compile ("(?:(\w+)\s*:\s*([^;)]+))")
+with_decl = re.compile ("with\s+(\w+)\s*")
+ada_kw = re.compile ("(?P<kw>with|while|when|use|until|type|then|terminate|task|tagged|subtype|separate|select|reverse|reverse|return|requeue|renames|rem|record|range|raise|protected|procedure|private|pragma|package|out|others|or|of|null|not|new|mod|loop|limited|is|in|if|goto|generic|function|for|exit|exception|entry|end|elsif|else|do|digits|delta|delay|declare|constant|configuration|case|body|begin|array|and|all|aliased|access|accept|abstract|abs|abort)\W")
+
+def get_comment_position (text, start_position):
+    position_of_comment = comment_mark.search (text, start_position)
+    if position_of_comment != None:
+        return position_of_comment.start ()
+    else:
+        return None
+
+def hilight_syntax (text):
+    return ada_kw.sub (r'@b{\g<kw> }', text)
+
+def filter_underscore (text):
+    m = re.sub ("_", "{@_}", text)
+    return m
+
+def get_package_name (text):
+    package_match = re.search (pack_name, text)
+    return package_match
+
+def get_package_comment (pack, text):
+    assert type (pack) != None
+    assert type (text) == str
+    pack_comments = package_comment_text.search (text, 0, pack.start ())
+    if pack_comments != None:
+        comment_string = pack_comments.groups ()[0]
+        comment_string.strip ()
+        comment_string = comment_mark.sub ("", comment_string)
+        return comment_string
+    else:
+        return ""
+
+def get_subprograms (text):
+    current_match = subprog_decl.search (text, 0)
+    subprogram_match = []
+    while current_match != None:
+        subprogram_match.append (current_match)
+        current_match = subprog_decl.search (text, current_match.end())
+    return subprogram_match
+
+def get_subprogram_parameters (declaration):
+    assert type (declaration) == str
+    param = subprog_param.search (declaration, 0)
+    params = []
+    while param != None:
+        params.append (param.group (1))
+        params.append (param.group (2))
+        param = subprog_param.search (declaration, param.end (2))
+    return params
+
+def get_subprogram_comment (subprogram_match, text):
+    assert type (subprogram_match) != None
+    assert type (text) == str
+    comments = comment_text.search (text, subprogram_match.end ())
+    if comments != None:
+        comment_string = comments.groups ()[0]
+        comment_string.strip ()
+        comment_string = comment_mark.sub ("", comment_string)
+        return comment_string
+    else:
+        return ""
+
+def get_withes (text):
+    with_match = re.findall (with_decl, text)
+    return with_match
+
+def process_file (input_file, output_file):
+    source_file, doc_file = open (input_file), open (output_file, "w")
+    source_text = source_file.read ()
+    pack = get_package_name (source_text)
+    subprogs = get_subprograms (source_text)
+
+    doc_file.write ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+    doc_file.write ("<section>\n")
+    if pack != None:
+        doc_file.write ("<title>")
+        doc_file.write (pack.string [pack.start(1):pack.end(1)])
+        doc_file.write ("</title>\n")
+
+    doc_file.write ("<para>")
+    doc_file.write (get_package_comment (pack, source_text))
+    doc_file.write ("</para>\n")
+        
+    doc_file.write ("\n")
+            
+    if len (subprogs) > 0:
+        doc_file.write ("<para>\n")
+        doc_file.write ("This package defines the following subprograms:\n")
+        doc_file.write ("</para>\n")
+
+        for elem in subprogs:
+            doc_file.write ("<para>\n")
+            doc_file.write ("<synopsis>\n")
+            doc_file.write (source_text [elem.start (1):elem.end (1)])
+            doc_file.write ("\n</synopsis>\n")
+            doc_file.write (get_subprogram_comment (elem, source_text))
+            doc_file.write ("\n</para>\n\n")
+
+    else:
+        doc_file.write ("<para>\n")
+        doc_file.write ("This package defines no subprogram\n")
+        doc_file.write ("\n</para>\n\n")
+
+    doc_file.write ("</section>\n")
+
+    doc_file.close ()
+    source_file.close ()
+
+def process_file_for_texinfo (input_file, output_file):
+    source_file, doc_file = open (input_file), open (output_file, "w")
+    source_text = source_file.read ()
+    pack = get_package_name (source_text)
+    subprogs = get_subprograms (source_text)
+
+    if pack != None:
+        doc_file.write ("@subsubsection " + pack.string [pack.start(1):pack.end(1)] + " \n")
+    else:
+        doc_file.write ("@subsubsection \  \n\n")    
+    
+    doc_file.write (get_package_comment (pack, source_text))
+    doc_file.write ("\n\n")
+			
+    if len (subprogs) > 0:
+        doc_file.write ("This package defines the following subprograms:\n\n")
+
+        for elem in subprogs:
+        	doc_file.write ("@strong{" + elem.group (3) + "}: ")
+                doc_file.write (get_subprogram_comment (elem, source_text))
+        	doc_file.write ("\n\n@example\n")
+        	doc_file.write (hilight_syntax (source_text [elem.start (1):elem.end (1)]))
+        	doc_file.write ("\n@end example\n")
+                doc_file.write ("\n\n")
+    else:
+        doc_file.write ("This package defines no subprogram\n")
+
+    doc_file.close ()
+    source_file.close ()
+
+for fic in sys.argv [2:]:
+#    output_file = sys.argv [1] + "/" + os.path.basename (fic) + ".xml"
+#    input_file = fic
+#    process_file (input_file, output_file)
+    output_file = sys.argv [1] + "/" + os.path.basename (fic) + ".texi"
+    input_file = fic
+    process_file_for_texinfo (input_file, output_file)
+
+sys.exit (0)

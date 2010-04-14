@@ -1,0 +1,178 @@
+\label {aadl_resources}
+
+REAL final objective is to be used not only to requirement 
+verification, but to optimization too. In order to achieve 
+this goal, we must have a precise view of which components 
+are concerned by each resources, either as a producer or as 
+a consumer. In this section, we describe a taxonomy of AADL 
+components relevant for hardware and software resources 
+management.
+
+\subsection {AADL components : a resource-oriented taxonomy}
+
+For each kind of resource, the AADL components can be divided 
+between producers and consumers. However, since some component 
+can offer a resource and need another one, no global 
+classification can be performed, and each component must be 
+separately reviewed.
+
+\subsubsection {Memory}
+
+Memory can be either a flash memory, a ROM, a RAM or even a Hard 
+Disk memory. Obviously, it offers memory space. 
+
+\begin{itemize}
+\item \textbf{Access Time} : Time needed to access to a specific 
+piece of memory;
+\item \textbf{Access Mode} : Either Read-Only or Read-Write;
+\item \textbf{Writing Rate} : Number of bytes that can be writen 
+in a second;
+\item \textbf{Reading Rate} : Number of bytes that can be read in 
+a second;
+\item \textbf{Size} : Size of the memory.
+\end{itemize}
+\textbf{comment : does bufferized memory matter at high-level ?}
+
+\subsubsection {Bus}
+
+The bus is the part of hardware that physically connect others 
+hardware components. It offers data rate to AADL features.
+
+\begin{itemize}
+\item \textbf{Access Bandwidth} : Number of bytes that can pass 
+throught the bus in a second;
+\item \textbf{Access Time} : Time needed by a given connection 
+in order to access the bus;
+\end{itemize}
+\textbf{comment : must we enter election policy detail ?}
+
+\subsubsection {Processor}
+
+AADL processor are basically a CPU/FPU and a scheduler. Thus, 
+it is at the same time a piece of hardware and a piece of 
+software. The scheduler can be more or less complex, up to 
+being a true operating system. The CPU often embbeds some 
+buffer memory and a local bus. When needed a precise 
+description of each of those parts, separate \texttt{system} 
+AADL components should be designed. 
+
+Due to its dual nature, the processor is at the same a 
+resource offerer (CPU time) and consumer (memory and CPU 
+time for the OS). We list separately scheduler-related 
+properties and (physical) processor-related properties.
+
+\paragraph{Hardware}
+\begin{itemize}
+\item \textbf{CPU frequency} : number of integer operations per second;
+\item \textbf{FPU frequency} : number of floating-point operations per second;
+\end{itemize}
+\textbf{comment : parallelism, context switchs and others precises properties are included in the two above}
+
+\paragraph{Software}
+\begin{itemize}
+\item \textbf{Maximum threads} : number of threads supported;
+\item \textbf{Maximum mutexes} : number of mutexes supported;
+\item \textbf{Maximum connections} : number of connections supported;
+\item \textbf{Kernel size} : memory occupied by the kernel;
+\item \textbf {Longest Critical Section} : longest possible critical 
+section allowed by the OS, in CPU time;
+time.
+\end{itemize}
+
+\subsubsection {Process}
+
+An AADL process is basically a partition space and can be mapped to a
+POSIX heavy thread. AADL threads within can share data and connection 
+in an efficient way, using only local objects instead of more complex
+mechanisms such as memory mapping. Contrary to their POSIX conterpart, 
+AADL processes are not active components, and does directly not consume 
+CPU time.
+
+\subsubsection {Thread}
+
+AADL threads, together with subprograms, are the active part of the 
+software. They consume CPU time and memory, the last being devided 
+between read-only (rodata/constant and text/code segments) and read-write 
+(data segments). 
+Note that the runtime cost (in both CPU time and memory) must be 
+discriminate from called subprogram costs. Properties listed below 
+only refer to the first one since the latter can be computed.
+
+Even if CPU consumption-related properties can seem to be redondant 
+with timing properties defined in the AADL standard, one should avoid 
+this mistake. Timing properties are constraints which should not be 
+trusted when designing a critical system, but verified. This is why 
+we included the \texttt{IC} (\texttt{Instruction Consumption}) 
+property.
+
+\begin{itemize}
+\item \textbf {Read only memory} : how much rodata and text segments 
+space the runtime needs in order to run the thread alone;
+\item \textbf {Read write memory} : how much data segments space the 
+runtime needs in order to run the thread alone;
+\item \textbf {Instruction Consumption} : How many instructions the 
+runtime takes (in each period or wake if periodic or sporadic).
+\end{itemize}
+
+\subsubsection {Subprogram}
+
+Like the threads, AADL subprograms are active code which can be 
+defined by CPU and memory consumption. Since a subprogram can call 
+others subprograms, the actual valuation of those parameters should 
+be done recursively. However, for ease of use, we allow to define 
+staticaly an actual consumption for each category. Recursive 
+valuation will be done at verification step, and compared to 
+expected consumption.
+
+\begin{itemize}
+\item \textbf {Read only memory} : how much rodata and text segments 
+space the subprogram needs without taking account of subprograms calls;
+\item \textbf {Read write memory} : how much data segments space the 
+subprogram needs without taking account of subprograms calls;
+\item \textbf {Worst-Case Instruction Consumption} : How many 
+instructions the subprogram execution takes, in the worst case without 
+taking account of subprograms calls;
+\item \textbf {Actual Read only memory} : how much rodata and text segments 
+space the subprogram needs;
+\item \textbf {Actual Read write memory} : how much data segments space the 
+subprogram needs;
+\item \textbf {Actual Worst-Case Instruction Consumption} : How many 
+instructions the subprogram execution takes, in the worst case.
+\end{itemize}
+
+\subsubsection {Data}
+\label {data_connection}
+
+Obviously, data needs memory space. Defining data in AADL is relevant 
+only for communication (evaluation of message size) or shared data 
+definition. In the last case, access a data can cost real time but 
+little CPU time if the data access is protected, however since 
+scheduling aspects of verification is beyond the scope of this study, 
+we only focus on the former case, which is when a data is send via a 
+feature to from one AADL component instance to another.
+
+\begin{itemize}
+\item \textbf{Size} : data size;
+\end{itemize}
+
+\subsubsection {Ports and accesses}
+
+AADL Ports and accesses are features, and not components. However, 
+REAL allows to address them specifically, since resources-related 
+properties can be expressed on them. 
+
+As seen in part~\ref{data_connection}, connections allow to send a 
+data (or a signal) from an AADL component instance to another. Such 
+an operation relies on the hardware bus the connection is binded to.
+A connection can be bufferized and delayed, in which case it consumes
+memory space (depending on the queue and window size). Connections 
+always consume bus bandwidth.
+
+\begin{itemize}
+\item \textbf{Queue Size} : size of reception queue;
+\end{itemize}
+
+\textbf{comment : investigate about delayed connections}
+
+
+\textbf{comment : changer tous les noms de prop. en leur equivalent du standard AADL si existant}

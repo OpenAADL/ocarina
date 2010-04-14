@@ -1,0 +1,3 @@
+test_err.aadl:22:21:  (property term) does not point to anything or to something unreachable
+test_err.aadl:24:21:  (property term) does not point to anything or to something unreachable
+Cannot analyze AADL specifications

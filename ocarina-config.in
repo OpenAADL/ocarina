@@ -1,0 +1,188 @@
+#!/bin/sh
+# @configure_input@
+
+work_dir=`pwd`
+script_dir=`dirname $0`; cd ${script_dir}; script_dir=`pwd`
+prefix="${script_dir}/.."; cd ${prefix}; prefix=`pwd`;
+prefix_w=`@CYGPATH_W@ ${prefix}`
+cd ${work_dir}
+
+modules="frontends backends"
+
+usage()
+{
+   cat <<EOF
+Usage: ocarina-config [OPTIONS]
+Options:
+        No option:
+            Output all the flags (compiler and linker) required
+            to compile your program.
+        [--prefix[=DIR]]
+            Output the directory in which Ocarina architecture-independent 
+           files are installed, or set this directory to DIR.
+        [--exec-prefix[=DIR]]
+            Output the directory in which Ocarina architecture-dependent 
+           files are installed, or set this directory to DIR.
+        [--version|-v]
+            Output the version of Ocarina.
+        [--config]
+            Output Ocarina's configuration parameters.
+        [--runtime[=<Runtime_Name>]]
+            Checks the validity and the presence of the given runtime and 
+            then, outputs its path. Only one runtime can be requested at 
+            a time. If no runtime name is given, outputs the root directory
+            of all runtimes.
+        [--libs]
+            Output the linker flags to use for Ocarina.
+        [--properties]
+            Output the location of the standard property file.
+        [--resources]
+            Output the location of resource files 
+            (typically the standard properties)
+        [--cflags]
+            Output the compiler flags to use for Ocarina.
+        [--help]
+            Output this message
+EOF
+}
+
+exec_prefix="${prefix}"
+exec_prefix_w="${prefix_w}"
+includedir="${prefix}/include"
+includedir_w="${prefix_w}/include"
+libdir="${exec_prefix}/lib"
+libdir_w="${exec_prefix_w}/lib"
+datadir="${prefix}/share"
+datadir_w="${prefix_w}/share"
+
+ocarina_dir="-aI${includedir_w}/ocarina -aO${libdir_w}/ocarina"
+ocarina_lib="-L${libdir_w} -locarina-config -locarina-transfo"
+
+runtime_set=false
+
+while test $# -gt 0; do
+  case "$1" in
+  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+  *) optarg= ;;
+  esac
+
+  case $1 in
+    --help|-h)
+      usage 1>&2
+      exit 1
+      ;;
+    --prefix=*)
+      prefix=${optarg};
+      if test "x${exec_prefix_set}" = x ; then
+	  exec_prefix=${prefix}
+      fi
+      ;;
+    --prefix)
+      echo_prefix=true
+      ;;
+    --exec-prefix=*)
+      exec_prefix=${optarg}
+      ;;
+    --exec-prefix)
+      echo_exec_prefix=true
+      ;;
+    --version|-v)
+      echo "Ocarina @VERSION@"
+      exit 0
+      ;;
+    --config)
+      echo "Modules included : ${modules}" 
+      exit 0
+      ;;  
+    --libs)
+      echo_libs=true
+      ;;
+
+    --runtime=*)
+      requested_runtime=${optarg}
+
+      if test ! -d "${includedir}/ocarina/runtime/${requested_runtime}"; then
+	  echo "Runtime \"${requested_runtime}\" is not installed"
+	  echo ""
+	  usage 1>&2
+	  exit 1
+      fi
+
+      if test x"${runtime_set}" = x"true"; then
+	  echo "Only one --runtime=* is allowed"
+	  usage 1>&2
+	  exit 1
+      fi
+
+      ocarina_runtime="${includedir_w}/ocarina/runtime/${requested_runtime}"
+      runtime_set=true
+      ;;
+
+    --runtime)
+      if test x"${runtime_set}" = x"true"; then
+	  echo "Only one --runtime=* is allowed"
+	  usage 1>&2
+	  exit 1
+      fi
+
+      ocarina_runtime="${includedir_w}/ocarina/runtime"
+      runtime_set=true
+      ;;
+
+    --properties)
+      echo ${datadir_w}/ocarina/standard_properties.aadl
+      exit 0
+      ;;
+    --resources)
+      echo ${datadir_w}/ocarina
+      exit 0
+      ;;
+    --cflags)
+      echo_cflags=true
+      ;;
+    *)
+      usage 1>&2
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+for P in ${modules}
+do
+    ocarina_lib="${ocarina_lib} -locarina-${P}"
+done
+
+# For some architectures (x86-linux-gnu...), it is important that
+# "-locarina" is the last one to be included because other libraries
+# (ocarina-backend.a...) use symbols from this library.
+
+ocarina_lib="${ocarina_lib} -locarina"
+
+if test ! x"${echo_prefix}" = x"true" \
+   -a ! x"${echo_exec_prefix}" = x"true" \
+   -a ! x"${echo_cflags}" = x"true" \
+   -a ! x"${echo_libs}" = x"true" \
+   -a ! x"${runtime_set}" = x"true"; 
+then
+   echo ${ocarina_dir} -largs ${ocarina_lib}
+fi
+
+if test x"${echo_prefix}" = x"true" ; then
+    echo ${prefix_w}
+fi
+if test x"${echo_exec_prefix}" = x"true" ; then
+    echo ${exec_prefix_w}
+fi
+
+if test x"${echo_cflags}" = x"true"; then
+    echo ${ocarina_dir} 
+fi
+
+if test x"${echo_libs}" = x"true"; then
+    echo ${ocarina_lib}
+fi
+
+if test x"${runtime_set}" = x"true"; then
+    echo ${ocarina_runtime}
+fi

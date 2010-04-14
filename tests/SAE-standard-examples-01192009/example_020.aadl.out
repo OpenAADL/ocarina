@@ -1,0 +1,7 @@
+example_020.aadl:22:01: DoCalc (subcomponent access) does not point to anything or to something unreachable
+example_020.aadl:35:01: MyCalc (subcomponent access) does not point to anything or to something unreachable
+example_020.aadl:40:01: DoCalc (subcomponent access) does not point to anything or to something unreachable
+example_020.aadl:52:01: MyCalc (subcomponent access) does not point to anything or to something unreachable
+example_020.aadl:99:01: app (subcomponent)  points to ApplicationSystem (component type) , which is not of the same kind 
+example_020.aadl:100:01: printserver (subcomponent) points to PrintServer (entity reference), which does not exist. 
+Cannot analyze AADL specifications

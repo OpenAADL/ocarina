@@ -1,0 +1,7 @@
+property set PS is
+  Max_Thread_Limit: constant aadlinteger => 32;
+  Thread_Limit: aadlinteger 0 .. value(PS::Max_Thread_Limit)
+      => value(PS::Max_Thread_Limit)
+      applies to (processor);
+end PS;
+

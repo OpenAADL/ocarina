@@ -1,0 +1,11 @@
+#! /bin/sh
+
+# This script invokes the stript utility with the right path kind
+# (UNIX or Windows).
+
+STRIP="@STRIP@"
+EXECUTABLE="$1"
+CYGPATH_W="@CYGPATH_W@"
+
+${STRIP} "`${CYGPATH_W} ${EXECUTABLE}`"
+exit $?

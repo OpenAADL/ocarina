@@ -1,0 +1,94 @@
+package t15
+public
+
+system system_15
+end system_15;
+
+data data_15
+end data_15;
+
+feature group feature_group_t15
+end feature_group_t15;
+
+subprogram subprogram_t15
+ features
+  p: in parameter data_15;
+end subprogram_t15;
+
+subprogram group subprogramgroup_t15
+end subprogramgroup_t15;
+
+abstract abstract_15
+ features
+  dport: in data port;
+  eport: out event port;
+end abstract_15;
+
+abstract implementation abstract_15.i
+ subcomponents
+  s: subprogram subprogram_t15;
+ connections
+  c1: parameter dport->s.p; 
+end abstract_15.i;
+
+process process_15_one
+ features
+  eport: in event port;
+  edport: in event data port;
+  dport: in data port;
+  datap: requires data access data_15;
+  fg: feature group feature_group_t15;
+  sp: provides subprogram access subprogram_t15;
+  spg: provides subprogram group access subprogramgroup_t15;
+end process_15_one;
+
+process process_15_two
+features
+ eport: out event port;
+ edport: out event data port;
+ dport: out data port;
+ datap: provides data access data_15;
+ fg: feature group feature_group_t15;
+ sp: requires subprogram access subprogram_t15;
+ spg: requires subprogram group access subprogramgroup_t15;
+end process_15_two;
+
+system implementation system_15.i
+ subcomponents
+  process1: process process_15_one;
+  process2: process process_15_two;
+ connections
+  eport: port process2.eport->process1.eport;
+  edport: port process2.edport->process1.edport;
+  dport:  port process2.dport->process1.dport;
+  fgc: feature group process2.fg->process1.fg;
+  dac: data access process2.datap->process1.datap;
+  sp: subprogram access process2.sp->process1.sp;
+  spg: subprogram group access process2.spg->process1.spg;
+end system_15.i;
+
+bus bus_t15_one
+end bus_t15_one;
+
+system system_t15_one
+ features
+  b1: provides bus access bus_t15_one;
+end system_t15_one;
+
+system system_t15_two
+ features
+  b1: requires bus access bus_t15_one;
+end system_t15_two;
+
+system integrated_t15
+end integrated_t15;
+
+system implementation integrated_t15.i
+ subcomponents
+  s1: system system_t15_one;
+  s2: system system_t15_two;
+ connections
+  c1: bus access s1.b1 -> s2.b1;
+end integrated_t15.i;
+
+end t15;

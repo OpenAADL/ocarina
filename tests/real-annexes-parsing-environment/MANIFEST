@@ -1,0 +1,2 @@
+AADL_VERSION=-aadlv2
+OCARINA_FLAGS=-q -g aadl -real_lib lib.real

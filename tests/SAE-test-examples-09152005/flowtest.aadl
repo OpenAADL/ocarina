@@ -1,0 +1,35 @@
+-- this model contains correct flow specifications and flow implementations
+-- No error report should occur
+system engine
+features
+  sig1: in event port;
+  sig2: out event port;
+flows
+  flo1: flow source sig2;
+  flo2: flow sink sig1;
+  flo3: flow path sig1 -> sig2;
+end engine;
+
+system etc
+features
+  ssig1: in event port;
+  ssig2: out event port;
+flows
+  sflo1: flow source ssig2;
+  sflo2: flow sink ssig1;
+  sflo3: flow path ssig1 -> ssig2;
+end etc;
+
+system implementation engine.impl
+subcomponents
+  sub1: system etc;
+  sub2: system etc;
+connections
+  con1: event port sub1.ssig2 -> sig2;
+  con2: event port sig1 -> sub2.ssig1;
+  con3: event port sub2.ssig2 -> sub1.ssig1;
+flows
+  flo1: flow source sub1.sflo1 -> con1 -> sig2;
+  flo2: flow sink sig1 -> con2 -> sub2.sflo2;
+  flo3: flow path sig1 -> con2 -> sub2.sflo3 -> con3 -> sub1.sflo3 -> con1 -> sig2;
+end engine.impl;

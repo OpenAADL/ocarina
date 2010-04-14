@@ -1,0 +1,15 @@
+--  For each processor/OS, check whether associated processes have a
+--  number of connections equal or less than the maximum allowed
+
+theorem Connections
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  Cnx_Set := {x in Process_Set | Is_Connected_To (x, Proc_Set)};
+
+  check (Get_Property_Value (e, "RTOS_Properties::Max_Connections_Number") >= 
+         Cardinal (Cnx_Set));
+
+end;

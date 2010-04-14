@@ -1,0 +1,263 @@
+package layers
+public
+   with POK;
+
+   virtual bus unclassified
+   properties
+      POK::security_level => 1;
+   end unclassified;
+
+   virtual bus secret
+   properties
+      POK::security_level => 8;
+   end secret;
+
+   virtual bus top_secret
+   properties
+      POK::security_level => 10;
+   end top_secret;
+end layers;
+
+
+package model
+public
+   with runtime;
+   with partitions;
+   with memories;
+
+   system main
+   end main;
+
+   system implementation main.i
+   subcomponents
+      node1                            : processor runtime::pok_kernel.impl;
+      node2                            : processor runtime::pok_kernel.impl;
+      node1_partition_topsecret        : process partitions::process_sender.i;
+      node1_partition_secret           : process partitions::process_sender.i;
+      node1_partition_unclassified     : process partitions::process_sender.i;
+      node2_partition_topsecret        : process partitions::process_receiver.i;
+      node2_partition_secret           : process partitions::process_receiver.i;
+      node2_partition_unclassified     : process partitions::process_receiver.i;
+      node1_memory                     : memory memories::main_memory.i;
+      node2_memory                     : memory memories::main_memory.i;
+      node1_netif                      : device runtime::separation_netif.i;
+      node2_netif                      : device runtime::separation_netif.i;
+      rtbus                            : bus runtime::separation_bus.i;
+   connections
+      port node1_partition_topsecret.outgoing      -> node2_partition_topsecret.incoming
+         {Actual_Connection_Binding => (reference (rtbus.layer_topsecret));};
+      port node1_partition_secret.outgoing         -> node2_partition_secret.incoming
+         {Actual_Connection_Binding => (reference (rtbus.layer_secret));};
+      port node1_partition_unclassified.outgoing   -> node2_partition_unclassified.incoming
+         {Actual_Connection_Binding => (reference (rtbus.layer_unclassified));};
+      bus access rtbus -> node1_netif.the_bus;
+      bus access rtbus -> node2_netif.the_bus;
+   properties
+      Actual_Processor_Binding   => (reference (node1.runtime_topsecret))    applies to node1_partition_topsecret;
+      Actual_Processor_Binding   => (reference (node1.runtime_secret))       applies to node1_partition_secret;
+      Actual_Processor_Binding   => (reference (node1.runtime_unclassified)) applies to node1_partition_unclassified;
+      Actual_Processor_Binding   => (reference (node2.runtime_topsecret))    applies to node2_partition_topsecret;
+      Actual_Processor_Binding   => (reference (node2.runtime_secret))       applies to node2_partition_secret;
+      Actual_Processor_Binding   => (reference (node2.runtime_unclassified)) applies to node2_partition_unclassified;
+      Actual_Processor_Binding   => (reference (node1.runtime_netif))        applies to node1_netif;
+      Actual_Processor_Binding   => (reference (node2.runtime_netif))        applies to node2_netif;
+      Actual_Memory_Binding      => (reference (node1_memory.topsecret))     applies to node1_partition_topsecret;
+      Actual_Memory_Binding      => (reference (node1_memory.secret))        applies to node1_partition_secret;
+      Actual_Memory_Binding      => (reference (node1_memory.unclassified))  applies to node1_partition_unclassified;
+      Actual_Memory_Binding      => (reference (node2_memory.topsecret))     applies to node2_partition_topsecret;
+      Actual_Memory_Binding      => (reference (node2_memory.secret))        applies to node2_partition_secret;
+      Actual_Memory_Binding      => (reference (node2_memory.driver))        applies to node2_netif;
+      Actual_Memory_Binding      => (reference (node1_memory.driver))        applies to node1_netif;
+
+   annex real_specification {**
+
+      theorem pok_security
+
+        foreach s in system_set do
+
+          requires (One_Security_Level_By_Memory 
+                    and bell_lapadula
+                    and biba
+                    and MILS_1
+                    and MILS_2
+                    and scheduling_1);
+
+        check (1 = 1);
+
+      end pok_security;
+
+   **};
+
+   end main.i;
+
+end model;
+package memories
+public
+
+   memory memory_segment
+   end memory_segment;
+
+   memory implementation memory_segment.i
+   end memory_segment.i;
+
+   memory main_memory
+   end main_memory;
+
+   memory implementation main_memory.i
+   subcomponents
+      topsecret       : memory memory_segment.i;
+      secret          : memory memory_segment.i;
+      unclassified    : memory memory_segment.i;
+      driver          : memory memory_segment.i;
+   end main_memory.i;
+
+end memories;
+package partitions
+public
+   with threads;
+   with types;
+
+   process process_sender
+   features
+      outgoing : out data port types::integer;
+   end process_sender;
+
+   process implementation process_sender.i
+   subcomponents
+      thr : thread threads::send_value.impl;
+   connections
+      port thr.outgoing_value -> outgoing;
+   end process_sender.i;
+
+
+   process process_receiver
+   features
+      incoming : in data port types::integer;
+   end process_receiver;
+
+   process implementation process_receiver.i
+   subcomponents
+      thr : thread threads::receive_value.impl;
+   connections
+      port incoming -> thr.incoming_value;
+   end process_receiver.i;
+
+end partitions;
+package runtime
+public
+   with POK;
+   with layers;
+
+   virtual processor partition
+   properties
+      POK::Scheduler => RR;
+   end partition;
+
+   virtual processor implementation partition.i
+   end partition.i;
+
+   processor pok_kernel
+   properties
+      POK::Architecture => x86;
+      POK::BSP => x86_qemu;
+   end pok_kernel;
+
+   device separation_netif
+   features
+      the_bus: requires bus access separation_bus.i;
+   end separation_netif;
+
+   device implementation separation_netif.i
+   end separation_netif.i;
+
+   processor implementation pok_kernel.impl
+   subcomponents
+      runtime_secret       : virtual processor partition.i
+                  {Provided_Virtual_Bus_Class => (classifier (layers::secret));};
+      runtime_topsecret    : virtual processor partition.i
+                  {Provided_Virtual_Bus_Class => (classifier (layers::top_secret));};
+      runtime_unclassified : virtual processor partition.i
+                  {Provided_Virtual_Bus_Class => (classifier (layers::unclassified));};
+      runtime_netif : virtual processor partition.i
+                  {Provided_Virtual_Bus_Class => (classifier (layers::unclassified), classifier (layers::top_secret), classifier (layers::secret));};
+   properties
+      POK::Major_Frame => 1500ms;
+      POK::Scheduler => static;
+      POK::Slots => (500ms, 500ms, 500ms);
+      POK::Slots_Allocation => ( reference (runtime_secret), reference (runtime_topsecret), reference (runtime_unclassified));
+   end pok_kernel.impl;
+
+   bus separation_bus
+   end separation_bus;
+
+   bus implementation separation_bus.i
+   subcomponents
+      layer_topsecret      : virtual bus layers::top_secret;
+      layer_secret         : virtual bus layers::secret;
+      layer_unclassified   : virtual bus layers::unclassified;
+   end separation_bus.i;
+end runtime;
+
+
+package subprograms
+public
+   with types;
+
+   subprogram receive_value
+   features
+      incoming : in parameter types::integer;
+   end receive_value;
+
+
+   subprogram send_value
+   features
+      outgoing : out parameter types::integer;
+   end send_value;
+
+end subprograms;
+package threads
+public
+   with types;
+   with subprograms;
+
+   thread receive_value
+   features
+      incoming_value : in data port types::integer;
+   properties
+      Dispatch_Protocol => Periodic;
+      Compute_Execution_Time => 0 ms .. 1 ms;
+      Period => 1000 Ms;
+   end receive_value;
+
+   thread implementation receive_value.impl
+   calls 
+      call1 : { pspg : subprogram subprograms::receive_value;};
+   connections
+      parameter incoming_value -> pspg.incoming;
+   end receive_value.impl;
+
+   thread send_value
+   features
+      outgoing_value : out data port types::integer;
+   properties
+      Dispatch_Protocol => Periodic;
+      Period => 1000 Ms;
+      Compute_Execution_Time => 0 ms .. 1 ms;
+   end send_value;
+
+   thread implementation send_value.impl
+   calls 
+      call1 : { pspg : subprogram subprograms::send_value;};
+   connections
+      parameter pspg.outgoing -> outgoing_value;
+   end send_value.impl;
+end threads;
+package types
+public
+   with Data_Model;
+
+   data integer
+   properties
+      Data_Model::Data_Representation => integer;
+   end integer;
+end types;

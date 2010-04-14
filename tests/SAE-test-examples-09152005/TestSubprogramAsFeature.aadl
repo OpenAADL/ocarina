@@ -1,0 +1,94 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set PS is
+  p: aadlstring applies to (subprogram, server subprogram);
+  q: aadlstring applies to (subprogram, server subprogram);
+  r: aadlstring applies to (subprogram, server subprogram);
+
+  p_expected: aadlstring applies to (subprogram, server subprogram);
+  q_expected: aadlstring applies to (subprogram, server subprogram);
+  r_expected: aadlstring applies to (subprogram, server subprogram);
+end PS;
+
+package Test
+  public 
+    -- p => "from Sub", q => not present, r => not present
+    subprogram Sub
+      properties 
+        PS::p => "from Sub";
+        PS::p_expected => "from Sub";
+    end Sub;
+    
+    -- p => "from Sub", q => "from Sub.One", r => not present
+    subprogram implementation Sub.One
+      properties
+        PS::p_expected => "from Sub";
+        PS::q => "from Sub.One";
+        PS::q_expected => "from Sub.One";
+    end Sub.One;
+    
+    data D
+      features
+        -- p => "from Sub", q => "from D", r => not present
+        sub1: subprogram Sub
+          { PS::p_expected => "from Sub";
+            PS::q => "from D";
+            PS::q_expected => "from D"; };
+    end D;
+    
+    data D2 extends D
+      features
+        -- p => "from D2", q => "from D", r => not present
+        sub1: refined to subprogram Sub
+          { PS::p => "from D2";
+            PS::p_expected => "from D2";
+            ps::q_expected => "from D"; };
+    end D2;
+    
+    data DD
+      features
+        -- p => "from Sub", q => "from Sub.One", r => "from DD"
+        sub2: subprogram Sub.One
+          { PS::p_expected => "from Sub";
+            PS::q_expected => "from Sub.One";
+            PS::r => "from DD";
+            PS::r_expected => "from DD"; };
+    end DD;
+
+
+    thread T
+      features
+        -- p => "from Sub", q => "from T", r => not present
+        sub1: server subprogram Sub
+          { PS::p_expected => "from Sub";
+            PS::q => "from T";
+            PS::q_expected => "from T"; };
+            
+        sub2: server subprogram DD.sub2
+          { PS::p => "from T";
+            PS::p_expected => "from T";
+            PS::q_expected => "from Sub.One";
+            PS::r_expected => "from DD"; };
+          
+    end T;
+    
+    thread T2 extends T
+      features
+        -- p => "from T2", q => "from T", r => not present
+        sub1: refined to server subprogram Sub
+          { PS::p => "from T2";
+            PS::p_expected => "from T2";
+            PS::q_expected => "from T"; };
+    end T2;
+    
+    thread TT
+      features
+        -- p => "from Sub", q => "from Sub.One", r => "from TT"
+        sub2: server subprogram Sub.One
+          { PS::p_expected => "from Sub";
+            PS::q_expected => "from Sub.One";
+            PS::r => "from TT";
+            PS::r_expected => "from TT"; };
+    end TT;
+
+end Test;

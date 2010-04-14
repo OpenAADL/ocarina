@@ -1,0 +1,87 @@
+package t9
+public
+abstract abstract_t9
+end abstract_t9;
+
+abstract implementation abstract_t9.i
+end abstract_t9.i;
+
+bus bus_t9
+end bus_t9;
+
+bus implementation  bus_t9.i
+end bus_t9.i;
+
+data data_t9
+end data_t9;
+
+data implementation data_t9.i
+end data_t9.i;
+
+device device_t9
+end device_t9;
+
+device implementation device_t9.i
+end device_t9.i;
+
+memory memory_t9
+end memory_t9;
+
+memory implementation memory_t9.i
+end memory_t9.i;
+
+process process_t9
+end process_t9;
+
+process implementation process_t9.i
+end process_t9.i;
+
+processor processor_t9
+end processor_t9;
+
+processor implementation processor_t9.i
+end processor_t9.i;
+
+subprogram subprogram_t9
+end subprogram_t9;
+
+subprogram implementation subprogram_t9.i
+end subprogram_t9.i;
+
+subprogram group subprogramgroup_t9
+end subprogramgroup_t9;
+
+subprogram group implementation subprogramgroup_t9.i
+end subprogramgroup_t9.i;
+
+system system_t9
+end system_t9;
+
+system implementation system_t9.i
+end system_t9.i;
+
+thread thread_t9
+end thread_t9;
+
+thread implementation thread_t9.i
+end thread_t9.i;
+
+thread group threadgroup_t9
+end threadgroup_t9;
+
+thread group implementation threadgroup_t9.i
+end threadgroup_t9.i;
+
+virtual bus virtualbus_t9
+end virtualbus_t9;
+
+virtual bus implementation virtualbus_t9.i
+end virtualbus_t9.i;
+
+virtual processor virtualprocessor_t9
+end virtualprocessor_t9;
+
+virtual processor implementation virtualprocessor_t9.i
+end virtualprocessor_t9.i;
+
+end t9;

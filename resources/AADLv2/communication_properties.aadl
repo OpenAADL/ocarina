@@ -1,0 +1,117 @@
+--******************************************************
+--  AADL Standard AADL_V2.0
+--   Appendix A (normative)
+--   Predeclared Property Sets
+--   Communication_Properties
+--   07Juin08
+--******************************************************
+
+property set Communication_Properties is
+  ----------------------------------------------------
+  ----------------------------------------------------
+
+  Fan_Out_Policy: enumeration (Broadcast, 
+                               RoundRobin, 
+                               OnDemand)
+  applies to (port);
+  ----------------------------------------------------
+
+  Connection_Pattern: 
+            list of Supported_Connection_Patterns
+  applies to (connection);
+  ----------------------------------------------------
+
+  Connection_Set: list of Connection_Pair
+  applies to (connection);
+  ----------------------------------------------------
+
+  Connection_Pair: 
+  type record ( src: aadlinteger;
+                dst: aadlinteger;);
+
+   ----------------------------------------------------
+   Overflow_Handling_Protocol: enumeration (DropOldest, 
+                                            DropNewest, 
+                                            Error)
+   => DropOldest
+  applies to (event port, 
+              event data port, 
+              subprogram);
+  ----------------------------------------------------
+
+  Queue_Processing_Protocol: 
+       Supported_Queue_Processing_Protocols 
+  => FIFO
+  applies to (event port, 
+              event data port, 
+              subprogram);
+  ----------------------------------------------------
+
+  Queue_Size: aadlinteger 0 .. Max_Queue_Size => 0
+  applies to (event port, 
+              event data port, 
+              subprogram);
+  ----------------------------------------------------
+
+  Transmission_Type: enumeration ( push, pull )
+  applies to (port, 
+              connection, 
+              bus, 
+              virtual bus);
+  ----------------------------------------------------
+
+  Input_Rate: Rate_Spec
+  applies to (port, access);
+  ----------------------------------------------------
+
+  Input_Time: IO_Time_Spec
+  applies to (port, access);
+  ----------------------------------------------------
+
+  IO_Time_Spec : type record (
+              ReferencePoint : IO_Reference_Point_Type;
+              TimeOffset : TimeRange;
+  );
+  ----------------------------------------------------
+
+  IO_Reference_Point_Type : 
+  type enumeration ( DispatchTime, 
+                     StartTime,
+                     CompletionTime, 
+                     DeadlineTime,
+                     NoIO);
+  ----------------------------------------------------
+
+  Output_Rate: Rate_Spec
+  applies to (port, access);
+  ----------------------------------------------------
+
+  Output_Time: IO_Time_Spec
+  applies to (port, access);
+  ----------------------------------------------------
+  -- XXX FIX : TO BE CHANGE BY FEILER
+  -- Rate_Spec : type record (
+  -- Value_Range : aadlreal units (perSecond, perDispatch);
+  -- Rate_Distribution : Supported_Distributions;
+  -- );
+
+  Rate_Spec : type record (rec: aadlinteger;);
+  ----------------------------------------------------
+
+  Transmission_Time: list of Time_Range
+  applies to (bus);
+  ----------------------------------------------------
+
+  Actual_Latency: Time_Range
+  applies to (flow);
+  ----------------------------------------------------
+
+  Expected_Latency: Time_Range
+  applies to (flow);
+  ----------------------------------------------------
+
+  Latency: Time_Range
+  applies to (flow, connection);
+  ----------------------------------------------------
+  ----------------------------------------------------
+end Communication_Properties;

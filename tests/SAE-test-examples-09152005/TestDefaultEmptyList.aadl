@@ -1,0 +1,15 @@
+-- Verify that a list-valued property with no specific default value
+-- has the empty list as the default value.
+
+property set PS is
+  p: list of aadlinteger applies to (system);
+  s: list of aadlinteger => () applies to (system);
+  t: list of aadlinteger => (1) applies to (system);
+end PS;
+
+package Test
+  public
+    -- p => (), s => (), t => (1)
+    system S
+    end S;
+end Test;

@@ -1,0 +1,31 @@
+system inner
+  features
+    p: out data port ;
+  flows
+    src: flow source p;
+end inner;
+
+system outer
+  features
+    output: out data port ;
+  flows 
+    outSrc: flow source output;
+end outer;
+
+system implementation outer.basic
+  subcomponents 
+    sub1: system inner;
+  connections
+    c1: data port sub1.p -> output in modes (m1);
+    c2: data port sub1.p -> output in modes (m2);
+  flows
+    --  outSrc: flow source sub1.src -> c2 -> output in modes (m1);
+    --  outSrc: flow source sub1.src -> c1 -> output in modes (m2);
+    --  ENST: The flows above are incorrect because modes do not 
+    --        match the connection modes
+    outSrc: flow source sub1.src -> c1 -> output in modes (m1);
+    outSrc: flow source sub1.src -> c2 -> output in modes (m2);
+  modes
+    m1: initial mode;
+    m2: mode;
+end outer.basic;

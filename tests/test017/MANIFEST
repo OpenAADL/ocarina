@@ -1,0 +1,4 @@
+Cmd0: ocarina modes_err.aadl
+Output0: modes_err.aadl.out
+Success0: no
+Keywords:  modes aadlv1

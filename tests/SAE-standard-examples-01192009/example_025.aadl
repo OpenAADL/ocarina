@@ -1,0 +1,65 @@
+-- test 10.1 Flows Specifications  draft-01192009
+
+package gps
+public
+
+data signal_data
+end signal_data;
+
+data position
+end position;
+
+data implementation position.radial
+end position.radial;
+
+data implementation position.cartesian
+end position.cartesian;
+end gps;
+
+package FlowExample
+public
+
+-- add for test
+with gps;
+-- end add
+
+process foo
+features
+Initcmd: in event port;
+Signal: in data port gps::signal_data;
+Result1: out data port gps::position.radial;
+Result2: out data port gps::position.cartesian;
+Status: out data port;
+flows
+-- two flows split from the same input
+Flow1: flow path signal -> result1;
+Flow2: flow path signal -> result2;
+-- An input is consumed by process foo through its initcmd port
+Flow3: flow sink initcmd;
+-- An output is generated (produced) by process foo and made available
+-- through its port Status;
+Flow4: flow source Status;
+end foo;
+thread bar
+features
+p1 : in data port gps::signal_data;
+p2 : out data port gps::position.radial;
+p3 : out event port;
+flows
+fs1 : flow path p1 -> p2;
+fs2 : flow source p3;
+end bar;
+thread implementation bar.basic
+end bar.basic;
+thread baz
+features
+p1 : in data port gps::position.radial;
+p2 : out data port gps::position.cartesian;
+reset : in event port;
+flows
+fs1 : flow path p1 -> p2;
+fsink : flow sink reset;
+end baz;
+thread implementation baz.basic
+end baz.basic;
+end FlowExample;

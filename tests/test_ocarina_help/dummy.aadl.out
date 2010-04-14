@@ -1,0 +1,62 @@
+Usage: 
+      ocarina [options] files
+      OR
+      ocarina -help
+  files are a non null sequence of AADL files
+
+  General purpose options:
+   -V  Output Ocarina version, then exit
+   -s  Output Ocarina search directory, then exit
+
+  Scenario file options:
+   -b  build the generated application code
+   -z  clean the generated application code
+   -ec execute the generated application code and
+       retrieve coverage information
+   -er execute the generated application code and
+       verify that there is no regression
+   -p  only parse and instantiate the application model
+   -c  only perform schedulability analysis
+
+  Advanced user options:
+   -d  Debug mode for developpers
+   -q  Quiet mode (default)
+   -t  [script] Run Ocarina in terminal interactive mode.
+       If a script is given, interpret it then exit.
+   -v  Verbose mode for users
+   -x  Parse AADL file as an AADL scenario file
+   -f  Parse predefined non standard property sets
+   -i  Instantiate the AADL model
+   -r  <name> The name of the instance tree root
+   -o  Specify output file
+   -I  Specify the inclusion paths
+   -aadlv1  Use AADL v1 standard (default)
+   -aadlv2  Use AADL v2 standard
+   -real_lib Add a REAL file to be used as a theorem libraries by REAL annexes
+   -g  Generate code from the AADL instance tree
+       Registered backends:
+        petri_nets
+        boundt
+        polyorb_hi_ada
+        polyorb_qos_ada
+        polyorb_hi_c
+        polyorb_hi_rtsj
+        pok_c
+        stats
+        subprograms
+        real_theorem
+        carts
+        aadl
+        aadl_min
+        aadl_annex
+        behavior_specification
+        real_specification
+   -arinc653  Generate code for ARINC653 API (POK backend only)
+   -b  Generate and build code from the AADL model
+   -z  Clean code generated from the AADL model
+   -disable-annexes={annexes}  Desactive one or all annexes
+       Annexes :
+        all
+        behavior
+        real
+

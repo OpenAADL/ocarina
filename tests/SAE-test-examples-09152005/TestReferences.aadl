@@ -1,0 +1,43 @@
+property set PS is
+  refType: type reference ;
+  
+  p1: PS::refType applies to (all);
+  p2: PS::refType applies to (all);
+  p3: PS::refType applies to (all);
+end PS;
+
+system a
+  features
+    output: out data port ;
+end a;
+
+system b
+  features 
+    input: in data port ;
+end b;
+
+system t
+  features
+    ss: server subprogram;
+end t;
+
+system implementation t.I
+  subcomponents
+    x: system a;
+    y: system b;
+    
+  connections
+    c: data port x.output -> y.input;
+end t.I;
+
+system s
+end s;
+
+system implementation S.I
+  subcomponents 
+    f: system t.I;
+  properties
+    PS::p1 => reference f;
+    PS::p2 => reference f.ss;
+    PS::p3 => reference f.c;
+end S.I;

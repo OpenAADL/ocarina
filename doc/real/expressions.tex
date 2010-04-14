@@ -1,0 +1,81 @@
+\label {expression_def}
+
+\paragraph{}
+\real{} use expressions in order to perform any computation associating
+sets, literals and function. Their is two kind of expressions : \textit{set 
+expressions}, which take sets or set expressions as operands and return a
+set, and \textit{regular expressions}, or \textit{expressions}, which take
+sets, literals, variables or functions as operands and returns a value or 
+a list of values. This section explains all expressions building.
+
+\subsubsection {Set Expression}
+
+\textit{set\_expression} $:=$ $<$declared\_set$>$ $|$ \textit{set\_expression} \textit{set\_operator} \textit{set\_expression}
+
+\textit{set\_operator} $:=$ \textbf{+} $|$ \textbf{*} $|$ \textbf{/}
+
+\paragraph{Operators}
+\begin {itemize}
+\item \textbf{+} : Union (x in A or x in B)
+\item \textbf{*} : Intersection (x in A and x in B)
+\item \textbf{/} : Exclusion (x in A and not x in B)
+\end {itemize}
+
+\subsubsection {Regular Expression}
+
+\textit{expression} $:=$ $<$literal$>$ $|$ $<$variable$>$ $|$ $<$suprogram\_call$>$ $|$ \textit{expression} \textit{operator} \textit{expression}
+
+\textit{operator} $:=$ \textbf{+} $|$ \textbf{*} $|$ \textbf{/} $|$ \textbf{and} $|$ \textbf{or} $|$ \textbf{not} $|$ \textbf{$<$} $|$ \textbf{$<=$} $|$ \textbf{$>$} $|$ \textbf{$>=$} $|$ \textbf{=} $|$ \textbf{**} 
+
+\paragraph{Operators}
+A check expression real type (ie. after evaluation) can be either 
+boolean, real, integer, string, of a list of any of those types. 
+Lists are handled by functions ratehr than by operators, and thus 
+are addressed in section~\ref{check_function}.\\
+Note that the top-level check expression must be a boolean.
+\begin {itemize}
+\item \textbf{+} : addition, defined on reals and integers;
+\item \textbf{-} : substraction, defined on reals and integers;
+\item \textbf{*} : multiplication, defined on reals and integers;
+\item \textbf{**} : power, defined on reals and integers (second parameter must be integer);
+\item \textbf{and} : and (x complies to A and x complies to B), lazy operator;
+\item \textbf{or} : or (x complies to A or x complies to B), lazy operator;
+\item \textbf{not} : not Exclusion (x does not comply to A);
+\item \textbf{$>$} : strictly greater, defined on reals and integers;
+\item \textbf{$<$} : strictly less, defined on reals and integers;
+\item \textbf{$>=$} : greater or equal, defined on reals and integers;
+\item \textbf{$<=$} : less or equal, defined on reals and integers;
+\item \textbf{$<>$} : different (not equal), defined on reals, integers, strings and booleans;
+\item \textbf{=} : equal, defined on reals, integers and strings;
+\end {itemize}
+
+\subsubsection {Ternary Expression}
+
+\textit{ternary\_expression} $:=$ \textbf{if} \textit{boolean\_expression} \textbf{then} \textit{expression} \textbf{else} \textit{expression}
+
+The ternary expression is typically used to perform conditional 
+assignation, generaly used in conjonction with a variable assignation :
+
+\textbf{var} \textit{variable\_name} $:=$ \textbf{if} \textit{boolean\_expression} \textbf{then} \textit{expression\_1} \textbf{else} \textit{expression\_2}
+
+where \textit{variable\_name} contains \textit{expression\_1} if \textit{boolean\_expression} is true, and textit{expression\_2} if it is false.
+
+\subsubsection {Expression and theorems type}
+
+The regular expression specified after the keywords \texttt{check} 
+or \texttt{return} is applied to all the elements of the range set.
+
+If the theorem finish with \texttt{check}, then it is considered 
+false if at least one element of the range set does not comply to 
+the expression, which must return a boolean value.
+
+If the theorem finish with \texttt{return}, then the value 
+returned by the theorem is the value returned by the expression,
+which must be a numeric. The result is always casted to a real. Note
+that if the result of the expression is a list of values, one can use
+an \texttt{aggregation function} on it. Existing \texttt{aggregation 
+function} are \texttt{MSum} and \texttt{MMax}, which respectively 
+returns the list's sum and maximum values. Of course, they are defined 
+only on lists of numeric values.
+
+\textit{return\_expression} $:=$ [$<$aggregation\_subprogram$>$ (]  \textit{expression} [)]

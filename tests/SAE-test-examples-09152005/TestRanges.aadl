@@ -1,0 +1,43 @@
+property set PS is
+  -- good:
+  t1: type aadlinteger ;
+  -- good:
+  t2: type aadlinteger units (meters);
+  --good
+  t3: type aadlinteger 0..1;
+  --good
+  t4: type aadlinteger 5..5 units (meters);
+  --bad
+  t5: type aadlinteger 10..0;
+  --bad: has real value, doesn't check range
+  t6: type aadlinteger 100.0..90;
+
+  -- good:
+  z1: type aadlreal ;
+  -- good:
+  z2: type aadlreal units (meters);
+  --good
+  z3: type aadlreal -3.0..-1.5;
+  --good
+  z4: type aadlreal 10.0..10.0 units (meters);
+  --bad
+  z5: type aadlreal 100.1..-9.9;
+  --bad: has integer value, doesn't check range
+  z6: type aadlreal 100.0..90;
+  
+  -- Good
+  q1: type range of aadlinteger 0..1;
+  -- bad
+  q2: type range of aadlinteger 1..0;
+  -- good
+  q3: type range of PS::t3;
+  -- bad: reference type doesn't define a range
+  q100: type range of PS::t1;
+  
+  -- Good
+  q4: type range of aadlreal 0.0..0.1;
+  -- bad
+  q5: type range of aadlreal 1.0..0.0;
+  -- good
+  q6: type range of PS::z3;
+end PS;

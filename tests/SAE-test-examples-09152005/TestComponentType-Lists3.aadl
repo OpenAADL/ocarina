@@ -1,0 +1,35 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set MyProperties is
+  prop1: list of aadlinteger => (0) applies to (data);
+end MyProperties;
+
+package MyPackage
+  public
+    -- should have (-5)
+    data DataType1
+    end DataType1;
+
+    -- Should have (-5, -10)
+    data DataType3
+      properties
+        MyProperties::prop1 +=> -10;
+    end DataType3;
+
+    properties
+      MyProperties::prop1 => -5;
+end MyPackage;
+
+package MyPackage2
+  public
+    -- Should get the initial value from THIS package, not the one
+    -- in which DataType 1 is defined
+    -- should have (5, 10)
+    data DataType2 extends MyPackage::DataType1
+      properties
+        MyProperties::prop1 +=> 10;
+    end DataType2;
+
+    properties
+      MyProperties::prop1 => 5;
+end MyPackage2;

@@ -1,0 +1,2 @@
+model.aadl:1:09: "Deployment" conflicts with declaration in deployment.aadl:1:01
+Cannot analyze AADL specifications

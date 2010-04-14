@@ -1,0 +1,41 @@
+-- this example was used to test that the name resolver resolves names correctly
+-- the validation is to check that the references are filled in correctly in the Aadl Object model
+
+
+property set RockwellCollins is
+-- the range values require a unit literal
+-- this should be reported
+badbyterate : type aadlreal 1.1bps .. 999.9mbps
+	units (
+	bps, 
+	kbps => bps * 1000, 
+	mbps => kbps * 1000);
+byterate : type aadlreal 1.1 bps ..999.9 bps
+	units (
+	bps, 
+	kbps => bps * 1000, 
+	mbps => kbps * 1000);
+
+limitedbyterate : type aadlreal 1.1..999.9;
+
+throughput : RockwellCollins::byterate applies to (system);
+-- we should not be able to name things in the same property set without qualifying the name
+throughputNoresolve : byterate applies to (system);
+-- a good property definition
+throughput2 : RockwellCollins::byterate applies to (system);
+
+limitedthroughput: RockwellCollins::limitedbyterate applies to (system);
+end RockwellCollins;
+
+system foo
+properties
+	-- the value is out of range
+	RockwellCollins::limitedthroughput => 1000.0;
+	-- this property name is resolved
+	RockwellCollins::throughput => 1000.0 bps;
+	-- this is ok
+	RockwellCollins::throughput2 => 100.0 bps;
+	-- the property name should not be found
+	throughput2 => 100.0 bps;
+end foo;
+----

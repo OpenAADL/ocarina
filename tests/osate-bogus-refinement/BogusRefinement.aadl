@@ -1,0 +1,57 @@
+data d
+  features
+    -- bad: cannot refine---not type extension
+    s: refined to subprogram ;
+end d;
+
+-- bad extension: category mismatch
+system s extends d
+end s;
+
+-- bad implementation: category mismatch
+thread implementation s.i
+end s.i;
+
+thread group tg
+end tg;
+
+-- bad extension: category mismatch
+thread group implementation tg.i extends s.i
+  subcomponents 
+    -- bad: category mismatch
+    t1: thread s;
+end tg.i;
+
+subprogram sub
+end sub;
+
+subprogram sub2
+end sub2;
+
+data X
+  features
+    a: subprogram sub;
+    b: subprogram sub;
+end X;
+
+data implementation X.i
+  refines type
+    -- bad: foo not an inherited feature
+    foo: refined to subprogram ;
+    a: refined to subprogram sub2 ;
+end X.i;
+
+
+
+system SS
+end SS;
+
+system implementation SS.I
+  subcomponents
+    d: data x;
+end SS.I;
+
+system implementation SS.J extends SS.I
+  subcomponents
+    d: refined to data d;
+end SS.J;

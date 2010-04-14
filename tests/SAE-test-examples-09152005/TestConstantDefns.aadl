@@ -1,0 +1,38 @@
+property set PS is
+  -- good
+  const11: constant aadlinteger => 0;
+  -- bad: parse error
+  const12: constant aadlinteger => 0.0;
+  -- bad: Unexpected token
+  const13: constant aadlinteger => "foo";
+  -- bad: Unexpected token
+  const14: constant aadlinteger => true;
+  
+  -- bad: parse error
+  const21: constant aadlreal => 0;
+  -- good
+  const22: constant aadlreal => 0.0;
+  -- bad: Unexpected token
+  const23: constant aadlreal => "foo";
+  -- bad: Unexpected token
+  const24: constant aadlreal => true;
+
+  -- bad: parse error
+  const31: constant aadlstring => 0;
+  -- bad: parse error
+  const32: constant aadlstring => 0.0;
+  -- good
+  const33: constant aadlstring => "foo";
+  -- bad: parse error
+  const34: constant aadlstring => true;
+  
+
+  -- bad: Unexpected token
+  const41: constant aadlboolean => 0;
+  -- bad: Unexpected token
+  const42: constant aadlboolean => 0.0;
+  -- bad: Unexpected token
+  const43: constant aadlboolean => "foo";
+  -- good
+  const44: constant aadlboolean => true;  
+end PS;

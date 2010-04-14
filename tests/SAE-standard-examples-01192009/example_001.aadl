@@ -1,0 +1,18 @@
+--test 4.2 Packages draft-01192009
+
+package Aircraft::Cockpit
+public
+with Avionics::DataTypes, Safety_Properties;
+
+-- bad syntax
+--  AirData renames Avionics::DataTypes::AirData;
+-- correction
+AirData renames data Avionics::DataTypes::AirData;
+
+system MFD
+features
+Airdata: in data port AirData;
+properties
+Safety_Properties::Safety_Criticality => high;
+end MFD;
+end Aircraft::Cockpit;

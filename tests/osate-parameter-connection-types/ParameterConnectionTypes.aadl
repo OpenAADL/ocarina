@@ -1,0 +1,31 @@
+data d
+end d;
+
+data implementation d.a
+end d.a;
+
+data implementation d.b
+end d.b;
+
+data e
+end e;
+
+subprogram sub
+  features
+    x: in parameter d.b;
+end sub;
+
+thread t
+  features
+    p: in data port d.a;
+end t;  
+
+thread implementation t.i
+  calls
+    normal: {
+      call: subprogram sub ;
+    };
+  connections
+    -- bad: data classifier mismatch
+    parameter p -> call.x;
+end t.i;

@@ -1,0 +1,2 @@
+test.aadl:9:05: titi::Tata is a list while the corresponding property name at test.aadl:4:03 is not a list.
+Cannot analyze AADL specifications

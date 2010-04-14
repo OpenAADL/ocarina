@@ -1,0 +1,2 @@
+ConnectionDirections.aadl:35:05: a.src2 (entity reference)  and b.tub2 (entity reference)  do not have compatible types
+Cannot analyze AADL specifications

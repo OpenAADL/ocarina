@@ -1,0 +1,87 @@
+-- test1 4.5 Subcomponents draft-01192009
+
+package Sampling
+public
+
+data Sample
+properties
+Source_Data_Size => 16 Bytes;
+end Sample;
+
+data Sample_Set
+properties
+Source_Data_Size => 1 MByte;
+end Sample_Set;
+
+data implementation Sample_Set.impl
+subcomponents
+Data_Set: data Sample ;
+end Sample_Set.impl;
+
+data Dynamic_Sample_Set extends Sample_Set
+end Dynamic_Sample_Set;
+
+data implementation Dynamic_Sample_Set.impl extends Sample_Set.impl
+properties
+Source_Data_Size => 8 Bytes applies to Data_Set;
+end Dynamic_Sample_Set.impl;
+end Sampling;
+
+-- add for test
+package Test
+public
+  with Sampling;
+-- end add
+
+thread Init_Samples
+features
+OrigSet : requires data access Sampling::Sample_Set;
+SampleSet : requires data access Sampling::Sample_Set;
+end Init_Samples;
+
+thread Collect_Samples
+features
+Input_Sample : in event data port Sampling::Sample;
+SampleSet : requires data access Sampling::Sample_Set;
+Filtering_Routine: requires subprogram access Sample_Subprogram;
+end Collect_Samples;
+
+thread implementation Collect_Samples.Batch_Update
+properties
+Source_Name => "InSample" applies to Input_Sample;
+end Collect_Samples.Batch_Update;
+
+thread Distribute_Samples
+features
+SampleSet : requires data access Sampling::Sample_Set;
+UpdatedSamples : out event data port Sampling::Sample;
+end Distribute_Samples;
+
+process Sample_Manager
+features
+Input_Sample: in event data port Sampling::Sample;
+External_Samples: requires data access Sampling::Sample_Set;
+Result_Sample: out event data port Sampling::Sample;
+end Sample_Manager;
+
+process implementation Sample_Manager.Slow_Update
+subcomponents
+Samples: data Sampling::Sample_Set;
+Init_Samples : thread Init_Samples;
+-- the required access is resolved to a subcomponent declaration
+Collect_Samples: thread Collect_Samples.Batch_Update;
+Distribute: thread Distribute_Samples;
+Sample_Filter: subprogram Sample_Subprogram.Simple;
+connections
+data access Samples <-> Init_Samples.SampleSet;
+data access External_Samples <-> Init_Samples.OrigSet;
+data access Samples <-> Collect_Samples.SampleSet;
+port Input_Sample -> Collect_Samples.Input_Sample;
+data access Samples <-> Distribute.SampleSet;
+port Distribute.UpdatedSamples -> Result_Sample;
+subprogram access Sample_Filter <-> Collect_Sample.Filtering_Routine;
+end Sample_Manager.Slow_Update;
+
+-- add for test
+end Test;
+-- end add

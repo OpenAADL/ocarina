@@ -1,0 +1,43 @@
+property set PS is
+  prop: aadlinteger applies to (all);
+  badConst: constant aadlinteger => 100;
+  goodConst: constant aadlinteger => 30;
+  badList: constant list of aadlinteger => (0, 1, 2, 57000);
+  l: list of aadlinteger applies to (all);
+  badProp: aadlinteger => 1000 applies to (all);
+  badProp2: list of aadlinteger => (6, 7, 8, 1000) applies to (all);
+end PS;
+
+property set Aadl_Properties is
+  p: aadlinteger applies to (all);
+end Aadl_Properties;
+
+property set Aadl_Project is
+  Max_Aadlinteger: constant aadlinteger => 42;
+end Aadl_Project;
+
+package Test
+  public
+    data D
+      properties
+        PS::prop => 0;
+        PS::l => (100, 101);
+    end D;
+    
+    bus B
+      properties 
+        PS::prop => 3000;
+        PS::l => value(ps::badlist);
+    end B;
+    
+    system s
+      properties
+        PS::prop => value(PS::badConst);
+        PS::l => (1, 2, 3, value(PS::badConst), value(PS::badlist));
+    end s;
+    
+    thread T
+      properties
+        PS::prop => value(PS::goodConst);
+    end T;
+end Test;

@@ -1,0 +1,153 @@
+
+
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 9.2.1 Flow specs
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+package gps
+public
+	data signal_data
+	end signal_data;
+	
+	data position
+	end position;
+	
+	data implementation position.radial
+	end position.radial;
+	
+	data implementation position.cartesian
+	end position.cartesian;
+	
+end gps;
+
+
+thread bar
+features
+	p1: in data port gps::signal_data;
+	p2: out data port gps::signal_data;
+	p3: out event port;
+flows
+	fs1: flow path p1 -> p2;
+	fs2: flow source p3;
+end bar;
+
+thread implementation bar.basic
+end bar.basic;
+
+thread baz
+features
+	p1: in data port gps::signal_data;
+	p2: out data port gps::position.radial;
+	p3: out data port gps::position.cartesian;
+	reset: in event port;
+flows
+	fs1: flow path p1 -> p2;
+	fs2: flow source p3;
+	fs3: flow path p1 -> p3;
+	fsink: flow sink reset;
+end baz;
+
+thread implementation baz.basic
+end baz.basic;
+
+--- end added material
+
+process foo 
+    features
+	Initcmd: in event port ;	
+	Signal: in data port gps::signal_data;
+	Result1: out data port gps::position.radial;
+	Result2: out data port gps::position.cartesian;
+	Status: out event port;
+  flows
+        -- two flows split from the same input	
+	Flow1: flow path Signal -> Result1;
+	Flow2: flow path Signal -> Result2;
+        -- An input is consumed by process foo through its initcmd port
+	Flow3: flow sink Initcmd;
+	-- An output is generated (produced) by process foo and made available
+	-- through its port Status; 
+	Flow4: flow source Status;
+end foo;
+
+
+
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 9.2.2 Flow impls
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+-- process foo is declared in the previous section
+process implementation foo.basic 
+    subcomponents
+	A: thread bar.basic;
+        -- bar has a flow path fs1 from port p1 to p2
+        -- bar has a flow source fs2 to p3
+	C: thread baz.basic;	
+	B: thread baz.basic;	
+        -- baz has a flow path fs1 from port p1 to p2
+        -- baz has a flow sink fsink in port reset
+  connections
+    conn1: data port signal -> A.p1;
+    conn2: data port A.p2 -> B.p1;
+    conn3: data port B.p2 -> result1;
+    conn4: data port A.p2 -> C.p1;
+    conn5: data port C.p3 -> result2;
+    conn6: event port A.p3 -> status;
+    connToThread: event port initcmd -> C.reset;
+  flows
+	Flow1: flow path 
+            signal -> conn1 -> A.fs1 -> conn2 -> 
+            B.fs1 -> conn3 -> result1; --  XXX: was result2
+	Flow2: flow path 
+            signal -> conn1 -> A.fs1 -> conn4 -> 
+            C.fs3 -> conn5 -> result2;
+	Flow3: flow sink initcmd -> connToThread -> C.fsink;
+       -- a flow source may start in a subcomponent, 
+       -- i.e., the first named element is a flow source
+	Flow4: flow source A.fs2 -> conn6 -> status;
+end foo.basic;
+
+
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 9.2.3 end to end flows
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+-- process foo is declared in the previous section
+process implementation foo.basic2 
+    subcomponents
+	A: thread bar.basic;
+        -- bar has a flow path fs1 from p1 to p2
+        -- bar has a flow source fs2 to p3
+	C: thread baz.basic;
+	 B: thread baz.basic;	
+        -- baz has a flow path fs1 
+        -- baz has a flow sink fsink 
+  connections
+    conn1: data port signal -> A.p1;
+    conn3: data port C.p2 -> result1;
+    conn4: data port A.p2 -> C.p1;
+    conn5: event port A.p3 -> Status;
+    conn6: event port A.p3 -> C.reset;
+    connToThread: event port initcmd -> C.reset;
+  flows
+	Flow1: flow path 
+            signal -> conn1 -> A.fs1 -> conn4 -> 
+            C.fs1 -> conn3 -> result1;
+	Flow3: flow sink initcmd -> connToThread -> C.fsink;
+       -- a flow source may start in a subcomponent, 
+       -- i.e., the first named element is a flow source
+	Flow4: flow source A.fs2 -> conn5 -> status;
+
+	-- an end to end flow from a source to a sink
+	ETE1: end to end flow
+	    A.fs2 -> conn6 -> C.fsink;	
+	-- an end to end flow where the end points are not sources or sinks
+	ETE2: end to end flow 
+            A.fs1 -> conn4 -> C.fs1;
+end foo.basic2;
+
+
+

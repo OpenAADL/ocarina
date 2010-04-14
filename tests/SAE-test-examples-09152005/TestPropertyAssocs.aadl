@@ -1,0 +1,409 @@
+property set PS is
+  int_const1: constant aadlinteger => 0;
+
+
+  int1: aadlinteger => 0 applies to (all);
+  
+  
+  bool1: aadlboolean applies to (all);
+  bool2: aadlboolean applies to (all);
+  bool3: aadlboolean applies to (all);
+  bool31: aadlboolean applies to (all);
+  bool4: aadlboolean applies to (all);
+  bool5: aadlboolean applies to (all);
+  bool6: aadlboolean applies to (all);
+  bool7: aadlboolean applies to (all);
+  bool8: aadlboolean applies to (all);
+  
+  bool_list100: list of aadlboolean applies to (all);
+  bool_list200: list of aadlboolean applies to (all);
+  bool100: aadlboolean applies to (all);
+  bool_list2: list of aadlboolean applies to (all);
+  bool_list3: list of aadlboolean applies to (all);
+  bool_list4: list of aadlboolean applies to (all);
+
+  
+  enum_type1: type enumeration (a, b, c);
+  enum_type1copy: type enumeration (a, b, c);
+  enum_type2: type enumeration (c, d, e);
+
+  enum1: ps::enum_type1 applies to (all);
+  enum2: ps::enum_type1 applies to (all);
+  enum3: ps::enum_type1 applies to (all);
+  enum4: ps::enum_type1 applies to (all);
+  enum5: ps::enum_type1 applies to (all);
+  enum6: PS::enum_type2 applies to (all);
+  enum61: PS::enum_type2 applies to (all);
+  enum7: list of ps::enum_type2 applies to (all);
+  enum8: PS::enum_type1copy applies to (all);
+  enum10: PS::enum_type1 applies to (all);
+  enum11: PS::enum_type2 applies to (all);
+  
+  enum_list1: list of PS::enum_type1 applies to (all);
+  enum_list2: list of PS::enum_type2 applies to (all);
+  enum100: PS::enum_type1 applies to (all);
+  
+
+  string_const1: constant aadlstring => "foo";
+  string_list_const1: constant list of aadlstring => ("foo", "bar");
+  
+  string1: aadlstring applies to (all);
+  string2: aadlstring applies to (all);
+  string3: aadlstring applies to (all);
+  string4: aadlstring applies to (all);
+  string5: aadlstring applies to (all);
+  string_list1: list of aadlstring applies to (all);
+  string6: aadlstring applies to (all);
+  string7: aadlstring applies to (all);
+
+
+  ctype1: type classifier (data, bus);
+  ctype2: type classifier (system, thread);
+  
+  class1: PS::ctype1 applies to (all);
+  class2: PS::ctype1 applies to (all);
+  class3: PS::ctype1 applies to (all);
+  class4: PS::ctype1 applies to (all);
+  class5: PS::ctype2 applies to (all);
+  class6: PS::ctype2 applies to (all);
+  class7: PS::ctype2 applies to (all);
+  class8: PS::ctype2 applies to (all);
+  class9: PS::ctype1 applies to (all);
+  
+  class10: list of PS::ctype1 applies to (all);
+  class11: list of PS::ctype1 applies to (all);
+  class12: PS::ctype1 applies to (all);
+  
+  
+  inttype1: type aadlinteger -10 .. 10;
+  inttype2: type aadlinteger 0a .. 5b units (a, b => a * 2);
+  inttype3: type aadlinteger -10 .. 10;
+  
+  int01: PS::inttype1 applies to (all);
+  int02: PS::inttype1 applies to (all);
+  int03: PS::inttype1 applies to (all);
+  int04: PS::inttype1 applies to (all);
+  int05: PS::inttype1 applies to (all);
+  
+  int06: PS::inttype3 applies to (all);
+  int07: PS::inttype1 applies to (all);
+  int08: ps::inttype1 applies to (all);
+  
+  int10: ps::inttype2 applies to (all);
+  int11: ps::inttype2 applies to (all);
+  int12: ps::inttype2 applies to (all);
+  
+  realtype1: type aadlreal -10.0 .. 10.0;
+  realtype2: type aadlreal 0.0a .. 5.0b units (a, b => a * 2);
+  realtype3: type aadlreal -10.0 .. 10.0;
+  
+  real01: PS::realtype1 applies to (all);
+  real02: PS::realtype1 applies to (all);
+  real03: PS::realtype1 applies to (all);
+  real04: PS::realtype1 applies to (all);
+  real05: PS::realtype1 applies to (all);
+  
+  real06: PS::realtype3 applies to (all);
+  real07: PS::realtype1 applies to (all);
+  real08: ps::realtype1 applies to (all);
+  
+  real10: ps::realtype2 applies to (all);
+  real11: ps::realtype2 applies to (all);
+  real12: ps::realtype2 applies to (all);
+  
+  intrangetype1: type range of PS::inttype1;
+  intrangetype2: type range of aadlinteger -10 .. 10;
+  numtype: type aadlinteger -5 ww .. 100 ww units (qq, ww => qq*10);
+  intrangetype3: type range of PS::numtype;
+  
+  intrange1: PS::intrangetype1 applies to (all);
+  intrange11: PS::intrangetype1 applies to (all);
+  intrange2: PS::intrangetype1 applies to (all);
+  intrange3: PS::intrangetype1 applies to (all);
+  intrange4: PS::intrangetype1 applies to (all);
+  intrange5: PS::intrangetype3 => 4 ww .. 76 ww delta 5 qq applies to (all);
+  intrange51: PS::intrangetype3 applies to (all);
+  intrange6: PS::intrangetype2 applies to (all);
+  intrange7: PS::intrangetype3 applies to (all);
+  
+  comptype1: type reference;
+  comptype2: type reference (data, bus);
+  comptype3: type reference (connections);
+  comptype4: type reference (server subprogram);
+  
+  comp11: PS::comptype1 applies to (all);
+  comp12: PS::comptype2 applies to (all);
+  comp13: PS::comptype3 applies to (all);
+  comp14: PS::comptype4 applies to (all);
+  comp21: PS::comptype1 applies to (all);
+  comp22: PS::comptype2 applies to (all);
+  comp23: PS::comptype3 applies to (all);
+  comp24: PS::comptype4 applies to (all);
+  comp31: PS::comptype1 applies to (all);
+  comp32: PS::comptype2 applies to (all);
+  comp33: PS::comptype3 applies to (all);
+  comp34: PS::comptype4 applies to (all);
+  comp_list1: list of PS::comptype1 applies to (all);
+  comp_list2: list of PS::comptype2 applies to (all);
+end PS;
+
+
+package P
+  public
+    data D end D;
+    subprogram SP end SP;
+    thread T end T;
+    thread group TG end TG;
+    process P end P;
+    memory M end M;
+    processor PR end PR;
+    bus B end B;
+    device DV end DV;
+    system s end s;
+    
+	system aa
+	  features
+	    output: out data port ;
+	end aa;
+	
+	system bb
+	  features 
+	    input: in data port ;
+	end bb;
+	
+	system tt
+	  features
+	    ss: server subprogram;
+	end tt;
+	
+	system implementation tt.I
+	  subcomponents
+	    x: system aa;
+	    y: system bb;
+	    
+	  connections
+	    c: data port x.output -> y.input;
+	end tt.I;
+	
+	system q
+	end q;
+	
+	system implementation q.I
+	  subcomponents 
+	    f: system tt.I;
+	    dat: data D;
+	  properties
+	    -- good
+	    ps::comp11 => reference dat;
+	    -- good
+        ps::comp12 => reference dat;
+        -- bad
+        ps::comp13 => reference dat;
+        --bad
+        ps::comp14 => reference dat;
+		  
+        -- good
+        ps::comp21 => reference f.ss;
+        -- bad
+        ps::comp22 => reference f.ss;
+        -- bad
+        ps::comp23 => reference f.ss;
+        -- good
+        ps::comp24 => reference f.ss;
+		  
+        -- good
+        ps::comp31 => reference f.c;
+        -- bad
+        ps::comp32 => reference f.c;
+        -- good
+        ps::comp33 => reference f.c;
+        -- bad 
+        ps::comp34 => reference f.c;
+		  
+        -- good
+        ps::comp_list1 => (value(ps::comp11), value(ps::comp31));
+        -- bad: comp31, comp33, comp34 have wrong type
+        ps::comp_list2 => (value(ps::comp31), value(ps::comp33), value(ps::comp32), value(ps::comp34));
+	end q.I;
+    
+    properties
+      -- Good: TRUE
+      ps::bool1 => true;
+      -- Good: FALSE
+      ps::bool2 => false;
+      -- Good: BooleanPropertyReference
+      ps::bool3 => value(PS::bool1);
+      -- Bad: PropertyReference to an integer
+      ps::bool31 => value(PS::int1);
+      -- BAD: integer property constant
+      ps::bool4 => value(PS::int_const1);
+      -- Good: BooleanOR
+      ps::bool5 => true or false;
+      -- Good: BooleanNOT
+      ps::bool6 => not false;
+      -- Good: BooleanAND
+      ps::bool7 => false and false;
+      -- Bad: IntegerValue
+      ps::bool8 => 3;
+      
+      -- good
+      ps::bool_list100 => (true, false);
+      -- good: can reference list and non-list from a list type
+      ps::bool_list200 => (true, value(PS::bool_list100), value(PS::bool7));
+      -- bad references a list type in a scalar
+      ps::bool100 => value(PS::bool_list100);
+  
+      -- Good: single boolean value
+      ps::bool_list2 => (true);
+      -- Good: many boolean values
+      ps::bool_list3 => (true, false);
+      -- BAD: contains non-boolean values
+      ps::bool_list4 => (true, 3, "foo", false);
+
+
+      -- Good
+      ps::enum1 => a;
+      -- Good
+      ps::enum2 => b;
+      -- Good
+      ps::enum3 => value(PS::enum2);
+      -- bad: No 'd' in type
+      ps::enum4 => d;
+      -- bad: no 'e' in type
+      ps::enum5 => e;
+      -- bad: string
+      ps::enum6 => "foo";
+      -- bad: references property of wrong enum type
+      ps::enum61 => value(PS::enum1);
+      -- good
+      ps::enum7 => (d, e);
+      -- bad: references property of wrong enum type
+      ps::enum8 => value(PS::enum1);
+      -- bad: references property of wrong type
+      ps::enum10 => value(PS::bool7);
+      -- bad: references constant of wrong type
+      ps::enum11 => value(PS::int_const1);
+      
+      -- good: ref to non-list enum & list num
+      ps::enum_list1 => (a, value(PS::enum3), value(PS::enum2));
+      -- bad: contains string
+      ps::enum_list2 => (c, "d", e);
+      -- bad: ref to list 
+      ps::enum100 => value(PS::enum_list1);
+
+
+      -- Good
+      ps::string1 => "one";
+      -- Good: string property reference
+      ps::string2 => value(PS::string1);
+      -- Good: string constant reference
+      ps::string3 => value(PS::string_const1);
+      -- Bad: boolean property reference
+      ps::string4 => value(ps::bool1);
+      -- Bad: integer constant reference
+      ps::string5 => value(ps::int_const1);
+      -- Good: string list referencing a string list constnat, and a string constant
+      ps::string_list1 => (value(PS::string_list_const1), value(PS::string_const1));
+      -- Bad: string referencing a string list property
+      ps::string6 => value(PS::string_list1);
+      -- bad: string referencing a string list constant
+      ps::string7 => value(PS::string_list_const1);
+
+
+      -- GOod
+      ps::class1 => data P::D;
+      -- Good
+      ps::class2 => bus P::B;
+      -- Bad: system value
+      ps::class3 => system P::S;
+      -- bad: string
+      ps::class4 => "foo";
+      -- good
+      ps::class5 => system P::S;
+      -- good
+      ps::class6 => thread P::T;
+      -- bad: data
+      ps::class7 => data P::D;
+      -- bad: ref to wrong classifier type
+      ps::class8 => value(PS::class1);
+      -- good: ref to same classifier type
+      ps::class9 => value(PS::class1);
+      
+      -- good: list 
+      ps::class10 => (bus P::B, bus P::B);
+      -- good: ref to list
+      ps::class11 => (value(PS::class10));
+      -- bad: ref to int const
+      ps::class12 => value(PS::int_const1);
+
+      --good:
+      ps::int01 => -10;
+      --good:
+      ps::int02 => 10;
+      --good:
+      ps::int03 => 0;
+      --bad: out of bounds
+      ps::int04 => -11;
+      --bad: out of bounds
+      ps::int05 => 11;
+      
+      -- good:
+      ps::int06 => 1;
+      -- Good: the types are equivalent
+      ps::int07 => value(PS::int06);
+      -- good
+      ps::int08 => value(PS::int01);
+      
+      -- bad: needs unit
+      ps::int10 => 3;
+      -- bad: wrong unit
+      ps::int11 => 3 z;
+      -- good:
+      ps::int12 => 2 a;
+
+
+      --good:
+      ps::real01 => -10.0;
+      --good:
+      ps::real02 => 10.0;
+      --good:
+      ps::real03 => 0.0;
+      --bad: out of bounds
+      ps::real04 => -11.0;
+      --bad: out of bounds
+      ps::real05 => 11.0;
+      
+      -- good:
+      ps::real06 => 1.0;
+      -- GOOD: The types are equivalent
+      ps::real07 => value(PS::real06);
+      -- good
+      ps::real08 => value(PS::real01);
+      
+      -- bad: needs unit
+      ps::real10 => 3.0;
+      -- bad: wrong unit
+      ps::real11 => 3.0 z;
+      -- good:
+      ps::real12 => 2.0 a;
+
+
+      -- good
+      ps::intrange1 => -5 .. 5;
+      -- bad: min > max
+      ps::intrange11 => 5 .. -5;
+      -- good:
+      ps::intrange2 => -10 .. 10 delta 2;
+      -- bad: lower bound out of range
+      ps::intrange3 => -11 .. 10;
+      -- bad: upper bound out of range
+      ps::intrange4 => 10 .. 11 delta 3;
+      -- good
+      ps::intrange5 => 4 ww .. 76 ww delta 5 qq;
+      -- bad: min and max have different units
+      ps::intrange51 => 1 qq .. 2 ww;
+      -- Good!
+      ps::intrange6 => value(PS::intrange1);
+      -- good
+      ps::intrange7 => value(PS::intrange5);
+end P;

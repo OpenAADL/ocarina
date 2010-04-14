@@ -1,0 +1,2 @@
+test.aadl:28:03: titi2 (component type)  extends something that does not exist
+Cannot analyze AADL specifications

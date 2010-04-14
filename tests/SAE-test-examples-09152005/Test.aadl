@@ -1,0 +1,21 @@
+property set ps is 
+  t: type aadlstring;
+  
+  tprop: ps::t => "foo" applies to (all);
+  tprop2: ps::t => "bar" applies to (all);
+  sprop: aadlstring => "baz" applies to (all);
+  
+  numtype: type aadlinteger -5 ww .. 100 ww units (qq, ww => qq*10);
+  intrangetype3: type range of PS::numtype;
+  
+  intrange5: PS::intrangetype3 => 4 ww .. 76 ww delta 5 qq applies to (all);
+end ps;
+
+package p
+  public 
+    data d end d;
+  
+    properties
+      ps::intrange5 => 4 ww .. 5 ww;
+      ps::tprop => value(ps::sprop);
+end p;

@@ -1,0 +1,3 @@
+example_028.aadl:8:28:  (signed aadlnumber)  is not a unit literal but  (real type)  is a unit type
+example_028.aadl:8:35:  (signed aadlnumber)  is not a unit literal but  (real type)  is a unit type
+Cannot analyze AADL specifications

@@ -1,0 +1,42 @@
+
+package Test
+public
+
+  data dt
+  end dt;
+
+properties
+  Source_Data_Size => 1 MByte;
+end Test;
+
+package Test2
+public
+
+  data dt
+  end dt;
+
+private
+
+  data bt
+  end bt;
+
+properties
+  Source_Data_Size => 1 MByte;
+end Test2;
+
+package Test3
+public
+
+  data dt
+  end dt;
+
+properties
+  Source_Data_Size => 1 MByte;
+
+private
+
+  data br
+  end br;
+
+
+end Test3;

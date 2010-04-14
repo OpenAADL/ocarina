@@ -1,0 +1,25 @@
+We considered the problem of requirements enforcement in 
+programs generated from architectural models. We proposed a simple
+solution to the problem without need for extra meta-model knowledge.
+
+Standard conformance can be verified by pre-defined REAL theorems,
+as we did for the Ravenscar Profile. REAL can also be used by
+modelers in order to implement requirements defined at a
+higher-level. REAL can be used as a low-level requirements
+definition language.
+
+In both cases, code-level conformance is ensured by the REAL
+runtime.  Hence, REAL can help to build secure architectural models
+without losing the code conformance offered by Ocarina generator.
+
+Our future work will consist of develop a process in which REAL
+would be used for optimization at model-level. A first possibility
+would be to use it in order to test performance and
+correctness. Another interesting - an not exclusive - possibility is
+to use it to select a subset of REAL instances candidates to
+optimization.
+
+With efficients code generators, performing optimization at model
+level would allow to definitively prevent the users to work at
+code-level, thus eliminating an error-prone and time-consuming part of
+the embedded software development process.

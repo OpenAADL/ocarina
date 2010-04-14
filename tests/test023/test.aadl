@@ -1,0 +1,80 @@
+-- test  
+-- example given in SAE AS5506 V2
+
+package Test
+public
+
+  data Person
+  end Person;
+
+  data Personnel_record
+  features
+     update_address: provides subprogram access update_address;
+  end Personnel_record;
+
+  data implementation Personnel_record.others
+  subcomponents
+     Name : data basic::string;
+     Home_address : data sei::Address;
+  end Personnel_record.others;
+
+  data Personnel_database
+  end Personnel_database;
+
+  data implementation Personnel_database.oracle
+  end Personnel_database.oracle;
+
+  subprogram update_address
+  features
+     person: in out parameter Personnel_record;
+     street :in parameter basic::string;
+     city: in parameter basic::string;
+  end update_address;
+
+end Test;
+
+package basic
+public
+   data string
+   end string;
+
+   data int
+   properties
+       Source_Data_Size => 64 bits;
+   end int;
+end basic;
+
+package SEI::PE
+public
+  thread SEI_Personnel_addition
+  features
+     new_person: in event data port Personnel_record;
+     SEI_personnel: requires data access Personnel_database.oracle;
+  properties
+     Dispatch_Protocol => aperiodic;
+  end SEI_Personnel_addition;
+end SEI::PE;
+
+
+package sei
+public
+   data Address
+   features
+       getStreet : provides subprogram access;
+       getCity : provides subprogram access;
+   end Address;
+
+   data implementation Address.others
+   properties
+       Source_Data_Size => 512 bits;
+   end Address.others;
+private
+   data implementation Address.other
+   subcomponents
+      street : data basic::string;
+      streetnumber: data basic::int;
+      city: data basic::string;
+      zipcode: data basic::int;
+   end Address.other;
+end sei;
+

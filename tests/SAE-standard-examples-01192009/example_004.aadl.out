@@ -1,0 +1,3 @@
+example_004.aadl:46:01: Filtering_Routine (subcomponent access) does not point to anything or to something unreachable
+example_004.aadl:74:01: Sample_Filter (subcomponent) points to Sample_Subprogram.Simple (entity reference), which does not exist. 
+Cannot analyze AADL specifications

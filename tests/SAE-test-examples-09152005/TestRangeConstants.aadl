@@ -1,0 +1,23 @@
+property set PS is
+  int_t: type aadlinteger 0 .. 10;
+  range_t: type range of aadlinteger 0 .. 10;
+  range_t2: type range of PS::int_t;
+  
+  p1: PS::range_t => 0..10 applies to (all);
+  p2: PS::range_t2 => 1..10 applies to (all);
+  
+  c1: constant PS::range_t => 2..4;
+  c2: constant PS::range_t2 => 5..6;
+  
+  i1: constant aadlinteger => -1;
+  i2: constant aadlinteger => 2;
+end PS;
+
+package Test
+  public
+    system S
+      properties
+        PS::p1 => -value(PS::i1)..value(PS::i2);
+        PS::p2 => value(PS::c2);
+    end S;
+end Test;

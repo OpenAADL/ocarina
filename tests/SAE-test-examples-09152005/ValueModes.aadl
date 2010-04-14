@@ -1,0 +1,21 @@
+property set PS is
+  p1: aadlinteger applies to (system);
+  p2: aadlinteger applies to (system);
+end PS;
+
+package P 
+  public 
+    system S
+    end S;
+    
+    system implementation S.I
+      modes
+        m1: initial mode;
+        m2: mode;
+        m3: mode;
+      properties
+        PS::p1 => 1 in modes (m1);
+        PS::p1 => 2 in modes (m2);
+        PS::p2 => value(PS::p1);
+    end S.I;
+end P;

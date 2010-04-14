@@ -1,0 +1,6 @@
+package t5
+public
+new_name renames package old_package_name;
+system system_t5
+end system_t5;
+end t5;

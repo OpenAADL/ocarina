@@ -1,0 +1,289 @@
+/*****************************************************************************
+**                                                                          **
+**                           OCARINA COMPONENTS                             **
+**                                                                          **
+**                     O C A R I N A . P N . N O D E S                      **
+**                                                                          **
+**               Copyright (C) 2006-2008, GET-Telecom Paris.                **
+**                                                                          **
+** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
+** it under terms of the GNU General Public License as published by the     **
+** Free Software Foundation; either version 2, or (at your option) any      **
+** later version. Ocarina is distributed  in  the  hope  that it will be    **
+** useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General **
+** Public License for more details. You should have received  a copy of the **
+** GNU General Public License distributed with Ocarina; see file COPYING.   **
+** If not, write to the Free Software Foundation, 51 Franklin Street, Fifth **
+** Floor, Boston, MA 02111-1301, USA.                                       **
+**                                                                          **
+** As a special exception,  if other files  instantiate  generics from this **
+** unit, or you link  this unit with other files  to produce an executable, **
+** this  unit  does not  by itself cause  the resulting  executable to be   **
+** covered  by the  GNU  General  Public  License. This exception does not  **
+** however invalidate  any other reasons why the executable file might be   **
+** covered by the GNU Public License.                                       **
+**                                                                          **
+**                 Ocarina is maintained by the Ocarina team                **
+**                       (ocarina-users@listes.enst.fr)                     **
+**                                                                          **
+*****************************************************************************/
+
+module Ocarina::Backends::PN::Nodes {
+
+  /******************/
+  /* Internal Types */
+  /******************/
+
+  typedef long Name_Id;
+  typedef long Value_Id;
+
+  /******************/
+  /* Internal Nodes */
+  /******************/
+
+  interface Node_Id {
+    Node_Id     Next_Node;
+  };
+
+  interface List_Id {
+    Node_Id     First_Node;
+    Node_Id     Last_Node;
+  };
+
+  interface Identifier : Node_Id {
+    Name_Id     Name;
+    Node_Id     Ocarina_Node;
+    Node_Id     Corresponding_Entity;    
+  };
+
+  /* basic nodes */
+  interface Pn_Node : Node_Id {
+    Node_Id     Identifier;      /* Identifier */
+    Node_Id     Scoped_Name;
+  };
+
+  interface Pn_Arc : Pn_Node {
+    Node_Id     Pn_From;
+    Node_Id     Pn_To;
+  };
+
+  interface Pn_Place : Pn_Node {
+  };
+
+  interface Pn_Transition : Pn_Node {
+    List_Id     Pn_Arcs_In;
+    List_Id     Pn_Arcs_Out;
+  };
+  /* ************ */
+
+  /* hierarchy */
+  interface Pn_Component : Pn_Node { /* has identifier and name */
+    List_Id     Public_Interfaces; /* transitions to be merged */
+    List_Id     Internal_Transitions; /* private transitions */
+    List_Id     Internal_Places; /* private places */
+  };
+
+  interface Pn_Box : Pn_Node {
+    List_Id     Pn_Subcomponents;  /* List of Pn_Component */
+    List_Id     Pn_Interconnections;        /* list of ports */
+  };
+  /* ********** */
+  
+  /* PN Nodes attributes depend on the formalism */
+
+  /* FIXME */
+  /* FAIRE UN ENUM POUR LES DIFFERENTS TYPES DE RDP */
+  /* PN := CPN | TPN */
+
+
+
+  interface Pn_Generated : Node_Id {
+    Node_Id     Pn_Box;         /* The Petri Net */
+    Node_Id     Pn_Formalism_Specific_Informations;
+    Value_Id    Formalism;
+  };
+
+  /* *********************************************************** */
+
+  /**********************/
+  /* Colored Attributes */
+  /**********************/
+  interface CPN_Formalism_Class_Item_Range : Pn_Node {
+    Value_Id    Low;
+    Value_Id    High;
+  };
+
+  interface CPN_Formalism_Class_Item_Enum_Item : Pn_Node {
+  };
+
+  interface CPN_Formalism_Class_Item_Enum : Pn_Node {
+    List_Id     Enum;           /* list of enum_item */
+  };
+
+  interface CPN_Formalism_Classes : Node_Id {
+    List_Id     Class_List;
+  };
+
+  /*  */
+
+  interface CPN_Formalism_Domains : Pn_Node {
+    List_Id     Domain_List;    /* tuples : list of class_item */
+  };
+
+  /*  */
+
+  interface CPN_Formalism_Variable_Item : Pn_Node {
+  };
+
+  interface CPN_Formalism_Variables : Node_Id {
+    Node_Id     Class_Type;     /* class  */
+    List_Id     Variable_List;  /* variable_item */
+  };
+
+  /*  */
+  interface CPN_Aadl_Id : Pn_Node {
+    Node_Id     Aadl_Instance;
+    Value_Id    Pn_Id;
+  };
+
+  interface CPN_Specific_Informations : Node_Id {
+    Node_Id     Classes;        /* formalism_classes */
+    List_Id     Domains;        /* formalism_domains */
+    List_Id     Variables;      /* formalism_variables */
+
+    /* specific informations*/
+    Value_Id    Threads_Count;
+    List_Id     Threads_Ids;    /* aadl_id */
+    List_Id     Ports_Ids;      /* aadl_id */
+  };
+
+  /* ***** */
+  
+  interface CPN_Marking_Token : Pn_Node {
+  };
+
+  interface CPN_Marking : Node_Id {
+    List_Id     Tokens;         /* marking_token */
+  };
+
+  interface CPN_Place: Pn_Place {
+    Node_Id     Domain;         /* class or domain */
+    Node_Id     Marking;        /* cpn_marking */
+    Value_Id    Nb_T;           /* simple tokens */
+  };
+
+  interface CPN_Transition_Guard : Pn_Node {
+    Value_Id    Operator;       /* 0: < | 1: <= | 2: >= | 3: > | 4: = | 5: != */
+    Value_Id    Left_Op;
+    Value_Id    Right_Op;
+  };
+
+  interface CPN_Transition : Pn_Transition {
+    List_Id     Guards;
+  };
+
+  interface CPN_Arc_Valuation : Pn_Node {
+    boolean     Is_Colored;
+  };
+
+  interface CPN_Arc : Pn_Arc {
+    List_Id     Valuations;      /* CPN_Marking_Token */
+  };
+
+  /* end CPN formalism specific attributes */
+  /* ************************************* */
+
+  /* *********************************************************** */
+
+  /**********************/
+  /* Timed Attributes */
+  /**********************/
+  interface TPN_Processor_Priority : Node_Id {
+    Node_Id     P_Instance;     /* processor instance */
+    List_Id     Bounded_Trans;  /* transitions, sorted from 
+                                   first : max prio
+                                   last  : min prio*/
+  };
+
+  interface TPN_Specific_Informations : Node_Id {
+    Value_Id    Th_Number;
+    Value_Id    Hyperperiod;
+    List_Id     Priorities;
+  };
+
+  /* ***** */
+
+  interface TPN_Guard : Node_Id {
+    Value_Id    Lower_Value;
+    Value_Id    Higher_Value;
+    Value_Id    Braces_Mode;    /* 0..3: [,] ; ],[ ; [,[ ; ],] */
+  };
+  
+  interface TPN_Place: Pn_Place {
+    Value_Id    Tokens_Number;
+  };
+
+  interface TPN_Transition : Pn_Transition {
+    Node_Id     Guard;
+    Value_Id    Priority;
+  };
+
+  interface TPN_Arc : Pn_Arc {
+    Value_Id    Valuation;
+    boolean     is_Priority;    /* yes if between two transitions */
+  };
+
+  /* end TPN formalism specific attributes */
+  /* ************************************* */
+  
+
+  /* ********************************* */
+  /*      AADL specific patterns       */
+
+  interface Thread_Pattern : Pn_Component {
+    List_Id     In_Ports;           /* give used ports and associated entrypoints */
+    List_Id     Out_Ports;    
+    Value_Id    Hyperperiod;
+    List_Id     Call_Seq;
+    Node_Id     Th_Instance;    /* refers to aadl thread instance */
+  };  
+
+  interface Port_Pattern : Pn_Component {
+    /* local information */
+    Node_Id     Port_Instance;
+    Node_Id     Source_Instance; /* change into list for multicast */
+    Node_Id     Target_Instance; /* idem */
+  };
+
+  interface Data_Port_Pattern : Port_Pattern {
+  };
+
+  interface Data_Event_Port_Pattern : Port_Pattern {
+    /* local information */
+    Value_Id    Queue_Size;
+    /* interfaces */
+    boolean     Has_CEP;         /* has specific entrypoint */
+    /* dispatch */
+    boolean     Dispatch_Port;  /* parameter if false */
+  };
+
+  interface Call_Sequence_Pattern : Pn_Component {
+    List_Id     Spg_Call;
+  };
+
+  interface Subprogram_Call_Pattern : Pn_Component {
+    List_Id     Param_In;       /* list of in spg_parameter */
+    List_Id     Param_Out;     /* list of out spg_parameter */
+  };
+
+  interface Spg_Parameter_Pattern : Pn_Component {
+    Node_Id     Par_Instance; /* aadl instance of paramter : from/to thread
+                               or from/to another spg */
+  };
+
+  interface Processor_Pattern : Pn_Component {
+    Node_Id     Proc_Instance;
+  };
+
+};

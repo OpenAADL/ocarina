@@ -1,0 +1,42 @@
+variables_basis execution
+theorem variables_basis is: TRUE
+
+variables_with_expression execution
+theorem variables_with_expression is: TRUE
+
+variables_dependant execution
+theorem variables_dependant is: TRUE
+
+variables_set_dependants execution
+theorem variables_set_dependants is: TRUE
+
+variables_iterative_expressions execution
+theorem variables_iterative_expressions is: TRUE
+
+variables_imbricated_iterative_expressions execution
+theorem variables_imbricated_iterative_expressions is: TRUE
+
+variables_product_expression execution
+theorem variables_product_expression is: TRUE
+
+element_list_expression execution
+theorem element_list_expression is: TRUE
+
+element_list_static_declaration execution
+theorem element_list_static_declaration is: TRUE
+
+list_concat execution
+theorem list_concat is: TRUE
+
+is_in_list_and_set_expression execution
+theorem is_in_list_and_set_expression is: TRUE
+
+if_then_else_expression execution
+theorem if_then_else_expression is: TRUE
+
+test_head_and_queue execution
+theorem test_head_and_queue is: TRUE
+
+test_reference_property execution
+theorem test_reference_property is: TRUE
+

@@ -1,0 +1,34 @@
+-- test 8.3.5 Runtime Support For Ports draft-01192009
+
+package Nav_Types 
+public
+data GPS properties Source_data_Size => 30 Bytes; end GPS;
+data INS properties Source_data_Size => 20 Bytes; end INS;
+data Position_ECEF properties Source_data_Size => 30 Bytes; end Position_ECEF;
+data Position_NED properties Source_data_Size => 30 Bytes; end Position_NED;
+end Nav_Types;
+
+package Navigation
+
+-- add for test
+public
+  with Nav_Types;
+-- end add
+
+process Blended_Navigation
+features
+GPS_Data : in data port Nav_Types::GPS;
+INS_Data : in data port Nav_Types::INS;
+Position_ECEF : out data port Nav_Types::Position_ECEF;
+Position_NED : out data port Nav_Types::Position_NED;
+properties
+-- the input rate of GPS is twice that of INS
+Input_Rate => ( 50.. 50, perSecond , Fixed ) applies to GPS_Data;
+Input_Rate => ( 100.. 100, perSecond , Fixed ) applies to INS_Data;
+end Blended_Navigation;
+process implementation Blended_Navigation.Simple
+subcomponents
+Integrate : thread;
+Navigate : thread;
+end Blended_Navigation.Simple;
+end Navigation;

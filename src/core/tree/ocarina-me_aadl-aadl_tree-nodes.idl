@@ -1,0 +1,1667 @@
+/*****************************************************************************
+**                                                                          **
+**                           OCARINA COMPONENTS                             **
+**                                                                          **
+**                        O C A R I N A . N O D E S                         **
+**                                                                          **
+**               Copyright (C) 2004-2009, GET-Telecom Paris.                **
+**                                                                          **
+** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
+** it under terms of the GNU General Public License as published by the     **
+** Free Software Foundation; either version 2, or (at your option) any      **
+** later version. Ocarina is distributed  in  the  hope  that it will be    **
+** useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General **
+** Public License for more details. You should have received  a copy of the **
+** GNU General Public License distributed with Ocarina; see file COPYING.   **
+** If not, write to the Free Software Foundation, 51 Franklin Street, Fifth **
+** Floor, Boston, MA 02111-1301, USA.                                       **
+**                                                                          **
+** As a special exception,  if other files  instantiate  generics from this **
+** unit, or you link  this unit with other files  to produce an executable, **
+** this  unit  does not  by itself cause  the resulting  executable to be   **
+** covered  by the  GNU  General  Public  License. This exception does not  **
+** however invalidate  any other reasons why the executable file might be   **
+** covered by the GNU Public License.                                       **
+**                                                                          **
+**                 Ocarina is maintained by the Ocarina team                **
+**                       (ocarina-users@listes.enst.fr)                     **
+**                                                                          **
+*****************************************************************************/
+
+module Ocarina::ME_AADL::AADL_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef octet Mode_Id;
+  typedef octet Operator_Id;
+  typedef long  Name_Id;
+  typedef long  Value_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  //  Node_Id:
+  //    Node type from which all the other node types derive.
+  //
+  //  * Next_Node:
+  //    Any node can be part of a container. Thus, the container
+  //    includes a list of nodes. Next_Node designates the next node
+  //    in the list of the container. It is forbidden to define
+  //    another attribute to point to a "next" node.
+
+  interface Node_Id {
+    Node_Id  Next_Node;
+  };
+
+  //  List_Id:
+  //    List type used to represent the entities contained in a
+  //    container.
+  //
+  //  * First_Node, Last_Node:
+  //    First and last nodes of a unidirectional list.
+
+  interface List_Id {
+    Node_Id  First_Node;
+    Node_Id  Last_Node;
+  };
+
+  //  Invalid_Node:
+  //    Node type used to represent an invalid node once analyzed.
+  //
+  //    FIXME: is this really needed ?
+
+  interface Invalid_Node : Node_Id {};
+
+  //  Scope_Definition:
+  //    XXX
+  //
+  //   
+
+  interface Scope_Definition : Node_Id {
+    Node_Id  Corresponding_Entity;
+  };
+
+  interface Identifier : Node_Id {
+    Name_Id  Name;
+    Name_Id  Display_Name;
+    Node_Id  Corresponding_Entity;
+    Node_Id  Scope_Entity;
+    Node_Id  Homonym;
+    boolean  Visible;
+    Node_Id  Backend_Node;
+  };
+
+  interface AADL_Entity : Node_Id {
+    Node_Id  Next_Entity;	// Used by the Ocarina core to build
+				// list of elements
+  };
+
+  interface Named_AADL_Entity : AADL_Entity {
+    Node_Id  Identifier;
+  };
+
+  interface AADL_Declaration : Named_AADL_Entity {
+    Node_Id  Entity_Scope;
+    Node_Id  Property_Scope;
+    boolean  Is_Private;	 // for packages
+    Node_Id  First_Visited_Node; // When we travel accross the tree, this field
+				 // contains the first visited node
+    Node_Id  Namespace;
+    Node_Id  Default_Instance;
+  };
+  //  Component types, component implementations and port group types
+  //  are AADL declarations.
+
+  interface Entity_Reference : Named_AADL_Entity {
+    // Identifier is meant to be the concatenation of First_Id and
+    // Second_Id, to help search component implementations
+
+    List_Id  Path;
+    // FIXME: Replace with a more appropriate structure
+
+    List_Id  Namespace_Path;
+    Node_Id  Namespace_Identifier;
+    Node_Id  Full_Identifier;
+    Node_Id  Entity;		  // Points to the actual entity
+  };
+  // Used for Unique_..._Reference, in modes, etc.
+
+  interface Pair_Of_Entity_References : Node_Id {
+    Node_Id  First_Reference;
+    Node_Id  Second_Reference;
+  };
+  // FIXME: Investigate more deeply the utility of this node kind
+
+  interface Identifiers_List : List_Id { };
+
+  /***********************/
+  /* AADL Specifications */
+  /***********************/
+
+  // AADL_specification ::= { AADL_global_declaration | AADL_declaration }+
+
+  interface AADL_Specification : Node_Id {
+    List_Id  Declarations;
+    Node_Id  Entity_Scope;
+    // FIXME: Is this field really useful?
+
+  };
+
+  // AADL_global_declaration ::= package_spec | property_set
+
+  // AADL_declaration ::=   component_classifier
+  //                      | port_group_classifier
+  //                      | annex_library
+
+  // component_classifier ::=   component_type
+  //                          | component_type_extension
+  //                          | component_implementation
+  //                          | component_implementation_extension
+
+  // port_group_classifier ::= port_group_type | port_group_type_extension
+
+  interface AADL_Declarations_List : List_Id {};
+
+  /************/
+  /* Packages */
+  /************/
+
+  // AADL_V2
+  // package_name ::= { package_identifier :: } * package_identifier
+  interface Package_Name : AADL_Entity {
+    List_Id Identifiers;
+  };
+  
+  // package_declaration ::= { aadl_declaration }+
+  //    [ properties ( { property_association }+ | none_statement ) ]
+  
+  // package_spec ::=
+  //    package defining_package_name
+  //    ( public package_declaration [ private package_declaration ] |
+  //      private package_declaration )
+  // end defining_package_name;
+
+  interface Package_Specification : Named_AADL_Entity {
+    boolean  Has_Private_Part;
+    boolean  Has_Public_Part;
+    // FIXME: Why not using two separate lists for public and private
+    // Declarations?
+
+    Node_Id  Entity_Scope;
+    // FIXME: Is this field useful?
+
+    List_Id  Declarations;
+    Node_Id  Property_Scope;
+    // FIXME: Is this field useful?
+
+    List_Id  Properties;
+
+    Node_Id  Package_Name;
+    Node_Id  Parent;
+  };
+
+  // AADL_V2
+  // name_visibility_declaration ::=
+  //    import_declaration | alias_declaration
+
+  interface Name_Visibility_Declaration : Node_Id {
+    boolean  Is_Private;    
+    Node_Id  Parent;
+    List_Id  List_Items;
+  };
+
+  // AADL_V2
+  // import_declaration ::=
+  //     with ( package_name | property_set_identifier )
+  //          { , ( package_name | property_set_identifier ) }+ ;
+
+  interface Import_Declaration : Named_AADL_Entity {                            
+    boolean  Is_Private;
+                                      
+    List_Id  List_Items; // list of package or property_sets imported  
+  };
+
+  // AADL_V2
+  // alias_declaration ::=
+  //     ( defining_identifier renames package package_name ; ) |
+  //     ( [ defining_identifier ] renames
+  //       ( component_category unique_component_type_reference |
+  //         feature group unique_feature_group_type_reference ) ; ) |
+  //     ( renames package_name::all ; )
+
+  interface Alias_Declaration : Named_AADL_Entity {
+    boolean Is_Private;
+    boolean Is_All;
+
+    octet Category;         // component category
+    octet Entity_Category;  // entities category
+
+    Node_Id Package_Name;  // package name
+    Node_Id Reference;
+    Node_Id Parent;
+  };
+
+  /*******************/
+  /* Component Types */
+  /*******************/
+
+  // component_type ::=
+  //    component_category defining_component_type_identifier
+  //    [ features ( { feature }+ | none_statement ) ]
+  //    [ flows ( { flow_spec }+ | none_statement ) ]
+  //    [ properties ( { component_type_property_association }+ |
+  //                   none_statement ) ]
+  //    { annex_subclause }*
+  // end defining_component_type_identifier ;
+
+  // component_type_extension ::=
+  //    component_category defining_component_type_identifier
+  //    extends unique_component_type_identifier
+  //    [ features ( { feature | feature_refinement }+ | none_statement ) ]
+  //    [ flows ( { flow_spec | flow_spec_refinement }+ | none_statement ) ]
+  //    [ properties ( { component_type_property_association }+ |
+  //                   none_statement ) ]
+  //    { annex_subclause }*
+  // end defining_component_type_identifier ;
+
+  interface Component_Category : Node_Id {
+    octet    Category;
+  };
+
+  interface Component_Type : AADL_Declaration {
+    octet    Category;
+    // FIXME: In this case, what is the role of the Component_Category node
+    // kind?
+
+    List_Id  Features;
+    List_Id  Flows;
+    List_Id  Properties;
+    List_Id  Annexes;
+    Node_Id  Parent;   //  Contains a entity_reference on the 
+                       //  extended component, if any
+
+    List_Id  Instances;
+    List_Id  Modes;
+    List_Id  Prototypes;  //  AADLv2 only
+    List_Id  Prototype_Bindings;
+  };
+
+  // component_implementation ::=
+  //    component_category implementation component_type_identifier .
+  //                         defining_component_implementation_identifier
+  //    [ refines type ( { feature_refinement }+ | none_statement ) ]
+  //    [ subcomponents ( { subcomponent }+ | none_statement ) ]
+  //    [ calls ( { subprogram_call_sequence }+ | none_statement ) ]
+  //    [ connections ( { connection }+ | none_statement ) ]
+  //    [ flows ( { flow_implementation | end_to_end_flow_spec }+ |
+  //              none_statement ) ]
+  //    [ modes ( { mode }+ { mode_transition }* | none_statement ) ]
+  //    [ properties ( { property_association }+ | none_statement ) ]
+  //    { annex_subclause }*
+  // end component_type_identifier .
+  //                         defining_component_implementation_identifier ;
+
+  // component_implementation_extension ::=
+  //    component_category implementation component_type_identifier .
+  //                         defining_component_implementation_identifier
+  //    extends unique_component_implementation_name
+  //    [ refines type ( { feature_refinement }+ | none_statement ) ]
+  //    [ subcomponents ( { subcomponent | subcomponent_refinement }+ |
+  //                      none_statement ) ]
+  //    [ calls ( { subprogram_call_sequence }+ | none_statement ) ]
+  //    [ connections ( { connection | connection_refinement }+ |
+  //                    none_statement ) ]
+  //    [ flows ( { flow_implementation | flow_implementation_refinement |
+  //                end_to_end_flow_spec }+ | none_statement ) ]
+  //    [ modes ( { mode | mode_refinement | mode_transition }+ |
+  //              none_statement ) ]
+  //    [ properties ( { property_association }+ | none_statement ) ]
+  //    { annex_subclause }*
+  // end component_type_identifier .
+  //                         defining_component_implementation_identifier ;
+
+  interface Component_Implementation : AADL_Declaration {
+    Node_Id  Component_Type_Identifier;
+    octet    Category;
+    List_Id  Refines_Type;
+    List_Id  Subcomponents;
+    List_Id  Calls;
+    List_Id  Connections;
+    List_Id  Flows;
+    List_Id  Modes;
+    List_Id  Properties;
+    List_Id  Annexes;
+    Node_Id  Parent;         //  Contains a entity_reference on the 
+                             //  extended component, if any
+    List_Id  Instances;
+    List_Id  Prototypes;     //  AADL_V2 only
+    List_Id  Prototype_Bindings;
+  };
+
+  interface Contained_Entity : Named_AADL_Entity {
+    Node_Id  Container_Component;   
+  };
+
+  interface Subclause : Contained_Entity {
+    Node_Id  Property_Scope;
+    List_Id  Properties;
+    Node_Id  Entity_Ref;	// may be No_Node
+  };
+
+  /**************/
+  /* Prototypes */
+  /**************/
+
+  // AADL_V2
+  // prototype ::= defining_prototype_identifier : component_category
+  //  [ unique_component_classifier_reference ]
+ 
+  // prototype_refinement ::= defining_prototype_identifier : refined to
+  //  component_category [ unique_component_classifier_reference ] ;
+
+  interface Prototype : Subclause {
+    octet   Category;
+    boolean Is_Refinement;
+  };
+
+  // AADL_V2
+
+  // prototype_bindings ::=
+  //     ( prototype_binding ( , prototype_ binding )* )
+
+  // prototype_binding ::=
+  //     prototype_identifier => component_category
+  //         ( unique_component_classifier_reference | prototype_identifier )
+
+  interface Binding_Prototype : Contained_Entity {
+    octet Category;
+    Node_Id Entity_Ref;
+  };
+
+  /*****************/
+  /* Feature Types */
+  /*****************/
+
+  // feature ::=   port_spec | port_group_spec
+  //             | server_subprogram | data_subprogram_spec
+  //             | subcomponent_access | parameter
+
+  // feature_refinement ::=   port_refinement
+  //                        | port_group_refinement
+  //                        | server_subprogram_refinement
+  //                        | data_subprogram_refinement
+  //                        | subcomponent_access_refinement
+  //                        | parameter_refinement
+
+  interface Feature : Subclause {
+    boolean  Is_Implicit_Inverse; // used in port group types
+    Node_Id  Inversed_Entity;	  // if a feature can be inversed in a
+				  // port group, points to its inverse
+  };
+
+  interface Refinable_Feature : Feature {
+    boolean  Is_Refinement;
+  };
+
+  // port_spec ::=
+  //    defining_port_identifier : ( in | out | in out ) port_type
+  //    [ { { port_property_association } + } ] ;
+
+  // port_refinement ::=
+  //    defining_port_identifier : refined to
+  //    ( in | out | in out ) port_type
+  //    [ { { port_property_association } + } ] ;
+
+  // port_type ::=   data port [ data_classifier_reference ]
+  //               | event data port [ data_classifier_reference ]
+  //               | event port
+
+
+  interface Port_Spec : Refinable_Feature {
+    boolean  Is_In;
+    boolean  Is_Out;
+    // FIXME: Replace the two flags above by a Mode_Id flag
+
+    boolean  Is_Event; // FIXME: Rename to Is_Event_Port
+    boolean  Is_Data;  // FIXME: Rename to Is_Data_Port
+  };
+
+  // AADL_V1
+  // port_group_spec ::=
+  //    defining_port_group_identifier : port group
+  //                                     unique_port_group_type_reference
+  //    [ { { portgroup_property_association }+ } ] ;
+
+  // port_group_refinement ::=
+  //    defining_port_group_identifier : refined to port group
+  //                                     unique_port_group_type_reference
+  //    [ { { portgroup_property_association }+ } ] ;
+
+  // unique_port_group_type_reference ::=
+  //     [ package_name :: ] port_group_type_identfier
+  
+  // AADL_V2
+  // feature_group_spec ::=
+  // defining_feature_group_identifier : feature group
+  //    [ [ inverse of ]
+  //      ( unique_feature_group_type_reference [ prototype_bindings ] )
+  //    | prototype_identifier ) ]
+  //    [ { { featuregroup_property_association }+ } ] ;
+  
+  // feature_group_refinement ::=
+  // defining_feature_group_identifier : refined to
+  //    feature group
+  //      [ [ inverse of ]
+  //        ( unique_feature_group_type_reference [ prototype_bindings ] )
+  //         | prototype_identifier ) ]
+  //      [ { { featuregroup_property_association }+ } ] ;
+  
+  // unique_feature_group_type_reference ::=
+  //  [ package_name :: ] feature_group_type_identifier
+
+  interface Feature_Group_Spec : Refinable_Feature {
+    Node_Id  Inverse_Of;
+  };
+
+  // data_subprogram_spec ::=
+  //    defining_subprogram_identifier : subprogram
+  //    [ unique_subprogram_reference ]
+  //    [ { { subprogram_property_association }+ } ] ;
+
+  // data_subprogram_refinement ::=
+  //    defining_subprogram_identifier : refined to subprogram
+  //    [ unique_subprogram_reference ]
+  //    [ { { subprogram_property_association }+ } ] ;
+
+  // server_subprogram ::=
+  //    defining_subprogram_identifier : server subprogram
+  //    [ unique_subprogram_reference ]
+  //    [ { { subprogram_property_association }+ } ] ;
+
+  // server_subprogram_refinement ::=
+  //    defining_subprogram_identifier : refined to server subprogram
+  //    [ unique_subprogram_reference ]
+  //    [ { { subprogram_property_association }+ } ] ;
+
+  // unique_subprogram_reference ::=
+  //    subprogram_classifier_reference |
+  //    subprogram_feature_classifier_reference
+
+  // subprogram_feature_classifier_reference ::=
+  //    [ package_name :: ] data_type_identifier . subprogram_identifier
+
+  interface Subprogram_Spec : Refinable_Feature {
+    boolean  Is_Server;  // FIXME: Rename to Is_Server_Subprogram
+  };
+
+  // parameter ::=
+  //    defining_parameter_identifier :
+  //       ( in | out | in out ) parameter data_classifier_reference
+  //    [ { { parameter_property_association }+ } ] ;
+
+  // parameter_refinement ::=
+  //    defining_parameter_identifier : refined to
+  //       ( in | out | in out ) parameter data_classifier_reference
+  //    [ { { parameter_property_association }+ } ] ;
+
+  interface Parameter : Refinable_Feature {
+    boolean  Is_In;
+    boolean  Is_Out;
+    // FIXME: Replace by a Mode_Id flag
+  };
+
+  // subcomponent_access ::=
+  //    defining_subcomponent_access_identifier :
+  //       subcomponent_access_classifier
+  //    [ { { access_property_association }+ } ] ;
+
+  // subcomponent_access_refinement ::=
+  //    defining_subcomponent_access_identifier : refined to
+  //       subcomponent_access_classifier
+  //    [ { { access_property_association }+ } ] ;
+
+  // subcomponent_access_classifier ::=
+  //    ( provides | requires ) ( data | bus ) access
+  //    [ unique_component_type_identifier
+  //      [ . component_implementation_name ] ]
+
+  interface Subcomponent_Access : Refinable_Feature {
+    boolean  Is_Provided;
+    // If True => 'provides access' otherwise 'requires access'
+    octet    Subcomponent_Category; // FIXME: Component_Category node kind?
+  };
+
+
+  /**************/
+  /* Flow Types */
+  /**************/
+
+  // flow_spec ::= flow_source_spec | flow_sink_spec | flow_path_spec
+
+  // flow_spec_refinement ::=   flow_source_spec_refinement
+  //                          | flow_sink_spec_refinement
+  //                          | flow_path_spec_refinement
+
+  // flow_source_spec ::=
+  //    defining_identifier : flow source flow_feature_identifier
+  //       [ { { property_association }+ } ] ;
+
+  // flow_sink_spec ::=
+  //    defining_identifier : flow sink flow_feature_identifier
+  //       [ { { property_association }+ } ] ;
+
+  // flow_path_spec ::=
+  //    defining_identifier : flow path
+  //       source_flow_feature_identifier -> sink_flow_feature_identifier
+  //       [ { { property_association }+ } ] ;
+
+  // flow_source_spec_refinement ::=
+  //    defining_identifier : refined to flow source
+  //       { { property_association }+ } ;
+
+  // flow_sink_spec_refinement ::=
+  //    defining_identifier : refined to flow sink
+  //       { { property_association }+ } ;
+
+  // flow_path_spec_refinement ::=
+  //    defining_identifier : refined to flow path
+  //       { { property_association }+ } ;
+
+  interface Flow_Spec : Refinable_Feature {
+    octet    Category;        // Source, Sink or Path
+    Node_Id  Source_Flow;     // used in Source and Path categories
+    Node_Id  Sink_Flow;       // used in Sink and Path categories
+    Node_Id  In_Modes;        // AADL_V2
+  };
+  // Source_Flow and Sink_Flow are Flow_Feature_Identifier
+  // category is AADL_Types.Flow_Category
+
+
+  /**************/
+  /* Mode Types */
+  /**************/
+
+  // mode ::= defining_mode_identifier : [ initial ] mode
+  //             [ { { mode_property_association }+ } ] ;
+
+  // mode_refinement ::= defining_mode_identifier : refined to mode
+  //                        { { mode_property_association }+ } ;
+
+  interface Mode : Refinable_Feature {
+    boolean  Is_Requires;     // use in AADLv2 only
+    boolean  Is_Initial;      // not used in Mode_Refinement
+  };
+
+  // mode_transition ::=
+  //    source_mode_identifier { , source_mode_identifier }*
+  //       -[ unique_port_identifier { , unique_port_identifier }* ]->
+  //       destination_mode_identifier ;
+
+  interface Mode_Transition : Node_Id {
+    List_Id  Source_Modes;
+    List_Id  Triggers;
+    List_Id  Properties;   // AADL_V2 only
+    Node_Id  Destination_Mode;
+    Node_Id  Container_Component;
+  };
+  // Triggers is Unique_Ports in AADL_V1 and
+  // Mode_Transition_Triggers in AADL_V2
+
+  /*
+  in_modes ::=
+    in modes ( ( mode_identifier { , mode_identifier }*
+            | none ) )
+
+  in_modes_and_transitions ::=
+    in modes ( ( mode_or_transition { , mode_or_transition }*
+            | none ) )
+  */
+
+  //  We create a single node kind to contain both structures
+
+  interface In_Modes : Node_Id {
+     List_Id  Modes;
+  };
+
+  // AADl_V2
+  //  mode_transition_trigger ::=
+  //     unique_port_identifier
+  //   | self . event_source_identifier
+  //   | processor . event_source_identifier
+
+  interface Mode_Transition_Trigger : Node_Id {
+    boolean  Is_Self;
+    boolean  Is_Processor;
+
+    Node_Id  Identifier;
+  };
+
+  /*****************************/
+  /* Flow Implementation Types */
+  /*****************************/
+
+  // flow_implementation ::=
+  //    (   flow_source_implementation
+  //      | flow_sink_implementation
+  //      | flow_path_implementation )
+  //    [ { { property_association }+ } ]
+  //    [ in_modes_and_transitions ] ;
+
+  // flow_source_implementation ::= flow_identifier : flow source
+  //    { subcomponent_flow_identifier -> connection_identifier -> }*
+  //    flow_feature_identifier
+
+  // flow_sink_implementation ::= flow_identifier : flow sink
+  //    flow_feature_identifier
+  //    { -> connection_identifier -> subcomponent_flow_identifier }*
+
+  // flow_path_implementation ::= flow_identifier : flow path
+  //    source_flow_feature_identifier
+  //    [ { -> connection_identifier -> subcomponent_flow_identifier }+
+  //    -> connection_identifier ]
+  //    -> sink_flow_feature_identifier
+
+  interface Flow_Implementation : Subclause {
+    octet    Category;
+    Node_Id  Source_Flow;     // used to store flow_feature_identifier source
+    Node_Id  Sink_Flow;       // used to store flow_feature_identifier sink
+    List_Id  Connections;    // list of subcomponent and connection identifiers
+    Node_Id  Corresponding_Flow_Spec;
+    Node_Id  In_Modes;
+  };
+  // Connections contains K_Identifier_Identifier
+  // Category is AADL_Types.Flow_Category
+
+  // end_to_end_flow_spec ::= flow_identifier : end to end flow
+  //    start_subcomponent_flow_identifier
+  //       { -> connection_identifier
+  //         -> flow_path_subcomponent_flow_identifier }*
+  //    -> connection_identifier -> end_subcomponent_flow_identifier
+  //    [ { ( property_association }+ } ]
+  //    [ in_modes_and_transitions ] ;
+
+  interface End_To_End_Flow_Spec : Subclause {
+    Node_Id  Source_Flow;     // start_subcomponent_flow_identifier
+    Node_Id  Sink_Flow;       // end_subcomponent_flow_identifier
+    List_Id  Connections;    // list of subcomponent and connection identifiers
+    Node_Id  In_Modes;
+  };
+  // Connections contains K_Identifier_Identifier
+
+  // flow_implementation_refinement ::=
+  //      flow_source_implementation_refinement
+  //    | flow_sink_implementation_refinement
+  //    | flow_path_implementation_refinement
+
+  // flow_source_implementation_refinement ::=
+  //    flow_identifier : refined to flow source
+  //    ( { { property_association }+ } [ in_modes_and_transitions ]
+  //      | in_modes_and_transitions ) ;
+
+  // flow_sink_implementation_refinement ::=
+  //    flow_identifier : refined to flow sink
+  //    ( { { property_association }+ } [ in_modes_and_transitions ]
+  //      | in_modes_and_transitions ) ;
+
+  // flow_path_implementation_refinement ::=
+  //    flow_identifier : refined to flow path
+  //    ( { { property_association }+ } [ in_modes_and_transitions ]
+  //      | in_modes_and_transitions ) ;
+
+  interface Flow_Implementation_Refinement : Subclause {
+    octet    Category;
+    Node_Id  In_Modes;
+  };
+  // Category is AADL_Types.Flow_Category
+
+  // end_to_end_flow_refinement ::=
+  //    defining_identifier : refined to end to end flow
+  //    ( { { property_association }+ } [ in_modes_and_transitions ]
+  //      | in_modes_and_transitions ) ;
+
+  interface End_To_End_Flow_Refinement : Subclause {
+    Node_Id  In_Modes;
+  };
+
+  // subprogram_call ::=
+  //    defining_call_identifier : subprogram called_subprogram
+  //    [ { { subcomponent_call_property_association }+ } ] ;
+
+  // called_subprogram ::=
+  //    subprogram_classifier_reference
+  //    | data_unique_type_reference . data_subprogram_identifier
+
+  interface Subprogram_Call : Subclause {
+    Node_Id  In_Modes;	
+    // Refers to the modes of the containing sequence. Handled by the
+    // Ocarina core only.
+
+    Node_Id  Parent_Sequence;
+    // The container call sequence
+  };
+
+  // subprogram_call_sequence ::=
+  //    [ defining_call_sequence_identifier : ]
+  //    { { subprogram_call }+ } [ in_modes ] ;
+
+  interface Subprogram_Call_Sequence : Subclause {
+    List_Id  Subprogram_Calls;
+    Node_Id  In_Modes;
+  };
+
+  // subcomponent ::=
+  //    defining_subcomponent_identifier :
+  //    component_category [ component classifier_reference ]
+  //    [ { { subcomponent_property_association
+  //        | contained_property_association }+ } ]
+  //    [ in_modes ] ;
+
+  // subcomponent_refinement ::=
+  //    defining_subcomponent_identifier : refined to
+  //    component_category [ component classifier_reference ]
+  //    [ { { subcomponent_property_association
+  //        | contained_property_association }+ } ]
+  //    [ in_modes ] ;
+
+  interface Subcomponent : Refinable_Feature {
+    octet    Category;
+    // FIXME: Component_Category node kind?
+
+    Node_Id  In_Modes;
+    Node_Id  Array_Dimensions;   // AADL_V2
+    List_Id  Prototype_Bindings; // AADL_V2
+  };
+
+  // AADL_V1
+  // port_group_type ::= port group defining_identifier
+  //    ( features { port_spec | port_group_spec }*
+  //      [ inverse of unique_port_group_type_reference ]
+  //    |
+  //      inverse of unique_port_group_type_reference )
+  //    [ properties
+  //        ( { portgroup_property_association }+ | none_statement ) ]
+  //    ( annex_subclause )*
+  // end defining_identifier ;
+
+  // port_group_type_extension ::= port group defining_identifier
+  //    extends unique_port_group_type_reference
+  //    ( features { port_spec | port_refinement |
+  //                 port_group_spec | port_group_refinement }*
+  //      [ inverse of unique_port_group_type_reference ]
+  //    |
+  //      inverse of unique_port_group_type_reference )
+  //    [ properties
+  //        ( { portgroup_property_association }+ | none_statement ) ]
+  //    ( annex_subclause )*
+  // end defining_identifier ;
+
+  // AADL_V2
+  // feature_group_type ::=
+  //  feature group defining_identifier
+  //  [ prototypes ( ( prototype }+ | none_statement ) ]
+  //  ( [ features
+  //     { feature }+
+  //    [ inverse of unique_feature_group_type ] ]
+  //  |
+  //    inverse of unique_feature_group_type
+  //  )
+  // [ properties ( { featuregroup_property_association }+ | none_statement ) ]
+  // { annex_subclause }*
+  // end defining_identifier ;
+
+  // feature_group_type_extension ::=
+  //  feature group defining_identifier
+  //  extends unique_feature_group_type_reference [ prototype_bindings ]
+  //  [ prototypes ( ( prototype }+ | none_statement ) ]
+  //  [ features
+  //     { feature | feature_refinement }+
+  //    [ inverse of unique_feature_group_type ] ]
+  // [ properties ( { featuregroup_property_association }+ | none_statement ) ]
+  // { annex_subclause }*
+  // end defining_identifier ;
+
+  interface Feature_Group_Type : AADL_Declaration {
+    List_Id  Features;
+    Node_Id  Inverse_Of;
+    List_Id  Properties;
+    List_Id  Annexes;
+    Node_Id  Parent;
+    List_Id  Prototypes;
+    List_Id  Prototype_Bindings;
+  };
+
+  /*********************/
+  /* Connections Types */
+  /*********************/
+
+  // AADL_V1
+  // connection ::=
+  //    port_connection | parameter_connection | access_connection
+
+  // connection_refinement ::=   port_connection_refinement
+  //                           | parameter_connection_refinement
+  //                           | access_connection_refinement
+
+  // port_connection ::=   data_connection | event_connection
+  //                     | event_data_connection | port_group_connection
+
+  // data_connection ::= [ defining_data_connection_identifier :]
+  //    data port source_unique_port_identifier
+  //              ( immediate_connection_symbol | delayed_connection_symbol )
+  //              destination_unique_port_identifier
+  //       [ { { property_association }+ } ] [ in_modes_and_transitions ] ;
+
+  // immediate_connection_symbol ::= ->>
+  // delayed_connection_symbol   ::= ->
+
+  // event_connection ::= [ defining_event_connection_identifier :]
+  //    event port source_unique_port_identifier
+  //            -> destination_unique_port_identifier
+  //       [ { { property_association }+ } ] [ in_modes_and_transitions ] ;
+
+  // event_data_connection ::= [ defining_event_data_connection_identifier :]
+  //    event data port source_unique_port_identifier
+  //                 -> destination_unique_port_identifier
+  //       [ { { property_association }+ } ] [ in_modes_and_transitions ] ;
+
+  // port_group_connection ::= [ defining_port_group_connection_identifier :]
+  //    port group source_unique_port_group_identifier
+  //            -> destination_unique_port_group_identifier
+  //       [ { { property_association }+ } ] [ in_modes_and_transitions ] ;
+
+  // port_connection_refinement ::=
+  //    connection_identifier : refined to
+  //    ( data port | event port | event data port | port group )
+  //       ( ( { { property_association }+ } [ in_modes_and_transitions ] )
+  //         | in_modes_and_transitions ) ;
+
+  // parameter_connection ::= [ defining_parameter_connection_identifier :]
+  //    parameter source_unique_parameter_identifier
+  //           -> destination_unique_parameter_identifier
+  //       [ { { property_association }+ } ] [ in_modes ] ;
+
+  // parameter_connection_refinement ::=
+  //    connection_identifier : refined to parameter
+  //      { { property_association }+ } [ in_modes ] ;
+
+  // access_connection ::= [ access_connection_identifier :]
+  //    ( bus | data ) access unique_access provider_identifier
+  //                       -> unique_access_requirer_identifier
+  //      [ { { property_association }+ } ] [ in_modes ] ;
+
+  // access_connection_refinement ::=
+  //    connection_identifier : refined to ( bus | data ) access
+  //      { { property_association }+ } [ in_modes ] ;
+
+  // AADL_V2
+  // connection ::=
+  //    [ defining_connection_identifier : ]
+  //        ( feature_connection | port_connection | parameter_connection
+  //          | access_connection | feature_group_connection )
+  //         [ { { property_association }+ } ]
+  //         [ in_modes_and_transitions ] ;
+
+  // connection_refinement ::=
+  //    defining_connection_identifier : refined to
+  //      [ feature_connection_refinement | port_connection_refinement
+  //        | parameter_connection_refinement | access_connection_refinement
+  //        | feature_group_connection_refinement ]
+  //      [ { { property_association }+ } ]
+  //      [ in_modes_and_transitions ] ;
+
+  // feature_connection ::=
+  //    source_feature_reference connection_symbol 
+  //    destination_feature_reference
+
+  // connection_symbol ::=
+  //    directional_connection_symbol | bidirectional_connection_symbol
+  
+  // directional_connection_symbol ::= ->
+  // bidirectional_connection_symbol ::= <->
+
+  // feature_reference ::=
+  //    -- feature in the component type
+  //       component_type_feature_identifier |
+  //    -- feature in a feature group of the component type
+  //       component_type_feature_group_identifier . feature_identifier |
+  //    -- feature in a subcomponent
+  //       subcomponent_identifier . feature_identifier
+
+  // feature_connection_refinement ::=
+  //    source_feature_reference connection_symbol
+  //    destination_feature_reference
+
+  // port_connection ::=
+  //    port source_port_connection_reference connection_symbol
+  //    destination_port_connection_reference
+
+  // port_connection_refinement ::=
+  //    port [ source_port_connection_reference connection_symbol
+  //    destination_port_connection_reference ]
+
+  // port_connection_reference ::=
+  //    -- port in the component type
+  //       component_type_port_identifier |
+  //    -- port in a subcomponent
+  //       subcomponent_identifier . port_identifier |
+  //    -- port element in a feature group of the component type
+  //       component_type_feature_group_identifier . element_port_identifier |
+  //    -- data element in aggregate data port
+  //       component_type_port_identifier . data_element_identifier |
+  //    -- requires data access in the component type
+  //       component_type_requires_data_access_identifier |
+  //    -- data subcomponent
+  //       data_subcomponent_identifier |
+  //    -- data component provided by a subcomponent
+  //       subcomponent_identifier . provides_data_access_identifier |
+  //    -- data access element in a feature group of the component type
+  //       component_type_feat._group_identifier.elt_data_access_identifier |
+  //    -- access to element in a data subcomponent
+  //       data_subcomponent_identifier .data_subcomponent_identifier |
+  //    -- processor port
+  //       processor . processor_port_identifier |
+  //    -- component itself as event or event data source
+  //       self . event_or_event_data_source_identifier
+
+  // Note: data port, event data port, and event port connections
+  // are replaced by port connections in AADL V2
+
+  // parameter_connection ::=
+  //    parameter source_parameter_reference directional_connection_symbol 
+  //    destination_parameter_reference
+  
+  //  parameter_connection_refinement ::=
+  //     parameter
+
+  //  parameter_reference ::=
+  //     -- parameter in the thread or subprogram type
+  //        component_type_parameter_identifier [ . parameter_identifier ] |
+  //     -- parameter in another subprogram call
+  //        subprogram_call_identifier . parameter_identifier |
+  //     -- data or event data port in the thread type
+  //     -- or an element of that port’s data
+  //        component_type_port_identifier [ . data_subcomponent_identifier ] |
+  //     -- data subcomponent in the thread or subprogram
+  //        data_subcomponent_identifier |
+  //     -- requires data access in the thread or subprogram type
+  //        requires_data_access_identifier |
+  //     -- data access element in a feature group of the component type
+  //        component_type_feat._group_identifier.elt_data_access_identifier |
+  //     -- port or parameter element in a feature group of the component type
+  //        component_type_feat._group_identifier [ . element_port_identifier ]
+
+  // access_connection ::=
+  //    [ bus | subprogram | subprogram group | data ] access
+  //    access_provider_reference connection_symbol access_requirer_reference
+
+  // access_connection_refinement ::=
+  //    [ bus | subprogram | subprogram group | data ] access
+
+  // access_reference ::=
+  //    -- requires or provides access feature in the component type
+  //       requires_access_identifier | provides_access_identifier |
+  //    -- requires or provides access feature a feature group of 
+  //    -- the component type
+  //       feature_group_identifier [ . requires_access_identifier ] |
+  //       feature_group_identifier [ . provides_access_identifier ] |
+  //    -- provides or requires access in a subcomponent
+  //       subcomponent_identifier . provides_access_identifier |
+  //       subcomponent_identifier . requires_access_identifier |
+  //    -- data, subprogram, subprogram group or bus being accessed
+  //       data_subprogram_subprogam_group_or_bus_subcomponent_identifier |
+  //    -- subprogram a processor being accessed
+  //       processor . provides_subprogram_access_identifier
+
+  // connection between feature groups of two subcomponents or between a
+  // feature group of a subcomponent and a feature group in the component type
+
+  // feature_group_connection ::=
+  //    feature group source_feature_group_reference 
+  //      bidirectional_connection_symbol destination_feature_group_reference
+
+  // A feature group refinement can only add properties
+  // The source and destination of the connection does not have to be repeated
+
+  // feature_group_connection_refinement ::=
+  //    feature group
+
+  // feature_group_reference ::=
+  //    -- feature group in the component type
+  //       component_type_feature_group_identifier |
+  //    -- feature group in a subcomponent
+  //       subcomponent_identifier . feature_group_identifier |
+  //    -- feature group element in a feature group of the component type
+  //       component_type_feature_group_identifier . 
+  //          element_feature_group_identifier
+
+  interface Connection : Subclause {
+    boolean  Is_Refinement;
+    boolean  Is_Bidirectional;     // used in AADL_V2
+    octet    Category;              // connection type
+    Node_Id  Source;                // used when not Is_Refinement
+    Node_Id  Destination;           // used when not Is_Refinement
+    Node_Id  In_Modes;
+  };
+
+  /********************/
+  /* Properties Types */
+  /********************/
+
+  // property set defining_property_set_identifier is
+  //    { property_type_declaration |
+  //      property_name_declaration |
+  //      property_constant }+
+  // end defining_property_set_identifier ;
+
+  interface Property_Set : Named_AADL_Entity {
+    List_Id  Declarations;
+    Node_Id  Entity_Scope;
+    // FIXME: Is this field useful?
+
+    Node_Id  Property_Set_Context;
+    List_Id  Imports_List;  // AADL_V2
+  };
+
+  /*************************/
+  /* Property Declarations */
+  /*************************/
+ 
+  // AADL_V2
+  
+  // Contained_element_path ::=
+  //    ( contained_element { . contained_element }*
+  //      [ annex_path ] )
+  //    | annex_path
+  
+  // contained_element ::=
+  //    named_element_identifier 
+  //  | named_element_array_selection_identifier
+
+  // annex_path ::=
+  //    [ { annex_identifier } ] { ** element_identifier }+
+
+  interface Contained_Element_Path : Contained_Entity {
+    List_Id  List_Items;
+    Node_Id  Annex_Path;
+    Node_Id  Entity;
+  };
+
+  interface Property_Type : Node_Id {
+    boolean  Is_List;
+    Node_Id  Property_Type_Designator;
+    Node_Id  Expanded_Type_Designator;
+  };
+  // Property_Type_Designator can be K_Boolean_Type,
+  // K_String_Type, K_Enumeration_Type, K_Units_Type,
+  // K_Real_Type, K_Integer_Type, K_Classifier_Type,
+  // K_Reference_Type
+
+  // Expanded_Type_Designator is the same as Property_Type_Designator,
+  // save unique_property_type_identifier
+  // FIXME: Investigate more deeply...
+
+  interface Property_Type_Declaration : Named_AADL_Entity {
+    Node_Id  Property_Type_Designator;
+  };
+  // FIXME: Why does this node kind inherit from Named_AADL_Entity and
+  // has a designator at the same time?
+
+  // single_valued_property ::=
+  //    property_type_designator [ => default_property_expression ]
+
+  interface Single_Valued_Property : Node_Id {
+    Node_Id  Property_Type_Designator;
+    Node_Id  Property_Expression;
+
+    Node_Id  Parent;  // property_type_name_identifier parent
+  };
+
+  // multi_valued_property ::=
+  //    list of property_type_designator
+  //       [ => ( [ default_property_expression
+  //                { , default_property_expression }* ] ) ]
+
+  interface Multi_Valued_Property : Node_Id {
+    Node_Id  Property_Type_Designator;
+    List_Id  Property_Expressions;
+  };
+
+  // FIXME: Single_Valued_Property and multi_valued_property should inherit
+  // from a common node kind to factorize fields.
+
+  // property_constant ::=
+  //    single_valued_property_constant | multi_valued_property_constant
+
+  // AADL_V1
+  // single_valued_property_constant ::=
+  //    defining_property_constant_identifier : constant
+  //       ( ( aadlinteger
+  //           | aadlreal ) [ units_unique_property_type_identifier ]
+  //         | aadlstring | aadlboolean
+  //	       | enumeration_unique_property_type_identifier
+  //	       | integer_range_unique_property_type_identifier
+  //	       | real_range_unique_property_type_identifier
+  //         | integer_unique_property_type_identifer
+  //         | real_unique_property_type_identifer )
+  //    => constant_property_value ;
+
+  // AADL_V2
+  // single_valued_property_constant ::=
+  //    defining_property_constant_identifier : constant
+  //        property_type_designator => constant_property_expression;
+
+  // Unique_Unit_Identifier is Unique_Property_Type_Identifier
+  //    NOTE: Only used for aadlinteger and aadlreal
+
+  // Constant_Type is
+  //     Integer_Type or Real_Type (unit_identifier can differ No_Node)
+  //  or String_Type or Boolean_Type
+  //  or Unique_Property_Type_Identifier
+  //     (represents XXX_unique_property_type_identifier)
+
+  // Property_Value represents
+  //     Literal (String or Boolean)
+  //  or Identifier (enumeration)
+  //  or Signed_AADLNumber
+  //  or Number_Range_Term or Integer_Range_Term or Real_Range_Term
+
+  // AADL_V1
+  // multi_valued_property_constant ::=
+  //    defining_property_constant_identifier : constant list of
+  //       ( ( aadlinteger
+  //           | aadlreal ) [ units_unique_property_type_identifier ]
+  //         | aadlstring | aadlboolean
+  //	       | enumeration_unique_property_type_identifier
+  //	       | integer_range_unique_property_type_identifier
+  //	       | real_range_unique_property_type_identifier
+  //         | integer_unique_property_type_identifer
+  //         | real_unique_property_type_identifer )
+  //      => ( [ constant_property_value { , constant_property_value }* ] ) ;
+
+  // AADL_V2
+  // multi_valued_property_constant ::=
+  //     defining_property_constant_identifier : constant list of
+  //         property_type_designator =>
+  //                        ( [ constant_property_expression
+  //                               { , constant_property_expression }* ] ) ;
+
+  interface Constant_Property_Declaration : Named_AADL_Entity {
+    Node_Id  Constant_Type;
+    Node_Id  Unique_Unit_Identifier;
+    Node_Id  Constant_Value;	// is of kind property_value
+  };
+
+  interface Property_Value : Node_Id {
+    Node_Id  Value_Container; // the parent node, in which the value
+			      // is declared
+    Node_Id  Single_Value;
+    List_Id  Multi_Value;
+    Node_Id  Expanded_Single_Value; // without property terms
+    List_Id  Expanded_Multi_Value;
+  };
+  // If Single_Value is No_Node, then the property value is a list,
+  // which may be empty
+
+  interface Property_Definition_Declaration : Named_AADL_Entity {
+    boolean  Is_Access;
+    boolean  Is_Inherit;
+    Node_Id  Property_Name_Type;
+    Node_Id  Default_Value;	// is of kind property_value
+    Node_Id  Applies_To;
+  };
+
+
+  // property_association ::=
+  //    [ property_set_identifier :: ] property_name_identifier ( => | +=> )
+  //    [ constant ] property_value [ in_binding ] [ in_modes ] ;
+
+  // access_property_association ::=
+  //    [ property_set_identifier :: ] property_name_identifier ( => | +=> )
+  //    [ constant ] access property_value [ in_binding ] [ in_modes ] ;
+
+  // contained_property_association ::=
+  //    [ property_set_identifier :: ] property_name_identifier ( => | +=> )
+  //    [ constant ] property_value
+  //    applies to contained_unit_identifier { . contained_unit_identifier }*
+  //    [ in_binding ] [ in_modes ] ;
+
+  // property_value ::= single_property_value | property_list_value
+
+  // single_property_value ::= property_expression
+
+  // property_list_value ::=
+  //    ( [ property_expression { , property_expression }* ] )
+
+  // in_binding ::= in binding ( platform_classifier_reference
+  //                                { , platform_classifier_reference }* )
+
+  // platform_classifier_reference ::=   processor_classifier_reference
+  //                                   | memory_classifier_reference
+  //                                   | bus_classsifer_reference
+
+  interface Property_List_Value : List_Id { };
+
+  /*
+  in_binding ::= in binding ( platform_classifier_reference
+                { , platform_classifier_reference }* )
+  */
+
+  interface In_Binding : Node_Id {
+     List_Id Binding;
+  };
+
+  interface Property_Association : Named_AADL_Entity {
+    Node_Id  Property_Name;	// Entity_Reference
+    boolean  Is_Additive_Association;
+    boolean  Is_Constant;
+
+    boolean  Is_Private;	// for packages
+    boolean  Is_Access;
+      // if Is_Access = TRUE ----> Access_Property_Association
+    Node_Id  Property_Association_Type;
+    Node_Id  Property_Association_Value;
+
+    List_Id  Applies_To_Prop;
+    // if Present (Applies_To_Prop) ----> Contained_Property_Association
+
+    Node_Id  In_Binding;
+    Node_Id  In_Modes;
+  };
+
+  /*******************/
+  /* Property values */
+  /*******************/
+
+  // AADL_V1
+  // property_owner_category ::=
+  //      component_category [ classifier_reference ]
+  //    | mode | port group | flow
+  //    | [ event ] [ data ] port
+  //    | server subprogram
+  //    | [ connection_type ] connections
+  //
+  // connection_type ::= port group | [ event ] [ data ] port | access
+
+  // AADL_V2
+  // property_owner ::=
+  //    named_element_qualified_identifier
+
+  interface Named_Element : Node_Id {
+    octet    Category;
+    // FIXME: Component_Category node kind?
+
+    // useful only when Category = POC_Component_Category
+    octet    Component_Cat;
+    // FIXME: Component_Category node kind?
+
+    Node_Id  Classifier_Ref;
+
+    Node_Id  Identifier;
+  };
+  // Named_Element is Property_Owner_Category in AADL_V1
+  // Named_Element is Qualified_Named_Element_Identifier in AADL_V2
+  // Category is AADL_Types.Named_Element
+  // Component_Cat is AADL_Types.Component_Category
+
+
+  // constant_property_value ::=   string_literal
+  //                             | [ sign ] integer_literal
+  //                             | [ sign ] real_literal
+
+  interface Literal : Node_Id {
+    Value_Id  Value;
+  };
+
+  interface Signed_AADLNumber : Node_Id {
+    Node_Id  Number_Value;    // this node is a property_constant_identifier
+                              // in the generic case AADLNumber
+    Node_Id  Unit_Identifier;
+  };
+  // Number_Value is a Literal
+
+  // boolean_term ::=   true
+  //                  | false
+  //                  | boolean_property_term
+  //                  | not boolean_term
+  //                  | boolean_term and boolean_term
+  //                  | boolean_term or boolean_term
+  //                  | ( boolean_term )
+
+  interface Not_Boolean_Term : Node_Id {
+    Node_Id  Boolean_Term;
+  };
+
+  interface And_Boolean_Term : Node_Id {
+    Node_Id  First_Term;
+    Node_Id  Second_Term;
+  };
+
+  interface Or_Boolean_Term : And_Boolean_Term {};
+
+  interface Parenthesis_Boolean_Term : Node_Id {
+    Node_Id  Boolean_Term;
+  };
+
+  interface Minus_Numeric_Term : Node_Id {
+    Node_Id  Numeric_Term;
+  };
+  // Numeric_Term is a property_term or a signed_aadlnumber
+
+  interface Property_Term : Named_AADL_Entity {
+    Node_Id  Property_Set_Identifier;
+    Node_Id  Entity;
+  };
+
+  interface Enumeration_Term : Property_Term {};
+
+  interface Unit_Term : Property_Term {};
+
+  // range_term ::=
+  //    number_term .. number_term [ delta number_term ]
+  // integer_range_term ::=
+  //    integer_term .. integer_term [ delta integer_term ]
+
+  interface Number_Range_Term : Node_Id {
+    Node_Id  Lower_Bound;
+    Node_Id  Upper_Bound;
+    Node_Id  Delta_Term;
+  };
+
+  //  component_classifier_term ::=
+  //     component_category [ unique_component_type_identifier
+  //                          [ . component_implementation_identifier ] ]
+
+  interface Component_Classifier_Term : Entity_Reference {
+    octet    Component_Cat;
+    // FIXME: Component_Category node kind?
+  };
+
+  // reference_term ::= component
+  //    ( subcomponent_identifier { . subcomponent_identifier }*
+  //      | subcomponent_identifier { . connection_identifier }*
+  //      | subcomponent_identifier { . server_subprogram_identifier }* )
+
+  interface Reference_Term : Node_Id {
+    Node_Id  Reference_Term;
+  }; 
+
+  // record_term ::=
+  //   ( property_expression ( , property_expression )* )
+
+  interface Record_Term : Node_Id {
+    List_Id List_Items;
+  };
+
+  interface Record_Term_Element : Node_Id {
+    Node_Id Identifier;
+    Node_Id Property_Expression;
+  };
+
+  // computed_term ::=
+  //    compute ( function_identifier )
+
+  interface Computed_Term : Node_Id {
+    Node_Id Identifier;
+  };
+  
+  /******************/
+  /* property types */
+  /******************/
+
+  // FIXME: Add the corresponding grammar rules
+
+  interface Boolean_Type : Node_Id { };
+  interface String_Type : Node_Id { };
+
+  // signed_aadlreal ::=
+  //    [ sign ] ( real_literal [ unit_identifier ]
+  //               | real_unique_property_constant_identifier )
+  // signed_aadlinteger ::=
+  //    [ sign ] ( integer_literal [ unit_identifier ]
+  //               | integer_unique_property_constant_identifier )
+
+  // real_range ::= real_lower_bound .. real_upper_bound
+  // real_lower_bound ::= signed_aadlreal
+  // real_upper_bound ::= signed_aadlreal
+
+  interface Real_Type : Node_Id {
+    Node_Id  Type_Range;
+    Node_Id  Unit_Designator;
+  };
+
+  // integer_range ::= integer_lower_bound .. integer_upper_bound
+  // integer_lower_bound ::= signed_aadlinteger
+  // integer_upper_bound ::= signed_aadlinteger
+
+  interface Integer_Type : Node_Id {
+    Node_Id  Type_Range;
+    Node_Id  Unit_Designator;
+  };
+
+  // enumeration_type ::=
+  //    enumeration ( defining_enumeration_literal_identifier
+  //                   { , defining_enumeration_literal_identifier }* )
+
+  interface Enumeration_Type : Node_Id {
+    List_Id  Identifiers; // FIXME: Enumerators
+    Node_Id  Enumeration_Context; // FIXME: Investigate more deeply
+  };
+
+  interface Number_Range : Node_Id {
+    Node_Id  Lower_Bound;
+    Node_Id  Upper_Bound;
+  };
+  // FIXME: Factorize with the other XXX_Range node kinds
+
+  // units_type ::= units units_list
+  // units_list ::=
+  //    ( defining_unit_identifier { , defining_unit_identifier =>
+  //                 unit_identifier * numeric_literal }* )
+
+  interface Unit_Definition : Named_AADL_Entity {
+    Node_Id  Unit_Identifier; // FIXME: Rename into Multiplier
+    Node_Id  Numeric_Literal; // FIXME: rename into Multiplicity
+  };
+
+  interface Units_Type : Node_Id {
+    Node_Id  Base_Identifier;
+    List_Id  Unit_Definitions;
+    Node_Id  Units_Context; // FIXME: Investigate more deeply
+  };
+
+  // range_type ::=   range of number_type
+  //                | range of number_unique_property_type_identifier
+
+  interface Range_Type : Node_Id {
+    Node_Id  Number_Type;
+  };
+
+  // AADL_V1
+  // classifier_type ::=
+  //    classifier [ ( component_category { , component_category }* ) ]
+
+  // AADL_V2
+  // classifier_type ::=
+  //     classifier [ ( classifier_category_reference
+  //                    { , classifier_category_reference }* ) ]
+  
+  interface Classifier_Type : Node_Id {
+    List_Id List_Items;
+  };
+  // contains K_Component_Category nodes
+
+
+  // AADL_V2
+  // classifier_category_reference ::=
+  //   classifier_qualified_identifier
+
+  interface Classifier_Category_Ref : Named_Element { };
+  // classifier_qualified_identifier is a Named_Element in AADL_V2
+
+  // referable_element_category ::=   component_category
+  //                                | connections | server subprogram
+
+  interface Referable_Element_Category : Node_Id {
+    octet   Component_Cat;  // useful only if Category = REC_Component_Category
+    octet   Category;
+
+    Node_Id Identifier;
+
+    // FIXME: Investigate really more deeply
+  };
+  // Component_Cat is AADL_Types.Component_Category
+  // Category is AADL_Types.Referable_Element_Category
+
+  // reference_type ::= component [ ( referable_element_category
+  //                                  { , referable_element_category }* ) ]
+
+  interface Reference_Type : Node_Id {
+    List_Id List_Items;
+  };
+  // contains K_Referable_Component_Category nodes
+
+  interface Reference_Category : Named_Element { };
+
+  //  AADL_V2
+  //  record_type ::=
+  //     record ( [ defining_field_identifier : property_type_designator
+  //            ( , defining_field_identifier : property_type_designator )* ] )
+
+  interface Record_Type : Node_Id {
+    List_Id List_Items; // list of Record_Type_Element
+  };
+
+  interface Record_Type_Element : Node_Id {
+    Node_Id Identifier;
+    Node_Id Property_Type_Designator;
+  };
+
+  // property_type_declaration ::=
+  //    defining_property_type_identifier : type property_type_designator ;
+
+  // property_type_designator ::=   property_type
+  //                              | unique_property_type_identifie
+
+  // property_type ::=   aadlboolean | aadlstring | enumeration_type
+  //                   | units_type | number_type | range_type
+  //                   | classifier_type | reference_type
+
+  // unique_property_type_identifier ::=
+  //    [ property_set_identifier :: ] property_type_identifier
+
+  interface Unique_Property_Type_Identifier : Named_AADL_Entity {
+    Node_Id  Property_Set_Identifier;
+    Node_Id  Entity;
+  };
+
+  // FIXME: Useless
+
+  // property_name_declaration ::=
+  //    defining_property_name_identifier : [ access ] [ inherit ]
+  //       ( single_valued_property | multi_valued_property )
+  //       applies to ( ( property_owner_category
+  //                      { , property_owner_category }* | all ) ) ;
+
+  interface Applies_To : Node_Id {
+    boolean  Is_All;
+    List_Id  Owner_Categories;
+  };
+  // Owner_Category contains Property_Owner_Category nodes
+
+
+  // AADL_V1
+  // unique_property_constant_identifier ::=
+  //    value ( [ property_set_identifier :: ] property_identifier )
+
+  // AADL_V2
+  // unique_property_constant_identifier ::=
+  //    [ property_set_identifier :: ] property_identifier
+
+  interface Unique_Property_Const_Identifier : Named_AADL_Entity {
+    Node_Id  Property_Set_Identifier;
+    Node_Id  Entity;
+  };
+
+  /***********/
+  /* Annexes */
+  /***********/
+
+  // annex_subclause ::=
+  //    annex annex_identifier (
+  //       ( {** annex_specific_language_constructs **} ) | none )
+  //       [ in_modes ] ;     
+  //   
+
+  // annex_library ::=
+  //    annex annex_identifier ( 
+  //    ( {** annex_specific_reusable_constructs **} ) | none ) ;
+
+  interface Annex_Content  : Node_Id {
+    Name_Id  Raw_Text;
+  };
+
+  interface Annex_Subclause : Contained_Entity {
+    Node_Id  Annex_Content;
+    Node_Id  In_Modes;
+
+    Node_Id  Corresponding_Annex;
+  };
+
+  interface Annex_Library : Named_AADL_Entity {
+    boolean  Is_Private;
+    Node_Id  Annex_Content;
+    Node_Id  Container_Package;
+  };
+
+  // annex_path ::= 
+  //    [ { annex_identifier } ] { ** element_identifier }+
+
+  interface Annex_Path : Contained_Entity {
+    List_Id  Identifiers;
+  };
+
+  /**********/
+  /* Arrays */
+  /**********/
+
+  // AADL_V2
+
+  // array_dimensions ::= { [ [ array_dimension_size ] ] }*
+  // array_dimension_size ::= numeral | unique_property_constant_identifier
+
+  interface Array_Dimensions : AADL_Entity {
+    List_Id  Array_List_Dim; 
+  };
+
+  interface Array_Dimension_Size : AADL_Entity {
+    Node_Id  Size; // if No_Node the array declaration
+                   // is incomplete
+    Node_Id  Parent;
+  };
+
+  // array_selection_identifier ::= identifier array_selection
+  // array_selection ::= {[range_selection]}* 
+
+  interface Array_Selection : Named_AADL_Entity {
+    List_Id  Range_Selections;
+  };
+
+  // range_selection ::= numeral [ .. numeral ]
+
+  interface Range_Selection : Node_Id {
+    Node_Id  Lower_Bound;  // Need to change the name of this two nodes
+    Node_Id  Upper_Bound;
+  };
+
+  //   Node_Container:   
+
+  interface Node_Container : Node_Id {
+    Node_Id  Item;
+    Node_Id  Extra_Item;
+  };
+    
+};

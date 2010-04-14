@@ -1,0 +1,39 @@
+-- test 4.4 Component implemantation draft-01192009
+
+-- add for test
+package Test
+public 
+-- end add
+
+data Bool_Type
+end Bool_Type;
+
+thread DriverModeLogic
+features
+BreakPedalPressed : in data port Bool_Type;
+ClutchPedalPressed : in data port Bool_Type;
+Activate : in data port Bool_Type;
+Cancel : in data port Bool_Type;
+OnNotOff : in data port Bool_Type;
+CruiseActive : out data port Bool_Type;
+end DriverModeLogic;
+
+-- Two implementations whose source texts use different variable names for
+-- their cruise active port
+thread implementation DriverModeLogic.Simulink
+properties
+Dispatch_Protocol=>Periodic;
+Period=> 10 ms;
+Source_Name => "CruiseControlActive" applies to CruiseActive;
+end DriverModeLogic.Simulink;
+
+thread implementation DriverModeLogic.C
+properties
+Dispatch_Protocol=>Periodic;
+Period=> 10 ms;
+Source_Name => "CCActive" applies to CruiseActive;
+end DriverModeLogic.C;
+
+-- add for test
+end Test;
+-- end add

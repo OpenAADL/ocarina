@@ -1,0 +1,37 @@
+package threads
+public
+   with types;
+   with subprograms;
+
+   thread receive_value
+   features
+      incoming_value : in data port types::integer;
+   properties
+      Dispatch_Protocol => Periodic;
+      Compute_Execution_Time => 0 ms .. 1 ms;
+      Period => 1000 Ms;
+   end receive_value;
+
+   thread implementation receive_value.impl
+   calls 
+      call1 : { pspg : subprogram subprograms::receive_value;};
+   connections
+      parameter incoming_value -> pspg.incoming;
+   end receive_value.impl;
+
+   thread send_value
+   features
+      outgoing_value : out data port types::integer;
+   properties
+      Dispatch_Protocol => Periodic;
+      Period => 1000 Ms;
+      Compute_Execution_Time => 0 ms .. 1 ms;
+   end send_value;
+
+   thread implementation send_value.impl
+   calls 
+      call1 : { pspg : subprogram subprograms::send_value;};
+   connections
+      parameter pspg.outgoing -> outgoing_value;
+   end send_value.impl;
+end threads;

@@ -1,0 +1,33 @@
+check_expression_max execution
+theorem check_expression_max is: TRUE
+
+check_expression_sum execution
+theorem check_expression_sum is: TRUE
+
+check_expression_product execution
+theorem check_expression_product is: TRUE
+
+check_expression_not execution
+theorem check_expression_not is: TRUE
+
+check_expression_complex execution
+theorem check_expression_complex is: TRUE
+
+check_expression_range execution
+theorem check_expression_range is: TRUE
+
+check_expression_lcm execution
+theorem check_expression_lcm is: TRUE
+
+check_expression_gcd execution
+theorem check_expression_gcd is: TRUE
+
+check_expression_gcd_var execution
+theorem check_expression_gcd_var is: TRUE
+
+check_expression_non_null execution
+theorem check_expression_non_null is: TRUE
+
+check_is_in execution
+theorem check_is_in is: TRUE
+

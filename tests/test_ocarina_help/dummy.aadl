@@ -1,0 +1,3 @@
+--  Dummy aadl file in order for autotest.sh to invoke the right command
+system S
+end S;

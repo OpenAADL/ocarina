@@ -1,0 +1,269 @@
+property set PS is
+  -- good
+  int_const1: constant aadlinteger => 0;
+  
+  -- good
+  bool_const: constant aadlboolean => false;
+  
+  -- Good
+  int1: aadlinteger => 0 applies to (all);
+  
+  -- Good: TRUE
+  bool1: aadlboolean => true applies to (all);
+  -- Good: FALSE
+  bool2: aadlboolean => false applies to (all);
+  -- Good: BooleanPropertyReference
+  bool3: aadlboolean => value(PS::bool1) applies to (all);
+  -- Bad: PropertyReference to an integer
+  bool31: aadlboolean => value(PS::int1) applies to (all);
+  -- BAD: integer property constant
+  bool4: aadlboolean => value(PS::int_const1) applies to (all);
+  -- good: boolean property constant
+  bool41: aadlboolean => value(PS::bool_const) applies to (all);
+  -- Good: BooleanOR
+  bool5: aadlboolean => true or false applies to (all);
+  -- Good: BooleanNOT
+  bool6: aadlboolean => not false applies to (all);
+  -- Good: BooleanAND
+  bool7: aadlboolean => false and false applies to (all);
+  -- Bad: IntegerValue
+  bool8: aadlboolean => 3 applies to (all);
+
+  -- good
+  bool_list100: list of aadlboolean => (true, false) applies to (all);
+  -- good: can reference list and non-list from a list type
+  bool_list200: list of aadlboolean => (true, value(PS::bool_list100), value(PS::bool7)) applies to (all);
+  -- bad references a list type in a scalar
+  bool100: aadlboolean => value(PS::bool_list100) applies to (all);
+  
+  -- Good: single boolean value
+  bool_list2: list of aadlboolean => (true) applies to (all);
+  -- Good: many boolean values
+  bool_list3: list of aadlboolean => (true, false) applies to (all);
+  -- BAD: contains non-boolean values
+  bool_list4: list of aadlboolean => (true, 3, "foo", false) applies to (all);
+  
+  enum_type1: type enumeration (a, b, c);
+  -- Same literals as enum_type1, but NOT the same type!
+  enum_type1copy: type enumeration (a, b, c);
+  enum_type2: type enumeration (c, d, e);
+  
+  -- Good
+  enum1: PS::enum_type1 => a applies to (all);
+  -- Good
+  enum2: PS::enum_type1 => b applies to (all);
+  -- Good
+  enum3: PS::enum_type1 => value(PS::enum2) applies to (all);
+  -- bad: No 'd' in type
+  enum4: PS::enum_type1 => d applies to (all);
+  -- bad: no 'e' in type
+  enum5: PS::enum_type1 => e applies to (all);
+  -- bad: string
+  enum6: PS::enum_type2 => "foo" applies to (all);
+  -- bad: references property of wrong enum type
+  enum61: PS::enum_type2 => value(PS::enum1) applies to (all);
+  -- good
+  enum7: list of ps::enum_type2 => (d, e) applies to (all);
+  -- bad: references property of wrong enum type
+  enum8: PS::enum_type1copy => value(PS::enum1) applies to (all);
+  -- bad: references property of wrong type
+  enum10: PS::enum_type1 => value(PS::bool7) applies to (all);
+  -- bad: references constant of wrong type
+  enum11: PS::enum_type2 => value(PS::int_const1) applies to (all);
+  
+  -- good: ref to non-list enum & list num
+  enum_list1: list of PS::enum_type1 => (a, value(PS::enum3), value(PS::enum2)) applies to (all);
+  -- bad: contains string
+  enum_list2: list of PS::enum_type2 => (c, "d", e) applies to (all);
+  -- bad: ref to list 
+  enum100: PS::enum_type1 => value(PS::enum_list1) applies to (all);
+  
+  -- GOod: string constant
+  string_const1: constant aadlstring => "foo";
+  -- good: string list constant
+  string_list_const1: constant list of aadlstring => ("foo", "bar");
+  
+  -- Good
+  string1: aadlstring => "one" applies to (all);
+  -- Good: string property reference
+  string2: aadlstring => value(PS::string1) applies to (all);
+  -- Good: string constant reference
+  string3: aadlstring => value(PS::string_const1) applies to (all);
+  -- Bad: boolean property reference
+  string4: aadlstring => value(ps::bool1) applies to (all);
+  -- Bad: integer constant reference
+  string5: aadlstring => value(ps::int_const1) applies to (all);
+  -- Good: string list referencing a string list constnat, and a string constant
+  string_list1: list of aadlstring => (value(PS::string_list_const1), value(PS::string_const1)) applies to (all);
+  -- Bad: string referencing a string list property
+  string6: aadlstring => value(PS::string_list1) applies to (all);
+  -- bad: string referencing a string list constant
+  string7: aadlstring => value(PS::string_list_const1) applies to (all);
+
+  ctype1: type classifier (data, bus);
+  ctype2: type classifier (system, thread);
+  
+  -- GOod
+  class1: PS::ctype1 => data P::D applies to (all);
+  -- Good
+  class2: PS::ctype1 => bus P::B applies to (all);
+  -- Bad: system value
+  class3: PS::ctype1 => system P::S applies to (all);
+  -- bad: string
+  class4: PS::ctype1 => "foo" applies to (all);
+  -- good
+  class5: PS::ctype2 => system P::S applies to (all);
+  -- good
+  class6: PS::ctype2 => thread P::T applies to (all);
+  -- bad: data
+  class7: PS::ctype2 => data P::D applies to (all);
+  -- bad: ref to wrong classifier type
+  class8: PS::ctype2 => value(PS::class1) applies to (all);
+  -- good: ref to same classifier type
+  class9: PS::ctype1 => value(PS::class1) applies to (all);
+  
+  -- good: list 
+  class10: list of PS::ctype1 => (bus P::B, bus P::B) applies to (all);
+  -- good: ref to list
+  class11: list of PS::ctype1 => (value(PS::class10)) applies to (all);
+  -- bad: ref to int const
+  class12: PS::ctype1 => value(PS::int_const1) applies to (all);
+  
+  -- good
+  inttype1: type aadlinteger -10 .. 10;
+  -- good
+  inttype2: type aadlinteger 0 a .. 5 a units (a, b => a * 2);
+  -- good: Same as inttype1
+  inttype3: type aadlinteger -10 .. 10;
+  
+  --good:
+  int01: PS::inttype1 => -10 applies to (all);
+  --good:
+  int02: PS::inttype1 => 10 applies to (all);
+  --good:
+  int03: PS::inttype1 => 0 applies to (all);
+  --bad: out of bounds
+  int04: PS::inttype1 => -11 applies to (all);
+  --bad: out of bounds
+  int05: PS::inttype1 => 11 applies to (all);
+  
+  -- good:
+  int06: PS::inttype3 => 1 applies to (all);
+  -- good: equivalent types
+  int07: PS::inttype1 => value(PS::int06) applies to (all);
+  -- good
+  int08: ps::inttype1 => value(PS::int01) applies to (all);
+  
+  -- bad: needs unit
+  int10: ps::inttype2 => 3 applies to (all);
+  -- bad: wrong unit
+  int11: ps::inttype2 => 3 z applies to (all);
+  -- good:
+  int12: ps::inttype2 => 2 a applies to (all);
+  
+  -- good
+  realtype1: type aadlreal -10.0 .. 10.0;
+  -- good
+  realtype2: type aadlreal 0.0 b.. 5.0 b units (a, b => a * 2);
+  -- good: same as realtype1!
+  realtype3: type aadlreal -10.0 .. 10.0;
+  
+  --good:
+  real01: PS::realtype1 => -10.0 applies to (all);
+  --good:
+  real02: PS::realtype1 => 10.0 applies to (all);
+  --good:
+  real03: PS::realtype1 => 0.0 applies to (all);
+  --bad: out of bounds
+  real04: PS::realtype1 => -11.0 applies to (all);
+  --bad: out of bounds
+  real05: PS::realtype1 => 11.0 applies to (all);
+  
+  -- good:
+  real06: PS::realtype3 => 1.0 applies to (all);
+  -- Good: realtype1 and realtype2 are equivalent
+  real07: PS::realtype1 => value(PS::real06) applies to (all);
+  -- good
+  real08: ps::realtype1 => value(PS::real01) applies to (all);
+  
+  -- bad: needs unit
+  real10: ps::realtype2 => 3.0 applies to (all);
+  -- bad: wrong unit
+  real11: ps::realtype2 => 3.0 z applies to (all);
+  -- good:
+  real12: ps::realtype2 => 2.0 a applies to (all);
+  
+  -- Good
+  intrangetype1: type range of PS::inttype1;
+  -- Good
+  intrangetype2: type range of aadlinteger -10 .. 10;
+  -- Good
+  numtype: type aadlinteger -5 ww .. 100 ww units (qq, ww => qq*10);
+  -- good
+  intrangetype3: type range of PS::numtype;
+  
+  -- good
+  intrange1: PS::intrangetype1 => -5 .. 5 applies to (all);
+  -- bad: min > max
+  intrange11: PS::intrangetype1 => 5 .. -5 applies to (all);
+  -- good:
+  intrange2: PS::intrangetype1 => -10 .. 10 delta 2 applies to (all);
+  -- bad: lower bound out of range
+  intrange3: PS::intrangetype1 => -11 .. 10 applies to (all);
+  -- bad: upper bound out of range
+  intrange4: PS::intrangetype1 => 10 .. 11 delta 3 applies to (all);
+  -- good
+  intrange5: PS::intrangetype3 => 4 ww .. 76 ww delta 5 qq applies to (all);
+  -- bad: min and max have different units
+  intrange51: PS::intrangetype3 => 1 qq .. 2 ww applies to (all);
+  -- bad: ref to wrong type
+  intrange6: PS::intrangetype2 => value(PS::intrange1) applies to (all);
+  -- good
+  intrange7: PS::intrangetype3 => value(PS::intrange5) applies to (all);
+
+
+  -- PARSER IS BUSTED, THESE DON'T PARSE!
+  
+  -- Good
+  realrangetype1: type range of PS::realtype1;
+  -- Good
+  realrangetype2: type range of aadlreal -10.0 .. 10.0;
+  -- Good
+  numtype2: type aadlreal -5.0 ww .. 100.0 ww units (qq, ww => qq*10);
+  -- good
+  realrangetype3: type range of PS::numtype2;
+  
+  -- good
+  realrange1: PS::realrangetype1 => -5.0 .. 5.0 applies to (all);
+  -- bad: min > max
+  realrange11: PS::realrangetype1 => 5.0 .. -5.0 applies to (all);
+  -- good:
+  realrange2: PS::realrangetype1 => -10.0 .. 10.0 delta 2.0 applies to (all);
+  -- bad: lower bound out of range
+  realrange3: PS::realrangetype1 => -11.0 .. 10.0 applies to (all);
+  -- bad: upper bound out of range
+  realrange4: PS::realrangetype1 => 10.0 .. 11.0 delta 3 applies to (all);
+  -- good
+  realrange5: PS::realrangetype3 => 4.0 ww .. 76.0 ww delta 5.0 qq applies to (all);
+  -- bad: min and max have different units
+  realrange51: PS::realrangetype3 => 1.0 qq .. 2.0 ww applies to (all);
+  -- bad: ref to wrong type
+  realrange6: PS::realrangetype2 => value(PS::realrange1) applies to (all);
+  -- good
+  realrange7: PS::realrangetype3 => value(PS::realrange5) applies to (all);
+end PS;
+
+
+package P
+  public
+    data D end D;
+    subprogram SP end SP;
+    thread T end T;
+    thread group TG end TG;
+    process P end P;
+    memory M end M;
+    processor PR end PR;
+    bus B end B;
+    device DV end DV;
+    system S end S;
+end P;

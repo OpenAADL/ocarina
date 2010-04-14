@@ -1,0 +1,361 @@
+--  Package developed in order to test REAL theorems
+
+package Test2_REAL
+public
+
+----------
+-- Data --
+----------
+
+data message
+properties
+  Concurrency_Control_Protocol => Protected_Access;
+end message;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Hello_Spg_1
+features
+  msg_out : out parameter message;
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_1";
+end Hello_Spg_1;
+
+subprogram Hello_Spg_2
+features
+  msg_in : in parameter message;
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_2";
+end Hello_Spg_2;
+
+-------------
+-- Threads --
+-------------
+
+thread Task1
+features
+  msg_out : out data port message;
+end Task1;
+
+thread implementation Task1.impl
+calls
+   MyCalls : {
+      P_Spg : subprogram Hello_Spg_1;
+   };
+connections
+  parameter P_Spg.msg_out -> msg_out;
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 1000ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 1000 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task1.impl;
+
+thread implementation Task1.impl2
+calls
+   MyCalls : {
+      P_Spg : subprogram Hello_Spg_1;
+   };
+connections
+  parameter P_Spg.msg_out -> msg_out;
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 1000ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 1000 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task1.impl2;
+
+thread Task2
+features
+  msg_in : in data port message;
+end Task2;
+
+thread implementation Task2.impl
+subcomponents
+   obj : data message;
+calls
+   MyCall : {
+     P_Spg : subprogram Hello_Spg_2;
+   };
+connections
+  parameter msg_in -> P_Spg.msg_in;
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 500ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 500 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task2.impl;
+
+thread implementation Task2.impl2
+calls
+   MyCall : {
+     P_Spg : subprogram Hello_Spg_2;
+   };
+connections
+  parameter msg_in -> P_Spg.msg_in;
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 500ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 500 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task2.impl2;
+
+---------------
+-- Processor --
+---------------
+
+processor cpurm
+end cpurm;
+
+processor implementation cpurm.impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end cpurm.impl;
+
+---------------
+-- Processes --
+---------------
+
+process node_a
+end node_a;
+
+process implementation node_a.impl
+subcomponents
+   Task_1 : thread Task1.impl;
+   Task_2 : thread Task2.impl;
+   Task_12 : thread Task1.impl2;
+   Task_22 : thread Task2.impl2;
+connections
+   port Task_1.msg_out -> Task_2.msg_in;
+   port Task_12.msg_out -> Task_22.msg_in;
+
+annex real_specification {**
+
+--  Tests predicate is_bound_to
+
+theorem set_declaration_is_bound_to
+
+foreach e in Processor_Set do
+
+   Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+  
+   check (Cardinal (Proc_Set) = 1);
+
+end set_declaration_is_bound_to;
+
+--  tests predicate Is_Connected_To
+
+theorem set_declaration_Is_Connected_To
+
+foreach e in Thread_Set do
+
+  Cnx_Set := {x in Thread_Set | Is_Connected_To (x, e)};
+
+  check (Cardinal (Cnx_Set) >= 0);
+
+end;
+
+--  tests predicate Is_Subcomponent_Of
+
+theorem set_declaration_Is_Subcomponent_Of
+
+foreach e in Process_Set do
+
+  threads := {x in Thread_Set | Is_Subcomponent_Of (x, e)};
+
+  check (Cardinal (threads) = 4);
+
+end;
+
+--  tests predicate Is_Accessed_By
+
+theorem set_declaration_Is_Accessed_By
+
+foreach e in Data_Set do
+
+  accessors := {t in Thread_Set | Is_Accessed_By (e, t)};
+
+  check (Cardinal (accessors) = 0);
+
+end;
+
+--  tests predicate Is_Accessing_To
+
+theorem set_declaration_Is_Accessing_To
+
+foreach e in Data_Set do
+
+  accessors := {t in Thread_Set | Is_Accessing_To (t, e)};
+
+  check (Cardinal (accessors) = 0);
+
+end;
+
+--  tests predicate Is_Called_By (1)
+
+--  common utilization : check if the defined subprogram_call is called
+--  by the thread
+
+theorem set_declaration_Is_Called_By_1
+
+  foreach e in Subprogram_Call_Set do
+
+    Callers(e) := {t in Thread_Set | Is_Called_By (e, t)};
+
+  check (Cardinal (Callers) = 1);
+
+end;
+
+--  tests predicate Is_Called_By (2)
+
+--  uncommon utilization : check if a subprogram of the defined kind
+--  is called
+
+theorem set_declaration_Is_Called_By_2
+
+  foreach e in Subprogram_Set do
+
+    Callers(e) := {t in Thread_Set | Is_Called_By (e, t)};
+
+  check (Cardinal (Callers) = 2);
+
+end;
+
+
+--  tests predicate Is_Connecting_To
+
+theorem set_declaration_Is_Connecting_To
+
+foreach e in Thread_Set do
+
+   Cnx_threads(e) := {t in Thread_Set | Is_Connecting_To (e, t)};
+
+   check (Cardinal (Cnx_threads) >= 0);
+
+end;
+
+--  tests predicate is_passing_through
+
+theorem set_declaration_is_passing_through
+
+foreach t in Thread_Set do
+
+  accessor_flows := {f in End_To_End_Flows_Set | 
+                          Is_Passing_Through (f, t)};
+
+  check (Cardinal (accessor_flows) = 1);
+
+end;
+
+--  tests predicate is_predecessor_of
+
+theorem set_declaration_is_predecessor_of
+
+  foreach t in Thread_Set do
+
+    pred := {th in thread_set | Is_Predecessor_Of (th, t)};
+
+    inv_pred := {th in thread_set | Is_Predecessor_Of (t, th)};
+
+  check ((Cardinal (pred) = 1 and Cardinal (inv_pred) = 0) or
+         (Cardinal (pred) = 0 and Cardinal (inv_pred) = 1));
+
+end;
+
+
+--  tests operator for property value access (and comparison)
+
+theorem set_declaration_Compare_Property_Value
+
+foreach e in Processor_Set do
+
+   Pure_Subprograms := {p in Subprogram_Set | 
+     property_exists (p, "Source_Language") and 
+     (get_property_value (p, "Source_Language") = "Ada95")};
+
+   check (Cardinal (Pure_Subprograms) = 2);
+
+end;
+
+--  test use of set instead of elements as a predicate's second parameter
+--  thus tests set composition.
+
+theorem set_declaration_set_composition
+
+foreach e in Processor_Set do
+
+   Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+   New_Set := {x in Thread_Set | Is_Subcomponent_Of (x, Proc_Set)};
+
+   check (Cardinal (New_Set) = 4);
+
+end;
+
+--  tests the 'and' operator within a selection expression
+
+theorem set_declaration_and_operator
+
+foreach e in Process_Set do
+
+  Protected_Data := {x in Data_Set | Property_Exists
+                        (x, "Concurrency_Control_Protocol") 
+                         and 
+                           (Get_Property_Value
+                             (x, "Concurrency_Control_Protocol") 
+                              = "Protected_Access")};
+
+  check (Cardinal (Protected_Data) = 1);
+end;
+
+--  tests 'or' operator within a selection expression
+
+theorem set_declaration_or_operator
+
+  foreach e in Process_Set do
+
+    a_set := {x in Thread_Set | Is_Subcomponent_Of (x, e) or 
+                              Is_Accessed_By (x, e)};
+
+  check (Cardinal (a_set) = 4);
+end;
+
+--  Test predefined sets usage in verification expression
+
+theorem set_declaration_predefined_sets
+
+foreach e in Processor_Set do
+
+  var x := Cardinal (Thread_Set);
+
+  check (x = 4);
+end;
+
+**};
+
+end node_a.impl;
+
+------------
+-- System --
+------------
+
+system rma 
+end rma;
+
+system implementation rma.ERC32
+subcomponents
+   node_a : process node_a.impl;
+   cpu_rm : processor cpurm.impl;
+properties
+   Actual_Processor_Binding => (reference (cpu_rm)) applies to node_a;
+end rma.ERC32;
+
+end Test2_REAL;

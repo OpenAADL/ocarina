@@ -1,0 +1,5 @@
+package t2
+private
+system system_t2
+end system_t2;
+end t2;

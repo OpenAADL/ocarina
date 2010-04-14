@@ -1,0 +1,54 @@
+ParameterConnections.aadl:41:05: in_data (port spec)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:46:05: out_data (port spec)  and in_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:48:05: out_data (port spec)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:50:05: out_data (port spec)  and in_out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:55:05: in_out_data (port spec)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:62:05: in_event_data (port spec)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:67:05: out_event_data (port spec)  and in_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:69:05: out_event_data (port spec)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:71:05: out_event_data (port spec)  and in_out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:76:05: in_out_event_data (port spec)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:81:15: in_event (entity reference)  points to in_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:83:15: in_event (entity reference)  points to in_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:85:15: in_event (entity reference)  points to in_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:88:15: out_event (entity reference)  points to out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:90:15: out_event (entity reference)  points to out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:92:15: out_event (entity reference)  points to out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:95:15: in_out_event (entity reference)  points to in_out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:97:15: in_out_event (entity reference)  points to in_out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:99:15: in_out_event (entity reference)  points to in_out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:110:05: out_param (parameter)  and in_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:114:05: in_param (parameter)  and in_out_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:129:05: in_param (parameter)  and in_event_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:142:05: in_out_param (parameter)  and in_event_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:144:05: in_param (parameter)  and out_event_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:155:05: out_param (parameter)  and in_event_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:159:05: in_param (parameter)  and in_out_event_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:174:32: in_event (entity reference)  points to in_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:187:36: in_event (entity reference)  points to in_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:189:32: out_event (entity reference)  points to out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:200:33: in_event (entity reference)  points to in_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:202:36: out_event (entity reference)  points to out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:204:32: in_out_event (entity reference)  points to in_out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:215:33: out_event (entity reference)  points to out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:217:36: in_out_event (entity reference)  points to in_out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:219:05: in_param (parameter)  and in_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:230:33: in_out_event (entity reference)  points to in_out_event (port spec) , which is not of a proper type
+ParameterConnections.aadl:232:05: in_out_param (parameter)  and in_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:234:05: in_param (parameter)  and out_data (port spec)  do not have compatible directions
+ParameterConnections.aadl:251:05: in_param (parameter)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:256:05: out_param (parameter)  and in_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:258:05: out_param (parameter)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:260:05: out_param (parameter)  and in_out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:265:05: in_out_param (parameter)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:278:05: in_param (parameter)  and in_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:293:05: in_param (parameter)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:297:05: in_out_param (parameter)  and in_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:308:05: in_param (parameter)  and in_out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:310:05: out_param (parameter)  and in_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:327:05: in_param (parameter)  and in_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:329:05: out_param (parameter)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:344:05: in_out_param (parameter)  and out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:346:05: in_param (parameter)  and in_out_param (parameter)  do not have compatible directions
+ParameterConnections.aadl:359:05: in_param (parameter)  and out_param (parameter)  do not have compatible directions
+Cannot analyze AADL specifications

@@ -1,0 +1,1232 @@
+\input texinfo @c -*-texinfo-*-
+
+@c $Id: ocarina.texi 7072 2009-10-14 07:28:52Z hugues $
+
+@include version.texi
+
+@setfilename ocarina.info
+@settitle Ocarina: A Compiler for the AADL
+@afourpaper
+
+@documentlanguage en
+@documentencoding ISO-8859-1
+
+@c description and copyright
+
+@copying
+Copyright @copyright{} 2003-2007 @'{E}cole
+nationale sup@'{e}rieure des t@'{e}l@'{e}communications
+
+@noindent
+Permission is granted to make and distribute verbatim copies of this
+entire document without royalty provided the copyright notice and
+this permission are preserved.
+
+@end copying
+
+@c title page, contents, copyright
+
+@titlepage
+@title Ocarina
+@subtitle A Compiler for the AADL
+@subtitle for Ocarina @value{EDITION}, @value{UPDATED}
+@author J@'er@^ome Hugues, Thomas Vergnaud, Bechir Zalila
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@iftex
+@contents
+@end iftex
+
+@c top node
+
+@ifnottex
+@node Top, About This Guide, (dir), (dir)
+@top Ocarina
+@insertcopying
+@end ifnottex
+
+@menu
+* About This Guide::
+* Introduction::                
+* AADL::     
+* Installation::        
+* Using Ocarina::
+* A Tutorial of AADL & Ocarina::
+* Ocarina API Reference Manual::                 
+* Petri Net Mapping Rules:: 
+* AADL modes for Emacs and vim:: 
+* Standard AADL property files::   
+* Ocarina AADL property files::
+* Conformance to standards::
+* GNU Free Documentation License::
+* Index::
+@end menu
+
+@ifhtml
+@center @code{$LastChangedDate: 2009-10-14 09:28:52 +0200 (Wed, 14 Oct 2009) $}
+@end ifhtml
+
+@c -------------------------------------------------------------------
+@node About This Guide
+@unnumbered About This Guide
+@c -------------------------------------------------------------------
+
+@noindent
+This guide describes the use of Ocarina, a compiler for the AADL.
+
+It presents the features of the compiler, related APIs and tools; and
+details how to use them to build and exploit AADL models.
+
+It also details model transformations of AADL models onto
+
+@itemize
+@item Ada code using the ARAO AADL runtime built on top of PolyORB;
+
+@item Petri Net models
+@end itemize
+
+Companion documents describe other add-ons for Ocarina:
+
+@itemize
+@item PolyORB-HI/Ada, a High-Integrity AADL runtime and its code
+generator built on top of Ocarina that targets Ada targets: Native or
+bare board runtimes; 
+
+@item PolyORB-HI/C, a High-Integrity AADL runtime and its code
+generator built on top of Ocarina that targets C targets: POSIX
+systems, RTEMS; 
+
+@end itemize
+
+@menu
+* What This Guide Contains::
+* Conventions::
+@end menu
+
+@c -------------------------------------------------------------------
+@node What This Guide Contains
+@unnumberedsec What This Guide Contains
+@c -------------------------------------------------------------------
+
+@noindent
+This guide contains the following chapters:
+@itemize @bullet
+
+@item @ref{Introduction} provides a brief description of Ocarina.
+
+@item @ref{AADL} provides a quick overview of the AADL language.
+
+@item @ref{Installation} details how to configure and install Ocarina
+on your system.
+
+@item @ref{Using Ocarina} details the utilization of Ocarina
+
+@item @ref{Ocarina API Reference Manual}
+
+@item @ref{Petri Net Mapping Rules} details the mapping rules used by
+Ocarina to generate Petri nets from AADL models
+
+@item @ref{AADL modes for Emacs and vim} presents the Emacs and vim modes for AADL packaged
+with Ocarina
+
+@item @ref{Standard AADL property files} provides the standard AADL 
+property sets.
+
+@item @ref{Ocarina AADL property files} lists Ocarina specific
+property files.
+
+@item @ref{Conformance to standards} discusses the conformance of
+ Ocarina to the AADL standard.
+
+@c @item @ref{References} provides a list of useful references to
+@c complete this documentation.
+
+@item
+@ref{GNU Free Documentation License} contains the text of the license
+under which this document is being distributed.
+
+@end itemize
+
+@c -------------------------------------------------------------------
+@node Conventions
+@unnumberedsec Conventions
+@cindex Conventions
+@cindex Typographical conventions
+@c -------------------------------------------------------------------
+
+@noindent
+Following are examples of the typographical and graphic conventions used
+in this guide:
+
+@itemize @bullet
+@item
+@code{Functions}, @code{utility program names}, @code{standard names},
+and @code{classes}.
+
+@item
+@samp{Option flags}
+
+@item
+@file{File Names}, @file{button names}, and @file{field names}.
+
+@item
+@var{Variables}.
+
+@item
+@emph{Emphasis}.
+
+@item
+[optional information or parameters]
+
+@item
+Examples are described by text
+@smallexample
+and then shown this way.
+@end smallexample
+@end itemize
+
+@noindent
+Commands that are entered by the user are preceded in this manual by
+the characters @w{``@code{$ }''} (dollar sign followed by space). If
+your system uses this sequence as a prompt, then the commands will
+appear exactly as you see them in the manual. If your system uses some
+other prompt, then the command will appear with the @code{$} replaced
+by whatever prompt character you are using.
+
+Full file names are shown with the ``@code{/}'' character
+as the directory separator; e.g., @file{parent-dir/subdir/myfile.adb}.
+If you are using GNAT on a Windows platform, please note that
+the ``@code{\}'' character should be used instead.
+
+@c -------------------------------------------------------------------
+@node Introduction
+@chapter Introduction
+@c -------------------------------------------------------------------
+
+Ocarina is an application that can be used to build applications from
+AADL descriptions. Because of its modular architecture, Ocarina can
+also be used to add AADL functions to existing applications. Ocarina
+supports the AADL 1.0 standard and proposes the following features :
+
+@enumerate
+@item Parsing and pretty printing of AADL models
+
+@item Semantics checks
+
+@item Code generation, using three code generators
+
+@itemize
+@item ARAO/Ada, an Ada AADL runtime built on top of PolyORB;
+
+@item PolyORB-HI/Ada, a High-Integrity AADL runtime and its code
+generator built on top of Ocarina that targets Ada targets: Native or
+bare board runtimes; 
+
+@item PolyORB-HI/C, a High-Integrity AADL runtime and its code
+generator built on top of Ocarina that targets C targets: POSIX
+systems, RTEMS; 
+@end itemize
+
+@item Model checking using Petri nets.
+@end enumerate
+
+Companion documents describe some of these add-ons for Ocarina:
+
+@c -------------------------------------------------------------------
+@node AADL
+@chapter The Architecture Analysis & Design Language
+@c -------------------------------------------------------------------
+
+AADL stands for Architecture Analysis & Design Language. It can be
+expressed using graphical and textual syntaxes; an XML representations
+is also defined to ease the interoperability between tools.
+
+AADL aims at allowing for the description of Distributed Real-Time
+Embedded (DRE) systems by assembling blocks separately developed.
+Thus it focuses on the definition of clear block interfaces, and
+separates the implementations from those interfaces. AADL allows for
+the description of both software and hardware parts of a system. Here
+is a brief presentation of the language; more information can be found
+on @uref{http://www.aadl.info,the AADL web site}.
+
+An AADL description is made of @emph{components}.  The AADL standard
+defines software components (data, threads, thread groups,
+subprograms, processes), execution platform components (memory, buses,
+processors, devices) and hybrid components (systems).
+
+Components model well identified elements of the actual
+system. @strong{Subprograms} model procedures such as those in C or
+Ada. @strong{Threads} model the active part of an application (such as
+POSIX threads).  @strong{Processes} are memory spaces that contain the
+@strong{threads}. @strong{Thread groups} are used to create an
+hierarchy among threads. @strong{Processors} model micro-processors
+and a minimal operating system (mainly a scheduler).
+@strong{Memories} model hard disks, RAMs, etc. @strong{Buses} model
+all kinds of networks, wires, etc. @strong{Devices} model sensors,
+etc. Unlike other components, @strong{systems} do not represent
+anything concrete; they actually create building blocks to help
+structure the description.
+
+Component declarations have to be instantiated into subcomponents of
+other components in order to model an architecture. At the top-level,
+a system contains all the component instances. Most components can
+have subcomponents, so that an AADL description is hierarchical.
+
+Each component has an interface (called @strong{component type}) that
+provides @strong{features} (e.g. communication ports). Components
+communicate one with another by @strong{connecting} their features. To
+a given component type correspond zero or several
+implementations. Each of them describe the internals of the
+components: subcomponents, connections between those subcomponents,
+etc. An implementation of a thread or a subprogram can specify
+@strong{call sequences} to other subprograms. This helps describe the
+whole execution flows in the architecture.
+
+AADL defines a set of standard @strong{properties} that can be
+attached to most elements (components, connections, features,
+etc.). Standard properties are used to specify things such as the
+clock frequency of a processor, the execution time of a thread, the
+bandwidth of a bus, etc. In addition, it is possible to add
+user-defined properties, to express specific description constraints.
+
+By default, all elements of an AADL description are declared in a
+global name space. To avoid possible name conflicts in the case of a
+large description, it is possible to gather components within
+@strong{packages}. Thus, packages help structure the description,
+while systems help structure the architecture. A package can have a
+public part and a private part; only the elements of the package can
+have a visibility on the private part.  Packages can contain
+components declarations. So, they can be used to structure the
+description from a logical point of view. Unlike systems, they do not
+impact the architecture.
+
+
+@c -------------------------------------------------------------------
+@node Installation
+@chapter Installation
+@c -------------------------------------------------------------------
+
+@menu
+* Supported Platforms::
+* Build requirements::
+* Build instructions::
+* Additional instructions for cross platforms::
+* Building the documentation::
+@end menu
+
+@c -------------------------------------------------------------------
+@node Supported Platforms
+@section Supported Platforms
+@c -------------------------------------------------------------------
+
+@noindent
+Ocarina has been compiled and successfully tested on the following
+platforms:
+
+@itemize @bullet
+@item Linux
+@item Mac OS X
+@item Solaris
+@item FreeBSD
+@item Windows
+@end itemize
+
+@noindent
+@emph{Note: Ocarina should compile and run on every target for which
+GNAT is available.}
+
+@c -------------------------------------------------------------------
+@node Build requirements
+@section Build requirements
+@c -------------------------------------------------------------------
+
+@noindent
+An Ada compiler:
+@itemize @bullet
+@item GNAT Pro 6.0.1 or later
+@item GNAT GPL 2006 or later
+@item GNAT GCC 4.4.0 or later
+@end itemize
+
+Optional: 
+
+@itemize @bullet
+@item PolyORB (@url{http://libre.adacore.com/polyorb/}) if you
+want to build distributed applications using Ocarina.
+@item Xcov and Qemu from the project Couverture if you want to
+get coverage information about the distributed applications.
+(@url{http://forge.open-do.org/projects/couverture/})
+@end itemize
+
+@noindent
+Note: per construction, the macro @command{configure} used to find
+your GNAT compiler looks first to the executable @command{gnatgcc},
+then @command{adagcc} and finally to @command{gcc} to find out which
+Ada compiler to use. You should be very careful with your path and
+binaries if you have multiple GNAT versions installed. See below
+explanations on the @code{ADA} environment variable if you need to
+override the default guess.
+
+@c -------------------------------------------------------------------
+@node Build instructions
+@section Build instructions
+@c -------------------------------------------------------------------
+
+@noindent
+To compile and install Ocarina, execute:
+
+@smallexample
+  % ./configure [some options]
+  % make              (or gmake if your make is not GNU make)
+  % make install      (ditto)
+@end smallexample
+
+@noindent
+This will install files in standard locations.  If you want to choose
+another prefix than @file{/usr/local}, give configure a
+@option{--prefix=whereveryouwant} argument.
+
+Note: at this time, you MUST use GNU make to compile this software.
+
+@c -------------------------------------------------------------------
+@node Additional instructions for cross platforms
+@section Additional instructions for cross platforms
+@c -------------------------------------------------------------------
+
+@noindent
+Only one Ocarina installation is currently possible with a given
+@code{--prefix}. If both a native and a cross installation are needed on
+the same machine, distinct prefixes must be used.
+
+@c -------------------------------------------------------------------
+@node Building the documentation
+@section Building the documentation
+@c -------------------------------------------------------------------
+
+@noindent
+Ocarina documentation is built automatically with the Ocarina libraries
+and tools. It is installed in the @file{$@{prefix@}/share/doc/ocarina}
+
+@c -------------------------------------------------------------------
+@subsection Build Options
+@c -------------------------------------------------------------------
+
+@noindent
+Available options for the @file{configure} script include:
+
+@itemize @bullet
+
+@item  @option{--enable-debug}: enable debugging information generation 
+and supplementary runtime checks. Note that this option has a
+significant space and time cost, and is not recommended for production
+use.
+
+@item  @option{--with-ocarina-runtimes=x}: enable building Ocarina along 
+with the requested runtimes. @option{x} is a set of valid runtimes
+located in the @file{resources/runtimes} directory. @option{x} is case
+insensitive. Examples of use:
+
+@itemize @bullet 
+        
+@item @option{--with-ocarina-runtimes=all}: compile Ocarina
+along with all the runtimes. All the Ocarina runtimes MUST be located
+in the @file{resources/runtimes} directory.
+
+@item @option{--with-ocarina-runtimes=none}: compile Ocarina
+along without any runtime.
+
+@item @option{--with-ocarina-runtimes=PolyORB-HI-Ada}: compile Ocarina
+along with the @option{PolyORB-HI-Ada} runtime. The directory
+@file{polyorb-hi-ada} MUST exist in the @file{resources/runtimes}
+directory.
+
+@item @option{--with-ocarina-runtimes="polyorb-hi-c PolyORB-HI-Ada"}: 
+compile Ocarina along with the @option{PolyORB-HI-Ada} and the
+@option{PolyORB-HI-C} runtimes. The directories @file{polyorb-hi-ada}
+and @file{polyorb-hi-c} MUST exist in the @file{resources/runtimes}
+directory.
+
+@item No option: compile Ocarina along with all the runtimes found in 
+the @file{resources/runtimes} directory.
+
+@end itemize
+
+@end itemize
+
+@c -------------------------------------------------------------------
+@subsection Compiler, Tools and Run-Time libraries Options
+@c -------------------------------------------------------------------
+
+@noindent
+The following environment variables can be used to override
+configure's guess at what compilers to use:
+
+@itemize
+
+@item @code{CC}:  the C compiler
+@item @code{ADA}: the Ada 95 compiler (e.g. gcc, gnatgcc or adagcc)
+
+@end itemize
+
+@noindent
+For example, if you have two versions of GNAT installed and available
+in your @code{PATH}, and configure picks the wrong one, you can
+indicate what compiler should be used with the following syntax:
+
+@smallexample
+  % ADA=/path/to/good/compiler/gcc ./configure [options]
+@end smallexample
+
+Ocarina will be compiled with GNAT build host's configuration,
+including run-time library. You may override this setting using
+@code{ADA_INCLUDE_PATH} and @code{ADA_OBJECTS_PATH} environment
+variables. See GNAT User's Guide for more details.
+
+NOTE: Developers building Ocarina from the version control repository
+who need to rebuild the configure and Makefile.in files should use the
+script @file{support/reconfig} for this purpose. This should be done
+after each update from the repository. In addition to the requirements
+above, they will need autoconf 2.57 or newer, automake 1.6.3 or newer.
+
+@c -------------------------------------------------------------------
+@node  Using Ocarina
+@chapter Using Ocarina
+@c -------------------------------------------------------------------
+
+@menu
+* ocarina_sh::
+* AADL Scenario Files::
+* ocarina::
+* ocarina-config::
+@end menu
+
+@c -------------------------------------------------------------------
+@node ocarina_sh
+@section @command{ocarina_sh}
+@cindex @command{ocarina_sh}
+@c -------------------------------------------------------------------
+
+This command is a simplified front-end for the functions provided by
+Ocarina.
+
+@smallexample
+@c XXX check consistency with corresponding executable
+Usage: ocarina_sh [opts] [-s <scenario_part_1> <scenario_part_2>...]
+ scenario_part_? is the AADL file describing the application scenario
+ -b: build the generated application code
+ -z: clean the generated application code
+ -p: only parse the application model
+ -l: collect the output of the each action it performs
+     in an appropriate file called log_xxx
+ -n: only produce Petri Net
+ -c: only perform schedulability analysis
+ -v: output Ocarina version
+@end smallexample
+
+This script takes an AADL scenario files as an input and, depending on
+the given switches, invokes the @file{ocarina} command with the proper
+command line options.
+
+If the user gave the ``-b'' command line switch, the generated code will
+be compiled.
+
+@c -------------------------------------------------------------------
+@node AADL Scenario Files
+@section AADL Scenario Files
+@cindex AADL Scenario Files
+@c -------------------------------------------------------------------
+
+AADL scenario files are a very simple way to configure an AADL
+application. AADL scenario may consist of more than one AADL file but
+they all should be located in the same directory. Example:
+
+The following file containing the common part of 2 AADL scenarios:
+
+@include scenario_common.aadl.texi
+
+The following files contains a system implementation of the previous one
+by adding specific parts for an application that will leads to a C code
+generation:
+
+@include scenario_c.aadl.texi
+
+The following files contains a system implementation of the first one by
+adding specific parts for an application that will leads to a Ada code
+generation:
+
+@include scenario_ada.aadl.texi
+
+Node that for the 2 last files, we used the ``additive'' for of AADL
+properties to ``add'' AADL files.
+
+If the user invokes @file{ocarina_sh} on both
+@file{scenario_common.aadl} and @file{scenario_c.aadl}, then
+@file{ocarina} will be invoked to generate C code for the PolyORB-HI
+middleware.
+
+If the user invokes @file{ocarina_sh} on both
+@file{scenario_common.aadl} and @file{scenario_ada.aadl}, then
+@file{ocarina} will be invoked to generate Ada code for the PolyORB-HI
+middleware.
+
+@c -------------------------------------------------------------------
+@node ocarina
+@section @command{ocarina}
+@cindex @command{ocarina}
+@c -------------------------------------------------------------------
+
+This command is an extended front-end for the functions provided by
+Ocarina.
+
+@i{Note: this script is the actual driver for the Ocarina compiler,
+its use is for advanced users. @command{ocarina_sh} relies on this
+driver to produce all-in-on model analysis and code generation}
+
+@smallexample
+@c XXX check consistency with corresponding script
+Usage: 
+      ocarina [options] files
+      OR
+      ocarina -help
+  files are a non null sequence of AADL files
+
+  Options:
+  -v  Output Ocarina version, then exit
+  -s  Output Ocarina search directory, then exit
+  -f  Parse Ocarina predefined NON STANDARD property sets
+  -n  To generate Petri Net from the AADL instance model
+  -g  To generate code from the AADL instance tree
+      Registered generators:
+       PolyORB-QoS-Ada
+       PolyORB-HI-Ada
+       PolyORB-HI-C
+  -b  To also build code generated from the AADL model
+  -z  To clean code generated from the AADL model
+  -i  To only instantiate the AADL model
+  -r  <name> The name of the instance tree root
+  -d  Specify output directory
+  -o  Specify output file
+  -p  Specify the printer to use
+      Registered printers:
+       aadl
+       aadl_min
+       aadl_tree_p
+       aadl_tree_i
+  -I  Specify the inclusion paths
+  -q  Quiet mode, no debugging messages (default)
+  -V  Verbose mode, display debugging messages
+  -aadlv2  Use AADL v2 standard
+  -aadlv1  Use AADL v1 standard (default)
+@end smallexample
+
+@c -------------------------------------------------------------------
+@node ocarina-config
+@section @command{ocarina-config}
+@cindex @command{ocarina-config}
+@c -------------------------------------------------------------------
+
+@noindent
+@command{ocarina-config} returns path and library information on
+Ocarina's installation.
+
+@smallexample
+@c XXX check consistency with corresponding script
+Usage: ocarina-config [OPTIONS]
+Options:
+        No option:
+            Output all the flags (compiler and linker) required
+            to compile your program.
+        [--prefix[=DIR]]
+            Output the directory in which Ocarina architecture-independent 
+           files are installed, or set this directory to DIR.
+        [--exec-prefix[=DIR]]
+            Output the directory in which Ocarina architecture-dependent 
+           files are installed, or set this directory to DIR.
+        [--version|-v]
+            Output the version of Ocarina.
+        [--config]
+            Output Ocarina's configuration parameters.
+        [--runtime[=<Runtime_Name>]]
+            Checks the validity and the presence of the given runtime and 
+            then, outputs its path. Only one runtime can be requested at 
+            a time. If no runtime name is given, outputs the root directory
+            of all runtimes.
+        [--libs]
+            Output the linker flags to use for Ocarina.
+        [--properties]
+            Output the location of the standard property file.
+        [--resources]
+            Output the location of resource files 
+            (typically the standard properties)
+        [--cflags]
+            Output the compiler flags to use for Ocarina.
+        [--help]
+            Output this message
+@end smallexample
+
+@noindent
+This script can be used to compile user program that uses Ocarina's
+API. @xref{Ocarina API Reference Manual}.
+
+@c -------------------------------------------------------------------
+@node  A Tutorial of AADL & Ocarina
+@chapter A Tutorial of AADL & Ocarina
+@c -------------------------------------------------------------------
+
+@noindent
+@i{This chapter will appear in a future revision of Ocarina.}
+
+@c -------------------------------------------------------------------
+@node  Ocarina API Reference Manual
+@chapter Ocarina API Reference Manual
+@c -------------------------------------------------------------------
+
+This chapter describes Ocarina's API, an API to manipulate AADL
+models.
+
+@menu
+* The Ocarina Core Library::    
+* Input/Output Modules::        
+@end menu
+
+@node The Ocarina Core Library
+@section The Ocarina Core Library
+
+@menu
+* Rationale of the core library::  
+* Code organization::           
+* Low level API to manipulate tree nodes::  
+* API to build and manipulate AADL models::  
+* API to build and manipulate AADL instances::  
+* Core parsing and printing facilities::  
+@end menu
+
+@node  Rationale of the core library
+@subsection Rationale of the core library
+
+The core library holds the tree structures of AADL descriptions. It
+provides the facilities required to manipulate the AADL descriptions.
+
+@subsubsection Internal representation
+
+AADL descriptions are usually sets of declarations. Verifications can
+be performed on these representations, but the declarations must be
+instantiated in order to be able to fully compute the
+architectures. Therefore, the processing of an AADL description is
+usually performed in two steps: 
+
+@itemize 
+@item 
+the building of an AADL model that corresponds to the AADL declarations;
+@item 
+then the instantiation of the model to manipulate the actual architecture.
+@end itemize
+
+The Ocarina core library provides the necessary functions to build
+AADL declaration, validate the model and then instantiate it.
+
+Both model and instance AADL descriptions are represented by abstract
+syntax trees. These trees are made of several nodes, defined in
+@file{src/core/tree/ocarina-nodes.idl}. As the structure is rather
+complex, higher lever notions are defined. Thus, Ocarina mainly
+manipulate @emph{entities}. AADL entities are:
+
+@itemize
+  @item namespaces:
+  @itemize
+    @item AADL specification,
+    @item packages,
+    @item property sets;
+  @end itemize
+  @item components:
+  @itemize
+    @item component types and implementations,
+    @item port group types;
+  @end itemize
+  @item properties:
+  @itemize
+    @item property names, types and constants,
+    @item property associations;
+  @end itemize
+  @item subclauses:
+  @itemize
+    @item features (ports, port group specifications, subprograms as features,
+     subcomponent accesses),
+    @item subcomponents,
+    @item subprogram call sequences and subprogram calls,
+    @item connections,
+    @item modes,
+    @item flows;
+  @end itemize
+  @item annexes (libraries and subclauses).
+@end itemize
+
+@node Code organization
+@subsection Code organization
+
+The Ocarina core is made of three main parts: the manipulation of the
+tree nodes, the manipulation of AADL models and the manipulation of
+AADL architecture instances.
+
+@subsubsection AADL nodes
+
+The manipulation of the tree nodes consists of the structures of the
+tree, and functions to manipulate them at a low level. The
+corresponding files are located in @file{src/core/tree}.
+
+The functions of lowest level are located in the package
+@code{Ocarina.Nodes}. They allow for the direct manipulation of tree,
+without checking any semantics. Some sort of assembly language to
+manipulate nodes.
+
+Some higher-level access functions are provided in packages such as
+@code{Ocarina.Entities}. Those functions provide higher level access to
+entity information such as getting their name, etc. without dealing
+with the actual structure of the nodes. They can be considered as low
+level functions. However, these functions should always be preferred to
+lowest level ones as they manipulates entities. These functions will
+be described in the next section;
+
+@subsubsection AADL models
+
+Functions are provided to manipulate trees of AADL models. They allow
+to build, check and interrogate model trees. The files are located in
+@file{src/core/model}.
+
+High level functions are provided to manipulate AADL models. They are
+meant to hide the actual structure of the Ocarina tree and only
+manipulate AADL notions (components, connections, etc.) Several
+packages are located in @file{src/core/model} and provide facilities to
+build, verify and interrogate AADL models.
+
+@subsubsection AADL instances
+
+Other functions are provided to manipulate trees of AADL
+instances. Like for AADL models, it is possible to build, check and
+interrogate trees. However, instance trees cannot be directly built:
+they are computed from model trees, thus instantiating AADL
+models. The files are located in @file{src/core/instance}.
+
+@node Low level API to manipulate tree nodes
+@subsection Low level API to manipulate tree nodes
+
+Low level functions that are provided in @code{Ocarina.Nodes} and the
+package @code{Ocarina.Entities} and its child packages.
+
+Functions of @code{Ocarina.Nodes} allow the direct manipulation of the
+node tree. Therefore it is difficult to use them. We do not describe
+this API. The packages @code{Ocarina.Entities} provide an API to
+manipulate entities, thus easing the manipulation of the tree
+elements.
+
+@include ocarina-me_aadl-aadl_tree-entities.ads.texi
+@include ocarina-me_aadl-aadl_tree-entities-properties.ads.texi
+
+@node API to build and manipulate AADL models
+@subsection API to build and manipulate AADL models
+
+This section describes the high level function's to manipulate AADL models:
+
+@enumerate
+
+@item 
+Builder API~: These functions (declared in the @code{Ocarina.Builder}
+hierarchy) are provided to create the main kinds of nodes: components,
+namespaces, subclauses, annexes, properties, etc. They are named
+@code{Add_New_....}. They create a new node and insert it as a child of a
+parent node, except for the root node. This helps ensure that the
+description structure is valid, since the API only allows valid
+constructions. All these functions take at least three parameters:
+
+@itemize 
+@item 
+the location of the node; for example the position in a file that
+corresponds to the element that is parsed; the location is of type
+Location as defined in the package @code{Locations};
+
+@item 
+the name that should be set for the node, since all those nodes can
+have names; the name is an identifier node; for some entities it can be
+set to @code{No_Node} (connections, etc.);
+
+@item 
+the namespace or the parent node, which shall contain the newly
+created node; this node must be different from @code{No_Node}, and has to
+be of a correct kind, according to the AADL standard BNF.
+
+@end itemize
+
+Other parameters may be required, to specify information such as the
+category of the component (bus, process, etc.), whether the subclause
+is a refinement, etc. Some parameters have default values, meaning
+that they can be omitted if the value is not known when the node is
+created; the values can be set later, using lower-level access
+functions.  Functions simply named @code{Add_...} are used internally to
+add child nodes to their parents. No verification is performed; they
+just ensure the child lists are created before inserting the node in
+them.
+
+@item 
+Verification API: Functions are provided to check the validity of
+AADL models. They ensure that all referenced AADL entities are
+declared, that their type is correct, etc. They also check that AADL
+properties are consistent.
+
+@item 
+Interrogation API: These functions (declared in the
+@code{Ocarina.Analyzer} hierarchy) are provided to interrogate AADL
+models in order to find entities, get properties, etc.
+
+@end enumerate
+
+@include ocarina-builder.ads.texi
+@include ocarina-builder-aadl.ads.texi
+@include ocarina-builder-aadl-annexes.ads.texi
+@include ocarina-builder-aadl-components.ads.texi
+@include ocarina-builder-aadl-components-connections.ads.texi
+@include ocarina-builder-aadl-components-features.ads.texi
+@include ocarina-builder-aadl-components-flows.ads.texi
+@include ocarina-builder-aadl-components-modes.ads.texi
+@include ocarina-builder-aadl-components-subcomponents.ads.texi
+@include ocarina-builder-aadl-components-subprogram_calls.ads.texi
+@include ocarina-builder-aadl-namespaces.ads.texi
+@include ocarina-builder-aadl-properties.ads.texi
+@include ocarina-analyzer-aadl-finder.ads.texi
+@include ocarina-analyzer-aadl-queries.ads.texi
+
+@node API to build and manipulate AADL instances
+@subsection API to build and manipulate AADL instances
+
+This section presents the functions that allow the manipulation of
+AADL instances.
+
+The routines that create the instance tree from the model tree are
+located in the @code{Ocarina.Instances} package. The main function
+that should be used is the @code{Ocarina.Instances.Instantiate_Model}
+function. It Instantiates the tree of the model and returns the
+instance architecture. The first parameter given to this function is
+the root of the model tree. The second parameter designs the root
+system implementation, used when several system implementations are
+electable as root system.
+
+@node Core parsing and printing facilities,
+@subsection Core parsing and printing facilities
+
+@subsubsection Parser
+
+The main parsing function is the @code{Ocarina.Parser.Parse}
+function. This function selects automatically the right parser
+depending on the file suffix: If the file suffix is ``.aadl'', then
+the parsing function used is
+@code{Ocarina.AADL.Parser.Process}. Therefore, the input files given
+to the Parse function must have valid suffixes.
+
+The return value of the @code{Ocarina.Parser.Parse} function is the node
+corresponding to the root of the tree. If something went wrong during
+the parsing, the return value is @code{No_Node}. The first parameter
+given to the @code{Ocarina.Parser.Parse} function is the name of the file
+to parse. The second parameter corresponds to the tree root, this way,
+it's possible to parse many files by calling the function several
+times and by giving to it the same root as second parameter. After
+each call, the returned value is the old tree to which are added the
+AADL entities of the last parsed file. Hence Ocarina supports multiple
+file AADL descriptions.
+
+@subsubsection Printer
+
+Unlike the parsing facility, the printing facility cannot be selected
+automatically. The user must precise which printer he wants to use.
+
+The data structure @code{Ocarina.Printer.Output_Options} contains a field
+named @code{Printer_Name} which allows to select a registered
+printer. There are other fields in this structure, they allow to
+configure some printing options (output file, output directory...).
+
+@subsubsection Using the parser and the printer
+
+The user should not directly use the parsing and printing subprogram
+supplied by each module. To parse a file, the function that should be
+used is @code{Ocarina.Parser.Parse}. To print a file, the user must
+specify the printer options in a variable of type
+@code{Ocarina.Printer.Output_Options}, then call the
+@code{Ocarina.Printer.Print} function with the Root of the AADL tree
+and the options variable as parameters. Here is a sample code that
+shows how to initialize Ocarina, parse and print a set of AADL
+files. The example describes a classical way to use the Ocarina
+libraries to build a basic program that loops indefinitely and parses
+at each iteration all the AADL files given to its command line. If the
+parsing has been successful, the program prints the AADL sources
+corresponding to the built AADL syntax tree. The example illustrates
+also the @emph{Reset} capabilities of Ocarina allowing to reinitialize
+all the Ocarina engines at the end of an iteration in order to use
+them in the incoming iteration.
+
+@include parse_and_print_aadl.adb.texi
+
+@node Input/Output Modules
+@section Input/Output Modules
+
+Ocarina can handle AADL source files written conforming to the AADL
+grammar.
+ 
+@itemize
+ 
+@item 
+@b{AADL} The @code{Print_Node} procedure provided by this module allows
+to print a node and its subnodes. The result is an AADL source
+file. The printer name associated to this module is @code{aadl}.
+
+@item 
+@b{Dumper} This module is used for debugging purpose. Its printing
+facility allows to dump the AADL tree or the AADL instance tree. The
+printer names associated to this module are @code{aadl_tree_p} for the
+parsed tree and @code{aadl_tree_e} for the instance tree (instance tree).
+
+@end itemize
+
+@c -------------------------------------------------------------------
+@node  Petri Net Mapping Rules
+@chapter Petri Net Mapping Rules
+@c -------------------------------------------------------------------
+
+Ocarina lets you generate Petri nets from AADL descriptions. This way,
+it is possible to achieve verification on AADL architectures before
+generating the corresponding source code.
+
+@menu
+* Mapping Patterns::            
+* Examples::                    
+@end menu
+
+@node Mapping Patterns
+@section Mapping Patterns
+
+
+The AADL elements to map into Petri nets are the software
+components. Indeed, execution platform components are used to model
+the deployment of the software components; such deployment information
+is not to in the scope of Petri nets.  AADL threads and AADL
+subprograms are the most important components, since they can host
+subprogram call sequences: they describe the actual execution flows in
+the architecture.  AADL processes and systems are actually boxes
+containing threads or other components, hence they do not provide any
+``active'' semantics; data components are not active components
+either. The following table lists the main rules of the mapping:
+
+@subsection Component Features
+
+@example
+feature : @b{in} @b{data} @b{port};
+@end example
+
+@image{images/feature}
+
+@subsection Subprograms
+
+@example
+@b{subprogram} a_subprogram
+@b{features}
+  input_1 : @b{in} @b{parameter};
+  input_2 : @b{in} @b{parameter};
+  output : @b{out} @b{parameter};
+@b{end} a_subprogram;
+@end example
+
+@image{images/subprogram}
+
+@subsection Other Components
+
+@example 
+@b{process} a_process
+@b{features}
+  input_1 : @b{in} @b{data} @b{port};
+  input_2 : @b{in} @b{data} @b{port};
+  output : @b{out} @b{data} @b{port};
+end a_process;
+@end example
+
+@image{images/component}
+
+@subsection Connections
+@example
+connection : @b{data} @b{port} output -> input;
+@end example
+
+@image{images/connection}
+
+@subsection Subprogram Connections
+@example
+connection : @b{parameter} output -> input;
+@end example
+
+@image{images/spg_connection}
+
+This mapping mainly consists of translating the AADL execution flows
+into Petri nets. Components that do not have any subcomponents nor
+call sequences are modeled by a transition that consumes inputs and
+produces outputs. Component features are modeled by places. Tokens
+stored in input features are to be consumed by the components or
+connections; tokens produced by component or connection transitions
+are stored in output features. Components that have subcomponents are
+modeled by merging the transition with the models of the
+subcomponents.
+
+We model a place per feature. This systematic approach help the user
+identify the translation between AADL models and corresponding Petri
+nets. In addition, it facilitates the expansions of the feature
+places. For example, we might want to describe the queue protocols
+defined by the AADL properties: in this case we would replace each
+place by Petri nets modeling FIFOs or whatever type of queue is
+specified by the AADL properties.
+
+Connections between features are modeled by transitions. We
+distinguish connections between subprograms parameters and between
+other component ports. 
+
+If an AADL port is connected to several other ports at a time, the
+Petri net transition shall be connected to all the corresponding
+places: a token will be sent to each target place, thus modeling the
+fact that each destination port receives the output of the initial
+port.
+
+Connections of subprograms parameters are slightly more
+complex. Indeed, output places of subprograms model variables, that
+can be read many times. Therefore, a subprogram produces two tokens:
+one that carries the output value and the control information, and an
+extra one that only carries the value. The extra token is stored in a
+place where subprograms from other call sequences can get it---the
+transition shall put the token back into the place. In order to ensure
+the correct replacement of the token whenever a new value is produced
+by the subprogram, the subprogram itself consumes its old extra output
+token to produce the new one.
+
+Call sequences are made of subprograms that are connected. We use an
+extra token to model the execution control. There is a single
+execution control token in each thread or subprogram, thus reflecting
+the fact that there is no concurrency in call sequences, and in threads
+and subprograms in general.
+
+@node Examples
+@section Examples
+
+Like code generation, the Petri net mapping does not directly handle
+behavioral description: such descriptions must be provided using AADL
+properties and then merged with the generated net.
+
+Here is an example of an AADL model:
+
+@include example_pn.aadl.texi
+
+By applying the mapping, we obtain the following Petri net:
+
+@image{images/mubroker_complet, 15cm}
+
+@c -------------------------------------------------------------------
+@node AADL modes for Emacs and vim
+@chapter AADL modes for Emacs and vim
+@c -------------------------------------------------------------------
+
+@noindent 
+The AADL modes for Emacs and vim provide syntax coloration and
+automatic indentation features when editing AADL files.
+
+@section Emacs
+
+To load the AADL mode for Emacs, you need to add the following line to
+your emacs configuration file (usually located in @file{~/.emacs}) :
+
+@smallexample
+ (load "/path/to/this/file.el")
+@end smallexample
+
+For more details on this mode, please refer to the emacs contextual
+help.
+
+@section vim
+
+The AADL mode for vim is made of two files @file{aadl.vim}: one for
+syntactic coloration, and the other for indentation. The file for
+indentation must be placed into @file{~/.vim/indent/} while the one
+for syntactic coloration must be placed into @file{~/.vim/syntax/}
+
+To load the AADL mode whenever you edit AADL files, create a file
+named @file{~/.vim/filetype.vim}, in which you write:
+
+@smallexample
+augroup filetypedetect
+        au BufNewFile,BufRead *.aadl    setf aadl
+augroup END
+@end smallexample
+
+For more details, please read the documentation of vim.
+
+@c -------------------------------------------------------------------
+@node Standard AADL property files
+@appendix Standard AADL property files
+@c -------------------------------------------------------------------
+
+@section AADL Project
+
+@include aadl_project.aadl.texi
+
+@page
+@section AADL Properties
+
+@include aadl_properties.aadl.texi
+
+@c -------------------------------------------------------------------
+@node Ocarina AADL property files
+@appendix Ocarina AADL property files
+@c -------------------------------------------------------------------
+
+Ocarina includes specific property files to specify some elements of
+the models that are not covered by AADL 1.0.
+
+@section Deployment
+@cindex Deployment, property set
+@include deployment.aadl.texi
+
+@page
+@section Ocarina_Config
+@cindex Ocarina_Config (property set)
+
+@include ocarina_config.aadl.texi
+
+@c -------------------------------------------------------------------
+@node Conformance to standards
+@appendix Conformance to standards
+@c -------------------------------------------------------------------
+
+@noindent
+
+Ocarina front-end supports the parsing and semantic analysis of all
+AADL 1.0 concepts.
+
+Code generators restricts AADL 1.0 semantics to ensure the model can
+lead to satisfactory code generation, see the corresponding
+documentation for more details.
+
+@c -------------------------------------------------------------------
+@c GNU's FDL
+
+@include gfdl.texi
+
+@c -------------------------------------------------------------------
+@node Index
+@unnumbered Index
+@c -------------------------------------------------------------------
+
+@printindex cp
+
+@c end
+
+@bye
+
+@c %%% Local Variables:
+@c %%% mode: texinfo
+@c %%% mode: flyspell
+@c %%% ispell-dictionary: "en"
+@c %%% End:

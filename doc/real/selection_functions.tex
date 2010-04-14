@@ -1,0 +1,69 @@
+\paragraph{}
+Relations refers to existing Ocarina~\cite{HZP07} functions.\\
+Note that each reference to \textit{an element} can be 
+replaced by {a set}, since the function will really be 
+applied to each elements of the parameter-passed sets. 
+While all elements are in fact variables (in the meaning 
+of a designator with fluctuating value), they are synonymous 
+to their related set.\\
+The range variable (ie. the element defined just after the 
+\textbf{foreach} keyword) is an exception to this rule, and 
+should always be refered as an element of the range set.\\
+Of course, anonymous sets cannot be refered with their name 
+either...
+
+\subsubsection {Is\_Subcomponent\_Of}
+
+\textit{Is\_Subcomponent\_Of} takes as parameters two elements,
+and return true if the first element is an AADL instance which 
+is a subcomponent of the second element.
+
+\subsubsection {Is\_Bound\_To}
+
+\textit{Is\_Bound\_To} takes as parameters two elements,
+and return true if the first element is an AADL instance which 
+is bound to the second element via the actual\_$*$\_binding 
+property class, where $*$ can be either \textit{processor},
+\textit{memory} or \textit{connection}.
+
+\subsubsection {Is\_Connected\_To}
+
+\textit{Is\_Connected\_To} takes as parameters two elements,
+and return true if the first element is an AADL instance which 
+is connected to the second element.
+
+\subsubsection {Is\_Called\_By}
+
+\textit{Is\_Called\_To} takes as parameters two elements,
+and return true if the second element has a call sequence
+with a subprogram call on the first element (which must be
+a subprogram).
+
+\subsubsection {Is\_Calling}
+
+\textit{Is\_Calling} takes as parameters two elements,
+and return true if the first element has a call sequence
+with a subprogram call on the second element (which must 
+be a subprogram).
+
+\subsubsection {Is\_Accessed\_By}
+
+\textit{Is\_Accessed\_By} takes as parameters two elements,
+and return true if the first element is an AADL instance which 
+is accessed by the second element, either directly or not.
+
+Note that \textit{Is\_Accessed\_By} can be used with a 
+connection instance and a data instance, returning true if the
+connection's destination is actually the provided data, and false 
+elsewhere.
+
+\subsubsection {Is\_Accessing\_To}
+
+\textit{Is\_Accessing\_To} is the same as \textit{Is\_Accessed\_By}, 
+but returns the instances which are accessing (ie. elements of
+the second parameter) instead of the instances which are accessed.
+
+\subsubsection {Is\_Passing\_Through}
+
+\textit {Is\_Passing\_Through} returns the end to end flows which are passing
+through the provided component instance.

@@ -1,0 +1,3 @@
+test.aadl:3:11: parsing Component_Type, unexpected token ';'
+test.aadl:7:32: parsing Component_Implementation, unexpected token ';'
+Cannot parse AADL specifications

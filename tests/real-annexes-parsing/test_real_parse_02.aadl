@@ -1,0 +1,259 @@
+package RMAAadl
+public
+  with Deployment;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Hello_Spg_1
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_1";
+end Hello_Spg_1;
+
+subprogram Hello_Spg_2
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_2";
+end Hello_Spg_2;
+
+-------------
+-- Threads --
+-------------
+
+thread Task
+end Task;
+
+thread implementation Task.impl_1
+calls
+   MyCalls : {
+      P_Spg : subprogram Hello_Spg_1;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 1000ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 1000 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_1;
+
+thread implementation Task.impl_2
+calls
+   MyCall : {
+     P_Spg : subprogram Hello_Spg_2;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 500ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 500 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_2;
+
+---------------
+-- Processor --
+---------------
+
+processor cpurm
+properties
+  Deployment::Execution_Platform => ERC32_ORK;
+end cpurm;
+
+processor implementation cpurm.impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end cpurm.impl;
+
+---------------
+-- Processes --
+---------------
+
+process node_a
+end node_a;
+
+process implementation node_a.impl
+subcomponents
+   Task1 : thread Task.impl_1;
+   Task2 : thread Task.impl_2;
+
+annex real_specification {**
+
+--  Tests operator is_bound_to
+
+theorem set_declaration_is_bound_to
+
+foreach e in Processor_Set do
+
+   Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+  
+   check (Cardinal (Proc_Set) = 1);
+
+end set_declaration_is_bound_to;
+
+--  tests operator Is_Connected_To
+
+theorem set_declaration_Is_Connected_To
+
+foreach e in Process_Set do
+
+  Cnx_Set := {x in Process_Set | Is_Connected_To (x, e)};
+
+  check (Cardinal (Cnx_Set) >= 1);
+
+end;
+
+--  tests operator Is_Subcomponent_Of
+
+theorem set_declaration_Is_Subcomponent_Of
+
+foreach e in Process_Set do
+
+  threads := {x in Thread_Set | Is_Connected_To (x, e)};
+
+  check (Cardinal (threads) >= 1);
+
+end;
+
+--  tests oprator Is_Accessed_By
+
+theorem set_declaration_Is_Accessed_By
+
+foreach e in Data_Set do
+
+  accessors := {t in Thread_Set | Is_Accessed_By (e, t)};
+
+  check (Cardinal (accessors) >= 0);
+
+end;
+
+--  tests operator Is_Accessing_To
+
+theorem set_declaration_Is_Accessing_To
+
+foreach e in Data_Set do
+
+  accessors := {t in Thread_Set | Is_Accessing_To (t, e)};
+
+  check (Cardinal (accessors) >= 0);
+
+end;
+
+--  tests operator Is_Called_By
+
+theorem set_declaration_Is_Called_By
+
+foreach e in Subprogram_Set do
+
+  Callers(e) := {t in Thread_Set | Is_Called_By (e, t)};
+
+  check (Cardinal (Callers) >= 0);
+
+end;
+
+--  tests operator Is_Connecting_To
+
+theorem set_declaration_Is_Connecting_To
+
+foreach e in Thread_Set do
+
+   Cnx_threads(e) := {t in Thread_Set | Is_Connecting_To (e, t)};
+
+   check (Cardinal (Cnx_threads) >= 0);
+
+end;
+
+--  tests operator for property value access (and comparison)
+
+theorem set_declaration_Compare_Property_Value
+
+foreach e in Processor_Set do
+
+   Pure_Subprograms := {p in Subprogram_Set | 
+     property_exists (p, "Source_Language") and 
+     (get_property_value (p, "Source_Language") = "Ada95")};
+
+   check (Cardinal (Pure_Subprograms) > 0);
+
+end;
+
+--  test use of set instead of elements as a predicate's second parameter
+--  thus tests set composition.
+
+theorem set_declaration_set_composition
+
+foreach e in Processor_Set do
+
+   Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+   New_Set := {x in Data_Set | Is_Subcomponent_Of (x, Proc_Set)};
+
+   check (Cardinal (New_Set) >= 0);
+
+end;
+
+--  tests the 'and' operator within a selection expression
+--  XXX FIXME : this test was originaly meant to be used with the 
+--  'shared' example. Should add a data in a process, with relevant
+--  properties.
+
+theorem set_declaration_and_operator
+
+foreach e in Process_Set do
+
+  Protected_Data := {x in Data_Set | Is_Subcomponent_Of (x, e) and 
+                      (Property_Exists
+                        (x, "Concurrency_Control_Protocol") 
+                         and 
+                           (Get_Property_Value
+                             (x, "Concurrency_Control_Protocol") 
+                              = "Protected_Access"))};
+
+  check (Cardinal (Protected_Data) >= 0);
+end;
+
+--  tests 'or' operator within a selection expression
+
+theorem set_declaration_or_operator
+
+foreach e in Thread_Set do
+
+  a_set := {x in Data_Set | Is_Subcomponent_Of (x, e) or
+                     Is_Accessed_By (x, e)};
+
+  check (Cardinal (a_set) >= 0);
+end;
+
+--  Test predefined sets usage in verification expression
+
+theorem set_declaration_predefined_sets
+
+foreach e in Processor_Set do
+
+  var x := Cardinal (Thread_Set);
+
+  check (x = 2);
+end;
+
+
+
+**};
+
+end node_a.impl;
+
+------------
+-- System --
+------------
+
+system rma 
+end rma;
+
+system implementation rma.ERC32
+subcomponents
+   node_a : process node_a.impl;
+   cpu_rm : processor cpurm.impl;
+properties
+   Actual_Processor_Binding => (reference (cpu_rm)) applies to node_a;
+end rma.ERC32;
+
+end RMAAadl;

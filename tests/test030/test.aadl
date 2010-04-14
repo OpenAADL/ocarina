@@ -1,0 +1,20 @@
+-- test for parsing arrays and prototypes in subcomponents (AADLv2)
+
+package Test
+public
+
+   data Mydata
+   end Mydata;
+
+   thread Mydevice
+   end Mydevice;
+
+   thread implementation Mydevice.Impl
+     subcomponents
+       Mysubcomp1 : data Mydata (proto1 => thread Mydevice) [];
+       Mysubcomp2 : data Mydata [][][];
+       Mysubcomp3 : data Mydata [3];
+       Mysubcomp4 : data Mydata [1][3][1];
+   end Mydevice.Impl;
+
+end Test;

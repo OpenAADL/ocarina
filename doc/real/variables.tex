@@ -1,0 +1,49 @@
+\label {variable_def}
+
+\real{} allows to declare variables of tree different scopes :
+\begin {itemize}
+\item global scope;
+\item theorem scope;
+\item local scope.
+\end {itemize}
+The two first kind of variables are declared in the same place as 
+theorem's sets, while the latter is declared within expression with
+the keyword \texttt{expr}.
+
+\subsubsection {Global an theorem variables}
+
+Global and theorem variables are declared either by associating them
+with sub-theorem calls or to expression. In the first case, the 
+declaration part with begin by the keyword \texttt{compute}. In the 
+latter case, no special keyword need to identify the association as 
+such.
+
+Global scope variables are declared with the \texttt{global} keyword, 
+while theorem scope variables are declared with the \texttt{var} 
+keyword.
+
+A theorem scope variable will be visible from any latter part of the 
+theorem. A global scope variable will be visible from any latter part 
+of the theorem, and from any part of teh sub-theorems called with 
+\texttt{compute}.
+
+\subsubsection {Local variable}
+
+A \textit{local variable} is a variable bind to a specific set. A 
+local variable does not need to be explicitely declared, since it is
+implicitely declared in the \texttt{expr} parameters.
+
+The keyword \texttt{expr} allows to bind a local variable to a set, 
+and to compute an expression according to each value of the set.
+Its tree parameters are in order :
+\begin {itemize}
+\item An existing set name;
+\item A non already existing variable name;
+\item An expression.
+\end {itemize}
+The expression specified as third parameters can refer to the variable
+name passed as first parameter. At run-time, the value of the expression
+while be computed for any value of the variable which is defined in the 
+parameter-passed set, and returned as a list of value. A local scope 
+variable is only visible whitin the expression specified as third 
+parameter. 

@@ -1,0 +1,469 @@
+% -*- coding: utf-8 -*-
+\documentclass[a4paper,10pt]{article}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{hyperref}
+\usepackage{makeidx}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{pslatex}
+\usepackage[utf8]{inputenc} 
+\usepackage{xspace}
+\usepackage{bnf}
+
+% variable definition
+%%%%%%%%
+\newcommand{\aadl} {\textsc{AADL}}
+\newcommand{\real}{\textsc{REAL}}
+\newcommand{\ocarina}{\textsc{Ocarina}}
+
+
+\input {real_definition}
+\input {aadl_definition}
+
+%opening
+
+\title{
+  \textbf{REAL : Requirement Enforcement Analysis Language}
+}
+
+\author{Olivier GILLES}
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\section {About This Document}
+
+This document aims to present \real{}, a language for requierements
+expression on architectural language.
+
+\subsection {What This Guide Contains}
+
+This document contains the following sections:
+\begin {itemize}
+
+\item section~\ref{Intro} provides a brief description of the issues 
+that \real{} aims to address and compare it to existing works on 
+related subjects;
+
+\item section~\ref{aadl_descr} provides a bried description of the 
+architectural language \aadl{} and the tool that we use in order to 
+manipulate it, \ocarina{};
+
+\item section~\ref{language_description} provides a proposition of 
+language in order to describes thoses verifications;
+
+\item section~\ref {examples} describes some examples of hardware 
+verification;
+
+\item section~\ref {predefined} describes more precisely the 
+predefined functions and sets.
+\end {itemize}
+
+
+\section{Motivations}
+\label {Intro}
+
+In this section, we present the place of non-functional requirements
+definition within the software development process and then the works
+related to non-functional requirement definition and verification.
+
+\subsection {Introduction}
+
+Distributed Real-time and Embedded (DRE) systems must enforce
+constraints of both the real-time and embedded domains. They need to
+comply with specific requirements: strict determinism, low resource
+consumption and reliability.
+
+Designing DRE systems is a complex and thus expensive task, which
+requires highly specialized manpower. Some methodologies have been
+developed in order to reduce DRE development costs, amongst them,
+model-driven design (MDD) coupled with code generation appear to be
+one of the most promising in reducing the development cost and
+increasing reliability.
+
+DRE systems must enforce a large set of non-functional requirements
+that come from their versatile nature. A real-time application needs
+strong timing guarantees; a distributed one must not break those
+guaranties. An embedded application also needs to check resource
+usage. Hence, enforcement of non-functional requirements is required
+to assess DRE system consistency. Yet, the complexity of expression 
+of these constraints is directly proportional to the level of
+restrictiveness of the non-functional requirements.
+
+Therefore, one need an efficient way to express these requirements on
+the model prior to evaluating them. One need also to make sure there
+is no divergence between the model and the requirements put on this
+model.
+
+In this document, we present a solution to these two problems for
+AADL-centric processes, using a Domain Specific Language. This DSL
+checks non-functional constraints at model level, ensuring that the
+model is ready for further analysis (e.g. schedulability) or code
+generation for constrained run-times.
+
+\subsection{Software development process}
+
+The software development process maps requirements onto high-level,
+low-level and code-source level descriptions. At each level,
+functional and non-functional requirements must be refined, faithfully
+translated to the actual system description, and also preserved. Some
+of them can be also checked at each stages.
+
+Architecture Description Languages (ADLs)~\cite{medvidovic97framework}
+aim at describing the system architecture. An ADL-based development
+process consists of modeling the application, analyzing it and then
+generating source code. ADL toolsuites can also provide support for
+describing system requirements for further validation and
+verification. Some examples of such approach are STOOD~\cite{stood},
+OSATE~\cite{osate} and TOPCASED~\cite{topcased}.
+
+DRE systems have complex non-functional requirements. While some of
+them are generic (and solved using well-known design patterns, e.g.
+concurrency~\cite{douglass2002real-time-desig}), most of them are
+highly application-dependent. Hence, it is necessary to have a
+language which can express application requirements. ADLs can document
+low-level architectures, but not constraints on them. Therefore,
+defining a language as a Domain Specific extension of an ADL would
+enable one to describe both software architecture and requirements in
+the same model. A checker for this language would validate model
+conformance to these requirements. This would simplify code generation
+from specific ADL patterns.
+
+\subsection{Related work}
+
+Non-functional requirements definition and enforcement can be
+performed by adding constraints to the
+model. UML~\cite{omg2003uml-2.0-superst} and its derivatives
+(MARTE~\cite{omg2007a-uml-profile-f}) are the de jure standards.
+Object Constraint Language~\cite{OCL98} (OCL), is a standard to
+express constraints on UML models. OCL constraints are described over
+the concepts of a meta-model and evaluated over a model which is an
+instance of the meta-model.  OCL requires a generic API to express
+queries, leading to complex expressions for assessing details of a
+model. This indirection to a higher level of abstraction increases the
+learning curve.
+
+Approaches exist to map a model onto other formalisms for verification
+purposes, e.g. using algebraic approaches like Z for modeling
+RT-POSIX~\cite{f06}; or model checking techniques for verifying
+RT-CORBA middleware using the Bogor model checker~\cite{bogor}. Yet,
+this introduces a new modeling space to master, especially for domain
+engineers. One need to automate the mapping between these two
+spaces. Besides, it could introduce inconsistencies in the process
+when one model is updated, but not the other. This could lead to
+inadequate or incomplete models. Therefore, one need to add
+requirements directly on the model to ensure analysis techniques are
+still applicable, and that the requirements apply to an up-to-date model.
+
+Therefore, we propose a DSL mapped to the concept of meta-model, while
+being simple enough to reduce risk of inconsistency and learning
+time. Using mathematical notations from set theory would make this
+language easier to manipulate. In this paper, we present a solution
+and its implementation on top of the \aadl{}. \aadl{} already has
+supporting tool for schedulability analysis, code
+generation. Complementing it with a DSL for specifying constraints
+would ensure \aadl{} models are ready for being processed by such
+tools in a transparent way.
+
+\section{Short overview of \aadl{} and \ocarina{}}
+\label{aadl_descr}
+
+\aadl{} (\textit{Architecture Analysis and Description
+  Language})~\cite{aadl-v1.0} aims at describing DRE systems by
+assembling components. \aadl{} allows for the description of both
+software and hardware parts of a system. It focuses on the definition
+of interfaces, and separates the implementations from these
+interfaces.
+
+An \aadl{} description is made of \emph{components}.  The \aadl{}
+standard defines software components (\texttt{data}, \texttt{thread},
+\texttt{thread group}, \texttt{subprogram}, \texttt{process}) and
+execution platform components (\texttt{memory}, \texttt{bus},
+\texttt{processor}, \texttt{device}) and hybrid components
+(\texttt{system}). Components describe well identified elements of the
+actual architecture. \emph{Subprograms} model procedures as in C or
+Ada. \emph{Threads} model the active part of an application (such as
+POSIX threads). \aadl{} threads may have multiple operational
+modes. Each mode may describe a different behaviour and property
+values for the thread. \emph{Processes} are memory spaces that contain
+the \emph{threads}. \emph{Processors} model micro-processors and a
+minimal operating system (mainly a scheduler). \emph{Memories} model
+hard disks, RAMs, \emph{buses} model all kinds of networks, wires,
+\emph{devices} model sensors, etc.
+
+An \aadl{} model also describe non-functional facets: embedded
+or real-time characteristics of the components (execution time, memory
+footprint\ldots), behavioral descriptions, etc. Description can be
+extended either through new property sets, or through annexes. Annexes
+are extensions to the core language. A complete introduction to the
+\aadl{} can be found in~\cite{feiler06aadl}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[height=6cm]{figs/figure-aadl-v4.eps}
+\caption{Sample \aadl{} model}
+\label {case_study}
+\end{figure}
+
+Figure~\ref{case_study} is a sample \aadl{} model.  It models two
+threads: one periodic and one aperiodic that interact to read and update
+a shared variable. Both threads are subcomponent of a process,
+bound to a processor and memory.
+
+We have developed the \ocarina{}~\cite{enst06ocarina} toolsuite to
+manipulate \aadl{} models. \ocarina{} proposes \aadl{} model manipulation
+based on a compiler-like API. ``Back-end'' modules can generate
+formal models, perform scheduling analysis and generate
+distributed high-integrity applications in Ada.
+
+Generated code relies on the PolyORB-HI~\cite{HZP06} middleware to
+ensure communications and task allocation. PolyORB-HI ensures that a
+minimal and reliable middleware is generated for a given distributed
+application.
+
+\aadl{} is a complete ADL that describes in -depth the architecture of
+a system. It allows for layered design through component
+refinement. Besides, the designer can express all is non-functional
+requirements.  We now detail how we enriched \aadl{} with a DSL to
+check non-functional properties at model level.
+
+\section {REAL basic constructs}
+\label  {language_description}
+
+\real{}\footnote {REAL sources and documentation can be accessed 
+from http://aadl.enst.fr/ocarina/real.html} (Requirement Enforcement 
+Analysis Language) aims at checking adequacy between different parts 
+of architectural descriptions, with emphasis on conciseness and 
+simplicity. In this section, we describe the main features of this 
+language.
+
+\real{} is based on set theory. It allows one to build sets whose
+elements are \aadl{} entities (connections, components or subprogram
+calls). Verification can then be performed on either a set or its
+elements by stating Boolean expressions. The basic unit of \real{} is
+a \textit{theorem}. A theorem is made of 3 parts :
+\begin {itemize}
+\item range definition;
+\item destination set building;
+\item verification expressions. 
+\end {itemize}
+In the following subsections, we review each of them.
+
+\subsection{Range definition}
+
+The \textit{range definition} selects the class of component instances
+on which the verification must be done. All following declarations
+(either set building or verification expressions) are performed for
+each element of the range set. An element of the range set is a
+\textit{range variable}.
+
+\lstset{language=aadl}
+\lstinputlisting[caption=\aadl{} threads, label=aadl_example_data]
+                {sources2/data.aadl}
+
+Listing~\ref{aadl_example_data} is an excerpt of the \aadl{} model in
+figure~\ref{case_study}.  In this example, let us assume that a range
+set is declared as being formed of the predefined thread set.
+
+\lstset{language=real}
+\lstinputlisting[caption=Thread periodicity, label=thread_decl]
+                {sources2/range_set.real}
+
+In this case (listing~\ref{thread_decl}), the range
+variable \textit{e} would be successively valued as
+the first thread (\textit{Receiver}) in the first
+evaluation iteration, then to the second one
+(\textit{Watcher}).
+
+\subsection{Destination set building}
+\label{set_building}
+
+\textit{Destination set building} defines sets that can refer to
+previously-defined ones. Additionally, they can refer to predefined
+sets (canonical one, e.g. all processors in a model). Their elements
+can be declared to be compliant to certain properties. These definitions
+(or \textit{relations}) are defined this way: \texttt{S
+  $:=$ {x in E | f (x)}}, where the character '\texttt{|}' is an 
+abbreviation for \texttt{such as}. In \real{}, it means that the 
+destination set will be formed by all elements of the set \texttt{E}
+which verify the expression \texttt{f(x)} (which is an application 
+from the set E to the boolean).
+
+This means that \texttt{S} holds all the elements of the set
+\textit{E} that comply with the relation \textit{f}. Hence, set
+building is done by giving its first-order logic definition.
+
+\lstset{language=aadl}
+\lstinputlisting[caption=\aadl{} protected data,
+  label=aadl_example_data_def]
+                {sources2/data_def.aadl}
+
+Let us suppose we want to build the set of concurrency-safe data
+(i.e. for which the \aadl{} property
+\textit{Concurrency\_Control\_Protocol} is set
+(listing~\ref{aadl_example_data_def})). The set of concurrency-safe
+data components is~:
+
+\lstset{language=real}
+\lstinputlisting[caption=access-protected set building]
+                {sources2/set_building.real}
+\label{set_building_real}
+
+Note that the expression that each element must complies to (ie. 
+the \textit{selection expression}) is build in the same way as the
+\textit{verification expression}, but actually uses \textit{relations}
+in addition to regular function. Explanation about relation usage can 
+be found in~\ref{relation_def}.
+
+\subsection{Verification expression}
+
+\textit{Verification expressions} check properties on sets,
+according to the range variable. If it refers to the range
+variable, or if it refers to any set that refers to the the range
+variable, it will be evaluated for each element of the range set.
+
+For listing~\ref{aadl_example_data}, one might want to check whether
+all threads are periodic. Using the check in listing~\ref{period}, the
+evaluation will fail on the first element \textit{e} (the
+\textit{Receiver} thread), but would have been successful on the
+second one (the \textit{Watcher} thread).
+
+\lstset{language=real} \lstinputlisting[caption=Thread periodicity,
+  label=period] {sources2/evaluation.real}
+
+An alternative to \textit{verification expression} is \textit{return 
+expression}. It is basically build with the same rules, but the 
+top-level expression type after resolution must be real instead of 
+boolean. A complete description of both expression building rules
+can be found in~\ref{expression_def}.
+
+\section {REAL features}
+
+\subsection {theorems}
+
+\input {theorems}
+
+\subsection {Sets}
+
+\input {sets}
+
+\subsection {Types}
+\label {types}
+
+\input {types}
+
+\subsection {Variables}
+
+\input {variables}
+
+\subsection {Expressions}
+
+%FIXME
+\input {expressions}
+
+\subsection {Keywords}
+%FIXME : update
+\input {keywords}
+
+
+%% \subsection {Verification declaration}
+
+%% \paragraph{} 
+%% \begin {itemize}
+%% \item Check range definition
+%% \item Destination set building
+%% \item Verification on the final set
+%% \end {itemize}
+
+%% \subsubsection {Check range definition}
+%% \label {range}
+%% \paragraph{}
+%% \textit{Range definition} aims to define on which instances the 
+%% following verifications must be done. Practically, it's the 
+%% template for a loop on the elements of a set.
+
+%% \paragraph{}
+%% syntax :
+%% \textbf{foreach} e [\textbf{in} \textit{Set\_Expression}]
+
+%% \subsubsection {Destination set building}
+
+%% \paragraph{}
+%% This part can be performed in multiples steps.
+%% A first step is to build a buffer sets related to the variable 
+%% bound in the previous part (range definition). The whole 
+%% declaration is to be put within barces.
+
+%% \paragraph{}
+%% First, the set must be defined, which is done in two parts : 
+%% \begin {itemize}
+%% \item declaring the new set as being a subset of a 
+%% already-defined set;
+%% \item defining the new set (with the \textbf{|} 
+%% keyword) by a boolean expression that all elements
+%% must comply to.
+%% \end {itemize}
+%% Note that this expression should reference the range variable
+%% in order to keep consistancy with set declaration.
+
+%% \paragraph{}
+%% syntax :\\
+%% $X_0 (e)$ := \{x \textbf{in} $S_i$ \textbf{|} $f_i$ (e, x)\}
+
+%% \paragraph{}
+%% Then, anothers buffer sets can be build according to 
+%% previously-defined buffer sets. In this case, the relation can 
+%% be either defined for two elements or for a set and an element.
+
+%% syntax :\\
+%% $X_{j}$ := \{y \textbf{in} $S_k$, x \textbf{in} $X_j$ \textbf{|} $f_j$ (y, x) \}\\
+%% or more simply :\\
+%% $X_{j}$ := \{y \textbf{in} $S_k$, x \textbf{in} $X_j$ \textbf{|} $f_j$ ($X_0$, x) \}\\
+
+%% \subsubsection {Verification on the final set}
+%% \label {verif}
+%% \paragraph{}
+%% The final verification can reference to any 
+%% previously-defined set or to the range variable.
+
+%% \paragraph{}
+%% Pre-defined functions can be called on either a set or the 
+%% bound variable. In every case, the verification expression 
+%% must be a boolean expression.
+
+%% \paragraph{}
+%% syntax :\\
+%% \textbf {check} ($P_i (e)$ \textit{comparison\_operator} $P_j (A\_Set)$);\\
+%% where \textit {comparison\_operator} is a boolean binary 
+%% operator.
+
+\section {Pre-defined sets and functions}
+\label {predefined}
+\input {predefined}
+
+\section {Verification examples}
+
+\label {examples}
+
+\input {examples}
+
+%% \section {AADL and resources management}
+%% \input {aadl_resources}
+
+\section {REAL BNF}
+\input {real_bnf}
+
+\section {Conclusion}
+\input {conclusion}
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}

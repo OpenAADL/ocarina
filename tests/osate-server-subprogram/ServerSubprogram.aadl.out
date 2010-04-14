@@ -1,0 +1,2 @@
+ServerSubprogram.aadl:22:05: ss3 (subprogram spec) points to ss (subprogram spec), which is not of an adequate kind
+Cannot analyze AADL specifications

@@ -1,0 +1,34 @@
+--  Behaviour Annex 2.9 example (6)
+--  Annex X.8 Behavior Expression Language
+
+package stack
+private
+  with Base_Types;
+ 
+  data implementation stack.default
+   subcomponents
+    elems : data Base_types::integer [params::tab_size];
+    sp : data Base_types::integer;
+  end stack.default;
+  
+  subprogram implementation push.default
+   annex behavior_specification {**
+    states
+     s0 : initial final state;
+    transitions
+     s0 -[ sp <= params::tab_size ]-> s0 { elems[sp]:=v ; sp:=sp+1 };
+     s0 -[ sp > params::tab_size ]-> s0 { overflow! };
+   **};
+  end push.default;
+  
+  subprogram implementation pop.default
+   annex behavior_specification {**
+    states
+     s0 : initial final state;
+    transitions
+     s0 -[ sp > 0 ]-> s0 { sp := sp – 1; v := elems[sp] };
+     s0 -[ sp = 0 ]-> s0 { underflow! };
+   **};
+  end pop.default;
+  
+end stack;

@@ -1,0 +1,28 @@
+-- test 5.4 Threads draft-01192009
+
+-- add for test
+package Test
+public 
+-- end add
+
+thread Prime_Reporter
+features
+Received_Prime : in event data port Integer_Type;
+properties
+Dispatch_Protocol => Timed;
+end Prime_Reporter;
+thread Prime_Reporter_One extends Prime_Reporter
+features
+Received_Prime : refined to in event data port Integer_Type
+{Compute_Entrypoint => "Primes.On_Received_Prime_One";};
+-- function called on message-based dispatch
+properties
+Period => 9 Sec; -- timeout period
+Priority => 45;
+Compute_Entrypoint => "Primes.Report_One";
+-- function called in case of timeout
+end Prime_Reporter_One;
+
+-- add for test
+end Test;
+-- end add

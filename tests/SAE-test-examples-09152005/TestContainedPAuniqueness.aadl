@@ -1,0 +1,50 @@
+property set PS is 
+  p: list of aadlinteger => (0) applies to (all);
+end PS;
+
+package Test
+  public
+    system S
+    end S;
+    
+    system T
+    end T;
+    
+    system implementation T.I
+      subcomponents
+        subS: system S ;
+        sub2: system S ;
+    end T.I;
+    
+    system U
+    end U;
+    
+    system implementation U.I
+      subcomponents 
+        subT: system T.I {
+        	PS::P => 3 applies to subS;
+        	-- NOT: redundant
+        	PS::p +=> 101;
+        };
+        subT2: system T.I {
+        	PS::P => 3 applies to subS;
+        	-- bad: redundant
+        	PS::P => 4 applies to subS;
+        };
+        subT3: system T.I {
+        	PS::P => 5 applies to subS in modes (m1);
+        	-- not redundant, different modes
+        	PS::P => 6 applies to subS in modes (m2);
+        	-- not redundant, differnt subcomponent
+        	pS::P => 7 applies to sub2;
+        };
+        subT4: system T.I {
+        	PS::P => 5 applies to subS in modes (m1);
+        	-- bad: overlapping modes
+        	PS::P => 6 applies to subS in modes (m2, m1);
+        };
+      modes
+        m1: initial mode;
+        m2: mode;
+    end U.I;
+end Test;

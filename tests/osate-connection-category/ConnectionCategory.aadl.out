@@ -1,0 +1,2 @@
+ConnectionCategory.aadl:20:30: b.tub (entity reference)  points to tub (port spec) , which is not of a proper type
+Cannot analyze AADL specifications

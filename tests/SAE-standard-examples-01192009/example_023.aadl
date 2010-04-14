@@ -1,0 +1,27 @@
+-- test 9.2.3 Connection Patterns for Component Arrays and
+-- Feature Arrays draft-01192009
+
+-- add for test
+package Test
+public
+--end add
+
+-- The first sensor array in Figure 15
+device sensor
+features
+Incoming: in event data port;
+Outgoing: out event data port;
+end sensor;
+system sensornet
+end sensornet;
+system implementation sensornet.impl
+subcomponents
+sensorarray: device sensor [10][10];
+connections
+rows: port sensorarray.outgoing -> sensorarray.incooming
+{ Connection_Pattern => ((One_To_One, Next));};
+end sensornet.impl;
+
+-- add for test
+end Test;
+-- end add

@@ -1,0 +1,17 @@
+TestAppliesToClassifier.aadl:13:09: PS::prop1 cannot apply to D
+TestAppliesToClassifier.aadl:15:09: PS::prop2 cannot apply to D
+TestAppliesToClassifier.aadl:17:09: PS::prop3 cannot apply to D
+TestAppliesToClassifier.aadl:26:09: PS::prop2 cannot apply to S
+TestAppliesToClassifier.aadl:37:09: PS::prop2 cannot apply to S2
+TestAppliesToClassifier.aadl:46:09: PS::prop1 cannot apply to T
+TestAppliesToClassifier.aadl:48:09: PS::prop2 cannot apply to T
+TestAppliesToClassifier.aadl:59:10: PS::prop1 cannot apply to Foo
+TestAppliesToClassifier.aadl:61:10: PS::prop2 cannot apply to Foo
+TestAppliesToClassifier.aadl:70:10: PS::prop2 cannot apply to Bar
+TestAppliesToClassifier.aadl:113:09: PS::prop1 cannot apply to S
+TestAppliesToClassifier.aadl:115:09: PS::prop2 cannot apply to S
+TestAppliesToClassifier.aadl:123:09: PS::prop1 cannot apply to T
+TestAppliesToClassifier.aadl:125:09: PS::prop2 cannot apply to T
+TestAppliesToClassifier.aadl:133:09: PS::prop1 cannot apply to S.I
+TestAppliesToClassifier.aadl:135:09: PS::prop2 cannot apply to S.I
+Cannot analyze AADL specifications

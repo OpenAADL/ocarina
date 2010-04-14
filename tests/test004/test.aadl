@@ -1,0 +1,29 @@
+package Pack2
+public
+  subprogram Subprog1
+  end Subprog1;
+
+  subprogram implementation Subprog1.Impl2
+  end Subprog1.Impl2;
+end Pack2;
+
+data Bool_Type
+end Bool_Type;
+
+thread DriverModeLogic extends DriverBase
+  features
+    BreakPedalPressed : out data port Bool_Type;
+    ClutchPedalPressed : in data port Bool_Type;
+    Activate : in data port Bool_Type;
+    Cancel : in data port Bool_Type;
+    OnNotOff : in data port Bool_Type;
+    CruiseActive : out data port Bool_Type;
+    toto: refined to server subprogram Pack2::Subprog1.Impl2;
+  flows
+    tata: flow path Activate -> CruiseActive;
+end DriverModeLogic;
+
+thread driverbase
+features
+  toto : server subprogram Pack2::Subprog1.Impl2;
+end driverbase;

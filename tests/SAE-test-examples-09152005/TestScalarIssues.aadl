@@ -1,0 +1,43 @@
+property set PS is
+  scalar1: aadlinteger applies to (all);
+  scalar2: aadlinteger applies to (all);
+  scalar3: aadlinteger applies to (all);
+  scalar4: aadlinteger applies to (all);
+  scalar5: aadlinteger applies to (all);
+  scalar6: aadlinteger applies to (all);
+  multi1: list of aadlinteger applies to (all);
+  multi2: list of aadlinteger applies to (all);
+  multi3: list of aadlinteger applies to (all);
+  multi4: list of aadlinteger applies to (all);
+  multi5: list of aadlinteger applies to (all);
+  multi6: list of aadlinteger applies to (all);
+end PS;
+
+system S
+  properties
+    -- good
+    PS::scalar1 => 0;
+    -- bad
+    PS::scalar2 => ();
+    -- bad
+    PS::scalar3 => (0, 1);
+    -- bad
+    PS::scalar4 +=> 4;
+    -- bad
+    PS::scalar5 +=> ();
+    -- bad
+    PS::scalar6 +=> (0, 1);
+    
+    -- good
+    PS::multi1 => 0;
+    -- good
+    PS::multi2 => ();
+    -- good
+    PS::multi3 => (0, 1);
+    -- good
+    PS::multi4 +=> 4;
+    -- good
+    PS::multi5 +=> ();
+    -- good
+    PS::multi6 +=> (0, 1);
+end S;

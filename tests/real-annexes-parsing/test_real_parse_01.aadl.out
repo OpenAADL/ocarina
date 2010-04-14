@@ -1,0 +1,145 @@
+
+
+
+
+
+
+
+property set Deployment is
+  Allowed_Transport_APIs : type enumeration (BSD_Sockets, SpaceWire);
+
+  Transport_API : Deployment::Allowed_Transport_APIs
+    applies to (bus);
+
+  Location : aadlstring
+    applies to (processor, device);
+
+  Port_Number : aadlinteger
+    applies to (process, device);
+
+  Process_ID : aadlinteger
+    applies to (process);
+
+  Channel_Address : aadlinteger
+    applies to (process);
+
+  Protocol_Type : type enumeration (iiop, diop);
+
+  Protocol : Deployment::Protocol_Type
+    applies to (system);
+
+  Allowed_Execution_Platform : type enumeration (Native, LEON_RTEMS, LEON_ORK, LEON_GNAT, ERC32_ORK, ARM_DSLINUX, ARM_N770, MARTE_OS);
+
+  Execution_Platform : Deployment::Allowed_Execution_Platform
+    applies to (processor);
+
+  Priority_Type : type aadlinteger 0 .. 255;
+
+  Priority : Deployment::Priority_Type
+    applies to (data, thread);
+
+end Deployment;
+
+package RMAAadl
+public
+  with Deployment;
+
+  subprogram Hello_Spg_1
+  properties
+    source_language => Ada95;
+    source_name => "Hello.Hello_Spg_1";
+
+  end Hello_Spg_1;
+
+  subprogram Hello_Spg_2
+  properties
+    source_language => Ada95;
+    source_name => "Hello.Hello_Spg_2";
+
+  end Hello_Spg_2;
+
+  thread Task
+  end Task;
+
+  thread implementation Task.impl_1
+  calls
+    MyCalls :
+    {P_Spg : subprogram Hello_Spg_1;}
+;
+
+  properties
+    Dispatch_Protocol => periodic;
+    Period => 1000 ms;
+    Compute_Execution_time => 0 ms .. 3 ms;
+    Deadline => 1000 ms;
+    Source_Stack_Size => 13952 Bytes;
+
+  end Task.impl_1;
+
+  thread implementation Task.impl_2
+  calls
+    MyCall :
+    {P_Spg : subprogram Hello_Spg_2;}
+;
+
+  properties
+    Dispatch_Protocol => periodic;
+    Period => 500 ms;
+    Compute_Execution_time => 0 ms .. 3 ms;
+    Deadline => 500 ms;
+    Source_Stack_Size => 13952 Bytes;
+
+  end Task.impl_2;
+
+  processor cpurm
+  properties
+    Deployment::Execution_Platform => ERC32_ORK;
+
+  end cpurm;
+
+  processor implementation cpurm.impl
+  properties
+    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+
+  end cpurm.impl;
+
+  process node_a
+  end node_a;
+
+  process implementation node_a.impl
+  subcomponents
+    Task1 : thread Task.impl_1;
+    Task2 : thread Task.impl_2;
+
+    annex real_specification {**
+
+--  integer_and_binaries_operators
+
+theorem integer_and_binaries_operators
+foreach e in processor_set do
+
+check (((((2 ** 2) = 4) and
+((2 + 4) = (2 * 3))) or
+((2 - 1) >= (4 / 2))));
+end integer_and_binaries_operators;
+
+
+    **};
+  end node_a.impl;
+
+  system rma
+  end rma;
+
+  system implementation rma.ERC32
+  subcomponents
+    node_a : process node_a.impl;
+    cpu_rm : processor cpurm.impl;
+
+  properties
+    Actual_Processor_Binding => (reference ( cpu_rm ))
+      applies to node_a;
+
+  end rma.ERC32;
+
+end RMAAadl;
+

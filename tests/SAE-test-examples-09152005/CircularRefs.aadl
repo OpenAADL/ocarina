@@ -1,0 +1,20 @@
+property set PS is
+  prop1: aadlinteger applies to (all);
+  prop2: aadlinteger applies to (all);
+end PS;
+
+package Test 
+  public
+    system S
+      properties
+        -- defer
+        PS::prop1 => value(PS::prop2);
+    end S;
+    
+    system T extends S
+      properties
+        -- BAD: causes cycle!
+        -- get from parent
+        PS::prop2 => value(PS::prop1);
+    end T;
+end Test;

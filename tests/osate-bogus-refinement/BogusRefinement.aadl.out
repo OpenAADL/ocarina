@@ -1,0 +1,3 @@
+BogusRefinement.aadl:4:08: parsing Feature, refinement is not allowed
+BogusRefinement.aadl:2:03: parsing Features, list is empty
+Cannot parse AADL specifications

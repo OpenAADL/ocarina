@@ -1,0 +1,30 @@
+system s
+  features
+    src2: port group pg2 ;
+end s;
+
+system t
+  features
+    tub2: port group pg1 ;
+end t;
+
+system u
+end u;
+
+system implementation u.i
+  subcomponents
+    a: system s;
+    b: system t;
+  connections
+    con4: port group a.src2 -> b.tub2;
+end u.i;
+
+port group pg1
+  features
+    xx: in data port ;
+    yy: out data port ;
+end pg1;
+
+port group pg2 inverse of pg1
+end pg2;
+

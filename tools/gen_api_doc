@@ -1,0 +1,32 @@
+# !/bin/sh
+
+# This scripts generates documentation of several ocarina
+# components. This scripts needs the absolute top source build
+# directories which are passed to it via the environment variables
+# ABS_TOP_SRCDIR. We prefer this mean rather than generating this
+# script by configure due to time stamps issues (this script must be
+# older that any file in the doc directory) to avoid rebuilding the
+# doc at the client-side.
+
+if test x"${ABS_TOP_SRCDIR}" = x"" -o x"${ABS_TOP_BUILDDIR}" = x""; then
+    echo "You must define the ABS_TOP_SRCDIR variable"
+fi
+
+script_dir=`dirname $0`
+
+gendoc="${ABS_TOP_BUILDDIR}/tools/gendoc.py"
+
+# Generate doc for Ocarina Builder
+
+${gendoc} . ${ABS_TOP_SRCDIR}/src/core/model/ocarina-builder*.ads
+${gendoc} . ${ABS_TOP_SRCDIR}/src/core/model/ocarina-analyzer-aadl-finder*.ads
+
+# Generate doc for Ocarina entities
+
+${gendoc} . ${ABS_TOP_SRCDIR}/src/core/tree/ocarina-me_aadl-aadl_tree-entities*.ads
+
+# Generate doc for Ocarina queries
+
+${gendoc} . ${ABS_TOP_SRCDIR}/src/core/model/ocarina-analyzer-aadl-queries*.ads
+
+

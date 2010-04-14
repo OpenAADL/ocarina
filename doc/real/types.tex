@@ -1,0 +1,49 @@
+
+\paragraph{}
+REAL supports two main kind of data :
+\begin {itemize}
+\item sets
+\item elements
+\end {itemize}
+Sets and elements may be typed, in order to reduce 
+errors. 
+
+\subsubsection {Elements}
+\paragraph{}
+An element ``T\_Generic'' , or within the list of 
+types supported :
+\begin {itemize}
+\item T\_Data
+\item T\_Subprogram
+\item T\_Subprogram\_Call
+\item T\_Sequence\_Call
+\item T\_Thread
+\item T\_Threadgroup
+\item T\_Process
+\item T\_Memory
+\item T\_Processor
+\item T\_Bus
+\item T\_Connection
+\item T\_Device
+\item T\_End\_To\_End\_Flow
+\item T\_System
+\end {itemize}
+All types corresponding to an existing AADL instance type.
+
+\paragraph{}
+An element typed as T\_Generic does not lose its original 
+type, but is still considered as T\_Generic as far as 
+comparisons are needed.
+
+\subsubsection {Sets}
+\paragraph{}
+A set type is the type of the elements it can have. Any 
+attempt to add an element of different type would lead 
+to an error return.
+
+\paragraph{}
+The T\_Generic type can replace any type, which means 
+that a set typed as T\_Generic can contain any type 
+of elements. An element extracted from a T\_Generic set
+will be considered as T\_Generic, no matter what is its
+actual AADL type.

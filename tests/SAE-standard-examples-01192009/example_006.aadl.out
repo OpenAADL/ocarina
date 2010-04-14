@@ -1,0 +1,3 @@
+example_006.aadl:17:01: exhaustoutput (subcomponent access) does not point to anything or to something unreachable
+example_006.aadl:21:01: exhaustManifold (subcomponent access) does not point to anything or to something unreachable
+Cannot analyze AADL specifications

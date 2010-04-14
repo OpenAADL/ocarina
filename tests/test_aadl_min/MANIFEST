@@ -1,0 +1,4 @@
+OCARINA_FLAGS=-g aadl_min -r flight_system.generic
+Cmd0: ocarina -g aadl_min -r flight_system.generic fcs.aadl
+Output0: fcs.aadl.out
+Success0: yes

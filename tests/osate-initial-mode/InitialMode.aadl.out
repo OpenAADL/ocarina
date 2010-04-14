@@ -1,0 +1,5 @@
+InitialMode.aadl:5:01: s.i (component implementation)  has no initial mode
+InitialMode.aadl:29:01: s.b (component implementation)  has no initial mode
+InitialMode.aadl:38:05: initial mode conflicts with another one at InitialMode.aadl:37:05
+InitialMode.aadl:44:05: initial mode conflicts with another one at InitialMode.aadl:14:05
+Cannot analyze AADL specifications

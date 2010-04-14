@@ -1,0 +1,74 @@
+Format :
+* tag login date priority
+
+Tags :
+* CORE, FE-AADL, BE-ADA, BE-C, BE-HI, BE-QoS, ENV, TRANSFO
+
+Priority :
+	  1-2 (nice to have)
+	  3-4 (needed)
+	  5   (default)
+	  6-7 (these)
+	  8-9 (projects)
+
+[FE-AADL] lasnier 080804
+Analyze Unit_Identifier in Units_Type declaration
+
+[FE-AADL] lasnier 080710
+Disable properly unamed namespace conform to AADL_V2
+
+[FE-AADL] lasnier 080701
+Add Legality Rules AADL_V2
+
+[FE-AADL] lasnier 080701
+Add Naming and Consistency Rules AADL_V2
+
+[FE-AADL] lasnier 080701
+Add Semantics Rules AADL_V2
+
+[ENV] hugues 080701
+Make Ocarina pass all tests in the testsuite
+
+[CORE] pautet 080701
+Encapsulate function Set_Kind in Ocarina.Nodes
+
+[FE-AADL] pautet 080701
+Make ocarina detect a name conflict when defining types such as:
+
+ Elec_Units : type units (
+   mV,
+   V  => mV * 1000,
+   kV => V* 1000,
+   MV => kV *1000); -- MV conflict with mv because AADL is case-UNsensitive
+
+[BE-HI-ADA] hugues 080701
+Support modes for thread compute entrypoints
+
+[BE-HI-ADA] hugues 080701
+Support *non* protected data objects with subprogram features (which
+are mapped to a generic package and not to a protected type).
+
+[BE-HI-ADA] hugues 080701
+Support more than one data access per component
+
+[FE-AADL] lasnier 080701
+Check unit type compatibility (integer vs real)
+
+[CORE] gilles 080809 1
+Add error messages that allows multiples locations references.
+
+[FE-AADL] delange 081015
+Test test036 must fail
+
+[FE-AADL, BE-*] zalila 081022
+Raise an error when querying a non standard/predeclared property and
+the underlying property set has not been parsed
+
+[TRANSFO] gilles 081103
+Manage wrapper in input models
+
+[FE-AADL] delange 081103
+Properties on access must be considered.
+
+[BE-*] gilles 081119
+Support subprogram access

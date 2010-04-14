@@ -1,0 +1,81 @@
+-- Tests for looking up property values of flow sequences.
+-- Meant to be exhaustive for the cases involving flow sequences.
+
+property set MyProperties is
+  -- Property with a default value
+  prop1: aadlstring => "default" applies to (flow);
+  prop2: inherit aadlstring applies to (flow, system);
+  prop3: inherit aadlstring applies to (flow, system);
+end MyProperties;
+
+package TestFlowSequence
+  public
+    system Outer
+      features
+        input: in data port ;
+        output1: out data port ;
+        output2: out data port ;
+      flows
+        InOut: flow path input -> output1;
+        InOnly: flow sink input;
+        OutOnly: flow source output2;
+      properties
+        MyProperties::prop3 => "from container's type";
+    end Outer;
+
+    system Inner
+      features
+        in1: in data port ;
+        in2: in data port ;
+        out1: out data port ;
+        out2: out data port ;
+      flows
+        PassThru: flow path in1 -> out1;
+        aSink: flow sink in2;
+        aSource: flow source out2;
+    end Inner;
+
+    system Inner2
+      features
+        dataIn: in data port ;
+        dataOut: out data port ;
+      flows
+        Tunnel: flow path dataIn -> dataOut;
+    end Inner2;
+
+    system implementation Outer.Impl
+      subcomponents
+        S: system Inner;
+        T: system Inner2;
+      connections
+        c1: data port input -> S.in1;
+        c2: data port input -> S.in2;
+        c3: data port S.out1 -> T.dataIn;
+        c4: data port S.out2 -> output2;
+        c5: data port T.dataOut -> output1;
+      flows
+        -- Should have prop1 => "locally set", prop2 => "from container", prop3 => "from container's type"
+        InOut:
+          flow path
+            input -> c1 -> S.PassThru -> c3 -> T.Tunnel -> c5 -> output1
+            { MyProperties::prop1 => "locally set"; };
+        -- Should have prop1 => "default", prop2 => "from container", prop3 => "from container's type"
+        InOnly: flow sink input-> c2 -> S.aSink;
+        -- Should have prop1 => "default", prop2 => "locally set", prop3 => "from container's type"
+        OutOnly: flow source S.aSource -> c4 -> output2
+          { MyProperties::prop2 => "locally set"; };
+      properties
+        MyProperties::prop2 => "from container";
+    end Outer.Impl;
+    
+    system implementation Outer.ImplRefined extends Outer.Impl
+      flows
+        -- Should have prop1 => "locally set", prop2 => "from refinement", prop3 => "from container's type"
+        InOut:
+          refined to flow path 
+            { MyProperties::prop2 => "from refinement"; };
+    end Outer.ImplRefined;
+
+    
+    
+end TestFlowSequence;

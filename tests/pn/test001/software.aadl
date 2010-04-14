@@ -1,0 +1,217 @@
+--  Example initialy trying to manage priorities
+--  It will deadlock because messages can be
+--  destructivly read by either 'receiver' or 'autist' threads.
+
+data message
+properties 
+  ARAO::data_type => integer;
+end message;
+
+--  subprograms
+
+subprogram send_broadcast_msg
+features
+  msg_out : out parameter message;
+properties
+  source_language => Ada95;
+  source_name => "Repository";
+end send_broadcast_msg;
+
+subprogram send_message_1
+features
+  msg_in : in parameter message;
+  msg_out : out parameter message;
+properties
+  source_language => Ada95;
+  source_name => "Repository";
+end send_message_1;
+
+subprogram send_message_2
+features
+  msg_in : in parameter message;
+  msg_out : out parameter message;
+properties
+  source_language => Ada95;
+  source_name => "Repository";
+end send_message_2;
+
+subprogram print_received_msg
+features
+  msg_in : in parameter message;
+properties
+  source_language => Ada95;
+  source_name => "Repository";
+end print_received_msg;
+
+subprogram useless
+features
+  msg_in : in parameter message;
+properties
+  source_language => Ada95;
+  source_name => "Repository";
+end useless;
+
+-- autist thread
+
+thread autist
+features
+  msg_in : in event data port message;
+properties
+  Dispatch_Protocol => Periodic;
+  Period => 1000 Ms;
+end autist;
+
+thread implementation autist.impl
+calls {
+  sp1 : subprogram useless;
+};
+connections
+  parameter msg_in -> sp1.msg_in;
+end autist.impl;
+
+-- receive_replies threads
+
+thread receive_replies
+features
+  msg_in : in event data port message;
+properties
+  Dispatch_Protocol => Aperiodic;
+end receive_replies;
+
+thread implementation receive_replies.impl
+calls {
+  sp1 : subprogram print_received_msg;
+};
+connections
+  parameter msg_in -> sp1.msg_in;
+properties
+  ARAO::Priority => 1;
+end receive_replies.impl;
+
+--  sender threads
+
+thread sender
+features
+  msg_out : out event data port message;
+properties
+  Dispatch_Protocol => Periodic;
+  Period => 1000 Ms;
+end sender;
+
+thread implementation sender.impl
+calls {
+  sp1 : subprogram send_broadcast_msg;
+};
+connections
+  parameter sp1.msg_out -> msg_out;
+properties
+  ARAO::Priority => 1;
+end sender.impl;
+
+--  receiver threads
+
+thread receiver
+features
+  msg_in : in event data port message;
+  msg_out : out event data port message;
+properties
+  Dispatch_Protocol => Aperiodic;
+end receiver;
+
+thread implementation receiver.impl1
+calls {
+  sp1 : subprogram send_message_1;
+};
+connections
+  parameter msg_in -> sp1.msg_in;
+  parameter sp1.msg_out -> msg_out;
+properties
+  ARAO::Priority => 1;
+end receiver.impl1;
+
+thread implementation receiver.impl2
+calls {
+  sp1 : subprogram send_message_2;
+};
+connections
+  parameter msg_in -> sp1.msg_in;
+  parameter sp1.msg_out -> msg_out;
+properties
+  ARAO::Priority => 32;
+end receiver.impl2;
+
+--  receiver processes
+
+process receiver_node
+features
+  msg_in : in event data port message;
+  msg_out : out event data port message;
+end receiver_node;
+
+process implementation receiver_node.impl1
+subcomponents
+  th1 : thread receiver.impl1;
+  th2 :	thread autist.impl;
+connections
+  event data port msg_in -> th1.msg_in;
+  event data port msg_in -> th2.msg_in;
+  event data port th1.msg_out -> msg_out;
+end receiver_node.impl1;
+
+process implementation receiver_node.impl2
+subcomponents
+  th1 : thread receiver.impl2;
+  th2 :	thread autist.impl;
+connections
+  event data port msg_in -> th1.msg_in;
+  event data port msg_in -> th2.msg_in;
+  event data port th1.msg_out -> msg_out;
+end receiver_node.impl2;
+
+--  sender processes
+
+process sender_node
+features
+  msg_in_1 : in event data port message;
+  msg_in_2 : in event data port message;
+  msg_out  : out event data port message;
+end sender_node;
+
+process implementation sender_node.impl
+subcomponents
+  th1 : thread sender.impl;
+  th2 : thread receive_replies.impl;
+connections
+  event data port msg_in_1 -> th2.msg_in;
+  event data port msg_in_2 -> th2.msg_in;
+  event data port th1.msg_out -> msg_out;
+end sender_node.impl;
+
+--  Hardware part
+
+processor a_processor
+properties
+  ARAO::location => "127.0.0.1";
+end a_processor;
+
+--  System Part
+
+system priorities
+end priorities;
+
+system implementation priorities.impl
+subcomponents
+  sn : process sender_node.impl {ARAO::port_number => 3200;};
+  r1 : process receiver_node.impl1 {ARAO::port_number => 4001;};
+  r2 : process receiver_node.impl2 {ARAO::port_number => 4002;};
+  proc_1 : processor a_processor;
+connections
+  event data port r1.msg_out -> sn.msg_in_1;
+  event data port r2.msg_out -> sn.msg_in_2;
+  event data port sn.msg_out -> r1.msg_in;
+  event data port sn.msg_out -> r2.msg_in;
+properties
+  actual_processor_binding => reference proc_1 applies to sn;
+  actual_processor_binding => reference proc_1 applies to r1;
+  actual_processor_binding => reference proc_1 applies to r2;
+end priorities.impl;

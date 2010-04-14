@@ -1,0 +1,46 @@
+subprogram sub1
+  features
+    x: in parameter ;
+    y: out parameter ;
+end sub1;
+
+subprogram sub2
+  features
+    p: in parameter ;
+    q: out parameter ;
+end sub2;
+
+thread t
+  features 
+    a: in data port ;
+    b: out data port ;
+end t;
+
+thread implementation t.i
+  calls {
+  	call1: subprogram sub1 ;
+  	call2: subprogram sub2 ;
+  };
+  
+  connections
+    parameter a -> call2.p;
+    -- bad: call2 comes after call1, cannot give input to  call1
+    parameter call2.q -> call1.x;
+    parameter call1.y -> b;
+end t.i;
+
+thread implementation t.j
+  calls
+    one: {
+    	call1: subprogram sub1 ;
+    };
+    two: {
+    	call2: subprogram sub2 ;
+    };
+  
+  connections
+    parameter a -> call2.p;
+    -- badL call2 and call1 are in different call sequences
+    parameter call2.q -> call1.x;
+    parameter call1.y -> b;
+end t.j;

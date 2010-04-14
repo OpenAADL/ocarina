@@ -1,0 +1,45 @@
+system s
+  features
+    src: out event port ;
+    src2: port group pg1 ;
+end s;
+
+system t
+  features
+    tub: in event port ;
+    tub2: port group pg1 ;
+end t;
+
+system x
+  features
+    i: in event port;
+    o: out event port;
+end x;
+
+system u
+  features
+    output: out event port;
+    input: in event port;
+end u;
+
+system implementation u.i
+  subcomponents
+    a: system s;
+    b: system t;
+    c: system x;
+  connections
+    con1: event port input -> c.i;
+    con3: event port c.o -> output;
+    con2: event port a.src -> b.tub;
+    -- bad: port groups are not inverses
+    con4: port group a.src2 -> b.tub2;
+end u.i;
+
+port group pg1
+  features
+    xx: in data port ;
+end pg1;
+
+port group pg2 inverse of pg1
+end pg2;
+

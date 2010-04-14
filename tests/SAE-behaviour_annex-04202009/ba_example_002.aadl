@@ -1,0 +1,27 @@
+--  Behaviour Annex 2.9 example (2)
+--  Annex X.3 Behavior specification
+
+package Test
+public
+  with Base_types;
+
+  thread speed
+   features
+    tick: in event port { Dequeue_Protocol => AllItems; };
+    sp: out data port Base_types::integer;
+   
+   properties
+    Dispatch_Protocol => periodic;
+    Period            => 1000 Ms;
+  end speed;
+
+  thread implementation speed.i
+   annex behavior_specification {**
+    states
+     s0: initial complete state;
+    transitions
+     s0 -[ ]-> s0 { sp := tick'count };
+   **};
+  end speed.i;
+
+end Test;

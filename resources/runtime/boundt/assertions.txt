@@ -1,0 +1,241 @@
+-- Bound-T assertions for analysing SunSeeker.
+
+-- Skip all Text_IO stuff:
+
+subprogram "output__put_line"
+   time 0 cycles;
+end;
+
+subprogram "system__img_enum__image_enumeration_8"
+   time 0 cycles;
+end;
+
+subprogram "system__string_ops_concat_3__str_concat_3"
+   time 0 cycles;
+end;
+
+subprogram "system__string_ops__str_concat"
+   time 0 cycles;
+end;
+
+subprogram "system__img_llu__set_image_long_long_unsigned__set_digits"
+   time 0 cycles;
+end;
+
+-- Skip PolyORB internal calls (TODO : set realistic times)
+
+subprogram "output__dump"
+   time 0 cycles;
+end;
+
+subprogram "output_low_level__put_line"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__transport_low_level__send"
+   time 0 cycles;
+end;
+
+subprogram "marshallers__single_float_marshallers__marshallX"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__messages__write"
+   time 0 cycles;
+end;
+
+--  Skip kernel calls
+
+subprogram ".udiv"
+   time 0 cycles;
+end;
+
+subprogram "memcpy"
+   time 0 cycles;
+end;
+
+subprogram "context_switch"
+   time 0 cycles;
+end;
+
+subprogram "system__bb__threads__queues__insert_alarm"
+   time 0 cycles;
+end;
+
+subprogram "system__bb__time__execution_time_support__gb_execution_time_adjust"
+   time 0 cycles;
+end;
+
+subprogram "system__bb__time__execution_time_support__timer_execution_time_adjust"
+   time 0 cycles;
+end;
+
+subprogram "system__img_int__set_image_integer" 
+   time 0 cycles;
+end;
+
+subprogram "system__img_lli__set_image_long_long_integer"
+   time 0 cycles;
+end;
+
+subprogram "system__img_dec__set_decimal_digits"
+   time 0 cycles;
+end;
+ 
+Subprogram "system__soft_links__set_jmpbuf_address_soft"
+   time 0 cycles;
+end;
+
+subprogram "system__img_uns__set_image_unsigned__set_digits"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__outputB" 
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__outputS"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output_E"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output___elabb"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__current_mode"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__dump"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__dump___clean.2"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__hex"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__lock"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__lockTVIP"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__lock__put_lineN"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__lock__put_lineP"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__lock__put_lineP___clean.0"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__nil"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__put_line"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__put_line__2"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__unprotected_put_line"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__unprotected_put_line___clean.1"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__verbosityN"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output__verbosityS"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output_low_levelB"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output_low_levelS"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output_low_level_E"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__output_low_level__put_line"
+   time 0 cycles;
+end;
+
+--  TMP
+subprogram "system__tasking__protected_objects__single_entry__service_entry"
+   time 0 cycles;
+end;
+
+subprogram "system__img_lld__image_long_long_decimal"
+   time 0 cycles;
+end;
+
+subprogram "system__bb__protection__leave_kernel"
+   time 0 cycles;
+end;
+
+subprogram "system__bb__threads__queues__change_priority"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__messages__read"
+   time 0 cycles;
+end;
+
+subprogram "polyorb_hi__messages__encapsulate"
+   time 0 cycles;
+end;
+
+-- Assume No run-time checks fail:
+
+subprogram "__gnat_rcheck_00"                       unused; end;
+subprogram "__gnat_rcheck_02"                       unused; end;
+subprogram "__gnat_rcheck_05"                       unused; end;
+subprogram "__gnat_rcheck_06"                       unused; end;
+subprogram "__gnat_rcheck_10"                       unused; end;
+subprogram "__gnat_rcheck_12"                       unused; end;
+subprogram "__gnat_rcheck_18"                       unused; end;
+subprogram "__gnat_rcheck_29"                       unused; end;
+subprogram "system__soft_links__get_gnat_exception" unused; end;
+subprogram "__gnat_raise_program_error"             unused; end;
+subprogram "__gnat_raise_storage_error"             unused; end;
+subprogram "__gnat_raise_constraint_error"          unused; end;
+subprogram "__gnat_last_chance_handler"             unused; end;
+subprogram "__gnat_raise_nodefer_with_msg"          unused; end;
+subprogram "system__arith_64__raise_error"          unused; end;
+subprogram "ada__exceptions__reraise_occurrence"    unused; end;
+subprogram "ada__exceptions__raise_exception"       unused; end;
+subprogram "system__assertions__raise_assert_failure" unused; end;
+
+-- Assume some ET for the arithmetic:
+
+subprogram "__divdi3"  time 100 cycles; end;
+subprogram "__udivdi3" time 100 cycles; end;
+subprogram "__umoddi3" time 100 cycles; end;
+subprogram "__moddi3" time 100 cycles; end;
+subprogram "system__arith_64__scaled_divide" time 100 cycles; end;

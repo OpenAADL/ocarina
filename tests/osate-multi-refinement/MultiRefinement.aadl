@@ -1,0 +1,19 @@
+device d
+  features 
+    f: out data port;
+    g: in data port;
+end d;
+
+device e extends d
+  features
+    f: refined to out data port;
+   -- bad: this second refinement is not legal and shoould be reported
+    f: refined to out data port;
+end e;
+
+device implementation d.i
+  refines type
+    f: refined to out data port;
+    -- bad: this second refinement is not legal and should be detected
+    f: refined to out data port;
+end d.i;

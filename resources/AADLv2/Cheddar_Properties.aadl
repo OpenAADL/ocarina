@@ -1,0 +1,75 @@
+property set Cheddar_Properties is
+	Dispatch_Seed_is_Predictable : aadlboolean
+		applies to (thread, thread group);
+	Context_Switch_Overhead : inherit Time
+		applies to (thread, thread group);
+	Source_Text : inherit list of aadlstring  applies to (virtual processor, processor, thread);
+	Automaton_Name : inherit list of aadlstring  applies to (virtual processor, processor, thread);
+	Dispatch_Seed_Value : aadlinteger
+		applies to (thread, thread group);
+	Dispatch_Absolute_Time :  inherit Time 
+		applies to (thread, thread group);
+	Criticality : aadlinteger
+		applies to (thread, thread group);
+	Bound_On_Data_Blocking_Time :  inherit Time 
+		applies to (thread, thread group);
+	Dispatch_Jitter :  inherit Time 
+		applies to (thread, thread group);
+	Fixed_Priority : aadlinteger 0..255
+		applies to (thread, thread group);
+	POSIX_Scheduling_Policy : enumeration (SCHED_FIFO, SCHED_RR, SCHED_OTHERS)
+		applies to (thread, thread group);
+	Dispatch_Offset_Value_0 : aadlinteger
+		applies to (thread, thread group);
+	Dispatch_Offset_Time_0 :  inherit Time 
+		applies to (thread, thread group);
+	Dispatch_Offset_Value_1 : aadlinteger
+		applies to (thread, thread group);
+	Dispatch_Offset_Time_1 :  inherit Time 
+		applies to (thread, thread group);
+	Dispatch_Offset_Value_2 : aadlinteger
+		applies to (thread, thread group);
+	Dispatch_Offset_Time_2 :  inherit Time 
+		applies to (thread, thread group);
+	Dispatch_Offset_Value_3 : aadlinteger
+		applies to (thread, thread group);
+	Dispatch_Offset_Time_3 :  inherit Time 
+		applies to (thread, thread group);
+	Dispatch_Offset_Value_4 : aadlinteger
+		applies to (thread, thread group);
+	Dispatch_Offset_Time_4 :  inherit Time 
+		applies to (thread, thread group);
+	Dispatch_Offset_Value_5 : aadlinteger
+		applies to (thread, thread group);
+	Dispatch_Offset_Time_5 :  inherit Time 
+		applies to (thread, thread group);
+	Task_Precedencies : list of aadlstring
+		applies to (system);
+
+	Scheduler_Quantum :  inherit Time 
+		applies to (processor, virtual processor);
+	Preemptive_Scheduler : aadlboolean
+		applies to (processor, virtual processor);
+
+
+	Scheduling_Protocol : list of Supported_Scheduling_Protocols 
+		applies to (processor, virtual processor);
+
+	Data_Concurrency_State : aadlinteger
+		applies to (data);
+
+	Critical_Section : list of aadlstring
+		applies to (virtual processor, thread, data);
+	Source_Global_Heap_Size : Size 
+		applies to (process);
+	Source_Global_Stack_Size : Size 
+		applies to (process);
+	Source_Global_Text_Size : Size 
+		applies to (process);
+	Source_Global_Data_Size : Size 
+		applies to (process);
+
+end Cheddar_Properties;
+
+
+

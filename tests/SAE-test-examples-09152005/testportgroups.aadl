@@ -1,0 +1,48 @@
+-- everything should pass
+-- this example was used to test that the name resolver resolves names correctly
+-- the validation is to check that the references are filled in correctly in the Aadl Object model
+system S
+end S;
+
+system implementation S.i
+	subcomponents
+		pr: process P.i1;
+end S.i;
+
+process P
+	features
+		p: port group PKG::PG;
+end P;
+
+process implementation P.i1
+end P.i1;
+
+
+package PKG
+	public
+		port group PG extends priv_PG
+			features
+				r1: in event data port D;
+		end PG;
+
+		port group PI
+			inverse of PG
+		end PI;
+				
+	private
+		port group priv_PG
+			features
+				p1: in data port D;
+				p2: in data port D;
+				pg: port group P1;
+		end priv_PG;
+		
+		port group P1
+			features
+				q1: in out event port;
+		end P1;
+		
+		data D
+		end D;
+		
+end PKG;

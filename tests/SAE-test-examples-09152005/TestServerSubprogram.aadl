@@ -1,0 +1,504 @@
+system s end s;
+system implementation S.I end S.I;
+
+package TestServerSubprogram
+  public
+    -- Good
+    thread T
+      features
+        Sub: server subprogram ;
+        
+      properties
+        Period => 1 ms;
+        Compute_Entrypoint => "a";
+    end T;
+
+    -- Good
+    thread T2
+      properties
+        Period => 1 ms;
+        Compute_Entrypoint => "a";
+    end T2;
+    
+    -- Good (no server subprogram)
+    thread implementation T2.I
+    end T2.I;
+    
+    -- Bad: periodic!
+    thread implementation T.I1
+    end T.I1;
+    
+    -- Good: aperiodic
+    thread implementation T.I2
+      properties
+        Dispatch_Protocol => aperiodic;
+    end T.I2;
+    
+    -- Good: sporadic
+    thread implementation T.I3
+      properties
+        Dispatch_Protocol => sporadic;
+    end T.I3;
+
+    process P
+    end P;
+    
+    process implementation P.I
+      subcomponents
+        -- bad: periodic
+        Th1: thread T ;
+        -- good
+        Th2: thread T {
+        	Dispatch_Protocol => aperiodic;
+        };
+        -- good
+        Th3: thread T {
+        	Dispatch_Protocol => sporadic;
+        };
+        -- bad
+        Th6: thread T.I1;
+        -- good
+        Th4: thread T.I2;
+        -- good
+        Th5: thread T.I3;
+    end P.I;    
+end TestServerSubprogram;
+
+
+property set Aadl_Properties
+   is
+ 
+      ----------------------------------------------------
+      ----------------------------------------------------
+      Activate_Deadline            : Time
+      applies to (thread);
+      ----------------------------------------------------
+ 
+      Activate_Execution_Time      : Time_Range
+      applies to (thread);
+      ----------------------------------------------------
+      Active_Thread_Handling_Protocol: Supported_Active_Thread_Handling_Protocols
+       => value(Default_Active_Thread_Handling_Protocol)
+      applies to (thread, thread group, process, system);
+      ----------------------------------------------------
+      Active_Thread_Queue_Handling_Protocol: enumeration (flush, hold)
+       => flush
+      applies to (thread, thread group, process, system);
+      ----------------------------------------------------
+      Actual_Connection_Binding    : inherit reference (bus)
+      applies to (connections, thread group, process, system);
+      ----------------------------------------------------
+      Actual_Latency               : Time
+      applies to (connections);
+      ----------------------------------------------------
+      Actual_Memory_Binding        : inherit reference (memory)
+      applies to (
+      thread, thread group,
+      process,
+      system,
+      data port,
+      event data port,
+      subprogram);
+      ----------------------------------------------------
+      Actual_Processor_Binding     : inherit reference (processor)
+      applies to (thread, thread group, process, system);
+      -----------------------------------------------------
+      Actual_Subprogram_Call       : reference (server subprogram)
+      applies to (subprogram);
+      -----------------------------------------------------
+      Actual_Subprogram_Call_Binding: reference (bus, processor, memory)
+      applies to (subprogram);
+      -----------------------------------------------------
+      Actual_Thoughput             : Data_Volume
+      applies to (flow);
+      -----------------------------------------------------
+      Aggregate_Data_Port          : aadlboolean=> false
+      applies to (port group);
+      ----------------------------------------------------
+      Allowed_Access_Protocol      : list of enumeration
+      (Memory_Access, Device_Access)
+      applies to (bus);
+      ----------------------------------------------------
+      Allowed_Connection_Binding   : inherit list of reference (bus, processor, device)
+      applies to (port connections, thread, thread group, process, system);
+      ----------------------------------------------------
+      Allowed_Connection_Binding_Class: inherit list of classifier (processor, bus, device)
+      applies to (port connections, thread, thread group, process, system);
+      ----------------------------------------------------
+      Allowed_Connection_Protocol  : list of enumeration
+      (Data_Connection, Event_Connection)
+      applies to (bus);
+      ----------------------------------------------------
+      Allowed_Dispatch_Protocol    : list of Supported_Dispatch_Protocols
+      applies to (processor);
+      ----------------------------------------------------
+      Allowed_Memory_Binding       : inherit list of reference (memory, system, processor)
+      applies to (thread, thread group, process, system, device,
+      data port, event data port, subprogram, processor);
+      ----------------------------------------------------
+      Allowed_Memory_Binding_Class : inherit list of classifier (memory, system, processor)
+      applies to (thread, thread group, process, system, device,
+      data port, event data port, subprogram, processor);
+      ----------------------------------------------------
+      Allowed_Message_Size         : Size_Range
+      applies to (bus);
+      ----------------------------------------------------
+      Allowed_Period               : list of Time_Range
+      applies to (processor, system);
+      ----------------------------------------------------
+      Allowed_Processor_Binding    : inherit list of reference (processor, system)
+      applies to (thread, thread group, process, system, device);
+      ----------------------------------------------------
+      Allowed_Processor_Binding_Class: inherit list of classifier (processor, system)
+      applies to (thread, thread group, process, system, device);
+      ----------------------------------------------------
+      Allowed_Subprogram_Call      : list of reference (server subprogram)
+      applies to (subprogram);
+      ----------------------------------------------------
+      Allowed_Subprogram_Call_Binding: inherit list of reference (bus, processor, device)
+      applies to (subprogram, thread, thread group, process, system);
+      ----------------------------------------------------
+      Assign_Time                  : Time
+      applies to (processor, bus);
+      ----------------------------------------------------
+      Assign_Byte_Time             : Time
+      applies to (processor, bus);
+      ----------------------------------------------------
+      Assign_Fixed_Time            : Time
+      applies to (processor, bus);
+      ----------------------------------------------------
+      Available_Memory_Binding     : inherit list of reference (memory, system)
+      applies to (system);
+      ----------------------------------------------------
+      Available_Processor_Binding  : inherit list of reference (processor, system)
+      applies to (system);
+      ----------------------------------------------------
+--      Base_Address                 : access aadlinteger 0 .. value(Max_Base_Address)
+--      applies to (memory);
+      ----------------------------------------------------
+      Client_Subprogram_Execution_Time: Time_Range
+      applies to (subprogram);
+      ----------------------------------------------------
+      Clock_Jitter                 : Time
+      applies to (processor, system);
+      ----------------------------------------------------
+      Clock_Period                 : Time
+      applies to (processor, system);
+      ----------------------------------------------------
+      Clock_Period_Range           : Time
+      applies to (processor, system);
+      ----------------------------------------------------
+      Compute_Execution_Time       : Time_Range
+      applies to (thread, subprogram, event port, event data port);
+      ----------------------------------------------------
+      Compute_Deadline             : Time
+      applies to (thread, subprogram, event port, event data port);
+      ----------------------------------------------------
+      Compute_Entrypoint           : aadlstring
+      applies to (thread, subprogram, event port, event data port);
+      ----------------------------------------------------
+      Concurrency_Control_Protocol :
+      Supported_Concurrency_Control_Protocols
+      => Nonespecified
+      applies to (data);
+      ----------------------------------------------------
+      Connection_Protocol          :
+      Supported_Connection_Protocols
+      applies to (connections);
+      ----------------------------------------------------
+	Data_Volume: type aadlinteger units 
+		( 
+		  bitsps, 
+		  bps => bitsps * 8, 
+		  Kbps => bps * 1000, 
+		  Mbps => kbps * 1000 );      
+----------------------------------------------------
+      Deactivate_Deadline          : Time
+      applies to (thread);
+      ----------------------------------------------------
+      Deactivate_Execution_Time    : Time_Range
+      applies to (thread);
+      ----------------------------------------------------
+      Deactivate_Entrypoint        : aadlstring
+      applies to (thread);
+      ----------------------------------------------------
+      Deadline                     : Time
+      applies to (thread);
+      ----------------------------------------------------
+      Dequeue_Protocol             : enumeration (OneItem, AllItems)=> OneItem
+      applies to (event port, event data port);
+      ----------------------------------------------------
+      Device_Dispatch_Protocol     :
+      Supported_Dispatch_Protocols
+      => Aperiodic
+      applies to (thread, device);
+     ----------------------------------------
+     Device_Register_Address: aadlinteger
+  		applies to (port, port group);
+      ----------------------------------------------------
+      Dispatch_Protocol            :
+      Supported_Dispatch_Protocols
+--      => Periodic
+      applies to (thread);
+      ----------------------------------------------------
+      Expected_Latency             : Time
+      applies to (flow);
+      ----------------------------------------------------
+      Expected_Throughput          : Data_Volume
+      applies to (flow);
+      ----------------------------------------------------
+      Finalize_Deadline            : Time
+      applies to (thread);
+      ----------------------------------------------------
+      Finalize_Execution_Time      : Time_Range
+      applies to (thread);
+      ----------------------------------------------------
+      Finalize_Entrypoint          : aadlstring
+      applies to (thread);
+      ----------------------------------------------------
+      Hardware_Description_Source_Text: inherit list of aadlstring
+      applies to (memory, bus, device, processor, system);
+      ----------------------------------------------------
+      Hardware_Source_Language     :
+      Supported_Hardware_Source_Languages
+      applies to (memory, bus, device, processor, system);
+      ----------------------------------------------------
+      Initialize_Deadline          : Time
+      applies to (thread);
+      ----------------------------------------------------
+      Initialize_Execution_Time    : Time_Range
+      applies to (thread);
+      ----------------------------------------------------
+      Initialize_Entrypoint        : aadlstring
+      applies to (thread);
+      ----------------------------------------------------
+      Latency                      : Time
+      applies to (flow, connections);
+      ----------------------------------------------------
+      Load_Deadline                : Time
+      applies to (process);
+      ----------------------------------------------------
+      Load_Time                    : Time_Range
+      applies to (process, system);
+      ----------------------------------------------------
+      Memory_Protocol              : enumeration (Read_Only, Write_Only, Read_Write)
+      => Read_Write
+      applies to (memory);
+      ----------------------------------------------------
+      Not_Collocated               : list of reference
+      (data, thread, process, system, connections)
+      applies to (data, thread, process, system, connections);
+      ----------------------------------------------------
+      Overflow_Handling_Protocol   : enumeration (Dropoldest, Dropnewest,Error)
+      => Dropoldest
+      applies to (event port, event data port, subprogram);
+      ----------------------------------------------------
+      Period                       : Time
+      applies to (thread, device);
+      ----------------------------------------------------
+      Process_Swap_Execution_Time  : Time_Range
+      applies to (processor);
+      ----------------------------------------------------
+      Propagation_Delay            : Time_Range
+      applies to (bus);
+      ----------------------------------------------------
+      Provided_Access              : access enumeration
+      (Read_Only, Write_Only, Read_Write, By_Method)
+      => Read_Write
+      applies to (data);
+      ----------------------------------------------------
+      Queue_Processing_Protocol    :
+      Supported_Queue_Processing_Protocols=> Fifo
+      applies to (event port, event data port, subprogram);
+      ----------------------------------------------------
+      Queue_Size                   :  aadlinteger 0 .. value(Max_Queue_Size)
+      => 0
+      applies to (event port, event data port, subprogram);
+      ----------------------------------------------------
+      Read_Time                    : list of Time_Range
+      applies to (memory);
+      ----------------------------------------------------
+      Recover_Deadline             : Time
+      applies to (thread, server subprogram);
+      ----------------------------------------------------
+      Recover_Execution_Time       : Time_Range
+      applies to (thread, server subprogram);
+      ----------------------------------------------------
+      Recover_Entrypoint           : aadlstring
+      applies to (thread);
+      ----------------------------------------------------
+      Required_Access              : access enumeration
+      (Read_Only, Write_Only, Read_Write, By_Method)
+      => Read_Write
+      applies to (data, bus);
+      ----------------------------------------------------
+      Required_Connection          : aadlboolean=> true
+      applies to (port);
+      ----------------------------------------------------
+      Runtime_Protection           : inherit aadlboolean=> true
+      applies to (process);
+      ----------------------------------------------------
+      Scheduling_Protocol          : list of
+      Supported_Scheduling_Protocols
+      applies to (processor);
+      ----------------------------------------------------
+      Server_Subprogram_Call_Binding: inherit list of reference (thread, processor)
+      applies to (subprogram, thread, thread group, process, system);
+      ----------------------------------------------------
+      Size                         : type aadlinteger 0 Bits .. value(Max_Memory_Size) units Size_Units;
+      
+      SIze_Units : type
+      units (
+      Bits,
+      B                        => Bits  * 8,
+      KB => B * 1000,
+      MB => KB * 1000,
+      GB => MB * 1000);
+      ----------------------------------------------------
+      Size_Range                   : type range of Size;
+      ----------------------------------------------------
+      Source_Code_Size             : Size_Range
+      applies to (data, thread, process, subprogram, processor, device);
+      ----------------------------------------------------
+      Source_Data_Size             : Size --DES   Removed _Range
+      applies to (data, subprogram, thread, process, processor, device);
+      ----------------------------------------------------
+      Source_Heap_Size             : Size_Range
+      applies to (thread);
+      ----------------------------------------------------
+      Source_Language              : Supported_Source_Languages
+      applies to (subprogram, data, thread, process, bus, device, processor);
+      ----------------------------------------------------
+      Source_Name                  : aadlstring
+      applies to (data, port, subprogram, parameter);
+      ----------------------------------------------------
+      Source_Stack_Size            : Size_Range
+      applies to (thread, subprogram, processor, device);
+      ----------------------------------------------------
+      Source_Text                  : inherit list of aadlstring
+      applies to (data, thread, thread group, process, system, memory, bus, device, processor, port, subprogram, parameter, port group);
+      ----------------------------------------------------
+      Startup_Deadline             : inherit Time
+      applies to (processor, system);
+      ----------------------------------------------------
+      Subprogram_Execution_Time    : Time_Range
+      applies to (subprogram);
+      ----------------------------------------------------
+      Supported_Source_Language    : list of Supported_Source_Languages
+      applies to (processor, system);
+      ----------------------------------------------------
+      Synchronized_Component      : inherit aadlboolean
+      applies to (mode);
+      ----------------------------------------------------
+      Thread_Limit                 : aadlinteger 0 .. value(Max_Thread_Limit)
+      => value(Max_Thread_Limit)
+      applies to (processor);
+      ----------------------------------------------------
+      Thread_Swap_Execution_Time   : Time_Range
+      applies to (processor, system);
+      ----------------------------------------------------
+      Throughput                   : Data_Volume
+      applies to (flow, connections);
+      ----------------------------------------------------
+      Time                         : type aadlinteger 0 ns .. value(Max_Time) units Time_Units;
+      
+      Time_Units : type 
+      units (
+      Ns,
+      Us                           => Ns  * 1000,
+      Ms                           => Us  * 1000,
+      Sec                          => Ms  * 1000,
+      Min                          => Sec * 60,
+      Hr                           => Min * 60);
+      ------------------------------------------------------
+      Time_Range                   : type range of Time;
+      ------------------------------------------------------
+      Transmission_Time            : list of Time_Range
+      applies to (bus);
+      ------------------------------------------------------
+      Type_Source_Name             : aadlstring
+      applies to (data, port, subprogram);
+      ------------------------------------------------------
+      Urgency                      : aadlinteger 0 .. value(Max_Urgency)
+      applies to (port);
+      ----------------------------------------------------
+      Word_Count                   : aadlinteger 0 .. value(Max_Word_Count)
+      applies to (memory);
+      ----------------------------------------------------
+      Word_Size                    : Size
+      => 8 Bits
+      applies to (memory);
+      ----------------------------------------------------
+ 
+      Word_Space                   : aadlinteger 1 .. value(Max_Word_Space)
+      => 1
+      applies to (memory);
+      ----------------------------------------------------
+      Write_Time                   : list of Time_Range
+      applies to (memory);
+      ----------------------------------------------------
+      ----------------------------------------------------
+end Aadl_Properties;
+
+property set AADL_Project is
+
+Supported_Active_Thread_Handling_Protocols: type enumeration (abort, complete_one_flush_queue, complete_one_transfer_queue, 
+    complete_one_preserve_queue, complete_all);
+-- a subset may be supported.
+    
+Default_Active_Thread_Handling_Protocol : Supported_Active_Thread_Handling_Protocols => abort
+	applies to (thread, thread group, process, system);
+-- one of the choices of Supported_Active_Thread_Handling_Protocols.
+-- Should be a constant but we don't have constants of enum values.
+-- As property it needs to have an applies to, so we used the same list as the actual property,
+-- for which the default is defined here.
+
+Supported_Connection_Protocols: type enumeration (UDP, TCP );
+-- The following are example protocols.
+-- (HTTPS, IP/TPC);
+
+Supported_Dispatch_Protocols: type enumeration (Periodic, Aperiodic, Sporadic );
+-- The following are protocols for which the semantics are defined.
+-- (Periodic, Sporadic, Aperiodic, Server_Dispatch, Background);
+
+Supported_Concurrency_Control_Protocols: type enumeration ( NoneSpecified,Interrupt_Masking );
+              -- phf : NoneSpecified instead of None
+-- The following are example concurrency control protocols.
+-- (Interrupt_Masking, Maximum_Priority, Priority_Inheritance, Priority_Ceiling)
+
+Supported_Hardware_Source_Languages: type enumeration ( VHDL );
+-- The following is an example hardware description language.
+-- (VHDL)
+
+Supported_Scheduling_Protocols: type enumeration ( RMS );
+-- The following are example scheduling protocols.
+-- (RMS, EDF, Sporadicserver, SlackServer, ARINC653)
+
+-- phf A26: added
+Supported_Queue_Processing_Protocols: type enumeration (FIFO);
+-- The Supported_Queue_Processing_Protocols property enumeration type specifies the set of queue processing protocols that are supported.
+
+Supported_Source_Languages: type enumeration ( Ada95, C );
+-- The following are example software source languages.
+-- ( Ada95, C, Simulink_6_5 )
+
+Max_Aadlinteger: constant aadlinteger => 4096000;
+
+Max_Memory_Size: constant aadlinteger Size_Units => 512000 GB;
+
+Max_Queue_Size: constant aadlinteger => 512;
+
+-- Max_Base_Address: constant aadlinteger => 512;
+-- not in standard
+
+Max_Urgency: constant aadlinteger => 12;
+
+Max_Time: constant aadlinteger Time_Units => 1000 Hr;
+
+Max_Thread_Limit: constant aadlinteger => 32;
+
+Max_Word_Count: constant aadlinteger => 64000;
+
+Max_Word_Space: constant aadlinteger => 64;
+
+end AADL_Project;

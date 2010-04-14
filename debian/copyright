@@ -1,0 +1,27 @@
+This package was debianized by Julien Delange <julien.delange@telecom-paristech.fr> on
+Mon, 03 Mar 2008 13:01:28 +0100.
+
+It was downloaded from http://aadl.enst.fr
+
+Upstream Author(s): Jerome Hugues, Laurent Pautet, Bechir Zalila
+   <name@enst.fr>
+
+Copyright: 
+
+    <Copyright (C) 2008 GET TELECOM ParisTech>
+
+License:
+
+    GNAT Modified GPL licence
+    It derivates from the original GPL licence, the modification is as follows :
+    As a special exception, if other files instantiate generics from this unit, 
+    or you link this unit with other files to produce an executable, this unit 
+    does not by itself cause the resulting executable to be covered by the GNU 
+    General Public License. This exception does not however invalidate any other 
+    reasons why the executable file might be covered by the GNU Public License.
+
+The Debian packaging is (C) 2008, Julien Delange <julien.delange@telecom-paristech.fr> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.

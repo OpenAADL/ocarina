@@ -1,0 +1,19 @@
+property set PS is
+  myUnits: type units (ml, tsp => ml * 5, tbs => tsp * 3, l => ml * 1000);
+  tablespoon: constant aadlinteger PS::myUnits => 1 tbs;
+  half_liter: constant aadlinteger PS::myUnits => 500 ml;
+  two_liters: constant aadlinteger PS::myUnits => 2000 ml;
+  
+  myType: type aadlinteger 0 ml .. 1 l units PS::myUnits;
+  
+  prop1: PS::myType => value(PS::tablespoon) applies to (all);
+  prop2: PS::myType => value(PS::tablespoon) applies to (all);
+end PS;
+
+system S
+  properties
+    -- Good
+    PS::prop1 => value(PS::half_liter);
+    -- Bad
+    PS::prop2 => value(PS::two_liters);
+end S;

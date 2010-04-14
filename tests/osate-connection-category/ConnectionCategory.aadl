@@ -1,0 +1,21 @@
+system s
+  features
+    src: out event port ;
+end s;
+
+system t
+  features
+    tub: in data port ;
+end t;
+
+system u
+end u;
+
+system implementation u.i
+  subcomponents
+    a: system s;
+    b: system t;
+  connections
+    -- bad: feature b.tub is not an evnet port
+    con: event port a.src -> b.tub;
+end u.i;

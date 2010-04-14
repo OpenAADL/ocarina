@@ -1,0 +1,53 @@
+--  test for property_association
+--  p 166-167 of AADL 1.0
+
+thread Producer
+end Producer;
+
+thread implementation Producer.Basic
+properties
+  Compute_Execution_Time => 0 ms .. 10 ms in binding ( powerpc.speed_350Mhz );
+  Compute_Execution_Time => 0 ms .. 8 ms in binding ( powerpc.speed_450MHz );
+end Producer.Basic;
+
+process Collect_Samples
+end Collect_Samples;
+
+system Software
+end Software;
+
+system implementation Software.Basic
+subcomponents
+  Sampler_A : process Collect_Samples;
+  Sampler_B : process Collect_Samples {
+    -- A property with a list of values
+    Source_Text => ("collect_samples.ads", "collect_samples.adb") ;
+    Period => 50 ms;
+  };
+end Software.Basic;
+
+system Hardware
+end Hardware;
+
+system implementation Hardware.Basic
+subcomponents
+  Host_A: processor;
+  Host_B: processor;
+end Hardware.Basic;
+
+system Total_System
+end Total_System;
+
+system implementation Total_System.SW_HW
+subcomponents
+  SW : system Software.Basic;
+  HW : system Hardware.Basic;
+properties
+  -- examples of contained property associations in a subcomponent of
+  -- SW we are setting the binding to a component contained in HW
+  
+  Allowed_Processor_Binding => reference HW.Host_A
+    applies to SW.Sampler_A;
+  Allowed_Processor_Binding => reference HW.Host_B
+    applies to SW.Sampler_B;
+end Total_System.SW_HW;

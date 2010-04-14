@@ -1,0 +1,16 @@
+--  Check whether the threads bound to each processors can be
+--  schedduled with RMA (cf. Liu, Layland. "Scheduling Algorithms for
+--  Multi-programming in hard-Real-Time Environment", JACM, 01/1973)
+
+theorem RMA
+
+foreach e in Processor_Set do
+
+  Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
+
+  Threads := {x in Thread_Set | Is_Subcomponent_Of (x, Proc_Set)};
+
+  check (sum (get_property_value (Threads, "RTOS_properties::Utilization")) <=  
+         (Cardinal (Threads) * (2 ** (1 / Cardinal (Threads))) -1));
+
+end RMA;

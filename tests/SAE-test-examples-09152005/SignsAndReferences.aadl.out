@@ -1,0 +1,3 @@
+SignsAndReferences.aadl:28:05: when evaluating the value of PS::intListProp, the value at SignsAndReferences.aadl:28:24 (minus numeric term) is inconsistent with the other one declared at SignsAndReferences.aadl:11:46 (list of signed aadlnumber)
+SignsAndReferences.aadl:30:05: when evaluating the value of PS::stringProp, the value at SignsAndReferences.aadl:30:23 (minus numeric term) is inconsistent with the other one declared at SignsAndReferences.aadl:13:35 (literal)
+Cannot analyze AADL specifications

@@ -1,0 +1,28 @@
+subprogram sub
+  features
+    x: in parameter d;
+    y: out parameter ;
+end sub;
+
+data d
+end d;
+
+data dd
+end dd;
+
+data implementation d.i
+end d.i;
+
+subprogram sub2 extends sub
+  features
+    -- bad 
+    x: in parameter dd;
+    -- okay
+    y: refined to out parameter d;
+end sub2;
+
+subprogram sub3 extends sub2
+  features
+    --okay
+    y: refined to out parameter d.i;
+end sub3;

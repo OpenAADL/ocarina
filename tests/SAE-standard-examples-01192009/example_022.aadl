@@ -1,0 +1,31 @@
+-- test 8.7 Bus Components Access draft-01192009
+
+package Example2
+
+-- add for test
+public
+  with Hardware;
+-- end add
+
+system simple
+end simple;
+system implementation simple.impl
+subcomponents
+A: processor Hardware::PPC;
+B: device Equipment::DigCamera;
+connections
+bus access A.USB1 <-> B.USB2;
+end simple.impl;
+processor PPC
+features
+USB1: provides bus access Hardware::USB;
+end PPC;
+device DigCamera
+
+-- bad syntax
+--   properties
+-- correction
+features
+USB2: requires bus access USB;
+end DigCamera;
+end Example2;

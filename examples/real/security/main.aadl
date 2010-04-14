@@ -1,0 +1,72 @@
+package model
+public
+   with runtime;
+   with partitions;
+   with memories;
+
+   system main
+   end main;
+
+   system implementation main.i
+   subcomponents
+      node1                            : processor runtime::pok_kernel.impl;
+      node2                            : processor runtime::pok_kernel.impl;
+      node1_partition_topsecret        : process partitions::process_sender.i;
+      node1_partition_secret           : process partitions::process_sender.i;
+      node1_partition_unclassified     : process partitions::process_sender.i;
+      node2_partition_topsecret        : process partitions::process_receiver.i;
+      node2_partition_secret           : process partitions::process_receiver.i;
+      node2_partition_unclassified     : process partitions::process_receiver.i;
+      node1_memory                     : memory memories::main_memory.i;
+      node2_memory                     : memory memories::main_memory.i;
+      node1_netif                      : device runtime::separation_netif.i;
+      node2_netif                      : device runtime::separation_netif.i;
+      rtbus                            : bus runtime::separation_bus.i;
+   connections
+      port node1_partition_topsecret.outgoing      -> node2_partition_topsecret.incoming
+         {Actual_Connection_Binding => (reference (rtbus.layer_topsecret));};
+      port node1_partition_secret.outgoing         -> node2_partition_secret.incoming
+         {Actual_Connection_Binding => (reference (rtbus.layer_secret));};
+      port node1_partition_unclassified.outgoing   -> node2_partition_unclassified.incoming
+         {Actual_Connection_Binding => (reference (rtbus.layer_unclassified));};
+      bus access rtbus -> node1_netif.the_bus;
+      bus access rtbus -> node2_netif.the_bus;
+   properties
+      Actual_Processor_Binding   => (reference (node1.runtime_topsecret))    applies to node1_partition_topsecret;
+      Actual_Processor_Binding   => (reference (node1.runtime_secret))       applies to node1_partition_secret;
+      Actual_Processor_Binding   => (reference (node1.runtime_unclassified)) applies to node1_partition_unclassified;
+      Actual_Processor_Binding   => (reference (node2.runtime_topsecret))    applies to node2_partition_topsecret;
+      Actual_Processor_Binding   => (reference (node2.runtime_secret))       applies to node2_partition_secret;
+      Actual_Processor_Binding   => (reference (node2.runtime_unclassified)) applies to node2_partition_unclassified;
+      Actual_Processor_Binding   => (reference (node1.runtime_netif))        applies to node1_netif;
+      Actual_Processor_Binding   => (reference (node2.runtime_netif))        applies to node2_netif;
+      Actual_Memory_Binding      => (reference (node1_memory.topsecret))     applies to node1_partition_topsecret;
+      Actual_Memory_Binding      => (reference (node1_memory.secret))        applies to node1_partition_secret;
+      Actual_Memory_Binding      => (reference (node1_memory.unclassified))  applies to node1_partition_unclassified;
+      Actual_Memory_Binding      => (reference (node2_memory.topsecret))     applies to node2_partition_topsecret;
+      Actual_Memory_Binding      => (reference (node2_memory.secret))        applies to node2_partition_secret;
+      Actual_Memory_Binding      => (reference (node2_memory.driver))        applies to node2_netif;
+      Actual_Memory_Binding      => (reference (node1_memory.driver))        applies to node1_netif;
+
+   annex real_specification {**
+
+      theorem pok_security
+
+        foreach s in system_set do
+
+          requires (One_Security_Level_By_Memory 
+                    and bell_lapadula
+                    and biba
+                    and MILS_1
+                    and MILS_2
+                    and scheduling_1);
+
+        check (1 = 1);
+
+      end pok_security;
+
+   **};
+
+   end main.i;
+
+end model;

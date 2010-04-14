@@ -1,0 +1,24 @@
+property set ps is
+  t: type aadlinteger;
+  
+  p: aadlboolean applies to (all);
+  q: aadlinteger applies to (all);
+  r: aadlinteger => 1 applies to (all);
+  s: list of aadlboolean applies to (all);
+  
+  x: aadlinteger applies to (all);
+  y: aadlinteger applies to (all);
+end ps;
+
+system s
+  properties 
+    -- GOOD
+    ps::q => value(ps::r);
+    -- BAD: reference to an integer-valued property in a boolean expression
+--    ps::p => value(ps::s)
+--               and value(ps::q);
+               
+--    ps::x => value(ps::y);
+--    ps::y => value(ps::x);
+end s;
+

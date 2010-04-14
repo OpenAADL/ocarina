@@ -1,0 +1,23 @@
+subprogram sub
+end sub;
+
+subprogram sub2
+end sub2;
+
+data d
+  features
+    s: subprogram sub2;
+end d;
+
+thread t
+  features
+    ss: server subprogram sub2;
+end t;
+
+thread tt
+  features
+    ss1: server subprogram sub;
+    ss2: server subprogram d.s;
+    -- bad: t.ss is not a subprogram
+    ss3: server subprogram t.ss;
+end tt;

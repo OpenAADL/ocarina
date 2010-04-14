@@ -1,0 +1,31 @@
+bus VME 
+end VME ;
+
+memory Memory_Card 
+  features
+    Card_Connector : requires bus access VME;
+end Memory_Card ;
+
+processor PowerPC 
+  features
+    Card_Connector : requires bus access VME;
+end PowerPC ;
+
+processor implementation PowerPC.Linux 
+--  subcomponents
+--    Interrupt_Handler : thread;
+end PowerPC.Linux ;
+
+system Dual_Processor end Dual_Processor ;
+
+system implementation Dual_Processor.PowerPC 
+  subcomponents
+    System_Bus: bus VME;
+    Left: processor PowerPC.Linux; 
+    Right: processor PowerPC.Linux;
+    Shared_Memory: memory Memory_Card;
+  connections
+    bus access System_Bus -> Left.Card_Connector;
+    bus access System_Bus -> Right.Card_Connector;
+    bus access System_Bus -> Shared_Memory.Card_Connector;
+end Dual_Processor.PowerPC ;

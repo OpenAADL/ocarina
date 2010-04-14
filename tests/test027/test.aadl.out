@@ -1,0 +1,10 @@
+test.aadl:5:05:  (package name) is not a package or a property set visible or existing
+test.aadl:6:05:  (package name) is not a package or a property set visible or existing
+test.aadl:7:05:  (package name) is not a package or a property set visible or existing
+: Security::Verification::Position (identifier) is not visible
+test.aadl:11:49: Control::Target::Proc.Impl (identifier) is not visible
+test.aadl:12:27: thefeature (identifier) is not visible
+: Command::Launcher (identifier) is not visible
+: Foo (identifier) is not visible
+test.aadl:23:05:  (package name) is not a package or a property set visible or existing
+Cannot analyze AADL specifications

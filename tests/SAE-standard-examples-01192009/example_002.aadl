@@ -1,0 +1,38 @@
+-- test 4.3 Component type draft-01192009
+
+-- add for test
+package Test
+public 
+-- end add
+
+system File_System
+features
+-- access to a data component
+root: requires data access FileSystem::Directory.hashed;
+end File_System;
+
+process Application
+features
+-- a data out port
+result: out data port App::result_type;
+home: requires data access FileSystem::Directory.hashed;
+end Application;
+
+thread Calculate
+prototypes
+-- A data type to be used as type for the input and result port
+data_type: data;
+features
+input: in data port prototype data_type;
+result: out data port prototype data_type;
+end Calculate;
+
+-- bad syntax
+--  thread Compute_Distance extends Calculate (data_type => App::Distance)
+-- correction
+thread Compute_Distance extends Calculate (data_type => data App::Distance)
+end Compute_Distance;
+
+-- add for test
+end Test;
+-- add

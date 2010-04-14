@@ -1,0 +1,98 @@
+ 
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@ Section 5.1 Data component
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+data Person
+end Person;
+
+data Personnel_record
+-- Methods are not required, but when provided act as access methods
+features
+     -- a subprogram feature with reference to a subprogram type for signature
+     update_address: subprogram update_address;
+end Personnel_record;
+
+data implementation Personnel_record.others
+   subcomponents
+-- here we declare the internal structure of the data type
+-- One field is defined in terms of another type; 
+-- the type name is sufficient, it defaults to others.
+      Name : data basic::string;
+      Home_address : data sei::aadl::relief::Address;
+end Personnel_record.others ;
+
+subprogram update_address
+features
+    Personnel_record: in out parameter person;
+    street :in parameter basic::string;
+    city: in parameter basic::string;
+end update_address ;
+
+package basic
+public
+    -- string as type
+    data string
+    end string;
+
+    -- int as type
+    data int
+    properties
+        Source_Data_Size => 64b;
+    end int;
+end basic;
+
+-- use of a data type as port type.
+thread SEI_Personnel_addition
+   features
+      new_person: in event data port Personnel_record;
+      SEI_personnel: requires data access Personnel_database.oracle;
+   properties
+      Dispatch_Protocol => aperiodic;
+end SEI_Personnel_addition;
+
+package sei::aadl::relief
+  public
+    data Address
+      features
+      -- a subprogram feature without parameter detail
+      getStreet : subprogram ;
+      getCity : subprogram ;
+  end Address;
+end sei::aadl::relief;
+
+-- The implementation is shown as a private declaration
+-- The public and the private part of a package are separate AADL specs
+package sei::aadl::relief
+  private
+  data implementation Address.others
+   subcomponents
+      street : data basic::string;
+      streetnumber: data basic::int;
+      city: data basic::string;
+      zipcode: data basic::int;
+  end Address.others;
+end sei::aadl::relief;
+
+-- missing in draft
+
+data Personnel_database
+end Personnel_database;
+
+data implementation Personnel_database.oracle
+end Personnel_database.oracle;
+
+--  ENST: according to the AADL standard, the declaration of the 
+--  parent packages sei and sei::aadl is necessary.
+
+package sei::aadl
+public
+   data dummy
+   end dummy;
+end sei::aadl;
+
+package sei
+public
+   data dummy
+   end dummy;
+end sei;

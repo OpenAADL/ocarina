@@ -1,0 +1,107 @@
+------------------------------------------------------------------------------
+--                                                                          --
+--                           OCARINA COMPONENTS                             --
+--                                                                          --
+--                              O C A R I N A                               --
+--                                                                          --
+--                              P r o j e c t                               --
+--                                                                          --
+--                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--                                                                          --
+-- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
+-- it under terms of the GNU General Public License as published by the     --
+-- Free Software Foundation; either version 2, or (at your option) any      --
+-- later version. Ocarina is distributed  in  the  hope  that it will be    --
+-- useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General --
+-- Public License for more details. You should have received  a copy of the --
+-- GNU General Public License distributed with Ocarina; see file COPYING.   --
+-- If not, write to the Free Software Foundation, 51 Franklin Street, Fifth --
+-- Floor, Boston, MA 02111-1301, USA.                                       --
+--                                                                          --
+-- As a special exception,  if other files  instantiate  generics from this --
+-- unit, or you link  this unit with other files  to produce an executable, --
+-- this  unit  does not  by itself cause  the resulting  executable to be   --
+-- covered  by the  GNU  General  Public  License. This exception does not  --
+-- however invalidate  any other reasons why the executable file might be   --
+-- covered by the GNU Public License.                                       --
+--                                                                          --
+--                 Ocarina is maintained by the Ocarina team                --
+--                       (ocarina-users@listes.enst.fr)                     --
+--                                                                          --
+------------------------------------------------------------------------------
+
+project Ocarina is
+   Top_Src_Dir := External ("ABS_SRC_DIR", "../src");
+   Top_Build_Dir := External ("ABS_BUILD_DIR", "../src");
+   --  The absolute source dir and build dir are given through
+   --  external variable from the command line because they need to be
+   --  computed at runtime to be platform dependant.
+
+   for Source_Dirs use ();
+
+   type Build_Type is ("release", "debug");
+   Build : Build_Type := External ("BUILD", "debug");
+
+   type Lib_Kinds is ("dynamic", "static");
+   Lib_Type : Lib_Kinds := External ("LIBRARY", "static");
+
+   package Compiler is
+      for  Local_Configuration_Pragmas use Top_Src_Dir
+         & "/../projects/restrictions.adc";
+      case Build is
+        when "debug" =>
+           for Default_Switches ("Ada") use
+             ("-fPIC", 
+              "-g",
+              "-gnatfy",
+              "-gnatwae",
+              "-gnatoa",
+              "-fstack-check",
+              "-gnaty",
+	      "-gnatyu", -- not in -gnaty: check multiple blank lines
+	      "-gnatys", -- not in -gnatx: check useless parentheses
+	      @GCOV@"-fprofile-arcs", 
+              @GCOV@"-ftest-coverage",
+	      "-gnat05");
+        when "release" =>
+           for Default_Switches ("Ada") use
+             ("-O2", 
+	      "-fPIC",
+              "-gnat05",
+              "-gnata",
+              "-gnatpn");
+      end case;
+   end Compiler;
+
+   package Binder is
+      case Build is
+        when "debug" =>
+           for Default_Switches ("Ada") use ("-E", "-t");
+        when "release" =>
+           for Default_Switches ("Ada") use ("-t");
+      end case;
+   end Binder;
+
+   package Linker is
+      case Build is
+        when "debug" =>
+        for Default_Switches ("Ada") use (
+	    		     	     	  @GCOV@"-g", 
+					  @GCOV@"-fprofile-arcs", 
+					  @GCOV@"-ftest-coverage"
+                                         );
+        when "release" =>
+           for Default_Switches ("Ada") use ();
+      end case;
+   end Linker;
+
+   package Builder is
+      case Build is
+        when "debug" =>
+           for Default_Switches ("Ada") use ("-s", "-g");
+        when "release" =>
+           for Default_Switches ("Ada") use ("-s");
+      end case;
+   end Builder;
+end Ocarina;

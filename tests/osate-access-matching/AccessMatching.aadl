@@ -1,0 +1,21 @@
+system Provider
+  features
+    given: provides data access { Provided_Access => access read_only; };
+end Provider;
+
+system Taker
+  features
+    needs: requires data access { Required_Access => access write_only; };
+end Taker;
+
+system S
+end S;
+
+system implementation S.i
+  subcomponents
+    p: system Provider;
+    t: system Taker;
+  connections
+    -- bad: provides read access, requires write access
+    data access p.given -> t.needs;
+end S.i;

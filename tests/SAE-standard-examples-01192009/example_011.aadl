@@ -1,0 +1,17 @@
+-- test 5.3 Subprogram Groups and Subprogram Group Types draft-01192009
+
+-- add for test
+package Test
+public 
+-- end add
+
+subprogram group mathlib
+features
+matrixMultiply: provides subprogram access ;
+matrixAdd: provides subprogram access ;
+vectorAdd: requires subprogram access ;
+end mathlib;
+
+-- add for test
+end Test;
+-- end add

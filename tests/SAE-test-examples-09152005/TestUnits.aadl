@@ -1,0 +1,47 @@
+property set PS is
+  int_const: constant aadlinteger => 42;
+  
+  -- Bad: circular dependency
+  circular_units: type units (a, b => a * 10, c => d * 10, d => c * 5);
+  -- Bad: b depends on c, which is declared after b
+  possibly_circulr_units: type units (a, b => c * 10, c => a * 5);
+  
+  t1_bad_units: type units (m, cm => m * 0.01, mm => m * 0.001, km => m * 1000);
+  t1_good_units: type units (mm, cm => mm * 10, m => cm * 100, km => m * 1000);
+  
+  -- Bad: units have non-integer factors
+  t1_bad: type range of aadlinteger 1 mm .. 5 km units (m, cm => m * 0.01, mm => m * 0.001, km => m * 1000);
+  -- Bad: units have non-integer factors
+  t1_bad2: type range of aadlinteger 1 mm .. 5 km units PS::t1_bad_units;
+  
+  t1_good: type range of aadlinteger 1 mm .. 5 km units (mm, cm => mm * 10, m => cm * 100, km => m * 1000);
+  t1_good2: type range of aadlinteger 1 mm .. 5 km units PS::t1_good_units;
+  
+  int: type range of aadlinteger 1 a ..10 a units (a, b => a * 2#1001#, c => b * 2);
+  int2: type range of aadlinteger 1 ..100;
+  
+  -- bad: bounds don't have units
+  needs_units: type range of aadlreal 3.0 .. 5.0 units (x, y => x * 20);
+
+  -- bad: bounds don't have units
+  needs_units_int: type range of aadlinteger 3 .. 5 units (x, y => x * 20);
+  
+  -- bad: 47 mm > 20 mm
+  intprop1: PS::t1_good => 47 mm .. 2 cm applies to (all);
+  -- good: 47 mm <= 50 mm
+  intprop12: PS::t1_good => 47 mm .. 5 cm applies to (all);
+  -- bad: bounds don't have units
+  intprop13: PS::t1_good => 1 .. 3 applies to (all);
+  -- bad: delta doesn't have units
+  intprop14: PS::t1_good => 1 km  .. 3 km delta 5 applies to (all);
+  intprop15: PS::t1_good => 1 km  .. 3 km delta 5 m applies to (all);
+  
+  -- bad: 2 * 1000 * 100 * 10 > 3 * 10
+  intprop11: PS::t1_good => 2 km .. 3 cm applies to (all);
+  -- bad: 3 > 1
+  intprop2: PS::int2 => 3 .. 1 applies to (all);
+  
+  rangeless: type range of aadlinteger;
+  
+  rprop: PS::rangeless => -10000000000 .. 10000 applies to (all);
+end PS;

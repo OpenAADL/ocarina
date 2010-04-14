@@ -1,0 +1,5 @@
+TestPropertyAssocs.aadl:358:20:  (signed aadlnumber)  is not a unit literal but  (property type)  is a unit type
+TestPropertyAssocs.aadl:360:20:  (signed aadlnumber)  and  (property type)  have incompatible unit types
+TestPropertyAssocs.aadl:384:21:  (signed aadlnumber)  is not a unit literal but  (property type)  is a unit type
+TestPropertyAssocs.aadl:386:21:  (signed aadlnumber)  and  (property type)  have incompatible unit types
+Cannot analyze AADL specifications

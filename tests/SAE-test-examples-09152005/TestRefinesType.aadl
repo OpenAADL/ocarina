@@ -1,0 +1,50 @@
+-- these property associations test are to test our methods for retrieving the property values
+-- The declarations are syntactically and semantically correct.
+property set PS is
+  prop1: aadlstring applies to (data port);
+  prop2: inherit aadlstring applies to (data port, system);
+  prop3: aadlstring applies to (data port);
+end PS;
+
+package Test
+  public
+    system S 
+      features
+        -- prop1 => "from S", prop2 => "inherited from S", prop3 => "from s"
+        output: out data port
+          { ps::prop1 => "from S"; ps::prop3 => "from s"; }; 
+      properties
+        ps::prop2 => "inherited from s";
+    end S;
+    
+    system T extends S
+      features
+        -- prop1 => "from t", prop2 => "inherited from T", prop3 => "from s"
+        output: refined to out data port 
+          { ps::prop1 => "from t"; };
+      properties
+        ps::prop2 => "inherited from t";
+    end T;
+    
+    system implementation S.Impl
+      refines type
+        -- my view: prop1 => "from S", prop2 => "inherited from s.impl", prop3 => "from s.impl"
+        -- spec's view: prop1 => "from S", prop2 => "inherited from s", prop3 => "from s.impl"
+        output: refined to out data port
+          { ps::prop3 => "from S.impl"; };
+      properties
+        ps::prop2 => "inherited from s.impl";
+    end S.Impl;
+
+	-- Semantics of refines type says that refinement goes directly to the
+	-- type, not the refined feature in the super implementation
+    system implementation T.Impl extends S.Impl
+      refines type
+        -- my view: prop1 => "from t.impl", prop2 => "inherited from T.impl", prop3 => "from s"
+        -- spec's view: prop1 => "from t.impl", prop2 => "inherited from t", prop3 => "from s"
+        output: refined to out data port
+          { ps::prop1 => "from T.impl"; };
+      properties
+        ps::prop2 => "inherited from T.impl";
+    end T.Impl;
+end Test;

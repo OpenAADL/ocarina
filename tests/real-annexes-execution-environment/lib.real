@@ -1,0 +1,42 @@
+--  Subtheorem without parameters
+
+theorem sub_theorem_1
+  foreach e in Process_Set do
+  return (MMax (2.0));
+end;
+
+--  Subtheorem with 1 parameter
+
+theorem sub_theorem_2
+  foreach e in System_Set do
+  return (MMax (argv_0));
+end;
+
+--  Subtheorem with 2 parameters
+
+theorem sub_theorem_3
+  foreach e in Local_Set do
+  return (MSum (argv_0 + argv_1));
+end;
+
+--  Subtheorem with 1 parameter + domain inheritance (local_set)
+
+theorem sub_theorem_4
+  foreach e in Local_Set do
+  return (MMax ((get_property_value (e, "Period") / 1000.0) + argv_0));
+end;
+
+--  Subtheorem with global variable access
+
+theorem sub_theorem_5
+  foreach e in Local_Set do
+  return (MMax (y));
+end;
+
+--  Subtheorem with simple domain access
+
+theorem sub_theorem_6
+  foreach e in Local_Set do
+  return (MSum (1.0));
+end;
+

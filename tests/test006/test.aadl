@@ -1,0 +1,56 @@
+-- test for port_group_type, page 114-115 (v0.99)
+
+package GPSLib
+public
+  data position
+  end position;
+
+  data commands
+  end commands;
+end GPSLib;
+
+port group GPSbasic_socket
+  features
+    Wakeup: in event port;
+    Observation: out data port GPSLib::position;
+end GPSbasic_socket;
+
+port group GPSbasic_plug
+  features
+    WakeupEvent: out event port;
+    ObservationData: in data port GPSLib::position;
+  
+  inverse of GPSbasic_socket
+end GPSbasic_plug;
+
+port group MyGPS_plug
+  inverse of GPSbasic_socket
+end MyGPS_plug;
+
+port group GPSextended_plug extends GPSbasic_plug
+  features
+    Signal: out event port;
+    Cmd: in data port GPSLib::commands;
+end GPSextended_plug;
+
+process Satellite_position
+  features
+    position: port group GPSBasic_socket;
+end Satellite_position;
+
+process GPS_System
+  features
+    position: port group GPSbasic_plug;
+end GPS_System;
+
+system implementation Satellite.others
+  subcomponents
+    SatPos: process Satellite_position;
+    MyGPS: process GPS_System;
+
+  connections
+    port group Satpos.position -> MyGPS.position;
+end Satellite.others;
+
+system Satellite
+end Satellite;

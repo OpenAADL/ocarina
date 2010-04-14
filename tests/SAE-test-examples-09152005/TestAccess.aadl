@@ -1,0 +1,11 @@
+property set PS is
+  good1: access aadlinteger applies to (bus);
+  good2: access aadlinteger applies to (data);
+  good3: access aadlinteger applies to (data, bus);
+  good4: access aadlinteger applies to (bus, data);
+  
+  bad1: access aadlinteger applies to (system);
+  bad2: access aadlinteger applies to (system, data);
+  bad3: access aadlinteger applies to (system, bus);
+  bad4: access aadlinteger applies to (system, data, bus);
+end PS;

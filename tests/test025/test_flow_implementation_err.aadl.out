@@ -1,0 +1,2 @@
+test_flow_implementation_err.aadl:31:03: outSrc1 (flow implementation)  does not have a corresponding flow spec
+Cannot analyze AADL specifications

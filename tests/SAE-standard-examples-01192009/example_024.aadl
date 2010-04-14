@@ -1,0 +1,73 @@
+-- test 9.5 Feature Group Connection draft-01192009
+
+package Example3
+
+-- add for test
+public
+-- end add
+
+-- A simple example showing a system with two processes and threads.
+data Alpha_Type
+properties
+Source_Data_Size => 256 Bytes;
+end Alpha_Type;
+feature group xfer_plug
+features
+Alpha : out data port Alpha_Type;
+Beta : in data port Alpha_Type;
+end xfer_plug;
+feature group xfer_socket
+inverse of xfer_plug
+end xfer_socket;
+thread P
+features
+Data_Source : out data port Alpha_Type;
+end P;
+thread implementation P.Impl
+properties
+Dispatch_Protocol=>Periodic;
+Period=> 10 ms;
+end P.Impl;
+process A
+features
+Produce : feature group xfer_plug;
+end A;
+process implementation A.Impl
+subcomponents
+Producer : thread P.Impl;
+Result_Consumer : thread Q.Impl;
+connections
+port Producer.Data_Source -> Produce.Alpha;
+port Produce.Beta -> Result_Consumer.Data_Sink;
+end A.Impl;
+thread Q
+features
+Data_Sink : in data port Alpha_Type;
+end Q;
+thread implementation Q.Impl
+properties
+Dispatch_Protocol=>Periodic;
+Period=> 10 ms;
+end Q.Impl;
+process B
+features
+Consume : feature group xfer_socket;
+end B;
+process implementation B.Impl
+subcomponents
+Consumer : thread Q.Impl;
+Result_Producer : thread P.Impl;
+connections
+port Consume.Alpha -> Consumer.Data_Sink;
+port Result_Producer.Data_Source -> Consume.Beta;
+end B.Impl;
+system Simple
+end Simple;
+system implementation Simple.Impl
+subcomponents
+pr_A : process A.Impl;
+pr_B : process B.Impl;
+connections
+feature group pr_A.Produce -> pr_B.Consume;
+end Simple.Impl;
+end Example3;

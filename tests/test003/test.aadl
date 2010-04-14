@@ -1,0 +1,66 @@
+package tata
+  public
+    process Program
+      features
+        result : out data port toto::titi::tata::type1;
+        qwerty : port group tata::toto::PortType3;
+        param : in out data port tata::toto::type2;
+    end Program;
+end tata;
+
+package toto::titi::tata
+public
+  data type1
+  end type1;
+
+  data implementation type1.impl1
+  end type1.impl1;
+end toto::titi::tata;
+
+package tata::toto
+public
+  data typ
+  end typ;
+
+  data type2
+  end type2;
+	
+  data implementation type2.impl1
+  end type2.impl1;
+
+  port group PortType3
+    features
+      t : in data port typ;
+  end PortType3;
+end tata::toto;
+
+package toto::titi
+  public
+    process Application extends tata::Program
+      features
+        result: refined to out data port toto::titi::tata::type1.impl1;
+        asdf: in out event data port;
+        titi: in out event port;
+        qwerty: refined to port group tata::toto::PortType3;
+        param: refined to in out data port tata::toto::type2.impl1;
+        SubAccess: provides data access;
+      flows
+        --  Nothing now
+        none;
+    end Application;
+
+    thread DriverModeLogic
+      flows
+        --  Nothing now
+        none;
+    end DriverModeLogic;
+  private
+    process tyty
+    end tyty;
+end toto::titi;
+
+package toto
+  public
+    data tyty
+    end tyty;
+end toto; 

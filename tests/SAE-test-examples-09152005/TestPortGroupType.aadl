@@ -1,0 +1,326 @@
+property set ps is
+  prop1: aadlstring applies to (port group);
+  prop2: aadlstring => "default" applies to (port group);
+  prop3: inherit aadlstring applies to (port group, system);
+
+  prop1_expected: aadlstring applies to (port group);
+  prop2_expected: aadlstring applies to (port group);
+  prop3_expected: aadlstring applies to (port group, system);
+end ps;
+
+-- Package with a public and private section.  To test
+-- lookup of properties that fallback on the package-level
+-- property declarations
+package PortGroupTest
+  public
+    -- Property prop1 is defined in the public section,
+    -- get the value from there. 
+    -- prop1 => "from public", prop2 => "default"
+    port group PublicPG
+      features
+      properties
+        ps::prop1_expected => "from public";
+        ps::prop2_expected => "default";
+    end PublicPG;
+  
+    properties
+      ps::prop1 => "from public";
+
+  private
+    -- Property prop2 is defined in the private section,
+    -- get the value from there.  Get value of prop1 
+    -- from the public section
+    -- Should have prop1 => "from public", prop2 => "from private"
+    port group PrivatePG
+      features
+      properties
+        ps::prop1_expected => "from public";
+        ps::prop2_expected => "from private";
+    end PrivatePG;
+	
+    properties
+      ps::prop2 => "from private";
+end PortGroupTest;
+
+
+-- Test that private properties not picked up in public section
+package PortGroupTest2
+  public
+    -- Should ignore the prop2 definition from the private
+    -- section.  Prop1 => not present, prop2 => "default".
+    port group PublicType
+      features
+      properties
+        ps::prop2_expected => "default";
+    end PublicType;
+
+  private
+    -- Prop1 => "local", prop2 => "from private".
+    port group PrivateType
+      features
+      properties
+        ps::prop1 => "local";
+        ps::prop1_expected => "local";
+        ps::prop2_expected => "from private";
+    end PrivateType;
+
+    properties
+      ps::prop2 => "from private";
+end PortGroupTest2;
+
+
+-- Package that contains a "properties" section
+package MyPackage
+  public
+    -- Explicitly declares a property value for prop1
+    -- No value for prop2
+    -- Should have prop1 => "RootType", prop2 => "package default"
+    port group RootType
+      features
+      properties
+        ps::prop1 => "RootType";
+        ps::prop1_expected => "RootType";
+        ps::prop2_expected => "package default";
+    end RootType;
+  
+    -- Explicitly declare a property value for prop1
+    -- Explicitly declare a property value for prop2
+    -- Should have prop1 => "ChildType1", prop2 => "foo"
+    port group ChildType1 extends RootType
+      features
+      properties
+        ps::prop1 => "ChildType1";
+        ps::prop1_expected => "ChildType1";
+        ps::prop2 => "foo";
+        ps::prop2_expected => "foo";
+    end ChildType1;
+  
+    -- Does not redeclare a value for prop1
+    -- Does not declare a value for prop2
+    -- Should have prop1 => "RootType", prop2 => "package default"
+    port group ChildType2 extends RootType
+      features
+      properties
+        ps::prop1_expected => "RootType";
+        ps::prop2_expected => "package default";
+    end ChildType2;
+
+    -- Does not declare any property values
+    -- Should have prop1 => "package default", prop2 => "package default"
+    port group RootType2
+      features
+      properties
+        ps::prop1_expected => "package default";
+        ps::prop2_expected => "package default";
+    end RootType2;
+
+    -- Properties 
+    properties
+      ps::prop1 => "package default";
+      ps::prop2 => "package default";
+end MyPackage;
+
+
+-- Package that does not contain a "properties" section
+package MyPackage2
+  public
+    -- Explicitly declares a property value for prop1
+    -- No value for prop2
+    -- Should have prop1 => "local", prop2 => "default"
+    port group RootType
+      features
+      properties
+        ps::prop1 => "local";
+        ps::prop1_expected => "local";
+        ps::prop2_expected => "default";
+    end RootType;
+  
+    -- Explicitly declare a property value for prop1
+    -- Explicitly declare a property value for prop2
+    -- Should have prop1 => "ChildType1", prop2 => "foo"
+    port group ChildType1 extends RootType
+      features
+      properties
+        ps::prop1 => "ChildType1";
+        ps::prop1_expected => "ChildType1";
+        ps::prop2 => "foo";
+        ps::prop2_expected => "foo";
+    end ChildType1;
+  
+    -- Does not redeclare a value for prop1
+    -- Does not declare a value for prop2
+    -- Should have prop1 => "local", prop2 => "default"
+    port group ChildType2 extends RootType
+      features
+      properties
+        ps::prop1_expected => "local";
+        ps::prop2_expected => "default";
+    end ChildType2;
+
+    -- Does not declare any property values
+    -- Should have prop1 => not present, prop2 => "default"
+    port group RootType2
+      features
+      properties
+        ps::prop2_expected => "default";
+    end RootType2;
+end MyPackage2;
+
+
+property set ps2 is
+  -- Property with a default value
+  prop1: aadlinteger => 0 applies to (data port);
+      
+  -- Property with out a default value
+  prop2: inherit aadlstring applies to (data port, port group);
+  
+  prop1_expected: aadlinteger applies to (data port);
+  prop2_expected: aadlstring applies to (data port, port group);
+end ps2;
+
+
+-- Test features in port groups
+package TestFeaturesInPortGroups
+  public
+    -- Locally setting properties, getting default values, and inherit
+    -- foo.prop1 should be the default value
+    -- foo.prop2 should be from the container
+    -- bar.prop1 is locally set
+    -- bar.prop2 is from the the container
+    port group Type1
+      features
+        -- prop1 => 0, prop2 => "from Type1"
+        foo: in data port 
+          { ps2::prop1_expected => 0;
+            ps2::prop2_expected => "from Type1"; };
+        -- prop1 => 5, prop2 => "from Type1"
+        bar: out data port
+          { ps2::prop1 => 5;
+            ps2::prop1_expected => 5;
+            ps2::prop2_expected => "from Type1"; };
+      properties
+        ps::prop2_expected => "default";
+        ps2::prop2 => "from Type1";
+        ps2::prop2_expected => "from Type1";
+    end Type1;
+
+    -- Setting properties by refinement, and inheriting properties from the 
+    -- closest type of the container
+    port group Type2 extends Type1
+      features
+        -- prop1 => 10, prop2 => "local"
+        foo: refined to in data port
+          { ps2::prop1 => 10;
+            ps2::prop1_expected => 10;
+            ps2::prop2 => "local";
+            ps2::prop2_expected => "local"; };
+        -- prop1 => 5, prop2 => "from Type2"
+        bar: refined to out data port 
+          { ps2::prop1_expected => 5;
+            ps2::prop2_expected => "from Type2"; };
+      properties
+        ps2::prop2 => "from Type2";
+        ps2::prop2_expected => "from Type2";
+    end Type2;
+end TestFeaturesInPortGroups;
+
+
+-- Test port groups as features 
+package TestPGasFeaturesInComponent
+  public
+    -- prop1 => "from PG", prop2 => "default", prop3 => not present
+    port group PG
+      features
+        foo: in data port
+          { ps2::prop1_expected => 0; };
+      properties
+        ps::prop1 => "from PG";
+        ps::prop1_expected => "from PG";
+        ps::prop2_expected => "default";
+    end PG;
+    
+    system S
+      features
+        -- prop1 => "from PG", prop2=> "from S", prop3 => "inherited from S";
+        f: port group PG
+          { ps::prop1_expected => "from PG";
+            ps::prop2 => "from S";
+            ps::prop2_expected => "from S";
+            ps::prop3_expected => "inherited from S"; };
+      properties
+        ps::prop3 => "inherited from S";
+        ps::prop3_expected => "inherited from S";
+    end S;
+    
+    system T extends S
+      features
+        -- prop1 => "from PG", prop2=> "from T", prop3 => "inherited from S";
+        f: refined to port group PG
+          { ps::prop1_expected => "from PG";
+            ps::prop2 => "from T";
+            ps::prop2_expected => "from T";
+            ps::prop3_expected => "inherited from S"; };
+    end T;
+    
+    system implementation T.Foo
+      refines type
+        -- prop1 => "from T.Foo", prop2=> "from T", prop3 => "inherited from T.foo";
+        f: refined to port group PG
+          { ps::prop1 => "from T.Foo";
+            ps::prop1_expected => "from T.Foo";
+            ps::prop2_expected => "from T";
+            ps::prop3_expected => "inherited from T.foo"; };
+      properties
+        ps::prop3 => "inherited from T.foo";
+        ps::prop3_expected => "inherited from T.foo";
+    end T.Foo;
+end TestPGasFeaturesInComponent;
+
+
+-- Test port groups as features 
+package TestPGasFeaturesInPG
+  public
+    -- prop1 => "from PG", prop2 => "default", prop2 => not present
+    port group PG
+      features
+        foo: in data port
+          { ps2::prop1_expected => 0; };
+      properties
+        ps::prop1 => "from PG";      
+        ps::prop1_expected => "from PG";
+        ps::prop2_expected => "default";
+    end PG;
+    
+    port group X
+      features
+        -- prop1 => "from PG", prop2=> "from X", prop3 => "inherited from X";
+        f: port group PG
+          { ps::prop1_expected => "from PG";
+            ps::prop2 => "from X";
+            ps::prop2_expected => "from X";
+            ps::prop3_expected => "inherited from X"; };
+      properties
+        ps::prop2_expected => "default";
+        ps::prop3 => "inherited from X";
+        ps::prop3_expected => "inherited from X";
+    end X;
+    --    end S;  --  WASAE: This line was present in the original file, 
+    --   corrected with the above to abide to AADL grammar.
+    
+    port group Y extends X
+      features
+        -- prop1 => "from PG", prop2=> "from Y", prop3 => "inherited from y";
+        f: refined to port group PG
+          { ps::prop1_expected => "from PG";
+            ps::prop2 => "from Y";
+            ps::prop2_expected => "from Y";
+            ps::prop3_expected => "inherited from y"; };
+      properties
+        ps::prop2_expected => "default";
+        ps::prop3 => "inherited from y";
+        ps::prop3_expected => "inherited from y";
+    end Y;
+    --    end T; --  WASAE: This line was present in the original file, 
+    --   corrected with the above to abide to AADL grammar.
+end TestPGasFeaturesInPG;
+

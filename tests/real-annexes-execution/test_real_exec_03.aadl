@@ -1,0 +1,126 @@
+package Test3_REAL
+public
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Hello_Spg_1
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_1";
+end Hello_Spg_1;
+
+subprogram Hello_Spg_2
+properties
+  source_language => Ada95;
+  source_name     => "Hello.Hello_Spg_2";
+end Hello_Spg_2;
+
+-------------
+-- Threads --
+-------------
+
+thread Task
+end Task;
+
+thread implementation Task.impl_1
+calls
+   MyCalls : {
+      P_Spg : subprogram Hello_Spg_1;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 1000ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 1000 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_1;
+
+thread implementation Task.impl_2
+calls
+   MyCall : {
+     P_Spg : subprogram Hello_Spg_2;
+   };
+properties
+   Dispatch_Protocol                  => periodic;
+   Period                             => 500ms;
+   Compute_Execution_time             => 0 ms .. 3 ms;
+   Deadline                           => 500 ms;
+   Source_Stack_Size                  => 13952 Bytes;
+end Task.impl_2;
+
+---------------
+-- Processor --
+---------------
+
+processor cpurm
+end cpurm;
+
+processor implementation cpurm.impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+end cpurm.impl;
+
+---------------
+-- Processes --
+---------------
+
+process node_a
+end node_a;
+
+process implementation node_a.impl
+subcomponents
+   Task1 : thread Task.impl_1;
+   Task2 : thread Task.impl_2;
+
+annex real_specification {**
+
+--  tests the different ('<>') operator on floats
+
+theorem type_issues_1
+
+foreach e in Processor_Set do
+
+  check (2.0 <> 2.1);
+
+end;
+
+--  test 'different' operator on strings
+
+theorem type_issues_2
+
+foreach e in Processor_Set do
+
+  check ("bla" <> "blo");
+
+end;
+
+--  tests explicit casting
+
+theorem type_issues_3
+
+foreach e in Processor_Set do
+
+  check (Int (2.0) = 2 and 2.0 = Float (2));
+end;
+
+**};
+end node_a.impl;
+
+------------
+-- System --
+------------
+
+system rma 
+end rma;
+
+system implementation rma.ERC32
+subcomponents
+   node_a : process node_a.impl;
+   cpu_rm : processor cpurm.impl;
+properties
+   Actual_Processor_Binding => (reference (cpu_rm)) applies to node_a;
+end rma.ERC32;
+
+end Test3_REAL;

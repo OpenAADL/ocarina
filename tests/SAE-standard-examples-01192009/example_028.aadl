@@ -1,0 +1,14 @@
+-- test 11.1.1 Property Types draft-01192009
+
+property set mine is
+Length_Unit : type units ( mm, cm => mm * 10,
+m => cm * 100, km => m * 1000 );
+OnOff : type aadlboolean;
+-- This type declaration references a separately declared units type
+Car_Length : type aadlreal 1.5 .. 4.5 units mine::Length_Unit ;
+-- This type declaration defines the units in place
+Speed_Range : type range of aadlreal 0 .. 250 units ( kph );
+Position : type record (
+X: aadlinteger;
+Y: aadlinteger; );
+end mine;

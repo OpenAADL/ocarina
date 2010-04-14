@@ -1,0 +1,52 @@
+subprogram sub 
+  features
+    p: in parameter ;
+    q: out parameter ;
+end sub;
+
+thread t
+  features
+    x: in data port ;
+    y: in data port ;
+    z: out data port ;
+end t;
+
+-- bad: call.p used the destination of multiple connections in a single mode
+thread implementation t.i2
+  calls 
+    normal: {
+      call: subprogram sub ;
+    } in modes (m1);
+  connections
+    parameter x -> call.p in modes (m1);
+    parameter y -> call.p in modes (m1);
+    parameter call.q -> z in modes (m1);
+  modes
+    m1: initial mode;
+end t.i2;
+
+-- bad: call.p used the destination of multiple connections 
+thread implementation t.i
+  calls 
+    normal: {
+      call: subprogram sub ;
+    };
+  connections
+    parameter x -> call.p;
+    parameter y -> call.p;
+    parameter call.q -> z;
+end t.i;
+
+-- bad: q used the destination of multiple connections 
+subprogram implementation sub.a
+  calls 
+    normal: {
+      call1: subprogram sub;
+      call2: subprogram sub;
+    };
+    
+  connections
+    parameter call1.q -> q;
+    parameter call2.q -> q;
+end sub.a;
+  

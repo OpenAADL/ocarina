@@ -1,0 +1,43 @@
+-- test for parsing Prototypes in component type component implementation
+-- and feature group type
+
+package TestPrototypes
+public
+  abstract flowComponent	
+    prototypes
+     dt: data;
+  end flowComponent;
+
+
+  data flowComponentExt extends flowComponent ( proto => data dt )
+  end flowComponentExt;
+
+
+  abstract implementation flowComponent.primaryBackup
+    prototypes
+      control: abstract flowComponent;
+  end flowComponent.primaryBackup;
+
+
+  abstract implementation flowComponent.Ext extends flowComponent.primaryBackup
+  ( proto1 => data dt,
+    proto2 => process pc,
+    proto3 => data proto )
+  end flowComponent.Ext;
+  
+
+  feature group flowConnection
+    prototypes
+      lpt1: system;
+    features
+      Wakeup: in event port;
+  end flowConnection;
+
+
+  feature group flowConnectionExt extends flowConnection 
+  ( myproto => data proto )
+    prototypes
+      lpt2: system;
+  end flowConnectionExt;
+
+end TestPrototypes;

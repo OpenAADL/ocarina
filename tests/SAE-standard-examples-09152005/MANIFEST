@@ -1,0 +1,31 @@
+Cmd0: ocarina SystemOperationexample.aadl
+Success0: yes
+
+Cmd1: ocarina connectionexamples.aadl
+Success1: yes
+
+Cmd2: ocarina modesexample.aadl
+Success2: yes
+
+Cmd3: ocarina propertiesexample.aadl
+Success3: yes
+
+Cmd4: ocarina subprogramexample.aadl
+Success4: yes
+
+Cmd5: ocarina busexample.aadl
+Success5: yes
+
+Cmd6: ocarina dataexample.aadl
+Success6: yes
+
+Cmd7: ocarina flowsexamples.aadl
+Success7: no
+
+Cmd8: ocarina portsnaccess.aadl
+Success8: yes
+
+Cmd9: ocarina section4.aadl
+Success9: yes
+
+

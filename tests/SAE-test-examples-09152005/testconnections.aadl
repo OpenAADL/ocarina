@@ -1,0 +1,65 @@
+
+-- this example was used to test that the name resolver resolves names correctly
+-- the validation is to check that the references are filled in correctly in the Aadl Object model
+system S
+end S;
+
+system implementation S.i
+	subcomponents
+		pr: process P.i1;
+		prinv: process P.i1;
+	connections
+	-- legal connection
+		c1: port group pr.p -> prinv.pinv;
+	-- this one is not legal as the port groups are not inverses
+		c2: port group pr.p -> prinv.p;
+end S.i;
+
+process P
+	features
+		p: port group PKG::PG;
+		pinv: port group PKG::PI;
+end P;
+
+process implementation P.i1
+	subcomponents
+		t1: thread T;
+	connections
+	-- a connection that takes an element from a port group and connects it to a subcomponent
+		c1: event port p.r2 -> t1.a;
+end P.i1;
+
+thread T
+	features
+		a: in event port;
+end T;
+
+package PKG
+	public
+		port group PG extends priv_PG
+			features
+				r1: in event data port D;
+				r2: in event port;
+		end PG;
+
+		port group PI
+			inverse of PG
+		end PI;
+				
+	private
+		port group priv_PG
+			features
+				p1: in data port D;
+				p2: in data port D;
+				pg: port group P1;
+		end priv_PG;
+		
+		port group P1
+			features
+				q1: in out event port;
+		end P1;
+		
+		data D
+		end D;
+		
+end PKG;

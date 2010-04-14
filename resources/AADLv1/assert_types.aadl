@@ -1,0 +1,14 @@
+-- This package defines types used to describe some generic elements
+-- used as part of the ASSERT process.
+
+package ASSERT_Types
+
+public
+
+data Stream_Element
+  -- Root type for buffer elements
+properties
+  Data_Model::Data_Representation => Character;
+end Stream_Element;
+
+end ASSERT_Types;

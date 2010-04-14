@@ -1,0 +1,10 @@
+package p1 
+public
+   data d1;
+   --  Ocarina should not hang indefinitely when parsing the incomplete
+   --  component above
+
+   data implementation d1.impl1;
+   --  Idem...
+
+end p1;

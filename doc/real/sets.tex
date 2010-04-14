@@ -1,0 +1,50 @@
+\subsubsection {Set definition}
+\paragraph{}
+Lets $S_1$, $S_2$ ... $S_N$ be pre-defined sets of instances. 
+All pre-defined sets are typed according to the AADL instance 
+types they are coming from.
+
+eg. :
+
+\textit{Process\_Set} is the set which contains all processes 
+instances.
+
+\subsubsection {Set functions}
+\label {set_operations}
+
+\paragraph{}
+In some case set must be restricted or joined in order to build 
+the final set. Set operations are defined in the sets space (ie. 
+they takes sets as arguments and returns sets). Set functions are
+called within set expressions (cf~\ref{expression_def}).
+
+eg. : 
+
+\textit{Union} is a function which take two sets and returns 
+the sets resulting in the union of the two sets, with delete 
+equal elements (ie. if an element is at the same time in E1 
+and E2, it is present twice in the result of Union (E1, E2).
+
+\subsubsection {The \textit{local} set}
+
+\paragraph{}
+If a theorem is defined within a AADL composant annex or if it is 
+called with a specified \textit{domain} then the \textit{local} set 
+is defined. Note that \textit{Local\_Set} is a valid set expression.
+
+\subsubsection{Relations}
+\label {relation_def}
+
+As exposed in Section~\ref{set_building}, sets can be defined that
+refer to previously defined sets. Sets gather elements matching
+specified properties. \real{} defines relations to find hierarchical
+links between \aadl{} component instances. Relations allow to navigate
+in the \aadl{} model and thus to access \aadl{} architectural
+semantics within \real{}. For instance, the relation \texttt{A
+  is\_subcomponent\_of B} returns \texttt{true} whenever the
+instance A is a subcomponent of the instance B.  Relation can be
+expressed between two elements, or between a set and an element. In
+that case, this example would return true whenever A is a subcomponent
+of any element of the set B. All existing relations are presented in
+section~\ref{predefined_stuf}.
+

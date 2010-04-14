@@ -1,0 +1,35 @@
+2004-08-13  Laurent Pautet  <pautet@dorine.enst.fr>
+
+	* output.adb, output.ads: Remove unused routines.
+
+2004-08-04  Laurent Pautet  <pautet@dorine.enst.fr>
+
+	* utils.adb, utils.ads: Slightly modify Capitalize to change any
+	leading character or successor of an underscore into its
+	corresponding uppercase character (do not modify anything else).
+
+2004-07-02  Ngoc Minh Vo  <nvo@siloe.enst.fr>
+
+	* output.ads, output.adb:
+	added Set_Output (File_Descriptor)
+
+2004-06-29  Laurent Pautet  <pautet@dorine.enst.fr>
+
+	* output.adb, output.ads: Add a parameter to Write_Eol in order to
+	indicate the number of lines to write. Add a parameter Offset to
+	Write_Indentation in order to insert or remove space when
+	executing this routine.
+
+2004-06-12  Laurent Pautet  <pautet@dorine.enst.fr>
+
+	* output.ads, output.adb: Move Write_Indentation, Write_Space,
+	Increment_Indentation and Decrement_Indentation from BE_IDL to
+	Output.
+
+	* errors.ads: Add exception Not_Yet_Implemented.
+
+2004-06-10  Laurent Pautet  <pautet@dorine.enst.fr>
+
+	* locations.adb, locations.ads: Add a location comparison function
+	in order to know which location occurs first in the source file.
+

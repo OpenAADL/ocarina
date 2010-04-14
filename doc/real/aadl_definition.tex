@@ -1,0 +1,24 @@
+% Support syntax highlighting for AADL
+
+\lstdefinelanguage{aadl}
+{morekeywords={in,out,package,end,bus,data,thread,port,group,process,processor,
+system,memory,device,subprogram,public,private,event,property,set,applies,to,
+units,type,implementation,parameter,reference},
+  morekeywords={properties,features,annex,modes,connections,flows,
+  subcomponents,calls,binding},
+  morekeywords={aadlinteger,aadlboolean,aadlstring,aadlfloat},
+morecomment=[l]{--},
+}
+
+% Layout for listings
+
+\lstset{language=aadl,
+        basicstyle=\scriptsize\sffamily,
+        aboveskip=.1cm, % \smallskipamount, % \bigskipamount,
+        belowskip= \smallskipamount, % \bigskipamount,
+        abovecaptionskip=-.5cm, % \smallskipamount, % \medskipamount,
+        belowcaptionskip=.0cm, % \smallskipamount, % \bigskipamount,
+        xleftmargin=.0cm,
+        captionpos=b,
+        tabsize=3,
+        }

@@ -1,0 +1,114 @@
+property set PS is
+  -- Good: 7
+  intconst: constant aadlinteger => 7;
+  -- Good: -7 and 7
+  inttype: type aadlinteger -value(PS::intconst) .. value(PS::intconst);
+
+  -- Bad: reference to an integer
+  -- Good: 4.5
+  realtype: type aadlreal -value(PS::intconst) .. 4.5;
+  
+  -- Bad: reference to a real
+  inttype2: type aadlinteger value(PS::w6) .. 100;
+  
+  -- GOod: 0.0, 1.0, 2.0
+  t1: constant list of aadlreal => (0.0, 1.0, 2.0);
+  -- Bad: references a list
+  -- t2: constant aadlreal => +value(PS::t1); -- Parse error
+  
+  -- Bad: based reals not yet supported
+  w1: constant aadlreal => 2#11101.1110101#;
+  -- Bad: based reals not yet supported
+  w2: constant aadlreal => 3#120.221001#e3;
+  -- Good: no explicit signs
+  w3: constant aadlreal => 4.1e3;
+  -- good: explicit +
+  w4: constant aadlreal => +4.1e+3;
+  -- good: explicit -
+  w5: constant aadlreal => -4.5e-5;
+  --good: big 'E'
+  w6: constant aadlreal => 47.0E10;
+
+  --bad: overflow
+  w7: constant aadlreal => 1.0e-10000000000000000000000000000000000;
+
+  -- good: 4.5e-5 .. 4.1e11
+  rt2: type aadlreal -value(PS::w5) .. value(PS::w6);
+
+  -- Good: -7
+  PROP1: aadlinteger => +value(PS::intconst) applies to (all);
+  -- bad: out of bounds 9223372036854775808
+  PROP2: aadlinteger => -value(PS::c24) applies to (all);
+  
+  -- Good: 7000
+  c1: constant aadlinteger => +  7_000;
+  -- Good: 7000
+  c2: constant aadlinteger => 7e3;
+  -- max representable value
+  c21: constant aadlinteger => 9223372036854775807;
+  -- bad: 1 + max representable value
+  c22: constant aadlinteger => 9223372036854775808;
+  -- Good: least representable value
+  c23: constant aadlinteger => -9223372036854775807;
+  -- bad: too negative
+  c24: constant aadlinteger => -9223372036854775808;
+  -- too big!
+  c3: constant aadlinteger => 4000000000000000000000000000000000;
+  -- negative exponent
+  c4: constant aadlinteger => 7e-100;
+  -- bad: too big
+  c5: constant aadlinteger => 7e100;
+  -- bad: too big, but exponent representable
+  c51: constant aadlinteger => 1e2147483647;
+  -- bad: too big, exponent not representable
+  c52: constant aadlinteger => 1e2147483648;
+  -- GOOD: positive exponent
+  c53: constant aadlinteger => 7e+10;
+  -- GOOD: implicit positive exponent
+  c6: constant aadlinteger => 7E10;
+  c7: constant aadlinteger => +3_0_0;
+  c8: constant aadlinteger => - 47_345_960;
+--  c7: constant aadlinteger => 0.0;  -- parse error
+--  c8: constant aadlinteger => 0.;  -- parse error
+--  c9: constant aadlinteger => 8e8e;  -- parse error
+--  c10: constant aadlinteger => 0_abs;  -- parse error
+
+  -- bad: base < 2
+  base1: constant aadlinteger => 0#0#;
+  -- bad: base < 2
+  base2: constant aadlinteger => 1#0#;
+  -- good: val = 5
+  base3: constant aadlinteger => 2#101#; 
+  -- good: val = -255
+  base4: constant aadlinteger => -16#ff#;
+  -- bad: base > 16
+  base5: constant aadlinteger => 37#90abf#;
+  -- bad: 'c' not in base 12
+  base6: constant aadlinteger => 12#abc#;
+  -- good: value = 16872
+  base7: constant aadlinteger => 13#78ab#;
+  -- bad: exponent is negative
+  base8: constant aadlinteger => 8#77#e-3;
+  -- good: exponent is plus, value = 32256
+  base9: constant aadlinteger => 8#77#E+3;
+  -- good: exponent is implicit plus, value = -32256
+  base10: constant aadlinteger => -8#77#e3;
+  
+  -- good value = 255;
+  example1: constant aadlinteger => 2#1111_1111#;
+  -- good value = 255;
+  example2: constant aadlinteger => 16#FF#;
+  -- good value = 255;
+  example3: constant aadlinteger => 016#0ff#;
+  -- good value = 224;
+  example4: constant aadlinteger => 16#E#E1;
+  -- good value = 224;
+  example5: constant aadlinteger => 2#1110_0000#;
+end PS;
+
+package P
+  public
+    data d end d;
+    properties 
+      PS::PROP1 => +value(PS::c1);
+end P;

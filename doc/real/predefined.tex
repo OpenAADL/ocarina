@@ -1,0 +1,128 @@
+\label {predefined_stuf}
+
+\subsection {Conventions}
+
+\paragraph{}
+This section aims to describe precisely the functions used 
+in REAL, so we need to begin with some words about actual 
+conventions used.
+
+\paragraph{}
+All pre-defined function names are in italics. Only parameters 
+type are given in the function prototype (in bold font). 
+Returned type is specifiate by :\\
+returns $<Type\_Name>$;
+
+\subsubsection {Basic types}
+\paragraph{}
+The last part of the algorithm (final set verification) is
+able to work on non-set types. Basic types must be evaluated, 
+too. Here is the list of types supported (derivated from AADL 
+basic types) :
+
+\begin {itemize}
+\item Integer
+\item String
+\item Boolean
+\item Real
+\end {itemize}
+Classical basic operations are implemented for all thoses types.
+
+\subsubsection{Example}
+\paragraph{}
+function ''func'' spec :\\ 
+\textit{func} (\textbf{T\_Data}) returns boolean; 
+
+\subsection {Sets}
+\label {predefined_sets}
+
+\paragraph{}
+As seen before, it exists a predefined set corresponding to each REAL type~(\ref{types}):
+\begin {itemize}
+\item \textit{Data\_Set} : set of \textbf{T\_Data}
+\item \textit{Subprogram\_Set} : set of \textbf{T\_Subprogram}
+\item \textit{Subprogram\_Call\_Set} : set of \textbf{T\_Subprogram\_Call}
+\item \textit{Sequence\_Call\_Set} : set of \textbf{T\_Sequence\_Call}
+\item \textit{Thread\_Set} : set of \textbf{T\_Thread}
+\item \textit{Threadgroup\_Set} : set of \textbf{T\_Threadgroup}
+\item \textit{Process\_Set} : set of \textbf{T\_Process}
+\item \textit{Memory\_Set} : set of \textbf{T\_Memory}
+\item \textit{Processor\_Set} : set of \textbf{T\_Processor}
+\item \textit{Virtual\_Processor\_Set} : set of \textbf{T\_Virtual\_Processor}
+\item \textit{Bus\_Set} : set of \textbf{T\_Bus}
+\item \textit{Virtual\_Bus\_Set} : set of \textbf{T\_Virtual\_Bus}
+\item \textit{Connection\_Set} : set of \textbf{T\_Connection}
+\item \textit{Device\_Set} : set of \textbf{T\_Device}
+\item \textit{End\_To\_End\_Flows\_Set} : set of \textbf{T\_End\_To\_End\_Flow} (the flows that exist in the distributed application)
+\item \textit{System\_Set} : set of \textbf{T\_System}
+\item \textit{Local} : set of instances which are of the same type than 
+the caller node. Note that if the theorem is actually not directly called (cf. case of library theorems~\ref {theorems}), then the \textit{Local} set is actually equal to the node which is calling the theorem actually calling the final theorem. This is named context inheritence.
+\end {itemize}
+
+\subsection {Set functions}
+
+\paragraph{}
+Set functions are basic operations in set theory, wich are :
+\begin {itemize}
+\item Union
+\item Intersection
+\item Complement
+\end {itemize}  
+
+\subsubsection {Union}
+
+\paragraph{}
+\textit{Union}, is defined by :\\ 
+\textit{Union} ($<Set\_Type>$, $<Set\_Type>$) returns $<Set\_Type>$;\\
+Where all $<Set\_Type>$ must be the same.
+
+\paragraph{}
+It exists a variant accepting a Generic\_Set as first parameter :\\
+\textit{Union} (\textbf{T\_Generic}, $<Set\_Type>$) returns \textbf{T\_Generic};\\
+
+\paragraph{}
+Note that, as exposed before, Union is actually a potentialy 
+redondant union, ie. an element present once in both parameter 
+sets will be present twice in resulting set. A non-redondant version
+(thus complying to set theory union) is called Distinct\_Union :\\
+\textit{Distinct\_Union} ($<Set\_Type>$, $<Set\_Type>$) returns $<Set\_Type>$;\\
+\textit{Distinct\_Union} (\textbf{T\_Generic}, $<Set\_Type>$) returns \textbf{T\_Generic};
+
+\subsubsection {Intersection}
+
+\paragraph{}
+\textit{Intersection}, is defined by :\\ 
+\textit{Intersection} ($<Set\_Type>$, $<Set\_Type>$) returns $<Set\_Type>$;\\
+Where all $<Set\_Type>$ must be the same.
+
+\paragraph{}
+It exists a variant accepting a Generic\_Set as first parameter :\\
+\textit{Union} (\textbf{T\_Generic}, $<Set\_Type>$) returns $<Set\_Type>$;
+
+\subsubsection {Complement}
+
+\paragraph{}
+\textit{Complement}, is defined by :\\ 
+\textit{Complement} ($<Set\_Type>$) returns $<Set\_Type>$;\\
+Where all $<Set\_Type>$ must be the same.
+
+\subsection {Relations}
+\input {selection_functions}
+
+\subsection {Regular functions}
+\input {check_functions}
+
+\subsection {Aggregation functions}
+
+\subsubsection {MSum}
+
+\textit {MSum} is an aggregation function which take a return expression
+as parameter. It will return the sum of the evaluations for each element 
+of the range set.
+
+\subsubsection {MMax}
+
+\textit {MMax} is an aggregation function which take a return expression
+as parameter. It will return the maximum of the evaluations on all element 
+of the range set.
+

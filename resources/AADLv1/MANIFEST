@@ -1,0 +1,5 @@
+AADL_VERSION=-aadlv1
+
+-- Do not remove this file here
+-- It is use to allow the parsing of AADLv1 pre-declared property sets
+-- in Ocarina Tests suite

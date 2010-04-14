@@ -1,0 +1,30 @@
+thread Receiver
+features
+   mem : requires data access shared_data.i;
+properties
+  Dispatch_Protocol => Sporadic;
+  ARAO::Priority => 2;
+  RTOS_Properties::Criticity => 3;
+end Receiver;
+
+thread Watcher
+features
+  mem : requires data access shared_data.i;
+properties
+  Dispatch_Protocol => Periodic;
+  Period            => 500 Ms;
+  ARAO::Priority => 4;
+  RTOS_Properties::Criticity => 3;
+end Watcher;
+
+process node end node;
+
+process implementation node.i
+subcomponents
+  th1 : thread Receiver;
+  th2 : thread Watcher;
+  sh_mem : data shared_data.i;
+connections
+  data access sh_mem -> th1.mem;
+  data access sh_mem -> th2.mem;
+end node.i;

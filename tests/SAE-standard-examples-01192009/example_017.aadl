@@ -1,0 +1,20 @@
+-- test 8.3.2 Port Input and Output timing draft-01192009
+
+-- add for test
+package Test
+public 
+-- end add
+
+-- a thread that gets input partway into execution and sends output
+-- before completion.
+thread TightLoop
+features
+sensor: in data port
+{Input_Time => (Start,10 us .. 15 us);} ;
+actuator: out data port
+{Output_Time => (Completion,10 us .. 11 us);} ;
+end TightLoop;
+
+-- add for test
+end Test;
+-- end add
