@@ -328,7 +328,7 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
             N := Make_Object_Declaration
               (Defining_Identifier => Make_Defining_Identifier (PN (P_Value)),
-               Object_Definition   => RE (RE_Integer_16));
+               Object_Definition   => RE (RE_Unsigned_16));
             Append_Node_To_List (N, Declarations);
 
             N := Make_Object_Declaration
