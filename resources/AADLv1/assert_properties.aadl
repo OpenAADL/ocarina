@@ -39,6 +39,9 @@ Transmission_Type : type enumeration
    full_duplex);
 --  Message transmission kind
 
+Encoding_type : type enumeration (native, uper);
+Encoding : Encoding_type applies to (parameter);
+
 Freq_Units : type units (
     Hz,
     KHz    => Hz  * 1000,
