@@ -2418,7 +2418,7 @@ package body Ocarina.Backends.Properties is
          return Transport_None;
       end if;
 
-      pragma Assert (Is_Bus (B));
+      pragma Assert (Is_Bus (B) or else Is_Virtual_Bus (B));
 
       if Present (E) then
          Root_Sys := Parent_Component (Parent_Subcomponent (E));

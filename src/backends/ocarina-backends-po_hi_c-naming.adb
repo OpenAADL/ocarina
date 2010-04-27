@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2008-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -424,7 +424,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                            --  connections.
 
                            if Transport_API /= Transport_None and then
-                             Transport_API /= Get_Transport_API (B)
+                             Transport_API /= Get_Transport_API (B, E)
                            then
                               Display_Located_Error
                                 (Loc (Parent_Subcomponent (E)),
@@ -434,7 +434,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                                  & " for now.",
                                  Fatal => True);
                            else
-                              Transport_API := Get_Transport_API (B);
+                              Transport_API := Get_Transport_API (B, E);
 
                               --  If we have a bus for which no
                               --  transport layer has been specified,

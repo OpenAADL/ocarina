@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2008-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -154,12 +154,20 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         U               : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P               : constant Node_Id := CTN.Entity (U);
+         U               : Node_Id;
+         P               : Node_Id;
          Implementation  : Node_Id;
          S               : Node_Id;
       begin
+
+         if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
+            return;
+         end if;
+         U := CTN.Distributed_Application_Unit
+           (CTN.Naming_Node (Backend_Node (Identifier (E))));
+
+         P := CTN.Entity (U);
+
          Push_Entity (P);
          Push_Entity (U);
 
@@ -805,12 +813,21 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         U               : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P               : constant Node_Id := CTN.Entity (U);
+         U               : Node_Id;
+         P               : Node_Id;
          Implementation  : Node_Id;
          S               : Node_Id;
       begin
+
+         if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
+            return;
+         end if;
+
+         U := CTN.Distributed_Application_Unit
+           (CTN.Naming_Node (Backend_Node (Identifier (E))));
+
+         P := CTN.Entity (U);
+
          Push_Entity (P);
          Push_Entity (U);
 
