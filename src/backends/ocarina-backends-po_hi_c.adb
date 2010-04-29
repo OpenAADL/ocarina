@@ -161,7 +161,7 @@ package body Ocarina.Backends.PO_HI_C is
       if Use_Transport then
          Write_Line ("yes");
 
-         if Transport_API /= Transport_None then
+         if Transport_API = Transport_BSD_Sockets then
             Write_Line
               ("ACTUAL_TRANSPORT= po_hi_sockets.o ");
          end if;
