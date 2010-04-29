@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2005-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -3594,5 +3594,4 @@ package body Ocarina.Backends.Utils is
 
       return No_Node;
    end Get_Corresponding_Port_In_Component;
-
 end Ocarina.Backends.Utils;

@@ -3952,4 +3952,20 @@ package body Ocarina.Backends.Properties is
       return ARINC653_Empty_Actions;
    end Get_ARINC653_HM_Actions;
 
+   ---------------------
+   -- Get_Driver_Name --
+   ---------------------
+
+   function Get_Driver_Name (Device : Node_Id) return Name_Id is
+   begin
+      if Is_Defined_String_Property
+        (Device, Get_String_Name ("deployment::driver_name")) then
+         return Get_String_Property
+           (Device, Get_String_Name ("deployment::driver_name"));
+      end if;
+
+      return No_Name;
+
+   end Get_Driver_Name;
+
 end Ocarina.Backends.Properties;

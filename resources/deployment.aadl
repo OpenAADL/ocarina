@@ -45,4 +45,6 @@ property set Deployment is
   Priority : Deployment::Priority_Type applies to (data, thread);
   --  Thread and data component priority
 
+  Driver_Name : aadlstring applies to (device);
+
 end Deployment;

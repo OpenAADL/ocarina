@@ -32,6 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Namet;
+with Utils; use Utils;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -356,6 +357,8 @@ package body Ocarina.Backends.PO_HI_C.Naming is
          C_End             : Node_Id;
          End_List          : List_Id;
          Parent            : Node_Id;
+         Accessing_Device  : Node_Id;
+         Driver_Name       : Name_Id;
          Root_Sys          : constant Node_Id
            := Parent_Component (Parent_Subcomponent (E));
          Transport_API     : Supported_Transport_APIs := Transport_None;
@@ -472,6 +475,23 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                --  nodes involved with the current one and append it
                --  to the naming list.
 
+               Set_Deployment_Header;
+
+               Append_Node_To_List
+                  (Make_Define_Statement
+                     (Defining_Identifier =>
+                        (RE (RE_Need_Driver_Sockets)),
+                     Value =>
+                        (Make_Literal
+                           (CV.New_Int_Value (1, 1, 10)))),
+                  CTN.Declarations (Current_File));
+
+               Set_Naming_Source;
+
+               --  Here, by default, we activate the socket
+               --  transport layer. This is the default behavior
+               --  if no device is specified for transport concerns.
+
                S := First_Node (Subcomponents (Root_Sys));
 
                while Present (S) loop
@@ -489,6 +509,57 @@ package body Ocarina.Backends.PO_HI_C.Naming is
 
                N := Message_Comment ("Naming Table");
                Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            when Transport_User =>
+               if AAU.Is_Bus (B) then
+                  Accessing_Device := Get_Device_Of_Process (B, E);
+               elsif AAU.Is_Virtual_Bus (B) then
+                  Accessing_Device := Get_Device_Of_Process
+                     (Parent_Component (Parent_Subcomponent (B)), E);
+               else
+                  Display_Located_Error
+                     (Loc (B),
+                      "Unknown bus kind !",
+                      Fatal => True);
+               end if;
+
+               if Accessing_Device = No_Node then
+                  Display_Located_Error
+                     (Loc (B),
+                      "No device is accessing this bus !",
+                      Fatal => True);
+               end if;
+
+               Driver_Name := Get_Driver_Name
+                  (Corresponding_Instance (Accessing_Device));
+
+               if Driver_Name = No_Name then
+                  Display_Located_Error
+                     (Loc (B),
+                      "Driver must have a name" &
+                      "(see Deployment::Driver_Name) !",
+                      Fatal => True);
+               end if;
+
+               Set_Deployment_Header;
+               Set_Str_To_Name_Buffer ("__PO_HI_NEED_");
+               Get_Name_String_And_Append (Driver_Name);
+
+               Driver_Name := Name_Find;
+               Driver_Name := To_Upper (Driver_Name);
+
+               Append_Node_To_List
+                  (Make_Define_Statement
+                     (Defining_Identifier =>
+                        (Make_Defining_Identifier
+                           (Driver_Name,
+                           C_Conversion => False)),
+                     Value =>
+                        (Make_Literal
+                           (CV.New_Int_Value (1, 1, 10)))),
+                  CTN.Declarations (Current_File));
+
+               Set_Naming_Source;
 
             when others =>
                --  If we did not fetch a meaningful transport layer,

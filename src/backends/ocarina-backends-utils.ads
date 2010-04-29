@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2005-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -476,5 +476,4 @@ package Ocarina.Backends.Utils is
       return Node_Id;
    --  Return the port connected the port given in parameter
    --  inside the component.
-
 end Ocarina.Backends.Utils;

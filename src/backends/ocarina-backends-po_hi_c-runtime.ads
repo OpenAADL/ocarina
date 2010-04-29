@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2008-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -154,6 +154,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Simulink_Init_Func,             --  __PO_HI_SIMULINK_INIT
       RE_Simulink_Model_Type,            --  __PO_HI_SIMULINK_MODEL
       RE_Nb_Tasks,                       --  __PO_HI_NB_TASKS
+      RE_Need_Driver_Sockets,            --  __PO_HI_NEED_DRIVER_SOCKETS
       RE_SUCCESS,                        --  __PO_HI_SUCCESS
 
       RE_Task_Id,                        --  __po_hi_task_id
@@ -315,6 +316,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Noaddr                         => RH_PO_HI_Protocols,
          RE_Noport                         => RH_PO_HI_Protocols,
          RE_Nb_Tasks                       => RH_Deployment,
+         RE_Need_Driver_Sockets            => RH_Deployment,
          RE_SUCCESS                        => RH_PO_HI_Returns,
 
          --  Variables associations

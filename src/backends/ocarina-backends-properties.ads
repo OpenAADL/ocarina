@@ -763,6 +763,9 @@ package Ocarina.Backends.Properties is
       return ARINC653_Memory_Kind;
    --  Returns the memory_kind property value of a memory component.
 
+   function Get_Driver_Name (Device : Node_Id) return Name_Id;
+   --  Returns the name of the driver.
+
 private
 
    Empty_Name_Array : constant Name_Array (1 .. 0) := (others => No_Name);
