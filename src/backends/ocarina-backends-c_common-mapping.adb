@@ -909,17 +909,21 @@ package body Ocarina.Backends.C_Common.Mapping is
       elsif AINU.Is_Thread (Corresponding_Instance (E)) then
          --  For threads, the enumerator name is mapped from the
          --  containing process name and the thread subcomponent name.
-
-         --  Verifiy that the thread is a subcomponent of a process
-
-         pragma Assert (AINU.Is_Process (Parent_Component (E)));
-
-         C_Name_1 := CTU.To_C_Name
-           (Display_Name
-              (Identifier
-                 (Parent_Subcomponent
+         if Parent_Subcomponent (Parent_Component (E)) = No_Node then
+            C_Name_1 := CTU.To_C_Name
+              (Display_Name
+                 (Identifier
                     (Parent_Component
-                       (E)))));
+                       (E))));
+         else
+            C_Name_1 := CTU.To_C_Name
+              (Display_Name
+                 (Identifier
+                     (Parent_Subcomponent
+                       (Parent_Component
+                        (E)))));
+         end if;
+
          C_Name_2 := CTU.To_C_Name
            (Display_Name
               (Identifier

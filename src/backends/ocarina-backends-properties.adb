@@ -93,6 +93,7 @@ package body Ocarina.Backends.Properties is
    --  Subprogram, thread, data, port...
 
    Implemented_As     : Name_Id;
+   Device_Driver_Name : Name_Id;
 
    -------------------------------
    -- Data component properties --
@@ -2125,6 +2126,8 @@ package body Ocarina.Backends.Properties is
    begin
       if Is_Defined_Property (E, Implemented_As) then
          return Get_Classifier_Property (E, Implemented_As);
+      elsif Is_Defined_Property (E, Device_Driver_Name) then
+         return Get_Classifier_Property (E, Device_Driver_Name);
       else
          return No_Node;
       end if;
@@ -2727,6 +2730,7 @@ package body Ocarina.Backends.Properties is
       Original_Name      := Get_String_Name
         ("transformations::original_name");
       Implemented_As     := Get_String_Name ("implemented_as");
+      Device_Driver_Name := Get_String_Name ("device_driver");
 
       Base_Type           := Get_String_Name ("data_model::base_type");
       Code_Set            := Get_String_Name ("data_model::code_set");

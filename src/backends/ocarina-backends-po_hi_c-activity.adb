@@ -75,6 +75,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);
       procedure Visit_Process_Instance (E : Node_Id);
+      procedure Visit_Device_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
       function Task_Job_Spec (E : Node_Id) return Node_Id;
       function Task_Deliver_Spec (E : Node_Id) return Node_Id;
@@ -185,6 +186,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Parameters : constant List_Id := New_List (CTN.K_Parameter_List);
          S          : Node_Id;
          N          : Node_Id;
+         The_System : constant Node_Id := Parent_Component
+           (Parent_Subcomponent (E));
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -253,9 +256,46 @@ package body Ocarina.Backends.PO_HI_C.Activity is
               (N, CTN.Declarations (CTN.Activity_Source (U)));
          end if;
 
+         --  Visit all devices attached to the parent system that
+         --  share the same processor as process E.
+
+         if not AAU.Is_Empty (Subcomponents (The_System)) then
+            S := First_Node (Subcomponents (The_System));
+            while Present (S) loop
+               if AAU.Is_Device (Corresponding_Instance (S))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (S))
+                 = Get_Bound_Processor (E)
+               then
+                  Visit_Device_Instance
+                    (Corresponding_Instance (S));
+               end if;
+               S := Next_Node (S);
+            end loop;
+         end if;
+
          Pop_Entity; -- U
          Pop_Entity; -- P
       end Visit_Process_Instance;
+
+      ---------------------------
+      -- Visit_Device_Instance --
+      ---------------------------
+
+      procedure Visit_Device_Instance (E : Node_Id) is
+         Implementation  : constant Node_Id := Get_Implementation (E);
+         S : Node_Id;
+      begin
+         if Implementation /= No_Node then
+            if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
+               S := First_Node (Subcomponents (Implementation));
+               while Present (S) loop
+                  Visit_Component_Instance (Corresponding_Instance (S));
+                  S := Next_Node (S);
+               end loop;
+            end if;
+         end if;
+      end Visit_Device_Instance;
 
       ---------------------------
       -- Visit_System_Instance --
@@ -344,6 +384,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);
       procedure Visit_Process_Instance (E : Node_Id);
+      procedure Visit_Device_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
 
       function Task_Job_Body (E : Node_Id) return Node_Id;
@@ -1316,6 +1357,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
            (CTN.K_Declaration_List);
          Statements   : constant List_Id := New_List (CTN.K_Statement_List);
          Parameters   : List_Id;
+         The_System : constant Node_Id := Parent_Component
+           (Parent_Subcomponent (E));
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -1456,9 +1499,46 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
+         --  Visit all devices attached to the parent system that
+         --  share the same processor as process E.
+
+         if not AAU.Is_Empty (Subcomponents (The_System)) then
+            S := First_Node (Subcomponents (The_System));
+            while Present (S) loop
+               if AAU.Is_Device (Corresponding_Instance (S))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (S))
+                 = Get_Bound_Processor (E)
+               then
+                  Visit_Device_Instance
+                    (Corresponding_Instance (S));
+               end if;
+               S := Next_Node (S);
+            end loop;
+         end if;
+
          Pop_Entity; -- U
          Pop_Entity; -- P
       end Visit_Process_Instance;
+
+      ---------------------------
+      -- Visit_Device_Instance --
+      ---------------------------
+
+      procedure Visit_Device_Instance (E : Node_Id) is
+         Implementation  : constant Node_Id := Get_Implementation (E);
+         S : Node_Id;
+      begin
+         if Implementation /= No_Node then
+            if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
+               S := First_Node (Subcomponents (Implementation));
+               while Present (S) loop
+                  Visit_Component_Instance (Corresponding_Instance (S));
+                  S := Next_Node (S);
+               end loop;
+            end if;
+         end if;
+      end Visit_Device_Instance;
 
       ---------------------------
       -- Visit_System_Instance --
