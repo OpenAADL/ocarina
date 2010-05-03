@@ -42,8 +42,6 @@ with Ocarina.Backends.C_Tree.Nutils;
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Common.Mapping;
 
-with Ocarina.Instances.Queries;
-
 package body Ocarina.Backends.C_Common.Subprograms is
 
    use Ocarina.ME_AADL;
@@ -53,8 +51,6 @@ package body Ocarina.Backends.C_Common.Subprograms is
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.C_Tree.Nutils;
    use Ocarina.Backends.C_Common.Mapping;
-
-   use Ocarina.Instances.Queries;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -159,19 +155,17 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Implementation  : Node_Id;
          S               : Node_Id;
       begin
+         if Get_Current_Backend_Kind = PolyORB_Kernel_C then
+            U := CTN.Distributed_Application_Unit
+              (CTN.Naming_Node (Backend_Node (Identifier (E))));
 
-         if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
-            return;
+            P := CTN.Entity (U);
+
+            Push_Entity (P);
+            Push_Entity (U);
          end if;
-         U := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
 
-         P := CTN.Entity (U);
-
-         Push_Entity (P);
-         Push_Entity (U);
-
-         Implementation := Get_Classifier_Property (E, "implemented_as");
+         Implementation := Get_Implementation (E);
 
          if Implementation /= No_Node then
             if not AINU.Is_Empty (AIN.Subcomponents (Implementation)) then
@@ -182,14 +176,19 @@ package body Ocarina.Backends.C_Common.Subprograms is
                         (Corresponding_Instance (S), False);
                   end if;
 
+                  if Get_Current_Backend_Kind = PolyORB_HI_C then
+                     Visit_Component_Instance (Corresponding_Instance (S));
+                  end if;
+
                   S := Next_Node (S);
                end loop;
             end if;
-
          end if;
 
-         Pop_Entity; -- U
-         Pop_Entity; -- P
+         if Get_Current_Backend_Kind = PolyORB_Kernel_C then
+            Pop_Entity; -- U
+            Pop_Entity; -- P
+         end if;
       end Visit_Device_Instance;
 
       -------------------------
@@ -277,6 +276,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
          U                    : Node_Id;
          P                    : Node_Id;
          S                    : Node_Id;
+         C                    : Node_Id;
+         The_System : constant Node_Id := Parent_Component
+           (Parent_Subcomponent (E));
       begin
          if Real_Process then
             U := CTN.Distributed_Application_Unit
@@ -302,6 +304,26 @@ package body Ocarina.Backends.C_Common.Subprograms is
                Visit (Corresponding_Instance (S));
 
                S := Next_Node (S);
+            end loop;
+         end if;
+
+         --  Visit all devices attached to the parent system that
+         --  share the same processor as process E.
+
+         if Get_Current_Backend_Kind = PolyORB_HI_C and then
+            not AINU.Is_Empty (Subcomponents (The_System)) then
+            C := First_Node (Subcomponents (The_System));
+            while Present (C) loop
+               if AINU.Is_Device (Corresponding_Instance (C))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (C))
+                 = Get_Bound_Processor (E)
+               then
+                  --  Build the enumerator corresponding to the device
+                  --  Note: we reuse the process name XXX
+                  Visit_Device_Instance (Corresponding_Instance (C));
+               end if;
+               C := Next_Node (C);
             end loop;
          end if;
 
@@ -621,6 +643,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
          U                    : Node_Id;
          P                    : Node_Id;
          S                    : Node_Id;
+         C                    : Node_Id;
+         The_System : constant Node_Id := Parent_Component
+           (Parent_Subcomponent (E));
       begin
          if Real_Process then
             U := CTN.Distributed_Application_Unit
@@ -644,6 +669,21 @@ package body Ocarina.Backends.C_Common.Subprograms is
                Visit (Corresponding_Instance (S));
 
                S := Next_Node (S);
+            end loop;
+         end if;
+
+         if Get_Current_Backend_Kind = PolyORB_HI_C and then
+            not AINU.Is_Empty (Subcomponents (The_System)) then
+            C := First_Node (Subcomponents (The_System));
+            while Present (C) loop
+               if AINU.Is_Device (Corresponding_Instance (C))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (C))
+                 = Get_Bound_Processor (E)
+               then
+                  Visit_Device_Instance (Corresponding_Instance (C));
+               end if;
+               C := Next_Node (C);
             end loop;
          end if;
 
@@ -818,20 +858,18 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Implementation  : Node_Id;
          S               : Node_Id;
       begin
+         if Get_Current_Backend_Kind = PolyORB_Kernel_C then
 
-         if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
-            return;
+            U := CTN.Distributed_Application_Unit
+               (CTN.Naming_Node (Backend_Node (Identifier (E))));
+
+            P := CTN.Entity (U);
+
+            Push_Entity (P);
+            Push_Entity (U);
          end if;
 
-         U := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-
-         P := CTN.Entity (U);
-
-         Push_Entity (P);
-         Push_Entity (U);
-
-         Implementation := Get_Classifier_Property (E, "implemented_as");
+         Implementation := Get_Implementation (E);
 
          if Implementation /= No_Node then
             if not AINU.Is_Empty (AIN.Subcomponents (Implementation)) then
@@ -842,14 +880,20 @@ package body Ocarina.Backends.C_Common.Subprograms is
                         (Corresponding_Instance (S), False);
                   end if;
 
+                  if Get_Current_Backend_Kind = PolyORB_HI_C then
+                     Visit_Component_Instance (Corresponding_Instance (S));
+                  end if;
+
                   S := Next_Node (S);
                end loop;
             end if;
 
          end if;
 
-         Pop_Entity; -- U
-         Pop_Entity; -- P
+         if Get_Current_Backend_Kind = PolyORB_Kernel_C then
+            Pop_Entity; -- U
+            Pop_Entity; -- P
+         end if;
       end Visit_Device_Instance;
    end Source_File;
 

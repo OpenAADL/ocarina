@@ -868,11 +868,12 @@ package body Ocarina.Backends.C_Common.Mapping is
    ---------------------------
 
    function Map_C_Enumerator_Name
-     (E          : Node_Id;
-      Entity     : Boolean := False;
-      Server     : Boolean := False;
-      Port_Type  : Boolean := False;
-      Local_Port : Boolean := False)
+     (E              : Node_Id;
+      Custom_Parent  : Node_Id := No_Node;
+      Entity         : Boolean := False;
+      Server         : Boolean := False;
+      Port_Type      : Boolean := False;
+      Local_Port     : Boolean := False)
      return Name_Id
    is
       C_Name_1 : Name_Id;
@@ -895,26 +896,27 @@ package body Ocarina.Backends.C_Common.Mapping is
             Add_Str_To_Name_Buffer ("_global_");
             Get_Name_String_And_Append (C_Name_1);
          end if;
-
-      elsif AINU.Is_Subprogram (E)
-        or else (Present (Corresponding_Instance (E))
-                   and then AINU.Is_Process (Corresponding_Instance (E)))
-      then
+      elsif AINU.Is_Subprogram (E) then
          --  For subprograms and processes, the enemerator name is
          --  mapped from the entity name.
 
          Get_Name_String (CTU.To_C_Name (Display_Name (Identifier (E))));
          Add_Str_To_Name_Buffer ("_k");
+      elsif (Present (Corresponding_Instance (E))
+         and then AINU.Is_Process_Or_Device
+            (Corresponding_Instance (E))) then
 
+         Get_Name_String (CTU.To_C_Name (Display_Name (Identifier (E))));
+         Add_Str_To_Name_Buffer ("_k");
       elsif AINU.Is_Thread (Corresponding_Instance (E)) then
          --  For threads, the enumerator name is mapped from the
          --  containing process name and the thread subcomponent name.
-         if Parent_Subcomponent (Parent_Component (E)) = No_Node then
+         if Custom_Parent /= No_Node then
             C_Name_1 := CTU.To_C_Name
               (Display_Name
                  (Identifier
-                    (Parent_Component
-                       (E))));
+                    (Parent_Subcomponent
+                       (Custom_Parent))));
          else
             C_Name_1 := CTU.To_C_Name
               (Display_Name

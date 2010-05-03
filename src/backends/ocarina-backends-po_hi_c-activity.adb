@@ -393,6 +393,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
       Main_Deliver_Alternatives : List_Id;
 
+      Current_Device : Node_Id := No_Node;
+
       -------------------
       -- Task_Job_Body --
       -------------------
@@ -534,7 +536,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             --  Make the call to __po_hi_compute_next_period
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
-            N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
+            N := Make_Defining_Identifier
+               (Map_C_Enumerator_Name
+                  (S,
+                  Custom_Parent => Current_Device));
+
             Append_Node_To_List (N, Call_Parameters);
 
             N := CTU.Make_Call_Profile (RE (RE_Compute_Next_Period),
@@ -551,7 +557,14 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             --  Make the __po_hi_wait_for_next_period call
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
-            N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
+            if Current_Device /= No_Node then
+               N := Make_Defining_Identifier
+                  (Map_C_Enumerator_Name
+                     (S,
+                     Custom_Parent => Current_Device));
+            else
+               N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
+            end if;
             Append_Node_To_List (N, Call_Parameters);
 
             N := CTU.Make_Call_Profile (RE (RE_Wait_For_Next_Period),
@@ -1277,7 +1290,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             N := CTU.Make_Call_Profile (RE (RE_Compute_Next_Period),
                                         Make_List_Id
                                           (Make_Defining_Identifier
-                                             (Map_C_Enumerator_Name (S))));
+                                             (Map_C_Enumerator_Name
+                                                (S, Current_Device))));
             Append_Node_To_List (N, Statements);
          end if;
 
@@ -1529,6 +1543,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Implementation  : constant Node_Id := Get_Implementation (E);
          S : Node_Id;
       begin
+         Current_Device := E;
+
          if Implementation /= No_Node then
             if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
                S := First_Node (Subcomponents (Implementation));
@@ -1538,6 +1554,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                end loop;
             end if;
          end if;
+
+         Current_Device := No_Node;
       end Visit_Device_Instance;
 
       ---------------------------

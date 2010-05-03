@@ -65,11 +65,12 @@ package Ocarina.Backends.C_Common.Mapping is
    function Map_Task_Job_Identifier (E : Node_Id) return Node_Id;
    function Map_Time (T : Time_Type) return Node_Id;
    function Map_C_Enum_Name (E : Node_Id; Enumerator : Name_Id) return Name_Id;
-   function Map_C_Enumerator_Name (E : Node_Id;
-                                   Entity     : Boolean := False;
-                                   Server     : Boolean := False;
-                                   Port_Type  : Boolean := False;
-                                   Local_Port : Boolean := False)
+   function Map_C_Enumerator_Name (E               : Node_Id;
+                                   Custom_Parent   : Node_Id := No_Node;
+                                   Entity          : Boolean := False;
+                                   Server          : Boolean := False;
+                                   Port_Type       : Boolean := False;
+                                   Local_Port      : Boolean := False)
                                   return Name_Id;
    function Map_C_Define_Name
      (E          : Node_Id;
