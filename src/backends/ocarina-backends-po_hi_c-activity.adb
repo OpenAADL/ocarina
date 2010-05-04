@@ -751,10 +751,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Send_Out_Ports is
             N                       : Node_Id;
             F                       : Node_Id;
-            Send_Alternative_Label  : constant List_Id
-                  := New_List (CTN.K_Label_List);
-            Send_Alternative_Stmts  : constant List_Id
-                  := New_List (CTN.K_Statement_List);
+            Send_Alternative_Label  : List_Id;
+            Send_Alternative_Stmts  : List_Id;
             Error_Already_Defined   : Boolean := False;
          begin
             N := Message_Comment ("Send the OUT ports");
@@ -765,6 +763,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance and then Is_Out (F) then
                   Has_Send_Output_Declared := True;
+
+                  Send_Alternative_Label := New_List (CTN.K_Label_List);
+                  Send_Alternative_Stmts := New_List (CTN.K_Statement_List);
 
                   Append_Node_To_List
                     (Make_Defining_Identifier
