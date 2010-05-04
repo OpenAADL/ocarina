@@ -789,8 +789,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                            (Used_Bus,
                               (Parent_Component
                                  (Parent_Subcomponent (E))));
-                     Send_Function_Name := Get_Send_Function_Name
-                        (Corresponding_Instance (Used_Device));
+                     if Used_Device /= No_Node then
+                        Send_Function_Name := Get_Send_Function_Name
+                           (Corresponding_Instance (Used_Device));
+                     end if;
                   end if;
 
                   if Send_Function_Name /= No_Name then
