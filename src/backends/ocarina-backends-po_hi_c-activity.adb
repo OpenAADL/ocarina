@@ -775,7 +775,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   Append_Node_To_List
                      (Make_Return_Statement
                         (CTU.Make_Call_Profile
-                           (RE (RE_Protocols_Send_Default),
+                           (RE (RE_Transport_Send_Default),
                            Make_List_Id
                               (Make_Defining_Identifier (PN (P_Task)),
                               Make_Defining_Identifier (PN (P_Port))))),
@@ -1585,7 +1585,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   Make_List_Id
                      (Make_Return_Statement
                         (CTU.Make_Call_Profile
-                           (RE (RE_Protocols_Send_Default),
+                           (RE (RE_Transport_Send_Default),
                            Make_List_Id
                               (Make_Defining_Identifier (PN (P_Task)),
                               Make_Defining_Identifier (PN (P_Port))))))),

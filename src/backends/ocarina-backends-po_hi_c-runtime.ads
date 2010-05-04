@@ -48,7 +48,6 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RH_PO_HI_Transport,            --  po_hi_marshallers header
       RH_PO_HI_Types,                --  po_hi_types header
       RH_PO_HI_Gqueue,               --  po_hi_gqueue header
-      RH_PO_HI_Protocols,            --  po_hi_protocols header
       RH_PO_HI_Simulink,             --  po_hi_simulink header
       RH_PO_HI_Utils,                --  po_hi_utils header
       RH_Activity,                   --  the activity header
@@ -120,11 +119,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Sporadic_Wait,                  -- __po_hi_sporadic_wait
       RE_Compute_Miss,                   -- __po_hi_compute_miss
       RE_Sporadic_Wait_Release,          -- __po_hi_sporadic_wait_release
-      RE_Protocols_Send,                 -- __po_hi_protocols_send
-      RE_Protocols_Send_Default,         -- __po_hi_protocols_send_default
+      RE_Transport_Send_Default,         -- __po_hi_transport_send_default
       RE_Main_Deliver,                   -- __po_hi_main_deliver
-      RE_Protocols_Receive,              -- __po_hi_protocols_receive
-      RE_Protocols_Nonblocking_Receive,  -- __po_hi_protocols_receive
       RE_Msg_Reallocate,                 -- __po_hi_msg_reallocate
       RE_Copy_Array,                     -- __po_hi_copy_array
       RE_Protected_Lock,                 -- __po_hi_protected_lock
@@ -203,10 +199,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Milliseconds                   => RH_PO_HI_Time,
          RE_Seconds                        => RH_PO_HI_Time,
          RE_Minutes                        => RH_PO_HI_Time,
-         RE_Protocols_Send                 => RH_PO_HI_Protocols,
-         RE_Protocols_Send_Default         => RH_PO_HI_Protocols,
-         RE_Protocols_Receive              => RH_PO_HI_Protocols,
-         RE_Protocols_Nonblocking_Receive  => RH_PO_HI_Protocols,
+         RE_Transport_Send_Default         => RH_PO_HI_Transport,
          RE_Unused_Node                    => RH_PO_HI_Types,
          RE_Msg_Reallocate                 => RH_PO_HI_Messages,
          RE_Marshall_Array                 => RH_PO_HI_Marshallers,
@@ -281,8 +274,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Port_T                         => RH_Deployment,
          RE_Entity_Server_T                => RH_Deployment,
          RE_Protected_T                    => RH_PO_HI_Protected,
-         RE_Inetport_T                     => RH_PO_HI_Protocols,
-         RE_Inetaddr_T                     => RH_PO_HI_Protocols,
+         RE_Inetport_T                     => RH_PO_HI_Transport,
+         RE_Inetaddr_T                     => RH_PO_HI_Transport,
          RE_Bool_T                         => RH_PO_HI_Types,
          RE_Uint8_T                        => RH_PO_HI_Types,
          RE_Int8_T                         => RH_PO_HI_Types,
@@ -317,8 +310,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Gqueue_Fifo_Indata             => RH_PO_HI_Gqueue,
          RE_Gqueue_Fifo_Out                => RH_PO_HI_Gqueue,
          RE_Nb_Operations                  => RH_Request,
-         RE_Noaddr                         => RH_PO_HI_Protocols,
-         RE_Noport                         => RH_PO_HI_Protocols,
+         RE_Noaddr                         => RH_PO_HI_Transport,
+         RE_Noport                         => RH_PO_HI_Transport,
          RE_Nb_Tasks                       => RH_Deployment,
          RE_Need_Driver_Sockets            => RH_Deployment,
          RE_SUCCESS                        => RH_PO_HI_Returns,
