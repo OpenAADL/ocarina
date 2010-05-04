@@ -357,7 +357,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         (Defining_Identifier =>
                            Make_Defining_Identifier (PN (P_Port)),
                         Parameter_Type => RE (RE_Port_T))),
-                  Return_Type         => New_Node (CTN.K_Void));
+                  Return_Type         => New_Node (CTN.K_Int));
                Append_Node_To_List
                   (Send_Output_Specification,
                   CTN.Declarations (Current_File));
@@ -772,11 +772,12 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      Send_Alternative_Label);
 
                   Append_Node_To_List
-                     (CTU.Make_Call_Profile
-                        (RE (RE_Protocols_Send_Default),
-                        Make_List_Id
-                           (Make_Defining_Identifier (VN (V_Entity)),
-                           Make_Defining_Identifier (PN (P_Port)))),
+                     (Make_Return_Statement
+                        (CTU.Make_Call_Profile
+                           (RE (RE_Protocols_Send_Default),
+                           Make_List_Id
+                              (Make_Defining_Identifier (VN (V_Entity)),
+                              Make_Defining_Identifier (PN (P_Port))))),
                      Send_Alternative_Stmts);
 
                   N := Make_Switch_Alternative
@@ -1580,11 +1581,13 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Append_Node_To_List
                (Make_Switch_Alternative
                   (No_List,
-                  Make_List_Id (CTU.Make_Call_Profile
-                     (RE (RE_Protocols_Send_Default),
-                     Make_List_Id
-                        (Make_Defining_Identifier (VN (V_Entity)),
-                        Make_Defining_Identifier (PN (P_Port)))))),
+                  Make_List_Id
+                     (Make_Return_Statement
+                        (CTU.Make_Call_Profile
+                           (RE (RE_Protocols_Send_Default),
+                           Make_List_Id
+                              (Make_Defining_Identifier (VN (V_Entity)),
+                              Make_Defining_Identifier (PN (P_Port))))))),
                Send_Output_Alternatives);
 
             Append_Node_To_List
