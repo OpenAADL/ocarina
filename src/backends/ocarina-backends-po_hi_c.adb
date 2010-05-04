@@ -130,6 +130,7 @@ package body Ocarina.Backends.PO_HI_C is
       Scade_Directory    : Name_Id)
    is
       pragma Unreferenced (Appli_Name,
+                           Transport_API,
                            C_Libraries);
    begin
       Write_Str ("BINARY = ");
@@ -161,10 +162,10 @@ package body Ocarina.Backends.PO_HI_C is
       if Use_Transport then
          Write_Line ("yes");
 
-         if Transport_API = Transport_BSD_Sockets then
-            Write_Line
-              ("ACTUAL_TRANSPORT= po_hi_sockets.o ");
-         end if;
+--         if Transport_API = Transport_BSD_Sockets then
+--            Write_Line
+--              ("ACTUAL_TRANSPORT= po_hi_sockets.o ");
+--         end if;
       else
          Write_Line ("no");
       end if;
