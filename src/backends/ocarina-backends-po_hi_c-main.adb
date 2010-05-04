@@ -76,6 +76,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);
       procedure Visit_Process_Instance (E : Node_Id);
+      procedure Visit_Device_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Subprogram_Instance (E : Node_Id);
 
@@ -229,10 +230,13 @@ package body Ocarina.Backends.PO_HI_C.Main is
          P               : constant Node_Id := CTN.Entity (U);
          N               : Node_Id;
          S               : Node_Id;
+         C               : Node_Id;
          Spec            : Node_Id;
          Declarations    : constant List_Id := New_List
            (CTN.K_Declaration_List);
          Statements      : constant List_Id := New_List (CTN.K_Statement_List);
+         The_System      : constant Node_Id := Parent_Component
+           (Parent_Subcomponent (E));
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -255,6 +259,25 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          N := CTU.Make_Call_Profile (RE (RE_Initialize));
          Append_Node_To_List (N, CTN.Statements (Main_Function));
+
+         --  Visit all devices attached to the parent system that
+         --  share the same processor as process E.
+         --  This is done to initialize all devices before system starts.
+
+         if not AAU.Is_Empty (Subcomponents (The_System)) then
+            C := First_Node (Subcomponents (The_System));
+            while Present (C) loop
+               if AAU.Is_Device (Corresponding_Instance (C))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (C))
+                 = Get_Bound_Processor (E)
+               then
+                  Visit_Device_Instance
+                    (Corresponding_Instance (C));
+               end if;
+               C := Next_Node (C);
+            end loop;
+         end if;
 
          if not AAU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));
@@ -295,7 +318,6 @@ package body Ocarina.Backends.PO_HI_C.Main is
          end if;
 
          Append_Node_To_List (Main_Function, CTN.Declarations (Current_File));
-
          --  Call __po_hi_wait_initialization(). With this function,
          --  the main function will wait all other tasks initialization.
 
@@ -451,6 +473,34 @@ package body Ocarina.Backends.PO_HI_C.Main is
             end;
          end if;
       end Visit_Subprogram_Instance;
+
+      ---------------------------
+      -- Visit_Device_Instance --
+      ---------------------------
+
+      procedure Visit_Device_Instance (E : Node_Id) is
+         N          : Node_Id;
+         Entrypoint : constant Node_Id
+           := Get_Thread_Initialize_Entrypoint (E);
+      begin
+         if Entrypoint /= No_Node then
+            N := Message_Comment ("Initialize device "
+                                    & Get_Name_String
+                                    (Name (Identifier (E))));
+            Append_Node_To_List (N, CTN.Statements (Main_Function));
+
+            N := Make_Extern_Entity_Declaration
+              (Make_Function_Specification
+                  (Map_C_Subprogram_Identifier (Entrypoint),
+                  No_List,
+                  New_Node (CTN.K_Void)));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            N := Make_Call_Profile
+              (Map_C_Subprogram_Identifier (Entrypoint), No_List);
+            Append_Node_To_List (N, CTN.Declarations (Main_Function));
+         end if;
+      end Visit_Device_Instance;
 
    end Source_File;
 

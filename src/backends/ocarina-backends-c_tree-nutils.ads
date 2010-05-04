@@ -160,6 +160,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       P_Request,
       P_Status,
       P_Entity,
+      P_Task,
       P_Partition,
       P_Port,
       P_Error,

@@ -351,8 +351,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   Parameters          => Make_List_Id
                      (Make_Parameter_Specification
                         (Defining_Identifier =>
-                           Make_Defining_Identifier (PN (P_Entity)),
-                        Parameter_Type => RE (RE_Entity_T)),
+                           Make_Defining_Identifier (PN (P_Task)),
+                        Parameter_Type => RE (RE_Task_Id)),
                      Make_Parameter_Specification
                         (Defining_Identifier =>
                            Make_Defining_Identifier (PN (P_Port)),
@@ -776,7 +776,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         (CTU.Make_Call_Profile
                            (RE (RE_Protocols_Send_Default),
                            Make_List_Id
-                              (Make_Defining_Identifier (VN (V_Entity)),
+                              (Make_Defining_Identifier (PN (P_Task)),
                               Make_Defining_Identifier (PN (P_Port))))),
                      Send_Alternative_Stmts);
 
@@ -1586,7 +1586,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         (CTU.Make_Call_Profile
                            (RE (RE_Protocols_Send_Default),
                            Make_List_Id
-                              (Make_Defining_Identifier (VN (V_Entity)),
+                              (Make_Defining_Identifier (PN (P_Task)),
                               Make_Defining_Identifier (PN (P_Port))))))),
                Send_Output_Alternatives);
 
