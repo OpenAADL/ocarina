@@ -3699,4 +3699,65 @@ package body Ocarina.Backends.Utils is
       return False;
    end Process_Use_Defaults_Sockets;
 
+   --------------------------
+   --  Get_Associated_Bus  --
+   --------------------------
+
+   function Get_Associated_Bus (Port : Node_Id)
+      return Node_Id is
+      C               : Node_Id;
+      F               : Node_Id;
+      B               : Node_Id;
+      C_End           : Node_Id;
+      End_List        : List_Id;
+      Ports_To_Browse : List_Id;
+   begin
+      if Is_In (Port) then
+         Ports_To_Browse := Sources (Port);
+      else
+         Ports_To_Browse := Destinations (Port);
+      end if;
+
+      if not AAU.Is_Empty (Ports_To_Browse) then
+         F := First_Node (Ports_To_Browse);
+
+         while Present (F) loop
+
+            --  We make two iteration to traverse (1) the sources
+            --  of F then (2) the destinations of F.
+
+            End_List := Sources (Item (F));
+
+            for I in Boolean'Range loop
+               if not AAU.Is_Empty (End_List) then
+                  C_End := First_Node (End_List);
+
+                  while Present (C_End) loop
+
+                     --  Get the connection involving C_End
+
+                     C := Extra_Item (C_End);
+
+                     --  Get the bus of the connection
+
+                     B := Get_Bound_Bus (C);
+
+                     if B /= No_Node then
+                        return B;
+                     end if;
+
+                     C_End := Next_Node (C_End);
+                  end loop;
+               end if;
+
+               End_List := Destinations (Item (F));
+            end loop;
+
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+      return No_Node;
+   end Get_Associated_Bus;
+
 end Ocarina.Backends.Utils;

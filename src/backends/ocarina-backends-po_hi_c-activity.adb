@@ -751,8 +751,12 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Send_Out_Ports is
             N                       : Node_Id;
             F                       : Node_Id;
+            Used_Bus                : Node_Id;
+            Used_Device             : Node_Id;
+            Send_Function_Node      : Node_Id;
             Send_Alternative_Label  : List_Id;
             Send_Alternative_Stmts  : List_Id;
+            Send_Function_Name      : Name_Id := No_Name;
             Error_Already_Defined   : Boolean := False;
          begin
             N := Message_Comment ("Send the OUT ports");
@@ -772,10 +776,34 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      (Map_C_Enumerator_Name (F)),
                      Send_Alternative_Label);
 
+                  Used_Bus := Get_Associated_Bus (F);
+
+                  if Used_Bus /= No_Node then
+
+                     if AAU.Is_Virtual_Bus (Used_Bus) then
+                        Used_Bus := Parent_Component
+                           (Parent_Subcomponent (Used_Bus));
+                     end if;
+
+                     Used_Device := Get_Device_Of_Process
+                           (Used_Bus,
+                              (Parent_Component
+                                 (Parent_Subcomponent (E))));
+                     Send_Function_Name := Get_Send_Function_Name
+                        (Corresponding_Instance (Used_Device));
+                  end if;
+
+                  if Send_Function_Name /= No_Name then
+                     Send_Function_Node :=
+                        Make_Defining_Identifier (Send_Function_Name);
+                  else
+                     Send_Function_Node := RE (RE_Transport_Send_Default);
+                  end if;
+
                   Append_Node_To_List
                      (Make_Return_Statement
                         (CTU.Make_Call_Profile
-                           (RE (RE_Transport_Send_Default),
+                           (Send_Function_Node,
                            Make_List_Id
                               (Make_Defining_Identifier (PN (P_Task)),
                               Make_Defining_Identifier (PN (P_Port))))),

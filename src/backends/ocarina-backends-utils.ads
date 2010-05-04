@@ -487,4 +487,6 @@ package Ocarina.Backends.Utils is
 
    function Process_Use_Defaults_Sockets (The_Process : Node_Id)
       return Boolean;
+
+   function Get_Associated_Bus (Port : Node_Id) return Node_Id;
 end Ocarina.Backends.Utils;

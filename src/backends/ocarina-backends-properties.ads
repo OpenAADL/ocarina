@@ -766,6 +766,11 @@ package Ocarina.Backends.Properties is
    function Get_Driver_Name (Device : Node_Id) return Name_Id;
    --  Returns the name of the driver.
 
+   function Get_Send_Function_Name (Device : Node_Id) return Name_Id;
+   --  Returns the sender function name of a device.
+   --  It corresponds to the receiver subcomponent in the abstract
+   --  device that models the content of the device.
+
 private
 
    Empty_Name_Array : constant Name_Array (1 .. 0) := (others => No_Name);

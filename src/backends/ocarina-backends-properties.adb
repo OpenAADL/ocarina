@@ -3969,7 +3969,40 @@ package body Ocarina.Backends.Properties is
       end if;
 
       return No_Name;
-
    end Get_Driver_Name;
+
+   ----------------------------
+   -- Get_Send_Function_Name --
+   ----------------------------
+
+   function Get_Send_Function_Name (Device : Node_Id) return Name_Id is
+      Impl : Node_Id;
+      S    : Node_Id;
+      I    : Node_Id;
+   begin
+      if Device = No_Node then
+         return No_Name;
+      end if;
+
+      Impl := Get_Implementation (Device);
+
+      if Impl /= No_Node then
+         if not AINU.Is_Empty (AIN.Subcomponents (Impl)) then
+            S := AIN.First_Node (AIN.Subcomponents (Impl));
+            while Present (S) loop
+               I := Corresponding_Instance (S);
+               if Is_Subprogram (I) and then
+                  AIN.Name (AIN.Identifier (S))
+                     = Get_String_Name ("sender") and then
+                  Get_Source_Name (I) /= No_Name then
+                  return Get_Source_Name (I);
+               end if;
+               S := AIN.Next_Node (S);
+            end loop;
+         end if;
+      end if;
+
+      return No_Name;
+   end Get_Send_Function_Name;
 
 end Ocarina.Backends.Properties;
