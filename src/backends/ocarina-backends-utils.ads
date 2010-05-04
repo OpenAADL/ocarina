@@ -111,6 +111,14 @@ package Ocarina.Backends.Utils is
    --  Return True IFF the component instance E contains at least one
    --  port.
 
+   function Has_Output_Ports (E : Node_Id) return Boolean;
+   --  Return True IFF the component instance E contains at least one
+   --  output port.
+
+   function Has_Input_Ports (E : Node_Id) return Boolean;
+   --  Return True IFF the component instance E contains at least one
+   --  input port.
+
    function Has_Modes (E : Node_Id) return Boolean;
    --  Return True IFF the entity instance E has AADL operational
    --  modes.

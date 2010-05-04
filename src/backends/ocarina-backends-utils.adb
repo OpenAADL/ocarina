@@ -560,6 +560,52 @@ package body Ocarina.Backends.Utils is
       return False;
    end Has_Ports;
 
+   ----------------------
+   -- Has_Output_Ports --
+   ----------------------
+
+   function Has_Output_Ports (E : Node_Id) return Boolean is
+      F : Node_Id;
+   begin
+      if not AAU.Is_Empty (Features (E)) then
+         F := First_Node (Features (E));
+
+         while Present (F) loop
+            if Kind (F) = K_Port_Spec_Instance and then
+               Is_Out (F) then
+               return True;
+            end if;
+
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+      return False;
+   end Has_Output_Ports;
+
+   ---------------------
+   -- Has_Input_Ports --
+   ---------------------
+
+   function Has_Input_Ports (E : Node_Id) return Boolean is
+      F : Node_Id;
+   begin
+      if not AAU.Is_Empty (Features (E)) then
+         F := First_Node (Features (E));
+
+         while Present (F) loop
+            if Kind (F) = K_Port_Spec_Instance and then
+               Is_In (F) then
+               return True;
+            end if;
+
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+      return False;
+   end Has_Input_Ports;
+
    ---------------
    -- Has_Modes --
    ---------------

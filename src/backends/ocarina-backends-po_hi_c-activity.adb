@@ -65,6 +65,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
    package CV renames Ocarina.Backends.C_Values;
 
+   Send_Output_Specification : Node_Id;
+
    ------------
    -- Header --
    ------------
@@ -80,7 +82,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       function Task_Job_Spec (E : Node_Id) return Node_Id;
       function Task_Deliver_Spec (E : Node_Id) return Node_Id;
 
-      Have_Main_Deliver : Boolean := False;
+      Have_Main_Deliver          : Boolean := False;
+      Has_Send_Output_Declared   : Boolean := False;
 
       -------------------
       -- Task_Job_Spec --
@@ -193,7 +196,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Push_Entity (U);
          Set_Activity_Header (U);
 
-         Have_Main_Deliver := False;
+         Have_Main_Deliver          := False;
+         Has_Send_Output_Declared   := False;
 
          if not AAU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));
@@ -337,6 +341,29 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             N := Task_Deliver_Spec (E);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
             Bind_AADL_To_Global_Port (Identifier (S), N);
+
+            N := Task_Deliver_Spec (E);
+
+            if Has_Output_Ports (E) and then
+               Has_Send_Output_Declared = False then
+               Send_Output_Specification := Make_Function_Specification
+                 (Defining_Identifier => RE (RE_Send_Output),
+                  Parameters          => Make_List_Id
+                     (Make_Parameter_Specification
+                        (Defining_Identifier =>
+                           Make_Defining_Identifier (PN (P_Entity)),
+                        Parameter_Type => RE (RE_Entity_T)),
+                     Make_Parameter_Specification
+                        (Defining_Identifier =>
+                           Make_Defining_Identifier (PN (P_Port)),
+                        Parameter_Type => RE (RE_Port_T))),
+                  Return_Type         => New_Node (CTN.K_Void));
+               Append_Node_To_List
+                  (Send_Output_Specification,
+                  CTN.Declarations (Current_File));
+
+               Has_Send_Output_Declared := True;
+            end if;
          end if;
 
          case P is
@@ -391,7 +418,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       --  Create the parameterless subprogram body that does the
       --  thread's job.
 
-      Main_Deliver_Alternatives : List_Id;
+      Main_Deliver_Alternatives     : List_Id;
+      Has_Send_Output_Declared      : Boolean := False;
+      Send_Output_Statements        : List_Id;
+      Send_Output_Declarations      : List_Id;
+      Send_Output_Alternatives      : List_Id;
 
       Current_Device : Node_Id := No_Node;
 
@@ -718,10 +749,13 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          -------------------------
 
          procedure Make_Send_Out_Ports is
-            N : Node_Id;
-            F : Node_Id;
-            Error_Already_Defined : Boolean := False;
-
+            N                       : Node_Id;
+            F                       : Node_Id;
+            Send_Alternative_Label  : constant List_Id
+                  := New_List (CTN.K_Label_List);
+            Send_Alternative_Stmts  : constant List_Id
+                  := New_List (CTN.K_Statement_List);
+            Error_Already_Defined   : Boolean := False;
          begin
             N := Message_Comment ("Send the OUT ports");
             Append_Node_To_List (N, WStatements);
@@ -730,6 +764,29 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance and then Is_Out (F) then
+                  Has_Send_Output_Declared := True;
+
+                  Append_Node_To_List
+                    (Make_Defining_Identifier
+                     (Map_C_Enumerator_Name (F)),
+                     Send_Alternative_Label);
+
+                  Append_Node_To_List
+                     (CTU.Make_Call_Profile
+                        (RE (RE_Protocols_Send_Default),
+                        Make_List_Id
+                           (Make_Defining_Identifier (VN (V_Entity)),
+                           Make_Defining_Identifier (PN (P_Port)))),
+                     Send_Alternative_Stmts);
+
+                  N := Make_Switch_Alternative
+                    (Send_Alternative_Label, Send_Alternative_Stmts);
+                  Append_Node_To_List (N, Send_Output_Alternatives);
+
+                  --  Generate appropriate source code to deliver
+                  --  the message when we send it.
+
+                  --  Then, call the send_output in the main loop.
                   Call_Parameters := New_List (CTN.K_Parameter_List);
                   N := Make_Defining_Identifier
                     (Map_C_Enumerator_Name (S));
@@ -739,8 +796,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                     (Map_C_Enumerator_Name (F));
                   Append_Node_To_List (N, Call_Parameters);
 
-                  N := CTU.Make_Call_Profile (RE (RE_Gqueue_Send_Output),
+                  N := CTU.Make_Call_Profile (RE (RE_Send_Output),
                                               Call_Parameters);
+
                   if Get_Miss_Rate (F) /= 0 then
                      --  XXX is this required ? from PolyORB-HI/C,
                      --  looks like it is some hack to add fake miss
@@ -1380,6 +1438,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
          Main_Deliver_Alternatives := New_List (CTN.K_Alternatives_List);
 
+         Has_Send_Output_Declared      := False;
+         Send_Output_Statements        := New_List (CTN.K_Statement_List);
+         Send_Output_Declarations      := New_List (CTN.K_Declaration_List);
+         Send_Output_Alternatives      := New_List (CTN.K_Alternatives_List);
+
          --  Visit all the subcomponents of the process
 
          if not AAU.Is_Empty (Subcomponents (E)) then
@@ -1512,6 +1575,39 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                Statements);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
+
+         if Has_Send_Output_Declared then
+            Append_Node_To_List
+               (Make_Switch_Alternative
+                  (No_List,
+                  Make_List_Id (CTU.Make_Call_Profile
+                     (RE (RE_Protocols_Send_Default),
+                     Make_List_Id
+                        (Make_Defining_Identifier (VN (V_Entity)),
+                        Make_Defining_Identifier (PN (P_Port)))))),
+               Send_Output_Alternatives);
+
+            Append_Node_To_List
+               (Message_Comment
+                  ("By default, we try to use the default protocol"),
+               Send_Output_Alternatives);
+
+            Append_Node_To_List
+               (Make_Switch_Statement
+                  (Expression    => Make_Defining_Identifier (VN (V_Port)),
+                  Alternatives   => Send_Output_Alternatives),
+               Send_Output_Statements);
+
+            N := Make_Function_Implementation
+               (Send_Output_Specification,
+               Send_Output_Declarations,
+               Send_Output_Statements);
+
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+         --  If some threads are connected to other nodes, we declare
+         --  a send_output function that is responsible to send
+         --  data over the network using device drivers functions.
 
          --  Visit all devices attached to the parent system that
          --  share the same processor as process E.
