@@ -3567,6 +3567,10 @@ package body Ocarina.Backends.Utils is
 
    end Is_Using_Virtual_Bus;
 
+   -------------------------------------------
+   --  Get_Corresponding_Port_In_Component  --
+   -------------------------------------------
+
    function Get_Corresponding_Port_In_Component (Port : Node_Id) return Node_Id
    is
       function Get_Corresponding_Port_In_Component_Rec
@@ -3606,7 +3610,6 @@ package body Ocarina.Backends.Utils is
 
          return No_Node;
       end Get_Corresponding_Port_In_Component_Rec;
-
       Parent : Node_Id;
       Tmp : Node_Id;
       R : Node_Id;
@@ -3640,4 +3643,60 @@ package body Ocarina.Backends.Utils is
 
       return No_Node;
    end Get_Corresponding_Port_In_Component;
+
+   -----------------------------------
+   --  Process_Use_Default_Sockets  --
+   -----------------------------------
+
+   function Process_Use_Defaults_Sockets (The_Process : Node_Id)
+      return Boolean is
+      C               : Node_Id;
+      F               : Node_Id;
+      B               : Node_Id;
+      C_End           : Node_Id;
+      End_List        : List_Id;
+   begin
+      if not AAU.Is_Empty (Features (The_Process)) then
+         F := First_Node (Features (The_Process));
+
+         while Present (F) loop
+
+            --  We make two iteration to traverse (1) the sources
+            --  of F then (2) the destinations of F.
+
+            End_List := Sources (F);
+
+            for I in Boolean'Range loop
+               if not AAU.Is_Empty (End_List) then
+                  C_End := First_Node (End_List);
+
+                  while Present (C_End) loop
+
+                     --  Get the connection involving C_End
+
+                     C := Extra_Item (C_End);
+
+                     --  Get the bus of the connection
+
+                     B := Get_Bound_Bus (C);
+
+                     if Get_Transport_API (B, The_Process)
+                       = Transport_BSD_Sockets then
+                        return True;
+                     end if;
+
+                     C_End := Next_Node (C_End);
+                  end loop;
+               end if;
+
+               End_List := Destinations (F);
+            end loop;
+
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+      return False;
+   end Process_Use_Defaults_Sockets;
+
 end Ocarina.Backends.Utils;

@@ -229,8 +229,8 @@ package body Ocarina.Backends.PO_HI_C.Main is
            (CTN.Naming_Node (Backend_Node (Identifier (E))));
          P               : constant Node_Id := CTN.Entity (U);
          N               : Node_Id;
-         S               : Node_Id;
          C               : Node_Id;
+         S               : Node_Id;
          Spec            : Node_Id;
          Declarations    : constant List_Id := New_List
            (CTN.K_Declaration_List);
@@ -257,8 +257,18 @@ package body Ocarina.Backends.PO_HI_C.Main is
          Main_Function := Make_Function_Implementation
            (Spec, Declarations, Statements);
 
-         N := CTU.Make_Call_Profile (RE (RE_Initialize));
-         Append_Node_To_List (N, CTN.Statements (Main_Function));
+         if Process_Use_Defaults_Sockets (E) then
+            Add_Include
+               (Make_Include_Clause
+                  (Make_Defining_Identifier
+                     (Get_String_Name
+                        ("drivers/po_hi_driver_sockets"))));
+            N := Make_Call_Profile
+               (Make_Defining_Identifier
+                  (Get_String_Name ("__po_hi_driver_sockets_init")),
+               No_List);
+            Append_Node_To_List (N, CTN.Statements (Main_Function));
+         end if;
 
          --  Visit all devices attached to the parent system that
          --  share the same processor as process E.
@@ -278,6 +288,11 @@ package body Ocarina.Backends.PO_HI_C.Main is
                C := Next_Node (C);
             end loop;
          end if;
+
+         --  Here, we should automatically initialize the sockets layer
+
+         N := CTU.Make_Call_Profile (RE (RE_Initialize));
+         Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          if not AAU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));

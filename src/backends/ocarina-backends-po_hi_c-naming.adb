@@ -542,7 +542,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                end if;
 
                Set_Deployment_Header;
-               Set_Str_To_Name_Buffer ("__PO_HI_NEED_");
+               Set_Str_To_Name_Buffer ("__PO_HI_NEED_DRIVER_");
                Get_Name_String_And_Append (Driver_Name);
 
                Driver_Name := Name_Find;

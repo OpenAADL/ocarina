@@ -484,4 +484,7 @@ package Ocarina.Backends.Utils is
       return Node_Id;
    --  Return the port connected the port given in parameter
    --  inside the component.
+
+   function Process_Use_Defaults_Sockets (The_Process : Node_Id)
+      return Boolean;
 end Ocarina.Backends.Utils;
