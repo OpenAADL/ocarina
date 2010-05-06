@@ -227,37 +227,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             Bind_AADL_To_Job
               (Identifier (Parent_Subcomponent (E)), N);
-
-            --  Declare some variables as extern variables
-            --  needed by the main_deliver function.
-            --  We declare them immediatly in the activity body
-            --  to have them at the top of the generated file.
-
-            N := Make_Extern_Entity_Declaration
-              (Make_Variable_Declaration
-                 (Defining_Identifier =>
-                    Make_Array_Declaration
-                    (Defining_Identifier =>
-                       RE (RE_Port_Global_To_Entity),
-                     Array_Size =>
-                       RE (RE_Nb_Ports)),
-                  Used_Type =>
-                    RE (RE_Entity_T)));
-            Append_Node_To_List
-              (N, CTN.Declarations (CTN.Activity_Source (U)));
-
-            N := Make_Extern_Entity_Declaration
-              (Make_Variable_Declaration
-                 (Defining_Identifier =>
-                    Make_Array_Declaration
-                    (Defining_Identifier =>
-                       RE (RE_Port_Global_To_Local),
-                     Array_Size =>
-                       RE (RE_Nb_Ports)),
-                  Used_Type =>
-                    RE (RE_Port_T)));
-            Append_Node_To_List
-              (N, CTN.Declarations (CTN.Activity_Source (U)));
          end if;
 
          --  Visit all devices attached to the parent system that
@@ -1549,15 +1518,15 @@ package body Ocarina.Backends.PO_HI_C.Activity is
               (Left_Expr => Make_Defining_Identifier (VN (V_Entity)),
                Operator => Op_Equal,
                Right_Expr =>
-                 Make_Array_Declaration
-                 (Defining_Identifier => RE (RE_Port_Global_To_Entity),
-                  Array_Size =>
-                    Make_Member_Designator
+                Make_Call_Profile
+                 (RE (RE_Get_Entity_From_Global_Port),
+                  Make_List_Id
+                   (Make_Member_Designator
                     (Defining_Identifier =>
-                       Make_Defining_Identifier (MN (M_Port)),
+                     Make_Defining_Identifier (MN (M_Port)),
                      Is_Pointer => True,
                      Aggregate_Name =>
-                       Make_Defining_Identifier (VN (V_Request)))));
+                     Make_Defining_Identifier (VN (V_Request))))));
             Append_Node_To_List (N, Statements);
 
             --  Add the switch which redirect to local deliver functions

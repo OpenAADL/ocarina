@@ -106,6 +106,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Marshall_Array,                 -- __po_hi_marshall_array
       RE_Unmarshall_Array,               -- __po_hi_unmarshall_array
       RE_Send_Output,                    -- __po_hi_send_output
+      RE_Get_Entity_From_Global_Port,    -- __po_hi_get_entity_from_global_port
       RE_Gqueue_Init,                    -- __po_hi_gqueue_init
       RE_Gqueue_Store_In,                -- __po_hi_gqueue_store_in
       RE_Gqueue_Store_Out,               -- __po_hi_gqueue_store_out
@@ -249,6 +250,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Protected_Unlock               => RH_PO_HI_Protected,
          RE_Copy_Array                     => RH_PO_HI_Types,
          RE_Send_Output                    => RH_Activity,
+         RE_Get_Entity_From_Global_Port    => RH_PO_HI_Transport,
          RE_Gqueue_Store_In                => RH_PO_HI_Gqueue,
          RE_Gqueue_Store_Out               => RH_PO_HI_Gqueue,
          RE_Gqueue_Send_Output             => RH_PO_HI_Gqueue,
