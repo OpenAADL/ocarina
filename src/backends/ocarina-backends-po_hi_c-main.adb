@@ -70,7 +70,8 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
    package body Source_File is
 
-      Main_Function : Node_Id;
+      Main_Function  : Node_Id;
+      Current_Device : Node_Id;
 
       procedure Visit_Architecture_Instance (E : Node_Id);
       procedure Visit_Component_Instance (E : Node_Id);
@@ -103,7 +104,10 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          --  Add the task name to the parameters list
 
-         N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
+         N := Make_Defining_Identifier
+            (Map_C_Enumerator_Name
+               (S,
+               Custom_Parent => Current_Device));
          Append_Node_To_List (N, Parameters);
 
          --  Add the period of the task to the parameters list. We use
@@ -257,6 +261,9 @@ package body Ocarina.Backends.PO_HI_C.Main is
          Main_Function := Make_Function_Implementation
            (Spec, Declarations, Statements);
 
+         N := CTU.Make_Call_Profile (RE (RE_Initialize));
+         Append_Node_To_List (N, CTN.Statements (Main_Function));
+
          if Process_Use_Defaults_Sockets (E) then
             Add_Include
                (Make_Include_Clause
@@ -290,9 +297,6 @@ package body Ocarina.Backends.PO_HI_C.Main is
          end if;
 
          --  Here, we should automatically initialize the sockets layer
-
-         N := CTU.Make_Call_Profile (RE (RE_Initialize));
-         Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          if not AAU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));
@@ -495,9 +499,12 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
       procedure Visit_Device_Instance (E : Node_Id) is
          N          : Node_Id;
+         S          : Node_Id;
          Entrypoint : constant Node_Id
            := Get_Thread_Initialize_Entrypoint (E);
+         Impl       : constant Node_Id := Get_Implementation (E);
       begin
+         Current_Device := E;
          if Entrypoint /= No_Node then
             N := Message_Comment ("Initialize device "
                                     & Get_Name_String
@@ -515,6 +522,21 @@ package body Ocarina.Backends.PO_HI_C.Main is
               (Map_C_Subprogram_Identifier (Entrypoint), No_List);
             Append_Node_To_List (N, CTN.Declarations (Main_Function));
          end if;
+
+         if Impl /= No_Node then
+            if not AAU.Is_Empty (Subcomponents (Impl)) then
+               S := First_Node (Subcomponents (Impl));
+               while Present (S) loop
+                  --  Visit the component instance corresponding to the
+                  --  subcomponent S.
+
+                  Visit (Corresponding_Instance (S));
+                  S := Next_Node (S);
+               end loop;
+            end if;
+         end if;
+
+         Current_Device := No_Node;
       end Visit_Device_Instance;
 
    end Source_File;
