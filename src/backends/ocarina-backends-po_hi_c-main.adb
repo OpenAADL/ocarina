@@ -71,7 +71,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
    package body Source_File is
 
       Main_Function  : Node_Id;
-      Current_Device : Node_Id;
+      Current_Device : Node_Id := No_Node;
 
       procedure Visit_Architecture_Instance (E : Node_Id);
       procedure Visit_Component_Instance (E : Node_Id);
