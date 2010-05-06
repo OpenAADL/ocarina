@@ -212,10 +212,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          if Have_Main_Deliver then
             N := Make_Parameter_Specification
               (Defining_Identifier =>
-                 Make_Defining_Identifier (PN (P_Message)),
+                 Make_Defining_Identifier (PN (P_Request)),
                Parameter_Type =>
                  Make_Pointer_Type
-                 (RE (RE_Msg_T)));
+                 (RE (RE_Request_T)));
             Append_Node_To_List (N, Parameters);
 
             N := Make_Function_Specification
@@ -1460,7 +1460,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Declarations : constant List_Id := New_List
            (CTN.K_Declaration_List);
          Statements   : constant List_Id := New_List (CTN.K_Statement_List);
-         Parameters   : List_Id;
          The_System : constant Node_Id := Parent_Component
            (Parent_Subcomponent (E));
       begin
@@ -1540,35 +1539,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Append_Node_To_List
               (Make_Variable_Declaration
                (Defining_Identifier =>
-                  Make_Defining_Identifier (VN (V_Request)),
-                Used_Type =>
-                  RE (RE_Request_T)), Declarations);
-
-            Append_Node_To_List
-              (Make_Variable_Declaration
-               (Defining_Identifier =>
                   Make_Defining_Identifier (VN (V_Entity)),
                 Used_Type =>
                   RE (RE_Entity_T)), Declarations);
-
-            --  Add the __po_hi_unmarshall_request call
-            --  in the main deliver function.
-
-            Parameters        := New_List (CTN.K_Parameter_List);
-
-            Append_Node_To_List
-              (Make_Variable_Address
-               (Make_Defining_Identifier (VN (V_Request))), Parameters);
-
-            Append_Node_To_List
-              (Make_Defining_Identifier (PN (P_Message)),
-               Parameters);
-
-            N := Make_Call_Profile
-              (RE (RE_Unmarshall_Request),
-                Parameters);
-
-            Append_Node_To_List (N, Statements);
 
             --  Add the call to entity = __po_hi_global...[port]
 
@@ -1582,6 +1555,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                     Make_Member_Designator
                     (Defining_Identifier =>
                        Make_Defining_Identifier (MN (M_Port)),
+                     Is_Pointer => True,
                      Aggregate_Name =>
                        Make_Defining_Identifier (VN (V_Request)))));
             Append_Node_To_List (N, Statements);
@@ -2126,9 +2100,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   Switch_Labels);
 
                Append_Node_To_List
-                 (Make_Variable_Address
                   (Make_Defining_Identifier
-                   (VN (V_Request))),
+                   (VN (V_Request)),
                   Parameters);
 
                N := Make_Call_Profile
