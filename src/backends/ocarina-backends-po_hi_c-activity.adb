@@ -765,6 +765,23 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   end if;
 
                   if Send_Function_Name /= No_Name then
+                     Append_Node_To_List
+                      (Make_Function_Specification
+                       (Defining_Identifier =>
+                        Make_Defining_Identifier (Send_Function_Name),
+                        Parameters          =>
+                           Make_List_Id
+                              (Make_Parameter_Specification
+                               (Defining_Identifier =>
+                                Make_Defining_Identifier (PN (P_Task)),
+                                Parameter_Type => RE (RE_Task_Id)),
+                               Make_Parameter_Specification
+                               (Defining_Identifier =>
+                                Make_Defining_Identifier (PN (P_Port)),
+                                Parameter_Type => RE (RE_Port_T))),
+                        Return_Type         => New_Node (CTN.K_Int)),
+                     CTN.Declarations (Current_File));
+
                      Send_Function_Node :=
                         Make_Defining_Identifier (Send_Function_Name);
                   else
