@@ -302,10 +302,10 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          --  Runtime Constants associations
 
          RE_Default_Priority               => RH_PO_HI_Task,
-         RE_Main_Type                      => RH_PO_HI_Common,
-         RE_Main_Args                      => RH_PO_HI_Common,
-         RE_Main_Name                      => RH_PO_HI_Common,
-         RE_Main_Return                    => RH_PO_HI_Common,
+         RE_Main_Type                      => RH_PO_HI_Task,
+         RE_Main_Args                      => RH_PO_HI_Task,
+         RE_Main_Name                      => RH_PO_HI_Task,
+         RE_Main_Return                    => RH_PO_HI_Task,
          RE_Nb_Nodes                       => RH_Deployment,
          RE_Nb_Ports                       => RH_Deployment,
          RE_Nb_Servers                     => RH_Deployment,
