@@ -580,6 +580,42 @@ package body Ocarina.Backends.C_Common.Mapping is
       CTN.Set_Frontend_Node (A, G);
    end Bind_AADL_To_Global_Port;
 
+   -------------------------------
+   -- Bind_AADL_To_Global_Names --
+   -------------------------------
+
+   procedure Bind_AADL_To_Global_Names (G : Node_Id; A : Node_Id) is
+      N : Node_Id;
+   begin
+      N := AIN.Backend_Node (G);
+
+      if No (N) then
+         N := New_Node (CTN.K_HI_Tree_Bindings);
+         AIN.Set_Backend_Node (G, N);
+      end if;
+
+      CTN.Set_Global_Names_Node (N, A);
+      CTN.Set_Frontend_Node (A, G);
+   end Bind_AADL_To_Global_Names;
+
+   -------------------------------------
+   -- Bind_AADL_To_Global_Model_Names --
+   -------------------------------------
+
+   procedure Bind_AADL_To_Global_Model_Names (G : Node_Id; A : Node_Id) is
+      N : Node_Id;
+   begin
+      N := AIN.Backend_Node (G);
+
+      if No (N) then
+         N := New_Node (CTN.K_HI_Tree_Bindings);
+         AIN.Set_Backend_Node (G, N);
+      end if;
+
+      CTN.Set_Global_Model_Names_Node (N, A);
+      CTN.Set_Frontend_Node (A, G);
+   end Bind_AADL_To_Global_Model_Names;
+
    -----------------------------
    -- Bind_AADL_To_Local_Port --
    -----------------------------

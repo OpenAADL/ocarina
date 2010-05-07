@@ -65,6 +65,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package CV renames Ocarina.Backends.C_Values;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
+   package CTU renames Ocarina.Backends.C_Tree.Nutils;
 
    Entity_Array : Node_Id;
 
@@ -99,11 +100,13 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       --  This function is used to warrant that all entities will have
       --  the same values on each node.
 
-      Node_Enumerator_List     : List_Id;
-      Tasks_Enumerator_List    : List_Id;
-      Entity_Enumerator_List   : List_Id;
-      Global_Port_List         : List_Id;
-      Local_Port_List          : List_Id;
+      Node_Enumerator_List          : List_Id;
+      Tasks_Enumerator_List         : List_Id;
+      Entity_Enumerator_List        : List_Id;
+      Global_Port_List              : List_Id;
+      Global_Port_Names             : Node_Id;
+      Global_Port_Model_Names       : Node_Id;
+      Local_Port_List               : List_Id;
 
       Current_Process_Instance : Node_Id := No_Node;
 
@@ -628,6 +631,15 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             Bind_AADL_To_Global_Port (Identifier (S), Global_Port_To_Entity);
          end if;
 
+         if not Is_Empty (CTN.Values (Global_Port_Names)) then
+            Bind_AADL_To_Global_Names (Identifier (S), Global_Port_Names);
+         end if;
+
+         if not Is_Empty (CTN.Values (Global_Port_Model_Names)) then
+            Bind_AADL_To_Global_Model_Names
+               (Identifier (S), Global_Port_Model_Names);
+         end if;
+
          if not Is_Empty (Local_Port_List) then
             if not Invalid_Local_Port_Added then
                Set_Str_To_Name_Buffer ("invalid_local_port_t");
@@ -668,6 +680,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Push_Entity (C_Root);
 
          Global_Port_List           := New_List (CTN.K_Enumeration_Literals);
+         Global_Port_Names          := Make_Array_Values;
+         Global_Port_Model_Names    := Make_Array_Values;
          Global_Port_To_Entity      := Make_Array_Values;
          Global_Port_To_Local       := Make_Array_Values;
          Entity_Enumerator_List     := New_List (CTN.K_Enumeration_Literals);
@@ -834,6 +848,19 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                        (Map_C_Enumerator_Name (S, Entity => True));
                      Append_Node_To_List
                        (N, CTN.Values (Global_Port_To_Entity));
+
+                     N := Make_Literal
+                        (CV.New_Pointed_Char_Value
+                           (Map_C_Enumerator_Name
+                              (F)));
+                     Append_Node_To_List
+                       (N, CTN.Values (Global_Port_Names));
+
+                     N := Make_Literal
+                        (CV.New_Pointed_Char_Value
+                           (Display_Name (Identifier (F))));
+                     Append_Node_To_List
+                       (N, CTN.Values (Global_Port_Model_Names));
 
                      N := Make_Expression
                        (Make_Defining_Identifier
@@ -1008,12 +1035,17 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U        : constant Node_Id := CTN.Distributed_Application_Unit
+         U              : constant Node_Id := CTN.Distributed_Application_Unit
            (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P        : constant Node_Id := CTN.Entity (U);
-         S        : constant Node_Id := Parent_Subcomponent (E);
-         N        : Node_Id;
-         C        : Node_Id;
+         P              : constant Node_Id := CTN.Entity (U);
+         S              : constant Node_Id := Parent_Subcomponent (E);
+         N              : Node_Id;
+         Q              : Node_Id;
+         C              : Node_Id;
+         Root_Sys       : constant Node_Id
+                        := Parent_Component (Parent_Subcomponent (E));
+         Endiannesses   : constant Node_Id := Make_Array_Values;
+         Execution_Platform : Supported_Execution_Platform;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -1044,6 +1076,48 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                Operator => Op_Equal,
                Right_Expr =>
                  CTN.Global_Port_Node (Backend_Node (Identifier (S))));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
+         if Present (Backend_Node (Identifier (S))) and then
+           Present (CTN.Global_Names_Node (Backend_Node (Identifier (S)))) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Port_Global_Names),
+                     Array_Size =>
+                       RE (RE_Nb_Ports)),
+                  Used_Type =>
+                     CTU.Make_Pointer_Type
+                        (New_Node (CTN.K_Char))),
+               Operator => Op_Equal,
+               Right_Expr =>
+                 CTN.Global_Names_Node (Backend_Node (Identifier (S))));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
+         if Present (Backend_Node (Identifier (S))) and then
+           Present (CTN.Global_Model_Names_Node
+            (Backend_Node (Identifier (S)))) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Port_Global_Model_Names),
+                     Array_Size =>
+                       RE (RE_Nb_Ports)),
+                  Used_Type =>
+                      CTU.Make_Pointer_Type
+                        (New_Node (CTN.K_Char))),
+               Operator => Op_Equal,
+               Right_Expr =>
+                 CTN.Global_Model_Names_Node
+                  (Backend_Node (Identifier (S))));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
@@ -1085,6 +1159,56 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 --              CTN.Entities_Node (Backend_Node (Identifier (S))));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 --         end if;
+
+         Q := First_Node (Subcomponents (Root_Sys));
+
+         while Present (Q) loop
+            if AAU.Is_Process (Corresponding_Instance (Q)) then
+               Execution_Platform := Get_Execution_Platform
+                  (Get_Bound_Processor
+                     (Corresponding_Instance (Q)));
+               case Execution_Platform is
+                  when Platform_Native | Platform_None =>
+                     Append_Node_To_List
+                        (RE (RE_Littleendian), CTN.Values (Endiannesses));
+
+                  when Platform_LEON_RTEMS =>
+                     Append_Node_To_List
+                        (RE (RE_Bigendian), CTN.Values (Endiannesses));
+
+                  when Platform_ARM_DSLINUX =>
+                     Append_Node_To_List
+                        (RE (RE_Bigendian), CTN.Values (Endiannesses));
+
+                  when Platform_ARM_N770 =>
+                     Append_Node_To_List
+                        (RE (RE_Bigendian), CTN.Values (Endiannesses));
+
+                  when others =>
+                     Append_Node_To_List
+                        (RE (RE_Bigendian), CTN.Values (Endiannesses));
+                     Display_Error
+                        ("Unknown endianess of " & Execution_Platform'Img,
+                           Fatal => False);
+               end case;
+            end if;
+            Q := Next_Node (Q);
+         end loop;
+
+         N := Make_Expression
+           (Left_Expr =>
+              Make_Variable_Declaration
+              (Defining_Identifier =>
+                 Make_Array_Declaration
+                 (Defining_Identifier =>
+                    RE (RE_Deployment_Endiannesses),
+                  Array_Size =>
+                    RE (RE_Nb_Nodes)),
+               Used_Type =>
+                 RE (RE_Uint8_T)),
+            Operator => Op_Equal,
+            Right_Expr => Endiannesses);
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          Pop_Entity; -- U
          Pop_Entity; -- P

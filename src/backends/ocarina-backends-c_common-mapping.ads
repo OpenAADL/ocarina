@@ -53,6 +53,8 @@ package Ocarina.Backends.C_Common.Mapping is
                          return Node_Id;
    function Map_HI_Unit (E : Node_Id) return Node_Id;
    procedure Bind_AADL_To_Activity (G : Node_Id; A : Node_Id);
+   procedure Bind_AADL_To_Global_Names (G : Node_Id; A : Node_Id);
+   procedure Bind_AADL_To_Global_Model_Names (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Naming (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Job (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Main (G : Node_Id; A : Node_Id);

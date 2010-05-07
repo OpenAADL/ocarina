@@ -460,6 +460,8 @@ module Ocarina::Backends::C_Tree::Nodes {
     Node_Id    Handlers_Node;
     Node_Id    Global_Port_Node;
     Node_Id    Local_Port_Node;
+    Node_Id    Global_Names_Node;
+    Node_Id    Global_Model_Names_Node;
     Node_Id    Request_Node;
     Node_Id    Deployment_Node;
     Node_Id    Entities_Node;

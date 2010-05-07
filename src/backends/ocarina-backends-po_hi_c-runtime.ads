@@ -119,6 +119,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Simulate_WCET,                  -- __po_hi_simulate_wcet
       RE_Sporadic_Wait,                  -- __po_hi_sporadic_wait
       RE_Compute_Miss,                   -- __po_hi_compute_miss
+      RE_Deployment_Endiannesses,        -- __po_hi_deployment_endiannesses
       RE_Sporadic_Wait_Release,          -- __po_hi_sporadic_wait_release
       RE_Transport_Send_Default,         -- __po_hi_transport_send_default
       RE_Main_Deliver,                   -- __po_hi_main_deliver
@@ -141,6 +142,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Nb_Servers,                     --  __PO_HI_NB_SERVERS
       RE_Nb_Ports,                       --  __PO_HI_NB_PORTS
       RE_Noport,                         --  __PO_HI_NOPORT
+      RE_Bigendian,                      --  __PO_HI_BIGENDIAN
+      RE_Littleendian,                   --  __PO_HI_LITTLEENDIAN
       RE_Noaddr,                         --  __PO_HI_NB_NOADDR
       RE_Unused_Node,                    --  __PO_HI_UNUSED_NODE
       RE_Nb_Protected,                   --  __PO_HI_NB_PROTECTED
@@ -183,6 +186,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Operation_Names,                --  __po_hi_operation_names
       RE_Ports_Names,                    --  __po_hi_port_names
       RE_Port_Global_To_Entity,          --  __po_hi_port_global_to_entity
+      RE_Port_Global_Names,              --  __po_hi_port_global_names
+      RE_Port_Global_Model_Names,        --  __po_hi_port_global_model_names
       RE_Port_Global_To_Local            --  __po_hi_port_global_to_local
      );
 
@@ -242,6 +247,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Create_Sporadic_Task           => RH_PO_HI_Task,
          RE_Simulate_WCET                  => RH_PO_HI_Utils,
          RE_Compute_Miss                   => RH_PO_HI_Utils,
+         RE_Deployment_Endiannesses        => RH_PO_HI_Transport,
          RE_Wait_For_Next_Period           => RH_PO_HI_Task,
          RE_Compute_Next_Period            => RH_PO_HI_Task,
          RE_Initialize                     => RH_PO_HI_Main,
@@ -314,6 +320,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Nb_Operations                  => RH_Request,
          RE_Noaddr                         => RH_PO_HI_Transport,
          RE_Noport                         => RH_PO_HI_Transport,
+         RE_Bigendian                      => RH_PO_HI_Transport,
+         RE_Littleendian                   => RH_PO_HI_Transport,
          RE_Nb_Tasks                       => RH_Deployment,
          RE_Need_Driver_Sockets            => RH_Deployment,
          RE_SUCCESS                        => RH_PO_HI_Returns,
@@ -323,6 +331,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Ports_Names                    => RH_PO_HI_Types,
          RE_Operation_Names                => RH_PO_HI_Types,
          RE_Port_Global_To_Entity          => RH_Deployment,
+         RE_Port_Global_Names              => RH_Deployment,
+         RE_Port_Global_Model_Names        => RH_Deployment,
          RE_Port_Global_To_Local           => RH_Deployment
         );
    procedure Initialize;

@@ -131,6 +131,8 @@ package body Ocarina.Backends.PO_HI_C is
    is
       pragma Unreferenced (Appli_Name,
                            Transport_API,
+                           C_Sources,
+                           Ada_Sources,
                            C_Libraries);
    begin
       Write_Str ("BINARY = ");
@@ -205,19 +207,6 @@ package body Ocarina.Backends.PO_HI_C is
          Write_Eol;
       end if;
 
-      --  The 'all' target
-
-      Write_Str ("all: ");
-
-      if Length (Ada_Sources) > 0 then
-         Write_Str ("compile-ada-files ");
-      end if;
-
-      if Length (C_Sources) > 0 then
-         Write_Str ("compile-c-files ");
-      end if;
-
-      Write_Line ("compile-node");
       Write_Line ("include $(RUNTIME_PATH)/make/Makefile.common");
    end PolyORB_HI_C_Makefile;
 
