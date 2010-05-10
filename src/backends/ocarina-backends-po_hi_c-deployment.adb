@@ -102,6 +102,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
       Node_Enumerator_List          : List_Id;
       Tasks_Enumerator_List         : List_Id;
+      Devices_Enumerator_List       : List_Id;
       Entity_Enumerator_List        : List_Id;
       Global_Port_List              : List_Id;
       Global_Port_Names             : Node_Id;
@@ -132,6 +133,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Entity_Identifier        : Unsigned_Long_Long := 0;
       Task_Identifier          : Unsigned_Long_Long := 0;
       Nb_Protected             : Unsigned_Long_Long := 0;
+      Nb_Devices               : Unsigned_Long_Long := 0;
       Nb_Ports_In_Process      : Unsigned_Long_Long := 0;
       Nb_Ports_Total           : Unsigned_Long_Long := 0;
       Total_Ports_Node         : Node_Id := No_Node;
@@ -274,6 +276,27 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       begin
          Current_Device := E;
 
+         if Current_Process_Instance /= No_Node and then
+            Get_Bound_Processor (E) =
+            Get_Bound_Processor (Current_Process_Instance) then
+            Bind_AADL_To_Enumerator
+               (Identifier (E),
+                Make_Defining_Identifier
+                  (Map_C_Enumerator_Name (E, Entity => False)));
+
+            N := Make_Expression
+              (Make_Defining_Identifier
+               (Map_C_Enumerator_Name
+                (E, Entity => False)),
+               Op_Equal,
+               (Make_Literal
+             (CV.New_Int_Value (Nb_Devices, 0, 10))));
+            Append_Node_To_List
+              (N, Devices_Enumerator_List);
+
+            Nb_Devices := Nb_Devices + 1;
+         end if;
+
          if Implementation /= No_Node then
             if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
                N := First_Node (Subcomponents (Implementation));
@@ -316,6 +339,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Current_Process_Instance := E;
 
          Tasks_Enumerator_List      := New_List (CTN.K_Enumeration_Literals);
+         Devices_Enumerator_List    := New_List (CTN.K_Enumeration_Literals);
          Node_Enumerator_List       := New_List (CTN.K_Enumeration_Literals);
 
          Push_Entity (P);
@@ -325,9 +349,36 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Node_Identifier       := 0;
          Task_Identifier       := 0;
          Nb_Protected          := 0;
+         Nb_Devices            := 0;
          Nb_Ports_In_Process   := 0;
 
-         --  First, we consider that the node has no simulink information.
+         N := Make_Define_Statement
+         (Defining_Identifier =>
+          (RE (RE_My_Node)),
+          Value => Make_Defining_Identifier
+          (Map_C_Enumerator_Name (Parent_Subcomponent (E))));
+         Append_Node_To_List
+         (N, CTN.Declarations (Current_File));
+
+         --  Visit all devices attached to the parent system that
+         --  share the same processor as process E.
+
+         if not AAU.Is_Empty (Subcomponents (The_System)) then
+            C := First_Node (Subcomponents (The_System));
+            while Present (C) loop
+               if AAU.Is_Device (Corresponding_Instance (C))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (C))
+                 = Get_Bound_Processor (E)
+               then
+                  --  Build the enumerator corresponding to the device
+                  --  Note: we reuse the process name XXX
+
+                  Visit_Device_Instance (Corresponding_Instance (C));
+               end if;
+               C := Next_Node (C);
+            end loop;
+         end if;
 
          --  Visit all the subcomponents of the process
 
@@ -349,26 +400,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   Visit (Corresponding_Instance (C));
                end if;
 
-               C := Next_Node (C);
-            end loop;
-         end if;
-
-         --  Visit all devices attached to the parent system that
-         --  share the same processor as process E.
-
-         if not AAU.Is_Empty (Subcomponents (The_System)) then
-            C := First_Node (Subcomponents (The_System));
-            while Present (C) loop
-               if AAU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
-               then
-                  --  Build the enumerator corresponding to the device
-                  --  Note: we reuse the process name XXX
-
-                  Visit_Device_Instance (Corresponding_Instance (C));
-               end if;
                C := Next_Node (C);
             end loop;
          end if;
@@ -569,6 +600,22 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               (Tasks_Enumerator_List));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+         Set_Str_To_Name_Buffer ("invalid_device_id");
+         N := Make_Expression
+           (Make_Defining_Identifier
+            (Name_Find),
+            Op_Equal,
+            (Make_Literal
+          (CV.New_Int_Value (1, -1, 10))));
+         Append_Node_To_List
+            (N, Devices_Enumerator_List);
+
+         N := Make_Full_Type_Declaration
+           (Defining_Identifier => RE (RE_Device_Id),
+            Type_Definition     => Make_Enum_Aggregate
+              (Devices_Enumerator_List));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
+
          N := Make_Define_Statement
            (Defining_Identifier => RE (RE_Nb_Tasks),
              Value => Make_Literal (New_Int_Value (Task_Identifier, 1, 10)));
@@ -663,6 +710,13 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
+         N := Make_Define_Statement
+           (Defining_Identifier => RE (RE_Nb_Devices),
+            Value => Make_Literal
+               (New_Int_Value (Nb_Devices, 1, 10)));
+         Append_Node_To_List
+           (N, CTN.Declarations (Current_File));
+
          Current_Process_Instance := No_Node;
 
          Pop_Entity; -- U
@@ -701,7 +755,12 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                --  Visit the component instance corresponding to the
                --  subcomponent S.
 
-               Visit (Corresponding_Instance (S));
+               if Get_Current_Backend_Kind = PolyORB_HI_C and then
+                  not AAU.Is_Device (Corresponding_Instance (S)) then
+                  Visit (Corresponding_Instance (S));
+               else
+                  Visit (Corresponding_Instance (S));
+               end if;
                S := Next_Node (S);
             end loop;
          end if;
@@ -815,6 +874,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                     (Present (Backend_Node (Identifier (F))) and then
                      No (CTN.Local_Port_Node
                         (Backend_Node (Identifier (F))))) then
+
                      N := Make_Expression
                         (Make_Defining_Identifier
                            (Map_C_Enumerator_Name (F, Local_Port => True)),

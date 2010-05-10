@@ -938,6 +938,10 @@ package body Ocarina.Backends.C_Common.Mapping is
 
          Get_Name_String (CTU.To_C_Name (Display_Name (Identifier (E))));
          Add_Str_To_Name_Buffer ("_k");
+      elsif Get_Current_Backend_Kind = PolyORB_HI_C and then
+         AINU.Is_Device (E) then
+         Get_Name_String (CTU.To_C_Name (Display_Name (Identifier (E))));
+         Add_Str_To_Name_Buffer ("_device_id");
       elsif (Present (Corresponding_Instance (E))
          and then AINU.Is_Process_Or_Device
             (Corresponding_Instance (E))) then

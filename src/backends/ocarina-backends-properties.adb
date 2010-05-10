@@ -2234,7 +2234,7 @@ package body Ocarina.Backends.Properties is
    function Get_Process_Id (P : Node_Id) return Value_Id is
       use Ocarina.AADL_Values;
    begin
-      pragma Assert (Is_Process (P));
+      pragma Assert (Is_Process_Or_Device (P));
 
       if not Is_Defined_Integer_Property (P, Process_Id) then
          return No_Value;
@@ -2253,7 +2253,7 @@ package body Ocarina.Backends.Properties is
    function Get_Channel_Address (P : Node_Id) return Value_Id is
       use Ocarina.AADL_Values;
    begin
-      pragma Assert (Is_Process (P));
+      pragma Assert (Is_Process_Or_Device (P));
 
       if not Is_Defined_Integer_Property (P, Process_Channel_Address) then
          return No_Value;

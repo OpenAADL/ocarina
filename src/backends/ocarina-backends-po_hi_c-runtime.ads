@@ -144,10 +144,13 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Noport,                         --  __PO_HI_NOPORT
       RE_Bigendian,                      --  __PO_HI_BIGENDIAN
       RE_Littleendian,                   --  __PO_HI_LITTLEENDIAN
-      RE_Noaddr,                         --  __PO_HI_NB_NOADDR
+      RE_Noaddr,                         --  __PO_HI_NOADDR
+      RE_No_Device,                      --  __PO_HI_NO_DEVICE
       RE_Unused_Node,                    --  __PO_HI_UNUSED_NODE
       RE_Nb_Protected,                   --  __PO_HI_NB_PROTECTED
       RE_Nb_Nodes,                       --  __PO_HI_NB_NODES
+      RE_Nb_Devices,                     --  __PO_HI_NB_DEVICES
+      RE_My_Node,                        --  __PO_HI_MY_NODE
       RE_Gqueue_Fifo_Indata,             --  __PO_HI_GQUEUE_FIFO_DATA
       RE_Gqueue_Fifo_Out,                --  __PO_HI_GQUEUE_FIFO_OUT
       RE_Nb_Operations,                  --  __PO_HI_NB_OPERATIONS
@@ -160,6 +163,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_SUCCESS,                        --  __PO_HI_SUCCESS
 
       RE_Task_Id,                        --  __po_hi_task_id
+      RE_Device_Id,                      --  __po_hi_device_id
       RE_Entity_T,                       --  __po_hi_entity_t
       RE_Inetport_T,                     --  __po_hi_inetport_t
       RE_Inetaddr_T,                     --  __po_hi_inetaddr_t
@@ -185,7 +189,9 @@ package Ocarina.Backends.PO_HI_C.Runtime is
 
       RE_Operation_Names,                --  __po_hi_operation_names
       RE_Ports_Names,                    --  __po_hi_port_names
+      RE_Devices_Naming,                 --  __po_hi_devices_naming
       RE_Port_Global_To_Entity,          --  __po_hi_port_global_to_entity
+      RE_Port_Global_To_Device,          --  __po_hi_port_global_to_device
       RE_Port_Global_Names,              --  __po_hi_port_global_names
       RE_Port_Global_Model_Names,        --  __po_hi_port_global_model_names
       RE_Port_Global_To_Local            --  __po_hi_port_global_to_local
@@ -277,6 +283,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
 
          RE_Msg_T                          => RH_PO_HI_Messages,
          RE_Task_Id                        => RH_Deployment,
+         RE_Device_Id                      => RH_Deployment,
          RE_Entity_T                       => RH_Deployment,
          RE_Local_Port_T                   => RH_Deployment,
          RE_Port_T                         => RH_Deployment,
@@ -307,6 +314,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Main_Name                      => RH_PO_HI_Task,
          RE_Main_Return                    => RH_PO_HI_Task,
          RE_Nb_Nodes                       => RH_Deployment,
+         RE_Nb_Devices                     => RH_Deployment,
+         RE_My_Node                        => RH_Deployment,
          RE_Nb_Ports                       => RH_Deployment,
          RE_Nb_Servers                     => RH_Deployment,
          RE_Nb_Protected                   => RH_PO_HI_Protected,
@@ -319,6 +328,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Gqueue_Fifo_Out                => RH_PO_HI_Gqueue,
          RE_Nb_Operations                  => RH_Request,
          RE_Noaddr                         => RH_PO_HI_Transport,
+         RE_No_Device                      => RH_Deployment,
          RE_Noport                         => RH_PO_HI_Transport,
          RE_Bigendian                      => RH_PO_HI_Transport,
          RE_Littleendian                   => RH_PO_HI_Transport,
@@ -329,8 +339,10 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          --  Variables associations
 
          RE_Ports_Names                    => RH_PO_HI_Types,
+         RE_Devices_Naming                 => RH_Deployment,
          RE_Operation_Names                => RH_PO_HI_Types,
          RE_Port_Global_To_Entity          => RH_Deployment,
+         RE_Port_Global_To_Device          => RH_Deployment,
          RE_Port_Global_Names              => RH_Deployment,
          RE_Port_Global_Model_Names        => RH_Deployment,
          RE_Port_Global_To_Local           => RH_Deployment
