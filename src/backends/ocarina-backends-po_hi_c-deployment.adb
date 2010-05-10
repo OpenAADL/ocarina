@@ -279,7 +279,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       procedure Visit_Device_Instance (E : Node_Id) is
          Implementation  : constant Node_Id := Get_Implementation (E);
          N : Node_Id;
-         Conf_Str : Name_Id;
+         Conf_Str : Name_Id := No_Name;
          Tmp_Name : Name_Id;
       begin
          Current_Device := E;
@@ -310,8 +310,15 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
             if Get_Location (E) /= No_Name then
                Get_Name_String (Get_Location (E));
-               Add_Str_To_Name_Buffer (":");
-               Add_Str_To_Name_Buffer (Value_Id'Image (Get_Port_Number (E)));
+               Conf_Str := Name_Find;
+               if Get_Port_Number (E) /= Properties.No_Value then
+                  Set_Str_To_Name_Buffer (":");
+                  Add_Str_To_Name_Buffer
+                     (Value_Id'Image (Get_Port_Number (E)));
+                  Tmp_Name := Name_Find;
+               end if;
+               Get_Name_String (Conf_Str);
+               Get_Name_String_And_Append (Tmp_Name);
                Conf_Str := Name_Find;
             elsif Is_Defined_Property (E, "deployment::channel_address") then
                Set_Str_To_Name_Buffer
@@ -1369,7 +1376,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
-         if not Is_Empty (CTN.Values (Devices_Array)) then
+         if not Is_Empty (CTN.Values (Port_To_Devices)) then
             N := Make_Expression
               (Left_Expr =>
                  Make_Variable_Declaration
