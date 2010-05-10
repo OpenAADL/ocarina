@@ -964,7 +964,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                                  (Backend_Node (Identifier (F)))) then
 
                      N := (Make_Literal
-                        (CV.New_Int_Value (-1, 0, 10)));
+                        (CV.New_Int_Value (0, 0, 10)));
 
                      Used_Bus := Get_Associated_Bus (F);
 
