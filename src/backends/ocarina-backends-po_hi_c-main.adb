@@ -273,7 +273,8 @@ package body Ocarina.Backends.PO_HI_C.Main is
             N := Make_Call_Profile
                (Make_Defining_Identifier
                   (Get_String_Name ("__po_hi_driver_sockets_init")),
-               No_List);
+               Make_List_Id
+                  (Make_Literal (New_Int_Value (0, 0, 10))));
             Append_Node_To_List (N, CTN.Statements (Main_Function));
          end if;
 
