@@ -47,6 +47,8 @@ with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Messages;
 
+with Ocarina.Instances.Queries;
+
 package body Ocarina.Backends.PO_HI_C.Deployment is
 
    use Namet;
@@ -60,6 +62,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    use Ocarina.Backends.PO_HI_C.Runtime;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Messages;
+   use Ocarina.Instances.Queries;
 
    package AAN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -67,7 +70,9 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
 
-   Entity_Array : Node_Id;
+   Entity_Array      : Node_Id;
+   Devices_Array     : Node_Id;
+   Port_To_Devices   : Node_Id;
 
    -----------------
    -- Header_File --
@@ -133,11 +138,12 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Entity_Identifier        : Unsigned_Long_Long := 0;
       Task_Identifier          : Unsigned_Long_Long := 0;
       Nb_Protected             : Unsigned_Long_Long := 0;
-      Nb_Devices               : Unsigned_Long_Long := 0;
+      Device_Id                : Unsigned_Long_Long := 0;
       Nb_Ports_In_Process      : Unsigned_Long_Long := 0;
       Nb_Ports_Total           : Unsigned_Long_Long := 0;
       Total_Ports_Node         : Node_Id := No_Node;
       Nb_Entities_Node         : Node_Id := No_Node;
+      Nb_Devices_Node          : Node_Id := No_Node;
 
       --  The information from Simulink can come
       --  from both data and subprograms. So, to avoid
@@ -273,6 +279,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       procedure Visit_Device_Instance (E : Node_Id) is
          Implementation  : constant Node_Id := Get_Implementation (E);
          N : Node_Id;
+         Conf_Str : Name_Id;
+         Tmp_Name : Name_Id;
       begin
          Current_Device := E;
 
@@ -290,11 +298,52 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                 (E, Entity => False)),
                Op_Equal,
                (Make_Literal
-             (CV.New_Int_Value (Nb_Devices, 0, 10))));
+             (CV.New_Int_Value (Device_Id, 0, 10))));
             Append_Node_To_List
               (N, Devices_Enumerator_List);
 
-            Nb_Devices := Nb_Devices + 1;
+            Device_Id  := Device_Id + 1;
+
+            CTN.Set_Value
+               (Nb_Devices_Node, New_Int_Value
+                (Device_Id, 1, 10));
+
+            if Get_Location (E) /= No_Name then
+               Get_Name_String (Get_Location (E));
+               Add_Str_To_Name_Buffer (":");
+               Add_Str_To_Name_Buffer (Value_Id'Image (Get_Port_Number (E)));
+               Conf_Str := Name_Find;
+            elsif Is_Defined_Property (E, "deployment::channel_address") then
+               Set_Str_To_Name_Buffer
+                  (Unsigned_Long_Long'Image
+                     (Get_Integer_Property
+                        (E, "deployment::channel_address")));
+               Conf_Str := Name_Find;
+               if Is_Defined_Property (E, "deployment::process_id") then
+                  Set_Str_To_Name_Buffer
+                  (Unsigned_Long_Long'Image
+                   (Get_Integer_Property (E, "deployment::process_id")));
+                  Tmp_Name := Name_Find;
+                  Get_Name_String (Conf_Str);
+                  Add_Str_To_Name_Buffer (":");
+                  Get_Name_String_And_Append (Tmp_Name);
+                  Conf_Str := Name_Find;
+               end if;
+            end if;
+
+            if Conf_Str /= No_Name then
+               Append_Node_To_List
+               (Make_Literal
+                (CV.New_Pointed_Char_Value (Conf_Str)),
+               CTN.Values (Devices_Array));
+            else
+               Append_Node_To_List
+               (Make_Literal
+                (CV.New_Pointed_Char_Value
+                 (Get_String_Name ("noaddr"))),
+               CTN.Values (Devices_Array));
+            end if;
+
          end if;
 
          if Implementation /= No_Node then
@@ -339,7 +388,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Current_Process_Instance := E;
 
          Tasks_Enumerator_List      := New_List (CTN.K_Enumeration_Literals);
-         Devices_Enumerator_List    := New_List (CTN.K_Enumeration_Literals);
          Node_Enumerator_List       := New_List (CTN.K_Enumeration_Literals);
 
          Push_Entity (P);
@@ -349,7 +397,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Node_Identifier       := 0;
          Task_Identifier       := 0;
          Nb_Protected          := 0;
-         Nb_Devices            := 0;
          Nb_Ports_In_Process   := 0;
 
          N := Make_Define_Statement
@@ -600,16 +647,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               (Tasks_Enumerator_List));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-         Set_Str_To_Name_Buffer ("invalid_device_id");
-         N := Make_Expression
-           (Make_Defining_Identifier
-            (Name_Find),
-            Op_Equal,
-            (Make_Literal
-          (CV.New_Int_Value (1, -1, 10))));
-         Append_Node_To_List
-            (N, Devices_Enumerator_List);
-
          N := Make_Full_Type_Declaration
            (Defining_Identifier => RE (RE_Device_Id),
             Type_Definition     => Make_Enum_Aggregate
@@ -712,8 +749,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
          N := Make_Define_Statement
            (Defining_Identifier => RE (RE_Nb_Devices),
-            Value => Make_Literal
-               (New_Int_Value (Nb_Devices, 1, 10)));
+            Value => Nb_Devices_Node);
          Append_Node_To_List
            (N, CTN.Declarations (Current_File));
 
@@ -733,6 +769,10 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       begin
          Push_Entity (C_Root);
 
+         Devices_Array              := Make_Array_Values;
+         Port_To_Devices            := Make_Array_Values;
+
+         Devices_Enumerator_List    := New_List (CTN.K_Enumeration_Literals);
          Global_Port_List           := New_List (CTN.K_Enumeration_Literals);
          Global_Port_Names          := Make_Array_Values;
          Global_Port_Model_Names    := Make_Array_Values;
@@ -745,7 +785,21 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                                        (New_Int_Value (0, 1, 10));
          Nb_Entities_Node           := Make_Literal
                                        (New_Int_Value (0, 1, 10));
+         Nb_Devices_Node            := Make_Literal
+                                       (New_Int_Value (0, 1, 10));
          Entity_Array               := Make_Array_Values;
+
+         Device_Id                  := 0;
+
+         Set_Str_To_Name_Buffer ("invalid_device_id");
+         N := Make_Expression
+           (Make_Defining_Identifier
+            (Name_Find),
+            Op_Equal,
+            (Make_Literal
+          (CV.New_Int_Value (1, -1, 10))));
+         Append_Node_To_List
+            (N, Devices_Enumerator_List);
 
          --  Visit all the subcomponents of the system
 
@@ -795,6 +849,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          S                 : constant Node_Id := Parent_Subcomponent (E);
          Call_Seq          : Node_Id;
          Spg_Call          : Node_Id;
+         Used_Bus          : Node_Id;
+         Used_Device       : Node_Id;
       begin
 
          Local_Port_Identifier := 0;
@@ -899,6 +955,32 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   if No (Backend_Node (Identifier (F))) or else
                     No (CTN.Global_Port_Node
                                  (Backend_Node (Identifier (F)))) then
+
+                     N := (Make_Literal
+                        (CV.New_Int_Value (-1, 0, 10)));
+
+                     Used_Bus := Get_Associated_Bus (F);
+
+                     if Used_Bus /= No_Node then
+
+                        if AAU.Is_Virtual_Bus (Used_Bus) then
+                           Used_Bus := Parent_Component
+                              (Parent_Subcomponent (Used_Bus));
+                        end if;
+
+                        Used_Device := Get_Device_Of_Process
+                           (Used_Bus,
+                              (Parent_Component
+                                 (Parent_Subcomponent (E))));
+                        if Used_Device /= No_Node then
+                           N := Make_Defining_Identifier
+                              (Map_C_Enumerator_Name
+                                 (Corresponding_Instance (Used_Device)));
+                        end if;
+                     end if;
+
+                     Append_Node_To_List (N, CTN.Values (Port_To_Devices));
+
                      N := Make_Defining_Identifier
                        (Map_C_Enumerator_Name (F, Local_Port => True));
                      Append_Node_To_List
@@ -1269,6 +1351,39 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             Operator => Op_Equal,
             Right_Expr => Endiannesses);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+         if not Is_Empty (CTN.Values (Devices_Array)) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Devices_Naming),
+                     Array_Size =>
+                       RE (RE_Nb_Devices)),
+                  Used_Type =>
+                    Make_Pointer_Type (New_Node (CTN.K_Char))),
+               Operator => Op_Equal,
+               Right_Expr => Devices_Array);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
+         if not Is_Empty (CTN.Values (Devices_Array)) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Port_To_Device),
+                     Array_Size =>
+                       RE (RE_Nb_Ports)),
+                  Used_Type => RE (RE_Device_Id)),
+               Operator => Op_Equal,
+               Right_Expr => Port_To_Devices);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
 
          Pop_Entity; -- U
          Pop_Entity; -- P

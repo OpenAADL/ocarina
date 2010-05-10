@@ -190,6 +190,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Operation_Names,                --  __po_hi_operation_names
       RE_Ports_Names,                    --  __po_hi_port_names
       RE_Devices_Naming,                 --  __po_hi_devices_naming
+      RE_Port_To_Device,                 --  __po_hi_port_to_device
       RE_Port_Global_To_Entity,          --  __po_hi_port_global_to_entity
       RE_Port_Global_To_Device,          --  __po_hi_port_global_to_device
       RE_Port_Global_Names,              --  __po_hi_port_global_names
@@ -340,6 +341,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
 
          RE_Ports_Names                    => RH_PO_HI_Types,
          RE_Devices_Naming                 => RH_Deployment,
+         RE_Port_To_Device                 => RH_Deployment,
          RE_Operation_Names                => RH_PO_HI_Types,
          RE_Port_Global_To_Entity          => RH_Deployment,
          RE_Port_Global_To_Device          => RH_Deployment,
