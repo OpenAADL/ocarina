@@ -38,8 +38,6 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
-with Ocarina.Instances.Queries;
-
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
@@ -62,10 +60,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
    use Ocarina.Backends.C_Common.Mapping;
    use Ocarina.Backends.Utils;
 
-   use Ocarina.Instances.Queries;
-
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package CV renames Ocarina.Backends.C_Values;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
 
@@ -508,80 +503,25 @@ package body Ocarina.Backends.PO_HI_C.Main is
          Entrypoint : constant Node_Id
            := Get_Thread_Initialize_Entrypoint (E);
          Impl       : constant Node_Id := Get_Implementation (E);
-         Init_Args  : constant List_Id := New_List (CTN.K_Parameter_List);
-         Conf_Str   : Name_Id := No_Name;
-         Tmp_Name   : Name_Id;
       begin
          Current_Device := E;
 
          if Entrypoint /= No_Node then
-            if Get_String_Property
-               (E, "deployment::driver_name") /= No_Name then
-               Append_Node_To_List
-               (Make_Literal
-                (CV.New_Pointed_Char_Value
-                 (Get_String_Property (E, "deployment::driver_name"))),
-               Init_Args);
-            else
-               Append_Node_To_List
-               (Make_Literal
-                (CV.New_Pointed_Char_Value
-                 (Get_String_Name ("noname"))),
-               Init_Args);
-            end if;
-
-            if Get_Location (E) /= No_Name then
-               Get_Name_String (Get_Location (E));
-               Add_Str_To_Name_Buffer (":");
-               Add_Str_To_Name_Buffer (Value_Id'Image (Get_Port_Number (E)));
-               Conf_Str := Name_Find;
-            elsif Is_Defined_Property (E, "deployment::channel_address") then
-               Set_Str_To_Name_Buffer
-                  (Unsigned_Long_Long'Image
-                     (Get_Integer_Property
-                        (E, "deployment::channel_address")));
-               Conf_Str := Name_Find;
-               if Is_Defined_Property (E, "deployment::process_id") then
-                  Set_Str_To_Name_Buffer
-                  (Unsigned_Long_Long'Image
-                   (Get_Integer_Property (E, "deployment::process_id")));
-                  Tmp_Name := Name_Find;
-                  Get_Name_String (Conf_Str);
-                  Add_Str_To_Name_Buffer (":");
-                  Get_Name_String_And_Append (Tmp_Name);
-                  Conf_Str := Name_Find;
-               end if;
-            end if;
-
-            if Conf_Str /= No_Name then
-               Append_Node_To_List
-               (Make_Literal
-                (CV.New_Pointed_Char_Value (Conf_Str)),
-               Init_Args);
-            else
-               Append_Node_To_List
-               (Make_Literal
-                (CV.New_Pointed_Char_Value
-                 (Get_String_Name ("noaddr"))),
-               Init_Args);
-            end if;
-
             N := Make_Extern_Entity_Declaration
               (Make_Function_Specification
                   (Map_C_Subprogram_Identifier (Entrypoint),
                   Make_List_Id
                      (Make_Parameter_Specification
-                        (Make_Defining_Identifier (Get_String_Name ("name")),
-                        Make_Pointer_Type (New_Node (CTN.K_Char))),
-                     Make_Parameter_Specification
-                        (Make_Defining_Identifier
-                           (Get_String_Name ("location")),
-                        Make_Pointer_Type (New_Node (CTN.K_Char)))),
+                        (Make_Defining_Identifier (Get_String_Name ("id")),
+                        RE (RE_Device_Id))),
                   New_Node (CTN.K_Void)));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             N := Make_Call_Profile
-              (Map_C_Subprogram_Identifier (Entrypoint), Init_Args);
+              (Map_C_Subprogram_Identifier (Entrypoint),
+              Make_List_Id
+               (Make_Defining_Identifier
+                  (Map_C_Enumerator_Name (E))));
             Append_Node_To_List (N, CTN.Declarations (Main_Function));
          end if;
 
