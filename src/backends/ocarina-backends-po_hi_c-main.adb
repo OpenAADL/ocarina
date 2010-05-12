@@ -44,6 +44,7 @@ with Ocarina.Backends.Messages;
 with Ocarina.Backends.C_Tree.Nutils;
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Values;
+with Ocarina.Backends.PO_HI_C;
 with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.C_Common.Mapping;
 
@@ -349,7 +350,12 @@ package body Ocarina.Backends.PO_HI_C.Main is
          --  all other task. In fact, no task will terminate, so this function
          --  will only switch the main task to the sleep state all the time.
 
-         N := CTU.Make_Call_Profile (RE (RE_Wait_For_Tasks));
+         if not PO_HI_C.Use_Performance_Analysis then
+            N := CTU.Make_Call_Profile (RE (RE_Wait_For_Tasks));
+         else
+            N := CTU.Make_Call_Profile (RE (RE_Wait_End_Of_Instrumentation));
+         end if;
+
          Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          N := CTU.Make_Return_Statement (RE (RE_Main_Return));

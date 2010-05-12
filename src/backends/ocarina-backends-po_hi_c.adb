@@ -84,6 +84,7 @@ package body Ocarina.Backends.PO_HI_C is
 
    Compile_Generated_Sources   : Boolean := False;
    Remove_Generated_Sources    : Boolean := False;
+   Add_Performance_Analysis    : Boolean := False;
    Do_Regression_Test          : Boolean := False;
    Do_Coverage_Test            : Boolean := False;
    Generated_Sources_Directory : Name_Id := No_Name;
@@ -170,6 +171,11 @@ package body Ocarina.Backends.PO_HI_C is
 --         end if;
       else
          Write_Line ("no");
+      end if;
+
+      if Add_Performance_Analysis then
+         Write_Str ("USE_GPROF = yes");
+         Write_Eol;
       end if;
 
       if Use_Simulink then
@@ -321,7 +327,7 @@ package body Ocarina.Backends.PO_HI_C is
       Generated_Sources_Directory := Get_String_Name (".");
       Initialize_Option_Scan;
       loop
-         case Getopt ("* b z ec er o:") is
+         case Getopt ("* b z ec er o: perf") is
             when ASCII.NUL =>
                exit;
 
@@ -330,6 +336,11 @@ package body Ocarina.Backends.PO_HI_C is
 
             when 'z' =>
                Remove_Generated_Sources := True;
+
+            when 'p' =>
+               if Full_Switch = "perf" then
+                  Add_Performance_Analysis := True;
+               end if;
 
             when 'e' =>
                Compile_Generated_Sources := True;
@@ -365,6 +376,15 @@ package body Ocarina.Backends.PO_HI_C is
    begin
       Ocarina.Backends.PO_HI_C.Runtime.Reset;
    end Reset;
+
+   ------------------------------
+   -- Use_Performance_Analysis --
+   ------------------------------
+
+   function Use_Performance_Analysis return Boolean is
+   begin
+      return Add_Performance_Analysis;
+   end Use_Performance_Analysis;
 
    ---------------------------------
    -- Visit_Architecture_Instance --

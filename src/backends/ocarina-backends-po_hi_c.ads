@@ -49,6 +49,9 @@ package Ocarina.Backends.PO_HI_C is
    procedure Reset;
    --  Reset the internal units of the PO_HI_C generator
 
+   function Use_Performance_Analysis return Boolean;
+   --  Specify if we use performance analysis or not.
+
 private
    C_Root : Node_Id;
    --  The root of the C trees

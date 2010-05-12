@@ -132,6 +132,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Simulink_Find_Var,              -- __po_hi_simulink_find_var
       RE_Simulink_Find_Parameter,        -- __po_hi_simulink_find_parameter
       RE_Simulink_Update,                -- __po_hi_simulink_update
+      RE_Wait_End_Of_Instrumentation,    -- __po_hi_wait_end_of_instrumentation
       RE_Wait_For_Tasks,                 -- __po_hi_wait_for_tasks
 
       RE_Default_Priority,               --  __PO_HI_DEFAULT_PRIORITY
@@ -278,6 +279,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Simulink_Find_Signal           => RH_PO_HI_Simulink,
          RE_Simulink_Find_Parameter        => RH_PO_HI_Simulink,
          RE_Simulink_Update                => RH_PO_HI_Simulink,
+         RE_Wait_End_Of_Instrumentation    => RH_PO_HI_Main,
          RE_Wait_For_Tasks                 => RH_PO_HI_Task,
 
          --  Runtime types associations
