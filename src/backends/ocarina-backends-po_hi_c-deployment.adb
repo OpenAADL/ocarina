@@ -336,6 +336,11 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   Get_Name_String_And_Append (Tmp_Name);
                   Conf_Str := Name_Find;
                end if;
+            elsif Is_Defined_Property (E, "deployment::configuration") then
+               Get_Name_String
+                  (Get_String_Property
+                     (E, "deployment::configuration"));
+               Conf_Str := Name_Find;
             end if;
 
             if Conf_Str /= No_Name then
