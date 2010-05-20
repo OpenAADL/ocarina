@@ -1,0 +1,55 @@
+module Ocarina::Backends::ASN1_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef octet   Operator_Id;
+  typedef long    Name_Id;
+  typedef long    Value_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  interface Node_Id {
+    Node_Id    Next_Node;
+    Node_Id    Frontend_Node;
+  };
+
+  interface Definition : Node_Id {
+    Node_Id    Defining_Identifier;
+  };
+
+  interface List_Id {
+    Node_Id    First_Node;
+    Node_Id    Last_Node;
+  };
+
+  interface Defining_Identifier : Node_Id {
+    Name_Id    Name;
+    Node_Id    Corresponding_Node;
+    Node_Id    Compile_Unit;
+    boolean    Is_Pointer; 
+  };
+
+
+  interface ASN1_Module : Node_Id {
+    Name_Id    Name;
+	 Node_Id    Oid;
+    boolean    Automatic_Tags;
+    List_Id    Imported_Clauses;
+    List_Id    Exported_Clauses;
+	 List_Id    Definitions;
+  };
+
+  interface Import_Export_Clause : Node_Id {
+  	 Name_Id    Name;
+    Name_Id    Associated_Module;
+  };
+
+  interface Type_Definition : Definition 
+  {
+    Node_Id    Declaration;
+  };
+};

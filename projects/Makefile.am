@@ -63,10 +63,11 @@ BUILD_DIRS_STAMPS = $(BUILD_DIRS:=-stamp)
 TREE_PIDL_SPECS = \
 	src/core/tree/ocarina-me_aadl-aadl_tree-nodes.idl \
 	src/core/tree/ocarina-me_aadl-aadl_instances-nodes.idl \
-        src/core/tree/ocarina-me_aadl_ba-ba_tree-nodes.idl \
-        src/core/tree/ocarina-me_real-real_tree-nodes.idl \
-        src/backends/ocarina-backends-ada_tree-nodes.idl \
+   src/core/tree/ocarina-me_aadl_ba-ba_tree-nodes.idl \
+   src/core/tree/ocarina-me_real-real_tree-nodes.idl \
+   src/backends/ocarina-backends-ada_tree-nodes.idl \
 	src/backends/ocarina-backends-c_tree-nodes.idl \
+	src/backends/ocarina-backends-asn1_tree-nodes.idl \
 	src/backends/ocarina-backends-xml_tree-nodes.idl \
 	src/backends/ocarina-backends-pn-nodes.idl \
 	src/backends/ocarina-backends-rtsj_tree-nodes.idl
