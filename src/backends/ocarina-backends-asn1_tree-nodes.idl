@@ -54,5 +54,6 @@ module Ocarina::Backends::ASN1_Tree::Nodes {
   interface Type_Definition : Definition 
   {
     Node_Id    Declaration;
+	 List_Id    Declarations;
   };
 };

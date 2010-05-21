@@ -116,11 +116,19 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    ---------------------
 
    procedure Generate_Module (N : Node_Id) is
+      P : Node_Id;
    begin
       Write_Name (Name (N));
       Write_Space;
       Write_Str ("DEFINITIONS AUTOMATIC TAGS ::= BEGIN");
       Write_Eol;
+      if not Is_Empty (Declarations (N)) then
+         P := First_Node (Declarations (N));
+         while Present (P) loop
+            Generate (P);
+            P := Next_Node (P);
+         end loop;
+      end if;
       Write_Line ("END");
    end Generate_Module;
 
