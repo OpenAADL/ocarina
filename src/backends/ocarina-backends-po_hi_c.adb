@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2008-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,6 +38,7 @@ with Ocarina.Instances;
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.C_Tree.Generator;
+with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.PO_HI_C.Activity;
 with Ocarina.Backends.PO_HI_C.Main;
 with Ocarina.Backends.PO_HI_C.Naming;
@@ -52,6 +53,7 @@ with Ocarina.Backends.Build_Utils;
 with Ocarina.Backends.Execution_Utils;
 with Ocarina.Backends.Execution_Tests;
 with Ocarina.Backends.Properties;
+with Ocarina.Backends.ASN1;
 with GNAT.Command_Line;
 
 with Namet;
@@ -75,6 +77,7 @@ package body Ocarina.Backends.PO_HI_C is
    use Ocarina.Backends.PO_HI_C.Marshallers;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.C_Tree.Generator;
+   use Ocarina.Backends.ASN1;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Expander;
    use Ocarina.Instances;
@@ -82,6 +85,9 @@ package body Ocarina.Backends.PO_HI_C is
    use Ocarina.Backends.Execution_Utils;
    use Ocarina.Backends.Execution_Tests;
 
+   package CTN renames Ocarina.Backends.C_Tree.Nodes;
+
+   Generate_ASN1_Deployment    : Boolean := False;
    Compile_Generated_Sources   : Boolean := False;
    Remove_Generated_Sources    : Boolean := False;
    Add_Performance_Analysis    : Boolean := False;
@@ -262,6 +268,12 @@ package body Ocarina.Backends.PO_HI_C is
 
          Generate_PolyORB_HI_C_Makefile (Instance_Root);
 
+         if Generate_ASN1_Deployment then
+            Enter_Directory (CTN.Name (C_Root));
+            ASN1.Generate (Instance_Root);
+            Leave_Directory;
+         end if;
+
          --  If the user requested to build the applications then we
          --  build it.
 
@@ -327,9 +339,14 @@ package body Ocarina.Backends.PO_HI_C is
       Generated_Sources_Directory := Get_String_Name (".");
       Initialize_Option_Scan;
       loop
-         case Getopt ("* b z ec er o: perf") is
+         case Getopt ("* b z ec er o: perf asn1") is
             when ASCII.NUL =>
                exit;
+
+            when 'a' =>
+               if Full_Switch = "asn1" then
+                  Generate_ASN1_Deployment := True;
+               end if;
 
             when 'b' =>
                Compile_Generated_Sources := True;

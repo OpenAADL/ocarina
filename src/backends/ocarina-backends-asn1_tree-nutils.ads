@@ -156,4 +156,8 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
 
    procedure New_Token (T : Token_Type; I : String := "");
 
+   function Make_ASN1_File (Identifier : Node_Id) return Node_Id;
+
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id;
+
 end Ocarina.Backends.ASN1_Tree.Nutils;

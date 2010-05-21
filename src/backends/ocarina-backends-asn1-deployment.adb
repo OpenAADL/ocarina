@@ -31,16 +31,21 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Namet; use Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+
+with Ocarina.Backends.ASN1_Tree.Nutils;
 
 package body Ocarina.Backends.ASN1.Deployment is
 
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
+
+   use Ocarina.Backends.ASN1_Tree.Nutils;
 
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
 
@@ -76,6 +81,9 @@ package body Ocarina.Backends.ASN1.Deployment is
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
    begin
+      ASN1_Root := Make_ASN1_File
+         (Make_Defining_Identifier
+            (Get_String_Name ("deployment")));
       Visit (Root_System (E));
    end Visit_Architecture_Instance;
 

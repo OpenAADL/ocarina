@@ -33,6 +33,9 @@ module Ocarina::Backends::ASN1_Tree::Nodes {
     boolean    Is_Pointer; 
   };
 
+  interface ASN1_File : Definition {
+    Node_Id    Module_Node;
+  };
 
   interface ASN1_Module : Node_Id {
     Name_Id    Name;

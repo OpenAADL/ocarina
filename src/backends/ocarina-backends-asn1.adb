@@ -35,9 +35,9 @@ with Ocarina.Instances;
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.ASN1_Tree.Generator;
+with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1.Deployment;
 with Ocarina.Backends.Utils;
-with Ocarina.Backends.Build_Utils;
 with GNAT.Command_Line;
 
 with Namet;
@@ -50,11 +50,11 @@ package body Ocarina.Backends.ASN1 is
 
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.ASN1_Tree.Generator;
+   use Ocarina.Backends.ASN1_Tree.Nutils;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Expander;
    use Ocarina.Instances;
 
-   Remove_Generated_Sources    : Boolean := False;
    Generated_Sources_Directory : Name_Id := No_Name;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
@@ -88,13 +88,7 @@ package body Ocarina.Backends.ASN1 is
 
       Enter_Directory (Generated_Sources_Directory);
 
-      if Remove_Generated_Sources then
-         Build_Utils.Makefiles.Clean (Instance_Root);
-      else
-         --  Create the source files
-
-         ASN1_Tree.Generator.Generate (ASN1_Root);
-      end if;
+      ASN1_Tree.Generator.Generate (ASN1_Root);
 
       --  Leave the output directory
       Leave_Directory;
@@ -106,15 +100,13 @@ package body Ocarina.Backends.ASN1 is
 
    procedure Init is
    begin
+      ASN1_Tree.Nutils.Initialize;
       Generated_Sources_Directory := Get_String_Name (".");
       Initialize_Option_Scan;
       loop
          case Getopt ("* b z ec er o: perf") is
             when ASCII.NUL =>
                exit;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
 
             when 'o' =>
                declare

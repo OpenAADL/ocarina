@@ -31,6 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with GNAT.OS_Lib; use GNAT.OS_Lib;
+with Outfiles; use Outfiles;
 with Namet;    use Namet;
 with Output;   use Output;
 
@@ -47,7 +49,8 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    procedure Write (T : Token_Type);
    procedure Write_Line (T : Token_Type);
 
-   pragma Unreferenced (Write_Line);
+   procedure Generate_ASN1_File (N : Node_Id);
+   procedure Generate_Module (N : Node_Id);
 
    -----------
    -- Write --
@@ -75,10 +78,45 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    procedure Generate (N : Node_Id) is
    begin
       case Kind (N) is
+         when K_ASN1_File =>
+            Generate_ASN1_File (N);
+
+         when K_ASN1_Module =>
+            Generate_Module (N);
+
          when others =>
             Display_Error ("other element in generator", Fatal => False);
             null;
       end case;
    end Generate;
+
+   ------------------------
+   -- Generate_ASN1_File --
+   ------------------------
+
+   procedure Generate_ASN1_File (N : Node_Id) is
+      Fd : File_Descriptor;
+   begin
+      if No (N) then
+         return;
+      end if;
+      Get_Name_String (Name (Defining_Identifier (N)));
+      Fd := Create_File (Name_Buffer (1 .. Name_Len) & ".asn1", Text);
+      Set_Output (Fd);
+
+      Generate (Module_Node (N));
+
+      Release_Output (Fd);
+   end Generate_ASN1_File;
+
+   ---------------------
+   -- Generate_Module --
+   ---------------------
+
+   procedure Generate_Module (N : Node_Id) is
+      pragma Unreferenced (N);
+   begin
+      Write_Line (Tok_Module);
+   end Generate_Module;
 
 end Ocarina.Backends.ASN1_Tree.Generator;

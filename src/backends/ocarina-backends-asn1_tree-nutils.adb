@@ -39,9 +39,12 @@ with Locations; use Locations;
 
 with Ocarina.Backends;
 
+with Ocarina.Backends.ASN1_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 use Ocarina.Backends;
+
+use Ocarina.Backends.ASN1_Tree.Nodes;
 
 package body Ocarina.Backends.ASN1_Tree.Nutils is
 
@@ -242,6 +245,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       end loop;
 
       --  Graphic Characters
+      New_Token (Tok_Module, "MODULE");
       New_Token (Tok_And, "&&");
       New_Token (Tok_Xor, "^");
       New_Token (Tok_Sharp, "#");
@@ -409,5 +413,34 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       end if;
       Operator_Image (Operator_Type'Pos (O)) := Name_Find;
    end New_Operator;
+
+   --------------------
+   -- Make_ASN1_File --
+   --------------------
+
+   function Make_ASN1_File (Identifier : Node_Id) return Node_Id is
+      File : Node_Id;
+   begin
+      File := New_Node (K_ASN1_File);
+      Set_Defining_Identifier (File, Identifier);
+      Set_Corresponding_Node (Identifier, File);
+
+      Set_Module_Node (File, New_Node (K_ASN1_Module));
+      return File;
+   end Make_ASN1_File;
+
+   ------------------------------
+   -- Make_Defining_Identifier --
+   ------------------------------
+
+   function Make_Defining_Identifier (Name         : Name_Id)
+     return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Defining_Identifier);
+      Set_Name (N, Name);
+      return N;
+   end Make_Defining_Identifier;
 
 end Ocarina.Backends.ASN1_Tree.Nutils;
