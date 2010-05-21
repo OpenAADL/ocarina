@@ -38,6 +38,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.ASN1_Tree.Nutils;
+with Ocarina.Backends.ASN1_Tree.Nodes;
 
 package body Ocarina.Backends.ASN1.Deployment is
 
@@ -47,6 +48,7 @@ package body Ocarina.Backends.ASN1.Deployment is
 
    use Ocarina.Backends.ASN1_Tree.Nutils;
 
+   package ASN1N renames Ocarina.Backends.ASN1_Tree.Nodes;
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
@@ -84,6 +86,9 @@ package body Ocarina.Backends.ASN1.Deployment is
       ASN1_Root := Make_ASN1_File
          (Make_Defining_Identifier
             (Get_String_Name ("deployment")));
+      ASN1N.Set_Name
+         (ASN1N.Module_Node (ASN1_Root),
+         Get_String_Name ("POHIC_DEPLOYMENT"));
       Visit (Root_System (E));
    end Visit_Architecture_Instance;
 

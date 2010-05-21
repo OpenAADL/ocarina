@@ -49,6 +49,8 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    procedure Write (T : Token_Type);
    procedure Write_Line (T : Token_Type);
 
+   pragma Unreferenced (Write_Line);
+
    procedure Generate_ASN1_File (N : Node_Id);
    procedure Generate_Module (N : Node_Id);
 
@@ -114,9 +116,12 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    ---------------------
 
    procedure Generate_Module (N : Node_Id) is
-      pragma Unreferenced (N);
    begin
-      Write_Line (Tok_Module);
+      Write_Name (Name (N));
+      Write_Space;
+      Write_Str ("DEFINITIONS AUTOMATIC TAGS ::= BEGIN");
+      Write_Eol;
+      Write_Line ("END");
    end Generate_Module;
 
 end Ocarina.Backends.ASN1_Tree.Generator;

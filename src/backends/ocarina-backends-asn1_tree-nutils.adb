@@ -426,6 +426,9 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       Set_Corresponding_Node (Identifier, File);
 
       Set_Module_Node (File, New_Node (K_ASN1_Module));
+      Set_Name
+         (Module_Node (File),
+         Get_String_Name ("unknownmodule"));
       return File;
    end Make_ASN1_File;
 
