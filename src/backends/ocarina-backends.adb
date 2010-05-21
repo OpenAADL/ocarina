@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2008-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,6 +43,7 @@ with Ocarina.Backends.Build_Utils;
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.PN;
 with Ocarina.Backends.PO_HI_Ada;
+with Ocarina.Backends.ASN1;
 with Ocarina.Backends.PO_HI_C;
 with Ocarina.Backends.PO_HI_RTSJ;
 with Ocarina.Backends.Stats;
@@ -174,6 +175,7 @@ package body Ocarina.Backends is
       Subprograms.Init;
       REAL.Init;
       Carts.Init;
+      ASN1.Init;
    end Init;
 
    ----------------------
