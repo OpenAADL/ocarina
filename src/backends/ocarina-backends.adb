@@ -289,7 +289,6 @@ package body Ocarina.Backends is
       Write_Line ("   -perf  Enable profiling with gprof (PolyORB-HI-C only)");
       Write_Line
          ("   -asn1  Generate ASN1 deployment file (PolyORB-HI-C only)");
-      Ocarina.Backends.Write_Backends (7);
       Write_Line
          ("   -arinc653  Generate code for ARINC653 API (POK backend only)");
       Write_Line ("   -b  Generate and build code from the AADL model");
