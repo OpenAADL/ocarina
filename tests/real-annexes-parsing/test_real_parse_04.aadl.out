@@ -18,10 +18,10 @@ property set Deployment is
     applies to (process, device);
 
   Process_ID : aadlinteger
-    applies to (process);
+    applies to (process, device);
 
   Channel_Address : aadlinteger
-    applies to (process);
+    applies to (process, device);
 
   Protocol_Type : type enumeration (iiop, diop);
 
@@ -37,6 +37,12 @@ property set Deployment is
 
   Priority : Deployment::Priority_Type
     applies to (data, thread);
+
+  Driver_Name : aadlstring
+    applies to (device);
+
+  Configuration : aadlstring
+    applies to (device);
 
 end Deployment;
 

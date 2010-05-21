@@ -46,11 +46,14 @@ Usage:
         subprograms
         real_theorem
         carts
+        asn1_deployment
         aadl
         aadl_min
         aadl_annex
         behavior_specification
         real_specification
+   -perf  Enable profiling with gprof (PolyORB-HI-C only)
+   -asn1  Generate ASN1 deployment file (PolyORB-HI-C only)
    -arinc653  Generate code for ARINC653 API (POK backend only)
    -b  Generate and build code from the AADL model
    -z  Clean code generated from the AADL model
