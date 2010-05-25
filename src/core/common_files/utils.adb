@@ -184,22 +184,21 @@ package body Utils is
 
    function Replace_Char (Name : Name_Id; O : Character; N : Character)
       return Name_Id is
-      pragma Unreferenced (O);
-      pragma Unreferenced (N);
-      Len : Natural;
       New_Name : Name_Id := No_Name;
+      Initial_Name : constant String := Get_Name_String (Name);
    begin
-      Get_Name_String (Name);
-      Len := Name_Len;
+      Name_Len := 0;
 
-      declare
-         New_Str : String (1 .. Len);
-      begin
-         for I in 1 .. Len loop
-            New_Str (I) := Name_Buffer (I);
-         end loop;
-         New_Name := Get_String_Name (New_Str);
-      end;
+      for Index in Initial_Name'First .. Initial_Name'Last loop
+         if Initial_Name (Index) = O then
+            Add_Char_To_Name_Buffer (N);
+         else
+            Add_Char_To_Name_Buffer (Initial_Name (Index));
+         end if;
+      end loop;
+
+      New_Name := Name_Find;
+
       return New_Name;
    end Replace_Char;
 
