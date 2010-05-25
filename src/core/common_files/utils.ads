@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2007-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2007-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -73,6 +73,10 @@ package Utils is
 
    function To_Lower  (N : Name_Id) return Name_Id;
    function To_Upper  (N : Name_Id) return Name_Id;
+
+   function Replace_Char (Name : Name_Id; O : Character; N : Character)
+      return Name_Id;
+   --  Replace occurence of character O in the Name by character N.
 
    function Is_Prefix (N1 : Name_Id; N2 : Name_Id) return Boolean;
    --  Is N1 a prefix of N2

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2007-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2007-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -178,6 +178,31 @@ package body Utils is
       return Quoted (Get_Name_String (N), D);
    end Quoted;
 
+   ------------------
+   -- Replace_Char --
+   ------------------
+
+   function Replace_Char (Name : Name_Id; O : Character; N : Character)
+      return Name_Id is
+      pragma Unreferenced (O);
+      pragma Unreferenced (N);
+      Len : Natural;
+      New_Name : Name_Id := No_Name;
+   begin
+      Get_Name_String (Name);
+      Len := Name_Len;
+
+      declare
+         New_Str : String (1 .. Len);
+      begin
+         for I in 1 .. Len loop
+            New_Str (I) := Name_Buffer (I);
+         end loop;
+         New_Name := Get_String_Name (New_Str);
+      end;
+      return New_Name;
+   end Replace_Char;
+
    --------------
    -- To_Lower --
    --------------
@@ -236,5 +261,4 @@ package body Utils is
 
       return True;
    end Is_Prefix;
-
 end Utils;

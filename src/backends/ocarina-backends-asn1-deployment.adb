@@ -274,6 +274,8 @@ package body Ocarina.Backends.ASN1.Deployment is
                Port_Name := Name_Find;
                Port_Name := To_Upper (Port_Name);
 
+               Port_Name := Replace_Char (Port_Name, '_', '-');
+
                Append_Node_To_List
                (Make_Enumerated_Value
                 (Port_Name, Port_Id),
