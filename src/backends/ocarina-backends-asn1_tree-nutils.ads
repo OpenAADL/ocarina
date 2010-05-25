@@ -199,8 +199,16 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    --  Make a sequence that contains the members given in parameter.
 
    function Make_Sequence_Member
-      (Member_Name : Name_Id; Member_Type : Name_Id) return Node_Id;
+      (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id;
    --  Make a sequence member identified by Member_Name which has the
+   --  type Member_Type.
+
+   function Make_Choice (Choice_Members : List_Id) return Node_Id;
+   --  Make a choice that contains the members given in parameter.
+
+   function Make_Choice_Member
+      (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id;
+   --  Make a choice member identified by Member_Name which has the
    --  type Member_Type.
 
 end Ocarina.Backends.ASN1_Tree.Nutils;

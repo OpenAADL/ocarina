@@ -60,6 +60,9 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    procedure Generate_Enumerated_Value (N : Node_Id);
    procedure Generate_Sequence (N : Node_Id);
    procedure Generate_Sequence_Member (N : Node_Id);
+   procedure Generate_Choice (N : Node_Id);
+   procedure Generate_Choice_Member (N : Node_Id);
+   procedure Generate_Defining_Identifier (N : Node_Id);
 
    -----------
    -- Write --
@@ -107,6 +110,15 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
 
          when K_Sequence_Member =>
             Generate_Sequence_Member (N);
+
+         when K_Choice =>
+            Generate_Choice (N);
+
+         when K_Choice_Member =>
+            Generate_Choice_Member (N);
+
+         when K_Defining_Identifier =>
+            Generate_Defining_Identifier (N);
 
          when others =>
             Display_Error ("other element in generator", Fatal => False);
@@ -163,7 +175,6 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
       Write_Name (Name (N));
       Write_Space;
       Write_Str (" ::= ");
-      Write_Eol;
       Generate (Declaration (N));
    end Generate_Type_Definition;
 
@@ -175,6 +186,9 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
       P : Node_Id;
    begin
       Write_Str (" ENUMERATED {");
+      Write_Eol;
+      Increment_Indentation;
+      Write_Indentation;
       if not Is_Empty (Values (N)) then
          P := First_Node (Values (N));
          while Present (P) loop
@@ -182,10 +196,16 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
             P := Next_Node (P);
             if P /= No_Node then
                Write_Char (',');
+               Write_Eol;
+               Write_Indentation;
             end if;
          end loop;
       end if;
+      Write_Eol;
+      Write_Indentation;
       Write_Line ("}");
+      Decrement_Indentation;
+      Write_Indentation;
    end Generate_Enumerated;
 
    -------------------------------
@@ -210,16 +230,22 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
       P : Node_Id;
    begin
       Write_Line (" SEQUENCE {");
+      Increment_Indentation;
       if not Is_Empty (Values (N)) then
          P := First_Node (Values (N));
          while Present (P) loop
+            Write_Indentation;
             Generate (P);
             P := Next_Node (P);
             if P /= No_Node then
                Write_Char (',');
+               Write_Eol;
             end if;
          end loop;
       end if;
+      Write_Eol;
+      Decrement_Indentation;
+      Write_Indentation;
       Write_Line ("}");
    end Generate_Sequence;
 
@@ -231,7 +257,54 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    begin
       Write_Name (Member_Name (N));
       Write_Space;
-      Write_Name (Member_Type (N));
+      Generate (Member_Type (N));
    end Generate_Sequence_Member;
+
+   ---------------------
+   -- Generate_Choice --
+   ---------------------
+
+   procedure Generate_Choice (N : Node_Id) is
+      P : Node_Id;
+   begin
+      Write_Line (" CHOICE {");
+      Increment_Indentation;
+      Write_Indentation (-1);
+      if not Is_Empty (Values (N)) then
+         P := First_Node (Values (N));
+         while Present (P) loop
+            Generate (P);
+            P := Next_Node (P);
+            if P /= No_Node then
+               Write_Char (',');
+               Write_Eol;
+               Write_Indentation;
+            end if;
+         end loop;
+      end if;
+      Decrement_Indentation;
+      Write_Indentation;
+      Write_Line ("}");
+   end Generate_Choice;
+
+   ------------------------------
+   -- Generate_Choice_Member --
+   ------------------------------
+
+   procedure Generate_Choice_Member (N : Node_Id) is
+   begin
+      Write_Name (Member_Name (N));
+      Write_Space;
+      Generate (Member_Type (N));
+   end Generate_Choice_Member;
+
+   ----------------------------------
+   -- Generate_Defining_Identifier --
+   ----------------------------------
+
+   procedure Generate_Defining_Identifier (N : Node_Id) is
+   begin
+      Write_Name (Name (N));
+   end Generate_Defining_Identifier;
 
 end Ocarina.Backends.ASN1_Tree.Generator;

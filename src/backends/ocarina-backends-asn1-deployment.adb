@@ -86,6 +86,8 @@ package body Ocarina.Backends.ASN1.Deployment is
    Port_Id : Unsigned_Long_Long := 0;
    --  The port identifier. This is unique for each port.
 
+   Msg_Choices : List_Id;
+
    Module_Node : Node_Id;
 
    -----------
@@ -120,8 +122,9 @@ package body Ocarina.Backends.ASN1.Deployment is
          Get_String_Name ("POHIC-DEPLOYMENT"));
       Module_Node := ASN1N.Module_Node (ASN1_Root);
 
-      Thread_Enumeration := New_List (ASN1N.K_Enumerated_Value_List);
-      Port_Enumeration := New_List (ASN1N.K_Enumerated_Value_List);
+      Thread_Enumeration   := New_List (ASN1N.K_Enumerated_Value_List);
+      Port_Enumeration     := New_List (ASN1N.K_Enumerated_Value_List);
+      Msg_Choices          := New_List (ASN1N.K_Enumerated_Value_List);
 
       Visit (Root_System (E));
 
@@ -147,25 +150,35 @@ package body Ocarina.Backends.ASN1.Deployment is
          Append_Node_To_List
             (Make_Sequence_Member
                (Get_String_Name ("sender-thread"),
-                Get_String_Name ("THREAD-ID")),
+               Make_Defining_Identifier
+                (Get_String_Name ("THREAD-ID"))),
              Pkt_Contents);
 
          Append_Node_To_List
             (Make_Sequence_Member
                (Get_String_Name ("sender-port"),
-                Get_String_Name ("PORT-ID")),
+                Make_Defining_Identifier
+                  (Get_String_Name ("PORT-ID"))),
              Pkt_Contents);
 
          Append_Node_To_List
             (Make_Sequence_Member
                (Get_String_Name ("receiver-thread"),
-                Get_String_Name ("THREAD-ID")),
+                Make_Defining_Identifier
+                  (Get_String_Name ("THREAD-ID"))),
              Pkt_Contents);
 
          Append_Node_To_List
             (Make_Sequence_Member
                (Get_String_Name ("receiver-port"),
-                Get_String_Name ("PORT-ID")),
+                Make_Defining_Identifier
+                  (Get_String_Name ("PORT-ID"))),
+             Pkt_Contents);
+
+         Append_Node_To_List
+            (Make_Sequence_Member
+               (Get_String_Name ("msg"),
+               Make_Choice (Msg_Choices)),
              Pkt_Contents);
 
          Packet_Type :=

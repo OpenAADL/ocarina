@@ -554,7 +554,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    --------------------------
 
    function Make_Sequence_Member
-      (Member_Name : Name_Id; Member_Type : Name_Id) return Node_Id
+      (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -563,6 +563,34 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       Set_Member_Type (N, Member_Type);
       return N;
    end Make_Sequence_Member;
+
+   -----------------
+   -- Make_Choice --
+   -----------------
+
+   function Make_Choice (Choice_Members : List_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Choice);
+      Set_Values (N, Choice_Members);
+      return N;
+   end Make_Choice;
+
+   ------------------------
+   -- Make_Choice_Member --
+   ------------------------
+
+   function Make_Choice_Member
+      (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Choice_Member);
+      Set_Member_Name (N, Member_Name);
+      Set_Member_Type (N, Member_Type);
+      return N;
+   end Make_Choice_Member;
 
    ------------------
    -- Make_Literal --
