@@ -65,6 +65,9 @@ with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.BoundT;
 with Ocarina.Backends.REAL;
+with Ocarina.Backends.ASN1_Tree.Nodes;
+with Ocarina.Backends.ASN1_Tree.Nutils;
+with Ocarina.Backends.ASN1_Values;
 
 with Ocarina.Options; use Ocarina.Options;
 
@@ -161,6 +164,7 @@ package body Ocarina.Backends is
       C_Tree.Nutils.Initialize;
       RTSJ_Tree.Nutils.Initialize;
       XML_Tree.Nutils.Initialize;
+      ASN1_Tree.Nutils.Initialize;
 
       --  Register the several code generators
 
@@ -240,6 +244,7 @@ package body Ocarina.Backends is
       Ada_Tree.Nutils.Reset;
       C_Tree.Nutils.Reset;
       RTSJ_Tree.Nutils.Reset;
+      ASN1_Tree.Nutils.Reset;
 
       Ada_Tree.Nodes.Entries.Free;
       Ada_Tree.Nodes.Entries.Init;
@@ -256,6 +261,10 @@ package body Ocarina.Backends is
       XML_Values.Reset;
       BoundT.Reset;
       REAL.Reset;
+
+      ASN1_Tree.Nodes.Entries.Free;
+      ASN1_Tree.Nodes.Entries.Init;
+      ASN1_Values.Reset;
 
       Build_Utils.Reset;
    end Reset;

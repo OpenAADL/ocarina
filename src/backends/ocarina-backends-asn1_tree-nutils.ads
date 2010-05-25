@@ -128,6 +128,9 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
 
    procedure Initialize;
 
+   function New_List (Kind : ASN1_Nodes.Node_Kind; From : Node_Id := No_Node)
+     return List_Id;
+
    function Image (O : Operator_Type) return String;
 
    function Image (T : Token_Type) return String;
@@ -159,5 +162,19 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    function Make_ASN1_File (Identifier : Node_Id) return Node_Id;
 
    function Make_Defining_Identifier (Name : Name_Id) return Node_Id;
+
+   function Make_Enumerated_Value (Name : Name_Id) return Node_Id;
+
+   function Make_Enumerated_Value (Name : Name_Id; V : Unsigned_Long_Long)
+      return Node_Id;
+
+   function Make_Enumerated return Node_Id;
+
+   function Make_Enumerated (L : List_Id) return Node_Id;
+
+   function Make_Type_Definition (Name : Name_Id; Decl : Node_Id)
+     return Node_Id;
+
+   function Make_Literal (Value : Value_Id) return Node_Id;
 
 end Ocarina.Backends.ASN1_Tree.Nutils;

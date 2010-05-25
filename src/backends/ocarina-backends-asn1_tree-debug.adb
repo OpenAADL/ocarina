@@ -36,6 +36,7 @@ with Locations;                      use Locations;
 with Namet;                          use Namet;
 with Utils;                          use Utils;
 with Ocarina.Backends.ASN1_Tree.Nutils; use Ocarina.Backends.ASN1_Tree.Nutils;
+with Ocarina.Backends.ASN1_Values;      use Ocarina.Backends.ASN1_Values;
 
 package body Ocarina.Backends.ASN1_Tree.Debug is
 
@@ -67,6 +68,11 @@ package body Ocarina.Backends.ASN1_Tree.Debug is
    function Image (N : Node_Id) return String is
    begin
       return Image (Int (N));
+   end Image;
+
+   function Image (N : Value_Id) return String is
+   begin
+      return ASN1_Values.Image (N);
    end Image;
 
    function Image (N : List_Id) return String is

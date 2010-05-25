@@ -33,18 +33,16 @@
 
 with GNAT.Table;
 
-with Charset;   use Charset;
 with Namet;     use Namet;
+with Charset;   use Charset;
 with Locations; use Locations;
 
-with Ocarina.Backends;
-
 with Ocarina.Backends.ASN1_Tree.Nodes;
+with Ocarina.Backends.ASN1_Values;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
-use Ocarina.Backends;
-
 use Ocarina.Backends.ASN1_Tree.Nodes;
+use Ocarina.Backends.ASN1_Values;
 
 package body Ocarina.Backends.ASN1_Tree.Nutils is
 
@@ -124,6 +122,26 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       end if;
       return Name;
    end Remove_Suffix_From_Name;
+
+   --------------
+   -- New_List --
+   --------------
+
+   function New_List (Kind : ASN1_Nodes.Node_Kind; From : Node_Id := No_Node)
+     return List_Id is
+      N : Node_Id;
+   begin
+      ASN1_Nodes.Entries.Increment_Last;
+      N := ASN1_Nodes.Entries.Last;
+      ASN1_Nodes.Entries.Table (N) := ASN1_Nodes.Default_Node;
+      Set_Kind (N, Kind);
+      if Present (From) then
+         ASN1_Nodes.Set_Loc  (N, ASN1_Nodes.Loc (From));
+      else
+         ASN1_Nodes.Set_Loc  (N, No_Location);
+      end if;
+      return List_Id (N);
+   end New_List;
 
    -------------------------
    -- Append_Node_To_List --
@@ -429,6 +447,8 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       Set_Name
          (Module_Node (File),
          Get_String_Name ("unknownmodule"));
+      Set_Definitions
+         (Module_Node (File), New_List (K_List_Id));
       return File;
    end Make_ASN1_File;
 
@@ -436,7 +456,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Defining_Identifier --
    ------------------------------
 
-   function Make_Defining_Identifier (Name         : Name_Id)
+   function Make_Defining_Identifier (Name : Name_Id)
      return Node_Id
    is
       N : Node_Id;
@@ -445,5 +465,87 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       Set_Name (N, Name);
       return N;
    end Make_Defining_Identifier;
+
+   ---------------------------
+   -- Make_Enumerated_Value --
+   ---------------------------
+
+   function Make_Enumerated_Value (Name : Name_Id)
+     return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Enumerated_Value);
+      Set_Name (N, Name);
+      Set_Value (N, No_Value);
+      return N;
+   end Make_Enumerated_Value;
+
+   ---------------------------
+   -- Make_Enumerated_Value --
+   ---------------------------
+
+   function Make_Enumerated_Value (Name : Name_Id; V : Unsigned_Long_Long)
+     return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := Make_Enumerated_Value (Name);
+      Set_Value (N, ASN1_Values.New_Int_Value (V, 1, 10));
+      return N;
+   end Make_Enumerated_Value;
+
+   --------------------------
+   -- Make_Type_Definition --
+   --------------------------
+
+   function Make_Type_Definition (Name : Name_Id; Decl : Node_Id)
+     return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Type_Definition);
+      Set_Name (N, Name);
+      Set_Declaration (N, Decl);
+      return N;
+   end Make_Type_Definition;
+
+   ---------------------
+   -- Make_Enumerated --
+   ---------------------
+
+   function Make_Enumerated return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Enumerated);
+      Set_Values (N, New_List (K_Enumerated_Value));
+      return N;
+   end Make_Enumerated;
+
+   ---------------------
+   -- Make_Enumerated --
+   ---------------------
+
+   function Make_Enumerated (L : List_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Enumerated);
+      Set_Values (N, L);
+      return N;
+   end Make_Enumerated;
+
+   ------------------
+   -- Make_Literal --
+   ------------------
+
+   function Make_Literal (Value : Value_Id) return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Literal);
+      ASN1_Nodes.Set_Value (N, Value);
+      return N;
+   end Make_Literal;
 
 end Ocarina.Backends.ASN1_Tree.Nutils;

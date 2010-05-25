@@ -61,6 +61,7 @@ package Ocarina.Backends.ASN1_Tree.Debug is
    function Image (N : Node_Id) return String;
    function Image (N : List_Id) return String;
    function Image (N : Mode_Id) return String;
+   function Image (N : Value_Id) return String;
    function Image (N : Operator_Id) return String;
    function Image (N : Boolean) return String;
    function Image (N : Byte) return String;

@@ -32,11 +32,13 @@
 ------------------------------------------------------------------------------
 
 with Namet; use Namet;
+with Utils; use Utils;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1_Tree.Nodes;
 
@@ -46,6 +48,7 @@ package body Ocarina.Backends.ASN1.Deployment is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
+   use Ocarina.Backends.Utils;
    use Ocarina.Backends.ASN1_Tree.Nutils;
 
    package ASN1N renames Ocarina.Backends.ASN1_Tree.Nodes;
@@ -58,6 +61,12 @@ package body Ocarina.Backends.ASN1.Deployment is
    procedure Visit_Device_Instance (E : Node_Id);
    procedure Visit_Thread_Instance (E : Node_Id);
    procedure Visit_Subprogram_Instance (E : Node_Id);
+
+   Thread_Enumeration : List_Id;
+   Thread_Id : Unsigned_Long_Long := 0;
+   Port_Enumeration : List_Id;
+   Port_Id : Unsigned_Long_Long := 0;
+   Module_Node : Node_Id;
 
    -----------
    -- Visit --
@@ -88,8 +97,30 @@ package body Ocarina.Backends.ASN1.Deployment is
             (Get_String_Name ("deployment")));
       ASN1N.Set_Name
          (ASN1N.Module_Node (ASN1_Root),
-         Get_String_Name ("POHIC_DEPLOYMENT"));
+         Get_String_Name ("POHIC-DEPLOYMENT"));
+      Module_Node := ASN1N.Module_Node (ASN1_Root);
+
+      Thread_Enumeration := New_List (ASN1N.K_Enumerated_Value_List);
+      Port_Enumeration := New_List (ASN1N.K_Enumerated_Value_List);
+
       Visit (Root_System (E));
+
+      if Length (Thread_Enumeration) > 0 then
+         Append_Node_To_List
+         (Make_Type_Definition
+            (Get_String_Name ("THREADS"),
+            Make_Enumerated (Thread_Enumeration)),
+         ASN1N.Definitions (Module_Node));
+      end if;
+
+      if Length (Thread_Enumeration) > 0 then
+         Append_Node_To_List
+         (Make_Type_Definition
+            (Get_String_Name ("PORTS"),
+            Make_Enumerated (Port_Enumeration)),
+         ASN1N.Definitions (Module_Node));
+      end if;
+
    end Visit_Architecture_Instance;
 
    ------------------------------
@@ -167,9 +198,37 @@ package body Ocarina.Backends.ASN1.Deployment is
 
    procedure Visit_Thread_Instance (E : Node_Id) is
       S        : Node_Id;
+      F        : Node_Id;
       Call_Seq : Node_Id;
       Spg_Call : Node_Id;
+      Thread_Name : Name_Id;
+      Parent_Name : Name_Id;
+      Port_Name : Name_Id;
    begin
+
+      Set_Str_To_Name_Buffer ("thread-");
+      Parent_Name := Display_Name
+         (Identifier
+          (Parent_Subcomponent
+           (Parent_Component
+            (Parent_Subcomponent (E)))));
+      Get_Name_String_And_Append (Parent_Name);
+      Add_Str_To_Name_Buffer ("-");
+      Get_Name_String_And_Append
+         (Display_Name
+           (Identifier
+            (Parent_Subcomponent (E))));
+      Thread_Name := Name_Find;
+
+      Thread_Name := To_Upper (Thread_Name);
+
+      Append_Node_To_List
+         (Make_Enumerated_Value
+            (Thread_Name, Thread_Id),
+         Thread_Enumeration);
+
+      Thread_Id := Thread_Id + 1;
+
       if not AAU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
@@ -202,6 +261,30 @@ package body Ocarina.Backends.ASN1.Deployment is
          end loop;
       end if;
 
+      if Has_Ports (E) then
+         F := First_Node (Features (E));
+
+         while Present (F) loop
+            if Kind (F) = K_Port_Spec_Instance then
+               Set_Str_To_Name_Buffer ("port-");
+               Get_Name_String_And_Append (Thread_Name);
+               Add_Str_To_Name_Buffer ("-");
+               Get_Name_String_And_Append
+                  (Display_Name (Identifier (F)));
+               Port_Name := Name_Find;
+               Port_Name := To_Upper (Port_Name);
+
+               Append_Node_To_List
+               (Make_Enumerated_Value
+                (Port_Name, Port_Id),
+                Port_Enumeration);
+
+               Port_Id := Port_Id + 1;
+
+            end if;
+            F := Next_Node (F);
+         end loop;
+      end if;
    end Visit_Thread_Instance;
 
    -------------------------------

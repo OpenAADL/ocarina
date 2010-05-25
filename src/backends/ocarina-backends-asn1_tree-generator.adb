@@ -36,12 +36,14 @@ with Outfiles; use Outfiles;
 with Namet;    use Namet;
 with Output;   use Output;
 
+with Ocarina.Backends.ASN1_Values;
 with Ocarina.Backends.ASN1_Tree.Nodes;
 with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.Messages;
 
 package body Ocarina.Backends.ASN1_Tree.Generator is
 
+   use Ocarina.Backends.ASN1_Values;
    use Ocarina.Backends.ASN1_Tree.Nodes;
    use Ocarina.Backends.ASN1_Tree.Nutils;
    use Ocarina.Backends.Messages;
@@ -53,6 +55,9 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
 
    procedure Generate_ASN1_File (N : Node_Id);
    procedure Generate_Module (N : Node_Id);
+   procedure Generate_Type_Definition (N : Node_Id);
+   procedure Generate_Enumerated (N : Node_Id);
+   procedure Generate_Enumerated_Value (N : Node_Id);
 
    -----------
    -- Write --
@@ -85,6 +90,15 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
 
          when K_ASN1_Module =>
             Generate_Module (N);
+
+         when K_Type_Definition =>
+            Generate_Type_Definition (N);
+
+         when K_Enumerated =>
+            Generate_Enumerated (N);
+
+         when K_Enumerated_Value =>
+            Generate_Enumerated_Value (N);
 
          when others =>
             Display_Error ("other element in generator", Fatal => False);
@@ -122,8 +136,8 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
       Write_Space;
       Write_Str ("DEFINITIONS AUTOMATIC TAGS ::= BEGIN");
       Write_Eol;
-      if not Is_Empty (Declarations (N)) then
-         P := First_Node (Declarations (N));
+      if not Is_Empty (Definitions (N)) then
+         P := First_Node (Definitions (N));
          while Present (P) loop
             Generate (P);
             P := Next_Node (P);
@@ -131,5 +145,53 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
       end if;
       Write_Line ("END");
    end Generate_Module;
+
+   ------------------------------
+   -- Generate_Type_Definition --
+   ------------------------------
+
+   procedure Generate_Type_Definition (N : Node_Id) is
+   begin
+      Write_Name (Name (N));
+      Write_Space;
+      Write_Str (" ::= ");
+      Write_Eol;
+      Generate (Declaration (N));
+   end Generate_Type_Definition;
+
+   -------------------------
+   -- Generate_Enumerated --
+   -------------------------
+
+   procedure Generate_Enumerated (N : Node_Id) is
+      P : Node_Id;
+   begin
+      Write_Str (" ENUMERATED {");
+      if not Is_Empty (Values (N)) then
+         P := First_Node (Values (N));
+         while Present (P) loop
+            Generate (P);
+            P := Next_Node (P);
+            if P /= No_Node then
+               Write_Char (',');
+            end if;
+         end loop;
+      end if;
+      Write_Line ("}");
+   end Generate_Enumerated;
+
+   -------------------------------
+   -- Generate_Enumerated_Value --
+   -------------------------------
+
+   procedure Generate_Enumerated_Value (N : Node_Id) is
+   begin
+      Write_Name (Name (N));
+      if Value (N) /= No_Value then
+         Write_Str (" (");
+         Write_Str (Image (Value (N)));
+         Write_Char (')');
+      end if;
+   end Generate_Enumerated_Value;
 
 end Ocarina.Backends.ASN1_Tree.Generator;
