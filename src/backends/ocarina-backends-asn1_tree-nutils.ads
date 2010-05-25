@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                 Copyright (C) 2010, GET-Telecom Paris.                   --
+--            Copyright (C) 2010, European Space Agency (ESA).              --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -194,5 +194,13 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    function Make_Literal (Value : Value_Id) return Node_Id;
    --  Make a Literal that contains a value (Value-Id), see
    --  Ocarina.Backends.ASN1_Values for more information.
+
+   function Make_Sequence (Sequence_Members : List_Id) return Node_Id;
+   --  Make a sequence that contains the members given in parameter.
+
+   function Make_Sequence_Member
+      (Member_Name : Name_Id; Member_Type : Name_Id) return Node_Id;
+   --  Make a sequence member identified by Member_Name which has the
+   --  type Member_Type.
 
 end Ocarina.Backends.ASN1_Tree.Nutils;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2010, GET-Telecom Paris.                   --
+--            Copyright (C) 2010, European Space Agency (ESA).              --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -58,6 +58,8 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    procedure Generate_Type_Definition (N : Node_Id);
    procedure Generate_Enumerated (N : Node_Id);
    procedure Generate_Enumerated_Value (N : Node_Id);
+   procedure Generate_Sequence (N : Node_Id);
+   procedure Generate_Sequence_Member (N : Node_Id);
 
    -----------
    -- Write --
@@ -99,6 +101,12 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
 
          when K_Enumerated_Value =>
             Generate_Enumerated_Value (N);
+
+         when K_Sequence =>
+            Generate_Sequence (N);
+
+         when K_Sequence_Member =>
+            Generate_Sequence_Member (N);
 
          when others =>
             Display_Error ("other element in generator", Fatal => False);
@@ -193,5 +201,37 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
          Write_Char (')');
       end if;
    end Generate_Enumerated_Value;
+
+   -----------------------
+   -- Generate_Sequence --
+   -----------------------
+
+   procedure Generate_Sequence (N : Node_Id) is
+      P : Node_Id;
+   begin
+      Write_Line (" SEQUENCE {");
+      if not Is_Empty (Values (N)) then
+         P := First_Node (Values (N));
+         while Present (P) loop
+            Generate (P);
+            P := Next_Node (P);
+            if P /= No_Node then
+               Write_Char (',');
+            end if;
+         end loop;
+      end if;
+      Write_Line ("}");
+   end Generate_Sequence;
+
+   ------------------------------
+   -- Generate_Sequence_Member --
+   ------------------------------
+
+   procedure Generate_Sequence_Member (N : Node_Id) is
+   begin
+      Write_Name (Member_Name (N));
+      Write_Space;
+      Write_Name (Member_Type (N));
+   end Generate_Sequence_Member;
 
 end Ocarina.Backends.ASN1_Tree.Generator;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2010, GET-Telecom Paris.                   --
+--            Copyright (C) 2010, European Space Agency (ESA).              --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -535,6 +535,34 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       Set_Values (N, L);
       return N;
    end Make_Enumerated;
+
+   -------------------
+   -- Make_Sequence --
+   -------------------
+
+   function Make_Sequence (Sequence_Members : List_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Sequence);
+      Set_Values (N, Sequence_Members);
+      return N;
+   end Make_Sequence;
+
+   --------------------------
+   -- Make_Sequence_Member --
+   --------------------------
+
+   function Make_Sequence_Member
+      (Member_Name : Name_Id; Member_Type : Name_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Sequence_Member);
+      Set_Member_Name (N, Member_Name);
+      Set_Member_Type (N, Member_Type);
+      return N;
+   end Make_Sequence_Member;
 
    ------------------
    -- Make_Literal --

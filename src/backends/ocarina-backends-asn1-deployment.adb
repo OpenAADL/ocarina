@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2010, GET-Telecom Paris.                   --
+--            Copyright (C) 2010, European Space Agency (ESA).              --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,6 +52,7 @@ package body Ocarina.Backends.ASN1.Deployment is
    use Ocarina.Backends.ASN1_Tree.Nutils;
 
    package ASN1N renames Ocarina.Backends.ASN1_Tree.Nodes;
+   package ASN1U renames Ocarina.Backends.ASN1_Tree.Nutils;
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
@@ -75,6 +76,12 @@ package body Ocarina.Backends.ASN1.Deployment is
    --  The Port_Enumeration list contains the enumeration of all
    --  ports used in the distributed system. In fact, we add each
    --  port in an enumeration and associate a value to them.
+
+   Packet_Type : Node_Id;
+   --  The Packet_Type node contains the definition of a packet
+   --  sent by a node. It consists of a sender-thread/port id, the
+   --  receiver thread/port id, and a message that is expressed
+   --  using an ASN1 CHOICE.
 
    Port_Id : Unsigned_Long_Long := 0;
    --  The port identifier. This is unique for each port.
@@ -121,7 +128,7 @@ package body Ocarina.Backends.ASN1.Deployment is
       if Length (Thread_Enumeration) > 0 then
          Append_Node_To_List
          (Make_Type_Definition
-            (Get_String_Name ("THREADS"),
+            (Get_String_Name ("THREAD-ID"),
             Make_Enumerated (Thread_Enumeration)),
          ASN1N.Definitions (Module_Node));
       end if;
@@ -129,10 +136,45 @@ package body Ocarina.Backends.ASN1.Deployment is
       if Length (Thread_Enumeration) > 0 then
          Append_Node_To_List
          (Make_Type_Definition
-            (Get_String_Name ("PORTS"),
+            (Get_String_Name ("PORT-ID"),
             Make_Enumerated (Port_Enumeration)),
          ASN1N.Definitions (Module_Node));
       end if;
+
+      declare
+         Pkt_Contents : constant List_Id := ASN1U.New_List (ASN1N.K_List_Id);
+      begin
+         Append_Node_To_List
+            (Make_Sequence_Member
+               (Get_String_Name ("sender-thread"),
+                Get_String_Name ("THREAD-ID")),
+             Pkt_Contents);
+
+         Append_Node_To_List
+            (Make_Sequence_Member
+               (Get_String_Name ("sender-port"),
+                Get_String_Name ("PORT-ID")),
+             Pkt_Contents);
+
+         Append_Node_To_List
+            (Make_Sequence_Member
+               (Get_String_Name ("receiver-thread"),
+                Get_String_Name ("THREAD-ID")),
+             Pkt_Contents);
+
+         Append_Node_To_List
+            (Make_Sequence_Member
+               (Get_String_Name ("receiver-port"),
+                Get_String_Name ("PORT-ID")),
+             Pkt_Contents);
+
+         Packet_Type :=
+            Make_Type_Definition
+               (Get_String_Name ("PKT"),
+               Make_Sequence (Pkt_Contents));
+         Append_Node_To_List
+            (Packet_Type, ASN1N.Definitions (Module_Node));
+      end;
 
    end Visit_Architecture_Instance;
 

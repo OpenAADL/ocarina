@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2006-2008, GET-Telecom Paris.                --
+--          Copyright (C) 2006-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -135,7 +135,7 @@ procedure Headers_Ocarina is
          Last := Range_Image'First + 3;
       end if;
       return "Copyright (C) " & Range_Image (Range_Image'First .. Last)
-        & ", GET-Telecom Paris.";
+        & ", European Space Agency (ESA).";
    end Copyright_Line;
 
    -----------------

@@ -74,6 +74,17 @@ module Ocarina::Backends::ASN1_Tree::Nodes {
    Value_Id    Value;
   };
 
+  interface Sequence : Node_Id
+  {
+   List_Id  Values;
+  };
+
+  interface Sequence_Member : Node_Id
+  {
+      Name_Id  Member_Name;
+      Name_Id  Member_Type;
+  };
+
   interface Literal : Node_Id {
     Value_Id   Value;
   };
