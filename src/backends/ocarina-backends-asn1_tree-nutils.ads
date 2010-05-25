@@ -160,21 +160,39 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    procedure New_Token (T : Token_Type; I : String := "");
 
    function Make_ASN1_File (Identifier : Node_Id) return Node_Id;
+   --  Build a node that describes an ASN1 file. The name
+   --  of the file is described in the parameter.
 
    function Make_Defining_Identifier (Name : Name_Id) return Node_Id;
+   --  Build a node that contains an identifier.
 
    function Make_Enumerated_Value (Name : Name_Id) return Node_Id;
+   --  Build a node that describes a member of an enumeration but
+   --  does not associate any value with it.
 
    function Make_Enumerated_Value (Name : Name_Id; V : Unsigned_Long_Long)
       return Node_Id;
+   --  Make a node that describes a member of an enumeration and associated
+   --  an integer value to it. The first parameter is the name of the
+   --  enumeration while the second is its corresponding value.
 
    function Make_Enumerated return Node_Id;
+   --  Make an enumeration definition list with an empty list of
+   --  values.
 
    function Make_Enumerated (L : List_Id) return Node_Id;
+   --  Make an enumerated nodes. The parameters are the values
+   --  of the enumeration. The returned node_id can be associated
+   --  with a type definition.
 
    function Make_Type_Definition (Name : Name_Id; Decl : Node_Id)
      return Node_Id;
+   --  Make a Type_Definition node. First parameter is the name
+   --  of the type, the second one is the declaration of this type
+   --  Enumerated/Choice/... node.
 
    function Make_Literal (Value : Value_Id) return Node_Id;
+   --  Make a Literal that contains a value (Value-Id), see
+   --  Ocarina.Backends.ASN1_Values for more information.
 
 end Ocarina.Backends.ASN1_Tree.Nutils;

@@ -268,6 +268,12 @@ package body Ocarina.Backends.PO_HI_C is
 
          Generate_PolyORB_HI_C_Makefile (Instance_Root);
 
+         --  If we have to generate the ASN1 deployment file, then
+         --  we enter the directory that contains the generate
+         --  code and invoke directly the ASN1 generator with the
+         --  instance root. It should automatically create an .asn1
+         --  file that contains deployment/messages informations.
+
          if Generate_ASN1_Deployment then
             Enter_Directory (CTN.Name (C_Root));
             ASN1.Generate (Instance_Root);

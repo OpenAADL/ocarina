@@ -63,9 +63,22 @@ package body Ocarina.Backends.ASN1.Deployment is
    procedure Visit_Subprogram_Instance (E : Node_Id);
 
    Thread_Enumeration : List_Id;
+   --   The Thread_Enumeration list contains the identifiers
+   --   and the associated identifier value for each thread
+   --   within the distributed system.
+
    Thread_Id : Unsigned_Long_Long := 0;
+   --  The thread identifier, unique for each thread in the
+   --  DISTRIBUTED system.
+
    Port_Enumeration : List_Id;
+   --  The Port_Enumeration list contains the enumeration of all
+   --  ports used in the distributed system. In fact, we add each
+   --  port in an enumeration and associate a value to them.
+
    Port_Id : Unsigned_Long_Long := 0;
+   --  The port identifier. This is unique for each port.
+
    Module_Node : Node_Id;
 
    -----------
@@ -197,13 +210,14 @@ package body Ocarina.Backends.ASN1.Deployment is
    ---------------------------
 
    procedure Visit_Thread_Instance (E : Node_Id) is
-      S        : Node_Id;
-      F        : Node_Id;
-      Call_Seq : Node_Id;
-      Spg_Call : Node_Id;
-      Thread_Name : Name_Id;
-      Parent_Name : Name_Id;
-      Port_Name : Name_Id;
+      S              : Node_Id;
+      F              : Node_Id;
+      Call_Seq       : Node_Id;
+      Spg_Call       : Node_Id;
+      Thread_Name    : Name_Id;
+      Port_Name      : Name_Id;
+      Parent_Name    : Name_Id;
+      --  Name of the containing process.
    begin
 
       Set_Str_To_Name_Buffer ("thread-");
@@ -222,12 +236,22 @@ package body Ocarina.Backends.ASN1.Deployment is
 
       Thread_Name := To_Upper (Thread_Name);
 
+      Thread_Name := Replace_Char (Thread_Name, '_', '-');
+      --  We replace _ by - because ASN1 does not allow
+      --  character _.
+
       Append_Node_To_List
          (Make_Enumerated_Value
             (Thread_Name, Thread_Id),
          Thread_Enumeration);
 
       Thread_Id := Thread_Id + 1;
+
+      --  Here, we build the ASN1 name of the thread and add it to the
+      --  Thread_Enumeration list that contains all threads of the
+      --  distributed system. When we discover a thread, we increment
+      --  the thread identifier so that we have a unique identifier
+      --  for each thread.
 
       if not AAU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
@@ -275,6 +299,8 @@ package body Ocarina.Backends.ASN1.Deployment is
                Port_Name := To_Upper (Port_Name);
 
                Port_Name := Replace_Char (Port_Name, '_', '-');
+               --  We replace _ by - because ASN1 does not allow
+               --  character _.
 
                Append_Node_To_List
                (Make_Enumerated_Value
@@ -282,6 +308,10 @@ package body Ocarina.Backends.ASN1.Deployment is
                 Port_Enumeration);
 
                Port_Id := Port_Id + 1;
+               --  Here, we build the port identifier (we increment it)
+               --  each time a port is discovered in a thread and add
+               --  it to the Port_Enumeration list that contains all
+               --  port identifiers.
 
             end if;
             F := Next_Node (F);
