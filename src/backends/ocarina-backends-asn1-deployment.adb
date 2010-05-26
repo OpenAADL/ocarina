@@ -120,7 +120,7 @@ package body Ocarina.Backends.ASN1.Deployment is
    begin
       ASN1_Root := Make_ASN1_File
          (Make_Defining_Identifier
-            (Get_String_Name ("deployment")));
+            (Get_String_Name ("asn1_deployment")));
       ASN1N.Set_Name
          (ASN1N.Module_Node (ASN1_Root),
          Get_String_Name ("POHIC-DEPLOYMENT"));

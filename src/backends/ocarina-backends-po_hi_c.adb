@@ -184,6 +184,11 @@ package body Ocarina.Backends.PO_HI_C is
          Write_Eol;
       end if;
 
+      if Generate_ASN1_Deployment then
+         Write_Str ("USE_ASN1_DEPLOYMENT = yes");
+         Write_Eol;
+      end if;
+
       if Use_Simulink then
          Write_Str ("SIMULINK_DIR = ");
          Write_Name (Simulink_Directory);
@@ -408,6 +413,15 @@ package body Ocarina.Backends.PO_HI_C is
    begin
       return Add_Performance_Analysis;
    end Use_Performance_Analysis;
+
+   -------------------------
+   -- Use_ASN1_Deployment --
+   -------------------------
+
+   function Use_ASN1_Deployment return Boolean is
+   begin
+      return Generate_ASN1_Deployment;
+   end Use_ASN1_Deployment;
 
    ---------------------------------
    -- Visit_Architecture_Instance --

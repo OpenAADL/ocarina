@@ -52,6 +52,10 @@ package Ocarina.Backends.PO_HI_C is
    function Use_Performance_Analysis return Boolean;
    --  Specify if we use performance analysis or not.
 
+   function Use_ASN1_Deployment return Boolean;
+   --  Just returns a boolean to indicate if the user
+   --  wants the ASN1 deployment information.
+
 private
    C_Root : Node_Id;
    --  The root of the C trees
