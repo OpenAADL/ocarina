@@ -135,7 +135,7 @@ package body Ocarina.Backends.ASN1.Deployment is
       if Length (Thread_Enumeration) > 0 then
          Append_Node_To_List
          (Make_Type_Definition
-            (Get_String_Name ("THREAD-ID"),
+            (Get_String_Name ("Thread-id"),
             Make_Enumerated (Thread_Enumeration)),
          ASN1N.Definitions (Module_Node));
       end if;
@@ -143,7 +143,7 @@ package body Ocarina.Backends.ASN1.Deployment is
       if Length (Thread_Enumeration) > 0 then
          Append_Node_To_List
          (Make_Type_Definition
-            (Get_String_Name ("PORT-ID"),
+            (Get_String_Name ("Port-id"),
             Make_Enumerated (Port_Enumeration)),
          ASN1N.Definitions (Module_Node));
       end if;
@@ -155,28 +155,28 @@ package body Ocarina.Backends.ASN1.Deployment is
             (Make_Sequence_Member
                (Get_String_Name ("sender-thread"),
                Make_Defining_Identifier
-                (Get_String_Name ("THREAD-ID"))),
+                (Get_String_Name ("Thread-id"))),
              Pkt_Contents);
 
          Append_Node_To_List
             (Make_Sequence_Member
                (Get_String_Name ("sender-port"),
                 Make_Defining_Identifier
-                  (Get_String_Name ("PORT-ID"))),
+                  (Get_String_Name ("Port-id"))),
              Pkt_Contents);
 
          Append_Node_To_List
             (Make_Sequence_Member
                (Get_String_Name ("receiver-thread"),
                 Make_Defining_Identifier
-                  (Get_String_Name ("THREAD-ID"))),
+                  (Get_String_Name ("Thread-id"))),
              Pkt_Contents);
 
          Append_Node_To_List
             (Make_Sequence_Member
                (Get_String_Name ("receiver-port"),
                 Make_Defining_Identifier
-                  (Get_String_Name ("PORT-ID"))),
+                  (Get_String_Name ("Port-id"))),
              Pkt_Contents);
 
          Append_Node_To_List
@@ -187,7 +187,7 @@ package body Ocarina.Backends.ASN1.Deployment is
 
          Packet_Type :=
             Make_Type_Definition
-               (Get_String_Name ("PKT"),
+               (Get_String_Name ("Pkt"),
                Make_Sequence (Pkt_Contents));
          Append_Node_To_List
             (Packet_Type, ASN1N.Definitions (Module_Node));
@@ -296,7 +296,7 @@ package body Ocarina.Backends.ASN1.Deployment is
             (Parent_Subcomponent (E))));
       Thread_Name := Name_Find;
 
-      Thread_Name := To_Upper (Thread_Name);
+      Thread_Name := To_Lower (Thread_Name);
 
       Thread_Name := Replace_Char (Thread_Name, '_', '-');
       --  We replace _ by - because ASN1 does not allow
@@ -359,7 +359,7 @@ package body Ocarina.Backends.ASN1.Deployment is
                Get_Name_String_And_Append
                   (Display_Name (Identifier (F)));
                Port_Name := Name_Find;
-               Port_Name := To_Upper (Port_Name);
+               Port_Name := To_Lower (Port_Name);
 
                Port_Name := Replace_Char (Port_Name, '_', '-');
                --  We replace _ by - because ASN1 does not allow
@@ -379,9 +379,7 @@ package body Ocarina.Backends.ASN1.Deployment is
                Msg_Name := Port_Name;
                Msg_Constraints := Make_Type_Constraints
                   (Size_Down => ASN1V.New_Int_Value
-                     (To_Bytes
-                        (Get_Data_Size
-                           (Corresponding_Instance (F))), 1, 10),
+                     (0, 1, 10),
                   Size_Up => ASN1V.New_Int_Value
                      (To_Bytes
                         (Get_Data_Size

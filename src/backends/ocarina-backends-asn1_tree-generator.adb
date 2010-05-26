@@ -285,6 +285,7 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
             end if;
          end loop;
       end if;
+      Write_Eol;
       Decrement_Indentation;
       Write_Indentation;
       Write_Line ("}");
@@ -321,11 +322,11 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
       if Cons /= No_Node then
          if Size_Down (Cons) /= No_Value and then
             Size_Up (Cons) /= No_Value then
-            Write_Str (" (");
+            Write_Str (" (SIZE (");
             Write_Str (Image (Size_Down (Cons)));
             Write_Str (" .. ");
             Write_Str (Image (Size_Up (Cons)));
-            Write_Str (" )");
+            Write_Str (" ))");
          end if;
       end if;
    end Generate_Type_Designator;
