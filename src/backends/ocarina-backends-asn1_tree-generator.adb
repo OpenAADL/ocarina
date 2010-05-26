@@ -63,6 +63,7 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    procedure Generate_Choice (N : Node_Id);
    procedure Generate_Choice_Member (N : Node_Id);
    procedure Generate_Defining_Identifier (N : Node_Id);
+   procedure Generate_Type_Designator (N : Node_Id);
 
    -----------
    -- Write --
@@ -119,6 +120,9 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
 
          when K_Defining_Identifier =>
             Generate_Defining_Identifier (N);
+
+         when K_Type_Designator =>
+            Generate_Type_Designator (N);
 
          when others =>
             Display_Error ("other element in generator", Fatal => False);
@@ -269,16 +273,15 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    begin
       Write_Line (" CHOICE {");
       Increment_Indentation;
-      Write_Indentation (-1);
       if not Is_Empty (Values (N)) then
          P := First_Node (Values (N));
          while Present (P) loop
+            Write_Indentation;
             Generate (P);
             P := Next_Node (P);
             if P /= No_Node then
                Write_Char (',');
                Write_Eol;
-               Write_Indentation;
             end if;
          end loop;
       end if;
@@ -306,5 +309,25 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    begin
       Write_Name (Name (N));
    end Generate_Defining_Identifier;
+
+   ------------------------------
+   -- Generate_Type_Designator --
+   ------------------------------
+
+   procedure Generate_Type_Designator (N : Node_Id) is
+      Cons : constant Node_Id := Constraints (N);
+   begin
+      Generate (Type_Name (N));
+      if Cons /= No_Node then
+         if Size_Down (Cons) /= No_Value and then
+            Size_Up (Cons) /= No_Value then
+            Write_Str (" (");
+            Write_Str (Image (Size_Down (Cons)));
+            Write_Str (" .. ");
+            Write_Str (Image (Size_Up (Cons)));
+            Write_Str (" )");
+         end if;
+      end if;
+   end Generate_Type_Designator;
 
 end Ocarina.Backends.ASN1_Tree.Generator;

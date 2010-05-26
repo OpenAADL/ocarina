@@ -32,10 +32,13 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Backends.ASN1_Tree.Nodes;
+with Ocarina.Backends.ASN1_Values;
 
 package Ocarina.Backends.ASN1_Tree.Nutils is
 
    package ASN1_Nodes renames Ocarina.Backends.ASN1_Tree.Nodes;
+
+   use Ocarina.Backends.ASN1_Values;
 
    type Token_Type is
      (
@@ -210,5 +213,23 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
       (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id;
    --  Make a choice member identified by Member_Name which has the
    --  type Member_Type.
+
+   function Make_Type_Designator (Type_Name       : Node_Id;
+                                 Type_Constraints : Node_Id := No_Node)
+   return Node_Id;
+   --  Make a node that points to a type. The type name is either a reference
+   --  to a type node, either a defining_identifier node that contains
+   --  the name of the pointed type. The second parameter is optional
+   --  and defines the constraints associated with the type designation.
+   --  You can look at the Make_Type_Constraints function for more
+   --  information.
+
+   function Make_Type_Constraints
+      (Size_Up  : Value_Id := No_Value;
+      Size_Down : Value_Id := No_Value)
+   return Node_Id;
+   --  Make the Type_Constraints node. This node contains all potential
+   --  constraints that a type designator can contain. So, all parameters
+   --  are not mandatory and have a default value.
 
 end Ocarina.Backends.ASN1_Tree.Nutils;

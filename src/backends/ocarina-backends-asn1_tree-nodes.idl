@@ -90,7 +90,7 @@ module Ocarina::Backends::ASN1_Tree::Nodes {
    List_Id  Values;
   };
 
-  interface Choice_Member : Node_Id
+interface Choice_Member : Node_Id
   {
       Name_Id  Member_Name;
       Node_Id  Member_Type;
@@ -98,6 +98,16 @@ module Ocarina::Backends::ASN1_Tree::Nodes {
 
   interface Literal : Node_Id {
     Value_Id   Value;
+  };
+
+  interface Type_Designator : Node_Id {
+    Node_Id Type_Name;
+    Node_Id Constraints;
+  };
+
+  interface Type_Constraints : Node_Id {
+   Value_Id    Size_Down;
+   Value_Id    Size_Up;
   };
 
 

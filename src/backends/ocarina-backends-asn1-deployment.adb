@@ -39,6 +39,8 @@ with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Utils;
+with Ocarina.Backends.Properties;
+with Ocarina.Backends.ASN1_Values;
 with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1_Tree.Nodes;
 
@@ -49,8 +51,10 @@ package body Ocarina.Backends.ASN1.Deployment is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
    use Ocarina.Backends.Utils;
+   use Ocarina.Backends.Properties;
    use Ocarina.Backends.ASN1_Tree.Nutils;
 
+   package ASN1V renames Ocarina.Backends.ASN1_Values;
    package ASN1N renames Ocarina.Backends.ASN1_Tree.Nodes;
    package ASN1U renames Ocarina.Backends.ASN1_Tree.Nutils;
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -273,6 +277,9 @@ package body Ocarina.Backends.ASN1.Deployment is
       Port_Name      : Name_Id;
       Parent_Name    : Name_Id;
       --  Name of the containing process.
+      Msg_Choice     : Node_Id;
+      Msg_Name       : Name_Id;
+      Msg_Constraints : Node_Id;
    begin
 
       Set_Str_To_Name_Buffer ("thread-");
@@ -344,7 +351,8 @@ package body Ocarina.Backends.ASN1.Deployment is
          F := First_Node (Features (E));
 
          while Present (F) loop
-            if Kind (F) = K_Port_Spec_Instance then
+            if Kind (F) = K_Port_Spec_Instance and then
+               Is_Data (F) then
                Set_Str_To_Name_Buffer ("port-");
                Get_Name_String_And_Append (Thread_Name);
                Add_Str_To_Name_Buffer ("-");
@@ -367,6 +375,26 @@ package body Ocarina.Backends.ASN1.Deployment is
                --  each time a port is discovered in a thread and add
                --  it to the Port_Enumeration list that contains all
                --  port identifiers.
+
+               Msg_Name := Port_Name;
+               Msg_Constraints := Make_Type_Constraints
+                  (Size_Down => ASN1V.New_Int_Value
+                     (To_Bytes
+                        (Get_Data_Size
+                           (Corresponding_Instance (F))), 1, 10),
+                  Size_Up => ASN1V.New_Int_Value
+                     (To_Bytes
+                        (Get_Data_Size
+                           (Corresponding_Instance (F))), 1, 10));
+               Msg_Choice := Make_Choice_Member
+                  (Msg_Name,
+                   Make_Type_Designator
+                     (Type_Name =>
+                        Make_Defining_Identifier
+                           (Get_String_Name ("OCTET STRING")),
+                     Type_Constraints => Msg_Constraints));
+
+               Append_Node_To_List (Msg_Choice, Msg_Choices);
 
             end if;
             F := Next_Node (F);

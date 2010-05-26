@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -317,7 +317,7 @@ package Ocarina.Backends.Properties is
    --  component.
 
    function Get_Data_Size (D : Node_Id) return Size_Type;
-   --  Return the size of the data
+   --  Return the size of the data. Returns Null_Size if not defined.
 
    function Get_Provided_Data_Access
      (D : Node_Id)

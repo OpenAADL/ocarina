@@ -38,11 +38,9 @@ with Charset;   use Charset;
 with Locations; use Locations;
 
 with Ocarina.Backends.ASN1_Tree.Nodes;
-with Ocarina.Backends.ASN1_Values;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 use Ocarina.Backends.ASN1_Tree.Nodes;
-use Ocarina.Backends.ASN1_Values;
 
 package body Ocarina.Backends.ASN1_Tree.Nutils is
 
@@ -603,5 +601,37 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       ASN1_Nodes.Set_Value (N, Value);
       return N;
    end Make_Literal;
+
+   ---------------------------
+   -- Make_Type_Constraints --
+   ---------------------------
+
+   function Make_Type_Constraints
+      (Size_Up  : Value_Id := No_Value;
+      Size_Down : Value_Id := No_Value)
+   return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Type_Constraints);
+      ASN1_Nodes.Set_Size_Up (N, Size_Up);
+      ASN1_Nodes.Set_Size_Down (N, Size_Down);
+      return N;
+   end Make_Type_Constraints;
+
+   --------------------------
+   -- Make_Type_Designator --
+   --------------------------
+
+   function Make_Type_Designator (Type_Name       : Node_Id;
+                                 Type_Constraints : Node_Id := No_Node)
+   return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (K_Type_Designator);
+      ASN1_Nodes.Set_Type_Name (N, Type_Name);
+      ASN1_Nodes.Set_Constraints (N, Type_Constraints);
+      return N;
+   end Make_Type_Designator;
 
 end Ocarina.Backends.ASN1_Tree.Nutils;

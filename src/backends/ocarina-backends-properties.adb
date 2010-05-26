@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -511,7 +511,7 @@ package body Ocarina.Backends.Properties is
             return ((0, Bit));
          end if;
       else
-         return ((0, Bit));
+         return Null_Size;
       end if;
    end Get_Size_Property_Value;
 
