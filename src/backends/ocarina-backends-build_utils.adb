@@ -1267,7 +1267,8 @@ package body Ocarina.Backends.Build_Utils is
                   O_File := Name_Find;
 
                   Get_Name_String (C_Sources.Table (J));
-                  while (Name_Buffer (Name_Len) /= '/') and then
+                  while (Name_Buffer (Name_Len) /= Directory_Separator)
+                    and then
                      Name_Len > 0 loop
                      Name_Len := Name_Len - 1;
                   end loop;
@@ -1285,7 +1286,9 @@ package body Ocarina.Backends.Build_Utils is
 
                   if Include_Dir /= No_Name then
                      Write_Str ("-I");
+                     Write_Str ("'");
                      Write_Name (Include_Dir);
+                     Write_Str ("'");
                   end if;
 
                   Write_Str (" '");
