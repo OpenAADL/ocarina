@@ -1778,6 +1778,36 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                     (N, Switch_Statements);
 
                   Append_Node_To_List
+                    (Make_Expression
+                     (Left_Expr =>
+                      Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Member_Designator
+                           (Defining_Identifier =>
+                              Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    Make_Member_Designator
+                                    (Defining_Identifier =>
+                                       Make_Defining_Identifier
+                                          (Get_String_Name ("nCount"),
+                                          C_Conversion => False),
+                                    Aggregate_Name =>
+                                       (Make_Defining_Identifier
+                                          (Map_Port_Name_For_Asn1 (F)))),
+                                 Aggregate_Name =>
+                                    (Make_Defining_Identifier
+                                       (Get_String_Name ("u")))),
+                           Aggregate_Name =>
+                              Make_Defining_Identifier (MN (M_Msg))),
+                        Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Pkt)),
+                        Is_Pointer => True),
+                      Operator => Op_Equal,
+                      Right_Expr => Get_Data_Size
+                        (Corresponding_Instance (F))),
+                     Switch_Statements);
+
+                  Append_Node_To_List
                     (Make_Defining_Identifier
                        (Map_C_Enumerator_Name (F)),
                      Switch_Labels);
