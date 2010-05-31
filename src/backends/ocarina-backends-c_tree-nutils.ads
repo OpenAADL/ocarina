@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -158,10 +158,12 @@ package Ocarina.Backends.C_Tree.Nutils is
       P_Message,
       P_Msg,
       P_Request,
+      P_Buffer,
       P_Status,
       P_Entity,
       P_Task,
       P_Partition,
+      P_Pkt,
       P_Port,
       P_Error,
       P_Offset,
@@ -178,6 +180,8 @@ package Ocarina.Backends.C_Tree.Nutils is
       M_Port,
       M_Entry,
       M_Entry_Point,
+      M_Kind,
+      M_Msg,
       M_Name,
       M_Base_Priority,
       M_Priority,
@@ -213,6 +217,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       V_Got_Data,
       V_Entity,
       V_Port,
+      V_Pkt,
       V_Thread,
       V_Error,
       V_Error_Status,

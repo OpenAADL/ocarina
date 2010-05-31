@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -369,6 +369,14 @@ package Ocarina.Backends.C_Common.Mapping is
       (Port                : Node_Id) return Node_Id;
    --  Returns the type identifier that should be used with a port
    --  if this port is associated to virtual bus layers.
+
+   function Map_Port_Name_For_Asn1
+     (E                    : Node_Id) return Name_Id;
+   --  Map the name of a port for ASN1 marshalling.
+
+   function Map_Port_Name_Present_For_Asn1
+     (E                    : Node_Id) return Name_Id;
+   --  Map the name of a port for ASN1 marshalling.
 
    procedure Handle_Virtual_Buses_Properties (Port : Node_Id);
    --  Add properties relevant to virtual buses in the current C file.

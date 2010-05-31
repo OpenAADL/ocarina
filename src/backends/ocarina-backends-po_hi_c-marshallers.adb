@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -30,6 +30,8 @@
 --                       (ocarina-users@listes.enst.fr)                     --
 --                                                                          --
 ------------------------------------------------------------------------------
+
+with Namet; use Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -64,6 +66,9 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
 
    Marshaller_Request_Spec   : Node_Id;
    Unmarshaller_Request_Spec : Node_Id;
+
+   Marshaller_Asn1_Request_Spec     : Node_Id;
+   Unmarshaller_Asn1_Request_Spec   : Node_Id;
 
    -----------------
    -- Header_File --
@@ -430,6 +435,60 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
          Append_Node_To_List (Unmarshaller_Request_Spec,
                               CTN.Declarations (Current_File));
 
+         if Use_ASN1_Deployment then
+         --  Make the main marshall_asn1_request function
+
+            Parameters := New_List (CTN.K_Parameter_List);
+            Append_Node_To_List
+            (Make_Parameter_Specification
+             (Defining_Identifier =>
+              Make_Defining_Identifier (PN (P_Request)),
+              Parameter_Type =>
+              Make_Pointer_Type (RE (RE_Request_T))),
+             Parameters);
+
+            Append_Node_To_List
+            (Make_Parameter_Specification
+             (Defining_Identifier =>
+              Make_Defining_Identifier (PN (P_Pkt)),
+              Parameter_Type =>
+              Make_Pointer_Type (RE (RE_Asn1_Pkt_T))),
+             Parameters);
+
+            Marshaller_Asn1_Request_Spec := Make_Function_Specification
+            (Defining_Identifier => RE (RE_Marshall_Asn1_Request),
+             Parameters          => Parameters,
+             Return_Type         => New_Node (CTN.K_Void));
+            Append_Node_To_List (Marshaller_Asn1_Request_Spec,
+                                 CTN.Declarations (Current_File));
+
+            --  Make the main unmarshall_request function
+
+            Parameters := New_List (CTN.K_Parameter_List);
+            Append_Node_To_List
+            (Make_Parameter_Specification
+             (Defining_Identifier =>
+              Make_Defining_Identifier (PN (P_Request)),
+              Parameter_Type =>
+              Make_Pointer_Type (RE (RE_Request_T))),
+             Parameters);
+
+            Append_Node_To_List
+            (Make_Parameter_Specification
+             (Defining_Identifier =>
+              Make_Defining_Identifier (PN (P_Pkt)),
+             Parameter_Type =>
+             Make_Pointer_Type (RE (RE_Asn1_Pkt_T))),
+             Parameters);
+
+            Unmarshaller_Asn1_Request_Spec := Make_Function_Specification
+            (Defining_Identifier => RE (RE_Unmarshall_Asn1_Request),
+             Parameters          => Parameters,
+             Return_Type         => New_Node (CTN.K_Void));
+            Append_Node_To_List (Unmarshaller_Asn1_Request_Spec,
+                  CTN.Declarations (Current_File));
+         end if;
+
          --  Unmark all the marked types
 
          Reset_Handlings;
@@ -583,8 +642,10 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       function Get_Marshall_Function_Name (E : Node_Id) return Node_Id;
       function Get_Unmarshall_Function_Name (E : Node_Id) return Node_Id;
 
-      Marshall_Alternatives : List_Id;
-      Unmarshall_Alternatives : List_Id;
+      Asn1_Marshall_Alternatives       : List_Id;
+      Asn1_Unmarshall_Alternatives     : List_Id;
+      Marshall_Alternatives            : List_Id;
+      Unmarshall_Alternatives          : List_Id;
 
       -----------------------------
       -- Make_Marshall_Type_Body --
@@ -1125,8 +1186,10 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
 
          Start_Recording_Handlings;
 
-         Marshall_Alternatives := New_List (CTN.K_Alternatives_List);
-         Unmarshall_Alternatives := New_List (CTN.K_Alternatives_List);
+         Asn1_Marshall_Alternatives    := New_List (CTN.K_Alternatives_List);
+         Asn1_Unmarshall_Alternatives  := New_List (CTN.K_Alternatives_List);
+         Marshall_Alternatives         := New_List (CTN.K_Alternatives_List);
+         Unmarshall_Alternatives       := New_List (CTN.K_Alternatives_List);
 
          if not AAU.Is_Empty (Features (E)) then
             C := First_Node (Features (E));
@@ -1311,6 +1374,61 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          --  Unmark all the marked types
+
+         if Use_ASN1_Deployment then
+            if not Is_Empty (Asn1_Marshall_Alternatives) then
+               N := Make_Switch_Alternative
+                 (No_List, No_List);
+               Append_Node_To_List (N, Asn1_Marshall_Alternatives);
+
+               N := Make_Switch_Statement
+                 (Expression =>
+                    Make_Member_Designator
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (MN (M_Port)),
+                   Aggregate_Name => Make_Defining_Identifier (VN (V_Request)),
+                   Is_Pointer => True),
+                  Alternatives => Asn1_Marshall_Alternatives);
+            else
+               N := Message_Comment
+                 ("No alternative was declared");
+            end if;
+
+            N := Make_Function_Implementation
+            (Marshaller_Asn1_Request_Spec,
+             No_List,
+             Make_List_Id (N));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            if not Is_Empty (Asn1_Unmarshall_Alternatives) then
+               N := Make_Switch_Alternative
+                 (No_List, No_List);
+               Append_Node_To_List (N, Asn1_Unmarshall_Alternatives);
+
+               N := Make_Switch_Statement
+                 (Expression =>
+                    Make_Member_Designator
+                  (Defining_Identifier =>
+                     Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Defining_Identifier (MN (M_Kind)),
+                        Aggregate_Name =>
+                           Make_Defining_Identifier (MN (M_Msg))),
+                   Aggregate_Name => Make_Defining_Identifier (VN (V_Pkt)),
+                   Is_Pointer => True),
+                  Alternatives => Asn1_Unmarshall_Alternatives);
+            else
+               N := Message_Comment
+                 ("No alternative was declared");
+            end if;
+
+            N := Make_Function_Implementation
+            (Unmarshaller_Asn1_Request_Spec,
+             Make_List_Id (N),
+             No_List);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+         end if;
 
          Reset_Handlings;
 
@@ -1543,6 +1661,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                   --  Now, add alternatives to the main switches to use
                   --  our marshallers functions.
 
+                  --  First, handle the generic marshallers.
+
                   Switch_Statements := New_List (CTN.K_Statement_List);
                   Switch_Labels := New_List (CTN.K_Label_List);
                   Parameters := New_List (CTN.K_Parameter_List);
@@ -1576,6 +1696,95 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                   N := Make_Switch_Alternative
                     (Switch_Labels, Switch_Statements);
                   Append_Node_To_List (N, Marshall_Alternatives);
+
+                  --  Then, handle the ASN1 marshallers
+                  Switch_Statements := New_List (CTN.K_Statement_List);
+                  Switch_Labels := New_List (CTN.K_Label_List);
+                  Parameters := New_List (CTN.K_Parameter_List);
+
+                  Append_Node_To_List
+                    (Make_Expression
+                     (Left_Expr =>
+                        Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Member_Designator
+                           (Defining_Identifier =>
+                              (Make_Defining_Identifier
+                                 (MN (M_Kind))),
+                           Aggregate_Name =>
+                              Make_Defining_Identifier (MN (M_Msg))),
+                        Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Pkt)),
+                        Is_Pointer => True),
+                      Operator => Op_Equal,
+                      Right_Expr =>
+                        Make_Defining_Identifier
+                        (Map_Port_Name_Present_For_Asn1 (F),
+                         C_Conversion => False)),
+                     Switch_Statements);
+
+                  Append_Node_To_List
+                      (Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Member_Designator
+                           (Defining_Identifier =>
+                              Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    Make_Member_Designator
+                                    (Defining_Identifier =>
+                                       Make_Defining_Identifier
+                                          (Get_String_Name ("arr")),
+                                    Aggregate_Name =>
+                                       (Make_Defining_Identifier
+                                          (Map_Port_Name_For_Asn1 (F)))),
+                                 Aggregate_Name =>
+                                    (Make_Defining_Identifier
+                                       (Get_String_Name ("u")))),
+                           Aggregate_Name =>
+                              Make_Defining_Identifier (MN (M_Msg))),
+                        Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Pkt)),
+                        Is_Pointer => True),
+                     Parameters);
+
+                  Append_Node_To_List
+                     (Make_Variable_Address
+                      (Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Member_Designator
+                           (Defining_Identifier =>
+                              Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    (Make_Defining_Identifier
+                                       (Map_C_Enumerator_Name (F))),
+                                 Aggregate_Name =>
+                                    (Make_Defining_Identifier
+                                       (Map_C_Enumerator_Name (F)))),
+                           Aggregate_Name =>
+                              Make_Defining_Identifier (MN (M_Vars))),
+                        Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Request)),
+                        Is_Pointer => True)),
+                     Parameters);
+                  Append_Node_To_List
+                    (Get_Data_Size (Corresponding_Instance (F)),
+                     Parameters);
+
+                  N := Make_Call_Profile
+                    (RE (RE_Copy_Array),
+                     Parameters);
+
+                  Append_Node_To_List
+                    (N, Switch_Statements);
+
+                  Append_Node_To_List
+                    (Make_Defining_Identifier
+                       (Map_C_Enumerator_Name (F)),
+                     Switch_Labels);
+
+                  N := Make_Switch_Alternative
+                    (Switch_Labels, Switch_Statements);
+                  Append_Node_To_List (N, Asn1_Marshall_Alternatives);
 
                   --  Make the alternative for the global unmarshall_request
                   --  function.
@@ -1613,6 +1822,91 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                   N := Make_Switch_Alternative
                     (Switch_Labels, Switch_Statements);
                   Append_Node_To_List (N, Unmarshall_Alternatives);
+
+                  --  Then, handle the ASN1 unmarshallers
+                  Switch_Statements := New_List (CTN.K_Statement_List);
+                  Switch_Labels := New_List (CTN.K_Label_List);
+                  Parameters := New_List (CTN.K_Parameter_List);
+
+                  Append_Node_To_List
+                    (Make_Expression
+                     (Left_Expr =>
+                        Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Defining_Identifier (PN (P_Port)),
+                        Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Request)),
+                        Is_Pointer => True),
+                      Operator => Op_Equal,
+                      Right_Expr =>
+                        Make_Defining_Identifier
+                        (Map_C_Enumerator_Name (F))),
+                     Switch_Statements);
+
+                  Append_Node_To_List
+                     (Make_Variable_Address
+                      (Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Member_Designator
+                           (Defining_Identifier =>
+                              Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    (Make_Defining_Identifier
+                                       (Map_C_Enumerator_Name (F))),
+                                 Aggregate_Name =>
+                                    (Make_Defining_Identifier
+                                       (Map_C_Enumerator_Name (F)))),
+                           Aggregate_Name =>
+                              Make_Defining_Identifier (MN (M_Vars))),
+                        Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Request)),
+                        Is_Pointer => True)),
+                     Parameters);
+
+                  Append_Node_To_List
+                      (Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Member_Designator
+                           (Defining_Identifier =>
+                              Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    Make_Member_Designator
+                                    (Defining_Identifier =>
+                                       Make_Defining_Identifier
+                                          (Get_String_Name ("arr")),
+                                    Aggregate_Name =>
+                                       (Make_Defining_Identifier
+                                          (Map_Port_Name_For_Asn1 (F)))),
+                                 Aggregate_Name =>
+                                    (Make_Defining_Identifier
+                                       (Get_String_Name ("u")))),
+                           Aggregate_Name =>
+                              Make_Defining_Identifier (MN (M_Msg))),
+                        Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Pkt)),
+                        Is_Pointer => True),
+                     Parameters);
+
+                  Append_Node_To_List
+                    (Get_Data_Size (Corresponding_Instance (F)),
+                     Parameters);
+
+                  N := Make_Call_Profile
+                    (RE (RE_Copy_Array),
+                     Parameters);
+
+                  Append_Node_To_List
+                    (N, Switch_Statements);
+
+                  Append_Node_To_List
+                     (Make_Defining_Identifier
+                        (Map_Port_Name_Present_For_Asn1 (F),
+                         C_Conversion => False),
+                     Switch_Labels);
+
+                  N := Make_Switch_Alternative
+                    (Switch_Labels, Switch_Statements);
+                  Append_Node_To_List (N, Asn1_Unmarshall_Alternatives);
 
                end if;
                F := Next_Node (F);

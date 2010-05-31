@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2831,6 +2831,63 @@ package body Ocarina.Backends.C_Common.Mapping is
       N := Name_Find;
       return (To_Lower (N));
    end Map_Bus_Name;
+
+   ----------------------------
+   -- Map_Port_Name_For_Asn1 --
+   ----------------------------
+
+   function Map_Port_Name_For_Asn1
+     (E                    : Node_Id)
+     return Name_Id
+   is
+      N              : Name_Id;
+      Thread_Name    : Name_Id;
+      Parent_Name    : Name_Id;
+      Containing_Thr : Node_Id;
+   begin
+      Containing_Thr := Parent_Subcomponent (Parent_Component (E));
+
+      Set_Str_To_Name_Buffer ("thread-");
+      Parent_Name := Display_Name
+         (Identifier
+          (Parent_Subcomponent
+           (Parent_Component
+            (Containing_Thr))));
+      Get_Name_String_And_Append (Parent_Name);
+      Add_Str_To_Name_Buffer ("-");
+      Get_Name_String_And_Append
+         (Display_Name
+           (Identifier
+            (Containing_Thr)));
+      Thread_Name := Name_Find;
+
+      Thread_Name := To_Lower (Thread_Name);
+
+      Set_Str_To_Name_Buffer ("port-");
+      Get_Name_String_And_Append (Thread_Name);
+      Add_Str_To_Name_Buffer ("-");
+      Get_Name_String_And_Append
+         (Display_Name (Identifier (E)));
+      N := Name_Find;
+      return (To_Lower (N));
+   end Map_Port_Name_For_Asn1;
+
+   ------------------------------------
+   -- Map_Port_Name_Present_For_Asn1 --
+   ------------------------------------
+
+   function Map_Port_Name_Present_For_Asn1
+     (E                    : Node_Id)
+     return Name_Id
+   is
+      N : Name_Id;
+   begin
+      Get_Name_String (Map_Port_Name_For_Asn1 (E));
+      Add_Str_To_Name_Buffer ("_PRESENT");
+      N := Name_Find;
+      N := Replace_Char (N, '-', '_');
+      return (Name_Find);
+   end Map_Port_Name_Present_For_Asn1;
 
    --------------------------------------
    -- Map_Port_Deployment_Destinations --

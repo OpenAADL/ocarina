@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -83,6 +83,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Unmarshall_Float64,             -- __po_hi_unmarshall_float64
       RE_Marshall_Request,               -- __po_hi_marshall_request
       RE_Unmarshall_Request,             -- __po_hi_unmarshall_request
+      RE_Marshall_Asn1_Request,          -- __po_hi_marshall_asn1_request
+      RE_Unmarshall_Asn1_Request,        -- __po_hi_unmarshall_asn1_request
       RE_Marshall_Int,                   -- __po_hi_marshall_int
       RE_Unmarshall_Int,                 -- __po_hi_unmarshall_int
       RE_Marshall_Int8,                  -- __po_hi_marshall_int8
@@ -136,6 +138,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Wait_For_Tasks,                 -- __po_hi_wait_for_tasks
 
       RE_Default_Priority,               --  __PO_HI_DEFAULT_PRIORITY
+      RE_Marshallers_Asn1_Copy_Member,   --  __PO_HI_MARSHALLERS_ASN1_COPY_MEMB
       RE_Main_Type,                      --  __PO_HI_MAIN_TYPE
       RE_Main_Args,                      --  __PO_HI_MAIN_ARGS
       RE_Main_Name,                      --  __PO_HI_MAIN_NAME
@@ -173,6 +176,9 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Operation_T,                    --  __po_hi_operation_t
       RE_Request_T,                      --  __po_hi_request_t
       RE_Bool_T,                         --  __po_hi_bool_t
+      RE_Asn1_Pkt_T,                     --  __po_hi_asn1_pkt_t
+      RE_Asn1_Buffer_T,                  --  __po_hi_asn1_buffer_t
+      RE_Byte_T,                         --  __po_hi_byte_t
       RE_Uint64_T,                       --  __po_hi_uint64_t
       RE_Uint32_T,                       --  __po_hi_uint32_t
       RE_Uint16_T,                       --  __po_hi_uint16_t
@@ -250,6 +256,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Unmarshall_Port                => RH_PO_HI_Marshallers,
          RE_Marshall_Request               => RH_Marshallers,
          RE_Unmarshall_Request             => RH_Marshallers,
+         RE_Marshall_Asn1_Request          => RH_Marshallers,
+         RE_Unmarshall_Asn1_Request        => RH_Marshallers,
          RE_Create_Periodic_Task           => RH_PO_HI_Task,
          RE_Main_Deliver                   => RH_Activity,
          RE_Create_Sporadic_Task           => RH_PO_HI_Task,
@@ -294,6 +302,9 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Protected_T                    => RH_PO_HI_Protected,
          RE_Inetport_T                     => RH_PO_HI_Transport,
          RE_Inetaddr_T                     => RH_PO_HI_Transport,
+         RE_Byte_T                         => RH_PO_HI_Types,
+         RE_Asn1_Pkt_T                     => RH_PO_HI_Marshallers,
+         RE_Asn1_Buffer_T                  => RH_PO_HI_Marshallers,
          RE_Bool_T                         => RH_PO_HI_Types,
          RE_Uint8_T                        => RH_PO_HI_Types,
          RE_Int8_T                         => RH_PO_HI_Types,
@@ -312,6 +323,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          --  Runtime Constants associations
 
          RE_Default_Priority               => RH_PO_HI_Task,
+         RE_Marshallers_Asn1_Copy_Member   => RH_PO_HI_Marshallers,
          RE_Main_Type                      => RH_PO_HI_Task,
          RE_Main_Args                      => RH_PO_HI_Task,
          RE_Main_Name                      => RH_PO_HI_Task,
