@@ -257,6 +257,8 @@ package body Ocarina.Backends.Properties is
    Language_Scade_Name    : Name_Id;
    Language_SCADE6_Name   : Name_Id;
    Language_SDL_Name      : Name_Id;
+   Language_SDL_ObjectGeode_Name : Name_Id;
+   Language_SDL_RTDS_Name : Name_Id;
    Language_Simulink_Name : Name_Id;
    Language_System_C_Name : Name_Id;
    Language_VHDL_Name     : Name_Id;
@@ -1309,11 +1311,15 @@ package body Ocarina.Backends.Properties is
          elsif Source_L = Language_Esterel_Name then
             return Language_Esterel;
 
-         elsif Source_L = Language_SDL_Name then
+         elsif Source_L = Language_SDL_Name
+           or else Source_L = Language_SDL_ObjectGeode_Name
+         then
             return Language_SDL;
 
-         elsif Source_L = Language_RTDS_Name then
-            return Language_RTDS;
+         elsif Source_L = Language_RTDS_Name
+           or else Source_L = Language_SDL_RTDS_Name
+         then
+            return Language_SDL_RTDS;
 
          elsif Source_L = Language_C_Name then
             return Language_C;
@@ -1430,7 +1436,7 @@ package body Ocarina.Backends.Properties is
             return Subprogram_Unknown;
 
          when Language_SDL
-           | Language_RTDS
+           | Language_SDL_RTDS
            | Language_System_C
            | Language_VHDL =>
             --  A subprogram having this language as implementation
@@ -2863,7 +2869,9 @@ package body Ocarina.Backends.Properties is
       Language_Rhapsody_Name := Get_String_Name ("rhapsody");
       Language_SCADE6_Name   := Get_String_Name ("scade6");
       Language_SDL_Name      := Get_String_Name ("sdl");
+      Language_SDL_ObjectGeode_Name := Get_String_Name ("sdl_objectgeode");
       Language_RTDS_Name     := Get_String_Name ("rtds");
+      Language_SDL_RTDS_Name := Get_String_Name ("sdl_rtds");
       Language_VHDL_Name     := Get_String_Name ("vhdl");
       Language_System_C_Name := Get_String_Name ("system_c");
 

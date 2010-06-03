@@ -96,10 +96,12 @@ property set AADL_Project is
      Lustre,
      Lustre5, -- alias for Lustre
      Lustre6, -- alias for Lustre
-     RTDS,    -- SDL
+     RTDS,    -- alias for SDL_RTDS
+     SDL_RTDS,
      RTSJ,    -- Real Time Specification for Java
      SCADE6,  -- alias for Lustre
-     SDL,
+     SDL,     -- alias for SDL_ObjectGeode
+     SDL_ObjectGeode,
      Scade,
      Simulink,
      Simulink_6_5,

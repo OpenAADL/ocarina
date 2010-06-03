@@ -67,7 +67,7 @@ package Ocarina.Backends.Properties is
       Language_Gui,
       Language_Lustre,
       Language_Rhapsody,
-      Language_RTDS,
+      Language_SDL_RTDS,
       Language_RTSJ,
       Language_Scade,
       Language_SDL,
