@@ -1,0 +1,112 @@
+package ocarina_drivers
+
+public
+
+with deployment;
+
+with ocarina_buses;
+
+with ocarina_drivers_rasta_1553;
+with ocarina_drivers_rasta_serial;
+with ocarina_drivers_rasta_spacewire;
+
+with ocarina_drivers_serial;
+
+with ocarina_drivers_ip_asn1;
+with ocarina_drivers_ip_pohic;
+
+------------------
+--  RASTA 1553  --
+------------------
+
+device rasta_1553
+end rasta_1553;
+
+device implementation rasta_1553.terminal
+properties
+   Deployment::Driver_Name    => "1553_rasta";
+   Device_Driver              => classifier (ocarina_drivers_rasta_1553::if1553_driver.rasta_terminal);
+   Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_1553::spg_1553_init_rasta_terminal);
+   Provided_Virtual_Bus_Class => (classifier (ocarina_buses::pohi.c));
+end rasta_1553.terminal;
+
+device implementation rasta_1553.controller_sender_only
+properties
+   Deployment::Driver_Name    => "1553_rasta";
+   Device_Driver              => classifier (ocarina_drivers_rasta_1553::if1553_driver.rasta_controller_sender_only);
+   Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_1553::spg_1553_init_rasta_controller);
+   Provided_Virtual_Bus_Class => (classifier (ocarina_buses::pohi.c));
+end rasta_1553.controller_sender_only;
+
+--------------------
+--  RASTA SERIAL  --
+--------------------
+
+device rasta_serial
+end rasta_serial;
+
+device implementation rasta_serial.raw
+properties
+   Deployment::Driver_Name    => "serial_rasta";
+   Device_Driver              => classifier (ocarina_drivers_rasta_serial::serial_driver.rasta);
+   Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_serial::spg_serial_init_rasta);
+   Provided_Virtual_Bus_Class => (classifier (ocarina_buses::raw.i));
+end rasta_serial.raw;
+
+
+-----------------------
+--  RASTA SPACEWIRE  --
+-----------------------
+
+device rasta_spacewire
+end rasta_spacewire;
+
+device implementation rasta_spacewire.pohic
+properties
+   Deployment::Driver_Name       => "spacewire_rasta";
+   Device_Driver                 => classifier (ocarina_drivers_rasta_spacewire::spacewire_driver.rasta);
+   Initialize_Entrypoint         => classifier (ocarina_drivers_rasta_spacewire::spg_spacewire_init_rasta);
+   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+end rasta_spacewire.pohic;
+
+
+-----------------------------
+--  Generic serial driver  --
+-----------------------------
+
+device generic_serial
+end generic_serial;
+
+device implementation generic_serial.raw
+properties
+   Deployment::Driver_Name       => "serial_linux";
+   Device_Driver                 => classifier (ocarina_drivers_serial::serial_driver.linux);
+   Initialize_Entrypoint         => classifier (ocarina_drivers_serial::spg_serial_init_linux);
+   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::raw.i));
+end generic_serial.raw;
+
+---------------------------------
+--  Generic sockets/ip driver  --
+---------------------------------
+
+device generic_sockets_ip
+end generic_sockets_ip;
+
+device implementation generic_sockets_ip.pohic
+properties
+   Deployment::Driver_Name       => "sockets";
+   Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.i);
+   Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
+   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+end generic_sockets_ip.pohic;
+
+device implementation generic_sockets_ip.asn1
+properties
+   Deployment::Driver_Name       => "sockets_asn1";
+   Device_Driver                 => classifier (ocarina_drivers_ip_asn1::sockets_impl.asn1);
+   Initialize_Entrypoint         => classifier (ocarina_drivers_ip_asn1::spg_sockets_init);
+   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::asn1.i));
+end generic_sockets_ip.asn1;
+
+end ocarina_drivers;
+

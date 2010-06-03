@@ -1,0 +1,52 @@
+package ocarina_buses
+
+public
+
+bus generic_bus
+end generic_bus;
+
+bus ip
+end ip;
+
+bus implementation ip.pohic
+end ip.pohic;
+
+bus implementation ip.asn1
+end ip.asn1;
+
+bus implementation ip.pohiada
+end ip.pohiada;
+
+bus spacewire
+end spacewire;
+
+bus implementation spacewire.pohic
+end spacewire.pohic;
+
+
+----------------------
+--  Virtual buses  --
+----------------------
+
+virtual bus raw
+end raw;
+
+virtual bus implementation raw.i
+end raw.i;
+
+virtual bus asn1
+end asn1;
+
+virtual bus implementation asn1.i
+end asn1.i;
+
+virtual bus pohi
+end pohi;
+
+virtual bus implementation pohi.c
+end pohi.c;
+
+virtual bus implementation pohi.ada
+end pohi.ada;
+
+end ocarina_buses;

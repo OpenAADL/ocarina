@@ -27,6 +27,16 @@ AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
 	$(srcdir)/AADLv2/base_types.aadl \
 	$(srcdir)/AADLv2/transformations.aadl
 
+AADL_V2_DRIVERS = $(srcdir)/AADLv2/drivers/devices.aadl \
+                  $(srcdir)/AADLv2/drivers/serial-raw.aadl \
+                  $(srcdir)/AADLv2/drivers/buses.aadl \
+                  $(srcdir)/AADLv2/drivers/sockets-raw.aadl \
+                  $(srcdir)/AADLv2/drivers/sockets-asn1.aadl \
+                  $(srcdir)/AADLv2/drivers/rasta-serial.aadl \
+                  $(srcdir)/AADLv2/drivers/rasta-spacewire.aadl \
+                  $(srcdir)/AADLv2/drivers/rasta-1553.aadl
+
+
 MODE_FILES = $(srcdir)/emacs/aadl-mode.el \
 	$(srcdir)/vim/indent/aadl.vim \
 	$(srcdir)/vim/syntax/aadl.vim
@@ -46,6 +56,9 @@ install-data-local:
 	done
 	for file in $(AADL_V1_PROPERTIES); do \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv1 || exit 1; \
+	done
+	for file in $(AADL_V2_DRIVERS); do \
+	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv2/driver-`basename $$file` || exit 1; \
 	done
 	for file in $(AADL_V2_PROPERTIES); do \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv2 || exit 1; \

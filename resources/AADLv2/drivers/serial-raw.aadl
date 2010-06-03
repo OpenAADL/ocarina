@@ -1,0 +1,50 @@
+package ocarina_drivers_serial
+
+public
+
+
+subprogram spg_serial_poller_linux
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_linux_poller";
+end spg_serial_poller_linux;
+
+
+subprogram spg_serial_sender_linux
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_linux_sender";
+end spg_serial_sender_linux;
+
+
+subprogram spg_serial_init_linux
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_linux_init";
+end spg_serial_init_linux;
+
+
+thread serial_poller
+end serial_poller;
+
+thread implementation serial_poller.linux
+calls
+	mycall : {
+	  pspg : subprogram spg_serial_poller_linux;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end serial_poller.linux;
+
+
+abstract serial_driver
+end serial_driver;
+
+abstract implementation serial_driver.linux
+subcomponents
+   receiver : thread serial_poller.linux;
+   sender   : subprogram spg_serial_sender_linux;
+end serial_driver.linux;
+
+end ocarina_drivers_serial;
