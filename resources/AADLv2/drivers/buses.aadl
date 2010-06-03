@@ -11,8 +11,12 @@ end ip;
 bus implementation ip.pohic
 end ip.pohic;
 
-bus implementation ip.asn1
-end ip.asn1;
+bus implementation ip.i
+subcomponents
+   asn      : virtual bus asn1.i;
+   pohic    : virtual bus pohi.c;
+   pohiada  : virtual bus pohi.ada;
+end ip.i;
 
 bus implementation ip.pohiada
 end ip.pohiada;

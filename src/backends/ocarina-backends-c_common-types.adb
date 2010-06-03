@@ -655,6 +655,7 @@ package body Ocarina.Backends.C_Common.Types is
                      declare
                         Source_Files : constant Name_Array
                           := Get_Source_Text (E);
+                        To_Include : Name_Id;
                      begin
                         if Source_Files'Length > 1 then
                            Display_Located_Error
@@ -662,10 +663,18 @@ package body Ocarina.Backends.C_Common.Types is
                               "More than 1 header file for a C type",
                               Fatal => True);
                         elsif Source_Files'Length = 1 then
+                           To_Include := Source_Files (Source_Files'First);
+                           Get_Name_String (To_Include);
+                           if Name_Buffer (Name_Len - 3 .. Name_Len)
+                              = ".asn" then
+                              Name_Len := Name_Len - 4;
+                              To_Include := Name_Find;
+                           end if;
+
                            Add_Include
                              (Make_Include_Clause
                                 (Make_Defining_Identifier
-                                   (Source_Files (Source_Files'First), False)),
+                                   (To_Include, False)),
                               Preserve_Case => True);
                         end if;
                      end;

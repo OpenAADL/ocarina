@@ -90,6 +90,8 @@ end generic_serial.raw;
 ---------------------------------
 
 device generic_sockets_ip
+features
+   thebus : requires bus access ocarina_buses::ip.i;
 end generic_sockets_ip;
 
 device implementation generic_sockets_ip.pohic
