@@ -90,13 +90,14 @@ property set AADL_Project is
      Lustre,
      Lustre5, -- alias for Lustre
      Lustre6, -- alias for Lustre
+     RTDS,    -- SDL
      RTSJ,    -- Real Time Specification for Java
      SCADE6,  -- alias for Lustre
      SDL,
      Simulink,
-     Simulink_6_5);
-  -- The following are example software source languages.
-  -- ( Ada95, C, Simulink_6_5 )
+     Simulink_6_5,
+     System_C,
+     VHDL);
 
   Max_Aadlinteger: constant aadlinteger => 2#1#e32;
 

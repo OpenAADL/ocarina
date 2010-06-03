@@ -96,14 +96,15 @@ property set AADL_Project is
      Lustre,
      Lustre5, -- alias for Lustre
      Lustre6, -- alias for Lustre
+     RTDS,    -- SDL
      RTSJ,    -- Real Time Specification for Java
      SCADE6,  -- alias for Lustre
      SDL,
      Scade,
      Simulink,
-     Simulink_6_5);
-  -- The following are example software source languages:
-  -- ( Ada95, Ada2005, C, Simulink_6_5 )
+     Simulink_6_5,
+     System_C,
+     VHDL);
 
   Supported_Distributions: type enumeration (Fixed);
   -- The following are example distributions:

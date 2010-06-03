@@ -241,22 +241,25 @@ package body Ocarina.Backends.Properties is
    Concurrency_Priority_Ceiling_Name            : Name_Id;
    Concurrency_Priority_Ceiling_Protocol_Name   : Name_Id;
 
-   Language_Ada_95_Name   : Name_Id;
    Language_Ada_Name      : Name_Id;
+   Language_Ada_95_Name   : Name_Id;
    Language_Ada_05_Name   : Name_Id;
-   Language_C_Name        : Name_Id;
-   Language_RTSJ_Name     : Name_Id;
-   Language_Simulink_Name : Name_Id;
-   Language_Scade_Name    : Name_Id;
    Language_ASN1_Name     : Name_Id;
-   Language_Lustre_Name   : Name_Id;
+   Language_C_Name        : Name_Id;
    Language_Esterel_Name  : Name_Id;
+   Language_GUI_Name      : Name_Id;
+   Language_Lustre_Name   : Name_Id;
    Language_Lustre5_Name  : Name_Id;
    Language_Lustre6_Name  : Name_Id;
-   Language_GUI_Name      : Name_Id;
    Language_Rhapsody_Name : Name_Id;
+   Language_RTDS_Name     : Name_Id;
+   Language_RTSJ_Name     : Name_Id;
+   Language_Scade_Name    : Name_Id;
    Language_SCADE6_Name   : Name_Id;
    Language_SDL_Name      : Name_Id;
+   Language_Simulink_Name : Name_Id;
+   Language_System_C_Name : Name_Id;
+   Language_VHDL_Name     : Name_Id;
 
    Thread_Periodic_Name   : Name_Id;
    Thread_Aperiodic_Name  : Name_Id;
@@ -1309,6 +1312,9 @@ package body Ocarina.Backends.Properties is
          elsif Source_L = Language_SDL_Name then
             return Language_SDL;
 
+         elsif Source_L = Language_RTDS_Name then
+            return Language_RTDS;
+
          elsif Source_L = Language_C_Name then
             return Language_C;
 
@@ -1323,6 +1329,12 @@ package body Ocarina.Backends.Properties is
 
          elsif Source_L = Language_Rhapsody_Name then
             return Language_Rhapsody;
+
+         elsif Source_L = Language_System_C_Name then
+            return Language_System_C;
+
+         elsif Source_L = Language_VHDL_Name then
+            return Language_VHDL;
 
          elsif Source_L = Language_GUI_Name then
             return Language_GUI;
@@ -1417,8 +1429,11 @@ package body Ocarina.Backends.Properties is
 
             return Subprogram_Unknown;
 
-         when Language_SDL =>
-            --  A subprogram having SDL as implementation
+         when Language_SDL
+           | Language_RTDS
+           | Language_System_C
+           | Language_VHDL =>
+            --  A subprogram having this language as implementation
             --  language is not supported.
 
             return Subprogram_Unknown;
@@ -2848,6 +2863,9 @@ package body Ocarina.Backends.Properties is
       Language_Rhapsody_Name := Get_String_Name ("rhapsody");
       Language_SCADE6_Name   := Get_String_Name ("scade6");
       Language_SDL_Name      := Get_String_Name ("sdl");
+      Language_RTDS_Name     := Get_String_Name ("rtds");
+      Language_VHDL_Name     := Get_String_Name ("vhdl");
+      Language_System_C_Name := Get_String_Name ("system_c");
 
       Thread_Periodic_Name   := Get_String_Name ("periodic");
       Thread_Aperiodic_Name  := Get_String_Name ("aperiodic");

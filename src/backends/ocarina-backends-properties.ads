@@ -63,14 +63,17 @@ package Ocarina.Backends.Properties is
      (Language_Ada_95,
       Language_ASN1,
       Language_C,
-      Language_Lustre,
       Language_Esterel,
       Language_Gui,
+      Language_Lustre,
       Language_Rhapsody,
+      Language_RTDS,
+      Language_RTSJ,
       Language_Scade,
       Language_SDL,
       Language_Simulink,
-      Language_RTSJ,
+      Language_System_C,
+      Language_VHDL,
       Language_None);
 
    type Supported_Scheduling_Protocol is
