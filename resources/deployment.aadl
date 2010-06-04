@@ -32,6 +32,7 @@ property set Deployment is
     ERC32_ORK,     -- ERC32 board or tsim-erc32 (ORK)
     ARM_DSLINUX,   -- Nintendo DS (tm) (DSLinux)
     ARM_N770,      -- Nokia N770 (tm)
+    X86_RTEMS,     -- x86 under RTEMS
     MARTE_OS       -- MaRTE OS
     );
   --  Supported platforms

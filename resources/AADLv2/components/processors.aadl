@@ -4,6 +4,7 @@ public
 
 with ocarina_processors_native;
 with ocarina_processors_leon;
+with ocarina_processors_x86;
 
 processor linux extends ocarina_processors_native::native
 end linux;
@@ -20,5 +21,13 @@ end leon.rtems;
 processor implementation leon.ork extends ocarina_processors_leon::leon.ork
 end leon.ork;
 
+processor x86
+end x86;
+
+processor implementation x86.rtems extends ocarina_processors_x86::x86.rtems
+end x86.rtems;
+
+processor implementation x86.linux extends ocarina_processors_x86::x86.linux
+end x86.linux;
 
 end ocarina_processors;
