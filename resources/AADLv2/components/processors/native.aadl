@@ -1,0 +1,8 @@
+package ocarina_processors_native
+
+public
+
+processor native
+end native;
+
+end ocarina_processors_native;
