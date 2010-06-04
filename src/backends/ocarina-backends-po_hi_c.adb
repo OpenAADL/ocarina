@@ -155,6 +155,9 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_LEON_RTEMS =>
             Write_Str ("leon.rtems");
 
+         when Platform_X86_RTEMS =>
+            Write_Str ("x86.rtems");
+
          when Platform_ARM_DSLINUX =>
             Write_Str ("arm.dslinux");
 

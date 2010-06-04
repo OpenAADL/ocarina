@@ -286,6 +286,7 @@ package body Ocarina.Backends.Properties is
 
    Platform_Native_Name      : Name_Id;
    Platform_LEON_RTEMS_Name  : Name_Id;
+   Platform_X86_RTEMS_Name   : Name_Id;
    Platform_LEON_GNAT_Name   : Name_Id;
    Platform_LEON_ORK_Name    : Name_Id;
    Platform_ERC32_ORK_Name   : Name_Id;
@@ -2402,6 +2403,8 @@ package body Ocarina.Backends.Properties is
             return Platform_Native;
          elsif P_Name = Platform_LEON_RTEMS_Name then
             return Platform_LEON_RTEMS;
+         elsif P_Name = Platform_X86_RTEMS_Name then
+            return Platform_X86_RTEMS;
          elsif P_Name = Platform_LEON_GNAT_Name then
             return Platform_LEON_GNAT;
          elsif P_Name = Platform_LEON_ORK_Name then
@@ -2890,6 +2893,7 @@ package body Ocarina.Backends.Properties is
       Time_Hr_Name  := Get_String_Name ("hr");
 
       Platform_Native_Name      := Get_String_Name ("native");
+      Platform_X86_RTEMS_Name   := Get_String_Name ("x86_rtems");
       Platform_LEON_RTEMS_Name  := Get_String_Name ("leon_rtems");
       Platform_LEON_GNAT_Name   := Get_String_Name ("leon_gnat");
       Platform_LEON_ORK_Name    := Get_String_Name ("leon_ork");

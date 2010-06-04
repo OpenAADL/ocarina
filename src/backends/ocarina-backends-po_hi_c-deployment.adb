@@ -1322,7 +1322,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   (Get_Bound_Processor
                      (Corresponding_Instance (Q)));
                case Execution_Platform is
-                  when Platform_Native | Platform_None =>
+                  when Platform_Native | Platform_None | Platform_X86_RTEMS =>
                      Append_Node_To_List
                         (RE (RE_Littleendian), CTN.Values (Endiannesses));
 
