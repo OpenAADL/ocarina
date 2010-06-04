@@ -1,0 +1,20 @@
+package ocarina_processors_leon
+
+public
+
+with Deployment;
+
+processor leon
+end leon;
+
+processor implementation leon.rtems
+properties
+   Deployment::Execution_Platform => LEON_RTEMS;
+end leon.rtems;
+
+processor implementation leon.ork
+properties
+   Deployment::Execution_Platform => LEON_ORK;
+end leon.ork;
+
+end ocarina_processors_leon;

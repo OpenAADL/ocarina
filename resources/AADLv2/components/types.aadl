@@ -1,0 +1,16 @@
+package ocarina_types
+
+public
+
+with Data_Model;
+
+data integer
+end integer;
+
+data implementation integer.i
+properties
+   Data_Model::Data_Representation => integer;
+end integer.i;
+
+
+end ocarina_types;

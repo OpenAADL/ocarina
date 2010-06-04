@@ -2,7 +2,11 @@ package ocarina_processors_native
 
 public
 
+with Deployment;
+
 processor native
+properties
+   Deployment::Execution_Platform => Native;
 end native;
 
 end ocarina_processors_native;

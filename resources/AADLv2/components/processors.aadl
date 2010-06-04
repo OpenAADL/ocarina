@@ -2,8 +2,23 @@ package ocarina_processors
 
 public
 
-processor native
-end native;
+with ocarina_processors_native;
+with ocarina_processors_leon;
+
+processor linux extends ocarina_processors_native::native
+end linux;
+
+processor implementation linux.simple 
+end linux.simple;
+
+processor leon
+end leon;
+
+processor implementation leon.rtems extends ocarina_processors_leon::leon.rtems
+end leon.rtems;
+
+processor implementation leon.ork extends ocarina_processors_leon::leon.ork
+end leon.ork;
 
 
 end ocarina_processors;
