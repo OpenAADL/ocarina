@@ -450,6 +450,10 @@ property set AADL_Properties is
   processor, device);
   ----------------------------------------------------
 
+  Ada_Package_Name: aadlstring
+  applies to (data);
+  ----------------------------------------------------
+
   Source_Heap_Size: Size
   applies to (thread, subprogram);
   ----------------------------------------------------
