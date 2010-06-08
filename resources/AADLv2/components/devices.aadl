@@ -9,6 +9,7 @@ with ocarina_buses;
 with ocarina_drivers_rasta_1553;
 with ocarina_drivers_rasta_serial;
 with ocarina_drivers_rasta_spacewire;
+with ocarina_drivers_rtems_ne2000;
 
 with ocarina_drivers_serial;
 
@@ -109,6 +110,24 @@ properties
    Initialize_Entrypoint         => classifier (ocarina_drivers_ip_asn1::spg_sockets_init);
    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::asn1.i));
 end generic_sockets_ip.asn1;
+
+---------------------
+--  RTEMS NE2000   --
+---------------------
+
+device rtems_ne2000
+features
+   thebus : requires bus access ocarina_buses::ip.i;
+end rtems_ne2000;
+
+device implementation rtems_ne2000.ip_pohic
+properties
+   Deployment::Driver_Name       => "rtems_ne2000_sockets";
+   Device_Driver                 => classifier (ocarina_drivers_rtems_ne2000::driver.i);
+   Initialize_Entrypoint         => classifier (ocarina_drivers_rtems_ne2000::init);
+   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+end rtems_ne2000.ip_pohic;
+
 
 end ocarina_drivers;
 

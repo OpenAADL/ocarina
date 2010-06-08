@@ -6,6 +6,8 @@ with ocarina_processors_native;
 with ocarina_processors_leon;
 with ocarina_processors_x86;
 
+with cheddar_properties;
+
 processor linux extends ocarina_processors_native::native
 end linux;
 
@@ -16,6 +18,11 @@ processor leon
 end leon;
 
 processor implementation leon.rtems extends ocarina_processors_leon::leon.rtems
+properties
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+   Priority_Range => 0 .. 255;
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
 end leon.rtems;
 
 processor implementation leon.ork extends ocarina_processors_leon::leon.ork

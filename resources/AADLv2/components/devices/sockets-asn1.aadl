@@ -5,7 +5,7 @@ public
 subprogram spg_sockets_init
 properties
 	Source_Language   => C;
-	Source_Name       => "__po_hi_driver_sockets_init";
+	Source_Name       => "__po_hi_driver_sockets_asn1_init";
 end spg_sockets_init;
 
 

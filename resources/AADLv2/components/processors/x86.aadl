@@ -1,0 +1,22 @@
+package ocarina_processors_x86
+
+public
+
+with Deployment;
+
+processor x86
+properties
+   Deployment::Execution_Platform => Native;
+end x86;
+
+processor implementation x86.linux
+properties
+   Deployment::Execution_Platform => Native;
+end x86.linux;
+
+processor implementation x86.rtems
+properties
+   Deployment::Execution_Platform => X86_RTEMS;
+end x86.rtems;
+
+end ocarina_processors_x86;
