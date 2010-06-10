@@ -6,11 +6,14 @@ with deployment;
 
 with ocarina_buses;
 
+with Data_Model;
+
 with ocarina_drivers_rasta_1553;
 with ocarina_drivers_rasta_serial;
 with ocarina_drivers_rasta_spacewire;
 with ocarina_drivers_rtems_ne2000;
 
+with ocarina_drivers_udp_exarm;
 with ocarina_drivers_serial;
 
 with ocarina_drivers_ip_asn1;
@@ -128,6 +131,25 @@ properties
    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
 end rtems_ne2000.ip_pohic;
 
+device exarm
+features
+   thebus : requires bus access ocarina_buses::ip.i;
+end exarm;
+
+device implementation exarm.i
+properties
+   Deployment::Driver_Name    => "exarm";
+   Device_Driver              => classifier (ocarina_drivers_udp_exarm::driver.i);
+   Initialize_Entrypoint      => classifier (ocarina_drivers_udp_exarm::init);
+end exarm.i;
+
+data exarm_protocol_data
+end exarm_protocol_data;
+
+data implementation exarm_protocol_data.i extends ocarina_drivers_udp_exarm::protocol.i
+properties
+   Data_Model::Data_Representation => Struct;
+end exarm_protocol_data.i;
 
 end ocarina_drivers;
 
