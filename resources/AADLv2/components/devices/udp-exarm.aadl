@@ -10,7 +10,7 @@ properties
    Data_Model::Data_Representation => Struct;
 end protocol;
 
-data implementation protocol.i
+data implementation protocol.robot
 subcomponents
    cmd   : data Base_Types::Unsigned_32;
    pktid : data Base_Types::Unsigned_32;
@@ -34,7 +34,41 @@ subcomponents
    J6    : data Base_Types::Float_32;
    J7    : data Base_Types::Float_32;
    Elbow : data Base_Types::Float_32;
-end protocol.i;
+end protocol.robot;
+
+
+data implementation protocol.vr
+subcomponents
+   J1    : data Base_Types::Float_64;
+   J2    : data Base_Types::Float_64;
+   J3    : data Base_Types::Float_64;
+   J4    : data Base_Types::Float_64;
+   J5    : data Base_Types::Float_64;
+   J6    : data Base_Types::Float_64;
+   J7    : data Base_Types::Float_64;
+   J8    : data Base_Types::Float_64;
+   J9    : data Base_Types::Float_64;
+   J10    : data Base_Types::Float_64;
+   J11    : data Base_Types::Float_64;
+   J12    : data Base_Types::Float_64;
+   J13    : data Base_Types::Float_64;
+   J14    : data Base_Types::Float_64;
+   J15    : data Base_Types::Float_64;
+   J16    : data Base_Types::Float_64;
+   P1    : data Base_Types::Float_64;
+   P2    : data Base_Types::Float_64;
+   P3    : data Base_Types::Float_64;
+   X1    : data Base_Types::Float_64;
+   X2    : data Base_Types::Float_64;
+   X3    : data Base_Types::Float_64;
+   Y1    : data Base_Types::Float_64;
+   Y2    : data Base_Types::Float_64;
+   Y3    : data Base_Types::Float_64;
+   Z1    : data Base_Types::Float_64;
+   Z2    : data Base_Types::Float_64;
+   Z3    : data Base_Types::Float_64;
+end protocol.vr;
+
 
 subprogram init
 properties

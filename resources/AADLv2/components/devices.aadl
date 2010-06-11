@@ -146,10 +146,16 @@ end exarm.i;
 data exarm_protocol_data
 end exarm_protocol_data;
 
-data implementation exarm_protocol_data.i extends ocarina_drivers_udp_exarm::protocol.i
+data implementation exarm_protocol_data.vr extends ocarina_drivers_udp_exarm::protocol.vr
 properties
    Data_Model::Data_Representation => Struct;
-end exarm_protocol_data.i;
+end exarm_protocol_data.vr;
+
+data implementation exarm_protocol_data.robot extends ocarina_drivers_udp_exarm::protocol.robot
+properties
+   Data_Model::Data_Representation => Struct;
+end exarm_protocol_data.robot;
+
 
 end ocarina_drivers;
 
