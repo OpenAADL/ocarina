@@ -1214,7 +1214,6 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
     Node_Id  Applies_To;
   };
 
-
   // property_association ::=
   //    [ property_set_identifier :: ] property_name_identifier ( => | +=> )
   //    [ constant ] property_value [ in_binding ] [ in_modes ] ;

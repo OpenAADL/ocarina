@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--               Copyright (C) 2009-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -132,12 +132,9 @@ package body Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates is
          M := 1;
          Found := False;
 
-         while M < (Last (R2) + 1) and then
-           (not Distinct or else not found) loop
-
-            if Predicate (R1.Table (N),
-                          R2.Table (M), Option) then
-
+         while M < (Last (R2) + 1)
+           and then (not Distinct or else not found) loop
+            if Predicate (R1.Table (N), R2.Table (M), Option) then
                if not Reversed then
                   Append (Result, R1.Table (N));
                else

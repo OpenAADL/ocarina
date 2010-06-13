@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2005-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -146,8 +146,9 @@ package body Ocarina.Instances.Finder is
       R : constant Node_Id := AIN.Root_System (Instance_Root);
       N : Node_Id;
    begin
-      if Ocarina.ME_AADL.AADL_Tree.Nutils.Is_Empty (AIN.Flows (R)) and then
-        Present (First_Node) and then Present (Last_Node) then
+      if Ocarina.ME_AADL.AADL_Tree.Nutils.Is_Empty (AIN.Flows (R))
+        and then Present (First_Node) and then Present (Last_Node)
+      then
          First_Node := No_Node;
          Last_Node := No_Node;
          return;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2006-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2006-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -465,9 +465,7 @@ package body Ocarina.Instances.Queries is
          In_Mode       => In_Mode);
    begin
       if not Type_Of_Property_Is_A_List
-        (ATE.Get_Referenced_Entity
-         (AIN.Property_Name
-          (Property)))
+        (ATE.Get_Referenced_Entity (AIN.Property_Name (Property)))
       then
          return No_List;
       end if;

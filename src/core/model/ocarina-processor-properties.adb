@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2005-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -366,8 +366,7 @@ package body Ocarina.Processor.Properties is
    -- Resolve_Value --
    -------------------
 
-   function Resolve_Value (Root, Property : Node_Id) return Boolean
-   is
+   function Resolve_Value (Root, Property : Node_Id) return Boolean is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.Analyzer.AADL.Queries;
 
@@ -573,7 +572,6 @@ package body Ocarina.Processor.Properties is
          Evaluated_Value := No_Node;
       else
          case Kind (Property_Value) is
-
             when K_Enumeration_Term =>
                Evaluated_Value := New_Node (Kind (Property_Value),
                                             Loc (Property_Value));

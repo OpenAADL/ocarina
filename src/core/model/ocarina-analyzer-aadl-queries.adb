@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--               Copyright (C) 2009-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -50,9 +50,7 @@ package body Ocarina.Analyzer.AADL.Queries is
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-   function Get_Category_Of_Entity
-     (Entity : Node_Id)
-     return Named_Element;
+   function Get_Category_Of_Entity (Entity : Node_Id) return Named_Element;
 
    ----------------------------
    -- Compute_Property_Value --
@@ -129,11 +127,9 @@ package body Ocarina.Analyzer.AADL.Queries is
    -- Get_Category_Of_Entity --
    ----------------------------
 
-   function Get_Category_Of_Entity
-     (Entity : Node_Id)
-     return Named_Element
-   is
+   function Get_Category_Of_Entity (Entity : Node_Id) return Named_Element is
       pragma Assert (Present (Entity));
+
    begin
       case Kind (Entity) is
          when K_Component_Type
@@ -244,10 +240,6 @@ package body Ocarina.Analyzer.AADL.Queries is
          return "";
       end if;
    end Get_Enumeration_Property;
-
-   ------------------------------
-   -- Get_Enumeration_Property --
-   ------------------------------
 
    function Get_Enumeration_Property
      (Entity  : Node_Id;
@@ -429,10 +421,9 @@ package body Ocarina.Analyzer.AADL.Queries is
          Property_Name => Name,
          In_Mode       => In_Mode);
    begin
-      if not Type_Of_Property_Is_A_List
-        (Get_Referenced_Entity
-         (Property_Name
-          (Property)))
+      if No (Property)
+        or else not Type_Of_Property_Is_A_List
+        (Get_Referenced_Entity (Property_Name (Property)))
       then
          return No_List;
       end if;

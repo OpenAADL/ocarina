@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--               Copyright (C) 2009-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -130,9 +130,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
       EL      : Node_List;
    begin
       Init (Results);
-      Find_All_Flows
-        (Root_Instance,
-         EL.First, EL.Last);
+      Find_All_Flows (Root_Instance, EL.First, EL.Last);
 
       while Present (EL.First) loop
          Append (Results, EL.First);
@@ -430,10 +428,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Is_Empty --
    --------------
 
-   function Is_Empty
-     (Set  : Result_Set)
-     return Boolean
-   is
+   function Is_Empty (Set  : Result_Set) return Boolean is
    begin
       return (Last (Set) < First);
    end Is_Empty;
@@ -442,21 +437,16 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Cardinal --
    --------------
 
-   function Cardinal
-     (Set  : Result_Set)
-     return Natural
-   is
+   function Cardinal (Set  : Result_Set) return Natural is
    begin
-      return Natural (Last (Set));
+      return Natural (Last (Set) - First + 1);
    end Cardinal;
 
    ---------------
    -- Empty_Set --
    ---------------
 
-   function Empty_Set
-     return Result_Set
-   is
+   function Empty_Set return Result_Set is
       R : Result_Set;
    begin
       Init (R);
