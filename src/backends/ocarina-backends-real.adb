@@ -2422,7 +2422,17 @@ package body Ocarina.Backends.REAL is
                   if Is_Int then
                      Cpt := Cpt + Integer (Get_Value_Type (V).IVal);
                   else
-                     Real_Cpt := Real_Cpt + Float (Get_Value_Type (V).RVal);
+                     if Get_Value_Type (V).T = LT_Real then
+                        Real_Cpt := Real_Cpt + Float (Get_Value_Type (V).RVal);
+                     elsif Get_Value_Type (V).T = LT_Integer then
+                        Real_Cpt := Real_Cpt + Float (Get_Value_Type (V).IVal);
+                     else
+                        Display_Located_Error
+                          (Loc (First_Node (Parameters (E))),
+                           "Incompatible types" & Get_Value_Type (V).T'Img,
+                           Fatal => True);
+                     end if;
+
                   end if;
 
                   N := Next_Node (N);
@@ -2738,7 +2748,6 @@ package body Ocarina.Backends.REAL is
               (Loc (E), "Unknown or not implemented verification function",
                Fatal => True);
       end case;
-
    end Compute_Check_Subprogram_Call;
 
    --------------------------
