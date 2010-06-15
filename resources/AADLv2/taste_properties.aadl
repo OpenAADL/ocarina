@@ -1,3 +1,10 @@
 property set Taste is
    Coordinates : aadlstring applies to (system, package, device, memory, processor, process);
+
+   Importance: enumeration (low, medium, high) applies to (system);
+
+   WCET: Time applies to (system);
+
+   Deadline: Time applies to (system);
+
 end Taste;
