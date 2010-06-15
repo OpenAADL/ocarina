@@ -1,0 +1,3 @@
+property set Taste is
+   Coordinates : aadlstring applies to (system, package, device, memory, processor, process);
+end Taste;
