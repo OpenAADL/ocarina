@@ -206,6 +206,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                        or else Kind (Container) = K_Component_Implementation
                        or else Kind (Container) = K_Feature_Group_Type
                        or else Kind (Container) = K_Subcomponent
+                       or else Kind (Container) = K_Subcomponent_Access
                        or else Kind (Container) = K_Port_Spec
                        or else Kind (Container) = K_Parameter
                        or else Kind (Container) = K_Connection);
@@ -238,6 +239,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                     Name (Namespace_Identifier (Qualified_Reference))
       then
          Success := True;
+
       elsif Kind (Qualified_Reference) = K_Identifier
         and then Name (Identifier (Pack_Container)) =
                     Name (Qualified_Reference)
@@ -256,7 +258,6 @@ package body Ocarina.Analyzer.AADL.Semantics is
       end if;
 
       return Success;
-
    end Check_Qualified_References;
 
    ----------------------

@@ -939,15 +939,17 @@ package body Ocarina.Analyzer.AADL.Queries is
               (Subcomponent_Category (Entity));
          end if;
 
-         --  Only access property names can be applied to subcomponent
-         --  accesses.
+         if AADL_Version = AADL_V1 then
+            --  AADLV1 only: access property names can be applied to
+            --  subcomponent accesses.
 
-         if Kind (Entity) = K_Subcomponent_Access
-           and then not Is_Access (Property_Name)
-         then
-            --  No need to go further, it cannot apply
+            if Kind (Entity) = K_Subcomponent_Access
+              and then not Is_Access (Property_Name)
+            then
+               --  No need to go further, it cannot apply
 
-            return False;
+               return False;
+            end if;
          end if;
 
          --  Check if the property can be applied to the entity
@@ -958,12 +960,23 @@ package body Ocarina.Analyzer.AADL.Queries is
          while List_Node /= No_Node and then not Success loop
             case Category_Of_Property_Owner is
                when PO_Component_Category =>
+                  --  Here, we check that the component (or an access
+                  --  to this component matches on of the
+                  --  corresponding component types or meta model
+                  --  elements in the 'applies to'
+
                   Can_Apply :=
                     (Named_Element'Val (Category (List_Node)) =
-                     PO_Component_Category)
+                     PO_Component_Category
+                       or else
+                     Named_Element'Val (Category (List_Node)) =
+                     PO_Component_Access)
                     and then
                     (Category_Of_Component =
                      Component_Category'Val (Component_Cat (List_Node)));
+
+                  --  XXX dubious, here we erase the previously
+                  --  computed value of Can_Apply, to be investigated.
 
                   if Present (Classifier_Ref (List_Node)) then
                      if Present (Corresponding_Component) then

@@ -280,7 +280,9 @@ package body Ocarina.FE_AADL.Parser.Properties is
                return No_Node;
          end case;
       else
-         if Property_Type = PAT_Access then
+         if AADL_Version = AADL_V1
+           and then Property_Type = PAT_Access
+         then
             if Is_Constant then
                DPE (Code, T_Access);
             else
