@@ -1,8 +1,8 @@
 property set Taste is
    Coordinates : aadlstring applies to 
-		(system, package, device, memory, processor, process);
+		(system, package, device, memory, processor, process, access, subprogram access, connection);
 
-   Importance: enumeration (low, medium, high) applies to (system);
+   Importance: enumeration (low, medium, high) applies to (system, subprogram access, access);
 
 	APLC_Binding : list of aadlstring applies to (process);
 
@@ -19,6 +19,14 @@ property set Taste is
        aoctetstring);
          
    ASN1_Basic_Type : ASN1_types applies to (data);
+
+	Deadline : inherit Time => Period
+	applies to (thread, 
+              thread group,
+              process, 
+              system, 
+              device,
+				  subprogram access);
 
 ----------------------------
 -- Types and enumerations --
@@ -182,13 +190,21 @@ RCMoperationKind_list: type enumeration
    any);
 
 RCMoperationKind: RCMoperationKind_list 
-  applies to (event port, event data port);
+  applies to (event port, event data port, access, subprogram access);
 
 RCMceiling: aadlinteger 
   applies to (event port, event data port);
 
-RCMperiod: Time applies to (event port, event data port);
+RCMperiod: Time applies to (event port, event data port, access, subprogram access);
 
 RCMpartition: reference (system) applies to (system);
+
+dataview : aadlstring applies to (package);
+
+dataviewpath : aadlstring applies to (package);
+
+Encoding_type : type enumeration (native, uper);
+
+Encoding : Encoding_type applies to (parameter);
 
 end Taste;
