@@ -207,4 +207,6 @@ Encoding_type : type enumeration (native, uper);
 
 Encoding : Encoding_type applies to (parameter);
 
+Ada_Package_Name : aadlstring applies to (data);
+
 end Taste;
