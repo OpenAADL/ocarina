@@ -1,10 +1,14 @@
 property set Taste is
+   Interface_Coordinates : record (Interface : aadlstring; Coordinates : aadlstring; Target: aadlstring;) applies to (bus, virtual bus);
+
    Coordinates : aadlstring applies to 
-		(system, package, device, memory, processor, process, access, subprogram access, connection);
+		(system, package, device, memory, processor, process, access, subprogram access, connection, bus, virtual bus);
 
    Importance: enumeration (low, medium, high) applies to (system, subprogram access, access);
 
-	APLC_Binding : list of aadlstring applies to (process);
+	APLC_Binding : list of aadlstring applies to (process, device);
+
+   APLC_Properties : record (APLC : aadlstring; Coordinates : aadlstring; Source_Language: Supported_Source_Language;) applies to (process);
 
 	ASN1_types: type enumeration
     	(asequenceof,
