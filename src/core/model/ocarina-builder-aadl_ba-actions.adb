@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--                 Copyright (C) 2010, GET-Telecom Paris.                   --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -78,7 +78,7 @@ package body Ocarina.Builder.AADL_BA.Actions is
    -- Add_New_If_Cond_Struct --
    ----------------------------
 
-   function Add_New_If_Cond_Struct (Loc : Location)return Node_Id is
+   function Add_New_If_Cond_Struct (Loc : Location) return Node_Id is
       If_Cond_Struct : constant Node_Id := New_Node (K_If_Cond_Struct, Loc);
    begin
       return If_Cond_Struct;
@@ -157,7 +157,7 @@ package body Ocarina.Builder.AADL_BA.Actions is
    -- Add_New_For_Cond_Struct --
    ----------------------------
 
-   function Add_New_For_Cond_Struct (Loc : Location)return Node_Id is
+   function Add_New_For_Cond_Struct (Loc : Location) return Node_Id is
       For_Cond_Struct : constant Node_Id := New_Node (K_For_Cond_Struct, Loc);
    begin
       return For_Cond_Struct;
