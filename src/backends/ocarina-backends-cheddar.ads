@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                     O C A R I N A . B A C K E N D S                      --
+--             O C A R I N A . B A C K E N D S . C H E D D A R              --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--                 Copyright (C) 2010, GET-Telecom Paris.                   --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,71 +31,28 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  This package is the root of all the source code generators of
---  Ocarina. It provides routines to register and select a code
---  generators. All the code generators should be implemented as child
---  packages of Ocarina.Backends. All the calls to these generators
---  have to be done through the procedure Generate exported by this
---  package. After selecting the wanted code generator.
+package Ocarina.Backends.Cheddar is
 
-with Types; use Types;
+   --  This backend generates an XML file compatible with the Cheddar
+   --  tool, provided by UBO:
+   --  http://beru.univ-brest.fr/~singhoff/cheddar/
 
-package Ocarina.Backends is
-
-   type Backend_Subprogram is access procedure (Instance : Node_Id);
-   --  Each code generator has to define such a subprogram. Instance
-   --  is the root of the AADL instance tree from which the user wants
-   --  to generate the code.
-
-   type Backend_Kind is
-     (Invalid_Backend,
-      AADL,
-      AADL_Min,
-      AADL_Annex,
-      ASN1_Deployment,
-      Bound_T,
-      Petri_Nets,
-      PolyORB_QoS_Ada,
-      PolyORB_HI_Ada,
-      PolyORB_HI_C,
-      PolyORB_HI_RTSJ,
-      Statistics,
-      Subprograms_Generator,
-      Carts_XML,
-      Cheddar_XML,
-      PolyORB_Kernel_C,
-      Behavior_PP,
-      REAL_PP,
-      REAL_Theorem);
-   --  Supported code generators. For each kind, at most one generator
-   --  must be implemented.
-
-   procedure Register_Backend
-     (Name    : String;
-      Process : Backend_Subprogram;
-      Kind    : Backend_Kind);
-   --  Register a new backend.
-
-   function Get_Current_Backend_Kind return Backend_Kind;
-   procedure Set_Current_Backend_Name (Name : String);
-   function Get_Current_Backend_Name return Name_Id;
-
-   procedure Generate_Code
-     (Root         : Node_Id;
-      Backend_Name : Name_Id  := No_Name);
-   --  Call the backend name if it is set or the current backend name
-   --  set in the command line. If the backend name and the current
-   --  backend name are set, backend name has the priority.
+   procedure Generate (AADL_Root : Node_Id);
+   --  The main entry point of the Cheddar
 
    procedure Init;
-   --  Initialize the Backends module by registering the several
-   --  implemented code generators.
+   --  Fills the corresponding location in the generator table by the
+   --  information on this generator and execute some initialization
+   --  routines necessary for its work.
 
    procedure Reset;
-   --  Resets the Backends module by resetting the node entries of
-   --  the several trees.
 
-   procedure Usage;
-   --  Print usage for all registered backends
+private
+   XML_Root                : Node_Id;
+   Current_XML_Node        : Node_Id;
+   Distributed_Application : Node_Id;
+   HI_Node                 : Node_Id;
+   HI_Unit                 : Node_Id;
+   --  The root of the XML trees
 
-end Ocarina.Backends;
+end Ocarina.Backends.Cheddar;

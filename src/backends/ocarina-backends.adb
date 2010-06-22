@@ -49,6 +49,7 @@ with Ocarina.Backends.PO_HI_RTSJ;
 with Ocarina.Backends.Stats;
 with Ocarina.Backends.Subprograms;
 with Ocarina.Backends.Carts;
+with Ocarina.Backends.Cheddar;
 with Ocarina.Backends.POK_C;
 with Ocarina.Backends.PO_QoS_Ada;
 with Ocarina.Backends.Properties;
@@ -180,6 +181,7 @@ package body Ocarina.Backends is
       REAL.Init;
       Carts.Init;
       ASN1.Init;
+      Cheddar.Init;
    end Init;
 
    ----------------------

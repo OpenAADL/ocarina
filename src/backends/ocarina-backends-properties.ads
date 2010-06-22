@@ -387,6 +387,9 @@ package Ocarina.Backends.Properties is
       Thread_With_Port_Compute_Entrypoint,
       Thread_Unknown);
 
+   type Supported_POSIX_Scheduling_Policy is
+     (SCHED_FIFO, SCHED_RR, SCHED_OTHERS, None);
+
    function Get_Dispatch_Offset (T : Node_Id) return Time_Type;
    --  Return the thread dispatch offset for periodic task.
 
@@ -396,6 +399,12 @@ package Ocarina.Backends.Properties is
    --  Return the dispatching protocol of a given thread component. If
    --  no protocol has been specified by the user, then return
    --  Thread_None.
+
+   function Get_Thread_POSIX_Scheduling_Policy
+     (T : Node_Id)
+     return Supported_POSIX_Scheduling_Policy;
+   --  Return the POSIX scheduling policy of a given thread
+   --  component. If no policy has been specified, then return none.
 
    function Get_Thread_Period (T : Node_Id) return Time_Type;
    --  Return the period (for periodic threads) or the minumum
@@ -407,6 +416,12 @@ package Ocarina.Backends.Properties is
    function Get_Thread_Deadline (T : Node_Id) return Time_Type;
    --  Return the deadline of a thread. The returned value is
    --  converted to the closest time unit depending on its unit in
+   --  AADL. If the thread has no deadline property defined, return
+   --  the value of the thread period.
+
+   function Get_Thread_First_Dispatch_Time (T : Node_Id) return Time_Type;
+   --  Return the first dispact time of a thread. The returned value
+   --  is converted to the closest time unit depending on its unit in
    --  AADL. If the thread has no deadline property defined, return
    --  the value of the thread period.
 
@@ -561,6 +576,8 @@ package Ocarina.Backends.Properties is
    --  returned if the processor to which O is mapped does not have a
    --  location and an error is raised if P is not mapped to any
    --  processor.
+
+   function Get_Scheduler_Quantum (P : Node_Id) return Time_Type;
 
    --------------------------------
    -- AADL Connection Properties --

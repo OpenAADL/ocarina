@@ -145,11 +145,13 @@ package body Ocarina.Backends.Utils is
       end if;
 
       if Is_Directory (Dir_Full_String) then
-         Display_Error
-           (Dir_Full_String
-            & " already exists",
-            Fatal   => False,
-            Warning => True);
+         if Dir_Full_String /= "." then
+            Display_Error
+              (Dir_Full_String
+                 & " already exists",
+               Fatal   => False,
+               Warning => True);
+         end if;
          return;
       end if;
 

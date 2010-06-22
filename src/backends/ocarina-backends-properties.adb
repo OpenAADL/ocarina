@@ -33,6 +33,7 @@
 
 with Locations;
 with Namet;
+with Utils; use Utils;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -44,7 +45,7 @@ with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.AADL_Values;
 with Ocarina.Instances.Queries;
-
+with Ocarina.Analyzer.AADL.Queries;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
 
@@ -125,6 +126,8 @@ package body Ocarina.Backends.Properties is
 
    Dispatch_Offset          : Name_Id;
    Thread_Period            : Name_Id;
+   Thread_Dispatch_Absolute_Time : Name_Id;
+   Thread_Cheddar_Dispatch_Absolute_Time : Name_Id;
    Thread_Deadline          : Name_Id;
    Thread_Dispatch_Protocol : Name_Id;
    Thread_Cheddar_Priority  : Name_Id;
@@ -133,6 +136,12 @@ package body Ocarina.Backends.Properties is
    Initialize_Entrypoint_Source_Text : Name_Id;
    Recover_Entrypoint    : Name_Id;
    Recover_Entrypoint_Source_Text : Name_Id;
+
+   POSIX_Scheduling_Policy : Name_Id;
+   Cheddar_POSIX_Scheduling_Policy : Name_Id;
+   SCHED_FIFO_Name         : Name_Id;
+   SCHED_RR_Name           : Name_Id;
+   SCHED_Others_Name       : Name_Id;
 
    ----------------------------------
    -- Process component properties --
@@ -176,6 +185,8 @@ package body Ocarina.Backends.Properties is
 
    Location           : Name_Id;
    Execution_Platform : Name_Id;
+   Scheduler_Quantum : Name_Id;
+   Cheddar_Scheduler_Quantum : Name_Id;
 
    ---------------------------------
    -- AADL Connections properties --
@@ -1045,7 +1056,6 @@ package body Ocarina.Backends.Properties is
       else
          return Representation_None;
       end if;
-
    end Get_Number_Representation;
 
    --------------------
@@ -1729,6 +1739,42 @@ package body Ocarina.Backends.Properties is
       end if;
    end Get_Thread_Dispatch_Protocol;
 
+   ----------------------------------------
+   -- Get_Thread_POSIX_Scheduling_Policy --
+   ----------------------------------------
+
+   function Get_Thread_POSIX_Scheduling_Policy
+     (T : Node_Id)
+     return Supported_POSIX_Scheduling_Policy
+   is
+      P_Name : Name_Id := No_Name;
+   begin
+      pragma Assert (Is_Thread (T));
+
+      if Is_Defined_Enumeration_Property (T, POSIX_Scheduling_Policy) then
+         P_Name :=  Get_Enumeration_Property (T, POSIX_Scheduling_Policy);
+      elsif Is_Defined_Enumeration_Property
+        (T, Cheddar_POSIX_Scheduling_Policy)
+      then
+         P_Name :=  Get_Enumeration_Property
+           (T, Cheddar_POSIX_Scheduling_Policy);
+      end if;
+
+      if P_Name /= No_Name then
+         if P_Name = SCHED_FIFO_Name then
+            return SCHED_FIFO;
+
+         elsif P_Name = SCHED_RR_Name then
+            return SCHED_RR;
+
+         elsif P_Name = SCHED_OTHERS_Name then
+            return SCHED_OTHERS;
+         end if;
+      end if;
+
+      return None;
+   end Get_Thread_POSIX_Scheduling_Policy;
+
    --------------------------------
    -- Convert_Value_To_Time_Type --
    --------------------------------
@@ -1814,7 +1860,7 @@ package body Ocarina.Backends.Properties is
               (AIN.Loc (T),
                "This kind of thread does not have a dispatch offset",
                Fatal => True);
-            return ((0, Picosecond));
+            return Null_Time;
       end case;
    end Get_Dispatch_Offset;
 
@@ -1823,6 +1869,7 @@ package body Ocarina.Backends.Properties is
    -----------------------
 
    function Get_Thread_Period (T : Node_Id) return Time_Type is
+      The_Period : Time_Type;
    begin
       pragma Assert (Is_Thread (T));
 
@@ -1830,16 +1877,46 @@ package body Ocarina.Backends.Properties is
          when Thread_Periodic | Thread_Sporadic | Thread_Hybrid =>
             --  We are sure the thread has a period
 
-            return Get_Time_Property_Value (T, Thread_Period);
+            The_Period :=  Get_Time_Property_Value (T, Thread_Period);
+
+            if The_Period.T = 0 then
+               Display_Located_Error
+                 (AIN.Loc (T), "Period cannot be null", Fatal => True);
+            end if;
+            return The_Period;
 
          when others =>
             Display_Located_Error
               (AIN.Loc (T),
                "This kind of thread does not have a period",
                Fatal => True);
-            return ((0, Picosecond));
+            return Null_Time;
       end case;
    end Get_Thread_Period;
+
+   ------------------------------------
+   -- Get_Thread_First_Dispatch_Time --
+   ------------------------------------
+
+   function Get_Thread_First_Dispatch_Time (T : Node_Id) return Time_Type is
+      pragma Assert (Is_Thread (T));
+
+   begin
+      if Is_Defined_Property (T, Thread_Dispatch_Absolute_Time) then
+         return Get_Time_Property_Value (T, Thread_Dispatch_Absolute_Time);
+         --  XXX For now, use the old name, we should update the
+         --  timing_properties property set and use new name:
+         --  first_dispatch_time
+
+      elsif Is_Defined_Property
+        (T, Thread_Cheddar_Dispatch_Absolute_Time)
+      then
+         return Get_Time_Property_Value
+           (T, Thread_Cheddar_Dispatch_Absolute_Time);
+      else
+         return Null_Time;
+      end if;
+   end Get_Thread_First_Dispatch_Time;
 
    -------------------------
    -- Get_Thread_Deadline --
@@ -1864,7 +1941,7 @@ package body Ocarina.Backends.Properties is
               (AIN.Loc (T),
                "This kind of thread does not have a deadline",
                Fatal => True);
-            return ((0, Picosecond));
+            return Null_Time;
       end case;
    end Get_Thread_Deadline;
 
@@ -2229,6 +2306,25 @@ package body Ocarina.Backends.Properties is
 
       return Get_String_Property (P, Location);
    end Get_Location;
+
+   ---------------------------
+   -- Get_Scheduler_Quantum --
+   ---------------------------
+
+   function Get_Scheduler_Quantum (P : Node_Id) return Time_Type is
+      pragma Assert (AINU.Is_Processor (P));
+
+   begin
+      if Is_Defined_Property (P, Scheduler_Quantum) then
+         return Get_Time_Property_Value (P, Scheduler_Quantum);
+
+      elsif Is_Defined_Property (P, Cheddar_Scheduler_Quantum) then
+         return Get_Time_Property_Value (P, Cheddar_Scheduler_Quantum);
+
+      else
+         return Null_Time;
+      end if;
+   end Get_Scheduler_Quantum;
 
    ---------------------
    -- Get_Port_Number --
@@ -2661,75 +2757,87 @@ package body Ocarina.Backends.Properties is
 
    begin
       if Is_Defined_Enumeration_Property (P, Scheduling_Protocol) then
+         --  XXX How can the code below work ?
+         --  It seems this work only for AADLv1 models
+
          Scheduling_L := Get_List_Property (P, Scheduling_Protocol);
          Scheduling_N := Value (Value (ATN.First_Node (Scheduling_L))).EVal;
 
-         if Scheduling_N = PARAMETRIC_PROTOCOL_Name then
-            return PARAMETRIC_PROTOCOL;
+      elsif Is_Defined_List_Property (P, Scheduling_Protocol) then
+         --  XXX This works for AADLv2 models, but in a ugly fashion:
+         --  we venture through the _declarative_ tree to find
+         --  relevant information. This is BAD BAD BAD
+         Scheduling_L := Ocarina.Analyzer.AADL.Queries.Get_List_Property
+         (Corresponding_Declaration (P), Scheduling_Protocol);
+         Scheduling_N :=
+           To_Lower (ATN.Display_Name
+                       (ATN.Identifier (ATN.First_Node (Scheduling_L))));
 
-         elsif Scheduling_N = EARLIEST_DEADLINE_FIRST_PROTOCOL_Name then
-            return EARLIEST_DEADLINE_FIRST_PROTOCOL;
-
-         elsif Scheduling_N = LEAST_LAXITY_FIRST_PROTOCOL_Name then
-            return LEAST_LAXITY_FIRST_PROTOCOL;
-
-         elsif Scheduling_N = RATE_MONOTONIC_PROTOCOL_Name then
-            return RATE_MONOTONIC_PROTOCOL;
-
-         elsif Scheduling_N = DEADLINE_MONOTONIC_PROTOCOL_Name then
-            return DEADLINE_MONOTONIC_PROTOCOL;
-
-         elsif Scheduling_N = ROUND_ROBIN_PROTOCOL_Name then
-            return ROUND_ROBIN_PROTOCOL;
-
-         elsif Scheduling_N
-           = TIME_SHARING_BASED_ON_WAIT_TIME_PROTOCOL_Name then
-            return TIME_SHARING_BASED_ON_WAIT_TIME_PROTOCOL;
-
-         elsif Scheduling_N
-           = POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL_Name then
-            return POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL;
-
-         elsif Scheduling_N = D_OVER_PROTOCOL_Name then
-            return D_OVER_PROTOCOL;
-
-         elsif Scheduling_N
-           = MAXIMUM_URGENCY_FIRST_BASED_ON_LAXITY_PROTOCOL_Name then
-            return MAXIMUM_URGENCY_FIRST_BASED_ON_LAXITY_PROTOCOL;
-
-         elsif Scheduling_N
-           = MAXIMUM_URGENCY_FIRST_BASED_ON_DEADLINE_PROTOCOL_Name then
-            return MAXIMUM_URGENCY_FIRST_BASED_ON_DEADLINE_PROTOCOL;
-
-         elsif Scheduling_N
-           = TIME_SHARING_BASED_ON_CPU_USAGE_PROTOCOL_Name then
-            return TIME_SHARING_BASED_ON_CPU_USAGE_PROTOCOL;
-
-         elsif Scheduling_N = NO_SCHEDULING_PROTOCOL_Name then
-            return NO_SCHEDULING_PROTOCOL;
-
-         elsif Scheduling_N = HIERARCHICAL_CYCLIC_PROTOCOL_Name then
-            return HIERARCHICAL_CYCLIC_PROTOCOL;
-
-         elsif Scheduling_N = HIERARCHICAL_ROUND_ROBIN_PROTOCOL_Name then
-            return HIERARCHICAL_ROUND_ROBIN_PROTOCOL;
-
-         elsif Scheduling_N
-           = HIERARCHICAL_FIXED_PRIORITY_PROTOCOL_Name then
-            return HIERARCHICAL_FIXED_PRIORITY_PROTOCOL;
-
-         elsif Scheduling_N
-           = HIERARCHICAL_PARAMETRIC_PROTOCOL_Name then
-            return HIERARCHICAL_PARAMETRIC_PROTOCOL;
-
-         else
-            Display_Located_Error
-              (AIN.Loc (P),
-               "Unknown scheduling protocol",
-               Fatal => True);
-            return Unknown_Scheduler;
-         end if;
       else
+         return Unknown_Scheduler;
+      end if;
+
+      if Scheduling_N = PARAMETRIC_PROTOCOL_Name then
+         return PARAMETRIC_PROTOCOL;
+
+      elsif Scheduling_N = EARLIEST_DEADLINE_FIRST_PROTOCOL_Name then
+         return EARLIEST_DEADLINE_FIRST_PROTOCOL;
+
+      elsif Scheduling_N = LEAST_LAXITY_FIRST_PROTOCOL_Name then
+         return LEAST_LAXITY_FIRST_PROTOCOL;
+
+      elsif Scheduling_N = RATE_MONOTONIC_PROTOCOL_Name then
+         return RATE_MONOTONIC_PROTOCOL;
+
+      elsif Scheduling_N = DEADLINE_MONOTONIC_PROTOCOL_Name then
+         return DEADLINE_MONOTONIC_PROTOCOL;
+
+      elsif Scheduling_N = ROUND_ROBIN_PROTOCOL_Name then
+         return ROUND_ROBIN_PROTOCOL;
+
+      elsif Scheduling_N
+        = TIME_SHARING_BASED_ON_WAIT_TIME_PROTOCOL_Name then
+         return TIME_SHARING_BASED_ON_WAIT_TIME_PROTOCOL;
+
+      elsif Scheduling_N
+        = POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL_Name then
+         return POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL;
+
+      elsif Scheduling_N = D_OVER_PROTOCOL_Name then
+         return D_OVER_PROTOCOL;
+
+      elsif Scheduling_N
+        = MAXIMUM_URGENCY_FIRST_BASED_ON_LAXITY_PROTOCOL_Name then
+         return MAXIMUM_URGENCY_FIRST_BASED_ON_LAXITY_PROTOCOL;
+
+      elsif Scheduling_N
+        = MAXIMUM_URGENCY_FIRST_BASED_ON_DEADLINE_PROTOCOL_Name then
+         return MAXIMUM_URGENCY_FIRST_BASED_ON_DEADLINE_PROTOCOL;
+
+      elsif Scheduling_N
+        = TIME_SHARING_BASED_ON_CPU_USAGE_PROTOCOL_Name then
+         return TIME_SHARING_BASED_ON_CPU_USAGE_PROTOCOL;
+
+      elsif Scheduling_N = NO_SCHEDULING_PROTOCOL_Name then
+         return NO_SCHEDULING_PROTOCOL;
+
+      elsif Scheduling_N = HIERARCHICAL_CYCLIC_PROTOCOL_Name then
+         return HIERARCHICAL_CYCLIC_PROTOCOL;
+
+      elsif Scheduling_N = HIERARCHICAL_ROUND_ROBIN_PROTOCOL_Name then
+         return HIERARCHICAL_ROUND_ROBIN_PROTOCOL;
+
+      elsif Scheduling_N
+        = HIERARCHICAL_FIXED_PRIORITY_PROTOCOL_Name then
+         return HIERARCHICAL_FIXED_PRIORITY_PROTOCOL;
+
+      elsif Scheduling_N
+        = HIERARCHICAL_PARAMETRIC_PROTOCOL_Name then
+         return HIERARCHICAL_PARAMETRIC_PROTOCOL;
+
+      else
+         Display_Located_Error
+           (AIN.Loc (P), "Unknown scheduling protocol", Fatal => True);
          return Unknown_Scheduler;
       end if;
    end Get_Scheduling_Protocol;
@@ -2784,6 +2892,11 @@ package body Ocarina.Backends.Properties is
       Dispatch_Offset          := Get_String_Name ("dispatch_offset");
       Thread_Period            := Get_String_Name ("period");
       Thread_Deadline          := Get_String_Name ("deadline");
+      Thread_Dispatch_Absolute_Time
+        := Get_String_Name ("dispatch_absolute_time");
+      Thread_Cheddar_Dispatch_Absolute_Time
+        := Get_String_Name ("cheddar_properties::dispatch_absolute_time");
+
       Thread_Dispatch_Protocol := Get_String_Name ("dispatch_protocol");
       Thread_Cheddar_Priority  :=
         Get_String_Name ("cheddar_properties::fixed_priority");
@@ -2816,6 +2929,9 @@ package body Ocarina.Backends.Properties is
 
       Location           := Get_String_Name ("deployment::location");
       Execution_Platform := Get_String_Name ("deployment::execution_platform");
+      Scheduler_Quantum := Get_String_Name ("scheduler_quantum");
+      Cheddar_Scheduler_Quantum := Get_String_Name
+        ("cheddar_properties::scheduler_quantum");
 
       Connection_Binding := Get_String_Name ("actual_connection_binding");
 
@@ -3140,6 +3256,13 @@ package body Ocarina.Backends.Properties is
       Recover_Entrypoint      := Get_String_Name ("recover_entrypoint");
       Recover_Entrypoint_Source_Text := Get_String_Name
                               ("recover_entrypoint_source_text");
+
+      POSIX_Scheduling_Policy := Get_String_Name ("posix_scheduling_policy");
+      Cheddar_POSIX_Scheduling_Policy
+        := Get_String_Name ("cheddar_properties::posix_scheduling_policy");
+      SCHED_FIFO_Name := Get_String_Name ("sched_fifo");
+      SCHED_RR_Name := Get_String_Name ("sched_rr");
+      SCHED_Others_Name := Get_String_Name ("sched_others");
 
       case AADL_Version is
          when AADL_V1 =>
@@ -3616,8 +3739,7 @@ package body Ocarina.Backends.Properties is
       if Is_Defined_Property (E, SEI_Stream_Miss_Rate) then
          Value := Get_Float_Property (E, SEI_Stream_Miss_Rate);
          Value := Value * Long_Long_Float (100);
-         return
-            Unsigned_Long_Long (Value);
+         return Unsigned_Long_Long (Value);
       end if;
       return 0;
    end Get_Miss_Rate;

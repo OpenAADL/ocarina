@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--               Copyright (C) 2009-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,13 +31,18 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Ocarina.ME_AADL.AADL_Instances.Nodes;
+
 with Ocarina.Backends.XML_Values;
+with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 
 package body Ocarina.Backends.XML_Common.Mapping is
 
+   use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.Backends.XML_Tree.Nutils;
-   package XV  renames Ocarina.Backends.XML_Values;
+   use Ocarina.Backends.XML_Tree.Nodes;
+   package XV renames Ocarina.Backends.XML_Values;
 
    --------------
    -- Map_Time --
@@ -83,5 +88,48 @@ package body Ocarina.Backends.XML_Common.Mapping is
 
       return Make_Literal (XV.New_Numeric_Value (Time, 1, 10));
    end Map_Time;
+
+   ---------------------
+   -- Map_To_XML_Node --
+   ---------------------
+
+   function Map_To_XML_Node (Name : String; Value : Unsigned_Long_Long)
+                            return Node_Id is
+      N, V : Node_Id;
+   begin
+      N := Make_XML_Node (Name);
+      V := Make_Literal (XV.New_Numeric_Value (Value, 1, 10));
+      Append_Node_To_List (V, Subitems (N));
+
+      return N;
+   end Map_To_XML_Node;
+
+   function Map_To_XML_Node (Name : String; Value : Name_Id)
+                            return Node_Id is
+      N, V : Node_Id;
+   begin
+      N := Make_XML_Node (Name);
+      V := Make_Defining_Identifier (Value);
+      Append_Node_To_List (V, Subitems (N));
+
+      return N;
+   end Map_To_XML_Node;
+
+   -------------------------------------
+   -- Map_Node_Identifier_To_XML_Node --
+   -------------------------------------
+
+   function Map_Node_Identifier_To_XML_Node
+     (Name : String; The_Node : Node_Id) return Node_Id
+   is
+      N, V : Node_Id;
+   begin
+      N := Make_XML_Node (Name);
+      V := Make_Defining_Identifier
+        (To_XML_Name (Display_Name (Identifier (The_Node))));
+      Append_Node_To_List (V, Subitems (N));
+
+      return N;
+   end Map_Node_Identifier_To_XML_Node;
 
 end Ocarina.Backends.XML_Common.Mapping;
