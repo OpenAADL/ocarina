@@ -677,7 +677,7 @@ package body Ocarina.REAL_Values is
                --  Get the true integer value of the 'Exp' variable
 
                EVal := Integer (Power (Integer (Exp.IBase),
-                                       Integer (Exp.IExp))) *
+                                       Exp.IExp)) *
                  Integer (Exp.IVal);
 
                V := New_Integer_Value (Unsigned_Long_Long
@@ -715,7 +715,7 @@ package body Ocarina.REAL_Values is
                --  Get the true integer value of the 'Exp' variable
 
                EVal := Integer (Power (Integer (Exp.IBase),
-                                       Integer (Exp.IExp))) *
+                                       Exp.IExp)) *
                  Integer (Exp.IVal);
 
                V := New_Real_Value (Long_Long_Float
@@ -833,7 +833,7 @@ package body Ocarina.REAL_Values is
       begin
          Result.IBase := 10;
          Result.ISign := Safe_XOR (L.ISign, R.ISign);
-         Result.IVal :=  Unsigned_Long_Long (Lval mod Rval);
+         Result.IVal :=  Lval mod Rval;
          Result.Iexp := 0;
          return Result;
       end;

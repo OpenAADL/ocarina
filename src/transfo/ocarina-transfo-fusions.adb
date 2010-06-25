@@ -3864,12 +3864,11 @@ package body Ocarina.Transfo.Fusions is
 
             if Gcd = 0 then
                if Is_Defined_Property (Old_Thread_1, Period) then
-                  GCD := Unsigned_Long_Long
-                    (Get_Integer_Property (Old_Thread_1, Period));
+                  GCD := Get_Integer_Property (Old_Thread_1, Period);
 
                elsif Is_Defined_Property (Old_Thread_2, Period) then
-                  GCD := Unsigned_Long_Long
-                    (Get_Integer_Property (Old_Thread_2, Period));
+                  GCD :=
+                    Get_Integer_Property (Old_Thread_2, Period);
 
                else
                   --  Should be periodic !

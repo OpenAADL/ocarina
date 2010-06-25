@@ -2257,7 +2257,7 @@ package body Ocarina.Backends.REAL is
                if VT.T = LT_Real then
                   Result := New_Integer_Value (Unsigned_Long_Long (VT.RVal));
                else
-                  Result := New_Integer_Value (Unsigned_Long_Long (VT.IVal));
+                  Result := New_Integer_Value (VT.IVal);
                end if;
                T := RT_Integer;
             end;
@@ -2317,7 +2317,7 @@ package body Ocarina.Backends.REAL is
                if VT.T = LT_Integer then
                   Result := New_Real_Value (Long_Long_Float (VT.IVal));
                else
-                  Result := New_Real_Value (Long_Long_Float (VT.RVal));
+                  Result := New_Real_Value (VT.RVal);
                end if;
                T := RT_Float;
             end;

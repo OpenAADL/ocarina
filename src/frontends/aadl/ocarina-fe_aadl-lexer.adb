@@ -165,7 +165,7 @@ package body Ocarina.FE_AADL.Lexer is
 
    begin
       Float_Literal_Value := 0.0;
-      Factor := Long_Long_Float (1.0 / Long_Long_Float (Base));
+      Factor := 1.0 / Long_Long_Float (Base);
       Token := T_Real_Literal;
 
       loop

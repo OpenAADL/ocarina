@@ -304,7 +304,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
 
          if Tmp_GCD > 0 then
             if Current > 0 then
-               Tmp_GCD := Int (Compute_Gcd (Current, Tmp_LCM));
+               Tmp_GCD := Compute_Gcd (Current, Tmp_LCM);
 
                --  Since GCD (a, b) * LCM (a, b) = a * b
                --  LCM (a, b) = (a * b) / GCD (a, b)

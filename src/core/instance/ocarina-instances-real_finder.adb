@@ -180,8 +180,8 @@ package body Ocarina.Instances.REAL_Finder is
                         RT.IBase, RT.IExp);
                   else
                      Result := New_Range_Value
-                       (Long_Long_Float (LT.RVal),
-                        Long_Long_Float (RT.RVal),
+                       (LT.RVal,
+                        RT.RVal,
                         LT.RSign, RT.RSign,
                         RT.RBase, RT.RExp);
                   end if;

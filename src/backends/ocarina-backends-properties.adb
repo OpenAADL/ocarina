@@ -2340,9 +2340,8 @@ package body Ocarina.Backends.Properties is
       end if;
 
       return New_Integer_Value
-        (Unsigned_Long_Long
          (Get_Integer_Property
-          (P, Port_Number)));
+          (P, Port_Number));
    end Get_Port_Number;
 
    --------------------
@@ -2359,9 +2358,8 @@ package body Ocarina.Backends.Properties is
       end if;
 
       return New_Integer_Value
-        (Unsigned_Long_Long
          (Get_Integer_Property
-          (P, Process_Id)));
+          (P, Process_Id));
    end Get_Process_Id;
 
    -------------------------
@@ -2378,9 +2376,8 @@ package body Ocarina.Backends.Properties is
       end if;
 
       return New_Integer_Value
-        (Unsigned_Long_Long
          (Get_Integer_Property
-          (P, Process_Channel_Address)));
+          (P, Process_Channel_Address));
    end Get_Channel_Address;
 
    -------------------------

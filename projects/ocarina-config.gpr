@@ -42,7 +42,7 @@ project Ocarina.Config is
    Build_Dir := Ocarina.Top_Build_Dir & "/main";
 
    for Source_Dirs use (Src_Dir, Build_Dir);
-   for Source_Files use ("ocarina-configuration.adb");
+   for Source_Files use ("ocarina-configuration.adb", "ocarina-configuration.ads");
    for Object_Dir use Build_Dir & "/objects";
    for Library_Dir use Build_Dir & "/libs";
    for Library_Name use "ocarina-config";

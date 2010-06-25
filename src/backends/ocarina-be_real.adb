@@ -563,7 +563,7 @@ package body Ocarina.BE_REAL is
       pragma Assert (Kind (Node) = K_Literal);
       use Ocarina.REAL_Values;
    begin
-      Write_Str (Image (Value_Id (Value (Node))));
+      Write_Str (Image (Value (Node)));
    end Print_Literal;
 
    -------------------

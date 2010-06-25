@@ -1408,7 +1408,7 @@ package body Ocarina.Analyzer.REAL is
                     | K_Ternary_Expression =>
                      Analyze_Verification_Expression (N, Success);
                      if Success then
-                        case Value_Id (Returned_Type (N)) is
+                        case Returned_Type (N) is
                            when RT_Float =>
                               Set_Returned_Type (S, RT_Float_List);
                            when RT_Integer =>
@@ -1809,8 +1809,8 @@ package body Ocarina.Analyzer.REAL is
                     | K_Ternary_Expression =>
                      Analyze_Verification_Expression (N, Success);
                      if Success then
-                        if Value_Id (Returned_Type (N)) /= RT_Integer
-                          and then Value_Id (Returned_Type (N)) /=
+                        if Returned_Type (N) /= RT_Integer
+                          and then Returned_Type (N) /=
                           RT_Float then
                            Display_Analyzer_Error
                              (No_Node,
