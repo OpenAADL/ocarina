@@ -802,6 +802,15 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                end;
             end if;
 
+            if Get_Data_Representation (E)  = Data_Struct then
+               N := Make_Attribute_Definition_Clause
+                 (Map_Ada_Defining_Identifier (E),
+                  Attribute_Designator => A_Alignment,
+                  Expression           => Make_Literal
+                    (New_Integer_Value (8, 1, 10)));
+               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            end if;
+
             --  Array types have also a subprogram 'Length' which is
             --  generated for use in other languages in which arrays
             --  are not aware of their lengths (such as C).

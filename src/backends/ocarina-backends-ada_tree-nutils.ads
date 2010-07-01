@@ -380,6 +380,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
    type Attribute_Id is
      (A_Access,
       A_Address,
+      A_Alignment,
       A_Class,
       A_First,
       A_Length,
