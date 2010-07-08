@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Namet;
-
+with Utils; use Utils;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -376,21 +376,23 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U        : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P        : constant Node_Id := CTN.Entity (U);
-         S        : constant Node_Id := Parent_Subcomponent (E);
-         Root_Sys : constant Node_Id
+         U           : constant Node_Id
+               := CTN.Distributed_Application_Unit
+                  (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P           : constant Node_Id := CTN.Entity (U);
+         S           : constant Node_Id := Parent_Subcomponent (E);
+         Root_Sys    : constant Node_Id
            := Parent_Component (Parent_Subcomponent (E));
-         Q        : Node_Id;
-         N        : Node_Id;
-         C        : Node_Id;
-         F        : Node_Id;
-         Data     : Node_Id;
-         Src      : Node_Id;
-         Dst      : Node_Id;
-         Parent   : Node_Id;
-         The_System : constant Node_Id := Parent_Component
+         Driver_Name : Name_Id;
+         Q           : Node_Id;
+         N           : Node_Id;
+         C           : Node_Id;
+         F           : Node_Id;
+         Data        : Node_Id;
+         Src         : Node_Id;
+         Dst         : Node_Id;
+         Parent      : Node_Id;
+         The_System  : constant Node_Id := Parent_Component
            (Parent_Subcomponent (E));
       begin
          pragma Assert (AAU.Is_System (Root_Sys));
@@ -497,7 +499,28 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                         end if;
 
                         --  Mark P as being Added
+                     elsif AAU.Is_Device (Parent)
+                        and then Parent /= E then
+                        Driver_Name := Get_Driver_Name (Parent);
 
+                        if Driver_Name /= No_Name then
+                           Set_Str_To_Name_Buffer ("__PO_HI_NEED_DRIVER_");
+                           Get_Name_String_And_Append (Driver_Name);
+
+                           Driver_Name := Name_Find;
+                           Driver_Name := To_Upper (Driver_Name);
+
+                           Append_Node_To_List
+                              (Make_Define_Statement
+                                 (Defining_Identifier =>
+                                    (Make_Defining_Identifier
+                                       (Driver_Name,
+                                       C_Conversion => False)),
+                                 Value =>
+                                    (Make_Literal
+                                       (CV.New_Int_Value (1, 1, 10)))),
+                              CTN.Declarations (Current_File));
+                        end if;
                      end if;
 
                      Src := Next_Node (Src);
@@ -525,6 +548,28 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
                               C := Next_Node (C);
                            end loop;
+                        end if;
+                     elsif AAU.Is_Device (Parent)
+                        and then Parent /= E then
+                        Driver_Name := Get_Driver_Name (Parent);
+
+                        if Driver_Name /= No_Name then
+                           Set_Str_To_Name_Buffer ("__PO_HI_NEED_DRIVER_");
+                           Get_Name_String_And_Append (Driver_Name);
+
+                           Driver_Name := Name_Find;
+                           Driver_Name := To_Upper (Driver_Name);
+
+                           Append_Node_To_List
+                              (Make_Define_Statement
+                                 (Defining_Identifier =>
+                                    (Make_Defining_Identifier
+                                       (Driver_Name,
+                                       C_Conversion => False)),
+                                 Value =>
+                                    (Make_Literal
+                                       (CV.New_Int_Value (1, 1, 10)))),
+                              CTN.Declarations (Current_File));
                         end if;
                      end if;
 
