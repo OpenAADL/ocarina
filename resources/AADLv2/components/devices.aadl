@@ -7,6 +7,7 @@ with deployment;
 with ocarina_buses;
 
 with Data_Model;
+with Base_Types;
 
 with ocarina_drivers_rasta_1553;
 with ocarina_drivers_rasta_serial;
@@ -18,6 +19,8 @@ with ocarina_drivers_serial;
 
 with ocarina_drivers_ip_asn1;
 with ocarina_drivers_ip_pohic;
+
+with ocarina_drivers_ni_6071e;
 
 ------------------
 --  RASTA 1553  --
@@ -131,6 +134,14 @@ properties
    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
 end rtems_ne2000.ip_pohic;
 
+------------------------------------------
+--            Exarm UDP driver          --
+------------------------------------------
+--  This driver is used to communicate  --
+--  with the exarm robot and also       --
+--  the Matlab simulator.               --
+------------------------------------------
+
 device exarm
 features
    thebus : requires bus access ocarina_buses::ip.i;
@@ -155,6 +166,25 @@ data implementation exarm_protocol_data.robot extends ocarina_drivers_udp_exarm:
 properties
    Data_Model::Data_Representation => Struct;
 end exarm_protocol_data.robot;
+
+---------------------------------------
+--  National Instruments PCI-6071E   --
+---------------------------------------
+--  This device is used to make data --
+--  acquisition of the EXARM robot.  --
+---------------------------------------
+
+device ni_pci_6071e
+features
+   data1 : out data port Base_Types::Integer;
+end ni_pci_6071e;
+
+device implementation ni_pci_6071e.i
+properties
+   Deployment::Driver_Name    => "ni_pci_6071e";
+   Device_Driver              => classifier (ocarina_drivers_ni_6071e::driver.i);
+   Initialize_Entrypoint      => classifier (ocarina_drivers_ni_6071e::spg_init);
+end ni_pci_6071e.i;
 
 
 end ocarina_drivers;

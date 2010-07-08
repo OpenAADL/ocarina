@@ -1,0 +1,41 @@
+package ocarina_drivers_ni_6071e
+
+public
+
+subprogram spg_init
+properties
+   Source_Language   => C;
+   Source_Name       => "__po_hi_c_driver_ni_pcimio_init";
+end spg_init;
+
+
+subprogram spg_poller
+properties
+   Source_Language   => C;
+   Source_Name       => "__po_hi_c_driver_ni_pcimio_poller";
+end spg_poller;
+
+
+thread thr_poller
+end thr_poller;
+
+thread implementation thr_poller.i
+calls
+	mycall : {
+	  pspg : subprogram spg_poller;
+	};
+properties
+   Period => 100 ms;
+   Dispatch_Protocol => Periodic;
+end thr_poller.i;
+
+
+abstract driver
+end driver;
+
+abstract implementation driver.i
+subcomponents
+   poller : thread thr_poller.i;
+end driver.i;
+
+end ocarina_drivers_ni_6071e;
