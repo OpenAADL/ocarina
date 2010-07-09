@@ -689,7 +689,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
                         Call_Parameters := New_List (CTN.K_Parameter_List);
                         N := Make_Defining_Identifier
-                          (Map_C_Enumerator_Name (S));
+                          (Map_C_Enumerator_Name (S, Current_Device));
                         Append_Node_To_List (N, Call_Parameters);
 
                         N := Make_Defining_Identifier
@@ -807,7 +807,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   --  Then, call the send_output in the main loop.
                   Call_Parameters := New_List (CTN.K_Parameter_List);
                   N := Make_Defining_Identifier
-                    (Map_C_Enumerator_Name (S));
+                    (Map_C_Enumerator_Name (S, Current_Device));
                   Append_Node_To_List (N, Call_Parameters);
 
                   N := Make_Defining_Identifier
@@ -1168,7 +1168,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Enumerator_Name (S)),
+               (Map_C_Enumerator_Name (S, Current_Device)),
                Call_Parameters);
 
             Append_Node_To_List
@@ -1517,6 +1517,24 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             end loop;
          end if;
 
+         --  Visit all devices attached to the parent system that
+         --  share the same processor as process E.
+
+         if not AAU.Is_Empty (Subcomponents (The_System)) then
+            S := First_Node (Subcomponents (The_System));
+            while Present (S) loop
+               if AAU.Is_Device (Corresponding_Instance (S))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (S))
+                 = Get_Bound_Processor (E)
+               then
+                  Visit_Device_Instance
+                    (Corresponding_Instance (S));
+               end if;
+               S := Next_Node (S);
+            end loop;
+         end if;
+
          if Present (Backend_Node (Identifier (Parent_Subcomponent
                         (E)))) and then
             Present (CTN.Job_Node (Backend_Node (Identifier
@@ -1568,6 +1586,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
+         --  If some threads are connected to other nodes, we declare
+         --  a send_output function that is responsible to send
+         --  data over the network using device drivers functions.
+
          if Has_Send_Output_Declared then
             Append_Node_To_List
                (Make_Switch_Alternative
@@ -1598,27 +1620,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                Send_Output_Statements);
 
             Append_Node_To_List (N, CTN.Declarations (Current_File));
-         end if;
-         --  If some threads are connected to other nodes, we declare
-         --  a send_output function that is responsible to send
-         --  data over the network using device drivers functions.
-
-         --  Visit all devices attached to the parent system that
-         --  share the same processor as process E.
-
-         if not AAU.Is_Empty (Subcomponents (The_System)) then
-            S := First_Node (Subcomponents (The_System));
-            while Present (S) loop
-               if AAU.Is_Device (Corresponding_Instance (S))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (S))
-                 = Get_Bound_Processor (E)
-               then
-                  Visit_Device_Instance
-                    (Corresponding_Instance (S));
-               end if;
-               S := Next_Node (S);
-            end loop;
          end if;
 
          Pop_Entity; -- U
@@ -1715,7 +1716,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                if Kind (F) = K_Port_Spec_Instance then
 
                   if Is_Out (F) then
-                     Destinations := Get_Destination_Ports (F);
+                     Destinations := Get_Destination_Ports (F, Current_Device);
                      Local_Dest_Values   := Make_Array_Values;
 
                      if AAU.Is_Empty (Destinations) then

@@ -114,7 +114,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Global_Port_Model_Names       : Node_Id;
       Local_Port_List               : List_Id;
 
-      Current_Process_Instance : Node_Id := No_Node;
+      Current_Process_Instance      : Node_Id := No_Node;
 
       Global_Port_To_Entity     : Node_Id;
       Global_Port_To_Local      : Node_Id;
@@ -277,7 +277,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         Implementation  : constant Node_Id := Get_Implementation (E);
          N : Node_Id;
          Conf_Str : Name_Id := No_Name;
          Tmp_Name : Name_Id;
@@ -358,16 +357,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
          end if;
 
-         if Implementation /= No_Node then
-            if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
-               N := First_Node (Subcomponents (Implementation));
-               while Present (N) loop
-                  Visit_Component_Instance (Corresponding_Instance (N));
-                  N := Next_Node (N);
-               end loop;
-            end if;
-         end if;
-
          Current_Device := No_Node;
       end Visit_Device_Instance;
 
@@ -394,6 +383,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Parent      : Node_Id;
          The_System  : constant Node_Id := Parent_Component
            (Parent_Subcomponent (E));
+         Device_Implementation : Node_Id;
       begin
          pragma Assert (AAU.Is_System (Root_Sys));
 
@@ -436,6 +426,27 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   --  Note: we reuse the process name XXX
 
                   Visit_Device_Instance (Corresponding_Instance (C));
+
+                  Current_Device := Corresponding_Instance (C);
+
+                  Device_Implementation :=
+                     Get_Implementation (Corresponding_Instance (C));
+
+                  if Device_Implementation /= No_Node then
+                     if not AAU.Is_Empty
+                        (AAN.Subcomponents (Device_Implementation)) then
+                        N := First_Node (Subcomponents
+                           (Device_Implementation));
+                        while Present (N) loop
+                           Visit_Component_Instance
+                              (Corresponding_Instance (N));
+                           N := Next_Node (N);
+                        end loop;
+                     end if;
+                  end if;
+
+                  Current_Device := No_Node;
+
                end if;
                C := Next_Node (C);
             end loop;
@@ -1044,7 +1055,10 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                        (N, CTN.Values (Global_Port_To_Local));
 
                      N := Make_Defining_Identifier
-                       (Map_C_Enumerator_Name (S, Entity => True));
+                        (Map_C_Enumerator_Name
+                           (S,
+                           Entity => True,
+                           Custom_Parent => Current_Device));
                      Append_Node_To_List
                        (N, CTN.Values (Global_Port_To_Entity));
 
@@ -1083,7 +1097,11 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             end loop;
 
             if Parent_Component (Parent_Subcomponent (E))
-               = Current_Process_Instance then
+               = Current_Process_Instance or else
+               (Current_Device /= No_Node and then
+               Get_Bound_Processor
+                  (Current_Device) =
+               Get_Bound_Processor (Current_Process_Instance)) then
                N := Make_Define_Statement
                   (Defining_Identifier =>
                      Make_Defining_Identifier

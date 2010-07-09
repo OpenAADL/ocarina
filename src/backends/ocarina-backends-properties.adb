@@ -1478,7 +1478,7 @@ package body Ocarina.Backends.Properties is
                --  and a null source name and a null source text is a
                --  wrong built subprogram.
 
-               return Subprogram_Unknown;
+               return Subprogram_Opaque_C;
             end if;
 
          when Language_RTSJ =>

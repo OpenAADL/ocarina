@@ -131,7 +131,9 @@ package Ocarina.Backends.Utils is
    --  Extra_Item of the node container corresponding to the
    --  destination.
 
-   function Get_Destination_Ports (P : Node_Id) return List_Id;
+   function Get_Destination_Ports
+      (P             : Node_Id;
+      Custom_Parent  : Node_Id := No_Node) return List_Id;
    --  Return a node container list of all the THREAD IN ports that
    --  are endpoint sources of the OUT port P. If the connection path
    --  between P and one of its destinations involves a connection

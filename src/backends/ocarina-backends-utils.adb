@@ -722,11 +722,14 @@ package body Ocarina.Backends.Utils is
    -- Get_Destination_Ports --
    ---------------------------
 
-   function Get_Destination_Ports (P : Node_Id) return List_Id is
+   function Get_Destination_Ports
+      (P             : Node_Id;
+      Custom_Parent  : Node_Id := No_Node) return List_Id is
 
       function Rec_Get_Destination_Ports
         (P : Node_Id;
-         B : Node_Id := No_Node)
+         B : Node_Id := No_Node;
+         Custom_Parent  : Node_Id := No_Node)
         return List_Id;
       --  Recursive internal routine
 
@@ -735,8 +738,9 @@ package body Ocarina.Backends.Utils is
       -------------------------------
 
       function Rec_Get_Destination_Ports
-        (P : Node_Id;
-         B : Node_Id := No_Node)
+        (P              : Node_Id;
+         B              : Node_Id := No_Node;
+         Custom_Parent  : Node_Id := No_Node)
         return List_Id
       is
          Result : constant List_Id := New_List (K_List_Id, No_Location);
@@ -802,7 +806,17 @@ package body Ocarina.Backends.Utils is
 
                AAU.Append_Node_To_List
                  (Make_Node_Container (Item (D), B), Result);
+            elsif Custom_Parent /= No_Node and then
+               Is_Device (Custom_Parent) and then
+               Get_Port_By_Name (P, Custom_Parent) /= No_Node then
 
+               AAU.Append_Node_To_List
+                 (First_Node
+                  (Rec_Get_Destination_Ports
+                     (Get_Port_By_Name (P, Custom_Parent),
+                     B,
+                     No_Node)),
+                  Result);
             else
                Display_Located_Error
                  (Loc (P),
@@ -816,7 +830,7 @@ package body Ocarina.Backends.Utils is
          return Result;
       end Rec_Get_Destination_Ports;
    begin
-      return Rec_Get_Destination_Ports (P, No_Node);
+      return Rec_Get_Destination_Ports (P, No_Node, Custom_Parent);
    end Get_Destination_Ports;
 
    ----------------------

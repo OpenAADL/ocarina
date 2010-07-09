@@ -51,8 +51,6 @@ with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.POK_C.Runtime;
 
-with Ocarina.Instances.Queries;
-
 package body Ocarina.Backends.C_Common.Types is
 
    use Ocarina.ME_AADL;
@@ -66,8 +64,6 @@ package body Ocarina.Backends.C_Common.Types is
    use Ocarina.Backends.PO_HI_C.Runtime;
    use Ocarina.Backends.POK_C;
    use Ocarina.Backends.POK_C.Runtime;
-
-   use Ocarina.Instances.Queries;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -212,27 +208,31 @@ package body Ocarina.Backends.C_Common.Types is
          Implementation  : Node_Id;
          S               : Node_Id;
       begin
-         if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
-            return;
+         if Get_Current_Backend_Kind = PolyORB_Kernel_C then
+            U := CTN.Distributed_Application_Unit
+               (CTN.Naming_Node (Backend_Node (Identifier (E))));
+
+            P := CTN.Entity (U);
+
+            Push_Entity (P);
+            Push_Entity (U);
          end if;
 
-         U := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-
-         P := CTN.Entity (U);
-
-         Push_Entity (P);
-         Push_Entity (U);
-
-         Implementation := Get_Classifier_Property (E, "implemented_as");
+         Implementation := Get_Implementation (E);
 
          if Implementation /= No_Node then
             if not AINU.Is_Empty (AIN.Subcomponents (Implementation)) then
                S := First_Node (Subcomponents (Implementation));
                while Present (S) loop
-                  if Get_Category_Of_Component (S) = CC_Process then
-                     Visit_Process_Instance
-                        (Corresponding_Instance (S), False);
+
+                  if Get_Current_Backend_Kind = PolyORB_Kernel_C then
+                     if Get_Category_Of_Component (S) = CC_Process then
+                        Visit_Process_Instance
+                           (Corresponding_Instance (S), False);
+                     end if;
+                  else
+                     Visit
+                        (Corresponding_Instance (S));
                   end if;
 
                   S := Next_Node (S);
@@ -241,8 +241,10 @@ package body Ocarina.Backends.C_Common.Types is
 
          end if;
 
-         Pop_Entity; -- U
-         Pop_Entity; -- P
+         if Get_Current_Backend_Kind = PolyORB_Kernel_C then
+            Pop_Entity; -- U
+            Pop_Entity; -- P
+         end if;
       end Visit_Device_Instance;
 
       ------------------------------
@@ -739,6 +741,8 @@ package body Ocarina.Backends.C_Common.Types is
          U : Node_Id;
          P : Node_Id;
          Declaration          : Node_Id;
+         The_System : constant Node_Id := Parent_Component
+           (Parent_Subcomponent (E));
       begin
          if Real_Process then
             U := CTN.Distributed_Application_Unit
@@ -807,6 +811,26 @@ package body Ocarina.Backends.C_Common.Types is
                end if;
 
                S := Next_Node (S);
+            end loop;
+         end if;
+
+         --  Visit all devices attached to the parent system that
+         --  share the same processor as process E.
+
+         if Get_Current_Backend_Kind = PolyORB_HI_C and then
+            not AINU.Is_Empty (Subcomponents (The_System)) then
+            C := First_Node (Subcomponents (The_System));
+            while Present (C) loop
+               if AINU.Is_Device (Corresponding_Instance (C))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (C))
+                 = Get_Bound_Processor (E)
+               then
+                  --  Build the enumerator corresponding to the device
+                  --  Note: we reuse the process name XXX
+                  Visit_Device_Instance (Corresponding_Instance (C));
+               end if;
+               C := Next_Node (C);
             end loop;
          end if;
 
@@ -935,7 +959,10 @@ package body Ocarina.Backends.C_Common.Types is
                then
                   null;
                else
-                  Visit (Corresponding_Instance (S));
+                  if Get_Category_Of_Component
+                     (Corresponding_Instance (S)) /= CC_Device then
+                     Visit (Corresponding_Instance (S));
+                  end if;
                end if;
                S := Next_Node (S);
             end loop;

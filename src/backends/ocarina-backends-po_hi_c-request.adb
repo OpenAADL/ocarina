@@ -43,6 +43,8 @@ with Ocarina.Backends.C_Tree.Nutils;
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Values;
 
+with Ocarina.Backends.Properties;
+
 package body Ocarina.Backends.PO_HI_C.Request is
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -51,6 +53,7 @@ package body Ocarina.Backends.PO_HI_C.Request is
    use Ocarina.Backends.C_Common.Mapping;
    use Ocarina.Backends.PO_HI_C.Runtime;
    use Ocarina.Backends.C_Tree.Nutils;
+   use Ocarina.Backends.Properties;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -145,6 +148,9 @@ package body Ocarina.Backends.PO_HI_C.Request is
          F             : Node_Id;
          J             : Node_Id;
          I             : Node_Id;
+         The_System  : constant Node_Id := Parent_Component
+           (Parent_Subcomponent (E));
+         Device_Implementation : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -159,6 +165,34 @@ package body Ocarina.Backends.PO_HI_C.Request is
 
          Operation_Identifier   := 0;
          Request_Declared       := False;
+
+         if not AINU.Is_Empty (Subcomponents (The_System)) then
+            C := First_Node (Subcomponents (The_System));
+            while Present (C) loop
+               if AINU.Is_Device (Corresponding_Instance (C))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (C))
+                 = Get_Bound_Processor (E)
+               then
+                  Device_Implementation :=
+                     Get_Implementation (Corresponding_Instance (C));
+
+                  if Device_Implementation /= No_Node then
+                     if not AINU.Is_Empty
+                        (AIN.Subcomponents (Device_Implementation)) then
+                        N := First_Node (Subcomponents
+                           (Device_Implementation));
+                        while Present (N) loop
+                           Visit_Component_Instance
+                              (Corresponding_Instance (N));
+                           N := Next_Node (N);
+                        end loop;
+                     end if;
+                  end if;
+               end if;
+               C := Next_Node (C);
+            end loop;
+         end if;
 
          if not AINU.Is_Empty (Features (E)) then
             C := First_Node (Features (E));
