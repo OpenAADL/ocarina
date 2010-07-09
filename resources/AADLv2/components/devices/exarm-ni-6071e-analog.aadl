@@ -1,0 +1,128 @@
+package ocarina_drivers_exarm_ni_6071e_analog
+
+public
+
+with Base_Types;
+
+subprogram spg_init
+properties
+   Source_Language   => C;
+   Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_analog_init";
+end spg_init;
+
+
+subprogram spg_poller
+features
+   data1  : out parameter Base_Types::Float_64;
+   data2  : out parameter Base_Types::Float_64;
+   data3  : out parameter Base_Types::Float_64;
+   data4  : out parameter Base_Types::Float_64;
+   data5  : out parameter Base_Types::Float_64;
+   data6  : out parameter Base_Types::Float_64;
+   data7  : out parameter Base_Types::Float_64;
+   data8  : out parameter Base_Types::Float_64;
+   data9  : out parameter Base_Types::Float_64;
+   data10 : out parameter Base_Types::Float_64;
+   data11 : out parameter Base_Types::Float_64;
+   data12 : out parameter Base_Types::Float_64;
+   data13 : out parameter Base_Types::Float_64;
+   data14 : out parameter Base_Types::Float_64;
+   data15 : out parameter Base_Types::Float_64;
+   data16 : out parameter Base_Types::Float_64;
+properties
+   Source_Language   => C;
+   Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_analog_poller";
+end spg_poller;
+
+
+thread thr_poller
+features
+   data1  : out data port Base_Types::Float_64;
+   data2  : out data port Base_Types::Float_64;
+   data3  : out data port Base_Types::Float_64;
+   data4  : out data port Base_Types::Float_64;
+   data5  : out data port Base_Types::Float_64;
+   data6  : out data port Base_Types::Float_64;
+   data7  : out data port Base_Types::Float_64;
+   data8  : out data port Base_Types::Float_64;
+   data9  : out data port Base_Types::Float_64;
+   data10 : out data port Base_Types::Float_64;
+   data11 : out data port Base_Types::Float_64;
+   data12 : out data port Base_Types::Float_64;
+   data13 : out data port Base_Types::Float_64;
+   data14 : out data port Base_Types::Float_64;
+   data15 : out data port Base_Types::Float_64;
+   data16 : out data port Base_Types::Float_64;
+end thr_poller;
+
+thread implementation thr_poller.i
+calls
+	mycall : {
+	  pspg : subprogram spg_poller;
+	};
+connections
+   parameter pspg.data1 -> data1;   
+   parameter pspg.data2 -> data2;   
+   parameter pspg.data3 -> data3;   
+   parameter pspg.data4 -> data4;   
+   parameter pspg.data5 -> data5;   
+   parameter pspg.data6 -> data6;   
+   parameter pspg.data7 -> data7;   
+   parameter pspg.data8 -> data8;   
+   parameter pspg.data9 -> data9;   
+   parameter pspg.data10 -> data10;   
+   parameter pspg.data11 -> data11;   
+   parameter pspg.data12 -> data12;   
+   parameter pspg.data13 -> data13;   
+   parameter pspg.data14 -> data14;   
+   parameter pspg.data15 -> data15;   
+   parameter pspg.data16 -> data16; 
+properties
+   Period => 100 ms;
+   Dispatch_Protocol => Periodic;
+end thr_poller.i;
+
+
+abstract driver
+features
+   data1  : out data port Base_Types::Float_64;
+   data2  : out data port Base_Types::Float_64;
+   data3  : out data port Base_Types::Float_64;
+   data4  : out data port Base_Types::Float_64;
+   data5  : out data port Base_Types::Float_64;
+   data6  : out data port Base_Types::Float_64;
+   data7  : out data port Base_Types::Float_64;
+   data8  : out data port Base_Types::Float_64;
+   data9  : out data port Base_Types::Float_64;
+   data10 : out data port Base_Types::Float_64;
+   data11 : out data port Base_Types::Float_64;
+   data12 : out data port Base_Types::Float_64;
+   data13 : out data port Base_Types::Float_64;
+   data14 : out data port Base_Types::Float_64;
+   data15 : out data port Base_Types::Float_64;
+   data16 : out data port Base_Types::Float_64;
+end driver;
+
+abstract implementation driver.i
+subcomponents
+   poller : thread thr_poller.i;
+connections
+   port poller.data1 -> data1;   
+   port poller.data2 -> data2;   
+   port poller.data3 -> data3;   
+   port poller.data4 -> data4;   
+   port poller.data5 -> data5;   
+   port poller.data6 -> data6;   
+   port poller.data7 -> data7;   
+   port poller.data8 -> data8;   
+   port poller.data9 -> data9;   
+   port poller.data10 -> data10;   
+   port poller.data11 -> data11;   
+   port poller.data12 -> data12;   
+   port poller.data13 -> data13;   
+   port poller.data14 -> data14;   
+   port poller.data15 -> data15;   
+   port poller.data16 -> data16; 
+end driver.i;
+
+end ocarina_drivers_exarm_ni_6071e_analog;

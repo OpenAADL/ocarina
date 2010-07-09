@@ -1,4 +1,4 @@
-package ocarina_drivers_ni_6071e
+package ocarina_drivers_exarm_ni_6071e_digital
 
 public
 
@@ -7,22 +7,22 @@ with Base_Types;
 subprogram spg_init
 properties
    Source_Language   => C;
-   Source_Name       => "__po_hi_c_driver_ni_pcimio_init";
+   Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_digital_init";
 end spg_init;
 
 
 subprogram spg_poller
 features
-   data1 : out parameter Base_Types::Integer;
+   data1 : out parameter Base_Types::Unsigned_8;
 properties
    Source_Language   => C;
-   Source_Name       => "__po_hi_c_driver_ni_pcimio_poller";
+   Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_digital_poller";
 end spg_poller;
 
 
 thread thr_poller
 features
-   data1 : out data port Base_Types::Integer;
+   data1 : out data port Base_Types::Unsigned_8;
 end thr_poller;
 
 thread implementation thr_poller.i
@@ -40,7 +40,7 @@ end thr_poller.i;
 
 abstract driver
 features
-   data1 : out data port Base_Types::Integer;
+   data1 : out data port Base_Types::Unsigned_8;
 end driver;
 
 abstract implementation driver.i
@@ -50,4 +50,4 @@ connections
    port poller.data1 -> data1; 
 end driver.i;
 
-end ocarina_drivers_ni_6071e;
+end ocarina_drivers_exarm_ni_6071e_digital;

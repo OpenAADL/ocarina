@@ -20,7 +20,8 @@ with ocarina_drivers_serial;
 with ocarina_drivers_ip_asn1;
 with ocarina_drivers_ip_pohic;
 
-with ocarina_drivers_ni_6071e;
+with ocarina_drivers_exarm_ni_6071e_analog;
+with ocarina_drivers_exarm_ni_6071e_digital;
 
 ------------------
 --  RASTA 1553  --
@@ -168,24 +169,54 @@ properties
 end exarm_protocol_data.robot;
 
 ---------------------------------------
+--   Devices for the Exo skeleton    --
 --  National Instruments PCI-6071E   --
 ---------------------------------------
 --  This device is used to make data --
 --  acquisition of the EXARM robot.  --
 ---------------------------------------
 
-device ni_pci_6071e
+device exarm_ni_6071e_analog
 features
-   data1 : out data port Base_Types::Integer;
-end ni_pci_6071e;
+   data1  : out data port Base_Types::Float_64;
+   data2  : out data port Base_Types::Float_64;
+   data3  : out data port Base_Types::Float_64;
+   data4  : out data port Base_Types::Float_64;
+   data5  : out data port Base_Types::Float_64;
+   data6  : out data port Base_Types::Float_64;
+   data7  : out data port Base_Types::Float_64;
+   data8  : out data port Base_Types::Float_64;
+   data9  : out data port Base_Types::Float_64;
+   data10 : out data port Base_Types::Float_64;
+   data11 : out data port Base_Types::Float_64;
+   data12 : out data port Base_Types::Float_64;
+   data13 : out data port Base_Types::Float_64;
+   data14 : out data port Base_Types::Float_64;
+   data15 : out data port Base_Types::Float_64;
+   data16 : out data port Base_Types::Float_64;
+end exarm_ni_6071e_analog;
 
-device implementation ni_pci_6071e.i
+
+device implementation exarm_ni_6071e_analog.i
 properties
-   Deployment::Driver_Name    => "ni_pci_6071e";
-   Device_Driver              => classifier (ocarina_drivers_ni_6071e::driver.i);
-   Initialize_Entrypoint      => classifier (ocarina_drivers_ni_6071e::spg_init);
-end ni_pci_6071e.i;
+   Deployment::Driver_Name    => "exarm_ni_6071e_analog";
+   Device_Driver              => classifier (ocarina_drivers_exarm_ni_6071e_analog::driver.i);
+   Initialize_Entrypoint      => classifier (ocarina_drivers_exarm_ni_6071e_analog::spg_init);
+end exarm_ni_6071e_analog.i;
 
+
+device exarm_ni_6071e_digital
+features
+   data1  : out data port Base_Types::Unsigned_8;
+end exarm_ni_6071e_digital;
+
+
+device implementation exarm_ni_6071e_digital.i
+properties
+   Deployment::Driver_Name    => "exarm_ni_6071e_digital";
+   Device_Driver              => classifier (ocarina_drivers_exarm_ni_6071e_digital::driver.i);
+   Initialize_Entrypoint      => classifier (ocarina_drivers_exarm_ni_6071e_digital::spg_init);
+end exarm_ni_6071e_digital.i;
 
 end ocarina_drivers;
 
