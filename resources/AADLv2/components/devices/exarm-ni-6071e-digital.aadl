@@ -14,6 +14,7 @@ end spg_init;
 subprogram spg_poller
 features
    data1 : out parameter Base_Types::Unsigned_8;
+   data2 : out parameter Base_Types::Unsigned_8;
 properties
    Source_Language   => C;
    Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_digital_poller";
@@ -23,6 +24,7 @@ end spg_poller;
 thread thr_poller
 features
    data1 : out data port Base_Types::Unsigned_8;
+   data2 : out data port Base_Types::Unsigned_8;
 end thr_poller;
 
 thread implementation thr_poller.i
@@ -32,6 +34,7 @@ calls
 	};
 connections
    parameter pspg.data1 -> data1;   
+   parameter pspg.data2 -> data2;   
 properties
    Period => 100 ms;
    Dispatch_Protocol => Periodic;
@@ -41,13 +44,15 @@ end thr_poller.i;
 abstract driver
 features
    data1 : out data port Base_Types::Unsigned_8;
+   data2 : out data port Base_Types::Unsigned_8;
 end driver;
 
 abstract implementation driver.i
 subcomponents
-   poller : thread thr_poller.i;
+   ni6071e_digital_poller : thread thr_poller.i;
 connections
-   port poller.data1 -> data1; 
+   port ni6071e_digital_poller.data1 -> data1; 
+   port ni6071e_digital_poller.data2 -> data2; 
 end driver.i;
 
 end ocarina_drivers_exarm_ni_6071e_digital;

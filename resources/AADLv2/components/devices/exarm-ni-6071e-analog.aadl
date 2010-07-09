@@ -105,24 +105,24 @@ end driver;
 
 abstract implementation driver.i
 subcomponents
-   poller : thread thr_poller.i;
+   ni6071e_analog_poller : thread thr_poller.i;
 connections
-   port poller.data1 -> data1;   
-   port poller.data2 -> data2;   
-   port poller.data3 -> data3;   
-   port poller.data4 -> data4;   
-   port poller.data5 -> data5;   
-   port poller.data6 -> data6;   
-   port poller.data7 -> data7;   
-   port poller.data8 -> data8;   
-   port poller.data9 -> data9;   
-   port poller.data10 -> data10;   
-   port poller.data11 -> data11;   
-   port poller.data12 -> data12;   
-   port poller.data13 -> data13;   
-   port poller.data14 -> data14;   
-   port poller.data15 -> data15;   
-   port poller.data16 -> data16; 
+   port ni6071e_analog_poller.data1 -> data1;   
+   port ni6071e_analog_poller.data2 -> data2;   
+   port ni6071e_analog_poller.data3 -> data3;   
+   port ni6071e_analog_poller.data4 -> data4;   
+   port ni6071e_analog_poller.data5 -> data5;   
+   port ni6071e_analog_poller.data6 -> data6;   
+   port ni6071e_analog_poller.data7 -> data7;   
+   port ni6071e_analog_poller.data8 -> data8;   
+   port ni6071e_analog_poller.data9 -> data9;   
+   port ni6071e_analog_poller.data10 -> data10;   
+   port ni6071e_analog_poller.data11 -> data11;   
+   port ni6071e_analog_poller.data12 -> data12;   
+   port ni6071e_analog_poller.data13 -> data13;   
+   port ni6071e_analog_poller.data14 -> data14;   
+   port ni6071e_analog_poller.data15 -> data15;   
+   port ni6071e_analog_poller.data16 -> data16; 
 end driver.i;
 
 end ocarina_drivers_exarm_ni_6071e_analog;

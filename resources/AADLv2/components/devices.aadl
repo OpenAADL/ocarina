@@ -208,6 +208,7 @@ end exarm_ni_6071e_analog.i;
 device exarm_ni_6071e_digital
 features
    data1  : out data port Base_Types::Unsigned_8;
+   data2  : out data port Base_Types::Unsigned_8;
 end exarm_ni_6071e_digital;
 
 
