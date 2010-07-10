@@ -37,4 +37,7 @@ end x86.rtems;
 processor implementation x86.linux extends ocarina_processors_x86::x86.linux
 end x86.linux;
 
+processor implementation x86.linuxtaste extends ocarina_processors_x86::x86.linuxtaste
+end x86.linuxtaste;
+
 end ocarina_processors;

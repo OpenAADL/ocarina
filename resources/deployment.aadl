@@ -33,6 +33,7 @@ property set Deployment is
     ARM_DSLINUX,   -- Nintendo DS (tm) (DSLinux)
     ARM_N770,      -- Nokia N770 (tm)
     X86_RTEMS,     -- x86 under RTEMS
+    X86_LINUXTASTE,-- TASTE-specific linux distribution
     MARTE_OS       -- MaRTE OS
     );
   --  Supported platforms

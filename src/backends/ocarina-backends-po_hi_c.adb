@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -154,6 +154,9 @@ package body Ocarina.Backends.PO_HI_C is
 
          when Platform_LEON_RTEMS =>
             Write_Str ("leon.rtems");
+
+         when Platform_X86_LINUXTASTE =>
+            Write_Str ("x86.linuxtaste");
 
          when Platform_X86_RTEMS =>
             Write_Str ("x86.rtems");

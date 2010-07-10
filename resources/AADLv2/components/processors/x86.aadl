@@ -19,4 +19,9 @@ properties
    Deployment::Execution_Platform => X86_RTEMS;
 end x86.rtems;
 
+processor implementation x86.linuxtaste
+properties
+   Deployment::Execution_Platform => X86_LINUXTASTE;
+end x86.linuxtaste;
+
 end ocarina_processors_x86;
