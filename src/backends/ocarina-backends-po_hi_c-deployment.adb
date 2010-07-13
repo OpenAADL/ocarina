@@ -521,16 +521,10 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                            Driver_Name := Name_Find;
                            Driver_Name := To_Upper (Driver_Name);
 
-                           Append_Node_To_List
-                              (Make_Define_Statement
-                                 (Defining_Identifier =>
+                           Add_Define_Deployment
                                     (Make_Defining_Identifier
                                        (Driver_Name,
-                                       C_Conversion => False)),
-                                 Value =>
-                                    (Make_Literal
-                                       (CV.New_Int_Value (1, 1, 10)))),
-                              CTN.Declarations (Current_File));
+                                       C_Conversion => False));
                         end if;
                      end if;
 

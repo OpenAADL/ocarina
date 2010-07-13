@@ -2089,7 +2089,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       W             : Node_Id;
       N             : Name_Id;
       F             : Node_Id;
-      Existing_Include : Node_Id;
+      Existing_Def  : Node_Id;
    begin
       Set_Str_To_Name_Buffer ("deployment");
       Get_Name_String_And_Append (CTN.Name (E));
@@ -2098,10 +2098,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
          (CTN.Name (CTN.Entity (Table (Last).Current_Entity)));
       N := Name_Find;
 
-      Existing_Include := Node_Id (Get_Name_Table_Info (N));
+      Existing_Def := Node_Id (Get_Name_Table_Info (N));
 
       --  If the file was already included, we return immediatly
-      if Present (Existing_Include) then
+      if Present (Existing_Def) then
          return;
       end if;
 
