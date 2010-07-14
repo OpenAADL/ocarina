@@ -49,6 +49,7 @@ package Ocarina.Property_Sets is
 
    type Ocarina_Property_Set_Type is
      (O_Error,                       --  Invalid enumerator
+      O_Base_Types,
       O_Data_Model,
       O_Deployment,
       O_Cheddar_Properties,
