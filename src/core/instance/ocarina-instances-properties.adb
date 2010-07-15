@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2005-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -625,6 +625,11 @@ package body Ocarina.Instances.Properties is
       Node : Node_Id;
 
    begin
+      if No (Property_Value) then
+         --  If there is no property value defined, simply return
+         return Instantiated_Value;
+      end if;
+
       case ATN.Kind (Property_Value) is
          when K_Literal =>
             Instantiated_Value := New_Node (Kind (Property_Value),

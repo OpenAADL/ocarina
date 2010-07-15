@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2009-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2009-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,7 +37,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
-
+with Locations;
 with Ocarina.Annotations;
 
 package body Ocarina.Analyzer.AADL.Queries is
@@ -209,7 +209,8 @@ package body Ocarina.Analyzer.AADL.Queries is
             end case;
 
          when others =>
-            raise Program_Error;
+            raise Program_Error with "Invalid kind " & Kind (Entity)'Img
+              & " at " & Locations.Image (Loc (Entity));
       end case;
    end Get_Category_Of_Entity;
 

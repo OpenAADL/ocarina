@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2005-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2005-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -149,7 +149,9 @@ package body Ocarina.Processor.Properties is
                     First_Node (Declarations (List_Node));
 
                   while Declaration_Node /= No_Node loop
-                     if Is_Private (Property_Node)
+                     if Kind (Declaration_Node)
+                       /= K_Name_Visibility_declaration
+                       and then Is_Private (Property_Node)
                        = Is_Private (Declaration_Node)
                        and then Property_Can_Apply_To_Entity
                        (Property_Node, Declaration_Node)
