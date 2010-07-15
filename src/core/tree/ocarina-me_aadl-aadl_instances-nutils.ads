@@ -151,5 +151,7 @@ package Ocarina.Me_AADL.AADL_Instances.Nutils is
    function Is_Processor  (C : Node_Id) return Boolean;
    function Is_Bus        (C : Node_Id) return Boolean;
    function Is_Virtual_Bus (C : Node_Id) return Boolean;
+   function Is_Subprogram_Access (C : Node_Id) return Boolean;
+   function Is_Port (C : Node_Id) return Boolean;
 
 end Ocarina.ME_AADL.AADL_Instances.Nutils;

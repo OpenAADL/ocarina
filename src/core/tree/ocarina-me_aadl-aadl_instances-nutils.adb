@@ -700,6 +700,16 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
         Get_Category_Of_Component (C) = CC_Processor;
    end Is_Processor;
 
+   --------------------------
+   -- Is_Subprogram_Access --
+   --------------------------
+
+   function Is_Subprogram_Access (C : Node_Id) return Boolean is
+   begin
+      return Kind (C) = K_Subcomponent_Access_Instance and then
+        Get_Category_Of_Component (Corresponding_Instance (C)) = CC_Subprogram;
+   end Is_Subprogram_Access;
+
    ------------
    -- Is_Bus --
    ------------
@@ -719,5 +729,14 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
       return Kind (C) = K_Component_Instance and then
         Get_Category_Of_Component (C) = CC_Virtual_Bus;
    end Is_Virtual_Bus;
+
+   -------------
+   -- Is_Port --
+   -------------
+
+   function Is_Port (C : Node_Id) return Boolean is
+   begin
+      return Kind (C) = K_Port_Spec_Instance;
+   end Is_Port;
 
 end Ocarina.ME_AADL.AADL_Instances.Nutils;

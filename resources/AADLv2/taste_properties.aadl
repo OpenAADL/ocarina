@@ -215,4 +215,6 @@ Ada_Package_Name : aadlstring applies to (data);
 
 interfaceView : aadlstring applies to (package);
 
+WCET : Time applies to (subprogram access);
+
 end Taste;
