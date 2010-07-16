@@ -61,6 +61,8 @@ package body Ocarina.Property_Sets is
          O_Deployment,
          O_Cheddar_Properties,
          O_Ocarina_Config,
+         O_Base_Types,
+         O_ASSERT_Types,
          O_ASSERT_Properties);
 
    AADLv2_Ocarina_Property_Sets : aliased Ocarina_Property_Set_Array_Type
