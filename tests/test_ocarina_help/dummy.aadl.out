@@ -47,6 +47,7 @@ Usage:
         real_theorem
         carts
         asn1_deployment
+        cheddar
         aadl
         aadl_min
         aadl_annex
