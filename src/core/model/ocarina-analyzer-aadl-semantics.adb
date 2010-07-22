@@ -1948,7 +1948,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                   Get_Type_Of_Property_Value
                   (Expanded_Single_Value
                    (Property_Association_Value
-                    (Property_Association))))
+                      (Property_Association))))
                  and then Test_Property_Value_Validity
                  (Property_Name_Type (Property_Name),
                   Expanded_Single_Value
@@ -2001,7 +2001,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
       end if;
 
       --  Use the routines of the AADL_Values package to compare the
-      --  values and wrapp them to intercept any comparison error.
+      --  values and wrap them to intercept any comparison error.
 
       begin
          if Value (Value (Literal_1)) < Value (Value (Literal_2)) then
@@ -2014,6 +2014,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
       exception
          when Constraint_Error =>
             Result := -2;
+            raise;
       end;
 
       return Result;
@@ -2150,6 +2151,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          N := New_Node (K_Literal, Loc (L));
          Set_Value (N, New_Value (Result));
+
          return N;
       end Convert_To_Base;
 
@@ -2340,7 +2342,6 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       if Success then
          case Kind (Type_Designator) is
-
             when K_Classifier_Type =>
                List_Node :=
                  First_Node (List_Items (Type_Designator));
@@ -2400,9 +2401,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
                                     if Get_Entity_Category (Temp_Node) =
                                       EC_Subcomponent
                                     then
-                                       --  If the subcomponent specification
-                                       --  is incmplete (see AADL 1.0
-                                       --  standard paragraph 4.5 section
+                                       --  If the subcomponent
+                                       --  specification is incomplete
+                                       --  (see AADL 1.0 standard
+                                       --  paragraph 4.5 section
                                        --  `semantics'), then there is
                                        --  nothing else to analyze.
 
@@ -2507,18 +2509,14 @@ package body Ocarina.Analyzer.AADL.Semantics is
                        Present (Lower_Bound (Type_Range (Type_Designator)))
                        and then
                        (Compare_Numbers
-                        (Lower_Bound
-                         (Type_Range
-                          (Type_Designator)),
-                         Actual_Literal) >= 0)
+                          (Lower_Bound (Type_Range (Type_Designator)),
+                           Actual_Literal) >= 0)
                        and then
                        Present (Upper_Bound (Type_Range (Type_Designator)))
                        and then
                        (Compare_Numbers
                         (Actual_Literal,
-                         Upper_Bound
-                         (Type_Range
-                          (Type_Designator))) >= 0);
+                         Upper_Bound (Type_Range (Type_Designator))) >= 0);
                   end if;
                else
                   Success := False;

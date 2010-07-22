@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2004-2008, GET-Telecom Paris.                --
+--               Copyright (C) 2004-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -262,27 +262,15 @@ package body Ocarina.AADL_Values is
       return Remove_Leading_Spaces (Unsigned_Short_Short'Image (V));
    end Image;
 
-   -----------
-   -- Image --
-   -----------
-
    function Image (V : Integer) return String is
    begin
       return Remove_Leading_Spaces (Integer'Image (V));
    end Image;
 
-   -----------
-   -- Image --
-   -----------
-
    function Image (V : Unsigned_Long_Long) return String is
    begin
       return Remove_Leading_Spaces (Unsigned_Long_Long'Image (V));
    end Image;
-
-   -----------
-   -- Image --
-   -----------
 
    function Image
      (V    : Unsigned_Long_Long;
@@ -321,10 +309,6 @@ package body Ocarina.AADL_Values is
       return Str (Str_Pos + 1 .. Str'Last);
    end Image;
 
-   -----------
-   -- Image --
-   -----------
-
    function Image
      (V    : Unsigned_Long_Long;
       Base : Unsigned_Short_Short;
@@ -359,10 +343,6 @@ package body Ocarina.AADL_Values is
       end if;
    end Image;
 
-   -----------
-   -- Image --
-   -----------
-
    function Image (V : Long_Long_Float) return String is
       Str : String (1 .. 2 * Long_Long_Float'Digits + 2);
       --  Max digits = [+/-] Fore . Aft
@@ -371,10 +351,6 @@ package body Ocarina.AADL_Values is
       Ada.Long_Long_Float_Text_IO.Put (Str, V, Long_Long_Float'Digits, 0);
       return Remove_Ending_Zeros (Remove_Leading_Spaces (Str));
    end Image;
-
-   -----------
-   -- Image --
-   -----------
 
    function Image
      (V    : Long_Long_Float;
@@ -430,10 +406,6 @@ package body Ocarina.AADL_Values is
       end if;
    end Image;
 
-   -----------
-   -- Image --
-   -----------
-
    function Image
      (V    : Long_Long_Float;
       Base : Unsigned_Short_Short;
@@ -468,10 +440,6 @@ package body Ocarina.AADL_Values is
       end if;
    end Image;
 
-   -----------
-   -- Image --
-   -----------
-
    function Image (Kind : Node_Kind) return String is
       use Charset;
 
@@ -504,7 +472,7 @@ package body Ocarina.AADL_Values is
       PExp   : constant Integer := abs (Exp);
 
    begin
-      for I in 1 .. PExp loop
+      for J in 1 .. PExp loop
          Result := Result * LBase;
       end loop;
 
@@ -568,6 +536,7 @@ package body Ocarina.AADL_Values is
                      Result.IBase := 10;
                      Result.ISign := Safe_XOR (L.ISign, R.ISign);
                      Result.IVal := L.IVal * R.IVal;
+                     Result.IExp := 0;
                      return Result;
                   end;
 
