@@ -227,7 +227,6 @@ package body Ocarina.Backends.REAL is
       end loop;
 
       --  We allocate the set table
-
       Set_Array := new Set_Table (1 .. Cpt);
 
       --  Build used predefined sets
@@ -238,7 +237,6 @@ package body Ocarina.Backends.REAL is
 
          N := First_Node (Used_Set (R));
          while Present (N) loop
-
             --  No expression can refer to non-previously declared
             --  sets, so there is no order issue
 
@@ -292,12 +290,12 @@ package body Ocarina.Backends.REAL is
 
       Range_Set : constant Result_Set := Set_Array
         (Integer
-         (Index
-          (Annotation
-           (Referenced_Set
-            (Set_Reference
-             (Range_Variable
-              (Range_Declaration (R))))))));
+           (Index
+              (Annotation
+                 (Referenced_Set
+                    (Set_Reference
+                       (Range_Variable
+                          (Range_Declaration (R))))))));
       Success   : Boolean := True;
    begin
       --  For each element of the global ("range") set,
@@ -342,9 +340,9 @@ package body Ocarina.Backends.REAL is
    begin
       Success := True;
 
-      --  We returns the value computed for the range set if
-      --  it contains only one element, otherwise we compute the
-      --  expected range function value.
+      --  We returns the value computed for the range set if it
+      --  contains only one element, otherwise we compute the expected
+      --  range function value.
       --  If there is a function value called on a single element,
       --  it is ignored.
       --  If there are multiples elements without a range function call,
@@ -358,8 +356,9 @@ package body Ocarina.Backends.REAL is
             Warning => True);
          Res := 0.0;
 
-      elsif Return_Expression (R) /= No_Node and then
-        Range_Function (Return_Expression (R)) /= No_Value then
+      elsif Return_Expression (R) /= No_Node
+        and then Range_Function (Return_Expression (R)) /= No_Value
+      then
          Compute_Range_Function_Value (R, Success, Res);
 
       elsif Cardinal (Range_Set) = 1 then
@@ -495,6 +494,7 @@ package body Ocarina.Backends.REAL is
       Success     : Boolean := True;
    begin
       N := First_Node (Required_Theorems (R));
+
       while Present (N) loop
          RNU.REAL_Root := Related_Theorem (N);
 
@@ -559,7 +559,6 @@ package body Ocarina.Backends.REAL is
 
       while Present (N) and then Success loop
          case Kind (N) is
-
             when K_Set_Declaration =>  --  Build a set
                Manage_Set_Declaration (N);
                if Returned_Type (Selection_Expression (N)) = RT_Error then
@@ -632,6 +631,10 @@ package body Ocarina.Backends.REAL is
       Local_Domain : constant Boolean := RNU.Is_Domain;
       Local_Domain_value : constant Result_Set := RNU.Domain;
    begin
+      Write_Line ("   Evaluating "
+                    & Get_Name_String
+                    (Name (Identifier (Referenced_Var (Var_Ref (E))))));
+
       --  1/ Save the current runtime state
 
       S := Save_Instance;
@@ -677,6 +680,12 @@ package body Ocarina.Backends.REAL is
             & " value", Fatal => True);
       end if;
 
+      Write_Line ("   value for "
+                    & Get_Name_String
+                    (Name (Identifier (Referenced_Var (Var_Ref (E)))))
+                    & " after evaluating " & Get_Name_String (Theorem_Name (E))
+                    & " is" & Float'Image (R));
+
       --  5/ Restore current runtime state
 
       Clean_Runtime;
@@ -703,12 +712,20 @@ package body Ocarina.Backends.REAL is
       D      : constant Node_Id := Check_Expression (Return_Expr (E));
    begin
       Compute_Check_Expression (D, Ret, Result);
+
       if Ret = RT_Error then
          Display_Located_Error
            (Loc (D), "Could not resolve expression value", Fatal => True);
          Success := False;
          return;
       end if;
+
+      Write_Line
+        ("     -> value for "
+           & Get_Name_String
+           (Name (Identifier (Referenced_Var (Var_Ref (E)))))
+           & " is " & Image (Result));
+
       Set_Var_Value (Referenced_Var (Var_Ref (E)), Result);
    end Manage_Variable_Declaration;
 
@@ -799,6 +816,10 @@ package body Ocarina.Backends.REAL is
       Result : Value_Id := No_Value;
       Ret    : Return_Type := RT_Unknown;
    begin
+      if No (D) then
+         return True;
+      end if;
+
       Compute_Check_Expression (D, Ret, Result);
       if Ret = RT_Error then
          return False;
@@ -829,8 +850,7 @@ package body Ocarina.Backends.REAL is
    function Manage_Return_Expression (E : Node_Id) return Float is
       pragma Assert (Kind (E) = K_Theorem);
 
-      D      : constant Node_Id := Check_Expression
-        (Return_Expression (E));
+      D  : constant Node_Id := Check_Expression (Return_Expression (E));
       Result : Value_Id := No_Value;
       Ret    : Return_Type := RT_Unknown;
    begin
@@ -844,10 +864,18 @@ package body Ocarina.Backends.REAL is
             end if;
 
          when RT_Integer =>
-            if Get_Value_Type (Result).ISign then
-               return -(Float (Get_Value_Type (Result).IVal));
+            if Get_Value_Type (Result).T = LT_Integer then
+               if Get_Value_Type (Result).ISign then
+                  return -(Float (Get_Value_Type (Result).IVal));
+               else
+                  return Float (Get_Value_Type (Result).IVal);
+               end if;
             else
-               return Float (Get_Value_Type (Result).IVal);
+               if Get_Value_Type (Result).RSign then
+                  return -(Float (Get_Value_Type (Result).RVal));
+               else
+                  return Float (Get_Value_Type (Result).RVal);
+               end if;
             end if;
 
          when RT_Error =>
@@ -1572,7 +1600,7 @@ package body Ocarina.Backends.REAL is
             begin
                for I in 1 .. Cardinal (Set) loop
 
-                  --  Set The current value of the variable to the
+                  --  Set the current value of the variable to the
                   --  value of the element
 
                   Set_Var_Value (Referenced_Var (Var),
@@ -1677,9 +1705,12 @@ package body Ocarina.Backends.REAL is
                     (Loc (First_Node (True_Parameters (E))),
                      "property " & Image
                      (Value (First_Node (True_Parameters (E))))
-                     & " is not defined on this single element. "
-                     & "Try using 'Property_Exists' before.",
-                     Fatal => True);
+                       & " is not defined on this single element.",
+                     Fatal => False,
+                     Warning => True);
+
+                  Result := No_Value;
+                  T := RT_Unknown;
                else
                   T := Returned_Type (E);
                end if;
@@ -1699,34 +1730,44 @@ package body Ocarina.Backends.REAL is
                                      (First_Node
                                       (Referenced_Sets (E)))))));
                   begin
-                     for I in 1 .. Cardinal (R1) loop
-                        V := Get_Property_Value_Function
-                          (Value (First_Node (True_Parameters (E))),
-                           Returned_Type (E), Get (R1, I));
-                        if V /= No_Value then
-                           VT := Get_Value_Type (V);
-                           if VT.T /= LT_List then
-                              F := New_Node (K_Value_Node, Loc (E));
-                              Set_Item_Val (F, V);
-                              RNU.Append_Node_To_List (F, L);
-                           else
-                              --  If the result is a list, we flatten
-                              --  the list of lists into a single list
-                              declare
-                                 P : Node_Id := First_Node (VT.LVal);
-                              begin
-                                 while Present (P) loop
-                                    F := New_Node (K_Value_Node, Loc (E));
-                                    Set_Item_Val (F, Item_Val (P));
-                                    RNU.Append_Node_To_List (F, L);
-                                    P := Next_Node (P);
-                                 end loop;
-                              end;
+                     if Cardinal (R1) > 0 then
+                        for I in 1 .. Cardinal (R1) loop
+                           V := Get_Property_Value_Function
+                             (Value (First_Node (True_Parameters (E))),
+                              Returned_Type (E), Get (R1, I));
+                           if V /= No_Value then
+                              VT := Get_Value_Type (V);
+                              if VT.T /= LT_List then
+                                 F := New_Node (K_Value_Node, Loc (E));
+                                 Set_Item_Val (F, V);
+                                 RNU.Append_Node_To_List (F, L);
+                              else
+                                 --  If the result is a list, we flatten
+                                 --  the list of lists into a single list
+                                 declare
+                                    P : Node_Id := First_Node (VT.LVal);
+                                 begin
+                                    while Present (P) loop
+                                       F := New_Node (K_Value_Node, Loc (E));
+                                       Set_Item_Val (F, Item_Val (P));
+                                       RNU.Append_Node_To_List (F, L);
+                                       P := Next_Node (P);
+                                    end loop;
+                                 end;
+                              end if;
                            end if;
-                        end if;
-                     end loop;
-                     Result := New_List_Value (L);
-                     T := Returned_Type (E);
+                        end loop;
+                        Result := New_List_Value (L);
+                        T := Returned_Type (E);
+                     else
+                        Display_Located_Error
+                          (Loc (E),
+                           "cardinal of set is null",
+                           Fatal => False,
+                           Warning => True);
+                        Result := No_Value;
+                        T := RT_Unknown;
+                     end if;
                   end;
                else
                   --  The first parameter is a variable
@@ -1901,8 +1942,17 @@ package body Ocarina.Backends.REAL is
             begin
                Compute_Check_Expression
                  (First_Node (Parameters (E)), T2, R);
-               if T2 /= RT_Error then
+               if T2 = RT_Unknown then
+                  Display_Located_Error
+                    (Loc (E), "use default value",
+                     Fatal => False, Warning => True);
+                  T := RT_Float;
+                  Result := New_Real_Value (0.0);
+                  return;
+
+               elsif T2 /= RT_Error then
                   VT := Get_Value_Type (R);
+
                else
                   T := RT_Error;
                   return;
@@ -2116,34 +2166,45 @@ package body Ocarina.Backends.REAL is
                   return;
                end if;
 
-               VT := Get_Value_Type (R);
-               N := First_Node (VT.LVal);
+               if T2 = RT_Unknown then
+                  Display_Located_Error
+                    (Loc (E),
+                     "unknown value, use default value of 0.0",
+                     Fatal => False,
+                     Warning => True);
 
-               case T2 is
-                  when RT_Float_List =>
-                     T := RT_Float;
-                  when RT_Int_List =>
-                     T := RT_Integer;
-                  when others =>
-                     Display_Located_Error
-                       (Loc (E),
-                        "'Min' subprogram cannot be "
-                        & "run on non-numeric properties",
-                        Fatal => True);
-               end case;
+                  Result := New_Real_Value (0.0, False);
 
-               Current_Min := Get_Value_Type (Max_Value);
-               while Present (N) loop
-                  V := Get_Value_Type (Item_Val (N));
+               else
+                  VT := Get_Value_Type (R);
+                  N := First_Node (VT.LVal);
 
-                  if V < Current_Min then
-                     Current_Min := V;
-                  end if;
+                  case T2 is
+                     when RT_Float_List =>
+                        T := RT_Float;
+                     when RT_Int_List =>
+                        T := RT_Integer;
+                     when others =>
+                        Display_Located_Error
+                          (Loc (E),
+                           "'Min' subprogram cannot be "
+                             & "run on non-numeric properties",
+                           Fatal => True);
+                  end case;
 
-                  N := Next_Node (N);
-               end loop;
+                  Current_Min := Get_Value_Type (Max_Value);
+                  while Present (N) loop
+                     V := Get_Value_Type (Item_Val (N));
 
-               result := New_Value (Current_Min);
+                     if V < Current_Min then
+                        Current_Min := V;
+                     end if;
+
+                     N := Next_Node (N);
+                  end loop;
+
+                  result := New_Value (Current_Min);
+               end if;
             end;
 
          when FC_Head =>  --  takes a list as parameter
@@ -2394,7 +2455,16 @@ package body Ocarina.Backends.REAL is
             begin
                Compute_Check_Expression
                  (First_Node (Parameters (E)), T2, R);
-               if T2 = RT_Error then
+
+               if T2 = RT_Unknown then
+                  Display_Located_Error
+                    (Loc (E), "use default value",
+                     Fatal => False, Warning => True);
+                  T := RT_Float;
+                  Result := New_Real_Value (0.0);
+                  return;
+
+               elsif T2 = RT_Error then
                   T := RT_Error;
                   return;
                end if;

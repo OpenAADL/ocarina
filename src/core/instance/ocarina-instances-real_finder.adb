@@ -90,7 +90,7 @@ package body Ocarina.Instances.REAL_Finder is
       VT2           : constant RV.Value_Type := RV.Get_Value_Type (Property);
       Property_Name : constant Name_Id := To_Lower (VT2.SVal);
       VT            : OV.Value_Type;
-      Result        : Value_Id;
+      Result        : Value_Id := Real_Values.No_Value;
       N             : Node_Id;
       Is_List       : Boolean := False;
       Resolved_Var  : Node_Id;

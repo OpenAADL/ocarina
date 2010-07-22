@@ -1294,7 +1294,7 @@ package body Ocarina.Analyzer.REAL is
       Set_Referenced_Sets (S, New_List (K_List_Id, Loc (S)));
       Set_True_Parameters (S, New_List (K_List_Id, Loc (S)));
 
-      --  Their is three kinds of verification subprogram :
+      --  There are three kinds of verification subprogram :
 
       --  Set-based subprogram, which always takes a  set or
       --  element as first parameter, and can have others
@@ -1577,8 +1577,8 @@ package body Ocarina.Analyzer.REAL is
                      if not Success then
                         return;
                      end if;
-                     case Returned_Type (N) is
 
+                     case Returned_Type (N) is
                         when RT_Range =>
                            Set_Returned_Type (S, RT_Float);
 
@@ -2501,7 +2501,6 @@ package body Ocarina.Analyzer.REAL is
                N := Next_Node (N);
             end loop;
       end case;
-
    end Analyze_Check_Subprogram_Call;
 
    -----------------------
@@ -2522,6 +2521,7 @@ package body Ocarina.Analyzer.REAL is
       --  Stands for property type designator, actually the property
       --  type, yet does not said wheither it is a list or not.
    begin
+
       Success := True;
       Set_Str_To_Name_Buffer
         (Ocarina.REAL_Values.Image (RN.Value (E), False));
