@@ -96,8 +96,8 @@ generator built on top of Ocarina that targets Ada targets: Native or
 bare board runtimes; 
 
 @item PolyORB-HI/C, a High-Integrity AADL runtime and its code
-generator built on top of Ocarina that targets C targets: POSIX
-systems, RTEMS; 
+generator built on top of Ocarina that targets C targets: POSIX and
+RT-POSIX systems, RTEMS; 
 
 @end itemize
 
@@ -206,17 +206,18 @@ the ``@code{\}'' character should be used instead.
 @chapter Introduction
 @c -------------------------------------------------------------------
 
-Ocarina is an application that can be used to build applications from
-AADL descriptions. Because of its modular architecture, Ocarina can
-also be used to add AADL functions to existing applications. Ocarina
-supports the AADL 1.0 standard and proposes the following features :
+Ocarina is an application that can be used to analyze and build
+applications from AADL descriptions. Because of its modular
+architecture, Ocarina can also be used to add AADL functions to
+existing applications. Ocarina supports the AADL 1.0 and AADLv2
+standards and proposes the following features :
 
 @enumerate
 @item Parsing and pretty printing of AADL models
 
 @item Semantics checks
 
-@item Code generation, using three code generators
+@item Code generation, using one of the four code generators
 
 @itemize
 @item ARAO/Ada, an Ada AADL runtime built on top of PolyORB;
@@ -228,9 +229,23 @@ bare board runtimes;
 @item PolyORB-HI/C, a High-Integrity AADL runtime and its code
 generator built on top of Ocarina that targets C targets: POSIX
 systems, RTEMS; 
+
+@item POK, a partioned operating system compliant with the ARINC653
+ standard.
+
 @end itemize
 
-@item Model checking using Petri nets.
+@item Model checking using Petri nets;
+
+@item Computation of Worst-Case Execution Time using the Bound-T
+tool from Tidorum Ltd.;
+
+@item REAL, Requirement Enforcement and Analysis Language, an AADLv2 annex
+language to evaluate properties and metrics of AADLv2 architectural models;
+
+@item Scheduling analysis of AADL models, with a gateway to the Cheddar 
+scheduling analysis tool from the Université de Bretagne Occidentale.
+
 @end enumerate
 
 Companion documents describe some of these add-ons for Ocarina:
@@ -497,41 +512,86 @@ above, they will need autoconf 2.57 or newer, automake 1.6.3 or newer.
 @c -------------------------------------------------------------------
 
 @menu
-* ocarina_sh::
-* AADL Scenario Files::
 * ocarina::
+* AADL Scenario Files::
 * ocarina-config::
 @end menu
 
 @c -------------------------------------------------------------------
-@node ocarina_sh
-@section @command{ocarina_sh}
-@cindex @command{ocarina_sh}
+@node ocarina
+@section @command{ocarina}
+@cindex @command{ocarina}
 @c -------------------------------------------------------------------
 
-This command is a simplified front-end for the functions provided by
+This command is an extended front-end for the functions provided by
 Ocarina.
 
 @smallexample
-@c XXX check consistency with corresponding executable
-Usage: ocarina_sh [opts] [-s <scenario_part_1> <scenario_part_2>...]
- scenario_part_? is the AADL file describing the application scenario
- -b: build the generated application code
- -z: clean the generated application code
- -p: only parse the application model
- -l: collect the output of the each action it performs
-     in an appropriate file called log_xxx
- -n: only produce Petri Net
- -c: only perform schedulability analysis
- -v: output Ocarina version
+@c XXX check consistency with corresponding script
+Usage: 
+      ocarina [options] files
+      OR
+      ocarina -help
+  files are a non null sequence of AADL files
+
+  General purpose options:
+   -V  Output Ocarina version, then exit
+   -s  Output Ocarina search directory, then exit
+
+  Scenario file options:
+   -b  build the generated application code
+   -z  clean the generated application code
+   -ec execute the generated application code and
+       retrieve coverage information
+   -er execute the generated application code and
+       verify that there is no regression
+   -p  only parse and instantiate the application model
+   -c  only perform schedulability analysis
+
+  Advanced user options:
+   -d  Debug mode for developpers
+   -q  Quiet mode (default)
+   -t  [script] Run Ocarina in terminal interactive mode.
+       If a script is given, interpret it then exit.
+   -v  Verbose mode for users
+   -x  Parse AADL file as an AADL scenario file
+   -f  Parse predefined non standard property sets
+   -i  Instantiate the AADL model
+   -r  <name> The name of the instance tree root
+   -o  Specify output file
+   -I  Specify the inclusion paths
+   -aadlv1  Use AADL v1 standard (default)
+   -aadlv2  Use AADL v2 standard
+   -real_lib Add a REAL file to be used as a theorem libraries by REAL annexes
+   -g  Generate code from the AADL instance tree
+       Registered backends:
+        petri_nets
+        boundt
+        polyorb_hi_ada
+        polyorb_qos_ada
+        polyorb_hi_c
+        polyorb_hi_rtsj
+        pok_c
+        stats
+        subprograms
+        real_theorem
+        carts
+        cheddar
+        aadl
+        aadl_min
+        aadl_annex
+        behavior_specification
+        real_specification
+   -arinc653  Generate code for ARINC653 API (POK backend only)
+   -b  Generate and build code from the AADL model
+   -z  Clean code generated from the AADL model
+   -disable-annexes=@{annexes@}  Desactive one or all annexes
+       Annexes :
+        all
+        behavior
+        real
+
 @end smallexample
-
-This script takes an AADL scenario files as an input and, depending on
-the given switches, invokes the @file{ocarina} command with the proper
-command line options.
-
-If the user gave the ``-b'' command line switch, the generated code will
-be compiled.
 
 @c -------------------------------------------------------------------
 @node AADL Scenario Files
@@ -562,65 +622,15 @@ generation:
 Node that for the 2 last files, we used the ``additive'' for of AADL
 properties to ``add'' AADL files.
 
-If the user invokes @file{ocarina_sh} on both
+If the user invokes @file{ocarina -x} on both
 @file{scenario_common.aadl} and @file{scenario_c.aadl}, then
 @file{ocarina} will be invoked to generate C code for the PolyORB-HI
 middleware.
 
-If the user invokes @file{ocarina_sh} on both
+If the user invokes @file{ocarina_ -x} on both
 @file{scenario_common.aadl} and @file{scenario_ada.aadl}, then
 @file{ocarina} will be invoked to generate Ada code for the PolyORB-HI
 middleware.
-
-@c -------------------------------------------------------------------
-@node ocarina
-@section @command{ocarina}
-@cindex @command{ocarina}
-@c -------------------------------------------------------------------
-
-This command is an extended front-end for the functions provided by
-Ocarina.
-
-@i{Note: this script is the actual driver for the Ocarina compiler,
-its use is for advanced users. @command{ocarina_sh} relies on this
-driver to produce all-in-on model analysis and code generation}
-
-@smallexample
-@c XXX check consistency with corresponding script
-Usage: 
-      ocarina [options] files
-      OR
-      ocarina -help
-  files are a non null sequence of AADL files
-
-  Options:
-  -v  Output Ocarina version, then exit
-  -s  Output Ocarina search directory, then exit
-  -f  Parse Ocarina predefined NON STANDARD property sets
-  -n  To generate Petri Net from the AADL instance model
-  -g  To generate code from the AADL instance tree
-      Registered generators:
-       PolyORB-QoS-Ada
-       PolyORB-HI-Ada
-       PolyORB-HI-C
-  -b  To also build code generated from the AADL model
-  -z  To clean code generated from the AADL model
-  -i  To only instantiate the AADL model
-  -r  <name> The name of the instance tree root
-  -d  Specify output directory
-  -o  Specify output file
-  -p  Specify the printer to use
-      Registered printers:
-       aadl
-       aadl_min
-       aadl_tree_p
-       aadl_tree_i
-  -I  Specify the inclusion paths
-  -q  Quiet mode, no debugging messages (default)
-  -V  Verbose mode, display debugging messages
-  -aadlv2  Use AADL v2 standard
-  -aadlv1  Use AADL v1 standard (default)
-@end smallexample
 
 @c -------------------------------------------------------------------
 @node ocarina-config
