@@ -7,6 +7,13 @@
 
 (defvar aadl-mode-hook nil)
 
+; Add support for compilation of AADL files directly from emacs
+(require 'compile)
+(add-hook 'aadl-mode-hook
+	  (lambda ()
+	    (set (make-local-variable 'compile-command)
+		 (concat "ocarina -aadlv2 -f -p " buffer-file-name))))
+
 (defvar aadl-mode-map
   (let ((aadl-mode-map (make-keymap)))
     (define-key aadl-mode-map "\C-j"  'new-line-and-indent)
