@@ -1,42 +1,58 @@
 variables_basis execution
+     -> value for bla is 2
 theorem variables_basis is: TRUE
 
 variables_with_expression execution
+     -> value for bla is 3
 theorem variables_with_expression is: TRUE
 
 variables_dependant execution
+     -> value for x1 is 1
+     -> value for x2 is 3
 theorem variables_dependant is: TRUE
 
 variables_set_dependants execution
+     -> value for x2 is 3
 theorem variables_set_dependants is: TRUE
 
 variables_iterative_expressions execution
+     -> value for y is 6.0
 theorem variables_iterative_expressions is: TRUE
 
 variables_imbricated_iterative_expressions execution
+     -> value for y is 7.0
 theorem variables_imbricated_iterative_expressions is: TRUE
 
 variables_product_expression execution
+     -> value for x is 0.5
 theorem variables_product_expression is: TRUE
 
 element_list_expression execution
 theorem element_list_expression is: TRUE
 
 element_list_static_declaration execution
+     -> value for period is Not implemented yet
 theorem element_list_static_declaration is: TRUE
 
 list_concat execution
+     -> value for lst1 is Not implemented yet
+     -> value for lst2 is Not implemented yet
+     -> value for lst3 is Not implemented yet
 theorem list_concat is: TRUE
 
 is_in_list_and_set_expression execution
 theorem is_in_list_and_set_expression is: TRUE
 
 if_then_else_expression execution
+     -> value for v1 is 1
+     -> value for v2 is 2
+     -> value for v3 is 0
 theorem if_then_else_expression is: TRUE
 
 test_head_and_queue execution
+     -> value for period_list is Not implemented yet
+     -> value for poped_list is Not implemented yet
 theorem test_head_and_queue is: TRUE
 
 test_reference_property execution
 theorem test_reference_property is: TRUE
-

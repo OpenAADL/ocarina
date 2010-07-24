@@ -17,15 +17,22 @@ check_expression_range execution
 theorem check_expression_range is: TRUE
 
 check_expression_lcm execution
+     -> value for var_list is Not implemented yet
 theorem check_expression_lcm is: TRUE
 
 check_expression_gcd execution
+     -> value for var_list is Not implemented yet
 theorem check_expression_gcd is: TRUE
 
 check_expression_gcd_var execution
+     -> value for v1 is 2
+     -> value for v2 is 4
+     -> value for v3 is 6
 theorem check_expression_gcd_var is: TRUE
 
 check_expression_non_null execution
+     -> value for v0 is 0
+     -> value for v1 is 42
 theorem check_expression_non_null is: TRUE
 
 check_is_in execution

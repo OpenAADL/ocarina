@@ -1,0 +1,19 @@
+all.aadl:66:03: warning: Field references a component type
+all.aadl:124:03: warning: proc_1 references a component type
+all.aadl:125:03: warning: proc_2 references a component type
+all.aadl:126:03: warning: ram references a component type
+all.aadl:127:03: warning: ram_2 references a component type
+ocarina: Total: 0 error and 5 warnings
+resources execution
+requirement : connections
+theorem connections is: TRUE
+requirement : memory_size
+theorem memory_size is: TRUE
+requirement : mutexes
+theorem mutexes is: TRUE
+requirement : latency
+requirement : buses_rate
+lib.real:12:33 Backends: warning : property "assert_properties::access_bandwidth" is not defined on this single element.
+lib.real:12:72 Backends: error : Property is false for instance 582 (shared.impl_a_bus)
+theorem buses_rate is: FALSE
+lib.real:85:01 Backends: fatal error : requirements are not fulfilled

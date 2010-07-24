@@ -43,5 +43,6 @@ set_declaration_or_operator execution
 theorem set_declaration_or_operator is: TRUE
 
 set_declaration_predefined_sets execution
+     -> value for x is 4
 theorem set_declaration_predefined_sets is: TRUE
 

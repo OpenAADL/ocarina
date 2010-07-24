@@ -2,21 +2,35 @@ lib.real:12:17: warning: Unable to determine actualy returned type.
 lib.real:19:24: warning: Unable to determine actualy returned type.
 lib.real:33:03: warning: Returned boolean value will be casted to a float at runtime
 test_env_subtheorem_call_no_parameter execution
+   Evaluating x
+   value for x after evaluating sub_theorem_1 is 2.00000E+00
 theorem test_env_subtheorem_call_no_parameter is: TRUE
 
 test_env_subtheorem_call_one_parameter execution
+   Evaluating x
+   value for x after evaluating sub_theorem_2 is 2.00000E+00
 theorem test_env_subtheorem_call_one_parameter is: TRUE
 
 test_env_subtheorem_call_multiple_parameters execution
+     -> value for y is 3
+   Evaluating x
+   value for x after evaluating sub_theorem_3 is 4.00000E+00
 theorem test_env_subtheorem_call_multiple_parameters is: TRUE
 
 test_env_subtheorem_call_with_domain execution
+     -> value for y is 1
+   Evaluating x
+   value for x after evaluating sub_theorem_4 is 2.00000E+00
 theorem test_env_subtheorem_call_with_domain is: TRUE
 
 test_env_subtheorem_call_global_variable execution
+     -> value for y is 1
+   Evaluating x
+   value for x after evaluating sub_theorem_5 is 1.00000E+00
 theorem test_env_subtheorem_call_global_variable is: TRUE
 
 test_env_subtheorem_call_with_empty_domain execution
+   Evaluating x
 lib.real:38:01 Backends: warning : Empty range set, returned value is 0.0
+   value for x after evaluating sub_theorem_6 is 0.00000E+00
 theorem test_env_subtheorem_call_with_empty_domain is: TRUE
-

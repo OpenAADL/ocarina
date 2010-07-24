@@ -1,6 +1,7 @@
 pok_safety execution
 requirement : check_error_handling
+     -> value for errors is Not implemented yet
+     -> value for actual_errors is Not implemented yet
 libsafety.real:32:46 Backends: error : Property is false for instance 69 (node.impl_part1_thr1)
 theorem check_error_handling is: FALSE
 model.aadl:118:07 Backends: fatal error : requirements are not fulfilled
-
