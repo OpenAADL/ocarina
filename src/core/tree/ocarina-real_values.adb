@@ -158,7 +158,7 @@ package body Ocarina.REAL_Values is
 
          when LT_List =>
             --  XXX FIXME :
-            raise Program_Error with "not implemented yet";
+            return "Not implemented yet";
 
          when LT_Range =>
             if Value.RSign_Left then

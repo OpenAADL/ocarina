@@ -987,7 +987,11 @@ package body Ocarina.Backends.REAL is
          when K_Check_Expression =>
             if Present (Left_Expr (E)) and then Present (Right_Expr (E)) then
                Compute_Check_Expression (Left_Expr (E), T1, R1);
-               if T1 = RT_Error then
+               if T1 = RT_Unknown then
+                  Ret := RT_Boolean;
+                  Result := New_Boolean_Value (False);
+                  return;
+               elsif T1 = RT_Error then
                   Ret := RT_Error;
                   return;
                end if;
@@ -1086,7 +1090,11 @@ package body Ocarina.Backends.REAL is
 
                   when OV_Greater_Equal =>
                      Compute_Check_Expression (Right_Expr (E), T2, R2);
-                     if T2 = RT_Error then
+                     if T2 = RT_Unknown then
+                        Ret := RT_Boolean;
+                        Result := New_Boolean_Value (True);
+                        return;
+                     elsif T2 = RT_Error then
                         Ret := RT_Error;
                         return;
                      end if;
@@ -1944,7 +1952,7 @@ package body Ocarina.Backends.REAL is
                  (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default value",
+                    (Loc (E), "use default float value of 0.0",
                      Fatal => False, Warning => True);
                   T := RT_Float;
                   Result := New_Real_Value (0.0);
@@ -2002,7 +2010,16 @@ package body Ocarina.Backends.REAL is
             begin
                Compute_Check_Expression
                  (First_Node (Parameters (E)), T2, R);
-               if T2 = RT_Error then
+
+               if T2 = RT_Unknown then
+                  Display_Located_Error
+                    (Loc (E), "use default float value of 0.0",
+                     Fatal => False, Warning => True);
+                  T := RT_Float;
+                  Result := New_Real_Value (0.0);
+                  return;
+
+               elsif T2 = RT_Error then
                   T := RT_Error;
                   return;
                end if;
@@ -2053,7 +2070,15 @@ package body Ocarina.Backends.REAL is
             begin
                Compute_Check_Expression
                  (First_Node (Parameters (E)), T2, R);
-               if T2 = RT_Error then
+               if T2 = RT_Unknown then
+                  Display_Located_Error
+                    (Loc (E), "use default boolean value of true",
+                     Fatal => False, Warning => True);
+                  result := New_Boolean_Value (True);
+                  T := RT_Boolean;
+                  return;
+
+               elsif T2 = RT_Error then
                   T := RT_Error;
                   return;
                end if;
@@ -2458,7 +2483,7 @@ package body Ocarina.Backends.REAL is
 
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default value",
+                    (Loc (E), "use default float value of 0.0",
                      Fatal => False, Warning => True);
                   T := RT_Float;
                   Result := New_Real_Value (0.0);
