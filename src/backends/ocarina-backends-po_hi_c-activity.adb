@@ -423,7 +423,24 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Fetch_In_Ports;
          procedure Make_Thread_Compute_Entrypoint;
          procedure Make_Ports_Compute_Entrypoint;
+         procedure Make_Init;
          function Make_Get_Valid_Value (F : Node_Id) return Node_Id;
+
+         ---------------
+         -- Make_Init --
+         ---------------
+
+         procedure Make_Init is
+            Entrypoint : constant Node_Id
+                  := Get_Thread_Initialize_Entrypoint (E);
+         begin
+            if Entrypoint /= No_Node then
+               Append_Node_To_List
+                  (Make_Call_Profile
+                     (Map_C_Subprogram_Identifier (Entrypoint)),
+                  Statements);
+            end if;
+         end Make_Init;
 
          --------------------------
          -- Make_Get_Valid_Value --
@@ -1158,6 +1175,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                Display_Error ("unknown type of thread", Fatal => False);
                null;
          end case;
+
+         Make_Init;
 
          Check_Thread_Consistency (E);
 
