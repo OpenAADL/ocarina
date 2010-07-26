@@ -257,6 +257,7 @@ package body Ocarina.Backends.Properties is
    Language_Ada_05_Name   : Name_Id;
    Language_ASN1_Name     : Name_Id;
    Language_C_Name        : Name_Id;
+   Language_Device_Name   : Name_Id;
    Language_Esterel_Name  : Name_Id;
    Language_GUI_Name      : Name_Id;
    Language_Lustre_Name   : Name_Id;
@@ -1313,6 +1314,9 @@ package body Ocarina.Backends.Properties is
          elsif Source_L = Language_ASN1_Name then
             return Language_ASN1;
 
+         elsif Source_L = Language_Device_Name then
+            return Language_Device;
+
          elsif Source_L = Language_Lustre_Name
            or else Source_L = Language_Lustre5_Name
            or else Source_L = Language_Lustre6_Name
@@ -1443,6 +1447,12 @@ package body Ocarina.Backends.Properties is
 
          when Language_ASN1 =>
             --  A subprogram having ASN1 as implementation
+            --  language is not supported.
+
+            return Subprogram_Unknown;
+
+         when Language_Device =>
+            --  A subprogram having Device as implementation
             --  language is not supported.
 
             return Subprogram_Unknown;
@@ -2975,6 +2985,7 @@ package body Ocarina.Backends.Properties is
       Language_Ada_Name      := Get_String_Name ("ada");
       Language_Ada_05_Name   := Get_String_Name ("ada05");
       Language_C_Name        := Get_String_Name ("c");
+      Language_Device_Name   := Get_String_Name ("device");
       Language_RTSJ_Name     := Get_String_Name ("rtsj");
       Language_Simulink_Name := Get_String_Name ("simulink");
       Language_Scade_Name    := Get_String_Name ("scade");

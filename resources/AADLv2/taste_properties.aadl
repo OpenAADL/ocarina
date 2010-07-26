@@ -207,7 +207,7 @@ dataview : aadlstring applies to (package);
 
 dataviewpath : aadlstring applies to (package);
 
-Encoding_type : type enumeration (native, uper);
+Encoding_type : type enumeration (native, uper, acn);
 
 Encoding : Encoding_type applies to (parameter);
 

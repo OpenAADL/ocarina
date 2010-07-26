@@ -92,6 +92,7 @@ property set AADL_Project is
      Ada05,   -- alias for Ada95
      ASN1,
      C,
+     Device,
      Esterel,
      Lustre,
      Lustre5, -- alias for Lustre
