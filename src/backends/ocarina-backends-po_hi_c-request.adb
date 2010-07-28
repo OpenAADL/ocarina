@@ -280,6 +280,14 @@ package body Ocarina.Backends.PO_HI_C.Request is
 
             Bind_AADL_To_Request
               (Identifier (E), Ports_Names_Array);
+         else
+            N := Make_Full_Type_Declaration
+              (Defining_Identifier => RE (RE_Request_T),
+               Type_Definition     => Make_Defining_Identifier (TN (T_Int)));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            Bind_AADL_To_Request_Type
+              (Identifier (E), N);
          end if;
 
          Reset_Handlings;
@@ -328,13 +336,17 @@ package body Ocarina.Backends.PO_HI_C.Request is
             F := First_Node (Features (E));
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance
-                 and then AIN.Is_Data (F)
                  and then No (Get_Handling (F, By_Node, H_C_Request_Spec))
                then
                   Set_Handling (F, By_Node, H_C_Request_Spec, F);
                   Request_Declared := True;
 
-                  V := Map_C_Data_Type_Designator (Corresponding_Instance (F));
+                  if Is_Data (F) then
+                     V := Map_C_Data_Type_Designator
+                        (Corresponding_Instance (F));
+                  else
+                     V := RE (RE_Bool_T);
+                  end if;
 
                   if V /= No_Node then
                      Struct_Members := New_List (CTN.K_Enumeration_Literals);

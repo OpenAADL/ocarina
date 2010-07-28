@@ -2985,7 +2985,7 @@ package body Ocarina.Backends.Properties is
       Language_Ada_Name      := Get_String_Name ("ada");
       Language_Ada_05_Name   := Get_String_Name ("ada05");
       Language_C_Name        := Get_String_Name ("c");
-      Language_Device_Name   := Get_String_Name ("device");
+      Language_Device_Name   := Get_String_Name ("blackbox_device");
       Language_RTSJ_Name     := Get_String_Name ("rtsj");
       Language_Simulink_Name := Get_String_Name ("simulink");
       Language_Scade_Name    := Get_String_Name ("scade");
