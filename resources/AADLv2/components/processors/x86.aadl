@@ -6,6 +6,7 @@ with Deployment;
 
 processor x86
 properties
+   Scheduling_Protocol => RATE_MONOTONIC_PROTOCOL;
    Deployment::Execution_Platform => Native;
 end x86;
 
