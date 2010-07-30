@@ -94,6 +94,7 @@ property set AADL_Project is
      C,
      Blackbox_Device,
      Esterel,
+     GUI,
      Lustre,
      Lustre5, -- alias for Lustre
      Lustre6, -- alias for Lustre
