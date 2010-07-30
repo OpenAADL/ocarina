@@ -2,42 +2,44 @@ package ocarina_processors
 
 public
 
-with ocarina_processors_native;
-with ocarina_processors_leon;
-with ocarina_processors_x86;
-
-with cheddar_properties;
-
-processor linux extends ocarina_processors_native::native
-end linux;
-
-processor implementation linux.simple 
-end linux.simple;
+with Cheddar_Properties;
+with Deployment;
 
 processor leon
 end leon;
 
-processor implementation leon.rtems extends ocarina_processors_leon::leon.rtems
+processor implementation leon.rtems
 properties
+   Deployment::Execution_Platform => LEON_RTEMS;
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
    Priority_Range => 0 .. 255;
    Cheddar_Properties::Scheduler_Quantum => 0 Ms;
    Cheddar_Properties::Preemptive_Scheduler => true;
 end leon.rtems;
 
-processor implementation leon.ork extends ocarina_processors_leon::leon.ork
+processor implementation leon.ork
+properties
+   Deployment::Execution_Platform => LEON_ORK;
 end leon.ork;
 
 processor x86
+properties
+   Scheduling_Protocol => (RATE_MONOTONIC_PROTOCOL);
 end x86;
 
-processor implementation x86.rtems extends ocarina_processors_x86::x86.rtems
+processor implementation x86.rtems
+properties
+   Deployment::Execution_Platform => X86_RTEMS;
 end x86.rtems;
 
-processor implementation x86.linux extends ocarina_processors_x86::x86.linux
-end x86.linux;
+processor implementation x86.linux_native
+properties
+   Deployment::Execution_Platform => Native;
+end x86.linux_native;
 
-processor implementation x86.linuxtaste extends ocarina_processors_x86::x86.linuxtaste
+processor implementation x86.linuxtaste
+properties
+   Deployment::Execution_Platform => X86_LINUXTASTE;
 end x86.linuxtaste;
 
 end ocarina_processors;
