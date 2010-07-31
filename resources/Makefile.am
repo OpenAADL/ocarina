@@ -28,7 +28,9 @@ AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
 	$(srcdir)/AADLv2/taste_properties.aadl \
 	$(srcdir)/AADLv2/transformations.aadl
 
-AADL_V2_COMPONENTS = $(srcdir)/AADLv2/components/*.aadl
+AADL_V2_COMPONENTS = $(srcdir)/AADLv2/components/*.aadl \
+                     $(srcdir)/AADLv2/components/devices/*.aadl \
+                     $(srcdir)/AADLv2/components/processors/*.aadl
 
 
 MODE_FILES = $(srcdir)/emacs/aadl-mode.el \
@@ -55,8 +57,15 @@ install-data-local:
 	for file in $(AADL_V1_PROPERTIES); do \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv1 || exit 1; \
 	done
+	rm -f $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl
 	for file in ./AADLv2/components/*.aadl; do \
-	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv2/`basename $$file` || exit 1; \
+	  cat $$file >> $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl || exit 1; \
+	done
+	for file in $(srcdir)/AADLv2/components/devices/*.aadl; do \
+	  cat $$file >> $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl || exit 1; \
+	done
+	for file in $(srcdir)/AADLv2/components/processors/*.aadl; do \
+	  cat $$file >> $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl || exit 1; \
 	done
 	for file in $(MODE_FILES); do \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina || exit 1; \

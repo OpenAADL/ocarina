@@ -1,0 +1,49 @@
+package ocarina_drivers_rtems_ne2000
+
+public
+
+subprogram init
+properties
+	Source_Language   => C;
+	Source_Name       => "__po_hi_driver_rtems_ne2000_init";
+end init;
+
+thread poller
+end poller;
+
+thread implementation poller.i
+calls
+	mycall : {
+	  pspg : subprogram spg_poller;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end poller.i;
+
+
+subprogram spg_poller
+properties
+	Source_Language   => C;
+	Source_Name       => "__po_hi_driver_rtems_ne2000_poller";
+end spg_poller;
+
+
+subprogram spg_sender
+properties
+	Source_Language   => C;
+	Source_Name       => "__po_hi_driver_sockets_send";
+end spg_sender;
+
+
+abstract driver
+end driver;
+
+
+abstract implementation driver.i
+subcomponents
+--  receiver : thread       eth_sockets_ne2000_rtems_poller.i;
+   sender   : subprogram   spg_sender;
+end driver.i;
+
+end ocarina_drivers_rtems_ne2000;
