@@ -55,3 +55,10 @@ install-exec-local:
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/ocarina-config
+
+release:
+	rm -rf release/
+	mkdir release/
+	$(MAKE) dist
+	cp -f $(DIST_ARCHIVES) release/$(DIST_ARCHIVES)
+
