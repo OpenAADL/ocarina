@@ -1601,7 +1601,6 @@ package body Ocarina.FE_REAL.Parser is
       Identifier : Node_Id;
       Elem       : Node_Id;
       Set_Expr   : Node_Id;
-      Expr       : Node_Id := No_Node;
    begin
       Range_Decl := New_Node (K_Range_Declaration, Token_Location);
 
@@ -1638,11 +1637,6 @@ package body Ocarina.FE_REAL.Parser is
          return No_Node;
       end if;
 
-      if Next_Token = T_Sothat then
-         Scan_Token (T_Sothat);
-         Expr := P_Expression;
-      end if;
-
       --  Scan 'do'
 
       Scan_Token (T_Do);
@@ -1651,7 +1645,6 @@ package body Ocarina.FE_REAL.Parser is
          return No_Node;
       end if;
 
-      Set_Range_Expression (Range_Decl, Expr);
       Set_Range_Variable (Range_Decl, Elem);
       Set_Range_Set (Range_Decl, Set_Expr);
       Set_Variable_Ref (Range_Decl,
