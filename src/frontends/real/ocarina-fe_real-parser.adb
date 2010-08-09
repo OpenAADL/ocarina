@@ -1398,6 +1398,7 @@ package body Ocarina.FE_REAL.Parser is
       --  We pass the sothat
 
       Scan_Token (T_Sothat);
+
       if Token = T_Error then
          DPE (PC_Single_Set_Declaration, T_Sothat);
          return No_Node;
@@ -1409,6 +1410,7 @@ package body Ocarina.FE_REAL.Parser is
       if No (Set_Def) then
          return No_Node;
       end if;
+
       Set_Selection_Expression (Set_Decl, Set_Def);
 
       --  We read the right brace (exit of set declaration)
@@ -1599,6 +1601,7 @@ package body Ocarina.FE_REAL.Parser is
       Identifier : Node_Id;
       Elem       : Node_Id;
       Set_Expr   : Node_Id;
+      Expr       : Node_Id := No_Node;
    begin
       Range_Decl := New_Node (K_Range_Declaration, Token_Location);
 
@@ -1635,6 +1638,11 @@ package body Ocarina.FE_REAL.Parser is
          return No_Node;
       end if;
 
+      if Next_Token = T_Sothat then
+         Scan_Token (T_Sothat);
+         Expr := P_Expression;
+      end if;
+
       --  Scan 'do'
 
       Scan_Token (T_Do);
@@ -1643,6 +1651,7 @@ package body Ocarina.FE_REAL.Parser is
          return No_Node;
       end if;
 
+      Set_Range_Expression (Range_Decl, Expr);
       Set_Range_Variable (Range_Decl, Elem);
       Set_Range_Set (Range_Decl, Set_Expr);
       Set_Variable_Ref (Range_Decl,
@@ -1864,17 +1873,21 @@ package body Ocarina.FE_REAL.Parser is
       Success     : Boolean := True;
       State       : Location;
    begin
-
       Buffer := From;
+
       if To /= No_Location then
          Buffer.EOF := To.Last_Pos;
       end if;
+
       Restore_Lexer (Buffer);
+
       Set_Theorems (Root, New_List (K_List_Id, From));
 
       Scan_Token;
+
       while Token = T_Theorem loop
          N := P_Theorem;
+
          Skip_To_Theorem_End (Success);
 
          if No (N) or else not Success then
@@ -1883,6 +1896,7 @@ package body Ocarina.FE_REAL.Parser is
             Success := False;
             exit;
          end if;
+
          Append_Node_To_List (N, Theorems (Root));
 
          --  Pass to the next theorem

@@ -328,7 +328,10 @@ package body Ocarina.Backends.C_Common.Types is
          Type_Source_Name      : Name_Id;
 
          Actual_Data_Size      : Unsigned_Long_Long;
-
+         Struct_Members             : constant List_Id := New_List
+                                    (CTN.K_Enumeration_Literals);
+         Protected_Struct_Members   : constant List_Id := New_List
+                                    (CTN.K_Enumeration_Literals);
       begin
          if No (Get_Handling (E, By_Name, H_C_Type_Spec)) then
             if Get_Current_Backend_Kind = PolyORB_HI_C then
@@ -478,10 +481,6 @@ package body Ocarina.Backends.C_Common.Types is
 
                when Data_Struct | Data_With_Accessors =>
                   declare
-                     Struct_Members : constant List_Id := New_List
-                       (CTN.K_Enumeration_Literals);
-                     Protected_Struct_Members : constant List_Id := New_List
-                       (CTN.K_Enumeration_Literals);
                      C          : Node_Id := No_Node;
                   begin
                      if No (Subcomponents (E)) then
@@ -689,6 +688,49 @@ package body Ocarina.Backends.C_Common.Types is
                               False),
                            True);
                      end if;
+                  elsif Get_Concurrency_Protocol (E) =
+                     Concurrency_Protected_Access then
+
+                     --  Protected type that does not have struct members.
+                     --  This piece of code is made to handle declaration
+                     --  such as:
+                     --  data implementation foo.i
+                     --  *** NOTHING ***
+                     --  properties
+                     --     Concurrency_Control_Protocol => Protected_Access;
+                     --  end foo.i;
+
+                     --  Other protected objects are data components that have
+                     --  subprogram accesses.
+
+                     Append_Node_To_List
+                       (Make_Member_Declaration
+                        (Used_Type => RE (RE_Protected_T),
+                         Defining_Identifier =>
+                           Make_Defining_Identifier
+                           (MN (M_Protected_Id))),
+                        Protected_Struct_Members);
+
+                     if not Is_Empty (Struct_Members) then
+                        S := CTN.First_Node (Struct_Members);
+                        while Present (S) loop
+                           Append_Node_To_List
+                             (S, Protected_Struct_Members);
+                           S := CTN.Next_Node (S);
+                        end loop;
+                     end if;
+
+                     N := Make_Full_Type_Declaration
+                       (Defining_Identifier =>
+                           Map_C_Defining_Identifier (E),
+                        Type_Definition =>
+                          Make_Struct_Aggregate
+                          (Members =>
+                             Protected_Struct_Members));
+
+                     Append_Node_To_List
+                       (N, CTN.Declarations (Current_File));
+
                   else
                      Display_Located_Error
                         (Loc (E), "unspecified data representation",
@@ -806,9 +848,7 @@ package body Ocarina.Backends.C_Common.Types is
                --  Visit the component instance corresponding to the
                --  subcomponent S.
 
-               if not AINU.Is_Data (Corresponding_Instance (S)) then
-                  Visit (Corresponding_Instance (S));
-               end if;
+               Visit (Corresponding_Instance (S));
 
                S := Next_Node (S);
             end loop;

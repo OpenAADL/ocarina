@@ -314,6 +314,14 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
                   Add_Include (RH (RH_Types));
 
+                  N := Make_Variable_Declaration
+                    (Map_C_Defining_Identifier (S),
+                     Map_C_Data_Type_Designator
+                     (Corresponding_Instance (S)));
+
+                  Append_Node_To_List
+                    (N, CTN.Declarations (Current_File));
+
                   N := Make_Expression
                     (Left_Expr =>
                        Make_Member_Designator

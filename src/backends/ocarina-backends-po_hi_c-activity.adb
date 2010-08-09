@@ -1485,9 +1485,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             S := First_Node (Subcomponents (E));
 
             while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
                if AAU.Is_Data (Corresponding_Instance (S)) then
 
                   N := Make_Variable_Declaration
@@ -1496,7 +1493,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      (Corresponding_Instance (S)));
 
                   Append_Node_To_List
-                    (N,
+                    (Make_Extern_Entity_Declaration (N),
                      CTN.Declarations (Current_File));
 
                   Bind_AADL_To_Object (Identifier (S), N);
@@ -1517,19 +1514,17 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   N := Make_Extern_Entity_Declaration (N);
                   Append_Node_To_List
                     (N, CTN.Declarations (CTN.Subprograms_Source (U)));
+               end if;
+               S := Next_Node (S);
+            end loop;
+         end if;
 
-                  N := Make_Variable_Declaration
-                    (Map_C_Defining_Identifier (S),
-                     Map_C_Data_Type_Designator
-                     (Corresponding_Instance (S)));
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            S := First_Node (Subcomponents (E));
 
-                  N := Make_Extern_Entity_Declaration (N);
-                  Append_Node_To_List
-                    (N, CTN.Declarations (CTN.Main_Source (U)));
-               else
-                  --  Visit the component instance corresponding to
-                  --  the subcomponent S.
+            while Present (S) loop
 
+               if not AAU.Is_Data (Corresponding_Instance (S)) then
                   Visit (Corresponding_Instance (S));
                end if;
                S := Next_Node (S);

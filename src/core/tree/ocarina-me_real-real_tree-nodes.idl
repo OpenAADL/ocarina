@@ -150,6 +150,7 @@ module Ocarina::ME_REAL::REAL_Tree::Nodes {
   interface Range_Declaration : Node_Id {
     Node_Id   Variable_Ref;   //  Var_Reference
     Node_Id   Range_Variable; //  Element
+    Node_Id   Range_Expression; //  Element
     Node_Id   Range_Set;      //  Set_Expression
   };
 
