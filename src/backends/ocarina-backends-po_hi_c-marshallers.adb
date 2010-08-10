@@ -318,6 +318,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
          N : Node_Id;
          S : Node_Id;
       begin
+         Add_Include (RH (RH_Types));
+
          if No (Get_Handling (E, By_Name, H_C_Marshall_Spec)) then
             N := Marshall_Type_Spec (E);
             Set_Handling (E, By_Name, H_C_Marshall_Spec, N);
