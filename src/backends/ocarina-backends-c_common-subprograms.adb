@@ -639,11 +639,13 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ----------------------------
 
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True) is
-         U                    : Node_Id;
-         P                    : Node_Id;
-         S                    : Node_Id;
-         C                    : Node_Id;
+         (E             : Node_Id;
+         Real_Process   : Boolean := True) is
+         U          : Node_Id;
+         P          : Node_Id;
+         S          : Node_Id;
+         C          : Node_Id;
+         N          : Node_Id;
          The_System : constant Node_Id := Parent_Component
            (Parent_Subcomponent (E));
       begin
@@ -661,12 +663,66 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          Start_Recording_Handlings;
 
+         --  First, generate extern declaration for globvars.
+
+         if not AINU.Is_Empty (Subcomponents (E)) then
+            S := First_Node (Subcomponents (E));
+            while Present (S) loop
+               if AINU.Is_Data (Corresponding_Instance (S)) then
+                  if Get_Current_Backend_Kind = PolyORB_HI_C and then
+                     Get_Data_Representation (Corresponding_Instance (S)) =
+                     Data_With_Accessors then
+
+                     --  For POHIC, generate globvars thathave only accessors.
+
+                     N := Make_Variable_Declaration
+                        (Map_C_Defining_Identifier (S),
+                        Map_C_Data_Type_Designator
+                        (Corresponding_Instance (S)));
+
+                     N := Make_Extern_Entity_Declaration (N);
+                     Append_Node_To_List
+                        (N, CTN.Declarations (Current_File));
+
+                  else
+                     --  For POK, generate all variables that are
+                     --  declared in the process.
+                     N := Make_Variable_Declaration
+                        (Map_C_Defining_Identifier (S),
+                        Map_C_Data_Type_Designator
+                        (Corresponding_Instance (S)));
+
+                     N := Make_Extern_Entity_Declaration (N);
+                     Append_Node_To_List
+                        (N, CTN.Declarations (Current_File));
+                  end if;
+               end if;
+
+               S := Next_Node (S);
+            end loop;
+         end if;
+
          --  Visit all the subcomponents of the process
 
          if not AINU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));
             while Present (S) loop
                Visit (Corresponding_Instance (S));
+
+               if Get_Current_Backend_Kind = PolyORB_HI_C and then
+                  AINU.Is_Data (Corresponding_Instance (S)) and then
+                  Get_Data_Representation (Corresponding_Instance (S)) =
+                  Data_With_Accessors then
+
+                  N := Make_Variable_Declaration
+                    (Map_C_Defining_Identifier (S),
+                     Map_C_Data_Type_Designator
+                     (Corresponding_Instance (S)));
+
+                  N := Make_Extern_Entity_Declaration (N);
+                  Append_Node_To_List
+                    (N, CTN.Declarations (Current_File));
+               end if;
 
                S := Next_Node (S);
             end loop;

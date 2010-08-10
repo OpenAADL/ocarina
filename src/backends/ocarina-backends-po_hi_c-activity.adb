@@ -1497,23 +1497,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      CTN.Declarations (Current_File));
 
                   Bind_AADL_To_Object (Identifier (S), N);
-
-                  --  When a variable is declared in a process, we declare
-                  --  it automatically in the subprograms source file.
-                  --  FIXME : This shoule be done in the
-                  --  PO_HI_C.Subprograms.Source_File package
-
-                  N := Make_Variable_Declaration
-                    (Map_C_Defining_Identifier (S),
-                     Map_C_Data_Type_Designator
-                     (Corresponding_Instance (S)));
-
-                  --  FIXME : This should be done in the
-                  --  PO_HI_C.Subprograms.Source_File package.
-
-                  N := Make_Extern_Entity_Declaration (N);
-                  Append_Node_To_List
-                    (N, CTN.Declarations (CTN.Subprograms_Source (U)));
                end if;
                S := Next_Node (S);
             end loop;
