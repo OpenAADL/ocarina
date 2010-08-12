@@ -99,6 +99,7 @@ property set AADL_Project is
      Simulink,
      Simulink_6_5,
      System_C,
+     blackbox_device,
      VHDL);
 
   Max_Aadlinteger: constant aadlinteger => 2#1#e32;
