@@ -1,5 +1,5 @@
 property set Taste is
-   Interface_Coordinates : record (Interface : aadlstring; Coordinates : aadlstring; Target: aadlstring;) applies to (bus, virtual bus);
+   Interface_Coordinates : aadlstring applies to (bus, virtual bus);
 
    Coordinates : aadlstring applies to 
 		(system, package, device, memory, processor, process, access, subprogram access, connection, bus, virtual bus);
