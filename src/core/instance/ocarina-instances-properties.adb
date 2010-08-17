@@ -148,6 +148,7 @@ package body Ocarina.Instances.Properties is
       Property_Instance : Node_Id;
       Pointed_Instance  : Node_Id;
       Success           : Boolean := True;
+
    begin
       --  We first find the instance on which the property applies
 
@@ -158,7 +159,8 @@ package body Ocarina.Instances.Properties is
 
       if Present (Pointed_Instance) then
          if Ocarina.ME_AADL.AADL_Instances.Nodes.Properties
-           (Pointed_Instance) = No_List then
+           (Pointed_Instance) = No_List
+         then
             AIN.Set_Properties (Pointed_Instance,
                                 AINU.New_List (K_List_Id, No_Location));
          end if;
@@ -170,8 +172,8 @@ package body Ocarina.Instances.Properties is
            (AIN.Properties (Pointed_Instance),
             Property_Association);
 
-         if Present (Property_Instance) and then
-           ATN.Is_Additive_Association (Property_Association)
+         if Present (Property_Instance)
+           and then ATN.Is_Additive_Association (Property_Association)
          then
             --  Append the current value to the old value list
 
@@ -182,6 +184,7 @@ package body Ocarina.Instances.Properties is
                    ATN.Property_Association_Value (Property_Association),
                    Entity_Instance,
                    ATN.Property_Association_Value (Property_Instance)));
+
          else
             Property_Instance := AINU.New_Node
               (K_Property_Association_Instance,
@@ -244,13 +247,12 @@ package body Ocarina.Instances.Properties is
 
                if Present (Container_Component) then
                   Instantiate_In_Modes
-                    (Container_Component,
-                     Property_Instance);
+                    (Container_Component, Property_Instance);
                end if;
             end;
 
-            if Present (ATN.Property_Association_Value
-                          (Property_Association)) then
+            if Present
+              (ATN.Property_Association_Value (Property_Association)) then
                AIN.Set_Property_Association_Value
                  (Property_Instance,
                   Duplicate_Property_Value
@@ -273,9 +275,13 @@ package body Ocarina.Instances.Properties is
                --  for subcomponents override the properties that are
                --  declared for the corresponding components.
 
+               --  XXX looks strange: why relying on order ? should
+               --  _remove_ the property from the list instead
+
                AINU.Push_Node_To_List
                  (Property_Instance,
                   AIN.Properties (Pointed_Instance));
+
             else
                AINU.Append_Node_To_List
                 (Property_Instance,
@@ -351,6 +357,7 @@ package body Ocarina.Instances.Properties is
                    AIN.Property_Association_Value (Property_Association),
                    Entity_Instance,
                    AIN.Property_Association_Value (Property_Instance)));
+
          else
             Property_Instance := AINU.New_Node
               (K_Property_Association_Instance,
@@ -531,6 +538,7 @@ package body Ocarina.Instances.Properties is
                end loop;
             end if;
          end if;
+
       else
          --  We first duplicate the values of the former property
          --  association.
@@ -673,7 +681,7 @@ package body Ocarina.Instances.Properties is
                                                          (Property_Value))));
 
                when AADL_V2 =>
-                  --  Node is an Contained_Element_Path
+                  --  Node is a Contained_Element_Path
 
                   Set_List_Items (Node,
                                   New_List (K_List_Id,
@@ -681,6 +689,7 @@ package body Ocarina.Instances.Properties is
                                                       (List_Items
                                                         (Reference_Term
                                                          (Property_Value))))));
+
                   if  List_Items (Reference_Term
                                     (Property_Value)) /= No_List
                   then
@@ -698,6 +707,7 @@ package body Ocarina.Instances.Properties is
 
                   --  XXX TODO INSTANCIATE ANNEX_PATH NODE
             end case;
+
             Set_Reference_Term (Instantiated_Value, Node);
 
          when K_Minus_Numeric_Term =>
