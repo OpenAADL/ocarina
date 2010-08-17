@@ -85,6 +85,8 @@ package body Ocarina.Instances.Finder is
       List_Node        : Node_Id;
       Actual_List_Node : Node_Id;
       Pointed_Instance : Node_Id;
+      Use_Contained_Element_Path : Boolean := False;
+
    begin
       --  Path may be the path of an entity reference; in this case it
       --  is a list of node_container that contain identifiers. Else
@@ -92,38 +94,55 @@ package body Ocarina.Instances.Finder is
 
       if Path = No_List then
          Pointed_Instance := Reference_Instance;
+
       else
          Pointed_Instance := Reference_Instance;
          List_Node := ATN.First_Node (Path);
 
          while Present (List_Node) loop
+            if not Use_Contained_Element_Path then
+               if ATN.Kind (List_Node) = K_Node_Container then
+                  Actual_List_Node := ATN.Item (List_Node);
 
-            if ATN.Kind (List_Node) = K_Node_Container then
-               Actual_List_Node := ATN.Item (List_Node);
-            elsif ATN.Kind (List_Node) = K_Identifier then
-               Actual_List_Node := List_Node;
-            else
-               Actual_List_Node := ATN.First_Node (List_Items (List_Node));
+               elsif ATN.Kind (List_Node) = K_Identifier then
+                  Actual_List_Node := List_Node;
+
+               else
+                  --  XXX check whether AADLv2 always implies
+                  --  Use_Contained_Element_Path to be true.
+
+                  Actual_List_Node := ATN.First_Node (List_Items (List_Node));
+                  Use_Contained_Element_Path := True;
+               end if;
             end if;
 
             pragma Assert (ATN.Kind (Actual_List_Node) = K_Identifier);
 
             Pointed_Instance := Find_Local_Instance
-              (Pointed_Instance,
-               Actual_List_Node);
+              (Pointed_Instance, Actual_List_Node);
 
             if No (Pointed_Instance) then
                exit;
+
             elsif Kind (Pointed_Instance) = K_Call_Instance then
                Pointed_Instance := Duplicate_Subprogram_Call_Instance
                  (Instance_Root,
                   Pointed_Instance);
                Pointed_Instance := Corresponding_Instance (Pointed_Instance);
+
             elsif Kind (Pointed_Instance) = K_Subcomponent_Instance then
                Pointed_Instance := Corresponding_Instance (Pointed_Instance);
+
             end if;
 
-            List_Node := ATN.Next_Node (List_Node);
+            if not Use_Contained_Element_Path then
+               List_Node := ATN.Next_Node (List_Node);
+            else
+               Actual_List_Node := ATN.Next_Node (Actual_List_Node);
+               if No (Actual_List_Node) then
+                  exit;
+               end if;
+            end if;
          end loop;
       end if;
 
