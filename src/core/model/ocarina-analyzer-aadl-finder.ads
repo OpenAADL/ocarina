@@ -58,8 +58,7 @@ package Ocarina.Analyzer.AADL.Finder is
    --  Find a property entity (type, name or constant). If
    --  Property_Set_Identifier is No_Node and the current scope is the
    --  one of a property set, try to find the property in it. Finally,
-   --  look for the implicit property sets (AADL_Project and
-   --  AADL_Properties).
+   --  look for the implicit property sets.
 
    function Find_Component_Classifier
      (Root                 : Node_Id;
@@ -149,7 +148,7 @@ package Ocarina.Analyzer.AADL.Finder is
    --  have any feature. Those systems correspond to the roots of the
    --  instantiated architecture.
 
-      function Find_All_Subclauses
+   function Find_All_Subclauses
      (AADL_Declaration : Node_Id;
       Kinds            : Node_Kind_Array)
      return Node_List;
