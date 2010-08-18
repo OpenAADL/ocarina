@@ -56,6 +56,9 @@ package body Ocarina.Analyzer.AADL.Links is
    use Ocarina.ME_AADL.AADL_Tree.Entities;
    use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
+   Global_Root : Node_Id := No_Node;
+   --  Store the root of the current AADL_Specification
+
    function Link_Declarations_Of_Package
      (Root    : Node_Id;
       Node    : Node_Id)
@@ -441,8 +444,7 @@ package body Ocarina.Analyzer.AADL.Links is
            (Ocarina.Me_AADL.AADL_Tree.Nodes.Refines_Type (Node));
 
          while Present (List_Node) loop
-            Success := Link_Feature
-              (Root, List_Node)
+            Success := Link_Feature (Root, List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -493,10 +495,12 @@ package body Ocarina.Analyzer.AADL.Links is
            First_Node (Ocarina.Me_AADL.AADL_Tree.Nodes.Connections (Node));
 
          while Present (List_Node) loop
+            Global_Root := Root;
             Success := Link_Connection (Node, List_Node)
               and then Link_In_Modes_Statement (Node, In_Modes (List_Node))
               and then Success;
             List_Node := Next_Node (List_Node);
+            Global_Root := No_Node;
          end loop;
       end if;
 
@@ -763,10 +767,7 @@ package body Ocarina.Analyzer.AADL.Links is
    -- Link_Declarations_Of_Namespaces --
    -------------------------------------
 
-   function Link_Declarations_Of_Namespaces
-     (Root    : Node_Id)
-     return Boolean
-   is
+   function Link_Declarations_Of_Namespaces (Root : Node_Id) return Boolean is
       pragma Assert (Kind (Root) = K_AADL_Specification);
 
       List_Node : Node_Id;
@@ -3221,12 +3222,14 @@ package body Ocarina.Analyzer.AADL.Links is
                   DAE (Node1    => Unit_Designator (Designator),
                        Message1 => "does not point to anything");
                   Success := False;
+
                elsif Kind (Pointed_Node) /= K_Property_Type_Declaration then
                   DAE (Node1    => Unit_Designator (Designator),
                        Message1 => " points to ",
                        Node2    => Pointed_Node,
                        Message2 => ", which is not a unit declaration");
                   Success := False;
+
                else
                   Set_Referenced_Entity
                     (Unit_Designator (Designator),
@@ -3301,6 +3304,7 @@ package body Ocarina.Analyzer.AADL.Links is
    is
       pragma Assert (Kind (Component) = K_Component_Implementation);
       pragma Assert (Kind (Connection_End) = K_Entity_Reference);
+
    begin
       if not Entity_Reference_Path_Has_Several_Elements (Connection_End) then
          --  The connection end is something like 'name'. It can
@@ -3350,27 +3354,45 @@ package body Ocarina.Analyzer.AADL.Links is
 
             Corresponding_Node := Find_Feature
               (Component          => Component,
-               Feature_Identifier => Item
-                 (First_Node (Path (Connection_End))));
+               Feature_Identifier =>
+                 Item (First_Node (Path (Connection_End))));
          end if;
 
          Set_Corresponding_Entity (Item (First_Node (Path (Connection_End))),
                                    Corresponding_Node);
 
          if Present (Corresponding_Node) then
-            if Kind (Corresponding_Node) = K_Subcomponent
-              and then Get_Referenced_Entity
-              (Entity_Ref (Corresponding_Node)) /= No_Node
-            then
-               Corresponding_Node := Find_Feature
-                 (Component          => Get_Referenced_Entity
-                    (Entity_Ref (Corresponding_Node)),
-                  Feature_Identifier => Item
-                    (Next_Node (First_Node (Path (Connection_End)))));
+            if Kind (Corresponding_Node) = K_Subcomponent then
+               if Present (Get_Referenced_Entity
+                             (Entity_Ref (Corresponding_Node)))
+               then
+                  Corresponding_Node := Find_Feature
+                    (Component          => Get_Referenced_Entity
+                       (Entity_Ref (Corresponding_Node)),
+                     Feature_Identifier => Item
+                       (Next_Node (First_Node (Path (Connection_End)))));
+               else
+                  --  If there is no Referenced_Entity, we try to find
+                  --  directly the corresponding component, and then
+                  --  its feature. XXX to be investigated, is this a
+                  --  hole in the instantiation process ?
+
+                  Corresponding_Node := Find_Feature
+                    (Component          =>
+                       Find_Component_Classifier
+                       (Root => Global_Root,
+                        Package_Identifier =>
+                          Namespace_Identifier
+                          (Entity_Ref (Corresponding_Node)),
+                        Component_Identifier =>
+                          Identifier (Entity_Ref (Corresponding_Node))),
+                     Feature_Identifier => Item
+                       (Next_Node (First_Node (Path (Connection_End)))));
+               end if;
 
             elsif Kind (Corresponding_Node) = K_Subprogram_Call
-              and then Get_Referenced_Entity
-              (Entity_Ref (Corresponding_Node)) /= No_Node
+              and then Present (Get_Referenced_Entity
+                                  (Entity_Ref (Corresponding_Node)))
             then
                Corresponding_Node := Find_Feature
                  (Component          => Get_Referenced_Entity
@@ -3380,7 +3402,7 @@ package body Ocarina.Analyzer.AADL.Links is
 
             elsif Kind (Corresponding_Node) = K_Feature_Group_Spec
               and then Present (Get_Referenced_Entity
-              (Entity_Ref (Corresponding_Node)))
+                                  (Entity_Ref (Corresponding_Node)))
             then
                Corresponding_Node := Find_Feature
                  (Component          => Get_Referenced_Entity
@@ -3396,7 +3418,6 @@ package body Ocarina.Analyzer.AADL.Links is
             Set_Corresponding_Entity
               (Item (Next_Node (First_Node (Path (Connection_End)))),
                Corresponding_Node);
-
          end if;
       end if;
    end Retrieve_Connection_End;
