@@ -76,7 +76,7 @@ end if1553_driver;
 abstract implementation if1553_driver.rasta_terminal
 subcomponents
    receiver_rasta_1553 : thread       if1553_poller.rasta_terminal;
-   sender_rasta_1553   : subprogram   spg_1553_sender_rasta_terminal;
+   sender              : subprogram   spg_1553_sender_rasta_terminal;
 end if1553_driver.rasta_terminal;
 
 abstract implementation if1553_driver.rasta_controller_sender_only

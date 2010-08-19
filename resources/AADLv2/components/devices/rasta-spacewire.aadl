@@ -43,7 +43,7 @@ end spacewire_driver;
 abstract implementation spacewire_driver.rasta
 subcomponents
    receiver_rasta_spacewire : thread spacewire_poller.rasta;
-   sender_rasta_spacewire   : subprogram spg_spacewire_sender_rasta;
+   sender                   : subprogram spg_spacewire_sender_rasta;
 end spacewire_driver.rasta;
 
 end ocarina_drivers_rasta_spacewire;
