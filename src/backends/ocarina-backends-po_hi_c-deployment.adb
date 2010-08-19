@@ -277,7 +277,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         N : Node_Id;
+         N        : Node_Id;
          Conf_Str : Name_Id := No_Name;
          Tmp_Name : Name_Id;
       begin
@@ -335,7 +335,9 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   Get_Name_String_And_Append (Tmp_Name);
                   Conf_Str := Name_Find;
                end if;
-            elsif Is_Defined_Property (E, "deployment::configuration") then
+            elsif Is_Defined_Property (E, "deployment::configuration") and then
+               Get_String_Property
+                  (E, "deployment::configuration") /= No_Name then
                Get_Name_String
                   (Get_String_Property
                      (E, "deployment::configuration"));

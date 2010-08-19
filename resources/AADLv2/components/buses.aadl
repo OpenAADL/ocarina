@@ -24,8 +24,14 @@ end ip.pohiada;
 bus spacewire
 end spacewire;
 
-bus implementation spacewire.pohic
-end spacewire.pohic;
+bus implementation spacewire.generic
+end spacewire.generic;
+
+bus serial
+end serial;
+
+bus implementation serial.generic
+end serial.generic;
 
 
 ----------------------

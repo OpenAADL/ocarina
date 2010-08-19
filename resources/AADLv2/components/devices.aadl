@@ -51,6 +51,8 @@ end rasta_1553.controller_sender_only;
 --------------------
 
 device rasta_serial
+features
+   serialaccess : requires bus access ocarina_buses::serial.generic;
 end rasta_serial;
 
 device implementation rasta_serial.raw
@@ -67,6 +69,8 @@ end rasta_serial.raw;
 -----------------------
 
 device rasta_spacewire
+features
+   spwaccess : requires bus access ocarina_buses::spacewire.generic;
 end rasta_spacewire;
 
 device implementation rasta_spacewire.pohic
@@ -83,6 +87,8 @@ end rasta_spacewire.pohic;
 -----------------------------
 
 device generic_serial
+features
+   serialaccess : requires bus access ocarina_buses::serial.generic;
 end generic_serial;
 
 device implementation generic_serial.raw
@@ -102,13 +108,23 @@ features
    thebus : requires bus access ocarina_buses::ip.i;
 end generic_sockets_ip;
 
-device implementation generic_sockets_ip.pohic
+device implementation generic_sockets_ip.pohic_old
 properties
    Deployment::Driver_Name       => "sockets";
    Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.i);
    Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+end generic_sockets_ip.pohic_old;
+
+
+device implementation generic_sockets_ip.pohic
+properties
+   Deployment::Driver_Name       => "socketsnew";
+   Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.inew);
+   Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
+   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
 end generic_sockets_ip.pohic;
+
 
 device implementation generic_sockets_ip.asn1
 properties

@@ -48,4 +48,12 @@ subcomponents
    sender   : subprogram   spg_eth_linux_sender;
 end sockets_impl.i;
 
+abstract implementation sockets_impl.i
+subcomponents
+--   receiver : thread       eth_linux_poller.i;
+   sender   : subprogram   spg_eth_linux_sender;
+end sockets_impl.i;
+
+
+
 end ocarina_drivers_ip_pohic;

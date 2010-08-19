@@ -1352,7 +1352,7 @@ package body Ocarina.Backends.C_Common.Types is
          Data_Representation := Get_Data_Representation (E);
 
          if Get_Current_Backend_Kind = PolyORB_HI_C then
-            Add_Include (PHR.RH (RH_Types));
+            Add_Include (PHR.RH (PHR.RH_Types));
          end if;
 
          if Data_Representation = Data_With_Accessors then
