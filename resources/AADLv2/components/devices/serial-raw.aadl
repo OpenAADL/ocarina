@@ -43,8 +43,8 @@ end serial_driver;
 
 abstract implementation serial_driver.linux
 subcomponents
-   receiver : thread serial_poller.linux;
-   sender   : subprogram spg_serial_sender_linux;
+   serial_linux_receiver : thread serial_poller.linux;
+   serial_linux_sender   : subprogram spg_serial_sender_linux;
 end serial_driver.linux;
 
 end ocarina_drivers_serial;
