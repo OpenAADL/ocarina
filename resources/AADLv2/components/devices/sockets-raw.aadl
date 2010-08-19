@@ -48,11 +48,11 @@ subcomponents
    sender   : subprogram   spg_eth_linux_sender;
 end sockets_impl.i;
 
-abstract implementation sockets_impl.i
+abstract implementation sockets_impl.inew
 subcomponents
 --   receiver : thread       eth_linux_poller.i;
    sender   : subprogram   spg_eth_linux_sender;
-end sockets_impl.i;
+end sockets_impl.inew;
 
 
 
