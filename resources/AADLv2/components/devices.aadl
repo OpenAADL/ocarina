@@ -23,6 +23,24 @@ with ocarina_drivers_ip_pohic;
 with ocarina_drivers_exarm_ni_6071e_analog;
 with ocarina_drivers_exarm_ni_6071e_digital;
 
+with ocarina_drivers_generic_keyboard;
+
+----------------
+--  Keyboard  --
+----------------
+
+device generic_keyboard
+features
+   key_pressed  : out data port Base_Types::Character;
+properties
+   Deployment::Driver_Name    => "1553_rasta";
+   Device_Driver              => classifier (ocarina_drivers_generic_keyboard::generic_keyboard_driver.i);
+   Initialize_Entrypoint      => classifier (ocarina_drivers_generic_keyboard::spg_generic_keyboard_init);
+end generic_keyboard;
+
+device implementation generic_keyboard.linux
+end generic_keyboard.linux;
+
 ------------------
 --  RASTA 1553  --
 ------------------
@@ -159,17 +177,17 @@ end rtems_ne2000.ip_pohic;
 --  the Matlab simulator.               --
 ------------------------------------------
 
-device exarm
+device exarm_ip
 features
    thebus : requires bus access ocarina_buses::ip.i;
-end exarm;
+end exarm_ip;
 
-device implementation exarm.i
+device implementation exarm_ip.vr_udp
 properties
    Deployment::Driver_Name    => "exarm";
    Device_Driver              => classifier (ocarina_drivers_udp_exarm::driver.i);
    Initialize_Entrypoint      => classifier (ocarina_drivers_udp_exarm::init);
-end exarm.i;
+end exarm_ip.vr_udp;
 
 data exarm_protocol_data
 end exarm_protocol_data;

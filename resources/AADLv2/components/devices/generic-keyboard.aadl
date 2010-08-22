@@ -1,0 +1,54 @@
+package ocarina_drivers_generic_keyboard
+
+public
+
+with Base_Types;
+
+subprogram spg_generic_keyboard_init
+properties
+	Source_Language   => C;
+	Source_Name       => "__po_hi_driver_generic_keyboard_init";
+end spg_generic_keyboard_init;
+
+
+thread keyboard_poller
+features
+   key_pressed : out data port Base_Types::Character;
+end keyboard_poller;
+
+thread implementation keyboard_poller.i
+calls
+	mycall : {
+	  pspg : subprogram spg_generic_keyboard_poller;
+	};
+connections
+   parameter pspg.key_pressed -> key_pressed;
+properties
+   Period => 10ms;
+   Dispatch_Protocol => Periodic;
+end keyboard_poller.i;
+
+
+subprogram spg_generic_keyboard_poller
+features
+   key_pressed : out parameter Base_Types::Character;
+properties
+	Source_Language   => C;
+	Source_Name       => "__po_hi_sockets_receiver_task";
+end spg_generic_keyboard_poller;
+
+abstract generic_keyboard_driver
+features
+   key_pressed : out data port Base_Types::Character;
+end generic_keyboard_driver;
+
+
+abstract implementation generic_keyboard_driver.i
+subcomponents
+   keyboard_receiver : thread       keyboard_poller.i;
+connections
+   port keyboard_receiver.key_pressed -> key_pressed;
+end generic_keyboard_driver.i;
+
+
+end ocarina_drivers_generic_keyboard;
