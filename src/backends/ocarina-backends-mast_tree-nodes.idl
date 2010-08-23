@@ -50,15 +50,6 @@ module Ocarina::Backends::MAST_Tree::Nodes {
 	boolean     Is_Preassigned;
   };
 
-  interface Operation : MAST_Node {
-  	boolean 		Is_Simple;
-	boolean		Is_Enclosing;
-	boolean		Is_Composite;
-	Node_Id		Worst_Case_Execution_Time;
-	Node_Id		Best_Case_Execution_Time;
-	Node_Id		Avg_Case_Execution_Time;
-  };
-
   interface Scheduler : MAST_Node
   {
   	Name_Id		Host;
@@ -83,11 +74,45 @@ module Ocarina::Backends::MAST_Tree::Nodes {
     Node_Id    Last_Node;
   };
 
+  interface Operation : MAST_Node {
+  	boolean 		Is_Simple;
+	boolean		Is_Enclosing;
+	boolean		Is_Composite;
+	List_Id		Operations;
+	Node_Id		Worst_Case_Execution_Time;
+	Node_Id		Best_Case_Execution_Time;
+	Node_Id		Avg_Case_Execution_Time;
+  };
+
+
   interface Transaction : MAST_Node {
   	boolean 		Is_Regular;
 	List_Id		External_Events;
 	List_Id		Internal_Events;
-	List_Id		Events_Handlers;
+	List_Id		Event_Handlers;
+  };
+
+	interface Event : MAST_Node {
+		boolean Is_Regular;
+		boolean Is_Sporadic;
+		boolean Is_Periodic;
+		Node_Id Timing_Requirements;
+		Node_Id Min_Interarrival;
+	};
+
+	interface Event_Timing_Requirements : Node_Id {
+		boolean Is_Hard_Deadline;
+		Node_Id Deadline;
+		Name_Id Referenced_Event;
+	};
+
+
+  interface Event_Handler : Node_Id {
+  boolean Is_Activity;
+  Name_Id Input_Name;
+  Name_Id Output_Name;
+  Name_Id Operation_Name;
+  Name_Id Server_Name;
   };
 
   interface Defining_Identifier : Node_Id {

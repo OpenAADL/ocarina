@@ -58,6 +58,10 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    procedure Generate_MAST_File (N : Node_Id);
    procedure Generate_Processing_Resource (N : Node_Id);
    procedure Generate_Scheduling_Server (N : Node_Id);
+   procedure Generate_Transaction (N : Node_Id);
+   procedure Generate_Event (N : Node_Id);
+   procedure Generate_Event_Handler (N : Node_Id);
+   procedure Generate_Operation (N : Node_Id);
 
    procedure Write (T : Token_Type);
    procedure Write_Line (T : Token_Type);
@@ -156,11 +160,23 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          when K_Literal =>
             Generate_Literal (N);
 
+         when K_Event =>
+            Generate_Event (N);
+
+         when K_Event_Handler =>
+            Generate_Event_Handler (N);
+
          when K_Processing_Resource =>
             Generate_Processing_Resource (N);
 
          when K_Scheduling_Server =>
             Generate_Scheduling_Server (N);
+
+         when K_Transaction =>
+            Generate_Transaction (N);
+
+         when K_Operation =>
+            Generate_Operation (N);
 
          when others =>
             Display_Error ("other element in generator", Fatal => False);
@@ -330,5 +346,257 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write_Name (MTN.Server_Processing_Resource (N));
       Write_Line (");");
    end Generate_Scheduling_Server;
+
+   --------------------------
+   -- Generate_Transaction --
+   --------------------------
+
+   procedure Generate_Transaction (N : Node_Id) is
+      F : Node_Id;
+   begin
+      Write_Line ("Transaction (");
+      Increment_Indentation;
+
+      Write_Indentation (-1);
+      if Is_Regular (N) then
+         Write_Line ("Type => Regular,");
+      elsif Is_Sporadic (N) then
+         Write_Line ("Type => Sporadic,");
+      else
+         Write_Line ("Type => Periodic,");
+      end if;
+
+      if not Is_Empty (External_Events (N))then
+
+         Write_Indentation (-1);
+         Write (Tok_External_Events);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write_Line (Tok_Left_Paren);
+
+         Increment_Indentation;
+         F := First_Node (External_Events (N));
+         while Present (F) loop
+            Write_Indentation (-1);
+            Generate (F);
+            if Present (Next_Node (F)) then
+               Write_Eol;
+            else
+
+               Write (Tok_Right_Paren);
+               Write_Line (Tok_Colon);
+            end if;
+            F := Next_Node (F);
+         end loop;
+         Decrement_Indentation;
+      end if;
+
+      if not Is_Empty (Internal_Events (N))then
+         Write_Indentation (-1);
+         Write (Tok_Internal_Events);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write_Line (Tok_Left_Paren);
+
+         Increment_Indentation;
+         F := First_Node (Internal_Events (N));
+         while Present (F) loop
+            Write_Indentation (-1);
+            Generate (F);
+            if Present (Next_Node (F)) then
+               Write_Eol;
+            else
+
+               Write (Tok_Right_Paren);
+               Write_Line (Tok_Colon);
+            end if;
+            F := Next_Node (F);
+         end loop;
+         Decrement_Indentation;
+      end if;
+
+      if not Is_Empty (Event_Handlers (N))then
+         Write_Indentation (-1);
+         Write (Tok_Event_Handlers);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write_Line (Tok_Left_Paren);
+
+         Increment_Indentation;
+         F := First_Node (Event_Handlers (N));
+         while Present (F) loop
+            Write_Indentation (-1);
+            Generate (F);
+            if Present (Next_Node (F)) then
+               Write_Eol;
+            else
+               Write (Tok_Right_Paren);
+               Write_Line (Tok_Colon);
+            end if;
+            F := Next_Node (F);
+         end loop;
+         Decrement_Indentation;
+      end if;
+
+      Write_Indentation (-1);
+      Write_Str ("Name => ");
+      Write_Name (Node_Name (N));
+
+      Write_Line (");");
+   end Generate_Transaction;
+
+   --------------------
+   -- Generate_Event --
+   --------------------
+
+   procedure Generate_Event (N : Node_Id) is
+   begin
+      Write (Tok_Left_Paren);
+      Write (Tok_Type);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Is_Periodic (N) then
+         Write_Str ("periodic");
+      elsif Is_Sporadic (N) then
+         Write_Str ("sporadic");
+      else
+         Write_Str ("regular");
+      end if;
+      Write_Line (Tok_Colon);
+
+      if Timing_Requirements (N) /= No_Node then
+         Write_Indentation (-1);
+         Write (Tok_Timing_Requirements);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Generate (Timing_Requirements (N));
+         Write_Line (Tok_Colon);
+      end if;
+
+      Write_Indentation (-1);
+      Write (Tok_Name);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Node_Name (N));
+      Write (Tok_Right_Paren);
+   end Generate_Event;
+
+   ----------------------------
+   -- Generate_Event_Handler --
+   ----------------------------
+
+   procedure Generate_Event_Handler (N : Node_Id) is
+   begin
+      Write (Tok_Left_Paren);
+      Write (Tok_Type);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Is_Activity (N) then
+         Write_Str ("activity");
+      else
+         Write_Str ("unknown");
+      end if;
+      Write_Line (Tok_Colon);
+
+      Write_Indentation (-1);
+      Write (Tok_Output_Event);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Output_Name (N));
+      Write_Line (Tok_Colon);
+
+      Write_Indentation (-1);
+      Write (Tok_Activity_Operation);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Operation_Name (N));
+      Write_Line (Tok_Colon);
+
+      Write_Indentation (-1);
+      Write (Tok_Activity_Server);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Server_Name (N));
+      Write_Line (Tok_Colon);
+
+      Write_Indentation (-1);
+      Write (Tok_Input_Event);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Input_Name (N));
+      Write (Tok_Right_Paren);
+   end Generate_Event_Handler;
+
+   ------------------------
+   -- Generate_Operation --
+   ------------------------
+
+   procedure Generate_Operation (N : Node_Id) is
+   begin
+      Write_Line ("Operation (");
+      Increment_Indentation;
+
+      Write_Indentation (-1);
+      if Is_Simple (N) then
+         Write_Line ("Type => Simple,");
+      elsif Is_Composite (N) then
+         Write_Line ("Type => Composite,");
+      else
+         Write_Line ("Type => Enclosing,");
+      end if;
+
+      if Worst_Case_Execution_Time (N) /= No_Node then
+         Write_Indentation (-1);
+         Write (Tok_Worst_Case_Execution_Time);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write (Tok_Left_Paren);
+         Generate (Worst_Case_Execution_Time (N));
+         Write (Tok_Right_Paren);
+         Write_Line (Tok_Colon);
+      end if;
+
+      if Avg_Case_Execution_Time (N) /= No_Node then
+         Write_Indentation (-1);
+         Write (Tok_Avg_Case_Execution_Time);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write (Tok_Left_Paren);
+         Generate (Avg_Case_Execution_Time (N));
+         Write (Tok_Right_Paren);
+         Write_Line (Tok_Colon);
+      end if;
+
+      if Best_Case_Execution_Time (N) /= No_Node then
+         Write_Indentation (-1);
+         Write (Tok_Best_Case_Execution_Time);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write (Tok_Left_Paren);
+         Generate (Best_Case_Execution_Time (N));
+         Write (Tok_Right_Paren);
+         Write_Line (Tok_Colon);
+      end if;
+
+      Write_Indentation (-1);
+      Write_Str ("Name => ");
+      Write_Name (Node_Name (N));
+
+      Write_Line (");");
+   end Generate_Operation;
 
 end Ocarina.Backends.MAST_Tree.Generator;

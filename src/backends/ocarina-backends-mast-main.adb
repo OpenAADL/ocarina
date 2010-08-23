@@ -31,6 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Namet; use Namet;
+
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -184,14 +186,78 @@ package body Ocarina.Backends.MAST.Main is
    ------------------
 
    procedure Visit_Thread (E : Node_Id) is
-      S        : Node_Id;
-      N        : Node_Id;
+      S                       : Node_Id;
+      N                       : Node_Id;
+      Activation_Event        : Node_Id;
+      Activation_Kind         : Event_Kind := Regular;
+      Activation_Event_Name   : Name_Id;
+      Output_Event            : Node_Id;
+      Output_Event_Name       : Name_Id;
+      Event_Handler           : Node_Id;
+      Server_Sched_Name       : Name_Id;
+      Operation_Name          : Name_Id;
+      Operation               : Node_Id;
    begin
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Normalize_Name (Name (Identifier (E))));
+      Add_Str_To_Name_Buffer ("_operations");
+      Operation_Name := Name_Find;
+
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Normalize_Name (Name (Identifier (E))));
+      Add_Str_To_Name_Buffer ("_sched_server");
+      Server_Sched_Name := Name_Find;
+
       N := Make_Scheduling_Server
-         (Normalize_Name (Name (Identifier (E))),
+         (Server_Sched_Name,
           Normalize_Name (Name (Identifier (Get_Bound_Processor
           (Parent_Component (Parent_Subcomponent (E)))))));
       Append_Node_To_List (N, MTN.Declarations (MAST_File));
+
+      N := Make_Transaction
+         (Normalize_Name (Name (Identifier (E))), Regular);
+      Append_Node_To_List (N, MTN.Declarations (MAST_File));
+
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Normalize_Name (Name (Identifier (E))));
+      Add_Str_To_Name_Buffer ("_activation_event");
+      Activation_Event_Name := Name_Find;
+
+      if Get_Thread_Dispatch_Protocol (E) = Thread_Periodic then
+         Activation_Kind := Periodic;
+      elsif Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic then
+         Activation_Kind := Sporadic;
+      else
+         Activation_Kind := Regular;
+      end if;
+
+      Activation_Event := Make_Event (Activation_Event_Name, Activation_Kind);
+
+      Append_Node_To_List
+         (Activation_Event, MTN.External_Events (N));
+
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Normalize_Name (Name (Identifier (E))));
+      Add_Str_To_Name_Buffer ("_output_event");
+      Output_Event_Name := Name_Find;
+
+      Output_Event := Make_Event (Output_Event_Name, Regular);
+
+      Append_Node_To_List
+         (Output_Event, MTN.Internal_Events (N));
+
+      Event_Handler := Make_Event_Handler
+         (Activity,
+         Activation_Event_Name,
+         Output_Event_Name,
+         Operation_Name,
+         Server_Sched_Name);
+
+      Append_Node_To_List
+         (Event_Handler, MTN.Event_Handlers (N));
+
+      Operation := Make_Operation (Operation_Name, Enclosing);
+      Append_Node_To_List (Operation, MTN.Declarations (MAST_File));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));

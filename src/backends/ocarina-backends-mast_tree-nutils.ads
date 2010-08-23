@@ -50,13 +50,19 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       --   Token name      Token type
       --   Keywords
       Tok_First_Keyword,
+      Tok_Activity_Operation,
+      Tok_Activity_Server,
       Tok_Avg_Case_Execution_Time,
       Tok_Avg_Context_Switch,
       Tok_Avg_ISR_Switch,
       Tok_Best_Case_Execution_time,
       Tok_Best_Context_Switch,
       Tok_Best_ISR_Switch,
+      Tok_Event_Handlers,
+      Tok_External_Events,
       Tok_Host,
+      Tok_Internal_Events,
+      Tok_Input_Event,
       Tok_List_Of_Drivers,
       Tok_Max_Blocking,
       Tok_Max_Packet_Size,
@@ -65,6 +71,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Min_Packet_Size,
       Tok_Min_Priority,
       Tok_Name,
+      Tok_Output_Event,
       Tok_Packet_Server,
       Tok_Packet_Send_Operation,
       Tok_Packet_Receive_Operation,
@@ -77,6 +84,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Server_Sched_Parameters,
       Tok_Speed_Factor,
       Tok_Throughput,
+      Tok_Timing_Requirements,
       Tok_Type,
       Tok_Worst_Case_Execution_Time,
       Tok_Worst_Context_Switch,
@@ -187,6 +195,40 @@ package Ocarina.Backends.MAST_Tree.Nutils is
    function Make_Scheduling_Server
       (Server_Name : Name_Id;
        Associated_Processor : Name_Id)
+      return Node_Id;
+
+   type Event_Kind is
+     (Periodic, Sporadic, Regular);
+
+   function Make_Event
+      (E_Name : Name_Id;
+      E_Kind : Event_Kind) return Node_Id;
+
+   type Event_Handler_Kind is
+     (Activity);
+
+   function Make_Event_Handler
+      (Kind          : Event_Handler_Kind;
+      Input_Event    : Name_Id;
+      Output_Event   : Name_Id;
+      Operation      : Name_Id;
+      Server         : Name_Id) return Node_Id;
+
+   type Transaction_Kind is
+     (Regular);
+
+   function Make_Transaction
+      (Trans_Name : Name_Id;
+       Trans_Type : Transaction_Kind)
+      return Node_Id;
+
+   type Operation_Kind is
+     (Enclosing, Simple, Composite);
+
+   function Make_Operation
+      (Op_Name       : Name_Id;
+      Op_Kind        : Operation_Kind;
+      Op_List        : List_Id := No_List)
       return Node_Id;
 
 end Ocarina.Backends.MAST_Tree.Nutils;

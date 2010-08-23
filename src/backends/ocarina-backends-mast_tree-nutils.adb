@@ -563,4 +563,116 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       return N;
    end Make_Scheduling_Server;
 
+   ----------------------
+   -- Make_Transaction --
+   ----------------------
+
+   function Make_Transaction
+      (Trans_Name : Name_Id;
+       Trans_Type : Transaction_Kind)
+      return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Transaction);
+      MTN.Set_Node_Name (N, Trans_Name);
+      if Trans_Type = Regular then
+         MTN.Set_Is_Regular (N, True);
+      end if;
+
+      MTN.Set_External_Events (N, New_List (MTN.K_List_Id));
+      MTN.Set_Internal_Events (N, New_List (MTN.K_List_Id));
+      MTN.Set_Event_Handlers (N, New_List (MTN.K_List_Id));
+      return N;
+   end Make_Transaction;
+
+   ----------------
+   -- Make_Event --
+   ----------------
+
+   function Make_Event
+      (E_Name : Name_Id;
+      E_Kind : Event_Kind) return Node_Id is
+         N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Event);
+      MTN.Set_Node_Name (N, E_Name);
+
+      MTN.Set_Timing_Requirements (N, No_Node);
+
+      MTN.Set_Is_Regular (N, False);
+      MTN.Set_Is_Periodic (N, False);
+      MTN.Set_Is_Sporadic (N, False);
+
+      if E_Kind = Regular then
+         MTN.Set_Is_Regular (N, True);
+      elsif E_Kind = Sporadic then
+         MTN.Set_Is_Sporadic (N, True);
+      else
+         MTN.Set_Is_Periodic (N, True);
+      end if;
+      return N;
+   end Make_Event;
+
+   ------------------------
+   -- Make_Event_Handler --
+   ------------------------
+
+   function Make_Event_Handler
+      (Kind          : Event_Handler_Kind;
+      Input_Event    : Name_Id;
+      Output_Event   : Name_Id;
+      Operation      : Name_Id;
+      Server         : Name_Id) return Node_Id is
+         N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Event_Handler);
+      if Kind = Activity then
+         MTN.Set_Is_Activity (N, True);
+      end if;
+
+      MTN.Set_Input_Name (N, Input_Event);
+      MTN.Set_Output_Name (N, Output_Event);
+      MTN.Set_Operation_Name (N, Operation);
+      MTN.Set_Server_Name (N, Server);
+
+      return N;
+   end Make_Event_Handler;
+
+   --------------------
+   -- Make_Operation --
+   --------------------
+
+   function Make_Operation
+      (Op_Name       : Name_Id;
+      Op_Kind        : Operation_Kind;
+      Op_List        : List_Id := No_List)
+      return Node_Id is
+         N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Operation);
+
+      MTN.Set_Node_Name (N, Op_Name);
+
+      if Op_List /= No_List then
+         MTN.Set_Operations (N, Op_List);
+      end if;
+
+      MTN.Set_Is_Enclosing (N, False);
+      MTN.Set_Is_Composite (N, False);
+      MTN.Set_Is_Simple (N, False);
+
+      if Op_Kind = Enclosing then
+         MTN.Set_Is_Enclosing (N, True);
+      elsif Op_Kind = Composite then
+         MTN.Set_Is_Composite (N, True);
+      else
+         MTN.Set_Is_Simple (N, True);
+      end if;
+
+      MTN.Set_Worst_Case_Execution_Time (N, No_Node);
+      MTN.Set_Best_Case_Execution_Time (N, No_Node);
+      MTN.Set_Avg_Case_Execution_Time (N, No_Node);
+      return N;
+   end Make_Operation;
+
 end Ocarina.Backends.MAST_Tree.Nutils;
