@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . B A C K E N D S . X M L _ T R E E             --
+--                O C A R I N A . B A C K E N D S . M A S T                 --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--            Copyright (C) 2010, European Space Agency (ESA).              --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,21 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  This is the root package of all the units that handle the XML code
---  generation.
+package Ocarina.Backends.MAST is
 
-package Ocarina.Backends.XML_Tree is
-end Ocarina.Backends.XML_Tree;
+   procedure Generate (AADL_Root : Node_Id);
+   --  The main entry point of the CARTS configuration generator
+
+   procedure Init;
+   --  Fills the corresponding location in the generator table by the
+   --  information on this generator and execute some initialization
+   --  routines necessary for its work.
+
+   procedure Reset;
+
+   function Get_MAST_File return Node_Id;
+
+private
+   MAST_File               : Node_Id;
+
+end Ocarina.Backends.MAST;

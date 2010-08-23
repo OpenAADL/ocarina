@@ -1,0 +1,93 @@
+module Ocarina::Backends::MAST_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef octet   Operator_Id;
+  typedef long    Name_Id;
+  typedef long    Value_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  interface Node_Id {
+    Node_Id    Next_Node;
+    Node_Id    Frontend_Node;
+  };
+
+  interface Definition : Node_Id {
+    Node_Id    Defining_Identifier;
+  };
+
+  interface MAST_Node : Node_Id {
+    Name_Id    Node_Name;
+    Name_Id    Node_Type;
+  };
+
+  interface Processing_Resource : MAST_Node {
+  	Node_Id 		Max_Interrupt_Priority;
+  	Node_Id 		Min_Interrupt_Priority;
+  	Node_Id 		Worst_ISR_Switch;
+  	Node_Id 		Avg_ISR_Switch;
+  	Node_Id 		Best_ISR_Switch;
+  	Node_Id 		Speed_Factor;
+  };
+
+  interface Scheduler : MAST_Node
+  {
+  	Name_Id		Host;
+  };
+
+  interface Scheduler_Policy : Node_Id
+  {
+  	Name_Id Scheduling_Type;
+	Node_Id Worst_Context_Switch;
+	Node_Id Avg_Context_Switch;
+	Node_Id Best_Context_Switch;
+	Node_Id Max_Priority;
+	Node_Id Min_Priority;
+  };
+
+  interface Literal : Node_Id {
+    Value_Id   Value;
+  };
+
+  interface List_Id {
+    Node_Id    First_Node;
+    Node_Id    Last_Node;
+  };
+
+  interface Defining_Identifier : Node_Id {
+    Name_Id    Name;
+    Node_Id    Corresponding_Node;
+    Node_Id    Compile_Unit;
+  };
+
+  interface MAST_File : Definition {
+    Node_Id    Distributed_Application_Unit;
+    List_Id    Declarations;
+  };
+
+ 
+   interface Base_Type {
+      Name_Id     Image;
+   };
+ 
+   interface Container : Node_Id {
+      Node_Id     Content;
+   };
+
+   interface _String : Base_Type {};
+   interface _Numeric : Base_Type {};
+   interface _Float : Base_Type {};
+
+   interface HI_Tree_Bindings : Node_Id {
+      Node_Id    Unit;
+      Node_Id    Node;
+      List_Id    Processes;
+   };
+
+
+};

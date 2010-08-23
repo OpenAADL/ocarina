@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . B A C K E N D S . X M L _ T R E E             --
+--           O C A R I N A . B A C K E N D S . M A S T _ T R E E            --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--            Copyright (C) 2010, European Space Agency (ESA).              --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,5 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  This is the root package of all the units that handle the XML code
---  generation.
-
-package Ocarina.Backends.XML_Tree is
-end Ocarina.Backends.XML_Tree;
+package Ocarina.Backends.MAST_Tree is
+end Ocarina.Backends.MAST_Tree;

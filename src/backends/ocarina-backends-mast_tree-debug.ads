@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . B A C K E N D S . X M L _ T R E E             --
+--     O C A R I N A . B A C K E N D S . M A S T _ T R E E . D E B U G      --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--            Copyright (C) 2010, European Space Agency (ESA).              --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,39 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  This is the root package of all the units that handle the XML code
---  generation.
+with Output; use Output;
 
-package Ocarina.Backends.XML_Tree is
-end Ocarina.Backends.XML_Tree;
+with Ocarina.Backends.MAST_Tree.Nodes; use Ocarina.Backends.MAST_Tree.Nodes;
+
+package Ocarina.Backends.MAST_Tree.Debug is
+
+   N_Indents : Natural := 0;
+
+   procedure W_Eol         (N : Natural := 1) renames Output.Write_Eol;
+   procedure W_Int         (N : Int)          renames Output.Write_Int;
+   procedure W_Line        (N : String)       renames Output.Write_Line;
+   procedure W_Str         (N : String)       renames Output.Write_Str;
+   procedure W_Indents;
+
+   procedure W_Byte        (N : Byte);
+   procedure W_List_Id     (L : List_Id);
+   procedure W_Node_Id     (N : Node_Id);
+   procedure W_Node_Header (N : Node_Id);
+
+   procedure W_Node_Attribute
+     (A : String;
+      K : String;
+      V : String;
+      N : Int := 0);
+
+   function Image (N : Node_Kind) return String;
+   function Image (N : Name_Id) return String;
+   function Image (N : Node_Id) return String;
+   function Image (N : List_Id) return String;
+   function Image (N : Mode_Id) return String;
+   function Image (N : Value_Id) return String;
+   function Image (N : Boolean) return String;
+   function Image (N : Byte) return String;
+   function Image (N : Int) return String;
+
+end Ocarina.Backends.MAST_Tree.Debug;

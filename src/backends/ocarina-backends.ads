@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -54,6 +54,7 @@ package Ocarina.Backends is
       AADL_Annex,
       ASN1_Deployment,
       Bound_T,
+      MAST_Scheduling,
       Petri_Nets,
       PolyORB_QoS_Ada,
       PolyORB_HI_Ada,

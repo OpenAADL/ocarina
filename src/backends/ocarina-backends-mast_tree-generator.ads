@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . B A C K E N D S . X M L _ T R E E             --
+--                  OCARINA.BACKENDS.MAST_TREE.GENERATOR                    --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--            Copyright (C) 2010, European Space Agency (ESA).              --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  This is the root package of all the units that handle the XML code
---  generation.
+package Ocarina.Backends.MAST_Tree.Generator is
 
-package Ocarina.Backends.XML_Tree is
-end Ocarina.Backends.XML_Tree;
+   Var_Name_Len    : Natural := 0;
+   Print_On_Stdout : Boolean := False;
+
+   procedure Generate (N : Node_Id);
+   --  All code generation is performed in the current directory. It
+   --  is up to the caller to change the working directory before
+   --  calling Generate.
+
+end Ocarina.Backends.MAST_Tree.Generator;

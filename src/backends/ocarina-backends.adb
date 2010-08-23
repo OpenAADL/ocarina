@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -50,6 +50,10 @@ with Ocarina.Backends.Stats;
 with Ocarina.Backends.Subprograms;
 with Ocarina.Backends.Carts;
 with Ocarina.Backends.Cheddar;
+with Ocarina.Backends.MAST;
+with Ocarina.Backends.MAST_Values;
+with Ocarina.Backends.MAST_Tree.Nodes;
+with Ocarina.Backends.MAST_Tree.Nutils;
 with Ocarina.Backends.POK_C;
 with Ocarina.Backends.PO_QoS_Ada;
 with Ocarina.Backends.Properties;
@@ -165,12 +169,14 @@ package body Ocarina.Backends is
       C_Tree.Nutils.Initialize;
       RTSJ_Tree.Nutils.Initialize;
       XML_Tree.Nutils.Initialize;
+      MAST_Tree.Nutils.Initialize;
       ASN1_Tree.Nutils.Initialize;
 
       --  Register the several code generators
 
       PN.Init;
       BoundT.Init;
+      MAST.Init;
       PO_HI_Ada.Init;
       PO_QoS_Ada.Init;
       PO_HI_C.Init;
@@ -247,6 +253,7 @@ package body Ocarina.Backends is
       C_Tree.Nutils.Reset;
       RTSJ_Tree.Nutils.Reset;
       ASN1_Tree.Nutils.Reset;
+      MAST_Tree.Nutils.Reset;
 
       Ada_Tree.Nodes.Entries.Free;
       Ada_Tree.Nodes.Entries.Init;
@@ -255,6 +262,10 @@ package body Ocarina.Backends is
       C_Tree.Nodes.Entries.Free;
       C_Tree.Nodes.Entries.Init;
       C_Values.Reset;
+
+      MAST_Tree.Nodes.Entries.Free;
+      MAST_Tree.Nodes.Entries.Init;
+      MAST_Values.Reset;
 
       RTSJ_Tree.Nodes.Entries.Free;
       RTSJ_Tree.Nodes.Entries.Init;
@@ -267,6 +278,10 @@ package body Ocarina.Backends is
       ASN1_Tree.Nodes.Entries.Free;
       ASN1_Tree.Nodes.Entries.Init;
       ASN1_Values.Reset;
+
+      MAST_Tree.Nodes.Entries.Free;
+      MAST_Tree.Nodes.Entries.Init;
+      MAST_Values.Reset;
 
       Build_Utils.Reset;
    end Reset;
