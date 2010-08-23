@@ -1025,6 +1025,7 @@ package body Ocarina.Backends.C_Tree.Generator is
       Application_Directory : Name_Id;
    begin
       --  Create the application directory (a lower case string)
+
       Get_Name_String (Name (N));
       Application_Directory := To_Lower (Name_Find);
 
