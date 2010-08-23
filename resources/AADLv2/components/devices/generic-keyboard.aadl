@@ -34,7 +34,7 @@ features
    key_pressed : out parameter Base_Types::Character;
 properties
 	Source_Language   => C;
-	Source_Name       => "__po_hi_sockets_receiver_task";
+	Source_Name       => "__po_hi_driver_generic_keyboard_poller";
 end spg_generic_keyboard_poller;
 
 abstract generic_keyboard_driver
