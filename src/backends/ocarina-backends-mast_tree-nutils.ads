@@ -52,32 +52,39 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_First_Keyword,
       Tok_Avg_Case_Execution_Time,
       Tok_Avg_Context_Switch,
+      Tok_Avg_ISR_Switch,
       Tok_Best_Case_Execution_time,
       Tok_Best_Context_Switch,
+      Tok_Best_ISR_Switch,
       Tok_Host,
       Tok_List_Of_Drivers,
       Tok_Max_Blocking,
       Tok_Max_Packet_Size,
       Tok_Max_Priority,
+      Tok_Max_ISR_Switch,
       Tok_Min_Packet_Size,
       Tok_Min_Priority,
       Tok_Name,
       Tok_Packet_Server,
       Tok_Packet_Send_Operation,
       Tok_Packet_Receive_Operation,
+      Tok_Parameters,
       Tok_Processing_Resource,
       Tok_RTA_Overhead_Model,
       Tok_Scheduler,
       Tok_Scheduling_Server,
+      Tok_Server_Processing_Resource,
       Tok_Server_Sched_Parameters,
       Tok_Speed_Factor,
       Tok_Throughput,
       Tok_Type,
       Tok_Worst_Case_Execution_Time,
       Tok_Worst_Context_Switch,
+      Tok_Worst_ISR_Switch,
       Tok_Last_Keyword,
 
       Tok_Assign,          -- =>
+      Tok_Colon,
       Tok_Left_Paren,      -- (
       Tok_Right_Paren,     -- )
       Tok_Semicolon);      -- ;
@@ -167,7 +174,19 @@ package Ocarina.Backends.MAST_Tree.Nutils is
 
    function Make_Container (Content : Node_Id) return Node_Id;
 
-   function Make_Processing_Resource (PR_Name : Name_Id; PR_Type : Name_Id)
+   type Processing_Resource_Kind is
+     (
+         PR_Regular_Processor,
+         PR_Packet_Based_Network
+     );
+
+   function Make_Processing_Resource
+      (PR_Name : Name_Id; PR_Type : Processing_Resource_Kind)
+      return Node_Id;
+
+   function Make_Scheduling_Server
+      (Server_Name : Name_Id;
+       Associated_Processor : Name_Id)
       return Node_Id;
 
 end Ocarina.Backends.MAST_Tree.Nutils;

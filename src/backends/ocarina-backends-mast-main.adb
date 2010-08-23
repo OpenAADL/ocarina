@@ -31,14 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.MAST_Tree.Nodes;
 with Ocarina.Backends.MAST_Tree.Nutils;
---  with Ocarina.Backends.Properties;
+with Ocarina.Backends.Properties;
+with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.MAST.Main is
 
@@ -46,7 +46,8 @@ package body Ocarina.Backends.MAST.Main is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.MAST_Tree.Nutils;
---   use Ocarina.Backends.Properties;
+   use Ocarina.Backends.Utils;
+   use Ocarina.Backends.Properties;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package MTN renames Ocarina.Backends.MAST_Tree.Nodes;
@@ -55,6 +56,8 @@ package body Ocarina.Backends.MAST.Main is
    procedure Visit_Component (E : Node_Id);
    procedure Visit_System (E : Node_Id);
    procedure Visit_Processor (E : Node_Id);
+   procedure Visit_Process (E : Node_Id);
+   procedure Visit_Thread (E : Node_Id);
    procedure Visit_Bus (E : Node_Id);
    procedure Visit_Virtual_Processor (E : Node_Id);
 
@@ -93,6 +96,12 @@ package body Ocarina.Backends.MAST.Main is
 
          when CC_Processor =>
             Visit_Processor (E);
+
+         when CC_Process =>
+            Visit_Process (E);
+
+         when CC_Thread =>
+            Visit_Thread (E);
 
          when CC_Bus =>
             Visit_Bus (E);
@@ -134,7 +143,8 @@ package body Ocarina.Backends.MAST.Main is
       N        : Node_Id;
    begin
       N := MTU.Make_Processing_Resource
-         (Get_String_Name ("test"), Get_String_Name ("test"));
+         (Normalize_Name (Name (Identifier (E))),
+         PR_Regular_Processor);
 
       MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
@@ -149,6 +159,51 @@ package body Ocarina.Backends.MAST.Main is
          end loop;
       end if;
    end Visit_Processor;
+
+   -------------------
+   -- Visit_Process --
+   -------------------
+
+   procedure Visit_Process (E : Node_Id) is
+      S        : Node_Id;
+   begin
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+
+            Visit (Corresponding_Instance (S));
+            S := Next_Node (S);
+         end loop;
+      end if;
+   end Visit_Process;
+
+   ------------------
+   -- Visit_Thread --
+   ------------------
+
+   procedure Visit_Thread (E : Node_Id) is
+      S        : Node_Id;
+      N        : Node_Id;
+   begin
+      N := Make_Scheduling_Server
+         (Normalize_Name (Name (Identifier (E))),
+          Normalize_Name (Name (Identifier (Get_Bound_Processor
+          (Parent_Component (Parent_Subcomponent (E)))))));
+      Append_Node_To_List (N, MTN.Declarations (MAST_File));
+
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+
+            Visit (Corresponding_Instance (S));
+            S := Next_Node (S);
+         end loop;
+      end if;
+   end Visit_Thread;
 
    ------------------
    -- Visit_System --

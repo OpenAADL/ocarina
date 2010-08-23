@@ -51,10 +51,13 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    use Ocarina.Backends.MAST_Values;
    use Ocarina.Backends.Messages;
 
+   package MTN renames Ocarina.Backends.MAST_Tree.Nodes;
+
    procedure Generate_Defining_Identifier (N : Node_Id);
    procedure Generate_Literal (N : Node_Id);
    procedure Generate_MAST_File (N : Node_Id);
    procedure Generate_Processing_Resource (N : Node_Id);
+   procedure Generate_Scheduling_Server (N : Node_Id);
 
    procedure Write (T : Token_Type);
    procedure Write_Line (T : Token_Type);
@@ -156,6 +159,9 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          when K_Processing_Resource =>
             Generate_Processing_Resource (N);
 
+         when K_Scheduling_Server =>
+            Generate_Scheduling_Server (N);
+
          when others =>
             Display_Error ("other element in generator", Fatal => False);
             null;
@@ -211,7 +217,6 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          return;
       end if;
       Fd := Set_Output (N);
-      Write_Line (Tok_Semicolon);
       if not Is_Empty (Declarations (N)) then
          F := First_Node (Declarations (N));
          while Present (F) loop
@@ -233,17 +238,97 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Increment_Indentation;
 
       Write_Indentation (-1);
-      Write_Str ("Type =>");
-      Write_Name (Node_Type (N));
-      Write_Line (",");
+      if Regular_Processor (N) then
+         Write_Line ("Type => Regular_Processor,");
+      else
+         Write_Line ("Type => Packet_Based_Network,");
+      end if;
 
       Write_Indentation (-1);
-      Write_Str ("Name =>");
+      Write_Str ("Name => ");
       Write_Name (Node_Name (N));
+      Write_Line (Tok_Colon);
+
+      Write_Indentation (-1);
+      Write (Tok_Avg_ISR_Switch);
+      Write_Space;
+      Write (Tok_Assign);
+      if Avg_ISR_Switch (N) /= No_Node then
+         Generate (Avg_ISR_Switch (N));
+      else
+         Write_Str ("0.00");
+      end if;
+      Write_Line (Tok_Colon);
+
+      Write_Indentation (-1);
+      Write (Tok_Best_ISR_Switch);
+      Write_Space;
+      Write (Tok_Assign);
+      if Best_ISR_Switch (N) /= No_Node then
+         Generate (Best_ISR_Switch (N));
+      else
+         Write_Str ("0.00");
+      end if;
+      Write_Line (Tok_Colon);
+
+      Write_Indentation (-1);
+      Write (Tok_Worst_ISR_Switch);
+      Write_Space;
+      Write (Tok_Assign);
+      if Worst_ISR_Switch (N) /= No_Node then
+         Generate (Worst_ISR_Switch (N));
+      else
+         Write_Str ("0.00");
+      end if;
+      Write_Line (Tok_Colon);
 
       Decrement_Indentation;
       Write_Indentation (-1);
       Write_Line (");");
    end Generate_Processing_Resource;
+
+   --------------------------------
+   -- Generate_Scheduling_Server --
+   --------------------------------
+
+   procedure Generate_Scheduling_Server (N : Node_Id) is
+   begin
+      Write_Line ("Scheduling_Server (");
+      Increment_Indentation;
+
+      Write_Indentation (-1);
+      if Is_Regular (N) then
+         Write_Line ("Type => Regular,");
+      else
+         Write_Str ("Type => ");
+         Write_Name (Associated_Scheduler (N));
+         Write_Line (Tok_Colon);
+      end if;
+
+      Write_Indentation (-1);
+      Write_Str ("Name => ");
+      Write_Name (Node_Name (N));
+      Write_Line (Tok_Colon);
+
+      if Parameters (N) /= No_Node then
+         Write_Indentation (-1);
+         Write (Tok_Parameters);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write (Tok_Left_Paren);
+         Generate (Parameters (N));
+         Write (Tok_Right_Paren);
+         Write_Line (Tok_Colon);
+      end if;
+
+      Write_Indentation (-1);
+      Write (Tok_Server_Processing_Resource);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (MTN.Server_Processing_Resource (N));
+      Write_Line (");");
+   end Generate_Scheduling_Server;
 
 end Ocarina.Backends.MAST_Tree.Generator;

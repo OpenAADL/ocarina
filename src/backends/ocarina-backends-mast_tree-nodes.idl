@@ -33,6 +33,30 @@ module Ocarina::Backends::MAST_Tree::Nodes {
   	Node_Id 		Avg_ISR_Switch;
   	Node_Id 		Best_ISR_Switch;
   	Node_Id 		Speed_Factor;
+	boolean     Regular_Processor;
+	boolean     Packet_Based_Network;
+  };
+
+  interface Scheduling_Server : MAST_Node {
+  	Name_Id 		Associated_Scheduler;
+	Node_Id		Parameters;
+	boolean     Is_Regular;
+	Name_Id		Server_Processing_Resource;
+  };
+
+  interface Scheduling_Server_Parameters : Node_Id {
+  	Node_Id 		Sched_Type;
+	Node_Id		Priority;
+	boolean     Is_Preassigned;
+  };
+
+  interface Operation : MAST_Node {
+  	boolean 		Is_Simple;
+	boolean		Is_Enclosing;
+	boolean		Is_Composite;
+	Node_Id		Worst_Case_Execution_Time;
+	Node_Id		Best_Case_Execution_Time;
+	Node_Id		Avg_Case_Execution_Time;
   };
 
   interface Scheduler : MAST_Node
@@ -46,8 +70,8 @@ module Ocarina::Backends::MAST_Tree::Nodes {
 	Node_Id Worst_Context_Switch;
 	Node_Id Avg_Context_Switch;
 	Node_Id Best_Context_Switch;
-	Node_Id Max_Priority;
-	Node_Id Min_Priority;
+	Node_Id Max_Interrupt_Priority;
+	Node_Id Min_Interrupt_Priority;
   };
 
   interface Literal : Node_Id {
@@ -57,6 +81,13 @@ module Ocarina::Backends::MAST_Tree::Nodes {
   interface List_Id {
     Node_Id    First_Node;
     Node_Id    Last_Node;
+  };
+
+  interface Transaction : MAST_Node {
+  	boolean 		Is_Regular;
+	List_Id		External_Events;
+	List_Id		Internal_Events;
+	List_Id		Events_Handlers;
   };
 
   interface Defining_Identifier : Node_Id {

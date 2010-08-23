@@ -233,6 +233,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       New_Token (Tok_Left_Paren, "(");
       New_Token (Tok_Right_Paren, ")");
       New_Token (Tok_Semicolon, ";");
+      New_Token (Tok_Colon, ",");
 
    end Initialize;
 
@@ -526,14 +527,40 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    -- Make_Processing_Resource --
    ------------------------------
 
-   function Make_Processing_Resource (PR_Name : Name_Id; PR_Type : Name_Id)
+   function Make_Processing_Resource
+      (PR_Name : Name_Id; PR_Type : Processing_Resource_Kind)
       return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (MTN.K_Processing_Resource);
       MTN.Set_Node_Name (N, PR_Name);
-      MTN.Set_Node_Type (N, PR_Type);
+      if PR_Type = PR_Regular_Processor then
+         MTN.Set_Regular_Processor (N, True);
+         MTN.Set_Packet_Based_Network (N, False);
+      else
+         MTN.Set_Regular_Processor (N, False);
+         MTN.Set_Packet_Based_Network (N, True);
+      end if;
       return N;
    end Make_Processing_Resource;
+
+   ------------------------------
+   -- Make_Scheduling_Server --
+   ------------------------------
+
+   function Make_Scheduling_Server
+      (Server_Name : Name_Id;
+       Associated_Processor : Name_Id)
+      return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Scheduling_Server);
+      MTN.Set_Node_Name (N, Server_Name);
+      MTN.Set_Server_Processing_Resource (N, Associated_Processor);
+      MTN.Set_Is_Regular (N, False);
+      MTN.Set_Associated_Scheduler (N, Get_String_Name ("Fixed_Priority"));
+      MTN.Set_Parameters (N, No_Node);
+      return N;
+   end Make_Scheduling_Server;
 
 end Ocarina.Backends.MAST_Tree.Nutils;
