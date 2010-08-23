@@ -491,6 +491,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       File : Node_Id;
    begin
       File := New_Node (K_MAST_File);
+      MTN.Set_Declarations (File, New_List (MTN.K_List_Id));
       Set_Defining_Identifier (File, Identifier);
       Set_Corresponding_Node (Identifier, File);
 
@@ -520,5 +521,19 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       MTN.Set_Content (N, Content);
       return N;
    end Make_Container;
+
+   ------------------------------
+   -- Make_Processing_Resource --
+   ------------------------------
+
+   function Make_Processing_Resource (PR_Name : Name_Id; PR_Type : Name_Id)
+      return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Processing_Resource);
+      MTN.Set_Node_Name (N, PR_Name);
+      MTN.Set_Node_Type (N, PR_Type);
+      return N;
+   end Make_Processing_Resource;
 
 end Ocarina.Backends.MAST_Tree.Nutils;

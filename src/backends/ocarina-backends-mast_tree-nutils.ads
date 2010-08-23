@@ -167,7 +167,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
 
    function Make_Container (Content : Node_Id) return Node_Id;
 
---   function Make_Processing_Resource
---      (Resource_Name : Name_Id; Resource_Type : Name_Id) return Node_Id;
+   function Make_Processing_Resource (PR_Name : Name_Id; PR_Type : Name_Id)
+      return Node_Id;
 
 end Ocarina.Backends.MAST_Tree.Nutils;

@@ -54,6 +54,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    procedure Generate_Defining_Identifier (N : Node_Id);
    procedure Generate_Literal (N : Node_Id);
    procedure Generate_MAST_File (N : Node_Id);
+   procedure Generate_Processing_Resource (N : Node_Id);
 
    procedure Write (T : Token_Type);
    procedure Write_Line (T : Token_Type);
@@ -152,6 +153,9 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          when K_Literal =>
             Generate_Literal (N);
 
+         when K_Processing_Resource =>
+            Generate_Processing_Resource (N);
+
          when others =>
             Display_Error ("other element in generator", Fatal => False);
             null;
@@ -218,5 +222,28 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
       Release_Output (Fd);
    end Generate_MAST_File;
+
+   ----------------------------------
+   -- Generate_Processing_Resource --
+   ----------------------------------
+
+   procedure Generate_Processing_Resource (N : Node_Id) is
+   begin
+      Write_Line ("Processing_Resource (");
+      Increment_Indentation;
+
+      Write_Indentation (-1);
+      Write_Str ("Type =>");
+      Write_Name (Node_Type (N));
+      Write_Line (",");
+
+      Write_Indentation (-1);
+      Write_Str ("Name =>");
+      Write_Name (Node_Name (N));
+
+      Decrement_Indentation;
+      Write_Indentation (-1);
+      Write_Line (");");
+   end Generate_Processing_Resource;
 
 end Ocarina.Backends.MAST_Tree.Generator;

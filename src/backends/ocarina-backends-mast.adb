@@ -37,6 +37,7 @@ with Ocarina.Backends.Messages;
 with Ocarina.Backends.Utils;
 --  with Ocarina.Backends.MAST_Tree.Nodes;
 with Ocarina.Backends.MAST_Tree.Nutils;
+with Ocarina.Backends.MAST.Main;
 with Ocarina.Backends.MAST_Tree.Generator;
 with GNAT.Command_Line; use GNAT.Command_Line;
 
@@ -137,11 +138,11 @@ package body Ocarina.Backends.MAST is
    ---------------------------------
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
    begin
       MAST_File := MTU.Make_MAST_File
          (MTU.Make_Defining_Identifier
             (Get_String_Name ("mast-model")));
+      MAST.Main.Visit (E);
    end Visit_Architecture_Instance;
 
    -------------------
