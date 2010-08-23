@@ -37,6 +37,9 @@ properties
 	Source_Name       => "__po_hi_driver_sockets_send";
 end spg_eth_linux_sender;
 
+subprogram implementation spg_eth_linux_sender.i
+end spg_eth_linux_sender.i;
+
 
 abstract sockets_impl
 end sockets_impl;
@@ -45,13 +48,13 @@ end sockets_impl;
 abstract implementation sockets_impl.i
 subcomponents
    sockets_linux_receiver : thread       eth_linux_poller.i;
-   sender                 : subprogram   spg_eth_linux_sender;
+   sender                 : subprogram   spg_eth_linux_sender.i;
 end sockets_impl.i;
 
 abstract implementation sockets_impl.inew
 subcomponents
 --   receiver : thread       eth_linux_poller.i;
-   sender   : subprogram   spg_eth_linux_sender;
+   sender   : subprogram   spg_eth_linux_sender.i;
 end sockets_impl.inew;
 
 

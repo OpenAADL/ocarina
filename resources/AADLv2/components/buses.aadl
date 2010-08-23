@@ -5,6 +5,15 @@ public
 bus generic_bus
 end generic_bus;
 
+bus implementation generic_bus.i
+end generic_bus.i;
+
+bus dummy_bus
+end dummy_bus;
+
+bus implementation dummy_bus.i
+end dummy_bus.i;
+
 bus ip
 end ip;
 

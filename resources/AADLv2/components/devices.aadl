@@ -33,7 +33,7 @@ device generic_keyboard
 features
    key_pressed  : out data port Base_Types::Character;
 properties
-   Deployment::Driver_Name    => "1553_rasta";
+   Deployment::Driver_Name    => "generic_keyboard";
    Device_Driver              => classifier (ocarina_drivers_generic_keyboard::generic_keyboard_driver.i);
    Initialize_Entrypoint      => classifier (ocarina_drivers_generic_keyboard::spg_generic_keyboard_init);
 end generic_keyboard;
