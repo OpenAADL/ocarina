@@ -57,7 +57,7 @@
 	  (regexp-opt
 	   '("abstract" "access" "and" "applies" "binding" "calls" "classifier" 
 	     "connections" "constant" "delta" "data" "enumeration" "event" 
-	     "features" "flow" "flows" "group" "in" "inherit" "initial" 
+	     "feature" "features" "flow" "flows" "group" "in" "inherit" "initial"
 	     "inverse" "is" "list" "mode" "modes" "not" "out" "parameter" 
 	     "path" "port" "private" "process" "processor" "prototypes" 
 	     "properties" "with" "renames"
