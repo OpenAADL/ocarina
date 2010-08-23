@@ -31,14 +31,15 @@ usage () {
      Usage : $0 [options]
 
      Options:
-       --help    |-h : This help
-       --tests   |-t {<test_directories>}: Do the tests (testsuite directory)
-       --examples|-x {examples_directories}: Do the examples (examples directory)
-       --runtimes|-r : Test the PolyORB-HI runtimes
-       --projects|-p : Test the AADL projects
-       --all     |-a : Test Ocarina, runtimes and projects
-       --lcov    |-l: Generate html output from gcov information
-       --clean   |-c: Delete intermediate files
+       --help     |-h : This help
+       --tests    |-t {<test_directories>}: Do the tests (testsuite directory)
+       --examples |-x {examples_directories}: Do the examples (examples directory)
+       --runtimes |-r : Test the PolyORB-HI runtimes
+       --projects |-p : Test the AADL projects
+       --all      |-a : Test Ocarina, runtimes and projects
+       --lcov     |-l: Generate html output from gcov information
+       --overwrite|-o: Overwrite reference file
+       --clean    |-c: Delete intermediate files
 EOF
 }
 
@@ -134,6 +135,7 @@ doexamples="false" # disabled for now
 doruntimes="false"
 doprojects="false"
 doall="false"
+overwrite_output="false"
 testfiles=""
 examplefiles=""
 
@@ -142,6 +144,9 @@ if test  $# != 0 ; then
 	--help|-h)
 	    usage
 	    exit 0
+	    ;;
+	--overwrite|-o)
+	    overwrite_output="true"
 	    ;;
 	--all|-a)
 	    doexamples="false"
@@ -379,6 +384,14 @@ if test ${dotests} = "true" ; then
 			    "${ocarina} ${flags} ${version} \"`${path_conv} ${file}`\"" \
 			    ${expected_output} \
 			    ${actual_output}
+
+			if test ${overwrite_output} = "true"; then
+			    echo ${actual_output}
+			    echo -------
+			    echo ${expected_output}
+			    echo cp ${actual_output} ${expected_output}
+			    cp ${actual_output} ${expected_output}
+			fi
 
 		    else
 			failed ${entry} \
