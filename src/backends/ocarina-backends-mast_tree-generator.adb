@@ -273,6 +273,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write (Tok_Avg_ISR_Switch);
       Write_Space;
       Write (Tok_Assign);
+      Write_Space;
       if Avg_ISR_Switch (N) /= No_Node then
          Generate (Avg_ISR_Switch (N));
       else
@@ -284,6 +285,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write (Tok_Best_ISR_Switch);
       Write_Space;
       Write (Tok_Assign);
+      Write_Space;
       if Best_ISR_Switch (N) /= No_Node then
          Generate (Best_ISR_Switch (N));
       else
@@ -295,16 +297,15 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write (Tok_Worst_ISR_Switch);
       Write_Space;
       Write (Tok_Assign);
+      Write_Space;
       if Worst_ISR_Switch (N) /= No_Node then
          Generate (Worst_ISR_Switch (N));
       else
          Write_Str ("0.00");
       end if;
-      Write_Line (Tok_Colon);
 
-      Decrement_Indentation;
-      Write_Indentation (-1);
       Write_Line (");");
+      Decrement_Indentation;
    end Generate_Processing_Resource;
 
    --------------------------------
@@ -370,19 +371,25 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write_Line ("Type => Periodic,");
       end if;
 
-      if not Is_Empty (External_Events (N))then
+      Write_Indentation (-1);
+      Write_Str ("Name => ");
+      Write_Name (Node_Name (N));
+      Write (Tok_Colon);
 
+      if not Is_Empty (External_Events (N))then
+         Write_Eol;
          Write_Indentation (-1);
          Write (Tok_External_Events);
          Write_Space;
          Write (Tok_Assign);
          Write_Space;
-         Write_Line (Tok_Left_Paren);
-
+         Write (Tok_Left_Paren);
+         Write_Eol;
          Increment_Indentation;
+         Write_Indentation (-1);
+
          F := First_Node (External_Events (N));
          while Present (F) loop
-            Write_Indentation (-1);
             Generate (F);
             if Present (Next_Node (F)) then
                Write_Eol;
@@ -402,12 +409,13 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write_Space;
          Write (Tok_Assign);
          Write_Space;
-         Write_Line (Tok_Left_Paren);
+         Write_Eol;
+         Write_Indentation (-1);
+         Write (Tok_Left_Paren);
 
          Increment_Indentation;
          F := First_Node (Internal_Events (N));
          while Present (F) loop
-            Write_Indentation (-1);
             Generate (F);
             if Present (Next_Node (F)) then
                Write_Eol;
@@ -438,17 +446,11 @@ package body Ocarina.Backends.MAST_Tree.Generator is
                Write_Eol;
             else
                Write (Tok_Right_Paren);
-               Write_Line (Tok_Colon);
             end if;
             F := Next_Node (F);
          end loop;
          Decrement_Indentation;
       end if;
-
-      Write_Indentation (-1);
-      Write_Str ("Name => ");
-      Write_Name (Node_Name (N));
-
       Write_Line (");");
    end Generate_Transaction;
 
@@ -472,17 +474,26 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       end if;
       Write_Line (Tok_Colon);
 
+      Write_Indentation (-1);
+      Write (Tok_Name);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Node_Name (N));
+      Write (Tok_Colon);
+
       if MTN.Period (N) /= No_Node then
+         Write_Eol;
          Write_Indentation (-1);
          Write (Tok_Period);
          Write_Space;
          Write (Tok_Assign);
          Write_Space;
          Generate (Period (N));
-         Write_Line (Tok_Colon);
       end if;
 
       if Timing_Requirements (N) /= No_Node then
+         Write_Eol;
          Write_Indentation (-1);
          Write (Tok_Timing_Requirements);
          Write_Space;
@@ -493,16 +504,8 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write (Tok_Left_Paren);
          Generate (Timing_Requirements (N));
          Write (Tok_Right_Paren);
-         Write_Line (Tok_Colon);
          Decrement_Indentation;
       end if;
-
-      Write_Indentation (-1);
-      Write (Tok_Name);
-      Write_Space;
-      Write (Tok_Assign);
-      Write_Space;
-      Write_Name (Node_Name (N));
       Write (Tok_Right_Paren);
    end Generate_Event;
 
@@ -611,6 +614,10 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write_Line ("Type => Enclosing,");
       end if;
 
+      Write_Indentation (-1);
+      Write_Str ("Name => ");
+      Write_Name (Node_Name (N));
+
       if Worst_Case_Execution_Time (N) /= No_Node then
          Write_Indentation (-1);
          Write (Tok_Worst_Case_Execution_Time);
@@ -648,6 +655,8 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       end if;
 
       if not Is_Empty (Operations (N)) then
+         Write (Tok_Colon);
+         Write_Eol;
          Write_Indentation (-1);
          Write (Tok_Composite_Operation_List);
          Write_Space;
@@ -665,14 +674,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          end loop;
 
          Write (Tok_Right_Paren);
-         Write (Tok_Colon);
-         Write_Eol;
       end if;
-
-      Write_Indentation (-1);
-      Write_Str ("Name => ");
-      Write_Name (Node_Name (N));
-
       Write_Line (");");
    end Generate_Operation;
 
