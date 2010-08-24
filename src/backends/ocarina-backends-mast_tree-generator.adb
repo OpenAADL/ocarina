@@ -656,39 +656,36 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write_Name (Node_Name (N));
 
       if Worst_Case_Execution_Time (N) /= No_Node then
+         Write (Tok_Colon);
+         Write_Eol;
          Write_Indentation (-1);
          Write (Tok_Worst_Case_Execution_Time);
          Write_Space;
          Write (Tok_Assign);
          Write_Space;
-         Write (Tok_Left_Paren);
          Generate (Worst_Case_Execution_Time (N));
-         Write (Tok_Right_Paren);
-         Write_Line (Tok_Colon);
       end if;
 
       if Avg_Case_Execution_Time (N) /= No_Node then
+         Write (Tok_Colon);
+         Write_Eol;
          Write_Indentation (-1);
          Write (Tok_Avg_Case_Execution_Time);
          Write_Space;
          Write (Tok_Assign);
          Write_Space;
-         Write (Tok_Left_Paren);
          Generate (Avg_Case_Execution_Time (N));
-         Write (Tok_Right_Paren);
-         Write_Line (Tok_Colon);
       end if;
 
       if Best_Case_Execution_Time (N) /= No_Node then
+         Write (Tok_Colon);
+         Write_Eol;
          Write_Indentation (-1);
          Write (Tok_Best_Case_Execution_Time);
          Write_Space;
          Write (Tok_Assign);
          Write_Space;
-         Write (Tok_Left_Paren);
          Generate (Best_Case_Execution_Time (N));
-         Write (Tok_Right_Paren);
-         Write_Line (Tok_Colon);
       end if;
 
       if not Is_Empty (Operations (N)) then

@@ -302,6 +302,23 @@ package body Ocarina.Backends.MAST.Main is
       Operation := Make_Operation (Operation_Name, Enclosing);
       MTN.Set_Operations (Operation, Operations_List);
 
+      if Get_Execution_Time (E) /= Empty_Time_Array then
+         declare
+            ET : constant Time_Array := Get_Execution_Time (E);
+         begin
+            MTN.Set_Best_Case_Execution_Time
+               (Operation,
+               Make_Literal
+                  (New_Numeric_Value
+                     (To_Milliseconds (ET (0)), 1, 10)));
+            MTN.Set_Worst_Case_Execution_Time
+               (Operation,
+               Make_Literal
+                  (New_Numeric_Value
+                     (To_Milliseconds (ET (1)), 1, 10)));
+         end;
+      end if;
+
       Append_Node_To_List (Operation, MTN.Declarations (MAST_File));
 
       if not AINU.Is_Empty (Calls (E)) then
