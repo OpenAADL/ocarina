@@ -62,6 +62,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Deadline,
       Tok_Event_Handlers,
       Tok_External_Events,
+      Tok_Fixed_Priority_Policy,
       Tok_Hard_Global_Deadline,
       Tok_Host,
       Tok_Internal_Events,
@@ -88,9 +89,11 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Server_Processing_Resource,
       Tok_Server_Sched_Parameters,
       Tok_Speed_Factor,
+      Tok_The_Priority,
       Tok_Throughput,
       Tok_Timing_Requirements,
       Tok_Type,
+      Tok_Unknown,
       Tok_Worst_Case_Execution_Time,
       Tok_Worst_Context_Switch,
       Tok_Worst_ISR_Switch,
@@ -190,11 +193,23 @@ package Ocarina.Backends.MAST_Tree.Nutils is
    type Processing_Resource_Kind is
      (
          PR_Regular_Processor,
+         PR_Fixed_Priority_Processor,
          PR_Packet_Based_Network
      );
 
    function Make_Processing_Resource
       (PR_Name : Name_Id; PR_Type : Processing_Resource_Kind)
+      return Node_Id;
+
+   type Scheduling_Server_Parameter_Kind is
+     (
+         Fixed_Priority,
+         Unknown
+     );
+
+   function Make_Scheduling_Server_Parameters
+      (Server_Kind : Scheduling_Server_Parameter_Kind;
+      Prio         : Unsigned_Long_Long)
       return Node_Id;
 
    function Make_Scheduling_Server

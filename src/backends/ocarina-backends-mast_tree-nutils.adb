@@ -535,12 +535,18 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       N : Node_Id;
    begin
       N := New_Node (MTN.K_Processing_Resource);
+
       MTN.Set_Node_Name (N, PR_Name);
+
+      MTN.Set_Regular_Processor (N, False);
+      MTN.Set_Fixed_Priority_Processor (N, False);
+      MTN.Set_Packet_Based_Network (N, False);
+
       if PR_Type = PR_Regular_Processor then
          MTN.Set_Regular_Processor (N, True);
-         MTN.Set_Packet_Based_Network (N, False);
+      elsif PR_Type = PR_Fixed_Priority_Processor then
+         MTN.Set_Fixed_Priority_Processor (N, True);
       else
-         MTN.Set_Regular_Processor (N, False);
          MTN.Set_Packet_Based_Network (N, True);
       end if;
       return N;
@@ -564,6 +570,30 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       MTN.Set_Parameters (N, No_Node);
       return N;
    end Make_Scheduling_Server;
+
+   ---------------------------------------
+   -- Make_Scheduling_Server_Parameters --
+   ---------------------------------------
+
+   function Make_Scheduling_Server_Parameters
+      (Server_Kind : Scheduling_Server_Parameter_Kind;
+      Prio         : Unsigned_Long_Long)
+      return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Scheduling_Server_Parameters);
+
+      MTN.Set_Fixed_Priority (N, False);
+      MTN.Set_Is_Preassigned (N, False);
+      MTN.Set_Priority
+         (N, Make_Literal
+            (New_Numeric_Value (Prio, 1, 10)));
+
+      if Server_Kind = Fixed_Priority then
+         MTN.Set_Fixed_Priority (N, True);
+      end if;
+      return N;
+   end Make_Scheduling_Server_Parameters;
 
    ----------------------
    -- Make_Transaction --

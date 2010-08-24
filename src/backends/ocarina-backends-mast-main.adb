@@ -153,7 +153,7 @@ package body Ocarina.Backends.MAST.Main is
    begin
       N := MTU.Make_Processing_Resource
          (Normalize_Name (Name (Identifier (E))),
-         PR_Regular_Processor);
+         PR_Fixed_Priority_Processor);
 
       MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
@@ -204,12 +204,14 @@ package body Ocarina.Backends.MAST.Main is
       Output_Event            : Node_Id;
       Output_Event_Name       : Name_Id;
       Event_Handler           : Node_Id;
+      Server_Parameters       : Node_Id;
       Server_Sched_Name       : Name_Id;
       Operation_Name          : Name_Id;
       Operation               : Node_Id;
       Operations_List         : constant List_Id
                   := MTU.New_List (MTN.K_List_Id);
       Output_Event_Req        : Node_Id := No_Node;
+      Prio                    : Unsigned_Long_Long;
    begin
       Set_Str_To_Name_Buffer ("");
       Get_Name_String (Normalize_Name (Name (Identifier (E))));
@@ -221,10 +223,20 @@ package body Ocarina.Backends.MAST.Main is
       Add_Str_To_Name_Buffer ("_sched_server");
       Server_Sched_Name := Name_Find;
 
+      Prio := Get_Thread_Priority (E);
+      if Prio = 0 then
+         Prio := 1;
+      end if;
+      Server_Parameters := Make_Scheduling_Server_Parameters
+         (Fixed_Priority, Prio);
+
       N := Make_Scheduling_Server
          (Server_Sched_Name,
           Normalize_Name (Name (Identifier (Get_Bound_Processor
           (Parent_Component (Parent_Subcomponent (E)))))));
+
+      MTN.Set_Parameters (N, Server_Parameters);
+
       Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
       N := Make_Transaction

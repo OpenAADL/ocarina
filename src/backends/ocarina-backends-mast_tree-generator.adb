@@ -63,6 +63,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    procedure Generate_Event_Handler (N : Node_Id);
    procedure Generate_Operation (N : Node_Id);
    procedure Generate_Event_Timing_Requirements (N : Node_Id);
+   procedure Generate_Scheduling_Server_Parameters (N : Node_Id);
 
    procedure Write (T : Token_Type);
    procedure Write_Line (T : Token_Type);
@@ -182,6 +183,9 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          when K_Event_Timing_Requirements =>
             Generate_Event_Timing_Requirements (N);
 
+         when K_Scheduling_Server_Parameters =>
+            Generate_Scheduling_Server_Parameters (N);
+
          when others =>
             Display_Error ("other element in generator", Fatal => False);
             null;
@@ -260,6 +264,8 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write_Indentation (-1);
       if Regular_Processor (N) then
          Write_Line ("Type => Regular_Processor,");
+      elsif Fixed_Priority_Processor (N) then
+         Write_Line ("Type => Fixed_Priority_Processor,");
       else
          Write_Line ("Type => Packet_Based_Network,");
       end if;
@@ -308,6 +314,32 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Decrement_Indentation;
    end Generate_Processing_Resource;
 
+   -------------------------------------------
+   -- Generate_Scheduling_Server_Parameters --
+   -------------------------------------------
+
+   procedure Generate_Scheduling_Server_Parameters (N : Node_Id) is
+   begin
+      Write (Tok_Type);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if MTN.Fixed_Priority (N) then
+         Write (Tok_Fixed_Priority_Policy);
+      else
+         Write (Tok_Unknown);
+      end if;
+      Write (Tok_Colon);
+      Write_Eol;
+
+      Write_Indentation (-1);
+      Write (Tok_The_Priority);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Generate (Priority (N));
+   end Generate_Scheduling_Server_Parameters;
+
    --------------------------------
    -- Generate_Scheduling_Server --
    --------------------------------
@@ -333,14 +365,19 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
       if Parameters (N) /= No_Node then
          Write_Indentation (-1);
-         Write (Tok_Parameters);
+         Write (Tok_Server_Sched_Parameters);
          Write_Space;
          Write (Tok_Assign);
          Write_Space;
          Write (Tok_Left_Paren);
+         Increment_Indentation;
+         Write_Eol;
+         Write_Indentation (-1);
          Generate (Parameters (N));
          Write (Tok_Right_Paren);
-         Write_Line (Tok_Colon);
+         Write (Tok_Colon);
+         Decrement_Indentation;
+         Write_Eol;
       end if;
 
       Write_Indentation (-1);

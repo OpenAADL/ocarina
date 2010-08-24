@@ -35,6 +35,7 @@ module Ocarina::Backends::MAST_Tree::Nodes {
   	Node_Id 		Speed_Factor;
 	boolean     Regular_Processor;
 	boolean     Packet_Based_Network;
+	boolean     Fixed_Priority_Processor;
   };
 
   interface Scheduling_Server : MAST_Node {
@@ -45,6 +46,7 @@ module Ocarina::Backends::MAST_Tree::Nodes {
   };
 
   interface Scheduling_Server_Parameters : Node_Id {
+   boolean		Fixed_Priority;
   	Node_Id 		Sched_Type;
 	Node_Id		Priority;
 	boolean     Is_Preassigned;
