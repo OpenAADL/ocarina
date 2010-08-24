@@ -58,13 +58,18 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Best_Case_Execution_time,
       Tok_Best_Context_Switch,
       Tok_Best_ISR_Switch,
+      Tok_Character_Packet_Driver,
       Tok_Composite_Operation_List,
+      Tok_Coupled,
       Tok_Deadline,
+      Tok_Decoupled,
+      Tok_Driver,
       Tok_Event_Handlers,
       Tok_External_Events,
       Tok_Fixed_Priority_Policy,
       Tok_Hard_Global_Deadline,
       Tok_Host,
+      Tok_Immediate_Ceiling_Resource,
       Tok_Internal_Events,
       Tok_Input_Event,
       Tok_List_Of_Drivers,
@@ -72,12 +77,14 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Max_Packet_Size,
       Tok_Max_Priority,
       Tok_Max_ISR_Switch,
+      Tok_Message_Partitioning,
       Tok_Min_Interarrival,
       Tok_Min_Packet_Size,
       Tok_Min_Priority,
       Tok_Name,
       Tok_Output_Event,
       Tok_Packet_Server,
+      Tok_Packet_Driver,
       Tok_Packet_Send_Operation,
       Tok_Packet_Receive_Operation,
       Tok_Parameters,
@@ -90,6 +97,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Server_Processing_Resource,
       Tok_Server_Sched_Parameters,
       Tok_Speed_Factor,
+      Tok_Shared_Resource,
       Tok_The_Priority,
       Tok_Throughput,
       Tok_Timing_Requirements,
@@ -260,5 +268,24 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Deadline       : Unsigned_Long_Long;
       Ref_Event      : Name_Id)
       return Node_Id;
+
+   type Shared_Resource_Kind is (Immediate_Ceiling, Unknown);
+
+   function Make_Shared_Resource
+      (Res_Kind : Shared_Resource_Kind; Res_Name : Name_Id)
+   return Node_Id;
+
+   type RTA_Overhead_Model_Kind is (Coupled, Decoupled);
+
+   type Driver_Kind is (Character, Packet);
+
+   function Make_Driver
+      (Driver_Name      : Name_Id;
+      Drv_Kind          : Driver_Kind;
+      Server_Sched_Name : Name_Id;
+      Send_Name         : Name_Id;
+      Receive_Name      : Name_Id;
+      Partitioning      : Boolean;
+      Overhead_Kind     : RTA_Overhead_Model_Kind) return Node_Id;
 
 end Ocarina.Backends.MAST_Tree.Nutils;

@@ -65,9 +65,17 @@ package body Ocarina.Backends.MAST.Main is
    procedure Visit_Thread (E : Node_Id);
    procedure Visit_Subprogram (E : Node_Id);
    procedure Visit_Bus (E : Node_Id);
+   procedure Visit_Data (E : Node_Id);
+   procedure Visit_Device (E : Node_Id);
    procedure Visit_Virtual_Processor (E : Node_Id);
 
    function Map_Port_Operation_Name (The_Thread : Node_Id; The_Port : Node_Id)
+      return Name_Id;
+   function Map_Driver_Receive_Operation_Name (The_Device : Node_Id)
+      return Name_Id;
+   function Map_Driver_Send_Operation_Name (The_Device : Node_Id)
+      return Name_Id;
+   function Map_Driver_Scheduling_Server_Name (The_Device : Node_Id)
       return Name_Id;
 
    Root_System_Node                 : Node_Id := No_Node;
@@ -86,6 +94,57 @@ package body Ocarina.Backends.MAST.Main is
          (Normalize_Name (Name (Identifier (The_Port))));
       return Name_Find;
    end Map_Port_Operation_Name;
+
+   ------------------------------------
+   -- Map_Driver_Send_Operation_Name --
+   ------------------------------------
+
+   function Map_Driver_Send_Operation_Name (The_Device : Node_Id)
+      return Name_Id is
+      N : Name_Id;
+   begin
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String
+         (Normalize_Name
+            (Name (Identifier (Parent_Subcomponent (The_Device)))));
+      Add_Str_To_Name_Buffer ("_operation_send");
+      N := Name_Find;
+      return N;
+   end Map_Driver_Send_Operation_Name;
+
+   ---------------------------------------
+   -- Map_Driver_Receive_Operation_Name --
+   ---------------------------------------
+
+   function Map_Driver_Receive_Operation_Name (The_Device : Node_Id)
+      return Name_Id is
+      N : Name_Id;
+   begin
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String
+         (Normalize_Name
+            (Name (Identifier (Parent_Subcomponent (The_Device)))));
+      Add_Str_To_Name_Buffer ("_operation_receive");
+      N := Name_Find;
+      return N;
+   end Map_Driver_Receive_Operation_Name;
+
+   ---------------------------------------
+   -- Map_Driver_Scheduling_Server_Name --
+   ---------------------------------------
+
+   function Map_Driver_Scheduling_Server_Name (The_Device : Node_Id)
+      return Name_Id is
+      N : Name_Id;
+   begin
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String
+         (Normalize_Name
+            (Name (Identifier (Parent_Subcomponent (The_Device)))));
+      Add_Str_To_Name_Buffer ("_scheduling_server");
+      N := Name_Find;
+      return N;
+   end Map_Driver_Scheduling_Server_Name;
 
    -----------
    -- Visit --
@@ -127,6 +186,12 @@ package body Ocarina.Backends.MAST.Main is
          when CC_Process =>
             Visit_Process (E);
 
+         when CC_Data =>
+            Visit_Data (E);
+
+         when CC_Device =>
+            Visit_Device (E);
+
          when CC_Thread =>
             Visit_Thread (E);
 
@@ -161,6 +226,37 @@ package body Ocarina.Backends.MAST.Main is
       null;
    end Visit_Virtual_Processor;
 
+   ------------------
+   -- Visit_Device --
+   ------------------
+
+   procedure Visit_Device (E : Node_Id) is
+      S        : Node_Id;
+      N        : Node_Id;
+   begin
+      N := MTU.Make_Driver
+         (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
+         Packet,
+         Map_Driver_Scheduling_Server_Name (E),
+         Map_Driver_Send_Operation_Name (E),
+         Map_Driver_Receive_Operation_Name (E),
+         False,
+         Coupled);
+
+      MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
+
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+
+            Visit (Corresponding_Instance (S));
+            S := Next_Node (S);
+         end loop;
+      end if;
+   end Visit_Device;
+
    ---------------------
    -- Visit_Processor --
    ---------------------
@@ -170,7 +266,7 @@ package body Ocarina.Backends.MAST.Main is
       N        : Node_Id;
    begin
       N := MTU.Make_Processing_Resource
-         (Normalize_Name (Name (Identifier (E))),
+         (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
          PR_Fixed_Priority_Processor);
 
       MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
@@ -205,6 +301,37 @@ package body Ocarina.Backends.MAST.Main is
          end loop;
       end if;
    end Visit_Process;
+
+   ----------------
+   -- Visit_Data --
+   -------------------
+
+   procedure Visit_Data (E : Node_Id) is
+      S        : Node_Id;
+      N        : Node_Id;
+      CP       : constant Supported_Concurrency_Control_Protocol
+         := Get_Concurrency_Protocol (E);
+   begin
+      if CP = Concurrency_Protected_Access or else
+         CP = concurrency_Priority_Ceiling or else
+         Is_Protected_Data (E) or else
+         Get_Data_Representation (E) = Data_With_Accessors then
+         N := Make_Shared_Resource
+            (Immediate_Ceiling, Normalize_Name (Name (Identifier (E))));
+         Append_Node_To_List (N, MTN.Declarations (MAST_File));
+      end if;
+
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+
+            Visit (Corresponding_Instance (S));
+            S := Next_Node (S);
+         end loop;
+      end if;
+   end Visit_Data;
 
    ------------------
    -- Visit_Thread --
@@ -253,8 +380,11 @@ package body Ocarina.Backends.MAST.Main is
 
       N := Make_Scheduling_Server
          (Server_Sched_Name,
-          Normalize_Name (Name (Identifier (Get_Bound_Processor
-          (Parent_Component (Parent_Subcomponent (E)))))));
+          Normalize_Name
+            (Name (Identifier (Parent_Subcomponent
+               (Get_Bound_Processor
+                  (Parent_Component
+                     (Parent_Subcomponent (E))))))));
 
       MTN.Set_Parameters (N, Server_Parameters);
 

@@ -26,6 +26,15 @@ module Ocarina::Backends::MAST_Tree::Nodes {
     Name_Id    Node_Type;
   };
 
+  interface Driver : MAST_Node {
+  	boolean 	Is_Packet_Driver;
+  	Name_Id	Send_Operation_Name;
+  	Name_Id	Scheduling_Server;
+	Name_Id	Receive_Operation_Name;
+	boolean  Message_Partitioning;
+	boolean  Is_RTA_Overhead_Model_Coupled;
+  };
+
   interface Processing_Resource : MAST_Node {
   	Node_Id 		Max_Interrupt_Priority;
   	Node_Id 		Min_Interrupt_Priority;
@@ -101,6 +110,10 @@ module Ocarina::Backends::MAST_Tree::Nodes {
 		Node_Id Timing_Requirements;
 		Node_Id Min_Interarrival;
 		Node_Id Period;
+	};
+
+	interface Shared_Resource : MAST_Node {
+		boolean Is_Immediate_Ceiling_Resource;
 	};
 
 	interface Event_Timing_Requirements : Node_Id {

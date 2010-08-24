@@ -62,6 +62,8 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    procedure Generate_Event (N : Node_Id);
    procedure Generate_Event_Handler (N : Node_Id);
    procedure Generate_Operation (N : Node_Id);
+   procedure Generate_Shared_Resource (N : Node_Id);
+   procedure Generate_Driver (N : Node_Id);
    procedure Generate_Event_Timing_Requirements (N : Node_Id);
    procedure Generate_Scheduling_Server_Parameters (N : Node_Id);
 
@@ -179,6 +181,12 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
          when K_Operation =>
             Generate_Operation (N);
+
+         when K_Shared_Resource =>
+            Generate_Shared_Resource (N);
+
+         when K_Driver =>
+            Generate_Driver (N);
 
          when K_Event_Timing_Requirements =>
             Generate_Event_Timing_Requirements (N);
@@ -642,6 +650,41 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write (Tok_Right_Paren);
    end Generate_Event_Handler;
 
+   ------------------------------
+   -- Generate_Shared_Resource --
+   ------------------------------
+
+   procedure Generate_Shared_Resource (N : Node_Id) is
+   begin
+      Write (Tok_Shared_Resource);
+      Write_Space;
+      Write (Tok_Left_Paren);
+      Increment_Indentation;
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Type);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Is_Immediate_Ceiling_Resource (N) then
+         Write (Tok_Immediate_Ceiling_Resource);
+      else
+         Write (Tok_Unknown);
+      end if;
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Name);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Node_Name (N));
+      Write (Tok_Right_Paren);
+      Write (Tok_Semicolon);
+   end Generate_Shared_Resource;
+
    ------------------------
    -- Generate_Operation --
    ------------------------
@@ -720,6 +763,89 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write (Tok_Right_Paren);
       end if;
       Write_Line (");");
+      Decrement_Indentation;
+      Write_Eol;
    end Generate_Operation;
+
+   ---------------------
+   -- Generate_Driver --
+   ---------------------
+
+   procedure Generate_Driver (N : Node_Id) is
+   begin
+      Write (Tok_Driver);
+      Write_Space;
+      Write (Tok_Left_Paren);
+      Increment_Indentation;
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Type);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Is_Packet_Driver (N) then
+         Write (Tok_Packet_Driver);
+      else
+         Write (Tok_Character_Packet_Driver);
+      end if;
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Packet_Server);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Scheduling_Server (N));
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Packet_Send_Operation);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Send_Operation_Name (N));
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Packet_Receive_Operation);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Receive_Operation_Name (N));
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Message_Partitioning);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Message_Partitioning (N) then
+         Write_Str ("Yes");
+      else
+         Write_Str ("No");
+      end if;
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_RTA_Overhead_Model);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Is_RTA_Overhead_Model_Coupled (N) then
+         Write (Tok_Coupled);
+      else
+         Write (Tok_Decoupled);
+      end if;
+      Write (Tok_Right_Paren);
+      Write (Tok_Semicolon);
+      Decrement_Indentation;
+      Write_Eol;
+   end Generate_Driver;
 
 end Ocarina.Backends.MAST_Tree.Generator;

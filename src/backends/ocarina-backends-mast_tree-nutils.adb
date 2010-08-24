@@ -732,4 +732,62 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       return N;
    end Make_Event_Timing_Requirement;
 
+   --------------------------
+   -- Make_Shared_Resource --
+   --------------------------
+
+   function Make_Shared_Resource
+      (Res_Kind : Shared_Resource_Kind; Res_Name : Name_Id)
+      return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Shared_Resource);
+      MTN.Set_Node_Name (N, Res_Name);
+      MTN.Set_Is_Immediate_Ceiling_Resource (N, False);
+
+      if Res_Kind = Immediate_Ceiling then
+         MTN.Set_Is_Immediate_Ceiling_Resource (N, True);
+      end if;
+
+      return N;
+   end Make_Shared_Resource;
+
+   -----------------
+   -- Make_Driver --
+   -----------------
+
+   function Make_Driver
+      (Driver_Name      : Name_Id;
+      Drv_Kind          : Driver_Kind;
+      Server_Sched_Name : Name_Id;
+      Send_Name         : Name_Id;
+      Receive_Name      : Name_Id;
+      Partitioning      : Boolean;
+      Overhead_Kind     : RTA_Overhead_Model_Kind)
+      return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Driver);
+
+      MTN.Set_Is_Packet_Driver (N, False);
+      if Drv_Kind = Packet then
+         MTN.Set_Is_Packet_Driver (N, True);
+      end if;
+
+      MTN.Set_Node_Name (N, Driver_Name);
+      MTN.Set_Scheduling_Server (N, Server_Sched_Name);
+      MTN.Set_Send_Operation_Name (N, Send_Name);
+      MTN.Set_Receive_Operation_Name (N, Receive_Name);
+      MTN.Set_Message_Partitioning (N, Partitioning);
+      MTN.Set_Is_RTA_Overhead_Model_Coupled (N, False);
+
+      if Overhead_Kind = Coupled then
+         MTN.Set_Is_RTA_Overhead_Model_Coupled (N, True);
+      end if;
+
+      return N;
+   end Make_Driver;
+
 end Ocarina.Backends.MAST_Tree.Nutils;
