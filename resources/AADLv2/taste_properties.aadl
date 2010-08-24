@@ -24,6 +24,8 @@ property set Taste is
          
    ASN1_Basic_Type : ASN1_types applies to (data);
 
+FS_Default_Value : aadlstring applies to (data);
+
 	Deadline : inherit Time => Period
 	applies to (thread, 
               thread group,
