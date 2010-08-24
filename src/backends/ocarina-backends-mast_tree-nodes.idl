@@ -98,6 +98,7 @@ module Ocarina::Backends::MAST_Tree::Nodes {
 		boolean Is_Periodic;
 		Node_Id Timing_Requirements;
 		Node_Id Min_Interarrival;
+		Node_Id Period;
 	};
 
 	interface Event_Timing_Requirements : Node_Id {

@@ -62,6 +62,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    procedure Generate_Event (N : Node_Id);
    procedure Generate_Event_Handler (N : Node_Id);
    procedure Generate_Operation (N : Node_Id);
+   procedure Generate_Event_Timing_Requirements (N : Node_Id);
 
    procedure Write (T : Token_Type);
    procedure Write_Line (T : Token_Type);
@@ -177,6 +178,9 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
          when K_Operation =>
             Generate_Operation (N);
+
+         when K_Event_Timing_Requirements =>
+            Generate_Event_Timing_Requirements (N);
 
          when others =>
             Display_Error ("other element in generator", Fatal => False);
@@ -468,14 +472,29 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       end if;
       Write_Line (Tok_Colon);
 
+      if MTN.Period (N) /= No_Node then
+         Write_Indentation (-1);
+         Write (Tok_Period);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Generate (Period (N));
+         Write_Line (Tok_Colon);
+      end if;
+
       if Timing_Requirements (N) /= No_Node then
          Write_Indentation (-1);
          Write (Tok_Timing_Requirements);
          Write_Space;
          Write (Tok_Assign);
-         Write_Space;
+         Write_Eol;
+         Increment_Indentation;
+         Write_Indentation (-1);
+         Write (Tok_Left_Paren);
          Generate (Timing_Requirements (N));
+         Write (Tok_Right_Paren);
          Write_Line (Tok_Colon);
+         Decrement_Indentation;
       end if;
 
       Write_Indentation (-1);
@@ -486,6 +505,41 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write_Name (Node_Name (N));
       Write (Tok_Right_Paren);
    end Generate_Event;
+
+   ----------------------------------------
+   -- Generate_Event_Timing_Requirements --
+   ----------------------------------------
+
+   procedure Generate_Event_Timing_Requirements (N : Node_Id) is
+   begin
+      Write (Tok_Type);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Is_Hard_Deadline (N) then
+         Write (Tok_Hard_Global_Deadline);
+      else
+         Write_Str ("unknown");
+      end if;
+      Write (Tok_Colon);
+      Write_Eol;
+
+      Write_Indentation (-1);
+      Write (Tok_Deadline);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Generate (Deadline (N));
+      Write (Tok_Colon);
+      Write_Eol;
+
+      Write_Indentation (-1);
+      Write (Tok_Referenced_Event);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Referenced_Event (N));
+   end Generate_Event_Timing_Requirements;
 
    ----------------------------
    -- Generate_Event_Handler --
@@ -543,6 +597,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    ------------------------
 
    procedure Generate_Operation (N : Node_Id) is
+      Op : Node_Id;
    begin
       Write_Line ("Operation (");
       Increment_Indentation;
@@ -590,6 +645,28 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Generate (Best_Case_Execution_Time (N));
          Write (Tok_Right_Paren);
          Write_Line (Tok_Colon);
+      end if;
+
+      if not Is_Empty (Operations (N)) then
+         Write_Indentation (-1);
+         Write (Tok_Composite_Operation_List);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write (Tok_Left_Paren);
+
+         Op := First_Node (Operations (N));
+         while Present (Op) loop
+            Generate (Op);
+            if Next_Node (Op) /= No_Node then
+               Write (Tok_Colon);
+            end if;
+            Op := Next_Node (Op);
+         end loop;
+
+         Write (Tok_Right_Paren);
+         Write (Tok_Colon);
+         Write_Eol;
       end if;
 
       Write_Indentation (-1);

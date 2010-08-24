@@ -36,11 +36,13 @@ with GNAT.Table;
 with Charset;   use Charset;
 with Locations; use Locations;
 with Namet;     use Namet;
+with Ocarina.Backends.MAST_Values;
 --  with Utils;     use Utils;
 
 --  with Ocarina.Backends.Utils;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 use Ocarina.ME_AADL.AADL_Tree.Nodes;
+use Ocarina.Backends.MAST_Values;
 --  use Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.MAST_Tree.Nutils is
@@ -674,5 +676,30 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       MTN.Set_Avg_Case_Execution_Time (N, No_Node);
       return N;
    end Make_Operation;
+
+   -----------------------------------
+   -- Make_Event_Timing_Requirement --
+   -----------------------------------
+
+   function Make_Event_Timing_Requirement
+      (Req_Kind      : Event_Timing_Requirement_Kind;
+      Deadline       : Unsigned_Long_Long;
+      Ref_Event      : Name_Id)
+      return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Event_Timing_Requirements);
+
+      if Req_Kind = Hard_Deadline then
+         MTN.Set_Is_Hard_Deadline (N, True);
+      end if;
+
+      MTN.Set_Deadline
+         (N, Make_Literal
+            (New_Numeric_Value (Deadline, 1, 10)));
+
+      MTN.Set_Referenced_Event (N, Ref_Event);
+      return N;
+   end Make_Event_Timing_Requirement;
 
 end Ocarina.Backends.MAST_Tree.Nutils;

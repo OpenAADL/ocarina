@@ -58,8 +58,11 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Best_Case_Execution_time,
       Tok_Best_Context_Switch,
       Tok_Best_ISR_Switch,
+      Tok_Composite_Operation_List,
+      Tok_Deadline,
       Tok_Event_Handlers,
       Tok_External_Events,
+      Tok_Hard_Global_Deadline,
       Tok_Host,
       Tok_Internal_Events,
       Tok_Input_Event,
@@ -76,8 +79,10 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Packet_Send_Operation,
       Tok_Packet_Receive_Operation,
       Tok_Parameters,
+      Tok_Period,
       Tok_Processing_Resource,
       Tok_RTA_Overhead_Model,
+      Tok_Referenced_Event,
       Tok_Scheduler,
       Tok_Scheduling_Server,
       Tok_Server_Processing_Resource,
@@ -229,6 +234,15 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       (Op_Name       : Name_Id;
       Op_Kind        : Operation_Kind;
       Op_List        : List_Id := No_List)
+      return Node_Id;
+
+   type Event_Timing_Requirement_Kind is
+     (Hard_Deadline);
+
+   function Make_Event_Timing_Requirement
+      (Req_Kind      : Event_Timing_Requirement_Kind;
+      Deadline       : Unsigned_Long_Long;
+      Ref_Event      : Name_Id)
       return Node_Id;
 
 end Ocarina.Backends.MAST_Tree.Nutils;
