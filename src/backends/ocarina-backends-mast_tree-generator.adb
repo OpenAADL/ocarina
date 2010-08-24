@@ -529,6 +529,16 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Generate (Period (N));
       end if;
 
+      if MTN.Min_Interarrival (N) /= No_Node then
+         Write_Eol;
+         Write_Indentation (-1);
+         Write (Tok_Min_Interarrival);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Generate (Min_Interarrival (N));
+      end if;
+
       if Timing_Requirements (N) /= No_Node then
          Write_Eol;
          Write_Indentation (-1);

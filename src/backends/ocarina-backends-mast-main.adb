@@ -67,7 +67,25 @@ package body Ocarina.Backends.MAST.Main is
    procedure Visit_Bus (E : Node_Id);
    procedure Visit_Virtual_Processor (E : Node_Id);
 
+   function Map_Port_Operation_Name (The_Thread : Node_Id; The_Port : Node_Id)
+      return Name_Id;
+
    Root_System_Node                 : Node_Id := No_Node;
+
+   -----------------------------
+   -- Map_Port_Operation_Name --
+   -----------------------------
+
+   function Map_Port_Operation_Name (The_Thread : Node_Id; The_Port : Node_Id)
+      return Name_Id
+   is
+   begin
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Normalize_Name (Name (Identifier (The_Thread))));
+      Get_Name_String_And_Append
+         (Normalize_Name (Name (Identifier (The_Port))));
+      return Name_Find;
+   end Map_Port_Operation_Name;
 
    -----------
    -- Visit --
@@ -212,6 +230,9 @@ package body Ocarina.Backends.MAST.Main is
                   := MTU.New_List (MTN.K_List_Id);
       Output_Event_Req        : Node_Id := No_Node;
       Prio                    : Unsigned_Long_Long;
+      Exec_Time               : constant Time_Array := Get_Execution_Time (E);
+      The_Feature             : Node_Id;
+      Port_Operation          : Node_Id;
    begin
       Set_Str_To_Name_Buffer ("");
       Get_Name_String (Normalize_Name (Name (Identifier (E))));
@@ -258,6 +279,13 @@ package body Ocarina.Backends.MAST.Main is
                Activation_Event_Name);
       elsif Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic then
          Activation_Kind := Sporadic;
+
+         Output_Event_Req
+            := Make_Event_Timing_Requirement
+               (Hard_Deadline,
+               To_Milliseconds (Get_Thread_Deadline (E)),
+               Activation_Event_Name);
+
       else
          Activation_Kind := Regular;
       end if;
@@ -266,6 +294,12 @@ package body Ocarina.Backends.MAST.Main is
 
       if Get_Thread_Dispatch_Protocol (E) = Thread_Periodic then
          MTN.Set_Period
+            (Activation_Event,
+            Make_Literal
+               (New_Numeric_Value
+                  (To_Milliseconds (Get_Thread_Period (E)), 1, 10)));
+      elsif Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic then
+         MTN.Set_Min_Interarrival
             (Activation_Event,
             Make_Literal
                (New_Numeric_Value
@@ -302,24 +336,35 @@ package body Ocarina.Backends.MAST.Main is
       Operation := Make_Operation (Operation_Name, Enclosing);
       MTN.Set_Operations (Operation, Operations_List);
 
-      if Get_Execution_Time (E) /= Empty_Time_Array then
-         declare
-            ET : constant Time_Array := Get_Execution_Time (E);
-         begin
-            MTN.Set_Best_Case_Execution_Time
-               (Operation,
-               Make_Literal
-                  (New_Numeric_Value
-                     (To_Milliseconds (ET (0)), 1, 10)));
-            MTN.Set_Worst_Case_Execution_Time
-               (Operation,
-               Make_Literal
-                  (New_Numeric_Value
-                     (To_Milliseconds (ET (1)), 1, 10)));
-         end;
+      if Exec_Time /= Empty_Time_Array then
+         MTN.Set_Best_Case_Execution_Time
+            (Operation,
+            Make_Literal
+               (New_Numeric_Value
+                  (To_Milliseconds (Exec_Time (0)), 1, 10)));
+         MTN.Set_Worst_Case_Execution_Time
+            (Operation,
+            Make_Literal
+               (New_Numeric_Value
+                  (To_Milliseconds (Exec_Time (1)), 1, 10)));
       end if;
 
       Append_Node_To_List (Operation, MTN.Declarations (MAST_File));
+
+      if Has_Ports (E) then
+         The_Feature := First_Node (Features (E));
+
+         while Present (The_Feature) loop
+            if Kind (The_Feature) = K_Port_Spec_Instance and then
+               Is_In (The_Feature) then
+                  Append_Node_To_List
+                     (Make_Defining_Identifier
+                        (Map_Port_Operation_Name (E, The_Feature)),
+                     Operations_List);
+            end if;
+            The_Feature := Next_Node (The_Feature);
+         end loop;
+      end if;
 
       if not AINU.Is_Empty (Calls (E)) then
          Call := AIN.First_Node (Calls (E));
@@ -343,6 +388,21 @@ package body Ocarina.Backends.MAST.Main is
          end loop;
       end if;
 
+      if Has_Ports (E) then
+         The_Feature := First_Node (Features (E));
+
+         while Present (The_Feature) loop
+            if Kind (The_Feature) = K_Port_Spec_Instance and then
+               Is_Out (The_Feature) then
+                  Append_Node_To_List
+                     (Make_Defining_Identifier
+                        (Map_Port_Operation_Name (E, The_Feature)),
+                     Operations_List);
+            end if;
+            The_Feature := Next_Node (The_Feature);
+         end loop;
+      end if;
+
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
@@ -353,6 +413,35 @@ package body Ocarina.Backends.MAST.Main is
             S := Next_Node (S);
          end loop;
       end if;
+
+      if Has_Ports (E) then
+         The_Feature := First_Node (Features (E));
+
+         while Present (The_Feature) loop
+            if Kind (The_Feature) = K_Port_Spec_Instance then
+               Port_Operation :=
+                  Make_Operation
+                     (Map_Port_Operation_Name (E, The_Feature), Simple);
+               MTN.Set_Operations (Port_Operation, New_List (MTN.K_List_Id));
+
+               MTN.Set_Best_Case_Execution_Time
+                  (Port_Operation,
+                  Make_Literal
+                     (New_Numeric_Value
+                        (1, 1, 10)));
+               MTN.Set_Worst_Case_Execution_Time
+                  (Port_Operation,
+                  Make_Literal
+                     (New_Numeric_Value
+                        (2, 1, 10)));
+
+               Append_Node_To_List
+                  (Port_Operation, MTN.Declarations (MAST_File));
+            end if;
+            The_Feature := Next_Node (The_Feature);
+         end loop;
+      end if;
+
    end Visit_Thread;
 
    ----------------------

@@ -72,6 +72,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Max_Packet_Size,
       Tok_Max_Priority,
       Tok_Max_ISR_Switch,
+      Tok_Min_Interarrival,
       Tok_Min_Packet_Size,
       Tok_Min_Priority,
       Tok_Name,
