@@ -265,6 +265,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    ----------------------------------
 
    procedure Generate_Processing_Resource (N : Node_Id) is
+      D : Node_Id;
    begin
       Write_Line ("Processing_Resource (");
       Increment_Indentation;
@@ -283,39 +284,171 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write_Name (Node_Name (N));
       Write_Line (Tok_Colon);
 
-      Write_Indentation (-1);
-      Write (Tok_Avg_ISR_Switch);
-      Write_Space;
-      Write (Tok_Assign);
-      Write_Space;
-      if Avg_ISR_Switch (N) /= No_Node then
-         Generate (Avg_ISR_Switch (N));
-      else
-         Write_Str ("0.00");
-      end if;
-      Write_Line (Tok_Colon);
+      if Fixed_Priority_Processor (N) or else
+         Regular_Processor (N) then
+         Write_Indentation (-1);
+         Write (Tok_Avg_ISR_Switch);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Avg_ISR_Switch (N) /= No_Node then
+            Generate (Avg_ISR_Switch (N));
+         else
+            Write_Str ("0.00");
+         end if;
+         Write_Line (Tok_Colon);
 
-      Write_Indentation (-1);
-      Write (Tok_Best_ISR_Switch);
-      Write_Space;
-      Write (Tok_Assign);
-      Write_Space;
-      if Best_ISR_Switch (N) /= No_Node then
-         Generate (Best_ISR_Switch (N));
-      else
-         Write_Str ("0.00");
-      end if;
-      Write_Line (Tok_Colon);
+         Write_Indentation (-1);
+         Write (Tok_Best_ISR_Switch);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Best_ISR_Switch (N) /= No_Node then
+            Generate (Best_ISR_Switch (N));
+         else
+            Write_Str ("0.00");
+         end if;
+         Write_Line (Tok_Colon);
 
-      Write_Indentation (-1);
-      Write (Tok_Worst_ISR_Switch);
-      Write_Space;
-      Write (Tok_Assign);
-      Write_Space;
-      if Worst_ISR_Switch (N) /= No_Node then
-         Generate (Worst_ISR_Switch (N));
-      else
-         Write_Str ("0.00");
+         Write_Indentation (-1);
+         Write (Tok_Worst_ISR_Switch);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Worst_ISR_Switch (N) /= No_Node then
+            Generate (Worst_ISR_Switch (N));
+         else
+            Write_Str ("0.00");
+         end if;
+      end if;
+
+      if Packet_Based_Network (N) then
+         Write_Indentation (-1);
+         Write (Tok_Speed_Factor);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Speed_Factor (N) /= No_Node then
+            Generate (Speed_Factor (N));
+         else
+            Write_Str ("0.00");
+         end if;
+         Write (Tok_Colon);
+         Write_Eol;
+
+         Write_Indentation (-1);
+         Write (Tok_Throughput);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Throughput (N) /= No_Node then
+            Generate (Throughput (N));
+         else
+            Write_Str ("0.00");
+         end if;
+         Write (Tok_Colon);
+         Write_Eol;
+
+         Write_Indentation (-1);
+         Write (Tok_Transmission);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Is_Simplex (N) then
+            Write (Tok_Simplex);
+         elsif Is_Half_Duplex (N) then
+            Write (Tok_Half_Duplex);
+         else
+            Write (Tok_Full_Duplex);
+         end if;
+         Write (Tok_Colon);
+         Write_Eol;
+
+         Write_Indentation (-1);
+         Write (Tok_Max_Blocking);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Max_Blocking (N) /= No_Node then
+            Generate (Max_Blocking (N));
+         else
+            Write_Str ("0.00");
+         end if;
+         Write (Tok_Colon);
+         Write_Eol;
+
+         Write_Indentation (-1);
+         Write (Tok_Max_Packet_Size);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Max_Packet_Size (N) /= No_Node then
+            Generate (Max_Packet_Size (N));
+         else
+            Write_Str ("0.00");
+         end if;
+         Write (Tok_Colon);
+         Write_Eol;
+
+         Write_Indentation (-1);
+         Write (Tok_Min_Packet_Size);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Min_Packet_Size (N) /= No_Node then
+            Generate (Min_Packet_Size (N));
+         else
+            Write_Str ("0.00");
+         end if;
+         Write (Tok_Colon);
+         Write_Eol;
+
+         Write_Indentation (-1);
+         Write (Tok_Max_Packet_Transmission_Time);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Max_Packet_Transmission_Time (N) /= No_Node then
+            Generate (Max_Packet_Transmission_Time (N));
+         else
+            Write_Str ("0.00");
+         end if;
+         Write (Tok_Colon);
+         Write_Eol;
+
+         Write_Indentation (-1);
+         Write (Tok_Min_Packet_Transmission_Time);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         if Min_Packet_Transmission_Time (N) /= No_Node then
+            Generate (Min_Packet_Transmission_Time (N));
+         else
+            Write_Str ("0.00");
+         end if;
+
+         if not Is_Empty (List_Of_Drivers (N)) then
+            Write (Tok_Colon);
+            Write_Eol;
+            Write_Indentation (-1);
+            Write (Tok_List_Of_Drivers);
+            Write_Space;
+            Write (Tok_Assign);
+            Write_Space;
+            Write (Tok_Left_Paren);
+
+            D := First_Node (List_Of_Drivers (N));
+
+            while Present (D) loop
+               Generate (D);
+               if Next_Node (D) /= No_Node then
+                  Write (Tok_Colon);
+               end if;
+               D := Next_Node (D);
+            end loop;
+
+            Write (Tok_Right_Paren);
+         end if;
       end if;
 
       Write_Line (");");

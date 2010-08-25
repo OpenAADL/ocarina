@@ -295,7 +295,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    is
       L : List_Id;
    begin
-      L := New_List (K_List_Id);
+      L := New_List (MTN.K_List_Id);
       Append_Node_To_List (N1, L);
       if Present (N2) then
          Append_Node_To_List (N2, L);
@@ -549,6 +549,25 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       else
          MTN.Set_Packet_Based_Network (N, True);
       end if;
+
+      MTN.Set_Is_Full_Duplex (N, False);
+      MTN.Set_Is_Half_Duplex (N, False);
+      MTN.Set_Is_Simplex (N, False);
+      MTN.Set_Throughput
+         (N, Make_Literal (New_Floating_Point_Value (0.0)));
+      MTN.Set_Max_Blocking
+         (N, Make_Literal (New_Floating_Point_Value (0.0)));
+      MTN.Set_Max_Packet_Size
+         (N, Make_Literal (New_Floating_Point_Value (10.0)));
+      MTN.Set_Min_Packet_Size
+         (N, Make_Literal (New_Floating_Point_Value (1.0)));
+      MTN.Set_Max_Packet_Transmission_Time
+         (N, Make_Literal (New_Floating_Point_Value (10.0)));
+      MTN.Set_Min_Packet_Transmission_Time
+         (N, Make_Literal (New_Floating_Point_Value (0.1)));
+      MTN.Set_List_Of_Drivers
+         (N, New_List (MTN.K_List_Id));
+
       return N;
    end Make_Processing_Resource;
 

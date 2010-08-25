@@ -66,7 +66,9 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Driver,
       Tok_Event_Handlers,
       Tok_External_Events,
+      Tok_Full_Duplex,
       Tok_Fixed_Priority_Policy,
+      Tok_Half_Duplex,
       Tok_Hard_Global_Deadline,
       Tok_Host,
       Tok_Immediate_Ceiling_Resource,
@@ -75,11 +77,13 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_List_Of_Drivers,
       Tok_Max_Blocking,
       Tok_Max_Packet_Size,
+      Tok_Max_Packet_Transmission_Time,
       Tok_Max_Priority,
       Tok_Max_ISR_Switch,
       Tok_Message_Partitioning,
       Tok_Min_Interarrival,
       Tok_Min_Packet_Size,
+      Tok_Min_Packet_Transmission_Time,
       Tok_Min_Priority,
       Tok_Name,
       Tok_Output_Event,
@@ -96,11 +100,13 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Scheduling_Server,
       Tok_Server_Processing_Resource,
       Tok_Server_Sched_Parameters,
+      Tok_Simplex,
       Tok_Speed_Factor,
       Tok_Shared_Resource,
       Tok_The_Priority,
       Tok_Throughput,
       Tok_Timing_Requirements,
+      Tok_Transmission,
       Tok_Type,
       Tok_Unknown,
       Tok_Worst_Case_Execution_Time,
@@ -205,6 +211,9 @@ package Ocarina.Backends.MAST_Tree.Nutils is
          PR_Fixed_Priority_Processor,
          PR_Packet_Based_Network
      );
+
+   type Transmission_Kind is
+      (Simplex, Half_Duplex, Full_Duplex);
 
    function Make_Processing_Resource
       (PR_Name : Name_Id; PR_Type : Processing_Resource_Kind)

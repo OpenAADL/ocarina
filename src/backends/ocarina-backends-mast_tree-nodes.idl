@@ -35,18 +35,6 @@ module Ocarina::Backends::MAST_Tree::Nodes {
 	boolean  Is_RTA_Overhead_Model_Coupled;
   };
 
-  interface Processing_Resource : MAST_Node {
-  	Node_Id 		Max_Interrupt_Priority;
-  	Node_Id 		Min_Interrupt_Priority;
-  	Node_Id 		Worst_ISR_Switch;
-  	Node_Id 		Avg_ISR_Switch;
-  	Node_Id 		Best_ISR_Switch;
-  	Node_Id 		Speed_Factor;
-	boolean     Regular_Processor;
-	boolean     Packet_Based_Network;
-	boolean     Fixed_Priority_Processor;
-  };
-
   interface Scheduling_Server : MAST_Node {
   	Name_Id 		Associated_Scheduler;
 	Node_Id		Parameters;
@@ -84,6 +72,29 @@ module Ocarina::Backends::MAST_Tree::Nodes {
     Node_Id    First_Node;
     Node_Id    Last_Node;
   };
+
+  interface Processing_Resource : MAST_Node {
+  	Node_Id 		Max_Interrupt_Priority;
+  	Node_Id 		Min_Interrupt_Priority;
+  	Node_Id 		Worst_ISR_Switch;
+  	Node_Id 		Avg_ISR_Switch;
+  	Node_Id 		Best_ISR_Switch;
+  	Node_Id 		Speed_Factor;
+	boolean     Regular_Processor;
+	boolean     Packet_Based_Network;
+	boolean     Fixed_Priority_Processor;
+	boolean		Is_Simplex;
+	boolean		Is_Half_Duplex;
+	boolean		Is_Full_Duplex;
+	Node_Id		Throughput;
+	Node_Id		Max_Blocking;
+	Node_Id		Max_Packet_Size;
+	Node_Id		Min_Packet_Size;
+	Node_Id		Max_Packet_Transmission_Time;
+	Node_Id		Min_Packet_Transmission_Time;
+	List_Id		List_Of_Drivers;
+  };
+
 
   interface Operation : MAST_Node {
   	boolean 		Is_Simple;

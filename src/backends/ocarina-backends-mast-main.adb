@@ -211,9 +211,14 @@ package body Ocarina.Backends.MAST.Main is
    ---------------
 
    procedure Visit_Bus (E : Node_Id) is
-      pragma Unreferenced (E);
+      N : Node_Id;
    begin
-      null;
+      N := MTU.Make_Processing_Resource
+         (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
+         PR_Packet_Based_Network);
+
+      MTN.Set_Is_Full_Duplex (N, True);
+      MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
    end Visit_Bus;
 
    --------------------------------------
