@@ -443,6 +443,8 @@ package body Ocarina.Backends.MAST_Tree.Generator is
                Generate (D);
                if Next_Node (D) /= No_Node then
                   Write (Tok_Colon);
+                  Write_Eol;
+                  Write_Indentation (-1);
                end if;
                D := Next_Node (D);
             end loop;
@@ -906,13 +908,9 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
    procedure Generate_Driver (N : Node_Id) is
    begin
-      Write (Tok_Driver);
-      Write_Space;
       Write (Tok_Left_Paren);
       Increment_Indentation;
 
-      Write_Eol;
-      Write_Indentation (-1);
       Write (Tok_Type);
       Write_Space;
       Write (Tok_Assign);
@@ -976,9 +974,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write (Tok_Decoupled);
       end if;
       Write (Tok_Right_Paren);
-      Write (Tok_Semicolon);
       Decrement_Indentation;
-      Write_Eol;
    end Generate_Driver;
 
 end Ocarina.Backends.MAST_Tree.Generator;

@@ -77,6 +77,7 @@ package body Ocarina.Backends.MAST.Main is
       return Name_Id;
    function Map_Driver_Scheduling_Server_Name (The_Device : Node_Id)
       return Name_Id;
+   function Make_Driver_Wrapper (The_Device : Node_Id) return Node_Id;
 
    Root_System_Node                 : Node_Id := No_Node;
 
@@ -146,6 +147,45 @@ package body Ocarina.Backends.MAST.Main is
       return N;
    end Map_Driver_Scheduling_Server_Name;
 
+   ------------------------
+   -- Map_Driver_Wrapper --
+   ------------------------
+
+   function Make_Driver_Wrapper (The_Device : Node_Id) return Node_Id is
+      M : Node_Id;
+      New_Drv : Node_Id;
+   begin
+      M := Make_Scheduling_Server
+         (Map_Driver_Scheduling_Server_Name (The_Device),
+         Normalize_Name (Name (Identifier (Parent_Subcomponent
+         (Get_Bound_Processor (The_Device))))));
+      MTN.Set_Parameters
+         (M, Make_Scheduling_Server_Parameters
+          (Fixed_Priority, 1));
+
+      MTU.Append_Node_To_List (M, MTN.Declarations (MAST_File));
+
+      M := Make_Operation
+         (Map_Driver_Send_Operation_Name (The_Device), Simple, No_List);
+      MTU.Append_Node_To_List (M, MTN.Declarations (MAST_File));
+
+      M := Make_Operation
+         (Map_Driver_Receive_Operation_Name (The_Device), Simple, No_List);
+      MTU.Append_Node_To_List (M, MTN.Declarations (MAST_File));
+
+      New_Drv := MTU.Make_Driver
+         (Normalize_Name
+            (Name
+               (Identifier (Parent_Subcomponent (The_Device)))),
+         Packet,
+         Map_Driver_Scheduling_Server_Name (The_Device),
+         Map_Driver_Send_Operation_Name (The_Device),
+         Map_Driver_Receive_Operation_Name (The_Device),
+         False,
+         Coupled);
+      return New_Drv;
+   end Make_Driver_Wrapper;
+
    -----------
    -- Visit --
    -----------
@@ -212,10 +252,41 @@ package body Ocarina.Backends.MAST.Main is
 
    procedure Visit_Bus (E : Node_Id) is
       N : Node_Id;
+      C : Node_Id;
+      C_Src : Node_Id;
+      C_Dst : Node_Id;
+      Src_Component : Node_Id;
+      Dst_Component : Node_Id;
    begin
       N := MTU.Make_Processing_Resource
          (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
          PR_Packet_Based_Network);
+
+      if not AINU.Is_Empty (Connections (Root_System_Node)) then
+         C := First_Node (Connections (Root_System_Node));
+         while Present (C) loop
+            C_Src := Source (C);
+            if Kind (C_Src) = K_Entity_Reference_Instance then
+               Src_Component := Get_Referenced_Entity (C_Src);
+            end if;
+            C_Dst := Get_Referenced_Entity (Destination (C));
+
+            if C_Src /= No_Node and then C_Dst /= No_Node then
+               Dst_Component := Parent_Subcomponent
+                  (Parent_Component (C_Dst));
+
+               if Src_Component = Parent_Subcomponent (E) and then
+                  Get_Category_Of_Component (Dst_Component) = CC_Device then
+                  Append_Node_To_List
+                     (Make_Driver_Wrapper
+                        (Corresponding_Instance (Dst_Component)),
+                     MTN.List_Of_Drivers (N));
+               end if;
+            end if;
+
+            C := Next_Node (C);
+         end loop;
+      end if;
 
       MTN.Set_Is_Full_Duplex (N, True);
       MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
@@ -239,15 +310,7 @@ package body Ocarina.Backends.MAST.Main is
       S        : Node_Id;
       N        : Node_Id;
    begin
-      N := MTU.Make_Driver
-         (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
-         Packet,
-         Map_Driver_Scheduling_Server_Name (E),
-         Map_Driver_Send_Operation_Name (E),
-         Map_Driver_Receive_Operation_Name (E),
-         False,
-         Coupled);
-
+      N := Make_Driver_Wrapper (E);
       MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
@@ -608,7 +671,11 @@ package body Ocarina.Backends.MAST.Main is
          while Present (S) loop
             --  Visit the component instance corresponding to the
             --  subcomponent S.
-            Visit (Corresponding_Instance (S));
+            if Get_Category_Of_Component
+               (Corresponding_Instance (S)) /= CC_Device then
+               Visit (Corresponding_Instance (S));
+            end if;
+
             S := Next_Node (S);
          end loop;
       end if;
