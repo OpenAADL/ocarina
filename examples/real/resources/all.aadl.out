@@ -13,7 +13,7 @@ requirement : mutexes
 theorem mutexes is: TRUE
 requirement : latency
 requirement : buses_rate
-lib.real:12:33 Backends: warning : property "assert_properties::access_bandwidth" is not defined on this single element.
+lib.real:12:33 Backends: warning : property "assert_properties::access_bandwidth" is not defined on element Bus_Set
 lib.real:12:72 Backends: error : Property is false for instance 582 (shared.impl_a_bus)
 theorem buses_rate is: FALSE
 lib.real:85:01 Backends: fatal error : requirements are not fulfilled

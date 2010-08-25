@@ -1,9 +1,9 @@
 ------------------------------------------
 ------ Ocarina Petri Nets Generator ------
 ------------------------------------------
-
+ 
 test.aadl:12:03: warning: CPU references a component type
-ocarina: Total: 0 error and 1 warning 
+ocarina: Total: 0 error and 1 warning
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~ Timed Petri Nets ~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

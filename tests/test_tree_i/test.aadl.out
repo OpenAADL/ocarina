@@ -7,7 +7,7 @@ Root_System Node_Id 6
   Corresponding_Entity Node_Id 6
   Scope_Entity Node_Id 0
   Backend_Node Node_Id 0
- Corresponding_Declaration Node_Id 1487
+ Corresponding_Declaration Node_Id 1488
  Properties List_Id 0
  Is_Private Boolean FALSE
  Features List_Id 0

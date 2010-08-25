@@ -7,26 +7,26 @@ all.aadl:197:07: warning: layer_unclassified references a component type
 ocarina: Total: 0 error and 6 warnings
 pok_security execution
 requirement : one_security_level_by_memory
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
-lib.real:15:23 Backends: warning : cardinal of set is null
-lib.real:15:11 Backends: warning : use default boolean value of true
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
 theorem one_security_level_by_memory is: TRUE
 requirement : bell_lapadula
 theorem bell_lapadula is: TRUE
@@ -35,54 +35,54 @@ theorem biba is: TRUE
 requirement : mils_1
 theorem mils_1 is: TRUE
 requirement : mils_2
-lib.real:117:20 Backends: warning : cardinal of set is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0
-lib.real:118:20 Backends: warning : cardinal of set is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0
-lib.real:119:20 Backends: warning : cardinal of set is null
-lib.real:119:15 Backends: warning : use default float value of 0.0
-lib.real:120:20 Backends: warning : cardinal of set is null
-lib.real:119:62 Backends: warning : use default float value of 0.0
-lib.real:117:20 Backends: warning : cardinal of set is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0
-lib.real:118:20 Backends: warning : cardinal of set is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0
-lib.real:119:20 Backends: warning : cardinal of set is null
-lib.real:119:15 Backends: warning : use default float value of 0.0
-lib.real:120:20 Backends: warning : cardinal of set is null
-lib.real:119:62 Backends: warning : use default float value of 0.0
-lib.real:117:20 Backends: warning : cardinal of set is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0
-lib.real:118:20 Backends: warning : cardinal of set is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0
-lib.real:119:20 Backends: warning : cardinal of set is null
-lib.real:119:15 Backends: warning : use default float value of 0.0
-lib.real:120:20 Backends: warning : cardinal of set is null
-lib.real:119:62 Backends: warning : use default float value of 0.0
-lib.real:117:20 Backends: warning : cardinal of set is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0
-lib.real:118:20 Backends: warning : cardinal of set is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0
-lib.real:119:20 Backends: warning : cardinal of set is null
-lib.real:119:15 Backends: warning : use default float value of 0.0
-lib.real:120:20 Backends: warning : cardinal of set is null
-lib.real:119:62 Backends: warning : use default float value of 0.0
-lib.real:117:20 Backends: warning : cardinal of set is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0
-lib.real:118:20 Backends: warning : cardinal of set is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0
-lib.real:119:20 Backends: warning : cardinal of set is null
-lib.real:119:15 Backends: warning : use default float value of 0.0
-lib.real:120:20 Backends: warning : cardinal of set is null
-lib.real:119:62 Backends: warning : use default float value of 0.0
-lib.real:117:20 Backends: warning : cardinal of set is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0
-lib.real:118:20 Backends: warning : cardinal of set is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0
-lib.real:119:20 Backends: warning : cardinal of set is null
-lib.real:119:15 Backends: warning : use default float value of 0.0
-lib.real:120:20 Backends: warning : cardinal of set is null
-lib.real:119:62 Backends: warning : use default float value of 0.0
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
 theorem mils_2 is: TRUE
 requirement : scheduling_1
 theorem scheduling_1 is: TRUE

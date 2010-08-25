@@ -9,14 +9,14 @@ Usage:
    -s  Output Ocarina search directory, then exit
 
   Scenario file options:
-   -b  build the generated application code
-   -z  clean the generated application code
-   -ec execute the generated application code and
+   -b  Generate and build code from the AADL model
+   -z  Clean code generated from the AADL model
+   -ec Execute the generated application code and
        retrieve coverage information
-   -er execute the generated application code and
+   -er Execute the generated application code and
        verify that there is no regression
-   -p  only parse and instantiate the application model
-   -c  only perform schedulability analysis
+   -p  Only parse and instantiate the application model
+   -c  Only perform schedulability analysis
 
   Advanced user options:
    -d  Debug mode for developpers
@@ -25,6 +25,7 @@ Usage:
        If a script is given, interpret it then exit.
    -v  Verbose mode for users
    -x  Parse AADL file as an AADL scenario file
+   -y  Automatically load AADL files on demand
    -f  Parse predefined non standard property sets
    -i  Instantiate the AADL model
    -r  <name> The name of the instance tree root
@@ -37,6 +38,7 @@ Usage:
        Registered backends:
         petri_nets
         boundt
+        mast
         polyorb_hi_ada
         polyorb_qos_ada
         polyorb_hi_c
