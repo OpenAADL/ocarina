@@ -386,10 +386,6 @@ if test ${dotests} = "true" ; then
 			    ${actual_output}
 
 			if test ${overwrite_output} = "true"; then
-			    echo ${actual_output}
-			    echo -------
-			    echo ${expected_output}
-			    echo cp ${actual_output} ${expected_output}
 			    cp ${actual_output} ${expected_output}
 			fi
 
