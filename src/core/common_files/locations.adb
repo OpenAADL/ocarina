@@ -71,7 +71,10 @@ package body Locations is
          Result := Namet.Name_Find;
 
          --  Restore backup into name buffer
-         Namet.Get_Name_String (Backup);
+
+         if Backup /= Types.No_Name then
+            Namet.Get_Name_String (Backup);
+         end if;
 
          --  Return result using a Get_Name_String variant with no side effect
          return Namet.Get_Name_String (Result);
