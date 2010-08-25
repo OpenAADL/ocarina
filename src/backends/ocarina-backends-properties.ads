@@ -566,6 +566,7 @@ package Ocarina.Backends.Properties is
       Platform_ARM_DSLINUX,
       Platform_ARM_N770,
       Platform_MARTE_OS,
+      Platform_VxWorks,
       Platform_None); --  Unspecified
 
    function Get_Execution_Platform

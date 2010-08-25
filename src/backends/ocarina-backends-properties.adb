@@ -306,6 +306,7 @@ package body Ocarina.Backends.Properties is
    Platform_ARM_DSLINUX_Name : Name_Id;
    Platform_ARM_N770_Name    : Name_Id;
    Platform_MARTE_OS_Name    : Name_Id;
+   Platform_Vxworks_Name     : Name_Id;
 
    Transport_BSD_Sockets_Name  : Name_Id;
    Transport_SpaceWire_Name    : Name_Id;
@@ -2523,11 +2524,12 @@ package body Ocarina.Backends.Properties is
             return Platform_ARM_N770;
          elsif P_Name = Platform_MARTE_OS_Name then
             return Platform_MARTE_OS;
+         elsif P_Name = Platform_VxWorks_Name then
+            return Platform_VxWorks;
          else
             Display_Located_Error
-              (AIN.Loc (P),
-               "Unknown execution platform",
-               Fatal => True);
+              (AIN.Loc (P), "Unknown execution platform", Fatal => True);
+
             return Platform_None;
          end if;
       else
@@ -3028,7 +3030,8 @@ package body Ocarina.Backends.Properties is
       Platform_ERC32_ORK_Name   := Get_String_Name ("erc32_ork");
       Platform_ARM_DSLINUX_Name := Get_String_Name ("arm_dslinux");
       Platform_ARM_N770_Name    := Get_String_Name ("arm_n770");
-      Platform_MARTE_OS_Name   := Get_String_Name ("marte_os");
+      Platform_MARTE_OS_Name    := Get_String_Name ("marte_os");
+      Platform_VxWorks_Name     := Get_String_Name ("vxworks");
 
       Transport_BSD_Sockets_Name := Get_String_Name ("bsd_sockets");
       Transport_SpaceWire_Name   := Get_String_Name ("spacewire");

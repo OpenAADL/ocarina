@@ -34,7 +34,8 @@ property set Deployment is
     ARM_N770,      -- Nokia N770 (tm)
     X86_RTEMS,     -- x86 under RTEMS
     X86_LINUXTASTE,-- TASTE-specific linux distribution
-    MARTE_OS       -- MaRTE OS
+    MARTE_OS,      -- MaRTE OS
+    VXWORKS        -- VXWORKS
     );
   --  Supported platforms
 
