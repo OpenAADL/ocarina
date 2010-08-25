@@ -437,7 +437,10 @@ package body Namet is
    begin
       --  Quick handling for one character names
 
-      if Name_Len = 1 then
+      if Name_Len = 0 then
+         return No_Name;
+
+      elsif Name_Len = 1 then
          return Name_Id (First_Name_Id + Character'Pos (Name_Buffer (1)));
 
       --  Otherwise search hash table for existing matching entry
