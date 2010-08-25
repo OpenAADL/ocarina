@@ -835,6 +835,8 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write_Line ("Type => Simple,");
       elsif Is_Composite (N) then
          Write_Line ("Type => Composite,");
+      elsif Is_Message_Transmission (N) then
+         Write_Line ("Type => Message_Transmission,");
       else
          Write_Line ("Type => Enclosing,");
       end if;
@@ -874,6 +876,39 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write (Tok_Assign);
          Write_Space;
          Generate (Best_Case_Execution_Time (N));
+      end if;
+
+      if Max_Message_Size (N) /= No_Node then
+         Write (Tok_Colon);
+         Write_Eol;
+         Write_Indentation (-1);
+         Write (Tok_Max_Message_Size);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Generate (Max_Message_Size (N));
+      end if;
+
+      if Avg_Message_Size (N) /= No_Node then
+         Write (Tok_Colon);
+         Write_Eol;
+         Write_Indentation (-1);
+         Write (Tok_Avg_Message_Size);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Generate (Avg_Message_Size (N));
+      end if;
+
+      if Min_Message_Size (N) /= No_Node then
+         Write (Tok_Colon);
+         Write_Eol;
+         Write_Indentation (-1);
+         Write (Tok_Min_Message_Size);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Generate (Min_Message_Size (N));
       end if;
 
       if not Is_Empty (Operations (N)) then

@@ -711,15 +711,21 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       MTN.Set_Is_Enclosing (N, False);
       MTN.Set_Is_Composite (N, False);
       MTN.Set_Is_Simple (N, False);
+      MTN.Set_Is_Message_Transmission (N, False);
 
       if Op_Kind = Enclosing then
          MTN.Set_Is_Enclosing (N, True);
       elsif Op_Kind = Composite then
          MTN.Set_Is_Composite (N, True);
+      elsif Op_Kind = Message_Transmission then
+         MTN.Set_Is_Message_Transmission (N, True);
       else
          MTN.Set_Is_Simple (N, True);
       end if;
 
+      MTN.Set_Max_Message_Size (N, No_Node);
+      MTN.Set_Avg_Message_Size (N, No_Node);
+      MTN.Set_Min_Message_Size (N, No_Node);
       MTN.Set_Worst_Case_Execution_Time (N, No_Node);
       MTN.Set_Best_Case_Execution_Time (N, No_Node);
       MTN.Set_Avg_Case_Execution_Time (N, No_Node);

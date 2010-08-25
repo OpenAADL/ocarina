@@ -78,8 +78,31 @@ package body Ocarina.Backends.MAST.Main is
    function Map_Driver_Scheduling_Server_Name (The_Device : Node_Id)
       return Name_Id;
    function Make_Driver_Wrapper (The_Device : Node_Id) return Node_Id;
+   function Map_Operation_Message_Transmission_Name
+      (The_Data : Node_Id)
+      return Name_Id;
 
    Root_System_Node                 : Node_Id := No_Node;
+
+   ---------------------------------------------
+   -- Map_Operation_Message_Transmission_Name --
+   ---------------------------------------------
+
+   function Map_Operation_Message_Transmission_Name (The_Data : Node_Id)
+      return Name_Id
+   is
+      N : Name_Id;
+   begin
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String
+         (Normalize_Name
+            (Name
+               (Identifier
+                  (The_Data))));
+      Add_Str_To_Name_Buffer ("_transmission_operation");
+      N := Name_Find;
+      return N;
+   end Map_Operation_Message_Transmission_Name;
 
    -----------------------------
    -- Map_Port_Operation_Name --
@@ -88,12 +111,24 @@ package body Ocarina.Backends.MAST.Main is
    function Map_Port_Operation_Name (The_Thread : Node_Id; The_Port : Node_Id)
       return Name_Id
    is
+      Thread_Name : Name_Id;
+      Port_Name   : Name_Id;
+      N : Name_Id;
    begin
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name (Name (Identifier (The_Thread))));
-      Get_Name_String_And_Append
+      Thread_Name :=
+         (Normalize_Name
+            (Name
+               (Identifier
+                  (Parent_Subcomponent (The_Thread)))));
+      Port_Name :=
          (Normalize_Name (Name (Identifier (The_Port))));
-      return Name_Find;
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Port_Name);
+      Add_Str_To_Name_Buffer ("_port_");
+      Get_Name_String_And_Append (Thread_Name);
+      N := Name_Find;
+      return N;
    end Map_Port_Operation_Name;
 
    ------------------------------------
@@ -380,6 +415,28 @@ package body Ocarina.Backends.MAST.Main is
       CP       : constant Supported_Concurrency_Control_Protocol
          := Get_Concurrency_Protocol (E);
    begin
+      N := Make_Operation
+         (Map_Operation_Message_Transmission_Name (E),
+         Message_Transmission,
+         No_List);
+      if Get_Data_Size (E) /= Null_Size then
+         MTN.Set_Max_Message_Size
+            (N, Make_Literal
+               (New_Numeric_Value
+                  (To_Bytes (Get_Data_Size (E)), 1, 10)));
+
+         MTN.Set_Avg_Message_Size
+            (N, Make_Literal
+               (New_Numeric_Value
+                  (To_Bytes (Get_Data_Size (E)), 1, 10)));
+
+         MTN.Set_Min_Message_Size
+            (N, Make_Literal
+               (New_Numeric_Value
+                  (To_Bytes (Get_Data_Size (E)), 1, 10)));
+      end if;
+      Append_Node_To_List (N, MTN.Declarations (MAST_File));
+
       if CP = Concurrency_Protected_Access or else
          CP = concurrency_Priority_Ceiling or else
          Is_Protected_Data (E) or else

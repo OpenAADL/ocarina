@@ -54,6 +54,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Activity_Server,
       Tok_Avg_Case_Execution_Time,
       Tok_Avg_Context_Switch,
+      Tok_Avg_Message_Size,
       Tok_Avg_ISR_Switch,
       Tok_Best_Case_Execution_time,
       Tok_Best_Context_Switch,
@@ -76,12 +77,14 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Input_Event,
       Tok_List_Of_Drivers,
       Tok_Max_Blocking,
+      Tok_Max_Message_Size,
       Tok_Max_Packet_Size,
       Tok_Max_Packet_Transmission_Time,
       Tok_Max_Priority,
       Tok_Max_ISR_Switch,
       Tok_Message_Partitioning,
       Tok_Min_Interarrival,
+      Tok_Min_Message_Size,
       Tok_Min_Packet_Size,
       Tok_Min_Packet_Transmission_Time,
       Tok_Min_Priority,
@@ -261,7 +264,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       return Node_Id;
 
    type Operation_Kind is
-     (Enclosing, Simple, Composite);
+     (Enclosing, Simple, Composite, Message_Transmission);
 
    function Make_Operation
       (Op_Name       : Name_Id;
