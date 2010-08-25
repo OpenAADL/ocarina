@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2008-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -115,7 +115,9 @@ package body Ocarina.Backends.PO_HI_C.Main is
          --  the fact that an aperiodic thread is sporadic, with
          --  period of 0.
 
-         if Get_Thread_Dispatch_Protocol (E) /= Thread_Aperiodic then
+         if Get_Thread_Dispatch_Protocol (E) /= Thread_Aperiodic
+           and then Get_Thread_Dispatch_Protocol (E) /= Thread_Background
+         then
             N := Map_Time (Get_Thread_Period (E));
          else
             N := Make_Literal (New_Int_Value (0, 1, 10));
@@ -159,6 +161,12 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
             when Thread_Sporadic
               | Thread_Aperiodic =>
+               Append_Node_To_List
+                 (CTU.Make_Call_Profile
+                    (RE (RE_Create_Sporadic_Task), Parameters),
+                  CTN.Statements (Main_Function));
+
+            when Thread_Background =>
                Append_Node_To_List
                  (CTU.Make_Call_Profile
                     (RE (RE_Create_Sporadic_Task), Parameters),

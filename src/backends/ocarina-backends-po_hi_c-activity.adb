@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2008-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -342,6 +342,12 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   & Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+            when Thread_Background =>
+               N := Message_Comment
+                 ("Background task : "
+                  & Get_Name_String (Display_Name (Identifier (S))));
+               Append_Node_To_List (N, CTN.Declarations (Current_File));
+
             when Thread_Sporadic =>
                N := Message_Comment
                  ("Sporadic task : "
@@ -423,14 +429,14 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Fetch_In_Ports;
          procedure Make_Thread_Compute_Entrypoint;
          procedure Make_Ports_Compute_Entrypoint;
-         procedure Make_Init;
+         procedure Make_Initialize_Entrypoint;
          function Make_Get_Valid_Value (F : Node_Id) return Node_Id;
 
-         ---------------
-         -- Make_Init --
-         ---------------
+         --------------------------------
+         -- Make_Initialize_Entrypoint --
+         --------------------------------
 
-         procedure Make_Init is
+         procedure Make_Initialize_Entrypoint is
             Entrypoint : constant Node_Id
                   := Get_Thread_Initialize_Entrypoint (E);
          begin
@@ -440,7 +446,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      (Map_C_Subprogram_Identifier (Entrypoint)),
                   Statements);
             end if;
-         end Make_Init;
+         end Make_Initialize_Entrypoint;
 
          --------------------------
          -- Make_Get_Valid_Value --
@@ -1171,12 +1177,18 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   & Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+            when Thread_Background =>
+               N := Message_Comment
+                 ("Background task : "
+                    & Get_Name_String (Display_Name (Identifier (S))));
+               Append_Node_To_List (N, CTN.Declarations (Current_File));
+
             when others =>
                Display_Error ("unknown type of thread", Fatal => False);
                null;
          end case;
 
-         Make_Init;
+         Make_Initialize_Entrypoint;
 
          Check_Thread_Consistency (E);
 
@@ -1390,15 +1402,20 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Append_Node_To_List (N, Statements);
          end if;
 
-         --  Make the while (1){} and add all statements
+         if P /= Thread_Background then
+            --  Make the while (1){} and add all statements
 
-         N := Make_While_Statement
-           (Make_Literal (CV.New_Int_Value (1, 0, 10)),
-            WStatements);
-         Append_Node_To_List (N, Statements);
+            N := Make_While_Statement
+              (Make_Literal (CV.New_Int_Value (1, 0, 10)),
+               WStatements);
+            Append_Node_To_List (N, Statements);
+         else
+            --  Simply append statements
+            Append_Node_To_List (CTN.First_Node (WStatements), Statements);
+         end if;
 
-         N := Make_Function_Implementation
-           (Spec, Declarations, Statements);
+         N := Make_Function_Implementation (Spec, Declarations, Statements);
+
          return N;
       end Task_Job_Body;
 
