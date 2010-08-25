@@ -13,7 +13,7 @@ end spg_generic_keyboard_init;
 
 thread keyboard_poller
 features
-   key_pressed : out data port Base_Types::Character;
+   key_pressed : out data port Base_Types::Integer;
 end keyboard_poller;
 
 thread implementation keyboard_poller.i
@@ -24,14 +24,14 @@ calls
 connections
    parameter pspg.key_pressed -> key_pressed;
 properties
-   Period => 10ms;
+   Period => 100ms;
    Dispatch_Protocol => Periodic;
 end keyboard_poller.i;
 
 
 subprogram spg_generic_keyboard_poller
 features
-   key_pressed : out parameter Base_Types::Character;
+   key_pressed : out parameter Base_Types::Integer;
 properties
 	Source_Language   => C;
 	Source_Name       => "__po_hi_driver_generic_keyboard_poller";
@@ -39,7 +39,7 @@ end spg_generic_keyboard_poller;
 
 abstract generic_keyboard_driver
 features
-   key_pressed : out data port Base_Types::Character;
+   key_pressed : out data port Base_Types::Integer;
 end generic_keyboard_driver;
 
 
