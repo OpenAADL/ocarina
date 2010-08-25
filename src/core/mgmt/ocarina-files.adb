@@ -41,9 +41,42 @@ with Ocarina.Options;       use Ocarina.Options;
 package body Ocarina.Files is
 
    use ASCII;
-   use Namet;
    use GNAT.OS_Lib;
+
    use Errors;
+   use Namet;
+
+   ----------------------------
+   -- Add_File_To_Parse_List --
+   ----------------------------
+
+   procedure Add_File_To_Parse_List (File_Name : Name_Id) is
+      File_Name_With_Extension : Name_Id;
+      --  Full_Name : Name_Id;
+      Do_Add : Boolean := True;
+   begin
+      Get_Name_String (File_Name);
+      if Name_Buffer (Name_Len - 4 .. Name_Len) /= ".aadl" then
+         Add_Str_To_Name_Buffer (".aadl");
+      end if;
+      File_Name_With_Extension := Name_Find;
+
+      --  Full_Name := Search_File (File_Name_With_Extension);
+
+      --  Exit_On_Error (Full_Name = No_Name,
+      --                 "Cannot find file "
+      --                   & Get_Name_String (File_Name_With_Extension));
+
+      for J in 1 .. Sources.Last loop
+         if File_Name_With_Extension = Sources.Table (J) then
+            Do_Add := False;
+         end if;
+      end loop;
+
+      if Do_Add then
+         Sources.Append (File_Name_With_Extension);
+      end if;
+   end Add_File_To_Parse_List;
 
    -----------------
    -- End_Of_File --
@@ -87,7 +120,6 @@ package body Ocarina.Files is
       Result    : Integer;
       Length    : Integer;
    begin
-
       --  Open the file
 
       Get_Name_String (File_Name);
@@ -152,7 +184,6 @@ package body Ocarina.Files is
 
    function Search_File (File_Name : Name_Id) return Name_Id is
    begin
-
       --  Check in the current directory first since -I- is not allowed
 
       Get_Name_String (File_Name);
@@ -166,6 +197,7 @@ package body Ocarina.Files is
          Get_Name_String (Library_Paths.Table (Path));
          Add_Char_To_Name_Buffer (Directory_Separator);
          Get_Name_String_And_Append (File_Name);
+
          if Is_Regular_File (Name_Buffer (1 .. Name_Len)) then
             return Name_Find;
          end if;

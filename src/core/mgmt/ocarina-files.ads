@@ -35,15 +35,21 @@
 --  by the parser for scanning AADL source files.  This package is
 --  conformant to the AADL v1.0 issued on 2004-09
 
+with GNAT.Table;
+
 with Types;         use Types;
 with Locations;     use Locations;
 
 package Ocarina.Files is
 
+   package Sources is new GNAT.Table (Name_Id, Nat, 1, 10, 10);
+
    Buffer          : Text_Buffer_Ptr;
    Buffer_Location : Location;
    --  The file is loaded in Buffer and Buffer_Location is used to
    --  scan it.
+
+   procedure Add_File_To_Parse_List (File_Name : Name_Id);
 
    function Search_File (File_Name : Name_Id) return Name_Id;
 

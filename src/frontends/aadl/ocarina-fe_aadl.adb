@@ -67,6 +67,7 @@ package body Ocarina.FE_AADL is
 
    procedure Usage is
    begin
+      Write_Line ("   -y  Automatically load AADL files on demand");
       Write_Line ("   -f  Parse predefined non standard property sets");
       Write_Line ("   -i  Instantiate the AADL model");
       Write_Line ("   -r  <name> The name of the instance tree root");

@@ -221,4 +221,17 @@ package body Errors is
       OS_Exit (3);
    end Display_Bug_Box;
 
+   -------------------
+   -- Exit_On_Error --
+   -------------------
+
+   procedure Exit_On_Error (Error : Boolean; Reason : String) is
+   begin
+      if Error then
+         Set_Standard_Error;
+         Write_Line (Reason);
+         OS_Exit (1);
+      end if;
+   end Exit_On_Error;
+
 end Errors;

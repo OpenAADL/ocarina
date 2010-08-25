@@ -35,7 +35,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
-with Namet;
+with Namet; use Namet;
 with Ocarina.FE_AADL.Lexer;
 with Ocarina.ME_AADL.Tokens;
 with Ocarina.FE_AADL.Parser.Annexes;
@@ -43,6 +43,8 @@ with Ocarina.FE_AADL.Parser.Components;
 with Ocarina.FE_AADL.Parser.Properties;
 with Ocarina.FE_AADL.Parser.Identifiers;
 with Ocarina.Builder.AADL.Namespaces;
+with Ocarina.Options;
+with Ocarina.Files;
 
 package body Ocarina.FE_AADL.Parser.Namespaces is
 
@@ -227,7 +229,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       Loc2, Start_Loc : Location;
@@ -659,7 +660,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --     { package_identifier :: }* package_identifier
 
    function P_Package_Name (Container : Node_Id) return Node_Id is
-
       use Locations;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -692,7 +692,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       end if;
 
       return Package_Name;
-
    end P_Package_Name;
 
    -----------------------------------
@@ -726,7 +725,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       List_Items := New_List (K_List_Id, Loc);
 
       loop
-
          case Token is
             when T_With =>
                Item := P_Import_Declaration (Namespace, Loc,
@@ -761,7 +759,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       end if;
 
       return Name_Visibility;
-
    end P_Name_Visibility_Declaration;
 
    --------------------------
@@ -851,10 +848,45 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          Import_Node := Add_New_Import_Declaration (Start_Loc, Namespace,
                                                     Imports_List,
                                                     Private_Declarations);
+
+         if Ocarina.Options.Auto_Load_AADL_Files
+           and then AADL_Version = AADL_V2
+           and then not Ocarina.Options.Use_Scenario_File
+         then
+            declare
+               I : Node_Id;
+            begin
+               I := First_Node (Imports_List);
+
+               while Present (I) loop
+                  if Kind (I) = K_Identifier then
+                     Ocarina.Files.Add_File_To_Parse_List (Name (I));
+                  elsif Kind (I) = K_Package_Name then
+                     declare
+                        J : Node_Id;
+                     begin
+                        J := First_Node
+                          (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (I));
+                        if Present (J) then
+                           Get_Name_String (Name (J));
+                           J := Next_Node (J);
+                           while Present (J) loop
+                              Add_Str_To_Name_Buffer
+                                ("-" & Get_Name_String (Name (J)));
+                              J := Next_Node (J);
+                           end loop;
+                           Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+                        end if;
+                     end;
+                  end if;
+
+                  I := Next_Node (I);
+               end loop;
+            end;
+         end if;
+
+         return Import_Node;
       end if;
-
-      return Import_Node;
-
    end P_Import_Declaration;
 
    -------------------------

@@ -35,4 +35,6 @@ package Errors is
 
    procedure Display_Bug_Box (E : Ada.Exceptions.Exception_Occurrence);
 
+   procedure Exit_On_Error (Error : Boolean; Reason : String);
+
 end Errors;

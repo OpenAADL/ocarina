@@ -34,6 +34,7 @@
 --  This program is used to drive Ocarina, it is a wrapper to all
 --  functions provided by the library.
 
+with Errors;    use Errors;
 with Locations; use Locations;
 with Namet;     use Namet;
 with Output;    use Output;
@@ -49,7 +50,6 @@ with Ada.Text_IO;
 with GNAT.Command_Line;         use GNAT.Command_Line;
 with GNAT.Directory_Operations; use GNAT.Directory_Operations;
 with GNAT.OS_Lib;               use GNAT.OS_Lib;
-with GNAT.Table;
 
 with Ocarina;                          use Ocarina;
 with Ocarina.AADL_Values;              use Ocarina.AADL_Values;
@@ -76,10 +76,6 @@ with Ocarina.Transfo.Optim;            use Ocarina.Transfo.Optim;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 procedure Ocarina_Cmd is
-
-   procedure Exit_On_Error (Error : Boolean; Reason : String);
-
-   package Sources is new GNAT.Table (Name_Id, Nat, 1, 10, 10);
 
    procedure Process_Command_Line
      (Root_System_Name  : out Name_Id;
@@ -405,7 +401,7 @@ procedure Ocarina_Cmd is
                   when Analyze =>
                      Success := Analyze (Language, AADL_Root);
                      if not Success then
-                        Put_Line ("Cannot analyze AADL specifications");
+                        Write_Line ("Cannot analyze AADL specifications");
                      else
                         Write_Line ("Model analyzed sucessfully");
                      end if;
@@ -733,19 +729,6 @@ procedure Ocarina_Cmd is
          N : Node_Id;
 
       begin
-         N := First_Node (Source_Files);
-         while Present (N) loop
-            declare
-               File_Name : constant String
-                 := Image (Value (N), Quoted => False);
-            begin
-               Get_Name_String (Current_Scenario_Dirname);
-               Add_Str_To_Name_Buffer (File_Name);
-               Sources.Append (Name_Find);
-               N := Next_Node (N);
-            end;
-         end loop;
-
          if not Is_Empty (Needed_PS) then
             N := First_Node (Needed_Ps);
 
@@ -777,22 +760,41 @@ procedure Ocarina_Cmd is
                      Add_Str_To_Name_Buffer (File_Name & ".aadl");
                end;
 
-               Sources.Append (Name_Find);
+               Ocarina.Files.Add_File_To_Parse_List (Name_Find);
 
                N := Next_Node (N);
             end loop;
          end if;
+
+         N := First_Node (Source_Files);
+         while Present (N) loop
+            declare
+               File_Name : constant String
+                 := Image (Value (N), Quoted => False);
+            begin
+               Get_Name_String (Current_Scenario_Dirname);
+               Add_Str_To_Name_Buffer (File_Name);
+               Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+               N := Next_Node (N);
+            end;
+         end loop;
       end Extract_Source_Files;
 
       package OIQ renames Ocarina.Instances.Queries;
 
+      F : Types.Int;
+
    begin
       Current_Scenario_Dirname := No_Name;
 
-      for F in Sources.First .. Sources.Last loop
+      AADL_Root := Process_Predefined_Property_Sets (AADL_Root);
+
+      F := Sources.First;
+
+      loop
          Dirname := Get_String_Name
-           (Dir_Name (Normalize_Pathname (Get_Name_String (Sources.Table (F))))
-              & Dir_Separator);
+           (Dir_Name (Normalize_Pathname
+                        (Get_Name_String (Sources.Table (F)))));
 
          if Current_Scenario_Dirname = No_Name then
             Current_Scenario_Dirname := Dirname;
@@ -805,7 +807,6 @@ procedure Ocarina_Cmd is
          Exit_On_Error
            (Current_Scenario_Dirname /= Dirname,
             "Cannot locate scenario files in the directory");
-
          File_Name := Search_File (Sources.Table (F));
          Exit_On_Error
            ((File_Name = No_Name),
@@ -818,9 +819,10 @@ procedure Ocarina_Cmd is
          Exit_On_Error
            (No (AADL_Root),
             "Cannot parse AADL specifications");
-      end loop;
 
-      AADL_Root := Process_Predefined_Property_Sets (AADL_Root);
+         exit when F = Sources.Last; -- XXX Sources.Last may be modified
+         F := F + 1;
+      end loop;
 
       --  Analyze the AADL tree
 
@@ -934,6 +936,7 @@ procedure Ocarina_Cmd is
 
          Ocarina.Configuration.Reset_Modules;
          Ocarina.Reset;
+         --         Ocarina.Files.Sources.Init;
 
          Ocarina.Initialize;
          Language := Get_String_Name ("aadl");
@@ -955,7 +958,7 @@ procedure Ocarina_Cmd is
 
          for J in Result'Range loop
             Set_Str_To_Name_Buffer (Result (J).all);
-            Sources.Append (Name_Find);
+            Ocarina.Files.Add_File_To_Parse_List (Name_Find);
          end loop;
 
          --  Avoid memory leaks
@@ -964,19 +967,6 @@ procedure Ocarina_Cmd is
          Free (Root_System_Name_Ptr);
       end;
    end Parse_Scenario_Files;
-
-   -------------------
-   -- Exit_On_Error --
-   -------------------
-
-   procedure Exit_On_Error (Error : Boolean; Reason : String) is
-   begin
-      if Error then
-         Set_Standard_Error;
-         Write_Line (Reason);
-         OS_Exit (1);
-      end if;
-   end Exit_On_Error;
 
    --------------------------
    -- Process_Command_Line --
@@ -1078,6 +1068,7 @@ procedure Ocarina_Cmd is
                --  an AADL version flag.
 
             when 'x' =>
+               Use_Scenario_File := True;
                Set_Current_Action (Parse_Scenario_Files_First);
 
             when 't' =>
@@ -1116,7 +1107,7 @@ procedure Ocarina_Cmd is
 
                   else
                      Set_Str_To_Name_Buffer (S);
-                     Sources.Append (Name_Find);
+                     Ocarina.Files.Add_File_To_Parse_List (Name_Find);
                   end if;
                end;
          end case;
@@ -1129,6 +1120,7 @@ procedure Ocarina_Cmd is
         and then Get_Current_Action /= Show_Libraries
         and then Get_Current_Action /= Show_Help
         and then Get_Current_Action /= Shell
+        and then Get_Current_Action /= Parse_Scenario_Files_First
       then
          Set_Current_Action (Show_Usage);
 
@@ -1141,7 +1133,7 @@ procedure Ocarina_Cmd is
    exception
       when Invalid_Options =>
          Write_Line (Base_Name (Command_Name)
-                     & ": invalid combination of options");
+                       & ": invalid combination of options");
          Write_Eol;
          OS_Exit (1);
 
@@ -1186,14 +1178,14 @@ procedure Ocarina_Cmd is
 
       Write_Eol;
       Write_Line ("  Scenario file options:");
-      Write_Line ("   -b  build the generated application code");
-      Write_Line ("   -z  clean the generated application code");
-      Write_Line ("   -ec execute the generated application code and");
+      Write_Line ("   -b  Generate and build code from the AADL model");
+      Write_Line ("   -z  Clean code generated from the AADL model");
+      Write_Line ("   -ec Execute the generated application code and");
       Write_Line ("       retrieve coverage information");
-      Write_Line ("   -er execute the generated application code and");
+      Write_Line ("   -er Execute the generated application code and");
       Write_Line ("       verify that there is no regression");
-      Write_Line ("   -p  only parse and instantiate the application model");
-      Write_Line ("   -c  only perform schedulability analysis");
+      Write_Line ("   -p  Only parse and instantiate the application model");
+      Write_Line ("   -c  Only perform schedulability analysis");
 
       Write_Eol;
       Write_Line ("  Advanced user options:");
@@ -1282,7 +1274,6 @@ begin
          Parse_Scenario_Files;
          Reset_Current_Action;
          Set_Current_Action (After_Scenario_Action);
-
       when others =>
          null;
    end case;
@@ -1291,20 +1282,26 @@ begin
       --  Parse the AADL files
 
       AADL_Root := No_Node;
-      for F in Sources.First .. Sources.Last loop
-         File_Name := Search_File (Sources.Table (F));
-         Exit_On_Error
-           ((File_Name = No_Name),
-            "Cannot find file " & Get_Name_String (Sources.Table (F)));
-         Buffer := Load_File (File_Name);
-         Exit_On_Error
-           ((File_Name = No_Name),
-            "Cannot read file " & Get_Name_String (Sources.Table (F)));
-         AADL_Root := Parse (Language, AADL_Root, Buffer);
-         Exit_On_Error
-           (No (AADL_Root),
-            "Cannot parse AADL specifications");
-      end loop;
+      declare
+         F : Types.Int := Sources.First;
+      begin
+         loop
+            File_Name := Search_File (Sources.Table (F));
+            Exit_On_Error
+              ((File_Name = No_Name),
+               "Cannot find file " & Get_Name_String (Sources.Table (F)));
+            Buffer := Load_File (File_Name);
+            Exit_On_Error
+              ((File_Name = No_Name),
+               "Cannot read file " & Get_Name_String (Sources.Table (F)));
+            AADL_Root := Parse (Language, AADL_Root, Buffer);
+            Exit_On_Error
+              (No (AADL_Root),
+               "Cannot parse AADL specifications");
+            exit when F = Sources.Last;
+            F := F + 1;
+         end loop;
+      end;
 
       Success := Analyze (Language, AADL_Root);
       Exit_On_Error (not Success, "Cannot analyze AADL specifications");

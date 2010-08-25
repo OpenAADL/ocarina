@@ -57,6 +57,8 @@ package Ocarina.Options is
    Quiet_Mode                   : Boolean := False;
    Verbose_Mode                 : Boolean := False;
    Debug_Mode                   : Boolean := False;
+   Use_Scenario_File            : Boolean := False;
+   Auto_Load_AADL_Files         : Boolean := False;
 
    procedure Set_Current_Action (Action : Action_Kind);
    function Get_Current_Action return Action_Kind;
