@@ -1713,7 +1713,8 @@ package body Ocarina.Backends.REAL is
                     (Loc (First_Node (True_Parameters (E))),
                      "property " & Image
                      (Value (First_Node (True_Parameters (E))))
-                       & " is not defined on this single element.",
+                       & " is not defined on element "
+                       & Get_Name_String (Name (Identifier (N))),
                      Fatal => False,
                      Warning => True);
 
@@ -1770,7 +1771,14 @@ package body Ocarina.Backends.REAL is
                      else
                         Display_Located_Error
                           (Loc (E),
-                           "cardinal of set is null",
+                           "cardinal of set "
+                             & Get_Name_String
+                             (Name
+                                (Identifier
+                                   (Referenced_Set
+                                      (First_Node
+                                         (Referenced_Sets (E))))))
+                             & " is null",
                            Fatal => False,
                            Warning => True);
                         Result := No_Value;
@@ -1952,7 +1960,8 @@ package body Ocarina.Backends.REAL is
                  (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default float value of 0.0",
+                    (Loc (E), "use default float value of 0.0 for "
+                       & "operator Last",
                      Fatal => False, Warning => True);
                   T := RT_Float;
                   Result := New_Real_Value (0.0);
@@ -2013,7 +2022,8 @@ package body Ocarina.Backends.REAL is
 
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default float value of 0.0",
+                    (Loc (E), "use default float value of 0.0 for operator"
+                       & " Max",
                      Fatal => False, Warning => True);
                   T := RT_Float;
                   Result := New_Real_Value (0.0);
@@ -2072,7 +2082,8 @@ package body Ocarina.Backends.REAL is
                  (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default boolean value of true",
+                    (Loc (E), "use default boolean value of true for "
+                       & "operator '='",
                      Fatal => False, Warning => True);
                   result := New_Boolean_Value (True);
                   T := RT_Boolean;
@@ -2194,7 +2205,8 @@ package body Ocarina.Backends.REAL is
                if T2 = RT_Unknown then
                   Display_Located_Error
                     (Loc (E),
-                     "unknown value, use default value of 0.0",
+                     "unknown value, use default value of 0.0 for operator"
+                       & " Min",
                      Fatal => False,
                      Warning => True);
 
@@ -2483,7 +2495,8 @@ package body Ocarina.Backends.REAL is
 
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default float value of 0.0",
+                    (Loc (E), "use default float value of 0.0 for operator"
+                       & " Sum",
                      Fatal => False, Warning => True);
                   T := RT_Float;
                   Result := New_Real_Value (0.0);
