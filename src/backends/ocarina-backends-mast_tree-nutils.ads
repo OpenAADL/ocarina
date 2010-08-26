@@ -68,6 +68,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Event_Handlers,
       Tok_External_Events,
       Tok_Full_Duplex,
+      Tok_Fixed_Priority,
       Tok_Fixed_Priority_Policy,
       Tok_Half_Duplex,
       Tok_Hard_Global_Deadline,
@@ -96,6 +97,8 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Packet_Receive_Operation,
       Tok_Parameters,
       Tok_Period,
+      Tok_Policy,
+      Tok_Primary_Scheduler,
       Tok_Processing_Resource,
       Tok_RTA_Overhead_Model,
       Tok_Referenced_Event,
@@ -300,4 +303,6 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Partitioning      : Boolean;
       Overhead_Kind     : RTA_Overhead_Model_Kind) return Node_Id;
 
+   function Make_Scheduler (Sched_Name : Name_Id; Host_Name : Name_Id)
+      return Node_Id;
 end Ocarina.Backends.MAST_Tree.Nutils;

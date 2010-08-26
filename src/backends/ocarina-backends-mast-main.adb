@@ -77,12 +77,27 @@ package body Ocarina.Backends.MAST.Main is
       return Name_Id;
    function Map_Driver_Scheduling_Server_Name (The_Device : Node_Id)
       return Name_Id;
+   function Map_Scheduler_Name (The_Processor : Node_Id) return Name_Id;
+
    function Make_Driver_Wrapper (The_Device : Node_Id) return Node_Id;
    function Map_Operation_Message_Transmission_Name
       (The_Data : Node_Id)
       return Name_Id;
 
    Root_System_Node                 : Node_Id := No_Node;
+
+   function Map_Scheduler_Name (The_Processor : Node_Id) return Name_Id is
+      N : Name_Id;
+   begin
+      Get_Name_String
+         (Normalize_Name
+          (Name
+           (Identifier
+            (Parent_Subcomponent (The_Processor)))));
+      Add_Str_To_Name_Buffer ("_scheduler");
+      N := Name_Find;
+      return N;
+   end Map_Scheduler_Name;
 
    ---------------------------------------------
    -- Map_Operation_Message_Transmission_Name --
@@ -370,7 +385,21 @@ package body Ocarina.Backends.MAST.Main is
    begin
       N := MTU.Make_Processing_Resource
          (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
-         PR_Fixed_Priority_Processor);
+         PR_Regular_Processor);
+
+      MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
+
+      N := MTU.Make_Scheduler
+         (Map_Scheduler_Name (E),
+         Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))));
+      MTN.Set_Is_Primary_Scheduler (N, True);
+      MTN.Set_Use_Fixed_Priority (N, True);
+      MTN.Set_Min_Priority
+      (N, Make_Literal
+       (New_Numeric_Value (1, 1, 10)));
+      MTN.Set_Max_Priority
+      (N, Make_Literal
+       (New_Numeric_Value (256, 1, 10)));
 
       MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
@@ -505,11 +534,13 @@ package body Ocarina.Backends.MAST.Main is
 
       N := Make_Scheduling_Server
          (Server_Sched_Name,
-          Normalize_Name
-            (Name (Identifier (Parent_Subcomponent
-               (Get_Bound_Processor
-                  (Parent_Component
-                     (Parent_Subcomponent (E))))))));
+         No_Name);
+      MTN.Set_Associated_Scheduler
+         (N,
+         Map_Scheduler_Name
+            (Get_Bound_Processor
+               (Parent_Component
+                  (Parent_Subcomponent (E)))));
 
       MTN.Set_Parameters (N, Server_Parameters);
 
@@ -613,7 +644,6 @@ package body Ocarina.Backends.MAST.Main is
             Make_Literal
                (New_Numeric_Value
                   (1, 1, 10)));
-
       end if;
 
       Append_Node_To_List (Operation, MTN.Declarations (MAST_File));

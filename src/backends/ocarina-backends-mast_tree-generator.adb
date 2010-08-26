@@ -64,6 +64,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    procedure Generate_Operation (N : Node_Id);
    procedure Generate_Shared_Resource (N : Node_Id);
    procedure Generate_Driver (N : Node_Id);
+   procedure Generate_Scheduler (N : Node_Id);
    procedure Generate_Event_Timing_Requirements (N : Node_Id);
    procedure Generate_Scheduling_Server_Parameters (N : Node_Id);
 
@@ -175,6 +176,9 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
          when K_Scheduling_Server =>
             Generate_Scheduling_Server (N);
+
+         when K_Scheduler =>
+            Generate_Scheduler (N);
 
          when K_Transaction =>
             Generate_Transaction (N);
@@ -497,7 +501,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write_Line ("Type => Regular,");
       else
          Write_Str ("Type => ");
-         Write_Name (Associated_Scheduler (N));
+         Write (Tok_Unknown);
          Write_Line (Tok_Colon);
       end if;
 
@@ -523,13 +527,25 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write_Eol;
       end if;
 
-      Write_Indentation (-1);
-      Write (Tok_Server_Processing_Resource);
-      Write_Space;
-      Write (Tok_Assign);
-      Write_Space;
-      Write_Name (MTN.Server_Processing_Resource (N));
-      Write_Line (");");
+      if MTN.Server_Processing_Resource (N) /= No_Name then
+         Write_Indentation (-1);
+         Write (Tok_Server_Processing_Resource);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write_Name (MTN.Server_Processing_Resource (N));
+         Write_Line (");");
+      end if;
+      if MTN.Associated_Scheduler (N) /= No_Name then
+         Write_Indentation (-1);
+         Write (Tok_Scheduler);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write_Name (MTN.Associated_Scheduler (N));
+         Write_Line (");");
+      end if;
+
    end Generate_Scheduling_Server;
 
    --------------------------
@@ -1011,5 +1027,95 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write (Tok_Right_Paren);
       Decrement_Indentation;
    end Generate_Driver;
+
+   ------------------------
+   -- Generate_Scheduler --
+   ------------------------
+
+   procedure Generate_Scheduler (N : Node_Id) is
+   begin
+      Write (Tok_Scheduler);
+      Write_Space;
+      Write (Tok_Left_Paren);
+      Increment_Indentation;
+
+      Write (Tok_Type);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Is_Primary_Scheduler (N) then
+         Write (Tok_Primary_Scheduler);
+      else
+         Write (Tok_Unknown);
+      end if;
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Name);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Node_Name (N));
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Host);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Write_Name (Host (N));
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Policy);
+      Write_Space;
+      Write (Tok_Assign);
+      Increment_Indentation;
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Left_Paren);
+      Write_Space;
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Type);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      if Use_Fixed_Priority (N) then
+         Write (Tok_Fixed_Priority);
+      else
+         Write (Tok_Unknown);
+      end if;
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Max_Priority);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Generate (Max_Priority (N));
+      Write (Tok_Colon);
+
+      Write_Eol;
+      Write_Indentation (-1);
+      Write (Tok_Min_Priority);
+      Write_Space;
+      Write (Tok_Assign);
+      Write_Space;
+      Generate (Min_Priority (N));
+      Write (Tok_Right_Paren);
+      Decrement_Indentation;
+
+      Write (Tok_Right_Paren);
+      Write (Tok_Semicolon);
+      Decrement_Indentation;
+      Write_Eol;
+
+   end Generate_Scheduler;
 
 end Ocarina.Backends.MAST_Tree.Generator;

@@ -584,8 +584,8 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       N := New_Node (MTN.K_Scheduling_Server);
       MTN.Set_Node_Name (N, Server_Name);
       MTN.Set_Server_Processing_Resource (N, Associated_Processor);
-      MTN.Set_Is_Regular (N, False);
-      MTN.Set_Associated_Scheduler (N, Get_String_Name ("Fixed_Priority"));
+      MTN.Set_Is_Regular (N, True);
+      MTN.Set_Associated_Scheduler (N, No_Name);
       MTN.Set_Parameters (N, No_Node);
       return N;
    end Make_Scheduling_Server;
@@ -814,5 +814,20 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
 
       return N;
    end Make_Driver;
+
+   --------------------
+   -- Make_Scheduler --
+   --------------------
+
+   function Make_Scheduler (Sched_Name : Name_Id; Host_Name : Name_Id)
+      return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (MTN.K_Scheduler);
+      MTN.Set_Node_Name (N, Sched_Name);
+      MTN.Set_Host (N, Host_Name);
+      return N;
+   end Make_Scheduler;
 
 end Ocarina.Backends.MAST_Tree.Nutils;

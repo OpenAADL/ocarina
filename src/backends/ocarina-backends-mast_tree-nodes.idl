@@ -51,10 +51,15 @@ module Ocarina::Backends::MAST_Tree::Nodes {
 
   interface Scheduler : MAST_Node
   {
+  	boolean 		Is_Primary_Scheduler;
   	Name_Id		Host;
+  	Node_Id 		Policy;
+  	boolean 		Use_Fixed_Priority;
+  	Node_Id		Max_Priority;
+  	Node_Id 		Min_Priority;
   };
 
-  interface Scheduler_Policy : Node_Id
+  interface Scheduler_Policy : MAST_Node
   {
   	Name_Id Scheduling_Type;
 	Node_Id Worst_Context_Switch;
