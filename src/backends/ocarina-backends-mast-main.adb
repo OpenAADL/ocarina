@@ -602,6 +602,18 @@ package body Ocarina.Backends.MAST.Main is
             Make_Literal
                (New_Numeric_Value
                   (To_Milliseconds (Exec_Time (1)), 1, 10)));
+      else
+         MTN.Set_Best_Case_Execution_Time
+            (Operation,
+            Make_Literal
+               (New_Numeric_Value
+                  (0, 1, 10)));
+         MTN.Set_Worst_Case_Execution_Time
+            (Operation,
+            Make_Literal
+               (New_Numeric_Value
+                  (1, 1, 10)));
+
       end if;
 
       Append_Node_To_List (Operation, MTN.Declarations (MAST_File));
