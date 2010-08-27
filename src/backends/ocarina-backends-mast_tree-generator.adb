@@ -834,6 +834,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write_Name (Node_Name (N));
       Write (Tok_Right_Paren);
       Write (Tok_Semicolon);
+      Write_Eol;
    end Generate_Shared_Resource;
 
    ------------------------
@@ -842,6 +843,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
    procedure Generate_Operation (N : Node_Id) is
       Op : Node_Id;
+      Sr : Node_Id;
    begin
       Write_Line ("Operation (");
       Increment_Indentation;
@@ -948,6 +950,29 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
          Write (Tok_Right_Paren);
       end if;
+
+      if not Is_Empty (Shared_Resources_List (N)) then
+         Write (Tok_Colon);
+         Write_Eol;
+         Write_Indentation (-1);
+         Write (Tok_Shared_Resources_List);
+         Write_Space;
+         Write (Tok_Assign);
+         Write_Space;
+         Write (Tok_Left_Paren);
+
+         Sr := First_Node (Shared_Resources_List (N));
+         while Present (Sr) loop
+            Generate (Sr);
+            if Next_Node (Sr) /= No_Node then
+               Write (Tok_Colon);
+            end if;
+            Sr := Next_Node (Sr);
+         end loop;
+
+         Write (Tok_Right_Paren);
+      end if;
+
       Write_Line (");");
       Decrement_Indentation;
       Write_Eol;

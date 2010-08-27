@@ -106,6 +106,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Tok_Scheduling_Server,
       Tok_Server_Processing_Resource,
       Tok_Server_Sched_Parameters,
+      Tok_Shared_Resources_List,
       Tok_Simplex,
       Tok_Speed_Factor,
       Tok_Shared_Resource,

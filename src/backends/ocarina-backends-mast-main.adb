@@ -78,6 +78,10 @@ package body Ocarina.Backends.MAST.Main is
    function Map_Driver_Scheduling_Server_Name (The_Device : Node_Id)
       return Name_Id;
    function Map_Scheduler_Name (The_Processor : Node_Id) return Name_Id;
+   function Map_Port_Shared_Resource_Name (The_Port : Node_Id)
+      return Name_Id;
+   function Map_Port_Shared_Resource_Operation_Name (The_Port : Node_Id)
+      return Name_Id;
 
    function Make_Driver_Wrapper (The_Device : Node_Id) return Node_Id;
    function Map_Operation_Message_Transmission_Name
@@ -118,6 +122,48 @@ package body Ocarina.Backends.MAST.Main is
       N := Name_Find;
       return N;
    end Map_Operation_Message_Transmission_Name;
+
+   -----------------------------------
+   -- Map_Port_Shared_Resource_Name --
+   -----------------------------------
+
+   function Map_Port_Shared_Resource_Name
+      (The_Port : Node_Id)
+      return Name_Id
+   is
+      Port_Name : Name_Id;
+      N : Name_Id;
+   begin
+      Set_Str_To_Name_Buffer ("");
+      Port_Name :=
+         (Normalize_Name (Name (Identifier (The_Port))));
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Port_Name);
+      Add_Str_To_Name_Buffer ("_shared_resource");
+      N := Name_Find;
+      return N;
+   end Map_Port_Shared_Resource_Name;
+
+   ---------------------------------------------
+   -- Map_Port_Shared_Resource_Operation_Name --
+   ---------------------------------------------
+
+   function Map_Port_Shared_Resource_Operation_Name
+      (The_Port : Node_Id)
+      return Name_Id
+   is
+      Port_Name : Name_Id;
+      N : Name_Id;
+   begin
+      Set_Str_To_Name_Buffer ("");
+      Port_Name :=
+         (Normalize_Name (Name (Identifier (The_Port))));
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Port_Name);
+      Add_Str_To_Name_Buffer ("_shared_resource_operation");
+      N := Name_Find;
+      return N;
+   end Map_Port_Shared_Resource_Operation_Name;
 
    -----------------------------
    -- Map_Port_Operation_Name --
@@ -513,7 +559,10 @@ package body Ocarina.Backends.MAST.Main is
       Prio                    : Unsigned_Long_Long;
       Exec_Time               : constant Time_Array := Get_Execution_Time (E);
       The_Feature             : Node_Id;
-      Port_Operation          : Node_Id;
+      Port_Operation                : Node_Id;
+      Port_Shared_Resource          : Node_Id;
+      Port_Shared_Resource_Op       : Node_Id;
+      Port_Shared_Resource_Op_List  : List_Id;
    begin
       Set_Str_To_Name_Buffer ("");
       Get_Name_String (Normalize_Name (Name (Identifier (E))));
@@ -656,8 +705,45 @@ package body Ocarina.Backends.MAST.Main is
                Is_In (The_Feature) then
                   Append_Node_To_List
                      (Make_Defining_Identifier
-                        (Map_Port_Operation_Name (E, The_Feature)),
+                        (Map_Port_Shared_Resource_Operation_Name
+                           (The_Feature)),
                      Operations_List);
+
+               Port_Shared_Resource := Make_Shared_Resource
+                     (Immediate_Ceiling,
+                     Map_Port_Shared_Resource_Name (The_Feature));
+               Append_Node_To_List
+                  (Port_Shared_Resource, MTN.Declarations (MAST_File));
+
+               Port_Shared_Resource_Op_List := New_List (MTN.K_List_Id);
+
+               Append_Node_To_List
+                  (Make_Defining_Identifier
+                     (Map_Port_Shared_Resource_Name (The_Feature)),
+                  Port_Shared_Resource_Op_List);
+
+               Port_Shared_Resource_Op := Make_Operation
+                     (Map_Port_Shared_Resource_Operation_Name (The_Feature),
+                     Simple,
+                     No_List);
+               MTN.Set_Shared_Resources_List
+               (Port_Shared_Resource_Op,
+                Port_Shared_Resource_Op_List);
+
+               MTN.Set_Best_Case_Execution_Time
+                  (Port_Shared_Resource_Op,
+                  Make_Literal
+                     (New_Numeric_Value
+                        (1, 1, 10)));
+               MTN.Set_Worst_Case_Execution_Time
+                  (Port_Shared_Resource_Op,
+                  Make_Literal
+                     (New_Numeric_Value
+                        (10, 1, 10)));
+
+               Append_Node_To_List
+                  (Port_Shared_Resource_Op, MTN.Declarations (MAST_File));
+
             end if;
             The_Feature := Next_Node (The_Feature);
          end loop;
@@ -691,10 +777,23 @@ package body Ocarina.Backends.MAST.Main is
          while Present (The_Feature) loop
             if Kind (The_Feature) = K_Port_Spec_Instance and then
                Is_Out (The_Feature) then
-                  Append_Node_To_List
-                     (Make_Defining_Identifier
-                        (Map_Port_Operation_Name (E, The_Feature)),
-                     Operations_List);
+                  declare
+                     Dest_Ports : constant List_Id
+                        := Get_Destination_Ports (The_Feature);
+                     Dest_Port : Node_Id;
+                  begin
+                     if not AINU.Is_Empty (Dest_Ports) then
+                        Dest_Port := AIN.First_Node (Dest_Ports);
+                        while Present (Dest_Port) loop
+                           Append_Node_To_List
+                              (Make_Defining_Identifier
+                                 (Map_Port_Shared_Resource_Operation_Name
+                                    (Item (Dest_Port))),
+                              Operations_List);
+                           Dest_Port := AIN.Next_Node (Dest_Port);
+                        end loop;
+                     end if;
+                  end;
             end if;
             The_Feature := Next_Node (The_Feature);
          end loop;

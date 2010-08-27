@@ -708,6 +708,8 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
          MTN.Set_Operations (N, Op_List);
       end if;
 
+      MTN.Set_Shared_Resources_List (N, No_List);
+
       MTN.Set_Is_Enclosing (N, False);
       MTN.Set_Is_Composite (N, False);
       MTN.Set_Is_Simple (N, False);

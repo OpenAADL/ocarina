@@ -107,6 +107,7 @@ module Ocarina::Backends::MAST_Tree::Nodes {
 	boolean		Is_Message_Transmission;
 	boolean		Is_Composite;
 	List_Id		Operations;
+	List_Id		Shared_Resources_List;
 	Node_Id		Worst_Case_Execution_Time;
 	Node_Id		Best_Case_Execution_Time;
 	Node_Id		Avg_Case_Execution_Time;
