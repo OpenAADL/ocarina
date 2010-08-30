@@ -429,6 +429,15 @@ package body Ocarina.Backends.PO_HI_C is
       return Generate_ASN1_Deployment;
    end Use_ASN1_Deployment;
 
+   -------------------------------
+   --  Set_Performance_Analysis --
+   -------------------------------
+
+   procedure Set_Performance_Analysis (Use_It : Boolean) is
+   begin
+      Add_Performance_Analysis := Use_It;
+   end Set_Performance_Analysis;
+
    ---------------------------------
    -- Visit_Architecture_Instance --
    ---------------------------------

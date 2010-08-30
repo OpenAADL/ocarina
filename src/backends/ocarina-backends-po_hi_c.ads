@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                 Copyright (C) 2008, GET-Telecom Paris.                   --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -51,6 +51,10 @@ package Ocarina.Backends.PO_HI_C is
 
    function Use_Performance_Analysis return Boolean;
    --  Specify if we use performance analysis or not.
+
+   procedure Set_Performance_Analysis (Use_It : Boolean);
+   --  Indicate to the generator if we use performance
+   --  analysis or not.
 
    function Use_ASN1_Deployment return Boolean;
    --  Just returns a boolean to indicate if the user

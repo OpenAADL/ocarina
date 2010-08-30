@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2004-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2004-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -55,6 +55,7 @@ with Ocarina;                          use Ocarina;
 with Ocarina.AADL_Values;              use Ocarina.AADL_Values;
 with Ocarina.Analyzer;                 use Ocarina.Analyzer;
 with Ocarina.Backends;                 use Ocarina.Backends;
+with Ocarina.Backends.PO_HI_C;
 with Ocarina.Backends.Execution_Tests;
 use Ocarina.Backends.Execution_Tests;
 with Ocarina.Configuration;            use Ocarina.Configuration;
@@ -632,14 +633,15 @@ procedure Ocarina_Cmd is
    --  "rma.aadl" and "software_ada.aadl".
 
    procedure Parse_Scenario_Files is
-      AADL_Root      : Node_Id := No_Node;
-      Instance_Root  : Node_Id := No_Node;
-      Root_System    : Node_Id := No_Node;
-      Source_Files   : List_Id;
-      Ref_Files      : List_Id;
-      Needed_PS      : List_Id;
-      Dirname        : Name_Id;
-      Success        : Boolean := False;
+      AADL_Root               : Node_Id := No_Node;
+      Instance_Root           : Node_Id := No_Node;
+      Root_System             : Node_Id := No_Node;
+      Source_Files            : List_Id;
+      Ref_Files               : List_Id;
+      Needed_PS               : List_Id;
+      Used_Generator_Options  : List_Id;
+      Dirname                 : Name_Id;
+      Success                 : Boolean := False;
 
       The_Backend : Name_Id := No_Name;
       --  The current code generator
@@ -662,6 +664,8 @@ procedure Ocarina_Cmd is
         := Get_String_Name (Ocarina_Config & "::referencial_files");
       The_Generator : constant Name_Id
         := Get_String_Name (Ocarina_Config & "::generator");
+      Generator_Options : constant Name_Id
+        := Get_String_Name (Ocarina_Config & "::generator_options");
       Predefined_PS : constant Name_Id
         := Get_String_Name
         (Ocarina_Config & "::needed_property_sets");
@@ -783,6 +787,7 @@ procedure Ocarina_Cmd is
       package OIQ renames Ocarina.Instances.Queries;
 
       F : Types.Int;
+      N : Node_Id;
 
    begin
       Current_Scenario_Dirname := No_Name;
@@ -879,6 +884,40 @@ procedure Ocarina_Cmd is
          Needed_PS := Get_List_Property (Root_System, Predefined_PS);
       else
          Needed_PS := No_List;
+      end if;
+
+      --  Extract the generator options.
+
+      if Is_Defined_List_Property (Root_System, Generator_Options) then
+         Used_Generator_Options
+            := Get_List_Property (Root_System, Generator_Options);
+      else
+         Used_Generator_Options := No_List;
+      end if;
+
+      --  Process options.
+
+      if not Is_Empty (Used_Generator_Options) then
+
+         N := First_Node (Used_Generator_Options);
+
+         while Present (N) loop
+            declare
+               P         : Name_Id;
+               Option : constant String
+                 := Image (Value (N), Quoted => False);
+            begin
+
+               Set_Str_To_Name_Buffer (Option);
+               P := Name_Find;
+
+               if P = Get_String_Name ("gprof") then
+                  Ocarina.Backends.PO_HI_C.Set_Performance_Analysis (True);
+               end if;
+
+               N := Next_Node (N);
+            end;
+         end loop;
       end if;
 
       --  Extract the AADL version

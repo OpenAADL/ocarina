@@ -15,6 +15,13 @@ property set Ocarina_Config is
   Generator : Ocarina_Config::Generator_Type applies to (system);
   --  The code generator that will be used for the current application
 
+  Generator_Options_Type : type enumeration
+   (gprof,
+    ASN1);
+
+  Generator_Options : list of Ocarina_Config::Generator_Options_Type applies to (system);
+  --  Code generation options.
+
   AADL_Files : list of aadlstring applies to (system);
   --  List of the AADL source files used by the current application
 
