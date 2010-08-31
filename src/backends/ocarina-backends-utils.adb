@@ -1407,7 +1407,9 @@ package body Ocarina.Backends.Utils is
       if Is_Subprogram (E)
         and then Get_Source_Language (E) /= Language_Ada_95
       then
-         Display_Error ("This is not an Ada subprogram", Fatal => True);
+         Display_Located_Error
+           (Loc (E),
+            "This is not an Ada subprogram", Fatal => True);
       end if;
 
       --  Get the subprogram name
