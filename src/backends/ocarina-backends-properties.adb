@@ -2781,9 +2781,18 @@ package body Ocarina.Backends.Properties is
          --  relevant information. This is BAD BAD BAD
          Scheduling_L := Ocarina.Analyzer.AADL.Queries.Get_List_Property
          (Corresponding_Declaration (P), Scheduling_Protocol);
-         Scheduling_N :=
-           To_Lower (ATN.Display_Name
-                       (ATN.Identifier (ATN.First_Node (Scheduling_L))));
+
+         if Present (Node_Id (Scheduling_L)) then
+            Scheduling_N :=
+              To_Lower (ATN.Display_Name
+                          (ATN.Identifier (ATN.First_Node (Scheduling_L))));
+         else
+            return Unknown_Scheduler;
+            --  XXX The property can be defined, but the returned
+            --  value may be empty because of a subtle bug:
+            --  Get_List_Property does not traverse the whole
+            --  inheritance tree ...
+         end if;
 
       else
          return Unknown_Scheduler;
