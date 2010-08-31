@@ -451,6 +451,63 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                                     Fatal => True);
                               end if;
                            end if;
+
+                           case Transport_API is
+                              when Transport_BSD_Sockets =>
+                                 Set_Deployment_Header;
+
+                                 Add_Define_Deployment
+                                    (RE (RE_Need_Driver_Sockets));
+
+                              when Transport_User =>
+                                 if AAU.Is_Bus (B) then
+                                    Accessing_Device :=
+                                       Get_Device_Of_Process (B, E);
+                                 elsif AAU.Is_Virtual_Bus (B) then
+                                    Accessing_Device := Get_Device_Of_Process
+                                       (Parent_Component
+                                          (Parent_Subcomponent (B)), E);
+                                 else
+                                    Display_Located_Error
+                                       (Loc (B),
+                                        "Unknown bus kind !",
+                                        Fatal => True);
+                                 end if;
+
+                                 if Accessing_Device = No_Node then
+                                    Display_Located_Error
+                                       (Loc (B),
+                                        "No device is accessing this bus !",
+                                        Fatal => True);
+                                 end if;
+
+                                 Driver_Name := Get_Driver_Name
+                                    (Corresponding_Instance
+                                       (Accessing_Device));
+
+                                 if Driver_Name = No_Name then
+                                    Display_Located_Error
+                                       (Loc (B),
+                                        "Driver must have a name" &
+                                        "(see Deployment::Driver_Name) !",
+                                        Fatal => True);
+                                 end if;
+
+                                 Set_Str_To_Name_Buffer
+                                    ("__PO_HI_NEED_DRIVER_");
+                                 Get_Name_String_And_Append (Driver_Name);
+
+                                 Driver_Name := Name_Find;
+                                 Driver_Name := To_Upper (Driver_Name);
+
+                                 Add_Define_Deployment
+                                    (Make_Defining_Identifier
+                                       (Driver_Name,
+                                       C_Conversion => False));
+
+                              when others =>
+                                 null;
+                           end case;
                         end if;
 
                         C_End := Next_Node (C_End);
@@ -477,14 +534,8 @@ package body Ocarina.Backends.PO_HI_C.Naming is
 
                Set_Deployment_Header;
 
-               Append_Node_To_List
-                  (Make_Define_Statement
-                     (Defining_Identifier =>
-                        (RE (RE_Need_Driver_Sockets)),
-                     Value =>
-                        (Make_Literal
-                           (CV.New_Int_Value (1, 1, 10)))),
-                  CTN.Declarations (Current_File));
+               Add_Define_Deployment
+                  (RE (RE_Need_Driver_Sockets));
 
                Set_Naming_Source;
 
@@ -548,16 +599,10 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                Driver_Name := Name_Find;
                Driver_Name := To_Upper (Driver_Name);
 
-               Append_Node_To_List
-                  (Make_Define_Statement
-                     (Defining_Identifier =>
-                        (Make_Defining_Identifier
-                           (Driver_Name,
-                           C_Conversion => False)),
-                     Value =>
-                        (Make_Literal
-                           (CV.New_Int_Value (1, 1, 10)))),
-                  CTN.Declarations (Current_File));
+               Add_Define_Deployment
+                  (Make_Defining_Identifier
+                     (Driver_Name,
+                     C_Conversion => False));
 
                Set_Naming_Source;
 
