@@ -61,12 +61,6 @@ package body Ocarina.Files is
       end if;
       File_Name_With_Extension := Name_Find;
 
-      --  Full_Name := Search_File (File_Name_With_Extension);
-
-      --  Exit_On_Error (Full_Name = No_Name,
-      --                 "Cannot find file "
-      --                   & Get_Name_String (File_Name_With_Extension));
-
       for J in 1 .. Sources.Last loop
          if File_Name_With_Extension = Sources.Table (J) then
             Do_Add := False;
