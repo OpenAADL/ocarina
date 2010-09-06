@@ -23,6 +23,20 @@ properties
 	Source_Name => "__po_hi_c_driver_serial_linux_init";
 end spg_serial_init_linux;
 
+subprogram spg_serial_init_linux_sender
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_linux_init_sender";
+end spg_serial_init_linux_sender;
+
+subprogram spg_serial_init_linux_receiver
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_linux_init_receiver";
+end spg_serial_init_linux_receiver;
+
+
+
 
 thread serial_poller
 end serial_poller;
@@ -46,5 +60,16 @@ subcomponents
    serial_linux_receiver : thread serial_poller.linux;
    sender                : subprogram spg_serial_sender_linux;
 end serial_driver.linux;
+
+abstract implementation serial_driver.linux_sender
+subcomponents
+   sender                : subprogram spg_serial_sender_linux;
+end serial_driver.linux_sender;
+
+
+abstract implementation serial_driver.linux_receiver
+subcomponents
+   serial_linux_receiver : thread serial_poller.linux;
+end serial_driver.linux_receiver;
 
 end ocarina_drivers_serial;
