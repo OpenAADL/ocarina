@@ -12,5 +12,20 @@ properties
    Data_Model::Data_Representation => integer;
 end integer.i;
 
+data float
+end float;
+
+data implementation float.i
+properties
+   Data_Model::Data_Representation => float;
+end float.i;
+
+data boolean
+end boolean;
+
+data implementation boolean.i
+properties
+   Data_Model::Data_Representation => boolean;
+end boolean.i;
 
 end ocarina_types;
