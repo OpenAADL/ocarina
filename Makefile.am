@@ -1,4 +1,5 @@
-SUBDIRS = support doc tools projects src resources projects-distrib examples
+SUBDIRS = support tools projects src resources projects-distrib examples @DOC_DIR@
+
 AUTOMAKE_OPTIONS = no-dependencies
 ACLOCAL_AMFLAGS = -I support
 CLEANFILES = config-stamp

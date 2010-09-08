@@ -345,6 +345,23 @@ fi
 AC_SUBST(CYGPATH_U)
 
 ##########################################
+# Build documentation
+##########################################
+
+AC_CHECK_PROGS(TEXI2HTML, texi2html)
+
+DOC_DIR=
+
+AC_ARG_ENABLE(doc,
+[  --enable-doc            Build documentation [default=no]],
+[if [[ "$enableval" = "yes" ]]; then
+        DOC_DIR=doc
+fi],
+[])
+
+AC_SUBST(DOC_DIR)
+
+##########################################
 # Output generated files
 ##########################################
 
