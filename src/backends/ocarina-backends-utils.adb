@@ -1572,13 +1572,15 @@ package body Ocarina.Backends.Utils is
                            --  container data component and the data
                            --  subcomponent.
 
-                           Param := ADU.Make_Parameter_Specification
-                             (Map_Ada_Protected_Aggregate_Identifier
-                              (F, Field),
-                              Map_Ada_Data_Type_Designator
-                              (Corresponding_Instance (Field)),
-                              Mode);
-                           ADU.Append_Node_To_List (Param, Profile);
+                           if AAU.Is_Data (Corresponding_Instance (Field)) then
+                              Param := ADU.Make_Parameter_Specification
+                                (Map_Ada_Protected_Aggregate_Identifier
+                                   (F, Field),
+                                 Map_Ada_Data_Type_Designator
+                                   (Corresponding_Instance (Field)),
+                                 Mode);
+                              ADU.Append_Node_To_List (Param, Profile);
+                           end if;
 
                            Field := Next_Node (Field);
                         end loop;

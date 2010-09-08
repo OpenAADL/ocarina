@@ -626,7 +626,6 @@ package body Ocarina.Backends.C_Common.Subprograms is
             S := First_Node (Features (E));
 
             while Present (S) loop
-
                Visit (Corresponding_Instance (S));
 
                S := Next_Node (S);

@@ -265,6 +265,11 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
          --  Do not generate Ada type more than once
 
          if No (Get_Handling (E, By_Name, H_Ada_Type_Spec)) then
+
+            --  Add a fake handling for now, to avoid infinite recursion
+
+            Set_Handling (E, By_Name, H_Ada_Type_Spec, No_Node + 1);
+
             Language_Type := Get_Source_Language (E);
 
             if Language_Type = Language_ASN1 then
@@ -615,14 +620,16 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
 
                            --  Make the record or private type component
 
-                           N := Make_Component_Declaration
-                             (Defining_Identifier
-                              => Map_Ada_Defining_Identifier
-                              (C),
-                              Subtype_Indication
-                              => Map_Ada_Data_Type_Designator
-                              (Corresponding_Instance (C)));
-                           Append_Node_To_List (N, Components);
+                           if AAU.Is_Data (Corresponding_Instance (C)) then
+                              N := Make_Component_Declaration
+                                (Defining_Identifier
+                                   => Map_Ada_Defining_Identifier
+                                   (C),
+                                 Subtype_Indication
+                                   => Map_Ada_Data_Type_Designator
+                                   (Corresponding_Instance (C)));
+                              Append_Node_To_List (N, Components);
+                           end if;
 
                            C := Next_Node (C);
                         end loop;
@@ -1127,14 +1134,16 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                      while Present (Param) loop
                         --  Create a parameter association
 
-                        N := Make_Parameter_Association
-                          (Selector_Name    =>
-                             Map_Ada_Protected_Aggregate_Identifier
-                             (C_Access, Param),
-                           Actual_Parameter => Map_Ada_Defining_Identifier
-                             (Param));
+                        if AAU.Is_Data (Corresponding_Instance (Param)) then
+                           N := Make_Parameter_Association
+                             (Selector_Name    =>
+                                Map_Ada_Protected_Aggregate_Identifier
+                                (C_Access, Param),
+                              Actual_Parameter => Map_Ada_Defining_Identifier
+                                (Param));
 
-                        Append_Node_To_List (N, Call_Profile);
+                           Append_Node_To_List (N, Call_Profile);
+                        end if;
 
                         Param := Next_Node (Param);
                      end loop;
@@ -1255,6 +1264,10 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
          --  Do not generate Ada type more than once
 
          if No (Get_Handling (E, By_Name, H_Ada_Type_Body)) then
+
+            --  Add a fake handling for now, to avoid infinite recursion
+            Set_Handling (E, By_Name, H_Ada_Type_Body, No_Node + 1);
+
             Data_Representation := Get_Data_Representation (E);
 
             case Data_Representation is

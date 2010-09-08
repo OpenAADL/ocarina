@@ -346,7 +346,9 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                --  Visit the component instance corresponding to the
                --  subcomponent S.
 
-               Visit (Corresponding_Instance (S));
+               if AAU.Is_Data (Corresponding_Instance (S)) then
+                  Visit (Corresponding_Instance (S));
+               end if;
                S := Next_Node (S);
             end loop;
          end if;
@@ -679,27 +681,30 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                C := First_Node (Subcomponents (E));
 
                while Present (C) loop
-                  Visit (Corresponding_Instance (C));
+                  if AAU.Is_Data (Corresponding_Instance (C)) then
+                     Visit (Corresponding_Instance (C));
 
-                  Parameters := New_List (CTN.K_Parameter_List);
-                  Append_Node_To_List
-                    (Make_Member_Designator
-                       (Aggregate_Name => Make_Defining_Identifier
-                          (PN (P_Value)),
-                        Defining_Identifier => Map_C_Defining_Identifier (C),
-                        Is_Pointer => False),
-                     Parameters);
-                  Append_Node_To_List
-                    (Make_Defining_Identifier (PN (P_Message)),
-                     Parameters);
-                  Append_Node_To_List
-                    (Make_Defining_Identifier (PN (P_Offset)),
-                     Parameters);
-                  N := Make_Call_Profile
-                    (Get_Marshall_Function_Name (Corresponding_Instance (C)),
-                     Parameters);
-                  Append_Node_To_List (N, Statements);
-
+                     Parameters := New_List (CTN.K_Parameter_List);
+                     Append_Node_To_List
+                       (Make_Member_Designator
+                          (Aggregate_Name => Make_Defining_Identifier
+                             (PN (P_Value)),
+                           Defining_Identifier =>
+                             Map_C_Defining_Identifier (C),
+                           Is_Pointer => False),
+                        Parameters);
+                     Append_Node_To_List
+                       (Make_Defining_Identifier (PN (P_Message)),
+                        Parameters);
+                     Append_Node_To_List
+                       (Make_Defining_Identifier (PN (P_Offset)),
+                        Parameters);
+                     N := Make_Call_Profile
+                       (Get_Marshall_Function_Name
+                          (Corresponding_Instance (C)),
+                        Parameters);
+                     Append_Node_To_List (N, Statements);
+                  end if;
                   C := Next_Node (C);
                end loop;
 
@@ -809,29 +814,31 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                C := First_Node (Subcomponents (E));
 
                while Present (C) loop
-                  Visit (Corresponding_Instance (C));
+                  if AAU.Is_Data (Corresponding_Instance (C)) then
+                     Visit (Corresponding_Instance (C));
 
-                  Parameters := New_List (CTN.K_Parameter_List);
-                  Append_Node_To_List
-                    (Make_Variable_Address
-                       (Make_Member_Designator
-                          (Aggregate_Name => Make_Defining_Identifier
-                             (PN (P_Value)),
-                           Defining_Identifier =>
-                             Map_C_Defining_Identifier (C),
-                           Is_Pointer => True)),
-                     Parameters);
-                  Append_Node_To_List
-                    (Make_Defining_Identifier (PN (P_Message)),
-                     Parameters);
-                  Append_Node_To_List
-                    (Make_Defining_Identifier (PN (P_Offset)),
-                     Parameters);
-                  N := Make_Call_Profile
-                    (Get_Unmarshall_Function_Name (Corresponding_Instance (C)),
-                     Parameters);
-                  Append_Node_To_List (N, Statements);
-
+                     Parameters := New_List (CTN.K_Parameter_List);
+                     Append_Node_To_List
+                       (Make_Variable_Address
+                          (Make_Member_Designator
+                             (Aggregate_Name => Make_Defining_Identifier
+                                (PN (P_Value)),
+                              Defining_Identifier =>
+                                Map_C_Defining_Identifier (C),
+                              Is_Pointer => True)),
+                        Parameters);
+                     Append_Node_To_List
+                       (Make_Defining_Identifier (PN (P_Message)),
+                        Parameters);
+                     Append_Node_To_List
+                       (Make_Defining_Identifier (PN (P_Offset)),
+                        Parameters);
+                     N := Make_Call_Profile
+                       (Get_Unmarshall_Function_Name
+                          (Corresponding_Instance (C)),
+                        Parameters);
+                     Append_Node_To_List (N, Statements);
+                  end if;
                   C := Next_Node (C);
                end loop;
 
@@ -1147,8 +1154,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
            Present (CTN.Unmarshaller_Node (Backend_Node (Identifier (E))))
          then
             N := Make_Unmarshall_Type_Body (E);
-               Set_Handling (E, By_Name, H_C_Unmarshall_Body, N);
-               Append_Node_To_List (N, CTN.Declarations (Current_File));
+            Set_Handling (E, By_Name, H_C_Unmarshall_Body, N);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
          if not AAU.Is_Empty (Subcomponents (E)) then
@@ -1157,7 +1164,9 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                --  Visit the component instance corresponding to the
                --  subcomponent S.
 
-               Visit (Corresponding_Instance (S));
+               if AAU.Is_Data (Corresponding_Instance (S)) then
+                  Visit (Corresponding_Instance (S));
+               end if;
                S := Next_Node (S);
             end loop;
          end if;

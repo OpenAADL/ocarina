@@ -2008,24 +2008,27 @@ package body Ocarina.Backends.C_Common.Mapping is
                         Field := AIN.First_Node (Subcomponents (D));
 
                         while Present (Field) loop
-                           if Mode = Mode_In then
-                              Param := CTU.Make_Parameter_Specification
-                                (Defining_Identifier =>
-                                   Map_C_Defining_Identifier (Field),
-                                 Parameter_Type =>
-                                   Map_C_Data_Type_Designator
-                                   (Corresponding_Instance (Field)));
-                           else
-                              Param := CTU.Make_Parameter_Specification
-                                (Defining_Identifier =>
-                                   Map_C_Defining_Identifier (Field),
-                                 Parameter_Type =>
-                                   Make_Pointer_Type
-                                   (Map_C_Data_Type_Designator
-                                      (Corresponding_Instance (Field))));
+                           if AINU.Is_Data
+                             (Corresponding_Instance (Field))
+                           then
+                              if Mode = Mode_In then
+                                 Param := CTU.Make_Parameter_Specification
+                                   (Defining_Identifier =>
+                                      Map_C_Defining_Identifier (Field),
+                                    Parameter_Type =>
+                                      Map_C_Data_Type_Designator
+                                      (Corresponding_Instance (Field)));
+                              else
+                                 Param := CTU.Make_Parameter_Specification
+                                   (Defining_Identifier =>
+                                      Map_C_Defining_Identifier (Field),
+                                    Parameter_Type =>
+                                      Make_Pointer_Type
+                                      (Map_C_Data_Type_Designator
+                                         (Corresponding_Instance (Field))));
+                              end if;
+                              CTU.Append_Node_To_List (Param, Profile);
                            end if;
-                           CTU.Append_Node_To_List (Param, Profile);
-
                            Field := AIN.Next_Node (Field);
                         end loop;
 

@@ -492,18 +492,20 @@ package body Ocarina.Backends.C_Common.Types is
 
                      while Present (C) loop
                         --  Generate the C type corresponding to the
-                        --  subcomponent.
+                        --  subcomponents.
 
-                        Visit (Corresponding_Instance (C));
+                        if AINU.Is_Data (Corresponding_Instance (C)) then
+                           Visit (Corresponding_Instance (C));
 
-                        --  Make the record or private type component
+                           --  Make the record or private type component
 
-                        N := Make_Member_Declaration
-                          (Defining_Identifier =>
-                              Map_C_Defining_Identifier (C),
-                           Used_Type  => Map_C_Data_Type_Designator
-                             (Corresponding_Instance (C)));
-                        Append_Node_To_List (N, Struct_Members);
+                           N := Make_Member_Declaration
+                             (Defining_Identifier =>
+                                Map_C_Defining_Identifier (C),
+                              Used_Type  => Map_C_Data_Type_Designator
+                                (Corresponding_Instance (C)));
+                           Append_Node_To_List (N, Struct_Members);
+                        end if;
 
                         C := Next_Node (C);
                      end loop;
@@ -755,7 +757,9 @@ package body Ocarina.Backends.C_Common.Types is
                   S := First_Node (Features (E));
 
                   while Present (S) loop
-                     Visit (Corresponding_Instance (S));
+                     if AINU.Is_Data (Corresponding_Instance (S)) then
+                        Visit (Corresponding_Instance (S));
+                     end if;
 
                      S := Next_Node (S);
                   end loop;
@@ -1026,8 +1030,9 @@ package body Ocarina.Backends.C_Common.Types is
             F := First_Node (Features (E));
 
             while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance and then
-                 AIN.Is_Data (F) then
+               if Kind (F) = K_Port_Spec_Instance
+                 and then AIN.Is_Data (F)
+               then
                   Visit (Corresponding_Instance (F));
                end if;
 
@@ -1102,6 +1107,7 @@ package body Ocarina.Backends.C_Common.Types is
          pragma Assert (AINU.Is_Subprogram (Spg));
 
          --  Make the call to __po_hi_protected_lock
+
          Call_Profile := New_List (CTN.K_Parameter_Profile);
          Append_Node_To_List
            (Make_Member_Designator
@@ -1132,7 +1138,7 @@ package body Ocarina.Backends.C_Common.Types is
             end loop;
          end if;
 
-         --  2 - The list of all record fileds given
+         --  2 - The list of all record fields given
 
          --  FIXME: Respect the mapping rules by setting the correct
          --  parameter orientation. For now all parameter are
@@ -1152,15 +1158,17 @@ package body Ocarina.Backends.C_Common.Types is
 
                      while Present (Param) loop
                         --  Create a parameter association
-                        N := Make_Variable_Address
-                          (Make_Member_Designator
-                           (Defining_Identifier =>
-                              Map_C_Defining_Identifier (Param),
-                            Aggregate_Name =>
-                              Make_Defining_Identifier (PN (P_Value)),
-                            Is_Pointer =>
-                              True));
-                        Append_Node_To_List (N, Call_Profile);
+                        if AINU.Is_Data (Corresponding_Instance (Param)) then
+                           N := Make_Variable_Address
+                           (Make_Member_Designator
+                              (Defining_Identifier =>
+                                 Map_C_Defining_Identifier (Param),
+                               Aggregate_Name =>
+                                 Make_Defining_Identifier (PN (P_Value)),
+                               Is_Pointer =>
+                                 True));
+                           Append_Node_To_List (N, Call_Profile);
+                        end if;
 
                         Param := Next_Node (Param);
                      end loop;
@@ -1364,7 +1372,10 @@ package body Ocarina.Backends.C_Common.Types is
                   --  Visit the subcomponents
 
                   while Present (C) loop
-                     Visit (Corresponding_Instance (C));
+                     if AINU.Is_Data (Corresponding_Instance (C)) then
+                        Visit (Corresponding_Instance (C));
+                     end if;
+
                      C := Next_Node (C);
                   end loop;
 
