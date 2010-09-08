@@ -481,7 +481,9 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    procedure Set_Request_Header (N : Node_Id := No_Node);
 
-   function To_C_Name (N : Name_Id; Ada_Style : Boolean := False)
+   function To_C_Name (N : Name_Id;
+                       Ada_Style : Boolean := False;
+                       Keyword_Check : Boolean := True)
                       return Name_Id;
    --  Convert N to a valid Ada identifier (no clashing with keywords,
    --  no consecutive '_', no heading '_'...).

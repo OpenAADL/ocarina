@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -322,7 +322,8 @@ package body Ocarina.Backends.POK_C.Makefile is
                         (AIN.Name
                            (AIN.Identifier
                               (AIN.Parent_Subcomponent
-                                 (E)))));
+                                 (E))),
+                        Keyword_Check => False));
       Fd := Create_File ("Makefile", Text);
 
       Partition_Object_Files := CTU.New_List (CTN.K_Element_List);
@@ -604,7 +605,8 @@ package body Ocarina.Backends.POK_C.Makefile is
       --  Reset the partition names table for this node.
 
       Enter_Directory
-         (To_C_Name (AIN.Name (AIN.Identifier (Parent_Subcomponent (E)))));
+         (To_C_Name (AIN.Name (AIN.Identifier (Parent_Subcomponent (E))),
+                         Keyword_Check => False));
 
       Kernel_Mode := False;
 

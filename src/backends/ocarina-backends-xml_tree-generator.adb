@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -114,7 +114,7 @@ package body Ocarina.Backends.XML_Tree.Generator is
             --  the same name
 
             Fd := Create_File
-               (Name_Buffer (1 .. Name_Len) & ".asn1", Text);
+               (Name_Buffer (1 .. Name_Len), Text);
 
             if Fd = Invalid_FD then
                raise Program_Error;

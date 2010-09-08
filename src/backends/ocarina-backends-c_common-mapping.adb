@@ -319,7 +319,8 @@ package body Ocarina.Backends.C_Common.Mapping is
       if Get_Current_Backend_Kind = PolyORB_Kernel_C then
          CTN.Set_Name (D, To_C_Name
                          (AIN.Name
-                            (AIN.Identifier (Parent_Subcomponent (E)))));
+                            (AIN.Identifier (Parent_Subcomponent (E))),
+                         Keyword_Check => False));
       else
          CTN.Set_Name (D, To_C_Name (AIN.Name (AIN.Identifier (E))));
       end if;
@@ -355,7 +356,8 @@ package body Ocarina.Backends.C_Common.Mapping is
                          (AIN.Name
                             (AIN.Identifier
                                (AIN.Parent_Subcomponent
-                                  (E)))));
+                                  (E))),
+                         Keyword_Check => False));
       end if;
 
       Set_Units (N, New_List (K_List_Id));

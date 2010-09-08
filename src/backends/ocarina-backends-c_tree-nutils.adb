@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -1146,7 +1146,9 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- To_C_Name --
    ---------------
 
-   function To_C_Name (N : Name_Id; Ada_Style : Boolean := False)
+   function To_C_Name (N : Name_Id;
+                       Ada_Style : Boolean := False;
+                       Keyword_Check : Boolean := True)
                       return Name_Id is
       Name      : Name_Id;
       Test_Name : Name_Id;
@@ -1155,17 +1157,19 @@ package body Ocarina.Backends.C_Tree.Nutils is
       Get_Name_String (Normalize_Name (N, Ada_Style));
       Name := Name_Find;
 
-      --  If the identifier collides with a C reserved word insert
-      --  "AADL_" string before the identifier.
+      if Keyword_Check then
 
-      Test_Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-      V := Get_Name_Table_Byte (Test_Name);
-      if V > 0 then
-         Set_Str_To_Name_Buffer ("AADL_");
-         Get_Name_String_And_Append (Name);
-         Name := Name_Find;
+         --  If the identifier collides with a C reserved word insert
+         --  "AADL_" string before the identifier.
+
+         Test_Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
+         V := Get_Name_Table_Byte (Test_Name);
+         if V > 0 then
+            Set_Str_To_Name_Buffer ("AADL_");
+            Get_Name_String_And_Append (Name);
+            Name := Name_Find;
+         end if;
       end if;
-
       return To_Lower (Name);
    end To_C_Name;
 
