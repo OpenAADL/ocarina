@@ -243,9 +243,9 @@ package body Ocarina.Backends.MAST.Main is
       return N;
    end Map_Driver_Scheduling_Server_Name;
 
-   ------------------------
-   -- Map_Driver_Wrapper --
-   ------------------------
+   -------------------------
+   -- Make_Driver_Wrapper --
+   -------------------------
 
    function Make_Driver_Wrapper (The_Device : Node_Id) return Node_Id is
       M : Node_Id;
@@ -253,8 +253,9 @@ package body Ocarina.Backends.MAST.Main is
    begin
       M := Make_Scheduling_Server
          (Map_Driver_Scheduling_Server_Name (The_Device),
-         Normalize_Name (Name (Identifier (Parent_Subcomponent
-         (Get_Bound_Processor (The_Device))))));
+         No_Name);
+      MTN.Set_Associated_Scheduler
+         (M, Map_Scheduler_Name (Get_Bound_Processor (The_Device)));
       MTN.Set_Parameters
          (M, Make_Scheduling_Server_Parameters
           (Fixed_Priority, 1));

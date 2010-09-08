@@ -536,6 +536,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write_Name (MTN.Server_Processing_Resource (N));
          Write_Line (");");
       end if;
+
       if MTN.Associated_Scheduler (N) /= No_Name then
          Write_Indentation (-1);
          Write (Tok_Scheduler);
