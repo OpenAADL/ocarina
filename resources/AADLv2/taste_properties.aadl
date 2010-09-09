@@ -24,6 +24,8 @@ property set Taste is
          
    ASN1_Basic_Type : ASN1_types applies to (data);
 
+Instance_Name : aadlstring applies to (system);
+
 FS_Default_Value : aadlstring applies to (data);
 
 	Deadline : inherit Time => Period
@@ -205,9 +207,9 @@ RCMperiod: Time applies to (event port, event data port, access, subprogram acce
 
 RCMpartition: reference (system) applies to (system);
 
-dataview : aadlstring applies to (package);
+dataview : list of aadlstring applies to (package);
 
-dataviewpath : aadlstring applies to (package);
+dataviewpath : list of aadlstring applies to (package);
 
 Encoding_type : type enumeration (native, uper, acn);
 
