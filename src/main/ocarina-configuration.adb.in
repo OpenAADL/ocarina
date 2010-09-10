@@ -149,6 +149,10 @@ package body Ocarina.Configuration is
                  := Normalize_Pathname (Path.all) & Directory_Separator;
             begin
                if Dir'Length > 0 then
+                  if not Is_Regular_File (Dir & "bin/" & Command_Name) then
+                     raise Program_Error with "Wrong value for OCARINA_PATH";
+                  end if;
+
                   Set_Str_To_Name_Buffer (Dir);
                   Installation_Directory := Name_Find;
                end if;
@@ -165,7 +169,9 @@ package body Ocarina.Configuration is
                declare
                   Dir : constant String := Get_Install_Dir (Exec);
                begin
-                  if Dir'Length > 0 then
+                  if Dir'Length > 0
+                    and then Is_Regular_File (Dir & "bin/" & Command_Name)
+                  then
                      Set_Str_To_Name_Buffer (Dir);
                      Installation_Directory := Name_Find;
                   end if;
