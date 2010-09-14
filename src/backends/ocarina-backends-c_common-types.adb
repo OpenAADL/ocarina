@@ -806,34 +806,32 @@ package body Ocarina.Backends.C_Common.Types is
 
          Start_Recording_Handlings;
 
-         if Get_Current_Backend_Kind = PolyORB_Kernel_C and then
-            not AINU.Is_Empty (Subcomponents (E)) then
-
+         if Get_Current_Backend_Kind = PolyORB_Kernel_C
+           and then not AINU.Is_Empty (Subcomponents (E))
+         then
             S := First_Node (Subcomponents (E));
 
             while Present (S) loop
                --  Visit the component instance corresponding to the
                --  subcomponent S.
 
-               if AINU.Is_Data (Corresponding_Instance (S)) and then
-                  Is_Protected_Data (Corresponding_Instance (S)) then
-
+               if AINU.Is_Data (Corresponding_Instance (S))
+                 and then Is_Protected_Data (Corresponding_Instance (S))
+               then
                   Add_Include (PKR.RH (RH_Deployment));
 
                   if POK_Flavor = ARINC653 then
                      Declaration := Make_Extern_Entity_Declaration
                         (Make_Variable_Declaration
                            (Make_Defining_Identifier
-                              (Map_Associated_Locking_Entity_Name
-                                 (S)),
-                           PKR.RE (RE_Semaphore_Id_Type)));
+                              (Map_Associated_Locking_Entity_Name (S)),
+                            PKR.RE (RE_Semaphore_Id_Type)));
                   else
                      Declaration := Make_Extern_Entity_Declaration
                         (Make_Variable_Declaration
                            (Make_Defining_Identifier
-                              (Map_Associated_Locking_Entity_Name
-                                 (S)),
-                           PKR.RE (RE_Pok_Sem_Id_T)));
+                              (Map_Associated_Locking_Entity_Name (S)),
+                            PKR.RE (RE_Pok_Sem_Id_T)));
                   end if;
 
                   Append_Node_To_List

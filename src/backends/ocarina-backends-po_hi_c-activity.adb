@@ -1507,7 +1507,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   N := Make_Variable_Declaration
                     (Map_C_Defining_Identifier (S),
                      Map_C_Data_Type_Designator
-                     (Corresponding_Instance (S)));
+                       (Corresponding_Instance (S)));
 
                   Append_Node_To_List
                     (Make_Extern_Entity_Declaration (N),

@@ -117,9 +117,9 @@ package body Ocarina.Me_AADL.AADL_Instances.Entities.Properties is
                --      and its value corresponds to the name of one
                --      element of the list.
 
-               if No (AIN.In_Modes (List_Node))              or else
-                 AINU.Is_Empty (ATN.Modes (AIN.In_Modes (List_Node))) or else
-                 In_Mode = No_Name
+               if No (AIN.In_Modes (List_Node))
+                 or else AINU.Is_Empty (ATN.Modes (AIN.In_Modes (List_Node)))
+                 or else In_Mode = No_Name
                then
                   return List_Node;
                else

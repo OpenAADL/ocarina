@@ -659,7 +659,7 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                               if CCP /= Concurrency_Priority_Ceiling then
                                  Display_Located_Error
                                    (Loc (E),
-                                    "Incompatoble concurrency protocol, "
+                                    "Incompatible concurrency protocol, "
                                       & "PolyORB-HI/Ada requires "
                                       & "Priority_Ceiling",
                                     True);

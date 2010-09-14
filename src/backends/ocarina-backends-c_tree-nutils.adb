@@ -1663,7 +1663,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       Hybrid         : constant Boolean :=
         AINU.Is_Subprogram (Caller) and then
         Properties.Get_Subprogram_Kind (Caller) =
-        Properties.Subprogram_Hybrid_Ada_95;
+        Properties.Subprogram_Hybrid_Ada_95; --  XXX why Ada ?
    begin
       --  The lists have to be created
 

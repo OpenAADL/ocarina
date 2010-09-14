@@ -206,7 +206,6 @@ package body Ocarina.Backends.C_Common.Subprograms is
             S := First_Node (Features (E));
 
             while Present (S) loop
-
                Visit (Corresponding_Instance (S));
 
                S := Next_Node (S);
@@ -404,12 +403,14 @@ package body Ocarina.Backends.C_Common.Subprograms is
                --  Visit the component instance corresponding to the
                --  subcomponent S.
                if Get_Current_Backend_Kind = PolyORB_Kernel_C
-                  and then Get_Category_Of_Component
-                     (Corresponding_Instance (S)) = CC_Process then
+                 and then Get_Category_Of_Component
+                 (Corresponding_Instance (S)) = CC_Process
+               then
                   null;
                else
                   if Get_Category_Of_Component
-                     (Corresponding_Instance (S)) /= CC_Device then
+                    (Corresponding_Instance (S)) /= CC_Device
+                  then
                      Visit (Corresponding_Instance (S));
                   end if;
                end if;
@@ -439,8 +440,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
                if Kind (Feature) = K_Port_Spec_Instance
                  and then Is_In (Feature)
                  and then Is_Event (Feature)
-                 and then not Is_Data (Feature) then
-
+                 and then not Is_Data (Feature)
+               then
                   if Get_Port_Compute_Entrypoint (Feature) /= No_Node then
                      Visit (Get_Port_Compute_Entrypoint (Feature));
                   end if;

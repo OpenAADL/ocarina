@@ -285,11 +285,11 @@ package body Ocarina.Instances.Components.Subprogram_Calls is
                return No_Node;
             end if;
          end;
+
       else
          Display_No_Entity_Ref (New_Instance);
          return No_Node;
       end if;
-
    end Instantiate_Subprogram_Call;
 
    ----------------------------------------
@@ -316,14 +316,16 @@ package body Ocarina.Instances.Components.Subprogram_Calls is
          New_Subinstance := Instantiate_Component
            (Instance_Root,
             Corresponding_Declaration
-            (Corresponding_Instance (Call_Instance)));
+              (Corresponding_Instance (Call_Instance)));
 
          if Present (New_Subinstance) then
             Set_Corresponding_Instance (Call_Instance, New_Subinstance);
             return Call_Instance;
+
          else
             return No_Node;
          end if;
+
       else
          return Call_Instance;
       end if;
