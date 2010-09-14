@@ -323,21 +323,26 @@ package body Ocarina.Backends.XML_Tree.Generator is
       Application_Directory : Name_Id;
    begin
       --  Create the application directory (a lower case string)
-      Get_Name_String (Name (N));
-      Application_Directory := To_Lower (Name_Find);
 
-      Create_Directory (Application_Directory);
+      if Name (N) /= No_Name then
+         Get_Name_String (Name (N));
+         Application_Directory := To_Lower (Name_Find);
 
-      --  Process the application nodes
+         Create_Directory (Application_Directory);
 
-      Enter_Directory (Application_Directory);
+         --  Process the application nodes
+
+         Enter_Directory (Application_Directory);
+      end if;
 
       while Present (P) loop
          Generate (P);
          P := Next_Node (P);
       end loop;
 
-      Leave_Directory;
+      if Name (N) /= No_Name then
+         Leave_Directory;
+      end if;
    end Generate_HI_Distributed_Application;
 
    ----------------------

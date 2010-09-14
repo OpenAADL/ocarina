@@ -137,9 +137,7 @@ package body Ocarina.Backends.Cheddar is
    procedure Visit_Architecture_Instance (E : Node_Id) is
    begin
       XML_Root := XTU.New_Node (XTN.K_HI_Distributed_Application);
-      Set_Str_To_Name_Buffer ("generated-code");
-      --      Set_Str_To_Name_Buffer (".");
-      XTN.Set_Name (XML_Root, Name_Find);
+      XTN.Set_Name (XML_Root, No_Name);
       XTN.Set_Units (XML_Root, XTU.New_List (XTN.K_List_Id));
       XTN.Set_HI_Nodes (XML_Root, XTU.New_List (XTN.K_List_Id));
 
