@@ -24,8 +24,6 @@ property set Taste is
          
    ASN1_Basic_Type : ASN1_types applies to (data);
 
-Instance_Name : aadlstring applies to (system);
-
 FS_Default_Value : aadlstring applies to (data);
 
 	Deadline : inherit Time => Period
@@ -220,5 +218,9 @@ Ada_Package_Name : aadlstring applies to (data);
 interfaceView : aadlstring applies to (package);
 
 WCET : Time applies to (subprogram access);
+
+Instance_Name : aadlstring applies to (system);
+
+Associated_Queue_Size : aadlinteger applies to (subprogram);
 
 end Taste;
