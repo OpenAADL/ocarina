@@ -110,7 +110,7 @@
 	  (regexp-opt
 	   '("annex" "bus" "data" "device" "end" "extends" "memory" 
 	     "package" "parameter" "process" "processor" "property" "port" 
-	     "subprogram" "system" "thread") t)
+	     "subprogram" "system" "thread" "with") t)
  	  "\\>[ \t]*"
  	  "\\(\\sw+\\(\\(\\.\\|::\\)\\sw*\\)*\\)?") 
  	 '(1 font-lock-keyword-face) 
