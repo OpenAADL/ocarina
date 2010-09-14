@@ -781,6 +781,8 @@ package body Ocarina.Backends.C_Common.Mapping is
    ----------------------------------
 
    procedure Bind_AADL_To_Type_Definition (G : Node_Id; A : Node_Id) is
+      pragma Assert (Present (A));
+
       N : Node_Id;
    begin
       N := AIN.Backend_Node (G);
@@ -1204,6 +1206,7 @@ package body Ocarina.Backends.C_Common.Mapping is
    begin
       if Get_Current_Backend_Kind = PolyORB_Kernel_C then
          Add_Include (PKR.RH (RH_Gtypes));
+
       elsif Get_Current_Backend_Kind = PolyORB_HI_C then
          Add_Include (PHR.RH (RH_Types));
       end if;
@@ -1217,13 +1220,16 @@ package body Ocarina.Backends.C_Common.Mapping is
 
          if Kind (N) = K_Defining_Identifier then
             return N;
+
          elsif Kind (N) = K_Array_Declaration then
             return Defining_Identifier (N);
          end if;
-         return No_Node;
       else
-         return No_Node;
+         --  XXX why do we need this hack?
+         return Map_C_Defining_Identifier (E);
       end if;
+
+      return No_Node;
    end Map_C_Data_Type_Designator;
 
    ---------------------------------

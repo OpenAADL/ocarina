@@ -137,13 +137,14 @@ package body Ocarina.Instances.Properties is
    is
       pragma Assert
         (Kind (Entity_Instance) = K_Component_Instance
-         or else Kind (Entity_Instance) = K_Port_Spec_Instance
-         or else Kind (Entity_Instance) = K_Feature_Group_Spec_Instance
-         or else Kind (Entity_Instance) = K_Parameter_Instance
-         or else Kind (Entity_Instance) = K_Subcomponent_Access_Instance
-         or else Kind (Entity_Instance) = K_Subprogram_Spec_Instance
-         or else Kind (Entity_Instance) = K_Connection_Instance
-         or else Kind (Entity_Instance) = K_Mode_Instance);
+           or else Kind (Entity_Instance) = K_Port_Spec_Instance
+           or else Kind (Entity_Instance) = K_Feature_Group_Spec_Instance
+           or else Kind (Entity_Instance) = K_Parameter_Instance
+           or else Kind (Entity_Instance) = K_Subcomponent_Access_Instance
+           or else Kind (Entity_Instance) = K_Subcomponent_Instance
+           or else Kind (Entity_Instance) = K_Subprogram_Spec_Instance
+           or else Kind (Entity_Instance) = K_Connection_Instance
+           or else Kind (Entity_Instance) = K_Mode_Instance);
 
       Property_Instance : Node_Id;
       Pointed_Instance  : Node_Id;
@@ -755,6 +756,7 @@ package body Ocarina.Instances.Properties is
                Instantiate_Component
                (Instance_Root,
                 ATE.Get_Referenced_Entity (Property_Value)));
+
             Set_Component_Cat (Instantiated_Value,
                                Component_Cat (Property_Value));
 

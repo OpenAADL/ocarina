@@ -3459,6 +3459,7 @@ package body Ocarina.Analyzer.AADL.Links is
                if Present (Unit_Designator (Property_Type)) then
                   return Recursive_Unwind_Units_Type
                     (Unit_Designator (Property_Type));
+
                else
                   return No_Node;
                end if;
@@ -3496,8 +3497,8 @@ package body Ocarina.Analyzer.AADL.Links is
                  (Number_Type (Property_Type));
 
             when K_Unique_Property_Type_Identifier =>
-               --  Link the property type because it may not be
-               --  linked yet.
+               --  Link the property type because it may not be linked
+               --  yet.
 
                declare
                   Pointed_Node : Node_Id;
@@ -3513,22 +3514,32 @@ package body Ocarina.Analyzer.AADL.Links is
                         DAE (Node1    => Property_Type,
                              Message1 => "does not point to anything");
                         return No_Node;
+
                      elsif Kind (Pointed_Node)
-                       /= K_Property_Type_Declaration then
+                       /= K_Property_Type_Declaration
+                     then
                         DAE (Node1    => Property_Type,
                              Message1 => " points to ",
                              Node2    => Pointed_Node,
                              Message2 => ", which is not a property type");
                         return No_Node;
+
                      else
                         Set_Referenced_Entity (Property_Type, Pointed_Node);
                      end if;
                   end if;
 
+                  if Kind (Get_Referenced_Entity (Property_Type)) /=
+                    K_Property_Type_Declaration
+                  then
+                     DAE (Node1    => Property_Type,
+                          Message1 => "is not a property type");
+                     return No_Node;
+                  end if;
+
                   return Recursive_Unwind_Units_Type
                     (Property_Type_Designator
-                     (Get_Referenced_Entity
-                      (Property_Type)));
+                       (Get_Referenced_Entity (Property_Type)));
                end;
 
             when K_Units_Type =>
@@ -3541,6 +3552,7 @@ package body Ocarina.Analyzer.AADL.Links is
 
          end case;
       end Recursive_Unwind_Units_Type;
+
    begin
       return Recursive_Unwind_Units_Type (Property_Type);
    end Unwind_Units_Type;

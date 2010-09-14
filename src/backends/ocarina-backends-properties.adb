@@ -1220,10 +1220,10 @@ package body Ocarina.Backends.Properties is
      (D : Node_Id)
      return Supported_Data_Access
    is
-      T_Name : Name_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
 
+      T_Name : Name_Id;
+   begin
       if Is_Defined_Enumeration_Property (D, Data_Required_Access) then
          T_Name := Get_Enumeration_Property (D, Data_Required_Access);
 
@@ -1993,36 +1993,39 @@ package body Ocarina.Backends.Properties is
                Property_Type_Range := Type_Range (Property_Type);
 
             when AADL_V2 =>
+               if Present (Parent_Subcomponent (E)) then
+                  Process_Inst := Parent_Subcomponent
+                    (Parent_Component (Parent_Subcomponent (E)));
 
-               Process_Inst := Parent_Subcomponent
-                 (Parent_Component (Parent_Subcomponent (E)));
+                  if Present (Process_Inst) then
+                     if Get_Category_Of_Component (Process_Inst)
+                       = CC_Thread
+                     then
+                        Process_Inst := Parent_Subcomponent
+                          (Parent_Component (Process_Inst));
+                     end if;
+                     Processor_Inst := Get_Bound_Processor
+                       (Corresponding_Instance (Process_Inst));
 
-               if Present (Process_Inst) then
-                  if Get_Category_Of_Component (Process_Inst) = CC_Thread then
-                     Process_Inst := Parent_Subcomponent
-                       (Parent_Component (Process_Inst));
-                  end if;
-                  Processor_Inst := Get_Bound_Processor
-                    (Corresponding_Instance (Process_Inst));
+                     if Is_Defined_Range_Property
+                       (Processor_Inst, Get_String_Name ("priority_range"))
+                     then
+                        Property_Type :=
+                          (AIN.Property_Association_Value
+                             (AIEP.Find_Property_Association_From_Name
+                                (Property_List =>
+                                   AIN.Properties (Processor_Inst),
+                                 Property_Name => Get_String_Name
+                                   ("priority_range"))));
 
-                  if Is_Defined_Range_Property (Processor_Inst,
-                                                Get_String_Name
-                                                  ("priority_range"))
-                  then
-                     Property_Type :=
-                       (AIN.Property_Association_Value
-                          (AIEP.Find_Property_Association_From_Name
-                             (Property_List => AIN.Properties (Processor_Inst),
-                              Property_Name => Get_String_Name
-                                ("priority_range"))));
-
-                     Property_Type_Range := Single_Value (Property_Type);
-                  else
-                     Display_Located_Error
-                       (AIN.Loc (Processor_Inst),
-                        "Priority_Range property is not defined",
-                        Fatal => False,
-                        Warning => True);
+                        Property_Type_Range := Single_Value (Property_Type);
+                     else
+                        Display_Located_Error
+                          (AIN.Loc (Processor_Inst),
+                           "Priority_Range property is not defined",
+                           Fatal => False,
+                           Warning => True);
+                     end if;
                   end if;
                end if;
          end case;
@@ -2252,10 +2255,12 @@ package body Ocarina.Backends.Properties is
    begin
       if Is_Defined_String_Property (T, Initialize_Entrypoint) then
          return Get_String_Property (T, Initialize_Entrypoint);
+
       elsif Is_Defined_String_Property
-               (T, Initialize_Entrypoint_Source_Text) then
+        (T, Initialize_Entrypoint_Source_Text)
+      then
          return Get_String_Property
-               (T, Initialize_Entrypoint_Source_Text);
+           (T, Initialize_Entrypoint_Source_Text);
       else
          return No_Name;
       end if;

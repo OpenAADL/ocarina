@@ -967,12 +967,15 @@ package body Ocarina.Backends.Utils is
    begin
       case Comparison is
          when By_Name =>
-            Get_Name_String (Compute_Full_Name_Of_Instance (E));
+            Get_Name_String (Map_Ada_Defining_Identifier (E));
+            --  Get_Name_String (Compute_Full_Name_Of_Instance (E));
+
          when By_Node =>
             Set_Nat_To_Name_Buffer (Nat (E));
       end case;
 
       Add_Str_To_Name_Buffer ("%Handling%" & Handling'Img);
+
       return Name_Find;
    end Get_Handling_Internal_Name;
 
@@ -988,6 +991,7 @@ package body Ocarina.Backends.Utils is
    is
       Internal_Name : constant Name_Id := Get_Handling_Internal_Name
         (E, Comparison, Handling);
+
    begin
       Set_Name_Table_Info (Internal_Name, Nat (A));
       May_Be_Append_Handling_Entry (E, Comparison, Handling, A);
@@ -1122,14 +1126,12 @@ package body Ocarina.Backends.Utils is
    ----------------------------------
 
    function Map_Ada_Data_Type_Designator (E : Node_Id) return Node_Id is
-   begin
       pragma Assert (AAU.Is_Data (E));
 
+   begin
       return ADU.Extract_Designator
         (ADN.Type_Definition_Node
-         (Backend_Node
-          (Identifier
-           (E))));
+         (Backend_Node (Identifier (E))));
    end Map_Ada_Data_Type_Designator;
 
    ---------------------------------
@@ -1244,7 +1246,7 @@ package body Ocarina.Backends.Utils is
       Suffix : String := "")
      return Name_Id
    is
-      I      : Node_Id := A;
+      I : Node_Id := A;
       N : Node_Id := No_Node;
       J : Node_Id;
       Name_List : List_Id;
@@ -1255,6 +1257,7 @@ package body Ocarina.Backends.Utils is
 
       if Kind (A) = K_Component_Instance then
          N := Namespace (A);
+
       elsif Kind (A) = K_Subcomponent_Instance then
          if Present (Parent_Component (A)) then
             N := Namespace (Parent_Component (A));
@@ -2182,7 +2185,8 @@ package body Ocarina.Backends.Utils is
                      Display_Located_Error
                        (Loc (F),
                         "This IN parameter is not connected to"
-                        & " any source",
+                          & " any source"
+                          & Image (Loc (Caller)),
                         Fatal => True);
                   elsif AAU.Length (Sources (F)) > 1 then
                      Display_Located_Error

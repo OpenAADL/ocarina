@@ -25,10 +25,25 @@ fcs.aadl:88:02: warning: Altitude references a component type
 fcs.aadl:68:02: warning: Degs references a component type
 fcs.aadl:69:02: warning: Mins references a component type
 fcs.aadl:70:02: warning: Secs references a component type
+fcs.aadl:68:02: warning: Degs references a component type
+fcs.aadl:69:02: warning: Mins references a component type
+fcs.aadl:70:02: warning: Secs references a component type
+fcs.aadl:68:02: warning: Degs references a component type
+fcs.aadl:69:02: warning: Mins references a component type
+fcs.aadl:70:02: warning: Secs references a component type
+fcs.aadl:68:02: warning: Degs references a component type
+fcs.aadl:69:02: warning: Mins references a component type
+fcs.aadl:70:02: warning: Secs references a component type
 fcs.aadl:508:02: warning: Dev_Bus references a component type
 fcs.aadl:509:02: warning: Mem_Bus references a component type
 fcs.aadl:346:02: warning: Dev_Bus references a component type
 fcs.aadl:347:02: warning: Mem_Bus references a component type
+fcs.aadl:68:02: warning: Degs references a component type
+fcs.aadl:69:02: warning: Mins references a component type
+fcs.aadl:70:02: warning: Secs references a component type
+fcs.aadl:68:02: warning: Degs references a component type
+fcs.aadl:69:02: warning: Mins references a component type
+fcs.aadl:70:02: warning: Secs references a component type
 fcs.aadl:278:02: warning: D_AP_Airspeed references a component type
 fcs.aadl:279:02: warning: D_AP_Altitude references a component type
 fcs.aadl:354:02: warning: GPS_Loc references a component type
@@ -38,7 +53,7 @@ fcs.aadl:360:02: warning: Aileron_Controller references a component type
 fcs.aadl:361:02: warning: Rudder_Controller references a component type
 fcs.aadl:362:02: warning: Elevator_Controller references a component type
 fcs.aadl:542:02: warning: LAN references a component type
-ocarina: Total: 0 error and 18 warnings
+ocarina: Total: 0 error and 33 warnings
 
 
 package Nav_Types

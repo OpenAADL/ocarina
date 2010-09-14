@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--               Copyright (C) 2005-2010, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -108,9 +108,9 @@ package body Ocarina.Instances.Components is
    ---------------------------
 
    function Instantiate_Component
-     (Instance_Root     : Node_Id;
-      Component         : Node_Id;
-      Existing_Instance : Node_Id := No_Node)
+     (Instance_Root       : Node_Id;
+      Component           : Node_Id;
+      Existing_Instance   : Node_Id := No_Node)
      return Node_Id
    is
       pragma Assert (AIN.Kind (Instance_Root) = K_Architecture_Instance);
@@ -122,25 +122,8 @@ package body Ocarina.Instances.Components is
       Instance_Node      : Node_Id;
       Success            : Boolean := True;
       Namespace_Instance : Node_Id;
+
    begin
-      --  Data components have to be instantiated only once. Other
-      --  components may be instantiated more than once. This avoids
-      --  infinite recursion in the case subprograms are features of
-      --  data and require/provide access to the same data. However,
-      --  if different data components inherit from the same parent
-      --  data component, the later has to be instantiated for each
-      --  child. This case is known if the Existing_Instance parameter
-      --  is not null. If different data component are implementations
-      --  of the same component type, the later has to be instantiated
-      --  for each implementation.
-
-      if No (Existing_Instance)
-        and then Component_Category'Val (Category (Component)) = CC_Data
-        and then Present (Get_Instance (Component))
-      then
-         return Get_Instance (Component);
-      end if;
-
       --  Getting the component namespace
 
       Namespace_Instance := Instantiate_Namespace
@@ -177,7 +160,7 @@ package body Ocarina.Instances.Components is
 
       --  1 - For component types:
 
-      --  (a) we instantite the features of the component
+      --  (a) we instantiate the features of the component
 
       --  (b) we instantiate recursively the parents of the component
 
@@ -218,8 +201,8 @@ package body Ocarina.Instances.Components is
 
          declare
             Component_Type : constant Node_Id := ATN.Corresponding_Entity
-              (Component_Type_Identifier
-               (Component));
+              (Component_Type_Identifier (Component));
+
          begin
             --  Annotate the component type node with the
             --  component implementation node.
@@ -250,7 +233,6 @@ package body Ocarina.Instances.Components is
             List_Node := ATN.First_Node (ATN.Subcomponents (Component));
 
             while Present (List_Node) loop
-               --  XXX Changed call Get_First_Homonym by this
                if No (Get_First_Homonym_Instance
                       (AIN.Subcomponents (New_Instance),
                        List_Node))
@@ -258,8 +240,7 @@ package body Ocarina.Instances.Components is
                   --  We do not re-instantiate subcomponent refinements
 
                   Instance_Node := Instantiate_Subcomponent
-                    (Instance_Root,
-                     List_Node);
+                    (Instance_Root, List_Node);
 
                   if Present (Instance_Node) then
                      --  Annotate the corresponding component of the
@@ -277,8 +258,7 @@ package body Ocarina.Instances.Components is
 
                      Append_Node_To_List
                        (Instance_Node,
-                        AIN.Subcomponents
-                        (New_Instance));
+                        AIN.Subcomponents (New_Instance));
 
                      --  We apply the properties to the component
                      --  corresponding to the subcomponent.
@@ -289,6 +269,7 @@ package body Ocarina.Instances.Components is
                         ATN.Properties (List_Node),
                         Override_Mode => True)
                        and then Success;
+
                   else
                      Display_Instantiation_Error (List_Node);
                      Success := False;
@@ -394,9 +375,11 @@ package body Ocarina.Instances.Components is
                         ATN.Properties (List_Node),
                         Override_Mode => True)
                        and then Success;
+
                      Append_Node_To_List
                        (Instance_Node,
                         AIN.Features (New_Instance));
+
                      Set_Parent_Component (Instance_Node, New_Instance);
                   else
                      Display_Instantiation_Error (List_Node);
@@ -442,9 +425,7 @@ package body Ocarina.Instances.Components is
             --  Instantiate the parent component
 
             New_Instance := Instantiate_Component
-              (Instance_Root,
-               The_Parent,
-               New_Instance);
+              (Instance_Root, The_Parent, New_Instance);
          end;
       end if;
 
@@ -472,9 +453,9 @@ package body Ocarina.Instances.Components is
                       (AIN.Connections (New_Instance),
                        List_Node))
                then
-                  Instance_Node := Instantiate_Connection (Instance_Root,
-                                                           New_Instance,
-                                                           List_Node);
+                  Instance_Node := Instantiate_Connection
+                    (Instance_Root, New_Instance, List_Node);
+
                   if Present (Instance_Node) then
                      Append_Node_To_List (Instance_Node,
                                           AIN.Connections (New_Instance));

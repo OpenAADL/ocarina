@@ -170,9 +170,7 @@ package body Ocarina.Instances.Components.Features is
                                   New_List (K_List_Id, No_Location));
 
             New_Subinstance := Instantiate_Corresponding_Entity
-              (Instance_Root,
-               Feature,
-               Container);
+              (Instance_Root, Feature, Container);
 
             if Present (New_Subinstance) then
                Set_Corresponding_Instance (New_Instance, New_Subinstance);
@@ -192,9 +190,7 @@ package body Ocarina.Instances.Components.Features is
             --  Instantiate the corresponding subprogram component
 
             New_Subinstance := Instantiate_Corresponding_Entity
-              (Instance_Root,
-               Feature,
-               Container);
+              (Instance_Root, Feature, Container);
 
             if Present (New_Subinstance) then
                Set_Corresponding_Instance (New_Instance, New_Subinstance);
@@ -209,8 +205,10 @@ package body Ocarina.Instances.Components.Features is
             AIN.Set_Is_Data (New_Instance,
                          Component_Category'Val
                          (Subcomponent_Category (Feature)) = CC_Data);
-            AIN.Set_Identifier (New_Instance,
-                            Duplicate_Identifier (ATN.Identifier (Feature)));
+
+            AIN.Set_Identifier
+              (New_Instance,
+               Duplicate_Identifier (ATN.Identifier (Feature)));
             Set_Sources (New_Instance, New_List (K_List_Id, No_Location));
             Set_Destinations (New_Instance, New_List (K_List_Id, No_Location));
 
@@ -224,15 +222,32 @@ package body Ocarina.Instances.Components.Features is
             --  2 - POSTPONE the resolution of this at the connection
             --  instantiation.
 
-            New_Subinstance := Instantiate_Corresponding_Entity
-              (Instance_Root,
-               Feature,
-               Container);
+            if Component_Category'Val
+              (Subcomponent_Category (Feature)) = CC_Data
+              and then Present (Get_Instance (ATE.Get_Referenced_Entity
+                                                (Entity_Ref (Feature))))
+            then
+               --  XXX If the component type denotes a data type, we
+               --  recycle an existing instance. this is done to avoid
+               --  infinite recursion, may lead to incorrect
+               --  properties being set. We should definitely
+               --  implement the recommandation above.  Yet, this
+               --  removes a dirtier hack in Instantiate_Component
 
-            if Present (New_Subinstance) then
-               Set_Corresponding_Instance (New_Instance, New_Subinstance);
+               Set_Corresponding_Instance
+                 (New_Instance,
+                  Get_Instance (ATE.Get_Referenced_Entity
+                                  (Entity_Ref (Feature))));
+
             else
-               Success := False;
+               New_Subinstance := Instantiate_Corresponding_Entity
+                 (Instance_Root, Feature, Container);
+
+               if Present (New_Subinstance) then
+                  Set_Corresponding_Instance (New_Instance, New_Subinstance);
+               else
+                  Success := False;
+               end if;
             end if;
 
          when others =>
@@ -300,12 +315,12 @@ package body Ocarina.Instances.Components.Features is
             return New_Subinstance;
          end if;
 
-         --  If the component isn't instantiateed yet, instantiate it...
+         --  If the component isn't instantiated yet, instantiate it...
 
          New_Subinstance := Instantiate_Component (Instance_Root, C);
 
          if Present (New_Subinstance) then
-            --  Instantiation is successful, append the compoent to the
+            --  Instantiation is successful, append the component to the
             --  declarations of its namespace. If the component has
             --  subcomponents, they will be added recursivly.
 
@@ -313,8 +328,8 @@ package body Ocarina.Instances.Components.Features is
             --  list because we cannot append the same node in two
             --  different lists.
 
-            Append_To_Namespace_Instance
-              (Instance_Root, New_Subinstance);
+            Append_To_Namespace_Instance (Instance_Root, New_Subinstance);
+
          else
             --  Something went wrong, propagate the information by
             --  returning No_Node.
