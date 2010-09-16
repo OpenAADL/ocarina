@@ -164,7 +164,8 @@ ASN1_types: type enumeration
      aboolean,
      areal,
      achoice,
-     aoctetstring);
+     aoctetstring,
+     astring);
      
          
 ASN1_Basic_Type : ASN1_types applies to (data);
