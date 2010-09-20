@@ -224,6 +224,7 @@ package body Ocarina.Instances.Components.Features is
 
             if Component_Category'Val
               (Subcomponent_Category (Feature)) = CC_Data
+              and then Present (Entity_Ref (Feature))
               and then Present (Get_Instance (ATE.Get_Referenced_Entity
                                                 (Entity_Ref (Feature))))
             then

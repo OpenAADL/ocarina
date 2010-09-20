@@ -78,7 +78,8 @@ package body Ocarina.Instances.Messages is
       pragma Assert (Present (Node));
       Error_Loc (1) := Loc (Node);
       Error_Name (1) := Get_Name_Of_Entity (Node);
-      DE ("%could not be properly instantiated");
+      DE ("%cannot be properly instantiated");
+      Exit_On_Error (True, "Cannot instantiate full model, exit now");
    end Display_Instantiation_Error;
 
 end Ocarina.Instances.Messages;
