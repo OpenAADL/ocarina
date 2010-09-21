@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -789,6 +789,7 @@ package body Ocarina.Backends.C_Common.Types is
          Declaration          : Node_Id;
          The_System : constant Node_Id := Parent_Component
            (Parent_Subcomponent (E));
+         Remote_Process : Node_Id;
       begin
          if Real_Process then
             U := CTN.Distributed_Application_Unit
@@ -888,6 +889,21 @@ package body Ocarina.Backends.C_Common.Types is
                   D := First_Node (Destinations (C));
                   I := Item (D);
 
+                  if Get_Category_Of_Component
+                     (Parent_Component (I)) = CC_Process then
+                     Remote_Process := Parent_Component (I);
+
+                     if not AINU.Is_Empty (Subcomponents (Remote_Process)) then
+                        S := First_Node (Subcomponents (Remote_Process));
+                        while Present (S) loop
+
+                           Visit (Corresponding_Instance (S));
+
+                           S := Next_Node (S);
+                        end loop;
+                     end if;
+                  end if;
+
                   if Present (I) and then
                     Kind (I) = K_Port_Spec_Instance and then
                     not AINU.Is_Empty (Destinations (I)) then
@@ -906,6 +922,48 @@ package body Ocarina.Backends.C_Common.Types is
 
                C := Next_Node (C);
             end loop;
+            C := First_Node (Features (E));
+
+            while Present (C) loop
+               if Kind (C) = K_Port_Spec_Instance and then
+                 not AINU.Is_Empty (Sources (C)) then
+                  D := First_Node (Sources (C));
+                  I := Item (D);
+
+                  if Get_Category_Of_Component
+                     (Parent_Component (I)) = CC_Process then
+                     Remote_Process := Parent_Component (I);
+
+                     if not AINU.Is_Empty (Subcomponents (Remote_Process)) then
+                        S := First_Node (Subcomponents (Remote_Process));
+                        while Present (S) loop
+
+                           Visit (Corresponding_Instance (S));
+
+                           S := Next_Node (S);
+                        end loop;
+                     end if;
+                  end if;
+
+                  if Present (I) and then
+                    Kind (I) = K_Port_Spec_Instance and then
+                    not AINU.Is_Empty (Sources (I)) then
+                     F := First_Node (Sources (I));
+                     while Present (F) loop
+                        J := Item (F);
+
+                        if Present (J) then
+                           Visit (Parent_Component (J));
+                        end if;
+                        F := Next_Node (F);
+                     end loop;
+                  end if;
+                  D := Next_Node (D);
+               end if;
+
+               C := Next_Node (C);
+            end loop;
+
          end if;
 
          --  Unmark all the marked types

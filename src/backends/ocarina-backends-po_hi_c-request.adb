@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2010, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -156,12 +156,9 @@ package body Ocarina.Backends.PO_HI_C.Request is
          Push_Entity (U);
          Set_Request_Header;
 
-         Start_Recording_Handlings;
-
          --  Create the global lists
 
          Request_Struct         := New_List (CTN.K_Enumeration_Literals);
-         Request_Union_List     := New_List (CTN.K_Enumeration_Literals);
 
          Operation_Identifier   := 0;
          Request_Declared       := False;
@@ -290,8 +287,6 @@ package body Ocarina.Backends.PO_HI_C.Request is
               (Identifier (E), N);
          end if;
 
-         Reset_Handlings;
-
          Pop_Entity; -- U
          Pop_Entity; -- P
       end Visit_Process_Instance;
@@ -304,6 +299,10 @@ package body Ocarina.Backends.PO_HI_C.Request is
          S : Node_Id;
       begin
          Push_Entity (C_Root);
+
+         Start_Recording_Handlings;
+
+         Request_Union_List     := New_List (CTN.K_Enumeration_Literals);
 
          Ports_Names_Array  := Make_Array_Values;
          --  Visit all the subcomponents of the system
@@ -318,6 +317,8 @@ package body Ocarina.Backends.PO_HI_C.Request is
                S := Next_Node (S);
             end loop;
          end if;
+
+         Reset_Handlings;
 
          Pop_Entity; --  C_Root
       end Visit_System_Instance;
@@ -334,6 +335,8 @@ package body Ocarina.Backends.PO_HI_C.Request is
       begin
          if Has_Ports (E) then
             F := First_Node (Features (E));
+            Request_Declared := True;
+            Add_Include (RH (RH_Types));
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance
                  and then No (Get_Handling (F, By_Node, H_C_Request_Spec))
