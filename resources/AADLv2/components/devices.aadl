@@ -1,277 +1,293 @@
 package ocarina_drivers
-
 public
 
-with deployment;
+  with deployment;
+  
+  with ocarina_buses;
+  
+  with Data_Model;
+  with Base_Types;
+  
+  with ocarina_drivers_rasta_1553;
+  with ocarina_drivers_rasta_serial;
+  with ocarina_drivers_rasta_spacewire;
+  with ocarina_drivers_rtems_ne2000;
+  
+  with ocarina_drivers_udp_exarm;
+  with ocarina_drivers_serial;
+  
+  with ocarina_drivers_ip_asn1;
+  with ocarina_drivers_ip_pohic;
+  
+  with ocarina_drivers_exarm_ni_6071e_analog;
+  with ocarina_drivers_exarm_ni_6071e_digital;
+  
+  with ocarina_drivers_generic_keyboard;
+  
+  with GRUART;
+  with GRSPW;
+  with TCP_IP_Protocol;
 
-with ocarina_buses;
+  --------------
+  -- Keyboard --
+  --------------
+  
+  device generic_keyboard
+  features
+    key_pressed  : out data port Base_Types::Character;
+  properties
+    Deployment::Driver_Name    => "generic_keyboard";
+    Device_Driver              => classifier (ocarina_drivers_generic_keyboard::generic_keyboard_driver.i);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_generic_keyboard::spg_generic_keyboard_init);
+  end generic_keyboard;
+  
+  device implementation generic_keyboard.linux
+  end generic_keyboard.linux;
 
-with Data_Model;
-with Base_Types;
+  ----------------
+  -- RASTA 1553 --
+  ----------------
+  
+  device rasta_1553
+  end rasta_1553;
+  
+  device implementation rasta_1553.terminal
+  properties
+    Deployment::Driver_Name    => "1553_rasta";
+    Device_Driver              => classifier (ocarina_drivers_rasta_1553::if1553_driver.rasta_terminal);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_1553::spg_1553_init_rasta_terminal);
+    Provided_Virtual_Bus_Class => (classifier (ocarina_buses::pohi.c));
+  end rasta_1553.terminal;
+  
+  device implementation rasta_1553.controller_sender_only
+  properties
+    Deployment::Driver_Name    => "1553_rasta";
+    Device_Driver              => classifier (ocarina_drivers_rasta_1553::if1553_driver.rasta_controller_sender_only);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_1553::spg_1553_init_rasta_controller);
+    Provided_Virtual_Bus_Class => (classifier (ocarina_buses::pohi.c));
+  end rasta_1553.controller_sender_only;
+  
+  ------------------
+  -- RASTA SERIAL --
+  ------------------
+  
+  device rasta_serial
+  features
+    serialaccess : requires bus access ocarina_buses::serial.generic;
+  end rasta_serial;
+  
+  device implementation rasta_serial.raw
+  properties
+    Deployment::Driver_Name    => "serial_rasta";
+    Device_Driver              => classifier (ocarina_drivers_rasta_serial::serial_driver.rasta);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_serial::spg_serial_init_rasta);
+    Provided_Virtual_Bus_Class => (classifier (ocarina_buses::raw.i));
+  end rasta_serial.raw;
 
-with ocarina_drivers_rasta_1553;
-with ocarina_drivers_rasta_serial;
-with ocarina_drivers_rasta_spacewire;
-with ocarina_drivers_rtems_ne2000;
+  device implementation rasta_serial.pohiada
+  properties
+    Deployment::Driver_Name    => "serial_rasta";
+    Implemented_As =>  classifier (GRUART::Driver_GRUART_Protocol.impl);
+    Initialize_Entrypoint => classifier (GRUART::Initialize);
+    Provided_Virtual_Bus_Class => (classifier (ocarina_buses::raw.i));
+  end rasta_serial.pohiada;
 
-with ocarina_drivers_udp_exarm;
-with ocarina_drivers_serial;
+  ---------------------
+  -- RASTA SPACEWIRE --
+  ---------------------
 
-with ocarina_drivers_ip_asn1;
-with ocarina_drivers_ip_pohic;
+  device rasta_spacewire
+  features
+    spwaccess : requires bus access ocarina_buses::spacewire.generic;
+  end rasta_spacewire;
+  
+  device implementation rasta_spacewire.pohic
+  properties
+    Deployment::Driver_Name       => "spacewire_rasta";
+    Device_Driver                 => classifier (ocarina_drivers_rasta_spacewire::spacewire_driver.rasta);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_rasta_spacewire::spg_spacewire_init_rasta);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end rasta_spacewire.pohic;
 
-with ocarina_drivers_exarm_ni_6071e_analog;
-with ocarina_drivers_exarm_ni_6071e_digital;
+  device implementation rasta_spacewire.pohiada
+  properties
+    Deployment::Driver_Name       => "spacewire_rasta";
+    Implemented_As =>  classifier (GRSPW::Driver_GRSPW_Protocol.impl);
+    Initialize_Entrypoint => classifier (GRSPW::Initialize);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end rasta_spacewire.pohiada;
 
-with ocarina_drivers_generic_keyboard;
+  ---------------------------
+  -- Generic serial driver --
+  ---------------------------
 
-----------------
---  Keyboard  --
-----------------
+  device generic_serial
+  features
+    serialaccess : requires bus access ocarina_buses::serial.generic;
+  end generic_serial;
+  
+  device implementation generic_serial.raw
+  properties
+    Deployment::Driver_Name       => "serial_linux";
+    Device_Driver                 => classifier (ocarina_drivers_serial::serial_driver.linux);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_serial::spg_serial_init_linux);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::raw.i));
+  end generic_serial.raw;
 
-device generic_keyboard
-features
-   key_pressed  : out data port Base_Types::Character;
-properties
-   Deployment::Driver_Name    => "generic_keyboard";
-   Device_Driver              => classifier (ocarina_drivers_generic_keyboard::generic_keyboard_driver.i);
-   Initialize_Entrypoint      => classifier (ocarina_drivers_generic_keyboard::spg_generic_keyboard_init);
-end generic_keyboard;
+  device implementation generic_serial.raw_sender
+  properties
+    Deployment::Driver_Name       => "serial_linux_sender";
+    Device_Driver                 => classifier (ocarina_drivers_serial::serial_driver.linux_sender);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_serial::spg_serial_init_linux_sender);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::raw.i));
+  end generic_serial.raw_sender;
+  
+  device implementation generic_serial.raw_receiver
+  properties
+    Deployment::Driver_Name       => "serial_linux_receiver";
+    Device_Driver                 => classifier (ocarina_drivers_serial::serial_driver.linux_receiver);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_serial::spg_serial_init_linux_receiver);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::raw.i));
+  end generic_serial.raw_receiver;
 
-device implementation generic_keyboard.linux
-end generic_keyboard.linux;
+  -------------------------------
+  -- Generic sockets/ip driver --
+  -------------------------------
 
-------------------
---  RASTA 1553  --
-------------------
+  device generic_sockets_ip
+  features
+    thebus : requires bus access ocarina_buses::ip.i;
+  end generic_sockets_ip;
+  
+  device implementation generic_sockets_ip.pohic_old
+  properties
+    Deployment::Driver_Name       => "sockets";
+    Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.i);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end generic_sockets_ip.pohic_old;
 
-device rasta_1553
-end rasta_1553;
+  device implementation generic_sockets_ip.pohic
+  properties
+    Deployment::Driver_Name       => "socketsnew";
+    Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.inew);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end generic_sockets_ip.pohic;
 
-device implementation rasta_1553.terminal
-properties
-   Deployment::Driver_Name    => "1553_rasta";
-   Device_Driver              => classifier (ocarina_drivers_rasta_1553::if1553_driver.rasta_terminal);
-   Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_1553::spg_1553_init_rasta_terminal);
-   Provided_Virtual_Bus_Class => (classifier (ocarina_buses::pohi.c));
-end rasta_1553.terminal;
+  device implementation generic_sockets_ip.pohiada
+  properties
+    Deployment::Driver_Name       => "socketsnew";
+    Implemented_As => classifier (TCP_IP_Protocol::Driver_TCP_IP_Protocol.impl);
+    Initialize_Entrypoint => classifier (TCP_IP_Protocol::Initialize);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end generic_sockets_ip.pohiada;
+  
+  device implementation generic_sockets_ip.asn1
+  properties
+    Deployment::Driver_Name       => "sockets_asn1";
+    Device_Driver                 => classifier (ocarina_drivers_ip_asn1::sockets_impl.asn1);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_ip_asn1::spg_sockets_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::asn1.i));
+  end generic_sockets_ip.asn1;
+  
+  ------------------
+  -- RTEMS NE2000 --
+  ------------------
 
-device implementation rasta_1553.controller_sender_only
-properties
-   Deployment::Driver_Name    => "1553_rasta";
-   Device_Driver              => classifier (ocarina_drivers_rasta_1553::if1553_driver.rasta_controller_sender_only);
-   Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_1553::spg_1553_init_rasta_controller);
-   Provided_Virtual_Bus_Class => (classifier (ocarina_buses::pohi.c));
-end rasta_1553.controller_sender_only;
+  device rtems_ne2000
+  features
+    thebus : requires bus access ocarina_buses::ip.i;
+  end rtems_ne2000;
+  
+  device implementation rtems_ne2000.ip_pohic
+  properties
+    Deployment::Driver_Name       => "rtems_ne2000_sockets";
+    Device_Driver                 => classifier (ocarina_drivers_rtems_ne2000::driver.i);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_rtems_ne2000::init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end rtems_ne2000.ip_pohic;
 
---------------------
---  RASTA SERIAL  --
---------------------
+  ------------------------------------------
+  --            Exarm UDP driver          --
+  ------------------------------------------
+  --  This driver is used to communicate  --
+  --  with the exarm robot and also       --
+  --  the Matlab simulator.               --
+  ------------------------------------------
+  
+  device exarm_ip
+  features
+    thebus : requires bus access ocarina_buses::ip.i;
+  end exarm_ip;
+  
+  device implementation exarm_ip.vr_udp
+  properties
+    Deployment::Driver_Name    => "exarm";
+    Device_Driver              => classifier (ocarina_drivers_udp_exarm::driver.i);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_udp_exarm::init);
+  end exarm_ip.vr_udp;
+  
+  data exarm_protocol_data
+  end exarm_protocol_data;
+  
+  data implementation exarm_protocol_data.vr extends ocarina_drivers_udp_exarm::protocol.vr
+  properties
+    Data_Model::Data_Representation => Struct;
+  end exarm_protocol_data.vr;
+  
+  data implementation exarm_protocol_data.robot extends ocarina_drivers_udp_exarm::protocol.robot
+  properties
+    Data_Model::Data_Representation => Struct;
+  end exarm_protocol_data.robot;
 
-device rasta_serial
-features
-   serialaccess : requires bus access ocarina_buses::serial.generic;
-end rasta_serial;
+  ---------------------------------------
+  --   Devices for the Exo skeleton    --
+  --  National Instruments PCI-6071E   --
+  ---------------------------------------
+  --  This device is used to make data --
+  --  acquisition of the EXARM robot.  --
+  ---------------------------------------
+  
+  device exarm_ni_6071e_analog
+  features
+    data1  : out data port Base_Types::Float_64;
+    data2  : out data port Base_Types::Float_64;
+    data3  : out data port Base_Types::Float_64;
+    data4  : out data port Base_Types::Float_64;
+    data5  : out data port Base_Types::Float_64;
+    data6  : out data port Base_Types::Float_64;
+    data7  : out data port Base_Types::Float_64;
+    data8  : out data port Base_Types::Float_64;
+    data9  : out data port Base_Types::Float_64;
+    data10 : out data port Base_Types::Float_64;
+    data11 : out data port Base_Types::Float_64;
+    data12 : out data port Base_Types::Float_64;
+    data13 : out data port Base_Types::Float_64;
+    data14 : out data port Base_Types::Float_64;
+    data15 : out data port Base_Types::Float_64;
+    data16 : out data port Base_Types::Float_64;
+  end exarm_ni_6071e_analog;
 
-device implementation rasta_serial.raw
-properties
-   Deployment::Driver_Name    => "serial_rasta";
-   Device_Driver              => classifier (ocarina_drivers_rasta_serial::serial_driver.rasta);
-   Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_serial::spg_serial_init_rasta);
-   Provided_Virtual_Bus_Class => (classifier (ocarina_buses::raw.i));
-end rasta_serial.raw;
+  device implementation exarm_ni_6071e_analog.i
+  properties
+    Deployment::Driver_Name    => "exarm_ni_6071e_analog";
+    Device_Driver              => classifier (ocarina_drivers_exarm_ni_6071e_analog::driver.i);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_exarm_ni_6071e_analog::spg_init);
+  end exarm_ni_6071e_analog.i;
 
+  device exarm_ni_6071e_digital
+  features
+    data1  : out data port Base_Types::Unsigned_8;
+    data2  : out data port Base_Types::Unsigned_8;
+  end exarm_ni_6071e_digital;
 
------------------------
---  RASTA SPACEWIRE  --
------------------------
-
-device rasta_spacewire
-features
-   spwaccess : requires bus access ocarina_buses::spacewire.generic;
-end rasta_spacewire;
-
-device implementation rasta_spacewire.pohic
-properties
-   Deployment::Driver_Name       => "spacewire_rasta";
-   Device_Driver                 => classifier (ocarina_drivers_rasta_spacewire::spacewire_driver.rasta);
-   Initialize_Entrypoint         => classifier (ocarina_drivers_rasta_spacewire::spg_spacewire_init_rasta);
-   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
-end rasta_spacewire.pohic;
-
-
------------------------------
---  Generic serial driver  --
------------------------------
-
-device generic_serial
-features
-   serialaccess : requires bus access ocarina_buses::serial.generic;
-end generic_serial;
-
-device implementation generic_serial.raw
-properties
-   Deployment::Driver_Name       => "serial_linux";
-   Device_Driver                 => classifier (ocarina_drivers_serial::serial_driver.linux);
-   Initialize_Entrypoint         => classifier (ocarina_drivers_serial::spg_serial_init_linux);
-   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::raw.i));
-end generic_serial.raw;
-
-
-device implementation generic_serial.raw_sender
-properties
-   Deployment::Driver_Name       => "serial_linux_sender";
-   Device_Driver                 => classifier (ocarina_drivers_serial::serial_driver.linux_sender);
-   Initialize_Entrypoint         => classifier (ocarina_drivers_serial::spg_serial_init_linux_sender);
-   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::raw.i));
-end generic_serial.raw_sender;
-
-
-device implementation generic_serial.raw_receiver
-properties
-   Deployment::Driver_Name       => "serial_linux_receiver";
-   Device_Driver                 => classifier (ocarina_drivers_serial::serial_driver.linux_receiver);
-   Initialize_Entrypoint         => classifier (ocarina_drivers_serial::spg_serial_init_linux_receiver);
-   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::raw.i));
-end generic_serial.raw_receiver;
-
-
-
----------------------------------
---  Generic sockets/ip driver  --
----------------------------------
-
-device generic_sockets_ip
-features
-   thebus : requires bus access ocarina_buses::ip.i;
-end generic_sockets_ip;
-
-device implementation generic_sockets_ip.pohic_old
-properties
-   Deployment::Driver_Name       => "sockets";
-   Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.i);
-   Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
-   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
-end generic_sockets_ip.pohic_old;
-
-
-device implementation generic_sockets_ip.pohic
-properties
-   Deployment::Driver_Name       => "socketsnew";
-   Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.inew);
-   Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
-   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
-end generic_sockets_ip.pohic;
-
-
-device implementation generic_sockets_ip.asn1
-properties
-   Deployment::Driver_Name       => "sockets_asn1";
-   Device_Driver                 => classifier (ocarina_drivers_ip_asn1::sockets_impl.asn1);
-   Initialize_Entrypoint         => classifier (ocarina_drivers_ip_asn1::spg_sockets_init);
-   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::asn1.i));
-end generic_sockets_ip.asn1;
-
----------------------
---  RTEMS NE2000   --
----------------------
-
-device rtems_ne2000
-features
-   thebus : requires bus access ocarina_buses::ip.i;
-end rtems_ne2000;
-
-device implementation rtems_ne2000.ip_pohic
-properties
-   Deployment::Driver_Name       => "rtems_ne2000_sockets";
-   Device_Driver                 => classifier (ocarina_drivers_rtems_ne2000::driver.i);
-   Initialize_Entrypoint         => classifier (ocarina_drivers_rtems_ne2000::init);
-   Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
-end rtems_ne2000.ip_pohic;
-
-------------------------------------------
---            Exarm UDP driver          --
-------------------------------------------
---  This driver is used to communicate  --
---  with the exarm robot and also       --
---  the Matlab simulator.               --
-------------------------------------------
-
-device exarm_ip
-features
-   thebus : requires bus access ocarina_buses::ip.i;
-end exarm_ip;
-
-device implementation exarm_ip.vr_udp
-properties
-   Deployment::Driver_Name    => "exarm";
-   Device_Driver              => classifier (ocarina_drivers_udp_exarm::driver.i);
-   Initialize_Entrypoint      => classifier (ocarina_drivers_udp_exarm::init);
-end exarm_ip.vr_udp;
-
-data exarm_protocol_data
-end exarm_protocol_data;
-
-data implementation exarm_protocol_data.vr extends ocarina_drivers_udp_exarm::protocol.vr
-properties
-   Data_Model::Data_Representation => Struct;
-end exarm_protocol_data.vr;
-
-data implementation exarm_protocol_data.robot extends ocarina_drivers_udp_exarm::protocol.robot
-properties
-   Data_Model::Data_Representation => Struct;
-end exarm_protocol_data.robot;
-
----------------------------------------
---   Devices for the Exo skeleton    --
---  National Instruments PCI-6071E   --
----------------------------------------
---  This device is used to make data --
---  acquisition of the EXARM robot.  --
----------------------------------------
-
-device exarm_ni_6071e_analog
-features
-   data1  : out data port Base_Types::Float_64;
-   data2  : out data port Base_Types::Float_64;
-   data3  : out data port Base_Types::Float_64;
-   data4  : out data port Base_Types::Float_64;
-   data5  : out data port Base_Types::Float_64;
-   data6  : out data port Base_Types::Float_64;
-   data7  : out data port Base_Types::Float_64;
-   data8  : out data port Base_Types::Float_64;
-   data9  : out data port Base_Types::Float_64;
-   data10 : out data port Base_Types::Float_64;
-   data11 : out data port Base_Types::Float_64;
-   data12 : out data port Base_Types::Float_64;
-   data13 : out data port Base_Types::Float_64;
-   data14 : out data port Base_Types::Float_64;
-   data15 : out data port Base_Types::Float_64;
-   data16 : out data port Base_Types::Float_64;
-end exarm_ni_6071e_analog;
-
-
-device implementation exarm_ni_6071e_analog.i
-properties
-   Deployment::Driver_Name    => "exarm_ni_6071e_analog";
-   Device_Driver              => classifier (ocarina_drivers_exarm_ni_6071e_analog::driver.i);
-   Initialize_Entrypoint      => classifier (ocarina_drivers_exarm_ni_6071e_analog::spg_init);
-end exarm_ni_6071e_analog.i;
-
-
-device exarm_ni_6071e_digital
-features
-   data1  : out data port Base_Types::Unsigned_8;
-   data2  : out data port Base_Types::Unsigned_8;
-end exarm_ni_6071e_digital;
-
-
-device implementation exarm_ni_6071e_digital.i
-properties
-   Deployment::Driver_Name    => "exarm_ni_6071e_digital";
-   Device_Driver              => classifier (ocarina_drivers_exarm_ni_6071e_digital::driver.i);
-   Initialize_Entrypoint      => classifier (ocarina_drivers_exarm_ni_6071e_digital::spg_init);
-end exarm_ni_6071e_digital.i;
+  device implementation exarm_ni_6071e_digital.i
+  properties
+    Deployment::Driver_Name    => "exarm_ni_6071e_digital";
+    Device_Driver              => classifier (ocarina_drivers_exarm_ni_6071e_digital::driver.i);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_exarm_ni_6071e_digital::spg_init);
+  end exarm_ni_6071e_digital.i;
 
 end ocarina_drivers;
 

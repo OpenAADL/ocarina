@@ -1,0 +1,18 @@
+package Generic_Bus
+public
+
+  ---------
+  -- BUS --
+  ---------
+
+  -- Generic bus to model connections between processors and
+  -- devices. It is not used by the code generation process, so it is
+  -- made fully generic.
+
+  bus Generic_Bus
+  end Generic_Bus;
+
+  bus implementation Generic_Bus.impl
+  end Generic_Bus.impl;
+
+end Generic_Bus;

@@ -1,0 +1,129 @@
+package Native_UART
+
+-- This package models a UART protocol layer for the PolyORB-HI/Ada
+-- AADL runtime. It defines the subprograms and threads to be
+-- integrated with the runtime low level interface.
+--
+-- To configure this interface, you should use the
+-- Deployment::Configuration property with the following format: 
+--     "serial DEVICE BAUDS DATA_BITS PARITY STOP_BIT"
+--
+-- e.g.
+--
+--     uart : device GRUART::GRUART_Device
+--            {Deployment::Configuration => "serial /dev/ttyS0 9600 8 N 1"
+-- 
+
+public
+
+   with Generic_Bus;
+
+   ------------
+   -- DEVICE --
+   ------------
+
+   -- The main entrypoint for this package is this device, it relies
+   -- on the 'Implement_As' feature that defines its full
+   -- specification.
+
+   device Native_UART_Device
+   features
+      DB9_Wire : requires bus access Generic_Bus::Generic_Bus.impl;
+      -- Connection to the remote node    
+
+   end Native_UART_Device;
+
+   device implementation Native_UART_Device.impl
+   properties
+      Implemented_As => 
+         classifier (Native_UART::Driver_Native_UART_Protocol.impl);
+      Initialize_Entrypoint => classifier (Native_UART::Initialize);
+   end Native_UART_Device.impl;
+
+   ------------
+   -- DRIVER --
+   ------------
+
+   -- In AADLv2, we can model the actual implementation of a driver
+   -- using an abstract component.
+
+   abstract Driver_Native_UART_Protocol
+   end Driver_Native_UART_Protocol;
+
+   abstract implementation Driver_Native_UART_Protocol.impl
+   subcomponents
+      receiver : thread Driver_Native_UART_Protocol_thread_receiver.impl;
+   end Driver_Native_UART_Protocol.impl;
+
+   -------------
+   -- THREADS --
+   -------------
+
+   -- This thread handles the execution logic of the protocol
+   -- stack. It relies on the previous subprograms to receive
+   -- messages.
+
+   thread Driver_Native_UART_Protocol_thread_receiver
+      
+      -- This thread is dispatched when an event is detected on the
+      -- real hardware. It then calls receive to handle the incoming
+      -- event.
+
+   properties
+      Dispatch_Protocol => Background;
+      Priority          => 10;
+      source_stack_size => 200 KByte;
+   end Driver_Native_UART_Protocol_thread_receiver;
+
+   thread implementation Driver_Native_UART_Protocol_thread_receiver.impl
+   calls 
+      call1 : { pspg : subprogram receive; };
+   end Driver_Native_UART_Protocol_thread_receiver.impl;
+
+   -----------------
+   -- SUBPROGRAMS --
+   -----------------
+
+   -- These subprograms model the high-level view of the SpaceWire
+   -- protocol stack. They define an API used by the stack to send and
+   -- receive data, and perform node's initialisation.
+
+   subprogram Initialize
+
+     -- Initialize the different internal resources for managing
+     -- connections on a node. This subprogram has no formal visible
+     -- parameters, but relies on well-known data structures and
+     -- variables to configure the stack.
+
+   properties
+      Source_Name => "PolyORB_HI_Drivers_Native_UART.Initialize";
+      Source_Language => Ada;
+   end Initialize;
+
+   -------------
+
+   subprogram Receive
+
+      -- Receive data and dispatch them to the receiving entity. This
+      -- program and its sibling (send) share a common protocol, not
+      -- defined in the AADL model.
+
+   properties
+      Source_Name => "PolyORB_HI_Drivers_Native_UART.Receive";
+      Source_Language => Ada;
+   end Receive;
+
+   -------------
+
+   subprogram Send
+
+      -- Send data to a remote node. This program and its sibling
+      -- (receive) share a common protocol, not defined in the AADL
+      -- model.
+
+   properties
+      Source_Name => "PolyORB_HI_Drivers_Native_UART.Send";
+      Source_Language => Ada;
+   end Send;
+
+end Native_UART;

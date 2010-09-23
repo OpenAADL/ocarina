@@ -1,0 +1,130 @@
+package GRSPW
+
+-- This package models a SpaceWire-based protocol layer for the
+-- PolyORB-HI/Ada AADL runtime, based on the GRSPW chipset from
+-- AEROFlex Gaisler. It defines the subprograms and threads to be
+-- integrated with the runtime low level interface.
+--
+-- To configure this interface, you should use the
+-- Deployment::Configuration property with the following format: 
+--     "spacewire Sender_Core_id Receiver_Core_Id"
+--
+-- e.g.
+--
+--     spw : device GRSPW::GRSPW_Device
+--            {Deployment::Configuration => "spacewire 1 2"};
+-- 
+
+public
+
+   with GR_CPCI_X4CV;
+   with Generic_Bus;
+
+   ------------
+   -- DEVICE --
+   ------------
+
+   -- The main entrypoint for this package is this device, it relies
+   -- on the 'Implement_As' feature that defines its full
+   -- specification.
+
+   device GRSPW_Device
+   features
+      LVDS_Wire : requires bus access Generic_Bus::Generic_Bus.impl;
+      -- Connection to the remote node    
+
+   end GRSPW_Device;
+
+   device implementation GRSPW_Device.impl
+   properties
+      Implemented_As => 
+         classifier (GRSPW::Driver_GRSPW_Protocol.impl);
+      Initialize_Entrypoint => classifier (GRSPW::Initialize);
+   end GRSPW_Device.impl;
+
+   ------------
+   -- DRIVER --
+   ------------
+
+   -- In AADLv2, we can model the actual implementation of a driver
+   -- using an abstract component.
+
+   abstract Driver_GRSPW_Protocol
+   end Driver_GRSPW_Protocol;
+
+   abstract implementation Driver_GRSPW_Protocol.impl
+   subcomponents
+      receiver : thread Driver_GRSPW_Protocol_thread_receiver.impl;
+   end Driver_GRSPW_Protocol.impl;
+
+   -------------
+   -- THREADS --
+   -------------
+
+   -- This thread handles the execution logic of the protocol
+   -- stack. It relies on the previous subprograms to receive
+   -- messages.
+
+   thread Driver_GRSPW_Protocol_thread_receiver
+      
+      -- This thread is dispatched when an event is detected on the
+      -- real hardware. It then calls receive to handle the incoming
+      -- event.
+
+   properties
+      Dispatch_Protocol => Background;
+      Priority          => 12;
+   end Driver_GRSPW_Protocol_thread_receiver;
+
+   thread implementation Driver_GRSPW_Protocol_thread_receiver.impl
+   calls 
+      call1 : { pspg : subprogram receive; };
+   end Driver_GRSPW_Protocol_thread_receiver.impl;
+
+   -----------------
+   -- SUBPROGRAMS --
+   -----------------
+
+   -- These subprograms model the high-level view of the SpaceWire
+   -- protocol stack. They define an API used by the stack to send and
+   -- receive data, and perform node's initialisation.
+
+   subprogram Initialize
+
+     -- Initialize the different internal resources for managing
+     -- connections on a node. This subprogram has no formal visible
+     -- parameters, but relies on well-known data structures and
+     -- variables to configure the stack.
+
+   properties
+      Source_Name => "PolyORB_HI_Drivers_GRSPW.Initialize";
+      Source_Language => Ada;
+   end Initialize;
+
+   -------------
+
+   subprogram Receive
+
+      -- Receive data and dispatch them to the receiving entity. This
+      -- program and its sibling (send) share a common protocol, not
+      -- defined in the AADL model.
+
+   properties
+      Source_Name => "PolyORB_HI_Drivers_GRSPW.Receive";
+      Source_Language => Ada;
+   end Receive;
+
+   -------------
+
+   subprogram Send
+
+      -- Send data to a remote node. This program and its sibling
+      -- (receive) share a common protocol, not defined in the AADL
+      -- model.
+
+   properties
+      Source_Name => "PolyORB_HI_Drivers_GRSPW.Send";
+      Source_Language => Ada;
+   end Send;
+
+end GRSPW;
