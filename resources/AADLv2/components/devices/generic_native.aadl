@@ -1,0 +1,59 @@
+package Generic_Native
+
+-- This package models a generic native platform with one generic bus. 
+--
+-- Native platforms are GNU/Linux variants, MacOS X, Solaris, Windows,
+-- ...
+
+public
+  with Deployment;
+
+  ---------------
+  -- PROCESSOR --
+  ---------------
+
+  -- Generic_Processor is the basic description of a processor with
+  -- one bus to connect an ethernet adapter. This ethernet adapter is
+  -- used through the TCP_IP_Device defined in TCP_IP_Protocol
+  -- package.
+
+  processor Generic_Processor
+  features
+    eth0_tcp_ip : requires bus access Generic_Bus.impl;
+    -- One ethernet card, connected to the processor. It is assumed
+    -- later that it is used through a TCP/IP stack
+
+  end Generic_Processor;
+
+  processor implementation Generic_Processor.impl
+  properties
+    Deployment::Execution_Platform => Native;
+    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+    Priority_Range => 0 .. 255;
+  end Generic_Processor.impl;
+
+  ------------
+  -- MEMORY --
+  ------------
+
+  memory Memory_Segment
+  end Memory_Segment;
+
+  memory implementation Memory_Segment.impl
+  end Memory_Segment.impl;
+
+  ---------
+  -- BUS --
+  ---------
+
+  -- Generic bus to model connections between processors and
+  -- devices. It is not used by the code generation process, so it is
+  -- made fully generic.
+
+  bus Generic_Bus
+  end Generic_Bus;
+
+  bus implementation Generic_Bus.impl
+  end Generic_Bus.impl;
+
+end Generic_Native;

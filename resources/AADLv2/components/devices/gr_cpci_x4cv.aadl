@@ -1,0 +1,50 @@
+package GR_CPCI_X4CV
+
+-- This package models the GR-Rasta GR-CPCI-XC4V LEON Compact-PCI
+-- Development board by AEROFlex Gaisler.
+
+public
+  with Deployment;
+  with Generic_Bus;
+  
+  ---------------
+  -- PROCESSOR --
+  ---------------
+
+  -- The Rasta board has one LEON2 processor, 3 SpW cores and several
+  -- UARTS.  
+  -- 
+  -- SpaceWire cores and UARTS are connected to separate bus, of type
+  -- Generic_Bus.impl.
+
+  processor LEON2
+  features
+    spw_core_1 : requires bus access Generic_Bus::Generic_Bus.impl;
+    spw_core_2 : requires bus access Generic_Bus::Generic_Bus.impl;
+    spw_core_3 : requires bus access Generic_Bus::Generic_Bus.impl;
+    -- Three SpaceWire cores
+
+    -- XXX Add UARTS
+  end LEON2;
+
+  processor implementation LEON2.impl
+  properties
+    Deployment::Execution_Platform => LEON_ORK;  -- for using GNATforLEON
+
+    -- Information on the scheduler used by GNATforLEON
+
+    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+    Priority_Range => 0 .. 255;
+  end LEON2.impl;
+
+  ------------
+  -- MEMORY --
+  ------------
+
+  memory Memory_Segment
+  end Memory_Segment;
+
+  memory implementation Memory_Segment.impl
+  end Memory_Segment.impl;
+
+end GR_CPCI_X4CV;
