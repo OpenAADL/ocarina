@@ -29,7 +29,7 @@ public
 
    device GRUART_Device
    features
-      DB9_Wire : requires bus access Generic_Bus::Generic_Bus.impl;
+      DB9_Wire : requires bus access Generic_Bus::GenericBus.impl;
       -- Connection to the remote node    
 
    end GRUART_Device;

@@ -9,10 +9,10 @@ public
   -- devices. It is not used by the code generation process, so it is
   -- made fully generic.
 
-  bus Generic_Bus
-  end Generic_Bus;
+  bus GenericBus
+  end GenericBus;
 
-  bus implementation Generic_Bus.impl
-  end Generic_Bus.impl;
+  bus implementation GenericBus.impl
+  end GenericBus.impl;
 
 end Generic_Bus;

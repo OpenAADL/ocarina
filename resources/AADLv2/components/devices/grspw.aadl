@@ -30,7 +30,7 @@ public
 
    device GRSPW_Device
    features
-      LVDS_Wire : requires bus access Generic_Bus::Generic_Bus.impl;
+      LVDS_Wire : requires bus access Generic_Bus::GenericBus.impl;
       -- Connection to the remote node    
 
    end GRSPW_Device;
