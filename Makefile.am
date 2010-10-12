@@ -51,6 +51,8 @@ STRIP = "@abs_top_srcdir@/support/strip_wrapper.sh"
 install-exec-local:
 	$(INSTALL) -d $(DESTDIR)$(bindir)
 	$(INSTALL) -d $(DESTDIR)$(datadir)
+	$(INSTALL) -d $(DESTDIR)$(datadir)/doc
+	$(INSTALL) -d $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_SCRIPT) ocarina-config $(DESTDIR)$(bindir)
 	$(INSTALL_DATA) $(srcdir)/ChangeLog $(DESTDIR)$(datadir)/doc/ocarina/ChangeLog_ocarina
 
