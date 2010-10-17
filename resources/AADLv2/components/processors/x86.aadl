@@ -15,10 +15,25 @@ properties
    Deployment::Execution_Platform => Native;
 end x86.linux;
 
+processor implementation x86.linux32
+properties
+   Deployment::Execution_Platform => Linux32;
+end x86.linux32;
+
+processor implementation x86.linux64
+properties
+   Deployment::Execution_Platform => Linux64;
+end x86.linux64;
+
 processor implementation x86.native
 properties
    Deployment::Execution_Platform => Native;
 end x86.native;
+
+processor implementation x86.native_compcert
+properties
+   Deployment::Execution_Platform => Native_Compcert;
+end x86.compcert;
 
 processor implementation x86.rtems
 properties

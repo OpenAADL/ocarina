@@ -167,6 +167,12 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_ARM_N770 =>
             Write_Str ("arm.n770");
 
+         when Platform_LINUX64 =>
+            Write_Str ("linux64");
+
+         when Platform_LINUX32 =>
+            Write_Str ("linux32");
+
          when others =>
             Display_Error ("Unsupported platform " & Execution_Platform'Img,
                            Fatal => True);

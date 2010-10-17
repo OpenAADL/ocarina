@@ -26,9 +26,12 @@ property set Deployment is
 
   Allowed_Execution_Platform : type enumeration
    (Native,        -- Native platforms (GNU/Linux, Solaris, Windows...)
+    Native_Compcert, -- Native platforms using the Compcert compiler
     LEON_RTEMS,    -- LEON2 board or tsim-leon (RTEMS)
     LEON_ORK,      -- LEON2 board or tsim-leon (ORK)
     LEON_GNAT,     -- LEON2 board or qemu (GNATPRO/HI-E)
+    LINUX32,       -- Linux 32 bits
+    LINUX64,       -- Linux 64 bits
     ERC32_ORK,     -- ERC32 board or tsim-erc32 (ORK)
     ARM_DSLINUX,   -- Nintendo DS (tm) (DSLinux)
     ARM_N770,      -- Nokia N770 (tm)
