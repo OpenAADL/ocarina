@@ -33,7 +33,7 @@ end x86.native;
 processor implementation x86.native_compcert
 properties
    Deployment::Execution_Platform => Native_Compcert;
-end x86.compcert;
+end x86.native_compcert;
 
 processor implementation x86.rtems
 properties
