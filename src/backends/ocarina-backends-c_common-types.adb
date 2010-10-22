@@ -691,7 +691,17 @@ package body Ocarina.Backends.C_Common.Types is
                            True);
                      end if;
                   elsif Get_Concurrency_Protocol (E) =
-                     Concurrency_Protected_Access then
+                     Concurrency_Protected_Access
+                     or else
+                     Get_Concurrency_Protocol (E) =
+                        Concurrency_Immediate_Priority_Ceiling
+                     or else
+                     Get_Concurrency_Protocol (E) =
+                        Concurrency_Priority_Inheritance
+                     or else
+                     Get_Concurrency_Protocol (E) =
+                        Concurrency_Priority_Ceiling
+                  then
 
                      --  Protected type that does not have struct members.
                      --  This piece of code is made to handle declaration

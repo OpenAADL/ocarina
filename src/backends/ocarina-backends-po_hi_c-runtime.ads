@@ -152,6 +152,10 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_No_Device,                      --  __PO_HI_NO_DEVICE
       RE_Unused_Node,                    --  __PO_HI_UNUSED_NODE
       RE_Nb_Protected,                   --  __PO_HI_NB_PROTECTED
+      RE_Protected_Regular,              --  __PO_HI_PROTECTED_REGULAR
+      RE_Protected_PIP,                  --  __PO_HI_PROTECTED_PIP
+      RE_Protected_PCP,                  --  __PO_HI_PROTECTED_PCP
+      RE_Protected_IPCP,                 --  __PO_HI_PROTECTED_IPCP
       RE_Nb_Nodes,                       --  __PO_HI_NB_NODES
       RE_Nb_Devices,                     --  __PO_HI_NB_DEVICES
       RE_My_Node,                        --  __PO_HI_MY_NODE
@@ -175,6 +179,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Entity_Server_T,                --  __po_hi_entity_server_t
       RE_Operation_T,                    --  __po_hi_operation_t
       RE_Request_T,                      --  __po_hi_request_t
+      RE_Protected_Protocol_T,           --  __po_hi_protected_protocol_t
       RE_Bool_T,                         --  __po_hi_bool_t
       RE_Asn1_Pkt_T,                     --  __po_hi_asn1_pkt_t
       RE_Asn1_Buffer_T,                  --  __po_hi_asn1_buffer_t
@@ -197,6 +202,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Operation_Names,                --  __po_hi_operation_names
       RE_Ports_Names,                    --  __po_hi_port_names
       RE_Devices_Naming,                 --  __po_hi_devices_naming
+      RE_Protected_Configuration,        --  __po_hi_protected_configuration
+      RE_Protected_Priorities,           --  __po_hi_protected_priorities
       RE_Port_To_Device,                 --  __po_hi_port_to_device
       RE_Port_Global_To_Entity,          --  __po_hi_port_global_to_entity
       RE_Port_Global_To_Device,          --  __po_hi_port_global_to_device
@@ -318,6 +325,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Float64_T                      => RH_PO_HI_Types,
          RE_Node_T                         => RH_Deployment,
          RE_Operation_T                    => RH_Request,
+         RE_Protected_Protocol_T           => RH_PO_HI_Protected,
          RE_Request_T                      => RH_Request,
 
          --  Runtime Constants associations
@@ -342,6 +350,12 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Gqueue_Fifo_Indata             => RH_PO_HI_Gqueue,
          RE_Gqueue_Fifo_Out                => RH_PO_HI_Gqueue,
          RE_Nb_Operations                  => RH_Request,
+         RE_Protected_Configuration        => RH_PO_HI_Protected,
+         RE_Protected_Priorities           => RH_PO_HI_Protected,
+         RE_Protected_Regular              => RH_PO_HI_Protected,
+         RE_Protected_PIP                  => RH_PO_HI_Protected,
+         RE_Protected_PCP                  => RH_PO_HI_Protected,
+         RE_Protected_IPCP                 => RH_PO_HI_Protected,
          RE_Noaddr                         => RH_PO_HI_Transport,
          RE_No_Device                      => RH_Deployment,
          RE_Noport                         => RH_PO_HI_Transport,

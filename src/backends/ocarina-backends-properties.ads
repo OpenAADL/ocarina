@@ -256,6 +256,8 @@ package Ocarina.Backends.Properties is
      (Concurrency_NoneSpecified,
       Concurrency_Read_Only,
       Concurrency_Protected_Access,
+      Concurrency_Immediate_Priority_Ceiling,
+      Concurrency_Priority_Inheritance,
       Concurrency_Priority_Ceiling);
 
    type Supported_IEEE754_Precision is

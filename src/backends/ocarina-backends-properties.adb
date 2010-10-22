@@ -250,7 +250,9 @@ package body Ocarina.Backends.Properties is
    Concurrency_Read_Only_Name                   : Name_Id;
    Concurrency_Protected_Access_Name            : Name_Id;
    Concurrency_Priority_Ceiling_Name            : Name_Id;
+   Concurrency_Immediate_Priority_Ceiling_Name  : Name_Id;
    Concurrency_Priority_Ceiling_Protocol_Name   : Name_Id;
+   Concurrency_Priority_Inheritance_Name        : Name_Id;
 
    Language_Ada_Name      : Name_Id;
    Language_Ada_95_Name   : Name_Id;
@@ -1281,6 +1283,16 @@ package body Ocarina.Backends.Properties is
          elsif C_Name = Concurrency_Priority_Ceiling_Protocol_Name then
 
             return Concurrency_Priority_Ceiling;
+
+         elsif C_Name = Concurrency_Priority_Inheritance_Name then
+
+            return Concurrency_Priority_Inheritance;
+
+         elsif C_Name =
+            Concurrency_Immediate_Priority_Ceiling_Name
+         then
+
+            return Concurrency_Immediate_Priority_Ceiling;
 
          else
             Display_Located_Error
@@ -2993,6 +3005,12 @@ package body Ocarina.Backends.Properties is
         ("protected_access");
       Concurrency_Priority_Ceiling_Name := Get_String_Name
         ("priority_ceiling");
+
+      Concurrency_Immediate_Priority_Ceiling_Name := Get_String_Name
+        ("immediate_priority_ceiling_protocol");
+
+      Concurrency_Priority_Inheritance_Name := Get_String_Name
+        ("priority_inheritance");
 
       Concurrency_Priority_Ceiling_Protocol_Name := Get_String_Name
         ("priority_ceiling_protocol");

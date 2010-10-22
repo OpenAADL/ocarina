@@ -30,6 +30,8 @@ property set AADL_Project is
   Supported_Concurrency_Control_Protocols: 
     type enumeration (NoneSpecified,
                       Read_Only,
+                      Priority_Inheritance,
+                      Immediate_Priority_Ceiling_Protocol,
                       Protected_Access,
                       Priority_Ceiling_Protocol,
                       Priority_Ceiling);

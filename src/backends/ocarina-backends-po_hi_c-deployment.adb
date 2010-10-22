@@ -466,8 +466,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                      (Nb_Protected, 1, 10));
                   Bind_AADL_To_Default_Value
                  (Identifier (C), N);
-                  Nb_Protected := Nb_Protected + 1;
 
+                  Nb_Protected := Nb_Protected + 1;
                else
                   --  Visit the component instance corresponding to the
                   --  subcomponent S.
@@ -1259,6 +1259,10 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                         := Parent_Component (Parent_Subcomponent (E));
          Endiannesses   : constant Node_Id := Make_Array_Values;
          Execution_Platform : Supported_Execution_Platform;
+         Protected_Configuration : constant Node_Id := Make_Array_Values;
+         Protected_Priorities    : constant Node_Id := Make_Array_Values;
+         Protected_Protocol      : Node_Id;
+         Protected_Priority      : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -1268,9 +1272,71 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             C := First_Node (Subcomponents (E));
 
             while Present (C) loop
+               if AAU.Is_Data (Corresponding_Instance (C)) then
+                  Protected_Priority :=
+                     Make_Literal (New_Int_Value (0, 1, 10));
+
+                  case Get_Concurrency_Protocol (Corresponding_Instance (C)) is
+                     when Concurrency_Priority_Ceiling =>
+                        Protected_Priority := Make_Literal
+                           (New_Int_Value
+                              (Get_Priority_Celing_Of_Data_Access
+                                 (Corresponding_Instance (C)), 1, 10));
+                        Protected_Protocol := RE (RE_Protected_PCP);
+
+                     when Concurrency_Immediate_Priority_Ceiling =>
+                        Protected_Protocol := RE (RE_Protected_IPCP);
+
+                     when Concurrency_Priority_Inheritance =>
+                        Protected_Protocol := RE (RE_Protected_PIP);
+
+                     when others =>
+                        Protected_Protocol := RE (RE_Protected_Regular);
+                  end case;
+
+                  Append_Node_To_List
+                   (Protected_Protocol, CTN.Values (Protected_Configuration));
+
+                  Append_Node_To_List
+                     (Protected_Priority,
+                     CTN.Values (Protected_Priorities));
+               end if;
+
                Visit (Corresponding_Instance (C));
                C := Next_Node (C);
             end loop;
+         end if;
+
+         if not Is_Empty (CTN.Values (Protected_Configuration)) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Protected_Configuration),
+                     Array_Size =>
+                       RE (RE_Nb_Protected)),
+                  Used_Type =>
+                    RE (RE_Protected_Protocol_T)),
+               Operator => Op_Equal,
+               Right_Expr => Protected_Configuration);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Protected_Priorities),
+                     Array_Size =>
+                       RE (RE_Nb_Protected)),
+                  Used_Type =>
+                    RE (RE_Uint8_T)),
+               Operator => Op_Equal,
+               Right_Expr => Protected_Priorities);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
          if Present (Backend_Node (Identifier (S))) and then
