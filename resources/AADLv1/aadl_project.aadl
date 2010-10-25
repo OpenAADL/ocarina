@@ -32,6 +32,8 @@ property set AADL_Project is
     (NoneSpecified,
      Read_Only,
      Protected_Access,
+     Immediate_Priority_Ceiling_Protocol,
+     Priority_Ceiling_Protocol,
      Priority_Ceiling);
   -- phf : NoneSpecified instead of None
   -- The following are example concurrency control protocols.
