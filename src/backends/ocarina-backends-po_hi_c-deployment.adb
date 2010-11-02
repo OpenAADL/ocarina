@@ -1448,7 +1448,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                      (Corresponding_Instance (Q)));
                case Execution_Platform is
                   when Platform_Native | Platform_None |
-                       Platform_X86_RTEMS | Platform_X86_LINUXTASTE =>
+                       Platform_X86_RTEMS | Platform_X86_LINUXTASTE |
+                       Platform_LINUX64 | Platform_LINUX32 =>
                      Append_Node_To_List
                         (RE (RE_Littleendian), CTN.Values (Endiannesses));
 
