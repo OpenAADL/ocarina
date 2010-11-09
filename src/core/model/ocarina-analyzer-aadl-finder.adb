@@ -1085,8 +1085,8 @@ package body Ocarina.Analyzer.AADL.Finder is
       Pointed_Node : Node_Id := No_Node;
    begin
       if Kind (Component) = K_Subcomponent_Access
-        and then  Component_Category'Val (Subcomponent_Category
-                                            (Component)) = CC_Subprogram
+        and then Component_Category'Val (Subcomponent_Category
+                                           (Component)) = CC_Subprogram
       then
          Pointed_Node := Node_In_Scope
            (Declaration_Identifier, Entity_Scope

@@ -49,7 +49,7 @@ package Ocarina.Analyzer.REAL is
    --  Root procedure of analysis
 
    function Analyze_Model (Root : Node_Id) return Boolean;
-   --  Proceed to both REAL expension and analysis on the whole
+   --  Proceed to both REAL expansion and analysis on the whole
    --  AADL model
 
    procedure Register_Library_Theorems (REAL_Library : Node_Id);

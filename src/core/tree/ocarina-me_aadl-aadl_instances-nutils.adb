@@ -416,10 +416,11 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
                --  2 - If we deal with a subprogram.
 
-               --  FIXME: This needs more effort scince a subprogram
+               --  FIXME: This needs more effort since a subprogram
                --  name should be Namespace1_Namespace2_..._Spg.
 
                Full_Name := Get_Name_Of_Entity (Instance, Display_Name);
+
             elsif Get_Category_Of_Component
               (Parent_Component (Parent_Subcomponent (Instance))) = CC_System
               and then not Keep_Root_System
