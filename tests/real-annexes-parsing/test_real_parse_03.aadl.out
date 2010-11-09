@@ -28,7 +28,7 @@ property set Deployment is
   Protocol : Deployment::Protocol_Type
     applies to (system);
 
-  Allowed_Execution_Platform : type enumeration (Native, LEON_RTEMS, LEON_ORK, LEON_GNAT, ERC32_ORK, ARM_DSLINUX, ARM_N770, X86_RTEMS, X86_LINUXTASTE, MARTE_OS, VXWORKS);
+  Allowed_Execution_Platform : type enumeration (Native, Native_Compcert, LEON_RTEMS, LEON_ORK, LEON_GNAT, LINUX32, LINUX64, ERC32_ORK, ARM_DSLINUX, ARM_N770, X86_RTEMS, X86_LINUXTASTE, MARTE_OS, VXWORKS);
 
   Execution_Platform : Deployment::Allowed_Execution_Platform
     applies to (processor);
