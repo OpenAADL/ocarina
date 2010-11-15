@@ -203,13 +203,9 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    type Variable_Id is
      (V_Request,
-      V_Entity_Table,
-      V_Mynode,
       V_Ret,
       V_Tattr,
       V_Next_Period,
-      V_Node_Addr,
-      V_Node_Port,
       V_Port_Global_To_Entity,
       V_Port_Global_To_Local_Port,
       V_Server_Entity_Table,

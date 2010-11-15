@@ -620,8 +620,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
               (Defining_Identifier =>
                  Make_Array_Declaration
               (Defining_Identifier =>
-                 Make_Defining_Identifier
-                 (VN (V_Node_Port)),
+                  RE (RE_Node_Port),
                Array_Size =>
                  RE (RE_Nb_Nodes)),
                Used_Type =>
@@ -639,8 +638,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
               (Defining_Identifier =>
                  Make_Array_Declaration
               (Defining_Identifier =>
-                 Make_Defining_Identifier
-                 (VN (V_Node_Addr)),
+                  RE (RE_Node_Addr),
                Array_Size =>
                  RE (RE_Nb_Nodes)),
                Used_Type =>
@@ -655,8 +653,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
            (Left_Expr =>
               Make_Variable_Declaration
               (Defining_Identifier =>
-                 Make_Defining_Identifier
-                 (VN (V_Mynode)),
+                  RE (RE_Mynode),
                Used_Type =>
                  RE (RE_Node_T)),
             Operator => Op_Equal,

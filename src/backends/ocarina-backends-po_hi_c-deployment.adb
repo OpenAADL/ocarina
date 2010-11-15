@@ -1427,8 +1427,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               (Defining_Identifier =>
                  Make_Array_Declaration
                  (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (VN (V_Entity_Table)),
+                     RE (RE_Entity_Table),
                   Array_Size =>
                     RE (RE_Nb_Entities)),
                Used_Type =>
