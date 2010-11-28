@@ -82,7 +82,7 @@ property set Memory_Properties is
   applies to (memory);
   ----------------------------------------------------
 
-  Word_Size: Size_Units => 8 bits
+  Word_Size: Size => 8 bits
   applies to (memory);
   ----------------------------------------------------
         
