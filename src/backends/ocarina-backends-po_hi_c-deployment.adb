@@ -286,6 +286,13 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          if Current_Process_Instance /= No_Node and then
             Get_Bound_Processor (E) =
             Get_Bound_Processor (Current_Process_Instance) then
+
+            if Backend_Node (Identifier (E)) /= No_Node and then
+               CTN.Enumerator_Node
+                  (Backend_Node (Identifier (E))) /= No_Node then
+               return;
+            end if;
+
             Bind_AADL_To_Enumerator
                (Identifier (E),
                 Make_Defining_Identifier
