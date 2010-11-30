@@ -6666,123 +6666,69 @@ Declarations List_Id 7
     Identifier Node_Id 1300
     1300 identifier memory_properties.aadl:85:14
      Corresponding_Entity Node_Id 0
-     Display_Name Name_Id "Size_Units"
+     Display_Name Name_Id "Size"
      Scope_Entity Node_Id 0
      Backend_Node Node_Id 0
-    Entity Node_Id 233
+    Entity Node_Id 1109
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 210
-   210 units type aadl_project.aadl:150:20
-    Base_Identifier Node_Id 211
-    211 identifier aadl_project.aadl:151:05
-     Corresponding_Entity Node_Id 210
-     Display_Name Name_Id "bits"
-     Scope_Entity Node_Id 0
-     Backend_Node Node_Id 0
-    Unit_Definitions List_Id 212
-    213 unit definition aadl_project.aadl:152:05
-     Identifier Node_Id 214
-     214 identifier aadl_project.aadl:152:05
-      Corresponding_Entity Node_Id 213
-      Display_Name Name_Id "Bytes"
+   Expanded_Type_Designator Node_Id 2231
+   2231 integer type memory_properties.aadl:12:14
+    Type_Range Node_Id 2232
+    2232 number range memory_properties.aadl:12:26
+     Lower_Bound Node_Id 2233
+     2233 signed aadlnumber memory_properties.aadl:12:26
+      Number_Value Node_Id 2234
+      2234 literal memory_properties.aadl:12:26
+       Value Value_Id 87
+      Unit_Identifier Node_Id 1103
+      1103 identifier memory_properties.aadl:12:28
+       Corresponding_Entity Node_Id 214
+       Display_Name Name_Id "Bytes"
+       Scope_Entity Node_Id 0
+       Backend_Node Node_Id 0
+     Upper_Bound Node_Id 2235
+     2235 signed aadlnumber aadl_project.aadl:136:37
+      Number_Value Node_Id 2236
+      2236 literal aadl_project.aadl:136:37
+       Value Value_Id 88
+      Unit_Identifier Node_Id 168
+      168 identifier aadl_project.aadl:136:45
+       Corresponding_Entity Node_Id 214
+       Display_Name Name_Id "Bytes"
+       Scope_Entity Node_Id 0
+       Backend_Node Node_Id 0
+    Unit_Designator Node_Id 1108
+    1108 unique property type identifier memory_properties.aadl:13:03
+     Identifier Node_Id 1107
+     1107 identifier memory_properties.aadl:13:09
+      Corresponding_Entity Node_Id 0
+      Display_Name Name_Id "Size_Units"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
-     Unit_Identifier Node_Id 215
-     215 identifier aadl_project.aadl:152:15
-      Corresponding_Entity Node_Id 210
-      Display_Name Name_Id "bits"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Numeric_Literal Node_Id 216
-     216 literal aadl_project.aadl:152:23
-      Value Value_Id 18
-    217 unit definition aadl_project.aadl:153:05
-     Identifier Node_Id 218
-     218 identifier aadl_project.aadl:153:05
-      Corresponding_Entity Node_Id 217
-      Display_Name Name_Id "KByte"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Unit_Identifier Node_Id 219
-     219 identifier aadl_project.aadl:153:15
-      Corresponding_Entity Node_Id 210
-      Display_Name Name_Id "Bytes"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Numeric_Literal Node_Id 220
-     220 literal aadl_project.aadl:153:23
-      Value Value_Id 19
-    221 unit definition aadl_project.aadl:154:05
-     Identifier Node_Id 222
-     222 identifier aadl_project.aadl:154:05
-      Corresponding_Entity Node_Id 221
-      Display_Name Name_Id "MByte"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Unit_Identifier Node_Id 223
-     223 identifier aadl_project.aadl:154:15
-      Corresponding_Entity Node_Id 210
-      Display_Name Name_Id "KByte"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Numeric_Literal Node_Id 224
-     224 literal aadl_project.aadl:154:23
-      Value Value_Id 20
-    225 unit definition aadl_project.aadl:155:05
-     Identifier Node_Id 226
-     226 identifier aadl_project.aadl:155:05
-      Corresponding_Entity Node_Id 225
-      Display_Name Name_Id "GByte"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Unit_Identifier Node_Id 227
-     227 identifier aadl_project.aadl:155:15
-      Corresponding_Entity Node_Id 210
-      Display_Name Name_Id "MByte"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Numeric_Literal Node_Id 228
-     228 literal aadl_project.aadl:155:23
-      Value Value_Id 21
-    229 unit definition aadl_project.aadl:156:05
-     Identifier Node_Id 230
-     230 identifier aadl_project.aadl:156:05
-      Corresponding_Entity Node_Id 229
-      Display_Name Name_Id "TByte"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Unit_Identifier Node_Id 231
-     231 identifier aadl_project.aadl:156:15
-      Corresponding_Entity Node_Id 210
-      Display_Name Name_Id "GByte"
-      Scope_Entity Node_Id 0
-      Backend_Node Node_Id 0
-     Numeric_Literal Node_Id 232
-     232 literal aadl_project.aadl:156:23
-      Value Value_Id 22
-    Units_Context Node_Id 0
+     Entity Node_Id 233
+     Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 1311
   1311 property value memory_properties.aadl:85:03
    Value_Container Node_Id 1097
    Single_Value Node_Id 1302
-   1302 signed aadlnumber memory_properties.aadl:85:28
+   1302 signed aadlnumber memory_properties.aadl:85:22
     Number_Value Node_Id 1303
-    1303 literal memory_properties.aadl:85:28
+    1303 literal memory_properties.aadl:85:22
      Value Value_Id 38
     Unit_Identifier Node_Id 1304
-    1304 identifier memory_properties.aadl:85:30
+    1304 identifier memory_properties.aadl:85:24
      Corresponding_Entity Node_Id 211
      Display_Name Name_Id "bits"
      Scope_Entity Node_Id 0
      Backend_Node Node_Id 0
    Multi_Value List_Id 0
-   Expanded_Single_Value Node_Id 2231
-   2231 signed aadlnumber memory_properties.aadl:85:28
-    Number_Value Node_Id 2232
-    2232 literal memory_properties.aadl:85:28
-     Value Value_Id 87
+   Expanded_Single_Value Node_Id 2237
+   2237 signed aadlnumber memory_properties.aadl:85:22
+    Number_Value Node_Id 2238
+    2238 literal memory_properties.aadl:85:22
+     Value Value_Id 89
     Unit_Identifier Node_Id 1304
-    1304 identifier memory_properties.aadl:85:30
+    1304 identifier memory_properties.aadl:85:24
      Corresponding_Entity Node_Id 211
      Display_Name Name_Id "bits"
      Scope_Entity Node_Id 0
@@ -6830,21 +6776,21 @@ Declarations List_Id 7
       Entity Node_Id 207
       Property_Set_Identifier Node_Id 0
     Unit_Designator Node_Id 0
-   Expanded_Type_Designator Node_Id 2233
-   2233 integer type memory_properties.aadl:89:15
-    Type_Range Node_Id 2234
-    2234 number range memory_properties.aadl:89:27
-     Lower_Bound Node_Id 2235
-     2235 signed aadlnumber memory_properties.aadl:89:27
-      Number_Value Node_Id 2236
-      2236 literal memory_properties.aadl:89:27
-       Value Value_Id 88
+   Expanded_Type_Designator Node_Id 2239
+   2239 integer type memory_properties.aadl:89:15
+    Type_Range Node_Id 2240
+    2240 number range memory_properties.aadl:89:27
+     Lower_Bound Node_Id 2241
+     2241 signed aadlnumber memory_properties.aadl:89:27
+      Number_Value Node_Id 2242
+      2242 literal memory_properties.aadl:89:27
+       Value Value_Id 90
       Unit_Identifier Node_Id 0
-     Upper_Bound Node_Id 2237
-     2237 signed aadlnumber aadl_project.aadl:148:43
-      Number_Value Node_Id 2238
-      2238 literal aadl_project.aadl:148:43
-       Value Value_Id 89
+     Upper_Bound Node_Id 2243
+     2243 signed aadlnumber aadl_project.aadl:148:43
+      Number_Value Node_Id 2244
+      2244 literal aadl_project.aadl:148:43
+       Value Value_Id 91
       Unit_Identifier Node_Id 0
     Unit_Designator Node_Id 0
   Default_Value Node_Id 1327
@@ -6857,11 +6803,11 @@ Declarations List_Id 7
      Value Value_Id 40
     Unit_Identifier Node_Id 0
    Multi_Value List_Id 0
-   Expanded_Single_Value Node_Id 2239
-   2239 signed aadlnumber memory_properties.aadl:89:50
-    Number_Value Node_Id 2240
-    2240 literal memory_properties.aadl:89:50
-     Value Value_Id 90
+   Expanded_Single_Value Node_Id 2245
+   2245 signed aadlnumber memory_properties.aadl:89:50
+    Number_Value Node_Id 2246
+    2246 literal memory_properties.aadl:89:50
+     Value Value_Id 92
     Unit_Identifier Node_Id 0
    Expanded_Multi_Value List_Id 0
   Applies_To Node_Id 1325
@@ -6895,28 +6841,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2241
-   2241 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2242
-    2242 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2243
-     2243 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2244
-      2244 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2245
-       2245 literal timing_properties.aadl:13:26
-        Value Value_Id 91
+   Expanded_Type_Designator Node_Id 2247
+   2247 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2248
+    2248 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2249
+     2249 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2250
+      2250 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2251
+       2251 literal timing_properties.aadl:13:26
+        Value Value_Id 93
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2246
-      2246 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2247
-       2247 literal aadl_project.aadl:142:30
-        Value Value_Id 92
+      Upper_Bound Node_Id 2252
+      2252 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2253
+       2253 literal aadl_project.aadl:142:30
+        Value Value_Id 94
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -7037,26 +6983,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2248
-   2248 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2249
-    2249 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2250
-     2250 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2251
-      2251 literal timing_properties.aadl:13:26
-       Value Value_Id 93
+   Expanded_Type_Designator Node_Id 2254
+   2254 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2255
+    2255 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2256
+     2256 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2257
+      2257 literal timing_properties.aadl:13:26
+       Value Value_Id 95
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2252
-     2252 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2253
-      2253 literal aadl_project.aadl:142:30
-       Value Value_Id 94
+     Upper_Bound Node_Id 2258
+     2258 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2259
+      2259 literal aadl_project.aadl:142:30
+       Value Value_Id 96
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -7105,28 +7051,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2254
-   2254 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2255
-    2255 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2256
-     2256 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2257
-      2257 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2258
-       2258 literal timing_properties.aadl:13:26
-        Value Value_Id 95
+   Expanded_Type_Designator Node_Id 2260
+   2260 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2261
+    2261 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2262
+     2262 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2263
+      2263 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2264
+       2264 literal timing_properties.aadl:13:26
+        Value Value_Id 97
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2259
-      2259 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2260
-       2260 literal aadl_project.aadl:142:30
-        Value Value_Id 96
+      Upper_Bound Node_Id 2265
+      2265 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2266
+       2266 literal aadl_project.aadl:142:30
+        Value Value_Id 98
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -7175,26 +7121,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2261
-   2261 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2262
-    2262 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2263
-     2263 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2264
-      2264 literal timing_properties.aadl:13:26
-       Value Value_Id 97
+   Expanded_Type_Designator Node_Id 2267
+   2267 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2268
+    2268 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2269
+     2269 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2270
+      2270 literal timing_properties.aadl:13:26
+       Value Value_Id 99
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2265
-     2265 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2266
-      2266 literal aadl_project.aadl:142:30
-       Value Value_Id 98
+     Upper_Bound Node_Id 2271
+     2271 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2272
+      2272 literal aadl_project.aadl:142:30
+       Value Value_Id 100
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -7263,28 +7209,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2267
-   2267 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2268
-    2268 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2269
-     2269 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2270
-      2270 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2271
-       2271 literal timing_properties.aadl:13:26
-        Value Value_Id 99
+   Expanded_Type_Designator Node_Id 2273
+   2273 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2274
+    2274 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2275
+     2275 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2276
+      2276 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2277
+       2277 literal timing_properties.aadl:13:26
+        Value Value_Id 101
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2272
-      2272 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2273
-       2273 literal aadl_project.aadl:142:30
-        Value Value_Id 100
+      Upper_Bound Node_Id 2278
+      2278 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2279
+       2279 literal aadl_project.aadl:142:30
+        Value Value_Id 102
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -7353,28 +7299,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2274
-   2274 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2275
-    2275 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2276
-     2276 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2277
-      2277 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2278
-       2278 literal timing_properties.aadl:13:26
-        Value Value_Id 101
+   Expanded_Type_Designator Node_Id 2280
+   2280 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2281
+    2281 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2282
+     2282 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2283
+      2283 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2284
+       2284 literal timing_properties.aadl:13:26
+        Value Value_Id 103
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2279
-      2279 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2280
-       2280 literal aadl_project.aadl:142:30
-        Value Value_Id 102
+      Upper_Bound Node_Id 2285
+      2285 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2286
+       2286 literal aadl_project.aadl:142:30
+        Value Value_Id 104
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -7423,26 +7369,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2281
-   2281 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2282
-    2282 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2283
-     2283 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2284
-      2284 literal timing_properties.aadl:13:26
-       Value Value_Id 103
+   Expanded_Type_Designator Node_Id 2287
+   2287 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2288
+    2288 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2289
+     2289 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2290
+      2290 literal timing_properties.aadl:13:26
+       Value Value_Id 105
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2285
-     2285 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2286
-      2286 literal aadl_project.aadl:142:30
-       Value Value_Id 104
+     Upper_Bound Node_Id 2291
+     2291 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2292
+      2292 literal aadl_project.aadl:142:30
+       Value Value_Id 106
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -7491,28 +7437,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2287
-   2287 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2288
-    2288 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2289
-     2289 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2290
-      2290 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2291
-       2291 literal timing_properties.aadl:13:26
-        Value Value_Id 105
+   Expanded_Type_Designator Node_Id 2293
+   2293 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2294
+    2294 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2295
+     2295 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2296
+      2296 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2297
+       2297 literal timing_properties.aadl:13:26
+        Value Value_Id 107
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2292
-      2292 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2293
-       2293 literal aadl_project.aadl:142:30
-        Value Value_Id 106
+      Upper_Bound Node_Id 2298
+      2298 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2299
+       2299 literal aadl_project.aadl:142:30
+        Value Value_Id 108
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -7561,26 +7507,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2294
-   2294 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2295
-    2295 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2296
-     2296 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2297
-      2297 literal timing_properties.aadl:13:26
-       Value Value_Id 107
+   Expanded_Type_Designator Node_Id 2300
+   2300 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2301
+    2301 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2302
+     2302 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2303
+      2303 literal timing_properties.aadl:13:26
+       Value Value_Id 109
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2298
-     2298 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2299
-      2299 literal aadl_project.aadl:142:30
-       Value Value_Id 108
+     Upper_Bound Node_Id 2304
+     2304 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2305
+      2305 literal aadl_project.aadl:142:30
+       Value Value_Id 110
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -7664,26 +7610,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2300
-   2300 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2301
-    2301 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2302
-     2302 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2303
-      2303 literal timing_properties.aadl:13:26
-       Value Value_Id 109
+   Expanded_Type_Designator Node_Id 2306
+   2306 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2307
+    2307 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2308
+     2308 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2309
+      2309 literal timing_properties.aadl:13:26
+       Value Value_Id 111
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2304
-     2304 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2305
-      2305 literal aadl_project.aadl:142:30
-       Value Value_Id 110
+     Upper_Bound Node_Id 2310
+     2310 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2311
+      2311 literal aadl_project.aadl:142:30
+       Value Value_Id 112
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -7737,26 +7683,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2306
-   2306 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2307
-    2307 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2308
-     2308 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2309
-      2309 literal timing_properties.aadl:13:26
-       Value Value_Id 111
+   Expanded_Type_Designator Node_Id 2312
+   2312 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2313
+    2313 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2314
+     2314 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2315
+      2315 literal timing_properties.aadl:13:26
+       Value Value_Id 113
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2310
-     2310 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2311
-      2311 literal aadl_project.aadl:142:30
-       Value Value_Id 112
+     Upper_Bound Node_Id 2316
+     2316 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2317
+      2317 literal aadl_project.aadl:142:30
+       Value Value_Id 114
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -7810,26 +7756,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2312
-   2312 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2313
-    2313 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2314
-     2314 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2315
-      2315 literal timing_properties.aadl:13:26
-       Value Value_Id 113
+   Expanded_Type_Designator Node_Id 2318
+   2318 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2319
+    2319 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2320
+     2320 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2321
+      2321 literal timing_properties.aadl:13:26
+       Value Value_Id 115
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2316
-     2316 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2317
-      2317 literal aadl_project.aadl:142:30
-       Value Value_Id 114
+     Upper_Bound Node_Id 2322
+     2322 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2323
+      2323 literal aadl_project.aadl:142:30
+       Value Value_Id 116
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -7878,26 +7824,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2318
-   2318 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2319
-    2319 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2320
-     2320 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2321
-      2321 literal timing_properties.aadl:13:26
-       Value Value_Id 115
+   Expanded_Type_Designator Node_Id 2324
+   2324 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2325
+    2325 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2326
+     2326 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2327
+      2327 literal timing_properties.aadl:13:26
+       Value Value_Id 117
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2322
-     2322 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2323
-      2323 literal aadl_project.aadl:142:30
-       Value Value_Id 116
+     Upper_Bound Node_Id 2328
+     2328 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2329
+      2329 literal aadl_project.aadl:142:30
+       Value Value_Id 118
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -7946,28 +7892,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2324
-   2324 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2325
-    2325 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2326
-     2326 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2327
-      2327 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2328
-       2328 literal timing_properties.aadl:13:26
-        Value Value_Id 117
+   Expanded_Type_Designator Node_Id 2330
+   2330 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2331
+    2331 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2332
+     2332 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2333
+      2333 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2334
+       2334 literal timing_properties.aadl:13:26
+        Value Value_Id 119
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2329
-      2329 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2330
-       2330 literal aadl_project.aadl:142:30
-        Value Value_Id 118
+      Upper_Bound Node_Id 2335
+      2335 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2336
+       2336 literal aadl_project.aadl:142:30
+        Value Value_Id 120
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -8016,26 +7962,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2331
-   2331 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2332
-    2332 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2333
-     2333 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2334
-      2334 literal timing_properties.aadl:13:26
-       Value Value_Id 119
+   Expanded_Type_Designator Node_Id 2337
+   2337 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2338
+    2338 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2339
+     2339 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2340
+      2340 literal timing_properties.aadl:13:26
+       Value Value_Id 121
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2335
-     2335 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2336
-      2336 literal aadl_project.aadl:142:30
-       Value Value_Id 120
+     Upper_Bound Node_Id 2341
+     2341 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2342
+      2342 literal aadl_project.aadl:142:30
+       Value Value_Id 122
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -8084,28 +8030,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2337
-   2337 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2338
-    2338 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2339
-     2339 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2340
-      2340 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2341
-       2341 literal timing_properties.aadl:13:26
-        Value Value_Id 121
+   Expanded_Type_Designator Node_Id 2343
+   2343 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2344
+    2344 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2345
+     2345 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2346
+      2346 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2347
+       2347 literal timing_properties.aadl:13:26
+        Value Value_Id 123
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2342
-      2342 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2343
-       2343 literal aadl_project.aadl:142:30
-        Value Value_Id 122
+      Upper_Bound Node_Id 2348
+      2348 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2349
+       2349 literal aadl_project.aadl:142:30
+        Value Value_Id 124
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -8154,26 +8100,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2344
-   2344 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2345
-    2345 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2346
-     2346 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2347
-      2347 literal timing_properties.aadl:13:26
-       Value Value_Id 123
+   Expanded_Type_Designator Node_Id 2350
+   2350 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2351
+    2351 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2352
+     2352 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2353
+      2353 literal timing_properties.aadl:13:26
+       Value Value_Id 125
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2348
-     2348 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2349
-      2349 literal aadl_project.aadl:142:30
-       Value Value_Id 124
+     Upper_Bound Node_Id 2354
+     2354 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2355
+      2355 literal aadl_project.aadl:142:30
+       Value Value_Id 126
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -8227,28 +8173,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2350
-   2350 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2351
-    2351 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2352
-     2352 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2353
-      2353 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2354
-       2354 literal timing_properties.aadl:13:26
-        Value Value_Id 125
+   Expanded_Type_Designator Node_Id 2356
+   2356 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2357
+    2357 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2358
+     2358 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2359
+      2359 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2360
+       2360 literal timing_properties.aadl:13:26
+        Value Value_Id 127
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2355
-      2355 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2356
-       2356 literal aadl_project.aadl:142:30
-        Value Value_Id 126
+      Upper_Bound Node_Id 2361
+      2361 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2362
+       2362 literal aadl_project.aadl:142:30
+        Value Value_Id 128
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -8302,26 +8248,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2357
-   2357 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2358
-    2358 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2359
-     2359 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2360
-      2360 literal timing_properties.aadl:13:26
-       Value Value_Id 127
+   Expanded_Type_Designator Node_Id 2363
+   2363 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2364
+    2364 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2365
+     2365 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2366
+      2366 literal timing_properties.aadl:13:26
+       Value Value_Id 129
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2361
-     2361 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2362
-      2362 literal aadl_project.aadl:142:30
-       Value Value_Id 128
+     Upper_Bound Node_Id 2367
+     2367 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2368
+      2368 literal aadl_project.aadl:142:30
+       Value Value_Id 130
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -8390,26 +8336,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2363
-   2363 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2364
-    2364 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2365
-     2365 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2366
-      2366 literal timing_properties.aadl:13:26
-       Value Value_Id 129
+   Expanded_Type_Designator Node_Id 2369
+   2369 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2370
+    2370 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2371
+     2371 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2372
+      2372 literal timing_properties.aadl:13:26
+       Value Value_Id 131
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2367
-     2367 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2368
-      2368 literal aadl_project.aadl:142:30
-       Value Value_Id 130
+     Upper_Bound Node_Id 2373
+     2373 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2374
+      2374 literal aadl_project.aadl:142:30
+       Value Value_Id 132
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -8458,28 +8404,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2369
-   2369 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2370
-    2370 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2371
-     2371 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2372
-      2372 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2373
-       2373 literal timing_properties.aadl:13:26
-        Value Value_Id 131
+   Expanded_Type_Designator Node_Id 2375
+   2375 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2376
+    2376 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2377
+     2377 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2378
+      2378 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2379
+       2379 literal timing_properties.aadl:13:26
+        Value Value_Id 133
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2374
-      2374 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2375
-       2375 literal aadl_project.aadl:142:30
-        Value Value_Id 132
+      Upper_Bound Node_Id 2380
+      2380 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2381
+       2381 literal aadl_project.aadl:142:30
+        Value Value_Id 134
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -8528,26 +8474,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2376
-   2376 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2377
-    2377 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2378
-     2378 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2379
-      2379 literal timing_properties.aadl:13:26
-       Value Value_Id 133
+   Expanded_Type_Designator Node_Id 2382
+   2382 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2383
+    2383 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2384
+     2384 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2385
+      2385 literal timing_properties.aadl:13:26
+       Value Value_Id 135
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2380
-     2380 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2381
-      2381 literal aadl_project.aadl:142:30
-       Value Value_Id 134
+     Upper_Bound Node_Id 2386
+     2386 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2387
+      2387 literal aadl_project.aadl:142:30
+       Value Value_Id 136
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -8611,26 +8557,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2382
-   2382 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2383
-    2383 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2384
-     2384 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2385
-      2385 literal timing_properties.aadl:13:26
-       Value Value_Id 135
+   Expanded_Type_Designator Node_Id 2388
+   2388 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2389
+    2389 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2390
+     2390 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2391
+      2391 literal timing_properties.aadl:13:26
+       Value Value_Id 137
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2386
-     2386 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2387
-      2387 literal aadl_project.aadl:142:30
-       Value Value_Id 136
+     Upper_Bound Node_Id 2392
+     2392 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2393
+      2393 literal aadl_project.aadl:142:30
+       Value Value_Id 138
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -8684,28 +8630,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2388
-   2388 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2389
-    2389 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2390
-     2390 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2391
-      2391 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2392
-       2392 literal timing_properties.aadl:13:26
-        Value Value_Id 137
+   Expanded_Type_Designator Node_Id 2394
+   2394 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2395
+    2395 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2396
+     2396 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2397
+      2397 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2398
+       2398 literal timing_properties.aadl:13:26
+        Value Value_Id 139
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2393
-      2393 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2394
-       2394 literal aadl_project.aadl:142:30
-        Value Value_Id 138
+      Upper_Bound Node_Id 2399
+      2399 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2400
+       2400 literal aadl_project.aadl:142:30
+        Value Value_Id 140
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -8754,26 +8700,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2395
-   2395 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2396
-    2396 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2397
-     2397 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2398
-      2398 literal timing_properties.aadl:13:26
-       Value Value_Id 139
+   Expanded_Type_Designator Node_Id 2401
+   2401 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2402
+    2402 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2403
+     2403 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2404
+      2404 literal timing_properties.aadl:13:26
+       Value Value_Id 141
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2399
-     2399 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2400
-      2400 literal aadl_project.aadl:142:30
-       Value Value_Id 140
+     Upper_Bound Node_Id 2405
+     2405 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2406
+      2406 literal aadl_project.aadl:142:30
+       Value Value_Id 142
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -8827,26 +8773,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2401
-   2401 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2402
-    2402 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2403
-     2403 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2404
-      2404 literal timing_properties.aadl:13:26
-       Value Value_Id 141
+   Expanded_Type_Designator Node_Id 2407
+   2407 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2408
+    2408 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2409
+     2409 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2410
+      2410 literal timing_properties.aadl:13:26
+       Value Value_Id 143
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2405
-     2405 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2406
-      2406 literal aadl_project.aadl:142:30
-       Value Value_Id 142
+     Upper_Bound Node_Id 2411
+     2411 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2412
+      2412 literal aadl_project.aadl:142:30
+       Value Value_Id 144
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -8900,28 +8846,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2407
-   2407 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2408
-    2408 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2409
-     2409 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2410
-      2410 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2411
-       2411 literal timing_properties.aadl:13:26
-        Value Value_Id 143
+   Expanded_Type_Designator Node_Id 2413
+   2413 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2414
+    2414 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2415
+     2415 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2416
+      2416 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2417
+       2417 literal timing_properties.aadl:13:26
+        Value Value_Id 145
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2412
-      2412 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2413
-       2413 literal aadl_project.aadl:142:30
-        Value Value_Id 144
+      Upper_Bound Node_Id 2418
+      2418 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2419
+       2419 literal aadl_project.aadl:142:30
+        Value Value_Id 146
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -8975,28 +8921,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2414
-   2414 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2415
-    2415 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2416
-     2416 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2417
-      2417 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2418
-       2418 literal timing_properties.aadl:13:26
-        Value Value_Id 145
+   Expanded_Type_Designator Node_Id 2420
+   2420 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2421
+    2421 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2422
+     2422 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2423
+      2423 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2424
+       2424 literal timing_properties.aadl:13:26
+        Value Value_Id 147
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2419
-      2419 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2420
-       2420 literal aadl_project.aadl:142:30
-        Value Value_Id 146
+      Upper_Bound Node_Id 2425
+      2425 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2426
+       2426 literal aadl_project.aadl:142:30
+        Value Value_Id 148
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -9107,8 +9053,8 @@ Declarations List_Id 7
    1647 real type timing_properties.aadl:156:28
     Type_Range Node_Id 0
     Unit_Designator Node_Id 0
-   Expanded_Type_Designator Node_Id 2421
-   2421 real type timing_properties.aadl:156:28
+   Expanded_Type_Designator Node_Id 2427
+   2427 real type timing_properties.aadl:156:28
     Type_Range Node_Id 0
     Unit_Designator Node_Id 0
   Default_Value Node_Id 0
@@ -9148,26 +9094,26 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1350
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2422
-   2422 integer type timing_properties.aadl:13:14
-    Type_Range Node_Id 2423
-    2423 number range timing_properties.aadl:13:26
-     Lower_Bound Node_Id 2424
-     2424 signed aadlnumber timing_properties.aadl:13:26
-      Number_Value Node_Id 2425
-      2425 literal timing_properties.aadl:13:26
-       Value Value_Id 147
+   Expanded_Type_Designator Node_Id 2428
+   2428 integer type timing_properties.aadl:13:14
+    Type_Range Node_Id 2429
+    2429 number range timing_properties.aadl:13:26
+     Lower_Bound Node_Id 2430
+     2430 signed aadlnumber timing_properties.aadl:13:26
+      Number_Value Node_Id 2431
+      2431 literal timing_properties.aadl:13:26
+       Value Value_Id 149
       Unit_Identifier Node_Id 1344
       1344 identifier timing_properties.aadl:13:28
        Corresponding_Entity Node_Id 236
        Display_Name Name_Id "ps"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-     Upper_Bound Node_Id 2426
-     2426 signed aadlnumber aadl_project.aadl:142:30
-      Number_Value Node_Id 2427
-      2427 literal aadl_project.aadl:142:30
-       Value Value_Id 148
+     Upper_Bound Node_Id 2432
+     2432 signed aadlnumber aadl_project.aadl:142:30
+      Number_Value Node_Id 2433
+      2433 literal aadl_project.aadl:142:30
+       Value Value_Id 150
       Unit_Identifier Node_Id 188
       188 identifier aadl_project.aadl:142:35
        Corresponding_Entity Node_Id 259
@@ -9216,28 +9162,28 @@ Declarations List_Id 7
      Backend_Node Node_Id 0
     Entity Node_Id 1356
     Property_Set_Identifier Node_Id 0
-   Expanded_Type_Designator Node_Id 2428
-   2428 range type timing_properties.aadl:16:20
-    Number_Type Node_Id 2429
-    2429 integer type timing_properties.aadl:13:14
-     Type_Range Node_Id 2430
-     2430 number range timing_properties.aadl:13:26
-      Lower_Bound Node_Id 2431
-      2431 signed aadlnumber timing_properties.aadl:13:26
-       Number_Value Node_Id 2432
-       2432 literal timing_properties.aadl:13:26
-        Value Value_Id 149
+   Expanded_Type_Designator Node_Id 2434
+   2434 range type timing_properties.aadl:16:20
+    Number_Type Node_Id 2435
+    2435 integer type timing_properties.aadl:13:14
+     Type_Range Node_Id 2436
+     2436 number range timing_properties.aadl:13:26
+      Lower_Bound Node_Id 2437
+      2437 signed aadlnumber timing_properties.aadl:13:26
+       Number_Value Node_Id 2438
+       2438 literal timing_properties.aadl:13:26
+        Value Value_Id 151
        Unit_Identifier Node_Id 1344
        1344 identifier timing_properties.aadl:13:28
         Corresponding_Entity Node_Id 236
         Display_Name Name_Id "ps"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
-      Upper_Bound Node_Id 2433
-      2433 signed aadlnumber aadl_project.aadl:142:30
-       Number_Value Node_Id 2434
-       2434 literal aadl_project.aadl:142:30
-        Value Value_Id 150
+      Upper_Bound Node_Id 2439
+      2439 signed aadlnumber aadl_project.aadl:142:30
+       Number_Value Node_Id 2440
+       2440 literal aadl_project.aadl:142:30
+        Value Value_Id 152
        Unit_Identifier Node_Id 188
        188 identifier aadl_project.aadl:142:35
         Corresponding_Entity Node_Id 259
@@ -9333,8 +9279,8 @@ Declarations List_Id 7
     Entity Node_Id 0
     Property_Set_Identifier Node_Id 0
    Multi_Value List_Id 0
-   Expanded_Single_Value Node_Id 2435
-   2435 enumeration term timing_properties.aadl:169:03
+   Expanded_Single_Value Node_Id 2441
+   2441 enumeration term timing_properties.aadl:169:03
     Identifier Node_Id 1680
     1680 identifier timing_properties.aadl:169:06
      Corresponding_Entity Node_Id 0
@@ -10971,9 +10917,9 @@ Declarations List_Id 7
    2028 literal programming_properties.aadl:200:40
     Value Value_Id 42
    Multi_Value List_Id 0
-   Expanded_Single_Value Node_Id 2436
-   2436 literal programming_properties.aadl:200:40
-    Value Value_Id 151
+   Expanded_Single_Value Node_Id 2442
+   2442 literal programming_properties.aadl:200:40
+    Value Value_Id 153
    Expanded_Multi_Value List_Id 0
   Applies_To Node_Id 2033
   2033 applies to programming_properties.aadl:200:03
