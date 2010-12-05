@@ -114,6 +114,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Global_Port_Model_Names       : Node_Id;
       Local_Port_List               : List_Id;
 
+      Nb_Nodes_Node                 : Node_Id := No_Node;
+
       Current_Process_Instance      : Node_Id := No_Node;
 
       Global_Port_To_Entity     : Node_Id;
@@ -739,10 +741,17 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                (Nb_Protected, 1, 10)));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+         if Nb_Nodes_Node = No_Node then
+            Nb_Nodes_Node := Make_Literal (New_Int_Value (0, 1, 10));
+         end if;
+
+         CTN.Set_Value
+            (Nb_Nodes_Node,
+            New_Int_Value (Node_Identifier, 1, 10));
+
          N := Make_Define_Statement
            (Defining_Identifier => RE (RE_Nb_Nodes),
-            Value => Make_Literal
-               (New_Int_Value (Node_Identifier, 1, 10)));
+            Value => Nb_Nodes_Node);
          Append_Node_To_List
            (N, CTN.Declarations (Current_File));
 
