@@ -74,6 +74,33 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    Devices_Array     : Node_Id;
    Port_To_Devices   : Node_Id;
 
+   function Is_Added (P : Node_Id; E : Node_Id) return Boolean;
+   function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id;
+
+   --------------
+   -- Is_Added --
+   --------------
+
+   function Is_Added (P : Node_Id; E : Node_Id) return Boolean is
+      I_Name : constant Name_Id := Added_Internal_Name (P, E);
+   begin
+      return Get_Name_Table_Byte (I_Name) = 1;
+   end Is_Added;
+
+   -------------------------
+   -- Added_Internal_Name --
+   -------------------------
+
+   function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id is
+   begin
+      Set_Str_To_Name_Buffer ("%add%enumerator%");
+      Add_Nat_To_Name_Buffer (Nat (P));
+      Add_Char_To_Name_Buffer ('%');
+      Add_Nat_To_Name_Buffer (Nat (E));
+
+      return Name_Find;
+   end Added_Internal_Name;
+
    -----------------
    -- Header_File --
    -----------------
@@ -88,8 +115,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       procedure Visit_Subprogram_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
 
-      function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id;
-      function Is_Added (P : Node_Id; E : Node_Id) return Boolean;
       procedure Set_Added (P : Node_Id; E : Node_Id);
 
       procedure Append_Existing
@@ -114,7 +139,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Global_Port_Model_Names       : Node_Id;
       Local_Port_List               : List_Id;
 
-      Nb_Nodes_Node                 : Node_Id := No_Node;
+      Nb_Nodes                      : Unsigned_Long_Long;
 
       Current_Process_Instance      : Node_Id := No_Node;
 
@@ -183,30 +208,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             Id := Id + 1;
          end if;
       end Append_Existing;
-
-      -------------------------
-      -- Added_Internal_Name --
-      -------------------------
-
-      function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id is
-      begin
-         Set_Str_To_Name_Buffer ("%add%enumerator%");
-         Add_Nat_To_Name_Buffer (Nat (P));
-         Add_Char_To_Name_Buffer ('%');
-         Add_Nat_To_Name_Buffer (Nat (E));
-
-         return Name_Find;
-      end Added_Internal_Name;
-
-      --------------
-      -- Is_Added --
-      --------------
-
-      function Is_Added (P : Node_Id; E : Node_Id) return Boolean is
-         I_Name : constant Name_Id := Added_Internal_Name (P, E);
-      begin
-         return Get_Name_Table_Byte (I_Name) = 1;
-      end Is_Added;
 
       ---------------
       -- Set_Added --
@@ -397,6 +398,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Device_Implementation : Node_Id;
       begin
          pragma Assert (AAU.Is_System (Root_Sys));
+
+         Nb_Nodes := 0;
 
          Set_Added (E, E);
 
@@ -644,6 +647,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   Append_Node_To_List
                      (N, Node_Enumerator_List);
                   Node_Identifier := Node_Identifier + 1;
+                  Nb_Nodes := Nb_Nodes + 1;
                else
                   N := Make_Expression
                      (Make_Defining_Identifier
@@ -741,17 +745,9 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                (Nb_Protected, 1, 10)));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-         if Nb_Nodes_Node = No_Node then
-            Nb_Nodes_Node := Make_Literal (New_Int_Value (0, 1, 10));
-         end if;
-
-         CTN.Set_Value
-            (Nb_Nodes_Node,
-            New_Int_Value (Node_Identifier, 1, 10));
-
          N := Make_Define_Statement
            (Defining_Identifier => RE (RE_Nb_Nodes),
-            Value => Nb_Nodes_Node);
+            Value => Make_Literal (New_Int_Value (Nb_Nodes, 1, 10)));
          Append_Node_To_List
            (N, CTN.Declarations (Current_File));
 
@@ -1457,7 +1453,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Q := First_Node (Subcomponents (Root_Sys));
 
          while Present (Q) loop
-            if AAU.Is_Process (Corresponding_Instance (Q)) then
+            if AAU.Is_Process (Corresponding_Instance (Q)) and then
+               Is_Added (Corresponding_Instance (Q), E) then
                Execution_Platform := Get_Execution_Platform
                   (Get_Bound_Processor
                      (Corresponding_Instance (Q)));
