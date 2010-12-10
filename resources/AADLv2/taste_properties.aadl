@@ -224,4 +224,6 @@ Instance_Name : aadlstring applies to (system);
 
 Associated_Queue_Size : aadlinteger applies to (subprogram);
 
+EncodingDefinitionFile : classifier (data) applies to (data);
+
 end Taste;
