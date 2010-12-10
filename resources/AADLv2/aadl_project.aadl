@@ -110,7 +110,8 @@ property set AADL_Project is
      Simulink,
      Simulink_6_5,
      System_C,
-     VHDL);
+     VHDL,
+     ACN);
 
   Supported_Distributions: type enumeration (Fixed);
   -- The following are example distributions:
