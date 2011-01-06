@@ -59,6 +59,12 @@ property set Thread_Properties is
 
   Dispatch_Protocol: Supported_Dispatch_Protocols
   applies to (thread);
+
+  Dispatch_Trigger: list of reference (port) 
+  applies to (device, thread);
+  --  The Dispatch_Trigger property specifies the list of ports that can
+  --  trigger the dispatch of a thread or device.
+
   ----------------------------------------------------
 
   POSIX_Scheduling_Policy : enumeration (SCHED_FIFO, 

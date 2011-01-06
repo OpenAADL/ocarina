@@ -93,8 +93,9 @@ property set AADL_Project is
      Ada,     -- alias for Ada95
      Ada05,   -- alias for Ada95
      ASN1,
-     C,
      Blackbox_Device,
+     C,
+     CPP,     -- C++     
      Esterel,
      GUI,
      Lustre,
@@ -155,7 +156,8 @@ property set AADL_Project is
     MByte  => KByte * 1000, 
     GByte  => MByte * 1000,
     TByte  => GByte * 1000);
-  -- Note: B, KB, etc. in AADL 2004 have been replaced by Byte, Kbyte etc. in AADL V2. 
+  -- Note: B, KB, etc. in AADL 2004 have been replaced by Byte, Kbyte
+  -- etc. in AADL V2.
 
   Time_Units: type units (
     ps, 
