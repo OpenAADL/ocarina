@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -72,6 +72,7 @@ package Ocarina.ME_AADL is
 
    type Connection_Type is
      (CT_Error,
+
       --  AADL_V1
       CT_Event_Data,
       CT_Data_Delayed,
@@ -88,12 +89,13 @@ package Ocarina.ME_AADL is
       --  AADL_V2
       CT_Access_Virtual_Bus,
       CT_Port_Connection,
-      CT_Access_Subprogram_Group);
+      CT_Access_Subprogram_Group,
+      CT_Access);
 
    --  Note: CT_Data represents Data_Immediate in AADL_V1
 
    subtype Port_Connection_Type is Connection_Type
-     range CT_Data .. CT_Event_Data;
+     range CT_Data .. CT_Event_Data; --  XXX is this type empty ????
 
    type Flow_Category is (FC_Source, FC_Sink, FC_Path);
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2009-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -204,7 +204,8 @@ package body Ocarina.Analyzer.AADL.Queries is
                  | CT_Access_Data
                  | CT_Access_Subprogram
                  | CT_Access_Subprogram_Group
-                 | CT_Access_Virtual_Bus =>
+                 | CT_Access_Virtual_Bus
+                 | CT_Access =>
                   return PO_Access_Connection;
             end case;
 

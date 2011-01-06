@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -700,11 +700,13 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          when CT_Port_Connection
            | CT_Access_Subprogram_Group
-           | CT_Access_Virtual_Bus =>
+           | CT_Access_Virtual_Bus
+           | CT_Access =>
             Success := True;
             --  XXX Incomplete TODO
 
-         when CT_Data | CT_Data_Delayed =>
+         when CT_Data
+           | CT_Data_Delayed =>
             Success := Kind (Connection_End) = K_Port_Spec
               and then Is_Data (Connection_End)
               and then not Is_Event (Connection_End);
@@ -1032,7 +1034,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          when CT_Port_Connection
            | CT_Access_Subprogram_Group
-           | CT_Access_Virtual_Bus =>
+           | CT_Access_Virtual_Bus
+           | CT_Access =>
             Success := True;
             --  XXX incomplete TODO
 

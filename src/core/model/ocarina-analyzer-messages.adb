@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2004-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2004-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -106,8 +106,10 @@ package body Ocarina.Analyzer.Messages is
       if Loc /= No_Location then
          Write_Str (Image (Loc) & ": ");
       else
-         Write_Str (Image
-                      (Ocarina.Me_AADL.AADL_Tree.Nodes.Loc (Node1)) & ": ");
+         if Present (Node1) then
+            Write_Str
+              (Image (Ocarina.Me_AADL.AADL_Tree.Nodes.Loc (Node1)) & ": ");
+         end if;
       end if;
 
       if Message0 /= "" then
