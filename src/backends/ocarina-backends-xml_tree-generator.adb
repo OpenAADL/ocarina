@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,6 +35,7 @@ with Namet;  use Namet;
 with Output; use Output;
 with Utils;  use Utils;
 
+with Ada.Directories;
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
 with Ocarina.Backends.Utils;
@@ -84,10 +85,7 @@ package body Ocarina.Backends.XML_Tree.Generator is
       --  The File name corresponding is the lowerd name of N
 
       Get_Name_String
-        (Conventional_Base_Name
-         (Name
-          (Defining_Identifier
-           (N))));
+        (Conventional_Base_Name (Name (Defining_Identifier (N))));
 
       --  Adding file suffix
 
@@ -104,17 +102,26 @@ package body Ocarina.Backends.XML_Tree.Generator is
    begin
       if not Print_On_Stdout then
          declare
-            File_Name : constant Name_Id
-              := Get_File_Name (N);
+            File_Name : constant Name_Id := Get_File_Name (N);
+            File_Name_String : constant String := Get_Name_String (File_Name);
             Fd : File_Descriptor;
+
          begin
-            Get_Name_String (File_Name);
+            if Present (XML_DTD (N)) then
+               --  If a DTD has been specified, copy it as target
+               --  file, then move at the end of the file to add
+               --  output.
 
-            --  Create a new file and overwrites existing file with
-            --  the same name
+               Ada.Directories.Copy_File
+                 (Source_Name => Get_Name_String (Name (XML_DTD (N))),
+                  Target_Name => File_Name_String);
+               Fd := Open_Read_Write (File_Name_String, Text);
+               Lseek (Fd, 0, Seek_End);
+            else
+               --  Else, create a new file, overwrite existing file
 
-            Fd := Create_File
-               (Name_Buffer (1 .. Name_Len), Text);
+               Fd := Create_File (File_Name_String, Text);
+            end if;
 
             if Fd = Invalid_FD then
                raise Program_Error;
@@ -470,11 +477,9 @@ package body Ocarina.Backends.XML_Tree.Generator is
    -----------------------
 
    procedure Generate_XML_File (N : Node_Id) is
+      pragma Assert (Present (N));
       Fd : File_Descriptor;
    begin
-      if No (N) then
-         return;
-      end if;
       Fd := Set_Output (N);
 
       Generate (Root_Node (N));

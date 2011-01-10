@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2010, GET-Telecom Paris.                   --
+--          Copyright (C) 2010-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -228,7 +228,7 @@ package body Ocarina.Backends.Cheddar.Main is
       --  >
 
       if Cheddar_Node = No_Node then
-         Cheddar_Node := Make_Xml_Node ("cheddar");
+         Cheddar_Node := Make_XML_Node ("cheddar");
          Append_Node_To_List
            (Cheddar_Node, XTN.Subitems (XTN.Root_Node (XTN.XML_File (U))));
       end if;

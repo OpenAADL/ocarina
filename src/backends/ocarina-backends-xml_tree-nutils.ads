@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -185,7 +185,9 @@ package Ocarina.Backends.XML_Tree.Nutils is
    function Conventional_Base_Name (N : Name_Id) return Name_Id;
    --  Return a lower case name of N
 
-   function Make_XML_File (Identifier : Node_Id) return Node_Id;
+   function Make_XML_File
+     (Identifier : Node_Id; DTD : Node_Id := No_Node)
+     return Node_Id;
 
    function Make_Literal (Value : Value_Id) return Node_Id;
 

@@ -387,6 +387,7 @@ AC_OUTPUT([
 	resources/Makefile
 	resources/behavioural_properties/Makefile
 	resources/runtime/Makefile
+	resources/runtime/cheddar/Makefile
 	projects/ocarina.gpr
 	src/main/Makefile
 	src/main/ocarina-configuration.adb

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2010, GET-Telecom Paris.                   --
+--          Copyright (C) 2010-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,6 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with GNAT.OS_Lib; use GNAT.OS_Lib;
 with Namet; use Namet;
 with Utils; use Utils;
 
@@ -38,6 +39,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.Build_Utils;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Common.Mapping;
@@ -51,6 +53,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
+   use Ocarina.Backends.Build_Utils;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Common.Mapping;
@@ -118,6 +121,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
       N        : Node_Id;
       P        : Node_Id;
       Root     : Node_Id;
+      DTD      : Node_Id;
    begin
       pragma Assert (AINU.Is_System (E)
                      or else AINU.Is_Process (E)
@@ -138,7 +142,13 @@ package body Ocarina.Backends.Cheddar.Mapping is
 
       Add_Str_To_Name_Buffer ("_cheddar");
       N := Make_Defining_Identifier (Name_Find);
-      P := Make_XML_File (N);
+
+      Set_Str_To_Name_Buffer
+        (Get_Runtime_Path ("cheddar")
+           & Directory_Separator & "cheddar.dtd");
+      DTD := Make_Defining_Identifier (Name_Find);
+
+      P := Make_XML_File (N, DTD);
       Set_Distributed_Application_Unit (P, U);
       XTN.Set_XML_File (U, P);
 

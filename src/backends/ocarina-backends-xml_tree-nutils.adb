@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -566,14 +566,24 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    -- Make_XML_File --
    -------------------
 
-   function Make_XML_File (Identifier : Node_Id) return Node_Id is
+   function Make_XML_File
+     (Identifier : Node_Id; DTD : Node_Id := No_Node)
+     return Node_Id
+   is
       File : Node_Id;
+      The_XML_Node : Node_Id;
+
    begin
       File := New_Node (K_XML_File);
+      The_XML_Node := New_Node (XTN.K_XML_Node);
+
       Set_Defining_Identifier (File, Identifier);
       Set_Corresponding_Node (Identifier, File);
 
-      XTN.Set_Root_Node (File, New_Node (XTN.K_XML_Node));
+      XTN.Set_Root_Node (File, The_XML_Node);
+      if Present (DTD) then
+         XTN.Set_XML_DTD (File, DTD);
+      end if;
 
       return File;
    end Make_XML_File;
