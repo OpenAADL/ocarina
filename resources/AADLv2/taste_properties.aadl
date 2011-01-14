@@ -4,6 +4,8 @@ property set Taste is
    Coordinates : aadlstring applies to 
 		(system, package, device, memory, processor, process, access, subprogram access, connection, bus, virtual bus);
 
+   Data_Transport : enumeration (legacy,asn1) applies to (device, abstract);
+
    Importance: enumeration (low, medium, high) applies to (system, subprogram access, access);
 
 	APLC_Binding : list of reference (process) applies to (process, device, system);

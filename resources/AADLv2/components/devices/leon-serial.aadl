@@ -1,0 +1,49 @@
+package ocarina_drivers_leon_serial
+
+public
+
+with ocarina_buses;
+
+subprogram spg_serial_poller_leon
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_leon_poller";
+end spg_serial_poller_leon;
+
+
+subprogram spg_serial_sender_leon
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_leon_sender";
+end spg_serial_sender_leon;
+
+subprogram spg_serial_init_leon
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_leon_init";
+end spg_serial_init_leon;
+
+thread serial_poller
+end serial_poller;
+
+
+thread implementation serial_poller.leon
+calls
+	mycall : {
+	  pspg : subprogram spg_serial_poller_leon;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end serial_poller.leon;
+
+abstract serial_driver
+end serial_driver;
+
+abstract implementation serial_driver.leon
+subcomponents
+   receiver_leon_serial  : thread serial_poller.leon;
+   sender                : subprogram spg_serial_sender_leon;
+end serial_driver.leon;
+
+end ocarina_drivers_leon_serial;
