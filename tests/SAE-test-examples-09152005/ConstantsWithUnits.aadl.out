@@ -1,2 +1,3 @@
+ConstantsWithUnits.aadl:18:23: Property value is not in the range defined for this property type
 ConstantsWithUnits.aadl:18:23: when evaluating the value of PS::prop2, the value (PT_INTEGER) is not conformant with declaration at ConstantsWithUnits.aadl:10:03 (PT_INTEGER)
 Cannot analyze AADL specifications
