@@ -1955,8 +1955,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
                  and then Test_Property_Value_Validity
                  (Property_Name_Type (Property_Name),
                   Expanded_Single_Value
-                  (Property_Association_Value
-                   (Property_Association)));
+                    (Property_Association_Value
+                       (Property_Association)));
 
                if not Success then
                   Display_Incompatible_Property_Types
@@ -2125,15 +2125,14 @@ package body Ocarina.Analyzer.AADL.Semantics is
          end if;
 
          Result := Value (Value (L));
-
          Count := 0;
 
          while not Base loop
             Result := Result * Value
               (Value
-               (Numeric_Literal
-                (Corresponding_Entity
-                 (Fetched))));
+                 (Numeric_Literal
+                    (Corresponding_Entity
+                       (Fetched))));
 
             Fetch
               (Unit_Identifier (Corresponding_Entity (Fetched)),
@@ -2146,12 +2145,11 @@ package body Ocarina.Analyzer.AADL.Semantics is
                DAE
                  (Message0 => "Units Type ",
                   Node1    =>  Units_Type,
-                  Message1 => " Contains cycles is not correctly defined");
+                  Message1 => " contains cycles is not correctly defined");
                exit;
             end if;
 
          end loop;
-
          N := New_Node (K_Literal, Loc (L));
          Set_Value (N, New_Value (Result));
 
@@ -2209,7 +2207,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
    begin
       --  If one of the numbers is a literal (without a unit) this
       --  means that the corresponding unit type contains only one
-      --  unit identifier an that the node linker did not detect an
+      --  unit identifier and that the node linker did not detect an
       --  error. So we return the literal without modifying them.
 
       if Kind (Number_1) = K_Literal then
@@ -2483,6 +2481,11 @@ package body Ocarina.Analyzer.AADL.Semantics is
                          Upper_Bound
                          (Type_Range
                           (Type_Designator))) >= 0);
+                     if not Success then
+                        Error_Loc (1) := Loc (Property_Value);
+                        DE ("Property value is not in the range"
+                              & " defined for this property type");
+                     end if;
                   end if;
                else
                   Success := False;
@@ -2520,6 +2523,11 @@ package body Ocarina.Analyzer.AADL.Semantics is
                        (Compare_Numbers
                         (Actual_Literal,
                          Upper_Bound (Type_Range (Type_Designator))) >= 0);
+                     if not Success then
+                        Error_Loc (1) := Loc (Property_Value);
+                        DE ("Property value is not in the range"
+                              & " defined for this property type");
+                     end if;
                   end if;
                else
                   Success := False;
