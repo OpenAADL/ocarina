@@ -129,13 +129,13 @@ property set AADL_Project is
   -- expressed in terms of seconds as time unit. The numeric value
   -- of the property must be positive.
 
-  Max_Aadlinteger: constant aadlinteger => 2#1#e32;
+  Max_Aadlinteger: constant aadlinteger => 2#1#e61;
 
   Max_Target_Integer: constant aadlinteger => 2#1#e32;
 
   Max_Base_Address: constant aadlinteger => 2#1#e32;
 
-  Max_Memory_Size: constant Size => 2#1#e32 Bytes;
+  Max_Memory_Size: constant Size => 2#1#e48 Bytes;
 
   Max_Queue_Size: constant aadlinteger => 512;
 
