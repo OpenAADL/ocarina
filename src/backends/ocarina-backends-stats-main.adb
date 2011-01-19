@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -59,10 +59,10 @@ package body Ocarina.Backends.Stats.Main is
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Stats.Mapping;
 
-   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package XTN renames Ocarina.Backends.XML_Tree.Nodes;
-   package XV renames Ocarina.Backends.XML_Values;
+   package AIN    renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package AINU   renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   package XTN    renames Ocarina.Backends.XML_Tree.Nodes;
+   package XV     renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);

@@ -80,7 +80,8 @@ package body Ocarina.Backends.XML_Tree.Generator is
    -------------------
 
    function Get_File_Name (N : Node_Id) return Name_Id is
-      Suffix : constant String := ".xml";
+      Suffix_XML  : constant String := ".xml";
+      Suffix_HTML : constant String := ".html";
    begin
       --  The File name corresponding is the lowerd name of N
 
@@ -88,8 +89,11 @@ package body Ocarina.Backends.XML_Tree.Generator is
         (Conventional_Base_Name (Name (Defining_Identifier (N))));
 
       --  Adding file suffix
-
-      Add_Str_To_Name_Buffer (Suffix);
+      if Is_HTML (N) then
+         Add_Str_To_Name_Buffer (Suffix_HTML);
+      else
+         Add_Str_To_Name_Buffer (Suffix_XML);
+      end if;
 
       return Name_Find;
    end Get_File_Name;

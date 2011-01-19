@@ -580,6 +580,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
       Set_Defining_Identifier (File, Identifier);
       Set_Corresponding_Node (Identifier, File);
 
+      XTN.Set_Is_HTML (File, False);
       XTN.Set_Root_Node (File, The_XML_Node);
       if Present (DTD) then
          XTN.Set_XML_DTD (File, DTD);

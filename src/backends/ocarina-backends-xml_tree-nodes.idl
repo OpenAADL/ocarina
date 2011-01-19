@@ -77,6 +77,7 @@ module Ocarina::Backends::XML_Tree::Nodes {
   interface XML_File : Definition {
     Node_Id    Distributed_Application_Unit;
     Node_Id    Root_Node;
+    boolean    Is_HTML;
     Node_Id    XML_DTD;   // Identifier referring to XML file DTD
   };
 

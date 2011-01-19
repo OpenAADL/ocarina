@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -50,6 +50,7 @@ with Ocarina.Backends.Stats;
 with Ocarina.Backends.Subprograms;
 with Ocarina.Backends.Carts;
 with Ocarina.Backends.Cheddar;
+with Ocarina.Backends.Connection_Matrix;
 with Ocarina.Backends.MAST;
 with Ocarina.Backends.MAST_Values;
 with Ocarina.Backends.MAST_Tree.Nodes;
@@ -188,6 +189,7 @@ package body Ocarina.Backends is
       Carts.Init;
       ASN1.Init;
       Cheddar.Init;
+      Connection_Matrix.Init;
    end Init;
 
    ----------------------
@@ -248,6 +250,7 @@ package body Ocarina.Backends is
       Stats.Reset;
       Carts.Reset;
       PO_QoS_Ada.Reset;
+      Connection_Matrix.Reset;
 
       Ada_Tree.Nutils.Reset;
       C_Tree.Nutils.Reset;
