@@ -23,6 +23,12 @@ properties
 	Source_Name => "__po_hi_c_driver_serial_leon_init";
 end spg_serial_init_leon;
 
+subprogram spg_serial_init_leon_sender
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_leon_init_sender";
+end spg_serial_init_leon_sender;
+
 thread serial_poller
 end serial_poller;
 
@@ -45,5 +51,11 @@ subcomponents
    receiver_leon_serial  : thread serial_poller.leon;
    sender                : subprogram spg_serial_sender_leon;
 end serial_driver.leon;
+
+abstract implementation serial_driver.leon_sender
+subcomponents
+   sender                : subprogram spg_serial_sender_leon;
+end serial_driver.leon_sender;
+
 
 end ocarina_drivers_leon_serial;
