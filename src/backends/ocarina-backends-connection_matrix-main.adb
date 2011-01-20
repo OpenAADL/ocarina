@@ -223,6 +223,9 @@ package body Ocarina.Backends.Connection_Matrix.Main is
       T                 : Node_Id;
       TR                : Node_Id;
       TD                : Node_Id;
+      UL                : Node_Id;
+      LI                : Node_Id;
+      H2                : Node_Id;
       Table             : Node_Id;
       P                 : Node_Id;
       Q                 : Node_Id;
@@ -231,7 +234,11 @@ package body Ocarina.Backends.Connection_Matrix.Main is
       Dest_Component    : Node_Id;
       Bandwidth         : Unsigned_Long_Long;
       Bandwidth_Unit    : Name_Id;
+      Latency           : Unsigned_Long_Long;
+      Latency_Unit      : Name_Id;
       Associated_Bus    : Node_Id;
+      Has_Bus           : Boolean := False;
+      Bus_Instance      : Node_Id;
    begin
       --  Declare the table node that will contain the connectivity matrix.
       Table := Make_XML_Node ("table");
@@ -259,7 +266,9 @@ package body Ocarina.Backends.Connection_Matrix.Main is
          --  In the following loop, we build a complete line
          --  that contains the name of all system subcomponents.
          while Present (S) loop
-            if Get_Category_Of_Component (S) /= CC_Bus then
+            if Get_Category_Of_Component (S) = CC_Bus then
+               Has_Bus := True;
+            else
 
                TD := Make_XML_Node ("td");
 
@@ -465,7 +474,128 @@ package body Ocarina.Backends.Connection_Matrix.Main is
          end loop;
       end if;
 
+      --  Add the table to the main HTML node (<body/>).
       Append_Node_To_List (Table,
                            XTN.Subitems (Current_Parent_Node));
+
+      --  Now, we are enumerating all buses that are used
+      --  in the model.
+
+      if Has_Bus then
+
+         --  Make a subtitle for the list of buses.
+         H2 := Make_XML_Node ("h2");
+
+         Set_Str_To_Name_Buffer
+            ("font-family: Arial;" &
+            "font-weight: bold; font-size: 1.2em");
+         P := Make_Defining_Identifier (Name_Find);
+         Set_Str_To_Name_Buffer ("style");
+         Q := Make_Defining_Identifier (Name_Find);
+         Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (H2));
+
+         Set_Str_To_Name_Buffer ("Buses used");
+         N := Make_Defining_Identifier (Name_Find);
+         XTN.Set_Node_Value (H2, N);
+
+         Append_Node_To_List (H2,
+                              XTN.Subitems (Current_Parent_Node));
+
+         --  Add a <ul> node that represent a line.
+         UL := Make_XML_Node ("ul");
+
+         S := First_Node (Subcomponents (E));
+
+         --  In the following loop, we build a complete line
+         --  that contains the name of all system subcomponents.
+         while Present (S) loop
+            if Get_Category_Of_Component (S) = CC_Bus then
+               Bus_Instance := Corresponding_Instance (S);
+               LI := Make_XML_Node ("li");
+
+               Set_Str_To_Name_Buffer
+                  ("font-family: Arial;" &
+                  "font-size: 0.8em");
+               P := Make_Defining_Identifier (Name_Find);
+               Set_Str_To_Name_Buffer ("style");
+               Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (LI));
+
+               Bandwidth := 0;
+               Latency   := 0;
+
+               --  Try to find the bus properties: bandwidth and latency.
+               if Is_Defined_Property
+                  (Bus_Instance, "aram_properties::bandwidth") then
+
+                  Bandwidth := Get_Integer_Property
+                     (Bus_Instance, "aram_properties::bandwidth");
+
+                  Bandwidth_Unit := ATN.Name
+                     (ATN.Unit_Identifier
+                        (Get_Value_Of_Property_Association
+                           (Bus_Instance,
+                            Get_String_Name
+                              ("aram_properties::bandwidth"))));
+               end if;
+
+               if Is_Defined_Property
+                  (Bus_Instance, "aram_properties::max_latency") then
+
+                  Latency := Get_Integer_Property
+                     (Bus_Instance, "aram_properties::max_latency");
+
+                  Latency_Unit := ATN.Name
+                     (ATN.Unit_Identifier
+                        (Get_Value_Of_Property_Association
+                           (Bus_Instance,
+                            Get_String_Name
+                              ("aram_properties::max_latency"))));
+               end if;
+
+               --  First, display the name of the bus in bold
+               --  using <strong/> tag.
+
+               Set_Str_To_Name_Buffer ("<strong>");
+               Get_Name_String_And_Append
+                  (Display_Name
+                     (Identifier (Bus_Instance)));
+               Add_Str_To_Name_Buffer ("</strong> (<em>");
+
+               --  Then, put its properties between parenthesis.
+               if Bandwidth = 0 and then Latency = 0 then
+                  Add_Str_To_Name_Buffer
+                     ("bus properties are not declared");
+               end if;
+
+               if Bandwidth > 0 then
+                  Add_Str_To_Name_Buffer ("bandwidth: ");
+                  Add_Str_To_Name_Buffer
+                     (Unsigned_Long_Long'Image (Bandwidth));
+                  Get_Name_String_And_Append (Bandwidth_Unit);
+               end if;
+
+               if Latency > 0 then
+                  Add_Str_To_Name_Buffer (" latency: ");
+                  Add_Str_To_Name_Buffer
+                     (Unsigned_Long_Long'Image (Latency));
+                  Get_Name_String_And_Append (Latency_Unit);
+               end if;
+
+               Add_Str_To_Name_Buffer ("</em>)");
+
+               N := Make_Defining_Identifier (Name_Find);
+               XTN.Set_Node_Value (LI, N);
+
+               Append_Node_To_List (LI,
+                           XTN.Subitems (UL));
+            end if;
+            S := Next_Node (S);
+         end loop;
+
+         Append_Node_To_List (UL,
+                              XTN.Subitems (Current_Parent_Node));
+      end if;
+
    end Visit_System_Instance;
 end Ocarina.Backends.Connection_Matrix.Main;
