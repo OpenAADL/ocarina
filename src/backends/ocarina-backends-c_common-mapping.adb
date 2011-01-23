@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -932,6 +932,11 @@ package body Ocarina.Backends.C_Common.Mapping is
             Add_Str_To_Name_Buffer ("_global_");
             Get_Name_String_And_Append (C_Name_1);
          end if;
+      elsif AINU.Is_Bus (E) then
+         Set_Str_To_Name_Buffer ("bus_");
+         Get_Name_String_And_Append
+            (AIN.Name
+               (AIN.Identifier (Parent_Subcomponent (E))));
       elsif AINU.Is_Subprogram (E) then
          --  For subprograms and processes, the enemerator name is
          --  mapped from the entity name.

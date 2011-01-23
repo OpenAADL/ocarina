@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -158,6 +158,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Protected_IPCP,                 --  __PO_HI_PROTECTED_IPCP
       RE_Nb_Nodes,                       --  __PO_HI_NB_NODES
       RE_Nb_Devices,                     --  __PO_HI_NB_DEVICES
+      RE_Nb_Buses,                       --  __PO_HI_NB_BUSES
       RE_My_Node,                        --  __PO_HI_MY_NODE
       RE_Gqueue_Fifo_Indata,             --  __PO_HI_GQUEUE_FIFO_DATA
       RE_Gqueue_Fifo_Out,                --  __PO_HI_GQUEUE_FIFO_OUT
@@ -172,6 +173,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
 
       RE_Task_Id,                        --  __po_hi_task_id
       RE_Device_Id,                      --  __po_hi_device_id
+      RE_Bus_Id,                         --  __po_hi_bus_id
       RE_Entity_T,                       --  __po_hi_entity_t
       RE_Inetport_T,                     --  __po_hi_inetport_t
       RE_Inetaddr_T,                     --  __po_hi_inetaddr_t
@@ -306,6 +308,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Msg_T                          => RH_PO_HI_Messages,
          RE_Task_Id                        => RH_Deployment,
          RE_Device_Id                      => RH_Deployment,
+         RE_Bus_Id                         => RH_Deployment,
          RE_Entity_T                       => RH_Deployment,
          RE_Local_Port_T                   => RH_Deployment,
          RE_Port_T                         => RH_Deployment,
@@ -342,6 +345,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Main_Return                    => RH_PO_HI_Task,
          RE_Nb_Nodes                       => RH_Deployment,
          RE_Nb_Devices                     => RH_Deployment,
+         RE_Nb_Buses                       => RH_Deployment,
          RE_My_Node                        => RH_Deployment,
          RE_Nb_Ports                       => RH_Deployment,
          RE_Nb_Servers                     => RH_Deployment,

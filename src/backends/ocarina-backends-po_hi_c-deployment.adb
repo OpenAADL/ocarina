@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -114,6 +114,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Subprogram_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
+      procedure Visit_Bus_Instance (E : Node_Id);
 
       procedure Set_Added (P : Node_Id; E : Node_Id);
 
@@ -133,6 +134,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Node_Enumerator_List          : List_Id;
       Tasks_Enumerator_List         : List_Id;
       Devices_Enumerator_List       : List_Id;
+      Buses_Enumerator_List         : List_Id;
       Entity_Enumerator_List        : List_Id;
       Global_Port_List              : List_Id;
       Global_Port_Names             : Node_Id;
@@ -166,11 +168,13 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Task_Identifier          : Unsigned_Long_Long := 0;
       Nb_Protected             : Unsigned_Long_Long := 0;
       Device_Id                : Unsigned_Long_Long := 0;
+      Bus_Id                   : Unsigned_Long_Long := 0;
       Nb_Ports_In_Process      : Unsigned_Long_Long := 0;
       Nb_Ports_Total           : Unsigned_Long_Long := 0;
       Total_Ports_Node         : Node_Id := No_Node;
       Nb_Entities_Node         : Node_Id := No_Node;
       Nb_Devices_Node          : Node_Id := No_Node;
+      Nb_Buses_Node            : Node_Id := No_Node;
 
       --  The information from Simulink can come
       --  from both data and subprograms. So, to avoid
@@ -270,10 +274,38 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             when CC_Device =>
                Visit_Device_Instance (E);
 
+            when CC_Bus =>
+               Visit_Bus_Instance (E);
+
             when others =>
                null;
          end case;
       end Visit_Component_Instance;
+
+      ------------------------
+      -- Visit_Bus_Instance --
+      ------------------------
+
+      procedure Visit_Bus_Instance (E : Node_Id) is
+         N        : Node_Id;
+      begin
+         N := Make_Expression
+           (Make_Defining_Identifier
+            (Map_C_Enumerator_Name
+             (E, Entity => False)),
+            Op_Equal,
+            (Make_Literal
+          (CV.New_Int_Value (Bus_Id, 0, 10))));
+         Append_Node_To_List
+           (N, Buses_Enumerator_List);
+
+         Bus_Id  := Bus_Id + 1;
+
+         CTN.Set_Value
+            (Nb_Buses_Node, New_Int_Value
+             (Bus_Id, 1, 10));
+
+      end Visit_Bus_Instance;
 
       ---------------------------
       -- Visit_Device_Instance --
@@ -730,6 +762,12 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               (Devices_Enumerator_List));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+         N := Make_Full_Type_Declaration
+           (Defining_Identifier => RE (RE_Bus_Id),
+            Type_Definition     => Make_Enum_Aggregate
+              (Buses_Enumerator_List));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
+
          N := Make_Define_Statement
            (Defining_Identifier => RE (RE_Nb_Tasks),
              Value => Make_Literal (New_Int_Value (Task_Identifier, 1, 10)));
@@ -829,6 +867,12 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Append_Node_To_List
            (N, CTN.Declarations (Current_File));
 
+         N := Make_Define_Statement
+           (Defining_Identifier => RE (RE_Nb_Buses),
+            Value => Nb_Buses_Node);
+         Append_Node_To_List
+           (N, CTN.Declarations (Current_File));
+
          Current_Process_Instance := No_Node;
 
          Pop_Entity; -- U
@@ -849,6 +893,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Port_To_Devices            := Make_Array_Values;
 
          Devices_Enumerator_List    := New_List (CTN.K_Enumeration_Literals);
+         Buses_Enumerator_List      := New_List (CTN.K_Enumeration_Literals);
          Global_Port_List           := New_List (CTN.K_Enumeration_Literals);
          Global_Port_Names          := Make_Array_Values;
          Global_Port_Model_Names    := Make_Array_Values;
@@ -863,9 +908,14 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                                        (New_Int_Value (0, 1, 10));
          Nb_Devices_Node            := Make_Literal
                                        (New_Int_Value (0, 1, 10));
+         Nb_Buses_Node              := Make_Literal
+                                       (New_Int_Value (0, 1, 10));
          Entity_Array               := Make_Array_Values;
-
          Device_Id                  := 0;
+
+         --  Automatically define invalid identifier
+         --  for devices and buses. These are fixed identifier
+         --  so that developpers can ALWAYS rely on it.
 
          Set_Str_To_Name_Buffer ("invalid_device_id");
          N := Make_Expression
@@ -876,6 +926,16 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
           (CV.New_Int_Value (1, -1, 10))));
          Append_Node_To_List
             (N, Devices_Enumerator_List);
+
+         Set_Str_To_Name_Buffer ("invalid_bus_id");
+         N := Make_Expression
+           (Make_Defining_Identifier
+            (Name_Find),
+            Op_Equal,
+            (Make_Literal
+          (CV.New_Int_Value (1, -1, 10))));
+         Append_Node_To_List
+            (N, Buses_Enumerator_List);
 
          --  Visit all the subcomponents of the system
 
