@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -388,5 +388,9 @@ package Ocarina.Backends.C_Common.Mapping is
    --  * POK_NEEDS_PROTOCOLS_CEASAR
    --  * POK_NEEDS_PROTOCOLS_BLOWFISH
    --  * POK_NEEDS_PROTOCOLS_DES
+
+   function Map_Devices_Buses_Array_Name
+     (E              : Node_Id)
+     return Name_Id;
 
 end Ocarina.Backends.C_Common.Mapping;

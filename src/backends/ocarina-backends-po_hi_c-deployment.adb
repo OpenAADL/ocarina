@@ -70,9 +70,11 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
 
-   Entity_Array      : Node_Id;
-   Devices_Array     : Node_Id;
-   Port_To_Devices   : Node_Id;
+   Entity_Array            : Node_Id;
+   Devices_Array           : Node_Id;
+   Devices_Nb_Buses_Array  : Node_Id;
+   Devices_Buses_Array     : Node_Id;
+   Port_To_Devices         : Node_Id;
 
    function Is_Added (P : Node_Id; E : Node_Id) return Boolean;
    function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id;
@@ -312,9 +314,18 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         N        : Node_Id;
-         Conf_Str : Name_Id := No_Name;
-         Tmp_Name : Name_Id;
+         N                    : Node_Id;
+         U                    : Node_Id;
+         P                    : Node_Id;
+         Q                    : Node_Id;
+         F                    : Node_Id;
+         Conf_Str             : Name_Id := No_Name;
+         Tmp_Name             : Name_Id;
+         Nb_Connected_Buses   : Unsigned_Long_Long;
+         Accessed_Buses       : constant Node_Id := Make_Array_Values;
+         Accessed_Bus         : Node_Id;
+         The_System           : constant Node_Id := Parent_Component
+                                 (Parent_Subcomponent (E));
       begin
          Current_Device := E;
 
@@ -399,8 +410,120 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                CTN.Values (Devices_Array));
             end if;
 
-         end if;
+            --  Now, we look at the amount of buses connected to
+            --  the device and which bus is connected to which
+            --  device. As a result, the arrays
+            --  __po_hi_devices_nb_accessed_bus and
+            --  __po_hi_devices_accessed_bus will be created.
 
+            Nb_Connected_Buses := 0;
+
+            if not AAU.Is_Empty (Features (E)) then
+               F := First_Node (Features (E));
+
+               while Present (F) loop
+                  if Kind (F) = K_Subcomponent_Access_Instance and then
+                     AAU.Is_Bus (Corresponding_Instance (F)) and then
+                     First_Node (Sources (F)) /= No_Node then
+
+                     Accessed_Bus := Item (First_Node (Sources (F)));
+
+                     Append_Node_To_List
+                     (Make_Defining_Identifier
+                      (Map_C_Enumerator_Name
+                        (Corresponding_Instance (Accessed_Bus))),
+                     CTN.Values (Accessed_Buses));
+
+                     Nb_Connected_Buses := Nb_Connected_Buses + 1;
+                  end if;
+                  F := Next_Node (F);
+               end loop;
+            end if;
+
+            --  If the device accesses at least one bus, we declare
+            --  an array in ALL processed that detail the buses
+            --  it accesses. Then, this array is contained
+            --  in the global array __po_hi_devices_accessed_buses.
+            --  For this reason, we are forced to process again
+            --  all processes to add the new array to all processes.
+
+            if not Is_Empty (CTN.Values (Accessed_Buses)) then
+               Set_Deployment_Source;
+
+               --  Here, we browse all the process components
+               --  of the root system.
+               Q := First_Node (Subcomponents (The_System));
+
+               while Present (Q) loop
+                  if AAU.Is_Process (Corresponding_Instance (Q)) then
+                     U := CTN.Distributed_Application_Unit
+                           (CTN.Naming_Node
+                              (Backend_Node
+                                 (Identifier
+                                    (Corresponding_Instance (Q)))));
+                     P := CTN.Entity (U);
+
+                     Push_Entity (P);
+                     Push_Entity (U);
+
+                     Set_Deployment_Source;
+
+                     --  Here, we build the array that details the buses
+                     --  accessed by the device and add it to each
+                     --  deployment.c file of ALL processes.
+
+                     N := Make_Expression
+                       (Left_Expr =>
+                          Make_Variable_Declaration
+                          (Defining_Identifier =>
+                             Make_Array_Declaration
+                             (Defining_Identifier =>
+                                 Make_Defining_Identifier
+                                    (Map_Devices_Buses_Array_Name (E)),
+                              Array_Size =>
+                                 Make_Literal
+                                    (CV.New_Int_Value
+                                       (Nb_Connected_Buses, 1, 10))),
+                           Used_Type =>
+                             RE (RE_Bus_Id)),
+                        Operator => Op_Equal,
+                        Right_Expr => Accessed_Buses);
+
+                     Append_Node_To_List
+                        (N,
+                         CTN.Declarations (Current_File));
+                     Pop_Entity;
+                     Pop_Entity;
+                     Set_Deployment_Header;
+                  end if;
+                  Q := Next_Node (Q);
+               end loop;
+
+               Set_Deployment_Header;
+
+               --  Finally, here, we reference the array name that
+               --  contains connected buses to the main array
+               --  __po_hi_devices_accessed_buses.
+
+               Append_Node_To_List
+                  (Make_Defining_Identifier
+                     (Map_Devices_Buses_Array_Name (E)),
+                  CTN.Values (Devices_Buses_Array));
+            else
+               --  If no bus is connected, we just specify
+               --  a null pointer, meaning that no bus is
+               --  connected to this device.
+               Append_Node_To_List
+                  (Make_Defining_Identifier (CONST (C_Null),
+                                                    C_Conversion => False),
+                  CTN.Values (Devices_Buses_Array));
+            end if;
+
+            Append_Node_To_List
+               (Make_Literal
+                   (CV.New_Int_Value (Nb_Connected_Buses, 1, 10)),
+               CTN.Values (Devices_Nb_Buses_Array));
+         end if;
          Current_Device := No_Node;
       end Visit_Device_Instance;
 
@@ -890,6 +1013,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Push_Entity (C_Root);
 
          Devices_Array              := Make_Array_Values;
+         Devices_Nb_Buses_Array     := Make_Array_Values;
+         Devices_Buses_Array        := Make_Array_Values;
          Port_To_Devices            := Make_Array_Values;
 
          Devices_Enumerator_List    := New_List (CTN.K_Enumeration_Literals);
@@ -1579,6 +1704,49 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                Right_Expr => Devices_Array);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
+
+         --  In the following, we add arrays previously filled arrays
+         --  in the header part of the package. These arrays describe
+         --  the number of buses accessed by each device and which
+         --  bus is under control of which device.
+
+         if not Is_Empty (CTN.Values (Devices_Nb_Buses_Array)) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Devices_Nb_Accessed_Buses),
+                     Array_Size =>
+                       RE (RE_Nb_Devices)),
+                  Used_Type =>
+                    RE (RE_Uint32_T)),
+               Operator => Op_Equal,
+               Right_Expr => Devices_Nb_Buses_Array);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
+         if not Is_Empty (CTN.Values (Devices_Buses_Array)) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Devices_Accessed_Buses),
+                     Array_Size =>
+                       RE (RE_Nb_Devices)),
+                  Used_Type =>
+                    Make_Pointer_Type (RE (RE_Bus_Id))),
+               Operator => Op_Equal,
+               Right_Expr => Devices_Buses_Array);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
+         --  In the following, we describe the association between
+         --  ports and devices. It corresponds to the
+         --  __po_hi_port_to_devices array generated in deployment.c.
 
          if not Is_Empty (CTN.Values (Port_To_Devices)) then
             N := Make_Expression

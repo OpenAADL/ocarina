@@ -4075,4 +4075,24 @@ package body Ocarina.Backends.C_Common.Mapping is
       end loop;
    end Handle_Virtual_Buses_Properties;
 
+   ----------------------------------
+   -- Map_Devices_Buses_Array_Name --
+   ----------------------------------
+
+   function Map_Devices_Buses_Array_Name
+     (E              : Node_Id)
+     return Name_Id
+   is
+   begin
+      if AINU.Is_Device (E) then
+         Set_Str_To_Name_Buffer ("device_");
+         Get_Name_String_And_Append
+            (AIN.Name
+               (AIN.Identifier (Parent_Subcomponent (E))));
+         Add_Str_To_Name_Buffer ("_accessed_buses");
+         return Name_Find;
+      end if;
+      return No_Name;
+   end Map_Devices_Buses_Array_Name;
+
 end Ocarina.Backends.C_Common.Mapping;
