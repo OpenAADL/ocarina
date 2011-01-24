@@ -529,8 +529,12 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
             if Is_Defined_Property (E, "source_text") then
                Append_Node_To_List
-                  (Make_Variable_Address
-                     (Make_Defining_Identifier (Map_Device_Confvar_Name (E))),
+                  (Make_Type_Conversion
+                     (Make_Pointer_Type
+                        (RE (RE_Uint32_T)),
+                     Make_Variable_Address
+                        (Make_Defining_Identifier
+                        (Map_Device_Confvar_Name (E)))),
                   CTN.Values (Devices_Confvars));
                Set_Deployment_Source;
 
