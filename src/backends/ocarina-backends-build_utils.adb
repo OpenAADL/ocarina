@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -538,7 +538,7 @@ package body Ocarina.Backends.Build_Utils is
                Set_Name_Table_Byte (Name_Find, 1);
             end if;
 
-         elsif Source_Files'Length /= 0 and then Implem_Name /= No_Name then
+         elsif Source_Files'Length /= 0 then
             for J in Source_Files'Range loop
                --  Ensure the source is added only once per node
 
@@ -674,10 +674,14 @@ package body Ocarina.Backends.Build_Utils is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
+         C  : Node_Id;
          S  : constant Node_Id := Parent_Subcomponent (E);
          A  : constant Node_Id := Parent_Component (Parent_Subcomponent (E));
          M  : constant Makefile_Type := new Makefile_Rec;
          SC : Node_Id;
+         Current_Device : Node_Id;
+         The_System           : constant Node_Id := Parent_Component
+                                 (Parent_Subcomponent (E));
       begin
          --  Associates the Makefile structure to the process
          --  instance. Keep in mind that it is important to use
@@ -725,6 +729,27 @@ package body Ocarina.Backends.Build_Utils is
                Visit (Corresponding_Instance (SC));
 
                SC := Next_Node (SC);
+            end loop;
+         end if;
+
+         --  We look for devices bound to the same processor
+         --  than the current process to find the file
+         --  that contains the configuration of the device.
+
+         if not AAU.Is_Empty (Subcomponents (The_System)) then
+            C := First_Node (Subcomponents (The_System));
+            while Present (C) loop
+               if AAU.Is_Device (Corresponding_Instance (C)) then
+                     Current_Device := Corresponding_Instance (C);
+                  declare
+                     Source_Files : constant Name_Array
+                                 := Get_Source_Text (Current_Device);
+                  begin
+                     Handle_C_Source
+                        (Current_Device, No_Name, Source_Files, M);
+                  end;
+               end if;
+               C := Next_Node (C);
             end loop;
          end if;
       end Visit_Process_Instance;

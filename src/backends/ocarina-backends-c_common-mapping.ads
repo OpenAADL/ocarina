@@ -389,8 +389,12 @@ package Ocarina.Backends.C_Common.Mapping is
    --  * POK_NEEDS_PROTOCOLS_BLOWFISH
    --  * POK_NEEDS_PROTOCOLS_DES
 
-   function Map_Devices_Buses_Array_Name
-     (E              : Node_Id)
-     return Name_Id;
+   function Map_Devices_Buses_Array_Name (E : Node_Id) return Name_Id;
+   --  Provide function to create the name of the array that contains
+   --  all accessed buses for a specific device.
+
+   function Map_Device_Confvar_Name (E : Node_Id) return Name_Id;
+   --  Map the device identifier name into a variable name
+   --  that is supposed to contain the device configuration.
 
 end Ocarina.Backends.C_Common.Mapping;

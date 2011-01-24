@@ -4095,4 +4095,23 @@ package body Ocarina.Backends.C_Common.Mapping is
       return No_Name;
    end Map_Devices_Buses_Array_Name;
 
+   -----------------------------
+   -- Map_Device_Confvar_Name --
+   -----------------------------
+
+   function Map_Device_Confvar_Name
+     (E              : Node_Id)
+     return Name_Id
+   is
+   begin
+      if AINU.Is_Device (E) then
+         Set_Str_To_Name_Buffer ("__po_hi_c_confvar_");
+         Get_Name_String_And_Append
+            (AIN.Name
+               (AIN.Identifier (Parent_Subcomponent (E))));
+         return Name_Find;
+      end if;
+      return No_Name;
+   end Map_Device_Confvar_Name;
+
 end Ocarina.Backends.C_Common.Mapping;

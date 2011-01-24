@@ -204,6 +204,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Operation_Names,                --  __po_hi_operation_names
       RE_Ports_Names,                    --  __po_hi_port_names
       RE_Devices_Naming,                 --  __po_hi_devices_naming
+      RE_Devices_Configuration_Values,   --  __po_hi_devices_configuration_...
       RE_Devices_Nb_Accessed_Buses,      --  __po_hi_devices_nb_accessed_buses
       RE_Devices_Accessed_Buses,         --  __po_hi_devices_accessed_buses
       RE_Protected_Configuration,        --  __po_hi_protected_configuration
@@ -379,6 +380,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
 
          RE_Ports_Names                    => RH_PO_HI_Types,
          RE_Devices_Naming                 => RH_Deployment,
+         RE_Devices_Configuration_Values   => RH_Deployment,
          RE_Devices_Nb_Accessed_Buses      => RH_Deployment,
          RE_Devices_Accessed_Buses         => RH_Deployment,
          RE_Port_To_Device                 => RH_Deployment,

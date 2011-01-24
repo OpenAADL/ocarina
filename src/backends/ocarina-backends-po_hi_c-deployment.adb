@@ -73,6 +73,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    Entity_Array            : Node_Id;
    Devices_Array           : Node_Id;
    Devices_Nb_Buses_Array  : Node_Id;
+   Devices_Confvars        : Node_Id;
    Devices_Buses_Array     : Node_Id;
    Port_To_Devices         : Node_Id;
 
@@ -324,6 +325,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Nb_Connected_Buses   : Unsigned_Long_Long;
          Accessed_Buses       : constant Node_Id := Make_Array_Values;
          Accessed_Bus         : Node_Id;
+         Device_Implementation : Node_Id;
+         Configuration_Data   : Node_Id;
          The_System           : constant Node_Id := Parent_Component
                                  (Parent_Subcomponent (E));
       begin
@@ -523,6 +526,106 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                (Make_Literal
                    (CV.New_Int_Value (Nb_Connected_Buses, 1, 10)),
                CTN.Values (Devices_Nb_Buses_Array));
+
+            if Is_Defined_Property (E, "source_text") then
+               Append_Node_To_List
+                  (Make_Variable_Address
+                     (Make_Defining_Identifier (Map_Device_Confvar_Name (E))),
+                  CTN.Values (Devices_Confvars));
+               Set_Deployment_Source;
+
+               Device_Implementation := Get_Implementation (Current_Device);
+
+               if Is_Defined_Property
+                  (Device_Implementation, "taste::configuration_type") then
+                  Configuration_Data
+                     := Get_Classifier_Property
+                        (Device_Implementation, "taste::configuration_type");
+                  if Configuration_Data /= No_Node and then
+                     Is_Defined_Property
+                        (Configuration_Data, "type_source_name") then
+                        --  Here, we browse all the process components
+                        --  of the root system to declare external
+                        --  variable that contain the configuration
+                        --  of the device.
+
+                        Q := First_Node (Subcomponents (The_System));
+
+                        while Present (Q) loop
+                           if AAU.Is_Process (Corresponding_Instance (Q)) then
+                              U := CTN.Distributed_Application_Unit
+                                    (CTN.Naming_Node
+                                       (Backend_Node
+                                          (Identifier
+                                             (Corresponding_Instance (Q)))));
+                              P := CTN.Entity (U);
+
+                              Push_Entity (P);
+                              Push_Entity (U);
+
+                              Set_Deployment_Source;
+
+                              N := Make_Extern_Entity_Declaration
+                                 (Make_Variable_Declaration
+                                    (Defining_Identifier =>
+                                       Make_Defining_Identifier
+                                          (Map_Device_Confvar_Name (E)),
+                                    Used_Type =>
+                                       Make_Pointer_Type
+                                          (Make_Defining_Identifier
+                                             (Get_String_Property
+                                                (Configuration_Data,
+                                                "type_source_name")))));
+                              Append_Node_To_List
+                                 (N, CTN.Declarations (Current_File));
+                              declare
+                                 ST : constant Name_Array
+                                    := Get_Source_Text (Configuration_Data);
+                                 Include_Name : Name_Id;
+                              begin
+                                 Set_Deployment_Header;
+
+                                 if ST'Length /= 1 then
+                                    Display_Error
+                                       ("Source_Text property of " &
+                                        "configuration data" &
+                                        " must have only one element " &
+                                        "(the header file).",
+                                        Fatal => True);
+                                 end if;
+
+                                 Get_Name_String (ST (1));
+
+                                 if Name_Len <= 2 then
+                                    Display_Error
+                                       ("Name of Source_Text of " &
+                                        "configuration data" &
+                                        "must be longer than 2 chars.",
+                                        Fatal => True);
+                                 end if;
+
+                                 Include_Name := Get_String_Name
+                                    (Name_Buffer (1 .. Name_Len - 2));
+                                 Add_Include
+                                    (Make_Include_Clause
+                                       (Make_Defining_Identifier
+                                          (Include_Name)));
+                              end;
+                              Pop_Entity;
+                              Pop_Entity;
+                           end if;
+                           Q := Next_Node (Q);
+                        end loop;
+                  end if;
+               end if;
+
+               Set_Deployment_Header;
+            else
+               Append_Node_To_List
+                  (Make_Defining_Identifier (CONST (C_Null),
+                                                    C_Conversion => False),
+                  CTN.Values (Devices_Confvars));
+            end if;
          end if;
          Current_Device := No_Node;
       end Visit_Device_Instance;
@@ -598,8 +701,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
                   Current_Device := Corresponding_Instance (C);
 
-                  Device_Implementation :=
-                     Get_Implementation (Corresponding_Instance (C));
+                  Device_Implementation := Get_Implementation (Current_Device);
 
                   if Device_Implementation /= No_Node then
                      if not AAU.Is_Empty
@@ -1014,6 +1116,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
          Devices_Array              := Make_Array_Values;
          Devices_Nb_Buses_Array     := Make_Array_Values;
+         Devices_Confvars           := Make_Array_Values;
          Devices_Buses_Array        := Make_Array_Values;
          Port_To_Devices            := Make_Array_Values;
 
@@ -1702,6 +1805,26 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                     Make_Pointer_Type (New_Node (CTN.K_Char))),
                Operator => Op_Equal,
                Right_Expr => Devices_Array);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
+         --  Here, we define an array that contains reference
+         --  to all configuration variables.
+
+         if not Is_Empty (CTN.Values (Devices_Confvars)) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Devices_Configuration_Values),
+                     Array_Size =>
+                       RE (RE_Nb_Devices)),
+                  Used_Type =>
+                    Make_Pointer_Type (RE (RE_Uint32_T))),
+               Operator => Op_Equal,
+               Right_Expr => Devices_Confvars);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
