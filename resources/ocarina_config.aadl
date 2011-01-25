@@ -54,6 +54,8 @@ property set Ocarina_Config is
   AADL_Version : Ocarina_Config::AADL_Version_Type applies to (system);
   --  AADL version of the model
 
+  Use_Components_Library : aadlboolean applies to (system);
+
   Referencial_Files : list of aadlstring applies to (system);
   --  The list of referencial files used to compute the regression test
 
