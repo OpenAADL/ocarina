@@ -2,6 +2,7 @@ package ocarina_drivers_ip_pohic
 
 public
 with Deployment;
+with ocarina_drivers;
 
 subprogram spg_sockets_init
 properties
@@ -19,16 +20,9 @@ end spg_eth_linux_sender;
 subprogram implementation spg_eth_linux_sender.i
 end spg_eth_linux_sender.i;
 
-data configuration_type
-properties
-   Type_Source_Name  => "__po_hi_c_ip_conf_t";
-   Source_Text       => ("drivers/configuration/ip.h");
- end configuration_type;
-
-
 abstract sockets_impl
 properties
-   Deployment::Configuration_Type => classifier (ocarina_drivers_ip_pohic::configuration_type);
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_ip);
 end sockets_impl;
 
 abstract implementation sockets_impl.i

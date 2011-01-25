@@ -2,6 +2,8 @@ package ocarina_drivers_serial
 
 public
 
+with Deployment;
+with ocarina_drivers;
 
 subprogram spg_serial_poller_linux
 properties
@@ -35,9 +37,6 @@ properties
 	Source_Name => "__po_hi_c_driver_serial_linux_init_receiver";
 end spg_serial_init_linux_receiver;
 
-
-
-
 thread serial_poller
 end serial_poller;
 
@@ -53,6 +52,8 @@ end serial_poller.linux;
 
 
 abstract serial_driver
+properties
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_serial);
 end serial_driver;
 
 abstract implementation serial_driver.linux

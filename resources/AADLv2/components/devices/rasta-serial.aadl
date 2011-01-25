@@ -2,7 +2,9 @@ package ocarina_drivers_rasta_serial
 
 public
 
+with Deployment;
 with ocarina_buses;
+with ocarina_drivers;
 
 subprogram spg_serial_poller_rasta
 properties
@@ -42,6 +44,8 @@ properties
 end serial_poller.rasta;
 
 abstract serial_driver
+properties
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_serial);
 end serial_driver;
 
 abstract implementation serial_driver.rasta

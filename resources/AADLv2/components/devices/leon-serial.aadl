@@ -2,7 +2,9 @@ package ocarina_drivers_leon_serial
 
 public
 
+with Deployment;
 with ocarina_buses;
+with ocarina_drivers;
 
 subprogram spg_serial_poller_leon
 properties
@@ -44,6 +46,8 @@ properties
 end serial_poller.leon;
 
 abstract serial_driver
+properties
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_serial);
 end serial_driver;
 
 abstract implementation serial_driver.leon
