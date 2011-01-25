@@ -639,6 +639,7 @@ procedure Ocarina_Cmd is
       Source_Files            : List_Id;
       Ref_Files               : List_Id;
       Needed_PS               : List_Id;
+      Use_CL                  : Boolean := False;
       Used_Generator_Options  : List_Id;
       Dirname                 : Name_Id;
       Success                 : Boolean := False;
@@ -660,6 +661,8 @@ procedure Ocarina_Cmd is
 
       AADL_Files    : constant Name_Id
         := Get_String_Name (Ocarina_Config & "::aadl_files");
+      Use_Components_Library : constant Name_Id
+        := Get_String_Name (Ocarina_Config & "::use_components_library");
       Referencial_Files    : constant Name_Id
         := Get_String_Name (Ocarina_Config & "::referencial_files");
       The_Generator : constant Name_Id
@@ -886,6 +889,13 @@ procedure Ocarina_Cmd is
          Needed_PS := No_List;
       end if;
 
+      if Is_Defined_Boolean_Property
+         (Root_System, Use_Components_Library) then
+         Use_CL := True;
+      else
+         Use_CL := False;
+      end if;
+
       --  Extract the generator options.
 
       if Is_Defined_List_Property (Root_System, Generator_Options) then
@@ -942,6 +952,13 @@ procedure Ocarina_Cmd is
       Sources.Free;
       Sources.Init;
       Extract_Source_Files (Source_Files, Needed_PS);
+
+      if Use_CL then
+         Set_Str_To_Name_Buffer ("ocarina_components.aadl");
+         Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+         Set_Str_To_Name_Buffer ("base_types.aadl");
+         Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+      end if;
 
       Extract_Referencial_Files (Ref_Files, Ref_Map);
 
