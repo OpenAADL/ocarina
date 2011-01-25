@@ -55,4 +55,6 @@ property set Deployment is
 
   Configuration : aadlstring applies to (device);
 
+  Configuration_Type : classifier (data) applies to (all);
+
 end Deployment;

@@ -228,6 +228,4 @@ Associated_Queue_Size : aadlinteger applies to (subprogram);
 
 EncodingDefinitionFile : classifier (data) applies to (data);
 
-Configuration_Type : classifier (data) applies to (device, abstract);
-
 end Taste;
