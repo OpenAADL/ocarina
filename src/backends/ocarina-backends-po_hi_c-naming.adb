@@ -618,41 +618,6 @@ package body Ocarina.Backends.PO_HI_C.Naming is
            (Left_Expr =>
               Make_Variable_Declaration
               (Defining_Identifier =>
-                 Make_Array_Declaration
-              (Defining_Identifier =>
-                  RE (RE_Node_Port),
-               Array_Size =>
-                 RE (RE_Nb_Nodes)),
-               Used_Type =>
-                 RE (RE_Inetport_T)),
-            Operator => Op_Equal,
-            Right_Expr =>
-              Inetport_Enumerator_List);
-
-         Append_Node_To_List
-           (N, CTN.Declarations (Current_File));
-
-         N := Make_Expression
-           (Left_Expr =>
-              Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-              (Defining_Identifier =>
-                  RE (RE_Node_Addr),
-               Array_Size =>
-                 RE (RE_Nb_Nodes)),
-               Used_Type =>
-                 RE (RE_Inetaddr_T)),
-            Operator => Op_Equal,
-            Right_Expr =>
-              Inetaddr_Enumerator_List);
-         Append_Node_To_List
-           (N, CTN.Declarations (Current_File));
-
-         N := Make_Expression
-           (Left_Expr =>
-              Make_Variable_Declaration
-              (Defining_Identifier =>
                   RE (RE_Mynode),
                Used_Type =>
                  RE (RE_Node_T)),

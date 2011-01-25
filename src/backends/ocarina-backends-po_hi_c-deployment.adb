@@ -540,11 +540,12 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
                Device_Implementation := Get_Implementation (Current_Device);
 
-               if Is_Defined_Property
-                  (Device_Implementation, "taste::configuration_type") then
+               if Is_Defined_Property (Device_Implementation,
+                                       "deployment::configuration_type") then
                   Configuration_Data
                      := Get_Classifier_Property
-                        (Device_Implementation, "taste::configuration_type");
+                        (Device_Implementation,
+                        "deployment::configuration_type");
                   if Configuration_Data /= No_Node and then
                      Is_Defined_Property
                         (Configuration_Data, "type_source_name") then

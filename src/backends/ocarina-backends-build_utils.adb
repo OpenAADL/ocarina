@@ -383,10 +383,11 @@ package body Ocarina.Backends.Build_Utils is
       --  Generate a makefile target to compile C_Sources C files
 
       procedure Handle_C_Source
-        (E            : Node_Id;
-         Implem_Name  : Name_Id;
-         Source_Files : Name_Array;
-         M            : Makefile_Type);
+        (E                 : Node_Id;
+         Implem_Name       : Name_Id;
+         Source_Files      : Name_Array;
+         M                 : Makefile_Type;
+         Custom_Source_Dir : Name_Id := No_Name);
       --  Update the makefile structure by adding necessary paths to
       --  sources or libraries provided by the 'Source_Files' array. E
       --  is the node for which the source files are given, it is used
@@ -493,16 +494,16 @@ package body Ocarina.Backends.Build_Utils is
       ---------------------
 
       procedure Handle_C_Source
-        (E            : Node_Id;
-         Implem_Name  : Name_Id;
-         Source_Files : Name_Array;
-         M            : Makefile_Type)
+        (E                 : Node_Id;
+         Implem_Name       : Name_Id;
+         Source_Files      : Name_Array;
+         M                 : Makefile_Type;
+         Custom_Source_Dir : Name_Id := No_Name)
       is
          Source_Basename : Name_Id;
          Source_Dirname  : Name_Id;
          S_Name          : Name_Id;
          Binding_Key     : constant String := "%user_src_dir%";
-
       begin
          --  Ensure the user gives at most one source file (.c)
 
@@ -526,6 +527,10 @@ package body Ocarina.Backends.Build_Utils is
                Loc (E).Dir_Name,
                Source_Basename,
                Source_Dirname);
+
+            if Custom_Source_Dir /= No_Name then
+               Source_Dirname := Custom_Source_Dir;
+            end if;
 
             Set_Str_To_Name_Buffer (Binding_Key);
             Get_Name_String_And_Append (Source_Dirname);
@@ -557,6 +562,10 @@ package body Ocarina.Backends.Build_Utils is
                      Loc (E).Dir_Name,
                      Source_Basename,
                      Source_Dirname);
+
+                  if Custom_Source_Dir /= No_Name then
+                     Source_Dirname := Custom_Source_Dir;
+                  end if;
 
                   Get_Name_String (Source_Basename);
 
@@ -746,7 +755,10 @@ package body Ocarina.Backends.Build_Utils is
                                  := Get_Source_Text (Current_Device);
                   begin
                      Handle_C_Source
-                        (Current_Device, No_Name, Source_Files, M);
+                        (Parent_Subcomponent (Current_Device),
+                        No_Name,
+                        Source_Files,
+                        M);
                   end;
                end if;
                C := Next_Node (C);
