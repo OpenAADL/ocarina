@@ -1,34 +1,13 @@
 package ocarina_drivers_ip_pohic
 
 public
-
+with Deployment;
 
 subprogram spg_sockets_init
 properties
 	Source_Language   => C;
 	Source_Name       => "__po_hi_driver_sockets_init";
 end spg_sockets_init;
-
-
-thread eth_linux_poller
-end eth_linux_poller;
-
-thread implementation eth_linux_poller.i
-calls
-	mycall : {
-	  pspg : subprogram spg_eth_linux_poller_i;
-	};
-properties
-   Period => 1000ms;
-   Dispatch_Protocol => Periodic;
-end eth_linux_poller.i;
-
-
-subprogram spg_eth_linux_poller_i
-properties
-	Source_Language   => C;
-	Source_Name       => "__po_hi_sockets_receiver_task";
-end spg_eth_linux_poller_i;
 
 
 subprogram spg_eth_linux_sender
@@ -40,23 +19,21 @@ end spg_eth_linux_sender;
 subprogram implementation spg_eth_linux_sender.i
 end spg_eth_linux_sender.i;
 
+data configuration_type
+properties
+   Type_Source_Name  => "__po_hi_c_ip_conf_t";
+   Source_Text       => ("drivers/configuration/ip.h");
+ end configuration_type;
+
 
 abstract sockets_impl
+properties
+   Deployment::Configuration_Type => classifier (ocarina_drivers_ip_pohic::configuration_type);
 end sockets_impl;
-
 
 abstract implementation sockets_impl.i
 subcomponents
-   sockets_linux_receiver : thread       eth_linux_poller.i;
-   sender                 : subprogram   spg_eth_linux_sender.i;
-end sockets_impl.i;
-
-abstract implementation sockets_impl.inew
-subcomponents
---   receiver : thread       eth_linux_poller.i;
    sender   : subprogram   spg_eth_linux_sender.i;
-end sockets_impl.inew;
-
-
+end sockets_impl.i;
 
 end ocarina_drivers_ip_pohic;

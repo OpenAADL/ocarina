@@ -18,7 +18,6 @@ public
   with ocarina_drivers_udp_exarm;
   with ocarina_drivers_serial;
   
-  with ocarina_drivers_ip_asn1;
   with ocarina_drivers_ip_pohic;
   
   with ocarina_drivers_exarm_ni_6071e_analog;
@@ -187,18 +186,10 @@ public
     thebus : requires bus access ocarina_buses::ip.i;
   end generic_sockets_ip;
   
-  device implementation generic_sockets_ip.pohic_old
+  device implementation generic_sockets_ip.pohic
   properties
     Deployment::Driver_Name       => "sockets";
     Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.i);
-    Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
-    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
-  end generic_sockets_ip.pohic_old;
-
-  device implementation generic_sockets_ip.pohic
-  properties
-    Deployment::Driver_Name       => "socketsnew";
-    Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.inew);
     Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end generic_sockets_ip.pohic;
@@ -210,16 +201,8 @@ public
     Initialize_Entrypoint => classifier (TCP_IP_Protocol::Initialize);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end generic_sockets_ip.pohiada;
-  
-  device implementation generic_sockets_ip.asn1
-  properties
-    Deployment::Driver_Name       => "sockets_asn1";
-    Device_Driver                 => classifier (ocarina_drivers_ip_asn1::sockets_impl.asn1);
-    Initialize_Entrypoint         => classifier (ocarina_drivers_ip_asn1::spg_sockets_init);
-    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::asn1.i));
-  end generic_sockets_ip.asn1;
-  
-  ------------------
+
+   ------------------
   -- RTEMS NE2000 --
   ------------------
 
