@@ -35,14 +35,16 @@ public
 
    data configuration_type_ip
    properties
-      Type_Source_Name  => "__po_hi_c_ip_conf_t";
-      Source_Text       => ("drivers/configuration/ip.h");
+      Type_Source_Name  => "IP-Conf-T";
+      Source_Language   => ASN1;
+      Source_Text       => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/ip.asn" , "drivers/configuration/ip.h");
    end configuration_type_ip;
 
    data configuration_type_serial
    properties
-      Type_Source_Name  => "__po_hi_c_serial_conf_t";
-      Source_Text       => ("drivers/configuration/serial.h");
+      Type_Source_Name  => "Serial-Conf-T";
+      Source_Language   => ASN1;
+      Source_Text       => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/serial.asn", "drivers/configuration/serial.h");
    end configuration_type_serial;
 
   --------------

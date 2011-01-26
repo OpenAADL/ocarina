@@ -67,6 +67,11 @@ install-data-local:
 	for file in $(srcdir)/AADLv2/components/processors/*.aadl; do \
 	  cat $$file >> $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl || exit 1; \
 	done
+	echo -n "s/OCARINA_INCLUDE_PATH/" > sedscript
+	echo -n $(DESTDIR)$(includedir)|sed -e 's/\//\\\//g' >> sedscript
+	echo -n "/g" >> sedscript 
+	sed -f sedscript $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl > tmp.aadl
+	mv -f tmp.aadl $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl
 	for file in $(MODE_FILES); do \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina || exit 1; \
 	done

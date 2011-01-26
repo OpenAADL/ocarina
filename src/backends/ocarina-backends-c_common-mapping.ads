@@ -397,4 +397,7 @@ package Ocarina.Backends.C_Common.Mapping is
    --  Map the device identifier name into a variable name
    --  that is supposed to contain the device configuration.
 
+   function Map_ASN_Type (ASN_Name : Name_Id) return Name_Id;
+   --  Map the name of an ASN.1 type into the C mapping.
+
 end Ocarina.Backends.C_Common.Mapping;

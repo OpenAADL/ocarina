@@ -4114,4 +4114,19 @@ package body Ocarina.Backends.C_Common.Mapping is
       return No_Name;
    end Map_Device_Confvar_Name;
 
+   ------------------
+   -- Map_ASN_Type --
+   ------------------
+
+   function Map_ASN_Type (ASN_Name : Name_Id) return Name_Id
+   is
+      Converted : Name_Id;
+   begin
+      Set_Str_To_Name_Buffer ("__po_hi_c_");
+      Get_Name_String_And_Append (ASN_Name);
+      Converted := Name_Find;
+      Converted := Replace_Char (Converted, '-', '_');
+      return To_Lower (Converted);
+   end Map_ASN_Type;
+
 end Ocarina.Backends.C_Common.Mapping;

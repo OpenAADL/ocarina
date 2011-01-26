@@ -578,9 +578,10 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                                     Used_Type =>
                                        Make_Pointer_Type
                                           (Make_Defining_Identifier
+                                             (Map_ASN_Type
                                              (Get_String_Property
                                                 (Configuration_Data,
-                                                "type_source_name")))));
+                                                "type_source_name"))))));
                               Append_Node_To_List
                                  (N, CTN.Declarations (Current_File));
                               declare
@@ -590,27 +591,33 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                               begin
                                  Set_Deployment_Header;
 
-                                 if ST'Length /= 1 then
+                                 if ST'Length = 0 then
                                     Display_Error
                                        ("Source_Text property of " &
                                         "configuration data" &
-                                        " must have only one element " &
+                                        " must have at least one element " &
                                         "(the header file).",
                                         Fatal => True);
                                  end if;
 
-                                 Get_Name_String (ST (1));
+                                 Include_Name := No_Name;
 
-                                 if Name_Len <= 2 then
+                                 for Index in ST'Range loop
+                                    Get_Name_String (ST (Index));
+                                    if Name_Buffer (Name_Len - 1 .. Name_Len)
+                                       = ".h" then
+                                       Include_Name := Get_String_Name
+                                          (Name_Buffer (1 .. Name_Len - 2));
+                                    end if;
+                                 end loop;
+
+                                 if Include_Name = No_Name then
                                     Display_Error
-                                       ("Name of Source_Text of " &
-                                        "configuration data" &
-                                        "must be longer than 2 chars.",
+                                       ("Cannot find header file " &
+                                        "that implements the data type",
                                         Fatal => True);
                                  end if;
 
-                                 Include_Name := Get_String_Name
-                                    (Name_Buffer (1 .. Name_Len - 2));
                                  Add_Include
                                     (Make_Include_Clause
                                        (Make_Defining_Identifier
