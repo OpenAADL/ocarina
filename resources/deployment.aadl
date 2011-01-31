@@ -54,6 +54,7 @@ property set Deployment is
   Driver_Name : aadlstring applies to (device);
 
   Configuration : aadlstring applies to (device);
+  Config : aadlstring applies to (device);
 
   Configuration_Type : classifier (data) applies to (all);
 

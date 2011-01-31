@@ -37,6 +37,10 @@ FS_Default_Value : aadlstring applies to (data);
               device,
 				  subprogram access);
 
+        Help : aadlstring applies to (device);
+        ASN1_Type : aadlstring applies to (device);
+        Driver_Id_And_Version : aadlstring applies to (device);
+
 ----------------------------
 -- Types and enumerations --
 ----------------------------
