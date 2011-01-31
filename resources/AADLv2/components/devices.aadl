@@ -29,6 +29,8 @@ public
   with GRSPW;
   with TCP_IP_Protocol;
 
+  with TASTE;
+
   ------------------------
   -- Configuration Type --
   ------------------------
@@ -71,6 +73,10 @@ public
   device leon_serial
   features
     serialaccess : requires bus access ocarina_buses::serial.generic;
+   properties
+    TASTE::Help                           => "help leon serial";
+    TASTE::ASN1_Type                      => "serial.asn";
+    TASTE::Driver_Id_And_Version          => "1.0beta";
   end leon_serial;
   
   device implementation leon_serial.raw
@@ -94,6 +100,10 @@ public
   ----------------
   
   device rasta_1553
+  properties
+    TASTE::Help                           => "help rasta 1553";
+    TASTE::ASN1_Type                      => "1553.asn";
+    TASTE::Driver_Id_And_Version          => "1.0beta";
   end rasta_1553;
   
   device implementation rasta_1553.terminal
@@ -119,6 +129,10 @@ public
   device rasta_serial
   features
     serialaccess : requires bus access ocarina_buses::serial.generic;
+  properties
+    TASTE::Help                           => "help rasta serial";
+    TASTE::ASN1_Type                      => "serial.asn";
+    TASTE::Driver_Id_And_Version          => "1.0beta";
   end rasta_serial;
   
   device implementation rasta_serial.raw
@@ -144,6 +158,10 @@ public
   device rasta_spacewire
   features
     spwaccess : requires bus access ocarina_buses::spacewire.generic;
+  properties
+    TASTE::Help                           => "help rasta spw";
+    TASTE::ASN1_Type                      => "spacewire.asn";
+    TASTE::Driver_Id_And_Version          => "1.0beta";
   end rasta_spacewire;
   
   device implementation rasta_spacewire.pohic
@@ -169,6 +187,10 @@ public
   device generic_serial
   features
     serialaccess : requires bus access ocarina_buses::serial.generic;
+  properties
+    TASTE::Help                           => "help generic serial";
+    TASTE::ASN1_Type                      => "serial.asn";
+    TASTE::Driver_Id_And_Version          => "1.0beta";
   end generic_serial;
   
   device implementation generic_serial.raw
@@ -202,6 +224,10 @@ public
   device generic_sockets_ip
   features
     thebus : requires bus access ocarina_buses::ip.i;
+  properties
+    TASTE::Help                           => "help generic sockets";
+    TASTE::ASN1_Type                      => "ip.asn";
+    TASTE::Driver_Id_And_Version          => "1.0beta";
   end generic_sockets_ip;
   
   device implementation generic_sockets_ip.pohic
@@ -227,6 +253,10 @@ public
   device rtems_ne2000
   features
     thebus : requires bus access ocarina_buses::ip.i;
+  properties
+    TASTE::Help                           => "help ne2000 sockets";
+    TASTE::ASN1_Type                      => "ip.asn";
+    TASTE::Driver_Id_And_Version          => "1.0beta";
   end rtems_ne2000;
   
   device implementation rtems_ne2000.ip_pohic
