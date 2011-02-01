@@ -634,8 +634,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                Set_Deployment_Header;
             else
                Append_Node_To_List
-                  (Make_Defining_Identifier (CONST (C_Null),
-                                                    C_Conversion => False),
+                  (Make_Literal
+                     (CV.New_Int_Value (0, 0, 10)),
                   CTN.Values (Devices_Confvars));
             end if;
          end if;

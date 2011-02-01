@@ -236,6 +236,9 @@ public
     Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.i);
     Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+    TASTE::Help                           => "help generic sockets";
+    TASTE::ASN1_Type                      => "ip.asn";
+    TASTE::Driver_Id_And_Version          => "1.0beta";
   end generic_sockets_ip.pohic;
 
   device implementation generic_sockets_ip.pohiada
