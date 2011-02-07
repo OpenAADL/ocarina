@@ -41,7 +41,6 @@ with Ocarina.ME_REAL.REAL_Tree.Utils;
 with Ocarina.REAL_Values;
 with Ocarina.Backends.Messages;
 
-with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 
@@ -72,7 +71,6 @@ package body Ocarina.Backends.REAL is
    package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;
    --  package AIEP renames Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
 
    --  This variable refers to the current element of the range set
 
@@ -2985,12 +2983,8 @@ package body Ocarina.Backends.REAL is
          --  Runtime step
 
          Write_Line (Get_Name_String
-                 (RN.Name (RN.Identifier (RNU.REAL_Root)))
-                       & RN.Related_Entity (Node)'Img
-                       & ATN.Kind (RN.Related_Entity (Node))'Img
-                       & Image (ATN.Loc (RN.Related_Entity (Node)))
-                       & " execution for instance at "
-                       & Image (Loc (RNU.Real_Root)));
+                       (RN.Name (RN.Identifier (RNU.REAL_Root)))
+                       & " execution");
 
          if not Check_Requirements (RNU.REAL_Root) then
             Display_Located_Error
