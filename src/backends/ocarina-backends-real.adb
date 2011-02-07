@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2009-2010, GET-Telecom Paris.                --
+--               Copyright (C) 2009-2011, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,6 +33,7 @@
 
 with Namet;
 with Output;
+with Locations; use Locations;
 
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
 with Ocarina.ME_REAL.REAL_Tree.Nutils;
@@ -40,6 +41,7 @@ with Ocarina.ME_REAL.REAL_Tree.Utils;
 with Ocarina.REAL_Values;
 with Ocarina.Backends.Messages;
 
+with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 
@@ -69,6 +71,8 @@ package body Ocarina.Backends.REAL is
    package RN renames Ocarina.ME_REAL.REAL_Tree.Nodes;
    package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;
    --  package AIEP renames Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
 
    --  This variable refers to the current element of the range set
 
@@ -776,9 +780,7 @@ package body Ocarina.Backends.REAL is
             Set_Var_Value (Referenced_Var (Local_Variable (E)), V);
 
             --  Compute selection expression result
-
             Compute_Check_Expression (Selection_Expression (E), Ret, Result);
-
             if Ret /= RT_Boolean then
                Display_Located_Error
                  (Loc (E), "selection expression must return a boolean",
@@ -808,9 +810,9 @@ package body Ocarina.Backends.REAL is
    -----------------------------
 
    function Manage_Check_Expression (E : Node_Id) return Boolean is
-      use Ocarina.ME_AADL.AADL_Instances.Nutils;
-
       pragma Assert (Kind (E) = K_Theorem);
+
+      use Ocarina.ME_AADL.AADL_Instances.Nutils;
 
       D      : constant Node_Id := Check_Expression (E);
       Result : Value_Id := No_Value;
@@ -821,7 +823,9 @@ package body Ocarina.Backends.REAL is
       end if;
 
       Compute_Check_Expression (D, Ret, Result);
+
       if Ret = RT_Error then
+         Display_Located_Error (Loc (D), "o<", Fatal => False);
          return False;
 
       elsif Ret = RT_Boolean then
@@ -855,15 +859,10 @@ package body Ocarina.Backends.REAL is
       Ret    : Return_Type := RT_Unknown;
    begin
       Compute_Check_Expression (D, Ret, Result);
-      case Ret is
-         when RT_Float =>
-            if Get_Value_Type (Result).RSign then
-               return -(Float (Get_Value_Type (Result).RVal));
-            else
-               return Float (Get_Value_Type (Result).RVal);
-            end if;
 
-         when RT_Integer =>
+      case Ret is
+         when RT_Float
+           | RT_Integer =>
             if Get_Value_Type (Result).T = LT_Integer then
                if Get_Value_Type (Result).ISign then
                   return -(Float (Get_Value_Type (Result).IVal));
@@ -1648,8 +1647,6 @@ package body Ocarina.Backends.REAL is
             --  * a string literal (with property name)
 
             declare
-               package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-
                RS          : constant Result_Set :=
                  Get_Instances_Of_Component_Type (C_System);
                Root_System : Node_Id;
@@ -1707,6 +1704,7 @@ package body Ocarina.Backends.REAL is
                     (Value (First_Node (True_Parameters (E))),
                      Returned_Type (E),
                      Current_Range_Variable);
+
                if Result = No_Value then
                   T := RT_Error;
                   Display_Located_Error
@@ -1714,6 +1712,12 @@ package body Ocarina.Backends.REAL is
                      "property " & Image
                      (Value (First_Node (True_Parameters (E))))
                        & " is not defined on element "
+                       & Image (Current_Range_Variable) & " (" &
+                       Get_Name_String
+                       (Ocarina.ME_AADL.AADL_Instances.Nutils.
+                          Compute_Full_Name_Of_Instance
+                                          (Current_Range_Variable)) & ") "
+                       & Image (AIN.Loc (Current_Range_Variable))
                        & Get_Name_String (Name (Identifier (N))),
                      Fatal => False,
                      Warning => True);
@@ -2917,7 +2921,7 @@ package body Ocarina.Backends.REAL is
             --  Local set is either the AADL component where the theorem
             --  has been declared or the parameter-passed domain
 
-            if RNU.Is_Domain = false then
+            if RNU.Is_Domain = False then
                return Get_Instances_Of_Component_Type (RNU.Owner_Node);
             else
                return RNU.Domain;
@@ -2961,9 +2965,9 @@ package body Ocarina.Backends.REAL is
    --------------
 
    procedure Generate (AADL_Root : Node_Id) is
-      use RNU.Node_List;
-
       pragma Unreferenced (AADL_Root);
+
+      use RNU.Node_List;
 
       It            : Natural := First;
       Node          : Node_Id;
@@ -2982,7 +2986,11 @@ package body Ocarina.Backends.REAL is
 
          Write_Line (Get_Name_String
                  (RN.Name (RN.Identifier (RNU.REAL_Root)))
-                 & " execution");
+                       & RN.Related_Entity (Node)'Img
+                       & ATN.Kind (RN.Related_Entity (Node))'Img
+                       & Image (ATN.Loc (RN.Related_Entity (Node)))
+                       & " execution for instance at "
+                       & Image (Loc (RNU.Real_Root)));
 
          if not Check_Requirements (RNU.REAL_Root) then
             Display_Located_Error
