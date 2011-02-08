@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -285,6 +285,51 @@ package body Ocarina.Backends.PO_HI_C.Main is
                Make_List_Id
                   (Make_Literal (New_Int_Value (0, 0, 10))));
             Append_Node_To_List (N, CTN.Statements (Main_Function));
+         end if;
+
+         --  Visit all threads and see if there is an initialize entrypoint.
+         --  In that case, call the initialize entrypoint.
+
+         --  There is two ways to deal with initialize entrypoint. The
+         --  entrypoint can point a subprogram classifier (a node)
+         --  or just reference text. We have to handle both cases.
+
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            C := First_Node (Subcomponents (E));
+            while Present (C) loop
+
+               --  First, handle the case when the initialize_entrypoint
+               --  is a subprogram classifier reference.
+
+               if AAU.Is_Thread (Corresponding_Instance (C)) and then
+                  Get_Thread_Initialize_Entrypoint
+                     (Corresponding_Instance (C)) /= No_Node
+               then
+                  Append_Node_To_List
+                     (Make_Call_Profile
+                        (Map_C_Subprogram_Identifier
+                           (Get_Thread_Initialize_Entrypoint
+                              (Corresponding_Instance (C))), No_List),
+                     CTN.Statements (Main_Function));
+               end if;
+
+               --  Then, handle the case when the initialize entrypoint
+               --  is just a string.
+
+               if AAU.Is_Thread (Corresponding_Instance (C)) and then
+                  Get_Thread_Initialize_Entrypoint
+                     (Corresponding_Instance (C)) /= No_Name
+               then
+                  Append_Node_To_List
+                     (Make_Call_Profile
+                        (Make_Defining_Identifier
+                           (Get_Thread_Initialize_Entrypoint
+                              (Corresponding_Instance (C))), No_List),
+                     CTN.Statements (Main_Function));
+               end if;
+
+               C := Next_Node (C);
+            end loop;
          end if;
 
          --  Visit all devices attached to the parent system that

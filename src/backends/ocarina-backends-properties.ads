@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -461,6 +461,14 @@ package Ocarina.Backends.Properties is
    function Get_Implementation (E : Node_Id) return Node_Id;
    --  Return the abstract component implementation attached to a
    --  component through the Implemented_As property.
+
+   function Get_Thread_Activate_Entrypoint (T : Node_Id) return Name_Id;
+   --  Return the activate entry point of the given thread. Return
+   --  No_Name in case the property is not defined for the thread.
+
+   function Get_Thread_Activate_Entrypoint (T : Node_Id) return Node_Id;
+   --  Same as before but returns the classifier associated with the
+   --  property (used in AADLv2).
 
    function Get_Thread_Initialize_Entrypoint (T : Node_Id) return Name_Id;
    --  Return the initialize entry point of the given thread. Return

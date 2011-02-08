@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -132,6 +132,8 @@ package body Ocarina.Backends.Properties is
    Thread_Dispatch_Protocol : Name_Id;
    Thread_Cheddar_Priority  : Name_Id;
    Thread_Stack_Size        : Name_Id;
+   Activate_Entrypoint    : Name_Id;
+   Activate_Entrypoint_Source_Text : Name_Id;
    Initialize_Entrypoint    : Name_Id;
    Initialize_Entrypoint_Source_Text : Name_Id;
    Recover_Entrypoint    : Name_Id;
@@ -2293,6 +2295,38 @@ package body Ocarina.Backends.Properties is
       end if;
    end Get_Thread_Initialize_Entrypoint;
 
+   ------------------------------------
+   -- Get_Thread_Activate_Entrypoint --
+   ------------------------------------
+
+   function Get_Thread_Activate_Entrypoint (T : Node_Id) return Name_Id is
+   begin
+      if Is_Defined_String_Property (T, Activate_Entrypoint) then
+         return Get_String_Property (T, Activate_Entrypoint);
+
+      elsif Is_Defined_String_Property
+        (T, Activate_Entrypoint_Source_Text)
+      then
+         return Get_String_Property
+           (T, Activate_Entrypoint_Source_Text);
+      else
+         return No_Name;
+      end if;
+   end Get_Thread_Activate_Entrypoint;
+
+   ------------------------------------
+   -- Get_Thread_Activate_Entrypoint --
+   ------------------------------------
+
+   function Get_Thread_Activate_Entrypoint (T : Node_Id) return Node_Id is
+   begin
+      if Is_Defined_Property (T, Activate_Entrypoint) then
+         return Get_Classifier_Property (T, Activate_Entrypoint);
+      else
+         return No_Node;
+      end if;
+   end Get_Thread_Activate_Entrypoint;
+
    -----------------------------------
    -- Get_Thread_Recover_Entrypoint --
    -----------------------------------
@@ -3308,6 +3342,10 @@ package body Ocarina.Backends.Properties is
       Initialize_Entrypoint      := Get_String_Name ("initialize_entrypoint");
       Initialize_Entrypoint_Source_Text := Get_String_Name
                               ("initialize_entrypoint_source_text");
+
+      Activate_Entrypoint      := Get_String_Name ("activate_entrypoint");
+      Activate_Entrypoint_Source_Text := Get_String_Name
+                              ("activate_entrypoint_source_text");
       Recover_Entrypoint      := Get_String_Name ("recover_entrypoint");
       Recover_Entrypoint_Source_Text := Get_String_Name
                               ("recover_entrypoint_source_text");

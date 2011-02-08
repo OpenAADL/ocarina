@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -429,16 +429,16 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Fetch_In_Ports;
          procedure Make_Thread_Compute_Entrypoint;
          procedure Make_Ports_Compute_Entrypoint;
-         procedure Make_Initialize_Entrypoint;
+         procedure Make_Activate_Entrypoint;
          function Make_Get_Valid_Value (F : Node_Id) return Node_Id;
 
-         --------------------------------
-         -- Make_Initialize_Entrypoint --
-         --------------------------------
+         ------------------------------
+         -- Make_Activate_Entrypoint --
+         ------------------------------
 
-         procedure Make_Initialize_Entrypoint is
+         procedure Make_Activate_Entrypoint is
             Entrypoint : constant Node_Id
-                  := Get_Thread_Initialize_Entrypoint (E);
+                  := Get_Thread_Activate_Entrypoint (E);
          begin
             if Entrypoint /= No_Node then
                Append_Node_To_List
@@ -446,7 +446,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      (Map_C_Subprogram_Identifier (Entrypoint)),
                   Statements);
             end if;
-         end Make_Initialize_Entrypoint;
+         end Make_Activate_Entrypoint;
 
          --------------------------
          -- Make_Get_Valid_Value --
@@ -1188,7 +1188,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                null;
          end case;
 
-         Make_Initialize_Entrypoint;
+         Make_Activate_Entrypoint;
 
          Check_Thread_Consistency (E);
 
@@ -1365,7 +1365,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
          declare
             Init_Entrypoint : constant Name_Id :=
-              Get_Thread_Initialize_Entrypoint (E);
+              Get_Thread_Activate_Entrypoint (E);
             Parameter_List : constant List_Id :=
               New_List (CTN.K_List_Id);
          begin
