@@ -29,26 +29,24 @@ public
   with GRSPW;
   with TCP_IP_Protocol;
 
-  with TASTE;
-
   ------------------------
   -- Configuration Type --
   ------------------------
 
    data configuration_type_ip
    properties
-      Type_Source_Name  => "IP-Conf-T";
-      Deployment::Module_Name => "POHICDRIVER-IP";
-      Source_Language   => ASN1;
-      Source_Text       => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/ip.asn" , "drivers/configuration/ip.h");
+      Type_Source_Name                 => "IP-Conf-T";
+      Deployment::ASN1_Module_Name     => "POHICDRIVER-IP";
+      Source_Language                  => ASN1;
+      Source_Text                      => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/ip.asn" , "drivers/configuration/ip.h");
    end configuration_type_ip;
 
    data configuration_type_serial
    properties
-      Type_Source_Name  => "Serial-Conf-T";
-      Deployment::Module_Name => "POHICDRIVER-UART";
-      Source_Language   => ASN1;
-      Source_Text       => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/serial.asn", "drivers/configuration/serial.h");
+      Type_Source_Name              => "Serial-Conf-T";
+      Deployment::ASN1_Module_Name  => "POHICDRIVER-UART";
+      Source_Language               => ASN1;
+      Source_Text                   => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/serial.asn", "drivers/configuration/serial.h");
    end configuration_type_serial;
 
   --------------
@@ -75,8 +73,6 @@ public
   device leon_serial
   features
     serialaccess : requires bus access ocarina_buses::serial.generic;
-   properties
-    TASTE::Help                           => "help leon serial";
   end leon_serial;
   
   device implementation leon_serial.raw
@@ -100,8 +96,6 @@ public
   ----------------
   
   device rasta_1553
-  properties
-    TASTE::Help                           => "help rasta 1553";
   end rasta_1553;
   
   device implementation rasta_1553.terminal
@@ -127,8 +121,6 @@ public
   device rasta_serial
   features
     serialaccess : requires bus access ocarina_buses::serial.generic;
-  properties
-    TASTE::Help                           => "help rasta serial";
   end rasta_serial;
   
   device implementation rasta_serial.raw
@@ -154,8 +146,6 @@ public
   device rasta_spacewire
   features
     spwaccess : requires bus access ocarina_buses::spacewire.generic;
-  properties
-    TASTE::Help                           => "help rasta spw";
   end rasta_spacewire;
   
   device implementation rasta_spacewire.pohic
@@ -181,8 +171,6 @@ public
   device generic_serial
   features
     serialaccess : requires bus access ocarina_buses::serial.generic;
-  properties
-    TASTE::Help                           => "help generic serial";
   end generic_serial;
   
   device implementation generic_serial.raw
@@ -216,8 +204,6 @@ public
   device generic_sockets_ip
   features
     thebus : requires bus access ocarina_buses::ip.i;
-  properties
-    TASTE::Help                           => "help generic sockets";
   end generic_sockets_ip;
   
   device implementation generic_sockets_ip.pohic
@@ -226,7 +212,6 @@ public
     Device_Driver                 => classifier (ocarina_drivers_ip_pohic::sockets_impl.i);
     Initialize_Entrypoint         => classifier (ocarina_drivers_ip_pohic::spg_sockets_init);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
-    TASTE::Help                           => "help generic sockets";
   end generic_sockets_ip.pohic;
 
   device implementation generic_sockets_ip.pohiada
@@ -244,8 +229,6 @@ public
   device rtems_ne2000
   features
     thebus : requires bus access ocarina_buses::ip.i;
-  properties
-    TASTE::Help                           => "help ne2000 sockets";
   end rtems_ne2000;
   
   device implementation rtems_ne2000.ip_pohic

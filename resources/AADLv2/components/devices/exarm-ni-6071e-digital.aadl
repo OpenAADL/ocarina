@@ -3,6 +3,7 @@ package ocarina_drivers_exarm_ni_6071e_digital
 public
 
 with Base_Types;
+with Deployment;
 
 subprogram spg_init
 properties
@@ -45,6 +46,9 @@ abstract driver
 features
    data1 : out data port Base_Types::Unsigned_32;
    data2 : out data port Base_Types::Unsigned_32;
+properties
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
 end driver;
 
 abstract implementation driver.i

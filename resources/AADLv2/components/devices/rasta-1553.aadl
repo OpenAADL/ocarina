@@ -1,6 +1,7 @@
 package ocarina_drivers_rasta_1553
 
 public
+with Deployment;
 
 subprogram spg_1553_controller_rasta
 properties
@@ -71,6 +72,9 @@ end if1553_controller.rasta;
 
 
 abstract if1553_driver
+properties
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
 end if1553_driver;
 
 abstract implementation if1553_driver.rasta_terminal

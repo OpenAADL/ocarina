@@ -18,6 +18,7 @@ package GRUART
 public
 
    with Generic_Bus;
+   with Deployment;
 
    ------------
    -- DEVICE --
@@ -49,6 +50,9 @@ public
    -- using an abstract component.
 
    abstract Driver_GRUART_Protocol
+   properties
+      Deployment::Version  => "0.1beta";
+      Deployment::Help     => "Write your ASN.1 configuration here";
    end Driver_GRUART_Protocol;
 
    abstract implementation Driver_GRUART_Protocol.impl

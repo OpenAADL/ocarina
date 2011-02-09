@@ -46,6 +46,8 @@ end serial_poller.rasta;
 abstract serial_driver
 properties
    Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_serial);
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
 end serial_driver;
 
 abstract implementation serial_driver.rasta

@@ -2,6 +2,8 @@ package ocarina_drivers_rtems_ne2000
 
 public
 
+with Deployment;
+
 subprogram init
 properties
 	Source_Language   => C;
@@ -37,6 +39,9 @@ end spg_sender;
 
 
 abstract driver
+properties
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
 end driver;
 
 

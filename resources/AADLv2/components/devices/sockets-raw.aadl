@@ -23,6 +23,8 @@ end spg_eth_linux_sender.i;
 abstract sockets_impl
 properties
    Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_ip);
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
 end sockets_impl;
 
 abstract implementation sockets_impl.i

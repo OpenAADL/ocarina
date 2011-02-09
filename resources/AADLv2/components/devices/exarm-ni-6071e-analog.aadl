@@ -3,6 +3,7 @@ package ocarina_drivers_exarm_ni_6071e_analog
 public
 
 with Base_Types;
+with Deployment;
 
 subprogram spg_init
 properties

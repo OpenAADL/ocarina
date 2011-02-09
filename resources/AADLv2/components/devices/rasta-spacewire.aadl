@@ -3,6 +3,7 @@ package ocarina_drivers_rasta_spacewire
 public
 
 with ocarina_buses;
+with Deployment;
 
 subprogram spg_spacewire_poller_rasta
 properties
@@ -38,6 +39,9 @@ end spacewire_poller.rasta;
 
 
 abstract spacewire_driver
+properties
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
 end spacewire_driver;
 
 abstract implementation spacewire_driver.rasta

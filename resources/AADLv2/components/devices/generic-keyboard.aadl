@@ -3,6 +3,7 @@ package ocarina_drivers_generic_keyboard
 public
 
 with Base_Types;
+with Deployment;
 
 subprogram spg_generic_keyboard_init
 properties
@@ -40,6 +41,9 @@ end spg_generic_keyboard_poller;
 abstract generic_keyboard_driver
 features
    key_pressed : out data port Base_Types::Integer;
+properties
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
 end generic_keyboard_driver;
 
 

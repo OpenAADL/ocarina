@@ -16,6 +16,7 @@ package TCP_IP_Protocol
 public
 
    with Generic_Native;
+   with Deployment;
 
    ------------
    -- DEVICE --
@@ -47,6 +48,9 @@ public
    -- using an abstract component.
 
    abstract Driver_TCP_IP_Protocol
+   properties
+      Deployment::Version  => "0.1beta";
+      Deployment::Help     => "Write your ASN.1 configuration here";
    end Driver_TCP_IP_Protocol;
 
    abstract implementation Driver_TCP_IP_Protocol.impl
