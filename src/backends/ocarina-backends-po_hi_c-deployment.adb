@@ -400,19 +400,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                Conf_Str := Name_Find;
             end if;
 
-            if Conf_Str /= No_Name then
-               Append_Node_To_List
-               (Make_Literal
-                (CV.New_Pointed_Char_Value (Conf_Str)),
-               CTN.Values (Devices_Array));
-            else
-               Append_Node_To_List
-               (Make_Literal
-                (CV.New_Pointed_Char_Value
-                 (Get_String_Name ("noaddr"))),
-               CTN.Values (Devices_Array));
-            end if;
-
             --  Now, we look at the amount of buses connected to
             --  the device and which bus is connected to which
             --  device. As a result, the arrays
@@ -630,6 +617,11 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                         end loop;
                   end if;
                end if;
+               Append_Node_To_List
+               (Make_Literal
+                (CV.New_Pointed_Char_Value
+                 (Get_String_Name ("noaddr"))),
+               CTN.Values (Devices_Array));
 
                Set_Deployment_Header;
             else
@@ -637,6 +629,19 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   (Make_Literal
                      (CV.New_Int_Value (0, 0, 10)),
                   CTN.Values (Devices_Confvars));
+
+               if Conf_Str /= No_Name then
+                  Append_Node_To_List
+                  (Make_Literal
+                   (CV.New_Pointed_Char_Value (Conf_Str)),
+                  CTN.Values (Devices_Array));
+               else
+                  Append_Node_To_List
+                  (Make_Literal
+                   (CV.New_Pointed_Char_Value
+                    (Get_String_Name ("noaddr"))),
+                  CTN.Values (Devices_Array));
+               end if;
             end if;
          end if;
          Current_Device := No_Node;

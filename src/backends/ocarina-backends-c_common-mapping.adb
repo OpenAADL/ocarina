@@ -4105,7 +4105,7 @@ package body Ocarina.Backends.C_Common.Mapping is
    is
    begin
       if AINU.Is_Device (E) then
-         Set_Str_To_Name_Buffer ("__po_hi_c_confvar_");
+         Set_Str_To_Name_Buffer ("pohidrv_");
          Get_Name_String_And_Append
             (AIN.Name
                (AIN.Identifier (Parent_Subcomponent (E))));

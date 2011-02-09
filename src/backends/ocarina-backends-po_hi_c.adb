@@ -223,7 +223,7 @@ package body Ocarina.Backends.PO_HI_C is
       if Length (User_Source_Dirs) > 0 then
          for J in
            Name_Tables.First .. Name_Tables.Last (User_Source_Dirs) loop
-
+            Write_Str ("-I");
             Write_Name (User_Source_Dirs.Table (J));
 
             exit when J = Name_Tables.Last (User_Source_Dirs);
