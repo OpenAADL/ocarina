@@ -307,7 +307,7 @@ package body Ocarina.BE_AADL.Properties.Values is
    -----------------------
 
    procedure Print_Record_Term (Node : Node_Id) is
-      pragma Assert (Kind (Node) = K_Record_Term_Element);
+      pragma Assert (Kind (Node) = K_Record_Term);
 
       List_Node : Node_Id;
    begin
@@ -318,16 +318,11 @@ package body Ocarina.BE_AADL.Properties.Values is
         (Ocarina.ME_AADL.AADL_Tree.Nodes.List_Items (Node));
 
       while Present (List_Node) loop
-         if List_Node /=
-           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.List_Items (Node)) then
-
-            Print_Token (T_Comma);
-            Write_Space;
-         end if;
-
          case Kind (List_Node) is
             when K_Record_Term_Element =>
                Print_Record_Term_Element (List_Node);
+               Print_Token (T_Semicolon);
+               Write_Space;
             when others =>
                Node_Not_Handled (Node);
          end case;

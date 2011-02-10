@@ -50,6 +50,7 @@ Usage:
         carts
         asn1_deployment
         cheddar
+        connection_matrix
         aadl
         aadl_min
         aadl_annex

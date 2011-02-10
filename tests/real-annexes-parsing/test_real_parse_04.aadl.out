@@ -44,6 +44,22 @@ property set Deployment is
   Configuration : aadlstring
     applies to (device);
 
+  Config : aadlstring
+    applies to (device);
+
+  ASN1_Module_Name : aadlstring
+    applies to ( all);
+
+  Help : aadlstring
+    applies to ( all);
+
+  Version : aadlstring
+    applies to ( all);
+
+  Configuration_Type : classifier (
+data)
+    applies to ( all);
+
 end Deployment;
 
 package RMAAadl

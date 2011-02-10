@@ -2145,7 +2145,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                DAE
                  (Message0 => "Units Type ",
                   Node1    =>  Units_Type,
-                  Message1 => " contains cycles is not correctly defined");
+                  Message1 => " is ill-defined: it contains cycles");
                exit;
             end if;
 

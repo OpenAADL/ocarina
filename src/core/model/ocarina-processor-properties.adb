@@ -563,12 +563,13 @@ package body Ocarina.Processor.Properties is
          or else Kind (Property_Value) = K_Parenthesis_Boolean_Term
          or else Kind (Property_Value) = K_Component_Classifier_Term
          or else Kind (Property_Value) = K_Unique_Property_Const_Identifier
+         or else Kind (Property_Value) = K_Record_Term
          or else Ocarina.ME_AADL.Aadl_Tree.Entities.DNKE (Property_Value));
 
       pragma Assert (Reference_Property /= No_Node);
 
-      Evaluated_Value : Node_Id;
-      Ref_Term : Node_Id;
+      Evaluated_Value : Node_Id := No_Node;
+      Ref_Term : Node_Id := No_Node;
    begin
       if Property_Value = No_Node then
          Evaluated_Value := No_Node;
@@ -1027,6 +1028,9 @@ package body Ocarina.Processor.Properties is
                                       Get_Referenced_Entity (Property_Value));
                Set_Component_Cat (Evaluated_Value,
                                   Component_Cat (Property_Value));
+
+            when K_Record_Term =>
+               null; --  XXX
 
             when others =>
                raise Program_Error;

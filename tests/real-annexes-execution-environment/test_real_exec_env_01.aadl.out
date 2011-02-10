@@ -34,3 +34,4 @@ test_env_subtheorem_call_with_empty_domain execution
 lib.real:38:01 Backends: warning : Empty range set, returned value is 0.0
    value for x after evaluating sub_theorem_6 is 0.00000E+00
 theorem test_env_subtheorem_call_with_empty_domain is: TRUE
+

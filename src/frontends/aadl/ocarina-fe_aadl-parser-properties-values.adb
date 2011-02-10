@@ -1741,7 +1741,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Save_Lexer (Start_Loc);
       Scan_Token;
       if Token /= T_Right_Parenthesis then
-
          Record_List := P_Items_List (P_Record_Type_Element'Access,
                                       No_Node,
                                       T_Semicolon,
@@ -2407,7 +2406,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             DPE (PC_Boolean_Or_Record_Term);
             return No_Node;
       end case;
-
    end P_Boolean_Or_Record_Term;
 
    ----------------------
@@ -2548,8 +2546,15 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          return No_Node;
       end if;
 
-      Items := P_Items_List (P_Record_Term_Element'Access, No_Node,
-                             T_Semicolon, T_Right_Parenthesis, PC_Record_Term);
+      Save_Lexer (Start_Loc);
+      Scan_Token;
+      Items := P_Items_List (P_Record_Term_Element'Access,
+                             No_Node,
+                             T_Semicolon,
+                             T_Right_Parenthesis,
+                             PC_Record_Term,
+                             True);
+
       if No (Items) then
          Skip_Tokens (T_Semicolon);
          return No_Node;
@@ -2559,12 +2564,11 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       Item  := First_Node (Items);
       while Present (Item) loop
-         Set_Corresponding_Entity (Item, Record_Term);
+         --         Set_Corresponding_Entity (Item, Record_Term);
          Item := Next_Node (Item);
       end loop;
 
       return Record_Term;
-
    end P_Record_Term;
 
    ---------------------------
@@ -2576,7 +2580,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
    function P_Record_Term_Element
      (Container : Node_Id)
-     return Node_Id is
+     return Node_Id
+   is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;
@@ -2592,10 +2597,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
    begin
       Save_Lexer (Loc);
-      Scan_Token;
 
       if Token /= T_Identifier then
          DPE (PC_Record_Term_Element, T_Identifier);
+         Restore_Lexer (Loc);
          return No_Node;
       end if;
 
@@ -2603,12 +2608,13 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Identifier := Make_Current_Identifier (Record_Term_Element);
       Set_Identifier (Record_Term_Element, Identifier);
 
+      Save_Lexer (Loc);
       Scan_Token;
+
       if Token = T_Association then
          Property_Expression := P_Property_Expression (No_Node);
 
          if No (Property_Expression) then
-            --  error when parsing Property_Expression, quit
             return No_Node;
          end if;
       else
@@ -2617,8 +2623,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          return No_Node;
       end if;
 
-      Set_Property_Expression (Property_Expression, Record_Term_Element);
-
+      Set_Property_Expression (Record_Term_Element, Property_Expression);
       return Record_Term_Element;
    end P_Record_Term_Element;
 

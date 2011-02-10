@@ -138,6 +138,9 @@ package body Ocarina.Analyzer.Messages is
          elsif Kind (Node2) = K_Entity_Reference then
             Write_Name (Get_Name_Of_Entity_Reference
                         (Node2, Get_Display_Name => True));
+
+         elsif Kind (Node2) = K_Identifier then
+            Write_Name (Name (Node2));
          end if;
 
          Write_Str (" (" & Image (Kind (Node2)) & ") ");
