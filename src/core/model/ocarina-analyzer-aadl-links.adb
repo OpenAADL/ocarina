@@ -1013,7 +1013,7 @@ package body Ocarina.Analyzer.AADL.Links is
       Pointed_Node       : Node_Id := No_Node;
       Other_Pointed_Node : Node_Id := No_Node;
       No_Ref_Given       : Boolean := False;
-      --  Some features may not refere to components (e.g. data ports)
+      --  Some features may not refer to components (e.g. data ports)
    begin
       if AADL_Version = AADL_V2
         and then Present (Entity_Ref (Node))
@@ -1034,7 +1034,6 @@ package body Ocarina.Analyzer.AADL.Links is
                   declare
                      Component_Ref : constant Node_Id := Entity_Ref (Node);
                   begin
-
                      if Present (Component_Ref) then
                         Pointed_Node := Find_Component_Classifier
                           (Root                 => Root,
@@ -1847,7 +1846,7 @@ package body Ocarina.Analyzer.AADL.Links is
             end if;
          end if;
 
-         --  link 'applies to' statement
+         --  Link 'applies to' statement
 
          if not Is_Empty (Applies_To_Prop (Node)) then
             List_Node := First_Node (Applies_To_Prop (Node));
@@ -1873,8 +1872,8 @@ package body Ocarina.Analyzer.AADL.Links is
                      Corresponding_Container := Pointed_Node;
 
                   when others =>
-                     --  Entities that cannot have 'applies to' clause in
-                     --  their property associations.
+                     --  These entities cannot have 'applies to'
+                     --  clause in their property associations.
 
                      Corresponding_Container := No_Node;
                end case;
@@ -1887,32 +1886,46 @@ package body Ocarina.Analyzer.AADL.Links is
                                                      Identifier (Tmp_Node));
                      Tmp_Node := Identifier (Tmp_Node);
                   else
-                     Pointed_Node := Find_Subclause (Corresponding_Container,
-                                                     Tmp_Node);
+                     while Tmp_Node /= No_Node loop
+                        Pointed_Node := Find_Subclause
+                          (Corresponding_Container, Tmp_Node);
+
+                        if Present (Pointed_Node) then
+                           Set_Corresponding_Entity (Tmp_Node, Pointed_Node);
+                           Set_Corresponding_Entity
+                             (First_Node (List_Items (List_Node)),
+                              Pointed_Node);
+
+                        else
+                           DAE (Node1    => Node,
+                                Message1 => "points to ",
+                                Node2 => Tmp_Node,
+                                Message2 =>
+                                  "that is not a valid subcomponent");
+                           Success := False;
+                           exit;
+                        end if;
+
+                        Tmp_Node := Next_Node (Tmp_Node);
+                        if No (Tmp_Node) then
+                           exit;
+                        end if;
+                        Corresponding_Container :=
+                          Get_Referenced_Entity (Entity_Ref (Pointed_Node));
+                     end loop;
                   end if;
-                  --  XXX Fix the link for all contained element path
-
-               else
-                  Pointed_Node := No_Node;
-               end if;
-
-               if Present (Pointed_Node) then
-                  Set_Corresponding_Entity (Tmp_Node, Pointed_Node);
-                  List_Node := Next_Node (List_Node);
-                  --  XXX Fix the link for all contained element path
 
                else
                   DAE (Node1    => Node,
-                       Message1 => "applies to something that"
-                                         & " cannot be found");
-                  Success := False;
-                  exit;
+                       Message1 =>
+                         "applies to something that cannot be found");
+                  --  XXX is this the correct error message?
+                  Pointed_Node := No_Node;
                end if;
+               List_Node := Next_Node (List_Node);
             end loop;
 
             if No (Pointed_Node) then
-               DAE (Node1    => Node,
-                    Message1 => "applies to something that cannot be found");
                Success := False;
             end if;
          end if;
@@ -1952,9 +1965,9 @@ package body Ocarina.Analyzer.AADL.Links is
       return Success;
    end Link_Property_Association;
 
-   --------------------------------
+   ---------------------
    -- Link_Properties --
-   --------------------------------
+   ---------------------
 
    function Link_Properties
      (Root      : Node_Id;
@@ -1981,9 +1994,9 @@ package body Ocarina.Analyzer.AADL.Links is
       return Success;
    end Link_Properties;
 
-   ----------------------------------------------------
+   -----------------------------------------
    -- Link_Properties_Of_AADL_Description --
-   ----------------------------------------------------
+   -----------------------------------------
 
    function Link_Properties_Of_AADL_Description
      (Root    : Node_Id)
@@ -2024,9 +2037,9 @@ package body Ocarina.Analyzer.AADL.Links is
       return Success;
    end Link_Properties_Of_AADL_Description;
 
-   ---------------------------------------------
+   ----------------------------------
    -- Link_Properties_Of_Component --
-   ---------------------------------------------
+   ----------------------------------
 
    function Link_Properties_Of_Component
      (Root    : Node_Id;
@@ -2061,9 +2074,9 @@ package body Ocarina.Analyzer.AADL.Links is
       return Success;
    end Link_Properties_Of_Component;
 
-   ------------------------------------------------------------
+   -------------------------------------------------
    -- Link_Properties_Of_Component_Implementation --
-   ------------------------------------------------------------
+   -------------------------------------------------
 
    function Link_Properties_Of_Component_Implementation
      (Root    : Node_Id;
@@ -2193,9 +2206,9 @@ package body Ocarina.Analyzer.AADL.Links is
       return Success;
    end Link_Properties_Of_Component_Implementation;
 
-   --------------------------------------------------
+   ---------------------------------------
    -- Link_Properties_Of_Component_Type --
-   --------------------------------------------------
+   ---------------------------------------
 
    function Link_Properties_Of_Component_Type
      (Root    : Node_Id;
@@ -2254,9 +2267,9 @@ package body Ocarina.Analyzer.AADL.Links is
       return Success;
    end Link_Properties_Of_Component_Type;
 
-   -------------------------------------------
+   --------------------------------
    -- Link_Properties_Of_Package --
-   -------------------------------------------
+   --------------------------------
 
    function Link_Properties_Of_Package
      (Root    : Node_Id;
@@ -2304,9 +2317,9 @@ package body Ocarina.Analyzer.AADL.Links is
       return Success;
    end Link_Properties_Of_Package;
 
-   ------------------------------------------------------
+   -------------------------------------------
    -- Link_Properties_Of_Feature_Group_Type --
-   ------------------------------------------------------
+   -------------------------------------------
 
    function Link_Properties_Of_Feature_Group_Type
      (Root    : Node_Id;
@@ -2685,7 +2698,6 @@ package body Ocarina.Analyzer.AADL.Links is
 
          when K_Reference_Term =>
             case Kind (Reference_Term (Node)) is
-
                when K_Entity_Reference =>
                   --  AADL_V1
 
@@ -2843,7 +2855,7 @@ package body Ocarina.Analyzer.AADL.Links is
                Set_Referenced_Entity (Node, Pointed_Node);
 
                --  IMPORTANT: we do not perform any verification
-               --  reguarding the validity of this reference: a single
+               --  regarding the validity of this reference: a single
                --  value property association may refer to a
                --  multi-valued constant. This is checked in the
                --  semantics packages.
@@ -2906,6 +2918,7 @@ package body Ocarina.Analyzer.AADL.Links is
                Second_Term (Node),
                Property_Type)
               and then Success;
+
          when K_Not_Boolean_Term | K_Parenthesis_Boolean_Term =>
             Success := Link_Property_Value
               (Root,

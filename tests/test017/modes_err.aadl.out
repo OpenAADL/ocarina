@@ -1,3 +1,3 @@
-modes_err.aadl:67:06: Mode_Properties::Dummy_Mode_Property (property association)  belongs to a mode. It cannot have 'in modes' statement
-modes_err.aadl:77:03: Mode_Properties::Dummy_Mode_Property (property association)  belongs to a mode. It cannot have 'in modes' statement
+modes_err.aadl:67:06: Mode_Properties::Dummy_Mode_Property (property association)  belongs to a mode. It cannot have 'in modes'  statement
+modes_err.aadl:77:03: Mode_Properties::Dummy_Mode_Property (property association)  belongs to a mode. It cannot have 'in modes'  statement
 Cannot analyze AADL specifications
