@@ -364,16 +364,16 @@ package body Ocarina.Backends.Connection_Matrix.Main is
 
                                     if Is_Defined_Property
                                        (Conn,
-                                 "aram_properties::required_bandwidth") then
+                                 "bus_properties::required_bandwidth") then
                                        Bandwidth := Get_Integer_Property (Conn,
-                                       "aram_properties::required_bandwidth");
+                                       "bus_properties::required_bandwidth");
 
                                        Bandwidth_Unit := ATN.Name
                                           (ATN.Unit_Identifier
                                              (Get_Value_Of_Property_Association
                                                 (Conn,
                                     Get_String_Name
-                                    ("aram_properties::required_bandwidth"))));
+                                    ("bus_properties::required_bandwidth"))));
                                        Connected := True;
                                     end if;
                                  end if;
@@ -526,31 +526,31 @@ package body Ocarina.Backends.Connection_Matrix.Main is
 
                --  Try to find the bus properties: bandwidth and latency.
                if Is_Defined_Property
-                  (Bus_Instance, "aram_properties::bandwidth") then
+                  (Bus_Instance, "bus_properties::bandwidth") then
 
                   Bandwidth := Get_Integer_Property
-                     (Bus_Instance, "aram_properties::bandwidth");
+                     (Bus_Instance, "bus_properties::bandwidth");
 
                   Bandwidth_Unit := ATN.Name
                      (ATN.Unit_Identifier
                         (Get_Value_Of_Property_Association
                            (Bus_Instance,
                             Get_String_Name
-                              ("aram_properties::bandwidth"))));
+                              ("bus_properties::bandwidth"))));
                end if;
 
                if Is_Defined_Property
-                  (Bus_Instance, "aram_properties::max_latency") then
+                  (Bus_Instance, "bus_properties::max_latency") then
 
                   Latency := Get_Integer_Property
-                     (Bus_Instance, "aram_properties::max_latency");
+                     (Bus_Instance, "bus_properties::max_latency");
 
                   Latency_Unit := ATN.Name
                      (ATN.Unit_Identifier
                         (Get_Value_Of_Property_Association
                            (Bus_Instance,
                             Get_String_Name
-                              ("aram_properties::max_latency"))));
+                              ("bus_properties::max_latency"))));
                end if;
 
                --  First, display the name of the bus in bold
