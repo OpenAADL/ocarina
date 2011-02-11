@@ -49,6 +49,14 @@ public
       Source_Text                   => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/serial.asn", "drivers/configuration/serial.h");
    end configuration_type_serial;
 
+   data configuration_type_spacewire
+   properties
+      Type_Source_Name              => "Spacewire-Conf-T";
+      Deployment::ASN1_Module_Name  => "POHICDRIVER-SPACEWIRE";
+      Source_Language               => ASN1;
+      Source_Text                   => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/spacewire.asn", "drivers/configuration/spacewire.h");
+   end configuration_type_spacewire;
+
   --------------
   -- Keyboard --
   --------------

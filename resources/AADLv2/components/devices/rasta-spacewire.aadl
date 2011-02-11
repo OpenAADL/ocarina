@@ -42,6 +42,7 @@ abstract spacewire_driver
 properties
    Deployment::Version  => "0.1beta";
    Deployment::Help     => "Write your ASN.1 configuration here";
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_spacewire);
 end spacewire_driver;
 
 abstract implementation spacewire_driver.rasta
