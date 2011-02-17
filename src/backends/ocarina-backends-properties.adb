@@ -2552,7 +2552,8 @@ package body Ocarina.Backends.Properties is
    is
       P_Name    : Name_Id;
    begin
-      pragma Assert (AINU.Is_Processor (P));
+      pragma Assert (AINU.Is_Processor (P)
+                     or else AINU.Is_Virtual_Processor (P));
 
       if Is_Defined_Enumeration_Property (P, Execution_Platform) then
          P_Name := Get_Enumeration_Property (P, Execution_Platform);

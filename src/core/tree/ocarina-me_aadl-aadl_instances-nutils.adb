@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -700,6 +700,16 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
       return Kind (C) = K_Component_Instance and then
         Get_Category_Of_Component (C) = CC_Processor;
    end Is_Processor;
+
+   --------------------------
+   -- Is_Virtual_Processor --
+   --------------------------
+
+   function Is_Virtual_Processor (C : Node_Id) return Boolean is
+   begin
+      return Kind (C) = K_Component_Instance and then
+        Get_Category_Of_Component (C) = CC_Virtual_Processor;
+   end Is_Virtual_Processor;
 
    --------------------------
    -- Is_Subprogram_Access --

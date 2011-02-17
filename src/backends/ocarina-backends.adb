@@ -71,6 +71,7 @@ with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.BoundT;
 with Ocarina.Backends.REAL;
+with Ocarina.Backends.Xtratum_Conf;
 with Ocarina.Backends.ASN1_Tree.Nodes;
 with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1_Values;
@@ -183,6 +184,7 @@ package body Ocarina.Backends is
       PO_HI_C.Init;
       PO_HI_RTSJ.Init;
       POK_C.Init;
+      Xtratum_Conf.Init;
       Stats.Init;
       Subprograms.Init;
       REAL.Init;
@@ -247,6 +249,7 @@ package body Ocarina.Backends is
       PO_HI_C.Reset;
       PO_HI_RTSJ.Reset;
       POK_C.Reset;
+      Xtratum_Conf.Reset;
       Stats.Reset;
       Carts.Reset;
       PO_QoS_Ada.Reset;

@@ -3,6 +3,7 @@ package ocarina_processors_leon
 public
 
 with Deployment;
+with ARINC653;
 with Cheddar_Properties;
 
 processor leon
@@ -21,5 +22,29 @@ processor implementation leon.ork
 properties
    Deployment::Execution_Platform => LEON_ORK;
 end leon.ork;
+
+processor leon3
+end leon3;
+
+virtual processor xtratum_partition
+end xtratum_partition;
+
+virtual processor implementation xtratum_partition.generic
+end xtratum_partition.generic;
+
+processor implementation leon3.xtratum
+properties
+   Deployment::Execution_Platform => LEON3_XTRATUM;
+end leon3.xtratum;
+
+processor implementation leon3.xtratum_2partitions
+subcomponents
+	part1 : virtual processor xtratum_partition.generic;
+	part2 : virtual processor xtratum_partition.generic;
+properties
+   ARINC653::Partition_Slots => (500ms, 500ms);
+   ARINC653::Slots_Allocation => (reference (part1), reference (part2));
+	ARINC653::Module_Major_Frame => 1000ms;
+end leon3.xtratum_2partitions;
 
 end ocarina_processors_leon;

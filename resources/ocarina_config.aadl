@@ -10,6 +10,7 @@ property set Ocarina_Config is
     PolyORB_HI_C,
     PolyORB_HI_RTSJ,
     POK_C,
+    Xtratum_Configuration,
     Petri_Nets);
 
   Generator : Ocarina_Config::Generator_Type applies to (system);
