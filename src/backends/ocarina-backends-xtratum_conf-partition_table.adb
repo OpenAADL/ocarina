@@ -145,10 +145,13 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
       Associated_Memory    : Node_Id;
       Physical_Areas_Node  : Node_Id;
       Temporal_Req_Node    : Node_Id;
+      Port_Table_Node      : Node_Id;
+      Port_Node            : Node_Id;
       Area_Node            : Node_Id;
       P                    : Node_Id;
       Q                    : Node_Id;
       S                    : Node_Id;
+      F                    : Node_Id;
    begin
       Associated_Processor := Get_Bound_Processor (E);
       Associated_Memory := Get_Bound_Memory (E);
@@ -289,6 +292,73 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
       Append_Node_To_List
          (Temporal_Req_Node, XTN.Subitems (Partition_Node));
+
+      --  Now, handle the ports of the partition.
+      if Has_Ports (E) then
+         Port_Table_Node := Make_XML_Node ("PortTable");
+
+         F := First_Node (Features (E));
+         while Present (F) loop
+            if Kind (F) = K_Port_Spec_Instance then
+
+               if not Is_Data (F) then
+                  Display_Located_Error
+                     (AIN.Loc (F),
+                      "Pure events ports are not allowed.",
+                      Fatal => True);
+               end if;
+
+               if Is_In (F) and then Is_Out (F) then
+                  Display_Located_Error
+                     (AIN.Loc (F),
+                      "in/out ports are not allowed.",
+                      Fatal => True);
+               end if;
+
+               Port_Node := Make_XML_Node ("Port");
+
+               Set_Str_To_Name_Buffer ("name");
+               P := Make_Defining_Identifier (Name_Find);
+
+               Get_Name_String (Display_Name (Identifier (F)));
+               Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List
+                  (Make_Assignement (P, Q), XTN.Items (Port_Node));
+
+               Set_Str_To_Name_Buffer ("type");
+               P := Make_Defining_Identifier (Name_Find);
+
+               if Is_Data (F) and then not Is_Event (F) then
+                  Set_Str_To_Name_Buffer ("sampling");
+               else
+                  Set_Str_To_Name_Buffer ("queueing");
+               end if;
+
+               Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List
+                  (Make_Assignement (P, Q), XTN.Items (Port_Node));
+
+               Set_Str_To_Name_Buffer ("direction");
+               P := Make_Defining_Identifier (Name_Find);
+
+               if Is_In (F) then
+                  Set_Str_To_Name_Buffer ("destination");
+               else
+                  Set_Str_To_Name_Buffer ("source");
+               end if;
+
+               Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List
+                  (Make_Assignement (P, Q), XTN.Items (Port_Node));
+
+               Append_Node_To_List
+                  (Port_Node, XTN.Subitems (Port_Table_Node));
+            end if;
+            F := Next_Node (F);
+         end loop;
+
+         Append_Node_To_List (Port_Table_Node, XTN.Subitems (Partition_Node));
+      end if;
 
       Append_Node_To_List
          (Partition_Node, XTN.Subitems (Current_XML_Node));

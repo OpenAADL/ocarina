@@ -44,6 +44,7 @@ with Ocarina.Backends.Xtratum_Conf.Hardware_Description;
 with Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor;
 with Ocarina.Backends.Xtratum_Conf.Resident_Sw;
 with Ocarina.Backends.Xtratum_Conf.Partition_Table;
+with Ocarina.Backends.Xtratum_Conf.Channels;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
@@ -168,6 +169,7 @@ package body Ocarina.Backends.Xtratum_Conf is
       Xm_Hypervisor.Visit (E);
       Resident_Sw.Visit (E);
       Partition_Table.Visit (E);
+      Channels.Visit (E);
 
       XTU.Pop_Entity;
    end Visit_Architecture_Instance;
