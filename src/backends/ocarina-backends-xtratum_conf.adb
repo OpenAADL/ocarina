@@ -41,6 +41,7 @@ with Ocarina.Backends.XML_Tree.Generator;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Xtratum_Conf.System_Description;
 with Ocarina.Backends.Xtratum_Conf.Hardware_Description;
+with Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
@@ -162,6 +163,7 @@ package body Ocarina.Backends.Xtratum_Conf is
 
       System_Description.Visit (E);
       Hardware_Description.Visit (E);
+      Xm_Hypervisor.Visit (E);
 
       XTU.Pop_Entity;
    end Visit_Architecture_Instance;

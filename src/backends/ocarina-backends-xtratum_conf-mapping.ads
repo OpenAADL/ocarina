@@ -53,11 +53,6 @@ package Ocarina.Backends.Xtratum_Conf.Mapping is
    function Map_Port_Connection (E : Node_Id) return Node_Id;
    function Map_Process_Memory (Process : Node_Id) return Node_Id;
    function Map_System_Description (System : Node_Id) return Node_Id;
-   procedure Map_Process_Scheduling
-      (Process : Node_Id;
-      Window_Number : in out Unsigned_Long_Long;
-      N : out Node_Id);
-
    function Map_Connection
       (Connection : Node_Id; Channel_Identifier : Unsigned_Long_Long)
       return Node_Id;

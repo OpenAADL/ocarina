@@ -33,14 +33,11 @@
 
 with Namet; use Namet;
 with Ocarina.ME_AADL;
-with Ocarina.ME_AADL.AADL_Tree.Nodes;
-with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Utils;
-with Ocarina.Backends.Messages;
 with Ocarina.Backends.XML_Common.Mapping;
 with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
@@ -52,13 +49,10 @@ package body Ocarina.Backends.Xtratum_Conf.Mapping is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.Utils;
-   use Ocarina.Backends.Messages;
    use Ocarina.Backends.XML_Common.Mapping;
    use Ocarina.Backends.XML_Tree.Nodes;
    use Ocarina.Backends.XML_Tree.Nutils;
 
-   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XV  renames Ocarina.Backends.XML_Values;
@@ -808,118 +802,6 @@ package body Ocarina.Backends.Xtratum_Conf.Mapping is
 
       return N;
    end Map_Process_Memory;
-
-   ----------------------------
-   -- Map_Process_Scheduling --
-   ----------------------------
-
-   procedure Map_Process_Scheduling
-      (Process : Node_Id;
-      Window_Number : in out Unsigned_Long_Long;
-      N : out Node_Id)
-   is
-      P                             : Node_Id;
-      Q                             : Node_Id;
-      Window_Node                   : Node_Id;
-      Associated_Virtual_Processor  : constant Node_Id
-         := Get_Bound_Processor (Process);
-      Associated_Processor          : constant Node_Id
-         := Parent_Component
-            (Parent_Subcomponent (Associated_Virtual_Processor));
-      Slots                         : constant Time_Array
-         := Get_POK_Slots (Associated_Processor);
-      Slots_Allocation              : List_Id;
-      S                             : Node_Id;
-      Referenced_Entity             : Node_Id;
-      Start_Time                    : Long_Double := 0.0;
-      Duration_Time                 : Long_Double := 0.0;
-   begin
-      N := Make_XML_Node ("Partition_Schedule");
-
-      Slots_Allocation := Get_POK_Slots_Allocation
-            (Associated_Processor);
-
-      if Slots_Allocation = No_List then
-         Display_Error
-           ("You must provide the slots allocation for each processor",
-            Fatal => True);
-      end if;
-
-      Set_Str_To_Name_Buffer ("PartitionName");
-      P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (Process)))));
-      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
-
-      if Present (Backend_Node (Identifier (Process))) then
-         Set_Str_To_Name_Buffer ("PartitionIdentifier");
-         Q := Make_Defining_Identifier (Name_Find);
-         Append_Node_To_List
-            (Make_Assignement
-             (Q, Copy_Node (Backend_Node (Identifier (Process)))),
-             XTN.Items (N));
-      end if;
-
-      Set_Str_To_Name_Buffer ("PeriodSeconds");
-      P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Floating_Point_Value
-            (To_Seconds
-               (Get_POK_Major_Frame
-                  (Associated_Processor))));
-      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
-
-      Start_Time := 0.0;
-
-      S := ATN.First_Node (Slots_Allocation);
-      for I in Slots'Range loop
-         Referenced_Entity := ATE.Get_Referenced_Entity (S);
-
-         if Referenced_Entity = Associated_Virtual_Processor then
-            Window_Node := Make_XML_Node ("Window_Schedule");
-
-            Set_Str_To_Name_Buffer ("WindowStartSeconds");
-            P := Make_Defining_Identifier (Name_Find);
-            Q := Make_Literal
-               (XV.New_Floating_Point_Value (Start_Time));
-            Append_Node_To_List
-               (Make_Assignement (P, Q), XTN.Items (Window_Node));
-
-            Set_Str_To_Name_Buffer ("WindowIdentifier");
-            P := Make_Defining_Identifier (Name_Find);
-            Q := Make_Literal
-               (XV.New_Numeric_Value
-                  (Window_Number, 1, 10));
-            Append_Node_To_List
-               (Make_Assignement (P, Q), XTN.Items (Window_Node));
-
-            Set_Str_To_Name_Buffer ("WindowDurationSeconds");
-            P := Make_Defining_Identifier (Name_Find);
-            Q := Make_Literal
-               (XV.New_Floating_Point_Value
-                  (To_Seconds (Slots (I))));
-            Append_Node_To_List
-               (Make_Assignement (P, Q), XTN.Items (Window_Node));
-
-            Append_Node_To_List (Window_Node, XTN.Subitems (N));
-            Window_Number := Window_Number + 1;
-            Duration_Time := Duration_Time + To_Seconds (Slots (I));
-         end if;
-
-         Start_Time := Start_Time + To_Seconds (Slots (I));
-         S := ATN.Next_Node (S);
-      end loop;
-
-      Set_Str_To_Name_Buffer ("PeriodDurationSeconds");
-      P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Floating_Point_Value (Duration_Time));
-      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
-
-   end Map_Process_Scheduling;
 
    --------------
    -- Map_Port --

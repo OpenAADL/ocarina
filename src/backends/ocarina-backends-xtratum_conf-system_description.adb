@@ -37,6 +37,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Xtratum_Conf.Mapping;
@@ -47,12 +48,14 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
+
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Xtratum_Conf.Mapping;
 
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+   package AINU   renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   package AIN    renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package XTN    renames Ocarina.Backends.XML_Tree.Nodes;
+   package XV     renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -61,6 +64,8 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+
+   Partition_Identifier : Unsigned_Long_Long := 0;
 
    -----------
    -- Visit --
@@ -223,8 +228,16 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
+      S                          : Node_Id;
+      Partition_Identifier_Node  : Node_Id;
    begin
+      Partition_Identifier_Node :=
+         Make_Literal (XV.New_Numeric_Value
+               (Partition_Identifier, 1, 10));
+
+      AIN.Set_Backend_Node
+         (Identifier (E), Partition_Identifier_Node);
+
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
@@ -235,6 +248,9 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
             S := Next_Node (S);
          end loop;
       end if;
+
+      Partition_Identifier := Partition_Identifier + 1;
+
    end Visit_Virtual_Processor_Instance;
 
 end Ocarina.Backends.Xtratum_Conf.System_Description;

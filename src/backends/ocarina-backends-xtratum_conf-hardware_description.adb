@@ -35,10 +35,12 @@ with Namet; use Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
---  with Ocarina.ME_AADL.AADL_Tree.Entities;
+with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+
+with Ocarina.Instances.Queries;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
@@ -46,22 +48,23 @@ with Ocarina.Backends.Properties;
 with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
-with Ocarina.Backends.Xtratum_Conf.Mapping;
 
 package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
+
+   use Ocarina.Instances.Queries;
+
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.XML_Values;
    use Ocarina.Backends.XML_Tree.Nutils;
-   use Ocarina.Backends.Xtratum_Conf.Mapping;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
---   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
+   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XV  renames Ocarina.Backends.XML_Values;
@@ -70,11 +73,10 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
    procedure Visit_Process_Instance (E : Node_Id);
+   procedure Visit_Memory_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
 
-   Scheduling_Node      : Node_Id;
-   Window_Number        : Unsigned_Long_Long := 0;
    Processor_Identifier : Unsigned_Long_Long := 0;
 
    -----------
@@ -122,6 +124,9 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          when CC_Processor =>
             Visit_Processor_Instance (E);
 
+         when CC_Memory =>
+            Visit_Memory_Instance (E);
+
          when CC_Virtual_Processor =>
             Visit_Virtual_Processor_Instance (E);
 
@@ -135,10 +140,9 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      N : Node_Id;
+      pragma Unreferenced (E);
    begin
-      Map_Process_Scheduling (E, Window_Number, N);
-      Append_Node_To_List (N, XTN.Subitems (Scheduling_Node));
+      null;
    end Visit_Process_Instance;
 
    ---------------------------
@@ -149,6 +153,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       S              : Node_Id;
       Hw_Desc_Node   : Node_Id;
       Processor_Node : Node_Id;
+      Memory_Node    : Node_Id;
       U              : Node_Id;
       R              : Node_Id;
    begin
@@ -172,6 +177,9 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       Current_XML_Node := Processor_Node;
 
+      --  First, create the <ProcessorTable> section of the hardware
+      --  description of the system.
+
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
@@ -183,6 +191,29 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
             S := Next_Node (S);
          end loop;
       end if;
+
+      --  Then, create the <MemoryLayout> section of the hardware
+      --  description of the system.
+
+      Memory_Node := Make_XML_Node ("MemoryLayout");
+
+      Append_Node_To_List (Memory_Node,
+                           XTN.Subitems (Hw_Desc_Node));
+
+      Current_XML_Node := Memory_Node;
+
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+         --  Visit the component instance corresponding to the
+         --  subcomponent S.
+            if AINU.Is_Memory (Corresponding_Instance (S)) then
+               Visit (Corresponding_Instance (S));
+            end if;
+            S := Next_Node (S);
+         end loop;
+      end if;
+
       Pop_Entity;
       Pop_Entity;
    end Visit_System_Instance;
@@ -200,7 +231,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       Plan_Node         : Node_Id;
       Start_Time        : Unsigned_Long_Long := 0;
       Slot_Node         : Node_Id;
---      Partition         : Node_Id;
+      Partition         : Node_Id;
       Slot_Identifier   : Unsigned_Long_Long := 0;
       Slots             : constant Time_Array
                            := Get_POK_Slots (E);
@@ -212,8 +243,6 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
            ("You must provide the slots allocation for each processor",
             Fatal => True);
       end if;
-
-      Scheduling_Node := Make_XML_Node ("Processor");
 
       --  First, add a <Processor> node
       Processor_Node := Make_XML_Node ("Processor");
@@ -269,6 +298,8 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       S := ATN.First_Node (Slots_Allocation);
       for I in Slots'Range loop
 
+         Partition := ATE.Get_Referenced_Entity (S);
+
          --  Create the node that corresponds to the slot.
 
          Slot_Node := Make_XML_Node ("Slot");
@@ -278,6 +309,15 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          Set_Str_To_Name_Buffer ("id");
          P := Make_Defining_Identifier (Name_Find);
          Q := Make_Literal (XV.New_Numeric_Value (Slot_Identifier, 0, 10));
+
+         Append_Node_To_List
+            (Make_Assignement (P, Q), XTN.Items (Slot_Node));
+
+         --  Associate a fixed identifier to the slot.
+
+         Set_Str_To_Name_Buffer ("partitionId");
+         P := Make_Defining_Identifier (Name_Find);
+         Q := Copy_Node (Backend_Node (Identifier (Partition)));
 
          Append_Node_To_List
             (Make_Assignement (P, Q), XTN.Items (Slot_Node));
@@ -334,7 +374,6 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
       S           : Node_Id;
-      Processes   : List_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
@@ -346,15 +385,49 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
             S := Next_Node (S);
          end loop;
       end if;
-
-      if Present (Backend_Node (Identifier (E))) then
-         Processes := XTN.Processes (Backend_Node (Identifier (E)));
-         S := XTN.First_Node (Processes);
-         while Present (S) loop
-            Visit (XTN.Content (S));
-            S := XTN.Next_Node (S);
-         end loop;
-      end if;
    end Visit_Virtual_Processor_Instance;
+
+   ---------------------------
+   -- Visit_Memory_Instance --
+   ---------------------------
+
+   procedure Visit_Memory_Instance (E : Node_Id) is
+      P           : Node_Id;
+      Q           : Node_Id;
+      Memory_Node : Node_Id;
+   begin
+      Memory_Node := Make_XML_Node ("Region");
+
+      --  Add the start attribute of the region node.
+      Set_Str_To_Name_Buffer ("start");
+      P := Make_Defining_Identifier (Name_Find);
+      Q := Make_Literal
+         (XV.New_Numeric_Value
+            (Get_Integer_Property (E, "base_address"), 0, 10));
+
+      Append_Node_To_List
+         (Make_Assignement (P, Q), XTN.Items (Memory_Node));
+
+      --  Add the size attribute of the region node.
+      Set_Str_To_Name_Buffer ("size");
+      P := Make_Defining_Identifier (Name_Find);
+      Q := Make_Literal
+         (XV.New_Numeric_Value
+            (Get_Integer_Property (E, "byte_count"), 0, 10));
+
+      Append_Node_To_List
+         (Make_Assignement (P, Q), XTN.Items (Memory_Node));
+
+      --  Add the type attribute of the region node.
+      Set_Str_To_Name_Buffer ("type");
+      P := Make_Defining_Identifier (Name_Find);
+      Set_Str_To_Name_Buffer ("stram");
+      Q := Make_Defining_Identifier (Name_Find);
+
+      Append_Node_To_List
+         (Make_Assignement (P, Q), XTN.Items (Memory_Node));
+
+      Append_Node_To_List (Memory_Node, XTN.Subitems (Current_XML_Node));
+   end Visit_Memory_Instance;
 
 end Ocarina.Backends.Xtratum_Conf.Hardware_Description;
