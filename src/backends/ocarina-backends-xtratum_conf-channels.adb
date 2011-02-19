@@ -37,9 +37,13 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.Utils;
+
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
+
+with Ocarina.Backends.XML_Values;
 
 package body Ocarina.Backends.Xtratum_Conf.Channels is
 
@@ -47,12 +51,15 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
+   use Ocarina.Backends.Utils;
+
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.XML_Tree.Nutils;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+   package XV  renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -139,10 +146,13 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
       R                    : Node_Id;
       P                    : Node_Id;
       Q                    : Node_Id;
+      Queue_Size                 : Unsigned_Long_Long;
       Source_Port_Name           : Name_Id;
       Destination_Port_Name      : Name_Id;
       Destination_Partition      : Node_Id;
       Source_Partition           : Node_Id;
+      Source_Port                : Node_Id;
+      Destination_Port           : Node_Id;
       Channels_Node              : Node_Id;
       Channel_Node               : Node_Id;
       Source_Node                : Node_Id;
@@ -164,9 +174,19 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
          while Present (C) loop
             if Kind (C) = K_Connection_Instance then
 
-               Channel_Node      := Make_XML_Node ("SamplingChannel");
-               Source_Node       := Make_XML_Node ("Source");
-               Destination_Node  := Make_XML_Node ("Destination");
+               Source_Port :=
+                  (AIN.Item
+                     (AIN.Next_Node
+                        (AIN.First_Node
+                           (AIN.Path
+                              (AIN.Source (C))))));
+
+               Destination_Port :=
+                  AIN.Item
+                     (AIN.Next_Node
+                        (AIN.First_Node
+                           (AIN.Path
+                              (AIN.Destination (C)))));
 
                Source_Port_Name :=
                   AIN.Name
@@ -176,6 +196,7 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
                               (AIN.First_Node
                                  (AIN.Path
                                     (AIN.Source (C)))))));
+
                Destination_Port_Name :=
                   AIN.Name
                      (AIN.Identifier
@@ -184,6 +205,7 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
                               (AIN.First_Node
                                  (AIN.Path
                                     (AIN.Destination (C)))))));
+
                Source_Partition :=
                      AIN.Corresponding_Instance
                         (AIN.Item
@@ -195,6 +217,47 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
                         (AIN.Item
                           (AIN.First_Node
                              (AIN.Path (AIN.Destination (C)))));
+               if not Is_Event (Source_Port) then
+                  Channel_Node      := Make_XML_Node ("SamplingChannel");
+               else
+                  Channel_Node      := Make_XML_Node ("QueueingChannel");
+                  Set_Str_To_Name_Buffer ("maxNoMessages");
+                  P := Make_Defining_Identifier (Name_Find);
+                  Get_Name_String (Source_Port_Name);
+
+                  if Get_Queue_Size (Destination_Port) = -1 then
+                     Queue_Size := 1;
+                  else
+                     Queue_Size := Unsigned_Long_Long
+                        (Get_Queue_Size (Destination_Port));
+                  end if;
+                  Q := Make_Literal
+                     (XV.New_Numeric_Value
+                        (Queue_Size, 1, 10));
+                  Append_Node_To_List
+                     (Make_Assignement (P, Q), XTN.Items (Channel_Node));
+               end if;
+
+               Source_Node       := Make_XML_Node ("Source");
+               Destination_Node  := Make_XML_Node ("Destination");
+
+               Set_Str_To_Name_Buffer ("maxMessageLength");
+               P := Make_Defining_Identifier (Name_Find);
+               Get_Name_String (Source_Port_Name);
+
+               if Get_Data_Size (Corresponding_Instance
+                  (Source_Port)) /= Null_Size then
+                  Q := Make_Literal
+                     (XV.New_Numeric_Value
+                        (To_Bytes
+                           (Get_Data_Size
+                              (Corresponding_Instance (Source_Port))), 1, 10));
+               else
+                  Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
+               end if;
+
+               Append_Node_To_List
+                  (Make_Assignement (P, Q), XTN.Items (Channel_Node));
 
                Set_Str_To_Name_Buffer ("portName");
                P := Make_Defining_Identifier (Name_Find);
