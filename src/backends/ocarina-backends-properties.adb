@@ -302,6 +302,8 @@ package body Ocarina.Backends.Properties is
 
    Platform_Native_Name      : Name_Id;
    Platform_LINUX32_Name     : Name_Id;
+   Platform_LINUX32_Xenomai_Native_Name : Name_Id;
+   Platform_LINUX32_Xenomai_Posix_Name : Name_Id;
    Platform_LINUX64_Name     : Name_Id;
    Platform_LEON_RTEMS_Name  : Name_Id;
    Platform_X86_LINUXTASTE_Name : Name_Id;
@@ -2566,6 +2568,10 @@ package body Ocarina.Backends.Properties is
             return Platform_X86_LINUXTASTE;
          elsif P_Name = Platform_LINUX32_Name then
             return Platform_LINUX32;
+         elsif P_Name = Platform_LINUX32_Xenomai_Native_Name then
+            return Platform_LINUX32_XENOMAI_NATIVE;
+         elsif P_Name = Platform_LINUX32_Xenomai_Posix_Name then
+            return Platform_LINUX32_XENOMAI_POSIX;
          elsif P_Name = Platform_LINUX64_Name then
             return Platform_LINUX64;
          elsif P_Name = Platform_X86_RTEMS_Name then
@@ -3097,6 +3103,10 @@ package body Ocarina.Backends.Properties is
       Platform_Native_Name      := Get_String_Name ("native");
       Platform_X86_RTEMS_Name   := Get_String_Name ("x86_rtems");
       Platform_LINUX32_Name     := Get_String_Name ("linux32");
+      Platform_LINUX32_Xenomai_Native_Name
+                                 := Get_String_Name ("linux32_xenomai_native");
+      Platform_LINUX32_Xenomai_Posix_Name
+                                 := Get_String_Name ("linux32_xenomai_posix");
       Platform_LINUX64_Name     := Get_String_Name ("linux64");
       Platform_X86_LINUXTASTE_Name := Get_String_Name ("x86_linuxtaste");
       Platform_LEON_RTEMS_Name  := Get_String_Name ("leon_rtems");
