@@ -32,6 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Namet; use Namet;
+with Utils; use Utils;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -154,6 +155,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       Hw_Desc_Node   : Node_Id;
       Processor_Node : Node_Id;
       Memory_Node    : Node_Id;
+      Device_Node    : Node_Id;
       U              : Node_Id;
       R              : Node_Id;
    begin
@@ -213,6 +215,44 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
             S := Next_Node (S);
          end loop;
       end if;
+
+      Device_Node := Make_XML_Node ("Devices");
+
+      --  Automatically add an UART device for debugging purposes.
+      declare
+         Uart_Node : Node_Id;
+         P         : Node_Id;
+         Q         : Node_Id;
+      begin
+         Uart_Node := Make_XML_Node ("Uart");
+
+         Set_Str_To_Name_Buffer ("id");
+         P := Make_Defining_Identifier (Name_Find);
+         Set_Str_To_Name_Buffer ("0");
+         Q := Make_Defining_Identifier (Name_Find);
+         Append_Node_To_List
+            (Make_Assignement (P, Q), XTN.Items (Uart_Node));
+
+         Set_Str_To_Name_Buffer ("baudRate");
+         P := Make_Defining_Identifier (Name_Find);
+         Set_Str_To_Name_Buffer ("115200");
+         Q := Make_Defining_Identifier (Name_Find);
+         Append_Node_To_List
+            (Make_Assignement (P, Q), XTN.Items (Uart_Node));
+
+         Set_Str_To_Name_Buffer ("name");
+         P := Make_Defining_Identifier (Name_Find);
+         Set_Str_To_Name_Buffer ("Uart");
+         Q := Make_Defining_Identifier (Name_Find);
+         Append_Node_To_List
+            (Make_Assignement (P, Q), XTN.Items (Uart_Node));
+
+         Append_Node_To_List (Uart_Node,
+                              XTN.Subitems (Device_Node));
+      end;
+
+      Append_Node_To_List (Device_Node,
+                           XTN.Subitems (Hw_Desc_Node));
 
       Pop_Entity;
       Pop_Entity;
@@ -288,7 +328,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          (Unsigned_Long_Long'Image
             (To_Milliseconds (Get_POK_Major_Frame (E))));
       Add_Str_To_Name_Buffer ("ms");
-      Q := Make_Defining_Identifier (Name_Find);
+      Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
       Append_Node_To_List
          (Make_Assignement (P, Q), XTN.Items (Plan_Node));
@@ -329,7 +369,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
             (Unsigned_Long_Long'Image
                (To_Milliseconds (Slots (I))));
          Add_Str_To_Name_Buffer ("ms");
-         Q := Make_Defining_Identifier (Name_Find);
+         Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
          Append_Node_To_List
             (Make_Assignement (P, Q), XTN.Items (Slot_Node));
 
@@ -339,7 +379,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          Set_Str_To_Name_Buffer
             (Unsigned_Long_Long'Image (Start_Time));
          Add_Str_To_Name_Buffer ("ms");
-         Q := Make_Defining_Identifier (Name_Find);
+         Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
          Append_Node_To_List
             (Make_Assignement (P, Q), XTN.Items (Slot_Node));
 
@@ -392,28 +432,35 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    ---------------------------
 
    procedure Visit_Memory_Instance (E : Node_Id) is
-      P           : Node_Id;
-      Q           : Node_Id;
-      Memory_Node : Node_Id;
+      P                    : Node_Id;
+      Q                    : Node_Id;
+      Memory_Node          : Node_Id;
+      Base_Address_Value   : Unsigned_Long_Long;
+      Byte_Count_Value     : Unsigned_Long_Long;
    begin
       Memory_Node := Make_XML_Node ("Region");
 
       --  Add the start attribute of the region node.
+      Base_Address_Value := Get_Integer_Property (E, "base_address");
       Set_Str_To_Name_Buffer ("start");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Numeric_Value
-            (Get_Integer_Property (E, "base_address"), 0, 10));
+      Set_Str_To_Name_Buffer ("0x");
+      Add_Str_To_Name_Buffer
+         (Unsigned_Long_Long'Image (Base_Address_Value));
+
+      Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
       Append_Node_To_List
          (Make_Assignement (P, Q), XTN.Items (Memory_Node));
 
       --  Add the size attribute of the region node.
+      Byte_Count_Value := Get_Integer_Property (E, "byte_count");
       Set_Str_To_Name_Buffer ("size");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Numeric_Value
-            (Get_Integer_Property (E, "byte_count"), 0, 10));
+      Set_Str_To_Name_Buffer
+         (Unsigned_Long_Long'Image (Byte_Count_Value));
+      Add_Str_To_Name_Buffer ("B");
+      Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
       Append_Node_To_List
          (Make_Assignement (P, Q), XTN.Items (Memory_Node));

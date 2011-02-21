@@ -32,6 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Namet; use Namet;
+with Utils; use Utils;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -45,7 +46,6 @@ with Ocarina.Instances.Queries;
 
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.Properties;
-with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 
@@ -60,7 +60,6 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.Properties;
-   use Ocarina.Backends.XML_Values;
    use Ocarina.Backends.XML_Tree.Nutils;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -68,7 +67,6 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
-   package XV  renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -77,6 +75,8 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
    procedure Visit_Memory_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+
+   Current_System : Node_Id := No_Node;
 
    -----------
    -- Visit --
@@ -140,6 +140,8 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
    procedure Visit_Process_Instance (E : Node_Id) is
       Partition_Node       : Node_Id;
+      Base_Address_Value   : Unsigned_Long_Long;
+      Byte_Count_Value     : Unsigned_Long_Long;
       Associated_Processor : Node_Id;
       Associated_Module    : Node_Id;
       Associated_Memory    : Node_Id;
@@ -188,7 +190,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
       Partition_Node := Make_XML_Node ("Partition");
 
-      Set_Str_To_Name_Buffer ("partitionId");
+      Set_Str_To_Name_Buffer ("id");
       P := Make_Defining_Identifier (Name_Find);
       Q := Copy_Node (Backend_Node (Identifier (Associated_Processor)));
       Append_Node_To_List
@@ -221,22 +223,27 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
       Area_Node := Make_XML_Node ("Area");
 
+      Base_Address_Value :=
+         Get_Integer_Property (Associated_Memory, "base_address");
+      Byte_Count_Value :=
+         Get_Integer_Property (Associated_Memory, "byte_count");
       Set_Str_To_Name_Buffer ("start");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Numeric_Value
-            (Get_Integer_Property
-               (Associated_Memory, "base_address"), 0, 10));
+      Set_Str_To_Name_Buffer ("0x");
+      Add_Str_To_Name_Buffer
+         (Unsigned_Long_Long'Image (Base_Address_Value));
+
+      Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
       Append_Node_To_List
          (Make_Assignement (P, Q), XTN.Items (Area_Node));
 
       Set_Str_To_Name_Buffer ("size");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Numeric_Value
-            (Get_Integer_Property
-              (Associated_Memory, "byte_count"), 0, 10));
+      Set_Str_To_Name_Buffer
+         (Unsigned_Long_Long'Image (Byte_Count_Value));
+      Add_Str_To_Name_Buffer ("B");
+      Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
       Append_Node_To_List
          (Make_Assignement (P, Q), XTN.Items (Area_Node));
@@ -256,6 +263,9 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
          Slots_Allocation  : constant List_Id
                            := Get_POK_Slots_Allocation (Associated_Module);
          Duration          : Unsigned_Long_Long := 0;
+         Major_Frame       : constant Unsigned_Long_Long
+                           := To_Milliseconds
+                              (Get_POK_Major_Frame (Associated_Module));
          Part              : Node_Id;
       begin
          S := ATN.First_Node (Slots_Allocation);
@@ -271,19 +281,20 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
          end loop;
          Set_Str_To_Name_Buffer ("duration");
          P := Make_Defining_Identifier (Name_Find);
-         Q := Make_Literal
-            (XV.New_Numeric_Value
-               (Duration, 0, 10));
+         Set_Str_To_Name_Buffer
+            (Unsigned_Long_Long'Image (Duration));
+         Add_Str_To_Name_Buffer ("ms");
+         Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
          Append_Node_To_List
             (Make_Assignement (P, Q), XTN.Items (Temporal_Req_Node));
 
          Set_Str_To_Name_Buffer ("period");
          P := Make_Defining_Identifier (Name_Find);
-         Q := Make_Literal
-            (XV.New_Numeric_Value
-               (To_Milliseconds
-                  (Get_POK_Major_Frame (Associated_Module)), 0, 10));
+         Set_Str_To_Name_Buffer
+            (Unsigned_Long_Long'Image (Major_Frame));
+         Add_Str_To_Name_Buffer ("ms");
+         Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
          Append_Node_To_List
             (Make_Assignement (P, Q), XTN.Items (Temporal_Req_Node));
@@ -321,7 +332,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
                P := Make_Defining_Identifier (Name_Find);
 
                Get_Name_String (Display_Name (Identifier (F)));
-               Q := Make_Defining_Identifier (Name_Find);
+               Q := Make_Defining_Identifier (To_Lower (Name_Find));
                Append_Node_To_List
                   (Make_Assignement (P, Q), XTN.Items (Port_Node));
 
@@ -331,7 +342,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
                if Is_Data (F) and then not Is_Event (F) then
                   Set_Str_To_Name_Buffer ("sampling");
                else
-                  Set_Str_To_Name_Buffer ("queueing");
+                  Set_Str_To_Name_Buffer ("queuing");
                end if;
 
                Q := Make_Defining_Identifier (Name_Find);
@@ -376,6 +387,8 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
       U := XTN.Unit (Backend_Node (Identifier (E)));
       R := XTN.Node (Backend_Node (Identifier (E)));
 
+      Current_System := E;
+
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
       Push_Entity (U);
@@ -386,8 +399,9 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
          while Present (S) loop
          --  Visit the component instance corresponding to the
          --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
+            if AINU.Is_Processor (Corresponding_Instance (S)) then
+               Visit (Corresponding_Instance (S));
+            end if;
             S := Next_Node (S);
          end loop;
       end if;
@@ -408,6 +422,9 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
       Partition_Table_Node := Make_XML_Node ("PartitionTable");
 
+      Append_Node_To_List (Partition_Table_Node,
+                           XTN.Subitems (Current_XML_Node));
+
       Current_XML_Node := Partition_Table_Node;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
@@ -420,6 +437,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
             S := Next_Node (S);
          end loop;
       end if;
+
    end Visit_Processor_Instance;
 
    --------------------------------------
@@ -429,6 +447,19 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
       S           : Node_Id;
    begin
+      if not AINU.Is_Empty (Subcomponents (Current_System)) then
+         S := First_Node (Subcomponents (Current_System));
+         while Present (S) loop
+         --  Visit the component instance corresponding to the
+         --  subcomponent S.
+            if AINU.Is_Process (Corresponding_Instance (S)) and then
+               Get_Bound_Processor (Corresponding_Instance (S)) = E then
+               Visit (Corresponding_Instance (S));
+            end if;
+            S := Next_Node (S);
+         end loop;
+      end if;
+
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop

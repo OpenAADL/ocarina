@@ -78,6 +78,10 @@ package Utils is
       return Name_Id;
    --  Replace occurence of character O in the Name by character N.
 
+   function Remove_Char (Name : Name_Id; O : Character)
+      return Name_Id;
+   --  Remove occurences of character O in the Name.
+
    function Is_Prefix (N1 : Name_Id; N2 : Name_Id) return Boolean;
    --  Is N1 a prefix of N2
 

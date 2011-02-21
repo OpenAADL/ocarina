@@ -175,7 +175,7 @@ package body Ocarina.Backends.Xtratum_Conf.Mapping is
       Set_Str_To_Name_Buffer ("xmlns");
       R := Make_Defining_Identifier (Name_Find);
 
-      Set_Str_To_Name_Buffer ("http://www.xtratum.org/xm-3.X");
+      Set_Str_To_Name_Buffer ("http://www.xtratum.org/xm-3.x");
       Q := Make_Defining_Identifier (Name_Find);
 
       Append_Node_To_List (Make_Assignement (R, Q), XTN.Items (Root));

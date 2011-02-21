@@ -178,6 +178,28 @@ package body Utils is
       return Quoted (Get_Name_String (N), D);
    end Quoted;
 
+   -----------------
+   -- Remove_Char --
+   -----------------
+
+   function Remove_Char (Name : Name_Id; O : Character)
+      return Name_Id is
+      New_Name : Name_Id := No_Name;
+      Initial_Name : constant String := Get_Name_String (Name);
+   begin
+      Name_Len := 0;
+
+      for Index in Initial_Name'First .. Initial_Name'Last loop
+         if Initial_Name (Index) /= O then
+            Add_Char_To_Name_Buffer (Initial_Name (Index));
+         end if;
+      end loop;
+
+      New_Name := Name_Find;
+
+      return New_Name;
+   end Remove_Char;
+
    ------------------
    -- Replace_Char --
    ------------------

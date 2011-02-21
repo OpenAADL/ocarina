@@ -31,6 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Utils; use Utils;
 with Namet; use Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -152,6 +153,7 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
       Destination_Partition      : Node_Id;
       Source_Partition           : Node_Id;
       Source_Port                : Node_Id;
+      Associated_Data_Size       : Unsigned_Long_Long;
       Destination_Port           : Node_Id;
       Channels_Node              : Node_Id;
       Channel_Node               : Node_Id;
@@ -220,7 +222,7 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
                if not Is_Event (Source_Port) then
                   Channel_Node      := Make_XML_Node ("SamplingChannel");
                else
-                  Channel_Node      := Make_XML_Node ("QueueingChannel");
+                  Channel_Node      := Make_XML_Node ("QueuingChannel");
                   Set_Str_To_Name_Buffer ("maxNoMessages");
                   P := Make_Defining_Identifier (Name_Find);
                   Get_Name_String (Source_Port_Name);
@@ -247,14 +249,17 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
 
                if Get_Data_Size (Corresponding_Instance
                   (Source_Port)) /= Null_Size then
-                  Q := Make_Literal
-                     (XV.New_Numeric_Value
-                        (To_Bytes
-                           (Get_Data_Size
-                              (Corresponding_Instance (Source_Port))), 1, 10));
+                  Associated_Data_Size :=
+                        To_Bytes (Get_Data_Size
+                           (Corresponding_Instance (Source_Port)));
                else
-                  Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
+                  Associated_Data_Size := 1;
                end if;
+
+               Set_Str_To_Name_Buffer
+                  (Unsigned_Long_Long'Image (Associated_Data_Size));
+               Add_Str_To_Name_Buffer ("B");
+               Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
                Append_Node_To_List
                   (Make_Assignement (P, Q), XTN.Items (Channel_Node));
