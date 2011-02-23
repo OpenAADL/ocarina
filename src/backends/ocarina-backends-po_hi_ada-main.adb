@@ -361,6 +361,29 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
                if P = Thread_Hybrid then
                   Has_Hybrid_Threads := True;
                end if;
+
+               declare
+                  Initialize_Entrypoint : constant Name_Id :=
+                    Get_Thread_Initialize_Entrypoint (E);
+                  N : Node_Id;
+               begin
+                  if Initialize_Entrypoint /= No_Name then
+                     N := Message_Comment
+                       ("Initialize thread "
+                          & Get_Name_String
+                          (Name (Identifier
+                                   (Corresponding_Instance
+                                      (Parent_Subcomponent (E))))));
+
+                     Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+                     N := Make_Subprogram_Call
+                       (Map_Ada_Subprogram_Identifier (Initialize_Entrypoint),
+                        No_List);
+                     Append_Node_To_List (N, ADN.Statements (Current_Package));
+                  end if;
+               end;
+
             when others =>
                raise Program_Error;
          end case;

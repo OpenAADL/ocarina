@@ -509,15 +509,15 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             Actual_Parameter => Map_Task_Job_Identifier (E));
          Append_Node_To_List (N, P_List);
 
-         --  If an initialize entrypoint has been specified for the
+         --  If an activate entrypoint has been specified for the
          --  thread, add an additional parameter association
 
          declare
-            Init_Entrypoint : constant Name_Id :=
-              Get_Thread_Initialize_Entrypoint (E);
+            Activate_Entrypoint : constant Name_Id :=
+              Get_Thread_Activate_Entrypoint (E);
          begin
-            if Init_Entrypoint /= No_Name then
-               --  We cannot use direcly the initialize entrypoint
+            if Activate_Entrypoint /= No_Name then
+               --  We cannot use direcly the activate entrypoint
                --  because the Activity spec must not depend on user
                --  package specs (to avoid introducing elaboration
                --  cycles). We use subprogram renaming as workaround.
@@ -530,7 +530,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
                N := Make_Parameter_Association
                  (Selector_Name    => Make_Defining_Identifier
-                    (PN (P_Initialize_Entrypoint)),
+                    (PN (P_Activate_Entrypoint)),
                   Actual_Parameter => Map_Task_Init_Identifier (E));
                Append_Node_To_List (N, P_List);
             end if;
@@ -4105,20 +4105,20 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          end case;
 
          declare
-            Init_Entrypoint : constant Name_Id :=
-              Get_Thread_Initialize_Entrypoint (E);
+            Activate_Entrypoint : constant Name_Id :=
+              Get_Thread_Activate_Entrypoint (E);
          begin
             --  If the thread has been assigned an initialize
             --  entrypoint, we complete the subprogram renaming
             --  initiated in the spec.
 
-            if Init_Entrypoint /= No_Name then
+            if Activate_Entrypoint /= No_Name then
                N := Make_Subprogram_Specification
                  (Defining_Identifier => Map_Task_Init_Identifier (E),
                   Parameter_Profile   => No_List,
                   Return_Type         => No_Node,
                   Renamed_Subprogram  => Map_Ada_Subprogram_Identifier
-                    (Init_Entrypoint));
+                    (Activate_Entrypoint));
                Append_Node_To_List (N, ADN.Statements (Current_Package));
             end if;
          end;

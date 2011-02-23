@@ -201,6 +201,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    type Parameter_Id is
      (P_A,
+      P_Activate_Entrypoint,
       P_Arg_List,
       P_Argument,
       P_C,
