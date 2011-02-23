@@ -44,6 +44,7 @@ Usage:
         polyorb_hi_c
         polyorb_hi_rtsj
         pok_c
+        xtratum_configuration
         stats
         subprograms
         real_theorem
