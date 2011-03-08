@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -97,6 +97,7 @@ package body Ocarina.Instances.REAL_Finder is
       Val           : Node_Id;
       Result_List   : constant List_Id := RNU.New_List
         (K_List_Id, No_Location);
+
    begin
       if AIN.Kind (Var) = AIN.K_Call_Instance then
          Resolved_Var := AIN.Corresponding_Instance (Var);
@@ -110,6 +111,7 @@ package body Ocarina.Instances.REAL_Finder is
       N := AIEP.Find_Property_Association_From_Name
         (Property_List => AIN.Properties (Resolved_Var),
          Property_Name => Property_Name);
+
       if Present (N) then
          N := AIN.Property_Association_Value (N);
          if ATN.Expanded_Single_Value (N) /= No_Node then
@@ -122,8 +124,9 @@ package body Ocarina.Instances.REAL_Finder is
          else
             N := No_Node;
          end if;
+
       else
-         --  If the specific case of lists, we always returns an empty list
+         --  In the specific case of lists, we always returns an empty list
 
          case T is
             when RT_String_List
@@ -192,9 +195,14 @@ package body Ocarina.Instances.REAL_Finder is
                  (ATN.Name (ATN.Identifier (N)));
 
             when ATN.K_Reference_Term =>
-               N := Get_Reference_Property
-                 (Resolved_Var, Property_Name);
-               Result := RV.New_Elem_Value (N);
+               Result := RV.New_Elem_Value
+                 (Get_Reference_Property
+                    (Resolved_Var, Property_Name));
+
+            when ATN.K_Component_Classifier_Term =>
+               Result := RV.New_Elem_Value
+                 (Get_Classifier_Property
+                    (Resolved_Var, Property_Name));
 
             when others =>
                return RV.No_Value;

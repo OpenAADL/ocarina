@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,6 +38,7 @@ with Ocarina.ME_REAL.Tokens;
 with Ocarina.ME_REAL.REAL_Tree.Debug;
 
 package Ocarina.ME_REAL.REAL_Tree.Utils is
+
    use Types;
    use Ocarina.ME_REAL.Tokens;
 
@@ -83,6 +84,7 @@ package Ocarina.ME_REAL.REAL_Tree.Utils is
    SV_System_Set             : constant := 32;
    SV_End_To_End_Flows_Set   : constant := 33;
    SV_Local_Set              : constant := 34;
+   SV_Abstract_Set           : constant := 35;
 
    --  Selection functions codes
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2009-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,6 +42,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Debug;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Namet; use Namet;
+with Output; use Output;
 
 package body Ocarina.Instances.REAL_Checker.Queries is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -108,6 +109,8 @@ package body Ocarina.Instances.REAL_Checker.Queries is
                   return (Component_T = C_Virtual_Bus);
                when CC_Device =>
                   return (Component_T = C_Device);
+               when CC_Abstract =>
+                  return (Component_T = C_Abstract);
                when CC_System =>
                   return (Component_T = C_System);
                when others =>
@@ -536,6 +539,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
          --  instances should be defined
 
          if ATN.Kind (Set.Table (N)) /= K_End_To_End_Flow_Spec then
+            Write_Indentation;
             Write_Name (Compute_Full_Name_Of_Instance (Set.Table (N)));
             W_Str (": ");
             W_Node_Header (Set.Table (N));

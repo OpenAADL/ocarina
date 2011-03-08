@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -56,6 +56,7 @@ package Ocarina.Instances.REAL_Checker.Queries is
       C_Connection,
       C_Device,
       C_System,
+      C_Abstract,
       C_Unknown);
 
    type Predicates_Search_Options is

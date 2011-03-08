@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2009-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -205,8 +205,7 @@ package body Ocarina.Analyzer.REAL is
    -- Analyze_Model --
    -------------------
 
-   function Analyze_Model (Root : Node_Id) return Boolean
-   is
+   function Analyze_Model (Root : Node_Id) return Boolean is
       use AIN;
       use ATN;
       use Ocarina.Analyzer.REAL;
@@ -1511,6 +1510,8 @@ package body Ocarina.Analyzer.REAL is
                            Set_Returned_Type (S, RT_Bool_List);
                         when RT_Range_List =>
                            Set_Returned_Type (S, RT_Range_List);
+                        when RT_Element_List =>
+                           Set_Returned_Type (S, RT_Element_List);
                         when others =>
                            Display_Analyzer_Error
                              (No_Node, "Could not resolve list type ",
@@ -2031,7 +2032,7 @@ package body Ocarina.Analyzer.REAL is
 
                            when others =>
                               Display_Analyzer_Error
-                                (No_Node, "Could not resolve list type",
+                                (No_Node, "Could not resolve list type ",
                                  Loc => Loc (N));
                               Success := False;
                               return;

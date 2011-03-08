@@ -1,24 +1,26 @@
+
+
 data Person
 end Person;
 
 data Personnel_record
 features
-    update_address : subprogram update_address;
+  update_address : subprogram update_address;
 
 end Personnel_record;
 
 data implementation Personnel_record.others
 subcomponents
-    Name : data basic::string;
-    Home_address : data sei::aadl::relief::Address;
+  Name : data basic::string;
+  Home_address : data sei::aadl::relief::Address;
 
 end Personnel_record.others;
 
 subprogram update_address
 features
-    Personnel_record : in out parameter person;
-    street : in parameter basic::string;
-    city : in parameter basic::string;
+  Personnel_record : in out parameter person;
+  street : in parameter basic::string;
+  city : in parameter basic::string;
 
 end update_address;
 
@@ -37,8 +39,8 @@ end basic;
 
 thread SEI_Personnel_addition
 features
-    new_person : in event data port Personnel_record;
-    SEI_personnel : requires data access Personnel_database.oracle;
+  new_person : in event data port Personnel_record;
+  SEI_personnel : requires data access Personnel_database.oracle;
 
 properties
   Dispatch_Protocol => aperiodic;
@@ -49,20 +51,19 @@ package sei::aadl::relief
 public
   data Address
   features
-        getStreet : subprogram;
-        getCity : subprogram;
+    getStreet : subprogram;
+    getCity : subprogram;
 
   end Address;
 
 
 private
-
   data implementation Address.others
   subcomponents
-        street : data basic::string;
-        streetnumber : data basic::int;
-        city : data basic::string;
-        zipcode : data basic::int;
+    street : data basic::string;
+    streetnumber : data basic::int;
+    city : data basic::string;
+    zipcode : data basic::int;
 
   end Address.others;
 
@@ -87,6 +88,4 @@ public
   end dummy;
 
 end sei;
-
-
 

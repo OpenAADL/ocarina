@@ -1,10 +1,12 @@
+
+
 data Position_Type
 end Position_Type;
 
 process Gps_Sender
 features
-    Position : out data port Position_Type;
-    SecondaryPosition : in data port Position_Type;
+  Position : out data port Position_Type;
+  SecondaryPosition : in data port Position_Type;
 
 end Gps_Sender;
 
@@ -16,22 +18,22 @@ end Gps_Sender.Secure;
 
 system Gps
 features
-    Position : out data port Position_Type;
-    Init_Done : in event port;
-    Backup_Stopped : in event port;
-    Main_Stopped : in event port;
-    All_OK : in event port;
-    Run_Secure : in event port;
-    Run_Normal : in event port;
+  Position : out data port Position_Type;
+  Init_Done : in event port;
+  Backup_Stopped : in event port;
+  Main_Stopped : in event port;
+  All_OK : in event port;
+  Run_Secure : in event port;
+  Run_Normal : in event port;
 
 end Gps;
 
 system implementation Gps.Dual
 subcomponents
-    Main_Gps : process Gps_Sender.Basic
+  Main_Gps : process Gps_Sender.Basic
 
     in modes (Dualmode, Mainmode);
-    Backup_Gps : process Gps_Sender.Basic
+  Backup_Gps : process Gps_Sender.Basic
 
     in modes (Dualmode, Backupmode);
 
@@ -44,10 +46,10 @@ connections
     in modes (Dualmode);
 
 modes
-    Initialize : initial mode;
-    Dualmode : mode;
-    Mainmode : mode;
-    Backupmode : mode;
+  Initialize : initial mode;
+  Dualmode : mode;
+  Mainmode : mode;
+  Backupmode : mode;
   Initialize -[ Init_Done ]-> Dualmode;
   Dualmode -[ Backup_Stopped ]-> Mainmode;
   Dualmode -[ Main_Stopped ]-> Backupmode;
@@ -57,7 +59,7 @@ end Gps.Dual;
 
 system implementation Gps.Secure extends Gps.Dual
 subcomponents
-    Secure_Gps : process Gps_Sender.Secure
+  Secure_Gps : process Gps_Sender.Secure
 
     in modes (Securemode);
 
@@ -66,8 +68,8 @@ connections
     in modes (Securemode);
 
 modes
-    Securemode : mode;
-    SingleSecuremode : mode;
+  Securemode : mode;
+  SingleSecuremode : mode;
   Dualmode -[ Run_Secure ]-> Securemode;
   Securemode -[ Run_Normal ]-> Dualmode;
   Securemode -[ Backup_Stopped ]-> SingleSecuremode;

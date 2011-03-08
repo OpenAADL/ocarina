@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -178,6 +178,8 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
             return SV_Device_Set;
          when T_System_Set =>
             return SV_System_Set;
+         when T_Abstract_Set =>
+            return SV_Abstract_Set;
          when T_End_To_End_Flows_Set =>
             return SV_End_To_End_Flows_Set;
          when T_Local_Set =>
@@ -228,6 +230,8 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
             return T_Device_Set;
          when SV_System_Set =>
             return T_System_Set;
+         when SV_Abstract_Set =>
+            return T_Abstract_Set;
          when SV_End_To_End_Flows_Set =>
             return T_End_To_End_Flows_Set;
          when SV_Local_Set =>

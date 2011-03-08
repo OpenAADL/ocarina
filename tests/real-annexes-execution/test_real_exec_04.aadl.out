@@ -1,16 +1,27 @@
 check_expression_max execution
+Content of set new_set (test_real_exec_04.aadl:86:18) is 
+  rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
+  rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
 theorem check_expression_max is: TRUE
 
 check_expression_sum execution
+Content of set new_set (test_real_exec_04.aadl:98:18) is 
+  rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
+  rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
 theorem check_expression_sum is: TRUE
 
 check_expression_product execution
+Content of set new_set (test_real_exec_04.aadl:110:18) is 
+  rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
+  rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
 theorem check_expression_product is: TRUE
 
 check_expression_not execution
 theorem check_expression_not is: TRUE
 
 check_expression_complex execution
+Content of set test_set (test_real_exec_04.aadl:134:15) is 
+  rma.erc32_node_a: 13 component instance test_real_exec_04.aadl:72:01
 theorem check_expression_complex is: TRUE
 
 check_expression_range execution
@@ -36,5 +47,8 @@ check_expression_non_null execution
 theorem check_expression_non_null is: TRUE
 
 check_is_in execution
+Content of set set (test_real_exec_04.aadl:216:12) is 
+  rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
+  rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
 theorem check_is_in is: TRUE
 

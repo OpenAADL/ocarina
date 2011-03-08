@@ -1,45 +1,117 @@
 test_real_exec_02.aadl:81:04: warning: obj references a component type
 ocarina: Total: 0 error and 1 warning
 set_declaration_is_bound_to execution
+Content of set proc_set (test_real_exec_02.aadl:148:19) is 
+  rma.erc32_node_a: 13 component instance test_real_exec_02.aadl:130:01
 theorem set_declaration_is_bound_to is: TRUE
 
 set_declaration_is_connected_to execution
+Content of set cnx_set (test_real_exec_02.aadl:160:14) is 
+Content of set cnx_set (test_real_exec_02.aadl:160:14) is 
+  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+Content of set cnx_set (test_real_exec_02.aadl:160:14) is 
+Content of set cnx_set (test_real_exec_02.aadl:160:14) is 
+  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
 theorem set_declaration_is_connected_to is: TRUE
 
 set_declaration_is_subcomponent_of execution
+Content of set threads (test_real_exec_02.aadl:172:14) is 
+  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
+  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
 theorem set_declaration_is_subcomponent_of is: TRUE
 
 set_declaration_is_accessed_by execution
+Content of set accessors (test_real_exec_02.aadl:184:16) is 
 theorem set_declaration_is_accessed_by is: TRUE
 
 set_declaration_is_accessing_to execution
+Content of set accessors (test_real_exec_02.aadl:196:16) is 
 theorem set_declaration_is_accessing_to is: TRUE
 
 set_declaration_is_called_by_1 execution
+Content of set callers (test_real_exec_02.aadl:211:19) is 
+  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+Content of set callers (test_real_exec_02.aadl:211:19) is 
+  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
+Content of set callers (test_real_exec_02.aadl:211:19) is 
+  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+Content of set callers (test_real_exec_02.aadl:211:19) is 
+  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
 theorem set_declaration_is_called_by_1 is: TRUE
 
 set_declaration_is_called_by_2 execution
+Content of set callers (test_real_exec_02.aadl:226:19) is 
+  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+Content of set callers (test_real_exec_02.aadl:226:19) is 
+  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
+  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
 theorem set_declaration_is_called_by_2 is: TRUE
 
 set_declaration_is_connecting_to execution
+Content of set cnx_threads (test_real_exec_02.aadl:239:22) is 
+Content of set cnx_threads (test_real_exec_02.aadl:239:22) is 
+  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+Content of set cnx_threads (test_real_exec_02.aadl:239:22) is 
+Content of set cnx_threads (test_real_exec_02.aadl:239:22) is 
+  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
 theorem set_declaration_is_connecting_to is: TRUE
 
 set_declaration_is_passing_through execution
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
+anonymous end to end flow :3448 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
+anonymous end to end flow :3448 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
+anonymous end to end flow :3449 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
+anonymous end to end flow :3449 end to end flow spec 
 theorem set_declaration_is_passing_through is: TRUE
 
 set_declaration_is_predecessor_of execution
+Content of set pred (test_real_exec_02.aadl:264:13) is 
+Content of set inv_pred (test_real_exec_02.aadl:266:17) is 
+  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
+Content of set pred (test_real_exec_02.aadl:264:13) is 
+  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+Content of set inv_pred (test_real_exec_02.aadl:266:17) is 
+Content of set pred (test_real_exec_02.aadl:264:13) is 
+Content of set inv_pred (test_real_exec_02.aadl:266:17) is 
+  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
+Content of set pred (test_real_exec_02.aadl:264:13) is 
+  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+Content of set inv_pred (test_real_exec_02.aadl:266:17) is 
 theorem set_declaration_is_predecessor_of is: TRUE
 
 set_declaration_compare_property_value execution
+Content of set pure_subprograms (test_real_exec_02.aadl:280:24) is 
+  test2_real_hello_spg_1: 41 component instance test_real_exec_02.aadl:19:01
+  test2_real_hello_spg_2: 103 component instance test_real_exec_02.aadl:27:01
 theorem set_declaration_compare_property_value is: TRUE
 
 set_declaration_set_composition execution
+Content of set proc_set (test_real_exec_02.aadl:295:19) is 
+  rma.erc32_node_a: 13 component instance test_real_exec_02.aadl:130:01
+Content of set new_set (test_real_exec_02.aadl:297:15) is 
+  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
+  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
 theorem set_declaration_set_composition is: TRUE
 
 set_declaration_and_operator execution
+Content of set protected_data (test_real_exec_02.aadl:309:21) is 
+  rma.erc32_node_a_task_2_obj: 92 component instance test_real_exec_02.aadl:10:01
 theorem set_declaration_and_operator is: TRUE
 
 set_declaration_or_operator execution
+Content of set a_set (test_real_exec_02.aadl:325:14) is 
+  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
+  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
 theorem set_declaration_or_operator is: TRUE
 
 set_declaration_predefined_sets execution

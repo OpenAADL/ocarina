@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -686,10 +686,13 @@ package body Ocarina.FE_REAL.Parser is
 
       function Precede (L, R : Node_Id) return Boolean is
          Left_Operator  : constant Operator_Id := Operator (L);
-         Right_Operator : constant Operator_Id := Operator (R);
+--         Right_Operator : constant Operator_Id := Operator (R);
       begin
-         return Preferences (Left_Operator) <
-           Preferences (Right_Operator);
+         if Kind (R) = K_Check_Subprogram_Call then
+            return True;
+         end if;
+
+         return Preferences (Left_Operator) < Preferences (Operator (R));
       end Precede;
 
       Expr     : Node_Id;
@@ -775,7 +778,7 @@ package body Ocarina.FE_REAL.Parser is
          --  expression value to the right expression of the left
          --  operator. Then as the left operator has already a left
          --  expression, it becomes an expression value which can be
-         --  assign to the left expression of the right operation.
+         --  assigned to the left expression of the right operation.
          --  Recompute the size of the expression stack.
 
          while First + 1 < Last
@@ -817,7 +820,6 @@ package body Ocarina.FE_REAL.Parser is
       Set_Last (First - 1);
 
       return Expr;
-
    end P_Check_Expression;
 
    --------------------------

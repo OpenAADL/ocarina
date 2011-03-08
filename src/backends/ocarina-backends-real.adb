@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2009-2011, GET-Telecom Paris.                --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -766,9 +766,9 @@ package body Ocarina.Backends.REAL is
 
       --  Iterate on the local set
 
-      for I in 1 .. Cardinal (R) loop
+      for J in 1 .. Cardinal (R) loop
          declare
-            V        : constant Value_Id := New_Elem_Value (Get (R, I));
+            V        : constant Value_Id := New_Elem_Value (Get (R, J));
             Ret      : Return_Type := RT_Error;
             Result   : Value_Id := No_Value;
          begin
@@ -788,7 +788,7 @@ package body Ocarina.Backends.REAL is
             end if;
 
             if Get_Value_Type (Result).BVal then
-               Add (R2, Get (R, I));
+               Add (R2, Get (R, J));
             end if;
          end;
       end loop;
@@ -801,6 +801,14 @@ package body Ocarina.Backends.REAL is
       --  Bind it in the set table,
 
       Set_Array (Integer (Index (Annotation (G)))) := R2;
+
+      Write_Line
+        ("Content of set "
+           & Get_Name_String (Name (Identifier (Parametrized_Expr (E))))
+           & " (" & Image (Loc (E)) & ") is ");
+      Increment_Indentation;
+      Display_Set (R2);
+      Decrement_Indentation;
    end Manage_Set_Declaration;
 
    -----------------------------
@@ -895,17 +903,22 @@ package body Ocarina.Backends.REAL is
    procedure Compute_Check_Expression
      (E : Node_Id; Ret : out Return_Type; Result : out Value_Id)
    is
-      pragma Assert (Kind (E) = K_Check_Expression or else
-                     Kind (E) = K_Ternary_Expression or else
-                     Kind (E) = K_Literal or else
-                     Kind (E) = K_Var_Reference or else
-                     Kind (E) = K_Check_Subprogram_Call);
+      pragma Assert (Kind (E) = K_Check_Expression
+                       or else Kind (E) = K_Ternary_Expression
+                       or else Kind (E) = K_Literal
+                       or else Kind (E) = K_Var_Reference
+                       or else Kind (E) = K_Check_Subprogram_Call);
 
       T1, T2 : Return_Type := RT_Unknown;
       R1, R2 : Value_Id := No_Value;
       V, V2  : Value_Type;
+
    begin
       case Kind (E) is
+         when K_Identifier =>
+            Write_Line (Get_Name_String (Name (E)));
+            raise Program_Error;
+
          when K_Var_Reference =>
             Ret := Var_Type (Referenced_Var (E));
             Result := Var_Value (Referenced_Var (E));
@@ -1742,10 +1755,10 @@ package body Ocarina.Backends.REAL is
                                       (Referenced_Sets (E)))))));
                   begin
                      if Cardinal (R1) > 0 then
-                        for I in 1 .. Cardinal (R1) loop
+                        for J in 1 .. Cardinal (R1) loop
                            V := Get_Property_Value_Function
                              (Value (First_Node (True_Parameters (E))),
-                              Returned_Type (E), Get (R1, I));
+                              Returned_Type (E), Get (R1, J));
                            if V /= No_Value then
                               VT := Get_Value_Type (V);
                               if VT.T /= LT_List then
@@ -1833,9 +1846,9 @@ package body Ocarina.Backends.REAL is
                else
                   Result := New_Boolean_Value (False);
                end if;
+
             else
                if Present (First_Node (Referenced_Sets (E))) then
-
                   --  The first parameter is a set
 
                   declare
@@ -2745,8 +2758,8 @@ package body Ocarina.Backends.REAL is
                   end if;
                   if T1 /= T2 then
                      Display_Located_Error
-                       (Loc (P), "Is_in must be called on lists "
-                        & "of same type",
+                       (Loc (P), "Is_In must be called on lists "
+                        & "of same type" & T1'Img & " " & T2'Img,
                         Fatal => True);
                   end if;
 
@@ -2911,6 +2924,9 @@ package body Ocarina.Backends.REAL is
 
          when SV_System_Set =>
             return Get_Instances_Of_Component_Type (C_System);
+
+         when SV_Abstract_Set =>
+            return Get_Instances_Of_Component_Type (C_Abstract);
 
          when SV_End_To_End_Flows_Set =>
             return Get_Instances_Of_End_To_End_Flows;

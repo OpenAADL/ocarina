@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -130,6 +130,7 @@ package body Ocarina.ME_REAL.Tokens is
       New_Token (T_Connection_Set, "Connection_Set");
       New_Token (T_Device_Set, "Device_Set");
       New_Token (T_System_Set, "System_Set");
+      New_Token (T_Abstract_Set, "Abstract_Set");
       New_Token (T_Unknown_Set, "Unknown_Set");
       New_Token (T_Local_Set, "Local");
 
