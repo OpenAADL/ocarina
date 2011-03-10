@@ -51,6 +51,7 @@ with Ocarina.Backends.Subprograms;
 with Ocarina.Backends.Carts;
 with Ocarina.Backends.Cheddar;
 with Ocarina.Backends.Connection_Matrix;
+with Ocarina.Backends.Functions_Matrix;
 with Ocarina.Backends.MAST;
 with Ocarina.Backends.MAST_Values;
 with Ocarina.Backends.MAST_Tree.Nodes;
@@ -192,6 +193,7 @@ package body Ocarina.Backends is
       ASN1.Init;
       Cheddar.Init;
       Connection_Matrix.Init;
+      Functions_Matrix.Init;
    end Init;
 
    ----------------------
@@ -254,6 +256,7 @@ package body Ocarina.Backends is
       Carts.Reset;
       PO_QoS_Ada.Reset;
       Connection_Matrix.Reset;
+      Functions_Matrix.Reset;
 
       Ada_Tree.Nutils.Reset;
       C_Tree.Nutils.Reset;

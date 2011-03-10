@@ -152,6 +152,7 @@ package body Ocarina.Backends.Properties is
    Port_Number             : Name_Id;
    Process_Id              : Name_Id;
    Processor_Binding       : Name_Id;
+   Function_Binding        : Name_Id;
    Memory_Binding          : Name_Id;
    Process_Channel_Address : Name_Id;
 
@@ -310,6 +311,7 @@ package body Ocarina.Backends.Properties is
    Platform_X86_RTEMS_Name   : Name_Id;
    Platform_LEON_GNAT_Name   : Name_Id;
    Platform_LEON_ORK_Name    : Name_Id;
+   Platform_LEON3_XM3_Name   : Name_Id;
    Platform_ERC32_ORK_Name   : Name_Id;
    Platform_ARM_DSLINUX_Name : Name_Id;
    Platform_ARM_N770_Name    : Name_Id;
@@ -2487,6 +2489,19 @@ package body Ocarina.Backends.Properties is
       end if;
    end Get_Bound_Memory;
 
+   -------------------------
+   -- Get_Bound_Processor --
+   -------------------------
+
+   function Get_Bound_Function (P : Node_Id) return Node_Id is
+   begin
+      if not Is_Defined_Reference_Property (P, Function_Binding) then
+         return No_Node;
+      end if;
+
+      return Get_Reference_Property (P, Function_Binding);
+   end Get_Bound_Function;
+
    -------------------
    -- Get_Bound_Bus --
    -------------------
@@ -2580,6 +2595,8 @@ package body Ocarina.Backends.Properties is
             return Platform_LEON_GNAT;
          elsif P_Name = Platform_LEON_ORK_Name then
             return Platform_LEON_ORK;
+         elsif P_Name = Platform_LEON3_XM3_Name then
+            return Platform_LEON3_XM3;
          elsif P_Name = Platform_ERC32_ORK_Name then
             return Platform_ERC32_ORK;
          elsif P_Name = Platform_ARM_DSLINUX_Name then
@@ -3006,6 +3023,7 @@ package body Ocarina.Backends.Properties is
       Port_Number             := Get_String_Name ("deployment::port_number");
       Process_Id              := Get_String_Name ("deployment::process_id");
       Processor_Binding       := Get_String_Name ("actual_processor_binding");
+      Function_Binding        := Get_String_Name ("actual_function_binding");
       Memory_Binding          := Get_String_Name ("actual_memory_binding");
       Word_Count              := Get_String_Name ("word_count");
       Word_Size               := Get_String_Name ("word_size");
@@ -3112,6 +3130,7 @@ package body Ocarina.Backends.Properties is
       Platform_LEON_RTEMS_Name  := Get_String_Name ("leon_rtems");
       Platform_LEON_GNAT_Name   := Get_String_Name ("leon_gnat");
       Platform_LEON_ORK_Name    := Get_String_Name ("leon_ork");
+      Platform_LEON3_XM3_Name   := Get_String_Name ("leon3_xm3");
       Platform_ERC32_ORK_Name   := Get_String_Name ("erc32_ork");
       Platform_ARM_DSLINUX_Name := Get_String_Name ("arm_dslinux");
       Platform_ARM_N770_Name    := Get_String_Name ("arm_n770");

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -172,6 +172,9 @@ package body Ocarina.Backends.PO_HI_C is
 
          when Platform_LINUX32 =>
             Write_Str ("linux32");
+
+         when Platform_LEON3_XM3 =>
+            Write_Str ("leon3-xm3");
 
          when Platform_LINUX32_XENOMAI_NATIVE =>
             Write_Str ("linux32-xenomai-native");

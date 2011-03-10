@@ -1772,7 +1772,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                      Append_Node_To_List
                         (RE (RE_Littleendian), CTN.Values (Endiannesses));
 
-                  when Platform_LEON_RTEMS =>
+                  when Platform_LEON_RTEMS |
+                       Platform_LEON3_XM3 =>
                      Append_Node_To_List
                         (RE (RE_Bigendian), CTN.Values (Endiannesses));
 

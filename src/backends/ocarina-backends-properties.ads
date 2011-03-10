@@ -531,6 +531,9 @@ package Ocarina.Backends.Properties is
    --  Return the processor component to which the process P is
    --  bound. Raises an error if P is not bound to any processor.
 
+   function Get_Bound_Function (P : Node_Id) return Node_Id;
+   --  Return the function bound to this component.
+
    function Get_Bound_Memory (P : Node_Id) return Node_Id;
    --  Return the memory component to which the process P is
    --  bound. Returns No_Node is no memory component is bounded.
@@ -571,6 +574,7 @@ package Ocarina.Backends.Properties is
       Platform_X86_RTEMS,
       Platform_X86_LINUXTASTE,
       Platform_LEON_GNAT,
+      Platform_LEON3_XM3,
       Platform_LEON_ORK,
       Platform_LINUX32,
       Platform_LINUX32_XENOMAI_NATIVE,
