@@ -59,8 +59,10 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
+   procedure Visit_Component (E : Node_Id; Table : Node_Id);
 
    Current_Parent_Node  : Node_Id;
+   Functional_System    : Node_Id := No_Node;
    My_Root              : Node_Id;
 
    -----------
@@ -209,6 +211,95 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       end case;
    end Visit_Component_Instance;
 
+   ---------------------
+   -- Visit_Component --
+   ---------------------
+
+   procedure Visit_Component (E : Node_Id; Table : Node_Id) is
+      N                 : Node_Id;
+      T                 : Node_Id;
+      TR                : Node_Id;
+      TD                : Node_Id;
+      P                 : Node_Id;
+      Q                 : Node_Id;
+      S                 : Node_Id;
+   begin
+      TR := Make_XML_Node ("tr");
+
+      --  Create a new colon that contain the name of the
+      --  sub-component being analyzed.
+      TD := Make_XML_Node ("td");
+
+      Set_Str_To_Name_Buffer
+         ("font-family: Arial; background-color: #0a97ac;" &
+         "text-align: left; font-weight: bold; font-size: 0.8em");
+      P := Make_Defining_Identifier (Name_Find);
+      Set_Str_To_Name_Buffer ("style");
+      Q := Make_Defining_Identifier (Name_Find);
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (TD));
+
+      Set_Str_To_Name_Buffer ("");
+
+      if Parent_Component (Parent_Subcomponent (E)) /= No_Node then
+         Get_Name_String_And_Append
+            (Display_Name
+               (Identifier
+                  (Parent_Subcomponent
+                     (Parent_Component
+                        (Parent_Subcomponent (E))))));
+         Add_Str_To_Name_Buffer (".");
+      end if;
+
+      Get_Name_String_And_Append
+         (Display_Name (Identifier (Parent_Subcomponent (E))));
+
+      N := Make_Defining_Identifier (Name_Find);
+      XTN.Set_Node_Value (TD, N);
+
+      Append_Node_To_List (TD,
+                  XTN.Subitems (TR));
+
+      T := First_Node (Subcomponents (Functional_System));
+
+      --  Here, we iterate again on all system sub-components
+      --  and try to see which one is connected to the component
+      --  actually analyzed (S).
+
+      while Present (T) loop
+         TD          := Make_XML_Node ("td");
+
+         if Get_Bound_Function
+            (E) /= No_Node and then
+            Get_Bound_Function
+            (E) = T then
+            Set_Str_To_Name_Buffer ("X");
+         else
+            Set_Str_To_Name_Buffer ("O");
+         end if;
+
+         N := Make_Defining_Identifier (Name_Find);
+
+         if N /= No_Node then
+            XTN.Set_Node_Value (TD, N);
+         end if;
+
+         Append_Node_To_List (TD,
+                     XTN.Subitems (TR));
+         T := Next_Node (T);
+      end loop;
+
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            Visit_Component (Corresponding_Instance (S), Table);
+            S := Next_Node (S);
+         end loop;
+      end if;
+
+      Append_Node_To_List
+         (TR, XTN.Subitems (Table));
+   end Visit_Component;
+
    ---------------------------
    -- Visit_System_Instance --
    ---------------------------
@@ -216,14 +307,12 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    procedure Visit_System_Instance (E : Node_Id) is
       S                 : Node_Id;
       N                 : Node_Id;
-      T                 : Node_Id;
       TR                : Node_Id;
       TD                : Node_Id;
       Table             : Node_Id;
       P                 : Node_Id;
       Q                 : Node_Id;
       Impl_System       : Node_Id := No_Node;
-      Functional_System : Node_Id := No_Node;
    begin
       --  Declare the table node that will contain the connectivity matrix.
       Table := Make_XML_Node ("table");
@@ -306,66 +395,8 @@ package body Ocarina.Backends.Functions_Matrix.Main is
 
       if not AINU.Is_Empty (Subcomponents (Impl_System)) then
          S := First_Node (Subcomponents (Impl_System));
-
-         --  In the following loop, we iterate on each subcomponents
-         --  and analyzes which one is connected.
          while Present (S) loop
-            if Get_Category_Of_Component (S) /= CC_Bus then
-               --  Create a new line (<tr> node).
-               TR := Make_XML_Node ("tr");
-
-               --  Create a new colon that contain the name of the
-               --  sub-component being analyzed.
-               TD := Make_XML_Node ("td");
-
-               Set_Str_To_Name_Buffer
-                  ("font-family: Arial; background-color: #0a97ac;" &
-                  "text-align: center; font-weight: bold; font-size: 0.8em");
-               P := Make_Defining_Identifier (Name_Find);
-               Set_Str_To_Name_Buffer ("style");
-               Q := Make_Defining_Identifier (Name_Find);
-               Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (TD));
-
-               Get_Name_String (Display_Name (Identifier (S)));
-
-               N := Make_Defining_Identifier (Name_Find);
-               XTN.Set_Node_Value (TD, N);
-
-               Append_Node_To_List (TD,
-                           XTN.Subitems (TR));
-
-               T := First_Node (Subcomponents (Functional_System));
-
-               --  Here, we iterate again on all system sub-components
-               --  and try to see which one is connected to the component
-               --  actually analyzed (S).
-
-               while Present (T) loop
-                  TD          := Make_XML_Node ("td");
-
-                  if Get_Bound_Function
-                     (Corresponding_Instance (S)) /= No_Node and then
-                     Get_Bound_Function
-                     (Corresponding_Instance (S)) = T then
-                     Set_Str_To_Name_Buffer ("X");
-                  else
-                     Set_Str_To_Name_Buffer ("O");
-                  end if;
-
-                  N := Make_Defining_Identifier (Name_Find);
-
-                  if N /= No_Node then
-                     XTN.Set_Node_Value (TD, N);
-                  end if;
-
-                  Append_Node_To_List (TD,
-                              XTN.Subitems (TR));
-                  T := Next_Node (T);
-               end loop;
-
-               Append_Node_To_List (TR,
-                           XTN.Subitems (Table));
-            end if;
+            Visit_Component (Corresponding_Instance (S), Table);
             S := Next_Node (S);
          end loop;
       end if;
