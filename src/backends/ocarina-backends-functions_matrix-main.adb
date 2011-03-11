@@ -60,6 +60,8 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
    procedure Visit_Component (E : Node_Id; Table : Node_Id);
+   function Get_Full_Component_Name (E : Node_Id; R : Boolean := False)
+      return Name_Id;
 
    Current_Parent_Node  : Node_Id;
    Functional_System    : Node_Id := No_Node;
@@ -211,6 +213,41 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       end case;
    end Visit_Component_Instance;
 
+   -----------------------------
+   -- Get_Full_Component_Name --
+   -----------------------------
+
+   function Get_Full_Component_Name (E : Node_Id; R : Boolean := False)
+      return Name_Id is
+      T : Name_Id;
+      pragma Unreferenced (T);
+   begin
+      if R then
+         Set_Str_To_Name_Buffer ("");
+      end if;
+
+      if Parent_Subcomponent (E) /= No_Node and then
+         Parent_Component (Parent_Subcomponent (E)) /= No_Node and then
+         Parent_Subcomponent
+            (Parent_Component (Parent_Subcomponent (E))) /= No_Node then
+            T := Get_Full_Component_Name
+               (Parent_Component (Parent_Subcomponent (E)));
+      end if;
+
+      Get_Name_String_And_Append
+         (Display_Name (Identifier (Parent_Subcomponent (E))));
+
+      if not R then
+         Add_Str_To_Name_Buffer (".");
+      end if;
+
+      if R then
+         return Name_Find;
+      else
+         return No_Name;
+      end if;
+   end Get_Full_Component_Name;
+
    ---------------------
    -- Visit_Component --
    ---------------------
@@ -238,22 +275,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       Q := Make_Defining_Identifier (Name_Find);
       Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (TD));
 
-      Set_Str_To_Name_Buffer ("");
-
-      if Parent_Component (Parent_Subcomponent (E)) /= No_Node then
-         Get_Name_String_And_Append
-            (Display_Name
-               (Identifier
-                  (Parent_Subcomponent
-                     (Parent_Component
-                        (Parent_Subcomponent (E))))));
-         Add_Str_To_Name_Buffer (".");
-      end if;
-
-      Get_Name_String_And_Append
-         (Display_Name (Identifier (Parent_Subcomponent (E))));
-
-      N := Make_Defining_Identifier (Name_Find);
+      N := Make_Defining_Identifier (Get_Full_Component_Name (E, True));
       XTN.Set_Node_Value (TD, N);
 
       Append_Node_To_List (TD,
@@ -271,10 +293,30 @@ package body Ocarina.Backends.Functions_Matrix.Main is
          if Get_Bound_Function
             (E) /= No_Node and then
             Get_Bound_Function
-            (E) = T then
-            Set_Str_To_Name_Buffer ("X");
-         else
+            (E) = Corresponding_Instance (T) then
+            Set_Str_To_Name_Buffer
+               ("font-family: Arial; font-weight: bold;" &
+                "background-color: #91ff94;" &
+               "text-align: center; font-size: 0.8em");
+            P := Make_Defining_Identifier (Name_Find);
+            Set_Str_To_Name_Buffer ("style");
+            Q := Make_Defining_Identifier (Name_Find);
+            Append_Node_To_List
+               (Make_Assignement (Q, P), XTN.Items (TD));
+
             Set_Str_To_Name_Buffer ("O");
+         else
+            Set_Str_To_Name_Buffer
+               ("font-family: Arial; font-weight: bold;" &
+                "background-color: #b83f3f;" &
+               "text-align: center; font-size: 0.8em");
+            P := Make_Defining_Identifier (Name_Find);
+            Set_Str_To_Name_Buffer ("style");
+            Q := Make_Defining_Identifier (Name_Find);
+            Append_Node_To_List
+               (Make_Assignement (Q, P), XTN.Items (TD));
+
+            Set_Str_To_Name_Buffer ("X");
          end if;
 
          N := Make_Defining_Identifier (Name_Find);

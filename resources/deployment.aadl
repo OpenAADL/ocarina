@@ -29,6 +29,7 @@ property set Deployment is
     Native_Compcert, -- Native platforms using the Compcert compiler
     LEON_RTEMS,    -- LEON2 board or tsim-leon (RTEMS)
     LEON3_XTRATUM, -- LEON3 with Xtratum
+    LEON3_XM3,     -- RTEMS for XTRATUM/LEON3
     LEON_ORK,      -- LEON2 board or tsim-leon (ORK)
     LEON_GNAT,     -- LEON2 board or qemu (GNATPRO/HI-E)
     LINUX32,       -- Linux 32 bits
@@ -46,7 +47,7 @@ property set Deployment is
   --  Supported platforms
 
   Execution_Platform : Deployment::Allowed_Execution_Platform 
-    applies to (processor);
+    applies to (all);
   --  Execution platform of a processor
 
   Priority_Type : type aadlinteger 0 .. 255;

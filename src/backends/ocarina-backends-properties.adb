@@ -2489,9 +2489,9 @@ package body Ocarina.Backends.Properties is
       end if;
    end Get_Bound_Memory;
 
-   -------------------------
-   -- Get_Bound_Processor --
-   -------------------------
+   ------------------------
+   -- Get_Bound_Function --
+   ------------------------
 
    function Get_Bound_Function (P : Node_Id) return Node_Id is
    begin
@@ -3023,7 +3023,8 @@ package body Ocarina.Backends.Properties is
       Port_Number             := Get_String_Name ("deployment::port_number");
       Process_Id              := Get_String_Name ("deployment::process_id");
       Processor_Binding       := Get_String_Name ("actual_processor_binding");
-      Function_Binding        := Get_String_Name ("actual_function_binding");
+      Function_Binding        :=
+         Get_String_Name ("aram_properties::actual_function_binding");
       Memory_Binding          := Get_String_Name ("actual_memory_binding");
       Word_Count              := Get_String_Name ("word_count");
       Word_Size               := Get_String_Name ("word_size");
