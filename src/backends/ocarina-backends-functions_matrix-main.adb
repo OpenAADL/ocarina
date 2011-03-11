@@ -330,6 +330,9 @@ package body Ocarina.Backends.Functions_Matrix.Main is
          T := Next_Node (T);
       end loop;
 
+      Append_Node_To_List
+         (TR, XTN.Subitems (Table));
+
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
@@ -337,9 +340,6 @@ package body Ocarina.Backends.Functions_Matrix.Main is
             S := Next_Node (S);
          end loop;
       end if;
-
-      Append_Node_To_List
-         (TR, XTN.Subitems (Table));
    end Visit_Component;
 
    ---------------------------
