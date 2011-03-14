@@ -52,6 +52,7 @@ Usage:
         asn1_deployment
         cheddar
         connection_matrix
+        function_matrix
         aadl
         aadl_min
         aadl_annex
