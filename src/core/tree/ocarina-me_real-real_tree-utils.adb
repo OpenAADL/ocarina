@@ -180,6 +180,8 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
             return SV_System_Set;
          when T_Abstract_Set =>
             return SV_Abstract_Set;
+         when T_Root_System_Set =>
+            return SV_Root_System_Set;
          when T_End_To_End_Flows_Set =>
             return SV_End_To_End_Flows_Set;
          when T_Local_Set =>
@@ -232,6 +234,8 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
             return T_System_Set;
          when SV_Abstract_Set =>
             return T_Abstract_Set;
+         when SV_Root_System_Set =>
+            return T_Root_System_Set;
          when SV_End_To_End_Flows_Set =>
             return T_End_To_End_Flows_Set;
          when SV_Local_Set =>

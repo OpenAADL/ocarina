@@ -214,7 +214,6 @@ package body Ocarina.Instances.Finder is
       N         : Node_Id;
    begin
       case AIN.Kind (Instance_Root) is
-
          when AIN.K_Architecture_Instance =>
             R := AIN.Root_System (Instance_Root);
             Select_Single_Node

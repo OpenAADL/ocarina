@@ -76,6 +76,8 @@ package body Ocarina.Backends.REAL is
 
    Current_Range_Variable : Node_Id;
 
+   Root_System : Node_Id;
+
    --  Buffer for runtime instance
 
    type Runtime_Instance is record
@@ -2931,6 +2933,15 @@ package body Ocarina.Backends.REAL is
          when SV_End_To_End_Flows_Set =>
             return Get_Instances_Of_End_To_End_Flows;
 
+         when SV_Root_System_Set =>
+            declare
+               Result : Result_Set;
+            begin
+               Result := Empty_Set;
+               Add (Result, AIN.Root_System (Root_System), Distinct => False);
+               return Result;
+            end;
+
          when SV_Local_Set =>
             --  Local set is either the AADL component where the theorem
             --  has been declared or the parameter-passed domain
@@ -2979,13 +2990,13 @@ package body Ocarina.Backends.REAL is
    --------------
 
    procedure Generate (AADL_Root : Node_Id) is
-      pragma Unreferenced (AADL_Root);
-
       use RNU.Node_List;
 
       It            : Natural := First;
       Node          : Node_Id;
    begin
+      Root_System := AADL_Root;
+
       --  Runtime
 
       while It <= Last (To_Run_Theorem_List) loop

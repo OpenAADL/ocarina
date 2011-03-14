@@ -45,12 +45,14 @@ with Namet; use Namet;
 with Output; use Output;
 
 package body Ocarina.Instances.REAL_Checker.Queries is
+
+   use Ocarina.ME_AADL.AADL_Instances.Debug;
+   use Ocarina.ME_AADL.AADL_Instances.Nutils;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
    use Ocarina.Instances.Queries;
    use Ocarina.Instances.Finder;
-   use Ocarina.ME_AADL.AADL_Instances.Nutils;
-   use Ocarina.ME_AADL.AADL_Instances.Debug;
+
    use Set;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -203,10 +205,12 @@ package body Ocarina.Instances.REAL_Checker.Queries is
       end case;
 
       while Present (EL.First) loop
-         if Is_Component (EL.First, Component_T) and then
-           (Component_T /= C_Subprogram or else
-            not Find_Subprogram_Declaration
-            (Corresponding_Declaration (EL.First), Results)) then
+         if Is_Component (EL.First, Component_T)
+           and then (Component_T /= C_Subprogram
+                       or else
+                       not Find_Subprogram_Declaration
+                       (Corresponding_Declaration (EL.First), Results))
+         then
             Add (Results, EL.First, Distinct => True);
          end if;
          EL.First := AIN.Next_Entity (EL.First);

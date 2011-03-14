@@ -85,6 +85,7 @@ package Ocarina.ME_REAL.REAL_Tree.Utils is
    SV_End_To_End_Flows_Set   : constant := 33;
    SV_Local_Set              : constant := 34;
    SV_Abstract_Set           : constant := 35;
+   SV_Root_System_Set        : constant := 36;
 
    --  Selection functions codes
 

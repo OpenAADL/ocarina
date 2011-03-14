@@ -131,6 +131,7 @@ package body Ocarina.ME_REAL.Tokens is
       New_Token (T_Device_Set, "Device_Set");
       New_Token (T_System_Set, "System_Set");
       New_Token (T_Abstract_Set, "Abstract_Set");
+      New_Token (T_Root_System_Set, "Root_System_Set");
       New_Token (T_Unknown_Set, "Unknown_Set");
       New_Token (T_Local_Set, "Local");
 
