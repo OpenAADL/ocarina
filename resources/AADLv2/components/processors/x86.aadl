@@ -40,9 +40,14 @@ properties
    Deployment::Execution_Platform => X86_RTEMS;
 end x86.rtems;
 
-processor implementation x86.linuxtaste
+processor implementation x86.xenomai_posix
 properties
-   Deployment::Execution_Platform => X86_LINUXTASTE;
-end x86.linuxtaste;
+   Deployment::Execution_Platform => linux32_xenomai_posix;
+end x86.xenomai_posix;
+
+processor implementation x86.xenomai_native
+properties
+   Deployment::Execution_Platform => linux32_xenomai_native;
+end x86.xenomai_native;
 
 end ocarina_processors_x86;
