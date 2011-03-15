@@ -70,6 +70,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Create_Sporadic_Task,           -- __po_hi_create_sporadic_task
       RE_Wait_For_Next_Period,           -- __po_hi_task_wait_for_next_period
       RE_Initialize,                     -- __po_hi_initialize
+      RE_Initialize_Early,               -- __po_hi_initialize_early
       RE_Wait_Initialization,            -- __po_hi_wait_initialization
       RE_Marshall_Bool,                  -- __po_hi_marshall_bool
       RE_Unmarshall_Bool,                -- __po_hi_unmarshall_bool
@@ -283,6 +284,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Wait_For_Next_Period           => RH_PO_HI_Task,
          RE_Compute_Next_Period            => RH_PO_HI_Task,
          RE_Initialize                     => RH_PO_HI_Main,
+         RE_Initialize_Early               => RH_PO_HI_Main,
          RE_Wait_Initialization            => RH_PO_HI_Main,
          RE_Protected_Lock                 => RH_PO_HI_Protected,
          RE_Protected_Unlock               => RH_PO_HI_Protected,

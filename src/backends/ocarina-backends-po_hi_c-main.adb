@@ -270,6 +270,28 @@ package body Ocarina.Backends.PO_HI_C.Main is
          Main_Function := Make_Function_Implementation
            (Spec, Declarations, Statements);
 
+         N := CTU.Make_Call_Profile (RE (RE_Initialize_Early));
+         Append_Node_To_List (N, CTN.Statements (Main_Function));
+
+         --  Visit all devices attached to the parent system that
+         --  share the same processor as process E.
+         --  This is done to initialize all devices before system starts.
+
+         if not AAU.Is_Empty (Subcomponents (The_System)) then
+            C := First_Node (Subcomponents (The_System));
+            while Present (C) loop
+               if AAU.Is_Device (Corresponding_Instance (C))
+               and then
+                 Get_Bound_Processor (Corresponding_Instance (C))
+                 = Get_Bound_Processor (E)
+               then
+                  Visit_Device_Instance
+                    (Corresponding_Instance (C));
+               end if;
+               C := Next_Node (C);
+            end loop;
+         end if;
+
          N := CTU.Make_Call_Profile (RE (RE_Initialize));
          Append_Node_To_List (N, CTN.Statements (Main_Function));
 
@@ -338,25 +360,6 @@ package body Ocarina.Backends.PO_HI_C.Main is
                      CTN.Statements (Main_Function));
                end if;
 
-               C := Next_Node (C);
-            end loop;
-         end if;
-
-         --  Visit all devices attached to the parent system that
-         --  share the same processor as process E.
-         --  This is done to initialize all devices before system starts.
-
-         if not AAU.Is_Empty (Subcomponents (The_System)) then
-            C := First_Node (Subcomponents (The_System));
-            while Present (C) loop
-               if AAU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
-               then
-                  Visit_Device_Instance
-                    (Corresponding_Instance (C));
-               end if;
                C := Next_Node (C);
             end loop;
          end if;
@@ -600,7 +603,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
               Make_List_Id
                (Make_Defining_Identifier
                   (Map_C_Enumerator_Name (E))));
-            Append_Node_To_List (N, CTN.Declarations (Main_Function));
+            Append_Node_To_List (N, CTN.Statements (Main_Function));
          end if;
 
          if Impl /= No_Node then
