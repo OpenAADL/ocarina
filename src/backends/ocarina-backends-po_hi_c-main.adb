@@ -353,6 +353,16 @@ package body Ocarina.Backends.PO_HI_C.Main is
                      (Corresponding_Instance (C)) /= No_Name
                then
                   Append_Node_To_List
+                     (Make_Extern_Entity_Declaration
+                        (Make_Function_Specification
+                              (Make_Defining_Identifier
+                                 (Get_Thread_Initialize_Entrypoint
+                                    (Corresponding_Instance (C))),
+                           Parameters   => No_List,
+                           Return_Type  => New_Node (CTN.K_Void))),
+                     CTN.Declarations (Current_File));
+
+                  Append_Node_To_List
                      (Make_Call_Profile
                         (Make_Defining_Identifier
                            (Get_Thread_Initialize_Entrypoint
