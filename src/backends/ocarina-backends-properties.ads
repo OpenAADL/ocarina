@@ -575,6 +575,7 @@ package Ocarina.Backends.Properties is
       Platform_X86_LINUXTASTE,
       Platform_LEON_GNAT,
       Platform_LEON3_XM3,
+      Platform_LEON3_XTRATUM,
       Platform_LEON_ORK,
       Platform_LINUX32,
       Platform_LINUX32_XENOMAI_NATIVE,
