@@ -1184,6 +1184,7 @@ package body Ocarina.Backends.Build_Utils is
             Fd          : File_Descriptor;
             S           : Node_Id;
             The_System  : Node_Id;
+            PID         : Unsigned_Long_Long := 0;
          begin
 
          --  The following part is very specific to PolyORB-HI-C and especially
@@ -1282,6 +1283,34 @@ package body Ocarina.Backends.Build_Utils is
                         (Normalize_Name (Display_Name (Identifier (S))));
                      Write_Str (".xef");
                      Write_Space;
+                  end if;
+                  S := Next_Node (S);
+               end loop;
+            end if;
+            Write_Eol;
+            Write_Eol;
+
+            Write_Str ("GENERATED_PACK_ARGS=");
+
+            --  Generate the makefiles of all process subcomponents
+
+            if not AAU.Is_Empty (Subcomponents (The_System)) then
+               S := First_Node (Subcomponents (The_System));
+
+               while Present (S) loop
+                  if AAU.Is_Process (Corresponding_Instance (S)) then
+                     Write_Str ("-p ");
+
+                     Write_Str (Unsigned_Long_Long'Image (PID));
+                     Write_Str (":");
+                     Write_Name
+                        (Normalize_Name (Display_Name (Identifier (S))));
+                     Write_Str ("/");
+                     Write_Name
+                        (Normalize_Name (Display_Name (Identifier (S))));
+                     Write_Str (".xef");
+                     Write_Space;
+                     PID := PID + 1;
                   end if;
                   S := Next_Node (S);
                end loop;

@@ -239,9 +239,10 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
       Set_Str_To_Name_Buffer ("size");
       P := Make_Defining_Identifier (Name_Find);
+      Byte_Count_Value := Byte_Count_Value / 1024;
       Set_Str_To_Name_Buffer
          (Unsigned_Long_Long'Image (Byte_Count_Value));
-      Add_Str_To_Name_Buffer ("B");
+      Add_Str_To_Name_Buffer ("KB");
       Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
       Append_Node_To_List

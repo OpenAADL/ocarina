@@ -442,6 +442,17 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       --  Add the start attribute of the region node.
       Base_Address_Value := Get_Integer_Property (E, "base_address");
+      Byte_Count_Value := Get_Integer_Property (E, "byte_count");
+
+      if Base_Address_Value = 0 or else Byte_Count_Value = 0 then
+         Display_Located_Error
+            (Loc (E),
+             "Memory does not specify the byte_count " &
+             "or base_address properties",
+             Fatal => False);
+         return;
+      end if;
+
       Set_Str_To_Name_Buffer ("start");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("0x");
@@ -454,7 +465,6 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          (Make_Assignement (P, Q), XTN.Items (Memory_Node));
 
       --  Add the size attribute of the region node.
-      Byte_Count_Value := Get_Integer_Property (E, "byte_count");
       Set_Str_To_Name_Buffer ("size");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer
