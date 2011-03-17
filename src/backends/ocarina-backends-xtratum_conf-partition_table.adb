@@ -200,8 +200,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
       P := Make_Defining_Identifier (Name_Find);
       Get_Name_String
          (Display_Name
-            (Identifier
-               (Parent_Subcomponent (Associated_Processor))));
+            (Identifier (Parent_Subcomponent (E))));
       Q := Make_Defining_Identifier (Name_Find);
       Append_Node_To_List
          (Make_Assignement (P, Q), XTN.Items (Partition_Node));

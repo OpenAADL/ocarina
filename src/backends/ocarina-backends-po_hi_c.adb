@@ -136,12 +136,17 @@ package body Ocarina.Backends.PO_HI_C is
       Use_Scade          : Boolean;
       Scade_Directory    : Name_Id)
    is
-      pragma Unreferenced (Appli_Name,
-                           Transport_API,
+      pragma Unreferenced (Transport_API,
                            C_Sources,
                            Ada_Sources,
                            C_Libraries);
    begin
+      if Appli_Name /= No_Name then
+         Write_Str ("MAINAPP = ");
+         Write_Name (Appli_Name);
+         Write_Eol;
+      end if;
+
       Write_Str ("BINARY = ");
       Write_Name (Node_Name);
       Write_Eol;
