@@ -352,7 +352,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
       --  cpu_name: computed from the processor binding of the
       --  container process of the current thread
       P := Map_Node_Identifier_To_XML_Node
-        ("cpu_name", Get_Bound_Processor (E));
+        ("cpu_name", Parent_Subcomponent (Get_Bound_Processor (E)));
       Append_Node_To_List (P, XTN.Subitems (N));
 
       --  text_memory_size: XXX
