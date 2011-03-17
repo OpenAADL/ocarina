@@ -1233,7 +1233,23 @@ package body Ocarina.Backends.Build_Utils is
             Write_Line ("###################################################");
             Write_Eol;
 
-            Write_Str ("PARTITIONS=");
+            Write_Line ("RUNTIME_PATH=" & Get_Runtime_Path ("polyorb-hi-c"));
+
+            Write_Eol;
+
+            Write_Str ("all: build-partitions resident_sw");
+
+            Write_Eol;
+            Write_Eol;
+
+            Write_Str ("MAINAPP=");
+            Write_Name
+               (Normalize_Name
+                  (Display_Name
+                     (Identifier (The_System))));
+            Write_Eol;
+
+            Write_Str ("PARTITIONS_NAME=");
             --  Generate the makefiles of all process subcomponents
 
             if not AAU.Is_Empty (Subcomponents (The_System)) then
@@ -1250,7 +1266,7 @@ package body Ocarina.Backends.Build_Utils is
             end if;
             Write_Eol;
 
-            Write_Str ("PARTITIONS_BINARIES=");
+            Write_Str ("PARTITIONS=");
 
             --  Generate the makefiles of all process subcomponents
 
@@ -1264,7 +1280,7 @@ package body Ocarina.Backends.Build_Utils is
                      Write_Str ("/");
                      Write_Name
                         (Normalize_Name (Display_Name (Identifier (S))));
-                     Write_Str (".exe");
+                     Write_Str (".xef");
                      Write_Space;
                   end if;
                   S := Next_Node (S);
@@ -1278,12 +1294,8 @@ package body Ocarina.Backends.Build_Utils is
             Write_Eol;
             Write_Eol;
 
-            Write_Str ("all: resident_sw");
-
-            Write_Eol;
-            Write_Eol;
-
             Close (Fd);
+
             Set_Standard_Output;
 
             --  Leave the directories
