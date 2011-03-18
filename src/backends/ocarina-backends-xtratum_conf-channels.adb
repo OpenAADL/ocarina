@@ -300,10 +300,11 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
                Set_Str_To_Name_Buffer ("partitionName");
                P := Make_Defining_Identifier (Name_Find);
                Get_Name_String
-                  (Display_Name
-                     (Identifier
-                        (Parent_Subcomponent
-                        (Get_Bound_Processor (Destination_Partition)))));
+                  (To_Lower
+                     (Display_Name
+                        (Identifier
+                           (Parent_Subcomponent
+                              (Destination_Partition)))));
                Q := Make_Defining_Identifier (Name_Find);
                Append_Node_To_List
                   (Make_Assignement (P, Q), XTN.Items (Destination_Node));

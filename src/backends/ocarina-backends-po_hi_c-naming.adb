@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2010, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -418,8 +418,26 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                            end if;
 
                            --  Get the bus of the connection
-
-                           B := Get_Bound_Bus (C);
+                           if Get_Execution_Platform
+                              (Get_Bound_Processor (E)) =
+                                Platform_LEON3_XM3
+                              and then
+                              Get_Execution_Platform
+                                 (Get_Bound_Processor (Parent)) =
+                                 Platform_LEON3_XM3
+                              and then
+                                 Parent_Component
+                                 (Parent_Subcomponent
+                                  (Get_Bound_Processor (E))) =
+                                 Parent_Component
+                                  (Parent_Subcomponent
+                                   (Get_Bound_Processor (Parent)))
+                           then
+                              B := No_Node;
+                              Transport_API := Transport_None;
+                           else
+                              B := Get_Bound_Bus (C);
+                           end if;
 
                            --  Get the transport layer of the Bus and
                            --  verify that all the features use the
@@ -443,7 +461,8 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                               --  transport layer has been specified,
                               --  we raise an error.
 
-                              if Transport_API = Transport_None then
+                              if B /= No_Node and then
+                                 Transport_API = Transport_None then
                                  Display_Located_Error
                                    (Loc (B),
                                     "No transport layer has been specified"

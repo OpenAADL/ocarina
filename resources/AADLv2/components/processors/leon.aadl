@@ -37,10 +37,12 @@ properties
    Deployment::Execution_Platform => LEON3_XTRATUM;
 end leon3.xtratum;
 
-processor implementation leon3.xtratum_2partitions
+processor implementation leon3.xtratum_2partitions extends leon3.xtratum
 subcomponents
-	part1 : virtual processor xtratum_partition.generic;
-	part2 : virtual processor xtratum_partition.generic;
+	part1 : virtual processor xtratum_partition.generic
+      { Deployment::Execution_Platform => LEON3_XM3;};
+	part2 : virtual processor xtratum_partition.generic
+      { Deployment::Execution_Platform => LEON3_XM3;};
 properties
    ARINC653::Partition_Slots => (500ms, 500ms);
    ARINC653::Slots_Allocation => (reference (part1), reference (part2));

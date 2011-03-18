@@ -2521,9 +2521,32 @@ package body Ocarina.Backends.Properties is
 
       if not Is_System (Parent_Component (C)) then
          return No_Node;
-      end if;
-
-      if not Is_Defined_List_Property (C, Connection_Binding) then
+      elsif Is_System (Parent_Component (C)) and then
+         Get_Execution_Platform
+            (Get_Bound_Processor
+               (Parent_Component
+                  (Get_Referenced_Entity
+                     (AIN.Source (C))))) = Platform_LEON3_XM3
+         and then
+         Get_Execution_Platform
+            (Get_Bound_Processor
+               (Parent_Component
+                  (Get_Referenced_Entity
+                     (AIN.Destination (C))))) = Platform_LEON3_XM3
+         and then
+            Parent_Component
+               (Parent_Subcomponent
+                (Parent_Component
+                 (Get_Referenced_Entity
+                  (AIN.Destination (C))))) =
+            Parent_Component
+               (Parent_Subcomponent
+                (Parent_Component
+                 (Get_Referenced_Entity
+                  (AIN.Source (C)))))
+      then
+         return No_Node;
+      elsif not Is_Defined_List_Property (C, Connection_Binding) then
          if Check then
             Display_Located_Error
               (AIN.Loc (C),

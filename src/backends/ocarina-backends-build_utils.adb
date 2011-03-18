@@ -40,6 +40,7 @@ with GNAT.Directory_Operations;
 
 with Namet;
 with Output;
+with Utils; use Utils;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -1204,18 +1205,19 @@ package body Ocarina.Backends.Build_Utils is
             --  Enter the directories
 
             Enter_Directory
-               (Normalize_Name
+               (To_Lower
+                  (Normalize_Name
                   (Display_Name
-                     (Identifier (The_System))));
+                     (Identifier (The_System)))));
 
             --  Create the file
 
             Fd := Create_File
                ("Makefile." &
                Get_Name_String
-               (Normalize_Name
+               (To_Lower (Normalize_Name
                   (Display_Name
-                     (Identifier (The_System)))),
+                     (Identifier (The_System))))),
                Text);
 
             if Fd = Invalid_FD then
@@ -1245,9 +1247,9 @@ package body Ocarina.Backends.Build_Utils is
 
             Write_Str ("MAINAPP=");
             Write_Name
-               (Normalize_Name
+               (To_Lower (Normalize_Name
                   (Display_Name
-                     (Identifier (The_System))));
+                     (Identifier (The_System)))));
             Write_Eol;
 
             Write_Str ("PARTITIONS_NAME=");
@@ -1259,7 +1261,9 @@ package body Ocarina.Backends.Build_Utils is
                while Present (S) loop
                   if AAU.Is_Process (Corresponding_Instance (S)) then
                      Write_Name
-                        (Normalize_Name (Display_Name (Identifier (S))));
+                        (To_Lower
+                           (Normalize_Name
+                              (Display_Name (Identifier (S)))));
                      Write_Space;
                   end if;
                   S := Next_Node (S);
@@ -1277,10 +1281,13 @@ package body Ocarina.Backends.Build_Utils is
                while Present (S) loop
                   if AAU.Is_Process (Corresponding_Instance (S)) then
                      Write_Name
-                        (Normalize_Name (Display_Name (Identifier (S))));
+                        (To_Lower
+                           (Normalize_Name (Display_Name (Identifier (S)))));
                      Write_Str ("/");
                      Write_Name
-                        (Normalize_Name (Display_Name (Identifier (S))));
+                        (To_Lower
+                           (Normalize_Name
+                              (Display_Name (Identifier (S)))));
                      Write_Str (".xef");
                      Write_Space;
                   end if;
@@ -1304,10 +1311,14 @@ package body Ocarina.Backends.Build_Utils is
                      Write_Str (Unsigned_Long_Long'Image (PID));
                      Write_Str (":");
                      Write_Name
-                        (Normalize_Name (Display_Name (Identifier (S))));
+                        (To_Lower
+                           (Normalize_Name
+                              (Display_Name (Identifier (S)))));
                      Write_Str ("/");
                      Write_Name
-                        (Normalize_Name (Display_Name (Identifier (S))));
+                        (To_Lower
+                           (Normalize_Name
+                              (Display_Name (Identifier (S)))));
                      Write_Str (".xef");
                      Write_Space;
                      PID := PID + 1;
