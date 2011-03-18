@@ -76,6 +76,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    Devices_Confvars        : Node_Id;
    Devices_Buses_Array     : Node_Id;
    Port_To_Devices         : Node_Id;
+   Global_Port_Kind        : Node_Id;
 
    function Is_Added (P : Node_Id; E : Node_Id) return Boolean;
    function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id;
@@ -1142,6 +1143,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Global_Port_List           := New_List (CTN.K_Enumeration_Literals);
          Global_Port_Names          := Make_Array_Values;
          Global_Port_Model_Names    := Make_Array_Values;
+         Global_Port_Kind           := Make_Array_Values;
          Global_Port_To_Entity      := Make_Array_Values;
          Global_Port_To_Local       := Make_Array_Values;
          Entity_Enumerator_List     := New_List (CTN.K_Enumeration_Literals);
@@ -1384,9 +1386,73 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
                      N := Make_Literal
                         (CV.New_Pointed_Char_Value
-                           (Display_Name (Identifier (F))));
+                           (To_Lower
+                              (Display_Name (Identifier (F)))));
                      Append_Node_To_List
                        (N, CTN.Values (Global_Port_Model_Names));
+
+                     if Is_In (F) then
+                        if Get_Connection_Pattern (F) = Intra_Process then
+                           if Is_Data (F) and then Is_Event (F) then
+                              Append_Node_To_List
+                                (RE (RE_In_Event_Data_Intra_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           elsif Is_Data (F) and then not Is_Event (F) then
+                              Append_Node_To_List
+                                (RE (RE_In_Data_Intra_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           else
+                              Append_Node_To_List
+                                (RE (RE_In_Event_Intra_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           end if;
+                        else
+                           if Is_Data (F) and then Is_Event (F) then
+                              Append_Node_To_List
+                                (RE (RE_In_Event_Data_Inter_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           elsif Is_Data (F) and then not Is_Event (F) then
+                              Append_Node_To_List
+                                (RE (RE_In_Data_Inter_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           else
+                              Append_Node_To_List
+                                (RE (RE_In_Event_Inter_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           end if;
+
+                        end if;
+                     elsif Is_Out (F) then
+                        if Get_Connection_Pattern (F) = Intra_Process then
+                           if Is_Data (F) and then Is_Event (F) then
+                              Append_Node_To_List
+                                (RE (RE_Out_Event_Data_Intra_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           elsif Is_Data (F) and then not Is_Event (F) then
+                              Append_Node_To_List
+                                (RE (RE_Out_Data_Intra_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           else
+                              Append_Node_To_List
+                                (RE (RE_Out_Event_Intra_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           end if;
+                        else
+                           if Is_Data (F) and then Is_Event (F) then
+                              Append_Node_To_List
+                                (RE (RE_Out_Event_Data_Inter_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           elsif Is_Data (F) and then not Is_Event (F) then
+                              Append_Node_To_List
+                                (RE (RE_Out_Data_Inter_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           else
+                              Append_Node_To_List
+                                (RE (RE_Out_Event_Inter_Process),
+                                 CTN.Values (Global_Port_Kind));
+                           end if;
+                        end if;
+                     end if;
 
                      N := Make_Expression
                        (Make_Defining_Identifier
@@ -1714,6 +1780,22 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                Right_Expr =>
                  CTN.Global_Model_Names_Node
                   (Backend_Node (Identifier (S))));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Port_Global_Kind),
+                     Array_Size =>
+                       RE (RE_Nb_Ports)),
+                  Used_Type =>
+                        RE (RE_Port_Kind_T)),
+               Operator => Op_Equal,
+               Right_Expr =>
+                  Global_Port_Kind);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 

@@ -169,11 +169,24 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Simulink_Init_Func,             --  __PO_HI_SIMULINK_INIT
       RE_Simulink_Model_Type,            --  __PO_HI_SIMULINK_MODEL
       RE_Nb_Tasks,                       --  __PO_HI_NB_TASKS
+      RE_In_Data_Inter_Process,
+      RE_In_Data_Intra_Process,
+      RE_Out_Data_Inter_Process,
+      RE_Out_Data_Intra_Process,
+      RE_In_Event_Inter_Process,
+      RE_In_Event_Intra_Process,
+      RE_Out_Event_Inter_Process,
+      RE_Out_Event_Intra_Process,
+      RE_In_Event_Data_Inter_Process,
+      RE_In_Event_Data_Intra_Process,
+      RE_Out_Event_Data_Inter_Process,
+      RE_Out_Event_Data_Intra_Process,
       RE_Need_Driver_Sockets,            --  __PO_HI_NEED_DRIVER_SOCKETS
       RE_SUCCESS,                        --  __PO_HI_SUCCESS
 
       RE_Task_Id,                        --  __po_hi_task_id
       RE_Device_Id,                      --  __po_hi_device_id
+      RE_Port_Kind_T,                    --  __po_hi_port_kind_t
       RE_Bus_Id,                         --  __po_hi_bus_id
       RE_Entity_T,                       --  __po_hi_entity_t
       RE_Inetport_T,                     --  __po_hi_inetport_t
@@ -214,6 +227,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Port_Global_To_Entity,          --  __po_hi_port_global_to_entity
       RE_Port_Global_To_Device,          --  __po_hi_port_global_to_device
       RE_Port_Global_Names,              --  __po_hi_port_global_names
+      RE_Port_Global_Kind,               --  __po_hi_port_global_kind
       RE_Mynode,                         --  __po_hi_mynode
       RE_Node_Port,                      --  __po_hi_node_port
       RE_Node_Addr,                      --  __po_hi_node_addr
@@ -325,6 +339,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Asn1_Pkt_T                     => RH_PO_HI_Marshallers,
          RE_Asn1_Buffer_T                  => RH_PO_HI_Marshallers,
          RE_Bool_T                         => RH_PO_HI_Types,
+         RE_Port_Kind_T                    => RH_PO_HI_Types,
          RE_Uint8_T                        => RH_PO_HI_Types,
          RE_Int8_T                         => RH_PO_HI_Types,
          RE_Uint16_T                       => RH_PO_HI_Types,
@@ -375,6 +390,18 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Bigendian                      => RH_PO_HI_Transport,
          RE_Littleendian                   => RH_PO_HI_Transport,
          RE_Nb_Tasks                       => RH_Deployment,
+         RE_In_Data_Inter_Process          => RH_PO_HI_Types,
+         RE_In_Data_Intra_Process          => RH_PO_HI_Types,
+         RE_Out_Data_Inter_Process         => RH_PO_HI_Types,
+         RE_Out_Data_Intra_Process         => RH_PO_HI_Types,
+         RE_In_Event_Inter_Process         => RH_PO_HI_Types,
+         RE_In_Event_Intra_Process         => RH_PO_HI_Types,
+         RE_Out_Event_Inter_Process        => RH_PO_HI_Types,
+         RE_Out_Event_Intra_Process        => RH_PO_HI_Types,
+         RE_In_Event_Data_Inter_Process    => RH_PO_HI_Types,
+         RE_In_Event_Data_Intra_Process    => RH_PO_HI_Types,
+         RE_Out_Event_Data_Inter_Process   => RH_PO_HI_Types,
+         RE_Out_Event_Data_Intra_Process   => RH_PO_HI_Types,
          RE_Need_Driver_Sockets            => RH_Deployment,
          RE_SUCCESS                        => RH_PO_HI_Returns,
 
@@ -390,6 +417,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Port_Global_To_Entity          => RH_Deployment,
          RE_Port_Global_To_Device          => RH_Deployment,
          RE_Port_Global_Names              => RH_Deployment,
+         RE_Port_Global_Kind               => RH_Deployment,
          RE_Mynode                         => RH_Deployment,
          RE_Node_Port                      => RH_Deployment,
          RE_Node_Addr                      => RH_Deployment,
