@@ -60,7 +60,7 @@ property set ARINC653 is
   
   Memory_Kind : Supported_Memory_Kind applies to (memory);
 
-  Access_Type : Supported_Access_Type applies to (memory);
+  Access_Type : ARINC653::Supported_Access_Type applies to (memory);
   
   Timeout : Time applies to (data port, event data port, event port, access);
   

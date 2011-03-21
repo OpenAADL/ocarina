@@ -2522,6 +2522,14 @@ package body Ocarina.Backends.Properties is
       if not Is_System (Parent_Component (C)) then
          return No_Node;
       elsif Is_System (Parent_Component (C)) and then
+         Is_Process
+            (Parent_Component
+               (Get_Referenced_Entity
+                  (AIN.Source (C)))) and then
+         Is_Process
+            (Parent_Component
+               (Get_Referenced_Entity
+                  (AIN.Destination (C)))) and then
          Get_Execution_Platform
             (Get_Bound_Processor
                (Parent_Component
