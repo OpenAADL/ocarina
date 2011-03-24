@@ -486,7 +486,17 @@ package body Ocarina.Backends.Ada_Values is
                return '"' & '"';
             end if;
             Add_Char_To_Name_Buffer ('"'); -- "
-            Get_Name_String_And_Append (V.SVal);
+            declare
+               The_String : constant String := Get_Name_String (V.SVal);
+            begin
+               for J in The_String'Range loop
+                  Add_Char_To_Name_Buffer (The_String (J));
+                  --  Escape '"' character
+                  if The_String (J) = '"' then
+                     Add_Char_To_Name_Buffer (The_String (J));
+                  end if;
+               end loop;
+            end;
             Add_Char_To_Name_Buffer ('"'); -- "
 
          when others =>
