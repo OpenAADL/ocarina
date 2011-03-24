@@ -38,6 +38,8 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Instances.Queries;
+
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Messages;
@@ -61,6 +63,7 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
    use Ocarina.Backends.PO_HI_Ada.Runtime;
    use Ocarina.Backends.Ada_Tree.Nutils;
    use Ocarina.Backends.Ada_Values;
+   use Ocarina.Instances.Queries;
 
    package ADV renames Ocarina.Backends.Ada_Values;
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -148,9 +151,21 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
          end if;
 
          if Location = No_Name then
-            L := Make_Subprogram_Call
-              (RE (RE_To_HI_String),
-               Make_List_Id (Make_Literal (New_String_Value (No_Name))));
+            if Is_Defined_Property (E, "deployment::configuration")
+              and then Get_String_Property
+                  (E, "deployment::configuration") /= No_Name
+            then
+               Get_Name_String
+                 (Get_String_Property
+                    (E, "deployment::configuration"));
+               L := Make_Subprogram_Call
+                 (RE (RE_To_HI_String),
+                  Make_List_Id (Make_Literal (New_String_Value (Name_Find))));
+            else
+               L := Make_Subprogram_Call
+                 (RE (RE_To_HI_String),
+                  Make_List_Id (Make_Literal (New_String_Value (No_Name))));
+            end if;
          else
             L := Make_Subprogram_Call
               (RE (RE_To_HI_String),
