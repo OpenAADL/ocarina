@@ -228,11 +228,11 @@ package body Ocarina.Backends.POK_C.Makefile is
 
       if N /= No_Name then
          Handle_Source_File (N);
+      else
+         for J in Source_Files'Range loop
+            Handle_Source_File (Source_Files (J));
+         end loop;
       end if;
-
-      for J in Source_Files'Range loop
-         Handle_Source_File (Source_Files (J));
-      end loop;
    end Visit_Subprogram_Instance;
 
    ---------------------------

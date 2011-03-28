@@ -228,6 +228,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Port_Global_To_Device,          --  __po_hi_port_global_to_device
       RE_Port_Global_Names,              --  __po_hi_port_global_names
       RE_Port_Global_Kind,               --  __po_hi_port_global_kind
+      RE_Port_Global_Queue_Size,         --  __po_hi_port_global_queue_size
+      RE_Port_Global_Data_Size,          --  __po_hi_port_global_data_size
       RE_Mynode,                         --  __po_hi_mynode
       RE_Node_Port,                      --  __po_hi_node_port
       RE_Node_Addr,                      --  __po_hi_node_addr
@@ -417,6 +419,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Port_Global_To_Entity          => RH_Deployment,
          RE_Port_Global_To_Device          => RH_Deployment,
          RE_Port_Global_Names              => RH_Deployment,
+         RE_Port_Global_Queue_Size         => RH_Deployment,
+         RE_Port_Global_Data_Size          => RH_Deployment,
          RE_Port_Global_Kind               => RH_Deployment,
          RE_Mynode                         => RH_Deployment,
          RE_Node_Port                      => RH_Deployment,

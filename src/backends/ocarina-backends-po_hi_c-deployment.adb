@@ -77,6 +77,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    Devices_Buses_Array     : Node_Id;
    Port_To_Devices         : Node_Id;
    Global_Port_Kind        : Node_Id;
+   Global_Port_Queue_Size  : Node_Id;
+   Global_Port_Data_Size   : Node_Id;
 
    function Is_Added (P : Node_Id; E : Node_Id) return Boolean;
    function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id;
@@ -1144,6 +1146,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Global_Port_Names          := Make_Array_Values;
          Global_Port_Model_Names    := Make_Array_Values;
          Global_Port_Kind           := Make_Array_Values;
+         Global_Port_Queue_Size     := Make_Array_Values;
+         Global_Port_Data_Size      := Make_Array_Values;
          Global_Port_To_Entity      := Make_Array_Values;
          Global_Port_To_Local       := Make_Array_Values;
          Entity_Enumerator_List     := New_List (CTN.K_Enumeration_Literals);
@@ -1452,6 +1456,27 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                                  CTN.Values (Global_Port_Kind));
                            end if;
                         end if;
+                     end if;
+
+                     if Is_Data (F) then
+                        Append_Node_To_List
+                           (Get_Data_Size (Corresponding_Instance (F)),
+                           CTN.Values (Global_Port_Data_Size));
+                     end if;
+
+                     if Get_Queue_Size (F) /= -1 then
+                        Append_Node_To_List
+                           (Make_Literal
+                            (CV.New_Int_Value
+                              (Unsigned_Long_Long
+                                 (Get_Queue_Size (F)), 0, 10)),
+                           CTN.Values (Global_Port_Queue_Size));
+                     else
+                        Append_Node_To_List
+                           (Make_Literal
+                            (CV.New_Int_Value
+                              (1, 0, 10)),
+                           CTN.Values (Global_Port_Queue_Size));
                      end if;
 
                      N := Make_Expression
@@ -1797,6 +1822,39 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                Right_Expr =>
                   Global_Port_Kind);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Port_Global_Data_Size),
+                     Array_Size =>
+                       RE (RE_Nb_Ports)),
+                  Used_Type =>
+                        RE (RE_Uint32_T)),
+               Operator => Op_Equal,
+               Right_Expr =>
+                  Global_Port_Data_Size);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Port_Global_Queue_Size),
+                     Array_Size =>
+                       RE (RE_Nb_Ports)),
+                  Used_Type =>
+                        RE (RE_Uint32_T)),
+               Operator => Op_Equal,
+               Right_Expr =>
+                  Global_Port_Queue_Size);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
          end if;
 
          if Present (Backend_Node (Identifier (S))) and then
