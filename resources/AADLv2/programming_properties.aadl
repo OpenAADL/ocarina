@@ -152,6 +152,7 @@ Property set Programming_Properties is
   Type_Source_Name: aadlstring
   applies to (data, 
               port,
+              device,
               subprogram);
   ----------------------------------------------------
      
