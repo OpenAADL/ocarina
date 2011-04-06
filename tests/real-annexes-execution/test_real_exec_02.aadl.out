@@ -61,13 +61,13 @@ theorem set_declaration_is_connecting_to is: TRUE
 
 set_declaration_is_passing_through execution
 Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :3448 end to end flow spec 
-Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :3448 end to end flow spec 
-Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
 anonymous end to end flow :3449 end to end flow spec 
 Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
 anonymous end to end flow :3449 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
+anonymous end to end flow :3450 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
+anonymous end to end flow :3450 end to end flow spec 
 theorem set_declaration_is_passing_through is: TRUE
 
 set_declaration_is_predecessor_of execution
