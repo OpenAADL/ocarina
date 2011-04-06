@@ -1464,7 +1464,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                            CTN.Values (Global_Port_Data_Size));
                      end if;
 
-                     if Get_Queue_Size (F) /= -1 then
+                     if Is_Event (F) and then
+                        Get_Queue_Size (F) /= -1 then
                         Append_Node_To_List
                            (Make_Literal
                             (CV.New_Int_Value
