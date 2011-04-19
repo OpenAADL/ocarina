@@ -4297,15 +4297,16 @@ package body Ocarina.Backends.Properties is
 
       Impl := Get_Implementation (Device);
 
-      if Impl /= No_Node then
+      if Present (Impl) then
          if not AINU.Is_Empty (AIN.Subcomponents (Impl)) then
             S := AIN.First_Node (AIN.Subcomponents (Impl));
             while Present (S) loop
                I := Corresponding_Instance (S);
-               if Is_Subprogram (I) and then
-                  AIN.Name (AIN.Identifier (S))
-                     = Get_String_Name ("sender") and then
-                  Get_Source_Name (I) /= No_Name then
+               if Is_Subprogram (I)
+                 and then AIN.Name (AIN.Identifier (S))
+                 = Get_String_Name ("sender")
+                 and then Get_Source_Name (I) /= No_Name
+               then
                   return Get_Source_Name (I);
                end if;
                S := AIN.Next_Node (S);

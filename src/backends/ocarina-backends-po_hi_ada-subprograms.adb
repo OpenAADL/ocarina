@@ -294,7 +294,9 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
             if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
                S := First_Node (Subcomponents (Implementation));
                while Present (S) loop
-                  Visit_Component_Instance (Corresponding_Instance (S));
+                  if not AAU.Is_Subprogram (Corresponding_Instance (S)) then
+                     Visit_Component_Instance (Corresponding_Instance (S));
+                  end if;
                   S := Next_Node (S);
                end loop;
             end if;
@@ -891,7 +893,9 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
             if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
                S := First_Node (Subcomponents (Implementation));
                while Present (S) loop
-                  Visit_Component_Instance (Corresponding_Instance (S));
+                  if not AAU.Is_Subprogram (Corresponding_Instance (S)) then
+                     Visit_Component_Instance (Corresponding_Instance (S));
+                  end if;
                   S := Next_Node (S);
                end loop;
             end if;

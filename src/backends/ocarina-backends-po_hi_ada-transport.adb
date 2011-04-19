@@ -42,7 +42,6 @@ with Ocarina.Backends.Utils;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Ada_Tree.Nutils;
 with Ocarina.Backends.Ada_Tree.Nodes;
-with Ocarina.Backends.Ada_Values;
 with Ocarina.Backends.PO_HI_Ada.Mapping;
 with Ocarina.Backends.PO_HI_Ada.Runtime;
 
@@ -60,7 +59,6 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package ADN renames Ocarina.Backends.Ada_Tree.Nodes;
-   package ADV renames Ocarina.Backends.Ada_Values;
 
    ------------------
    -- Package_Spec --
@@ -925,7 +923,7 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                                  declare
                                     Profile : constant List_Id
                                       := New_List (ADN.K_Parameter_Profile);
-                                    A, B, C : Node_Id;
+                                    A : Node_Id;
                                  begin
                                     --  Entity
 
@@ -951,62 +949,24 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                                        RE (RE_Stream_Element_Offset),
                                        Mode_In);
                                     Append_Node_To_List (A, Profile);
-
-                                    if not Is_Handled (Device) then
-                                       --  Make sure we import only
-                                       --  once definition for send
-                                       --  for this device.
-
-                                       Set_Handled (Device);
-
-                                       --  The subprogram spec
-
-                                       Get_Name_String
-                                         (Name
-                                            (Identifier
-                                               (Corresponding_Instance
-                                                  (Device))));
-                                       Add_Str_To_Name_Buffer ("_send");
-                                       B := Make_Defining_Identifier
-                                         (Name_Find);
-
-                                       A := Make_Subprogram_Specification
-                                         (B,
-                                          Profile,
-                                          RE (RE_Error_Kind));
-
-                                       Append_Node_To_List (A, Declarations);
-
-                                       Get_Name_String
-                                         (Name
-                                            (Identifier
-                                               (Corresponding_Instance
-                                                  (Device))));
-                                       Add_Str_To_Name_Buffer ("_send");
-
-                                       C := Make_Literal
-                                         (ADV.New_String_Value (Name_Find));
-
-                                       A := Make_Pragma_Statement
-                                         (Pragma_Import,
-                                          Make_List_Id
-                                            (Make_Defining_Identifier
-                                               (PN (P_C)),
-                                             B,
-                                             C));
-                                       Append_Node_To_List (A, Declarations);
-                                    end if;
                                  end;
 
-                                 Get_Name_String
-                                   (Name
-                                      (Identifier
+                                 N := Make_Designator
+                                   (Unit_Name
+                                      (Get_Send_Function_Name
                                          (Corresponding_Instance (Device))));
-                                 Add_Str_To_Name_Buffer ("_send");
-                                 N := Make_Defining_Identifier (Name_Find);
+                                 Add_With_Package (N);
+
+                                 N := Make_Designator
+                                   (Local_Name
+                                      (Get_Send_Function_Name
+                                         (Corresponding_Instance (Device))),
+                                    Unit_Name
+                                      (Get_Send_Function_Name
+                                         (Corresponding_Instance (Device))));
 
                                  N := Make_Subprogram_Call
-                                   (N,
+                                   (ADN.Defining_Identifier (N),
                                     Make_List_Id
                                     (Make_Indexed_Component
                                      (RE (RE_Entity_Table),

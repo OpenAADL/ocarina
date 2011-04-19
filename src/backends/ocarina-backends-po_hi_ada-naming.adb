@@ -141,13 +141,18 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
          N           : Node_Id;
          L           : Node_Id;
          P           : Node_Id;
+         V           : Node_Id;
+         Configuration_Data : Name_Id := No_Name;
+
       begin
          if AAU.Is_Process (E) then
             Location := Get_Location (Get_Bound_Processor (E));
             Port_Number := Get_Port_Number (E);
+
          elsif AAU.Is_Device (E) then
             Location := Get_Location (E);
             Port_Number := Get_Port_Number (E);
+            Configuration_Data := Get_Type_Source_Name (E);
          end if;
 
          if Location = No_Name then
@@ -178,9 +183,17 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
             P := Make_Literal (To_Ada_Value (Port_Number));
          end if;
 
+         if Configuration_Data = No_Name then
+            V := RE (RE_Null_Address);
+         else
+            V := Make_Attribute_Designator
+              (Map_Ada_Subprogram_Identifier (Configuration_Data),
+               A_Address);
+         end if;
+
          --  Build the record aggregate
 
-         N := Make_Record_Aggregate (Make_List_Id (L, P));
+         N := Make_Record_Aggregate (Make_List_Id (L, P, V));
          N := Make_Element_Association (Extract_Enumerator (E), N);
          return N;
       end Naming_Information;
@@ -352,8 +365,6 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
             end loop;
          end if;
 
-         --  A useful marking (for future fetch of the transport layer)
-
          --  Generate the naming table
 
          case Transport_API is
@@ -404,6 +415,7 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                      Expression          => Make_Array_Aggregate
                        (Naming_Table_List));
                   Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
                else
                   --  We generate the default name table
 
