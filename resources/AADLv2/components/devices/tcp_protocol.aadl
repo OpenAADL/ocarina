@@ -5,7 +5,7 @@ package TCP_IP_Protocol
 -- to be integrated with the runtime low level interface.
 --
 -- To configure this interface, you should use the
--- Deployment::Configuration property with the following format: 
+-- Deployment::Configuration property with the following format:
 --     "ip <ipv4_addresse> <ipv4_port>"
 --
 -- e.g.
@@ -15,8 +15,7 @@ package TCP_IP_Protocol
 
 public
 
-   with Generic_Native;
-   with Deployment;
+   with Generic_Bus;
 
    ------------
    -- DEVICE --
@@ -28,14 +27,14 @@ public
 
    device TCP_IP_Device
    features
-      Ethernet_Wire : requires bus access Generic_Native::Generic_Bus.impl;
-      -- Connection to the remote node    
+      Ethernet_Wire : requires bus access Generic_Bus::Generic_Bus.impl;
+      -- Connection to the remote node
 
    end TCP_IP_Device;
 
    device implementation TCP_IP_Device.impl
    properties
-      Implemented_As => 
+      Implemented_As =>
          classifier (TCP_IP_Protocol::Driver_TCP_IP_Protocol.impl);
       Initialize_Entrypoint => classifier (TCP_IP_Protocol::Initialize);
    end TCP_IP_Device.impl;
@@ -48,14 +47,12 @@ public
    -- using an abstract component.
 
    abstract Driver_TCP_IP_Protocol
-   properties
-      Deployment::Version  => "0.1beta";
-      Deployment::Help     => "Write your ASN.1 configuration here";
    end Driver_TCP_IP_Protocol;
 
    abstract implementation Driver_TCP_IP_Protocol.impl
    subcomponents
       receiver : thread Driver_TCP_IP_Protocol_thread_receiver.impl;
+      sender : subprogram Send;
    end Driver_TCP_IP_Protocol.impl;
 
    -------------
@@ -67,19 +64,19 @@ public
    -- messages.
 
    thread Driver_TCP_IP_Protocol_thread_receiver
-      
+
       -- This thread is dispatched when an event is detected on the
       -- real hardware. It then calls receive to handle the incoming
       -- event.
 
    properties
-      -- Initialize_Entrypoint 
+      -- Initialize_Entrypoint
       --    => classifier (TCP_IP_Protocol::Initialize_Receiver);
       Dispatch_Protocol => Background;
    end Driver_TCP_IP_Protocol_thread_receiver;
 
    thread implementation Driver_TCP_IP_Protocol_thread_receiver.impl
-   calls 
+   calls
       call1 : { pspg : subprogram receive; };
    end Driver_TCP_IP_Protocol_thread_receiver.impl;
 

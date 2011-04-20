@@ -7,6 +7,7 @@ package Generic_Native
 
 public
   with Deployment;
+  with Generic_Bus;
 
   ---------------
   -- PROCESSOR --
@@ -19,7 +20,7 @@ public
 
   processor Generic_Processor
   features
-    eth0_tcp_ip : requires bus access Generic_Bus.impl;
+    eth0_tcp_ip : requires bus access Generic_Bus::Generic_Bus.impl;
     -- One ethernet card, connected to the processor. It is assumed
     -- later that it is used through a TCP/IP stack
 
@@ -41,19 +42,5 @@ public
 
   memory implementation Memory_Segment.impl
   end Memory_Segment.impl;
-
-  ---------
-  -- BUS --
-  ---------
-
-  -- Generic bus to model connections between processors and
-  -- devices. It is not used by the code generation process, so it is
-  -- made fully generic.
-
-  bus Generic_Bus
-  end Generic_Bus;
-
-  bus implementation Generic_Bus.impl
-  end Generic_Bus.impl;
 
 end Generic_Native;

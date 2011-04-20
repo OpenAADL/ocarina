@@ -6,20 +6,20 @@ package GRSPW
 -- integrated with the runtime low level interface.
 --
 -- To configure this interface, you should use the
--- Deployment::Configuration property with the following format: 
+-- Deployment::Configuration property with the following format:
 --     "spacewire Sender_Core_id Receiver_Core_Id"
 --
 -- e.g.
 --
 --     spw : device GRSPW::GRSPW_Device
 --            {Deployment::Configuration => "spacewire 1 2"};
--- 
+--
 
 public
 
+   with Deployment;
    with GR_CPCI_X4CV;
    with Generic_Bus;
-   with Deployment;
 
    ------------
    -- DEVICE --
@@ -31,14 +31,14 @@ public
 
    device GRSPW_Device
    features
-      LVDS_Wire : requires bus access Generic_Bus::GenericBus.impl;
-      -- Connection to the remote node    
+      LVDS_Wire : requires bus access Generic_Bus::Generic_Bus.impl;
+      -- Connection to the remote node
 
    end GRSPW_Device;
 
    device implementation GRSPW_Device.impl
    properties
-      Implemented_As => 
+      Implemented_As =>
          classifier (GRSPW::Driver_GRSPW_Protocol.impl);
       Initialize_Entrypoint => classifier (GRSPW::Initialize);
    end GRSPW_Device.impl;
@@ -59,6 +59,7 @@ public
    abstract implementation Driver_GRSPW_Protocol.impl
    subcomponents
       receiver : thread Driver_GRSPW_Protocol_thread_receiver.impl;
+      sender : subprogram Send;
    end Driver_GRSPW_Protocol.impl;
 
    -------------
@@ -70,7 +71,7 @@ public
    -- messages.
 
    thread Driver_GRSPW_Protocol_thread_receiver
-      
+
       -- This thread is dispatched when an event is detected on the
       -- real hardware. It then calls receive to handle the incoming
       -- event.
@@ -81,7 +82,7 @@ public
    end Driver_GRSPW_Protocol_thread_receiver;
 
    thread implementation Driver_GRSPW_Protocol_thread_receiver.impl
-   calls 
+   calls
       call1 : { pspg : subprogram receive; };
    end Driver_GRSPW_Protocol_thread_receiver.impl;
 

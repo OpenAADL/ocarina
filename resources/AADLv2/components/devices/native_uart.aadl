@@ -5,19 +5,19 @@ package Native_UART
 -- integrated with the runtime low level interface.
 --
 -- To configure this interface, you should use the
--- Deployment::Configuration property with the following format: 
+-- Deployment::Configuration property with the following format:
 --     "serial DEVICE BAUDS DATA_BITS PARITY STOP_BIT"
 --
 -- e.g.
 --
 --     uart : device GRUART::GRUART_Device
 --            {Deployment::Configuration => "serial /dev/ttyS0 9600 8 N 1"
--- 
+--
 
 public
 
-   with Generic_Bus;
    with Deployment;
+   with Generic_Bus;
 
    ------------
    -- DEVICE --
@@ -29,14 +29,14 @@ public
 
    device Native_UART_Device
    features
-      DB9_Wire : requires bus access Generic_Bus::GenericBus.impl;
-      -- Connection to the remote node    
+      DB9_Wire : requires bus access Generic_Bus::Generic_Bus.impl;
+      -- Connection to the remote node
 
    end Native_UART_Device;
 
    device implementation Native_UART_Device.impl
    properties
-      Implemented_As => 
+      Implemented_As =>
          classifier (Native_UART::Driver_Native_UART_Protocol.impl);
       Initialize_Entrypoint => classifier (Native_UART::Initialize);
    end Native_UART_Device.impl;
@@ -50,6 +50,8 @@ public
 
    abstract Driver_Native_UART_Protocol
    properties
+      Deployment::Configuration_Type
+        => classifier (ocarina_drivers::configuration_type_serial);
       Deployment::Version  => "0.1beta";
       Deployment::Help     => "Write your ASN.1 configuration here";
    end Driver_Native_UART_Protocol;
@@ -57,6 +59,7 @@ public
    abstract implementation Driver_Native_UART_Protocol.impl
    subcomponents
       receiver : thread Driver_Native_UART_Protocol_thread_receiver.impl;
+      sender : subprogram Send;
    end Driver_Native_UART_Protocol.impl;
 
    -------------
@@ -68,7 +71,7 @@ public
    -- messages.
 
    thread Driver_Native_UART_Protocol_thread_receiver
-      
+
       -- This thread is dispatched when an event is detected on the
       -- real hardware. It then calls receive to handle the incoming
       -- event.
@@ -80,7 +83,7 @@ public
    end Driver_Native_UART_Protocol_thread_receiver;
 
    thread implementation Driver_Native_UART_Protocol_thread_receiver.impl
-   calls 
+   calls
       call1 : { pspg : subprogram receive; };
    end Driver_Native_UART_Protocol_thread_receiver.impl;
 

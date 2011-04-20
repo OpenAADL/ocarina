@@ -19,9 +19,9 @@ public
 
   processor LEON2
   features
-    spw_core_1 : requires bus access Generic_Bus::GenericBus.impl;
-    spw_core_2 : requires bus access Generic_Bus::GenericBus.impl;
-    spw_core_3 : requires bus access Generic_Bus::GenericBus.impl;
+    spw_core_1 : requires bus access Generic_Bus::Generic_Bus.impl;
+    spw_core_2 : requires bus access Generic_Bus::Generic_Bus.impl;
+    spw_core_3 : requires bus access Generic_Bus::Generic_Bus.impl;
     -- Three SpaceWire cores
 
     -- XXX Add UARTS
