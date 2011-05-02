@@ -54,6 +54,7 @@ public
    properties
       Deployment::Version  => "0.1beta";
       Deployment::Help     => "Write your ASN.1 configuration here";
+      Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_spacewire);
    end Driver_GRSPW_Protocol;
 
    abstract implementation Driver_GRSPW_Protocol.impl
