@@ -573,7 +573,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write_Name (Node_Name (N));
       Write (Tok_Colon);
 
-      if not Is_Empty (External_Events (N))then
+      if not Is_Empty (External_Events (N)) then
          Write_Eol;
          Write_Indentation (-1);
          Write (Tok_External_Events);
@@ -600,7 +600,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Decrement_Indentation;
       end if;
 
-      if not Is_Empty (Internal_Events (N))then
+      if not Is_Empty (Internal_Events (N)) then
          Write_Indentation (-1);
          Write (Tok_Internal_Events);
          Write_Space;
@@ -626,7 +626,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Decrement_Indentation;
       end if;
 
-      if not Is_Empty (Event_Handlers (N))then
+      if not Is_Empty (Event_Handlers (N)) then
          Write_Indentation (-1);
          Write (Tok_Event_Handlers);
          Write_Space;
