@@ -397,6 +397,17 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                   S := Next_Node (S);
                end loop;
 
+               N := Make_Element_Association
+                 (No_Node,
+                  Make_Record_Aggregate
+                  (Make_List_Id
+                   (Make_Subprogram_Call
+                    (RE (RE_To_HI_String),
+                     Make_List_Id (Make_Literal (New_String_Value (No_Name)))),
+                    Make_Literal (New_Integer_Value (0, 1, 10)),
+                    RE (RE_Null_Address))));
+               Append_Node_To_List (N, Naming_Table_List);
+
                --  Declare the Naming Table
 
                N := Message_Comment
