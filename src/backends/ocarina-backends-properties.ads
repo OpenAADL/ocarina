@@ -570,6 +570,7 @@ package Ocarina.Backends.Properties is
 
    type Supported_Execution_Platform is
      (Platform_Native,
+      Platform_Native_Compcert,
       Platform_LEON_RTEMS,
       Platform_X86_RTEMS,
       Platform_X86_LINUXTASTE,

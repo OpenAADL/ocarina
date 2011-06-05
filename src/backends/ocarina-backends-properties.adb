@@ -301,10 +301,11 @@ package body Ocarina.Backends.Properties is
    Size_Giga_Byte_Name : Name_Id;
    Size_Tera_Byte_Name : Name_Id;
 
-   Platform_Native_Name      : Name_Id;
-   Platform_LINUX32_Name     : Name_Id;
-   Platform_LINUX32_Xenomai_Native_Name : Name_Id;
-   Platform_LINUX32_Xenomai_Posix_Name : Name_Id;
+   Platform_Native_Name                   : Name_Id;
+   Platform_Native_Compcert_Name          : Name_Id;
+   Platform_LINUX32_Name                  : Name_Id;
+   Platform_LINUX32_Xenomai_Native_Name   : Name_Id;
+   Platform_LINUX32_Xenomai_Posix_Name    : Name_Id;
    Platform_LINUX64_Name         : Name_Id;
    Platform_LEON_RTEMS_Name      : Name_Id;
    Platform_X86_LINUXTASTE_Name  : Name_Id;
@@ -2609,6 +2610,8 @@ package body Ocarina.Backends.Properties is
 
          if P_Name = Platform_Native_Name then
             return Platform_Native;
+         elsif P_Name = Platform_Native_Compcert_Name then
+            return Platform_Native_Compcert;
          elsif P_Name = Platform_LEON_RTEMS_Name then
             return Platform_LEON_RTEMS;
          elsif P_Name = Platform_X86_LINUXTASTE_Name then
@@ -2644,7 +2647,6 @@ package body Ocarina.Backends.Properties is
          else
             Display_Located_Error
               (AIN.Loc (P), "Unknown execution platform", Fatal => True);
-
             return Platform_None;
          end if;
       else
@@ -3154,6 +3156,8 @@ package body Ocarina.Backends.Properties is
       Time_Hr_Name  := Get_String_Name ("hr");
 
       Platform_Native_Name      := Get_String_Name ("native");
+      Platform_Native_Compcert_Name
+                                := Get_String_Name ("native_compcert");
       Platform_X86_RTEMS_Name   := Get_String_Name ("x86_rtems");
       Platform_LINUX32_Name     := Get_String_Name ("linux32");
       Platform_LINUX32_Xenomai_Native_Name
