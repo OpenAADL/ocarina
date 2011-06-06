@@ -150,6 +150,7 @@ package body Ocarina.Builder.AADL.Components.Features is
       Is_Out            : Boolean;
       Is_Data           : Boolean;
       Is_Event          : Boolean;
+      Is_Feature        : Boolean;
       Is_Refinement     : Boolean  := False;
       Associated_Entity : Node_Id  := No_Node)
      return Node_Id
@@ -173,6 +174,8 @@ package body Ocarina.Builder.AADL.Components.Features is
       Set_Is_Out (Node, Is_Out);
       Set_Is_Data (Node, Is_Data);
       Set_Is_Event (Node, Is_Event);
+      Set_Is_Feature (Node, Is_Feature);
+
       Set_Entity_Ref (Node, Associated_Entity);
 
       --  We only create an inversed feature for in or out features

@@ -426,6 +426,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
     boolean  Is_Out;
     // FIXME: Replace the two flags above by a Mode_Id flag
 
+    boolean  Is_Feature;
     boolean  Is_Event; // FIXME: Rename to Is_Event_Port
     boolean  Is_Data;  // FIXME: Rename to Is_Data_Port
   };

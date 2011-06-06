@@ -193,6 +193,8 @@ package body Ocarina.Analyzer.AADL.Queries is
                   return PO_Event_Data_Port_Connections;
                when CT_Parameter =>
                   return PO_Parameter_Connections;
+               when CT_Feature =>
+                  return PO_Feature;
                when CT_Feature_Group =>
                   case AADL_Version is
                      when AADL_V1 =>

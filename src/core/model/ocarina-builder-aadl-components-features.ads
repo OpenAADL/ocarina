@@ -49,6 +49,7 @@ package Ocarina.Builder.AADL.Components.Features is
       Is_Out            : Boolean;
       Is_Data           : Boolean;
       Is_Event          : Boolean;
+      Is_Feature        : Boolean;
       Is_Refinement     : Boolean := False;
       Associated_Entity : Node_Id := No_Node)
      return Node_Id;

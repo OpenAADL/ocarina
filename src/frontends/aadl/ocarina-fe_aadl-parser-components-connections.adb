@@ -338,14 +338,15 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
                   Code := PC_Feature_Group_Connection;
                end if;
 
+               Save_Lexer (Loc);
                Scan_Token;
                if Token /= T_Group then
-                  DPE (Code, T_Group);
-                  Skip_Tokens (T_Semicolon);
-                  return No_Node;
+                  Category := CT_Feature;
+                  Restore_Lexer (Loc);
+               else
+                  Category := CT_Feature_Group;
                end if;
 
-               Category := CT_Feature_Group;
             else
                DPE (PC_Feature_Group_Connection, EMC_Not_Allowed_In_AADL_V1);
                Skip_Tokens (T_Semicolon);
@@ -535,6 +536,7 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
               | CT_Port_Connection
               | CT_Event_Data
               | CT_Event
+              | CT_Feature
               | CT_Feature_Group =>
                In_Modes := P_In_Modes (PC_In_Modes_And_Transitions);
 

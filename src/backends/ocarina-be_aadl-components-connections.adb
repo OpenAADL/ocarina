@@ -90,6 +90,8 @@ package body Ocarina.BE_AADL.Components.Connections is
             Print_Tokens ((T_Event, T_Port));
          when CT_Event_Data =>
             Print_Tokens ((T_Event, T_Data, T_Port));
+         when CT_Feature =>
+            Print_Token (T_Feature);
          when CT_Feature_Group =>
             case AADL_Version is
                when AADL_V1 =>

@@ -635,8 +635,7 @@ package body Ocarina.Instances.Properties is
 
    begin
       if No (Property_Value) then
-         --  If there is no property value defined, simply return
-         return Instantiated_Value;
+         return No_Node;
       end if;
 
       case ATN.Kind (Property_Value) is

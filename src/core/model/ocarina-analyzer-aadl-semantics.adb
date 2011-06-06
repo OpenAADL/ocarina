@@ -299,12 +299,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
            (Property, Entity_Of_Property);
       end if;
 
-      if Success then
-         return True;
-      else
+      if not Success then
          Display_Property_Not_Applicable (Property, Entity_Of_Property);
-         return False;
       end if;
+      return Success;
    end Check_Applies_To;
 
    ----------------------------------------------
@@ -699,6 +697,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
             Success := False;
 
          when CT_Port_Connection
+           | CT_Feature
            | CT_Access_Subprogram_Group
            | CT_Access_Virtual_Bus
            | CT_Access =>
@@ -1033,6 +1032,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
             Success := False;
 
          when CT_Port_Connection
+           | CT_Feature
            | CT_Access_Subprogram_Group
            | CT_Access_Virtual_Bus
            | CT_Access =>

@@ -158,10 +158,14 @@ package body Ocarina.BE_AADL.Components.Features is
          Write_Space;
       end if;
 
-      if Is_Data (Node) then
-         Print_Token (T_Data);
-         Write_Space;
-         Print_Token (T_Port);
+      if Is_Data (Node) or else Is_Feature (Node) then
+         if Is_Data (Node) then
+            Print_Token (T_Data);
+            Write_Space;
+            Print_Token (T_Port);
+         elsif Is_Feature (Node) then
+            Print_Token (T_Feature);
+         end if;
 
          if Present (Class_Ref) then
             Write_Space;

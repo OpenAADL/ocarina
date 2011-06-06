@@ -1569,6 +1569,7 @@ package body Ocarina.Transfo.Fusions is
                               Is_In (Src_Feat),
                               Is_Out (Src_Feat),
                               Is_Data (Src_Feat),
+                              Is_Feature (Src_Feat),
                               True);
                         else
 
@@ -1664,6 +1665,7 @@ package body Ocarina.Transfo.Fusions is
                               Is_In (Src_Feat),
                               Is_Out (Src_Feat),
                               Is_Data (Src_Feat),
+                              Is_Feature (Src_Feat),
                               True);
                         else
 
@@ -1748,6 +1750,7 @@ package body Ocarina.Transfo.Fusions is
                               Is_In (Dst_Feat),
                               Is_Out (Dst_Feat),
                               Is_Data (Dst_Feat),
+                              Is_Feature (Dst_Feat),
                               True);
                         else
 
@@ -1835,6 +1838,7 @@ package body Ocarina.Transfo.Fusions is
                               Is_In (Dst_Feat),
                               Is_Out (Dst_Feat),
                               Is_Data (Dst_Feat),
+                              Is_Feature (Dst_Feat),
                               True);
                         else
 

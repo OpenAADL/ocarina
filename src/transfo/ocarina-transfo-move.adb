@@ -642,6 +642,7 @@ package body Ocarina.Transfo.Move is
                                     Is_Out => Is_Out (Dst),
                                     Is_Data => Is_Data (Dst),
                                     Is_Event => Is_Event (Dst),
+                                    Is_Feature => Is_Feature (Dst),
                                     Is_Refinement => False,
                                     Associated_Entity => Data_E);
                                  if No (New_Port) then
@@ -862,6 +863,7 @@ package body Ocarina.Transfo.Move is
                                  Is_Out => False,
                                  Is_Data => Is_Data (Src_Port),
                                  Is_Event => Is_Event (Src_Port),
+                                 Is_Feature => Is_Feature (Src_Port),
                                  Is_Refinement => False,
                                  Associated_Entity => Data_E);
                               if No (Src_P) then
@@ -887,6 +889,7 @@ package body Ocarina.Transfo.Move is
                                  Is_Out => True,
                                  Is_Data => Is_Data (Src_Port),
                                  Is_Event => Is_Event (Src_Port),
+                                 Is_Feature => Is_Feature (Src_Port),
                                  Is_Refinement => False,
                                  Associated_Entity => Data_E);
                               if No (Dst_P) then
@@ -1328,6 +1331,7 @@ package body Ocarina.Transfo.Move is
                                     Is_Out => Is_Out (Src),
                                     Is_Data => Is_Data (Src),
                                     Is_Event => Is_Event (Src),
+                                    Is_Feature => Is_Feature (Src),
                                     Is_Refinement => False,
                                     Associated_Entity => Data_E);
                                  if No (New_Port) then
@@ -1519,7 +1523,7 @@ package body Ocarina.Transfo.Move is
                                 (Features
                                  (Corresponding_Entity
                                   (Component_Type_Identifier
-                                   (Src_Process_Impl))),
+                                     (Src_Process_Impl))),
                                  Src_Port_Name);
 
                               Src_P := Add_New_Port_Spec
@@ -1533,6 +1537,7 @@ package body Ocarina.Transfo.Move is
                                  Is_Out => True,
                                  Is_Data => Is_Data (Src_Port),
                                  Is_Event => Is_Event (Src_Port),
+                                 Is_Feature => Is_Feature (Src_Port),
                                  Is_Refinement => False,
                                  Associated_Entity => Data_E);
                               if No (Src_P) then
@@ -1559,6 +1564,7 @@ package body Ocarina.Transfo.Move is
                                  Is_Out => False,
                                  Is_Data => Is_Data (Src_Port),
                                  Is_Event => Is_Event (Src_Port),
+                                 Is_Feature => Is_Feature (Src_Port),
                                  Is_Refinement => False,
                                  Associated_Entity => Data_E);
                               if No (Dst_P) then

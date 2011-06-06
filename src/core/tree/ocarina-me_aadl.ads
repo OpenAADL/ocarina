@@ -88,6 +88,7 @@ package Ocarina.ME_AADL is
 
       --  AADL_V2
       CT_Access_Virtual_Bus,
+      CT_Feature,
       CT_Port_Connection,
       CT_Access_Subprogram_Group,
       CT_Access);

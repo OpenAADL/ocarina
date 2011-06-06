@@ -125,7 +125,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       end if;
 
       case Token is
-         when T_Data | T_Event =>
+         when T_Data | T_Event | T_Feature =>
             if Code = PC_Parameter or else Code = PC_Parameter_Refinement then
                DPE (Code, T_Parameter);
                Skip_Tokens (T_Semicolon);
@@ -273,6 +273,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       Port_Spec : Node_Id := No_Node;
       Is_Data   : Boolean := False;
       Is_Event  : Boolean := False;
+      Is_Feature : Boolean := False;
       Code      : Parsing_Code;
       OK        : Boolean;
       Loc       : Location;
@@ -293,21 +294,28 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          else
             Restore_Lexer (Loc);
          end if;
+
       elsif Token = T_Data then
          Is_Data := True;
+
+      elsif Token = T_Feature then
+         Is_Feature := True;
+
       else
          DPE (PC_Port_Type, ((T_Event, T_Data)));
          return No_Node;
       end if;
 
-      Scan_Token;
+      if not Is_Feature then
+         Scan_Token;
 
-      if Token /= T_Port then
-         DPE (PC_Port_Type, T_Port);
-         return No_Node;
+         if Token /= T_Port then
+            DPE (PC_Port_Type, T_Port);
+            return No_Node;
+         end if;
       end if;
 
-      if Is_Data then
+      if Is_Data or else Is_Feature then
          Save_Lexer (Loc);
          Scan_Token;
          if Token = T_Identifier then
@@ -331,6 +339,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          Is_Out => Is_Out,
          Is_Event => Is_Event,
          Is_Data => Is_Data,
+         Is_Feature => Is_Feature,
          Is_Refinement => Is_Refinement,
          Associated_Entity => Class_Ref);
 
@@ -682,6 +691,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       end if;
 
       Scan_Token;
+
       case Token is
          when T_In | T_Out =>
             Node := P_In_Out_Item (Container, Identifier, Is_Refinement, Code);
