@@ -178,6 +178,8 @@ package body Ocarina.Backends.Cheddar.Mapping is
            Get_String_Name ("POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL"),
          EARLIEST_DEADLINE_FIRST_PROTOCOL =>
            Get_String_Name ("EARLIEST_DEADLINE_FIRST_PROTOCOL"),
+         ROUND_ROBIN_PROTOCOL =>
+           Get_String_Name ("ROUND_ROBIN_PROTOCOL"),
          others => No_Name);
 
       Quantum : constant Time_Type := Get_Scheduler_Quantum (E);
