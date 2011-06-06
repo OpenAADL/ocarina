@@ -42,6 +42,8 @@ with Errors;  use Errors;
 with Ocarina.Backends.Build_Utils;
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.PN;
+
+with Ocarina.Backends.ARINC653_Conf;
 with Ocarina.Backends.PO_HI_Ada;
 with Ocarina.Backends.ASN1;
 with Ocarina.Backends.PO_HI_C;
@@ -177,6 +179,7 @@ package body Ocarina.Backends is
 
       --  Register the several code generators
 
+      Ocarina.Backends.ARINC653_Conf.Init;
       PN.Init;
       BoundT.Init;
       MAST.Init;

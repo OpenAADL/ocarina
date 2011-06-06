@@ -37,6 +37,7 @@ Usage:
    -real_theorem <theorem> Evaluate only theorem
    -g  Generate code from the AADL instance tree
        Registered backends:
+        arinc653_conf
         petri_nets
         boundt
         mast
