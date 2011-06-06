@@ -68,7 +68,8 @@ package body Ocarina.FE_REAL is
    procedure Usage is
    begin
       Write_Line ("   -real_lib Add a REAL file to be used as a theorem "&
-                  "libraries by REAL annexes");
+                  "library by REAL annexes");
+      Write_Line ("   -real_theorem <theorem> Evaluate only theorem");
    end Usage;
 
 end Ocarina.FE_REAL;

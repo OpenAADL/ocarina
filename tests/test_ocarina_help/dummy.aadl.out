@@ -33,7 +33,8 @@ Usage:
    -I  Specify the inclusion paths
    -aadlv1  Use AADL v1 standard (default)
    -aadlv2  Use AADL v2 standard
-   -real_lib Add a REAL file to be used as a theorem libraries by REAL annexes
+   -real_lib Add a REAL file to be used as a theorem library by REAL annexes
+   -real_theorem <theorem> Evaluate only theorem
    -g  Generate code from the AADL instance tree
        Registered backends:
         petri_nets

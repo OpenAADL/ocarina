@@ -1,6 +1,6 @@
 lib.real:12:17: warning: Unable to determine actualy returned type.
 lib.real:19:24: warning: Unable to determine actualy returned type.
-lib.real:33:03: warning: Returned boolean value will be casted to a float at runtime
+lib.real:33:03: warning: Returned integer value will be cast to a float at runtime
 test_env_subtheorem_call_no_parameter execution
    Evaluating x
    value for x after evaluating sub_theorem_1 is 2.00000E+00

@@ -47,10 +47,12 @@ with Ocarina.Analyzer.REAL;
 with Namet;
 
 package body Ocarina.FE_REAL.Parser is
+
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Ocarina.ME_REAL.REAL_Tree.Utils;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.ME_REAL.Tokens;
+   use Ocarina.Analyzer.Real;
    use Ocarina.Builder.REAL;
    use Ocarina.FE_REAL.Lexer;
    use Ocarina.FE_REAL.Parser_Errors;
@@ -1934,7 +1936,7 @@ package body Ocarina.FE_REAL.Parser is
 
       Initialize_Option_Scan;
       loop
-         C := Getopt ("* real_lib:");
+         C := Getopt ("* real_lib: real_theorem:");
          case C is
             when ASCII.NUL =>
                exit;
@@ -1942,6 +1944,10 @@ package body Ocarina.FE_REAL.Parser is
             when 'r' =>
                if Full_Switch = "real_lib" then
                   REAL_Libs.Append (Get_String_Name (Parameter));
+               end if;
+
+               if Full_Switch = "real_theorem" then
+                  Main_Theorem := Get_String_Name (Parameter);
                end if;
 
             when others =>
@@ -1957,7 +1963,6 @@ package body Ocarina.FE_REAL.Parser is
 
       for J in REAL_Libs.First .. REAL_Libs.Last loop
          declare
-            use Ocarina.Analyzer.REAL;
             use Ocarina.Files;
 
             Buffer            : Location;

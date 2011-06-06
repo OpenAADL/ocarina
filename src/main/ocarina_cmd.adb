@@ -1038,8 +1038,9 @@ procedure Ocarina_Cmd is
       Initialize_Option_Scan;
       loop
          case Getopt ("* aadlv1 aadlv2 help o: c d g: "
-                      & "r: real_lib: boundt_process: disable-annexes=: "
-                      & "i p q v V s x t?") is
+                        & "r: real_lib: real_theorem: boundt_process: "
+                        & "disable-annexes=: "
+                        & "i p q v V s x t?") is
             when 'a' =>
                if Full_Switch = "aadlv2" then
                   AADL_Version := AADL_V2;

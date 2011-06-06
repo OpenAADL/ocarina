@@ -315,6 +315,7 @@ package body Ocarina.Backends.REAL is
          if Success then
             Success := Manage_Check_Expression (R);
          end if;
+
          exit when not Success;
       end loop;
 

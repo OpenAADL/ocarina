@@ -107,7 +107,6 @@ package body Ocarina.Analyzer.REAL is
    procedure Analyze_Subtheorem_Parameters
      (E : Node_Id; Success : out Boolean);
    --  Analyze subtheorem parameters
-   --  pragma Unreferenced (Analyze_Subtheorem_Parameters);
 
    function Find_Variable (E : Name_Id) return Node_Id;
    --  returns a variable, searched by name from both used_var list
@@ -143,8 +142,7 @@ package body Ocarina.Analyzer.REAL is
    -- Register_Library_Theorems --
    -------------------------------
 
-   procedure Register_Library_Theorems (REAL_Library : Node_Id)
-   is
+   procedure Register_Library_Theorems (REAL_Library : Node_Id) is
       pragma Assert (Kind (REAL_Library) = K_Root_Node);
       package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;
 
@@ -168,37 +166,56 @@ package body Ocarina.Analyzer.REAL is
    -- Build_Theorem_List --
    ------------------------
 
-   procedure Build_Theorem_List (AADL_Root : Node_Id)
-   is
+   procedure Build_Theorem_List (AADL_Root : Node_Id) is
       NL : RNU.Node_List.Instance;
       N  : Node;
       A  : Node_Id;
       T  : Node_Id;
       It : Natural := RNU.Node_List.First;
    begin
-      NL := Get_REAL_Annexes_List (AADL_Root);
-      while It <= RNU.Node_List.Last (NL) loop
-         A := ATN.Corresponding_Annex (NL.Table (It).Node);
+      if Main_Theorem = No_Name then
+         --  We walk through all annex clauses to build the list of
+         --  theorems to be checked.
 
-         T := First_Node (Theorems (A));
-         while Present (T) loop
-            N.Node := T;
+         NL := Get_REAL_Annexes_List (AADL_Root);
+         while It <= RNU.Node_List.Last (NL) loop
+            A := ATN.Corresponding_Annex (NL.Table (It).Node);
 
-            --  Set link to the container AADL component for each
-            --  theorem in the annex
+            T := First_Node (Theorems (A));
+            while Present (T) loop
+               N.Node := T;
 
-            Set_Related_Entity
-              (N.Node, ATN.Container_Component (NL.Table (It).Node));
+               --  Set link to the container AADL component for each
+               --  theorem in the annex
 
-            --  Append to the list of theorems to be runned
+               Set_Related_Entity
+                 (N.Node, ATN.Container_Component (NL.Table (It).Node));
 
-            RNU.Node_List.Append (To_Run_Theorem_List, N);
+               --  Append to the list of theorems to be run
 
-            T := Next_Node (T);
+               RNU.Node_List.Append (To_Run_Theorem_List, N);
+
+               T := Next_Node (T);
+            end loop;
+
+            It := It + 1;
          end loop;
 
-         It := It + 1;
-      end loop;
+      else
+         for J in RNU.Node_List.First ..
+           RNU.Node_List.Last (Library_Theorems) loop
+            A := Library_Theorems.Table (J).Node;
+
+            if Main_Theorem = Name (Identifier (A)) then
+               N.Node := A;
+               Set_Related_Entity (N.Node, AADL_Root);
+
+               --  Append to the list of theorems to be run
+
+               RNU.Node_List.Append (To_Run_Theorem_List, N);
+            end if;
+         end loop;
+      end if;
    end Build_Theorem_List;
 
    -------------------
@@ -252,8 +269,7 @@ package body Ocarina.Analyzer.REAL is
 
          --  Analyze step
 
-         Ocarina.Analyzer.REAL.Analyze_Theorem
-           (RNU.REAL_Root, Root, Success);
+         Ocarina.Analyzer.REAL.Analyze_Theorem (RNU.REAL_Root, Root, Success);
          if not Success then
             Display_Analyzer_Error
               (RN.Related_Entity (Node),
@@ -267,18 +283,18 @@ package body Ocarina.Analyzer.REAL is
       --  For non-used library theorems, we still analyze them,
       --  since they can be called directly through the API
 
-      for I in RNU.Node_List.First ..
-        RNU.Node_List.Last (Library_Theorems) loop
-         Node := Library_Theorems.Table (I).Node;
+      --  for J in RNU.Node_List.First ..
+      --    RNU.Node_List.Last (Library_Theorems) loop
+      --     Node := Library_Theorems.Table (J).Node;
 
-         RNU.REAL_Root := Node;
+      --     RNU.REAL_Root := Node;
 
-         if not Analyze_Sub_Theorem (RNU.REAL_Root) then
-            Display_Analyzer_Error
-              (Root, "could not proceed to theorem analysis");
-            return False;
-         end if;
-      end loop;
+      --     if not Analyze_Sub_Theorem (RNU.REAL_Root) then
+      --        Display_Analyzer_Error
+      --          (Root, "could not proceed to theorem analysis");
+      --        return False;
+      --     end if;
+      --  end loop;
 
       return True;
    end Analyze_Model;
@@ -379,8 +395,9 @@ package body Ocarina.Analyzer.REAL is
    begin
       Analyze_Verification_Expression (Check_Expression (R), Success);
       if Success and then
-        Returned_Type (Check_Expression (R)) /= RT_Boolean and then
-        Returned_Type (Check_Expression (R)) /= RT_Unknown then
+        Returned_Type (Check_Expression (R)) /= RT_Boolean
+        and then Returned_Type (Check_Expression (R)) /= RT_Unknown
+      then
          Display_Analyzer_Error
            (No_Node,
             "Top-level check expression must be a boolean value",
@@ -454,12 +471,12 @@ package body Ocarina.Analyzer.REAL is
 
             when RT_Integer =>
                Error_Loc (1) := Loc (Return_Expression (R));
-               DW ("Returned boolean value will be casted to a float "
+               DW ("Returned integer value will be cast to a float "
                    & "at runtime");
 
             when RT_Boolean =>
                Error_Loc (1) := Loc (Return_Expression (R));
-               DW ("Returned boolean value will be casted to a float "
+               DW ("Returned boolean value will be cast to a float "
                    & "at runtime");
 
             when others =>
@@ -476,8 +493,7 @@ package body Ocarina.Analyzer.REAL is
    -- Analyze_Sub_Theorem --
    -------------------------
 
-   function Analyze_Sub_Theorem (R : Node_Id) return Boolean
-   is
+   function Analyze_Sub_Theorem (R : Node_Id) return Boolean is
       use Ocarina.REAL_Expander;
 
       pragma Assert (Kind (R) = K_Theorem);
@@ -778,7 +794,7 @@ package body Ocarina.Analyzer.REAL is
                   Append_Node_To_List (P, True_params (E));
                else
                   Display_Analyzer_Error
-                    (No_Node, "could not found variable " &
+                    (No_Node, "could not find variable " &
                      Get_Name_String (To_Lower (Name (N))),
                      Loc => Loc (N));
                   Success := False;
@@ -795,7 +811,6 @@ package body Ocarina.Analyzer.REAL is
 
          N := Next_Node (N);
       end loop;
-
    end Analyze_Subtheorem_Parameters;
 
    -------------------------------------
@@ -818,8 +833,8 @@ package body Ocarina.Analyzer.REAL is
       Part_Unknown : Boolean;
    begin
       Success := True;
-      case Kind (E) is
 
+      case Kind (E) is
          when K_Var_Reference =>  --  Found a variable
             declare
                N : Node_Id;
@@ -834,7 +849,7 @@ package body Ocarina.Analyzer.REAL is
                     (To_Lower (Name (E)), Local_Var (Real_Root));
                   if No (N) then
                      Display_Analyzer_Error
-                       (No_Node, "could not found variable " &
+                       (No_Node, "could not find variable " &
                         Get_Name_String (To_Lower (Name (E))),
                         Loc => Loc (E));
                      Success := False;
@@ -888,6 +903,7 @@ package body Ocarina.Analyzer.REAL is
             if Success then
                Analyze_Verification_Expression (Right_Expr (E), Success);
             end if;
+
             if Success then
                Analyze_Verification_Expression (Third_Expr (E), Success);
             end if;
@@ -914,13 +930,13 @@ package body Ocarina.Analyzer.REAL is
             end if;
 
          when K_Check_Expression =>
-            if Present (Left_Expr (E)) and then
-              Present (Right_Expr (E))
-            then
+            if Present (Left_Expr (E)) and then Present (Right_Expr (E)) then
                Analyze_Verification_Expression (Left_Expr (E), Success);
+
                if Success then
                   Analyze_Verification_Expression (Right_Expr (E), Success);
                end if;
+
                if not Success then
                   return;
                end if;
@@ -929,7 +945,6 @@ package body Ocarina.Analyzer.REAL is
                Part_Unknown := (T1 = RT_Unknown or else T2 = RT_Unknown);
 
                case Operator (E) is
-
                   when OV_And | OV_Or =>
                      if not Part_Unknown then
                         if T1 /= RT_Boolean or else
@@ -985,7 +1000,8 @@ package body Ocarina.Analyzer.REAL is
                             and then T2 /= RT_Integer)
                           or else
                           (T1 /= RT_Float
-                           and then T1 /= RT_Integer) then
+                             and then T1 /= RT_Integer)
+                        then
                            Display_Analyzer_Error
                              (No_Node, "Inconsistent types in expression "
                               & "<comparator>", Loc => Loc (E));
@@ -1211,8 +1227,9 @@ package body Ocarina.Analyzer.REAL is
                            Append_Node_To_List (M, True_parameters (S));
                            Found := True;
                         else
-                           if Present (D) and then
-                             Var_Type (D) = RT_Unknown then
+                           if Present (D)
+                             and then Var_Type (D) = RT_Unknown
+                           then
                               DW (Get_Name_String (Name (N)) &
                                   " variable cannot be typed.");
                               Ignore := True;
@@ -1249,8 +1266,9 @@ package body Ocarina.Analyzer.REAL is
                               Append_Node_To_List (M, True_parameters (S));
                               Found := True;
                            else
-                              if Present (D) and then
-                                Var_Type (D) = RT_Unknown then
+                              if Present (D)
+                                and then Var_Type (D) = RT_Unknown
+                              then
                                  DW (Get_Name_String (Name (N)) &
                                      " variable cannot be typed.");
                                  Ignore := True;
@@ -1514,7 +1532,8 @@ package body Ocarina.Analyzer.REAL is
                            Set_Returned_Type (S, RT_Element_List);
                         when others =>
                            Display_Analyzer_Error
-                             (No_Node, "Could not resolve list type ",
+                             (No_Node, "Could not resolve list type "
+                                & Value_Id (T)'Img,
                               Loc => Loc (N));
                            Success := False;
                            return;
@@ -2284,15 +2303,22 @@ package body Ocarina.Analyzer.REAL is
                         if not Success then
                            return;
                         end if;
+
                         if Returned_Type (N) /= RT_Int_List
                           and then Returned_Type (N) /= RT_Float_List
                           and then Returned_Type (N) /= RT_String_List
                           and then Returned_Type (N) /= RT_Element_List
                           and then Returned_Type (N) /= RT_Bool_List
-                          and then Nb_Params = 1 then
+                          and then Nb_Params = 1
+                        then
+                           if Returned_Type (N) = RT_Unknown then
+                              Success := True;
+                              return;
+                           end if;
+
                            Display_Analyzer_Error
                              (No_Node,
-                              "expected a list return expression",
+                              "expected a list return expression ",
                               Loc => Loc (N));
                            Success := False;
                            return;
@@ -2378,7 +2404,13 @@ package body Ocarina.Analyzer.REAL is
                   end case;
 
                   if Returned_Type (N) /= RT_Int_List
-                    and then Returned_Type (N) /= RT_Float_List then
+                    and then Returned_Type (N) /= RT_Float_List
+                  then
+                     if Returned_Type (N) = RT_Unknown then
+                        Success := True;
+                        return;
+                     end if;
+
                      Display_Analyzer_Error
                        (No_Node,
                         "expected a numeric list return expression",
@@ -2403,9 +2435,14 @@ package body Ocarina.Analyzer.REAL is
                      if not Success then
                         return;
                      end if;
-                     if Returned_Type (N) /= RT_Int_List and then
-                       Returned_Type (N) /= RT_Float_List
+                     if Returned_Type (N) /= RT_Int_List
+                       and then Returned_Type (N) /= RT_Float_List
                      then
+                        if Returned_Type (N) = RT_Unknown then
+                           Success := True;
+                           return;
+                        end if;
+
                         Display_Analyzer_Error
                           (No_Node,
                            "expected a numeric list return expression",
@@ -2416,7 +2453,8 @@ package body Ocarina.Analyzer.REAL is
 
                   when others =>
                      Display_Analyzer_Error
-                       (No_Node, "expected a numeric list return expression",
+                       (No_Node,
+                        "expected a numeric list return expression",
                         Loc => Loc (N));
                      Success := False;
                      return;
@@ -2516,30 +2554,52 @@ package body Ocarina.Analyzer.REAL is
 
       Packages            : Node_Id := ATN.First_Node
         (ATN.Declarations (AADL_Tree));
+      Fully_Qualified_Property_Name : Name_Id;
       Property_Name       : Name_Id;
       List                : Boolean;
       Property_Designator : Node_Id;
       --  Stands for property type designator, actually the property
-      --  type, yet does not said wheither it is a list or not.
-   begin
+      --  type, yet does not say wheither it is a list or not.
 
+   begin
       Success := True;
       Set_Str_To_Name_Buffer
         (Ocarina.REAL_Values.Image (RN.Value (E), False));
-      Property_Name := Remove_Prefix (Name_Find);
+      Fully_Qualified_Property_Name := Name_Find;
+      Property_Name := Remove_Prefix (Fully_Qualified_Property_Name);
 
       while Present (Packages) loop
          if ATN.Kind (Packages) = ATN.K_Property_Set then
             declare
                Decl : Node_Id := ATN.First_Node (ATN.Declarations (Packages));
+               Good_Package : Boolean;
             begin
                while Present (Decl) loop
-
                   if ATN.Kind (Decl) =
                     ATN.K_Property_Definition_Declaration then
 
-                     if Property_Name = ATN.Name (ATN.Identifier (Decl)) then
+                     declare
+                        Package_S : constant String :=
+                          Get_Name_String
+                          (ATN.Name (ATN.Identifier (Packages)));
+                        Package_Length : constant Natural
+                          := Package_S'Length;
+                        FQN_S : constant String :=
+                          Get_Name_String (Fully_Qualified_Property_Name);
+                        Property_Name_Length : constant Natural
+                          := Get_Name_String (Property_Name)'Length;
+                     begin
+                        Good_Package :=
+                          (Package_Length
+                             = FQN_S'Length - Property_Name_Length - 2
+                             and then FQN_S (1 .. Package_Length) = Package_S)
+                          or else Property_Name
+                          = Fully_Qualified_Property_Name;
+                     end;
 
+                     if Property_Name = ATN.Name (ATN.Identifier (Decl))
+                       and then Good_Package
+                     then
                         Property_Designator := Expanded_Type_Designator
                           (Property_Name_Type (Decl));
                         if No (Property_Designator) then
@@ -2549,7 +2609,6 @@ package body Ocarina.Analyzer.REAL is
                         List := Is_List (Property_Name_Type (Decl));
 
                         case ATN.Kind (Property_Designator) is
-
                            when K_Integer_Type =>
                               if List then
                                  Result :=  RT_Int_List;
@@ -2679,9 +2738,8 @@ package body Ocarina.Analyzer.REAL is
          Packages := ATN.Next_Node (Packages);
       end loop;
 
-      Display_Analyzer_Error
-        (No_Node, "could not resolve property type", Loc => RN.Loc (E));
-      Success := False;
+      Result := RT_Unknown;
+      Success := True; -- Here, we return true to avoid false positive
       return;
    end Get_Property_Type;
 
@@ -2689,9 +2747,9 @@ package body Ocarina.Analyzer.REAL is
    -- Find_Variable --
    -------------------
 
-   function Find_Variable (E : Name_Id) return Node_Id
-   is
+   function Find_Variable (E : Name_Id) return Node_Id is
       D : Node_Id := Find_Node_By_Name (To_Lower (E), Used_Var (Real_Root));
+
    begin
       if No (D) then
          D := Find_Global_Variable (To_Lower (E));

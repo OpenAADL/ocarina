@@ -57,4 +57,8 @@ package Ocarina.Analyzer.REAL is
    --  the library theorem list (ie. REAL theorems that must *not*
    --  be called directly).
 
+   Main_Theorem : Name_Id := No_Name;
+   --  Name of the main theorem to be evaluated, by default evaluate
+   --  all theorems.
+
 end Ocarina.Analyzer.REAL;
