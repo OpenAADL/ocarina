@@ -43,6 +43,10 @@ with GNAT.Dynamic_Tables;
 with Namet;
 
 package body Ocarina.REAL_Expander.Flow_Analysis is
+   use Namet;
+   use Ocarina.ME_AADL.AADL_Instances.Entities;
+   use Ocarina.ME_AADL;
+   use Ocarina.Instances.Queries;
 
    type Flow_Element is record
       Node : Node_Id;
@@ -75,17 +79,17 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
 
    procedure Build_Flows (Branch : List_Id; E : Node_Id);
    --  From a node E, explore the following flow
-   --  * Whenever it find a cycle or a sink, remove Branch from
-   --    the global Flow_List, and ad it to End_To_End_Flows
-   --  * Whenever it find a separation, create a copy of the branch
+   --  * Whenever it finds a cycle or a sink, remove Branch from
+   --    the global Flow_List, and add it to End_To_End_Flows
+   --  * Whenever it finds a separation, create a copy of the branch
    --    and add it to the global Flow_List
 
    function Detect_Cycle (Branch : List_Id; E : Node_Id) return Boolean;
    --  Return true whenever E is already present in Branch
 
-   function Bounded_Bus (Src : Node_Id; Dst : Node_Id) return Node_Id;
-   --  Return a bus if one is binded to the connection defined by
-   --  Src -> Dst, return no_node otherwise.
+   function Bound_Bus (Src : Node_Id; Dst : Node_Id) return Node_Id;
+   --  Return a bus if one is bound to the connection defined by
+   --  Src -> Dst, return No_Node otherwise.
 
    -------------------
    -- Explore_Flows --
@@ -94,8 +98,6 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
    procedure Explore_Flows is
       use AIN;
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
-      use Ocarina.ME_AADL.AADL_Instances.Entities;
-      use Ocarina.ME_AADL;
 
       C                  : Node_Id;
       L                  : List_Id;
@@ -117,14 +119,14 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
       --  * add data access
 
       for N in 1 .. Entries.Last loop
-         if Kind (N) = K_Component_Instance and then
-           Get_Category_Of_Component (N) = CC_Thread then
+         if Kind (N) = K_Component_Instance
+           and then Get_Category_Of_Component (N) = CC_Thread
+         then
             declare
                F             : Node_Id;
                Found_Input   : Boolean := False;
                Temp_Flow_Src : Flow_List.Instance;
             begin
-
                Flow_List.Init (Temp_Flow_Src);
 
                if not Is_Empty (Features (N)) then
@@ -212,14 +214,11 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
    procedure Build_Flows (Branch : List_Id; E : Node_Id) is
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
-      use Ocarina.ME_AADL.AADL_Instances.Entities;
-      use Ocarina.ME_AADL;
       use Flow;
 
-      pragma Assert (Kind (Corresponding_Entity (E)) =
-                     K_Port_Spec_Instance or else
-                     Kind (Corresponding_Entity (E)) =
-                     K_Parameter_Instance);
+      pragma Assert
+        (Kind (Corresponding_Entity (E)) = K_Port_Spec_Instance
+           or else Kind (Corresponding_Entity (E)) = K_Parameter_Instance);
 
       Successors : Flow_List.Instance;
       S          : Node_Id;
@@ -387,14 +386,13 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
       --  We continue the exploration
 
       if NB_Output = 1 then
+         --  Check if the connection from E to S is bound to a bus
 
-         --  Check if the connection from E to S is bound to
-         --  a bus
-
-         if Kind (Successors.Table (First).Node) = K_Port_Spec_Instance then
-
-            Bus := Bounded_Bus (Corresponding_Entity (E),
-                                Corresponding_Entity
+         if Kind (Corresponding_Entity (Successors.Table (First).Node))
+           = K_Port_Spec_Instance
+         then
+            Bus := Bound_Bus (Corresponding_Entity (E),
+                              Corresponding_Entity
                                 (Successors.Table (First).Node));
             if Present (Bus) then
                Id := Make_Identifier
@@ -437,13 +435,12 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
             SF.List := TFL;
             Append (Flow_Lists, SF);
 
-            --  Check if the connection from E to S is bound to
-            --  a bus
+            --  Check if the connection from E to S is bound to a bus
 
             if Kind (Successors.Table (I).Node) = K_Port_Spec_Instance then
 
-               Bus := Bounded_Bus (Corresponding_Entity (E),
-                                   Corresponding_Entity
+               Bus := Bound_Bus (Corresponding_Entity (E),
+                                 Corresponding_Entity
                                    (Successors.Table (I).Node));
                if Present (Bus) then
                   Id := Make_Identifier
@@ -472,6 +469,7 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
 
       R : constant Node_Id := Root_System (Instance);
       P : Node_Id;
+
    begin
       if ATNU.Is_Empty (Flows (R)) then
          Set_Flows (R, ATNU.New_List (ATN.K_List_Id, No_Location));
@@ -501,6 +499,7 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
       R : Node_Id;
+
    begin
       if Present (Instance) then
          R := Root_System (Instance);
@@ -514,13 +513,13 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
    -- Detect_Cycle --
    ------------------
 
-   function Detect_Cycle (Branch : List_Id; E : Node_Id) return Boolean
-   is
+   function Detect_Cycle (Branch : List_Id; E : Node_Id) return Boolean is
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
       use Flow;
 
       N : Node_Id := First_Node (Branch);
+
    begin
       while Present (N) loop
          if Corresponding_Entity (N) = E then
@@ -533,40 +532,64 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
    end Detect_Cycle;
 
    -----------------
-   -- Bounded_Bus --
+   -- Bound_Bus --
    -----------------
 
-   function Bounded_Bus (Src : Node_Id; Dst : Node_Id) return Node_Id
-   is
+   function Bound_Bus (Src : Node_Id; Dst : Node_Id) return Node_Id is
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
-      use Ocarina.Instances.Queries;
-      use Namet;
+      --      use Namet;
 
       Owner : Node_Id;
       S     : Node_Id;
       Str   : constant Name_Id := Get_String_Name
         ("actual_connection_binding");
+      Src_Process : Node_Id;
+      Dst_Process : Node_Id;
+
    begin
-      if Kind (Src) /= K_Port_Spec_Instance or else
-        Kind (Dst) /= K_Port_Spec_Instance then
+      if Kind (Src) /= K_Port_Spec_Instance
+        or else Kind (Dst) /= K_Port_Spec_Instance
+      then
          return No_Node;
       end if;
 
-      Owner := Parent_Subcomponent
-        (Parent_Component (Corresponding_Instance (Src)));
+      if Get_Category_Of_Component (Parent_Component (Src)) /= CC_Process
+        or else
+        Get_Category_Of_Component (Parent_Component (Dst)) /= CC_Process
+      then
+         --  A bus can only be bound to an inter-process connection
+         return No_Node;
+      end if;
+
+      Src_Process := Parent_Subcomponent (Parent_Component (Src));
+      Dst_Process := Parent_Subcomponent (Parent_Component (Dst));
+
+      Owner := Parent_Component (Parent_Subcomponent (Parent_Component (Src)));
 
       if not Is_Empty (Connections (Owner)) then
          S := First_Node (Connections (Owner));
          while Present (S) loop
-            if Corresponding_Entity (Source (S)) = Src and then
-              Corresponding_Entity (Destination (S)) = Dst then
-               return Get_Reference_Property (S, Str);
+            if Kind (S) = K_Connection_Instance
+              and then Is_Defined_Property (S, Str)
+            then
+               if Item (First_Node (Path (Source (S)))) = Src_Process
+                 and then Item (Next_Node (First_Node (Path (Source (S)))))
+                 = Src
+                 and then Item (First_Node (Path (Destination (S))))
+                 = Dst_Process
+                 and then Item
+                 (Next_Node (First_Node (Path (Destination (S))))) = Dst
+               then
+                  return Get_Reference_Property (S, Str);
+               end if;
             end if;
+
             S := Next_Node (S);
          end loop;
       end if;
+
       return No_Node;
-   end Bounded_Bus;
+   end Bound_Bus;
 
 end Ocarina.REAL_Expander.Flow_Analysis;
