@@ -284,6 +284,7 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    begin
       if Kind (Entity_Ref) = K_Reference_Term then
          return Entity (Reference_Term (Entity_Ref));
+
       elsif Present (Entity (Entity_Ref))
         and then Kind (Entity (Entity_Ref)) = K_Subprogram_Spec
         and then Present (Ocarina.Me_AADL.AADL_Tree.Nodes.Entity_Ref

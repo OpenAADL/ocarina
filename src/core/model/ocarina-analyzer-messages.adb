@@ -511,7 +511,8 @@ package body Ocarina.Analyzer.Messages is
             Write_Str (", which is not of an adequate kind");
          end if;
       else
-         Write_Str (" does not point to anything or to something unreachable");
+         Write_Str
+           (" does not point to anything or to something unreachable");
       end if;
 
       Write_Eol;

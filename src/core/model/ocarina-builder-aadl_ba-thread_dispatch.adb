@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--               Copyright (C) 2009-2011, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -50,11 +50,13 @@ package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
       Frozen_Port_List : List_Id)
      return Node_Id
    is
-      pragma Assert (No (Container)
+      pragma Assert (False
+                       or else No (Container)
                        or else Kind (Container) = K_Behavior_Condition);
 
-      Dispatch_Condition : constant Node_Id := New_Node (K_Dispatch_Condition,
-                                                         Loc);
+      Dispatch_Condition : constant Node_Id
+        := New_Node (K_Dispatch_Condition, Loc);
+
    begin
       Add_New_Dispatch_Condition (Dispatch_Condition,
                                   Container,
@@ -66,12 +68,7 @@ package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
       end if;
 
       return Dispatch_Condition;
-
    end Add_New_Dispatch_Condition;
-
-   --------------------------------
-   -- Add_New_Dispatch_Condition --
-   --------------------------------
 
    procedure Add_New_Dispatch_Condition
      (Dispatch_Condition : Node_Id;
@@ -93,7 +90,6 @@ package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
       if not Is_Empty (Frozen_Port_List) then
          Set_Frozen_Ports (Dispatch_Condition, Frozen_Port_List);
       end if;
-
    end Add_New_Dispatch_Condition;
 
    ------------------------------

@@ -1252,7 +1252,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             O := First_Node (Subcomponents (E));
 
             while Present (O) loop
-
                if AINU.Is_Data (Corresponding_Instance (O)) then
                   N := Make_Object_Declaration
                     (Defining_Identifier => Map_Ada_Defining_Identifier (O),

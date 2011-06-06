@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--               Copyright (C) 2009-2011, GET-Telecom Paris.                --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -99,6 +99,7 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
    -------------------------------
    -- Add_New_Behavior_Variable --
    -------------------------------
+
    function Add_New_Behavior_Variable
      (Loc          : Location;
       Container    : Node_Id;

@@ -926,7 +926,6 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
       else
          return Behavior_Time;
       end if;
-
    end P_Behavior_Time;
 
 end Ocarina.FE_AADL_BA.Parser.Expressions;
