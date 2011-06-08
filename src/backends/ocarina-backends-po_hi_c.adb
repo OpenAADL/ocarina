@@ -160,6 +160,9 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_Native_Compcert =>
             Write_Str ("compcert");
 
+         when Platform_Bench =>
+            Write_Str ("bench");
+
          when Platform_LEON_RTEMS =>
             Write_Str ("leon.rtems");
 

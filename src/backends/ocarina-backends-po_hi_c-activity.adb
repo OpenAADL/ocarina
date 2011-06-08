@@ -967,7 +967,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
                CTU.Handle_Call_Sequence
                  (S, Call_Seq, Declarations, WStatements);
-               CTU.Simulate_WCET (E, WStatements);
+               CTU.Simulate_WCET (E, Declarations, WStatements);
             else
                N := Message_Comment ("not implemented yet");
                Append_Node_To_List (N, WStatements);

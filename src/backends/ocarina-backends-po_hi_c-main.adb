@@ -71,8 +71,9 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
    package body Source_File is
 
-      Main_Function  : Node_Id;
-      Current_Device : Node_Id := No_Node;
+      Main_Function              : Node_Id;
+      Current_Device             : Node_Id := No_Node;
+      Period_Variable_Declared   : Boolean := False;
 
       procedure Visit_Architecture_Instance (E : Node_Id);
       procedure Visit_Component_Instance (E : Node_Id);
@@ -114,15 +115,32 @@ package body Ocarina.Backends.PO_HI_C.Main is
          --  Add the period of the task to the parameters list. We use
          --  the fact that an aperiodic thread is sporadic, with
          --  period of 0.
+         if Period_Variable_Declared = False then
+            N := Make_Variable_Declaration
+            (Make_Defining_Identifier
+               (Get_String_Name ("period")),
+               RE (RE_Time_T));
+            Append_Node_To_List (N, CTN.Declarations (Main_Function));
+
+            Period_Variable_Declared := True;
+         end if;
 
          if Get_Thread_Dispatch_Protocol (E) /= Thread_Aperiodic
            and then Get_Thread_Dispatch_Protocol (E) /= Thread_Background
          then
-            N := Map_Time (Get_Thread_Period (E));
+            N := Map_Time (Get_Thread_Period (E), Get_String_Name ("period"));
+
          else
-            N := Make_Literal (New_Int_Value (0, 1, 10));
+            N := Map_Time ((0, Second), Get_String_Name ("period"));
          end if;
-         Append_Node_To_List (N, Parameters);
+
+         Append_Node_To_List
+            (Make_Variable_Address
+               (Make_Defining_Identifier
+                  (Get_String_Name ("period"))),
+            Parameters);
+
+         Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          --  Add the priority of the task in the parameters list. If
          --  the task does not have any priority, we use the macro
@@ -256,6 +274,8 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          Set_Main_Source;
          Ada_Initialized := False;
+
+         Period_Variable_Declared := False;
 
          Add_Include (E => RH (RH_Activity));
 

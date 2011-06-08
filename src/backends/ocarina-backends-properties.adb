@@ -302,6 +302,7 @@ package body Ocarina.Backends.Properties is
    Size_Tera_Byte_Name : Name_Id;
 
    Platform_Native_Name                   : Name_Id;
+   Platform_Bench_Name                    : Name_Id;
    Platform_Native_Compcert_Name          : Name_Id;
    Platform_LINUX32_Name                  : Name_Id;
    Platform_LINUX32_Xenomai_Native_Name   : Name_Id;
@@ -2610,6 +2611,8 @@ package body Ocarina.Backends.Properties is
 
          if P_Name = Platform_Native_Name then
             return Platform_Native;
+         elsif P_Name = Platform_Bench_Name then
+            return Platform_Bench;
          elsif P_Name = Platform_Native_Compcert_Name then
             return Platform_Native_Compcert;
          elsif P_Name = Platform_LEON_RTEMS_Name then
@@ -3156,6 +3159,7 @@ package body Ocarina.Backends.Properties is
       Time_Hr_Name  := Get_String_Name ("hr");
 
       Platform_Native_Name      := Get_String_Name ("native");
+      Platform_Bench_Name       := Get_String_Name ("bench");
       Platform_Native_Compcert_Name
                                 := Get_String_Name ("native_compcert");
       Platform_X86_RTEMS_Name   := Get_String_Name ("x86_rtems");

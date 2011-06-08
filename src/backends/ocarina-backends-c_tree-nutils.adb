@@ -2183,6 +2183,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    procedure Simulate_WCET
      (Caller            : Node_Id;
+      Declarations      : List_Id;
       Statements        : List_Id) is
       N                 : Node_Id;
       Parameters        : List_Id;
@@ -2191,13 +2192,40 @@ package body Ocarina.Backends.C_Tree.Nutils is
    begin
       if Get_Current_Backend_Kind = PolyORB_HI_C then
 
+         N := Make_Variable_Declaration
+           (Make_Defining_Identifier
+            (Get_String_Name ("wcet_low")),
+           PHCR.RE (PHCR.RE_Time_T));
+         Append_Node_To_List (N, Declarations);
+
+         N := Make_Variable_Declaration
+           (Make_Defining_Identifier
+            (Get_String_Name ("wcet_high")),
+           PHCR.RE (PHCR.RE_Time_T));
+         Append_Node_To_List (N, Declarations);
+
          if Execution_Times'Length > 0 then
             Parameters := New_List (CTN.K_Parameter_List);
 
-            for J in Execution_Times'Range loop
-               N := Map_Time (Execution_Times (J));
-               Append_Node_To_List (N, Parameters);
-            end loop;
+            N := Map_Time (Execution_Times (0),
+                           Get_String_Name ("wcet_low"));
+            Append_Node_To_List (N, Declarations);
+
+            N := Map_Time (Execution_Times (1),
+                           Get_String_Name ("wcet_high"));
+            Append_Node_To_List (N, Declarations);
+
+            Append_Node_To_List
+               (Make_Variable_Address
+                  (Make_Defining_Identifier
+                  (Get_String_Name ("wcet_low"))),
+               Parameters);
+
+            Append_Node_To_List
+               (Make_Variable_Address
+               (Make_Defining_Identifier
+                  (Get_String_Name ("wcet_high"))),
+               Parameters);
 
             N := Make_Call_Profile
                (PHCR.RE (PHCR.RE_Simulate_WCET), Parameters);

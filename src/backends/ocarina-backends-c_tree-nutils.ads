@@ -586,6 +586,7 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    procedure Simulate_WCET
      (Caller       : Node_Id;
+      Declarations : List_Id;
       Statements   : List_Id);
 
    function Make_Array_Value (Array_Name : Node_Id; Array_Item : Node_Id)

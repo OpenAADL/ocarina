@@ -65,7 +65,8 @@ package Ocarina.Backends.C_Common.Mapping is
    procedure Bind_AADL_To_Servers (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Entities (G : Node_Id; A : Node_Id);
    function Map_Task_Job_Identifier (E : Node_Id) return Node_Id;
-   function Map_Time (T : Time_Type) return Node_Id;
+   function Map_Time (T : Time_Type;
+                      Variable : Name_Id := No_Name) return Node_Id;
    function Map_C_Enum_Name (E : Node_Id; Enumerator : Name_Id) return Name_Id;
    function Map_C_Enumerator_Name (E               : Node_Id;
                                    Custom_Parent   : Node_Id := No_Node;

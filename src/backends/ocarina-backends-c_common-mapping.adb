@@ -3066,9 +3066,12 @@ package body Ocarina.Backends.C_Common.Mapping is
    -- Map_Time --
    --------------
 
-   function Map_Time (T : Time_Type) return Node_Id is
+   function Map_Time (T       : Time_Type;
+                     Variable : Name_Id := No_Name) return Node_Id is
       Time : Unsigned_Long_Long;
       S    : Node_Id;
+      Parameters : constant List_Id
+         := New_List (CTN.K_Parameter_List);
    begin
       case T.U is
          when Picosecond =>
@@ -3152,8 +3155,18 @@ package body Ocarina.Backends.C_Common.Mapping is
             end if;
       end case;
 
+      if Variable /= No_Name then
+         Append_Node_To_List
+            (Make_Variable_Address
+               (Make_Defining_Identifier (Variable)),
+            Parameters);
+      end if;
+
+      Append_Node_To_List
+         (Make_Literal (New_Int_Value (Time, 1, 10)), Parameters);
+
       return Make_Call_Profile
-        (S, Make_List_Id (Make_Literal (New_Int_Value (Time, 1, 10))));
+        (S, Parameters);
    end Map_Time;
 
    -----------------------------
