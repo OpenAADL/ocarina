@@ -156,7 +156,7 @@ package body Ocarina.Options is
             Tmp_Name := Name_Find;
             if Tmp_Name = Get_String_Name ("real") then
                Set_Annex_Action (Disable_REAL);
-            elsif Tmp_Name = Get_String_Name ("behavior") then
+            elsif Tmp_Name = Get_String_Name ("behavior_specification") then
                Set_Annex_Action (Disable_BA);
             elsif Tmp_Name = Get_String_Name ("all") then
                Set_Annex_Action (Disable_ALL);
@@ -186,10 +186,12 @@ package body Ocarina.Options is
    begin
       if Current_Annex_Action (Disable_ALL) = 1 then
          Perform := False;
+
       elsif Language = Behavior_Language_Name
         and then Current_Annex_Action (Disable_BA) = 1
       then
          Perform := False;
+
       elsif Language = Real_Language_Name
         and then Current_Annex_Action (Disable_REAL) = 1
       then
@@ -197,7 +199,6 @@ package body Ocarina.Options is
       end if;
 
       return Perform;
-
    end Perform_Annex_Action;
 
 end Ocarina.Options;
