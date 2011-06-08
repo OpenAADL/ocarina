@@ -73,7 +73,7 @@ package Ocarina.FE_AADL.Lexer is
    function End_Of_File return Boolean
      renames Ocarina.Files.End_Of_File;
 
-   procedure Scan_Token;
+   procedure Scan_Token (Ignore_Invalid_Character : Boolean := False);
    --  Scan token and update the global variables declared above.
 
    procedure Scan_Raw_Text (T : Token_Type);

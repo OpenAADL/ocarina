@@ -614,7 +614,7 @@ package body Ocarina.FE_AADL.Lexer is
    begin
       loop
          Save_Lexer (Loc);
-         Scan_Token;
+         Scan_Token (Ignore_Invalid_Character => True);
 
          if Token = T or else Token = T_EOF then
             Restore_Lexer (Loc);
@@ -689,7 +689,7 @@ package body Ocarina.FE_AADL.Lexer is
    -- Scan_Token --
    ----------------
 
-   procedure Scan_Token is
+   procedure Scan_Token (Ignore_Invalid_Character : Boolean := False) is
       use Charset;
    begin
       Token       := T_Error;
@@ -897,9 +897,11 @@ package body Ocarina.FE_AADL.Lexer is
                if Is_Alphabetic_Character (Buffer (Token_Location.Scan)) then
                   Scan_Identifier;
                else
-                  Error_Loc (1) := Token_Location;
-                  DE ("character '|" & Buffer (Token_Location.Scan) &
-                        "' is invalid, ignored");
+                  if not Ignore_Invalid_Character then
+                     Error_Loc (1) := Token_Location;
+                     DE ("character '|" & Buffer (Token_Location.Scan) &
+                           "' is invalid, ignored ");
+                  end if;
                   Token_Location.Scan := Token_Location.Scan + 1;
                end if;
          end case;
@@ -923,7 +925,7 @@ package body Ocarina.FE_AADL.Lexer is
 
       while Token /= T_EOF loop
          Save_Lexer (Loc);
-         Scan_Token;
+         Scan_Token (Ignore_Invalid_Character => True);
 
          if Token in Opening_Delimiter then
             Braces := Braces + 1;
