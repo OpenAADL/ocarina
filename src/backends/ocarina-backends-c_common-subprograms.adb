@@ -76,6 +76,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
       procedure Visit_Data_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
 
+      Current_Device : Node_Id := No_Node;
+
       -----------
       -- Visit --
       -----------
@@ -155,6 +157,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Implementation  : Node_Id;
          S               : Node_Id;
       begin
+         Current_Device := E;
          if Get_Current_Backend_Kind = PolyORB_Kernel_C then
             U := CTN.Distributed_Application_Unit
               (CTN.Naming_Node (Backend_Node (Identifier (E))));
@@ -189,6 +192,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
             Pop_Entity; -- U
             Pop_Entity; -- P
          end if;
+
+         Current_Device := No_Node;
       end Visit_Device_Instance;
 
       -------------------------
@@ -348,7 +353,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
          --  Generate the spec of the subprogram
 
          if No (Get_Handling (E, By_Name, H_C_Subprogram_Spec)) then
-            N := Map_C_Subprogram_Spec (E);
+            N := Map_C_Subprogram_Spec (E, Current_Device);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             --  Mark the subprogram as being handled
@@ -493,6 +498,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
       procedure Visit_Subprogram_Instance (E : Node_Id);
       procedure Visit_Data_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
+
+      Current_Device : Node_Id := No_Node;
 
       -----------
       -- Visit --
@@ -783,7 +790,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
                   CTN.Declarations (Current_File));
             end if;
 
-            N := Map_C_Subprogram_Body (E);
+            N := Map_C_Subprogram_Body (E, Current_Device);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             --  Mark the subprogram as being handled
@@ -914,6 +921,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Implementation  : Node_Id;
          S               : Node_Id;
       begin
+
+         Current_Device := E;
+
          if Get_Current_Backend_Kind = PolyORB_Kernel_C then
 
             U := CTN.Distributed_Application_Unit
@@ -950,6 +960,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
             Pop_Entity; -- U
             Pop_Entity; -- P
          end if;
+
+         Current_Device := No_Node;
+
       end Visit_Device_Instance;
    end Source_File;
 

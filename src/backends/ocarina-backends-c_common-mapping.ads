@@ -64,7 +64,9 @@ package Ocarina.Backends.C_Common.Mapping is
    procedure Bind_AADL_To_Subprogram (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Servers (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Entities (G : Node_Id; A : Node_Id);
-   function Map_Task_Job_Identifier (E : Node_Id) return Node_Id;
+   function Map_Task_Job_Identifier
+      (E : Node_Id; Prefix_Component : Node_Id := No_Node)
+      return Node_Id;
    function Map_Time (T : Time_Type;
                       Variable : Name_Id := No_Name) return Node_Id;
    function Map_C_Enum_Name (E : Node_Id; Enumerator : Name_Id) return Name_Id;
@@ -111,8 +113,12 @@ package Ocarina.Backends.C_Common.Mapping is
    procedure Bind_AADL_To_Local_Port (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Global_Port (G : Node_Id; A : Node_Id);
    function Map_Stub_Identifier (E : Node_Id) return Node_Id;
-   function Map_C_Subprogram_Spec (S : Node_Id) return Node_Id;
-   function Map_C_Subprogram_Body (S : Node_Id) return Node_Id;
+   function Map_C_Subprogram_Spec
+      (S : Node_Id; Containing_Device : Node_Id := No_Node)
+      return Node_Id;
+   function Map_C_Subprogram_Body
+      (S : Node_Id; Containing_Device : Node_Id := No_Node)
+      return Node_Id;
    function Map_C_Subprogram_Identifier (E : Node_Id) return Node_Id;
    function Map_C_Marshaller_Subprogram (A : Node_Id;
                                          Is_Unmarshall : Boolean := False;

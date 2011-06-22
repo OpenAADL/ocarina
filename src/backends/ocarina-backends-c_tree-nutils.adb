@@ -1643,10 +1643,11 @@ package body Ocarina.Backends.C_Tree.Nutils is
    --------------------------
 
    procedure Handle_Call_Sequence
-     (Caller       : Node_Id;
-      Call_Seq     : Node_Id;
-      Declarations : List_Id;
-      Statements   : List_Id)
+     (Caller            : Node_Id;
+      Call_Seq          : Node_Id;
+      Declarations      : List_Id;
+      Statements        : List_Id;
+      Containing_Device : Node_Id := No_Node)
    is
       Destination_F  : Node_Id;
       Source_F       : Node_Id;
@@ -1979,6 +1980,12 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
             if Get_Current_Backend_Kind = PolyORB_HI_C then
                N := Map_C_Defining_Identifier (Spg);
+               if Containing_Device /= No_Node then
+                  CTU.Append_Node_To_List
+                     (Make_Defining_Identifier
+                        (Map_C_Enumerator_Name (Containing_Device)),
+                     Call_Profile);
+               end if;
             elsif Get_Current_Backend_Kind = PolyORB_Kernel_C then
                N := Map_C_Defining_Identifier (Spg);
             end if;

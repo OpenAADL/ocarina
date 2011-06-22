@@ -854,10 +854,32 @@ package body Ocarina.Backends.C_Common.Mapping is
    -- Map_Task_Job_Identifier --
    -----------------------------
 
-   function Map_Task_Job_Identifier (E : Node_Id) return Node_Id is
+   function Map_Task_Job_Identifier
+      (E : Node_Id; Prefix_Component : Node_Id := No_Node)
+      return Node_Id is
       Name : Name_Id;
+      C1   : Name_Id := No_Name;
+      C2   : Name_Id := No_Name;
    begin
-      Get_Name_String (To_C_Name (AIN.Display_Name (Identifier (E))));
+      if Prefix_Component /= No_Node then
+         Get_Name_String
+            (To_C_Name
+               (AIN.Display_Name
+                  (Identifier (Prefix_Component))));
+         C1 := Name_Find;
+      end if;
+      Get_Name_String
+         (To_C_Name (AIN.Display_Name (Identifier (E))));
+      C2 := Name_Find;
+
+      Set_Str_To_Name_Buffer ("");
+
+      if C1 /= No_Name then
+         Get_Name_String (C1);
+         Add_Str_To_Name_Buffer ("_");
+      end if;
+
+      Get_Name_String_And_Append (C2);
       Add_Str_To_Name_Buffer ("_job");
       Name := Name_Find;
       Name := To_Lower (Name);
@@ -1890,7 +1912,8 @@ package body Ocarina.Backends.C_Common.Mapping is
    -- Map_C_Subprogram_Spec --
    ---------------------------
 
-   function Map_C_Subprogram_Spec (S : Node_Id) return Node_Id is
+   function Map_C_Subprogram_Spec
+      (S : Node_Id; Containing_Device : Node_Id := No_Node) return Node_Id is
       Profile : constant List_Id := CTU.New_List (CTN.K_Parameter_Profile);
       Param   : Node_Id;
       Mode    : Mode_Id;
@@ -1900,6 +1923,15 @@ package body Ocarina.Backends.C_Common.Mapping is
       Field   : Node_Id;
    begin
       pragma Assert (AINU.Is_Subprogram (S));
+
+      if Containing_Device /= No_Node then
+         Param := CTU.Make_Parameter_Specification
+         (Defining_Identifier =>
+            Make_Defining_Identifier (VN (V_Dev_Id)),
+          Parameter_Type =>
+            (RE (RE_Device_Id)));
+         CTU.Append_Node_To_List (Param, Profile);
+      end if;
 
       --  We build the parameter profile of the subprogram instance by
       --  adding:
@@ -2069,9 +2101,13 @@ package body Ocarina.Backends.C_Common.Mapping is
    -- Map_C_Subprogram_Body --
    ---------------------------
 
-   function Map_C_Subprogram_Body (S : Node_Id) return Node_Id is
-      Spec          : constant Node_Id := Map_C_Subprogram_Spec (S);
-      User_Spec     : constant Node_Id := Map_C_Subprogram_Spec (S);
+   function Map_C_Subprogram_Body
+      (S                : Node_Id;
+      Containing_Device : Node_Id := No_Node) return Node_Id is
+      Spec          : constant Node_Id :=
+         Map_C_Subprogram_Spec (S, Containing_Device);
+      User_Spec     : constant Node_Id :=
+         Map_C_Subprogram_Spec (S, Containing_Device);
       Declarations  : constant List_Id := New_List (CTN.K_Declaration_List);
       Statements    : constant List_Id := New_List (CTN.K_Statement_List);
       Call_Profile  : List_Id := New_List (CTN.K_Parameter_Profile);

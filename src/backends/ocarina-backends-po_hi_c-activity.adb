@@ -66,6 +66,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
    package CV renames Ocarina.Backends.C_Values;
 
    Send_Output_Specification : Node_Id;
+   Current_Device            : Node_Id := No_Node;
 
    ------------
    -- Header --
@@ -94,7 +95,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          S : constant Node_Id := Parent_Subcomponent (E);
       begin
          N := Make_Function_Specification
-           (Defining_Identifier => Map_Task_Job_Identifier (S),
+           (Defining_Identifier => Map_Task_Job_Identifier (S, Current_Device),
             Parameters          => No_List,
             Return_Type         => CTU.Make_Pointer_Type
               (New_Node (CTN.K_Void)));
@@ -259,6 +260,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Implementation  : constant Node_Id := Get_Implementation (E);
          S : Node_Id;
       begin
+         Current_Device := E;
          if Implementation /= No_Node then
             if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
                S := First_Node (Subcomponents (Implementation));
@@ -268,6 +270,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                end loop;
             end if;
          end if;
+         Current_Device := No_Node;
       end Visit_Device_Instance;
 
       ---------------------------
@@ -966,7 +969,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                --  unique call sequence, handle it.
 
                CTU.Handle_Call_Sequence
-                 (S, Call_Seq, Declarations, WStatements);
+                 (S, Call_Seq, Declarations, WStatements, Current_Device);
                CTU.Simulate_WCET (E, Declarations, WStatements);
             else
                N := Message_Comment ("not implemented yet");

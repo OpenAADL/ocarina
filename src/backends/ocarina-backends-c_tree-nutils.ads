@@ -211,6 +211,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       V_Server_Entity_Table,
       V_Invalid_Server,
       V_Got_Data,
+      V_Dev_Id,
       V_Entity,
       V_Port,
       V_Pkt,
@@ -546,10 +547,15 @@ package Ocarina.Backends.C_Tree.Nutils is
       Exception_Error : Node_Id := No_Node);
 
    procedure Handle_Call_Sequence
-     (Caller       : Node_Id;
-      Call_Seq     : Node_Id;
-      Declarations : List_Id;
-      Statements   : List_Id);
+     (Caller            : Node_Id;
+      Call_Seq          : Node_Id;
+      Declarations      : List_Id;
+      Statements        : List_Id;
+      Containing_Device : Node_Id := No_Node);
+   --  The Containing_Device argument is used when the call
+   --  sequence is generated for a thread that is within
+   --  a device. In that case, the first parameter is ALWAYS
+   --  the device id of the containing device.
 
    procedure Set_Deployment_Source (N : Node_Id := No_Node);
 
