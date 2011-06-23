@@ -1924,7 +1924,8 @@ package body Ocarina.Backends.C_Common.Mapping is
    begin
       pragma Assert (AINU.Is_Subprogram (S));
 
-      if Containing_Device /= No_Node then
+      if Get_Current_Backend_Kind = PolyORB_HI_C
+         and then Containing_Device /= No_Node then
          Param := CTU.Make_Parameter_Specification
          (Defining_Identifier =>
             Make_Defining_Identifier (VN (V_Dev_Id)),
