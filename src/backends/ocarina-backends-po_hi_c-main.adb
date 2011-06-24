@@ -116,9 +116,19 @@ package body Ocarina.Backends.PO_HI_C.Main is
          --  the fact that an aperiodic thread is sporadic, with
          --  period of 0.
          if Period_Variable_Declared = False then
+            N := Make_Doxygen_C_Comment
+               (Brief => "Variable for task period",
+               Is_Variable => True,
+               Desc => "This variable is used to store the value" &
+               "of the period of a task when we create it. The " &
+               "value put in the variable is set according to " &
+               "AADL model description",
+               Element_Name => Get_Name_String (VN (V_Period)),
+               Has_Header_Spaces => False);
+            Append_Node_To_List (N, CTN.Declarations (Main_Function));
+
             N := Make_Variable_Declaration
-            (Make_Defining_Identifier
-               (Get_String_Name ("period")),
+            (Make_Defining_Identifier (VN (V_Period)),
                RE (RE_Time_T));
             Append_Node_To_List (N, CTN.Declarations (Main_Function));
 
@@ -172,6 +182,18 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          case Get_Thread_Dispatch_Protocol (E) is
             when Thread_Periodic =>
+               N := Make_Doxygen_C_Comment
+                  (Brief => "Making Periodic Task",
+                  Desc => "Make a periodic task according to " &
+                           "AADL model requirements. The first " &
+                           "parameter is the task identifier defined " &
+                           "in deployment.h, the second is the period " &
+                           "defined in the AADL model. Third is the task " &
+                           "priority, fourth is the stack size and last "&
+                           "the subprogram executed by the task",
+                  Has_Header_Spaces => False);
+               Append_Node_To_List (N, CTN.Statements (Main_Function));
+
                Append_Node_To_List
                  (CTU.Make_Call_Profile
                     (RE (RE_Create_Periodic_Task), Parameters),
@@ -179,12 +201,20 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
             when Thread_Sporadic
               | Thread_Aperiodic =>
+               N := Make_Doxygen_C_Comment
+                  ("Making Sporadic task", Has_Header_Spaces => False);
+               Append_Node_To_List (N, CTN.Statements (Main_Function));
+
                Append_Node_To_List
                  (CTU.Make_Call_Profile
                     (RE (RE_Create_Sporadic_Task), Parameters),
                   CTN.Statements (Main_Function));
 
             when Thread_Background =>
+               N := Make_Doxygen_C_Comment
+                  ("Making background task", Has_Header_Spaces => False);
+               Append_Node_To_List (N, CTN.Statements (Main_Function));
+
                Append_Node_To_List
                  (CTU.Make_Call_Profile
                     (RE (RE_Create_Sporadic_Task), Parameters),
@@ -311,6 +341,10 @@ package body Ocarina.Backends.PO_HI_C.Main is
                C := Next_Node (C);
             end loop;
          end if;
+
+         N := Make_Doxygen_C_Comment
+            ("Initialize the runtime", Has_Header_Spaces => False);
+         Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          N := CTU.Make_Call_Profile (RE (RE_Initialize));
          Append_Node_To_List (N, CTN.Statements (Main_Function));
@@ -446,6 +480,11 @@ package body Ocarina.Backends.PO_HI_C.Main is
          --  Call __po_hi_wait_initialization(). With this function,
          --  the main function will wait all other tasks initialization.
 
+         N := Make_Doxygen_C_Comment
+            ("Waiting for other tasks initialization",
+               Has_Header_Spaces => False);
+         Append_Node_To_List (N, Statements);
+
          N := CTU.Make_Call_Profile (RE (RE_Wait_Initialization),
                                      No_List);
          Append_Node_To_List (N, Statements);
@@ -454,12 +493,21 @@ package body Ocarina.Backends.PO_HI_C.Main is
          --  all other task. In fact, no task will terminate, so this function
          --  will only switch the main task to the sleep state all the time.
 
+         N := Make_Doxygen_C_Comment
+            ("Used to switch the main task to sleep all the time",
+            Has_Header_Spaces => False);
+         Append_Node_To_List (N, CTN.Statements (Main_Function));
+
          if not PO_HI_C.Use_Performance_Analysis then
             N := CTU.Make_Call_Profile (RE (RE_Wait_For_Tasks));
          else
             N := CTU.Make_Call_Profile (RE (RE_Wait_End_Of_Instrumentation));
          end if;
 
+         Append_Node_To_List (N, CTN.Statements (Main_Function));
+
+         N := Make_Doxygen_C_Comment
+               ("Return Statement", Has_Header_Spaces => False);
          Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          N := CTU.Make_Return_Statement (RE (RE_Main_Return));

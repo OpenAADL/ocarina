@@ -302,6 +302,24 @@ module Ocarina::Backends::C_Tree::Nodes {
     boolean     Has_Header_Spaces;
   };
 
+  interface Doxygen_C_Comment : Node_Id {
+    boolean       Has_Header_Spaces;
+    boolean       For_Struct;
+    boolean       For_Union;
+    boolean       For_Enum;
+    boolean       For_Function;
+    boolean       For_Variable;
+    boolean       For_Define;
+    boolean       For_Typedef;
+    boolean       For_File;
+    boolean       For_Namespace;
+    boolean       For_Package;
+    boolean       For_Interface;
+    Node_Id       Summary;
+    Node_Id       Description;
+    Node_Id       Element;
+  };
+
   interface Define_Statement : Definition {
     Node_Id     Defined_Value;
   };

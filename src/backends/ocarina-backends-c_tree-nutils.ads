@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -213,6 +213,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       V_Got_Data,
       V_Dev_Id,
       V_Entity,
+      V_Period,
       V_Port,
       V_Pkt,
       V_Thread,
@@ -623,5 +624,25 @@ package Ocarina.Backends.C_Tree.Nutils is
    --  Get_Inter_Partition_Port_Type returns a Node_Id that contains
    --  all information to generate a C data type linked with
    --  virtual bus layers.
+
+   function Make_Doxygen_C_Comment
+     (Desc                 : String;
+      Brief                : String := "";
+      Element_Name         : String := "";
+      Is_Struct            : Boolean := False;
+      Is_Union             : Boolean := False;
+      Is_Enum              : Boolean := False;
+      Is_Function          : Boolean := False;
+      Is_Variable          : Boolean := False;
+      Is_Define            : Boolean := False;
+      Is_Typedef           : Boolean := False;
+      Is_File              : Boolean := False;
+      Is_Namespace         : Boolean := False;
+      Is_Package           : Boolean := False;
+      Is_Interface         : Boolean := False;
+      Has_Header_Spaces    : Boolean := True)
+     return Node_Id;
+
+   --  The Make_Doxygen_C_Comment.
 
 end Ocarina.Backends.C_Tree.Nutils;

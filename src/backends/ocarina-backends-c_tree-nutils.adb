@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2010, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2562,5 +2562,83 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
       return Map_C_Data_Type_Designator (Corresponding_Instance (Port));
    end Get_Inter_Partition_Port_Type;
+
+   ----------------------------
+   -- Make_Doxygen_C_Comment --
+   ----------------------------
+
+   function Make_Doxygen_C_Comment
+     (Desc                 : String;
+      Brief                : String := "";
+      Element_Name         : String := "";
+      Is_Struct            : Boolean := False;
+      Is_Union             : Boolean := False;
+      Is_Enum              : Boolean := False;
+      Is_Function          : Boolean := False;
+      Is_Variable          : Boolean := False;
+      Is_Define            : Boolean := False;
+      Is_Typedef           : Boolean := False;
+      Is_File              : Boolean := False;
+      Is_Namespace         : Boolean := False;
+      Is_Package           : Boolean := False;
+      Is_Interface         : Boolean := False;
+      Has_Header_Spaces    : Boolean := True)
+     return Node_Id
+   is
+      C : Node_Id;
+   begin
+      C := New_Node (K_Doxygen_C_Comment);
+      CTN.Set_Summary (C, No_Node);
+      CTN.Set_Element (C, No_Node);
+      CTN.Set_Description (C, No_Node);
+
+      CTN.Set_For_Struct (C, False);
+      CTN.Set_For_Union (C, False);
+      CTN.Set_For_Enum (C, False);
+      CTN.Set_For_Function (C, False);
+      CTN.Set_For_Variable (C, False);
+      CTN.Set_For_Define (C, False);
+      CTN.Set_For_Typedef (C, False);
+      CTN.Set_For_File (C, False);
+      CTN.Set_For_Namespace (C, False);
+      CTN.Set_For_Package (C, False);
+      CTN.Set_For_Interface (C, False);
+      CTN.Set_Has_Header_Spaces (C, Has_Header_Spaces);
+
+      if Desc /= "" then
+         Set_Description
+            (C, New_Node (K_Defining_Identifier));
+         CTN.Set_Name
+            (Description (C), Get_String_Name (Desc));
+      end if;
+
+      if Element_Name /= "" then
+         Set_Element
+            (C, New_Node (K_Defining_Identifier));
+         CTN.Set_Name
+            (Element (C), Get_String_Name (Element_Name));
+      end if;
+
+      if Brief /= "" then
+         Set_Summary
+            (C, New_Node (K_Defining_Identifier));
+         CTN.Set_Name
+            (Summary (C), Get_String_Name (Brief));
+      end if;
+
+      CTN.Set_For_Struct (C, Is_Struct);
+      CTN.Set_For_Union (C, Is_Union);
+      CTN.Set_For_Enum (C, Is_Enum);
+      CTN.Set_For_Function (C, Is_Function);
+      CTN.Set_For_Variable (C, Is_Variable);
+      CTN.Set_For_Define (C, Is_Define);
+      CTN.Set_For_Typedef (C, Is_Typedef);
+      CTN.Set_For_File (C, Is_File);
+      CTN.Set_For_Namespace (C, Is_Namespace);
+      CTN.Set_For_Package (C, Is_Package);
+      CTN.Set_For_Interface (C, Is_Interface);
+
+      return C;
+   end Make_Doxygen_C_Comment;
 
 end Ocarina.Backends.C_Tree.Nutils;

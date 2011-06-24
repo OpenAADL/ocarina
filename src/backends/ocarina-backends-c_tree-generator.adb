@@ -60,6 +60,7 @@ package body Ocarina.Backends.C_Tree.Generator is
    procedure Generate_C_Comment (N : Node_Id);
    procedure Generate_Call_Profile (N : Node_Id);
    procedure Generate_Macro_Call (N : Node_Id);
+   procedure Generate_Doxygen_C_Comment (N : Node_Id);
    procedure Generate_HI_Distributed_Application (N : Node_Id);
    procedure Generate_HI_Node (N : Node_Id);
    procedure Generate_Assignment_Statement (N : Node_Id);
@@ -164,6 +165,9 @@ package body Ocarina.Backends.C_Tree.Generator is
 
          when K_Assignment_Statement =>
             Generate_Assignment_Statement (N);
+
+         when K_Doxygen_C_Comment =>
+            Generate_Doxygen_C_Comment (N);
 
          when K_Call_Profile =>
             Generate_Call_Profile (N);
@@ -388,6 +392,208 @@ package body Ocarina.Backends.C_Tree.Generator is
       Write_Eol;
    end Generate_C_Comment;
 
+   --------------------------
+   -- Generate_Doxygen_C_Comment --
+   --------------------------
+
+   procedure Generate_Doxygen_C_Comment (N : Node_Id) is
+      --  This procedure does the following :
+
+      --  * It generates a C comment basing on the name of node N
+
+      --  * If the name it too long, and depending on the location of
+      --    the comment in the source code, the procedure splits the
+      --    comment into more than a line.
+
+      --  The comment is assumed to be a sequence of caracters,
+      --  beginning and ending with a NON-SPACE caracter.
+
+      --  A word is :
+
+      --  a space character, or else a sequence of non space
+      --  characters located between two spaces.
+
+      --  The maximum length of a line, in colums
+      Max_Line_Length : constant Natural := 78;
+
+      function Are_There_More_Words return Boolean;
+      --  This function returns True if there are words in the buffer
+
+      function Next_Word_Length return Natural;
+      --  This function returns the size of the next word to be
+      --  got. It returns zero when the buffer is empty.
+
+      function Get_Next_Word return String;
+      --  This function extracts the next word from the buffer
+
+      --------------------------
+      -- Are_There_More_Words --
+      --------------------------
+
+      function Are_There_More_Words return Boolean is
+      begin
+         return (Name_Len /= 0);
+      end Are_There_More_Words;
+
+      ----------------------
+      -- Next_Word_Length --
+      ----------------------
+
+      function Next_Word_Length return Natural is
+         L : Natural;
+      begin
+         if not Are_There_More_Words then
+            L := 0;
+         elsif Name_Buffer (1) = ' ' then
+            L := 1;
+         else
+            L := 0;
+            while L + 1 <= Name_Len and then  Name_Buffer (L + 1) /= ' ' loop
+               L := L + 1;
+            end loop;
+         end if;
+         return L;
+      end Next_Word_Length;
+
+      -------------------
+      -- Get_Next_Word --
+      -------------------
+
+      function Get_Next_Word return String is
+         L : constant Natural := Next_Word_Length;
+      begin
+         if L = 0 then
+            return "";
+         else
+            declare
+               Next_Word : constant String := Name_Buffer (1 .. L);
+            begin
+               if Name_Len = L then
+                  Name_Len := 0;
+               else
+                  Set_Str_To_Name_Buffer (Name_Buffer (L + 1 .. Name_Len));
+               end if;
+               return Next_Word;
+            end;
+         end if;
+      end Get_Next_Word;
+
+      Used_Columns : Natural;
+   begin
+      Used_Columns := N_Space;
+      Used_Columns := Used_Columns + 3;
+      Write_Eol;
+      Write_Str ("/*!");
+
+      if For_Struct (N) then
+         Write_Eol;
+         Write_Str (" * \struct ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Union (N) then
+         Write_Eol;
+         Write_Str (" * \union ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Enum (N) then
+         Write_Eol;
+         Write_Str (" * \enum ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Function (N) then
+         Write_Eol;
+         Write_Str (" * \fn ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Variable (N) then
+         Write_Eol;
+         Write_Str (" * \var ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Define (N) then
+         Write_Eol;
+         Write_Str (" * \def ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Typedef (N) then
+         Write_Eol;
+         Write_Str (" * \typedef ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_File (N) then
+         Write_Eol;
+         Write_Str (" * \file ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Namespace (N) then
+         Write_Eol;
+         Write_Str (" * \namespace ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Package (N) then
+         Write_Eol;
+         Write_Str (" * \package ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if For_Interface (N) then
+         Write_Eol;
+         Write_Str (" * \interface ");
+         Write_Name (Name (Element (N)));
+      end if;
+
+      if Summary (N) /= No_Node then
+         Write_Eol;
+         Write_Str (" * \brief ");
+         Write_Name
+          (Name (Summary (N)));
+         Write_Eol;
+         Write_Str (" *");
+      end if;
+
+      Write_Eol;
+      Get_Name_String
+         (Name (Description (N)));
+      while Are_There_More_Words loop
+         Used_Columns := N_Space;
+
+         --  We consume 4 colums
+
+         Used_Columns := Used_Columns + 2;
+         Write_Str (" * ");
+         if Has_Header_Spaces (N) then
+            Used_Columns := Used_Columns + 2;
+            Write_Str ("  ");
+         end if;
+
+         Used_Columns := Used_Columns + Next_Word_Length;
+         Write_Str (Get_Next_Word);
+
+         while Are_There_More_Words
+           and then (Used_Columns + Next_Word_Length < Max_Line_Length)
+         loop
+            Used_Columns := Used_Columns + Next_Word_Length;
+            Write_Str (Get_Next_Word);
+         end loop;
+
+         if Are_There_More_Words then
+            Write_Eol;
+         end if;
+      end loop;
+      Write_Eol;
+      Write_Str (" */");
+      Write_Eol;
+   end Generate_Doxygen_C_Comment;
+
    -----------------------------------
    -- Generate_Assignment_Statement --
    -----------------------------------
@@ -546,6 +752,7 @@ package body Ocarina.Backends.C_Tree.Generator is
    begin
       --  Enter If_Statement
 
+      Write_Str ("/* :: Yes if commentary :: */");
       Write (Tok_If);
       Write_Space;
       Write (Tok_Left_Paren);
@@ -1099,7 +1306,9 @@ package body Ocarina.Backends.C_Tree.Generator is
         or else Kind (N) = K_Function_Implementation
       then
          Write_Eol;
-      elsif Kind (N) /= K_C_Comment then
+      elsif Kind (N) /= K_C_Comment
+        and then Kind (N) /= K_Doxygen_C_Comment
+      then
          Write_Line (Tok_Semicolon);
       end if;
    end Generate_Statement_Delimiter;

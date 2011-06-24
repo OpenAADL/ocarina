@@ -37,6 +37,10 @@ with Output;
 with Ocarina.Instances;
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.Messages;
+with Ocarina.ME_AADL;
+with Ocarina.ME_AADL.AADL_Instances.Nutils;
+with Ocarina.ME_AADL.AADL_Instances.Nodes;
+with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.C_Tree.Generator;
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.PO_HI_C.Activity;
@@ -67,6 +71,9 @@ package body Ocarina.Backends.PO_HI_C is
    use Output;
 
    use Ocarina.Backends.Properties;
+   use Ocarina.ME_AADL;
+   use Ocarina.ME_AADL.AADL_Instances.Nodes;
+   use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.PO_HI_C.Activity;
    use Ocarina.Backends.PO_HI_C.Deployment;
    use Ocarina.Backends.PO_HI_C.Main;
@@ -85,6 +92,8 @@ package body Ocarina.Backends.PO_HI_C is
    use Ocarina.Backends.Execution_Utils;
    use Ocarina.Backends.Execution_Tests;
 
+   package AAN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
 
    Generate_ASN1_Deployment    : Boolean := False;
@@ -254,6 +263,140 @@ package body Ocarina.Backends.PO_HI_C is
       Write_Line ("include $(RUNTIME_PATH)/make/Makefile.common");
    end PolyORB_HI_C_Makefile;
 
+   ------------------------------------
+   -- Generate_Doxygen_Configuration --
+   ------------------------------------
+
+   procedure Generate_Doxygen_Configuration
+     (My_System : Node_Id)
+   is
+      use Ocarina.Backends.C_Tree.Nodes;
+      procedure Visit_Architecture_Instance (E : Node_Id);
+      procedure Visit_Component_Instance    (E : Node_Id);
+      procedure Visit_System_Instance       (E : Node_Id);
+      procedure Visit_Process_Instance      (E : Node_Id);
+
+      -----------
+      -- Visit --
+      -----------
+
+      procedure Visit (E : Node_Id) is
+      begin
+         case AAN.Kind (E) is
+            when AAN.K_Architecture_Instance =>
+               Visit_Architecture_Instance (E);
+
+            when AAN.K_Component_Instance =>
+               Visit_Component_Instance (E);
+
+            when others =>
+               null;
+         end case;
+      end Visit;
+
+      ---------------------------------
+      -- Visit_Architecture_Instance --
+      ---------------------------------
+
+      procedure Visit_Architecture_Instance (E : Node_Id) is
+      begin
+         Visit (AAN.Root_System (E));
+      end Visit_Architecture_Instance;
+
+      ------------------------------
+      -- Visit_Component_Instance --
+      ------------------------------
+
+      procedure Visit_Component_Instance (E : Node_Id) is
+         Category : constant Component_Category
+           := Get_Category_Of_Component (E);
+      begin
+         case Category is
+            when CC_System =>
+               Visit_System_Instance (E);
+
+            when CC_Process =>
+               Visit_Process_Instance (E);
+
+            when others =>
+               null;
+         end case;
+      end Visit_Component_Instance;
+
+      ----------------------------
+      -- Visit_Process_Instance --
+      ----------------------------
+
+      procedure Visit_Process_Instance (E : Node_Id) is
+         S  : constant Node_Id := AAN.Parent_Subcomponent (E);
+         A  : constant Node_Id :=
+            AAN.Parent_Component (AAN.Parent_Subcomponent (E));
+         Fd : File_Descriptor;
+      begin
+         Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (A))));
+         Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (S))));
+
+         Fd := Create_File ("doxygen.cfg", Text);
+
+         if Fd = Invalid_FD then
+            raise Program_Error;
+         end if;
+
+         Set_Output (Fd);
+
+         Write_Str ("PROJECT_NAME           = ");
+         Write_Name
+            (Normalize_Name (AAN.Name (AAN.Identifier (S))));
+         Write_Eol;
+         Write_Line ("OUTPUT_DIRECTORY       = generated-documentation");
+         Write_Line ("GENERATE_LATEX         = YES");
+         Write_Line ("GENERATE_MAN           = YES");
+         Write_Line ("GENERATE_RTF           = YES");
+         Write_Line ("CASE_SENSE_NAMES       = NO");
+         Write_Line ("INPUT                  = ");
+         Write_Line ("QUIET                  = YES");
+         Write_Line ("JAVADOC_AUTOBRIEF      = YES");
+         Write_Line ("EXTRACT_PRIVATE        = YES");
+         Write_Line ("EXTRACT_STATIC         = YES");
+         Write_Line ("TYPEDEF_HIDES_STRUCT   = YES");
+         Write_Line ("INLINE_SOURCES         = YES");
+         Write_Line ("REFERENCED_BY_RELATION = YES");
+         Write_Line ("REFERENCES_RELATION    = YES");
+         Write_Line ("SEARCHENGINE           = NO");
+         Write_Eol;
+
+         Close (Fd);
+
+         Set_Standard_Output;
+
+         Leave_Directory;
+         Leave_Directory;
+      end Visit_Process_Instance;
+
+      ---------------------------
+      -- Visit_System_Instance --
+      ---------------------------
+
+      procedure Visit_System_Instance (E : Node_Id) is
+         S : Node_Id;
+      begin
+         --  Visit all the subcomponents of the system
+
+         if not AAU.Is_Empty (AAN.Subcomponents (E)) then
+            S := AAN.First_Node (AAN.Subcomponents (E));
+            while Present (S) loop
+               --  Visit the component instance corresponding to the
+               --  subcomponent S.
+
+               Visit (Corresponding_Instance (S));
+               S := AAN.Next_Node (S);
+            end loop;
+         end if;
+      end Visit_System_Instance;
+   begin
+      Visit (My_System);
+   end Generate_Doxygen_Configuration;
+
    --------------
    -- Generate --
    --------------
@@ -295,6 +438,10 @@ package body Ocarina.Backends.PO_HI_C is
          --  Create the source files
 
          C_Tree.Generator.Generate (C_Root);
+
+         --  Create doxygen configuration files
+
+         Generate_Doxygen_Configuration (Instance_Root);
 
          --  Generate the Makefiles
 

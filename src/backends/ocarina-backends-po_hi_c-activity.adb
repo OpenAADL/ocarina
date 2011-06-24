@@ -1387,6 +1387,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             end if;
          end;
 
+         N := Make_Doxygen_C_Comment
+            ("Waiting for other tasks initialization",
+               Has_Header_Spaces => False);
+         Append_Node_To_List (N, Statements);
+
          --  Call __po_hi_wait_initialization
 
          N := CTU.Make_Call_Profile (RE (RE_Wait_Initialization),
