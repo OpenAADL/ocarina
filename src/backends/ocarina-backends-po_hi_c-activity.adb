@@ -303,8 +303,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       ---------------------------
 
       procedure Visit_Thread_Instance (E : Node_Id) is
-         P : constant Supported_Thread_Dispatch_Protocol :=
-           Get_Thread_Dispatch_Protocol (E);
          S : constant Node_Id := Parent_Subcomponent (E);
          N : Node_Id;
       begin
@@ -337,36 +335,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                Has_Send_Output_Declared := True;
             end if;
          end if;
-
-         case P is
-            when Thread_Periodic =>
-               N := Message_Comment
-                 ("Periodic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, CTN.Declarations (Current_File));
-
-            when Thread_Background =>
-               N := Message_Comment
-                 ("Background task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, CTN.Declarations (Current_File));
-
-            when Thread_Sporadic =>
-               N := Message_Comment
-                 ("Sporadic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, CTN.Declarations (Current_File));
-
-            when Thread_Aperiodic =>
-               N := Message_Comment
-                 ("Aperiodic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, CTN.Declarations (Current_File));
-
-            when others =>
-               Display_Error ("Unsupported thread type " & P'Img,
-                              Fatal => True);
-         end case;
 
          --  Create the spec of the parameterless subprogram
          --  that executes the thread job.
@@ -1600,6 +1568,19 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             Append_Node_To_List (N, Statements);
 
+            N := Make_Doxygen_C_Comment
+               (Is_Function => True,
+               Element_Name => "void __po_hi_main_deliver "&
+               "(__po_hi_request_t* request)",
+            Brief => "Used to deliver request to the appropriate ports",
+            Desc =>
+               "This function takes a request as argument (\arg request) " &
+               "and calls the appropriate function for its delivery. To " &
+               "specify which function should be called, it extracts " &
+               " the receiver entity using the destination port.",
+               Has_Header_Spaces => False);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
             N := Make_Function_Implementation
               (CTN.Job_Node
                (Backend_Node (Identifier (Parent_Subcomponent (E)))),
@@ -2089,6 +2070,28 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                Append_Node_To_List (N, Deliver_Statements);
 
                --  Make the deliver function specific to a thread
+               N := Make_Doxygen_C_Comment
+                  (Is_Function => True,
+                  Element_Name => "void " &
+                     Get_Name_String
+                        (CTN.Name (CTN.Defining_Identifier
+                           (CTN.Global_Port_Node
+                              (Backend_Node (Identifier (S)))))) &
+                     " (__po_hi_request_t* request)",
+                  Brief => "Function that delivers requests to the task " &
+                     Get_Name_String (Name (Identifier (S))),
+                  Desc =>
+                     "When the generated application received a request, it " &
+                     "calls a main delivery function that redirects to local" &
+                     " functions for each task. This function (" &
+                     Get_Name_String
+                        (CTN.Name (CTN.Defining_Identifier
+                           (CTN.Global_Port_Node
+                              (Backend_Node (Identifier (S)))))) &
+                     ") stores the incoming request for the task" &
+                     Get_Name_String (Name (Identifier (S))),
+                     Has_Header_Spaces => False);
+               Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                N := Make_Function_Implementation
                  (CTN.Global_Port_Node (Backend_Node (Identifier (S))),
@@ -2125,6 +2128,23 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                Append_Node_To_List (N, Main_Deliver_Alternatives);
             end if;
          end if;
+
+         N := Make_Doxygen_C_Comment
+            (Is_Function => True,
+            Element_Name => "void* " &
+               Get_Name_String
+                  (CTN.Name (Map_Task_Job_Identifier (S, Current_Device))) &
+               " (void)",
+            Brief => "Function executed by the task " &
+               Get_Name_String (Name (Identifier (S))),
+            Desc =>
+               "This function is executed as soon as the task " &
+               " is created. It performs the following operations: " &
+               " Receive incoming data, " &
+               " Execute tasks subprograms, " &
+               " Send output data.",
+               Has_Header_Spaces => False);
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          N := Task_Job_Body (E);
          Append_Node_To_List
