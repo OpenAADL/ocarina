@@ -100,7 +100,6 @@ package body Ocarina.Backends.C_Tree.Generator is
    procedure Write_Line (T : Token_Type);
 
    procedure Generate_Statement_Delimiter (N : Node_Id);
-   procedure Generate_Comment_Box (M : Name_Id);
 
    function Get_File_Name (N : Node_Id) return Name_Id;
    --  Generate a C file name from the package node given as parameter
@@ -975,9 +974,6 @@ package body Ocarina.Backends.C_Tree.Generator is
       P : constant Node_Id := Specification (N);
       M : Node_Id;
    begin
-      Generate_Comment_Box (Name (Defining_Identifier (P)));
-      Write_Eol;
-
       Write_Indentation;
       Generate (P);
 
@@ -1312,36 +1308,6 @@ package body Ocarina.Backends.C_Tree.Generator is
          Write_Line (Tok_Semicolon);
       end if;
    end Generate_Statement_Delimiter;
-
-   --------------------------
-   -- Generate_Comment_Box --
-   --------------------------
-
-   procedure Generate_Comment_Box (M : Name_Id) is
-   begin
-      Get_Name_String (M);
-      Write_Eol;
-      Write_Str ("/**");
-      for I in 1 .. Name_Len + 4 loop
-         Write_Char ('*');
-      end loop;
-      Write_Str ("*/");
-      Write_Eol;
-      Write_Indentation;
-
-      Write_Str ("/* ");
-      Write_Name (M);
-      Write_Str ("   */ ");
-      Write_Eol;
-      Write_Indentation;
-
-      Write_Str ("/*");
-      for I in 1 .. Name_Len + 4 loop
-         Write_Char ('*');
-      end loop;
-      Write_Str ("*/");
-      Write_Eol;
-   end Generate_Comment_Box;
 
    ------------------------------
    -- Generate_Type_Conversion --

@@ -332,6 +332,7 @@ package body Ocarina.Backends.PO_HI_C is
          A  : constant Node_Id :=
             AAN.Parent_Component (AAN.Parent_Subcomponent (E));
          Fd : File_Descriptor;
+         Rpath : constant String := Get_Runtime_Path ("polyorb-hi-c");
       begin
          Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (A))));
          Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (S))));
@@ -353,16 +354,45 @@ package body Ocarina.Backends.PO_HI_C is
          Write_Line ("GENERATE_MAN           = YES");
          Write_Line ("GENERATE_RTF           = YES");
          Write_Line ("CASE_SENSE_NAMES       = NO");
-         Write_Line ("INPUT                  = ");
+         Write_Str ("INPUT                  = . ");
+         Write_Str (Rpath);
+         Write_Eol;
+         Write_Line ("SOURCE_BROWSER         = YES");
+         Write_Line ("OPTIMIZE_OUTPUT_FOR_C  = YES");
+         Write_Line ("GENERATE_TREEVIEW      = YES");
          Write_Line ("QUIET                  = YES");
+         Write_Line ("HAVE_DOT               = YES");
          Write_Line ("JAVADOC_AUTOBRIEF      = YES");
+         Write_Line ("EXTRACT_ALL            = YES");
          Write_Line ("EXTRACT_PRIVATE        = YES");
          Write_Line ("EXTRACT_STATIC         = YES");
          Write_Line ("TYPEDEF_HIDES_STRUCT   = YES");
          Write_Line ("INLINE_SOURCES         = YES");
          Write_Line ("REFERENCED_BY_RELATION = YES");
          Write_Line ("REFERENCES_RELATION    = YES");
-         Write_Line ("SEARCHENGINE           = NO");
+         Write_Line ("SEARCHENGINE           = YES");
+         Write_Line ("SERVER_BASED_SEARCH    = NO");
+         Write_Line ("SEARCH_INCLUDES        = YES");
+         Write_Line ("INCLUDED_BY_GRAPH      = YES");
+         Write_Line ("ENABLE_PREPROCESSING   = YES");
+         Write_Line ("OUTPUT_LANGUAGE        = English");
+         Write_Line ("BRIEF_MEMBER_DESC      = YES");
+         Write_Line ("REPEAT_BRIEF           = YES");
+         Write_Line ("RECURSIVE              = YES");
+         Write_Line ("EXAMPLE_RECURSIVE      = NO");
+         Write_Line ("DIRECTORY_GRAPH        = YES");
+         Write_Line ("CLASS_GRAPH            = YES");
+         Write_Line ("COLLABORATION_GRAPH    = YES");
+         Write_Line ("GROUP_GRAPHS           = YES");
+         Write_Line ("INCLUDE_GRAPH          = YES");
+         Write_Line ("INCLUDED_BY_GRAPH      = YES");
+         Write_Line ("CALL_GRAPH             = YES");
+         Write_Line ("CALLER_GRAPH           = YES");
+         Write_Line ("GRAPHICAL_HIERARCHY    = YES");
+         Write_Line ("DIRECTORY_GRAPH        = YES");
+         Write_Line ("DOT_GRAPH_MAX_NODES    = 50");
+         Write_Line ("MAX_DOT_GRAPH_DEPTH    = 0");
+
          Write_Eol;
 
          Close (Fd);

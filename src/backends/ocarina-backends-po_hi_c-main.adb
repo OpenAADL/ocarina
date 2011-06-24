@@ -135,19 +135,24 @@ package body Ocarina.Backends.PO_HI_C.Main is
             Period_Variable_Declared := True;
          end if;
 
+         N := Make_Doxygen_C_Comment
+            (Desc => "Store the period time for task " &
+               Get_Name_String (Name (Identifier (S))),
+            Has_Header_Spaces => False);
+         Append_Node_To_List (N, CTN.Statements (Main_Function));
+
          if Get_Thread_Dispatch_Protocol (E) /= Thread_Aperiodic
            and then Get_Thread_Dispatch_Protocol (E) /= Thread_Background
          then
-            N := Map_Time (Get_Thread_Period (E), Get_String_Name ("period"));
+            N := Map_Time (Get_Thread_Period (E), VN (V_Period));
 
          else
-            N := Map_Time ((0, Second), Get_String_Name ("period"));
+            N := Map_Time ((0, Second), VN (V_Period));
          end if;
 
          Append_Node_To_List
             (Make_Variable_Address
-               (Make_Defining_Identifier
-                  (Get_String_Name ("period"))),
+               (Make_Defining_Identifier (VN (V_Period))),
             Parameters);
 
          Append_Node_To_List (N, CTN.Statements (Main_Function));
@@ -183,14 +188,22 @@ package body Ocarina.Backends.PO_HI_C.Main is
          case Get_Thread_Dispatch_Protocol (E) is
             when Thread_Periodic =>
                N := Make_Doxygen_C_Comment
-                  (Brief => "Making Periodic Task",
+                  (Brief => "Making Periodic Task " &
+                   Get_Name_String (Name (Identifier (S))),
                   Desc => "Make a periodic task according to " &
                            "AADL model requirements. The first " &
                            "parameter is the task identifier defined " &
-                           "in deployment.h, the second is the period " &
+                           "in deployment.h (" &
+                           Get_Name_String (Map_C_Enumerator_Name (S)) &
+                           ") the second is the period " &
                            "defined in the AADL model. Third is the task " &
-                           "priority, fourth is the stack size and last "&
-                           "the subprogram executed by the task",
+                           "priority (" &
+                           Unsigned_Long_Long'Image (Get_Thread_Priority (E)) &
+                           "), fourth is the stack size ("&
+                           Unsigned_Long_Long'Image
+                              (To_Bytes (Get_Thread_Stack_Size (E))) &
+                           " bytes) and last is the subprogram executed "&
+                           "by the task",
                   Has_Header_Spaces => False);
                Append_Node_To_List (N, CTN.Statements (Main_Function));
 
@@ -475,6 +488,16 @@ package body Ocarina.Backends.PO_HI_C.Main is
                S := Next_Node (S);
             end loop;
          end if;
+
+         N := Make_Doxygen_C_Comment
+            (Is_Function => True,
+            Element_Name => "__PO_HI_MAIN_TYPE __PO_HI_MAIN_NAME (void)",
+            Brief => "Main function executed by the system",
+            Desc =>
+               "Full function name and return types are available " &
+               " in the PolyORB-HI-C runtime header files.",
+               Has_Header_Spaces => False);
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          Append_Node_To_List (Main_Function, CTN.Declarations (Current_File));
          --  Call __po_hi_wait_initialization(). With this function,
