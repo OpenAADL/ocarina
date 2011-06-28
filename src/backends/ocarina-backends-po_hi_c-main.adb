@@ -194,7 +194,9 @@ package body Ocarina.Backends.PO_HI_C.Main is
                            "AADL model requirements. The first " &
                            "parameter is the task identifier defined " &
                            "in deployment.h (" &
-                           Get_Name_String (Map_C_Enumerator_Name (S)) &
+                           Get_Name_String
+                              (Map_C_Enumerator_Name (S,
+                              Custom_Parent => Current_Device)) &
                            ") the second is the period " &
                            "defined in the AADL model. Third is the task " &
                            "priority (" &
