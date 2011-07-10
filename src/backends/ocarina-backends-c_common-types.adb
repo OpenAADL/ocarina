@@ -882,6 +882,22 @@ package body Ocarina.Backends.C_Common.Types is
                   --  Build the enumerator corresponding to the device
                   --  Note: we reuse the process name XXX
                   Visit_Device_Instance (Corresponding_Instance (C));
+
+               --  We also visit ALL processes of the system to be
+               --  sure that ALL types used in the distributed system
+               --  are generated (and not only the ones related to the
+               --  current node). This would ensure that ALL types used
+               --  in the request_t type
+               --  (see ocarina-backends-po_hi_c-request.adb) are used.
+
+               elsif AINU.Is_Process (Corresponding_Instance (C)) then
+                  S := First_Node (Subcomponents
+                     (Corresponding_Instance (C)));
+                  while Present (S) loop
+                     Visit_Component_Instance
+                       (Corresponding_Instance (S));
+                     S := Next_Node (S);
+                  end loop;
                end if;
                C := Next_Node (C);
             end loop;
