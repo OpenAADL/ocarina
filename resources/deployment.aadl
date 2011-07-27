@@ -47,12 +47,25 @@ property set Deployment is
     );
   --  Supported platforms
 
-  Execution_Platform : Deployment::Allowed_Execution_Platform 
+  Execution_Platform : Deployment::Allowed_Execution_Platform
     applies to (all);
   --  Execution platform of a processor
 
+  Supported_Execution_Platform : list of Deployment::Allowed_Execution_Platform
+    applies to (device);
+  --  List execution platforms supported by a particular driver
+
+  Runtime : type enumeration
+    (PolyORB_HI_C,
+     PolyORB_HI_Ada,
+     POK);
+  --  List of supported runtime
+
+  Supported_Runtime : Deployment::Runtime applies to (all);
+  --  List the runtime compatible with the component
+
   Priority_Type : type aadlinteger 0 .. 255;
- 
+
   Priority : Deployment::Priority_Type applies to (data, thread);
   --  Thread and data component priority
 
