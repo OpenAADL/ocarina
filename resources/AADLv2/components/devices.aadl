@@ -15,6 +15,8 @@ public
   with ocarina_drivers_rasta_spacewire;
   with ocarina_drivers_rtems_ne2000;
 
+  with ocarina_drivers_star_dundee_spacewire_brick;
+
   with ocarina_drivers_udp_exarm;
   with ocarina_drivers_serial;
 
@@ -147,6 +149,23 @@ public
     Initialize_Entrypoint => classifier (GRUART::Initialize);
     Provided_Virtual_Bus_Class => (classifier (ocarina_buses::raw.i));
   end rasta_serial.pohiada;
+
+  --------------------------------------------------
+  -- USB BRICK (STAR DUNDEE) DEVICE FOR SPACEWIRE --
+  --------------------------------------------------
+
+  device usb_brick_spacewire
+  features
+    spwaccess : requires bus access ocarina_buses::spacewire.generic;
+  end usb_brick_spacewire;
+
+  device implementation usb_brick_spacewire.pohic
+  properties
+    Deployment::Driver_Name       => "spacewire_usb_brick";
+    Device_Driver                 => classifier (ocarina_drivers_star_dundee_spacewire_brick::driver.usb_brick);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_star_dundee_spacewire_brick::spg_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end usb_brick_spacewire.pohic;
 
   ---------------------
   -- RASTA SPACEWIRE --

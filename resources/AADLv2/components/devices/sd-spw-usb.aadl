@@ -1,0 +1,53 @@
+package ocarina_drivers_star_dundee_spacewire_brick
+public
+
+with ocarina_buses;
+with Deployment;
+
+subprogram spg_poller
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_spw_usb_brick_poller";
+end spg_poller;
+
+subprogram spg_sender
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_spw_usb_brick_sender";
+end spg_sender;
+
+subprogram spg_init
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_spw_usb_brick_init";
+end spg_init;
+
+
+thread thr_poller
+end thr_poller;
+
+thread implementation thr_poller.i
+calls
+	mycall : {
+	  pspg : subprogram spg_poller;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end thr_poller.i;
+
+
+abstract driver
+properties
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_spacewire);
+end driver;
+
+abstract implementation driver.usb_brick
+subcomponents
+   receiver_rasta_spacewire : thread thr_poller.i;
+   sender                   : subprogram spg_sender;
+end driver.usb_brick;
+
+end ocarina_drivers_star_dundee_spacewire_brick;
