@@ -33,6 +33,14 @@ property set Deployment is
   Execution_Platform : Deployment::Allowed_Execution_Platform
     applies to ( all);
 
+  Supported_Execution_Platform : list of Deployment::Allowed_Execution_Platform
+    applies to (device);
+
+  Runtime : type enumeration (PolyORB_HI_C, PolyORB_HI_Ada, POK);
+
+  Supported_Runtime : Deployment::Runtime
+    applies to ( all);
+
   Priority_Type : type aadlinteger 0 .. 255;
 
   Priority : Deployment::Priority_Type
