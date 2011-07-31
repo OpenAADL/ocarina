@@ -1557,12 +1557,20 @@ package body Ocarina.Backends.POK_C.Deployment is
          end if;
 
          if Is_Defined_Property (E, "pok::pci_vendor_id") then
+            Kernel_Use_Pci := True;
+            Kernel_Use_Io := True;
             N := CTU.Make_Define_Statement
                (Defining_Identifier => RE (RE_Pok_Pci_Vendor_Id),
                 Value => CTU.Make_Literal (CV.New_Pointed_Char_Value
                      (Get_String_Property (E, "pok::pci_vendor_id"))));
 
             CTU.Append_Node_To_List (N, CTN.Declarations (CTU.Current_File));
+         end if;
+
+         if Get_String_Property (E, "pok::device_name") =
+            Get_String_Name ("rtl8029") then
+            Kernel_Use_Pci := True;
+            Kernel_Use_Io := True;
          end if;
 
          if not AINU.Is_Empty (Features (E)) then
