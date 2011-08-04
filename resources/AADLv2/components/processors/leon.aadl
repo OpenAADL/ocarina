@@ -18,6 +18,16 @@ properties
    Deployment::Execution_Platform => LEON_RTEMS;
 end leon.rtems;
 
+processor implementation leon.rtems_posix
+properties
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+   Priority_Range => 0 .. 255;
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
+   Deployment::Execution_Platform => LEON_RTEMS_POSIX;
+end leon.rtems_posix;
+
+
 processor implementation leon.ork
 properties
    Deployment::Execution_Platform => LEON_ORK;

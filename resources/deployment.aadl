@@ -25,25 +25,27 @@ property set Deployment is
   Protocol : Deployment::Protocol_Type applies to (system);
 
   Allowed_Execution_Platform : type enumeration
-   (Native,        -- Native platforms (GNU/Linux, Solaris, Windows...)
-    Native_Compcert, -- Native platforms using the Compcert compiler
-    bench,         -- Benchmark platform (native with instrumentation).
-    LEON_RTEMS,    -- LEON2 board or tsim-leon (RTEMS)
-    LEON3_XTRATUM, -- LEON3 with Xtratum
-    LEON3_XM3,     -- RTEMS for XTRATUM/LEON3
-    LEON_ORK,      -- LEON2 board or tsim-leon (ORK)
-    LEON_GNAT,     -- LEON2 board or qemu (GNATPRO/HI-E)
-    LINUX32,       -- Linux 32 bits
-    LINUX32_XENOMAI_NATIVE, -- Linux 32 bits with native Xenomai
-    LINUX32_XENOMAI_POSIX, -- Linux 32 bits with Xenomai and POSIX skin
-    LINUX64,       -- Linux 64 bits
-    ERC32_ORK,     -- ERC32 board or tsim-erc32 (ORK)
-    ARM_DSLINUX,   -- Nintendo DS (tm) (DSLinux)
-    ARM_N770,      -- Nokia N770 (tm)
-    X86_RTEMS,     -- x86 under RTEMS
-    X86_LINUXTASTE,-- TASTE-specific linux distribution
-    MARTE_OS,      -- MaRTE OS
-    VXWORKS        -- VXWORKS
+   (Native,                   -- Native platforms (GNU/Linux, Solaris, Windows...)
+    Native_Compcert,          -- Native platforms using the Compcert compiler
+    bench,                    -- Benchmark platform (native with instrumentation).
+    LEON_RTEMS,               -- LEON2 board or tsim-leon (RTEMS)
+    LEON_RTEMS_POSIX,         -- LEON2 board or tsim-leon (RTEMS)
+    LEON3_XTRATUM,            -- LEON3 with Xtratum
+    LEON3_XM3,                -- RTEMS for XTRATUM/LEON3
+    LEON_ORK,                 -- LEON2 board or tsim-leon (ORK)
+    LEON_GNAT,                -- LEON2 board or qemu (GNATPRO/HI-E)
+    LINUX32,                  -- Linux 32 bits
+    LINUX32_XENOMAI_NATIVE,   -- Linux 32 bits with native Xenomai
+    LINUX32_XENOMAI_POSIX,    -- Linux 32 bits with Xenomai and POSIX skin
+    LINUX64,                  -- Linux 64 bits
+    ERC32_ORK,                -- ERC32 board or tsim-erc32 (ORK)
+    ARM_DSLINUX,              -- Nintendo DS (tm) (DSLinux)
+    ARM_N770,                 -- Nokia N770 (tm)
+    X86_RTEMS,                -- x86 under RTEMS
+    X86_RTEMS_POSIX,          -- x86 under RTEMS with POSIX layer
+    X86_LINUXTASTE,           -- TASTE-specific linux distribution
+    MARTE_OS,                 -- MaRTE OS
+    VXWORKS                   -- VXWORKS
     );
   --  Supported platforms
 
