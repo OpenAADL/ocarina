@@ -307,19 +307,21 @@ package body Ocarina.Backends.Properties is
    Platform_LINUX32_Name                  : Name_Id;
    Platform_LINUX32_Xenomai_Native_Name   : Name_Id;
    Platform_LINUX32_Xenomai_Posix_Name    : Name_Id;
-   Platform_LINUX64_Name         : Name_Id;
-   Platform_LEON_RTEMS_Name      : Name_Id;
-   Platform_X86_LINUXTASTE_Name  : Name_Id;
-   Platform_X86_RTEMS_Name       : Name_Id;
-   Platform_LEON_GNAT_Name       : Name_Id;
-   Platform_LEON_ORK_Name        : Name_Id;
-   Platform_LEON3_XM3_Name       : Name_Id;
-   Platform_LEON3_Xtratum_Name   : Name_Id;
-   Platform_ERC32_ORK_Name       : Name_Id;
-   Platform_ARM_DSLINUX_Name     : Name_Id;
-   Platform_ARM_N770_Name        : Name_Id;
-   Platform_MARTE_OS_Name        : Name_Id;
-   Platform_Vxworks_Name         : Name_Id;
+   Platform_LINUX64_Name                  : Name_Id;
+   Platform_LEON_RTEMS_Name               : Name_Id;
+   Platform_LEON_RTEMS_POSIX_Name         : Name_Id;
+   Platform_X86_LINUXTASTE_Name           : Name_Id;
+   Platform_X86_RTEMS_Name                : Name_Id;
+   Platform_X86_RTEMS_POSIX_Name          : Name_Id;
+   Platform_LEON_GNAT_Name                : Name_Id;
+   Platform_LEON_ORK_Name                 : Name_Id;
+   Platform_LEON3_XM3_Name                : Name_Id;
+   Platform_LEON3_Xtratum_Name            : Name_Id;
+   Platform_ERC32_ORK_Name                : Name_Id;
+   Platform_ARM_DSLINUX_Name              : Name_Id;
+   Platform_ARM_N770_Name                 : Name_Id;
+   Platform_MARTE_OS_Name                 : Name_Id;
+   Platform_Vxworks_Name                  : Name_Id;
 
    Transport_BSD_Sockets_Name  : Name_Id;
    Transport_SpaceWire_Name    : Name_Id;
@@ -2615,6 +2617,8 @@ package body Ocarina.Backends.Properties is
             return Platform_Bench;
          elsif P_Name = Platform_Native_Compcert_Name then
             return Platform_Native_Compcert;
+         elsif P_Name = Platform_LEON_RTEMS_POSIX_Name then
+            return Platform_LEON_RTEMS_POSIX;
          elsif P_Name = Platform_LEON_RTEMS_Name then
             return Platform_LEON_RTEMS;
          elsif P_Name = Platform_X86_LINUXTASTE_Name then
@@ -2627,6 +2631,8 @@ package body Ocarina.Backends.Properties is
             return Platform_LINUX32_XENOMAI_POSIX;
          elsif P_Name = Platform_LINUX64_Name then
             return Platform_LINUX64;
+         elsif P_Name = Platform_X86_RTEMS_POSIX_Name then
+            return Platform_X86_RTEMS_POSIX;
          elsif P_Name = Platform_X86_RTEMS_Name then
             return Platform_X86_RTEMS;
          elsif P_Name = Platform_LEON_GNAT_Name then
@@ -3162,15 +3168,18 @@ package body Ocarina.Backends.Properties is
       Platform_Bench_Name       := Get_String_Name ("bench");
       Platform_Native_Compcert_Name
                                 := Get_String_Name ("native_compcert");
-      Platform_X86_RTEMS_Name   := Get_String_Name ("x86_rtems");
-      Platform_LINUX32_Name     := Get_String_Name ("linux32");
+      Platform_X86_RTEMS_Name          := Get_String_Name ("x86_rtems");
+      Platform_X86_RTEMS_POSIX_Name
+                                       := Get_String_Name ("x86_rtems_posix");
+      Platform_LINUX32_Name            := Get_String_Name ("linux32");
       Platform_LINUX32_Xenomai_Native_Name
                                  := Get_String_Name ("linux32_xenomai_native");
       Platform_LINUX32_Xenomai_Posix_Name
                                  := Get_String_Name ("linux32_xenomai_posix");
-      Platform_LINUX64_Name     := Get_String_Name ("linux64");
-      Platform_X86_LINUXTASTE_Name := Get_String_Name ("x86_linuxtaste");
-      Platform_LEON_RTEMS_Name  := Get_String_Name ("leon_rtems");
+      Platform_LINUX64_Name            := Get_String_Name ("linux64");
+      Platform_X86_LINUXTASTE_Name     := Get_String_Name ("x86_linuxtaste");
+      Platform_LEON_RTEMS_Name         := Get_String_Name ("leon_rtems");
+      Platform_LEON_RTEMS_POSIX_Name   := Get_String_Name ("leon_rtems_posix");
       Platform_LEON_GNAT_Name   := Get_String_Name ("leon_gnat");
       Platform_LEON_ORK_Name    := Get_String_Name ("leon_ork");
       Platform_LEON3_XM3_Name   := Get_String_Name ("leon3_xm3");

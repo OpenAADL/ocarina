@@ -1906,14 +1906,16 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                      (Corresponding_Instance (Q)));
                case Execution_Platform is
                   when Platform_Native | Platform_None |
-                       Platform_X86_RTEMS | Platform_X86_LINUXTASTE |
+                       Platform_X86_RTEMS | Platform_X86_RTEMS_POSIX |
                        Platform_LINUX32_XENOMAI_NATIVE |
+                       Platform_Native_Compcert |
                        Platform_LINUX32_XENOMAI_POSIX |
                        Platform_LINUX64 | Platform_LINUX32 =>
                      Append_Node_To_List
                         (RE (RE_Littleendian), CTN.Values (Endiannesses));
 
                   when Platform_LEON_RTEMS |
+                       Platform_LEON_RTEMS_POSIX |
                        Platform_LEON3_XM3 =>
                      Append_Node_To_List
                         (RE (RE_Bigendian), CTN.Values (Endiannesses));
