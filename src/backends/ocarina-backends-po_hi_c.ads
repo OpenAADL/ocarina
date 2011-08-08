@@ -56,6 +56,10 @@ package Ocarina.Backends.PO_HI_C is
    --  Indicate to the generator if we use performance
    --  analysis or not.
 
+   procedure Set_ASN1_Deployment (Use_It : Boolean);
+   --  Indicate if we would like to generate deployment
+   --  data using ASN1.
+
    function Use_ASN1_Deployment return Boolean;
    --  Just returns a boolean to indicate if the user
    --  wants the ASN1 deployment information.

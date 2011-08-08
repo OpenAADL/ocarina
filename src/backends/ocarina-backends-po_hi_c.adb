@@ -633,6 +633,15 @@ package body Ocarina.Backends.PO_HI_C is
       return Generate_ASN1_Deployment;
    end Use_ASN1_Deployment;
 
+   --------------------------
+   --  Set_ASN1_Deployment --
+   --------------------------
+
+   procedure Set_ASN1_Deployment (Use_It : Boolean) is
+   begin
+      Generate_ASN1_Deployment := Use_It;
+   end Set_ASN1_Deployment;
+
    -------------------------------
    --  Set_Performance_Analysis --
    -------------------------------

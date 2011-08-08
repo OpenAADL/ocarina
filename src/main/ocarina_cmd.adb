@@ -925,6 +925,10 @@ procedure Ocarina_Cmd is
                   Ocarina.Backends.PO_HI_C.Set_Performance_Analysis (True);
                end if;
 
+               if P = Get_String_Name ("asn1") then
+                  Ocarina.Backends.PO_HI_C.Set_ASN1_Deployment (True);
+               end if;
+
                N := Next_Node (N);
             end;
          end loop;
