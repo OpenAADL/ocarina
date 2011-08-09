@@ -89,6 +89,7 @@ package body Ocarina.Backends.PO_QoS_Ada is
       Execution_Platform : Supported_Execution_Platform := Platform_None;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
+      Asn_Sources        : Name_Tables.Instance;
       C_Sources          : Name_Tables.Instance;
       C_Libraries        : Name_Tables.Instance;
       User_Source_Dirs   : Name_Tables.Instance;
@@ -126,6 +127,7 @@ package body Ocarina.Backends.PO_QoS_Ada is
       Execution_Platform : Supported_Execution_Platform := Platform_None;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
+      Asn_Sources        : Name_Tables.Instance;
       C_Sources          : Name_Tables.Instance;
       C_Libraries        : Name_Tables.Instance;
       User_Source_Dirs   : Name_Tables.Instance;
@@ -139,6 +141,7 @@ package body Ocarina.Backends.PO_QoS_Ada is
       pragma Unreferenced (Appli_Name,
                            Transport_API,
                            Ada_Sources,
+                           Asn_Sources,
                            C_Libraries,
                            User_Source_Dirs,
                            Use_Transport,

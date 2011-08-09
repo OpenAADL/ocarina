@@ -73,6 +73,7 @@ package Ocarina.Backends.Build_Utils is
             Execution_Platform : Supported_Execution_Platform := Platform_None;
             Transport_API      : Supported_Transport_APIs;
             Ada_Sources        : Name_Tables.Instance;
+            Asn_Sources        : Name_Tables.Instance;
             C_Sources          : Name_Tables.Instance;
             C_Libraries        : Name_Tables.Instance;
             User_Source_Dirs   : Name_Tables.Instance;

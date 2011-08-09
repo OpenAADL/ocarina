@@ -115,6 +115,7 @@ package body Ocarina.Backends.PO_HI_C is
       Execution_Platform : Supported_Execution_Platform := Platform_None;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
+      Asn_Sources        : Name_Tables.Instance;
       C_Sources          : Name_Tables.Instance;
       C_Libraries        : Name_Tables.Instance;
       User_Source_Dirs   : Name_Tables.Instance;
@@ -135,6 +136,7 @@ package body Ocarina.Backends.PO_HI_C is
       Execution_Platform : Supported_Execution_Platform := Platform_None;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
+      Asn_Sources        : Name_Tables.Instance;
       C_Sources          : Name_Tables.Instance;
       C_Libraries        : Name_Tables.Instance;
       User_Source_Dirs   : Name_Tables.Instance;
@@ -263,6 +265,28 @@ package body Ocarina.Backends.PO_HI_C is
          Write_Eol;
       else
          Write_Str (".");
+         Write_Eol;
+      end if;
+
+      Write_Str ("ASN_SOURCES=");
+
+      if Generate_ASN1_Deployment then
+         Write_Str ("../asn1_deployment.asn ");
+      end if;
+
+      if Length (Asn_Sources) > 0 then
+         for J in
+           Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
+            Write_Str ("");
+            Write_Name (Asn_Sources.Table (J));
+
+            exit when J = Name_Tables.Last (Asn_Sources);
+
+            Write_Space;
+         end loop;
+
+         Write_Eol;
+      else
          Write_Eol;
       end if;
 

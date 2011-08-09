@@ -292,8 +292,13 @@ package body Ocarina.Backends.Build_Utils is
       procedure Visit_System_Instance       (E : Node_Id);
       procedure Visit_Process_Instance      (E : Node_Id);
       procedure Visit_Thread_Instance       (E : Node_Id);
-      procedure Visit_Subprogram_Instance   (E : Node_Id);
+      procedure Visit_Subprogram_Instance
+         (E : Node_Id; Force_Parent : Node_Id := No_Node);
       procedure Visit_Port_Instance         (E : Node_Id);
+      procedure Visit_Bus_Instance          (E : Node_Id);
+      procedure Visit_Virtual_Bus_Instance  (E : Node_Id);
+      procedure Visit_Data_Instance         (E : Node_Id);
+      procedure Visit_Abstract_Instance     (E : Node_Id);
 
       procedure Build_Architecture_Instance (E : Node_Id);
       procedure Build_Component_Instance    (E : Node_Id);
@@ -303,6 +308,8 @@ package body Ocarina.Backends.Build_Utils is
       procedure Clean_Architecture_Instance (E : Node_Id);
       procedure Clean_Component_Instance    (E : Node_Id);
       procedure Clean_System_Instance       (E : Node_Id);
+
+      Current_Process : Node_Id := No_Node;
 
       type Makefile_Rec is record
          Appli_Name         : Name_Id;
@@ -322,6 +329,8 @@ package body Ocarina.Backends.Build_Utils is
          C_Objs             : Name_Tables.Instance;
 
          Ada_Sources        : Name_Tables.Instance;
+
+         Asn_Sources        : Name_Tables.Instance;
 
          C_Sources          : Name_Tables.Instance;
          --  The C source files that may implement some subprograms of
@@ -413,6 +422,7 @@ package body Ocarina.Backends.Build_Utils is
            (Makefile_Rec, Makefile_Type);
       begin
          Name_Tables.Free (M.all.Ada_Sources);
+         Name_Tables.Free (M.all.Asn_Sources);
          Name_Tables.Free (M.all.C_Objs);
          Name_Tables.Free (M.all.C_Sources);
          Name_Tables.Free (M.all.C_Libraries);
@@ -671,6 +681,18 @@ package body Ocarina.Backends.Build_Utils is
             when CC_Thread =>
                Visit_Thread_Instance (E);
 
+            when CC_Bus =>
+               Visit_Bus_Instance (E);
+
+            when CC_Virtual_Bus =>
+               Visit_Virtual_Bus_Instance (E);
+
+            when CC_Data =>
+               Visit_Data_Instance (E);
+
+            when CC_Abstract =>
+               Visit_Abstract_Instance (E);
+
             when CC_Subprogram =>
                Visit_Subprogram_Instance (E);
 
@@ -678,6 +700,107 @@ package body Ocarina.Backends.Build_Utils is
                null;
          end case;
       end Visit_Component_Instance;
+
+      ------------------------
+      -- Visit_Bus_Instance --
+      ------------------------
+
+      procedure Visit_Bus_Instance (E : Node_Id) is
+         SC : Node_Id;
+      begin
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+
+               Visit (Corresponding_Instance (SC));
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Bus_Instance;
+
+      -----------------------------
+      -- Visit_Abstract_Instance --
+      -----------------------------
+
+      procedure Visit_Abstract_Instance (E : Node_Id) is
+         SC       : Node_Id;
+         Instance : Node_Id;
+      begin
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+               Instance := Corresponding_Instance (SC);
+               if (Get_Category_Of_Component (Instance) = CC_Subprogram) then
+                  Visit_Subprogram_Instance (Instance, Current_Process);
+               else
+                  Visit (Instance);
+               end if;
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Abstract_Instance;
+
+      -------------------------
+      -- Visit_Data_Instance --
+      -------------------------
+
+      procedure Visit_Data_Instance (E : Node_Id) is
+         SC       : Node_Id;
+         Source   : Name_Id;
+         Sources  : constant Name_Array := Get_Source_Text (E);
+         M        : constant Makefile_Type :=
+           Makefiles.Get (Current_Process);
+      begin
+         if Get_Source_Language (E) = Language_ASN1 and then
+            Sources'Length /= 0 then
+            Source := Sources (1);
+            Name_Tables.Append
+              (M.Asn_Sources,
+               Source);
+         end if;
+
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+
+               Visit (Corresponding_Instance (SC));
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Data_Instance;
+
+      --------------------------------
+      -- Visit_Virtual_Bus_Instance --
+      --------------------------------
+
+      procedure Visit_Virtual_Bus_Instance (E : Node_Id) is
+         SC : Node_Id;
+      begin
+         if Get_Implementation (E) /= No_Node then
+            Visit (Get_Implementation (E));
+         end if;
+
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+
+               Visit (Corresponding_Instance (SC));
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Virtual_Bus_Instance;
 
       ----------------------------
       -- Visit_Process_Instance --
@@ -690,6 +813,10 @@ package body Ocarina.Backends.Build_Utils is
          M  : constant Makefile_Type := new Makefile_Rec;
          SC : Node_Id;
          Current_Device : Node_Id;
+         Feature        : Node_Id;
+         Parent         : Node_Id;
+         Src            : Node_Id;
+         Dst            : Node_Id;
          The_System           : constant Node_Id := Parent_Component
                                  (Parent_Subcomponent (E));
       begin
@@ -698,6 +825,8 @@ package body Ocarina.Backends.Build_Utils is
          --  accesses here because all the visited threads and
          --  subprgrams will fetch this access to update the
          --  corresponding structure.
+
+         Current_Process := E;
 
          Makefiles.Set (E, M);
 
@@ -723,6 +852,7 @@ package body Ocarina.Backends.Build_Utils is
          --  Initialize the lists
 
          Name_Tables.Init (M.Ada_Sources);
+         Name_Tables.Init (M.Asn_Sources);
          Name_Tables.Init (M.C_Sources);
          Name_Tables.Init (M.C_Objs);
          Name_Tables.Init (M.C_Libraries);
@@ -739,6 +869,59 @@ package body Ocarina.Backends.Build_Utils is
                Visit (Corresponding_Instance (SC));
 
                SC := Next_Node (SC);
+            end loop;
+         end if;
+
+         if not AAU.Is_Empty (Features (E)) then
+            Feature := First_Node (Features (E));
+
+            while Present (Feature) loop
+               if not AAU.Is_Empty (Sources (Feature)) then
+                  Src := First_Node (Sources (Feature));
+
+                  while Present (Src) loop
+
+                     Parent := Parent_Component (Item (Src));
+
+                     if AAU.Is_Process (Parent)
+                       and then Parent /= E
+                     then
+                        if Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Src)) /= No_Node then
+                           Visit
+                              (Get_Provided_Virtual_Bus_Class
+                                 (Extra_Item (Src)));
+                        end if;
+                     end if;
+
+                     Src := Next_Node (Src);
+                  end loop;
+               end if;
+
+               --  The destinations of F
+
+               if not AAU.Is_Empty (Destinations (Feature)) then
+                  Dst := First_Node (Destinations (Feature));
+
+                  while Present (Dst) loop
+                     Parent := Parent_Component (Item (Dst));
+
+                     if AAU.Is_Process (Parent)
+                       and then Parent /= E
+                     then
+                        if Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Dst)) /= No_Node then
+                           Visit
+                              (Get_Provided_Virtual_Bus_Class
+                                 (Extra_Item (Dst)));
+                        end if;
+                     end if;
+
+                     Dst := Next_Node (Dst);
+                  end loop;
+               end if;
+
+               Feature := Next_Node (Feature);
             end loop;
          end if;
 
@@ -862,11 +1045,10 @@ package body Ocarina.Backends.Build_Utils is
       -- Visit_Subprogram_Instance --
       -------------------------------
 
-      procedure Visit_Subprogram_Instance (E : Node_Id) is
-         Parent_Process  : constant Node_Id :=
-           Corresponding_Instance (Get_Container_Process (E));
-         M               : constant Makefile_Type :=
-           Makefiles.Get (Parent_Process);
+      procedure Visit_Subprogram_Instance
+         (E : Node_Id; Force_Parent : Node_Id := No_Node) is
+         Parent_Process  : Node_Id;
+         M               : Makefile_Type;
          Subprogram_Kind : constant Supported_Subprogram_Kind :=
            Get_Subprogram_Kind (E);
          Source_Name     : constant Name_Id := Get_Source_Name (E);
@@ -878,6 +1060,15 @@ package body Ocarina.Backends.Build_Utils is
       begin
          --  Only C subprogram influence the structure of the
          --  generated makefile.
+         if Force_Parent /= No_Node then
+            Parent_Process := Force_Parent;
+         else
+            Parent_Process :=
+               Corresponding_Instance
+                  (Get_Container_Process (E));
+         end if;
+
+         M := Makefiles.Get (Parent_Process);
 
          case Subprogram_Kind is
             when Subprogram_Opaque_C =>
@@ -986,7 +1177,21 @@ package body Ocarina.Backends.Build_Utils is
                      M.Simulink_Node      := Get_Source_Name (Data);
                   end if;
                end;
+            elsif Get_Source_Language (Data) = Language_ASN1 then
+               declare
+                  Source_Text : constant Name_Array := Get_Source_Text (Data);
+               begin
+                  if Get_Name_Table_Byte (Name_Find) = 0 then
+                     Name_Tables.Append
+                        (M.Asn_Sources,
+                        Source_Text (1));
+                     Set_Name_Table_Byte (Source_Text (1), 1);
+                  end if;
 
+                  if Get_Source_Name (Data) /= No_Name then
+                     M.Simulink_Node      := Get_Source_Name (Data);
+                  end if;
+               end;
             else
                declare
                   Source_Name : constant Name_Id
@@ -1147,6 +1352,7 @@ package body Ocarina.Backends.Build_Utils is
                M.Execution_Platform,
                M.Transport_API,
                M.Ada_Sources,
+               M.Asn_Sources,
                M.C_Sources,
                M.C_Libraries,
                M.User_Source_Dirs,
@@ -1775,7 +1981,8 @@ package body Ocarina.Backends.Build_Utils is
       procedure Visit_System_Instance       (E : Node_Id);
       procedure Visit_Process_Instance      (E : Node_Id);
       procedure Visit_Thread_Instance       (E : Node_Id);
-      procedure Visit_Subprogram_Instance   (E : Node_Id);
+      procedure Visit_Subprogram_Instance
+         (E : Node_Id; Force_Parent : Node_Id := No_Node);
       procedure Visit_Port_Instance         (E : Node_Id);
 
       type Ada_Project_File_Rec is record
@@ -2195,11 +2402,10 @@ package body Ocarina.Backends.Build_Utils is
       -- Visit_Subprogram_Instance --
       -------------------------------
 
-      procedure Visit_Subprogram_Instance (E : Node_Id) is
-         Parent_Process  : constant Node_Id :=
-           Corresponding_Instance (Get_Container_Process (E));
-         P               : constant Ada_Project_File_Type :=
-           Ada_Project_Files.Get (Parent_Process);
+      procedure Visit_Subprogram_Instance
+         (E : Node_Id; Force_Parent : Node_Id := No_Node) is
+         Parent_Process  : Node_Id;
+         P               : Ada_Project_File_Type;
          Subprogram_Kind : constant Supported_Subprogram_Kind :=
            Get_Subprogram_Kind (E);
          Source_Name     : constant Name_Id := Get_Source_Name (E);
@@ -2207,6 +2413,14 @@ package body Ocarina.Backends.Build_Utils is
          Call_Seq        : Node_Id;
          Spg_Call        : Node_Id;
       begin
+         if Force_Parent = No_Node then
+            Parent_Process :=
+               Corresponding_Instance (Get_Container_Process (E));
+         else
+            Parent_Process := Force_Parent;
+         end if;
+
+         P := Ada_Project_Files.Get (Parent_Process);
          --  Only Ada subprograms may influence the structure of the
          --  generated project files.
 
