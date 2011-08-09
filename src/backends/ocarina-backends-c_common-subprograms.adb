@@ -67,6 +67,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
       procedure Visit_Architecture_Instance (E : Node_Id);
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);
+      procedure Visit_Abstract_Instance (E : Node_Id);
+      procedure Visit_Bus_Instance (E : Node_Id);
+      procedure Visit_Virtual_Bus_Instance (E : Node_Id);
       procedure Visit_Process_Instance
          (E : Node_Id; Real_Process : Boolean := True);
       procedure Visit_Processor_Instance (E : Node_Id);
@@ -118,6 +121,15 @@ package body Ocarina.Backends.C_Common.Subprograms is
            := Get_Category_Of_Component (E);
       begin
          case Category is
+            when CC_Abstract =>
+               Visit_Abstract_Instance (E);
+
+            when CC_Bus =>
+               Visit_Bus_Instance (E);
+
+            when CC_Virtual_Bus =>
+               Visit_Virtual_Bus_Instance (E);
+
             when CC_System =>
                Visit_System_Instance (E);
 
@@ -146,6 +158,71 @@ package body Ocarina.Backends.C_Common.Subprograms is
                null;
          end case;
       end Visit_Component_Instance;
+
+      ------------------------
+      -- Visit_Bus_Instance --
+      ------------------------
+
+      procedure Visit_Bus_Instance (E : Node_Id) is
+         SC : Node_Id;
+      begin
+         if not AINU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+
+               Visit (Corresponding_Instance (SC));
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Bus_Instance;
+
+      -----------------------------
+      -- Visit_Abstract_Instance --
+      -----------------------------
+
+      procedure Visit_Abstract_Instance (E : Node_Id) is
+         SC       : Node_Id;
+         Instance : Node_Id;
+      begin
+         if not AINU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+               Instance := Corresponding_Instance (SC);
+               Visit (Instance);
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Abstract_Instance;
+
+      --------------------------------
+      -- Visit_Virtual_Bus_Instance --
+      --------------------------------
+
+      procedure Visit_Virtual_Bus_Instance (E : Node_Id) is
+         SC : Node_Id;
+      begin
+         if Get_Implementation (E) /= No_Node then
+            Visit (Get_Implementation (E));
+         end if;
+
+         if not AINU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+
+               Visit (Corresponding_Instance (SC));
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Virtual_Bus_Instance;
 
       ---------------------------
       -- Visit_Device_Instance --
@@ -281,6 +358,10 @@ package body Ocarina.Backends.C_Common.Subprograms is
          P                    : Node_Id;
          S                    : Node_Id;
          C                    : Node_Id;
+         Feature              : Node_Id;
+         Src                  : Node_Id;
+         Parent               : Node_Id;
+         Dst                  : Node_Id;
          The_System : constant Node_Id := Parent_Component
            (Parent_Subcomponent (E));
       begin
@@ -308,6 +389,61 @@ package body Ocarina.Backends.C_Common.Subprograms is
                Visit (Corresponding_Instance (S));
 
                S := Next_Node (S);
+            end loop;
+         end if;
+
+         --  Visit the features and their associated bus/virtual buses.
+
+         if not AINU.Is_Empty (Features (E)) then
+            Feature := First_Node (Features (E));
+
+            while Present (Feature) loop
+               if not AINU.Is_Empty (Sources (Feature)) then
+                  Src := First_Node (Sources (Feature));
+
+                  while Present (Src) loop
+
+                     Parent := Parent_Component (Item (Src));
+
+                     if AINU.Is_Process (Parent)
+                       and then Parent /= E
+                     then
+                        if Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Src)) /= No_Node then
+                           Visit
+                              (Get_Provided_Virtual_Bus_Class
+                                 (Extra_Item (Src)));
+                        end if;
+                     end if;
+
+                     Src := Next_Node (Src);
+                  end loop;
+               end if;
+
+               --  The destinations of F
+
+               if not AINU.Is_Empty (Destinations (Feature)) then
+                  Dst := First_Node (Destinations (Feature));
+
+                  while Present (Dst) loop
+                     Parent := Parent_Component (Item (Dst));
+
+                     if AINU.Is_Process (Parent)
+                       and then Parent /= E
+                     then
+                        if Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Dst)) /= No_Node then
+                           Visit
+                              (Get_Provided_Virtual_Bus_Class
+                                 (Extra_Item (Dst)));
+                        end if;
+                     end if;
+
+                     Dst := Next_Node (Dst);
+                  end loop;
+               end if;
+
+               Feature := Next_Node (Feature);
             end loop;
          end if;
 
@@ -490,6 +626,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
       procedure Visit_Architecture_Instance (E : Node_Id);
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);
+      procedure Visit_Abstract_Instance (E : Node_Id);
+      procedure Visit_Bus_Instance (E : Node_Id);
+      procedure Visit_Virtual_Bus_Instance (E : Node_Id);
       procedure Visit_Process_Instance
          (E : Node_Id; Real_Process : Boolean := True);
       procedure Visit_Processor_Instance (E : Node_Id);
@@ -537,6 +676,15 @@ package body Ocarina.Backends.C_Common.Subprograms is
            := Get_Category_Of_Component (E);
       begin
          case Category is
+            when CC_Abstract =>
+               Visit_Abstract_Instance (E);
+
+            when CC_Bus =>
+               Visit_Bus_Instance (E);
+
+            when CC_Virtual_Bus =>
+               Visit_Virtual_Bus_Instance (E);
+
             when CC_System =>
                Visit_System_Instance (E);
 
@@ -565,6 +713,71 @@ package body Ocarina.Backends.C_Common.Subprograms is
                null;
          end case;
       end Visit_Component_Instance;
+
+      ------------------------
+      -- Visit_Bus_Instance --
+      ------------------------
+
+      procedure Visit_Bus_Instance (E : Node_Id) is
+         SC : Node_Id;
+      begin
+         if not AINU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+
+               Visit (Corresponding_Instance (SC));
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Bus_Instance;
+
+      -----------------------------
+      -- Visit_Abstract_Instance --
+      -----------------------------
+
+      procedure Visit_Abstract_Instance (E : Node_Id) is
+         SC       : Node_Id;
+         Instance : Node_Id;
+      begin
+         if not AINU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+               Instance := Corresponding_Instance (SC);
+               Visit (Instance);
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Abstract_Instance;
+
+      --------------------------------
+      -- Visit_Virtual_Bus_Instance --
+      --------------------------------
+
+      procedure Visit_Virtual_Bus_Instance (E : Node_Id) is
+         SC : Node_Id;
+      begin
+         if Get_Implementation (E) /= No_Node then
+            Visit (Get_Implementation (E));
+         end if;
+
+         if not AINU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+
+               Visit (Corresponding_Instance (SC));
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Virtual_Bus_Instance;
 
       ------------------------------
       -- Visit_Processor_Instance --
@@ -653,6 +866,10 @@ package body Ocarina.Backends.C_Common.Subprograms is
          S          : Node_Id;
          C          : Node_Id;
          N          : Node_Id;
+         Feature              : Node_Id;
+         Src                  : Node_Id;
+         Parent               : Node_Id;
+         Dst                  : Node_Id;
          The_System : constant Node_Id := Parent_Component
            (Parent_Subcomponent (E));
       begin
@@ -747,6 +964,61 @@ package body Ocarina.Backends.C_Common.Subprograms is
                   Visit_Device_Instance (Corresponding_Instance (C));
                end if;
                C := Next_Node (C);
+            end loop;
+         end if;
+
+         --  Visit the features and their associated bus/virtual buses.
+
+         if not AINU.Is_Empty (Features (E)) then
+            Feature := First_Node (Features (E));
+
+            while Present (Feature) loop
+               if not AINU.Is_Empty (Sources (Feature)) then
+                  Src := First_Node (Sources (Feature));
+
+                  while Present (Src) loop
+
+                     Parent := Parent_Component (Item (Src));
+
+                     if AINU.Is_Process (Parent)
+                       and then Parent /= E
+                     then
+                        if Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Src)) /= No_Node then
+                           Visit
+                              (Get_Provided_Virtual_Bus_Class
+                                 (Extra_Item (Src)));
+                        end if;
+                     end if;
+
+                     Src := Next_Node (Src);
+                  end loop;
+               end if;
+
+               --  The destinations of F
+
+               if not AINU.Is_Empty (Destinations (Feature)) then
+                  Dst := First_Node (Destinations (Feature));
+
+                  while Present (Dst) loop
+                     Parent := Parent_Component (Item (Dst));
+
+                     if AINU.Is_Process (Parent)
+                       and then Parent /= E
+                     then
+                        if Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Dst)) /= No_Node then
+                           Visit
+                              (Get_Provided_Virtual_Bus_Class
+                                 (Extra_Item (Dst)));
+                        end if;
+                     end if;
+
+                     Dst := Next_Node (Dst);
+                  end loop;
+               end if;
+
+               Feature := Next_Node (Feature);
             end loop;
          end if;
 
