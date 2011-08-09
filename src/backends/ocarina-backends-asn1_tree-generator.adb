@@ -141,7 +141,7 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
          return;
       end if;
       Get_Name_String (Name (Defining_Identifier (N)));
-      Fd := Create_File (Name_Buffer (1 .. Name_Len) & ".asn1", Text);
+      Fd := Create_File (Name_Buffer (1 .. Name_Len) & ".asn", Text);
       Set_Output (Fd);
 
       Generate (Module_Node (N));
