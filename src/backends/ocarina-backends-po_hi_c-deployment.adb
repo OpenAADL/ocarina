@@ -74,6 +74,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    Devices_Array           : Node_Id;
    Devices_Nb_Buses_Array  : Node_Id;
    Devices_Confvars        : Node_Id;
+   Protocols_Conf          : Node_Id;
    Devices_Buses_Array     : Node_Id;
    Port_To_Devices         : Node_Id;
    Global_Port_Kind        : Node_Id;
@@ -326,12 +327,133 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       --------------------------------
 
       procedure Visit_Virtual_Bus_Instance (E : Node_Id) is
-         N : Node_Id;
+         N        : Node_Id;
+         C        : Node_Id;
+         S        : Node_Id;
+         Impl     : Node_Id;
+         Found    : Boolean;
+         Bus_Conf : constant Node_Id := Make_Array_Values;
       begin
+         --  A virtual bus describe a user-defined protocol.
+         --  We are expecting that such a component defines some
+         --  sub-components that model how it works.
+         --  We are expecting at least one subprogram
+         --  for marshalling (called marshaller in the subcomponent)
+         --  and one for unmarshalling.
+
+         --  Here, we retrieve the implementation of the protocol, as
+         --  an abstract component. Then, we look for the marshaller
+         --  and unmarshaller components that model protocol internals.
+
+         Impl := Get_Implementation (E);
+
+         --  If there is no abstract component associated with the virtual
+         --  bus, this is useless to continue.
+
+         if Impl = No_Node then
+            return;
+         end if;
+
+         --  Make sure we include the header of subprograms
+         --  in order to avoid any compilation issue (warning/errors).
+         Set_Deployment_Source;
+         Add_Include (RH (RH_Subprograms));
+         Set_Deployment_Header;
+
+         --  If there is a backend node and a naming node associated
+         --  with it, it means that we already processed this protocol
+         --  and correctly mapped it in the generated code.
+
          if Backend_Node (Identifier (E)) /= No_Node and then
             CTN.Naming_Node (Backend_Node (Identifier (E))) /= No_Node then
             return;
          end if;
+
+         --  First, we are looking for the marshaller subcomponent.
+         --  If not found, we raise an error.
+
+         Found := False;
+
+         if not AAU.Is_Empty (Subcomponents (Impl)) then
+            S := First_Node (Subcomponents (Impl));
+            while Present (S) loop
+               C := Corresponding_Instance (S);
+               if AAU.Is_Subprogram (C) and then
+                  Get_Name_String (Name (Identifier (S))) = "marshaller" then
+                  Append_Node_To_List
+                    (Map_C_Defining_Identifier (C),
+                  CTN.Values (Bus_Conf));
+                  Found := True;
+               end if;
+
+               S := Next_Node (S);
+            end loop;
+         end if;
+
+         if not Found then
+            Display_Error
+               ("User-defined protocol does define a marshaller",
+                Fatal => True);
+         end if;
+
+         --  First, we are looking for the unmarshaller subcomponent.
+         --  If not found, we display an error.
+
+         Found := False;
+
+         if not AAU.Is_Empty (Subcomponents (Impl)) then
+            S := First_Node (Subcomponents (Impl));
+            while Present (S) loop
+               C := Corresponding_Instance (S);
+               if AAU.Is_Subprogram (C) and then
+                  Get_Name_String (Name (Identifier (S))) = "unmarshaller" then
+
+                  Append_Node_To_List
+                    (Map_C_Defining_Identifier (C),
+                  CTN.Values (Bus_Conf));
+                  Found := True;
+               end if;
+
+               S := Next_Node (S);
+            end loop;
+         end if;
+
+         if not Found then
+            Display_Error
+               ("User-defined protocol does define a unmarshaller",
+                Fatal => True);
+         end if;
+
+--         Found := False;
+--
+--         if not AAU.Is_Empty (Subcomponents (Impl)) then
+--            S := First_Node (Subcomponents (Impl));
+--            while Present (S) loop
+--               C := Corresponding_Instance (S);
+--               if AAU.Is_Data (C) and then
+--                  Append_Node_To_List
+--                     (Map_C_Defining_Identifier (C),
+--                     CTN.Values (Bus_Conf));
+--               end if;
+--               S := Next_Node (S);
+--            end loop;
+--         end if;
+--
+--         if not Found then
+--            Display_Error
+--               ("User-defined protocol does define an associated type",
+--                Fatal => True);
+--         end if;
+
+         --  Here, we add the array we just built and that describe
+         --  the protocol configuration into the global array
+         --  that contain all protocols configuration.
+
+         Append_Node_To_List (Bus_Conf, CTN.Values (Protocols_Conf));
+
+         --  Finally, we assigned a unique protocol identifier to the
+         --  virtual bus, that will be mapped in the protocol_t enumeration
+         --  in deployment.h.
 
          N := Make_Expression
            (Make_Defining_Identifier
@@ -1219,6 +1341,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Devices_Array              := Make_Array_Values;
          Devices_Nb_Buses_Array     := Make_Array_Values;
          Devices_Confvars           := Make_Array_Values;
+         Protocols_Conf             := Make_Array_Values;
          Devices_Buses_Array        := Make_Array_Values;
          Port_To_Devices            := Make_Array_Values;
 
@@ -2073,6 +2196,23 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                     Make_Pointer_Type (RE (RE_Uint32_T))),
                Operator => Op_Equal,
                Right_Expr => Devices_Confvars);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
+         if not Is_Empty (CTN.Values (Protocols_Conf)) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Protocols_Configuration),
+                     Array_Size =>
+                       RE (RE_Nb_Protocols)),
+                  Used_Type =>
+                     RE (RE_Protocol_Conf_T)),
+               Operator => Op_Equal,
+               Right_Expr => Protocols_Conf);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 

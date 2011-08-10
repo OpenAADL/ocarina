@@ -214,6 +214,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Float64_T,                      --  __po_hi_float64_t
       RE_Msg_T,                          --  __po_hi_msg_t
       RE_Port_T,                         --  __po_hi_port_t
+      RE_Protocol_Conf_T,                --  __po_hi_protocol_conf_t
       RE_Protocol_T,                     --  __po_hi_protocol_t
       RE_Local_Port_T,                   --  __po_hi_local_port_t
       RE_Node_T,                         --  __po_hi_node_t
@@ -221,6 +222,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Operation_Names,                --  __po_hi_operation_names
       RE_Ports_Names,                    --  __po_hi_port_names
       RE_Devices_Naming,                 --  __po_hi_devices_naming
+      RE_Protocols_Configuration,        --  __po_hi_protocols_configuration
       RE_Devices_Configuration_Values,   --  __po_hi_devices_configuration_...
       RE_Devices_Nb_Accessed_Buses,      --  __po_hi_devices_nb_accessed_buses
       RE_Devices_Accessed_Buses,         --  __po_hi_devices_accessed_buses
@@ -336,6 +338,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Entity_T                       => RH_Deployment,
          RE_Local_Port_T                   => RH_Deployment,
          RE_Port_T                         => RH_Deployment,
+         RE_Protocol_Conf_T                => RH_PO_HI_Transport,
          RE_Protocol_T                     => RH_Deployment,
          RE_Entity_Server_T                => RH_Deployment,
          RE_Protected_T                    => RH_PO_HI_Protected,
@@ -417,6 +420,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
 
          RE_Ports_Names                    => RH_PO_HI_Types,
          RE_Devices_Naming                 => RH_Deployment,
+         RE_Protocols_Configuration        => RH_Deployment,
          RE_Devices_Configuration_Values   => RH_Deployment,
          RE_Devices_Nb_Accessed_Buses      => RH_Deployment,
          RE_Devices_Accessed_Buses         => RH_Deployment,
