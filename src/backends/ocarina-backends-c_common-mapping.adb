@@ -959,6 +959,18 @@ package body Ocarina.Backends.C_Common.Mapping is
          Get_Name_String_And_Append
             (AIN.Name
                (AIN.Identifier (Parent_Subcomponent (E))));
+      elsif AINU.Is_Virtual_Bus (E) then
+         Set_Str_To_Name_Buffer ("virtual_bus_");
+         if Parent_Subcomponent (E) /= No_Node then
+            Get_Name_String_And_Append
+               (AIN.Name
+                  (AIN.Identifier
+                     (Parent_Subcomponent (E))));
+         else
+            Get_Name_String_And_Append
+               (AIN.Name
+                  (AIN.Identifier (E)));
+         end if;
       elsif AINU.Is_Subprogram (E) then
          --  For subprograms and processes, the enemerator name is
          --  mapped from the entity name.

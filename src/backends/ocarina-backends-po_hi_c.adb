@@ -34,6 +34,8 @@
 with GNAT.OS_Lib;
 with Output;
 
+with GNAT.Directory_Operations;
+
 with Ocarina.Instances;
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.Messages;
@@ -69,6 +71,8 @@ package body Ocarina.Backends.PO_HI_C is
 
    use Namet;
    use Output;
+
+   use GNAT.Directory_Operations;
 
    use Ocarina.Backends.Properties;
    use Ocarina.ME_AADL;
@@ -151,7 +155,32 @@ package body Ocarina.Backends.PO_HI_C is
                            C_Sources,
                            Ada_Sources,
                            C_Libraries);
+      O_File             : Name_Id;
    begin
+      if Use_Asn1_Deployment then
+         Write_Str ("ASN_OBJS += asn1_deployment.o ");
+         if Length (Asn_Sources) > 0 then
+            for J in
+              Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
+
+               Get_Name_String (Asn_Sources.Table (J));
+               Name_Buffer (Name_Len - 2) := 'o';
+
+               Set_Str_To_Name_Buffer
+                 (Base_Name (Name_Buffer (1 .. Name_Len - 2)));
+               O_File := Name_Find;
+
+               Write_Str ("");
+               Write_Name (O_File);
+
+               exit when J = Name_Tables.Last (Asn_Sources);
+
+               Write_Space;
+            end loop;
+         end if;
+         Write_Eol;
+      end if;
+
       if Appli_Name /= No_Name then
          Write_Str ("MAINAPP = ");
          Write_Name (Appli_Name);

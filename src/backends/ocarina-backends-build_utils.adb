@@ -751,7 +751,6 @@ package body Ocarina.Backends.Build_Utils is
       -------------------------
 
       procedure Visit_Data_Instance (E : Node_Id) is
-         SC       : Node_Id;
          Source   : Name_Id;
          Sources  : constant Name_Array := Get_Source_Text (E);
          M        : constant Makefile_Type :=
@@ -763,18 +762,6 @@ package body Ocarina.Backends.Build_Utils is
             Name_Tables.Append
               (M.Asn_Sources,
                Source);
-         end if;
-
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            SC := First_Node (Subcomponents (E));
-
-            while Present (SC) loop
-               --  Visit the corresponding instance of SC
-
-               Visit (Corresponding_Instance (SC));
-
-               SC := Next_Node (SC);
-            end loop;
          end if;
       end Visit_Data_Instance;
 

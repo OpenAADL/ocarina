@@ -121,6 +121,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       procedure Visit_Subprogram_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
       procedure Visit_Bus_Instance (E : Node_Id);
+      procedure Visit_Virtual_Bus_Instance (E : Node_Id);
 
       procedure Set_Added (P : Node_Id; E : Node_Id);
 
@@ -143,6 +144,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Buses_Enumerator_List         : List_Id;
       Entity_Enumerator_List        : List_Id;
       Global_Port_List              : List_Id;
+      Protocol_List                 : List_Id;
       Global_Port_Names             : Node_Id;
       Global_Port_Model_Names       : Node_Id;
       Local_Port_List               : List_Id;
@@ -156,6 +158,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Local_Port_Values         : Node_Id;
 
       Invalid_Local_Port_Added  : Boolean := False;
+      Invalid_Protocol_Added    : Boolean := False;
       Invalid_Global_Port_Added : Boolean := False;
       Invalid_Entity_Added      : Boolean := False;
 
@@ -168,6 +171,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       --  process.
 
       Node_Identifier          : Unsigned_Long_Long := 0;
+      Protocol_Identifier      : Unsigned_Long_Long := 0;
       Global_Port_Identifier   : Unsigned_Long_Long := 0;
       Local_Port_Identifier    : Unsigned_Long_Long := 0;
       Entity_Identifier        : Unsigned_Long_Long := 0;
@@ -181,6 +185,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Nb_Entities_Node         : Node_Id := No_Node;
       Nb_Devices_Node          : Node_Id := No_Node;
       Nb_Buses_Node            : Node_Id := No_Node;
+      Nb_Protocols_Node        : Node_Id := No_Node;
 
       --  The information from Simulink can come
       --  from both data and subprograms. So, to avoid
@@ -283,6 +288,9 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             when CC_Bus =>
                Visit_Bus_Instance (E);
 
+            when CC_Virtual_Bus =>
+               Visit_Virtual_Bus_Instance (E);
+
             when others =>
                null;
          end case;
@@ -312,6 +320,38 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
              (Bus_Id, 1, 10));
 
       end Visit_Bus_Instance;
+
+      --------------------------------
+      -- Visit_Virtual_Bus_Instance --
+      --------------------------------
+
+      procedure Visit_Virtual_Bus_Instance (E : Node_Id) is
+         N : Node_Id;
+      begin
+         if Backend_Node (Identifier (E)) /= No_Node and then
+            CTN.Naming_Node (Backend_Node (Identifier (E))) /= No_Node then
+            return;
+         end if;
+
+         N := Make_Expression
+           (Make_Defining_Identifier
+            (Map_C_Enumerator_Name (E)),
+            Op_Equal,
+            (Make_Literal
+          (CV.New_Int_Value (Protocol_Identifier, 1, 10))));
+         Append_Node_To_List
+            (N, Protocol_List);
+         Protocol_Identifier := Protocol_Identifier + 1;
+
+         CTN.Set_Value
+            (Nb_Protocols_Node, New_Int_Value
+             (Protocol_Identifier, 1, 10));
+
+         Bind_AADL_To_Naming
+            (Identifier (E),
+             Make_Defining_Identifier
+             (Map_C_Enumerator_Name (E)));
+      end Visit_Virtual_Bus_Instance;
 
       ---------------------------
       -- Visit_Device_Instance --
@@ -787,6 +827,13 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                      if AAU.Is_Process (Parent)
                        and then Parent /= E
                      then
+                        if Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Src)) /= No_Node then
+                           Visit
+                              (Get_Provided_Virtual_Bus_Class
+                                 (Extra_Item (Src)));
+                        end if;
+
                         Set_Added (Parent, E);
                         --  Traverse all the subcomponents of Parent
 
@@ -834,6 +881,13 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                      if AAU.Is_Process (Parent)
                        and then Parent /= E
                      then
+                        if Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Dst)) /= No_Node then
+                           Visit
+                              (Get_Provided_Virtual_Bus_Class
+                                 (Extra_Item (Dst)));
+                        end if;
+
                         Set_Added (Parent, E);
 
                         if not AAU.Is_Empty (Subcomponents (Parent)) then
@@ -1066,6 +1120,28 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
+         if not Is_Empty (Protocol_List) then
+            if not Invalid_Protocol_Added then
+               Set_Str_To_Name_Buffer ("invalid_protocol_t");
+               N := Make_Expression
+                 (Make_Defining_Identifier
+                  (Name_Find),
+                  Op_Equal,
+                  (Make_Literal
+                (CV.New_Int_Value (1, -1, 10))));
+               Append_Node_To_List
+                  (N, Protocol_List);
+
+               Invalid_Protocol_Added := True;
+            end if;
+
+            N := Make_Full_Type_Declaration
+              (Defining_Identifier => RE (RE_Protocol_T),
+               Type_Definition     => Make_Enum_Aggregate
+                 (Protocol_List));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
          if not Is_Empty (CTN.Values (Global_Port_To_Local)) then
             Bind_AADL_To_Local_Port (Identifier (S), Global_Port_To_Local);
          end if;
@@ -1118,6 +1194,12 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Append_Node_To_List
            (N, CTN.Declarations (Current_File));
 
+         N := Make_Define_Statement
+           (Defining_Identifier => RE (RE_Nb_Protocols),
+            Value => Nb_Protocols_Node);
+         Append_Node_To_List
+           (N, CTN.Declarations (Current_File));
+
          Current_Process_Instance := No_Node;
 
          Pop_Entity; -- U
@@ -1143,6 +1225,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Devices_Enumerator_List    := New_List (CTN.K_Enumeration_Literals);
          Buses_Enumerator_List      := New_List (CTN.K_Enumeration_Literals);
          Global_Port_List           := New_List (CTN.K_Enumeration_Literals);
+         Protocol_List              := New_List (CTN.K_Enumeration_Literals);
          Global_Port_Names          := Make_Array_Values;
          Global_Port_Model_Names    := Make_Array_Values;
          Global_Port_Kind           := Make_Array_Values;
@@ -1160,6 +1243,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Nb_Devices_Node            := Make_Literal
                                        (New_Int_Value (0, 1, 10));
          Nb_Buses_Node              := Make_Literal
+                                       (New_Int_Value (0, 1, 10));
+         Nb_Protocols_Node          := Make_Literal
                                        (New_Int_Value (0, 1, 10));
          Entity_Array               := Make_Array_Values;
          Device_Id                  := 0;

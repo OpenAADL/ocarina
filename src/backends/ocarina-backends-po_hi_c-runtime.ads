@@ -160,6 +160,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Nb_Nodes,                       --  __PO_HI_NB_NODES
       RE_Nb_Devices,                     --  __PO_HI_NB_DEVICES
       RE_Nb_Buses,                       --  __PO_HI_NB_BUSES
+      RE_Nb_Protocols,                   --  __PO_HI_NB_PROTOCOLS
       RE_My_Node,                        --  __PO_HI_MY_NODE
       RE_Gqueue_Fifo_Indata,             --  __PO_HI_GQUEUE_FIFO_DATA
       RE_Gqueue_Fifo_Out,                --  __PO_HI_GQUEUE_FIFO_OUT
@@ -213,6 +214,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Float64_T,                      --  __po_hi_float64_t
       RE_Msg_T,                          --  __po_hi_msg_t
       RE_Port_T,                         --  __po_hi_port_t
+      RE_Protocol_T,                     --  __po_hi_protocol_t
       RE_Local_Port_T,                   --  __po_hi_local_port_t
       RE_Node_T,                         --  __po_hi_node_t
 
@@ -334,6 +336,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Entity_T                       => RH_Deployment,
          RE_Local_Port_T                   => RH_Deployment,
          RE_Port_T                         => RH_Deployment,
+         RE_Protocol_T                     => RH_Deployment,
          RE_Entity_Server_T                => RH_Deployment,
          RE_Protected_T                    => RH_PO_HI_Protected,
          RE_Inetport_T                     => RH_PO_HI_Transport,
@@ -370,6 +373,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Nb_Nodes                       => RH_Deployment,
          RE_Nb_Devices                     => RH_Deployment,
          RE_Nb_Buses                       => RH_Deployment,
+         RE_Nb_Protocols                   => RH_Deployment,
          RE_My_Node                        => RH_Deployment,
          RE_Nb_Ports                       => RH_Deployment,
          RE_Nb_Servers                     => RH_Deployment,
