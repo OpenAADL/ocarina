@@ -337,6 +337,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          S        : Node_Id;
          Impl     : Node_Id;
          Found    : Boolean;
+         PName    : Name_Id;
          Bus_Conf : constant Node_Id := Make_Array_Values;
       begin
          --  A virtual bus describe a user-defined protocol.
@@ -364,6 +365,20 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Set_Deployment_Source;
          Add_Include (RH (RH_Subprograms));
          Set_Deployment_Header;
+
+         --  Add a maccro __PO_HI_USE_PROTOCOL_<NAME> so that we can
+         --  make conditional compilation depending on the protocol
+         --  that are used within the distributed system.
+         Set_Str_To_Name_Buffer ("__PO_HI_USE_PROTOCOL_");
+         Get_Name_String_And_Append (Name (Identifier (E)));
+
+         PName := Name_Find;
+         PName := To_Upper (To_C_Name (PName));
+
+         Add_Define_Deployment
+                  (Make_Defining_Identifier
+                     (PName,
+                     C_Conversion => False));
 
          --  If there is a backend node and a naming node associated
          --  with it, it means that we already processed this protocol
