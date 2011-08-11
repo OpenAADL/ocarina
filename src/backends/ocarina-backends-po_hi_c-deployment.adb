@@ -49,6 +49,8 @@ with Ocarina.Backends.Messages;
 
 with Ocarina.Instances.Queries;
 
+with Locations;
+
 package body Ocarina.Backends.PO_HI_C.Deployment is
 
    use Namet;
@@ -63,6 +65,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Messages;
    use Ocarina.Instances.Queries;
+
+   use Locations;
 
    package AAN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -80,6 +84,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    Global_Port_Kind        : Node_Id;
    Global_Port_Queue_Size  : Node_Id;
    Global_Port_Data_Size   : Node_Id;
+   Global_Ports            : List_Id;
 
    function Is_Added (P : Node_Id; E : Node_Id) return Boolean;
    function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id;
@@ -1244,7 +1249,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
          if not Is_Empty (Protocol_List) then
             if not Invalid_Protocol_Added then
-               Set_Str_To_Name_Buffer ("invalid_protocol_t");
+               Set_Str_To_Name_Buffer ("invalid_protocol");
                N := Make_Expression
                  (Make_Defining_Identifier
                   (Name_Find),
@@ -1338,6 +1343,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       begin
          Push_Entity (C_Root);
 
+         Global_Ports               := AAU.New_List (K_List_Id, No_Location);
          Devices_Array              := Make_Array_Values;
          Devices_Nb_Buses_Array     := Make_Array_Values;
          Devices_Confvars           := Make_Array_Values;
@@ -1688,6 +1694,9 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                            CTN.Values (Global_Port_Queue_Size));
                      end if;
 
+                     --  We associate a unique identifier to the port
+                     --  within the global distributed architecture.
+
                      N := Make_Expression
                        (Make_Defining_Identifier
                         (Map_C_Enumerator_Name (F)),
@@ -1695,6 +1704,19 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                         (Make_Literal
                          (CV.New_Int_Value (Global_Port_Identifier, 0, 10))));
                      Append_Node_To_List (N, Global_Port_List);
+
+                     --  We also store the port in a list to process
+                     --  it later. By doing so, we ensure that we have
+                     --  each port only one time in this time and in
+                     --  the same order than the identifiers.
+
+                     AAU.Append_Node_To_List
+                         (AAU.Make_Node_Container (F), Global_Ports);
+
+                     --  Finally, we associate the backend node
+                     --  with something to indicate that we already
+                     --  processed this port. It avoids any double
+                     --  processing of the same port.
 
                      Bind_AADL_To_Global_Port
                        (Identifier (F),
@@ -1809,6 +1831,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       procedure Visit_System_Instance (E : Node_Id);
       procedure Visit_Process_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
+
+      Protocols_Ports_Array : Node_Id;
 
       -----------
       -- Visit --
@@ -2064,6 +2088,27 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   Global_Port_Queue_Size);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+            --  Add the array that contains the protocols
+            --  used for each port.
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                        Make_Array_Declaration
+                           (Defining_Identifier =>
+                              RE (RE_Ports_Protocols),
+                           Array_Size =>
+                           RE (RE_Nb_Ports)),
+                     Array_Size =>
+                       RE (RE_Nb_Ports)),
+                  Used_Type =>
+                     RE (RE_Protocol_T)),
+               Operator => Op_Equal,
+               Right_Expr =>
+                  Protocols_Ports_Array);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
          if Present (Backend_Node (Identifier (S))) and then
@@ -2315,8 +2360,65 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
       procedure Visit_System_Instance (E : Node_Id) is
          S : Node_Id;
+         S2 : Node_Id;
+         A : Node_Id;
+         Lst : List_Id;
+         Tmp : Node_Id;
+         Port : Node_Id;
+         Port2 : Node_Id;
+         Virtual_Bus : Node_Id;
       begin
          Push_Entity (C_Root);
+
+         Protocols_Ports_Array := Make_Array_Values;
+
+         if not AAU.Is_Empty (Global_Ports) then
+            S := AAN.First_Node (Global_Ports);
+            while Present (S) loop
+               A := Make_Array_Values;
+               Port := AAN.Item (S);
+               if Is_In (Port) and then
+                  not AAU.Is_Empty (Sources (Port)) then
+                  Port := Item (AAN.First_Node (Sources (Port)));
+                  Lst := Sources (Port);
+               else
+                  Port := Item (AAN.First_Node (Destinations (Port)));
+                  Lst := Destinations (Port);
+               end if;
+
+               S2 := AAN.First_Node (Global_Ports);
+               while Present (S2) loop
+                  Port2 := AAN.Item (S2);
+                  if not AAU.Is_Empty (Sources (Port2)) then
+                     Port2 := Item (AAN.First_Node (Sources (Port2)));
+                  else
+                     Port2 := Item (AAN.First_Node (Destinations (Port2)));
+                  end if;
+
+                  Tmp := First_Node (Lst);
+                  while Present (Tmp) loop
+                     if AAN.Item (Tmp) = Port2 then
+                        Virtual_Bus := Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Tmp));
+                        Append_Node_To_List
+                           (Make_Defining_Identifier
+                              (Map_C_Enumerator_Name (Virtual_Bus)),
+                        CTN.Values (A));
+                     else
+                        Append_Node_To_List
+                           (Make_Defining_Identifier
+                              (Get_String_Name ("invalid_protocol")),
+                        CTN.Values (A));
+                     end if;
+                     Tmp := Next_Node (Tmp);
+                  end loop;
+                  S2 := Next_Node (S2);
+               end loop;
+
+               Append_Node_To_List (A, CTN.Values (Protocols_Ports_Array));
+               S := Next_Node (S);
+            end loop;
+         end if;
 
          --  Visit all the subcomponents of the system
 
