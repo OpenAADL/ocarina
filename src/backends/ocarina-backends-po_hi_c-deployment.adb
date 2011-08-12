@@ -1150,6 +1150,29 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               (Node_Enumerator_List));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+         --  Make sure the __po_hi_protocol_t enum type is defined
+         --  with at least the invalid_protocol value.
+
+         if not Invalid_Protocol_Added then
+            Set_Str_To_Name_Buffer ("invalid_protocol");
+            N := Make_Expression
+              (Make_Defining_Identifier
+               (Name_Find),
+               Op_Equal,
+               (Make_Literal
+             (CV.New_Int_Value (1, -1, 10))));
+            Append_Node_To_List
+               (N, Protocol_List);
+
+            Invalid_Protocol_Added := True;
+         end if;
+
+         N := Make_Full_Type_Declaration
+           (Defining_Identifier => RE (RE_Protocol_T),
+            Type_Definition     => Make_Enum_Aggregate
+              (Protocol_List));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
+
          --  Create the thread enumeration type declaration. Note that
          --  the type creation is possible even the enumeration list
          --  is incomplete. This type may not be generated in case the
@@ -1259,28 +1282,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               (Defining_Identifier => RE (RE_Port_T),
                Type_Definition     => Make_Enum_Aggregate
                  (Global_Port_List));
-            Append_Node_To_List (N, CTN.Declarations (Current_File));
-         end if;
-
-         if not Is_Empty (Protocol_List) then
-            if not Invalid_Protocol_Added then
-               Set_Str_To_Name_Buffer ("invalid_protocol");
-               N := Make_Expression
-                 (Make_Defining_Identifier
-                  (Name_Find),
-                  Op_Equal,
-                  (Make_Literal
-                (CV.New_Int_Value (1, -1, 10))));
-               Append_Node_To_List
-                  (N, Protocol_List);
-
-               Invalid_Protocol_Added := True;
-            end if;
-
-            N := Make_Full_Type_Declaration
-              (Defining_Identifier => RE (RE_Protocol_T),
-               Type_Definition     => Make_Enum_Aggregate
-                 (Protocol_List));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
@@ -2105,25 +2106,32 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
             --  Add the array that contains the protocols
             --  used for each port.
-            N := Make_Expression
-              (Left_Expr =>
-                 Make_Variable_Declaration
-                 (Defining_Identifier =>
-                    Make_Array_Declaration
+
+            if not CTU.Is_Empty (CTN.Values (Protocols_Ports_Array)) and then
+               not CTU.Is_Empty (CTN.Values
+                  (CTN.First_Node
+                     (CTN.Values (Protocols_Ports_Array)))) and then
+               not AAU.Is_Empty (Global_Ports) then
+               N := Make_Expression
+                 (Left_Expr =>
+                    Make_Variable_Declaration
                     (Defining_Identifier =>
-                        Make_Array_Declaration
-                           (Defining_Identifier =>
-                              RE (RE_Ports_Protocols),
-                           Array_Size =>
-                           RE (RE_Nb_Ports)),
-                     Array_Size =>
-                       RE (RE_Nb_Ports)),
-                  Used_Type =>
-                     RE (RE_Protocol_T)),
-               Operator => Op_Equal,
-               Right_Expr =>
-                  Protocols_Ports_Array);
-            Append_Node_To_List (N, CTN.Declarations (Current_File));
+                       Make_Array_Declaration
+                       (Defining_Identifier =>
+                           Make_Array_Declaration
+                              (Defining_Identifier =>
+                                 RE (RE_Ports_Protocols),
+                              Array_Size =>
+                              RE (RE_Nb_Ports)),
+                        Array_Size =>
+                          RE (RE_Nb_Ports)),
+                     Used_Type =>
+                        RE (RE_Protocol_T)),
+                  Operator => Op_Equal,
+                  Right_Expr =>
+                     Protocols_Ports_Array);
+               Append_Node_To_List (N, CTN.Declarations (Current_File));
+            end if;
          end if;
 
          if Present (Backend_Node (Identifier (S))) and then
