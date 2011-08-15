@@ -2420,7 +2420,10 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
                   Tmp := First_Node (Lst);
                   while Present (Tmp) loop
-                     if AAN.Item (Tmp) = Port2 then
+                     if AAN.Item (Tmp) = Port2 and then
+                        Extra_Item (Tmp) /= No_Node and then
+                        Get_Provided_Virtual_Bus_Class
+                           (Extra_Item (Tmp)) /= No_Node then
                         Virtual_Bus := Get_Provided_Virtual_Bus_Class
                            (Extra_Item (Tmp));
                         Append_Node_To_List
