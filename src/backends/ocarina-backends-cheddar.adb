@@ -66,9 +66,13 @@ package body Ocarina.Backends.Cheddar is
 
    procedure Generate (AADL_Root : Node_Id) is
       Instance_Root : Node_Id;
-   begin
 
+   begin
       Instance_Root := Instantiate_Model (AADL_Root);
+
+      if No (Instance_Root) then
+         Display_Error ("Cannot instantiate the AADL model", Fatal => True);
+      end if;
 
       --  Expand the AADL instance
 
