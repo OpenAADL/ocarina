@@ -2192,15 +2192,13 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
                   when Platform_LEON_RTEMS |
                        Platform_LEON_RTEMS_POSIX |
+                       Platform_ARM_DSLINUX |
+                       Platform_ARM_N770 |
+                       Platform_NDS_RTEMS |
+                       Platform_NDS_RTEMS_POSIX |
+                       Platform_Gumstix_RTEMS |
+                       Platform_Gumstix_RTEMS_POSIX |
                        Platform_LEON3_XM3 =>
-                     Append_Node_To_List
-                        (RE (RE_Bigendian), CTN.Values (Endiannesses));
-
-                  when Platform_ARM_DSLINUX =>
-                     Append_Node_To_List
-                        (RE (RE_Bigendian), CTN.Values (Endiannesses));
-
-                  when Platform_ARM_N770 =>
                      Append_Node_To_List
                         (RE (RE_Bigendian), CTN.Values (Endiannesses));
 
