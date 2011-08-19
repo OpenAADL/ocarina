@@ -200,6 +200,18 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_Native_Compcert =>
             Write_Str ("compcert");
 
+         when Platform_NDS_RTEMS =>
+            Write_Str ("nds.rtems");
+
+         when Platform_NDS_RTEMS_POSIX =>
+            Write_Str ("nds.rtems_posix");
+
+         when Platform_Gumstix_RTEMS =>
+            Write_Str ("gumstix.rtems");
+
+         when Platform_Gumstix_RTEMS_POSIX =>
+            Write_Str ("gumstix.rtems_posix");
+
          when Platform_Bench =>
             Write_Str ("bench");
 
