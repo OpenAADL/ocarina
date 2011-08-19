@@ -308,6 +308,10 @@ package body Ocarina.Backends.Properties is
    Platform_LINUX32_Xenomai_Native_Name   : Name_Id;
    Platform_LINUX32_Xenomai_Posix_Name    : Name_Id;
    Platform_LINUX64_Name                  : Name_Id;
+   Platform_NDS_RTEMS_Name                : Name_Id;
+   Platform_NDS_RTEMS_POSIX_Name          : Name_Id;
+   Platform_Gumstix_RTEMS_Name            : Name_Id;
+   Platform_Gumstix_RTEMS_POSIX_Name      : Name_Id;
    Platform_LEON_RTEMS_Name               : Name_Id;
    Platform_LEON_RTEMS_POSIX_Name         : Name_Id;
    Platform_X86_LINUXTASTE_Name           : Name_Id;
@@ -2617,6 +2621,14 @@ package body Ocarina.Backends.Properties is
             return Platform_Bench;
          elsif P_Name = Platform_Native_Compcert_Name then
             return Platform_Native_Compcert;
+         elsif P_Name = Platform_Gumstix_RTEMS_POSIX_Name then
+            return Platform_Gumstix_RTEMS_POSIX;
+         elsif P_Name = Platform_Gumstix_RTEMS_Name then
+            return Platform_Gumstix_RTEMS;
+         elsif P_Name = Platform_NDS_RTEMS_POSIX_Name then
+            return Platform_NDS_RTEMS_POSIX;
+         elsif P_Name = Platform_NDS_RTEMS_Name then
+            return Platform_NDS_RTEMS;
          elsif P_Name = Platform_LEON_RTEMS_POSIX_Name then
             return Platform_LEON_RTEMS_POSIX;
          elsif P_Name = Platform_LEON_RTEMS_Name then
@@ -3168,6 +3180,15 @@ package body Ocarina.Backends.Properties is
       Platform_Bench_Name       := Get_String_Name ("bench");
       Platform_Native_Compcert_Name
                                 := Get_String_Name ("native_compcert");
+      Platform_Gumstix_RTEMS_Name      := Get_String_Name ("gumstix_rtems");
+      Platform_Gumstix_RTEMS_POSIX_Name
+                                       := Get_String_Name
+                                          ("gumstix_rtems_posix");
+
+      Platform_NDS_RTEMS_Name          := Get_String_Name ("nds_rtems");
+      Platform_NDS_RTEMS_POSIX_Name
+                                       := Get_String_Name ("nds_rtems_posix");
+
       Platform_X86_RTEMS_Name          := Get_String_Name ("x86_rtems");
       Platform_X86_RTEMS_POSIX_Name
                                        := Get_String_Name ("x86_rtems_posix");
