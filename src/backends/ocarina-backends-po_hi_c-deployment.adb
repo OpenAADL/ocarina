@@ -2380,14 +2380,15 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         S : Node_Id;
-         S2 : Node_Id;
-         A : Node_Id;
-         Lst : List_Id;
-         Tmp : Node_Id;
-         Port : Node_Id;
-         Port2 : Node_Id;
-         Virtual_Bus : Node_Id;
+         S              : Node_Id;
+         S2             : Node_Id;
+         A              : Node_Id;
+         Lst            : List_Id;
+         Tmp            : Node_Id;
+         Port           : Node_Id;
+         Port2          : Node_Id;
+         Virtual_Bus    : Node_Id;
+         Protocol_Name  : Name_Id;
       begin
          Push_Entity (C_Root);
 
@@ -2417,6 +2418,9 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   end if;
 
                   Tmp := First_Node (Lst);
+
+                  Protocol_Name := Get_String_Name ("invalid_protocol");
+
                   while Present (Tmp) loop
                      if AAN.Item (Tmp) = Port2 and then
                         Extra_Item (Tmp) /= No_Node and then
@@ -2424,18 +2428,16 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                            (Extra_Item (Tmp)) /= No_Node then
                         Virtual_Bus := Get_Provided_Virtual_Bus_Class
                            (Extra_Item (Tmp));
-                        Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Map_C_Enumerator_Name (Virtual_Bus)),
-                        CTN.Values (A));
-                     else
-                        Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Get_String_Name ("invalid_protocol")),
-                        CTN.Values (A));
+                        Protocol_Name :=
+                              Map_C_Enumerator_Name (Virtual_Bus);
                      end if;
                      Tmp := Next_Node (Tmp);
                   end loop;
+
+                  Append_Node_To_List
+                     (Make_Defining_Identifier (Protocol_Name),
+                     CTN.Values (A));
+
                   S2 := Next_Node (S2);
                end loop;
 
