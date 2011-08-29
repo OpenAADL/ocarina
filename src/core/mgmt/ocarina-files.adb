@@ -180,9 +180,18 @@ package body Ocarina.Files is
 
    function Search_File (File_Name : Name_Id) return Name_Id is
    begin
+      if File_Name = No_Name then
+         return No_Name;
+      end if;
+
       --  Check in the current directory first since -I- is not allowed
 
       Get_Name_String (File_Name);
+
+      if Name_Len = 0 then
+         return No_Name;
+      end if;
+
       if Is_Regular_File (Name_Buffer (1 .. Name_Len)) then
          return File_Name;
       end if;
