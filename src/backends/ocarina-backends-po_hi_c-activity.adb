@@ -728,20 +728,18 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             F := First_Node (Features (E));
 
             while Present (F) loop
+               Send_Function_Name := No_Name;
+               Used_Bus := No_Node;
+
                if Kind (F) = K_Port_Spec_Instance and then Is_Out (F) then
                   Has_Send_Output_Declared := True;
 
                   Send_Alternative_Label := New_List (CTN.K_Label_List);
                   Send_Alternative_Stmts := New_List (CTN.K_Statement_List);
 
-                  Append_Node_To_List
-                    (Make_Defining_Identifier
-                     (Map_C_Enumerator_Name (F)),
-                     Send_Alternative_Label);
+                  if Get_Associated_Bus (F) /= No_Node then
 
-                  Used_Bus := Get_Associated_Bus (F);
-
-                  if Used_Bus /= No_Node then
+                     Used_Bus := Get_Associated_Bus (F);
 
                      if AAU.Is_Virtual_Bus (Used_Bus) then
                         Used_Bus := Parent_Component
@@ -757,6 +755,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                            (Corresponding_Instance (Used_Device));
                      end if;
                   end if;
+
+                  Append_Node_To_List
+                    (Make_Defining_Identifier
+                     (Map_C_Enumerator_Name (F)),
+                     Send_Alternative_Label);
 
                   if Send_Function_Name /= No_Name then
                      Append_Node_To_List
