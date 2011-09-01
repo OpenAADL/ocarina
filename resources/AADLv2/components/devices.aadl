@@ -77,6 +77,33 @@ public
   end generic_keyboard.linux;
 
 
+  -------------------
+  -- LEON ETHERNET --
+  -------------------
+
+  device leon_ethernet
+  features
+    ethbus : requires bus access ocarina_buses::ip.i;
+  end leon_ethernet;
+
+  device implementation leon_ethernet.raw
+  properties
+    Deployment::Driver_Name    => "eth_leon";
+    Device_Driver              => classifier (ocarina_drivers_leon_eth::eth_driver.leon);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_leon_eth::spg_leon_eth_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end leon_ethernet.raw;
+
+  device implementation leon_ethernet.raw_sender
+  properties
+    Deployment::Driver_Name    => "eth_leon_sender";
+    Device_Driver              => classifier (ocarina_drivers_leon_eth::eth_driver.leon_sender);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_leon_eth::spg_leon_eth_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end leon_ethernet.raw_sender;
+
+
+
   ------------------
   -- RASTA SERIAL --
   ------------------

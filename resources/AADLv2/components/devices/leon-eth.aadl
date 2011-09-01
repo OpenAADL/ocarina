@@ -1,0 +1,61 @@
+package ocarina_drivers_leon_eth
+
+public
+
+with Deployment;
+with ocarina_buses;
+with ocarina_drivers;
+
+subprogram spg_leon_eth_poller
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_eth_leon_poller";
+end spg_leon_eth_poller;
+
+
+subprogram spg_leon_eth_sender
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_eth_leon_sender";
+end spg_leon_eth_sender;
+
+subprogram spg_leon_eth_init
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_eth_leon_init";
+end spg_leon_eth_init;
+
+thread thr_poller
+end thr_poller;
+
+
+thread implementation thr_poller.i
+calls
+	mycall : {
+	  pspg : subprogram spg_leon_eth_poller;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end thr_poller.i;
+
+abstract eth_driver
+properties
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_ip);
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
+end eth_driver;
+
+abstract implementation eth_driver.leon
+subcomponents
+   eth_leon_poller       : thread thr_poller.i;
+   sender                : subprogram spg_leon_eth_sender;
+end eth_driver.leon;
+
+abstract implementation eth_driver.leon_sender
+subcomponents
+   sender                : subprogram spg_leon_eth_sender;
+end eth_driver.leon_sender;
+
+
+end ocarina_drivers_leon_eth;
