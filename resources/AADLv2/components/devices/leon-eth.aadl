@@ -48,7 +48,6 @@ end eth_driver;
 
 abstract implementation eth_driver.leon
 subcomponents
-   eth_leon_poller       : thread thr_poller.i;
    sender                : subprogram spg_leon_eth_sender;
 end eth_driver.leon;
 
