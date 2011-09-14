@@ -232,12 +232,14 @@ package body Ocarina.Backends.PO_HI_Ada is
                      & " \");
          Write_Char (ASCII.HT);
          Write_Str ("  $(GNATMAKE) -x -P$(PROJECT_FILE) -XTARGET=$(TARGET)"
-                    & " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL)");
+                    & " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL) ${USER_CFLAGS}");
 
          --  If there are C source or C libraries, there will be more
          --  options.
 
-         Write_Str (" -largs $(EXTERNAL_OBJECTS) ${C_OBJECTS}");
+         Write_Str
+           (" -largs $(EXTERNAL_OBJECTS) ${C_OBJECTS} ${USER_LDFLAGS}");
+
          Write_Eol;
 
          if Execution_Platform = Platform_LEON_GNAT then
@@ -258,7 +260,8 @@ package body Ocarina.Backends.PO_HI_Ada is
             --  If there are C source or C libraries, there will be more
             --  options.
 
-            Write_Str (" -largs $(EXTERNAL_OBJECTS) ${C_OBJECTS}");
+            Write_Str
+              (" -largs $(EXTERNAL_OBJECTS) ${C_OBJECTS} ${USER_LDFLAGS}");
             Write_Eol;
          end if;
       else
