@@ -55,6 +55,7 @@ Usage:
         cheddar
         connection_matrix
         function_matrix
+        aadl_xml
         aadl
         aadl_min
         aadl_annex

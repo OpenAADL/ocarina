@@ -78,6 +78,7 @@ with Ocarina.Backends.Xtratum_Conf;
 with Ocarina.Backends.ASN1_Tree.Nodes;
 with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1_Values;
+with Ocarina.Backends.AADL_XML;
 
 with Ocarina.Options; use Ocarina.Options;
 
@@ -197,6 +198,7 @@ package body Ocarina.Backends is
       Cheddar.Init;
       Connection_Matrix.Init;
       Functions_Matrix.Init;
+      AADL_XML.Init;
    end Init;
 
    ----------------------

@@ -1,4 +1,4 @@
-SUBDIRS = cheddar
+SUBDIRS = cheddar aadl_xml
 
 @DEBUG_FALSE@DEBUG_FLAG = --disable-debug
 @DEBUG_TRUE@DEBUG_FLAG = --enable-debug

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- AADL XML Root node -->
+  <xs:element name='aadl_xml'>
+    <xs:annotation>
+      <xs:documentation>
+ 	This node is the root of the XML tree, defining
+ 	* A root_system element as the root of the instance tree;
+ 	* A list of components
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+ 	<xs:element ref='components'/>
+      </xs:sequence>
+      <xs:attribute name='root_system' type="xs:string" use='required'/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='components'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+ 	<xs:element ref='component'/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+ 
+  <xs:element name='component'>
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element ref='classifier'/>
+	<xs:sequence minOccurs='0' maxOccurs='1'>
+ 	  <xs:element ref='features'/>
+	</xs:sequence>
+	<xs:sequence minOccurs='0' maxOccurs='1'>
+ 	  <xs:element ref='subcomponents'/>
+	</xs:sequence>
+	<xs:sequence minOccurs='0' maxOccurs='1'>
+	  <xs:element ref='connections'/>
+	</xs:sequence>
+	<xs:sequence minOccurs='0' maxOccurs='1'>
+	  <xs:element ref='properties'/>
+	</xs:sequence>
+	<xs:sequence minOccurs='0' maxOccurs='1'>
+	  <xs:element ref='flows'/>
+	</xs:sequence>
+	<xs:sequence minOccurs='0' maxOccurs='1'>
+	  <xs:element ref='modes'/> 
+	</xs:sequence>
+	<xs:sequence minOccurs='0' maxOccurs='1'>
+	  <xs:element ref='annexes'/> 
+	</xs:sequence>
+      </xs:sequence>
+      <xs:attribute name='category' use='required'>
+	<xs:simpleType>
+ 	  <xs:restriction base="xs:string">
+ 	    <xs:enumeration value='abstract'/>
+ 	    <xs:enumeration value='bus'/>
+ 	    <xs:enumeration value='data'/>
+ 	    <xs:enumeration value='device'/>
+ 	    <xs:enumeration value='process'/>
+ 	    <xs:enumeration value='processor'/>
+ 	    <xs:enumeration value='thread'/>
+ 	    <xs:enumeration value='port'/>
+ 	    <xs:enumeration value='subprogram'/>
+ 	    <xs:enumeration value='system'/>
+ 	    <xs:enumeration value='virtual_bus'/>
+ 	    <xs:enumeration value='virtual_processor'/>
+ 	  </xs:restriction>
+	</xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name='identifier' type="xs:string" use='optional'/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='classifier'>
+    <xs:complexType mixed='true'>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='features'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+	<xs:element ref='feature'/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='feature'>
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element ref='direction'/>
+	<xs:element ref='type'/>
+	<xs:element ref='classifier' minOccurs='0' maxOccurs='1'/>
+	<xs:element ref='properties' minOccurs='0' maxOccurs='1'/>
+      </xs:sequence>
+      <xs:attribute name='identifier' type="xs:string" use='required'/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='direction'>
+    <xs:complexType>
+      <xs:attribute name='kind' use='required'>
+	<xs:simpleType>
+ 	  <xs:restriction base="xs:string">
+ 	    <xs:enumeration value='in'/>
+ 	    <xs:enumeration value='out'/>
+ 	    <xs:enumeration value='in_out'/>
+ 	    <xs:enumeration value='none'/>
+ 	  </xs:restriction>
+	</xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='type'>
+    <xs:complexType>
+      <xs:attribute name='kind' use='required'>
+	<xs:simpleType>
+ 	  <xs:restriction base="xs:string">
+ 	    <xs:enumeration value='access'/>
+ 	    <xs:enumeration value='data'/>
+ 	    <xs:enumeration value='event'/>
+ 	    <xs:enumeration value='event_data'/>
+ 	    <xs:enumeration value='feature'/>
+ 	  </xs:restriction>
+	</xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='subcomponents'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+	<xs:element ref='component'/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Connections -->  
+  <xs:element name='connections'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+	<xs:element ref='connection'/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='connection'>
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element ref='src' minOccurs='1' maxOccurs='1'/>
+	<xs:element ref='dst' minOccurs='1' maxOccurs='1'/>
+	<xs:element ref='properties' minOccurs='0' maxOccurs='1'/>
+      </xs:sequence>
+      <xs:attribute name='name' type="xs:string" use='optional'/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='src'>
+    <xs:complexType>
+      <xs:attribute name='component' type="xs:string" use='required'/>
+      <xs:attribute name='feature' type="xs:string" use='required'/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='dst'>
+    <xs:complexType>
+      <xs:attribute name='component' type="xs:string" use='required'/>
+      <xs:attribute name='feature' type="xs:string" use='required'/>
+    </xs:complexType>
+  </xs:element>
+  
+  <!-- Properties -->
+  <xs:element name='properties'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+	<xs:element ref='property'/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='property'>
+    <xs:complexType>
+      <xs:sequence minOccurs='1' maxOccurs='unbounded'>
+	<xs:element ref='property_value'/>
+      </xs:sequence>
+      <xs:attribute name='name' type="xs:string" use='required'/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="property_value">
+    <xs:complexType>
+      <xs:choice>
+	<xs:element name="classifier" type="classifier_prop"/>
+	<xs:element name="reference" type="reference_prop"/>
+	<xs:element name="unit" type="unit_prop"/>
+	<xs:element name="value" type="value_prop"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name='classifier_prop'>
+    <xs:attribute name='name' type="xs:string" use='required'/>
+  </xs:complexType>
+
+  <xs:complexType name='unit_prop'>
+    <xs:attribute name='value' type="xs:string" use='required'/>
+    <xs:attribute name='unit' type="xs:string" use='required'/>
+  </xs:complexType>
+
+  <xs:complexType name='value_prop'>
+    <xs:attribute name='value' type="xs:string" use='required'/>
+  </xs:complexType>
+
+  <xs:complexType name='reference_prop'>
+    <xs:attribute name='value' type="xs:string" use='required'/>
+  </xs:complexType>
+
+  <!-- Modes -->
+  <xs:element name='modes'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+	<xs:element ref='mode'/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='mode'>
+    <xs:complexType>
+      <xs:attribute name='name' type="xs:string" use='required'/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Flows -->  
+  <xs:element name='flows'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+	<xs:element ref='flow'/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name='flow'>
+    <xs:complexType>
+      <xs:attribute name='name' type="xs:string" use='required'/>
+    </xs:complexType>
+  </xs:element>
+  
+  <!-- Annexes -->
+  <xs:element name='annexes'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+	<xs:element ref='annex'/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <!-- To be completed -->	
+  <xs:element name='annex'>
+    <xs:complexType>
+      <xs:sequence maxOccurs='unbounded'>
+	<xs:any minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name='name' type="xs:string" use='required'/>
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
