@@ -571,9 +571,9 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       return N;
    end Make_Processing_Resource;
 
-   ------------------------------
+   ----------------------------
    -- Make_Scheduling_Server --
-   ------------------------------
+   ----------------------------
 
    function Make_Scheduling_Server
       (Server_Name : Name_Id;
@@ -621,15 +621,15 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    function Make_Transaction
       (Trans_Name : Name_Id;
        Trans_Type : Transaction_Kind)
-      return Node_Id is
+      return Node_Id
+   is
+      pragma Unreferenced (Trans_Type);
+
       N : Node_Id;
    begin
       N := New_Node (MTN.K_Transaction);
       MTN.Set_Node_Name (N, Trans_Name);
-      if Trans_Type = Regular then
-         MTN.Set_Is_Regular (N, True);
-      end if;
-
+      MTN.Set_Is_Regular (N, True);
       MTN.Set_External_Events (N, New_List (MTN.K_List_Id));
       MTN.Set_Internal_Events (N, New_List (MTN.K_List_Id));
       MTN.Set_Event_Handlers (N, New_List (MTN.K_List_Id));
@@ -669,18 +669,18 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    ------------------------
 
    function Make_Event_Handler
-      (Kind          : Event_Handler_Kind;
+     (Kind          : Event_Handler_Kind;
       Input_Event    : Name_Id;
       Output_Event   : Name_Id;
       Operation      : Name_Id;
-      Server         : Name_Id) return Node_Id is
-         N : Node_Id;
+      Server         : Name_Id) return Node_Id
+   is
+      pragma Unreferenced (Kind);
+
+      N : Node_Id;
    begin
       N := New_Node (MTN.K_Event_Handler);
-      if Kind = Activity then
-         MTN.Set_Is_Activity (N, True);
-      end if;
-
+      MTN.Set_Is_Activity (N, True);
       MTN.Set_Input_Name (N, Input_Event);
       MTN.Set_Output_Name (N, Output_Event);
       MTN.Set_Operation_Name (N, Operation);
@@ -742,15 +742,14 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       (Req_Kind      : Event_Timing_Requirement_Kind;
       Deadline       : Unsigned_Long_Long;
       Ref_Event      : Name_Id)
-      return Node_Id is
+      return Node_Id
+   is
+      pragma Unreferenced (Req_Kind);
+
       N : Node_Id;
    begin
       N := New_Node (MTN.K_Event_Timing_Requirements);
-
-      if Req_Kind = Hard_Deadline then
-         MTN.Set_Is_Hard_Deadline (N, True);
-      end if;
-
+      MTN.Set_Is_Hard_Deadline (N, True);
       MTN.Set_Deadline
          (N, Make_Literal
             (New_Numeric_Value (Deadline, 1, 10)));
