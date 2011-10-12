@@ -81,6 +81,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    Protocols_Conf          : Node_Id;
    Devices_Buses_Array     : Node_Id;
    Port_To_Devices         : Node_Id;
+   Devices_To_Nodes        : Node_Id;
    Global_Port_Kind        : Node_Id;
    Global_Port_Queue_Size  : Node_Id;
    Global_Port_Data_Size   : Node_Id;
@@ -514,6 +515,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Configuration_Data   : Node_Id;
          The_System           : constant Node_Id := Parent_Component
                                  (Parent_Subcomponent (E));
+         Associated_Process   : Node_Id := No_Node;
       begin
          Current_Device := E;
 
@@ -532,6 +534,18 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                 Make_Defining_Identifier
                   (Map_C_Enumerator_Name (E, Entity => False)));
 
+            --  Try to find the process bounded with the device.
+            Q := First_Node (Subcomponents (The_System));
+
+            while Present (Q) loop
+               if AAU.Is_Process (Corresponding_Instance (Q)) and then
+                  Get_Bound_Processor (Corresponding_Instance (Q)) =
+                  Get_Bound_Processor (E) then
+                  Associated_Process := Q;
+               end if;
+               Q := Next_Node (Q);
+            end loop;
+
             N := Make_Expression
               (Make_Defining_Identifier
                (Map_C_Enumerator_Name
@@ -541,6 +555,18 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
              (CV.New_Int_Value (Device_Id, 0, 10))));
             Append_Node_To_List
               (N, Devices_Enumerator_List);
+
+            if Associated_Process /= No_Node then
+               Append_Node_To_List
+               (Make_Defining_Identifier
+                   (Map_C_Enumerator_Name
+                     (Associated_Process)),
+                CTN.Values (Devices_To_Nodes));
+            else
+               Append_Node_To_List
+               (RE (RE_Unused_Node),
+                CTN.Values (Devices_To_Nodes));
+            end if;
 
             Device_Id  := Device_Id + 1;
 
@@ -1366,6 +1392,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Protocols_Conf             := Make_Array_Values;
          Devices_Buses_Array        := Make_Array_Values;
          Port_To_Devices            := Make_Array_Values;
+         Devices_To_Nodes           := Make_Array_Values;
 
          Devices_Enumerator_List    := New_List (CTN.K_Enumeration_Literals);
          Buses_Enumerator_List      := New_List (CTN.K_Enumeration_Literals);
@@ -2338,6 +2365,25 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   Used_Type => RE (RE_Device_Id)),
                Operator => Op_Equal,
                Right_Expr => Port_To_Devices);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
+         --  In the following, we describe the association between
+         --  devices and their nodes.
+
+         if not Is_Empty (CTN.Values (Devices_To_Nodes)) then
+            N := Make_Expression
+              (Left_Expr =>
+                 Make_Variable_Declaration
+                 (Defining_Identifier =>
+                    Make_Array_Declaration
+                    (Defining_Identifier =>
+                       RE (RE_Devices_To_Nodes),
+                     Array_Size =>
+                       RE (RE_Nb_Devices)),
+                  Used_Type => RE (RE_Port_T)),
+               Operator => Op_Equal,
+               Right_Expr => Devices_To_Nodes);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 

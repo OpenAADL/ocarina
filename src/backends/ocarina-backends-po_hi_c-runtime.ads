@@ -229,6 +229,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Protected_Configuration,        --  __po_hi_protected_configuration
       RE_Protected_Priorities,           --  __po_hi_protected_priorities
       RE_Port_To_Device,                 --  __po_hi_port_to_device
+      RE_Devices_To_Nodes,               --  __po_hi_devices_to_nodes
       RE_Port_Global_To_Entity,          --  __po_hi_port_global_to_entity
       RE_Port_Global_To_Device,          --  __po_hi_port_global_to_device
       RE_Port_Global_Names,              --  __po_hi_port_global_names
@@ -426,6 +427,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Devices_Nb_Accessed_Buses      => RH_Deployment,
          RE_Devices_Accessed_Buses         => RH_Deployment,
          RE_Port_To_Device                 => RH_Deployment,
+         RE_Devices_To_Nodes               => RH_Deployment,
          RE_Operation_Names                => RH_PO_HI_Types,
          RE_Port_Global_To_Entity          => RH_Deployment,
          RE_Port_Global_To_Device          => RH_Deployment,
