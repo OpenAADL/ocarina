@@ -273,6 +273,7 @@ public
   properties
     Deployment::Driver_Name       => "socketsnew";
     Implemented_As => classifier (TCP_IP_Protocol::Driver_TCP_IP_Protocol.impl);
+    Device_Driver => classifier (TCP_IP_Protocol::Driver_TCP_IP_Protocol.impl);
     Initialize_Entrypoint => classifier (TCP_IP_Protocol::Initialize);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end generic_sockets_ip.pohiada;

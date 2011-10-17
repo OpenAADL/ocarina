@@ -47,6 +47,10 @@ public
    -- using an abstract component.
 
    abstract Driver_TCP_IP_Protocol
+   properties
+      Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_ip);
+      Deployment::Version  => "0.1beta";
+      Deployment::Help     => "Write your ASN.1 configuration here";
    end Driver_TCP_IP_Protocol;
 
    abstract implementation Driver_TCP_IP_Protocol.impl
