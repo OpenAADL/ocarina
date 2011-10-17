@@ -16,6 +16,7 @@ package TCP_IP_Protocol
 public
 
    with Generic_Bus;
+   with Deployment;
 
    ------------
    -- DEVICE --
