@@ -448,7 +448,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          Display_Located_Error
             (Loc (E),
              "Memory does not specify the byte_count " &
-             "or base_address properties",
+             "or base_address properties (not fatal)",
              Fatal => False);
          return;
       end if;

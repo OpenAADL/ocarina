@@ -821,6 +821,7 @@ package body Ocarina.Backends.Build_Utils is
          M.Node_Name  := Normalize_Name (Name (Identifier (S)));
          M.Use_Transport := False;
          M.Use_Simulink  := False;
+         M.Use_Scade     := False;
 
          --  Get the execution platform of the processor this node is
          --  bound to.
