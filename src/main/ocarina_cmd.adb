@@ -1168,7 +1168,8 @@ procedure Ocarina_Cmd is
 
                   else
                      Set_Str_To_Name_Buffer (S);
-                     Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+                     Ocarina.Files.Add_File_To_Parse_List
+                      (Name_Find, Add_Suffix => False);
                   end if;
                end;
          end case;

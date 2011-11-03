@@ -50,16 +50,21 @@ package body Ocarina.Files is
    -- Add_File_To_Parse_List --
    ----------------------------
 
-   procedure Add_File_To_Parse_List (File_Name : Name_Id) is
+   procedure Add_File_To_Parse_List
+     (File_Name : Name_Id; Add_Suffix : Boolean := True)
+   is
+
       File_Name_With_Extension : Name_Id;
       Do_Add : Boolean := True;
 
    begin
       Get_Name_String (File_Name);
-      if Name_Len < 5
-        or else Name_Buffer (Name_Len - 4 .. Name_Len) /= ".aadl"
-      then
-         Add_Str_To_Name_Buffer (".aadl");
+      if Add_Suffix then
+         if Name_Len < 5
+          or else Name_Buffer (Name_Len - 4 .. Name_Len) /= ".aadl"
+         then
+            Add_Str_To_Name_Buffer (".aadl");
+         end if;
       end if;
       File_Name_With_Extension := Name_Find;
 

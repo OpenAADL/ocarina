@@ -49,7 +49,8 @@ package Ocarina.Files is
    --  The file is loaded in Buffer and Buffer_Location is used to
    --  scan it.
 
-   procedure Add_File_To_Parse_List (File_Name : Name_Id);
+   procedure Add_File_To_Parse_List
+     (File_Name : Name_Id; Add_Suffix : Boolean := True);
 
    function Search_File (File_Name : Name_Id) return Name_Id;
 
