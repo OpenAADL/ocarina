@@ -83,7 +83,7 @@ public
 
   device leon_ethernet
   features
-    ethbus : requires bus access ocarina_buses::ip.i;
+    link : requires bus access ocarina_buses::ip.i;
   end leon_ethernet;
 
   device implementation leon_ethernet.raw
@@ -101,7 +101,7 @@ public
 
   device leon_serial
   features
-    serialaccess : requires bus access ocarina_buses::serial.generic;
+    link : requires bus access ocarina_buses::serial.generic;
   end leon_serial;
 
   device implementation leon_serial.raw
@@ -149,7 +149,7 @@ public
 
   device rasta_serial
   features
-    serialaccess : requires bus access ocarina_buses::serial.generic;
+    link : requires bus access ocarina_buses::serial.generic;
   end rasta_serial;
 
   device implementation rasta_serial.raw
@@ -174,7 +174,7 @@ public
 
   device usb_brick_spacewire
   features
-    spwaccess : requires bus access ocarina_buses::spacewire.generic;
+    link : requires bus access ocarina_buses::spacewire.generic;
   end usb_brick_spacewire;
 
   device implementation usb_brick_spacewire.pohic
@@ -191,7 +191,7 @@ public
 
   device rasta_spacewire
   features
-    spwaccess : requires bus access ocarina_buses::spacewire.generic;
+    link : requires bus access ocarina_buses::spacewire.generic;
   end rasta_spacewire;
 
   device implementation rasta_spacewire.pohic
@@ -216,7 +216,7 @@ public
 
   device generic_serial
   features
-    serialaccess : requires bus access ocarina_buses::serial.generic;
+    link : requires bus access ocarina_buses::serial.generic;
   end generic_serial;
 
   device implementation generic_serial.raw
@@ -258,7 +258,7 @@ public
 
   device generic_sockets_ip
   features
-    thebus : requires bus access ocarina_buses::ip.i;
+    link : requires bus access ocarina_buses::ip.i;
   end generic_sockets_ip;
 
   device implementation generic_sockets_ip.pohic
@@ -284,7 +284,7 @@ public
 
   device rtems_ne2000
   features
-    thebus : requires bus access ocarina_buses::ip.i;
+    link : requires bus access ocarina_buses::ip.i;
   end rtems_ne2000;
 
   device implementation rtems_ne2000.ip_pohic
@@ -305,7 +305,7 @@ public
 
   device exarm_ip
   features
-    thebus : requires bus access ocarina_buses::ip.i;
+    link : requires bus access ocarina_buses::ip.i;
   end exarm_ip;
 
   device implementation exarm_ip.vr_udp
