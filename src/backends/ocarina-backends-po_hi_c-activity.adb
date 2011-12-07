@@ -585,7 +585,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             F := First_Node (Features (E));
 
             while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance and then Is_Out (F) then
+               if Kind (F) = K_Port_Spec_Instance and then Is_Out (F)
+                  and then not AAU.Is_Empty (AAN.Sources (F)) then
                   --  We do not set the ports that are connected to
                   --  subprogram out ports, this should be done during
                   --  the subprogram call sequence handling.
