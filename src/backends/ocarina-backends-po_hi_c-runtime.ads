@@ -382,7 +382,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_My_Node                        => RH_Deployment,
          RE_Nb_Ports                       => RH_Deployment,
          RE_Nb_Servers                     => RH_Deployment,
-         RE_Nb_Protected                   => RH_PO_HI_Protected,
+         RE_Nb_Protected                   => RH_Deployment,
          RE_Nb_Entities                    => RH_Deployment,
          RE_Simulink_Init                  => RH_PO_HI_Simulink,
          RE_Simulink_Node                  => RH_Null,
