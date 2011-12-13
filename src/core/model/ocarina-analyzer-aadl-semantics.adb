@@ -33,7 +33,6 @@
 
 with Errors;
 with Namet;
-with Utils;
 
 with Ocarina.AADL_Values;
 
@@ -53,7 +52,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    use Errors;
    use Namet;
-   use Utils;
+
    use Ocarina.AADL_Values;
    use Ocarina.Analyzer.Messages;
    use Ocarina.Analyzer.AADL.Queries;
@@ -2082,125 +2081,6 @@ package body Ocarina.Analyzer.AADL.Semantics is
       Literal_1 : out Node_Id;
       Literal_2 : out Node_Id)
    is
-      function Convert_To_Base (L : Node_Id; U : Node_Id) return Node_Id;
-      --  Converts the literal L associated to the unit U into a
-      --  literal associated with the base dentifier of the units
-      --  type.
-
-      procedure Fetch
-        (U       :     Node_Id;
-         Fetched : out Node_Id;
-         Base    : out Boolean);
-      --  Return the defining identifier corresponding to the
-      --  multiplier U in the corresponding units type. Base is set to
-      --  True if the fetched identifier is the base unit
-      --  identifier. If the identifier is not found, return No_Node
-      --  and False.
-
-      ---------------------
-      -- Convert_To_Base --
-      ---------------------
-
-      function Convert_To_Base (L : Node_Id; U : Node_Id) return Node_Id is
-         Fetched        : Node_Id;
-         N              : Node_Id;
-         Base           : Boolean;
-         Result         : Value_Type;
-         Count          : Natural;
-         Max_Iterations : Natural;
-         Units_Type     : Node_Id;
-      begin
-         Fetch (U, Fetched, Base);
-
-         if not Base then
-            --  To avoid infinite loops and detect bad formed units
-            --  types.
-
-            Units_Type := Corresponding_Entity
-              (Unit_Identifier
-               (Corresponding_Entity
-                (Fetched)));
-
-            Max_Iterations := Length (Unit_Definitions (Units_Type));
-         end if;
-
-         Result := Value (Value (L));
-         Count := 0;
-
-         while not Base loop
-            Result := Result * Value
-              (Value
-                 (Numeric_Literal
-                    (Corresponding_Entity
-                       (Fetched))));
-
-            Fetch
-              (Unit_Identifier (Corresponding_Entity (Fetched)),
-               Fetched,
-               Base);
-
-            Count := Count + 1;
-
-            if Count > Max_Iterations + 1 then
-               DAE
-                 (Message0 => "Units Type ",
-                  Node1    =>  Units_Type,
-                  Message1 => " is ill-defined: it contains cycles");
-               exit;
-            end if;
-
-         end loop;
-         N := New_Node (K_Literal, Loc (L));
-         Set_Value (N, New_Value (Result));
-
-         return N;
-      end Convert_To_Base;
-
-      -----------
-      -- Fetch --
-      -----------
-
-      procedure Fetch
-        (U       :     Node_Id;
-         Fetched : out Node_Id;
-         Base    : out Boolean)
-      is
-         Units_Type      : Node_Id;
-         Unit_Definition : Node_Id;
-      begin
-         if Kind (Corresponding_Entity (U)) = K_Units_Type then
-            --  We have the base identifier
-
-            Units_Type := Corresponding_Entity (U);
-         else
-            Units_Type := Corresponding_Entity
-              (Unit_Identifier
-               (Corresponding_Entity
-                (U)));
-         end if;
-
-         --  This phase is neccessary because the Unit_Identifier of a
-         --  Unit_definition is not linked directly to its
-         --  corresponding unit definition.
-
-         Fetched := Base_Identifier (Units_Type);
-
-         if To_Lower (Name (Fetched)) = To_Lower (Name (U)) then
-            Base := True;
-         else
-            Base := False;
-            Unit_Definition := First_Node (Unit_Definitions (Units_Type));
-
-            while Present (Unit_Definition) loop
-               Fetched := Identifier (Unit_Definition);
-
-               exit when To_Lower (Name (Fetched)) = To_Lower (Name (U));
-
-               Fetched := No_Node;
-               Unit_Definition := Next_Node (Unit_Definition);
-            end loop;
-         end if;
-      end Fetch;
 
       Unit_1 : Node_Id;
       Unit_2 : Node_Id;

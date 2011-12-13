@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2005-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -44,5 +44,9 @@ package Ocarina.Processor.Properties is
    --  Resolve all the property values, so that all property values
    --  are explicit (no more value() statements). Return True if there
    --  was no problem during the resolution process.
+
+   function Convert_To_Base (L : Node_Id; U : Node_Id) return Node_Id;
+   --  Converts the literal L associated to the unit U into a literal
+   --  associated with the base dentifier of the units type.
 
 end Ocarina.Processor.Properties;

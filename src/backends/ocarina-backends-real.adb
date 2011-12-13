@@ -2442,8 +2442,8 @@ package body Ocarina.Backends.REAL is
             declare
                V         : Value_Id;
                VT        : Value_Type;
-               Cpt       : Integer := 1;
-               Real_Cpt  : Float := 1.0;
+               Cpt       : Long_Long := 1;
+               Real_Cpt  : Long_Long_Float := 1.0;
                N         : Node_Id;
                Is_Int    : Boolean;
                R         : Value_Id;
@@ -2478,10 +2478,11 @@ package body Ocarina.Backends.REAL is
 
                while Present (N) loop
                   V := Item_Val (N);
+                  --  XXX dubious
                   if Is_Int then
-                     Cpt := Cpt * Integer (Get_Value_Type (V).IVal);
+                     Cpt := Cpt * Long_Long (Get_Value_Type (V).IVal);
                   else
-                     Real_Cpt := Real_Cpt * Float (Get_Value_Type (V).RVal);
+                     Real_Cpt := Real_Cpt * Get_Value_Type (V).RVal;
                   end if;
                   N := Next_Node (N);
                end loop;
@@ -2492,7 +2493,7 @@ package body Ocarina.Backends.REAL is
                   T := RT_Integer;
                else
                   result := New_Real_Value
-                    (Long_Long_Float (Real_Cpt));
+                    (Real_Cpt);
                   T := RT_Float;
                end if;
             end;
@@ -2501,8 +2502,8 @@ package body Ocarina.Backends.REAL is
             declare
                V         : Value_Id;
                VT        : Value_Type;
-               Cpt       : Integer := 0;
-               Real_Cpt  : Float := 0.0;
+               Cpt       : Long_Long := 0;
+               Real_Cpt  : Long_Long_Float := 0.0;
                N         : Node_Id;
                Is_Int    : Boolean;
                R         : Value_Id;
@@ -2546,12 +2547,14 @@ package body Ocarina.Backends.REAL is
                while Present (N) loop
                   V := Item_Val (N);
                   if Is_Int then
-                     Cpt := Cpt + Integer (Get_Value_Type (V).IVal);
+                     Cpt := Cpt + Long_Long (Get_Value_Type (V).IVal);
+                     --  XXX Dubious
                   else
                      if Get_Value_Type (V).T = LT_Real then
-                        Real_Cpt := Real_Cpt + Float (Get_Value_Type (V).RVal);
+                        Real_Cpt := Real_Cpt + Get_Value_Type (V).RVal;
                      elsif Get_Value_Type (V).T = LT_Integer then
-                        Real_Cpt := Real_Cpt + Float (Get_Value_Type (V).IVal);
+                        Real_Cpt := Real_Cpt
+                          + Long_Long_Float (Get_Value_Type (V).IVal);
                      else
                         Display_Located_Error
                           (Loc (First_Node (Parameters (E))),
@@ -2568,7 +2571,7 @@ package body Ocarina.Backends.REAL is
                   result := New_Integer_Value (Unsigned_Long_Long (Cpt));
                   T := RT_Integer;
                else
-                  result := New_Real_Value (Long_Long_Float (Real_Cpt));
+                  result := New_Real_Value (Real_Cpt);
                   T := RT_Float;
                end if;
             end;

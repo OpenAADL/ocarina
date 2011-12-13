@@ -42,12 +42,14 @@ with Ocarina.REAL_Values;
 with Ocarina.AADL_Values;
 with Locations;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.Processor.Properties;
 
 package body Ocarina.Instances.REAL_Finder is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.REAL_Values;
+   use Ocarina.Processor.Properties;
 
    package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;
    package AIEP renames Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
@@ -150,7 +152,22 @@ package body Ocarina.Instances.REAL_Finder is
 
          case ATN.Kind (N) is
             when ATN.K_Signed_AADLNumber =>
-               Result := AADL_Value (ATN.Value (ATN.Number_Value (N)));
+               declare
+                  Base_Value : Node_Id;
+               begin
+                  if Present (ATN.Unit_Identifier (N))
+                    and then Present
+                    (ATN.Corresponding_Entity (ATN.Unit_Identifier (N)))
+                  then
+                     Base_Value :=
+                       Convert_To_Base
+                       (ATN.Number_Value (N),
+                        ATN.Corresponding_Entity (ATN.Unit_Identifier (N)));
+                     Result := AADL_Value (ATN.Value (Base_Value));
+                  else
+                     Result := AADL_Value (ATN.Value (ATN.Number_Value (N)));
+                  end if;
+               end;
 
             when ATN.K_Literal =>
                VT := OV.Get_Value_Type (ATN.Value (N));
