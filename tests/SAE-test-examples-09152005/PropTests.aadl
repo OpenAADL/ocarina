@@ -10,7 +10,7 @@ property set MyProperties
     
     my_prop: aadlinteger applies to (data);
     my_bool_prop: aadlboolean applies to (data);
-    my_enum_prop: list of my_enum => (c, b, a) applies to (data);
+    my_enum_prop: list of MyProperties::my_enum => (c, b, a) applies to (data);
     my_2nd_bool_prop: aadlboolean applies to (data);
     my_3rd_bool_prop: aadlboolean applies to (data);
     bool_list_prop: list of aadlboolean applies to (data);
