@@ -49,16 +49,16 @@ property set ARINC653 is
 
   Supported_Memory_Kind : type enumeration (memory_data, memory_code);
   
-  HM_Errors   : list of Supported_Error_Code 
+  HM_Errors   : list of ARINC653::Supported_Error_Code 
      applies to (processor, virtual processor, thread);
   
-  HM_Actions : list of Supported_Recovery_Action 
+  HM_Actions : list of ARINC653::Supported_Recovery_Action 
      applies to (processor, virtual processor, thread);
   
   HM_Callback : classifier (Subprogram Classifier) 
      applies to (thread, virtual processor, processor);
   
-  Memory_Kind : Supported_Memory_Kind applies to (memory);
+  Memory_Kind : ARINC653::Supported_Memory_Kind applies to (memory);
 
   Access_Type : ARINC653::Supported_Access_Type applies to (memory);
   
@@ -66,7 +66,7 @@ property set ARINC653 is
   
   Supported_DAL_Type : type enumeration (LEVEL_A, LEVEL_B, LEVEL_C, LEVEL_D, LEVEL_E);
 
-  DAL : Supported_DAL_Type applies to (virtual processor);
+  DAL : ARINC653::Supported_DAL_Type applies to (virtual processor);
 
   System_Overhead_Time : Time applies to (processor, virtual processor);
 

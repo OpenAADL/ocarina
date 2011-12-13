@@ -1,2 +1,2 @@
-testrange.aadl:39:02: throughput2 (property association) does not point to anything
+testrange.aadl:23:01: throughputNoresolve (property definition declaration) does not point to anything
 Cannot analyze AADL specifications

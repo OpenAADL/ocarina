@@ -19,7 +19,7 @@ ASN1_types: type enumeration
      achoice,
      aoctetstring);
          
-ASN1_Basic_Type : ASN1_types applies to (data);
+ASN1_Basic_Type : ASSERT_Properties::ASN1_types applies to (data);
 
 ----------------------------
 -- Types and enumerations --
@@ -72,7 +72,7 @@ Frequency : type aadlinteger 0 Hz .. Max_Aadlinteger
 -- Partition --
 ---------------
 
-Criticality : Criticality_Level_Type applies to (process, system);
+Criticality : ASSERT_Properties::Criticality_Level_Type applies to (process, system);
 Local_Scheduling_Policy : Supported_Scheduling_Protocols 
   applies to (process, system);
 Time_Budget : aadlinteger applies to (process, system);
@@ -122,7 +122,7 @@ Budget_Exhausted_Recovery_Call : Time applies to (processor);
 
 -- Processor
 
-Processor_Speed : Frequency applies to (processor);
+Processor_Speed : ASSERT_Properties::Frequency applies to (processor);
 --  XXX to be replaced with AADLv2 property
 
 -- Interconnection
@@ -135,7 +135,7 @@ Processor_Speed : Frequency applies to (processor);
 --  Transmission_Time.
 
 Interconnection_Speed_Factor : aadlreal applies to (bus);
-Transmission_Kind : Transmission_Type applies to (bus);
+Transmission_Kind : ASSERT_Properties::Transmission_Type applies to (bus);
 
 Bandwidth : Data_Volume applies to (bus);
 
@@ -181,7 +181,7 @@ RCMoperationKind_list: type enumeration
    immediate, 
    any);
 
-RCMoperationKind: RCMoperationKind_list 
+RCMoperationKind: ASSERT_Properties::RCMoperationKind_list 
   applies to (event port, event data port);
 
 RCMceiling: aadlinteger 

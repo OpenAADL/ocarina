@@ -29,7 +29,7 @@ property set Taste is
        aoctetstring,
        astring);
          
-   ASN1_Basic_Type : ASN1_types applies to (data);
+   ASN1_Basic_Type : Taste::ASN1_types applies to (data);
 
 FS_Default_Value : aadlstring applies to (data);
 
@@ -93,7 +93,7 @@ Frequency : type aadlinteger 0 Hz .. Max_Aadlinteger
 -- Partition --
 ---------------
 
-Criticality : Criticality_Level_Type applies to (process, system);
+Criticality : Taste::Criticality_Level_Type applies to (process, system);
 Local_Scheduling_Policy : Supported_Scheduling_Protocols 
   applies to (process, system);
 Time_Budget : aadlinteger applies to (process, system);
@@ -143,7 +143,7 @@ Budget_Exhausted_Recovery_Call : Time applies to (processor);
 
 -- Processor
 
-Processor_Speed : Frequency applies to (processor);
+Processor_Speed : Taste::Frequency applies to (processor);
 --  XXX to be replaced with AADLv2 property
 
 -- Interconnection
@@ -156,7 +156,7 @@ Processor_Speed : Frequency applies to (processor);
 --  Transmission_Time.
 
 Interconnection_Speed_Factor : aadlreal applies to (bus);
-Transmission_Kind : Transmission_Type applies to (bus);
+Transmission_Kind : Taste::Transmission_Type applies to (bus);
 
 Bandwidth : Data_Volume applies to (bus);
 
@@ -202,7 +202,7 @@ RCMoperationKind_list: type enumeration
    immediate, 
    any);
 
-RCMoperationKind: RCMoperationKind_list 
+RCMoperationKind: Taste::RCMoperationKind_list 
   applies to (event port, event data port, access, subprogram access);
 
 RCMceiling: aadlinteger 
@@ -218,7 +218,7 @@ dataviewpath : list of aadlstring applies to (package);
 
 Encoding_type : type enumeration (native, uper, acn);
 
-Encoding : Encoding_type applies to (parameter);
+Encoding : Taste::Encoding_type applies to (parameter);
 
 Ada_Package_Name : aadlstring applies to (data);
 

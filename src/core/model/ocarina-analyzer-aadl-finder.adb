@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2011, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -988,12 +988,16 @@ package body Ocarina.Analyzer.AADL.Finder is
       Property_Set               : Node_Id;
       Found_Property_Declaration : Node_Id := No_Node;
    begin
+      --  Per strict conformance to AADL legality rules, all property
+      --  entities should be either fully qualified, or part of
+      --  pre-declared property sets.
+
       if Present (Property_Set_Identifier) then
          Property_Set := Node_In_Scope
            (Property_Set_Identifier, Entity_Scope (Root));
 
-         --  If we found the property set, then we look for the
-         --  property in it.
+         --  If we found the corresponding property set, then we look
+         --  for the property in it.
 
          if Present (Property_Set) then
             Found_Property_Declaration := Node_In_Scope
@@ -1003,31 +1007,20 @@ package body Ocarina.Analyzer.AADL.Finder is
          end if;
 
       else
-         if Present (Current_Scope) and then
-           Kind (Corresponding_Entity (Current_Scope)) = K_Property_Set
-         then
-            --  If we are in a property set, we search here
-
-            Found_Property_Declaration := Node_In_Scope
-              (Property_Identifier, Current_Scope);
-         end if;
-
          --  If we did not find anything so far, we try the implicit
          --  property sets.
 
-         if No (Found_Property_Declaration) then
-            for S in Standard_Property_Set_Type'Range loop
-               Set_Str_To_Name_Buffer (Image (S));
-               Property_Set := Node_In_Scope (Name_Find, Entity_Scope (Root));
+         for S in Standard_Property_Set_Type'Range loop
+            Set_Str_To_Name_Buffer (Image (S));
+            Property_Set := Node_In_Scope (Name_Find, Entity_Scope (Root));
 
-               if Present (Property_Set) then
-                  Found_Property_Declaration := Node_In_Scope
-                    (Property_Identifier, Entity_Scope (Property_Set));
-               end if;
+            if Present (Property_Set) then
+               Found_Property_Declaration := Node_In_Scope
+                 (Property_Identifier, Entity_Scope (Property_Set));
+            end if;
 
-               exit when Present (Found_Property_Declaration);
-            end loop;
-         end if;
+            exit when Present (Found_Property_Declaration);
+         end loop;
       end if;
 
       return Found_Property_Declaration;
