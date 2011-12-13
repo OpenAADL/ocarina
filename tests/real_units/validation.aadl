@@ -1,0 +1,172 @@
+package validation
+public
+  with Data_Model;
+  with Deployment;
+  with Cheddar_Properties;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram spg_printer1
+properties
+  source_language => C;
+  source_name     => "print_lot_of_stuff";
+  source_text     => ("printer.c");
+end spg_printer1;
+
+subprogram spg_printer2
+properties
+  source_language => C;
+  source_name     => "print_too_many_stuff";
+  source_text     => ("printer.c");
+end spg_printer2;
+
+-------------
+-- Threads --
+-------------
+
+thread thr_printer1
+end thr_printer1;
+
+thread implementation thr_printer1.i
+calls 
+mycalls: {
+  P_Spg : subprogram spg_printer1;
+};
+properties
+  Dispatch_Protocol                  => Periodic;
+  Period                             => 1000 Ms;
+  Compute_Execution_time             => 0 ms .. 3 ms;
+  Deadline                           => 1000 ms;
+  Priority                           => 2;
+  Source_Data_Size                   => 4 Bytes;
+  Source_Code_Size                   => 2 Bytes;
+  Source_Stack_Size                  => 2 Bytes;
+end thr_printer1.i;
+
+thread thr_printer2
+end thr_printer2;
+
+thread implementation thr_printer2.i
+calls 
+mycalls: {
+  Q_Spg : subprogram spg_printer2;
+};
+properties
+  Dispatch_Protocol                  => Sporadic;
+  Period                             => 10 Ms;
+  deadline                           => 10 Ms;
+  Compute_Execution_time             => 0 ms .. 3 ms;
+  Priority                           => 1;
+  Source_Data_Size                   => 4 Bytes;
+  Source_Code_Size                   => 2 Bytes;
+  Source_Stack_Size                  => 2 Bytes;
+end thr_printer2.i;
+
+processor native
+properties
+  Deployment::Execution_Platform => native;
+end native;
+
+processor implementation native.i
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+   Priority_Range => 0 .. 255;
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
+end native.i;
+
+---------------
+-- Processes --
+---------------
+
+process prs_printer
+end prs_printer;
+
+process implementation prs_printer.i
+subcomponents
+  p1        : thread validation::thr_printer1.i;
+  p2        : thread validation::thr_printer2.i;
+properties
+   Source_Data_Size => 4 Bytes;
+   Source_Code_Size => 2 Bytes;
+end prs_printer.i;
+
+memory ram
+end ram;
+
+memory implementation ram.i
+properties
+   Word_Size => 8 bits;
+   Word_Count => 1;
+end ram.i;
+
+------------
+-- System --
+------------
+
+system mysystem
+end mysystem;
+
+system implementation mysystem.local
+subcomponents
+  Node   : process prs_printer.i;
+  CPU    : processor native.i;
+  RAM    : memory ram.i;
+properties
+  actual_processor_binding => (reference (CPU)) applies to Node;
+  actual_memory_binding    => (reference (RAM)) applies to Node;
+annex real_specification {**
+   theorem Contains_Memories
+      foreach s in system_set do
+         mainmem        := {y in Memory_Set | is_subcomponent_of (y, s)};
+
+         check ( (Cardinal (mainmem) > 0) and
+                 (Property_Exists (mainmem, "Word_Count"))
+               );
+   end Contains_Memories;
+**};
+annex real_specification {**
+   theorem Check_Memory_And_Process_Mem
+      foreach m in memory_set do
+         prs            := {x in Process_Set | is_bound_to (m, x)};
+
+         check ( ((Get_Property_Value (m, "Word_Size")) * (Get_Property_Value (m, "Word_Count"))) > 
+                 ((sum(Get_Property_Value (prs, "Source_Data_Size")))+
+                  (sum(Get_Property_Value (prs, "Source_Code_Size"))))
+               );
+   end Check_Memory_And_Process_Mem;
+**};
+annex real_specification {**
+   theorem Check_Thread_And_Process_Mem
+      foreach p in process_set do
+         thrs           := {y in Thread_Set | is_subcomponent_of (y, p)};
+
+         check ( (
+                  (Sum (Get_Property_Value (thrs, "Source_Data_Size")))+
+                  (Sum (Get_Property_Value (thrs, "Source_Code_Size")))+
+                  (Sum (Get_Property_Value (thrs, "Source_Stack_Size")))
+                 )
+               <
+                 ((Get_Property_Value (p, "Source_Data_Size"))+
+                  (Get_Property_Value (p, "Source_Code_Size")))
+               );
+   end Check_Thread_And_Process_Mem;
+**};
+annex real_specification {**
+   theorem Check_Processor_Compliance
+      foreach p in processor_set do
+         prs            := {x in Process_Set | is_bound_to (x, p)};
+         thrs           := {y in Thread_Set  | is_subcomponent_of (y, prs)};
+
+         check ( (Min(Get_Property_Value (thrs, "Priority")) > First (Get_Property_Value (p, "Priority_Range"))) and
+                (Max (Get_Property_Value (thrs, "Priority")) < Last (Get_Property_Value (p, "Priority_Range"))));
+
+   end Check_Processor_Compliance;
+**};
+
+
+end mysystem.local;
+
+end validation;

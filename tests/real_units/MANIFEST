@@ -1,0 +1,3 @@
+AADL_VERSION=-aadlv2 -f
+OCARINA_FLAGS=-g real_theorem
+
