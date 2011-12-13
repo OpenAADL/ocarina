@@ -112,7 +112,7 @@ foreach e in Process_Set do
   a_set := {t in Thread_Set | (1 = 1)};
   var y := 1;
   var x := compute sub_theorem_4 (a_set, y);
-  check (x = 2.0);
+  check (x = 1000000000.0);
 end;
 
 --  test global variable declaration and access

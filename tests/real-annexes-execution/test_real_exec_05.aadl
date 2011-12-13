@@ -167,7 +167,7 @@ foreach e in Processor_Set do
                          (Get_Property_Value  
                            (t, "Compute_Execution_Time")))));
 
-  check (y = 7.0);
+  check (y = 4000000003.0);
 end;
 
 --  Tests product, variable, iterative expressions and alias
@@ -180,7 +180,7 @@ theorem variables_product_expression
 
      var x := Product (Expr (New_Set, t, (property (t, "period") / 1000.0)));
 
-   check (x = 0.5);
+   check (x = 500000000000000000.0);
 end;
 
 --  Tests element lists, list casting operator and is_in operator
@@ -202,7 +202,7 @@ foreach e in Process_Set do
 
    New_Set(e) := {x in Thread_Set | Is_Subcomponent_Of (x, e)};
 
-   var period := list (500, 1000, 2000);
+   var period := list (500000000000, 1000000000000, 2000000000000);
 
    check (Is_In (Property (new_set, "period"), period));
 end;
