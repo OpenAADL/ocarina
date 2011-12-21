@@ -56,6 +56,7 @@ with Ocarina.AADL_Values;              use Ocarina.AADL_Values;
 with Ocarina.Analyzer;                 use Ocarina.Analyzer;
 with Ocarina.Backends;                 use Ocarina.Backends;
 with Ocarina.Backends.PO_HI_C;
+with Ocarina.Backends.PO_HI_Ada;
 with Ocarina.Backends.Execution_Tests;
 use Ocarina.Backends.Execution_Tests;
 with Ocarina.Configuration;            use Ocarina.Configuration;
@@ -908,7 +909,6 @@ procedure Ocarina_Cmd is
       --  Process options.
 
       if not Is_Empty (Used_Generator_Options) then
-
          N := First_Node (Used_Generator_Options);
 
          while Present (N) loop
@@ -927,6 +927,7 @@ procedure Ocarina_Cmd is
 
                if P = Get_String_Name ("asn1") then
                   Ocarina.Backends.PO_HI_C.Set_ASN1_Deployment (True);
+                  Ocarina.Backends.PO_HI_Ada.Set_ASN1_Deployment (True);
                end if;
 
                N := Next_Node (N);

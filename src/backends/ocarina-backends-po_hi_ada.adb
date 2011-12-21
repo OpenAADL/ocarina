@@ -49,6 +49,7 @@ with Ocarina.Backends.PO_HI_Ada.Subprograms;
 with Ocarina.Backends.PO_HI_Ada.Transport;
 with Ocarina.Backends.PO_HI_Ada.Types;
 with Ocarina.Backends.PO_HI_Ada.Main;
+with Ocarina.Backends.ASN1;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Build_Utils;
@@ -117,6 +118,17 @@ package body Ocarina.Backends.PO_HI_Ada is
       Custom_Body_Names  : Name_Tables.Instance;
       User_Source_Dirs   : Name_Tables.Instance);
 
+   --------------------------
+   --  Set_ASN1_Deployment --
+   --------------------------
+
+   Generate_ASN1_Deployment : Boolean := False;
+
+   procedure Set_ASN1_Deployment (Use_It : Boolean) is
+   begin
+      Generate_ASN1_Deployment := Use_It;
+   end Set_ASN1_Deployment;
+
    -----------------------------
    -- PolyORB_HI_Ada_Makefile --
    -----------------------------
@@ -141,7 +153,6 @@ package body Ocarina.Backends.PO_HI_Ada is
       pragma Unreferenced (Appli_Name,
                            Transport_API,
                            Ada_Sources,
-                           Asn_Sources,
                            C_Libraries,
                            User_Source_Dirs,
                            Use_Transport,
@@ -209,11 +220,32 @@ package body Ocarina.Backends.PO_HI_Ada is
          Write_Str ("PROJECT_FILE = ");
          Write_Name (Node_Name);
          Write_Line (".gpr");
+         Write_Str ("ASN_SOURCES=");
+
+         if Generate_ASN1_Deployment then
+            Write_Str ("../../asn1_deployment.asn ");
+         end if;
+
+         if Length (Asn_Sources) > 0 then
+            for J in
+              Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
+               Write_Str ("");
+               Write_Name (Asn_Sources.Table (J));
+               exit when J = Name_Tables.Last (Asn_Sources);
+               Write_Space;
+            end loop;
+         end if;
          Write_Eol;
 
          --  The 'all' target
 
          Write_Str ("all:");
+
+         --  First, process ASN.1 files
+
+         if Length (Asn_Sources) > 0 then
+            Write_Str (" generate-asn1-files");
+         end if;
 
          --  If there are C files to be compiled, add a dependency on
          --  these files
@@ -278,6 +310,11 @@ package body Ocarina.Backends.PO_HI_Ada is
          Write_Char (ASCII.HT);
          Write_Str ("$(CC) $(CFLAGS) -I. $(CPU_CFLAGS) -c $<");
       end if;
+
+      Write_Eol;
+      Write_Line ("generate-asn1-files: $(ASN_SOURCES)");
+      Write_Char (ASCII.HT);
+      Write_Line (" asn1.exe -Ada -uPER $(ASN_SOURCES)");
    end PolyORB_HI_Ada_Makefile;
 
    -------------------------------------
@@ -507,6 +544,16 @@ package body Ocarina.Backends.PO_HI_Ada is
          --  Generate the Ada project files
 
          Generate_PolyORB_HI_Ada_Ada_Project_File (Instance_Root);
+
+         --  If we have to generate the ASN1 deployment file, then
+         --  we enter the directory that contains the generated
+         --  code and invoke directly the ASN1 generator with the
+         --  instance root. It should automatically create an .asn1
+         --  file that contains deployment/messages informations.
+
+         if Generate_ASN1_Deployment then
+            ASN1.Generate (Instance_Root);
+         end if;
 
          --  If the user requested to build the applications then we
          --  build it.

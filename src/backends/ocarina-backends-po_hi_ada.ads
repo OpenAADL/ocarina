@@ -49,6 +49,8 @@ package Ocarina.Backends.PO_HI_Ada is
    procedure Reset;
    --  Reset the internal units of the PO_HI_Ada generator
 
+   procedure Set_ASN1_Deployment (Use_It : Boolean);
+
 private
    Ada_Root : Node_Id;
    --  The root of the Ada trees
