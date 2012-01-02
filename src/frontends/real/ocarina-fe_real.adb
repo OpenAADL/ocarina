@@ -70,6 +70,8 @@ package body Ocarina.FE_REAL is
       Write_Line ("   -real_lib Add a REAL file to be used as a theorem "&
                   "library by REAL annexes");
       Write_Line ("   -real_theorem <theorem> Evaluate only theorem");
+      Write_Line
+        ("   -real_continue_eval Continue evaluation in case of failures");
    end Usage;
 
 end Ocarina.FE_REAL;

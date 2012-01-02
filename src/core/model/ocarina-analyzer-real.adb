@@ -1464,8 +1464,7 @@ package body Ocarina.Analyzer.REAL is
             end if;
 
          when FC_Get_Property_Value =>
-            if Present (N) and then
-              Present (Next_Node (N)) then
+            if Present (N) and then Present (Next_Node (N)) then
                declare
                   Is_Set : Boolean;
                begin

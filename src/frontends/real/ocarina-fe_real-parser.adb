@@ -702,7 +702,7 @@ package body Ocarina.FE_REAL.Parser is
    begin
 
       --  Read enough expressions to push as first expression a binary
-      --  operator with no right expressio
+      --  operator with no right expression
 
       Expr := P_Expression_Part;
       if No (Expr) then
@@ -1936,7 +1936,7 @@ package body Ocarina.FE_REAL.Parser is
 
       Initialize_Option_Scan;
       loop
-         C := Getopt ("* real_lib: real_theorem:");
+         C := Getopt ("* real_lib: real_theorem: real_continue_eval");
          case C is
             when ASCII.NUL =>
                exit;
@@ -1948,6 +1948,10 @@ package body Ocarina.FE_REAL.Parser is
 
                if Full_Switch = "real_theorem" then
                   Main_Theorem := Get_String_Name (Parameter);
+               end if;
+
+               if Full_Switch = "real_continue_eval" then
+                  Continue_Evaluation := True;
                end if;
 
             when others =>

@@ -1,9 +1,30 @@
 type_issues_1 execution
+-------------------------------------
+Evaluating theorem type_issues_1
+
+ * Iterate for variable: rma.erc32_cpu_rm
+ => Result: TRUE
+
 theorem type_issues_1 is: TRUE
 
+
 type_issues_2 execution
+-------------------------------------
+Evaluating theorem type_issues_2
+
+ * Iterate for variable: rma.erc32_cpu_rm
+ => Result: TRUE
+
 theorem type_issues_2 is: TRUE
 
+
 type_issues_3 execution
+-------------------------------------
+Evaluating theorem type_issues_3
+
+ * Iterate for variable: rma.erc32_cpu_rm
+ => Result: TRUE
+
 theorem type_issues_3 is: TRUE
+
 

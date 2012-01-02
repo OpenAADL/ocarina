@@ -1,26 +1,54 @@
 contains_memories execution
+-------------------------------------
+Evaluating theorem contains_memories
+
+ * Iterate for variable: mysystem.local
 Content of set mainmem (validation.aadl:123:28) is 
   mysystem.local_ram: 122 component instance validation.aadl:99:01
+ => Result: TRUE
+
 theorem contains_memories is: TRUE
 
+
 check_memory_and_process_mem execution
+-------------------------------------
+Evaluating theorem check_memory_and_process_mem
+
+ * Iterate for variable: mysystem.local_ram
 Content of set prs (validation.aadl:133:28) is 
   mysystem.local_node: 13 component instance validation.aadl:87:01
 validation.aadl:135:99 Backends: error : Property is false for instance 122 (mysystem.local_ram)
+ => Result: FALSE
+
 theorem check_memory_and_process_mem is: FALSE
 
+
 check_thread_and_process_mem execution
+-------------------------------------
+Evaluating theorem check_thread_and_process_mem
+
+ * Iterate for variable: mysystem.local_node
 Content of set thrs (validation.aadl:144:28) is 
   mysystem.local_node_p1: 20 component instance validation.aadl:32:01
   mysystem.local_node_p2: 60 component instance validation.aadl:51:01
 validation.aadl:151:16 Backends: error : Property is false for instance 13 (mysystem.local_node)
+ => Result: FALSE
+
 theorem check_thread_and_process_mem is: FALSE
 
+
 check_processor_compliance execution
+-------------------------------------
+Evaluating theorem check_processor_compliance
+
+ * Iterate for variable: mysystem.local_cpu
 Content of set prs (validation.aadl:160:28) is 
   mysystem.local_node: 13 component instance validation.aadl:87:01
 Content of set thrs (validation.aadl:161:28) is 
   mysystem.local_node_p1: 20 component instance validation.aadl:32:01
   mysystem.local_node_p2: 60 component instance validation.aadl:51:01
+ => Result: TRUE
+
 theorem check_processor_compliance is: TRUE
+
 

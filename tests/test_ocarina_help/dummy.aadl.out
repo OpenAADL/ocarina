@@ -35,6 +35,7 @@ Usage:
    -aadlv2  Use AADL v2 standard
    -real_lib Add a REAL file to be used as a theorem library by REAL annexes
    -real_theorem <theorem> Evaluate only theorem
+   -real_continue_eval Continue evaluation in case of failures
    -g  Generate code from the AADL instance tree
        Registered backends:
         arinc653_conf

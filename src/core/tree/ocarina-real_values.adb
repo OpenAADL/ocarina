@@ -157,8 +157,25 @@ package body Ocarina.REAL_Values is
             end if;
 
          when LT_List =>
-            --  XXX FIXME :
-            return "Not implemented yet";
+            declare
+               N : Node_Id;
+               Name : Name_Id;
+            begin
+               N := First_Node (Value.LVal);
+               if Present (N) then
+                  Name := Get_String_Name ("(" & Image (Item_Val (N)));
+                  N := Next_Node (N);
+               else
+                  Name := Get_String_Name ("(");
+               end if;
+               while Present (N) loop
+                  Name := Get_String_Name
+                    (Get_Name_String (Name)
+                       & ", " & Image (Item_Val (N)));
+                  N := Next_Node (N);
+               end loop;
+               Add_Str_To_Name_Buffer (")");
+            end;
 
          when LT_Range =>
             if Value.RSign_Left then
@@ -167,7 +184,7 @@ package body Ocarina.REAL_Values is
             Add_Str_To_Name_Buffer
               (Image (Value.RVal_Left, Value.RVBase, Value.RVExp));
 
-            Add_Str_To_Name_Buffer (" - ");
+            Add_Str_To_Name_Buffer (" .. ");
 
             if Value.RSign_Right then
                Set_Char_To_Name_Buffer ('-');

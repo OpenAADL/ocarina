@@ -1,48 +1,121 @@
 check_expression_max execution
+-------------------------------------
+Evaluating theorem check_expression_max
+
+ * Iterate for variable: rma.erc32_node_a
 Content of set new_set (test_real_exec_04.aadl:86:18) is 
   rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
   rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
+ => Result: TRUE
+
 theorem check_expression_max is: TRUE
 
+
 check_expression_sum execution
+-------------------------------------
+Evaluating theorem check_expression_sum
+
+ * Iterate for variable: rma.erc32_node_a
 Content of set new_set (test_real_exec_04.aadl:98:18) is 
   rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
   rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
+ => Result: TRUE
+
 theorem check_expression_sum is: TRUE
 
+
 check_expression_not execution
+-------------------------------------
+Evaluating theorem check_expression_not
+
+ * Iterate for variable: rma.erc32_cpu_rm
+ => Result: TRUE
+
 theorem check_expression_not is: TRUE
 
+
 check_expression_complex execution
+-------------------------------------
+Evaluating theorem check_expression_complex
+
+ * Iterate for variable: rma.erc32_cpu_rm
 Content of set test_set (test_real_exec_04.aadl:136:15) is 
   rma.erc32_node_a: 13 component instance test_real_exec_04.aadl:72:01
+ => Result: TRUE
+
 theorem check_expression_complex is: TRUE
 
+
 check_expression_range execution
+-------------------------------------
+Evaluating theorem check_expression_range
+
+ * Iterate for variable: rma.erc32_node_a_task1
+ => Result: TRUE
+
+ * Iterate for variable: rma.erc32_node_a_task2
+ => Result: TRUE
+
 theorem check_expression_range is: TRUE
 
+
 check_expression_lcm execution
-     -> value for var_list is Not implemented yet
+-------------------------------------
+Evaluating theorem check_expression_lcm
+
+ * Iterate for variable: rma.erc32
+     -> value for var_list is (2, 4, 6)
+ => Result: TRUE
+
 theorem check_expression_lcm is: TRUE
 
+
 check_expression_gcd execution
-     -> value for var_list is Not implemented yet
+-------------------------------------
+Evaluating theorem check_expression_gcd
+
+ * Iterate for variable: rma.erc32
+     -> value for var_list is (2, 4, 6)
+ => Result: TRUE
+
 theorem check_expression_gcd is: TRUE
 
+
 check_expression_gcd_var execution
+-------------------------------------
+Evaluating theorem check_expression_gcd_var
+
+ * Iterate for variable: rma.erc32
      -> value for v1 is 2
      -> value for v2 is 4
      -> value for v3 is 6
+ => Result: TRUE
+
 theorem check_expression_gcd_var is: TRUE
 
+
 check_expression_non_null execution
+-------------------------------------
+Evaluating theorem check_expression_non_null
+
+ * Iterate for variable: rma.erc32
      -> value for v0 is 0
      -> value for v1 is 42
+ => Result: TRUE
+
 theorem check_expression_non_null is: TRUE
 
+
 check_is_in execution
+-------------------------------------
+Evaluating theorem check_is_in
+
+ * Iterate for variable: rma.erc32_node_a
 Content of set set (test_real_exec_04.aadl:218:12) is 
   rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
   rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
+ => Result: TRUE
+
 theorem check_is_in is: TRUE
+
 

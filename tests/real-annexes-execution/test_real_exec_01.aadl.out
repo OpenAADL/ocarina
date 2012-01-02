@@ -1,6 +1,20 @@
 integer_and_binaries_operators execution
+-------------------------------------
+Evaluating theorem integer_and_binaries_operators
+
+ * Iterate for variable: rma.erc32_cpu_rm
+ => Result: TRUE
+
 theorem integer_and_binaries_operators is: TRUE
 
+
 modulo_operator execution
+-------------------------------------
+Evaluating theorem modulo_operator
+
+ * Iterate for variable: rma.erc32_cpu_rm
+ => Result: TRUE
+
 theorem modulo_operator is: TRUE
+
 

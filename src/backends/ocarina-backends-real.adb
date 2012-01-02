@@ -35,6 +35,7 @@ with Namet;
 with Output;
 with Locations; use Locations;
 
+with Ocarina.Analyzer.REAL;
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
 with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.ME_REAL.REAL_Tree.Utils;
@@ -285,11 +286,8 @@ package body Ocarina.Backends.REAL is
       Dummy := Apply_To_All_Elements (R);
    end Apply_To_All_Elements;
 
-   ---------------------------
-   -- Apply_To_All_Elements --
-   ---------------------------
-
    function Apply_To_All_Elements (R : Node_Id) return Boolean is
+      use Ocarina.ME_AADL.AADL_Instances.Nutils;
       pragma Assert (Kind (R) = K_Theorem);
 
       Range_Set : constant Result_Set := Set_Array
@@ -302,12 +300,23 @@ package body Ocarina.Backends.REAL is
                           (Range_Declaration (R))))))));
       Success   : Boolean := True;
    begin
-      --  For each element of the global ("range") set,
-      --  we build the dependant sets and then
-      --  we check the verification expression
+      --  For each element of the global ("range") set, we build the
+      --  dependant sets and then we check the verification expression
 
+      Write_Line ("-------------------------------------");
+      Write_Line ("Evaluating theorem "
+                    & Get_Name_String (Name (Identifier (R))));
+      Write_Line ("");
       for J in 1 .. Cardinal (Range_Set) loop
          Current_Range_Variable := Get (Range_Set, J);
+         begin
+            Write_Line (" * Iterate for variable: "
+                          & Get_Name_String (Compute_Full_Name_Of_Instance
+                                               (Current_Range_Variable)));
+         exception
+            when others =>
+               null;
+         end;
          Set_Var_Value
            (Referenced_Var (Variable_Ref (Range_Declaration (R))),
             New_Elem_Value (Current_Range_Variable));
@@ -315,13 +324,14 @@ package body Ocarina.Backends.REAL is
          if Success then
             Success := Manage_Check_Expression (R);
          end if;
-
+         Write_Line (" => Result: " & Success'Img);
+         Write_Line ("");
          exit when not Success;
       end loop;
 
       Write_Line ("theorem " & Get_Name_String (Name (Identifier (R)))
                     & " is: "& Boolean'Image (Success));
-
+      Write_Line ("");
       return Success;
    end Apply_To_All_Elements;
 
@@ -521,7 +531,8 @@ package body Ocarina.Backends.REAL is
          Success := Apply_To_All_Elements (RNU.REAL_Root);
 
          Clean_Runtime;
-         exit when not Success;
+         exit when (not Success)
+           and then (not Ocarina.Analyzer.REAL.Continue_Evaluation);
 
          N := Next_Node (N);
       end loop;
@@ -1448,7 +1459,7 @@ package body Ocarina.Backends.REAL is
       Success   : Boolean;
 
    begin
-      case (Code (E)) is
+      case Code (E) is
          when FC_Is_Called_By =>
             Extract_Parameters_Sets (E, R1, R2, Success);
             if not Success then

@@ -7,58 +7,96 @@ all.aadl:197:07: warning: layer_unclassified references a component type
 ocarina: Total: 0 error and 6 warnings
 pok_security execution
 requirement : one_security_level_by_memory
+-------------------------------------
+Evaluating theorem one_security_level_by_memory
+
+ * Iterate for variable: main.i_node1_memory
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_memory_topsecret
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_memory_secret
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_memory_unclassified
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_memory_driver
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_memory
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_memory_topsecret
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_memory_secret
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_memory_unclassified
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_memory_driver
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
 lib.real:15:23 Backends: warning : cardinal of set b is null
 lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+ => Result: TRUE
+
 theorem one_security_level_by_memory is: TRUE
+
 requirement : bell_lapadula
+-------------------------------------
+Evaluating theorem bell_lapadula
+
+ * Iterate for variable: main.i_node1_partition_topsecret
 Content of set vp1 (lib.real:27:14) is 
   main.i_node1_runtime_topsecret: 48 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
@@ -69,6 +107,9 @@ Content of set vp2 (lib.real:33:14) is
   main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
 Content of set b_dst (lib.real:35:16) is 
   main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_partition_secret
 Content of set vp1 (lib.real:27:14) is 
   main.i_node1_runtime_secret: 28 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
@@ -79,6 +120,9 @@ Content of set vp2 (lib.real:33:14) is
   main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
 Content of set b_dst (lib.real:35:16) is 
   main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_partition_unclassified
 Content of set vp1 (lib.real:27:14) is 
   main.i_node1_runtime_unclassified: 64 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
@@ -89,6 +133,9 @@ Content of set vp2 (lib.real:33:14) is
   main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
 Content of set b_dst (lib.real:35:16) is 
   main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_topsecret
 Content of set vp1 (lib.real:27:14) is 
   main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
@@ -96,6 +143,9 @@ Content of set b_src (lib.real:29:16) is
 Content of set p_dest (lib.real:31:17) is 
 Content of set vp2 (lib.real:33:14) is 
 Content of set b_dst (lib.real:35:16) is 
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_secret
 Content of set vp1 (lib.real:27:14) is 
   main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
@@ -103,6 +153,9 @@ Content of set b_src (lib.real:29:16) is
 Content of set p_dest (lib.real:31:17) is 
 Content of set vp2 (lib.real:33:14) is 
 Content of set b_dst (lib.real:35:16) is 
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_unclassified
 Content of set vp1 (lib.real:27:14) is 
   main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
@@ -110,8 +163,15 @@ Content of set b_src (lib.real:29:16) is
 Content of set p_dest (lib.real:31:17) is 
 Content of set vp2 (lib.real:33:14) is 
 Content of set b_dst (lib.real:35:16) is 
+ => Result: TRUE
+
 theorem bell_lapadula is: TRUE
+
 requirement : biba
+-------------------------------------
+Evaluating theorem biba
+
+ * Iterate for variable: main.i_node1_partition_topsecret
 Content of set vp1 (lib.real:51:14) is 
   main.i_node1_runtime_topsecret: 48 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
@@ -122,6 +182,9 @@ Content of set vp2 (lib.real:57:14) is
   main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
 Content of set b_dst (lib.real:59:16) is 
   main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_partition_secret
 Content of set vp1 (lib.real:51:14) is 
   main.i_node1_runtime_secret: 28 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
@@ -132,6 +195,9 @@ Content of set vp2 (lib.real:57:14) is
   main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
 Content of set b_dst (lib.real:59:16) is 
   main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_partition_unclassified
 Content of set vp1 (lib.real:51:14) is 
   main.i_node1_runtime_unclassified: 64 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
@@ -142,6 +208,9 @@ Content of set vp2 (lib.real:57:14) is
   main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
 Content of set b_dst (lib.real:59:16) is 
   main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_topsecret
 Content of set vp1 (lib.real:51:14) is 
   main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
@@ -149,6 +218,9 @@ Content of set b_src (lib.real:53:16) is
 Content of set p_dest (lib.real:55:17) is 
 Content of set vp2 (lib.real:57:14) is 
 Content of set b_dst (lib.real:59:16) is 
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_secret
 Content of set vp1 (lib.real:51:14) is 
   main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
@@ -156,6 +228,9 @@ Content of set b_src (lib.real:53:16) is
 Content of set p_dest (lib.real:55:17) is 
 Content of set vp2 (lib.real:57:14) is 
 Content of set b_dst (lib.real:59:16) is 
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_unclassified
 Content of set vp1 (lib.real:51:14) is 
   main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
@@ -163,8 +238,15 @@ Content of set b_src (lib.real:53:16) is
 Content of set p_dest (lib.real:55:17) is 
 Content of set vp2 (lib.real:57:14) is 
 Content of set b_dst (lib.real:59:16) is 
+ => Result: TRUE
+
 theorem biba is: TRUE
+
 requirement : mils_1
+-------------------------------------
+Evaluating theorem mils_1
+
+ * Iterate for variable: main.i_node1_partition_topsecret
 Content of set vp1 (lib.real:73:14) is 
   main.i_node1_runtime_topsecret: 48 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
@@ -175,6 +257,9 @@ Content of set vp2 (lib.real:79:14) is
   main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
 Content of set b_dst (lib.real:81:16) is 
   main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_partition_secret
 Content of set vp1 (lib.real:73:14) is 
   main.i_node1_runtime_secret: 28 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
@@ -185,6 +270,9 @@ Content of set vp2 (lib.real:79:14) is
   main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
 Content of set b_dst (lib.real:81:16) is 
   main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_partition_unclassified
 Content of set vp1 (lib.real:73:14) is 
   main.i_node1_runtime_unclassified: 64 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
@@ -195,6 +283,9 @@ Content of set vp2 (lib.real:79:14) is
   main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
 Content of set b_dst (lib.real:81:16) is 
   main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_topsecret
 Content of set vp1 (lib.real:73:14) is 
   main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
@@ -202,6 +293,9 @@ Content of set b_src (lib.real:75:16) is
 Content of set p_dest (lib.real:77:17) is 
 Content of set vp2 (lib.real:79:14) is 
 Content of set b_dst (lib.real:81:16) is 
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_secret
 Content of set vp1 (lib.real:73:14) is 
   main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
@@ -209,6 +303,9 @@ Content of set b_src (lib.real:75:16) is
 Content of set p_dest (lib.real:77:17) is 
 Content of set vp2 (lib.real:79:14) is 
 Content of set b_dst (lib.real:81:16) is 
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_unclassified
 Content of set vp1 (lib.real:73:14) is 
   main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
@@ -216,8 +313,15 @@ Content of set b_src (lib.real:75:16) is
 Content of set p_dest (lib.real:77:17) is 
 Content of set vp2 (lib.real:79:14) is 
 Content of set b_dst (lib.real:81:16) is 
+ => Result: TRUE
+
 theorem mils_1 is: TRUE
+
 requirement : mils_2
+-------------------------------------
+Evaluating theorem mils_2
+
+ * Iterate for variable: main.i_node1_partition_topsecret
 Content of set vp1 (lib.real:98:14) is 
   main.i_node1_runtime_topsecret: 48 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
@@ -235,6 +339,9 @@ lib.real:119:20 Backends: warning : cardinal of set b_dst is null
 lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
 lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
 lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_partition_secret
 Content of set vp1 (lib.real:98:14) is 
   main.i_node1_runtime_secret: 28 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
@@ -252,6 +359,9 @@ lib.real:119:20 Backends: warning : cardinal of set b_dst is null
 lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
 lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
 lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node1_partition_unclassified
 Content of set vp1 (lib.real:98:14) is 
   main.i_node1_runtime_unclassified: 64 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
@@ -269,6 +379,9 @@ lib.real:119:20 Backends: warning : cardinal of set b_dst is null
 lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
 lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
 lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_topsecret
 Content of set vp1 (lib.real:98:14) is 
   main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
@@ -286,6 +399,9 @@ lib.real:119:20 Backends: warning : cardinal of set b_dst is null
 lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
 lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
 lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_secret
 Content of set vp1 (lib.real:98:14) is 
   main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
@@ -303,6 +419,9 @@ lib.real:119:20 Backends: warning : cardinal of set b_dst is null
 lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
 lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
 lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2_partition_unclassified
 Content of set vp1 (lib.real:98:14) is 
   main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
@@ -320,8 +439,28 @@ lib.real:119:20 Backends: warning : cardinal of set b_dst is null
 lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
 lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
 lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+ => Result: TRUE
+
 theorem mils_2 is: TRUE
+
 requirement : scheduling_1
+-------------------------------------
+Evaluating theorem scheduling_1
+
+ * Iterate for variable: main.i_node1
+ => Result: TRUE
+
+ * Iterate for variable: main.i_node2
+ => Result: TRUE
+
 theorem scheduling_1 is: TRUE
+
+-------------------------------------
+Evaluating theorem pok_security
+
+ * Iterate for variable: main.i
+ => Result: TRUE
+
 theorem pok_security is: TRUE
+
 

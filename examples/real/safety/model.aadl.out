@@ -1,13 +1,20 @@
 pok_safety execution
 requirement : check_error_handling
+-------------------------------------
+Evaluating theorem check_error_handling
+
+ * Iterate for variable: node.impl_part1_thr1
 Content of set prs (libsafety.real:6:15) is 
   node.impl_part1: 62 component instance model.aadl:40:01
 Content of set vp (libsafety.real:8:14) is 
   node.impl_cpu_part1: 20 component instance model.aadl:16:01
 Content of set cpu (libsafety.real:10:15) is 
   node.impl_cpu: 13 component instance model.aadl:22:01
-     -> value for errors is Not implemented yet
-     -> value for actual_errors is Not implemented yet
+     -> value for errors is ("module_config", "module_init", "module_scheduling", "partition_scheduling", "partition_config", "partition_handler", "partition_init", "deadline_miss", "application_error", "numeric_error", "illegal_request", "stack_overflow", "memory_violation", "hardware_fault", "power_fail")
+     -> value for actual_errors is ("module_config", "partition_init", "illegal_request")
 libsafety.real:32:46 Backends: error : Property is false for instance 69 (node.impl_part1_thr1)
+ => Result: FALSE
+
 theorem check_error_handling is: FALSE
+
 model.aadl:118:07 Backends: fatal error : requirements are not fulfilled
