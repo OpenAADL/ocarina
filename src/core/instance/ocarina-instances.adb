@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2005-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -206,6 +206,9 @@ package body Ocarina.Instances is
            and then ATE.Get_Name_Of_Entity (Root_System, False) /=
            Root_System_Name
          then
+            Error_Name (1) := Root_System_Name;
+            Error_Name (2) := ATE.Get_Name_Of_Entity (List_Node);
+            DE ("system % is not a root system, use %");
             Root_System := No_Node;
          end if;
       end if;
@@ -216,7 +219,6 @@ package body Ocarina.Instances is
 
       if No (Root_System) then
          Instance_Root := No_Node;
-
       else
          --  The first step of the instantiation consist of propagate the
          --  properties declared in the AADL packages to the AADL
