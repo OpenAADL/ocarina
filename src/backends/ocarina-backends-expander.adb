@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -140,21 +140,23 @@ package body Ocarina.Backends.Expander is
                   I := First_Node (Features (F));
 
                   while Present (I) loop
-
                      if Category = CC_Subprogram then
                         N := Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
                            (K_Parameter_Instance, No_Location);
                      else
                         N := Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
-                           (K_Port_Spec_Instance, No_Location);
+                          (AIN.Kind (I), No_Location);
                         AIN.Set_Identifier
                            (N, AIU.Copy_Node (Identifier (I)));
-                        AIN.Set_Is_Event (N, AIN.Is_Event (I));
-                        AIN.Set_Is_Data (N, AIN.Is_Data (I));
                      end if;
 
-                     AIN.Set_Is_In (N, AIN.Is_In (I));
-                     AIN.Set_Is_Out (N, AIN.Is_Out (I));
+                     if Kind (I) = K_Port_Spec_Instance then
+                        AIN.Set_Is_Event (N, AIN.Is_Event (I));
+                        AIN.Set_Is_Data (N, AIN.Is_Data (I));
+                        AIN.Set_Is_In (N, AIN.Is_In (I));
+                        AIN.Set_Is_Out (N, AIN.Is_Out (I));
+                     end if;
+
                      AIN.Set_Corresponding_Instance
                         (N, AIN.Corresponding_Instance (I));
                      AIN.Set_Sources

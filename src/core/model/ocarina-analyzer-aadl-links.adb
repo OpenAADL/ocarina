@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -1081,8 +1081,13 @@ package body Ocarina.Analyzer.AADL.Links is
 
             when K_Feature_Group_Spec =>
                declare
-                  Port_Group_Ref : constant Node_Id := Entity_Ref (Node);
+                  Port_Group_Ref : Node_Id := Entity_Ref (Node);
                begin
+                  if No (Port_Group_Ref) then
+                     --  If Entity_Ref is null, look for inverse
+                     Port_Group_Ref := Inverse_Of (Node);
+                  end if;
+
                   if Present (Port_Group_Ref) then
                      Pointed_Node := Find_Port_Group_Classifier
                        (Root                  => Root,
@@ -1600,19 +1605,32 @@ package body Ocarina.Analyzer.AADL.Links is
                  (Component               => Component,
                   Subcomponent_Identifier => Item
                     (First_Node (Path (Entity_Node))));
-               if Present (Pointed_Node)
-                 and then Get_Referenced_Entity
-                 (Entity_Ref
-                  (Pointed_Node)) /= No_Node
-               then
-                  Pointed_Node :=
-                    Find_Feature
-                    (Component          => Get_Referenced_Entity
-                       (Entity_Ref (Pointed_Node)),
-                     Feature_Identifier => Item
-                       (Next_Node (First_Node (Path (Entity_Node)))));
+               if Present (Pointed_Node) then
+                  if Present (Entity_Ref (Pointed_Node))
+                    and then Present (Get_Referenced_Entity
+                                        (Entity_Ref (Pointed_Node)))
+                  then
+                     Pointed_Node :=
+                       Find_Feature
+                       (Component          => Get_Referenced_Entity
+                          (Entity_Ref (Pointed_Node)),
+                        Feature_Identifier => Item
+                          (Next_Node (First_Node (Path (Entity_Node)))));
 
-                  SC_Owned := True;
+                     SC_Owned := True;
+                  elsif Present (Inverse_Of (Pointed_Node))
+                    and then Present (Get_Referenced_Entity
+                                        (Inverse_Of (Pointed_Node)))
+                  then
+                     Pointed_Node :=
+                       Find_Feature
+                       (Component          => Get_Referenced_Entity
+                          (Inverse_Of (Pointed_Node)),
+                        Feature_Identifier => Item
+                          (Next_Node (First_Node (Path (Entity_Node)))));
+
+                     SC_Owned := True;
+                  end if;
                end if;
             end if;
 
@@ -2398,7 +2416,7 @@ package body Ocarina.Analyzer.AADL.Links is
          end if;
       end if;
 
-      --  Link constant type if it is a reference to a declare
+      --  Link constant type if it is a reference to a declared
       --  property type.
 
       if Kind (Constant_Type (Node)) = K_Unique_Property_Type_Identifier then
@@ -2576,7 +2594,8 @@ package body Ocarina.Analyzer.AADL.Links is
                            (Classifier_Ref (List_Node)),
                          Component_Identifier => Identifier
                            (Classifier_Ref (List_Node))));
-                  when PO_Port_Group =>
+                  when PO_Port_Group |
+                    PO_Feature_Group =>
                      Set_Referenced_Entity
                        (Classifier_Ref (List_Node),
                         Find_Port_Group_Classifier
@@ -2750,7 +2769,6 @@ package body Ocarina.Analyzer.AADL.Links is
                      Corresponding_Container := Pointed_Node;
 
                   when others =>
-
                      Corresponding_Container := No_Node;
                end case;
 
@@ -2763,6 +2781,11 @@ package body Ocarina.Analyzer.AADL.Links is
                      when AADL_V2 =>
                         Pointed_Node := Find_Subclause
                           (Corresponding_Container, List_Node);
+
+                        if No (Pointed_Node) then
+                           Pointed_Node := Find_Feature
+                             (Corresponding_Container, List_Node);
+                        end if;
                   end case;
 
                else
@@ -3336,7 +3359,6 @@ package body Ocarina.Analyzer.AADL.Links is
                Feature_Identifier => Item
                  (First_Node (Path (Connection_End))));
          end if;
-
          Set_Corresponding_Entity (Item (First_Node (Path (Connection_End))),
                                    Corresponding_Node);
 
@@ -3414,8 +3436,9 @@ package body Ocarina.Analyzer.AADL.Links is
                     (Next_Node (First_Node (Path (Connection_End)))));
 
             elsif Kind (Corresponding_Node) = K_Feature_Group_Spec
+              and then Present (Entity_Ref (Corresponding_Node))
               and then Present (Get_Referenced_Entity
-                                  (Entity_Ref (Corresponding_Node)))
+              (Entity_Ref (Corresponding_Node)))
             then
                Corresponding_Node := Find_Feature
                  (Component          => Get_Referenced_Entity
@@ -3423,6 +3446,28 @@ package body Ocarina.Analyzer.AADL.Links is
                   Feature_Identifier => Item
                     (Next_Node (First_Node (Path (Connection_End)))));
                Is_Local := True;
+
+            elsif Kind (Corresponding_Node) = K_Feature_Group_Spec
+              and then Present (Inverse_Of (Corresponding_Node))
+              and then Present (Get_Referenced_Entity
+              (Inverse_Of (Corresponding_Node)))
+            then
+               Corresponding_Node := Find_Feature
+                 (Component          => Get_Referenced_Entity
+                    (Inverse_Of (Corresponding_Node)),
+                  Feature_Identifier => Item
+                    (Next_Node (First_Node (Path (Connection_End)))));
+               Is_Local := True;
+
+            elsif Kind (Corresponding_Node) = K_Subcomponent_Access
+              and then Present (Get_Referenced_Entity
+              (Entity_Ref (Corresponding_Node)))
+            then
+               Corresponding_Node := Find_Feature
+                 (Component          => Get_Referenced_Entity
+                    (Entity_Ref (Corresponding_Node)),
+                  Feature_Identifier => Item
+                    (Next_Node (First_Node (Path (Connection_End)))));
 
             else
                Corresponding_Node := No_Node;

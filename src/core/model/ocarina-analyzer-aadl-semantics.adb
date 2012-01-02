@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2009-2011, European Space Agency (ESA).           --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -884,13 +884,6 @@ package body Ocarina.Analyzer.AADL.Semantics is
          or else Kind (Connection_Source) = K_Subcomponent_Access
          or else Kind (Connection_Source) = K_Subcomponent);
 
-      pragma Assert
-        (Kind (Connection_Destination) = K_Port_Spec
-         or else Kind (Connection_Destination) = K_Parameter
-         or else Kind (Connection_Destination) = K_Feature_Group_Spec
-         or else Kind (Connection_Destination) = K_Subcomponent_Access
-         or else Kind (Connection_Destination) = K_Subcomponent);
-
       case Kind (Connection_Destination) is
          when K_Port_Spec | K_Parameter =>
 
@@ -901,28 +894,35 @@ package body Ocarina.Analyzer.AADL.Semantics is
             --  make sense: an in/out port could have two different
             --  connections.
 
-            Directions := (not Source_Is_Local
-                           and then not Destination_Is_Local
-                           and then Is_Out (Connection_Source)
-                           and then Is_In (Connection_Destination))
-              or else (Source_Is_Local
-                       and then not Destination_Is_Local
-                       and then Is_In (Connection_Source)
-                       and then Is_In (Connection_Destination))
-              or else (not Source_Is_Local
-                       and then Destination_Is_Local
-                       and then Is_Out (Connection_Source)
-                       and then Is_Out (Connection_Destination))
-              or else (Source_Is_Local
-                       and then Destination_Is_Local
-                       and then Is_In (Connection_Source)
-                       and then Is_Out (Connection_Destination))
-              or else (Is_In (Connection_Source)
-                       and then Is_Out (Connection_Source)
-                       and then Is_Out (Connection_Destination)
-                       and then Is_In (Connection_Destination));
-            --  XXX The latest test may be redudant with the previous
-            --  ones
+            if Present (Inversed_Entity (Connection_Source))
+              or else Present (Inversed_Entity (Connection_Destination))
+            then
+               --
+               Directions := True;
+            else
+               Directions := (not Source_Is_Local
+                                and then not Destination_Is_Local
+                                and then Is_Out (Connection_Source)
+                                and then Is_In (Connection_Destination))
+                 or else (Source_Is_Local
+                            and then not Destination_Is_Local
+                            and then Is_In (Connection_Source)
+                            and then Is_In (Connection_Destination))
+                 or else (not Source_Is_Local
+                            and then Destination_Is_Local
+                            and then Is_Out (Connection_Source)
+                            and then Is_Out (Connection_Destination))
+                 or else (Source_Is_Local
+                            and then Destination_Is_Local
+                            and then Is_In (Connection_Source)
+                            and then Is_Out (Connection_Destination))
+                 or else (Is_In (Connection_Source)
+                            and then Is_Out (Connection_Source)
+                            and then Is_Out (Connection_Destination)
+                            and then Is_In (Connection_Destination));
+               --  XXX The latest test may be redudant with the previous
+               --  ones
+            end if;
 
          when K_Feature_Group_Spec =>
             Directions := True;

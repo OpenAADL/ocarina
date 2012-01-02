@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2005-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2005-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -143,6 +143,28 @@ package body Ocarina.Instances.Components.Features is
                AIN.Set_Identifier (New_Instance,
                               Duplicate_Identifier (ATN.Identifier (Feature)));
                Port_Group := ATE.Get_Referenced_Entity (Entity_Ref (Feature));
+               AIN.Set_Sources
+                  (New_Instance, New_List (K_List_Id, No_Location));
+               AIN.Set_Destinations (New_Instance,
+                                  New_List (K_List_Id, No_Location));
+
+               Success := Instantiate_Port_Group_Type
+                 (Instance_Root,
+                  Port_Group,
+                  Ocarina.ME_AADL.AADL_Instances.Nodes.Features (New_Instance),
+                  Container,
+                  Inverse);
+            elsif Inverse_Of (Feature) /= No_Node
+              and then ATE.Get_Referenced_Entity
+              (Inverse_Of (Feature)) /= No_Node
+            then
+               New_Instance := New_Node (K_Feature_Group_Spec_Instance,
+                                         ATN.Loc (Feature));
+               AIN.Set_Features (New_Instance,
+                             New_List (K_List_Id, ATN.Loc (Feature)));
+               AIN.Set_Identifier (New_Instance,
+                              Duplicate_Identifier (ATN.Identifier (Feature)));
+               Port_Group := ATE.Get_Referenced_Entity (Inverse_Of (Feature));
                AIN.Set_Sources
                   (New_Instance, New_List (K_List_Id, No_Location));
                AIN.Set_Destinations (New_Instance,

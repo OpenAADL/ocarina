@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2008-2009, GET-Telecom Paris.                --
+--          Copyright (C) 2008-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -946,10 +946,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          return No_Node;
       end if;
 
-      if Feature_Group_Spec /= No_Node then
-         Set_Entity_Ref (Feature_Group_Spec, Group_Type_Ref);
-      end if;
-
+      Set_Entity_Ref (Feature_Group_Spec, Group_Type_Ref);
       Set_Inverse_Of (Feature_Group_Spec, Inverse_Of);
 
       return Feature_Group_Spec;
