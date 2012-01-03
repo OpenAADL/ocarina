@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -62,7 +62,6 @@ package body Ocarina.BE_AADL_BA.Thread_Dispatch is
 
    procedure Print_Dispatch_Condition (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Dispatch_Condition);
-      pragma Assert (not Is_Empty (Dispatch_Logical_Expressions (Node)));
 
    begin
       Print_Tokens ((T_On, T_Dispatch));
@@ -79,22 +78,23 @@ package body Ocarina.BE_AADL_BA.Thread_Dispatch is
    ----------------------------------------
 
    procedure Print_Dispatch_Logical_Expressions (List : List_Id) is
-      pragma Assert (not Is_Empty (List));
-
       List_Node : Node_Id;
+
    begin
-      List_Node := First_Node (List);
+      if not Is_Empty (List) then
+         List_Node := First_Node (List);
 
-      while Present (List_Node) loop
-         Print_Dispatch_Trigger (List_Node);
+         while Present (List_Node) loop
+            Print_Dispatch_Trigger (List_Node);
 
-         List_Node := Next_Node (List_Node);
-         if Present (List_Node) then
-            Write_Space;
-            Print_Token (T_Or);
-            Write_Space;
-         end if;
-      end loop;
+            List_Node := Next_Node (List_Node);
+            if Present (List_Node) then
+               Write_Space;
+               Print_Token (T_Or);
+               Write_Space;
+            end if;
+         end loop;
+      end if;
    end Print_Dispatch_Logical_Expressions;
 
    ----------------------------

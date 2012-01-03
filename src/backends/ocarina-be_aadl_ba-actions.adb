@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -299,6 +299,12 @@ package body Ocarina.BE_AADL_BA.Actions is
          when CK_Exclamation      => Print_Token (T_Exclamation);
          when CK_Interrogative    => Print_Token (T_Interrogative);
          when CK_Greater_Greater  => Print_Token (T_Greater_Greater_Than);
+         when CK_Exclamation_Less_Than =>
+            Print_Token (T_Exclamation);
+            Print_Token (T_Less_Than_Sign);
+         when CK_Exclamation_Greater_Than =>
+            Print_Token (T_Exclamation);
+            Print_Token (T_Greater_Than_Sign);
          when others              => Write_Line  (Bug_Str);
       end case;
    end Print_Communication_Kind;

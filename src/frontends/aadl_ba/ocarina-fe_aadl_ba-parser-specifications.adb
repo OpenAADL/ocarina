@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -30,6 +30,8 @@
 --                       (ocarina-users@listes.enst.fr)                     --
 --                                                                          --
 ------------------------------------------------------------------------------
+
+with Ada.Text_IO;
 
 with Locations;
 
@@ -590,9 +592,10 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          Behavior_Act_List := P_Behavior_Actions (Container);
 
          if Is_Empty (Behavior_Act_List) then
-            DPE (PC_Behavior_Transition, EMC_List_Is_Empty);
-            Skip_Tokens (T_Semicolon);
-            return No_Node;
+            --  DPE (PC_Behavior_Transition, EMC_List_Is_Empty);
+            raise Program_Error;
+            --  Skip_Tokens (T_Semicolon);
+            --  return No_Node;
          end if;
 
          Scan_Token;  --  consume token }
@@ -601,7 +604,16 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       end if;
 
       Scan_Token;
-      if Token /= T_Semicolon then
+
+      if Token = T_Timeout then --  XXX
+         Scan_Token;
+         Ada.Text_IO.Put_Line (Token'Img);
+         Scan_Token;
+         Ada.Text_IO.Put_Line (Token'Img);
+         Scan_Token;
+         Ada.Text_IO.Put_Line (Token'Img);
+
+      elsif Token /= T_Semicolon then
          DPE (PC_Behavior_Transition,
               Expected_Token => T_Semicolon);
          Skip_Tokens (T_Semicolon);
@@ -622,7 +634,6 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       else
          return Execute_Transition;
       end if;
-
    end P_Execute_Or_Mode_Behavior_Transition;
 
    --------------------------
@@ -647,6 +658,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       if Token = T_On then
          Restore_Lexer (Start_Loc);
          Condition_Node := P_Dispatch_Condition (No_Node);
+
       else
          Restore_Lexer (Start_Loc);
          Condition_Node := P_Value_Expression (No_Node);
@@ -667,7 +679,6 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       else
          return Behavior_Condition;
       end if;
-
    end P_Behavior_Condition;
 
 end Ocarina.FE_AADL_BA.Parser.Specifications;

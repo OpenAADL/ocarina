@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -568,14 +568,24 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
             return No_Node;
          end if;
 
+      elsif Token = T_Less_Than_Sign then
+         --  Parsed "!<"
+         Com_Kind := CK_Exclamation_Less_Than;
+
+      elsif Token = T_Greater_Than_Sign then
+         --  Parsed "!<"
+         Com_Kind := CK_Exclamation_Greater_Than;
+
       else
          Restore_Lexer (Loc);
       end if;
 
       Save_Lexer (Loc);
       Scan_Token;
+
       if Token = T_Right_Curly_Bracket then
          Restore_Lexer (Loc);
+
       elsif Token /= T_Semicolon then
          DPE (PC_Assignment_Or_Communication_Action,
               Expected_Token => T_Semicolon);
@@ -599,7 +609,6 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       else
          return Node;
       end if;
-
    end P_Assignment_Or_Communication_Action;
 
    --------------------
@@ -668,10 +677,13 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
          case Token is
             when T_Fixed =>
                Distribution := DK_Fixed;
+
             when T_Normal =>
                Distribution := DK_Normal;
+
             when T_Poisson =>
                Distribution := DK_Poisson;
+
             when T_Random =>
                Distribution := DK_Random;
 
@@ -689,8 +701,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       end if;
 
       Scan_Token;
-      if Token /= T_Right_Parenthesis then
-         DPE (PC_Timed_Action, Expected_Token => T_Right_Parenthesis);
+      if Token /= T_Semicolon then
+         DPE (PC_Timed_Action, Expected_Token => T_Semicolon);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
@@ -707,7 +719,6 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       else
          return Timed_Action;
       end if;
-
    end P_Timed_Action;
 
    --------------------------------

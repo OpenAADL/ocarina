@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -57,10 +57,15 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
    function P_Dispatch_Trigger
      (Container : Types.Node_Id)
     return Node_Id;
+   pragma Unreferenced (P_Dispatch_Trigger);
 
    function P_Dispatch_Trigger_Conjunction
      (Container : Types.Node_Id;
       Start_Loc : Location)
+     return Node_Id;
+
+   function P_Dispatch_Trigger_Condition
+     (Container : Types.Node_Id)
      return Node_Id;
 
    --------------------------
@@ -68,10 +73,10 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
    --------------------------
 
    --  dispatch_condition ::=
-   --    on dispatch dispatch_logical_expression [ frozen frozen_ports ]
+   --    on dispatch [ dispatch_trigger_condition ] [ frozen frozen_ports ]
 
-   --  dispatch_logical_expression ::=
-   --    dispatch_trigger { or dispatch_trigger }*
+   --  frozen_ports ::=
+   --    in_port_identifier { , in_port_identifier }*
 
    function P_Dispatch_Condition (Container : Types.Node_Id)
      return Node_Id
@@ -80,16 +85,17 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
       Loc                   : Location;
 
       Frozen_Port_List      : List_Id   := No_List;
-      Dispatch_Logical_List : List_Id;
+      Dispatch_Trigger_Conditions : List_Id;
       Dispatch_Condition    : Node_Id;
    begin
       Save_Lexer (Start_Loc);
       Scan_Token;  -- consume T_On
 
-      Dispatch_Condition := Add_New_Dispatch_Condition (Start_Loc,
-                                                        Container,
-                                                        No_List,
-                                                        No_List);
+      Dispatch_Condition := Add_New_Dispatch_Condition
+        (Loc              => Start_Loc,
+         Container        => Container,
+         Expressions      => No_List,
+         Frozen_Port_List => No_List);
 
       if No (Dispatch_Condition) then
          DPE (PC_Dispatch_Condition, EMC_Failed);
@@ -97,31 +103,28 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
          return No_Node;
       end if;
 
+      --  Parse token "dispatch"
+
       Scan_Token;
       if Token /= T_Dispatch then
          Restore_Lexer (Start_Loc);
-         DPE (PC_Dispatch_Condition,
-              Expected_Token => T_Dispatch);
+         DPE (PC_Dispatch_Condition, Expected_Token => T_Dispatch);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
-      Dispatch_Logical_List := P_Items_List (P_Dispatch_Trigger'Access,
-                                             Dispatch_Condition,
-                                             T_Or);
+      --  Parse dispatch_trigger_condition
 
-      if Is_Empty (Dispatch_Logical_List) then
-         DPE (PC_Dispatch_Condition, EMC_List_Is_Empty);
-         Skip_Tokens (T_Semicolon);
-         return No_Node;
-      end if;
+      Dispatch_Trigger_Conditions := P_Items_List
+        (P_Dispatch_Trigger_Condition'Access, Dispatch_Condition, T_Or);
+
+      --  Parse list of frozen ports
 
       Save_Lexer (Loc);
       Scan_Token;
       if Token = T_Frozen then
-         Frozen_Port_List := P_Items_List (P_Identifier'Access,
-                                           Dispatch_Condition,
-                                           T_Comma);
+         Frozen_Port_List := P_Items_List
+           (P_Identifier'Access, Dispatch_Condition, T_Comma);
 
          if Is_Empty (Frozen_Port_List) then
             DPE (PC_Dispatch_Condition, EMC_List_Is_Empty);
@@ -132,10 +135,11 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
          Restore_Lexer (Loc);
       end if;
 
-      Add_New_Dispatch_Condition (Dispatch_Condition,
-                                  Container,
-                                  Dispatch_Logical_List,
-                                  Frozen_Port_List);
+      Add_New_Dispatch_Condition
+        (Dispatch_Condition,
+         Container,
+         Dispatch_Trigger_Conditions,
+         Frozen_Port_List);
 
       return Dispatch_Condition;
    end P_Dispatch_Condition;
@@ -145,10 +149,8 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
    ------------------------
 
    --  dispatch_trigger ::=
-   --    dispatch_trigger_conjunction
-   --  | timeout [ behavior_time ]
-   --  | stop
-   --  | abort
+   --    in_event_port_identifier
+   --  | in_event_data_port_identifier
 
    function P_Dispatch_Trigger (Container : Types.Node_Id)
     return Node_Id
@@ -227,8 +229,125 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
       else
          return Dispatch_Trigger_Node;
       end if;
-
    end P_Dispatch_Trigger;
+
+   -----------------------------------
+   -- P_Dispatch_Trigger_Condition --
+   -----------------------------------
+
+   --  dispatch_trigger_condition ::=
+   --    dispatch_trigger_logical_expression
+   --  | provides_subprogram_access_identifier
+   --  | stop
+   --  | completion_relative_timeout_condition_and_catch
+   --  | dispatch_relative_timeout_catch
+
+   --  dispatch_logical_expression ::=
+   --    dispatch_trigger { or dispatch_trigger }*
+
+   --  dispatch_trigger_logical_expression ::=
+   --    dispatch_conjunction { or dispatch_conjunction }*
+
+   --  dispatch_conjunction ::=
+   --    dispatch_trigger { and dispatch_trigger }*
+
+   --  completion_relative_timeout_condition_and_catch ::=
+   --    timeout behavior_time
+
+   --  dispatch_relative_timeout_catch ::=
+   --    timeout
+
+   function P_Dispatch_Trigger_Condition
+     (Container : Types.Node_Id)
+     return Node_Id
+   is
+      Start_Loc             : Location;
+      Loc                   : Location;
+      Dispatch_Trigger_Node : Node_Id;
+      Behavior_Time         : Node_Id                := No_Node;
+      Trigger_Conjunction   : Node_Id                := No_Node;
+      Trig_Kind             : Dispatch_Trigger_Kind;
+
+   begin
+      Save_Lexer (Start_Loc);
+
+      Scan_Token;
+      case Token is
+         when T_Timeout =>
+            --  Parse either token "timeout",
+            --    or token "timeout" + behavior_time
+
+            Trig_Kind := TRI_Timeout;
+
+            Save_Lexer (Loc);
+            Scan_Token;
+            if Token = T_Real_Literal
+              or else Token = T_Integer_Literal
+            then
+               Restore_Lexer (Loc);
+               Behavior_Time := P_Behavior_Time (No_Node);
+
+               if No (Behavior_Time) then
+                  DPE (PC_Dispatch_Trigger, EMC_Failed);
+                  Skip_Tokens (T_Semicolon);
+                  return No_Node;
+               end if;
+            else
+               Restore_Lexer (Loc);
+            end if;
+
+         when T_Stop =>
+            --  Parse "stop" token
+
+            Trig_Kind := TRI_Stop;
+
+         when T_Identifier
+           | T_Integer_Literal
+           | T_Real_Literal
+           | T_Left_Parenthesis =>
+            Trig_Kind := TRI_No_Kind;
+
+            Trigger_Conjunction := P_Dispatch_Trigger_Conjunction (No_Node,
+                                                                   Start_Loc);
+            if No (Trigger_Conjunction) then
+               DPE (PC_Dispatch_Trigger,
+                    EMC_Trigger_Conjunction_Failed);
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
+
+         when others =>
+            if Token = T_Right_Step_Bracket then
+               --  There is no dispatch_trigger_condition attached,
+               --  simply return.
+               Restore_Lexer (Start_Loc);
+
+               return No_Node;
+
+            else
+               DPE (PC_Dispatch_Trigger,
+                    Expected_Tokens => (T_Timeout, T_Stop,
+                                        T_Right_Step_Bracket, T_Identifier));
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
+      end case;
+
+      Dispatch_Trigger_Node := Add_New_Dispatch_Trigger
+        (Start_Loc,
+         Container,
+         Trig_Kind,
+         Trigger_Conjunction,
+         Behavior_Time);
+
+      if No (Dispatch_Trigger_Node) then
+         DPE (PC_Dispatch_Trigger, EMC_Failed);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
+      else
+         return Dispatch_Trigger_Node;
+      end if;
+   end P_Dispatch_Trigger_Condition;
 
    ------------------------------------
    -- P_Dispatch_Trigger_Conjunction --
@@ -363,7 +482,6 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
       else
          return Trigger_Conj;
       end if;
-
    end P_Dispatch_Trigger_Conjunction;
 
 end Ocarina.FE_AADL_BA.Parser.Thread_Dispatch;

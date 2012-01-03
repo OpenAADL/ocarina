@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -394,7 +394,7 @@ package body Ocarina.Builder.AADL_BA.Expressions is
 
       Set_Integer_Value (Behavior_Time, Integer_Val);
       Set_BE_Container (Integer_Val, Behavior_Time);
-      Set_Unit_Identifier (Behavior_Time, Integer_Val);
+      Set_Unit_Identifier (Behavior_Time, Unit_Ident);
       Set_BE_Container (Integer_Val, Behavior_Time);
 
       return Behavior_Time;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -58,7 +58,9 @@ package Ocarina.ME_AADL_BA is
       CK_No_Kind,
       CK_Exclamation,
       CK_Interrogative,
-      CK_Greater_Greater);
+      CK_Greater_Greater,
+      CK_Exclamation_Less_Than,
+      CK_Exclamation_Greater_Than);
    --  Communication_Kind for Communication_Action Node
 
    type Distribution_Kind is

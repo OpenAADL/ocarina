@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                 Copyright (C) 2010, GET-Telecom Paris.                   --
+--          Copyright (C) 2010-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -302,13 +302,14 @@ package body Ocarina.Builder.AADL_BA.Actions is
       Set_BE_Container (Fst_Behav_Time, Timed_Action);
 
       Set_Scd_Behavior_Time (Timed_Action, Scd_Behav_Time);
-      Set_BE_Container (Scd_Behav_Time, Timed_Action);
+      if Present (Scd_Behav_Time) then
+         Set_BE_Container (Scd_Behav_Time, Timed_Action);
+      end if;
 
       Set_Distrib_Kind (Timed_Action, Distribution_Kind'Pos (Distribution));
       Set_Is_Computation (Timed_Action, Is_Comput);
 
       return Timed_Action;
-
    end Add_New_Timed_Action;
 
    --------------------------------------
