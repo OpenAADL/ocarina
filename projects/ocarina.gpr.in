@@ -6,7 +6,7 @@
 --                                                                          --
 --                              P r o j e c t                               --
 --                                                                          --
---                 Copyright (C) 2009, GET-Telecom Paris.                   --
+--          Copyright (C) 2009-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -77,9 +77,9 @@ project Ocarina is
    package Binder is
       case Build is
         when "debug" =>
-           for Default_Switches ("Ada") use ("-E", "-t");
+           for Default_Switches ("Ada") use ("-E", "-t", "-static");
         when "release" =>
-           for Default_Switches ("Ada") use ("-t");
+           for Default_Switches ("Ada") use ("-t", "-static");
       end case;
    end Binder;
 
