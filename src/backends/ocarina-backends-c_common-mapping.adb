@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2011, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2142,6 +2142,36 @@ package body Ocarina.Backends.C_Common.Mapping is
 
             N := Message_Comment ("Empty subprogram");
             CTU.Append_Node_To_List (N, Statements);
+
+            return Make_Function_Implementation
+              (Spec, Declarations, Statements);
+
+         when Subprogram_LUA =>
+            if Get_Source_Text (S)'Size = 0 then
+               Display_Located_Error
+                 (AIN.Loc (S),
+                  "This subprogram must have the property Source_Text",
+                  Fatal => True);
+            end if;
+
+            Append_Node_To_List
+               (Make_Literal
+                  (C_Values.New_Pointed_Char_Value
+                  (Get_Source_Text (S)(1))),
+               Call_Profile);
+
+            if Get_Source_Name (S) /= No_Name then
+               Append_Node_To_List
+                  (Make_Literal
+                     (C_Values.New_Pointed_Char_Value
+                     (Get_Source_Name (S))),
+                  Call_Profile);
+            end if;
+
+            Append_Node_To_List
+               (CTU.Make_Call_Profile
+                  (RE (RE_LUA_Load), Call_Profile),
+               Statements);
 
             return Make_Function_Implementation
               (Spec, Declarations, Statements);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2011, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -66,6 +66,7 @@ package Ocarina.Backends.Properties is
       Language_Esterel,
       Language_Device,
       Language_Gui,
+      Language_Lua,
       Language_Lustre,
       Language_Rhapsody,
       Language_SDL_RTDS,
@@ -515,6 +516,7 @@ package Ocarina.Backends.Properties is
       Subprogram_Scade,
       Subprogram_Lustre,
       Subprogram_Esterel,
+      Subprogram_Lua,
       Subprogram_Pure_Call_Sequence,
       Subprogram_Hybrid_Ada_95);
 

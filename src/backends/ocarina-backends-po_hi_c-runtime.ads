@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---          Copyright (C) 2008-2011, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,6 +40,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RH_PO_HI_Task,                 --  po_hi_task header
       RH_PO_HI_Time,                 --  po_hi_time header
       RH_PO_HI_Common,               --  po_hi_common header
+      RH_PO_HI_Lua,                  --  po_hi_lua
       RH_PO_HI_Main,                 --  po_hi_main header
       RH_PO_HI_Messages,             --  po_hi_messages header
       RH_PO_HI_Protected,            --  po_hi_protected header
@@ -71,6 +72,9 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Wait_For_Next_Period,           -- __po_hi_task_wait_for_next_period
       RE_Initialize,                     -- __po_hi_initialize
       RE_Initialize_Early,               -- __po_hi_initialize_early
+      RE_LUA_Load,                       -- __po_hi_lua_load
+      RE_LUA_Load_File,                  -- __po_hi_lua_load_file
+      RE_LUA_Load_File_With_Function,    -- __po_hi_lua_load_file_with_function
       RE_Wait_Initialization,            -- __po_hi_wait_initialization
       RE_Marshall_Bool,                  -- __po_hi_marshall_bool
       RE_Unmarshall_Bool,                -- __po_hi_unmarshall_bool
@@ -294,6 +298,9 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Unmarshall_Float64             => RH_PO_HI_Marshallers,
          RE_Marshall_Port                  => RH_PO_HI_Marshallers,
          RE_Unmarshall_Port                => RH_PO_HI_Marshallers,
+         RE_LUA_Load                       => RH_PO_HI_Lua,
+         RE_LUA_Load_File                  => RH_PO_HI_Lua,
+         RE_LUA_Load_File_With_Function    => RH_PO_HI_Lua,
          RE_Marshall_Request               => RH_Marshallers,
          RE_Unmarshall_Request             => RH_Marshallers,
          RE_Marshall_Asn1_Request          => RH_Marshallers,

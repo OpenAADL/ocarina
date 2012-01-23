@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2008-2011, European Space Agency (ESA).           --
+--          Copyright (C) 2008-2012, European Space Agency (ESA).           --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -265,6 +265,7 @@ package body Ocarina.Backends.Properties is
    Language_Device_Name   : Name_Id;
    Language_Esterel_Name  : Name_Id;
    Language_GUI_Name      : Name_Id;
+   Language_LUA_Name      : Name_Id;
    Language_Lustre_Name   : Name_Id;
    Language_Lustre5_Name  : Name_Id;
    Language_Lustre6_Name  : Name_Id;
@@ -1391,6 +1392,9 @@ package body Ocarina.Backends.Properties is
          elsif Source_L = Language_GUI_Name then
             return Language_GUI;
 
+         elsif Source_L = Language_LUA_Name then
+            return Language_LUA;
+
          else
             Display_Located_Error
               (AIN.Loc (E),
@@ -1474,6 +1478,9 @@ package body Ocarina.Backends.Properties is
 
          when Language_Esterel =>
             return Subprogram_Esterel;
+
+         when Language_Lua =>
+            return Subprogram_Lua;
 
          when Language_ASN1 =>
             --  A subprogram having ASN1 as implementation
@@ -3153,6 +3160,7 @@ package body Ocarina.Backends.Properties is
       Language_Lustre5_Name  := Get_String_Name ("lustre5");
       Language_Lustre6_Name  := Get_String_Name ("lustre6");
       Language_GUI_Name      := Get_String_Name ("gui");
+      Language_LUA_Name      := Get_String_Name ("lua");
       Language_Rhapsody_Name := Get_String_Name ("rhapsody");
       Language_SCADE6_Name   := Get_String_Name ("scade6");
       Language_SDL_Name      := Get_String_Name ("sdl");
