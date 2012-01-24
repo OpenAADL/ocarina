@@ -2124,6 +2124,7 @@ package body Ocarina.Backends.C_Common.Mapping is
       Declarations  : constant List_Id := New_List (CTN.K_Declaration_List);
       Statements    : constant List_Id := New_List (CTN.K_Statement_List);
       Call_Profile  : List_Id := New_List (CTN.K_Parameter_Profile);
+      D             : Node_Id;
       N             : Node_Id;
       P             : Node_Id;
       T             : Node_Id;
@@ -2134,6 +2135,8 @@ package body Ocarina.Backends.C_Common.Mapping is
       Call_Parameters      : List_Id;
       Return_Code_Declared : Boolean := False;
       Function_Call        : Node_Id;
+      Function_Name        : Node_Id;
+      Param_Representation : Supported_Data_Representation;
    begin
       case Get_Subprogram_Kind (S) is
          when Subprogram_Empty =>
@@ -2155,29 +2158,163 @@ package body Ocarina.Backends.C_Common.Mapping is
             end if;
 
             Append_Node_To_List
+               (Make_Variable_Declaration
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (VN (V_Lua_Context)),
+                  Used_Type =>
+                     RE (RE_Lua_Context_T)),
+               Declarations);
+
+            Append_Node_To_List
+               (Make_Variable_Address
+                  (Make_Defining_Identifier (VN (V_Lua_Context))),
+               Call_Profile);
+
+            Append_Node_To_List
                (Make_Literal
                   (C_Values.New_Pointed_Char_Value
                   (Get_Source_Text (S)(1))),
                Call_Profile);
 
+            Append_Node_To_List
+               (CTU.Make_Call_Profile
+                  (RE (RE_LUA_Load), Call_Profile),
+               Statements);
+
             if Get_Source_Name (S) /= No_Name then
+               --  Init the function call of the LUA function
+               Call_Profile := New_List (CTN.K_Parameter_Profile);
+
+               Append_Node_To_List
+                  (Make_Variable_Address
+                     (Make_Defining_Identifier (VN (V_Lua_Context))),
+                  Call_Profile);
+
                Append_Node_To_List
                   (Make_Literal
                      (C_Values.New_Pointed_Char_Value
                      (Get_Source_Name (S))),
                   Call_Profile);
-            else
+
                Append_Node_To_List
-                  (Make_Defining_Identifier (CONST (C_Null),
-                     C_Conversion => False),
+                  (CTU.Make_Call_Profile
+                     (RE (RE_LUA_Init_Function_Call), Call_Profile),
+                  Statements);
+
+               --  Push all the IN parameters on the stack
+               if not AINU.Is_Empty (Features (S)) then
+                  Feature := AIN.First_Node (Features (S));
+
+                  while Present (Feature) loop
+                     if Kind (Feature) = K_Parameter_Instance and then
+                        Is_In (Feature) then
+
+                        D := Corresponding_Instance (Feature);
+
+                        Param_Representation := Get_Data_Representation (D);
+
+                        Call_Profile := New_List (CTN.K_Parameter_Profile);
+
+                        Append_Node_To_List
+                           (Make_Variable_Address
+                              (Make_Defining_Identifier (VN (V_Lua_Context))),
+                           Call_Profile);
+
+                        Append_Node_To_List
+                           (Map_C_Defining_Identifier (Feature),
+                           Call_Profile);
+
+                        if Param_Representation = Data_Integer then
+                           Function_Name := RE (RE_Lua_Push_Number);
+                        elsif Param_Representation = Data_String then
+                           Function_Name := RE (RE_Lua_Push_String);
+                        elsif Param_Representation = Data_Boolean then
+                           Function_Name := RE (RE_Lua_Push_Boolean);
+                        else
+                           Display_Located_Error
+                             (AIN.Loc (Feature),
+                              "Type of this feature is not supported " &
+                              "for LUA interface",
+                              Fatal => True);
+                        end if;
+
+                        Append_Node_To_List
+                           (CTU.Make_Call_Profile
+                              (Function_Name, Call_Profile),
+                           Statements);
+                     end if;
+                     Feature := AIN.Next_Node (Feature);
+                  end loop;
+               end if;
+
+               --  Perform the function call of the LUA function
+               Call_Profile := New_List (CTN.K_Parameter_Profile);
+
+               Append_Node_To_List
+                  (Make_Variable_Address
+                     (Make_Defining_Identifier (VN (V_Lua_Context))),
                   Call_Profile);
 
-            end if;
+               Append_Node_To_List
+                  (CTU.Make_Call_Profile
+                     (RE (RE_LUA_Perform_Function_Call), Call_Profile),
+                  Statements);
 
-            Append_Node_To_List
-               (CTU.Make_Call_Profile
-                  (RE (RE_LUA_Load), Call_Profile),
-               Statements);
+               --  Get all the OUT parameters from LUA to C.
+               if not AINU.Is_Empty (Features (S)) then
+                  Feature := AIN.First_Node (Features (S));
+
+                  while Present (Feature) loop
+                     if Kind (Feature) = K_Parameter_Instance and then
+                        Is_Out (Feature) then
+
+                        D := Corresponding_Instance (Feature);
+
+                        Param_Representation := Get_Data_Representation (D);
+
+                        Call_Profile := New_List (CTN.K_Parameter_Profile);
+
+                        Append_Node_To_List
+                           (Make_Variable_Address
+                              (Make_Defining_Identifier (VN (V_Lua_Context))),
+                           Call_Profile);
+
+                        Append_Node_To_List
+                           (Make_Literal
+                              (C_Values.New_Pointed_Char_Value
+                                 (To_C_Name
+                                    (AIN.Name
+                                       (AIN.Identifier (Feature))))),
+                           Call_Profile);
+
+                        Append_Node_To_List
+                           (Map_C_Defining_Identifier (Feature),
+                           Call_Profile);
+
+                        if Param_Representation = Data_Integer then
+                           Function_Name := RE (RE_Lua_Get_Number);
+                        elsif Param_Representation = Data_String then
+                           Function_Name := RE (RE_Lua_Get_String);
+                        elsif Param_Representation = Data_Boolean then
+                           Function_Name := RE (RE_Lua_Get_Boolean);
+                        else
+                           Display_Located_Error
+                             (AIN.Loc (Feature),
+                              "Type of this feature is not supported " &
+                              "for LUA interface",
+                              Fatal => True);
+                        end if;
+
+                        Append_Node_To_List
+                           (CTU.Make_Call_Profile
+                              (Function_Name, Call_Profile),
+                           Statements);
+                     end if;
+                     Feature := AIN.Next_Node (Feature);
+                  end loop;
+               end if;
+
+            end if;
 
             return Make_Function_Implementation
               (Spec, Declarations, Statements);

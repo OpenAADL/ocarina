@@ -73,6 +73,14 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Initialize,                     -- __po_hi_initialize
       RE_Initialize_Early,               -- __po_hi_initialize_early
       RE_LUA_Load,                       -- __po_hi_lua_load
+      RE_LUA_Init_Function_Call,         -- __po_hi_lua_init_function_call
+      RE_LUA_Perform_Function_Call,      -- __po_hi_lua_perform_function_call
+      RE_LUA_Push_Boolean,               -- __po_hi_lua_push_boolean
+      RE_LUA_Push_Number,                -- __po_hi_lua_push_number
+      RE_LUA_Push_String,                -- __po_hi_lua_push_string
+      RE_LUA_Get_Boolean,                -- __po_hi_lua_get_boolean
+      RE_LUA_Get_Number,                 -- __po_hi_lua_get_number
+      RE_LUA_Get_String,                 -- __po_hi_lua_get_string
       RE_LUA_Load_File,                  -- __po_hi_lua_load_file
       RE_LUA_Load_File_With_Function,    -- __po_hi_lua_load_file_with_function
       RE_Wait_Initialization,            -- __po_hi_wait_initialization
@@ -202,6 +210,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Request_T,                      --  __po_hi_request_t
       RE_Protected_Protocol_T,           --  __po_hi_protected_protocol_t
       RE_Bool_T,                         --  __po_hi_bool_t
+      RE_Lua_Context_T,                  --  __po_hi_lua_context_t
       RE_Asn1_Pkt_T,                     --  __po_hi_asn1_pkt_t
       RE_Asn1_Buffer_T,                  --  __po_hi_asn1_buffer_t
       RE_Time_T,                         --  __po_hi_time_t
@@ -301,6 +310,14 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_LUA_Load                       => RH_PO_HI_Lua,
          RE_LUA_Load_File                  => RH_PO_HI_Lua,
          RE_LUA_Load_File_With_Function    => RH_PO_HI_Lua,
+         RE_LUA_Init_Function_Call         => RH_PO_HI_Lua,
+         RE_LUA_Perform_Function_Call      => RH_PO_HI_Lua,
+         RE_LUA_Push_Boolean               => RH_PO_HI_Lua,
+         RE_LUA_Push_Number                => RH_PO_HI_Lua,
+         RE_LUA_Push_String                => RH_PO_HI_Lua,
+         RE_LUA_Get_Boolean                => RH_PO_HI_Lua,
+         RE_LUA_Get_Number                 => RH_PO_HI_Lua,
+         RE_LUA_Get_String                 => RH_PO_HI_Lua,
          RE_Marshall_Request               => RH_Marshallers,
          RE_Unmarshall_Request             => RH_Marshallers,
          RE_Marshall_Asn1_Request          => RH_Marshallers,
@@ -355,6 +372,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Inetaddr_T                     => RH_PO_HI_Transport,
          RE_Time_T                         => RH_PO_HI_Time,
          RE_Byte_T                         => RH_PO_HI_Types,
+         RE_Lua_Context_T                  => RH_PO_HI_Lua,
          RE_Asn1_Pkt_T                     => RH_PO_HI_Marshallers,
          RE_Asn1_Buffer_T                  => RH_PO_HI_Marshallers,
          RE_Bool_T                         => RH_PO_HI_Types,

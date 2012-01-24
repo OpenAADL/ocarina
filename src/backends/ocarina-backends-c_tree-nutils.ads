@@ -205,6 +205,7 @@ package Ocarina.Backends.C_Tree.Nutils is
      (V_Request,
       V_Ret,
       V_Tattr,
+      V_Lua_Context,
       V_Next_Period,
       V_Port_Global_To_Entity,
       V_Port_Global_To_Local_Port,
