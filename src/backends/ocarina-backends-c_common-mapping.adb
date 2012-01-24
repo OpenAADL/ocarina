@@ -2166,6 +2166,12 @@ package body Ocarina.Backends.C_Common.Mapping is
                      (C_Values.New_Pointed_Char_Value
                      (Get_Source_Name (S))),
                   Call_Profile);
+            else
+               Append_Node_To_List
+                  (Make_Defining_Identifier (CONST (C_Null),
+                     C_Conversion => False),
+                  Call_Profile);
+
             end if;
 
             Append_Node_To_List
