@@ -31,6 +31,22 @@ AC_CHECK_PROG(GNATLS, gnatls, gnatls)
 AC_EXEEXT
 AM_PATH_PYTHON
 
+dnl we need a GNU flavoured sed 
+AC_CHECK_PROG(HAVE_GNUSED,gnused,yes,no)
+AC_CHECK_PROG(HAVE_GSED,gsed,yes,no)
+AC_CHECK_PROG(HAVE_SED,sed,yes,no)
+
+if test "$HAVE_GNUSED" = yes; then
+ SED=gnused
+else
+ if test "$HAVE_GSED" = yes; then
+  SED=gsed
+ else
+  SED=sed
+ fi
+fi
+AC_SUBST(SED)
+
 ##########################################
 # Check for the path kind used by GNAT
 ##########################################
