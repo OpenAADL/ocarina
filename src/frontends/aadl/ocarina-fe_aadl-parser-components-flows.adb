@@ -433,7 +433,7 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
       Is_Refinement : Boolean        := False;
       Is_End_To_End : Boolean;
       Category      : Flow_Category;
-      Code          : Parsing_Code;
+      Code          : Parsing_Code := PC_Flow_Implementation;
       OK            : Boolean;
    begin
 
