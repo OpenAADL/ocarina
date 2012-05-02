@@ -710,6 +710,8 @@ package body Ocarina.Analyzer.Messages is
       Write_Str (" is not a list while the corresponding property name at ");
       Write_Str (Image (Loc (Property_Name)));
       Write_Line (" is a list.");
+      Write_Str (Image (Loc (Property_Association)));
+      Write_Str (": Warning: ");
       Write_Str ("The value of ");
       Write_Str (Get_Name_Of_Entity (Property_Association));
       Write_Line (" has been converted into a list.");
