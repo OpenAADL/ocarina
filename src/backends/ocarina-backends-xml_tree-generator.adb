@@ -160,7 +160,6 @@ package body Ocarina.Backends.XML_Tree.Generator is
    procedure Generate (N : Node_Id) is
    begin
       case Kind (N) is
-
          when K_XML_Comment =>
             Generate_XML_Comment (N);
 
