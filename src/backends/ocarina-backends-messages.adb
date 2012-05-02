@@ -97,10 +97,12 @@ package body Ocarina.Backends.Messages is
       Fatal   : Boolean;
       Warning : Boolean := False)
    is
+      Current_FD : constant File_Descriptor := Current_Output;
    begin
+      Set_Standard_Error;
       Write_Str (Image (Loc) & ' ');
-
       Display_Error_Message (Message, Fatal, Warning);
+      Set_Output (Current_FD);
 
       if Fatal then
          OS_Exit (2);
