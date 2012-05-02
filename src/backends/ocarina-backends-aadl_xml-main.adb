@@ -472,7 +472,7 @@ package body Ocarina.Backends.AADL_XML.Main is
             elsif Present (AADL_Property_Value)
               and then ATN.Kind (AADL_Property_Value) = ATN.K_ENUMERATION_TERM
             then
-               --  This property value denotes a reference term
+               --  This property value denotes an enumeration term
 
                declare
                   Unit_Node : Node_Id;
@@ -493,7 +493,7 @@ package body Ocarina.Backends.AADL_XML.Main is
             elsif Present (AADL_Property_Value)
               and then ATN.Kind (AADL_Property_Value) = ATN.K_NUMBER_RANGE_TERM
             then
-               --  This property value denotes a reference term
+               --  This property value denotes a number range term
 
                declare
                   Unit_Node : Node_Id;
@@ -524,7 +524,7 @@ package body Ocarina.Backends.AADL_XML.Main is
                              (Ocarina.AADL_Values.Image
                                 (ATN.Value
                                    (ATN.Number_Value
-                                      (ATN.Lower_Bound
+                                      (ATN.Upper_Bound
                                          (AADL_Property_Value))))))),
                      XTN.Items (Unit_Node));
 
