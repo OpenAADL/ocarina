@@ -35,11 +35,5 @@ package Ocarina.Backends.AADL_XML.Mapping is
 
    function Map_HI_Node (E : Node_Id) return Node_Id;
    function Map_HI_Unit (E : Node_Id) return Node_Id;
-   function Map_Processor (E : Node_Id) return Node_Id;
-   function Map_Process (E : Node_Id) return Node_Id;
-   function Map_Thread (E : Node_Id) return Node_Id;
-   function Map_Buffer (E : Node_Id; P : Node_Id) return Node_Id;
-   function Map_Dependency (E : Node_Id; P : Node_Id) return Node_Id;
-   function Map_Data (E : Node_Id) return Node_Id;
 
 end Ocarina.Backends.AADL_XML.Mapping;
