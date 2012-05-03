@@ -1,3 +1,3 @@
 rma.aadl:65:04: Warning: Scheduling_Protocol is not a list while the corresponding property name at aadl_properties.aadl:416:03 is a list.
-The value of Scheduling_Protocol has been converted into a list.
+rma.aadl:65:04: Warning: The value of Scheduling_Protocol has been converted into a list.
 Backends: warning : No assertion file found, create a new one

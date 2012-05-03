@@ -1,25 +1,25 @@
 fcs.aadl:395:69: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
-The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:395:69: Warning: The value of Actual_Connection_Binding has been converted into a list.
 fcs.aadl:396:55: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
-The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:396:55: Warning: The value of Actual_Connection_Binding has been converted into a list.
 fcs.aadl:403:69: Warning: Allowed_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:90:03 is a list.
-The value of Allowed_Connection_Binding has been converted into a list.
+fcs.aadl:403:69: Warning: The value of Allowed_Connection_Binding has been converted into a list.
 fcs.aadl:404:71: Warning: Allowed_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:90:03 is a list.
-The value of Allowed_Connection_Binding has been converted into a list.
+fcs.aadl:404:71: Warning: The value of Allowed_Connection_Binding has been converted into a list.
 fcs.aadl:405:67: Warning: Allowed_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:90:03 is a list.
-The value of Allowed_Connection_Binding has been converted into a list.
+fcs.aadl:405:67: Warning: The value of Allowed_Connection_Binding has been converted into a list.
 fcs.aadl:406:72: Warning: Allowed_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:90:03 is a list.
-The value of Allowed_Connection_Binding has been converted into a list.
+fcs.aadl:406:72: Warning: The value of Allowed_Connection_Binding has been converted into a list.
 fcs.aadl:550:49: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
-The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:550:49: Warning: The value of Actual_Connection_Binding has been converted into a list.
 fcs.aadl:551:71: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
-The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:551:71: Warning: The value of Actual_Connection_Binding has been converted into a list.
 fcs.aadl:554:67: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
-The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:554:67: Warning: The value of Actual_Connection_Binding has been converted into a list.
 fcs.aadl:556:67: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
-The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:556:67: Warning: The value of Actual_Connection_Binding has been converted into a list.
 fcs.aadl:557:67: Warning: Actual_Connection_Binding is not a list while the corresponding property name at aadl_properties.aadl:38:03 is a list.
-The value of Actual_Connection_Binding has been converted into a list.
+fcs.aadl:557:67: Warning: The value of Actual_Connection_Binding has been converted into a list.
 fcs.aadl:87:02: warning: Airspeed references a component type
 fcs.aadl:88:02: warning: Altitude references a component type
 fcs.aadl:68:02: warning: Degs references a component type

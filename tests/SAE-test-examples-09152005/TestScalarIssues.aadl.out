@@ -4,5 +4,5 @@ TestScalarIssues.aadl:25:05: PS::scalar4 is a list while the corresponding prope
 TestScalarIssues.aadl:27:05: PS::scalar5 is a list while the corresponding property name at TestScalarIssues.aadl:6:03 is not a list.
 TestScalarIssues.aadl:29:05: PS::scalar6 is a list while the corresponding property name at TestScalarIssues.aadl:7:03 is not a list.
 TestScalarIssues.aadl:32:05: Warning: PS::multi1 is not a list while the corresponding property name at TestScalarIssues.aadl:8:03 is a list.
-The value of PS::multi1 has been converted into a list.
+TestScalarIssues.aadl:32:05: Warning: The value of PS::multi1 has been converted into a list.
 Cannot analyze AADL specifications
