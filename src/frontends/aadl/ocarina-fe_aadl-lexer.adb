@@ -348,12 +348,18 @@ package body Ocarina.FE_AADL.Lexer is
    ---------------------
    -- Scan_Identifier --
    ---------------------
+   --  15.3
+
+   --  identifier ::= identifier_letter {[underline] letter_or_digit}*
+   --  letter_or_digit ::= identifier_letter | digit
 
    procedure Scan_Identifier is
       use Charset;
 
       B             : Byte;
       Is_Identifier : Boolean := False;
+      Got_Underscore : Boolean := False;
+
    begin
       --  The first character of identifier is an alphabetic
       --  character.  Buffer (Token_Location.Scan) is tested in
@@ -374,10 +380,30 @@ package body Ocarina.FE_AADL.Lexer is
          Display_Name_Buffer (Display_Name_Len) :=
            Buffer (Token_Location.Scan);
 
+         if Buffer (Token_Location.Scan) = '_' then
+            if not Got_Underscore then
+               Got_Underscore := True;
+            else
+               Error_Loc (1) := Token_Location;
+               DE ("An indentifier cannot have two consecutive underscores");
+               Token := T_Error;
+               return;
+            end if;
+         else
+            Got_Underscore := False;
+         end if;
+
          Token_Location.Scan := Token_Location.Scan + 1;
       end loop;
 
-      --  check whether it is a reserved word
+      if Got_Underscore then
+         Error_Loc (1) := Token_Location;
+         DE ("An indentifier cannot end with an underscore");
+         Token := T_Error;
+         return;
+      end if;
+
+      --  Check whether it is a reserved word
 
       Token_Name := Name_Find;
 
@@ -394,10 +420,11 @@ package body Ocarina.FE_AADL.Lexer is
             else
                raise Program_Error;
             end if;
-            --  Token_Name is not necessairy here
+            --  Token_Name is not necessary here
          else
             raise Program_Error;
          end if;
+
       elsif B in First_PO_Type_Pos .. Last_PO_Type_Pos then
          if Token_Name = Token_PO_Image (Property_Owner_Token'Val (B)) then
             Token := T_Identifier;
@@ -416,8 +443,8 @@ package body Ocarina.FE_AADL.Lexer is
          --  Add identifier display string with case-sensitive
          Name_Len := 0;
 
-         for I in 1 .. Display_Name_Len loop
-            Add_Char_To_Name_Buffer (Display_Name_Buffer (I));
+         for J in 1 .. Display_Name_Len loop
+            Add_Char_To_Name_Buffer (Display_Name_Buffer (J));
          end loop;
 
          Token_Display_Name := Name_Find;
