@@ -1,0 +1,10 @@
+package plop
+public
+
+  thread t__a
+  end t__a;
+
+  process p_
+  end p_;
+
+end plop;

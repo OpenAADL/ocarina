@@ -270,5 +270,6 @@ examples/petri_net/robot/robot.aadl
 examples/real/security/all.aadl
 examples/real/resources/all.aadl
 examples/real/safety/model.aadl
+tests/test_identifier/t.aadl
 
 

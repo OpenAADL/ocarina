@@ -1,2 +1,12 @@
 underscoretest.aadl:3:01: parsing Component_Type, an identifier is expected, found token '_'
+underscoretest.aadl:8:08: An indentifier cannot end with an underscore
+underscoretest.aadl:8:08: An indentifier cannot end with an underscore
+underscoretest.aadl:8:01: parsing Component_Type, an identifier is expected, found keyword 'features'
+underscoretest.aadl:8:08: An indentifier cannot end with an underscore
+underscoretest.aadl:16:05: An indentifier cannot end with an underscore
+underscoretest.aadl:19:08: An indentifier cannot have two consecutive underscores
+underscoretest.aadl:19:08: An indentifier cannot have two consecutive underscores
+underscoretest.aadl:19:01: parsing Component_Type, an identifier is expected, found token '_'
+underscoretest.aadl:19:08: An indentifier cannot have two consecutive underscores
+underscoretest.aadl:23:05: An indentifier cannot have two consecutive underscores
 Cannot parse AADL specifications

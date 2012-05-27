@@ -1,0 +1,12 @@
+t.aadl:4:10: An indentifier cannot have two consecutive underscores
+t.aadl:4:10: An indentifier cannot have two consecutive underscores
+t.aadl:4:10: An indentifier cannot have two consecutive underscores
+t.aadl:4:03: parsing Component_Type, an identifier is expected, found token '_'
+t.aadl:4:10: An indentifier cannot have two consecutive underscores
+t.aadl:5:07: An indentifier cannot have two consecutive underscores
+t.aadl:7:11: An indentifier cannot end with an underscore
+t.aadl:7:11: An indentifier cannot end with an underscore
+t.aadl:7:03: parsing Component_Type, an identifier is expected, found keyword 'end'
+t.aadl:7:11: An indentifier cannot end with an underscore
+t.aadl:8:07: An indentifier cannot end with an underscore
+Cannot parse AADL specifications
