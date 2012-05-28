@@ -1119,6 +1119,28 @@ package body Ocarina.Analyzer.AADL.Finder is
       return Pointed_Node;
    end Find_Subcomponent;
 
+   --------------------
+   -- Find_Prototype --
+   --------------------
+
+   function Find_Prototype
+     (Component            : Node_Id;
+      Prototype_Identifier : Node_Id)
+     return Node_Id
+   is
+      pragma Assert (Kind (Component) = K_Component_Type);
+      pragma Assert (Kind (Prototype_Identifier) = K_Identifier);
+
+      Pointed_Node : Node_Id;
+   begin
+      Pointed_Node := Find_Subclause_Declaration_Classifier
+        (Component,
+         Prototype_Identifier,
+         (1 => K_Prototype));
+
+      return Pointed_Node;
+   end Find_Prototype;
+
    --------------------------
    -- Find_Subprogram_Call --
    --------------------------

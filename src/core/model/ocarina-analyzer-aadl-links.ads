@@ -53,6 +53,8 @@ package Ocarina.Analyzer.AADL.Links is
      return Boolean;
    --  Perform the link of subclauses (subcomponents, calls...)
 
+private
+
    function Link_Component_Or_Feature_Group_Extension
      (Root    : Node_Id;
       Node    : Node_Id)
@@ -133,7 +135,8 @@ package Ocarina.Analyzer.AADL.Links is
 
    function Link_Feature
      (Root    : Node_Id;
-      Node    : Node_Id)
+      Node    : Node_Id;
+      Component_Type : Node_Id)
      return Boolean;
    --  Perform the link between the feature type to the actual data
    --  component.

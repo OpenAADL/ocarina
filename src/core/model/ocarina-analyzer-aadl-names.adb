@@ -350,6 +350,19 @@ package body Ocarina.Analyzer.AADL.Names is
 
       Push_Scope (Entity_Scope (Node));
 
+      --  Prototypes
+
+      if not Is_Empty (Prototypes (Node)) then
+         List_Node := First_Node (Prototypes (Node));
+
+         while Present (List_Node) loop
+            Success := Enter_Name_In_Scope (Identifier (List_Node))
+              --  and then Check_Property_Association_Names (List_Node)
+              and then Success;
+            List_Node := Next_Node (List_Node);
+         end loop;
+      end if;
+
       --  Features
 
       if not Is_Empty (Features (Node)) then

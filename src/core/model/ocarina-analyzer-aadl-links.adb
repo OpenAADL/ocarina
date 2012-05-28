@@ -86,7 +86,7 @@ package body Ocarina.Analyzer.AADL.Links is
       Node    : Node_Id)
      return Boolean;
    --  Perform all the designator and identifier links in the
-   --  subclauses (featues...) of a component type.
+   --  subclauses (features...) of a component type.
 
    function Link_Feature_Group_Type_Subclauses
      (Root    : Node_Id;
@@ -403,7 +403,7 @@ package body Ocarina.Analyzer.AADL.Links is
          --  subprogram spec may be declared at the end of the AADL
          --  specification.
 
-         Success := Link_Feature (Root, Other_Pointed_Node)
+         Success := Link_Feature (Root, Other_Pointed_Node, No_Node)
            and then Success;
 
          Set_Referenced_Entity (Entity_Ref (Node), Other_Pointed_Node);
@@ -444,7 +444,7 @@ package body Ocarina.Analyzer.AADL.Links is
            (Ocarina.Me_AADL.AADL_Tree.Nodes.Refines_Type (Node));
 
          while Present (List_Node) loop
-            Success := Link_Feature (Root, List_Node)
+            Success := Link_Feature (Root, List_Node, No_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -681,7 +681,7 @@ package body Ocarina.Analyzer.AADL.Links is
          List_Node := First_Node (Features (Node));
 
          while Present (List_Node) loop
-            Success := Link_Feature (Root, List_Node)
+            Success := Link_Feature (Root, List_Node, Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -997,7 +997,8 @@ package body Ocarina.Analyzer.AADL.Links is
 
    function Link_Feature
      (Root    : Node_Id;
-      Node    : Node_Id)
+      Node    : Node_Id;
+      Component_Type : Node_Id)
      return Boolean
    is
       use Ocarina.Analyzer.AADL.Semantics;
@@ -1041,6 +1042,15 @@ package body Ocarina.Analyzer.AADL.Links is
                              (Component_Ref),
                            Component_Identifier => Identifier
                              (Component_Ref));
+
+                        if No (Pointed_Node)
+                          and then Present (Component_Type)
+                        then
+                           Pointed_Node := Find_Prototype
+                             (Component_Type,
+                              Identifier (Component_Ref));
+                        end if;
+
                         if No (Pointed_Node) then
                            DLTWN (Node, Component_Ref);
                            Success := False;
@@ -1064,6 +1074,7 @@ package body Ocarina.Analyzer.AADL.Links is
                            K_Component_Implementation)
                         and then Component_Category'Val
                           (Category (Pointed_Node)) = CC_Data)
+                       and then not (Kind (Pointed_Node) = K_Prototype)
                      then
                         DLTWN (Node, Pointed_Node);
                         Success := False;
@@ -1748,8 +1759,7 @@ package body Ocarina.Analyzer.AADL.Links is
            First_Node (Ocarina.Me_AADL.AADL_Tree.Nodes.Features (Node));
 
          while Present (List_Node) loop
-            Success := Link_Feature
-              (Root, List_Node)
+            Success := Link_Feature (Root, List_Node, No_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -2604,6 +2614,7 @@ package body Ocarina.Analyzer.AADL.Links is
                            (Classifier_Ref (List_Node)),
                          Port_Group_Identifier => Identifier
                            (Classifier_Ref (List_Node))));
+
                   when others =>
                      Set_Referenced_Entity
                        (Classifier_Ref (List_Node),

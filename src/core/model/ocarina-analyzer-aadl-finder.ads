@@ -86,6 +86,12 @@ package Ocarina.Analyzer.AADL.Finder is
      return Node_Id;
    --  Same as above, but find a mode
 
+   function Find_Prototype
+     (Component            : Node_Id;
+      Prototype_Identifier : Node_Id)
+     return Node_Id;
+   --  XXX
+
    function Find_Subcomponent
      (Component               : Node_Id;
       Subcomponent_Identifier : Node_Id;
