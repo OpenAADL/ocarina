@@ -17,7 +17,6 @@ end ordercmd;
 data protected_data
 properties
    Concurrency_Control_Protocol => Protected_Access;
-   ARINC653::Queueing_Discipline => FIFO;
 end protected_data;
 
 
@@ -66,8 +65,8 @@ properties
    Period => 20 ms;
    Compute_Execution_Time => 10 ms .. 12 ms;
    Deadline => 40 ms;
-   ARINC653::HM_Errors => (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request);
-   ARINC653::HM_Actions => (Process_Stop_And_Reinit, Process_Stop_And_Reinit, Ignore, Ignore);
+   ARINC653::HM_Errors => (Deadline_Miss, Application_Error, Numeric_Error, Illegal_Request);
+   ARINC653::HM_Process_Recovery_Actions => (Process_Stop, Process_Stop, Ignore, Ignore);
 end sensor_temperature_thread;
 
 thread implementation   sensor_temperature_thread.impl
@@ -84,8 +83,8 @@ properties
    Period => 20 ms;
    Compute_Execution_Time => 8 ms .. 10 ms;
    Deadline => 40 ms;
-   ARINC653::HM_Errors => (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request);
-   ARINC653::HM_Actions => (Process_Stop_And_Reinit, Process_Stop_And_Reinit, Process_Stop_And_Reinit, Process_Stop_And_Reinit);
+   ARINC653::HM_Errors => (Deadline_Miss, Application_Error, Numeric_Error, Illegal_Request);
+   ARINC653::HM_Process_Recovery_Actions => (Process_Stop, Process_Stop, Process_Stop, Process_Stop);
 end sensor_receiveinput_thread;
 
 thread implementation   sensor_receiveinput_thread.impl
@@ -106,8 +105,8 @@ properties
    Period => 20 ms;
    Compute_Execution_Time => 5 ms .. 7 ms;
    Deadline => 40 ms;
-   ARINC653::HM_Errors => (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request);
-   ARINC653::HM_Actions => (Process_Stop_And_Reinit, Process_Stop, Process_Stop, Process_Stop);
+   ARINC653::HM_Errors => (Deadline_Miss, Application_Error, Numeric_Error, Illegal_Request);
+   ARINC653::HM_Process_Recovery_Actions => (Process_Stop, Process_Stop, Process_Stop, Process_Stop);
 end commandboard_receiveinput_thread;
 
 thread commandboard_printinfos_thread
@@ -123,17 +122,15 @@ properties
    Period => 20 ms;
    Compute_Execution_Time => 2 ms .. 6 ms;
    Deadline => 40 ms;
-   ARINC653::HM_Errors => (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request);
-   ARINC653::HM_Actions => (Process_Stop_And_Reinit, Process_Stop_And_Reinit, Process_Stop_And_Reinit, Process_Stop_And_Reinit);
+   ARINC653::HM_Errors => (Deadline_Miss, Application_Error, Numeric_Error, Illegal_Request);
+   ARINC653::HM_Process_Recovery_Actions => (Process_Stop, Process_Stop, Process_Stop, Process_Stop);
 end commandboard_printinfos_thread;
 
 -- Now, declare process that model partition address space
 
 process partition1_process
 features
-   queueingin: in event data port integer {Queue_Size => 4;
-                                           ARINC653::Timeout => 5ms; 
-                                           ARINC653::Queueing_Discipline => FIFO;};
+   queueingin: in event data port integer {Queue_Size => 4;};
    --  In the context of a event data port, the ARINC653::Timeout property
    --  is the timeout we used in the APEX functions.
    --  More, the Queue_Size property is used to compute the size of the queue
@@ -155,7 +152,7 @@ end partition1_process.impl;
 
 process partition2_process
 features
-   queueingout: out event data port integer {ARINC653::Timeout => 10ms;};
+   queueingout: out event data port integer;
    --  In the context of a event data port, the ARINC653::Timeout property
    --  is the timeout we used in the APEX functions. 
    samplingin: in data port integer {ARINC653::Sampling_Refresh_Period => 10ms;};
@@ -177,8 +174,8 @@ connections
    eventconnectionexample: port receiver.newavg -> printer.newavg;
    port printer.ordersensor -> queueingout;
    port samplingin -> receiver.temp;
-   data access sem -> receiver.need_semaphore {ARINC653::Timeout => 20 ms;};
-   data access sem -> printer.need_semaphore {ARINC653::Timeout => 10 ms;};
+   data access sem -> receiver.need_semaphore;
+   data access sem -> printer.need_semaphore;
 end partition2_process.impl;
 
 -- Main runtime
@@ -195,7 +192,7 @@ properties
    ARINC653::Partition_Slots => (10ms, 10ms, 30ms);
    ARINC653::Slots_Allocation => (reference (part1), reference (part2), reference (part1));
    ARINC653::HM_Errors => (Power_Fail);
-   ARINC653::HM_Actions => (Module_Restart);
+   ARINC653::HM_Module_Recovery_Actions => (Reset);
 end powerpc.impl;
 
 

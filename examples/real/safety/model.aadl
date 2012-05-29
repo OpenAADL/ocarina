@@ -10,7 +10,7 @@ virtual processor partition
 properties
    POK::Scheduler => RR;
    ARINC653::HM_Errors => (Partition_Init);
-   ARINC653::HM_Actions => (Partition_Stop);
+   ARINC653::HM_Partition_Recovery_Actions => (Partition_Stop);
 end partition;
 
 virtual processor implementation partition.impl
@@ -31,7 +31,7 @@ properties
    POK::Slots => (500ms, 500ms);
    POK::Slots_Allocation => ( reference (part1), reference (part2));
    ARINC653::HM_Errors => (Module_Config);
-   ARINC653::HM_Actions => (Module_Stop);
+   ARINC653::HM_Module_Recovery_Actions => (Stop);
 end ppc.impl;
 
 process myprocess
@@ -66,7 +66,7 @@ properties
    deadline          => 500ms;
    compute_execution_time => 0ms .. 1ms;
    ARINC653::HM_Errors => (Illegal_Request);
-   ARINC653::HM_Actions => (Process_Stop);
+   ARINC653::HM_Process_Recovery_Actions => (Process_Stop);
 end mythread.impl1;
 
 thread implementation mythread.impl2
