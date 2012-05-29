@@ -29,40 +29,47 @@ property set ARINC653 is
                    Hardware_Fault,
                    Power_Fail
                   );
-  
-  Supported_Recovery_Action: type enumeration 
-                  (Ignore,
-                   Confirm,
-                   Partition_Stop,
-                   Module_Stop,
-                   Process_Stop,
-                   Process_Stop_And_Start_Another,
-                   Process_Restart,
-                   Partition_Restart,
-                   Module_Restart,
-                   Nothing);
+ 
+  Supported_Partition_Recovery_Action : type enumeration
+     (Ignore, Partition_Stop, Warm_Restart, Cold_Restart);
+
+  Supported_Process_Recovery_Action : type enumeration
+     (Ignore, Confirm, Partition_Stop, Process_Stop, 
+      Process_Stop_And_Start_Another, Process_Restart, 
+      Nothing, Cold_Restart, Warm_Restart);
+
+  Supported_Module_Recovery_Action : type enumeration
+     (Ignore, Stop, Reset);
+
+  HM_Module_Recovery_Actions : list of    
+      ARINC653::Supported_Module_Recovery_Action applies to (processor);
+
+  HM_Partition_Recovery_Actions : list of 
+      ARINC653::Supported_Partition_Recovery_Action applies to (virtual processor);
+
+  HM_Process_Recovery_Actions : list of   
+      ARINC653::Supported_Process_Recovery_Action applies to (thread);
+
   --  The difference between ignore and nothing is that ignore does
   --  not perform anything but logs the error. On the contrary,
   --  nothing will do nothing, the HM CallBack should do everything.
 
   Supported_Access_Type : type enumeration (read, write, read_write);
 
-  Supported_Memory_Kind : type enumeration (memory_data, memory_code);
+  Supported_Memory_Type: type enumeration (Data_Memory, Code_Memory, IO_Memory);
   
   HM_Errors   : list of ARINC653::Supported_Error_Code 
      applies to (processor, virtual processor, thread);
   
-  HM_Actions : list of ARINC653::Supported_Recovery_Action 
-     applies to (processor, virtual processor, thread);
-  
-  HM_Callback : classifier (Subprogram Classifier) 
+  HM_Callback : classifier (subprogram Classifier) 
      applies to (thread, virtual processor, processor);
   
-  Memory_Kind : ARINC653::Supported_Memory_Kind applies to (memory);
+  Memory_Type : list of ARINC653::Supported_Memory_Type
+    applies to (memory);
 
   Access_Type : ARINC653::Supported_Access_Type applies to (memory);
   
-  Timeout : Time applies to (data port, event data port, event port, access);
+  Timeout : Time applies to (data port, event data port, event port, data access);
   
   Supported_DAL_Type : type enumeration (LEVEL_A, LEVEL_B, LEVEL_C, LEVEL_D, LEVEL_E);
 
