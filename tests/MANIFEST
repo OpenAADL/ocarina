@@ -273,5 +273,5 @@ examples/real/safety/model.aadl
 
 tests/test_identifier/t.aadl
 tests/example_04_03/t.aadl
-
+tests/example_04_05_1/t.aadl
 

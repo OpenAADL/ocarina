@@ -63,6 +63,11 @@ package body Ocarina.Analyzer.AADL.Semantics is
    use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
    use Ocarina.Processor.Properties;
 
+   function Check_Classifier_Matching_Rule
+     (Source_Type      : Node_Id;
+      Destination_Type : Node_Id)
+     return Boolean;
+
    function Check_Cycles_In_Component_Implementation
      (Node         : Node_Id;
       Initial_Node : Node_Id := No_Node)
@@ -188,6 +193,43 @@ package body Ocarina.Analyzer.AADL.Semantics is
      (Property_Type  : Node_Id;
       Property_Value : Node_Id)
      return Boolean;
+
+   ------------------------------------
+   -- Check_Classifier_Matching_Rule --
+   ------------------------------------
+
+   function Check_Classifier_Matching_Rule
+     (Source_Type      : Node_Id;
+      Destination_Type : Node_Id)
+     return Boolean
+   is
+   begin
+      --  This function implements a check for the classifier_matching
+      --  rule
+      --
+      --  For now, we only implement the following:
+      --
+      --  "Classifier_Match:" The source data type and data
+      --  implementation must be identical to the data type or data
+      --  implementation of the destination. If the destination
+      --  classifier is a component type, then any implementation of
+      --  the source matches. This is the default rule.
+
+      if Source_Type = Destination_Type then
+         --  a) strict equality
+
+         return True;
+
+      elsif Kind (Source_Type) = K_Component_Implementation
+        and then Corresponding_Entity
+        (Component_Type_Identifier (Source_Type)) = Destination_Type
+      then
+         --  b) source is an implementation of the destination
+         return True;
+      end if;
+
+      return False;
+   end Check_Classifier_Matching_Rule;
 
    --------------------------------
    -- Check_Qualified_References --
@@ -1083,15 +1125,16 @@ package body Ocarina.Analyzer.AADL.Semantics is
          when CT_Access_Bus
            | CT_Access_Data
            | CT_Access_Subprogram =>
-            if Source_Type = Destination_Type then
-               Success := True;
-            else
+
+            Success := Check_Classifier_Matching_Rule
+              (Source_Type, Destination_Type);
+
+            if not Success then
                DAE (Loc      => Loc (Node),
                     Node1    => Source (Node),
                     Message1 => " and ",
                     Node2    => Destination (Node),
                     Message2 => " do not have compatible types");
-               Success := False;
             end if;
       end case;
 
