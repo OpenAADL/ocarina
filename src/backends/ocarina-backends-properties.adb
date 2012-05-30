@@ -428,6 +428,9 @@ package body Ocarina.Backends.Properties is
    ARINC653_Memory_Kind_Data_Name            : Name_Id;
 
    ARINC653_Actions_Name                              : Name_Id;
+   ARINC653_Module_Recovery_Actions_Name              : Name_Id;
+   ARINC653_Partition_Recovery_Actions_Name           : Name_Id;
+   ARINC653_Process_Recovery_Actions_Name             : Name_Id;
    ARINC653_Action_Ignore_Name                        : Name_Id;
    ARINC653_Action_Confirm_Name                       : Name_Id;
    ARINC653_Action_Partition_Stop_Name                : Name_Id;
@@ -436,8 +439,12 @@ package body Ocarina.Backends.Properties is
    ARINC653_Action_Process_Stop_And_Start_Other_Name  : Name_Id;
    ARINC653_Action_Process_Restart_Name               : Name_Id;
    ARINC653_Action_Partition_Restart_Name             : Name_Id;
+   ARINC653_Action_Cold_Restart_Name                  : Name_Id;
+   ARINC653_Action_Warm_Restart_Name                  : Name_Id;
    ARINC653_Action_Module_Restart_Name                : Name_Id;
    ARINC653_Action_Nothing_Name                       : Name_Id;
+   ARINC653_Action_Reset_Name                         : Name_Id;
+   ARINC653_Action_Stop_Name                          : Name_Id;
 
    ARINC653_Errors_Name                      : Name_Id;
    ARINC653_Error_Module_Init_Name           : Name_Id;
@@ -3299,6 +3306,14 @@ package body Ocarina.Backends.Properties is
 
       ARINC653_Actions_Name
          := Get_String_Name ("arinc653::hm_actions");
+      ARINC653_Module_Recovery_Actions_Name
+         := Get_String_Name ("arinc653::hm_module_recovery_actions");
+      ARINC653_Partition_Recovery_Actions_Name
+         := Get_String_Name
+            ("arinc653::hm_partition_recovery_actions");
+      ARINC653_Process_Recovery_Actions_Name
+         := Get_String_Name
+            ("arinc653::hm_process_recovery_actions");
       ARINC653_Action_Ignore_Name
          := Get_String_Name ("ignore");
       ARINC653_Action_Confirm_Name
@@ -3313,10 +3328,18 @@ package body Ocarina.Backends.Properties is
          := Get_String_Name ("proces_stop_and_start_another");
       ARINC653_Action_Process_Restart_Name
          := Get_String_Name ("process_restart");
+      ARINC653_Action_Warm_Restart_Name
+         := Get_String_Name ("warm_restart");
+      ARINC653_Action_Cold_Restart_Name
+         := Get_String_Name ("cold_restart");
       ARINC653_Action_Partition_Restart_Name
          := Get_String_Name ("partition_restart");
       ARINC653_Action_Module_Restart_Name
          := Get_String_Name ("module_restart");
+      ARINC653_Action_Reset_Name
+         := Get_String_Name ("reset");
+      ARINC653_Action_Stop_Name
+         := Get_String_Name ("stop");
       ARINC653_Action_Nothing_Name
          := Get_String_Name ("nothing");
 
@@ -4249,7 +4272,7 @@ package body Ocarina.Backends.Properties is
    function Get_ARINC653_HM_Actions (E : Node_Id)
      return ARINC653_Actions
    is
-      L : List_Id;
+      L : List_Id := No_List;
       P : Node_Id;
    begin
       if Is_Defined_Property (E, ARINC653_Actions_Name) then
@@ -4259,58 +4282,91 @@ package body Ocarina.Backends.Properties is
                 In_Mode       => No_Name);
 
          L := Multi_Value (AIN.Property_Association_Value (P));
+      elsif Is_Defined_Property (E, ARINC653_Module_Recovery_Actions_Name) then
+         P := AIEP.Find_Property_Association_From_Name
+               (Property_List => AIN.Properties (E),
+                Property_Name => ARINC653_Module_Recovery_Actions_Name,
+                In_Mode       => No_Name);
 
-         if ATNU.Is_Empty (L) then
-            return ARINC653_Empty_Actions;
-         else
-            declare
-               Handled_Actions : ARINC653_Actions (1 .. Int (ATNU.Length (L)));
-               S : Node_Id;
-               I : Int := 1;
-            begin
-               S := ATN.First_Node (L);
-               while Present (S) loop
-                  if ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Ignore_Name then
-                     Handled_Actions (I) := ARINC653_Action_Ignore;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Confirm_Name then
-                     Handled_Actions (I) := ARINC653_Action_Confirm;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Process_Restart_Name then
-                     Handled_Actions (I) := ARINC653_Action_Process_Restart;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Process_Stop_And_Start_Other_Name then
-                     Handled_Actions (I) :=
-                     ARINC653_Action_Process_Stop_And_Start_Another;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Process_Stop_Name then
-                     Handled_Actions (I) := ARINC653_Action_Process_Stop;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Partition_Restart_Name then
-                     Handled_Actions (I) := ARINC653_Action_Partition_Restart;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Partition_Stop_Name then
-                     Handled_Actions (I) := ARINC653_Action_Partition_Stop;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Module_Stop_Name then
-                     Handled_Actions (I) := ARINC653_Action_Module_Stop;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Module_Restart_Name then
-                     Handled_Actions (I) := ARINC653_Action_Module_Restart;
-                  elsif ATN.Name (ATN.Identifier (S)) =
-                        ARINC653_Action_Nothing_Name then
-                     Handled_Actions (I) := ARINC653_Action_Nothing;
-                  end if;
-                  S := ATN.Next_Node (S);
-                  I := I + 1;
-               end loop;
-               return Handled_Actions;
-            end;
-         end if;
+         L := Multi_Value (AIN.Property_Association_Value (P));
+      elsif Is_Defined_Property (E, ARINC653_Partition_Recovery_Actions_Name) then
+         P := AIEP.Find_Property_Association_From_Name
+               (Property_List => AIN.Properties (E),
+                Property_Name => ARINC653_Partition_Recovery_Actions_Name,
+                In_Mode       => No_Name);
+
+         L := Multi_Value (AIN.Property_Association_Value (P));
+      elsif Is_Defined_Property (E, ARINC653_Process_Recovery_Actions_Name) then
+         P := AIEP.Find_Property_Association_From_Name
+               (Property_List => AIN.Properties (E),
+                Property_Name => ARINC653_Process_Recovery_Actions_Name,
+                In_Mode       => No_Name);
+
+         L := Multi_Value (AIN.Property_Association_Value (P));
+      else
+         L := No_List;
       end if;
 
-      return ARINC653_Empty_Actions;
+      if ATNU.Is_Empty (L) then
+         return ARINC653_Empty_Actions;
+      else
+         declare
+            Handled_Actions : ARINC653_Actions (1 .. Int (ATNU.Length (L)));
+            S : Node_Id;
+            I : Int := 1;
+         begin
+            S := ATN.First_Node (L);
+            while Present (S) loop
+               if ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Ignore_Name then
+                  Handled_Actions (I) := ARINC653_Action_Ignore;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Confirm_Name then
+                  Handled_Actions (I) := ARINC653_Action_Confirm;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Process_Restart_Name then
+                  Handled_Actions (I) := ARINC653_Action_Process_Restart;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Process_Stop_And_Start_Other_Name then
+                  Handled_Actions (I) :=
+                  ARINC653_Action_Process_Stop_And_Start_Another;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Process_Stop_Name then
+                  Handled_Actions (I) := ARINC653_Action_Process_Stop;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Partition_Restart_Name then
+                  Handled_Actions (I) := ARINC653_Action_Partition_Restart;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Warm_Restart_Name then
+                  Handled_Actions (I) := ARINC653_Action_Partition_Restart;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Cold_Restart_Name then
+                  Handled_Actions (I) := ARINC653_Action_Partition_Restart;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Partition_Stop_Name then
+                  Handled_Actions (I) := ARINC653_Action_Partition_Stop;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Module_Stop_Name then
+                  Handled_Actions (I) := ARINC653_Action_Module_Stop;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Stop_Name then
+                  Handled_Actions (I) := ARINC653_Action_Module_Stop;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Module_Restart_Name then
+                  Handled_Actions (I) := ARINC653_Action_Module_Restart;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Reset_Name then
+                  Handled_Actions (I) := ARINC653_Action_Module_Restart;
+               elsif ATN.Name (ATN.Identifier (S)) =
+                     ARINC653_Action_Nothing_Name then
+                  Handled_Actions (I) := ARINC653_Action_Nothing;
+               end if;
+               S := ATN.Next_Node (S);
+               I := I + 1;
+            end loop;
+            return Handled_Actions;
+         end;
+      end if;
    end Get_ARINC653_HM_Actions;
 
    ---------------------
