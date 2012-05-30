@@ -833,9 +833,9 @@ package body Ocarina.BE_AADL.Properties.Values is
    begin
 
       To_Lower (S);
-      for I in S'Range loop
-         if S (I) = '_' then
-            S (I) := ' ';
+      for J in S'Range loop
+         if S (J) = '_' then
+            S (J) := ' ';
          end if;
       end loop;
       Write_Str (S (4 .. S'Last));
@@ -850,7 +850,6 @@ package body Ocarina.BE_AADL.Properties.Values is
       Class_Ref  : constant Node_Id := Classifier_Ref (Node);
    begin
       case Named_Element'Val (Category (Node)) is
-
          when PO_Port_Group =>
             Print_Tokens ((T_Port, T_Group));
          when PO_Server_Subprogram =>
@@ -908,9 +907,7 @@ package body Ocarina.BE_AADL.Properties.Values is
             Print_Token (T_Classifier);
          when PO_Package =>
             Print_Token (T_Package);
-
          when PO_Component_Implementation =>
-
             if Component_Category'Val (Component_Cat (Node)) = CC_Unknown then
                Print_Identifier (Identifier (Node));
             else
@@ -923,6 +920,14 @@ package body Ocarina.BE_AADL.Properties.Values is
                Write_Space;
                Print_Entity_Reference (Class_Ref);
             end if;
+         when PO_Component_Access =>
+            if Component_Category'Val (Component_Cat (Node)) = CC_Unknown then
+               Print_Identifier (Identifier (Node));
+            else
+               Print_Component_Category (Component_Cat (Node));
+            end if;
+            Write_Space;
+            Print_Token (T_Access);
 
          when others =>
             Print_Named_Element_Identifier
