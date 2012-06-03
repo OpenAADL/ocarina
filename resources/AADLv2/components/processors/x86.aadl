@@ -15,6 +15,12 @@ properties
    Deployment::Execution_Platform => Native;
 end x86.linux;
 
+processor implementation x86.win32
+properties
+   Deployment::Execution_Platform => win32;
+end x86.win32;
+
+
 processor implementation x86.linux_bench
 properties
    Scheduling_Protocol => (RATE_MONOTONIC_PROTOCOL);

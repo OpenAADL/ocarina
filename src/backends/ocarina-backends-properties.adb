@@ -4289,14 +4289,16 @@ package body Ocarina.Backends.Properties is
                 In_Mode       => No_Name);
 
          L := Multi_Value (AIN.Property_Association_Value (P));
-      elsif Is_Defined_Property (E, ARINC653_Partition_Recovery_Actions_Name) then
+      elsif Is_Defined_Property
+            (E, ARINC653_Partition_Recovery_Actions_Name) then
          P := AIEP.Find_Property_Association_From_Name
                (Property_List => AIN.Properties (E),
                 Property_Name => ARINC653_Partition_Recovery_Actions_Name,
                 In_Mode       => No_Name);
 
          L := Multi_Value (AIN.Property_Association_Value (P));
-      elsif Is_Defined_Property (E, ARINC653_Process_Recovery_Actions_Name) then
+      elsif Is_Defined_Property
+            (E, ARINC653_Process_Recovery_Actions_Name) then
          P := AIEP.Find_Property_Association_From_Name
                (Property_List => AIN.Properties (E),
                 Property_Name => ARINC653_Process_Recovery_Actions_Name,

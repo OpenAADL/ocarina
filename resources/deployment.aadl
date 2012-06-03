@@ -47,6 +47,7 @@ property set Deployment is
     X86_RTEMS_POSIX,          -- x86 under RTEMS with POSIX layer
     X86_LINUXTASTE,           -- TASTE-specific linux distribution
     MARTE_OS,                 -- MaRTE OS
+    WIN32,                    -- WIN32
     VXWORKS                   -- VXWORKS
     );
   --  Supported platforms
