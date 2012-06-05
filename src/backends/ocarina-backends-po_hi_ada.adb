@@ -176,6 +176,7 @@ package body Ocarina.Backends.PO_HI_Ada is
          when Platform_Native
            | Platform_LINUX32
            | Platform_LINUX64
+           | Platform_WIN32
            | Platform_None =>
             Change_If_Empty (String_Ptr (Target_Prefix), "");
             Target := new String'("NATIVE");
