@@ -507,6 +507,7 @@ package Ocarina.Backends.Properties is
 
    type Supported_Subprogram_Kind is
      (Subprogram_Unknown,
+      Subprogram_Default,
       Subprogram_Empty,
       Subprogram_Opaque_Ada_95,
       Subprogram_Opaque_Ada_95_Transfo,

@@ -1573,9 +1573,10 @@ package body Ocarina.Backends.Properties is
             if Src_Name /= No_Name or else Src_Files'Length > 0 then
                --  A subprogram having no implementation source
                --  language but a non null source name or an non null
-               --  source text is a wrong built subprogram.
+               --  source text is assumed to use the same source
+               --  language as the back-end.
 
-               return Subprogram_Unknown;
+               return Subprogram_Default;
             else
                if not Is_Empty (AIN.Calls (S)) and then
                  not Is_Empty (AIN.Subprogram_Calls

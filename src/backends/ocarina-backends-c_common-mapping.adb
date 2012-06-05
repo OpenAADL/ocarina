@@ -2319,7 +2319,8 @@ package body Ocarina.Backends.C_Common.Mapping is
             return Make_Function_Implementation
               (Spec, Declarations, Statements);
 
-         when Subprogram_Opaque_C =>
+         when Subprogram_Opaque_C
+           | Subprogram_Default =>
 
             --  Create function to lock the data.
 

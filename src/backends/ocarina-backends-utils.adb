@@ -1688,7 +1688,8 @@ package body Ocarina.Backends.Utils is
 
             return No_Node;
 
-         when Subprogram_Opaque_Ada_95 =>
+         when Subprogram_Opaque_Ada_95
+           | Subprogram_Default =>
             --  An opaque Ada AADL subprogram is a subprogram which is
             --  implemented by an Ada subprogram. We perform the
             --  mapping between the two subprograms using the Ada
