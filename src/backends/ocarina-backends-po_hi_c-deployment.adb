@@ -2445,12 +2445,35 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             S := AAN.First_Node (Global_Ports);
             while Present (S) loop
                A := Make_Array_Values;
+
+               if S = No_Node then
+                  Display_Located_Error
+                  (AAN.Loc (S),
+                  "Port is not connected",
+                  Fatal => True);
+               end if;
+
                Port := AAN.Item (S);
+
+               if Port = No_Node then
+                  Display_Located_Error
+                  (AAN.Loc (Port),
+                  "Port is not connected",
+                  Fatal => True);
+               end if;
+
                if Is_In (Port) and then
                   not AAU.Is_Empty (Sources (Port)) then
                   Port := Item (AAN.First_Node (Sources (Port)));
                   Lst := Sources (Port);
                else
+                  if AAU.Is_Empty (Destinations (Port)) then
+                     Display_Located_Error
+                        (AAN.Loc (Port),
+                        "Port destination empty",
+                        Fatal => True);
+                  end if;
+
                   Port := Item (AAN.First_Node (Destinations (Port)));
                   Lst := Destinations (Port);
                end if;
@@ -2461,6 +2484,13 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   if not AAU.Is_Empty (Sources (Port2)) then
                      Port2 := Item (AAN.First_Node (Sources (Port2)));
                   else
+                     if AAU.Is_Empty (Destinations (Port2)) then
+                        Display_Located_Error
+                           (AAN.Loc (Port2),
+                           "Port destination empty",
+                           Fatal => True);
+                     end if;
+
                      Port2 := Item (AAN.First_Node (Destinations (Port2)));
                   end if;
 
