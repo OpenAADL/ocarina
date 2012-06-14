@@ -84,11 +84,11 @@ thread implementation t.i
     -- bad: event to param
     parameter in_event -> call7.in_out_param ;
 
-    -- bad: event to param
+    -- bad: event to param XXX
     parameter out_event -> call8.in_param ;
-    -- bad: event to param
+    -- bad: event to param XXX
     parameter out_event -> call8.out_param ;
-    -- bad: event to param
+    -- bad: event to param XXX
     parameter out_event -> call8.in_out_param ;
 
     -- bad: event to param
@@ -198,7 +198,7 @@ thread implementation t.p
   connections
     -- bad: in cannot be dest, event cannot be dest
     parameter call.out_param -> in_event ;
-    -- bad: event cannot be dest
+    -- bad: event cannot be dest XXX
     parameter call.in_out_param -> out_event ;
     -- bad: in cannot be src, event cannot be dest
     parameter call.in_param -> in_out_event ;
@@ -249,7 +249,7 @@ subprogram implementation sub.a
     parameter in_param -> call1.in_param ;
     -- bad: call.out_param cannot be a dest
     parameter in_param -> call1.out_param ;
-    -- bood: in to in/out
+    -- good: in to in/out
     parameter in_param -> call1.in_out_param ;
 
     -- bad: out_param cannot be source

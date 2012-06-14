@@ -928,29 +928,25 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       case Kind (Connection_Destination) is
          when K_Port_Spec | K_Parameter =>
-
-            --  We do not check strict correspondence between port
-            --  directions: an in port can be connected to an in/out
-            --  port. This seems strange, but the examples provided
-            --  with Osate accept this situation. After all, it can
-            --  make sense: an in/out port could have two different
-            --  connections.
-
-            if Present (Inversed_Entity (Connection_Source))
-              or else Present (Inversed_Entity (Connection_Destination))
+            if (Present (Inversed_Entity (Connection_Source))
+                  and then Connection_Source
+                  /= Inversed_Entity (Connection_Source))
+              or else (Present (Inversed_Entity (Connection_Destination))
+                         and then Connection_Destination
+                         /= Inversed_Entity (Connection_Destination))
             then
-               --
+               --  XXX to be refined
                Directions := True;
             else
-               Directions := (not Source_Is_Local
-                                and then not Destination_Is_Local
+               Directions := ((not Source_Is_Local)
+                                and then (not Destination_Is_Local)
                                 and then Is_Out (Connection_Source)
                                 and then Is_In (Connection_Destination))
                  or else (Source_Is_Local
-                            and then not Destination_Is_Local
+                            and then (not Destination_Is_Local)
                             and then Is_In (Connection_Source)
                             and then Is_In (Connection_Destination))
-                 or else (not Source_Is_Local
+                 or else ((not Source_Is_Local)
                             and then Destination_Is_Local
                             and then Is_Out (Connection_Source)
                             and then Is_Out (Connection_Destination))
