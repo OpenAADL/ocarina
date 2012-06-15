@@ -1068,15 +1068,15 @@ package body Ocarina.Analyzer.AADL.Semantics is
          when CT_Error =>
             Success := False;
 
-         when CT_Port_Connection
-           | CT_Feature
+         when CT_Feature
            | CT_Access_Subprogram_Group
            | CT_Access_Virtual_Bus
            | CT_Access =>
             Success := True;
             --  XXX incomplete TODO
 
-         when CT_Data
+         when CT_Port_Connection
+           | CT_Data
            | CT_Data_Delayed
            | CT_Event_Data
            | CT_Parameter =>
