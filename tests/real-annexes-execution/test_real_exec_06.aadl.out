@@ -1,0 +1,19 @@
+test_reference_property execution
+-------------------------------------
+Evaluating theorem test_reference_property
+
+ * Iterate for variable: rma.erc32_cpu_rm
+     -> value for cos_x is 0.540302305868139717
+     -> value for sin_x is 0.841470984807896507
+     -> value for tan_x is 1.55740772465490223
+     -> value for cosh_x is 1.54308063481524378
+     -> value for sinh_x is 1.17520119364380146
+     -> value for tanh_x is 0.761594155955764888
+     -> value for ln_x is 0.693147180559945309
+     -> value for exp_x is 2.71828182845904524
+     -> value for sqrt_x is 1.41421356237309505
+ => Result: TRUE
+
+theorem test_reference_property is: TRUE
+
+

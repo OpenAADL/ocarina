@@ -138,6 +138,16 @@ package Ocarina.ME_REAL.Tokens is
       T_Integer,
       T_Max,
       T_Min,
+      T_Cos,
+      T_Sin,
+      T_Tan,
+      T_Cosh,
+      T_Sinh,
+      T_Tanh,
+      T_Ln,
+      T_Exp,
+      T_Sqrt,
+
       T_Is_In,      --  Checks weither list_1 is included into list_2
       T_LCM,        --  Lowest Common Multiple
       T_GCD,        --  Greatest Common Divisor

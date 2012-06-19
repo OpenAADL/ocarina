@@ -2099,9 +2099,7 @@ package body Ocarina.Analyzer.REAL is
             begin
                Success := True;
                while Present (N) and then Success loop
-
                   case Kind (N) is
-
                      when K_Check_Subprogram_Call
                        | K_Check_Expression
                        | K_Ternary_Expression
@@ -2497,6 +2495,94 @@ package body Ocarina.Analyzer.REAL is
                Success := False;
                return;
             end if;
+
+         when FC_Cos | FC_Sin | FC_Tan | FC_Cosh | FC_Sinh | FC_Tanh
+           | FC_Ln | FC_Exp | FC_Sqrt =>
+            Set_Returned_Type (S, RT_Float);
+
+            declare
+               Is_List : Boolean := False;
+               Iter    : Int := 0;
+               P, Var  : Node_Id;
+            begin
+               while Present (N) and then Success loop
+                  case Kind (N) is
+                     when K_Check_Subprogram_Call
+                       | K_Check_Expression
+                       | K_Ternary_Expression
+                       | K_Var_Reference =>
+
+                        Analyze_Verification_Expression (N, Success);
+                        if not Success then
+                           return;
+                        end if;
+                        if Returned_Type (N) = RT_Integer then
+                           null;
+                        elsif Returned_Type (N) = RT_Int_List then
+                           if Iter = 0 then
+                              Is_List := True;
+                           else
+                              Success := False;
+                           end if;
+                        else
+                           Success := False;
+                           return;
+                        end if;
+
+                     when K_Literal =>
+                        declare
+                           use Ocarina.REAL_Values;
+
+                           V : constant Value_Type
+                             := Get_Value_Type (Value (N));
+                        begin
+                           Success :=  (V.T = LT_Real);
+                        end;
+
+                     when K_Identifier =>
+                        Var := Find_Variable (Name (N));
+                        if No (Var) then
+                           Display_Analyzer_Error
+                             (No_Node,
+                              "Could not find variable " &
+                                Get_Name_String (Name (Identifier (N))),
+                              Loc => Loc (N));
+                           Success := False;
+                           exit;
+                        end if;
+                        P := Make_Var_Reference (Name (N));
+                        Set_Referenced_Var (P, Var);
+                        Replace_Node_To_List (Parameters (S), N, P);
+                        Analyze_Verification_Expression (P, Success);
+                        if Success then
+                           if Returned_Type (P) = RT_Integer then
+                              Success := not Is_List;
+                           elsif Returned_Type (P) = RT_Int_List then
+                              Is_List := True;
+                           else
+                              Success := False;
+                           end if;
+                        else
+                           return;
+                        end if;
+
+                     when others =>
+                        Success := False;
+                  end case;
+
+                  Iter := Iter + 1;
+                  N := Next_Node (N);
+               end loop;
+
+               if not Success
+                 or else (Iter >= 1 and then Is_List) then
+                  Display_Analyzer_Error
+                    (No_Node,
+                     "expected a float as parameter",
+                     Loc => Loc (S));
+                  return;
+               end if;
+            end;
 
          when others =>
             Set_Returned_Type (S, Get_Returned_Type (Code (S)));

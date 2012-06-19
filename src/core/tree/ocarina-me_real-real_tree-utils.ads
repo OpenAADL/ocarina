@@ -123,14 +123,23 @@ package Ocarina.ME_REAL.REAL_Tree.Utils is
    FC_All_Equals                : constant := 39;
    FC_Product                   : constant := 40;
    FC_Sum                       : constant := 41;
+   FC_Cos                       : constant := 42;
+   FC_Sin                       : constant := 43;
+   FC_Tan                       : constant := 44;
+   FC_Cosh                      : constant := 45;
+   FC_Sinh                      : constant := 46;
+   FC_Tanh                      : constant := 47;
+   FC_Ln                        : constant := 48;
+   FC_Exp                       : constant := 49;
+   FC_Sqrt                      : constant := 50;
 
-   FC_MMax                      : constant := 50;
-   FC_MMin                      : constant := 51;
-   FC_MAll_Equals               : constant := 52;
-   FC_MProduct                  : constant := 53;
-   FC_MSum                      : constant := 54;
+   FC_MMax                      : constant := 60;
+   FC_MMin                      : constant := 61;
+   FC_MAll_Equals               : constant := 62;
+   FC_MProduct                  : constant := 63;
+   FC_MSum                      : constant := 64;
 
-   FC_Unknown                   : constant := 55;
+   FC_Unknown                   : constant := 65;
 
    --  return types
 

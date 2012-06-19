@@ -247,6 +247,7 @@ tests/real-annexes-execution/test_real_exec_02.aadl
 tests/real-annexes-execution/test_real_exec_03.aadl
 tests/real-annexes-execution/test_real_exec_04.aadl
 tests/real-annexes-execution/test_real_exec_05.aadl
+tests/real-annexes-execution/test_real_exec_06.aadl
 tests/real-annexes-execution-environment/test_real_exec_env_01.aadl
 tests/real_units/validation.aadl
 tests/ticket_46/test.aadl

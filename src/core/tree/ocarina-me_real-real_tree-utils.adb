@@ -119,7 +119,6 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
       P : Boolean := False;
       L : Natural := 0;
    begin
-
       --  Search the last occurence of "::"
 
       for I in 1 .. M loop
@@ -144,8 +143,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
    -- Translate_Predefined_Sets --
    -------------------------------
 
-   function Translate_Predefined_Sets (T : Token_Type) return Value_Id
-   is
+   function Translate_Predefined_Sets (T : Token_Type) return Value_Id is
    begin
       case T is
          when T_Processor_Set =>
@@ -198,8 +196,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
    -- Translate_Predefined_Sets --
    -------------------------------
 
-   function Translate_Predefined_Sets (T : Value_Id) return Token_Type
-   is
+   function Translate_Predefined_Sets (T : Value_Id) return Token_Type is
    begin
       case T is
          when SV_Processor_Set =>
@@ -252,8 +249,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
    -- Translate_Function_Code --
    -----------------------------
 
-   function Translate_Function_Code (T : Token_Type) return Value_Id
-   is
+   function Translate_Function_Code (T : Token_Type) return Value_Id is
    begin
       case T is
          when T_Is_Subcomponent_Of =>
@@ -332,6 +328,24 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
             return FC_Head;
          when T_Queue =>
             return FC_Queue;
+         when T_Cos =>
+            return FC_Cos;
+         when T_Sin =>
+            return FC_Sin;
+         when T_Tan =>
+            return FC_Tan;
+         when T_Cosh =>
+            return FC_Cosh;
+         when T_Sinh =>
+            return FC_Sinh;
+         when T_Tanh =>
+            return FC_Tanh;
+         when T_Ln =>
+            return FC_Ln;
+         when T_Exp =>
+            return FC_Exp;
+         when T_Sqrt =>
+            return FC_Sqrt;
          when others =>
             DE ("Unknown REAL function");
             return FC_Unknown;
@@ -343,8 +357,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
    -- Get_Returned_Type --
    -----------------------
 
-   function Get_Returned_Type (T : Value_Id) return Return_Type
-   is
+   function Get_Returned_Type (T : Value_Id) return Return_Type is
    begin
       case T is
          when FC_Is_Subcomponent_Of =>
@@ -407,6 +420,8 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
             return RT_Unknown;
          when FC_Queue =>
             return RT_Unknown;
+         when FC_Cos | FC_Sin | FC_Tan =>
+            return RT_Float;
          when others =>
             DE ("Unable to determine REAL function returning type");
             return RT_Error;

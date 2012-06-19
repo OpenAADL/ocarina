@@ -165,6 +165,16 @@ package body Ocarina.ME_REAL.Tokens is
       New_Token (T_List, "List");
       New_Token (T_Float, "Float");
       New_Token (T_Max, "Max");
+      New_Token (T_Cos, "cos");
+      New_Token (T_Sin, "sin");
+      New_Token (T_Tan, "tan");
+      New_Token (T_Cosh, "cosh");
+      New_Token (T_Sinh, "sinh");
+      New_Token (T_Tanh, "tanh");
+      New_Token (T_Ln, "ln");
+      New_Token (T_Exp, "exp");
+      New_Token (T_Sqrt, "sqrt");
+
       New_Token (T_LCM, "LCM");
       New_Token (T_GCD, "GCD");
       New_Token (T_Non_Null, "Non_Null");

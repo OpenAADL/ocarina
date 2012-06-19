@@ -31,6 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Ada.Numerics.Generic_Elementary_Functions;
 with Namet;
 with Output;
 with Locations; use Locations;
@@ -58,6 +59,10 @@ with Ocarina.Instances.REAL_Checker.Queries.Provided_Class_Predicates;
 with Unchecked_Deallocation;
 
 package body Ocarina.Backends.REAL is
+
+   package Numerics is
+      new Ada.Numerics.Generic_Elementary_Functions (Long_Long_Float);
+   use Numerics;
 
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
@@ -1159,22 +1164,26 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
-                     V := V - V2;
-                     Result := New_Value (V);
-                     case V.T is
-                        when LT_Integer =>
-                           Ret := RT_Integer;
+                     declare
+                        V3 : Value_Type;
+                     begin
+                        V := Get_Value_Type (R1);
+                        V2 := Get_Value_Type (R2);
+                        V3 := V - V2;
+                        Result := New_Value (V3);
+                        case V.T is
+                           when LT_Integer =>
+                              Ret := RT_Integer;
 
-                        when LT_Real =>
-                           Ret := RT_Float;
+                           when LT_Real =>
+                              Ret := RT_Float;
 
-                        when others =>
-                           Display_Located_Error
-                             (Loc (E), "expected numeric value",
-                              Fatal => True);
-                     end case;
+                           when others =>
+                              Display_Located_Error
+                                (Loc (E), "expected numeric value",
+                                 Fatal => True);
+                        end case;
+                     end;
 
                   when OV_Star =>
                      declare
@@ -1222,27 +1231,31 @@ package body Ocarina.Backends.REAL is
                      end if;
 
                   when OV_Slash =>
-                     Compute_Check_Expression (Right_Expr (E), T2, R2);
-                     if T2 = RT_Error then
-                        Ret := RT_Error;
-                        return;
-                     end if;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
-                     V := V / V2;
-                     Result := New_Value (V);
-                     case V.T is
-                        when LT_Integer =>
-                           Ret := RT_Integer;
+                     declare
+                        V3 : Value_Type;
+                     begin
+                        Compute_Check_Expression (Right_Expr (E), T2, R2);
+                        if T2 = RT_Error then
+                           Ret := RT_Error;
+                           return;
+                        end if;
+                        V := Get_Value_Type (R1);
+                        V2 := Get_Value_Type (R2);
+                        V3 := V / V2;
+                        Result := New_Value (V3);
+                        case V.T is
+                           when LT_Integer =>
+                              Ret := RT_Integer;
 
-                        when LT_Real =>
-                           Ret := RT_Float;
+                           when LT_Real =>
+                              Ret := RT_Float;
 
-                        when others =>
-                           Display_Located_Error
-                             (Loc (E), "expected numeric value",
-                              Fatal => True);
-                     end case;
+                           when others =>
+                              Display_Located_Error
+                                (Loc (E), "expected numeric value",
+                                 Fatal => True);
+                        end case;
+                     end;
 
                   when OV_Power =>
                      Compute_Check_Expression (Right_Expr (E), T2, R2);
@@ -2881,6 +2894,46 @@ package body Ocarina.Backends.REAL is
 
                T := RT_Boolean;
                Result := New_Boolean_Value (Local_Is_In);
+            end;
+
+         when FC_Cos | FC_Sin | FC_Tan | FC_Cosh | FC_Sinh | FC_Tanh
+           | FC_Ln | FC_Exp | FC_Sqrt =>
+            declare
+               VT        : Value_Type;
+               R         : Value_Id;
+               T2        : Return_Type;
+            begin
+               Compute_Check_Expression
+                 (First_Node (Parameters (E)), T2, R);
+               if T2 = RT_Error then
+                  T := RT_Error;
+                  return;
+               end if;
+
+               VT := Get_Value_Type (R);
+               case Code (E) is
+                  when FC_Cos =>
+                     Result := New_Real_Value (Cos (VT.RVal));
+                  when FC_Sin =>
+                     Result := New_Real_Value (Sin (VT.RVal));
+                  when FC_Tan =>
+                     Result := New_Real_Value (Tan (VT.RVal));
+                  when FC_Cosh =>
+                     Result := New_Real_Value (Cosh (VT.RVal));
+                  when FC_Sinh =>
+                     Result := New_Real_Value (Sinh (VT.RVal));
+                  when FC_Tanh =>
+                     Result := New_Real_Value (Tanh (VT.RVal));
+                  when FC_Ln =>
+                     Result := New_Real_Value (Log (VT.RVal));
+                  when FC_Exp =>
+                     Result := New_Real_Value (Exp (VT.RVal));
+                  when FC_Sqrt =>
+                     Result := New_Real_Value (Sqrt (VT.RVal));
+                  when others =>
+                     raise Program_Error;
+               end case;
+               T := RT_Float;
             end;
 
          when others =>
