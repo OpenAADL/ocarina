@@ -2516,9 +2516,9 @@ package body Ocarina.Analyzer.REAL is
                         if not Success then
                            return;
                         end if;
-                        if Returned_Type (N) = RT_Integer then
+                        if Returned_Type (N) = Rt_Float then
                            null;
-                        elsif Returned_Type (N) = RT_Int_List then
+                        elsif Returned_Type (N) = Rt_Float_List then
                            if Iter = 0 then
                               Is_List := True;
                            else
@@ -2555,9 +2555,9 @@ package body Ocarina.Analyzer.REAL is
                         Replace_Node_To_List (Parameters (S), N, P);
                         Analyze_Verification_Expression (P, Success);
                         if Success then
-                           if Returned_Type (P) = RT_Integer then
+                           if Returned_Type (P) = RT_Float then
                               Success := not Is_List;
-                           elsif Returned_Type (P) = RT_Int_List then
+                           elsif Returned_Type (P) = RT_Float_List then
                               Is_List := True;
                            else
                               Success := False;
@@ -2575,7 +2575,8 @@ package body Ocarina.Analyzer.REAL is
                end loop;
 
                if not Success
-                 or else (Iter >= 1 and then Is_List) then
+                 or else (Iter >= 1 and then Is_List)
+               then
                   Display_Analyzer_Error
                     (No_Node,
                      "expected a float as parameter",
