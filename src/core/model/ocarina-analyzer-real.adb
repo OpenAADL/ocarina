@@ -2702,6 +2702,14 @@ package body Ocarina.Analyzer.REAL is
                               end if;
                               return;
 
+                           when K_Boolean_Type =>
+                              if List then
+                                 Result :=  RT_Bool_List;
+                              else
+                                 Result :=  RT_Boolean;
+                              end if;
+                              return;
+
                            when K_String_Type =>
                               if List then
                                  Result :=  RT_String_List;
