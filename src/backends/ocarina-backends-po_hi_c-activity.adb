@@ -371,6 +371,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Send_Out_Ports;
          procedure Make_Task_Blocking;
          procedure Make_Fetch_In_Ports;
+         procedure Make_Wait_Offset;
          procedure Make_Thread_Compute_Entrypoint;
          procedure Make_Ports_Compute_Entrypoint;
          procedure Make_Activate_Entrypoint;
@@ -782,6 +783,41 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             end loop;
          end Make_Send_Out_Ports;
 
+         ----------------------
+         -- Make_Wait_Offset --
+         ----------------------
+
+         procedure Make_Wait_Offset is
+            D : Time_Type;
+         begin
+            if Get_Thread_Dispatch_Protocol (E) /= Thread_Periodic then
+               return;
+            end if;
+
+            D := Get_Dispatch_Offset (E);
+
+            if D /= Null_Time then
+               N := Make_Variable_Declaration
+               (Make_Defining_Identifier (VN (V_Offset)),
+                  RE (RE_Time_T));
+               Append_Node_To_List (N, Statements);
+
+               N := Map_Time (D, VN (V_Offset));
+               Append_Node_To_List
+                  (N, Statements);
+
+               Append_Node_To_List
+                 (CTU.Make_Call_Profile
+                    (RE (RE_Wait_Offset),
+                     Make_List_Id
+                        (Make_Variable_Address
+                           (Make_Defining_Identifier
+                              (VN (V_Offset))))),
+                     WStatements);
+
+            end if;
+         end Make_Wait_Offset;
+
          -------------------------
          -- Make_Fetch_In_Ports --
          -------------------------
@@ -1160,6 +1196,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                --  one. The user has only to implementation the
                --  behaviour of subprograms and does not have to worry
                --  about sending and receiving ports.
+
+               Make_Wait_Offset;
 
                --  Get IN ports values and dequeue them
 

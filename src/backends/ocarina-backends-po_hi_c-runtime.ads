@@ -69,6 +69,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Minutes,                        --  __po_hi_minutes
       RE_Create_Periodic_Task,           -- __po_hi_create_periodic_task
       RE_Create_Sporadic_Task,           -- __po_hi_create_sporadic_task
+      RE_Wait_Offset,                    -- __po_hi_task_wait_offset
       RE_Wait_For_Next_Period,           -- __po_hi_task_wait_for_next_period
       RE_Initialize,                     -- __po_hi_initialize
       RE_Initialize_Early,               -- __po_hi_initialize_early
@@ -328,6 +329,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Simulate_WCET                  => RH_PO_HI_Utils,
          RE_Compute_Miss                   => RH_PO_HI_Utils,
          RE_Deployment_Endiannesses        => RH_PO_HI_Transport,
+         RE_Wait_Offset                    => RH_PO_HI_Task,
          RE_Wait_For_Next_Period           => RH_PO_HI_Task,
          RE_Compute_Next_Period            => RH_PO_HI_Task,
          RE_Initialize                     => RH_PO_HI_Main,

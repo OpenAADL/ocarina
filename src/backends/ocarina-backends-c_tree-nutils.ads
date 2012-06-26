@@ -215,6 +215,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       V_Dev_Id,
       V_Entity,
       V_Period,
+      V_Offset,
       V_Port,
       V_Pkt,
       V_Thread,
