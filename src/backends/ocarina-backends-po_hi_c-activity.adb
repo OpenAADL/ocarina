@@ -808,7 +808,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
                Append_Node_To_List
                  (CTU.Make_Call_Profile
-                    (RE (RE_Wait_Offset),
+                    (RE (RE_Task_Wait_Offset),
                      Make_List_Id
                         (Make_Variable_Address
                            (Make_Defining_Identifier
