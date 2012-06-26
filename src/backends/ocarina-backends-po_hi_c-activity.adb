@@ -65,7 +65,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
    package CV renames Ocarina.Backends.C_Values;
 
-   Send_Output_Specification : Node_Id;
    Current_Device            : Node_Id := No_Node;
 
    ------------
@@ -84,7 +83,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       function Task_Deliver_Spec (E : Node_Id) return Node_Id;
 
       Have_Main_Deliver          : Boolean := False;
-      Has_Send_Output_Declared   : Boolean := False;
 
       -------------------
       -- Task_Job_Spec --
@@ -198,7 +196,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Set_Activity_Header (U);
 
          Have_Main_Deliver          := False;
-         Has_Send_Output_Declared   := False;
 
          if not AAU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));
@@ -314,26 +311,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             N := Task_Deliver_Spec (E);
 
-            if Has_Output_Ports (E) and then
-               Has_Send_Output_Declared = False then
-               Send_Output_Specification := Make_Function_Specification
-                 (Defining_Identifier => RE (RE_Send_Output),
-                  Parameters          => Make_List_Id
-                     (Make_Parameter_Specification
-                        (Defining_Identifier =>
-                           Make_Defining_Identifier (PN (P_Task)),
-                        Parameter_Type => RE (RE_Task_Id)),
-                     Make_Parameter_Specification
-                        (Defining_Identifier =>
-                           Make_Defining_Identifier (PN (P_Port)),
-                        Parameter_Type => RE (RE_Port_T))),
-                  Return_Type         => New_Node (CTN.K_Int));
-               Append_Node_To_List
-                  (Send_Output_Specification,
-                  CTN.Declarations (Current_File));
-
-               Has_Send_Output_Declared := True;
-            end if;
          end if;
 
          --  Create the spec of the parameterless subprogram
@@ -365,10 +342,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       --  thread's job.
 
       Main_Deliver_Alternatives     : List_Id;
-      Has_Send_Output_Declared      : Boolean := False;
-      Send_Output_Statements        : List_Id;
-      Send_Output_Declarations      : List_Id;
-      Send_Output_Alternatives      : List_Id;
 
       Current_Device : Node_Id := No_Node;
 
@@ -715,12 +688,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Send_Out_Ports is
             N                       : Node_Id;
             F                       : Node_Id;
-            Used_Bus                : Node_Id;
-            Used_Device             : Node_Id;
-            Send_Function_Node      : Node_Id;
-            Send_Alternative_Label  : List_Id;
-            Send_Alternative_Stmts  : List_Id;
-            Send_Function_Name      : Name_Id := No_Name;
             Error_Already_Defined   : Boolean := False;
          begin
             N := Message_Comment ("Send the OUT ports");
@@ -729,78 +696,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             F := First_Node (Features (E));
 
             while Present (F) loop
-               Send_Function_Name := No_Name;
-               Used_Bus := No_Node;
 
                if Kind (F) = K_Port_Spec_Instance and then Is_Out (F) then
-                  Has_Send_Output_Declared := True;
-
-                  Send_Alternative_Label := New_List (CTN.K_Label_List);
-                  Send_Alternative_Stmts := New_List (CTN.K_Statement_List);
-
-                  if Get_Associated_Bus (F) /= No_Node then
-
-                     Used_Bus := Get_Associated_Bus (F);
-
-                     if AAU.Is_Virtual_Bus (Used_Bus) then
-                        Used_Bus := Parent_Component
-                           (Parent_Subcomponent (Used_Bus));
-                     end if;
-
-                     Used_Device := Get_Device_Of_Process
-                           (Used_Bus,
-                              (Parent_Component
-                                 (Parent_Subcomponent (E))));
-                     if Used_Device /= No_Node then
-                        Send_Function_Name := Get_Send_Function_Name
-                           (Corresponding_Instance (Used_Device));
-                     end if;
-                  end if;
-
-                  Append_Node_To_List
-                    (Make_Defining_Identifier
-                     (Map_C_Enumerator_Name (F)),
-                     Send_Alternative_Label);
-
-                  if Send_Function_Name /= No_Name then
-                     Append_Node_To_List
-                      (Make_Function_Specification
-                       (Defining_Identifier =>
-                        Make_Defining_Identifier (Send_Function_Name),
-                        Parameters          =>
-                           Make_List_Id
-                              (Make_Parameter_Specification
-                               (Defining_Identifier =>
-                                Make_Defining_Identifier (PN (P_Task)),
-                                Parameter_Type => RE (RE_Task_Id)),
-                               Make_Parameter_Specification
-                               (Defining_Identifier =>
-                                Make_Defining_Identifier (PN (P_Port)),
-                                Parameter_Type => RE (RE_Port_T))),
-                        Return_Type         => New_Node (CTN.K_Int)),
-                     CTN.Declarations (Current_File));
-
-                     Send_Function_Node :=
-                        Make_Defining_Identifier (Send_Function_Name);
-                  else
-                     Send_Function_Node := RE (RE_Transport_Send_Default);
-                  end if;
-
-                  Append_Node_To_List
-                     (Make_Return_Statement
-                        (CTU.Make_Call_Profile
-                           (Send_Function_Node,
-                           Make_List_Id
-                              (Make_Defining_Identifier (PN (P_Task)),
-                              Make_Defining_Identifier (PN (P_Port))))),
-                     Send_Alternative_Stmts);
-
-                  N := Make_Switch_Alternative
-                    (Send_Alternative_Label, Send_Alternative_Stmts);
-                  Append_Node_To_List (N, Send_Output_Alternatives);
-
-                  --  Generate appropriate source code to deliver
-                  --  the message when we send it.
 
                   --  Then, call the send_output in the main loop.
                   Call_Parameters := New_List (CTN.K_Parameter_List);
@@ -1471,11 +1368,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
          Main_Deliver_Alternatives := New_List (CTN.K_Alternatives_List);
 
-         Has_Send_Output_Declared      := False;
-         Send_Output_Statements        := New_List (CTN.K_Statement_List);
-         Send_Output_Declarations      := New_List (CTN.K_Declaration_List);
-         Send_Output_Alternatives      := New_List (CTN.K_Alternatives_List);
-
          --  Visit all the subcomponents of the process
 
          if not AAU.Is_Empty (Subcomponents (E)) then
@@ -1590,42 +1482,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                (Backend_Node (Identifier (Parent_Subcomponent (E)))),
                Declarations,
                Statements);
-            Append_Node_To_List (N, CTN.Declarations (Current_File));
-         end if;
-
-         --  If some threads are connected to other nodes, we declare
-         --  a send_output function that is responsible to send
-         --  data over the network using device drivers functions.
-
-         if Has_Send_Output_Declared then
-            Append_Node_To_List
-               (Make_Switch_Alternative
-                  (No_List,
-                  Make_List_Id
-                     (Make_Return_Statement
-                        (CTU.Make_Call_Profile
-                           (RE (RE_Transport_Send_Default),
-                           Make_List_Id
-                              (Make_Defining_Identifier (PN (P_Task)),
-                              Make_Defining_Identifier (PN (P_Port))))))),
-               Send_Output_Alternatives);
-
-            Append_Node_To_List
-               (Message_Comment
-                  ("By default, we try to use the default protocol"),
-               Send_Output_Alternatives);
-
-            Append_Node_To_List
-               (Make_Switch_Statement
-                  (Expression    => Make_Defining_Identifier (VN (V_Port)),
-                  Alternatives   => Send_Output_Alternatives),
-               Send_Output_Statements);
-
-            N := Make_Function_Implementation
-               (Send_Output_Specification,
-               Send_Output_Declarations,
-               Send_Output_Statements);
-
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
