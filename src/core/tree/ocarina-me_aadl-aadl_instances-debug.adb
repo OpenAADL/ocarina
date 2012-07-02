@@ -262,7 +262,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Debug is
    ---------
 
    procedure wni (N : Node_Id) is
-      I : constant Natural := N_Indents;
+      I : constant Integer := N_Indents;
    begin
       N_Indents := 1;
       W_Node_Id (N);
