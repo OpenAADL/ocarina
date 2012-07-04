@@ -455,9 +455,11 @@ package body Ocarina.Instances.Queries is
          return No_List;
       end if;
 
-      if No (ATN.First_Node
-               (Expanded_Multi_Value
-                  (AIN.Property_Association_Value (Property))))
+      if Present (Expanded_Multi_Value
+                    (AIN.Property_Association_Value (Property)))
+        and then No (ATN.First_Node
+                       (Expanded_Multi_Value
+                          (AIN.Property_Association_Value (Property))))
       then
          return Multi_Value
               (AIN.Property_Association_Value (Property));
