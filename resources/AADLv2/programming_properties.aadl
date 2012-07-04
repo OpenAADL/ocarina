@@ -6,84 +6,84 @@
 property set Programming_Properties is
 	Activate_Entrypoint: classifier (subprogram classifier)
 		applies to (thread, device);
-	
+
 	Activate_Entrypoint_Call_Sequence: reference (subprogram call sequence)
 		applies to (thread, device);
-	
+
 	Activate_Entrypoint_Source_Text: aadlstring
 		applies to (thread, device);
-	
+
 	Compute_Entrypoint: classifier (subprogram classifier)
 		applies to (thread, device, subprogram access, event port, event data port);
-	
+
 	Compute_Entrypoint_Call_Sequence: reference (subprogram call sequence)
 		applies to (thread, device, subprogram access, event port, event data port);
-	
+
 	Compute_Entrypoint_Source_Text: aadlstring
 		applies to (thread, device, subprogram access, event port, event data port);
-	
+
 	Deactivate_Entrypoint: classifier (subprogram classifier)
 		applies to (thread, device);
-	
+
 	Deactivate_Entrypoint_Call_Sequence: reference (subprogram call sequence)
 		applies to (thread, device);
-	
+
 	Deactivate_Entrypoint_Source_Text: aadlstring
 		applies to (thread);
-	
+
 	Finalize_Entrypoint: classifier (subprogram classifier)
 		applies to (thread, device);
-	
+
 	Finalize_Entrypoint_Call_Sequence: reference (subprogram call sequence)
 		applies to (thread, device);
-	
+
 	Finalize_Entrypoint_Source_Text: aadlstring
 		applies to (thread, device);
-	
+
 	Initialize_Entrypoint: classifier (subprogram classifier)
 		applies to (thread, device);
-	
+
 	Initialize_Entrypoint_Call_Sequence: reference (subprogram call sequence)
 		applies to (thread, device);
-	
+
 	Initialize_Entrypoint_Source_Text: aadlstring
 		applies to (thread, device);
-	
+
 	Recover_Entrypoint: classifier (subprogram classifier)
 		applies to (thread, device);
-	
+
 	Recover_Entrypoint_Call_Sequence: reference (subprogram call sequence)
 		applies to (thread, device);
-	
+
 	Recover_Entrypoint_Source_Text: aadlstring
 		applies to (thread, device);
-	
+
 	Source_Language: inherit list of Supported_Source_Languages
-		applies to (subprogram, data, thread, thread group, process, system, bus, device, 
+		applies to (subprogram, data, thread, thread group, process, system, bus, device,
 		processor, virtual processor, virtual bus);
-	
+
 	Source_Name: aadlstring
 		applies to (data, port, subprogram, parameter, virtual bus, virtual processor);
-	
+
 	Source_Text: inherit list of aadlstring applies to (data,
 		port, subprogram, thread, thread group, process,
 		system, virtual bus, virtual processor, memory, bus,
-		device, processor, parameter, feature group); 
--- XXX not supported by Ocarina		
+		device, processor, parameter, feature group);
+-- XXX not supported by Ocarina
 --, aadl package);
-	
+
 	Supported_Source_Language: list of Supported_Source_Languages
 		applies to (processor, virtual processor, system);
-	
+
 	Type_Source_Name: aadlstring
-		applies to (data, port, subprogram);
-	
-	Hardware_Description_Source_Text: inherit list of aadlstring	
+		applies to (data, port, subprogram, device); -- XXX used to apply on device, no longer true
+
+	Hardware_Description_Source_Text: inherit list of aadlstring
 		applies to (memory, bus, device, processor, system);
-	
+
 	Hardware_Source_Language: Supported_Hardware_Source_Languages
 		applies to (memory, bus, device, processor, system);
-		
+
 	Device_Driver: classifier (abstract implementation)
 		applies to (device);
 end Programming_Properties;
