@@ -946,7 +946,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
          if Scheduling_Protocol = Unknown_Scheduler then
             Display_Located_Error
-              (Loc (Parent_Subcomponent (E)),
+              (Loc (Get_Bound_Processor (E)),
                "Undefined scheduling protocol, "
                  & "will use FIFO_WITHIN_PRIORITIES",
                Fatal => False,

@@ -30,7 +30,7 @@ thread thr_printer1
 end thr_printer1;
 
 thread implementation thr_printer1.i
-calls 
+calls
 mycalls: {
   P_Spg : subprogram spg_printer1;
 };
@@ -49,7 +49,7 @@ thread thr_printer2
 end thr_printer2;
 
 thread implementation thr_printer2.i
-calls 
+calls
 mycalls: {
   Q_Spg : subprogram spg_printer2;
 };
@@ -70,7 +70,7 @@ properties
 end native;
 
 processor implementation native.i
-properties 
+properties
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
    Priority_Range => 0 .. 255;
    Cheddar_Properties::Scheduler_Quantum => 0 Ms;
@@ -99,7 +99,7 @@ end ram;
 memory implementation ram.i
 properties
    Word_Size => 8 bits;
-   Word_Count => 1;
+   Byte_Count => 1;
 end ram.i;
 
 ------------
@@ -123,7 +123,7 @@ annex real_specification {**
          mainmem        := {y in Memory_Set | is_subcomponent_of (y, s)};
 
          check ( (Cardinal (mainmem) > 0) and
-                 (Property_Exists (mainmem, "Word_Count"))
+                 (Property_Exists (mainmem, "Byte_Count"))
                );
    end Contains_Memories;
 **};
@@ -132,7 +132,7 @@ annex real_specification {**
       foreach m in memory_set do
          prs            := {x in Process_Set | is_bound_to (m, x)};
 
-         check ( ((Get_Property_Value (m, "Word_Size")) * (Get_Property_Value (m, "Word_Count"))) > 
+         check ( ((Get_Property_Value (m, "Word_Size")) * (Get_Property_Value (m, "Byte_Count"))) >
                  ((sum(Get_Property_Value (prs, "Source_Data_Size")))+
                   (sum(Get_Property_Value (prs, "Source_Code_Size"))))
                );

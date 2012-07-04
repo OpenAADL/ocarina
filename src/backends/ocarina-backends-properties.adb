@@ -1,3 +1,4 @@
+with Ada.Text_IO; use Ada.Text_IO;
 ------------------------------------------------------------------------------
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
@@ -45,7 +46,7 @@ with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.AADL_Values;
 with Ocarina.Instances.Queries;
-with Ocarina.Analyzer.AADL.Queries;
+--  with Ocarina.Analyzer.AADL.Queries;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
 
@@ -1340,77 +1341,96 @@ package body Ocarina.Backends.Properties is
    is
       Source_L : Name_Id;
    begin
-      if Is_Defined_Enumeration_Property (E, Source_Language) then
+      if AADL_Version = AADL_V1
+        and then Is_Defined_Enumeration_Property (E, Source_Language)
+      then
          Source_L := Get_Enumeration_Property (E, Source_Language);
 
-         if Source_L = Language_Ada_95_Name
-           or else Source_L = Language_Ada_Name
-           or else Source_L = Language_Ada_05_Name
-         then
-            --  All instances of Ada are aliased to Ada_95
-            return Language_Ada_95;
-
-         elsif Source_L = Language_ASN1_Name then
-            return Language_ASN1;
-
-         elsif Source_L = Language_Device_Name then
-            return Language_Device;
-
-         elsif Source_L = Language_Lustre_Name
-           or else Source_L = Language_Lustre5_Name
-           or else Source_L = Language_Lustre6_Name
-           or else Source_L = Language_SCADE6_Name
-         then
-            return Language_Lustre;
-
-         elsif Source_L = Language_Esterel_Name then
-            return Language_Esterel;
-
-         elsif Source_L = Language_SDL_Name
-           or else Source_L = Language_SDL_ObjectGeode_Name
-         then
-            return Language_SDL;
-
-         elsif Source_L = Language_RTDS_Name
-           or else Source_L = Language_SDL_RTDS_Name
-         then
-            return Language_SDL_RTDS;
-
-         elsif Source_L = Language_C_Name then
-            return Language_C;
-
-         elsif Source_L = Language_RTSJ_Name then
-            return Language_RTSJ;
-
-         elsif Source_L = Language_Simulink_Name then
-            return Language_Simulink;
-
-         elsif Source_L = Language_Scade_Name then
-            return Language_Scade;
-
-         elsif Source_L = Language_Rhapsody_Name then
-            return Language_Rhapsody;
-
-         elsif Source_L = Language_System_C_Name then
-            return Language_System_C;
-
-         elsif Source_L = Language_VHDL_Name then
-            return Language_VHDL;
-
-         elsif Source_L = Language_GUI_Name then
-            return Language_GUI;
-
-         elsif Source_L = Language_LUA_Name then
-            return Language_LUA;
-
-         else
-            Display_Located_Error
-              (AIN.Loc (E),
-               "Unknown source language",
-               Fatal => True);
-            return Language_None;
-         end if;
+      elsif AADL_Version = AADL_V2
+        and then Is_Defined_List_Property (E, Source_Language)
+      then
+         declare
+            Source_Language_List : constant List_Id
+              := Get_List_Property (E, Source_Language);
+         begin
+            if ATNU.Length (Source_Language_List) > 1 then
+               Display_Located_Error
+                 (AIN.Loc (E),
+                  "Cannot use more than one language",
+                  Fatal => True);
+            end if;
+            Source_L := ATN.Name
+              (ATN.Identifier (ATN.First_Node (Source_Language_List)));
+         end;
       else
+         return Language_None;
+      end if;
+
+      if Source_L = Language_Ada_95_Name
+        or else Source_L = Language_Ada_Name
+        or else Source_L = Language_Ada_05_Name
+      then
+         --  All instances of Ada are aliased to Ada_95
+         return Language_Ada_95;
+
+      elsif Source_L = Language_ASN1_Name then
+         return Language_ASN1;
+
+      elsif Source_L = Language_Device_Name then
+         return Language_Device;
+
+      elsif Source_L = Language_Lustre_Name
+        or else Source_L = Language_Lustre5_Name
+        or else Source_L = Language_Lustre6_Name
+        or else Source_L = Language_SCADE6_Name
+      then
+         return Language_Lustre;
+
+      elsif Source_L = Language_Esterel_Name then
+         return Language_Esterel;
+
+      elsif Source_L = Language_SDL_Name
+        or else Source_L = Language_SDL_ObjectGeode_Name
+      then
+         return Language_SDL;
+
+      elsif Source_L = Language_RTDS_Name
+        or else Source_L = Language_SDL_RTDS_Name
+      then
+         return Language_SDL_RTDS;
+
+      elsif Source_L = Language_C_Name then
+         return Language_C;
+
+      elsif Source_L = Language_RTSJ_Name then
+         return Language_RTSJ;
+
+      elsif Source_L = Language_Simulink_Name then
+         return Language_Simulink;
+
+      elsif Source_L = Language_Scade_Name then
+         return Language_Scade;
+
+      elsif Source_L = Language_Rhapsody_Name then
+         return Language_Rhapsody;
+
+      elsif Source_L = Language_System_C_Name then
+         return Language_System_C;
+
+      elsif Source_L = Language_VHDL_Name then
+         return Language_VHDL;
+
+      elsif Source_L = Language_GUI_Name then
+         return Language_GUI;
+
+      elsif Source_L = Language_LUA_Name then
+         return Language_LUA;
+
+      else
+         Display_Located_Error
+           (AIN.Loc (E),
+            "Unknown source language",
+            Fatal => True);
          return Language_None;
       end if;
    end Get_Source_Language;
@@ -2479,9 +2499,8 @@ package body Ocarina.Backends.Properties is
    -------------------------
 
    function Get_Bound_Processor (P : Node_Id) return Node_Id is
-   begin
       pragma Assert (Is_Process_Or_Device (P));
-
+   begin
       if not Is_Defined_Reference_Property (P, Processor_Binding)
         and then Is_Process (P)
       then
@@ -2919,35 +2938,29 @@ package body Ocarina.Backends.Properties is
      (P : Node_Id)
      return Supported_Scheduling_Protocol
    is
+      pragma Assert (AINU.Is_Processor (P));
       use Ocarina.AADL_Values;
       Scheduling_L : List_Id;
       Scheduling_N : Name_Id;
 
    begin
-      if Is_Defined_Enumeration_Property (P, Scheduling_Protocol) then
-         --  XXX How can the code below work ?
-         --  It seems this work only for AADLv1 models
-
+      Put_Line (AIN.Kind (P)'Img);
+      if AADL_Version = AADL_V1
+        and then Is_Defined_Enumeration_Property (P, Scheduling_Protocol)
+      then
          Scheduling_L := Get_List_Property (P, Scheduling_Protocol);
          Scheduling_N := Value (Value (ATN.First_Node (Scheduling_L))).EVal;
 
-      elsif Is_Defined_List_Property (P, Scheduling_Protocol) then
-         --  XXX This works for AADLv2 models, but in a ugly fashion:
-         --  we venture through the _declarative_ tree to find
-         --  relevant information. This is BAD BAD BAD
-         Scheduling_L := Ocarina.Analyzer.AADL.Queries.Get_List_Property
-         (Corresponding_Declaration (P), Scheduling_Protocol);
-
-         if Present (Node_Id (Scheduling_L)) then
+      elsif AADL_Version = AADL_V2
+        and then Is_Defined_List_Property (P, Scheduling_Protocol)
+      then
+         Scheduling_L := Get_List_Property (P, Scheduling_Protocol);
+         if ATNU.Length (Scheduling_L) = 1 then
             Scheduling_N :=
-              To_Lower (ATN.Display_Name
+              To_Lower (ATN.Name
                           (ATN.Identifier (ATN.First_Node (Scheduling_L))));
          else
-            return Unknown_Scheduler;
-            --  XXX The property can be defined, but the returned
-            --  value may be empty because of a subtle bug:
-            --  Get_List_Property does not traverse the whole
-            --  inheritance tree ...
+            raise Program_Error;
          end if;
 
       else

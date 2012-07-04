@@ -1,0 +1,21 @@
+--AADL2
+--SAE Aerospace Standard AS5506A
+--Proposed Draft (2008-11-08)
+--Appendix A: Predeclared Property Sets
+
+property set Modeling_Properties is
+	Acceptable_Array_Size: list of Size_Range
+		applies to (subcomponent, feature);
+	
+	Classifier_Matching_Rule: inherit enumeration (Classifier_Match, Equivalence, Subset, Conversion, Complement)
+		applies to (connection, component implementation);
+	
+	Classifier_Substitution_Rule: inherit enumeration (Classifier_Match, Type_Extension, Signature_Match)
+		applies to (classifier, subcomponent);
+	
+	Implemented_As: classifier (system implementation)
+		applies to (memory, bus, virtual bus, device, virtual processor, processor, system);
+	
+	Prototype_Substitution_Rule: inherit enumeration (Classifier_Match, Type_Extension, Signature_Match)
+		applies to (prototype, classifier);
+end Modeling_Properties;

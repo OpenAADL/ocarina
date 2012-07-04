@@ -1,97 +1,67 @@
---******************************************************
---  AADL Standard AADL_V2.0
---   Appendix A (normative)
---   Predeclared Property Sets
---   Memory_Properties
---   07Juin08
---******************************************************
+--AADL2
+--SAE Aerospace Standard AS5506A
+--Proposed Draft (2008-11-08)
+--Appendix A: Predeclared Property Sets
 
 property set Memory_Properties is
-  ----------------------------------------------------
-  ----------------------------------------------------
-  Size: type aadlinteger 0 Bytes .. Max_Memory_Size 
-  units Size_Units;
-  
-  ----------------------------------------------------
-  Byte_Count: aadlinteger 0 .. Max_Word_Count applies to (memory);
-
-  Size_Range: type range of Size;
-  ----------------------------------------------------
-
-  Access_Right : Access_Rights => read_write
-  applies to (Data, Bus);
-  ----------------------------------------------------         
-
-  Access_Rights : type enumeration (read_only, 
-                                    write_only, 
-                                    read_write,
-                                    by_method);
-  ----------------------------------------------------
-          
-  Allowed_Message_Size: Size_Range
-  applies to (bus);
-  ----------------------------------------------------       
-
-  Assign_Time: Time
-  applies to (processor, bus);
-  ---------------------------------------------------- 
-   
-  Assign_Byte_Time: Time
-  applies to (processor, bus);
-  ----------------------------------------------------
-   
-  Assign_Fixed_Time: Time
-  applies to (processor, bus);
-  ----------------------------------------------------
-
-  Base_Address: aadlinteger 0 .. Max_Base_Address
-  applies to (memory, data, port);
-  ----------------------------------------------------
-
-  Bound_On_Data_Blocking_Time : inherit Time
-  applies to (thread, thread group);
-  ----------------------------------------------------
-    
-  Device_Register_Address: aadlinteger
-  applies to (port, feature group);
-  ----------------------------------------------------  
-
-  Read_Time: list of Time_Range
-  applies to (memory);
-  ---------------------------------------------------- 
-  
-  Source_Code_Size: Size
-  applies to (data, thread, thread group, process, 
-              system, subprogram, processor, device);
-  ----------------------------------------------------
-     
-  Source_Data_Size: Size
-  applies to (data, subprogram, thread, thread  group,
-              process, system, processor, device);
-  ----------------------------------------------------
-    
-  Source_Heap_Size: Size
-  applies to (thread, subprogram);
-  ----------------------------------------------------
- 
-  Source_Stack_Size: Size
-  applies to (thread, subprogram, processor, device);
-  ----------------------------------------------------
-   
-  Word_Count: aadlinteger 0 .. Max_Word_Count
-  applies to (memory);
-  ----------------------------------------------------
-
-  Word_Size: Size => 8 bits
-  applies to (memory);
-  ----------------------------------------------------
-        
-  Word_Space: aadlinteger 1 .. Max_Word_Space => 1
-  applies to (memory);
-  ----------------------------------------------------
-
-  Write_Time: list of Time_Range
-  applies to (memory);
-  ----------------------------------------------------
-  ----------------------------------------------------
+	Size: type aadlinteger 0 Bytes .. Max_Memory_Size units Size_Units;
+	
+	Size_Range: type range of Size;
+	
+	Access_Right: Access_Rights => read_write
+		applies to (data, bus, data access, bus access);
+	
+	Access_Rights: type enumeration (read_only, write_only, read_write, by_method);
+	
+	Access_Time: record (
+		First: IO_Time_Spec;
+		Last: IO_Time_Spec;)
+		=> (First => (Time => Start; Offset => 0 ns .. 0 ns;);
+			Last => (Time => Completion; Offset => 0 ns .. 0 ns;);)
+		applies to (data access);
+	
+	Allowed_Message_Size: Size_Range
+		applies to (bus);
+	
+	Assign_Time: record (
+		Fixed: Time_Range;
+		PerByte: Time_Range;)
+		applies to (processor);
+	
+	Base_Address: aadlinteger 0 .. Max_Base_Address
+		applies to (memory, data, data access, port);
+	
+	Device_Register_Address: aadlinteger
+		applies to (port, feature group);
+	
+	Read_Time: record (
+		Fixed: Time_Range;
+		PerByte: Time_Range;)
+		applies to (memory);
+	
+	Source_Code_Size: Size
+		applies to (data, thread, thread group, process, system, subprogram, processor, device);
+	
+	Source_Data_Size: Size
+		applies to (data, subprogram, thread, thread group, process, system, processor, device);
+	
+	Source_Heap_Size: Size
+		applies to (thread, subprogram);
+	
+	Source_Stack_Size: Size
+		applies to (thread, subprogram, processor, device);
+	
+	Byte_Count: aadlinteger 0 .. Max_Byte_Count
+		applies to (memory);
+	
+	Word_Size: Size => 8 bits
+		applies to (memory);
+	
+	Word_Space: aadlinteger 1 .. Max_Word_Space => 1
+		applies to (memory);
+	
+	Write_Time: record (
+		Fixed: Time_Range;
+		PerByte: Time_Range;)
+		applies to (memory);
 end Memory_Properties;

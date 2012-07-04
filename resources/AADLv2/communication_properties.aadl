@@ -1,117 +1,77 @@
---******************************************************
---  AADL Standard AADL_V2.0
---   Appendix A (normative)
---   Predeclared Property Sets
---   Communication_Properties
---   07Juin08
---******************************************************
+--AADL2
+--SAE Aerospace Standard AS5506A
+--Proposed Draft (2008-11-08)
+--Appendix A: Predeclared Property Sets
 
 property set Communication_Properties is
-  ----------------------------------------------------
-  ----------------------------------------------------
+	Fan_Out_Policy: enumeration (Broadcast, RoundRobin, Selective, OnDemand)
+		applies to (port);
 
-  Fan_Out_Policy: enumeration (Broadcast, 
-                               RoundRobin, 
-                               OnDemand)
-  applies to (port);
-  ----------------------------------------------------
-
-  Connection_Pattern: 
-            list of Supported_Connection_Patterns
-  applies to (connection);
-  ----------------------------------------------------
-
-  Connection_Set: list of Connection_Pair
-  applies to (connection);
-  ----------------------------------------------------
-
-  Connection_Pair: 
-  type record ( src: aadlinteger;
-                dst: aadlinteger;);
-
-   ----------------------------------------------------
-   Overflow_Handling_Protocol: enumeration (DropOldest, 
-                                            DropNewest, 
-                                            Error)
-   => DropOldest
-  applies to (event port, 
-              event data port, 
-              subprogram);
-  ----------------------------------------------------
-
-  Queue_Processing_Protocol: 
-       Supported_Queue_Processing_Protocols 
-  => FIFO
-  applies to (event port, 
-              event data port, 
-              subprogram);
-  ----------------------------------------------------
-
-  Queue_Size: aadlinteger 0 .. Max_Queue_Size => 0
-  applies to (event port, 
-              event data port, 
-              subprogram);
-  ----------------------------------------------------
-
-  Transmission_Type: enumeration ( push, pull )
-  applies to (port, 
-              connection, 
-              bus, 
-              virtual bus);
-  ----------------------------------------------------
-
-  Input_Rate: Rate_Spec
-  applies to (port, access);
-  ----------------------------------------------------
-
-  Input_Time: IO_Time_Spec
-  applies to (port, access);
-  ----------------------------------------------------
-
-  IO_Time_Spec : type record (
-              ReferencePoint : IO_Reference_Point_Type;
-              TimeOffset : TimeRange;
-  );
-  ----------------------------------------------------
-
-  IO_Reference_Point_Type : 
-  type enumeration ( DispatchTime, 
-                     StartTime,
-                     CompletionTime, 
-                     DeadlineTime,
-                     NoIO);
-  ----------------------------------------------------
-
-  Output_Rate: Rate_Spec
-  applies to (port, access);
-  ----------------------------------------------------
-
-  Output_Time: IO_Time_Spec
-  applies to (port, access);
-  ----------------------------------------------------
-  -- XXX FIX : TO BE CHANGE BY FEILER
-  -- Rate_Spec : type record (
-  -- Value_Range : aadlreal units (perSecond, perDispatch);
-  -- Rate_Distribution : Supported_Distributions;
-  -- );
-
-  Rate_Spec : type record (rec: aadlinteger;);
-  ----------------------------------------------------
-
-  Transmission_Time: list of Time_Range
-  applies to (bus);
-  ----------------------------------------------------
-
-  Actual_Latency: Time_Range
-  applies to (flow);
-  ----------------------------------------------------
-
-  Expected_Latency: Time_Range
-  applies to (flow);
-  ----------------------------------------------------
-
-  Latency: Time_Range
-  applies to (flow, connection);
-  ----------------------------------------------------
-  ----------------------------------------------------
+-- XXX not supported by Ocarina	
+--	Connection_Pattern: list of list of Supported_Connection_Patterns
+--		applies to (connection);
+	
+--	Connection_Set: list of Connection_Pair
+--		applies to (connection);
+	
+--	Connection_Pair: type record (
+--		src: list of aadlinteger;
+--		dst: list of aadlinteger;);
+	
+	Overflow_Handling_Protocol: enumeration (DropOldest, DropNewest, Error) => DropOldest
+		applies to (event port, event data port, subprogram access);
+	
+	Queue_Processing_Protocol: Supported_Queue_Processing_Protocols => FIFO
+		applies to (event port, event data port, subprogram access);
+	
+	Queue_Size: aadlinteger 0 .. Max_Queue_Size => 1
+		applies to (event port, event data port, subprogram access);
+	
+	Required_Connection: aadlboolean => true
+		applies to (feature);
+	
+	Timing: enumeration (sampled, immediate, delayed) => sampled
+		applies to (port connection);
+	
+	Transmission_Type: enumeration (push, pull)
+		applies to (data port, port connection, bus, virtual bus);
+	
+	Input_Rate: Rate_Spec => (Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed;)
+		applies to (port);
+	
+	Input_Time: list of IO_Time_Spec => ((Time => Dispatch; Offset => 0 ns .. 0 ns;))
+		applies to (port);
+	
+	IO_Time_Spec: type record (
+		Offset: Time_Range;
+		Time: IO_Reference_Time;
+	);
+	
+	IO_Reference_Time: type enumeration (Dispatch, Start, Completion, Deadline, NoIO);
+	
+	Output_Rate: Rate_Spec => (Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed;)
+		applies to (port);
+	
+	Output_Time: list of IO_Time_Spec => ((Time => Completion; Offset => 0 ns .. 0 ns;))
+		applies to (port);
+	
+	Rate_Spec: type record (
+		Value_Range: range of aadlreal;
+		Rate_Unit: enumeration (PerSecond, PerDispatch);
+		Rate_Distribution: Supported_Distributions;
+	);
+	
+	Subprogram_Call_Rate: Rate_Spec => (Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed;)
+		applies to (subprogram access);
+	
+	Transmission_Time: record (
+			Fixed: Time_Range;
+			PerByte: Time_Range;)
+		applies to (bus);
+	
+	Actual_Latency: Time_Range
+		applies to (flow, connection, bus, processor, device, port);
+	
+	Latency: Time_Range
+		applies to (flow, connection, bus, processor, device, port);
 end Communication_Properties;

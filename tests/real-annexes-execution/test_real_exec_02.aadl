@@ -20,7 +20,7 @@ subprogram Hello_Spg_1
 features
   msg_out : out parameter message;
 properties
-  source_language => Ada95;
+  source_language => (Ada95);
   source_name     => "Hello.Hello_Spg_1";
 end Hello_Spg_1;
 
@@ -28,7 +28,7 @@ subprogram Hello_Spg_2
 features
   msg_in : in parameter message;
 properties
-  source_language => Ada95;
+  source_language => (Ada95);
   source_name     => "Hello.Hello_Spg_2";
 end Hello_Spg_2;
 
@@ -116,7 +116,7 @@ processor cpurm
 end cpurm;
 
 processor implementation cpurm.impl
-properties 
+properties
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
 end cpurm.impl;
 
@@ -146,7 +146,7 @@ theorem set_declaration_is_bound_to
 foreach e in Processor_Set do
 
    Proc_Set(e) := {x in Process_Set | Is_Bound_To (x, e)};
-  
+
    check (Cardinal (Proc_Set) = 1);
 
 end set_declaration_is_bound_to;
@@ -248,7 +248,7 @@ theorem set_declaration_is_passing_through
 
 foreach t in Thread_Set do
 
-  accessor_flows := {f in End_To_End_Flows_Set | 
+  accessor_flows := {f in End_To_End_Flows_Set |
                           Is_Passing_Through (f, t)};
 
   check (Cardinal (accessor_flows) = 1);
@@ -277,9 +277,9 @@ theorem set_declaration_Compare_Property_Value
 
 foreach e in Processor_Set do
 
-   Pure_Subprograms := {p in Subprogram_Set | 
-     property_exists (p, "Source_Language") and 
-     (get_property_value (p, "Source_Language") = "Ada95")};
+   Pure_Subprograms := {p in Subprogram_Set |
+     property_exists (p, "Source_Language") and
+     (head (get_property_value (p, "Source_Language")) = "Ada95")};
 
    check (Cardinal (Pure_Subprograms) = 2);
 
@@ -307,10 +307,10 @@ theorem set_declaration_and_operator
 foreach e in Process_Set do
 
   Protected_Data := {x in Data_Set | Property_Exists
-                        (x, "Concurrency_Control_Protocol") 
-                         and 
+                        (x, "Concurrency_Control_Protocol")
+                         and
                            (Get_Property_Value
-                             (x, "Concurrency_Control_Protocol") 
+                             (x, "Concurrency_Control_Protocol")
                               = "Protected_Access")};
 
   check (Cardinal (Protected_Data) = 1);
@@ -322,7 +322,7 @@ theorem set_declaration_or_operator
 
   foreach e in Process_Set do
 
-    a_set := {x in Thread_Set | Is_Subcomponent_Of (x, e) or 
+    a_set := {x in Thread_Set | Is_Subcomponent_Of (x, e) or
                               Is_Accessed_By (x, e)};
 
   check (Cardinal (a_set) = 4);
@@ -347,7 +347,7 @@ end node_a.impl;
 -- System --
 ------------
 
-system rma 
+system rma
 end rma;
 
 system implementation rma.ERC32

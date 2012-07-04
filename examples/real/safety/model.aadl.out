@@ -1,3 +1,9 @@
+model.aadl:85:04: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
+model.aadl:85:04: Warning: The value of source_language has been converted into a list.
+model.aadl:92:04: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
+model.aadl:92:04: Warning: The value of source_language has been converted into a list.
+model.aadl:99:04: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
+model.aadl:99:04: Warning: The value of source_language has been converted into a list.
 pok_safety execution
 requirement : check_error_handling
 -------------------------------------

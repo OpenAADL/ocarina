@@ -1,3 +1,7 @@
+validation.aadl:13:03: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
+validation.aadl:13:03: Warning: The value of source_language has been converted into a list.
+validation.aadl:20:03: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
+validation.aadl:20:03: Warning: The value of source_language has been converted into a list.
 contains_memories execution
 -------------------------------------
 Evaluating theorem contains_memories

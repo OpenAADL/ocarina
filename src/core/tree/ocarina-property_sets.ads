@@ -43,6 +43,7 @@ package Ocarina.Property_Sets is
       S_Thread_Properties,
       S_Communication_Properties,
       S_Memory_Properties,
+      S_Modeling_Properties,
       S_Timing_Properties,
       S_Programming_Properties);
    --  The standard property sets

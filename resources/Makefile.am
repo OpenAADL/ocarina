@@ -21,6 +21,7 @@ AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
 	$(srcdir)/AADLv2/thread_properties.aadl \
 	$(srcdir)/AADLv2/communication_properties.aadl \
 	$(srcdir)/AADLv2/memory_properties.aadl \
+	$(srcdir)/AADLv2/modeling_properties.aadl \
 	$(srcdir)/AADLv2/timing_properties.aadl \
 	$(srcdir)/AADLv2/pok_properties.aadl \
 	$(srcdir)/AADLv2/programming_properties.aadl \

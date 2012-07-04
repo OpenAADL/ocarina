@@ -1,173 +1,109 @@
---******************************************************
---  AADL Standard AADL_V2.0
---   Appendix A (normative)
---   Predeclared Property Sets
---   Timing_Properties
---   07Juin08
---******************************************************
+--AADL2
+--SAE Aerospace Standard AS5506A
+--Proposed Draft (2008-11-08)
+--Appendix A: Predeclared Property Sets
 
 property set Timing_Properties is
-  ----------------------------------------------------
-  ----------------------------------------------------
-
-  Time: type aadlinteger 0 ps .. Max_Time units Time_Units;
-  ----------------------------------------------------
-
-  Time_Range: type range of Time;
-  ---------------------------------------------------- 
-
-  Activate_Deadline: Time
-  applies to (Thread);
-  ----------------------------------------------------
-
-  Activate_Execution_Time: Time_Range
-  applies to (thread);
-  ----------------------------------------------------
-
-  Compute_Deadline: Time
-  applies to (thread, 
-              device, 
-              subprogram, 
-              event port, 
-              event data port);
-  ----------------------------------------------------
-
-  Compute_Execution_Time: Time_Range
-  applies to (thread, 
-              device, 
-              subprogram, 
-              event port, 
-              event data port);
-  ----------------------------------------------------
-
-  Client_Subprogram_Execution_Time: Time_Range
-  applies to (subprogram);
-  ----------------------------------------------------
-
-  Deactivate_Deadline: Time
-  applies to (thread);
-  ----------------------------------------------------
-
-  Deactivate_Execution_Time: Time_Range
-  applies to (thread);
-  ----------------------------------------------------
-
-  Deadline: inherit Time => Period
-  applies to (thread, 
-              thread group,
-              process, 
-              system, 
-              device);
-  ----------------------------------------------------
-
-  Dispatch_Absolute_Time : inherit Time
-  applies to (thread, thread group);
-  ----------------------------------------------------
-
-  Dispatch_Jitter: inherit Time
-  applies to (thread, thread group);
-  ----------------------------------------------------
-
-  Dispatch_Offset: Time
-  applies to (thread);
-  ----------------------------------------------------
-
-  Finalize_Deadline: Time
-  applies to (thread);
-  ----------------------------------------------------
-
-  Finalize_Execution_Time: Time_Range
-  applies to (thread);
-  ----------------------------------------------------
-
-  Initialize_Deadline: Time
-  applies to (thread);
-  ----------------------------------------------------
-
-  Initialize_Execution_Time: Time_Range
-  applies to (thread);
-  ----------------------------------------------------
-
-  Load_Deadline: Time
-  applies to (process, system);
-  ----------------------------------------------------
-
-  Load_Time: Time_Range
-  applies to (process, system);
-  ----------------------------------------------------
-
-  Period: inherit Time
-  applies to (thread, 
-              thread group, 
-              process, 
-              system, 
-              device);
-  ----------------------------------------------------
-
-  Recover_Deadline: Time
-  applies to (thread);
-  ----------------------------------------------------
-
-  Recover_Execution_Time: Time_Range
-  applies to (thread);
-  ----------------------------------------------------
-
-  Startup_Deadline: Time
-  applies to (processor, 
-              virtual processor, 
-              process, 
-              system);
-  ----------------------------------------------------
-
-  Startup_Execution_Time: inherit Time
-  applies to (virtual processor, process);
-  ----------------------------------------------------
-
-  Subprogram_Execution_Time: Time_Range
-  applies to (subprogram);
-  ----------------------------------------------------
-
-  Clock_Jitter: Time
-  applies to (processor, system);
-  ----------------------------------------------------
-
-  Clock_Period: Time
-  applies to (processor, system);
-  ----------------------------------------------------
-
-  Clock_Period_Range: Time_Range
-  applies to (processor, system);
-  ----------------------------------------------------
-
-  Process_Swap_Execution_Time: Time_Range
-  applies to (processor);
-  ----------------------------------------------------
-
-  Reference_Processor: classifier ( processor )
-  applies to (subprogram, 
-              subprogram group, 
-              thread, 
-              thread group, 
-              process,
-              device, 
-              system);
-  ----------------------------------------------------
-
-  Scaling_Factor : inherit aadlreal
-  applies to (processor, system);
-  ----------------------------------------------------
-
-  Scheduler_Quantum : inherit Time
-  applies to (processor);
-  ----------------------------------------------------
-
-  Thread_Swap_Execution_Time: Time_Range
-  applies to (processor, system);
-  ----------------------------------------------------
-
-  Timing: enumeration (sampled, immediate, delayed) 
-  => sampled
-  applies to (port);
-  ----------------------------------------------------
-  ----------------------------------------------------
+	Time: type aadlinteger 0 ps .. Max_Time units Time_Units;
+	
+	Time_Range: type range of Time;
+	
+	Activate_Deadline: Time
+		applies to (thread);
+	
+	Activate_Execution_Time: Time_Range
+		applies to (thread);
+	
+	Compute_Deadline: Time
+		applies to (thread, device, subprogram, subprogram access, event port, event data port);
+	
+	Compute_Execution_Time: Time_Range
+		applies to (thread, device, subprogram, event port, event data port);
+	
+	Client_Subprogram_Execution_Time: Time_Range
+		applies to (subprogram);
+	
+	Deactivate_Dealing: Time
+		applies to (thread);
+	
+	Deactivate_Execution_Time: Time_Range
+		applies to (thread);
+	
+	Deadline: inherit Time => Period
+		applies to (thread, thread group, process, system, device, virtual processor);
+	
+	First_Dispatch_Time: inherit Time
+		applies to (thread, thread group);
+	
+	Dispatch_Jitter: inherit Time
+		applies to (thread, thread group);
+	
+	Dispatch_Offset: inherit Time
+		applies to (thread);
+	
+	Execution_Time: Time
+		applies to (virtual processor);
+	
+	Finalize_Deadline: Time
+		applies to (thread);
+	
+	Finalize_Execution_Time: Time_Range
+		applies to (thread);
+	
+	Initialize_Deadline: Time
+		applies to (thread);
+	
+	Initialize_Execution_Time: Time_Range
+		applies to (thread);
+	
+	Load_Deadline: Time
+		applies to (process, system);
+	
+	Load_Time: Time_Range
+		applies to (process, system);
+	
+	Period: inherit Time
+		applies to (thread, thread group, process, system, device, virtual processor);
+	
+	Recover_Deadline: Time
+		applies to (thread);
+	
+	Recover_Execution_Time: Time_Range
+		applies to (thread);
+	
+	Startup_Deadline: Time
+		applies to (processor, virtual processor, process, system);
+	
+	Startup_Execution_Time: Time_Range
+		applies to (virtual processor, processor, process, system);
+	
+	Clock_Jitter: Time
+		applies to (processor, system);
+	
+	Clock_Period: Time
+		applies to (processor, system);
+	
+	Clock_Period_Range: Time_Range
+		applies to (processor, system);
+	
+	Process_Swap_Execution_Time: Time_Range
+		applies to (processor);
+	
+	Reference_Processor: inherit classifier (processor)
+		applies to (subprogram, subprogram group, thread, thread group, process, device, system);
+	
+	Scaling_Factor: inherit aadlreal
+		applies to (processor, system);
+	
+	Scheduler_Quantum: inherit Time
+		applies to (processor);
+	
+	Thread_Swap_Execution_Time: Time_Range
+		applies to (processor, system);
+	
+	Frame_Period: Time
+		applies to (processor, virtual processor);
+	
+	Slot_Time: Time
+		applies to (processor, virtual processor);
 end Timing_Properties;

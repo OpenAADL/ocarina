@@ -2,7 +2,6 @@
 -- used as part of the ASSERT process.
 
 package ASSERT_Types
-
 public
 
   with Data_Model;

@@ -1,3 +1,7 @@
+test_real_exec_05.aadl:10:03: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
+test_real_exec_05.aadl:10:03: Warning: The value of source_language has been converted into a list.
+test_real_exec_05.aadl:16:03: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
+test_real_exec_05.aadl:16:03: Warning: The value of source_language has been converted into a list.
 variables_basis execution
 -------------------------------------
 Evaluating theorem variables_basis
