@@ -958,9 +958,9 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             Display_Located_Error
               (Loc (Parent_Subcomponent (E)),
                "Incompatible scheduling protocol, "
-                 & "PolyORB-HI/Ada requires "
+                 & "PolyORB-HI/Ada runtime assume "
                  & "POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL",
-               Fatal => True);
+               Fatal => False);
          end if;
 
          --  Visit all the subcomponents of the process
