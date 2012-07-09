@@ -6,60 +6,61 @@
 property set Thread_Properties is
 	Dispatch_Protocol: Supported_Dispatch_Protocols
 		applies to (thread, device, virtual processor);
-	
+
 	Dispatch_Trigger: list of reference (port)
 		applies to (device, thread);
-		
+
 	Dispatch_Able: aadlboolean applies to (thread);
-	
+
 	POSIX_Scheduling_Policy: enumeration (SCHED_FIFO, SCHED_RR, SCHED_OTHERS)
 		applies to (thread, thread group);
-	
+
 	Priority: inherit aadlinteger
-		applies to (thread, thread group, process, system, device);
-	
+		applies to (thread, thread group, process, system, device, data);
+--  XXX Added data
+
 	Criticality: aadlinteger
 		applies to (thread, thread group);
-	
+
 	Time_Slot: list of aadlinteger
 		applies to (thread, thread group, process, virtual processor, system);
-	
+
 	Concurrency_Control_Protocol: Supported_Concurrency_Control_Protocols
 		applies to (data);
-	
+
 	Urgency: aadlinteger 0 .. Max_Urgency
 		applies to (port, subprogram);
-	
+
 	Dequeue_Protocol: enumeration (OneItem, MultipleItems, AllItems) => OneItem
 		applies to (event port, event data port);
-	
+
 	Dequeued_Items: aadlinteger
 		applies to (event port, event data port);
-	
+
 	Mode_Transition_Response: enumeration (emergency, planned)
 		applies to (mode transition);
-	
+
 	Resumption_Policy: enumeration (restart, resume)
 		applies to (thread, thread group, process, system, device, processor, memory, bus, system, virtual bus, virtual processor, subprogram);
-	
+
 	Active_Thread_Handling_Protocol:
 		inherit Supported_Active_Thread_Handling_Protocols => abort
 		applies to (thread, thread group, process, system);
-	
+
 	Active_Thread_Queue_Handling_Protocol:
 		inherit enumeration (flush, hold) => flush
 		applies to (thread, thread group, process, system);
-	
+
 	Deactivation_Policy: enumeration (inactive, unload) => inactive
 		applies to (thread, process, virtual processor, processor);
-	
+
 	Runtime_Protection: inherit aadlboolean
 		applies to (process, system, virtual processor);
-	
+
 	Subprogram_Call_Type: enumeration (Synchronous, SemiSynchronous)
 		=> Synchronous
 		applies to (subprogram);
-	
+
 	Synchronized_Component: inherit aadlboolean => true
 		applies to (thread, thread group, process, system);
 end Thread_Properties;
