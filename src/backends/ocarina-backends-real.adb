@@ -526,7 +526,7 @@ package body Ocarina.Backends.REAL is
          if not Check_Requirements (RNU.REAL_Root) then
             Display_Located_Error
               (Loc (RNU.REAL_Root), "requirements are not fulfilled",
-               Fatal => True);
+               Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
          end if;
 
          --  Library theorems are already analyzed, so we proceed
@@ -686,7 +686,7 @@ package body Ocarina.Backends.REAL is
       if not Check_Requirements (RNU.REAL_Root) then
          Display_Located_Error
            (Loc (RNU.REAL_Root), "requirements are not fulfilled",
-            Fatal => True);
+            Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
       end if;
 
       Initialize_Sets_Table (RNU.REAL_Root);
@@ -850,7 +850,6 @@ package body Ocarina.Backends.REAL is
       Compute_Check_Expression (D, Ret, Result);
 
       if Ret = RT_Error then
-         Display_Located_Error (Loc (D), "o<", Fatal => False);
          return False;
 
       elsif Ret = RT_Boolean then
@@ -3083,8 +3082,16 @@ package body Ocarina.Backends.REAL is
 
          if not Check_Requirements (RNU.REAL_Root) then
             Display_Located_Error
-              (Loc (RNU.REAL_Root), "requirements are not fulfilled",
-               Fatal => True);
+              (Loc (RNU.REAL_Root),
+               "requirements are not fulfilled for theorem "
+                 & Get_Name_String (RN.Name (RN.Identifier (RNU.REAL_Root))),
+               Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
+            Write_Line ("");
+            Write_Line
+              ("theorem "
+                 & Get_Name_String (RN.Name (RN.Identifier (RNU.REAL_Root)))
+                 & " is: FALSE");
+
          else
             Initialize_Sets_Table (RNU.REAL_Root);
             Apply_To_All_Elements (RNU.REAL_Root);

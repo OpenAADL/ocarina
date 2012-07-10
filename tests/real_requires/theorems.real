@@ -1,0 +1,4 @@
+theorem required_theorem
+foreach s in system_set do
+	check(1=0);
+end required_theorem;

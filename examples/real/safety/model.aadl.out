@@ -23,4 +23,4 @@ libsafety.real:32:46 Backends: error : Property is false for instance 69 (node.i
 
 theorem check_error_handling is: FALSE
 
-model.aadl:118:07 Backends: fatal error : requirements are not fulfilled
+model.aadl:118:07 Backends: fatal error : requirements are not fulfilled for theorem pok_safety

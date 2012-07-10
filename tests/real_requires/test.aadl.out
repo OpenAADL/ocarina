@@ -1,0 +1,25 @@
+test_theorem execution
+requirement : required_theorem
+-------------------------------------
+Evaluating theorem required_theorem
+
+ * Iterate for variable: a.impl
+theorems.real:3:09 Backends: error : Property is false for instance 6 (a.impl)
+ => Result: FALSE
+
+theorem required_theorem is: FALSE
+
+test.aadl:9:02 Backends: error : requirements are not fulfilled for theorem test_theorem
+
+theorem test_theorem is: FALSE
+
+test_theorem2 execution
+-------------------------------------
+Evaluating theorem test_theorem2
+
+ * Iterate for variable: a.impl
+ => Result: TRUE
+
+theorem test_theorem2 is: TRUE
+
+
