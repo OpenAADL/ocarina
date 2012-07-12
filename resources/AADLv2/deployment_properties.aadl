@@ -26,7 +26,7 @@ property set Deployment_Properties is
 	
 	Allowed_Connection_Binding_Class:
 		inherit list of classifier (processor, virtual processor, bus, virtual bus, device, memory)
-		applies to (feature, connection, thread, thread group, process, system, virtual bus);
+		applies to (feature, connection, thread, thread group, process, system, virtual bus, port); -- XXX added port
 	
 	Allowed_Connection_Binding: inherit list of reference (processor, virtual processor, bus, virtual bus, device, memory)
 		applies to (feature, connection, thread, thread group, process, system, virtual bus);

@@ -19,6 +19,7 @@ property set AADL_Project is
   Protected_Access,
   Priority_Inheritance,
   Priority_Ceiling,
+  Priority_Ceiling_Protocol, -- XXX
   Spin_Lock,
   Semaphore);
 
