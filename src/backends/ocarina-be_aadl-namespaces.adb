@@ -37,9 +37,10 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.Property_Sets;
+with Ocarina.BE_AADL.Annexes;
 with Ocarina.BE_AADL.Components;
-with Ocarina.BE_AADL.Properties;
 with Ocarina.BE_AADL.Identifiers;
+with Ocarina.BE_AADL.Properties;
 
 package body Ocarina.BE_AADL.Namespaces is
 
@@ -48,6 +49,7 @@ package body Ocarina.BE_AADL.Namespaces is
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.Property_Sets;
+   use Ocarina.BE_AADL.Annexes;
    use Ocarina.BE_AADL.Components;
    use Ocarina.BE_AADL.Properties;
    use Ocarina.BE_AADL.Identifiers;
@@ -279,6 +281,22 @@ package body Ocarina.BE_AADL.Namespaces is
                List_Node := Next_Node (List_Node);
             end loop;
          end if;
+      end if;
+
+      --  Annex subclauses
+
+      if not Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Annexes (Node)) then
+         Increment_Indentation;
+         List_Node := First_Node
+           (Ocarina.ME_AADL.AADL_Tree.Nodes.Annexes (Node));
+
+         while Present (List_Node) loop
+            Print_Annex_Subclause (List_Node);
+            List_Node := Next_Node (List_Node);
+         end loop;
+
+         Decrement_Indentation;
+         Write_Eol;
       end if;
 
       --  private part

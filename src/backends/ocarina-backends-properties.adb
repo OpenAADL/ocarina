@@ -180,7 +180,7 @@ package body Ocarina.Backends.Properties is
    -- Memory component properties --
    ---------------------------------
 
-   Word_Count              : Name_Id;
+   Byte_Count              : Name_Id;
    Word_Size               : Name_Id;
 
    ------------------------------------
@@ -2907,19 +2907,19 @@ package body Ocarina.Backends.Properties is
    end Get_Protocol;
 
    --------------------
-   -- Get_Word_Count --
+   -- Get_Byte_Count --
    --------------------
 
-   function Get_Word_Count (S : Node_Id) return Unsigned_Long_Long is
+   function Get_Byte_Count (S : Node_Id) return Unsigned_Long_Long is
    begin
       pragma Assert (Is_Memory (S));
 
-      if Is_Defined_Integer_Property (S, Word_Count) then
-         return Get_Integer_Property (S, Word_Count);
+      if Is_Defined_Integer_Property (S, Byte_Count) then
+         return Get_Integer_Property (S, Byte_Count);
       else
          return 0;
       end if;
-   end Get_Word_Count;
+   end Get_Byte_Count;
 
    -------------------
    -- Get_Word_Size --
@@ -3114,7 +3114,7 @@ package body Ocarina.Backends.Properties is
       Function_Binding        :=
          Get_String_Name ("aram_properties::actual_function_binding");
       Memory_Binding          := Get_String_Name ("actual_memory_binding");
-      Word_Count              := Get_String_Name ("word_count");
+      Byte_Count              := Get_String_Name ("byte_count");
       Word_Size               := Get_String_Name ("word_size");
       Process_Channel_Address := Get_String_Name
         ("deployment::channel_address");

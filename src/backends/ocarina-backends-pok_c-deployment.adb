@@ -1254,18 +1254,18 @@ package body Ocarina.Backends.POK_C.Deployment is
 
          if Bound_Memory_Component /= No_Node then
             declare
-               Word_Count : Unsigned_Long_Long := 1;
+               Byte_Count : Unsigned_Long_Long := 1;
                Word_Size  : Unsigned_Long_Long := 1;
             begin
-               if Get_Word_Count (Bound_Memory_Component) /= 0 then
-                  Word_Count := Get_Word_Count (Bound_Memory_Component);
+               if Get_Byte_Count (Bound_Memory_Component) /= 0 then
+                  Byte_Count := Get_Byte_Count (Bound_Memory_Component);
                end if;
 
                if Get_Word_Size (Bound_Memory_Component) /= Null_Size then
                   Word_Size := To_Bytes
                      (Get_Word_Size (Bound_Memory_Component));
                end if;
-               Bound_Memory_Size := Word_Count * Word_Size;
+               Bound_Memory_Size := Byte_Count * Word_Size;
 
                --  byte_count override other properties.
                if Is_Defined_Property

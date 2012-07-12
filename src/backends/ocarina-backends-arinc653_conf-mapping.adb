@@ -747,11 +747,11 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
       if Get_Bound_Memory (Process) /= No_Node then
          Memory := Get_Bound_Memory (Process);
          declare
-            Word_Count : Unsigned_Long_Long := 1;
+            Byte_Count : Unsigned_Long_Long := 1;
             Word_Size : Unsigned_Long_Long := 1;
          begin
-            if Get_Word_Count (Get_Bound_Memory (Process)) /= 0 then
-               Word_Count := Get_Word_Count (Get_Bound_Memory (Process));
+            if Get_Byte_Count (Get_Bound_Memory (Process)) /= 0 then
+               Byte_Count := Get_Byte_Count (Get_Bound_Memory (Process));
             end if;
 
             if Get_Word_Size (Get_Bound_Memory (Process)) /= Null_Size then
@@ -763,7 +763,7 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
             Set_Str_To_Name_Buffer ("SizeBytes");
             P := Make_Defining_Identifier (Name_Find);
             Q := Make_Literal (XV.New_Numeric_Value
-               (Word_Count * Word_Size, 1, 10));
+               (Byte_Count * Word_Size, 1, 10));
             Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (M));
 
             if Get_ARINC653_Memory_Kind (Memory) = Data then

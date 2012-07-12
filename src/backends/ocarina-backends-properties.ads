@@ -553,8 +553,8 @@ package Ocarina.Backends.Properties is
    function Get_Channel_Address (P : Node_Id) return Value_Id;
    --  Return the address of the SpaceWire channel of the process P
 
-   function Get_Word_Count (S : Node_Id) return Unsigned_Long_Long;
-   --  Get the Word_Count property of a memory component. Return 0
+   function Get_Byte_Count (S : Node_Id) return Unsigned_Long_Long;
+   --  Get the Byte_Count property of a memory component. Return 0
    --  if the component is not set.
 
    function Get_Word_Size (S : Node_Id) return Size_Type;
