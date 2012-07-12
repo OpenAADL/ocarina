@@ -202,6 +202,8 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
 
     Node_Id  Package_Name;
     Node_Id  Parent;
+    List_Id  Annexes;
+
   };
 
   // AADL_V2

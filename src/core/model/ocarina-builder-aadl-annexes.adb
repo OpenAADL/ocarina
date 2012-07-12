@@ -68,14 +68,15 @@ package body Ocarina.Builder.AADL.Annexes is
       pragma Assert (Annex_Name /= No_Node
                      and then Kind (Annex_Name) = K_Identifier);
       pragma Assert (Namespace /= No_Node);
-      pragma Assert ((Annex_Kind = K_Annex_Subclause
-                      and then (Kind (Namespace) = K_Component_Implementation
-                                or else Kind (Namespace) = K_Component_Type
-                                or else Kind (Namespace) =
-                                                        K_Feature_Group_Type))
-          or else (Annex_Kind = K_Annex_Library
+      pragma Assert
+        ((Annex_Kind = K_Annex_Subclause
+            and then (Kind (Namespace) = K_Component_Implementation
+                      or else Kind (Namespace) = K_Package_Specification
+                      or else Kind (Namespace) = K_Component_Type
+                      or else Kind (Namespace) = K_Feature_Group_Type))
+         or else (Annex_Kind = K_Annex_Library
                   and then (Kind (Namespace) = K_Package_Specification
-                           or else Kind (Namespace) = K_AADL_Specification)));
+                            or else Kind (Namespace) = K_AADL_Specification)));
 
       Node : constant Node_Id := New_Node (Annex_Kind, Loc);
       Success : Boolean := True;
@@ -83,18 +84,17 @@ package body Ocarina.Builder.AADL.Annexes is
       Set_Identifier (Node, Annex_Name);
       Set_Corresponding_Entity (Annex_Name, Node);
       Set_Annex_Content (Node, No_Node);
-      Set_In_Modes (Node, In_Modes);
 
-      if Kind (Namespace) = K_AADL_Specification
-        or else Kind (Namespace) = K_Package_Specification
-      then
+      if Kind (Namespace) = K_AADL_Specification then
          Set_Container_Package (Node, Namespace);
          Success := Add_Declaration (Namespace, Node);
 
       elsif Kind (Namespace) = K_Component_Type
+        or else Kind (Namespace) = K_Package_Specification
         or else Kind (Namespace) = K_Component_Implementation
         or else Kind (Namespace) = K_Feature_Group_Type
       then
+         Set_In_Modes (Node, In_Modes);
          Set_Container_Component (Node, Namespace);
          Success := Add_Annex (Namespace, Node);
       end if;

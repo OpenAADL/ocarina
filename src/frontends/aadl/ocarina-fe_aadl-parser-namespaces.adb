@@ -391,8 +391,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
                end if;
 
             when T_Annex =>
-               Declaration := P_Annex_Library
-                 (Package_Spec, Private_Declaration => Private_Declarations);
+               Declaration := P_Annex_Subclause (Package_Spec);
 
             when others =>
                Restore_Lexer (Loc);
@@ -400,7 +399,9 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          end case;
 
          if Present (Declaration) then
-            Set_Is_Private (Declaration, Private_Declarations);
+            if Kind (Declaration) /= K_Annex_Subclause then
+               Set_Is_Private (Declaration, Private_Declarations);
+            end if;
             Nb_Items := Nb_Items + 1;
 
          else

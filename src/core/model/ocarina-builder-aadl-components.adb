@@ -51,6 +51,7 @@ package body Ocarina.Builder.AADL.Components is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       pragma Assert (Kind (Component) = K_Component_Implementation
+                     or else Kind (Component) = K_Package_Specification
                      or else Kind (Component) = K_Component_Type
                      or else Kind (Component) = K_Feature_Group_Type);
       pragma Assert (Present (Annex));
