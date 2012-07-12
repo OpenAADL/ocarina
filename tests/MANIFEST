@@ -253,6 +253,7 @@ tests/real_units/validation.aadl
 tests/real_requires/test.aadl
 tests/ticket_46/test.aadl
 tests/ticket_48/test.aadl
+tests/package_annex/test.aadl
 
 # Pre-declared property sets AADL_v1
 resources/AADLv1

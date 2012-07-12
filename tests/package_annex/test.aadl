@@ -1,0 +1,17 @@
+package Test
+public
+
+system A
+end A;
+
+system implementation A.impl
+end A.impl;
+
+annex real_specification {**
+	theorem test_theorem
+	foreach s in system_set do
+		check(1=1);
+	end test_theorem;
+**};
+
+end Test;

@@ -8265,10 +8265,10 @@ Declarations List_Id 7
  Default_Instance Node_Id 0
  Properties List_Id 0
  Parent Node_Id 0
+ Annexes List_Id 0
  Category Byte 13
  Features List_Id 0
  Flows List_Id 0
- Annexes List_Id 0
  Instances List_Id 0
  Modes List_Id 0
  Prototypes List_Id 0
@@ -8288,9 +8288,9 @@ Declarations List_Id 7
  Default_Instance Node_Id 0
  Properties List_Id 0
  Parent Node_Id 0
+ Annexes List_Id 0
  Category Byte 13
  Flows List_Id 0
- Annexes List_Id 0
  Instances List_Id 0
  Modes List_Id 0
  Prototypes List_Id 0
