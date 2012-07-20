@@ -312,6 +312,11 @@ package body Ocarina.Backends.REAL is
       Write_Line ("Evaluating theorem "
                     & Get_Name_String (Name (Identifier (R))));
       Write_Line ("");
+
+      if Cardinal (Range_Set) = 0 then
+         Write_Line ("Warning: evaluating theorem on an empty set");
+      end if;
+
       for J in 1 .. Cardinal (Range_Set) loop
          Current_Range_Variable := Get (Range_Set, J);
          begin
