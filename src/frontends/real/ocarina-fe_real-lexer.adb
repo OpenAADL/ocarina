@@ -593,8 +593,9 @@ package body Ocarina.FE_REAL.Lexer is
          Skip_Spaces;
          Token_Location.Last_Pos := Token_Location.Scan;
 
-         if Token_Location.Scan >= Token_Location.EOF or else
-           Token = T_EOF then
+         if Token_Location.Scan > Token_Location.EOF
+           or else Token = T_EOF
+         then
             Token := T_EOF;
             return;
          end if;
