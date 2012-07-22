@@ -1,0 +1,16 @@
+package BugTest
+public
+system A
+end A;
+
+system implementation A.impl
+annex real_specification {**
+    theorem test
+    foreach s in system_set do
+        requires (sub1);
+        check (1 = 1);
+    end test;
+**};
+end A.impl;
+
+end BugTest;

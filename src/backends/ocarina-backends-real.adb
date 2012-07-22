@@ -532,13 +532,14 @@ package body Ocarina.Backends.REAL is
             Display_Located_Error
               (Loc (RNU.REAL_Root), "requirements are not fulfilled",
                Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
+            Success := False;
          end if;
 
          --  Library theorems are already analyzed, so we proceed
          --  directly to execution
 
          Initialize_Sets_Table (RNU.REAL_Root);
-         Success := Apply_To_All_Elements (RNU.REAL_Root);
+         Success := Apply_To_All_Elements (RNU.REAL_Root) and then Success;
 
          Clean_Runtime;
          exit when (not Success)
@@ -685,6 +686,7 @@ package body Ocarina.Backends.REAL is
       --  3/ Initialize the runtime space with new values
       --  Library theorems are already analyzed
       --  so we proceed directly to execution
+
       Clean_Runtime;
       REAL_Root := Related_Theorem (E);
 
@@ -696,7 +698,7 @@ package body Ocarina.Backends.REAL is
 
       Initialize_Sets_Table (RNU.REAL_Root);
 
-      --  4/ Launch the extern theorem
+      --  4/ Launch the external theorem
 
       Compute_Value (RNU.REAL_Root, Success, R);
       if not Success then
