@@ -34,6 +34,7 @@ property set AADL_Project is
   Supported_Scheduling_Protocols: type enumeration -- Updated for Cheddar
   (SporadicServer, RMS, FixedTimeline,
   PARAMETRIC_PROTOCOL,
+  EDF,
   EARLIEST_DEADLINE_FIRST_PROTOCOL,
   LEAST_LAXITY_FIRST_PROTOCOL,
   RATE_MONOTONIC_PROTOCOL,
