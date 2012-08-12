@@ -564,6 +564,7 @@ package body Ocarina.AADL_Values is
                      Result.RSign := Safe_XOR (L.RSign, R.ISign);
                      Result.RExp := 0;
                      Result.RVal := L.RVal * Long_Long_Float (R.IVal);
+                     Result.RBase := 10;
                      return Result;
                   end;
 
@@ -574,6 +575,7 @@ package body Ocarina.AADL_Values is
                      Result.RSign := Safe_XOR (L.RSign, R.RSign);
                      Result.RExp := 0;
                      Result.RVal := L.RVal * R.RVal;
+                     Result.RBase := 10;
                      return Result;
                   end;
 
