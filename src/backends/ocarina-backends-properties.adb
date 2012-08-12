@@ -1,4 +1,3 @@
-with Ada.Text_IO; use Ada.Text_IO;
 ------------------------------------------------------------------------------
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
@@ -159,8 +158,10 @@ package body Ocarina.Backends.Properties is
 
    Scheduling_Protocol                                   : Name_Id;
    PARAMETRIC_PROTOCOL_Name                              : Name_Id;
+   EDF_Name                                              : Name_Id;
    EARLIEST_DEADLINE_FIRST_PROTOCOL_Name                 : Name_Id;
    LEAST_LAXITY_FIRST_PROTOCOL_Name                      : Name_Id;
+   RMS_Name                                              : Name_Id;
    RATE_MONOTONIC_PROTOCOL_Name                          : Name_Id;
    DEADLINE_MONOTONIC_PROTOCOL_Name                      : Name_Id;
    ROUND_ROBIN_PROTOCOL_Name                             : Name_Id;
@@ -2944,7 +2945,6 @@ package body Ocarina.Backends.Properties is
       Scheduling_N : Name_Id;
 
    begin
-      Put_Line (AIN.Kind (P)'Img);
       if AADL_Version = AADL_V1
         and then Is_Defined_Enumeration_Property (P, Scheduling_Protocol)
       then
@@ -2970,13 +2970,17 @@ package body Ocarina.Backends.Properties is
       if Scheduling_N = PARAMETRIC_PROTOCOL_Name then
          return PARAMETRIC_PROTOCOL;
 
-      elsif Scheduling_N = EARLIEST_DEADLINE_FIRST_PROTOCOL_Name then
+      elsif Scheduling_N = EARLIEST_DEADLINE_FIRST_PROTOCOL_Name
+        or else Scheduling_N = EDF_Name
+      then
          return EARLIEST_DEADLINE_FIRST_PROTOCOL;
 
       elsif Scheduling_N = LEAST_LAXITY_FIRST_PROTOCOL_Name then
          return LEAST_LAXITY_FIRST_PROTOCOL;
 
-      elsif Scheduling_N = RATE_MONOTONIC_PROTOCOL_Name then
+      elsif Scheduling_N = RATE_MONOTONIC_PROTOCOL_Name
+        or else Scheduling_N = RMS_Name
+      then
          return RATE_MONOTONIC_PROTOCOL;
 
       elsif Scheduling_N = DEADLINE_MONOTONIC_PROTOCOL_Name then
@@ -3147,7 +3151,7 @@ package body Ocarina.Backends.Properties is
       Access_Read_Write_Name := Get_String_Name ("read_write");
       Access_By_Method_Name  := Get_String_Name ("by_method");
 
-      Concurrency_NoneSpecified_Name    := Get_String_Name ("nonespecified");
+      Concurrency_NoneSpecified_Name    := Get_String_Name ("none_specified");
       Concurrency_Read_Only_Name        := Get_String_Name ("read_only");
       Concurrency_Protected_Access_Name := Get_String_Name
         ("protected_access");
@@ -3254,10 +3258,12 @@ package body Ocarina.Backends.Properties is
         := Get_String_Name ("scheduling_protocol");
       PARAMETRIC_PROTOCOL_Name
         := Get_String_Name ("parametric_protocol");
+      EDF_NAME := Get_String_Name ("edf");
       earliest_DEADLINE_FIRST_PROTOCOL_Name
         := Get_String_Name ("earliest_deadline_first_protocol");
       LEAST_LAXITY_FIRST_PROTOCOL_Name
         := Get_String_Name ("least_laxity_first_protocol");
+      RMS_Name := Get_String_Name ("rms");
       RATE_MONOTONIC_PROTOCOL_Name
         := Get_String_Name ("rate_monotonic_protocol");
       DEADLINE_MONOTONIC_PROTOCOL_Name
