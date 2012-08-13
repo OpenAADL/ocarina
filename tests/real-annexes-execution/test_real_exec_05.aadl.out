@@ -59,10 +59,11 @@ Content of set proc_set (test_real_exec_05.aadl:139:18) is
 Content of set threads (test_real_exec_05.aadl:141:14) is 
   rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
   rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
-     -> value for y is 6.0
- => Result: TRUE
+     -> value for y is 6000000000.0
+test_real_exec_05.aadl:147:12 Backends: error : Property is false for instance 84 (rma.erc32_cpu_rm)
+ => Result: FALSE
 
-theorem variables_iterative_expressions is: TRUE
+theorem variables_iterative_expressions is: FALSE
 
 
 variables_imbricated_iterative_expressions execution
@@ -75,10 +76,11 @@ Content of set proc_set (test_real_exec_05.aadl:156:18) is
 Content of set threads (test_real_exec_05.aadl:158:14) is 
   rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
   rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
-     -> value for y is 4000000003.0
- => Result: TRUE
+     -> value for y is 7000000000.0
+test_real_exec_05.aadl:170:12 Backends: error : Property is false for instance 84 (rma.erc32_cpu_rm)
+ => Result: FALSE
 
-theorem variables_imbricated_iterative_expressions is: TRUE
+theorem variables_imbricated_iterative_expressions is: FALSE
 
 
 variables_product_expression execution

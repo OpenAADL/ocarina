@@ -184,12 +184,40 @@ package body Ocarina.Instances.REAL_Finder is
                declare
                   L, R   : Value_Id;
                   LT, RT : RV.Value_Type;
+                  Base_Value : Node_Id;
                begin
-                  L := AADL_Value (ATN.Value (ATN.Number_Value
-                                              (ATN.Lower_Bound (N))));
+                  if Present (ATN.Unit_Identifier (ATN.Lower_Bound (N)))
+                    and then Present
+                    (ATN.Corresponding_Entity
+                       (ATN.Unit_Identifier (ATN.Lower_Bound (N))))
+                  then
+                     Base_Value :=
+                       Convert_To_Base
+                       (ATN.Number_Value (ATN.Lower_Bound (N)),
+                        ATN.Corresponding_Entity
+                          (ATN.Unit_Identifier (ATN.Lower_Bound (N))));
+                     L := AADL_Value (ATN.Value (Base_Value));
+                  else
+                     L := AADL_Value (ATN.Value (ATN.Number_Value
+                                                   (ATN.Lower_Bound (N))));
+                  end if;
                   LT := Get_Value_Type (L);
-                  R := AADL_Value (ATN.Value (ATN.Number_Value
-                                              (ATN.Upper_Bound (N))));
+
+                  if Present (ATN.Unit_Identifier (ATN.Upper_Bound (N)))
+                    and then Present
+                    (ATN.Corresponding_Entity
+                       (ATN.Unit_Identifier (ATN.Upper_Bound (N))))
+                  then
+                     Base_Value :=
+                       Convert_To_Base
+                       (ATN.Number_Value (ATN.Upper_Bound (N)),
+                        ATN.Corresponding_Entity
+                          (ATN.Unit_Identifier (ATN.Upper_Bound (N))));
+                     R := AADL_Value (ATN.Value (Base_Value));
+                  else
+                     R := AADL_Value (ATN.Value (ATN.Number_Value
+                                                   (ATN.Upper_Bound (N))));
+                  end if;
                   RT := Get_Value_Type (R);
 
                   if LT.T = LT_Integer then
