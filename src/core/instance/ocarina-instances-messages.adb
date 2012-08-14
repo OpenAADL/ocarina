@@ -73,13 +73,19 @@ package body Ocarina.Instances.Messages is
    -- Display_Instantiation_Error --
    ---------------------------------
 
-   procedure Display_Instantiation_Error (Node : Node_Id) is
-   begin
+   procedure Display_Instantiation_Error
+     (Node : Node_Id; Fatal : Boolean := True)
+   is
       pragma Assert (Present (Node));
+   begin
       Error_Loc (1) := Loc (Node);
       Error_Name (1) := Get_Name_Of_Entity (Node);
-      DE ("%cannot be properly instantiated");
-      Exit_On_Error (True, "Cannot instantiate full model, exit now");
+      if Fatal then
+         DE ("%cannot be properly instantiated");
+      else
+         DW ("%cannot be properly instantiated");
+      end if;
+      Exit_On_Error (Fatal, "Cannot instantiate full model, exit now");
    end Display_Instantiation_Error;
 
 end Ocarina.Instances.Messages;

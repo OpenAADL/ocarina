@@ -268,8 +268,6 @@ package body Ocarina.Instances.Components.Features is
 
                if Present (New_Subinstance) then
                   Set_Corresponding_Instance (New_Instance, New_Subinstance);
-               else
-                  Success := False;
                end if;
             end if;
 
@@ -312,6 +310,7 @@ package body Ocarina.Instances.Components.Features is
          --  Abort the instantiation of the corresponding entity if there
          --  is no such corresponding entity.
 
+         Display_Instantiation_Error (Feature, Fatal => False);
          return No_Node;
       else
          C := ATE.Get_Referenced_Entity (Entity_Ref (Feature));

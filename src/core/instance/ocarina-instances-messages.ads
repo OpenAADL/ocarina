@@ -35,6 +35,7 @@ package Ocarina.Instances.Messages is
 
    procedure Display_No_Entity_Ref (Node : Node_Id);
    procedure Display_Entity_Is_A_Component_Type (Node : Node_Id);
-   procedure Display_Instantiation_Error (Node : Node_Id);
+   procedure Display_Instantiation_Error
+     (Node : Node_Id; Fatal : Boolean := True);
 
 end Ocarina.Instances.Messages;
