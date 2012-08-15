@@ -90,6 +90,10 @@ package body Ocarina.Backends.MAST.Main is
 
    Root_System_Node                 : Node_Id := No_Node;
 
+   ------------------------
+   -- Map_Scheduler_Name --
+   ------------------------
+
    function Map_Scheduler_Name (The_Processor : Node_Id) return Name_Id is
       N : Name_Id;
    begin
@@ -566,12 +570,14 @@ package body Ocarina.Backends.MAST.Main is
       Port_Shared_Resource_Op_List  : List_Id;
    begin
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name (Name (Identifier (E))));
+      Get_Name_String (Normalize_Name
+                         (Name (Identifier (Parent_Subcomponent (E)))));
       Add_Str_To_Name_Buffer ("_operations");
       Operation_Name := Name_Find;
 
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name (Name (Identifier (E))));
+      Get_Name_String (Normalize_Name
+                         (Name (Identifier (Parent_Subcomponent (E)))));
       Add_Str_To_Name_Buffer ("_sched_server");
       Server_Sched_Name := Name_Find;
 
@@ -597,11 +603,13 @@ package body Ocarina.Backends.MAST.Main is
       Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
       N := Make_Transaction
-         (Normalize_Name (Name (Identifier (E))), Regular);
+        (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
+         Regular);
       Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name (Name (Identifier (E))));
+      Get_Name_String (Normalize_Name
+                         (Name (Identifier (Parent_Subcomponent (E)))));
       Add_Str_To_Name_Buffer ("_activation_event");
       Activation_Event_Name := Name_Find;
 
@@ -648,7 +656,8 @@ package body Ocarina.Backends.MAST.Main is
          (Activation_Event, MTN.External_Events (N));
 
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name (Name (Identifier (E))));
+      Get_Name_String (Normalize_Name
+                         (Name (Identifier (Parent_Subcomponent (E)))));
       Add_Str_To_Name_Buffer ("_output_event");
       Output_Event_Name := Name_Find;
 
