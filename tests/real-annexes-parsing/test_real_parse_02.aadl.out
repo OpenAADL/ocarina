@@ -9,6 +9,7 @@ test_real_parse_02.aadl:17:03: Warning: The value of source_language has been co
 
 
 
+
 property set Deployment is
   Allowed_Transport_APIs : type enumeration (BSD_Sockets, SpaceWire);
 
