@@ -1743,7 +1743,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
                   if AINU.Is_Thread (Caller)
                     or else AIN.Parent_Component (Destination_F) /= Caller
                   then
-                     --  Here, we map the variable name from the
+                     --  (1) Here, we map the variable name from the
                      --  subprogram *call* name and the feature
                      --  name. This avoids name clashing when a thread
                      --  calls twice the same subprogram.
@@ -1800,7 +1800,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
                      --  (3) If the calleD parameter is connected to
                      --      the calleR parameter and then then calleR
                      --      is NOT hybrid, then we use simply the
-                     --      corresponding paremeter of the calleR.
+                     --      corresponding parameter of the calleR.
 
                      Param_Value := Make_Defining_Identifier
                        (To_C_Name
@@ -1897,9 +1897,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
                      --      formerly declared variable.
 
                      Param_Value := Make_Defining_Identifier
-                       (Map_C_Full_Parameter_Name
-                        (AIN.Parent_Subcomponent (Source_Parent),
-                         Source_F));
+                       (Map_C_Variable_Name
+                          (Source_F, Request_Variable => True));
 
                   elsif Hybrid then
                      --  (3) If the calleD parameter is connected to
