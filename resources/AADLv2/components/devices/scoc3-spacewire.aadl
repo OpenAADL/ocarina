@@ -1,0 +1,54 @@
+package ocarina_drivers_scoc3_spacewire
+
+public
+
+with ocarina_buses;
+with Deployment;
+
+subprogram spg_poller
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_spacewire_scoc3_poller";
+end spg_poller;
+
+subprogram spg_sender
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_spacewire_scoc3_sender";
+end spg_sender;
+
+subprogram spg_init
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_spacewire_scoc3_init";
+end spg_init;
+
+
+thread thr_poller
+end thr_poller;
+
+thread implementation thr_poller.i
+calls
+	mycall : {
+	  pspg : subprogram spg_poller;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end thr_poller.i;
+
+
+abstract driver
+properties
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Check the ASN.1 type definition";
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_spacewire);
+end driver;
+
+abstract implementation driver.i
+subcomponents
+   receiver_rasta_spacewire : thread thr_poller.i;
+   sender                   : subprogram spg_sender;
+end driver.i;
+
+end ocarina_drivers_scoc3_spacewire;

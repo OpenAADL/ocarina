@@ -210,6 +210,24 @@ public
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end rasta_spacewire.pohiada;
 
+
+  ---------------------
+  -- SCOC3 SPACEWIRE --
+  ---------------------
+
+  device scoc3_spacewire
+  features
+    link : requires bus access ocarina_buses::spacewire.generic;
+  end scoc3_spacewire;
+
+  device implementation scoc3_spacewire.pohic
+  properties
+    Deployment::Driver_Name       => "spacewire_scoc3";
+    Device_Driver                 => classifier (ocarina_drivers_scoc3_spacewire::driver.i);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_scoc3_spacewire::spg_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end scoc3_spacewire.pohic;
+
   ---------------------------
   -- Generic serial driver --
   ---------------------------

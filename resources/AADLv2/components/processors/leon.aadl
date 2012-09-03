@@ -42,6 +42,11 @@ end xtratum_partition;
 virtual processor implementation xtratum_partition.generic
 end xtratum_partition.generic;
 
+processor implementation leon3.scoc3
+properties
+   Deployment::Execution_Platform => LEON3_SCOC3;
+end leon3.scoc3;
+
 processor implementation leon3.xtratum
 properties
    Deployment::Execution_Platform => LEON3_XTRATUM;
