@@ -248,6 +248,9 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_LEON3_XM3 =>
             Write_Str ("leon3-xm3");
 
+         when Platform_LEON3_SCOC3 =>
+            Write_Str ("leon3-scoc3");
+
          when Platform_LINUX32_XENOMAI_NATIVE =>
             Write_Str ("linux32-xenomai-native");
 

@@ -323,6 +323,7 @@ package body Ocarina.Backends.Properties is
    Platform_X86_RTEMS_POSIX_Name          : Name_Id;
    Platform_LEON_GNAT_Name                : Name_Id;
    Platform_LEON_ORK_Name                 : Name_Id;
+   Platform_LEON3_SCOC3_Name              : Name_Id;
    Platform_LEON3_XM3_Name                : Name_Id;
    Platform_LEON3_Xtratum_Name            : Name_Id;
    Platform_ERC32_ORK_Name                : Name_Id;
@@ -2691,6 +2692,8 @@ package body Ocarina.Backends.Properties is
             return Platform_LEON_ORK;
          elsif P_Name = Platform_LEON3_XM3_Name then
             return Platform_LEON3_XM3;
+         elsif P_Name = Platform_LEON3_SCOC3_Name then
+            return Platform_LEON3_SCOC3;
          elsif P_Name = Platform_LEON3_Xtratum_Name then
             return Platform_LEON3_XTRATUM;
          elsif P_Name = Platform_ERC32_ORK_Name then
@@ -3240,6 +3243,7 @@ package body Ocarina.Backends.Properties is
       Platform_LEON_RTEMS_POSIX_Name   := Get_String_Name ("leon_rtems_posix");
       Platform_LEON_GNAT_Name   := Get_String_Name ("leon_gnat");
       Platform_LEON_ORK_Name    := Get_String_Name ("leon_ork");
+      Platform_LEON3_SCOC3_Name := Get_String_Name ("leon3_scoc3");
       Platform_LEON3_XM3_Name   := Get_String_Name ("leon3_xm3");
       Platform_LEON3_XTRATUM_Name := Get_String_Name ("leon3_xtratum");
       Platform_ERC32_ORK_Name   := Get_String_Name ("erc32_ork");
