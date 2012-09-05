@@ -205,68 +205,73 @@ package body Ocarina.Backends.Cheddar.Main is
       P : Node_Id;
       U : Node_Id;
    begin
-      P := Map_HI_Node (E);
-      Push_Entity (P);
+      if E = Root_System_Node then
+         P := Map_HI_Node (E);
+         Push_Entity (P);
 
-      U := Map_HI_Unit (E);
-      Push_Entity (U);
+         U := Map_HI_Unit (E);
+         Push_Entity (U);
 
-      --  A cheddar XML file is made of one cheddar node, with several
-      --  children: tasks (AADL tasks), processors (AADL processors),
-      --  address_spaces (AADL processes), resources (AADL data
-      --  components).
+         --  A cheddar XML file is made of one cheddar node, with several
+         --  children: tasks (AADL tasks), processors (AADL processors),
+         --  address_spaces (AADL processes), resources (AADL data
+         --  components).
 
-      --  <!ELEMENT cheddar (processors,
-      --                     (address_spaces)?,
-      --                     (tasks)?,
-      --                     ((event_analyzers)?
-      --                      |(networks)?
-      --                      |(buffers)?
-      --                      |(resources)?
-      --                      |(messages)?),
-      --                     (dependencies)?)
-      --  >
+         --  <!ELEMENT cheddar (processors,
+         --                     (address_spaces)?,
+         --                     (tasks)?,
+         --                     ((event_analyzers)?
+         --                      |(networks)?
+         --                      |(buffers)?
+         --                      |(resources)?
+         --                      |(messages)?),
+         --                     (dependencies)?)
+         --  >
 
-      if Cheddar_Node = No_Node then
-         Cheddar_Node := Make_XML_Node ("cheddar");
-         Append_Node_To_List
-           (Cheddar_Node, XTN.Subitems (XTN.Root_Node (XTN.XML_File (U))));
-      end if;
+         if Cheddar_Node = No_Node then
+            Cheddar_Node := Make_XML_Node ("cheddar");
+            Append_Node_To_List
+              (Cheddar_Node, XTN.Subitems (XTN.Root_Node (XTN.XML_File (U))));
+         end if;
 
-      if Processors_Node = No_Node then
-         Processors_Node := Make_XML_Node ("processors");
-         Append_Node_To_List (Processors_Node, XTN.Subitems (Cheddar_Node));
-      end if;
+         if Processors_Node = No_Node then
+            Processors_Node := Make_XML_Node ("processors");
+            Append_Node_To_List (Processors_Node, XTN.Subitems (Cheddar_Node));
+         end if;
 
-      if Address_Node = No_Node then
-         Address_Node := Make_XML_Node ("address_spaces");
-         Append_Node_To_List (Address_Node, XTN.Subitems (Cheddar_Node));
-      end if;
+         if Address_Node = No_Node then
+            Address_Node := Make_XML_Node ("address_spaces");
+            Append_Node_To_List (Address_Node, XTN.Subitems (Cheddar_Node));
+         end if;
 
-      if Tasks_Node = No_Node then
-         Tasks_Node := Make_XML_Node ("tasks");
-         Append_Node_To_List (Tasks_Node, XTN.Subitems (Cheddar_Node));
-      end if;
+         if Tasks_Node = No_Node then
+            Tasks_Node := Make_XML_Node ("tasks");
+            Append_Node_To_List (Tasks_Node, XTN.Subitems (Cheddar_Node));
+         end if;
 
-      if Buffers_Node = No_Node then
-         Buffers_Node := Make_XML_Node ("buffers");
-         Append_Node_To_List (Buffers_Node, XTN.Subitems (Cheddar_Node));
-      end if;
+         if Buffers_Node = No_Node then
+            Buffers_Node := Make_XML_Node ("buffers");
+            Append_Node_To_List (Buffers_Node, XTN.Subitems (Cheddar_Node));
+         end if;
 
-      if Resources_Node = No_Node then
-         Resources_Node := Make_XML_Node ("resources");
-         Append_Node_To_List (Resources_Node, XTN.Subitems (Cheddar_Node));
-      end if;
+         if Resources_Node = No_Node then
+            Resources_Node := Make_XML_Node ("resources");
+            Append_Node_To_List (Resources_Node, XTN.Subitems (Cheddar_Node));
+         end if;
 
-      if Dependencies_Node = No_Node then
-         Dependencies_Node := Make_XML_Node ("dependencies");
-         Append_Node_To_List (Dependencies_Node, XTN.Subitems (Cheddar_Node));
+         if Dependencies_Node = No_Node then
+            Dependencies_Node := Make_XML_Node ("dependencies");
+            Append_Node_To_List
+              (Dependencies_Node, XTN.Subitems (Cheddar_Node));
+         end if;
       end if;
 
       Visit_Subcomponents_Of (E);
 
-      Pop_Entity;
-      Pop_Entity; --  A
+      if E = Root_System_Node then
+         Pop_Entity;
+         Pop_Entity; --  A
+      end if;
    end Visit_System;
 
 end Ocarina.Backends.Cheddar.Main;
