@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2004-2010, European Space Agency (ESA).           --
+--  Copyright (C) 2004-2009 ENST, 2010-2012 European Space Agency & ISAE.   --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -26,8 +26,8 @@
 -- however invalidate  any other reasons why the executable file might be   --
 -- covered by the GNU Public License.                                       --
 --                                                                          --
---                 Ocarina is maintained by the Ocarina team                --
---                       (ocarina-users@listes.enst.fr)                     --
+--                 Ocarina is maintained by the TASTE project               --
+--                      (taste-users@lists.tuxfamily.org)                   --
 --                                                                          --
 ------------------------------------------------------------------------------
 
@@ -1289,7 +1289,8 @@ procedure Ocarina_Cmd is
       end if;
 
       Write_Line
-        ("Copyright (c) 2003-" & Ocarina_Last_Configure_Year & " ENST");
+        ("Copyright (c) 2003-2009 ENST, 2010-"
+           & Ocarina_Last_Configure_Year & " ESA & ISAE");
    end Version;
 
    package RT renames Ocarina.ME_REAL.Tokens;
