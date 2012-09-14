@@ -2790,12 +2790,29 @@ package body Ocarina.Analyzer.AADL.Links is
                           (Corresponding_Container,
                            Item (List_Node));
                      when AADL_V2 =>
+                        --  Search in subclause
+
                         Pointed_Node := Find_Subclause
                           (Corresponding_Container, List_Node);
+
+                        --  then in features
 
                         if No (Pointed_Node) then
                            Pointed_Node := Find_Feature
                              (Corresponding_Container, List_Node);
+                        end if;
+
+                        --  in the case of property applied directly
+                        --  to a subcomponent, then we need to check
+                        --  whether the property refers to a colocated
+                        --  subcomponent.
+
+                        if No (Pointed_Node) then
+                           Pointed_Node :=
+                             Find_Subcomponent
+                             (Corresponding_Entity
+                                (Scope_Entity (Identifier (Container))),
+                              List_Node);
                         end if;
                   end case;
 
