@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---               Copyright (C) 2007-2010, GET-Telecom Paris.                --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -26,8 +26,8 @@
 -- however invalidate  any other reasons why the executable file might be   --
 -- covered by the GNU Public License.                                       --
 --                                                                          --
---                 Ocarina is maintained by the Ocarina team                --
---                       (ocarina-users@listes.enst.fr)                     --
+--                 Ocarina is maintained by the TASTE project               --
+--                      (taste-users@lists.tuxfamily.org)                   --
 --                                                                          --
 ------------------------------------------------------------------------------
 

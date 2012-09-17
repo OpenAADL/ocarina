@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---  Copyright (C) 2004-2009 ENST, 2010-2012 European Space Agency & ISAE.   --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -1289,7 +1289,7 @@ procedure Ocarina_Cmd is
       end if;
 
       Write_Line
-        ("Copyright (c) 2003-2009 ENST, 2010-"
+        ("Copyright (c) 2003-2009 Telecom ParisTech, 2010-"
            & Ocarina_Last_Configure_Year & " ESA & ISAE");
    end Version;
 
