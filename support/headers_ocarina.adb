@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---          Copyright (C) 2006-2010, European Space Agency (ESA).           --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -26,8 +26,8 @@
 -- however invalidate  any other reasons why the executable file might be   --
 -- covered by the GNU Public License.                                       --
 --                                                                          --
---                 Ocarina is maintained by the Ocarina team                --
---                       (ocarina-users@listes.enst.fr)                     --
+--                 Ocarina is maintained by the TASTE project               --
+--                      (taste-users@lists.tuxfamily.org)                   --
 --                                                                          --
 ------------------------------------------------------------------------------
 
@@ -77,8 +77,8 @@ procedure Headers_Ocarina is
    "-- however invalidate  any other reasons why the executable file might be   --" & ASCII.LF &
    "-- covered by the GNU Public License.                                       --" & ASCII.LF &
    "--                                                                          --" & ASCII.LF &
-   "--                 Ocarina is maintained by the Ocarina team                --" & ASCII.LF &
-   "--                       (ocarina-users@listes.enst.fr)                     --" & ASCII.LF &
+   "--                 Ocarina is maintained by the TASTE project               --" & ASCII.LF &
+   "--                      (taste-users@lists.tuxfamily.org)                   --" & ASCII.LF &
    "--                                                                          --" & ASCII.LF &
      "------------------------------------------------------------------------------" & ASCII.LF;
 
@@ -134,8 +134,20 @@ procedure Headers_Ocarina is
       if First_Year = Last_Year then
          Last := Range_Image'First + 3;
       end if;
-      return "Copyright (C) " & Range_Image (Range_Image'First .. Last)
-        & ", European Space Agency (ESA).";
+
+      if First_Year < 2009 then
+         return "Copyright (C) " &
+           Image (First_Year) & "-2009 Telecom ParisTech, "
+           & "2010-" & Image (last_year) & " ESA & ISAE.";
+      elsif First_Year = 2009 then
+         return "Copyright (C) " &
+           Image (First_Year) & " Telecom ParisTech, "
+           & "2010-" & Image (last_year) & " ESA & ISAE.";
+
+      else
+         return "Copyright (C) " & Range_Image (Range_Image'First .. Last)
+           & " ESA & ISAE.";
+      end if;
    end Copyright_Line;
 
    -----------------
