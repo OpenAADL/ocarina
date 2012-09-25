@@ -6,7 +6,7 @@ all.aadl:196:07: warning: layer_secret references a component type
 all.aadl:197:07: warning: layer_unclassified references a component type
 ocarina: Total: 0 error and 6 warnings
 pok_security execution
-requirement : one_security_level_by_memory
+Processing requirement : one_security_level_by_memory
 -------------------------------------
 Evaluating theorem one_security_level_by_memory
 
@@ -92,7 +92,7 @@ lib.real:15:11 Backends: warning : use default boolean value of true for operato
 
 theorem one_security_level_by_memory is: TRUE
 
-requirement : bell_lapadula
+Processing requirement : bell_lapadula
 -------------------------------------
 Evaluating theorem bell_lapadula
 
@@ -167,7 +167,7 @@ Content of set b_dst (lib.real:35:16) is
 
 theorem bell_lapadula is: TRUE
 
-requirement : biba
+Processing requirement : biba
 -------------------------------------
 Evaluating theorem biba
 
@@ -242,7 +242,7 @@ Content of set b_dst (lib.real:59:16) is
 
 theorem biba is: TRUE
 
-requirement : mils_1
+Processing requirement : mils_1
 -------------------------------------
 Evaluating theorem mils_1
 
@@ -317,7 +317,7 @@ Content of set b_dst (lib.real:81:16) is
 
 theorem mils_1 is: TRUE
 
-requirement : mils_2
+Processing requirement : mils_2
 -------------------------------------
 Evaluating theorem mils_2
 
@@ -443,7 +443,7 @@ lib.real:119:62 Backends: warning : use default float value of 0.0 for operator 
 
 theorem mils_2 is: TRUE
 
-requirement : scheduling_1
+Processing requirement : scheduling_1
 -------------------------------------
 Evaluating theorem scheduling_1
 

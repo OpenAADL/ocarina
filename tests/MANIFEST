@@ -252,6 +252,7 @@ tests/real-annexes-execution-environment/test_real_exec_env_01.aadl
 tests/real_units/validation.aadl
 tests/real_requires/test.aadl
 tests/real_requires_2/test.aadl
+tests/real_requires_3/test.aadl
 tests/ticket_46/test.aadl
 tests/ticket_48/test.aadl
 tests/package_annex/test.aadl

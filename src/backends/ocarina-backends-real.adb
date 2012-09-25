@@ -137,7 +137,8 @@ package body Ocarina.Backends.REAL is
    procedure Compute_Check_Subprogram_Call
      (E : Node_Id; T : out Return_Type; Result : out Value_Id);
 
-   function Apply_To_All_Elements (R : Node_Id) return Boolean;
+   function Apply_To_All_Elements
+     (R : Node_Id; Force_Result_To_False : Boolean := False) return Boolean;
    --  Test the theorem on all elements of the range set;
    --  return false if at least one of them fail
 
@@ -291,7 +292,9 @@ package body Ocarina.Backends.REAL is
       Dummy := Apply_To_All_Elements (R);
    end Apply_To_All_Elements;
 
-   function Apply_To_All_Elements (R : Node_Id) return Boolean is
+   function Apply_To_All_Elements
+     (R : Node_Id; Force_Result_To_False : Boolean := False) return Boolean
+   is
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
       pragma Assert (Kind (R) = K_Theorem);
 
@@ -338,6 +341,10 @@ package body Ocarina.Backends.REAL is
          Write_Line ("");
          exit when not Success;
       end loop;
+
+      if Force_Result_To_False then
+         Success := False;
+      end if;
 
       Write_Line ("theorem " & Get_Name_String (Name (Identifier (R)))
                     & " is: "& Boolean'Image (Success));
@@ -517,29 +524,37 @@ package body Ocarina.Backends.REAL is
       Stored_Root : constant Node_Id := R;
       N           : Node_Id;
       Success     : Boolean := True;
+      Local_Success : Boolean;
    begin
       N := First_Node (Required_Theorems (R));
 
       while Present (N) loop
+         Local_Success := True;
          RNU.REAL_Root := Related_Theorem (N);
 
-         Write_Line ("requirement : " &
+         Write_Line ("Processing requirement : " &
                      Get_Name_String (Name (Identifier (RNU.REAL_Root))));
 
          --  Requirements can also have requirements
 
          if not Check_Requirements (RNU.REAL_Root) then
             Display_Located_Error
-              (Loc (RNU.REAL_Root), "requirements are not fulfilled",
+              (Loc (RNU.REAL_Root), "requirements of "
+                 &  Get_Name_String (Name (Identifier (RNU.REAL_Root)))
+                 &" are not fulfilled",
                Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
-            Success := False;
+            Local_Success := False;
          end if;
 
          --  Library theorems are already analyzed, so we proceed
          --  directly to execution
 
          Initialize_Sets_Table (RNU.REAL_Root);
-         Success := Apply_To_All_Elements (RNU.REAL_Root) and then Success;
+
+         --  Note: if the requirements are not fulfilled, we flag the
+         --  theorem as wrong in all cases.
+         Success := Apply_To_All_Elements (RNU.REAL_Root, not Local_Success)
+           and then Success;
 
          Clean_Runtime;
          exit when (not Success)
@@ -657,6 +672,7 @@ package body Ocarina.Backends.REAL is
       Ref          : constant Node_Id := Referenced_Var (Var_Ref (E));
       Local_Domain : constant Boolean := RNU.Is_Domain;
       Local_Domain_value : constant Result_Set := RNU.Domain;
+      Requirements_Checked : Boolean;
    begin
       Write_Line ("   Evaluating "
                     & Get_Name_String
@@ -690,7 +706,9 @@ package body Ocarina.Backends.REAL is
       Clean_Runtime;
       REAL_Root := Related_Theorem (E);
 
-      if not Check_Requirements (RNU.REAL_Root) then
+      Requirements_Checked := Check_Requirements (RNU.REAL_Root);
+
+      if not Requirements_Checked then
          Display_Located_Error
            (Loc (RNU.REAL_Root), "requirements are not fulfilled",
             Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
