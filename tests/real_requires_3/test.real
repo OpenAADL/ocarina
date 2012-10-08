@@ -1,0 +1,15 @@
+theorem sub1
+  foreach s in System_Set do
+  requires(sub2 and sub3);
+  check (1 = 1);
+end sub1;
+
+theorem sub2
+  foreach s in System_Set do
+  check (Property_Exists(s, "Priority"));
+end sub2;
+
+theorem sub3
+  foreach s in System_Set do
+  check (1 = 1);
+end sub3;

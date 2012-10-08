@@ -1,0 +1,2 @@
+AADL_VERSION=-aadlv2
+OCARINA_FLAGS=-q -real_continue_eval -g real_theorem -real_lib test.real -r a.impl

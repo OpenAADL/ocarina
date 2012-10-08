@@ -1,0 +1,34 @@
+package Test
+public
+    system B
+    end B;
+
+    system implementation B.impl
+    end B.impl;
+
+    system C
+    end C;
+
+    system implementation C.impl
+    properties
+        Priority => 5;
+    end C.impl;
+
+    system A
+    end A;
+
+    system implementation A.impl
+    subcomponents
+        b1 : system B.impl;
+        c1 : system C.impl;
+
+    annex real_specification {**
+        theorem test
+        foreach s in system_set do
+            requires (sub1);
+            check (1 = 1);
+        end test;
+   **};
+    end A.impl;
+
+end Test;
