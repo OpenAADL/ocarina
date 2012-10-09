@@ -331,13 +331,13 @@ package body Ocarina.Backends.POK_C.Main is
                (POK_Make_Function_Call_With_Assert
                   (RF (RE_Create_Process), Parameters),
                Statements);
-	    Parameters := New_List(CTN.K_Parameter_List);
-            Append_Node_To_List ( Make_Array_Value
+            Parameters := New_List (CTN.K_Parameter_List);
+            Append_Node_To_List (Make_Array_Value
                                  (Copy_Node (Process_Variable_Name),
                                    CTU.Make_Literal
                                       (CV.New_Int_Value (Thread_Id, 1, 10))),
                                 Parameters);
-	    Add_Return_Variable_In_Parameters(Parameters);
+            Add_Return_Variable_In_Parameters (Parameters);
             Append_Node_To_List
                (POK_Make_Function_Call_With_Assert
                   (RF (RE_Start), Parameters),
