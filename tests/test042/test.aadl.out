@@ -5,6 +5,7 @@
 
 
 
+
 property set ARINC653 is
   Partition_Slots : list of Time
     applies to (processor);

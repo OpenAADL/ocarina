@@ -881,6 +881,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 227
   227 property type aadl_properties.aadl:13:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 221
    221 unique property type identifier aadl_properties.aadl:13:20
     Identifier Node_Id 220
@@ -949,6 +950,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 237
   237 property type aadl_properties.aadl:17:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 231
    231 unique property type identifier aadl_properties.aadl:17:26
     Identifier Node_Id 230
@@ -1019,6 +1021,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 245
   245 property type aadl_properties.aadl:21:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 239
    239 string type aadl_properties.aadl:21:24
    Expanded_Type_Designator Node_Id 239
@@ -1045,6 +1048,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 259
   259 property type aadl_properties.aadl:25:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 248
    248 unique property type identifier aadl_properties.aadl:25:36
     Identifier Node_Id 247
@@ -1138,6 +1142,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 275
   275 property type aadl_properties.aadl:31:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 262
    262 enumeration type aadl_properties.aadl:31:50
     Identifiers List_Id 263
@@ -1213,6 +1218,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 293
   293 property type aadl_properties.aadl:38:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 283
    283 reference type aadl_properties.aadl:38:46
     List_Items List_Id 279
@@ -1290,6 +1296,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 302
   302 property type aadl_properties.aadl:51:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 296
    296 unique property type identifier aadl_properties.aadl:51:17
     Identifier Node_Id 295
@@ -1358,6 +1365,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 319
   319 property type aadl_properties.aadl:55:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 306
    306 reference type aadl_properties.aadl:55:34
     List_Items List_Id 304
@@ -1429,6 +1437,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 332
   332 property type aadl_properties.aadl:60:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 323
    323 reference type aadl_properties.aadl:60:37
     List_Items List_Id 321
@@ -1480,6 +1489,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 342
   342 property type aadl_properties.aadl:64:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 336
    336 reference type aadl_properties.aadl:64:27
     List_Items List_Id 334
@@ -1516,6 +1526,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 355
   355 property type aadl_properties.aadl:68:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 350
    350 reference type aadl_properties.aadl:68:51
     List_Items List_Id 345
@@ -1576,6 +1587,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 364
   364 property type aadl_properties.aadl:76:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 358
    358 unique property type identifier aadl_properties.aadl:76:20
     Identifier Node_Id 357
@@ -1703,6 +1715,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 373
   373 property type aadl_properties.aadl:80:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 366
    366 boolean type aadl_properties.aadl:80:24
    Expanded_Type_Designator Node_Id 366
@@ -1739,6 +1752,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 385
   385 property type aadl_properties.aadl:84:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 377
    377 enumeration type aadl_properties.aadl:84:36
     Identifiers List_Id 378
@@ -1789,6 +1803,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 400
   400 property type aadl_properties.aadl:90:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 392
    392 reference type aadl_properties.aadl:90:47
     List_Items List_Id 388
@@ -1856,6 +1871,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 416
   416 property type aadl_properties.aadl:97:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 407
    407 classifier type aadl_properties.aadl:97:53
     List_Items List_Id 403
@@ -1916,6 +1932,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 431
   431 property type aadl_properties.aadl:104:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 419
    419 enumeration type aadl_properties.aadl:104:40
     Identifiers List_Id 420
@@ -2001,6 +2018,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 440
   440 property type aadl_properties.aadl:113:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 435
    435 unique property type identifier aadl_properties.aadl:113:35
     Identifier Node_Id 434
@@ -2062,6 +2080,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 460
   460 property type aadl_properties.aadl:117:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 447
    447 reference type aadl_properties.aadl:117:43
     List_Items List_Id 443
@@ -2154,6 +2173,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 480
   480 property type aadl_properties.aadl:125:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 467
    467 classifier type aadl_properties.aadl:125:49
     List_Items List_Id 463
@@ -2234,6 +2254,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 489
   489 property type aadl_properties.aadl:133:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 483
    483 unique property type identifier aadl_properties.aadl:133:23
     Identifier Node_Id 482
@@ -2304,6 +2325,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 499
   499 property type aadl_properties.aadl:137:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 493
    493 unique property type identifier aadl_properties.aadl:137:24
     Identifier Node_Id 492
@@ -2379,6 +2401,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 514
   514 property type aadl_properties.aadl:141:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 505
    505 reference type aadl_properties.aadl:141:46
     List_Items List_Id 502
@@ -2443,6 +2466,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 529
   529 property type aadl_properties.aadl:147:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 520
    520 classifier type aadl_properties.aadl:147:52
     List_Items List_Id 517
@@ -2499,6 +2523,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 539
   539 property type aadl_properties.aadl:153:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 534
    534 reference type aadl_properties.aadl:153:36
     List_Items List_Id 532
@@ -2535,6 +2560,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 555
   555 property type aadl_properties.aadl:158:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 546
    546 reference type aadl_properties.aadl:158:52
     List_Items List_Id 542
@@ -2607,6 +2633,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 565
   565 property type aadl_properties.aadl:165:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 558
    558 unique property type identifier aadl_properties.aadl:165:14
     Identifier Node_Id 557
@@ -2680,6 +2707,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 575
   575 property type aadl_properties.aadl:169:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 568
    568 unique property type identifier aadl_properties.aadl:169:19
     Identifier Node_Id 567
@@ -2753,6 +2781,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 585
   585 property type aadl_properties.aadl:173:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 578
    578 unique property type identifier aadl_properties.aadl:173:20
     Identifier Node_Id 577
@@ -2826,6 +2855,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 596
   596 property type aadl_properties.aadl:177:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 591
    591 reference type aadl_properties.aadl:177:45
     List_Items List_Id 588
@@ -2870,6 +2900,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 607
   607 property type aadl_properties.aadl:183:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 602
    602 reference type aadl_properties.aadl:183:48
     List_Items List_Id 599
@@ -2914,6 +2945,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 620
   620 property type aadl_properties.aadl:189:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 609
    609 integer type aadl_properties.aadl:189:24
     Type_Range Node_Id 614
@@ -2974,6 +3006,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 629
   629 property type aadl_properties.aadl:193:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 623
    623 unique property type identifier aadl_properties.aadl:193:35
     Identifier Node_Id 622
@@ -3042,6 +3075,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 639
   639 property type aadl_properties.aadl:197:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 632
    632 unique property type identifier aadl_properties.aadl:197:15
     Identifier Node_Id 631
@@ -3115,6 +3149,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 649
   649 property type aadl_properties.aadl:201:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 642
    642 unique property type identifier aadl_properties.aadl:201:15
     Identifier Node_Id 641
@@ -3188,6 +3223,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 659
   659 property type aadl_properties.aadl:205:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 652
    652 unique property type identifier aadl_properties.aadl:205:21
     Identifier Node_Id 651
@@ -3263,6 +3299,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 672
   672 property type aadl_properties.aadl:209:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 662
    662 unique property type identifier aadl_properties.aadl:209:19
     Identifier Node_Id 661
@@ -3351,6 +3388,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 683
   683 property type aadl_properties.aadl:213:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 674
    674 string type aadl_properties.aadl:213:23
    Expanded_Type_Designator Node_Id 674
@@ -3392,6 +3430,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 696
   696 property type aadl_properties.aadl:217:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 686
    686 unique property type identifier aadl_properties.aadl:217:25
     Identifier Node_Id 685
@@ -3482,6 +3521,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 706
   706 property type aadl_properties.aadl:221:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 699
    699 unique property type identifier aadl_properties.aadl:221:31
     Identifier Node_Id 698
@@ -3558,6 +3598,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 716
   716 property type aadl_properties.aadl:226:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 710
    710 unique property type identifier aadl_properties.aadl:226:22
     Identifier Node_Id 709
@@ -3720,6 +3761,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 753
   753 property type aadl_properties.aadl:239:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 747
    747 unique property type identifier aadl_properties.aadl:239:22
     Identifier Node_Id 746
@@ -3788,6 +3830,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 762
   762 property type aadl_properties.aadl:243:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 756
    756 unique property type identifier aadl_properties.aadl:243:28
     Identifier Node_Id 755
@@ -3858,6 +3901,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 770
   770 property type aadl_properties.aadl:247:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 764
    764 string type aadl_properties.aadl:247:26
    Expanded_Type_Designator Node_Id 764
@@ -3884,6 +3928,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 785
   785 property type aadl_properties.aadl:251:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 773
    773 unique property type identifier aadl_properties.aadl:251:13
     Identifier Node_Id 772
@@ -3987,6 +4032,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 799
   799 property type aadl_properties.aadl:255:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 788
    788 enumeration type aadl_properties.aadl:255:21
     Identifiers List_Id 789
@@ -4052,6 +4098,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 810
   810 property type aadl_properties.aadl:262:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 803
    803 unique property type identifier aadl_properties.aadl:262:27
     Identifier Node_Id 802
@@ -4123,6 +4170,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 820
   820 property type aadl_properties.aadl:267:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 813
    813 integer type aadl_properties.aadl:267:28
     Type_Range Node_Id 0
@@ -4158,6 +4206,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 829
   829 property type aadl_properties.aadl:271:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 823
    823 unique property type identifier aadl_properties.aadl:271:20
     Identifier Node_Id 822
@@ -4219,6 +4268,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 838
   838 property type aadl_properties.aadl:275:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 832
    832 unique property type identifier aadl_properties.aadl:275:19
     Identifier Node_Id 831
@@ -4287,6 +4337,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 847
   847 property type aadl_properties.aadl:279:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 841
    841 unique property type identifier aadl_properties.aadl:279:22
     Identifier Node_Id 840
@@ -4414,6 +4465,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 856
   856 property type aadl_properties.aadl:283:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 850
    850 unique property type identifier aadl_properties.aadl:283:20
     Identifier Node_Id 849
@@ -4482,6 +4534,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 865
   865 property type aadl_properties.aadl:287:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 859
    859 unique property type identifier aadl_properties.aadl:287:26
     Identifier Node_Id 858
@@ -4552,6 +4605,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 873
   873 property type aadl_properties.aadl:291:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 867
    867 string type aadl_properties.aadl:291:24
    Expanded_Type_Designator Node_Id 867
@@ -4578,6 +4632,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 885
   885 property type aadl_properties.aadl:295:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 876
    876 string type aadl_properties.aadl:295:53
    Expanded_Type_Designator Node_Id 876
@@ -4624,6 +4679,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 898
   898 property type aadl_properties.aadl:299:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 888
    888 unique property type identifier aadl_properties.aadl:299:27
     Identifier Node_Id 887
@@ -4685,6 +4741,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 907
   907 property type aadl_properties.aadl:303:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 901
    901 unique property type identifier aadl_properties.aadl:303:22
     Identifier Node_Id 900
@@ -4753,6 +4810,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 916
   916 property type aadl_properties.aadl:307:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 910
    910 unique property type identifier aadl_properties.aadl:307:28
     Identifier Node_Id 909
@@ -4823,6 +4881,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 924
   924 property type aadl_properties.aadl:311:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 918
    918 string type aadl_properties.aadl:311:26
    Expanded_Type_Designator Node_Id 918
@@ -4849,6 +4908,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 934
   934 property type aadl_properties.aadl:315:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 927
    927 unique property type identifier aadl_properties.aadl:315:10
     Identifier Node_Id 926
@@ -4922,6 +4982,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 944
   944 property type aadl_properties.aadl:319:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 937
    937 unique property type identifier aadl_properties.aadl:319:16
     Identifier Node_Id 936
@@ -4995,6 +5056,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 954
   954 property type aadl_properties.aadl:323:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 947
    947 unique property type identifier aadl_properties.aadl:323:12
     Identifier Node_Id 946
@@ -5070,6 +5132,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 967
   967 property type aadl_properties.aadl:327:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 956
    956 enumeration type aadl_properties.aadl:327:20
     Identifiers List_Id 957
@@ -5140,6 +5203,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 986
   986 property type aadl_properties.aadl:335:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 977
    977 reference type aadl_properties.aadl:335:27
     List_Items List_Id 971
@@ -5228,6 +5292,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1001
   1001 property type aadl_properties.aadl:344:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 988
    988 enumeration type aadl_properties.aadl:344:31
     Identifiers List_Id 989
@@ -5308,6 +5373,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1015
   1015 property type aadl_properties.aadl:352:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1005
    1005 unique property type identifier aadl_properties.aadl:352:11
     Identifier Node_Id 1004
@@ -5396,6 +5462,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1024
   1024 property type aadl_properties.aadl:356:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1018
    1018 unique property type identifier aadl_properties.aadl:356:30
     Identifier Node_Id 1017
@@ -5466,6 +5533,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1033
   1033 property type aadl_properties.aadl:360:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1027
    1027 unique property type identifier aadl_properties.aadl:360:20
     Identifier Node_Id 1026
@@ -5536,6 +5604,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1048
   1048 property type aadl_properties.aadl:364:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1035
    1035 enumeration type aadl_properties.aadl:364:28
     Identifiers List_Id 1036
@@ -5621,6 +5690,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1061
   1061 property type aadl_properties.aadl:373:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1052
    1052 unique property type identifier aadl_properties.aadl:373:28
     Identifier Node_Id 1051
@@ -5682,6 +5752,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1079
   1079 property type aadl_properties.aadl:378:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1064
    1064 integer type aadl_properties.aadl:378:15
     Type_Range Node_Id 1069
@@ -5768,6 +5839,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1089
   1089 property type aadl_properties.aadl:383:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 1084
    1084 unique property type identifier aadl_properties.aadl:383:19
     Identifier Node_Id 1083
@@ -5838,6 +5910,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1099
   1099 property type aadl_properties.aadl:387:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1092
    1092 unique property type identifier aadl_properties.aadl:387:19
     Identifier Node_Id 1091
@@ -5911,6 +5984,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1109
   1109 property type aadl_properties.aadl:391:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1102
    1102 unique property type identifier aadl_properties.aadl:391:25
     Identifier Node_Id 1101
@@ -5986,6 +6060,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1117
   1117 property type aadl_properties.aadl:395:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1111
    1111 string type aadl_properties.aadl:395:23
    Expanded_Type_Designator Node_Id 1111
@@ -6012,6 +6087,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1132
   1132 property type aadl_properties.aadl:399:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1119
    1119 enumeration type aadl_properties.aadl:399:28
     Identifiers List_Id 1120
@@ -6097,6 +6173,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1142
   1142 property type aadl_properties.aadl:408:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1135
    1135 boolean type aadl_properties.aadl:408:25
    Expanded_Type_Designator Node_Id 1135
@@ -6133,6 +6210,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1153
   1153 property type aadl_properties.aadl:412:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1145
    1145 boolean type aadl_properties.aadl:412:32
    Expanded_Type_Designator Node_Id 1145
@@ -6174,6 +6252,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1163
   1163 property type aadl_properties.aadl:416:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 1158
    1158 unique property type identifier aadl_properties.aadl:416:29
     Identifier Node_Id 1157
@@ -6295,6 +6374,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1178
   1178 property type aadl_properties.aadl:420:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 1169
    1169 reference type aadl_properties.aadl:420:51
     List_Items List_Id 1166
@@ -6420,6 +6500,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1210
   1210 property type aadl_properties.aadl:443:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1197
    1197 unique property type identifier aadl_properties.aadl:443:19
     Identifier Node_Id 1196
@@ -6523,6 +6604,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1226
   1226 property type aadl_properties.aadl:448:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1213
    1213 unique property type identifier aadl_properties.aadl:448:19
     Identifier Node_Id 1212
@@ -6626,6 +6708,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1234
   1234 property type aadl_properties.aadl:453:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1228
    1228 string type aadl_properties.aadl:453:21
    Expanded_Type_Designator Node_Id 1228
@@ -6652,6 +6735,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1244
   1244 property type aadl_properties.aadl:457:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1237
    1237 unique property type identifier aadl_properties.aadl:457:19
     Identifier Node_Id 1236
@@ -6725,6 +6809,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1261
   1261 property type aadl_properties.aadl:461:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1247
    1247 unique property type identifier aadl_properties.aadl:461:20
     Identifier Node_Id 1246
@@ -6901,6 +6986,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1272
   1272 property type aadl_properties.aadl:466:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1263
    1263 string type aadl_properties.aadl:466:16
    Expanded_Type_Designator Node_Id 1263
@@ -6942,6 +7028,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1284
   1284 property type aadl_properties.aadl:470:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1275
    1275 unique property type identifier aadl_properties.aadl:470:20
     Identifier Node_Id 1274
@@ -7025,6 +7112,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1304
   1304 property type aadl_properties.aadl:474:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 1287
    1287 string type aadl_properties.aadl:474:32
    Expanded_Type_Designator Node_Id 1287
@@ -7111,6 +7199,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1314
   1314 property type aadl_properties.aadl:479:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1307
    1307 unique property type identifier aadl_properties.aadl:479:21
     Identifier Node_Id 1306
@@ -7184,6 +7273,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1323
   1323 property type aadl_properties.aadl:483:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1317
    1317 unique property type identifier aadl_properties.aadl:483:28
     Identifier Node_Id 1316
@@ -7254,6 +7344,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1333
   1333 property type aadl_properties.aadl:487:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 1327
    1327 unique property type identifier aadl_properties.aadl:487:35
     Identifier Node_Id 1326
@@ -7395,6 +7486,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1345
   1345 property type aadl_properties.aadl:491:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1335
    1335 boolean type aadl_properties.aadl:491:35
    Expanded_Type_Designator Node_Id 1335
@@ -7446,6 +7538,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1361
   1361 property type aadl_properties.aadl:495:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1348
    1348 integer type aadl_properties.aadl:495:17
     Type_Range Node_Id 1353
@@ -7526,6 +7619,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1372
   1372 property type aadl_properties.aadl:500:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1365
    1365 unique property type identifier aadl_properties.aadl:500:29
     Identifier Node_Id 1364
@@ -7601,6 +7695,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1382
   1382 property type aadl_properties.aadl:504:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1375
    1375 unique property type identifier aadl_properties.aadl:504:13
     Identifier Node_Id 1374
@@ -7794,6 +7889,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1407
   1407 property type aadl_properties.aadl:527:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 1402
    1402 unique property type identifier aadl_properties.aadl:527:27
     Identifier Node_Id 1401
@@ -7864,6 +7960,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1417
   1417 property type aadl_properties.aadl:531:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1409
    1409 string type aadl_properties.aadl:531:21
    Expanded_Type_Designator Node_Id 1409
@@ -7900,6 +7997,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1430
   1430 property type aadl_properties.aadl:535:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1419
    1419 integer type aadl_properties.aadl:535:12
     Type_Range Node_Id 1424
@@ -7960,6 +8058,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1443
   1443 property type aadl_properties.aadl:539:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1432
    1432 integer type aadl_properties.aadl:539:15
     Type_Range Node_Id 1437
@@ -8020,6 +8119,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1455
   1455 property type aadl_properties.aadl:543:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1446
    1446 unique property type identifier aadl_properties.aadl:543:12
     Identifier Node_Id 1445
@@ -8114,6 +8214,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1471
   1471 property type aadl_properties.aadl:547:03
    Is_List Boolean FALSE
+   Multiplicity Int 0
    Property_Type_Designator Node_Id 1458
    1458 integer type aadl_properties.aadl:547:15
     Type_Range Node_Id 1463
@@ -8190,6 +8291,7 @@ Declarations List_Id 7
   Property_Name_Type Node_Id 1481
   1481 property type aadl_properties.aadl:551:03
    Is_List Boolean TRUE
+   Multiplicity Int 1
    Property_Type_Designator Node_Id 1476
    1476 unique property type identifier aadl_properties.aadl:551:20
     Identifier Node_Id 1475

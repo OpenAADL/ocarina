@@ -36,6 +36,7 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.BE_AADL.Properties;
 with Ocarina.BE_AADL.Identifiers;
 with Ocarina.BE_AADL.Components;
+with Ocarina.BE_AADL.Components.Arrays;
 
 package body Ocarina.BE_AADL.Components.Features is
 
@@ -44,6 +45,7 @@ package body Ocarina.BE_AADL.Components.Features is
    use Ocarina.BE_AADL.Properties;
    use Ocarina.BE_AADL.Identifiers;
    use Ocarina.BE_AADL.Components;
+   use Ocarina.BE_AADL.Components.Arrays;
 
    -------------------
    -- Print_Feature --
@@ -173,6 +175,11 @@ package body Ocarina.BE_AADL.Components.Features is
          end if;
       else
          Print_Token (T_Port);
+      end if;
+
+      if Present (Array_Dimensions (Node)) then
+         Write_Space;
+         Print_Array_Dimensions (Array_Dimensions (Node));
       end if;
    end Print_Port_Spec;
 

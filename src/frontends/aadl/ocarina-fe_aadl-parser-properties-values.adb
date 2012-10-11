@@ -633,7 +633,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    -- P_Multi_Valued_Property --
    -----------------------------
 
-   --  multi_valued_property ::= list of property_type_designator
+   --  multi_valued_property ::= (list of)+ property_type_designator
    --     [ => ( [ default_property_expression
    --                 { , default_property_expression }* ] ) ]
 
@@ -648,7 +648,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Property_Type_Designator : Node_Id;
       Property_Expressions     : List_Id;
       Loc                      : Location;
-
    begin
       Valued_Property := New_Node (K_Multi_Valued_Property, Token_Location);
 
@@ -659,7 +658,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       end if;
 
       Property_Type_Designator := P_Property_Type_Designator;
-
       if No (Property_Type_Designator) then
          --  error when parsing Property_Type_Designator, quit
          return No_Node;
@@ -694,7 +692,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       Set_Property_Type_Designator (Valued_Property, Property_Type_Designator);
       Set_Property_Expressions (Valued_Property, Property_Expressions);
-
       return Valued_Property;
    end P_Multi_Valued_Property;
 
@@ -1766,9 +1763,11 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    -- P_Record_Type_Element  --
    ----------------------------
 
+   --  XXX To be renamed in P_Record_Field someday ..
+
    --  AADL_V2
    --
-   --  defining_field_identifier : property_type_designator
+   --  defining_field_identifier : [list of ] property_type_designator
 
    function P_Record_Type_Element
      (Container : Node_Id)
@@ -1785,6 +1784,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Identifier                : Node_Id;
       Record_Element            : Node_Id;
       Property_Type_Designator  : Node_Id;
+      Is_List : Boolean := False;
 
    begin
       Save_Lexer (Loc);
@@ -1803,6 +1803,21 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Scan_Token;
 
       if Token = T_Colon then
+         Save_Lexer (Loc);
+         Scan_Token;
+
+         if Token = T_List then
+            Scan_Token;
+            if Token /= T_Of then
+               DPE (PC_Record_Type_Element, T_Of);
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
+            Is_List := True;
+         else
+            Restore_Lexer (Loc);
+         end if;
+
          Property_Type_Designator := P_Property_Type_Designator;
          if No (Property_Type_Designator) then
             DPE (PC_Record_Type_Element);
@@ -1817,6 +1832,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       Set_Property_Type_Designator (Record_Element,
                                     Property_Type_Designator);
+      Set_Is_List (Record_Element, Is_List);
       return Record_Element;
    end P_Record_Type_Element;
 

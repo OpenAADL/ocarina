@@ -82,7 +82,6 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
       Is_Refinement  : Boolean;
       OK             : Boolean;
    begin
-
       P_Identifier_Refined_To
         (Refinable_To_RT (Refinable),
          False,
@@ -146,7 +145,6 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
       end if;
 
       return Prototype;
-
    end P_Prototype_Or_Prototype_Refinement;
 
    --------------------------
@@ -269,7 +267,6 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
       end if;
 
       return Prototype_Binding;
-
    end P_Prototype_Binding;
 
 end Ocarina.FE_AADL.Parser.Components.Prototypes;

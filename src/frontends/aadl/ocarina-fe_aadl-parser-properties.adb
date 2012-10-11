@@ -67,12 +67,110 @@ package body Ocarina.FE_AADL.Parser.Properties is
 
    function P_Property_Owner_Category return Node_Id;
 
+   function P_Property_Value (Container : Node_Id) return Node_Id;
+
+   ----------------------
+   -- P_Property_Value --
+   ----------------------
+
+   --  property_value ::= single_property_value | property_list_value
+
+   function P_Property_Value (Container : Node_Id) return Node_Id is
+      pragma Unreferenced (Container);
+      use Lexer;
+      use Ocarina.ME_AADL.Tokens;
+
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nutils;
+      use Ocarina.Builder.AADL.Properties;
+
+      use Ocarina.FE_AADL.Parser.Components.Modes;
+      use Ocarina.FE_AADL.Parser.Identifiers;
+      use Ocarina.FE_AADL.Parser.Properties.Values;
+
+      Loc : Location;
+      Prop_Value : Node_Id;
+      Parse_List_Of_Properties : Boolean := True;
+
+   begin
+      --  Parse Property_Value
+
+      Save_Lexer (Loc);
+      Scan_Token;
+
+      --  The AADLv2 BNF is ambiguous, a string starting with a '('
+      --  can either be a list of property expressions e.g. "(foo,
+      --  bar);" _or_ a single_expression containing a record term,
+      --  e.g. "(foo => 1; bar =>2;)". This look ahead loop scans
+      --  token to see which case we are currently processing.
+
+      declare
+         Loc2 : Location;
+      begin
+         Save_Lexer (Loc2);
+         if Token = T_Left_Parenthesis then
+            while Token /= T_Right_Parenthesis loop
+               Scan_Token;
+               if Token = T_Semicolon
+                 or else Token = T_Applies
+               then
+                  Parse_List_Of_Properties := False;
+               end if;
+            end loop;
+         else
+            Parse_List_Of_Properties := False;
+         end if;
+         Restore_Lexer (Loc2);
+      end;
+
+      if Parse_List_Of_Properties then
+         Save_Lexer (Loc);
+         Scan_Token;
+
+         if Token = T_Right_Parenthesis then
+            --  Property_List_Value is empty
+            Prop_Value := Node_Id (New_List (K_List_Id, Loc));
+            Set_Kind (Prop_Value, K_Property_List_Value);
+            Set_First_Node (List_Id (Prop_Value), No_Node);
+            Set_Last_Node (List_Id (Prop_Value), No_Node);
+         else
+            Restore_Lexer (Loc);
+
+            --  Prop_Value :=
+            --  Node_Id (P_Items_List (P_Property_Value'Access,
+
+            Prop_Value := Node_Id (P_Items_List (P_Property_Expression'Access,
+                                                 No_Node,
+                                                 T_Comma, T_Right_Parenthesis,
+                                                 PC_Property_List_Value));
+            if No (Prop_Value) then
+               --  error when parsing Property_Expression list, quit
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
+
+            Set_Kind (Prop_Value, K_Property_List_Value);
+         end if;
+
+      else
+         Restore_Lexer (Loc);
+         Prop_Value := P_Property_Expression (No_Node);
+
+         if No (Prop_Value) then
+            --  error when parsing Property_Expression, quit
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+      end if;
+
+      return Prop_Value;
+   end P_Property_Value;
+
    ----------------------------
    -- P_Property_Association --
    ----------------------------
 
    function P_Property_Association (Container : Node_Id) return Node_Id is
-
       use Ocarina.ME_AADL.Tokens;
 
    begin
@@ -157,8 +255,6 @@ package body Ocarina.FE_AADL.Parser.Properties is
    --  annex_path ::=
    --     [ { annex_identifier } ] { ** model_element_identifier }+
 
-   --  property_value ::= single_property_value | property_list_value
-
    --  single_property_value ::= property_expression
 
    --  property_list_value ::=
@@ -209,7 +305,6 @@ package body Ocarina.FE_AADL.Parser.Properties is
       Property_Loc             : Location;
       Item                     : Node_Id;
 
-      Parse_List_Of_Properties : Boolean := True;
    begin
       Save_Lexer (Loc);
       Scan_Token;
@@ -301,67 +396,7 @@ package body Ocarina.FE_AADL.Parser.Properties is
 
       --  Parse Property_Value
 
-      Save_Lexer (Loc);
-      Scan_Token;
-
-      --  The AADLv2 BNF is ambiguous, a string starting with a '('
-      --  can either be a list of property expressions e.g. "(foo,
-      --  bard);"_or_ a single_expression containing a record term,
-      --  e.g. "(foo => 1; bar =>2;)". This look ahead loop scans
-      --  token to see which case we are currently processing.
-
-      declare
-         Loc2 : Location;
-      begin
-         Save_Lexer (Loc2);
-         if Token = T_Left_Parenthesis then
-            while Token /= T_Right_Parenthesis loop
-               Scan_Token;
-               if Token = T_Semicolon then
-                  Parse_List_Of_Properties := False;
-               end if;
-            end loop;
-         else
-            Parse_List_Of_Properties := False;
-         end if;
-         Restore_Lexer (Loc2);
-      end;
-
-      if Parse_List_Of_Properties then
-         Save_Lexer (Loc);
-         Scan_Token;
-
-         if Token = T_Right_Parenthesis then
-            --  Property_List_Value is empty
-            Prop_Value := Node_Id (New_List (K_List_Id, Loc));
-            Set_Kind (Prop_Value, K_Property_List_Value);
-            Set_First_Node (List_Id (Prop_Value), No_Node);
-            Set_Last_Node (List_Id (Prop_Value), No_Node);
-         else
-            Restore_Lexer (Loc);
-
-            Prop_Value := Node_Id (P_Items_List (P_Property_Expression'Access,
-                                                 No_Node,
-                                                 T_Comma, T_Right_Parenthesis,
-                                                 PC_Property_List_Value));
-            if No (Prop_Value) then
-               --  error when parsing Property_Expression list, quit
-               Skip_Tokens (T_Semicolon);
-               return No_Node;
-            end if;
-
-            Set_Kind (Prop_Value, K_Property_List_Value);
-         end if;
-      else
-         Restore_Lexer (Loc);
-         Prop_Value := P_Property_Expression (No_Node);
-
-         if No (Prop_Value) then
-            --  error when parsing Property_Expression, quit
-            Skip_Tokens (T_Semicolon);
-            return No_Node;
-         end if;
-      end if;
+      Prop_Value := P_Property_Value (Container);
 
       --  Parse 'applies to ...'
 
@@ -694,6 +729,7 @@ package body Ocarina.FE_AADL.Parser.Properties is
       Multiple_Default_Value    : List_Id;
       Owner_Categories          : List_Id;
       Loc                       : Location;
+      Multiplicity : Int   := 0;
    begin
       Save_Lexer (Loc);
       Scan_Token;
@@ -726,6 +762,22 @@ package body Ocarina.FE_AADL.Parser.Properties is
 
       if Token = T_List then
          Is_A_List := True;
+         Multiplicity := 1;
+
+         Save_Lexer (Loc);
+         Scan_Token;
+
+         if Token = T_Of then
+            Scan_Token;
+            if Token /= T_List then
+               Restore_Lexer (Loc);
+            else
+               Multiplicity := 2; -- XXX shall we iterate? BNF says yes
+            end if;
+         else
+            Restore_Lexer (Loc);
+         end if;
+
          Property_Definition_Value := P_Multi_Valued_Property;
          Single_Default_Value := No_Node;
 
@@ -831,6 +883,7 @@ package body Ocarina.FE_AADL.Parser.Properties is
          Property_Type_Is_A_List => Is_A_List,
          Applies_To_All          => Is_All,
          Applies_To              => Owner_Categories);
+      Set_Multiplicity (Property_Name_Type (Property), Multiplicity);
       return Property;
    end P_Property_Definition_Declaration;
 

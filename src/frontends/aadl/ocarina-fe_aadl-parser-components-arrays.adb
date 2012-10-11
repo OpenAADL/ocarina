@@ -63,7 +63,8 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       pragma Assert (Container /= No_Node
-                     and then (Kind (Container) = K_Subcomponent));
+                       and then (Kind (Container) = K_Subcomponent
+                                   or else Kind (Container) = K_Port_Spec));
 
       Loc            : Location;
       List_Array_Dim : List_Id := No_List;

@@ -253,8 +253,10 @@ package body Ocarina.BE_AADL.Properties is
       end if;
 
       if Is_List (Property_Name_Type (Node)) then
-         Print_Tokens ((T_List, T_Of));
-         Write_Space;
+         for J in 1 .. Multiplicity (Property_Name_Type (Node)) loop
+            Print_Tokens ((T_List, T_Of));
+            Write_Space;
+         end loop;
       end if;
 
       Print_Property_Type_Designator

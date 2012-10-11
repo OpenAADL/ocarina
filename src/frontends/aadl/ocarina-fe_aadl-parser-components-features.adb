@@ -35,6 +35,7 @@ with Locations;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.FE_AADL.Lexer;
 with Ocarina.ME_AADL.Tokens;
+with Ocarina.FE_AADL.Parser.Components.Arrays;
 with Ocarina.FE_AADL.Parser.Identifiers;
 with Ocarina.FE_AADL.Parser.Properties;
 with Ocarina.Builder.AADL.Components.Features;
@@ -246,6 +247,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
 
    --  port_spec ::=
    --     defining_port_identifier : ( in | out | in out ) port_type
+   --  XXX dimensions ???
    --        [ { { port_property_association }+ } ] ;
 
    --  port_refinement ::=
@@ -268,6 +270,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       use Parser.Properties;
       use Parser.Identifiers;
       use Ocarina.Builder.AADL.Components.Features;
+      use Parser.Components.Arrays;
 
       Class_Ref : Node_Id := No_Node;
       Port_Spec : Node_Id := No_Node;
@@ -277,6 +280,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       Code      : Parsing_Code;
       OK        : Boolean;
       Loc       : Location;
+      Array_Dimensions   : Node_Id;
 
    begin
       if Is_Refinement then
@@ -342,6 +346,29 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          Is_Feature => Is_Feature,
          Is_Refinement => Is_Refinement,
          Associated_Entity => Class_Ref);
+
+      Save_Lexer (Loc);
+      Scan_Token;
+      if Token = T_Left_Square_Bracket then
+         case AADL_Version is
+            when AADL_V2 =>
+               Array_Dimensions := P_Array_Dimensions (Port_Spec);
+               if No (Array_Dimensions) then
+                  DPE (Code);
+                  Skip_Tokens (T_Semicolon);
+                  return No_Node;
+               end if;
+               Set_Array_Dimensions (Port_Spec, Array_Dimensions);
+
+            when AADL_V1 =>
+               DPE (CODE, EMC_Not_Allowed_In_AADL_V1);
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+         end case;
+
+      else
+         Restore_Lexer (Loc);
+      end if;
 
       OK := P_Property_Associations (Port_Spec, True, PAT_Simple, Code);
 

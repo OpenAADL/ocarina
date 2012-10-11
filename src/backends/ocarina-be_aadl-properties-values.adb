@@ -393,6 +393,12 @@ package body Ocarina.BE_AADL.Properties.Values is
       Print_Identifier (Identifier (Node));
       Write_Space;
       Print_Token (T_Colon);
+      if Is_List (Node) then
+         Write_Space;
+         Print_Token (T_List);
+         Write_Space;
+         Print_Token (T_Of);
+      end if;
       Write_Space;
       Print_Property_Type_Designator (Property_Type_Designator (Node));
       Print_Token (T_Semicolon);

@@ -1,3 +1,8 @@
 example_014.aadl:14:32: parsing Property_Expression, not allowed in aadl v2
+example_014.aadl:15:01: parsing Property_Association or Contained_Property_Association, token ';' is expected, found keyword 'end'
 example_014.aadl:13:01: parsing Properties, list is empty
+example_014.aadl:16:01: parsing AADL_Declaration, not allowed in aadl v2
+example_014.aadl:18:01: parsing AADL_Declaration, not allowed in aadl v2
+example_014.aadl:21:01: parsing AADL_Declaration, unexpected keyword 'end'
+example_014.aadl:22:01: parsing AADL_Declaration, unexpected keyword 'end'
 Cannot parse AADL specifications
