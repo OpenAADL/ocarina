@@ -197,7 +197,9 @@ package body Ocarina.Backends.PO_HI_Ada is
             Change_If_Empty (String_Ptr (Target_Prefix), "m");
             Target := new String'("MARTEOS");
 
-         when Platform_LEON_RTEMS =>
+         when Platform_LEON_RTEMS |
+           Platform_LEON_RTEMS_POSIX =>
+            --   Nothing to do: a special makefile is used for RTEMS
             null;
 
          when others =>
@@ -205,7 +207,9 @@ package body Ocarina.Backends.PO_HI_Ada is
               & Execution_Platform'Img;
       end case;
 
-      if Execution_Platform /= Platform_LEON_RTEMS then
+      if Execution_Platform /= Platform_LEON_RTEMS
+        or else Execution_Platform /= Platform_LEON_RTEMS_POSIX
+      then
          Write_Line ("GNATMAKE = " & Target_Prefix.all & "gnatmake");
          Write_Line ("GNAT = " & Target_Prefix.all & "gnat");
          Write_Line ("GCC = " & Target_Prefix.all & "gcc");
