@@ -52,7 +52,7 @@ project Ocarina is
       case Build is
         when "debug" =>
            for Default_Switches ("Ada") use
-             ("-fPIC", 
+             ("-fPIC",
               "-g",
               "-gnatfy",
               "-gnatwae",
@@ -61,15 +61,18 @@ project Ocarina is
               "-gnaty",
 	      "-gnatyu", -- not in -gnaty: check multiple blank lines
 	      "-gnatys", -- not in -gnatx: check useless parentheses
-	      @GCOV@"-fprofile-arcs", 
+	      @GCOV@"-fprofile-arcs",
               @GCOV@"-ftest-coverage",
 	      "-gnat05");
         when "release" =>
            for Default_Switches ("Ada") use
-             ("-O2", 
+             ("-O2",
 	      "-fPIC",
               "-gnat05",
               "-gnata",
+              "-gnaty",
+	      "-gnatyu", -- not in -gnaty: check multiple blank lines
+	      "-gnatys", -- not in -gnatx: check useless parentheses
               "-gnatpn");
       end case;
    end Compiler;
@@ -87,8 +90,8 @@ project Ocarina is
       case Build is
         when "debug" =>
         for Default_Switches ("Ada") use (
-	    		     	     	  @GCOV@"-g", 
-					  @GCOV@"-fprofile-arcs", 
+	    		     	     	  @GCOV@"-g",
+					  @GCOV@"-fprofile-arcs",
 					  @GCOV@"-ftest-coverage"
                                          );
         when "release" =>
