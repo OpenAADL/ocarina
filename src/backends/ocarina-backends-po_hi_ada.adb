@@ -208,7 +208,7 @@ package body Ocarina.Backends.PO_HI_Ada is
       end case;
 
       if Execution_Platform /= Platform_LEON_RTEMS
-        or else Execution_Platform /= Platform_LEON_RTEMS_POSIX
+        and then Execution_Platform /= Platform_LEON_RTEMS_POSIX
       then
          Write_Line ("GNATMAKE = " & Target_Prefix.all & "gnatmake");
          Write_Line ("GNAT = " & Target_Prefix.all & "gnat");
