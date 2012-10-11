@@ -2220,6 +2220,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
                   when Platform_LEON_RTEMS |
                        Platform_LEON_RTEMS_POSIX |
+                       Platform_LEON_ORK |
                        Platform_ARM_DSLINUX |
                        Platform_ARM_N770 |
                        Platform_NDS_RTEMS |
