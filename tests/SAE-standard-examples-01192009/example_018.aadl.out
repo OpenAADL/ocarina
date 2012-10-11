@@ -1,3 +1,48 @@
-example_018.aadl:29:41: Connection_Pattern (property association) does not point to anything
-example_018.aadl:29:60:  (property term) does not point to anything or to something unreachable
-Cannot analyze AADL specifications
+example_018.aadl:29:41: Warning: Connection_Pattern is not a list while the corresponding property name at communication_properties.aadl:10:02 is a list.
+example_018.aadl:29:41: Warning: The value of Connection_Pattern has been converted into a list.
+
+
+
+
+
+
+
+
+package Patterns
+public
+  thread Voter
+  features
+    Input : in data port [3];
+    Output : out data port;
+
+  end Voter;
+
+  thread Processing
+  features
+    Input : in data port;
+    Result : out data port;
+
+  end Processing;
+
+  thread group Redundant_Processing
+  features
+    Input : in data port;
+    Result : out data port;
+
+  end Redundant_Processing;
+
+  thread group implementation Redundant_Processing.basic
+  subcomponents
+    processing : thread Processing [3];
+    voting : thread voter;
+
+  connections
+    port processing.Result -> voting.Input
+      {Connection_Pattern => One_To_One;};
+    port Input -> processing.Input;
+    port voting.Output -> Result;
+
+  end Redundant_Processing.basic;
+
+end Patterns;
+

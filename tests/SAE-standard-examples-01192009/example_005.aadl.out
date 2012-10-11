@@ -1,5 +1,2 @@
-example_005.aadl:16:03: Connection_Pattern (property association) does not point to anything
 example_005.aadl:16:22:  (property term) does not point to anything or to something unreachable
-example_005.aadl:18:03: Connection_Pattern (property association) does not point to anything
-example_005.aadl:18:22:  (property term) does not point to anything or to something unreachable
 Cannot analyze AADL specifications
