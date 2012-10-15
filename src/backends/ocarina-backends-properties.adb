@@ -1527,6 +1527,8 @@ package body Ocarina.Backends.Properties is
          when Language_SDL
            | Language_SDL_RTDS
            | Language_System_C
+           | Language_CPP
+           | Language_SDL_OpenGEODE
            | Language_VHDL =>
             --  A subprogram having this language as implementation
             --  language is not supported.
