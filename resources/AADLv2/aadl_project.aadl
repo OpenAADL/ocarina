@@ -72,6 +72,7 @@ property set AADL_Project is
      SCADE6,  -- alias for Lustre
      SDL,     -- alias for SDL_ObjectGeode
      SDL_ObjectGeode,
+     SDL_OpenGEODE,
      Scade,
      Simulink,
      Simulink_6_5,
