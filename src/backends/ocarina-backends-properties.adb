@@ -264,6 +264,8 @@ package body Ocarina.Backends.Properties is
    Language_Ada_05_Name   : Name_Id;
    Language_ASN1_Name     : Name_Id;
    Language_C_Name        : Name_Id;
+   Language_CPP_Name      : Name_Id;
+   Language_SDL_OpenGEODE_Name : Name_Id;
    Language_Device_Name   : Name_Id;
    Language_Esterel_Name  : Name_Id;
    Language_GUI_Name      : Name_Id;
@@ -1403,6 +1405,12 @@ package body Ocarina.Backends.Properties is
 
       elsif Source_L = Language_C_Name then
          return Language_C;
+
+      elsif Source_L = Language_CPP_Name then
+         return Language_CPP;
+
+      elsif Source_L = Language_SDL_OpenGEODE_Name then
+         return Language_SDL_OpenGEODE;
 
       elsif Source_L = Language_RTSJ_Name then
          return Language_RTSJ;
@@ -3182,6 +3190,7 @@ package body Ocarina.Backends.Properties is
       Language_Ada_Name      := Get_String_Name ("ada");
       Language_Ada_05_Name   := Get_String_Name ("ada05");
       Language_C_Name        := Get_String_Name ("c");
+      Language_CPP_Name      := Get_String_Name ("cpp");
       Language_Device_Name   := Get_String_Name ("blackbox_device");
       Language_RTSJ_Name     := Get_String_Name ("rtsj");
       Language_Simulink_Name := Get_String_Name ("simulink");
@@ -3197,6 +3206,7 @@ package body Ocarina.Backends.Properties is
       Language_Rhapsody_Name := Get_String_Name ("rhapsody");
       Language_SCADE6_Name   := Get_String_Name ("scade6");
       Language_SDL_Name      := Get_String_Name ("sdl");
+      Language_SDL_OpenGEODE_Name := Get_String_Name ("sdl_opengeode");
       Language_SDL_ObjectGeode_Name := Get_String_Name ("sdl_objectgeode");
       Language_RTDS_Name     := Get_String_Name ("rtds");
       Language_SDL_RTDS_Name := Get_String_Name ("sdl_rtds");
