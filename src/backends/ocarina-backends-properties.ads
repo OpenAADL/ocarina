@@ -70,6 +70,8 @@ package Ocarina.Backends.Properties is
       Language_Lustre,
       Language_Rhapsody,
       Language_SDL_RTDS,
+      Language_CPP,
+      Language_SDL_OpenGEODE,
       Language_RTSJ,
       Language_Scade,
       Language_SDL,
