@@ -2921,7 +2921,7 @@ package body Ocarina.Backends.REAL is
             end;
 
          when FC_Cos | FC_Sin | FC_Tan | FC_Cosh | FC_Sinh | FC_Tanh
-           | FC_Ln | FC_Exp | FC_Sqrt =>
+           | FC_Ln | FC_Exp | FC_Sqrt | FC_Ceil | FC_Floor =>
             declare
                VT        : Value_Type;
                R         : Value_Id;
@@ -2954,6 +2954,12 @@ package body Ocarina.Backends.REAL is
                      Result := New_Real_Value (Exp (VT.RVal));
                   when FC_Sqrt =>
                      Result := New_Real_Value (Sqrt (VT.RVal));
+                  when FC_Floor =>
+                     Result := New_Real_Value
+                       (Long_Long_Float'Floor (VT.RVal));
+                  when FC_Ceil =>
+                     Result := New_Real_Value
+                       (Long_Long_Float'Ceiling (VT.RVal));
                   when others =>
                      raise Program_Error;
                end case;

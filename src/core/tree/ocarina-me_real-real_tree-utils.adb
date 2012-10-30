@@ -302,6 +302,10 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
             return FC_List;
          when T_Integer =>
             return FC_Int;
+         when T_Ceil =>
+            return FC_Ceil;
+         when T_Floor =>
+            return FC_Floor;
          when T_Float =>
             return FC_Float;
          when T_Sum =>
@@ -420,7 +424,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
             return RT_Unknown;
          when FC_Queue =>
             return RT_Unknown;
-         when FC_Cos | FC_Sin | FC_Tan =>
+         when FC_Cos | FC_Sin | FC_Tan | FC_Ceil | FC_Floor =>
             return RT_Float;
          when others =>
             DE ("Unable to determine REAL function returning type");

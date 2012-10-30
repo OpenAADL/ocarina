@@ -132,6 +132,8 @@ package Ocarina.ME_REAL.REAL_Tree.Utils is
    FC_Ln                        : constant := 48;
    FC_Exp                       : constant := 49;
    FC_Sqrt                      : constant := 50;
+   FC_Ceil                      : constant := 51;
+   FC_Floor                     : constant := 52;
 
    FC_MMax                      : constant := 60;
    FC_MMin                      : constant := 61;

@@ -136,6 +136,8 @@ package Ocarina.ME_REAL.Tokens is
       T_Head,       --  Return the first node of a list
       T_Queue,      --  Return the list minus  the first node
       T_Integer,
+      T_Ceil,
+      T_Floor,
       T_Max,
       T_Min,
       T_Cos,

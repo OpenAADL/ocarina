@@ -173,6 +173,9 @@ package body Ocarina.Analyzer.REAL is
       T  : Node_Id;
       It : Natural := RNU.Node_List.First;
    begin
+      --  XXX The list of theorem to be checked should be computed
+      --  from the instance tree instead
+
       if Main_Theorem = No_Name then
          --  We walk through all annex clauses to build the list of
          --  theorems to be checked.
@@ -1337,7 +1340,6 @@ package body Ocarina.Analyzer.REAL is
                --  The first parameter must be a set
 
                case Kind (N) is
-
                   when K_Set_Reference =>
 
                      --  We register the predefined set
@@ -2497,7 +2499,7 @@ package body Ocarina.Analyzer.REAL is
             end if;
 
          when FC_Cos | FC_Sin | FC_Tan | FC_Cosh | FC_Sinh | FC_Tanh
-           | FC_Ln | FC_Exp | FC_Sqrt =>
+           | FC_Ln | FC_Exp | FC_Sqrt | FC_Floor | FC_Ceil =>
             Set_Returned_Type (S, RT_Float);
 
             declare
@@ -2590,7 +2592,6 @@ package body Ocarina.Analyzer.REAL is
 
             while Present (N) loop
                case Kind (N) is
-
                   when K_Set_Reference =>
                      --  We register the predefined set
 
