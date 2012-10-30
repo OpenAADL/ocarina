@@ -35,148 +35,148 @@ with Types;
 
 package Ocarina.Backends.PN.Iutils is
 
-   function Pn_Get_New_Pn_Generated
+   function PN_Get_New_PN_Generated
      return Types.Node_Id;
 
-   procedure Pn_Init_Pn_Generated
+   procedure PN_Init_PN_Generated
      (G : Types.Node_Id;
       F : Types.Value_Id);
 
-   function Pn_Get_New_TPn_Informations
+   function PN_Get_New_TPN_Informations
      return Types.Node_Id;
 
-   function Pn_Get_New_Processor_Priority
+   function PN_Get_New_Processor_Priority
      return Types.Node_Id;
 
-   procedure Pn_Init_Processor_Priority
-     (Pn_Proc : Types.Node_Id;
+   procedure PN_Init_Processor_Priority
+     (PN_Proc : Types.Node_Id;
       Aadl_P : Types.Node_Id);
 
    procedure Append_Trans_To_Processor
-     (Pn_T : Types.Node_Id;
-      Pn_Proc : Types.Node_Id);
+     (PN_T : Types.Node_Id;
+      PN_Proc : Types.Node_Id);
 
-   function Pn_Get_New_Processor_Pattern
+   function PN_Get_New_Processor_Pattern
      return Types.Node_Id;
 
-   procedure Pn_Init_Processor_Pattern
-     (Pn_Proc : Types.Node_Id;
+   procedure PN_Init_Processor_Pattern
+     (PN_Proc : Types.Node_Id;
       Aadl_P : Types.Node_Id);
 
-   function Pn_Get_New_Thread_Pattern
+   function PN_Get_New_Thread_Pattern
      return Types.Node_Id;
 
-   procedure Pn_Init_Thread_Pattern
-     (Pn_T : Types.Node_Id;
+   procedure PN_Init_Thread_Pattern
+     (PN_T : Types.Node_Id;
       Aadl_T : Types.Node_Id);
 
-   function Pn_Get_New_Port_Pattern
+   function PN_Get_New_Port_Pattern
      return Types.Node_Id;
 
-   procedure Pn_Init_Port_Pattern
-     (Pn_P : Types.Node_Id;
+   procedure PN_Init_Port_Pattern
+     (PN_P : Types.Node_Id;
       Aadl_P : Types.Node_Id);
 
-   function Pn_Get_New_D_Port_Pattern
+   function PN_Get_New_D_Port_Pattern
      return Types.Node_Id;
 
-   procedure Pn_Init_D_Port_Pattern
-     (Pn_DP : Types.Node_Id;
+   procedure PN_Init_D_Port_Pattern
+     (PN_DP : Types.Node_Id;
       Aadl_DP : Types.Node_Id);
 
-   function Pn_Get_New_ED_Port_Pattern
+   function PN_Get_New_ED_Port_Pattern
      return Types.Node_Id;
 
-   procedure Pn_Init_ED_Port_Pattern
-     (Pn_DEP : Types.Node_Id;
+   procedure PN_Init_ED_Port_Pattern
+     (PN_DEP : Types.Node_Id;
       Aadl_DEP : Types.Node_Id);
 
-   function Pn_Get_New_Call_Seq_Pattern
+   function PN_Get_New_Call_Seq_Pattern
      return Types.Node_Id;
 
-   procedure Pn_Init_Call_Seq_Pattern
-     (Pn_CS : Types.Node_Id;
+   procedure PN_Init_Call_Seq_Pattern
+     (PN_CS : Types.Node_Id;
       Aadl_T : Types.Node_Id);
 
-   function Pn_Get_New_Spg_Pattern
+   function PN_Get_New_Spg_Pattern
      return Types.Node_Id;
 
-   procedure Pn_Init_Spg_Pattern
-     (Pn_Spg : Types.Node_Id;
+   procedure PN_Init_Spg_Pattern
+     (PN_Spg : Types.Node_Id;
       Aadl_Spg : Types.Node_Id);
 
-   function Pn_Get_New_Spg_Par_Pattern
+   function PN_Get_New_Spg_Par_Pattern
      return Types.Node_Id;
 
-   procedure Pn_Init_Spg_Par_Pattern
-     (Pn_Spg_Par : Types.Node_Id;
+   procedure PN_Init_Spg_Par_Pattern
+     (PN_Spg_Par : Types.Node_Id;
       Aadl_Spg_Par : Types.Node_Id);
 
-   procedure Pn_Init_Pn_Component
-     (Pn_C : Types.Node_Id;
+   procedure PN_Init_PN_Component
+     (PN_C : Types.Node_Id;
       Aadl_C : Types.Node_Id);
 
-   procedure Pn_Init_Pn_Node
-     (Pn_N : Types.Node_Id;
+   procedure PN_Init_PN_Node
+     (PN_N : Types.Node_Id;
       Aadl_N : Types.Node_Id;
       Name : Types.Name_id);
 
-   procedure Pn_Init_Node
+   procedure PN_Init_Node
      (N : Types.Node_Id);
 
-   procedure Pn_Tpn_Init_Place
+   procedure PN_TPN_Init_Place
      (P : Types.Node_Id;
       Aadl : Types.Node_Id;
       Name : Types.Name_Id;
-      Pn_G : Types.Node_Id;
+      PN_G : Types.Node_Id;
       M    : Unsigned_Long_Long);
 
-   procedure Pn_Init_Place
+   procedure PN_Init_Place
      (P : Types.Node_Id;
       Aadl : Types.Node_Id;
       Name : Types.Name_Id);
 
-   function Pn_Tpn_Get_New_Place
+   function PN_TPN_Get_New_Place
      return Types.Node_Id;
 
-   procedure Pn_Tpn_Init_Transition
+   procedure PN_TPN_Init_Transition
      (T : Types.Node_Id;
       Aadl : Types.Node_Id;
       Name : Types.Name_Id;
-      Pn_G : Types.Node_Id;
+      PN_G : Types.Node_Id;
       M    : Unsigned_Long_Long);
 
-   procedure Pn_Init_Transition
+   procedure PN_Init_Transition
      (T : Types.Node_Id;
       Aadl : Types.Node_Id;
       Name : Types.Name_Id);
 
-   function Pn_Tpn_Get_New_Transition
+   function PN_TPN_Get_New_Transition
      return Types.Node_Id;
 
-   procedure Pn_Tpn_Set_Guard
+   procedure PN_TPN_Set_Guard
      (T : Types.Node_Id;
       Low, Up : Types.Value_Id;
       Braces_Mode : Types.Value_Id;
       Priority : Types.Value_Id);
 
-   function Pn_Tpn_Get_New_Arc
+   function PN_TPN_Get_New_Arc
      return Types.Node_Id;
 
-   procedure Pn_Tpn_Init_Arc
+   procedure PN_TPN_Init_Arc
      (A : Types.Node_Id;
       Aadl : Types.Node_Id;
       From : Types.Node_Id := No_Node;
       To : Types.Node_Id := No_Node;
       K : Unsigned_Long_Long := 0);
 
-   procedure Pn_Tpn_Duplicate_Arc
+   procedure PN_TPN_Duplicate_Arc
      (A : Types.Node_Id;
       A_Inst : Types.Node_Id;
       Endpoint : Types.Node_Id;
       From : Boolean := False);
 
-   procedure Pn_Init_Arc
+   procedure PN_Init_Arc
      (A : Types.Node_Id;
       Aadl : Types.Node_Id;
       From : Types.Node_Id;
@@ -185,40 +185,40 @@ package Ocarina.Backends.PN.Iutils is
 
    ----------------------
 
-   function Pn_Get_New_CPn_Informations
+   function PN_Get_New_CPN_Informations
      return Types.Node_Id;
 
-   function Pn_Cpn_Get_New_Place
+   function PN_CPN_Get_New_Place
      return Types.Node_Id;
 
-   procedure Pn_Cpn_Init_Place
+   procedure PN_CPN_Init_Place
      (P : Types.Node_Id;
       Aadl : Types.Node_Id;
       Name : Types.Name_Id;
-      Pn_G : Types.Node_Id;
+      PN_G : Types.Node_Id;
       M    : Unsigned_Long_Long);
 
-   function Pn_Cpn_Get_New_Transition
+   function PN_CPN_Get_New_Transition
      return Types.Node_Id;
 
-   procedure Pn_Cpn_Init_Transition
+   procedure PN_CPN_Init_Transition
      (T : Types.Node_Id;
       Aadl : Types.Node_Id;
       Name : Types.Name_Id;
-      Pn_G : Types.Node_Id;
+      PN_G : Types.Node_Id;
       M    : Unsigned_Long_Long);
 
-   function Pn_Cpn_Get_New_Arc
+   function PN_CPN_Get_New_Arc
      return Types.Node_Id;
 
-   procedure Pn_Cpn_Init_Arc
+   procedure PN_CPN_Init_Arc
      (A : Types.Node_Id;
       Aadl : Types.Node_Id;
       From : Types.Node_Id := No_Node;
       To : Types.Node_Id := No_Node;
       K : Unsigned_Long_Long);
 
-   procedure Pn_Cpn_Duplicate_Arc
+   procedure PN_CPN_Duplicate_Arc
      (A : Types.Node_Id;
       A_Inst : Types.Node_Id;
       Endpoint : Types.Node_Id;

@@ -61,76 +61,76 @@ package body Ocarina.Backends.PN.Components is
 
    package OAV renames Ocarina.AADL_Values;
 
-   procedure Pn_Process_Final_System
-     (Pn_Generated : Node_Id;
-      Pn_P_Init_Proc : Pn_Init_Node;
-      Pn_P_New_Proc  : Pn_New_Node;
-      Pn_A_Init_Proc : Pn_Init_Arc;
-      Pn_A_New_Proc  : Pn_New_Node;
-      Pn_Dup_Arc_Proc : Pn_Dup_Arc);
+   procedure PN_Process_Final_System
+     (PN_Generated : Node_Id;
+      PN_P_Init_Proc : PN_Init_Node;
+      PN_P_New_Proc  : PN_New_Node;
+      PN_A_Init_Proc : PN_Init_Arc;
+      PN_A_New_Proc  : PN_New_Node;
+      PN_Dup_Arc_Proc : PN_Dup_Arc);
 
    function Process_Component_Instance
      (Instance : Types.Node_Id;
-      Pn_Generated : Types.Node_Id)
+      PN_Generated : Types.Node_Id)
      return Boolean;
 
    function Process_Thread_Instance
      (Aadl_Instance : Types.Node_Id;
-      Pn_Generated : Types.Node_Id)
+      PN_Generated : Types.Node_Id)
      return Boolean;
 
-   procedure Pn_Process_Thread_Pattern
+   procedure PN_Process_Thread_Pattern
      (Aadl_Instance : Types.Node_Id;
-      Pn_Thread : Types.Node_Id;
-      Pn_Generated : Types.Node_Id;
-      Pn_P_Init_Proc : Pn_Init_Node;
-      Pn_P_New_Proc : Pn_New_Node;
-      Pn_T_Init_Proc : Pn_Init_Node;
-      Pn_T_New_Proc : Pn_New_Node;
-      Pn_A_Init_Proc : Pn_Init_Arc;
-      Pn_A_New_Proc : Pn_New_Node);
+      PN_Thread : Types.Node_Id;
+      PN_Generated : Types.Node_Id;
+      PN_P_Init_Proc : PN_Init_Node;
+      PN_P_New_Proc : PN_New_Node;
+      PN_T_Init_Proc : PN_Init_Node;
+      PN_T_New_Proc : PN_New_Node;
+      PN_A_Init_Proc : PN_Init_Arc;
+      PN_A_New_Proc : PN_New_Node);
 
-   procedure Pn_Thread_Skeleton
+   procedure PN_Thread_Skeleton
      (Aadl_Instance : Types.Node_Id;
-      Pn_Thread : Types.Node_Id;
-      Pn_Generated : Types.Node_Id;
-      Pn_P_Init_Proc : Pn_Init_Node;
-      Pn_P_New_Proc : Pn_New_Node;
-      Pn_T_Init_Proc : Pn_Init_Node;
-      Pn_T_New_Proc : Pn_New_Node;
-      Pn_A_Init_Proc : Pn_Init_Arc;
-      Pn_A_New_Proc : Pn_New_Node);
+      PN_Thread : Types.Node_Id;
+      PN_Generated : Types.Node_Id;
+      PN_P_Init_Proc : PN_Init_Node;
+      PN_P_New_Proc : PN_New_Node;
+      PN_T_Init_Proc : PN_Init_Node;
+      PN_T_New_Proc : PN_New_Node;
+      PN_A_Init_Proc : PN_Init_Arc;
+      PN_A_New_Proc : PN_New_Node);
 
-   procedure Pn_Build_Spg_Par
+   procedure PN_Build_Spg_Par
      (Aadl_Instance : Types.Node_Id;
-      Pn_Generated  : Types.Node_Id;
+      PN_Generated  : Types.Node_Id;
       Spg_Feat : Types.Node_Id;
-      Pn_Spg_Call : Types.Node_Id;
+      PN_Spg_Call : Types.Node_Id;
       In_Par : Boolean := True;
-      Pn_P_Init_Proc : Pn_Init_Node;
-      Pn_P_New_Proc  : Pn_New_Node;
-      Pn_T_Init_Proc : Pn_Init_Node;
-      Pn_T_New_Proc  : Pn_New_Node;
-      Pn_A_Init_Proc : Pn_Init_Arc;
-      Pn_A_New_Proc  : Pn_New_Node);
+      PN_P_Init_Proc : PN_Init_Node;
+      PN_P_New_Proc  : PN_New_Node;
+      PN_T_Init_Proc : PN_Init_Node;
+      PN_T_New_Proc  : PN_New_Node;
+      PN_A_Init_Proc : PN_Init_Arc;
+      PN_A_New_Proc  : PN_New_Node);
 
-   procedure Pn_Build_Port (Aadl_Instance : Types.Node_Id;
-                            Pn_Generated  : Types.Node_Id;
-                            Pn_Thread : Types.Node_Id;
+   procedure PN_Build_Port (Aadl_Instance : Types.Node_Id;
+                            PN_Generated  : Types.Node_Id;
+                            PN_Thread : Types.Node_Id;
                             F : Types.Value_Id);
 
-   procedure Pn_Build_Tpn_Port
+   procedure PN_Build_Tpn_Port
      (Aadl_Instance : Node_Id;
-      Pn_Generated  : Types.Node_Id;
+      PN_Generated  : Types.Node_Id;
       Port_Instance : Node_Id;
-      Pn_Port : Node_Id;
+      PN_Port : Node_Id;
       Is_Data : Boolean := True);
 
-   procedure Pn_Build_Cpn_Port
+   procedure PN_Build_Cpn_Port
      (Aadl_Instance : Node_Id;
-      Pn_Generated  : Types.Node_Id;
+      PN_Generated  : Types.Node_Id;
       Port_Instance : Node_Id;
-      Pn_Port : Node_Id;
+      PN_Port : Node_Id;
       Is_Data : Boolean := True);
 
    -----------------------------------
@@ -149,7 +149,7 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Nodes;
 
       Instance : Node_Id;
-      Pn_Generated : Node_Id;
+      PN_Generated : Node_Id;
       Success : Boolean := False;
 
       --  0 for CPN, 1 for TPN
@@ -162,77 +162,77 @@ package body Ocarina.Backends.PN.Components is
       Instance := Root_System (Architecture_Instance);
 
       --  initialization of the Petri Net top box
-      Pn_Generated := Pn_Get_New_Pn_Generated;
-      Pn_Init_Pn_Generated (Pn_Generated,
+      PN_Generated := PN_Get_New_PN_Generated;
+      PN_Init_PN_Generated (PN_Generated,
                             Formalism);
 
       declare
          F : constant Value_Type := Get_Value_Type
-           (OPN.Formalism (Pn_Generated));
+           (OPN.Formalism (PN_Generated));
       begin
          case F.Ival is
             when 0 =>
                --  CPN Pattern
-               Set_Pn_Formalism_Specific_Informations
-                 (Pn_Generated,
-                  Pn_Get_New_CPn_Informations);
+               Set_PN_Formalism_Specific_Informations
+                 (PN_Generated,
+                  PN_Get_New_CPN_Informations);
 
-               if Instance /= No_Node and then Pn_Generated /= No_Node then
+               if Instance /= No_Node and then PN_Generated /= No_Node then
                   Success := Process_Component_Instance (Instance,
-                                                         Pn_Generated);
+                                                         PN_Generated);
                   if Success then
                      null;
                   end if;
                end if;
 
                --  assembly and final processing
-               Pn_Process_Final_System (Pn_Generated,
-                                        Pn_Cpn_Init_Place'Access,
-                                        Pn_Cpn_Get_New_Place'Access,
-                                        Pn_Cpn_Init_Arc'Access,
-                                        Pn_Cpn_Get_New_Arc'Access,
-                                        Pn_Cpn_Duplicate_Arc'Access);
+               PN_Process_Final_System (PN_Generated,
+                                        PN_Cpn_Init_Place'Access,
+                                        PN_Cpn_Get_New_Place'Access,
+                                        PN_Cpn_Init_Arc'Access,
+                                        PN_Cpn_Get_New_Arc'Access,
+                                        PN_Cpn_Duplicate_Arc'Access);
             when 1 =>
                --  TPN Pattern
                --  set specific informations
-               Set_Pn_Formalism_Specific_Informations
-                 (Pn_Generated,
-                  Pn_Get_New_TPn_Informations);
+               Set_PN_Formalism_Specific_Informations
+                 (PN_Generated,
+                  PN_Get_New_TPN_Informations);
 
-               if Instance /= No_Node and then Pn_Generated /= No_Node then
+               if Instance /= No_Node and then PN_Generated /= No_Node then
                   Success := Process_Component_Instance (Instance,
-                                                         Pn_Generated);
+                                                         PN_Generated);
                   if Success then
                      null;
                   end if;
                end if;
 
                --  assembly and final processing
-               Pn_Process_Final_System (Pn_Generated,
-                                        Pn_Tpn_Init_Place'Access,
-                                        Pn_Tpn_Get_New_Place'Access,
-                                        Pn_Tpn_Init_Arc'Access,
-                                        Pn_Tpn_Get_New_Arc'Access,
-                                        Pn_Tpn_Duplicate_Arc'Access);
+               PN_Process_Final_System (PN_Generated,
+                                        PN_Tpn_Init_Place'Access,
+                                        PN_Tpn_Get_New_Place'Access,
+                                        PN_Tpn_Init_Arc'Access,
+                                        PN_Tpn_Get_New_Arc'Access,
+                                        PN_Tpn_Duplicate_Arc'Access);
             when others =>
                null;
          end case;
       end;
 
-      return Pn_Generated;
+      return PN_Generated;
    end Process_Architecture_Instance;
 
    -------------------------------
-   --  Pn_Process_Final_System  --
+   --  PN_Process_Final_System  --
    -------------------------------
 
-   procedure Pn_Process_Final_System
-     (Pn_Generated : Node_Id;
-      Pn_P_Init_Proc : Pn_Init_Node;
-      Pn_P_New_Proc  : Pn_New_Node;
-      Pn_A_Init_Proc : Pn_Init_Arc;
-      Pn_A_New_Proc  : Pn_New_Node;
-      Pn_Dup_Arc_Proc : Pn_Dup_Arc)
+   procedure PN_Process_Final_System
+     (PN_Generated : Node_Id;
+      PN_P_Init_Proc : PN_Init_Node;
+      PN_P_New_Proc  : PN_New_Node;
+      PN_A_Init_Proc : PN_Init_Arc;
+      PN_A_New_Proc  : PN_New_Node;
+      PN_Dup_Arc_Proc : PN_Dup_Arc)
 
    is
       use OPN;
@@ -250,8 +250,8 @@ package body Ocarina.Backends.PN.Components is
    begin
 
       Thread_Iter := OPN.First_Node
-        (Pn_Subcomponents
-         (Pn_Box (Pn_Generated)));
+        (PN_Subcomponents
+         (PN_Box (PN_Generated)));
 
       --  run across subcomponents
       while Present (Thread_Iter) loop
@@ -259,12 +259,12 @@ package body Ocarina.Backends.PN.Components is
          if OPN.Kind (Thread_Iter) = K_Thread_Pattern then
             --  run across threads
 
-            if OPN.Kind (Pn_Formalism_Specific_Informations (Pn_Generated))
+            if OPN.Kind (PN_Formalism_Specific_Informations (PN_Generated))
               = K_TPN_Specific_Informations then
 
                --  manage processor
                declare
-                  Pn_Proc : Node_Id;
+                  PN_Proc : Node_Id;
                   Aadl_Proc : constant Node_Id
                     := Get_Bound_Processor (AIN.Corresponding_Instance
                                             (Get_Container_Process
@@ -274,44 +274,44 @@ package body Ocarina.Backends.PN.Components is
                begin
                   if Aadl_Proc /= No_Node then
 
-                     Pn_Proc := Get_Handling (Aadl_Proc,
+                     PN_Proc := Get_Handling (Aadl_Proc,
                                               By_Node,
                                               H_PN_Proc_Creation);
 
-                     if Pn_Proc = No_Node then
+                     if PN_Proc = No_Node then
 
                         --  create processor
-                        Pn_Proc := Pn_Get_New_Processor_Pattern;
-                        Pn_Init_Processor_Pattern (Pn_Proc,
+                        PN_Proc := PN_Get_New_Processor_Pattern;
+                        PN_Init_Processor_Pattern (PN_Proc,
                                                    Aadl_Proc);
 
                         --  add place in component
                         declare
                            P_Proc : Node_Id;
                         begin
-                           P_Proc := Pn_Tpn_Get_New_Place;
-                           Pn_Tpn_Init_Place (P_Proc,
+                           P_Proc := PN_Tpn_Get_New_Place;
+                           PN_Tpn_Init_Place (P_Proc,
                                               Aadl_Proc,
                                               Get_String_Name ("_Processor"),
-                                              Pn_Generated,
+                                              PN_Generated,
                                               0);
 
                            Set_Tokens_Number (P_Proc,
                                               New_Integer_Value (1));
                            --  add place into component
                            Append_Node_To_List (P_Proc,
-                                                Internal_Places (Pn_Proc));
+                                                Internal_Places (PN_Proc));
                         end;
 
                         Set_Handling (Aadl_Proc,
                                       By_Node,
                                       H_PN_Proc_Creation,
-                                      Pn_Proc);
+                                      PN_Proc);
 
                         --  add processor into components list
-                        Append_Node_To_List (Pn_Proc,
-                                             Pn_Subcomponents
-                                             (Pn_Box (Pn_Generated)));
+                        Append_Node_To_List (PN_Proc,
+                                             PN_Subcomponents
+                                             (PN_Box (PN_Generated)));
                      end if;
 
                      --  here we have the processor component
@@ -320,23 +320,23 @@ package body Ocarina.Backends.PN.Components is
                      --  first, find dedicated entry in tpn_info to update
                      --  priorities
                      if Is_Empty (Priorities
-                                  (Pn_Formalism_Specific_Informations
-                                   (Pn_Generated))) then
+                                  (PN_Formalism_Specific_Informations
+                                   (PN_Generated))) then
                         --  first entry in the list
-                        Proc_Prio_Node := Pn_Get_New_Processor_Priority;
-                        Pn_Init_Processor_Priority (Proc_Prio_Node,
+                        Proc_Prio_Node := PN_Get_New_Processor_Priority;
+                        PN_Init_Processor_Priority (Proc_Prio_Node,
                                                     Aadl_Proc);
                         Append_Node_To_List
                           (Proc_Prio_Node,
                            Priorities
-                           (Pn_Formalism_Specific_Informations
-                            (Pn_Generated)));
+                           (PN_Formalism_Specific_Informations
+                            (PN_Generated)));
                      else
                         --  find it
                         Proc_Prio_Node := OPN.First_Node
                           (Priorities
-                           (Pn_Formalism_Specific_Informations
-                            (Pn_Generated)));
+                           (PN_Formalism_Specific_Informations
+                            (PN_Generated)));
                         while Present (Proc_Prio_Node) loop
                            if P_Instance (Proc_Prio_Node) = Aadl_Proc then
                               --  leave loop
@@ -353,7 +353,7 @@ package body Ocarina.Backends.PN.Components is
                         declare
                            Cs_Iter, Spg_Iter, Trans_Iter : Node_Id;
                            P_Proc : constant Node_Id :=
-                             OPN.First_Node (Internal_Places (Pn_Proc));
+                             OPN.First_Node (Internal_Places (PN_Proc));
                         begin
                            Cs_Iter := OPN.First_Node (Call_Seq (Thread_Iter));
                            while Present (Cs_Iter) loop
@@ -371,8 +371,8 @@ package body Ocarina.Backends.PN.Components is
                                     declare
                                        New_Arc : Node_Id;
                                     begin
-                                       New_Arc := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (New_Arc,
+                                       New_Arc := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (New_Arc,
                                                        Th_Instance
                                                        (Thread_Iter),
                                                        P_Proc,
@@ -381,7 +381,7 @@ package body Ocarina.Backends.PN.Components is
 
                                        Append_Node_To_List
                                          (New_Arc,
-                                          Pn_Arcs_In (Trans_Iter));
+                                          PN_Arcs_In (Trans_Iter));
                                     end;
                                     --  since it is begin,
                                     --  its priority needs to be
@@ -398,8 +398,8 @@ package body Ocarina.Backends.PN.Components is
                                     declare
                                        New_Arc : Node_Id;
                                     begin
-                                       New_Arc := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (New_Arc,
+                                       New_Arc := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (New_Arc,
                                                        Th_Instance
                                                        (Thread_Iter),
                                                        Trans_Iter,
@@ -408,7 +408,7 @@ package body Ocarina.Backends.PN.Components is
 
                                        Append_Node_To_List
                                          (New_Arc,
-                                          Pn_Arcs_Out (Trans_Iter));
+                                          PN_Arcs_Out (Trans_Iter));
                                     end;
 
                                     --  handle context switch
@@ -418,8 +418,8 @@ package body Ocarina.Backends.PN.Components is
                                     declare
                                        New_Arc : Node_Id;
                                     begin
-                                       New_Arc := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (New_Arc,
+                                       New_Arc := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (New_Arc,
                                                        Th_Instance
                                                        (Thread_Iter),
                                                        Trans_Iter,
@@ -428,7 +428,7 @@ package body Ocarina.Backends.PN.Components is
 
                                        Append_Node_To_List
                                          (New_Arc,
-                                          Pn_Arcs_Out (Trans_Iter));
+                                          PN_Arcs_Out (Trans_Iter));
                                     end;
                                     --  since it is preemp1, its priority needs
                                     --  to be recorded
@@ -444,8 +444,8 @@ package body Ocarina.Backends.PN.Components is
                                     declare
                                        New_Arc : Node_Id;
                                     begin
-                                       New_Arc := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (New_Arc,
+                                       New_Arc := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (New_Arc,
                                                        Th_Instance
                                                        (Thread_Iter),
                                                        P_Proc,
@@ -454,7 +454,7 @@ package body Ocarina.Backends.PN.Components is
 
                                        Append_Node_To_List
                                          (New_Arc,
-                                          Pn_Arcs_In (Trans_Iter));
+                                          PN_Arcs_In (Trans_Iter));
                                     end;
 
                                     --  next
@@ -471,14 +471,14 @@ package body Ocarina.Backends.PN.Components is
                end;
             end if;                     --  tpn for processors
 
-            if OPN.Kind (Pn_Formalism_Specific_Informations (Pn_Generated))
+            if OPN.Kind (PN_Formalism_Specific_Informations (PN_Generated))
               = K_TPN_Specific_Informations then
                --  TPN
                --  set hyperperiod
                Set_Hyperperiod (Thread_Iter,
                                 Hyperperiod
-                                (Pn_Formalism_Specific_Informations
-                                 (Pn_Generated)));
+                                (PN_Formalism_Specific_Informations
+                                 (PN_Generated)));
 
                --  set hyperperiod values to hyperperiod place
                declare
@@ -576,10 +576,10 @@ package body Ocarina.Backends.PN.Components is
                                              begin
                                                 --  look at in arcs
                                                 Arc_Iter := OPN.First_Node
-                                                  (Pn_Arcs_In (Pop_Node));
+                                                  (PN_Arcs_In (Pop_Node));
                                                 while Present (Arc_Iter) loop
 
-                                                   Pn_Dup_Arc_Proc.all
+                                                   PN_Dup_Arc_Proc.all
                                                      (Arc_Iter,
                                                       Th_Instance
                                                       (Thread_Iter),
@@ -593,10 +593,10 @@ package body Ocarina.Backends.PN.Components is
 
                                                 --  look at out arcs
                                                 Arc_Iter := OPN.First_Node
-                                                  (Pn_Arcs_Out (Pop_Node));
+                                                  (PN_Arcs_Out (Pop_Node));
                                                 while Present (Arc_Iter) loop
 
-                                                   Pn_Dup_Arc_Proc.all
+                                                   PN_Dup_Arc_Proc.all
                                                      (Arc_Iter,
                                                       Th_Instance
                                                       (Thread_Iter),
@@ -689,10 +689,10 @@ package body Ocarina.Backends.PN.Components is
                                              begin
                                                 --  look at in arcs
                                                 Arc_Iter := OPN.First_Node
-                                                  (Pn_Arcs_In (Push_Node));
+                                                  (PN_Arcs_In (Push_Node));
                                                 while Present (Arc_Iter) loop
 
-                                                   Pn_Dup_Arc_Proc.all
+                                                   PN_Dup_Arc_Proc.all
                                                      (Arc_Iter,
                                                       Th_Instance
                                                       (Thread_Iter),
@@ -706,10 +706,10 @@ package body Ocarina.Backends.PN.Components is
 
                                                 --  look at out arcs
                                                 Arc_Iter := OPN.First_Node
-                                                  (Pn_Arcs_Out (Push_Node));
+                                                  (PN_Arcs_Out (Push_Node));
                                                 while Present (Arc_Iter) loop
 
-                                                   Pn_Dup_Arc_Proc.all
+                                                   PN_Dup_Arc_Proc.all
                                                      (Arc_Iter,
                                                       Th_Instance
                                                       (Thread_Iter),
@@ -798,10 +798,10 @@ package body Ocarina.Backends.PN.Components is
                            Arc_Iter : Node_Id;
                         begin
                            --  look at in arcs
-                           Arc_Iter := OPN.First_Node (Pn_Arcs_In (End_Node));
+                           Arc_Iter := OPN.First_Node (PN_Arcs_In (End_Node));
                            while Present (Arc_Iter) loop
 
-                              Pn_Dup_Arc_Proc.all
+                              PN_Dup_Arc_Proc.all
                                 (Arc_Iter,
                                  Th_Instance (Thread_Iter),
                                  Begin_Next_Node,
@@ -812,10 +812,10 @@ package body Ocarina.Backends.PN.Components is
                            end loop;
 
                            --  look at out arcs
-                           Arc_Iter := OPN.First_Node (Pn_Arcs_Out (End_Node));
+                           Arc_Iter := OPN.First_Node (PN_Arcs_Out (End_Node));
                            while Present (Arc_Iter) loop
 
-                              Pn_Dup_Arc_Proc.all
+                              PN_Dup_Arc_Proc.all
                                 (Arc_Iter,
                                  Th_Instance (Thread_Iter),
                                  Begin_Next_Node,
@@ -879,15 +879,15 @@ package body Ocarina.Backends.PN.Components is
                         declare
                            New_Arc : Node_Id;
                         begin
-                           New_Arc := Pn_A_New_Proc.all;
-                           Pn_A_Init_Proc (New_Arc,
+                           New_Arc := PN_A_New_Proc.all;
+                           PN_A_Init_Proc (New_Arc,
                                            Th_Instance (Thread_Iter),
                                            Wait_Node,
                                            Pop_Node,
                                            1);
 
                            Append_Node_To_List (New_Arc,
-                                                Pn_Arcs_In
+                                                PN_Arcs_In
                                                 (Pop_Node));
                         end;
 
@@ -905,7 +905,7 @@ package body Ocarina.Backends.PN.Components is
               (Th_Instance (Thread_Iter)) = Thread_Periodic then
                --  manage periodic
                declare
-                  Beg_Node : Node_Id;
+                  Beg_Node : Node_Id := No_Node;
                   Wait_Node : Node_Id;
                   Clock_Node : Node_Id;
                   Node_Iter : Node_Id;
@@ -918,8 +918,8 @@ package body Ocarina.Backends.PN.Components is
                   --  find clock place
                   if not Is_Empty (Internal_Places (Thread_Iter)) then
 
-                     if OPN.Kind (Pn_Formalism_Specific_Informations
-                                  (Pn_Generated))
+                     if OPN.Kind (PN_Formalism_Specific_Informations
+                                  (PN_Generated))
                        = K_TPN_Specific_Informations then
 
                         Node_Iter := OPN.First_Node
@@ -961,40 +961,42 @@ package body Ocarina.Backends.PN.Components is
                      end if;
 
                      --  add new arc for clock
-                     if OPN.Kind (Pn_Formalism_Specific_Informations
-                                  (Pn_Generated))
-                       = K_TPN_Specific_Informations then
-
+                     if Present (Beg_Node)
+                       and then OPN.Kind (PN_Formalism_Specific_Informations
+                                            (PN_Generated))
+                       = K_TPN_Specific_Informations
+                     then
                         declare
                            New_Arc : Node_Id;
                         begin
-                           New_Arc := Pn_Tpn_Get_New_Arc;
-                           Pn_Tpn_Init_Arc (New_Arc,
+                           New_Arc := PN_Tpn_Get_New_Arc;
+                           PN_Tpn_Init_Arc (New_Arc,
                                             Th_Instance (Thread_Iter),
                                             Clock_Node,
                                             Beg_Node,
                                             0);
-
                            Append_Node_To_List (New_Arc,
-                                                Pn_Arcs_In (Beg_Node));
+                                                PN_Arcs_In (Beg_Node));
                         end;
                      end if;
 
                      --  add new arc for wait node
-                     declare
-                        New_Arc : Node_Id;
-                     begin
-                        New_Arc := Pn_A_New_Proc.all;
-                        Pn_A_Init_Proc (New_Arc,
-                                        Th_Instance (Thread_Iter),
-                                        Wait_Node,
-                                        Beg_Node,
-                                        1);
+                     if Present (Beg_Node) then
+                        declare
+                           New_Arc : Node_Id;
+                        begin
+                           New_Arc := PN_A_New_Proc.all;
+                           PN_A_Init_Proc (New_Arc,
+                                           Th_Instance (Thread_Iter),
+                                           Wait_Node,
+                                           Beg_Node,
+                                           1);
 
-                        Append_Node_To_List (New_Arc,
-                                             Pn_Arcs_In (Beg_Node));
-                     end;
-                  end if;               --  thread internal places for clock
+                           Append_Node_To_List (New_Arc,
+                                                PN_Arcs_In (Beg_Node));
+                        end;
+                     end if;               --  thread internal places for clock
+                  end if;
                end;
             end if;                     --  periodic thread clock
 
@@ -1008,8 +1010,8 @@ package body Ocarina.Backends.PN.Components is
                begin
                   --  find clock place
                   if not Is_Empty (Internal_Places (Thread_Iter)) then
-                     if OPN.Kind (Pn_Formalism_Specific_Informations
-                                  (Pn_Generated))
+                     if OPN.Kind (PN_Formalism_Specific_Informations
+                                  (PN_Generated))
                        = K_TPN_Specific_Informations then
 
                         Node_Iter := OPN.First_Node
@@ -1056,8 +1058,8 @@ package body Ocarina.Backends.PN.Components is
                                  declare
                                     New_Arc : Node_Id;
                                  begin
-                                    New_Arc := Pn_Tpn_Get_New_Arc;
-                                    Pn_Tpn_Init_Arc (New_Arc,
+                                    New_Arc := PN_Tpn_Get_New_Arc;
+                                    PN_Tpn_Init_Arc (New_Arc,
                                                      Th_Instance (Thread_Iter),
                                                      Clock_Node,
                                                      Pop_Node,
@@ -1065,7 +1067,7 @@ package body Ocarina.Backends.PN.Components is
 
                                     Append_Node_To_List
                                       (New_Arc,
-                                       Pn_Arcs_In (Pop_Node));
+                                       PN_Arcs_In (Pop_Node));
                                  end;
 
                                  --  next
@@ -1103,11 +1105,11 @@ package body Ocarina.Backends.PN.Components is
 
                   while Present (Port_Iter) loop
                      --  create new node
-                     Interconnection_Node := Pn_P_New_Proc.all;
-                     Pn_P_Init_Proc (Interconnection_Node,
+                     Interconnection_Node := PN_P_New_Proc.all;
+                     PN_P_Init_Proc (Interconnection_Node,
                                      Port_Instance (Port_Iter),
                                      Get_String_Name ("_Bus"),
-                                     Pn_Generated,
+                                     PN_Generated,
                                      0);
 
                      --  set handling to the target port instance
@@ -1119,8 +1121,8 @@ package body Ocarina.Backends.PN.Components is
 
                      --  add place to pn_box
                      Append_Node_To_List (Interconnection_Node,
-                                          Pn_Interconnections
-                                          (Pn_Box (Pn_Generated)));
+                                          PN_Interconnections
+                                          (PN_Box (PN_Generated)));
 
                      --  find pop's interface
                      if Get_Handling (Port_Iter,
@@ -1157,21 +1159,21 @@ package body Ocarina.Backends.PN.Components is
                      end if;
 
                      --  create arc
-                     if OPN.Kind (Pn_Formalism_Specific_Informations
-                                  (Pn_Generated))
+                     if OPN.Kind (PN_Formalism_Specific_Informations
+                                  (PN_Generated))
                        = K_TPN_Specific_Informations then
                         declare
                            New_Arc : Node_Id;
                         begin
-                           New_Arc := Pn_A_New_Proc.all;
-                           Pn_A_Init_Proc (New_Arc,
+                           New_Arc := PN_A_New_Proc.all;
+                           PN_A_Init_Proc (New_Arc,
                                            Th_Instance (Thread_Iter),
                                            Pop_Node,
                                            Interconnection_Node,
                                            2);
 
                            Append_Node_To_List (New_Arc,
-                                                Pn_Arcs_Out (Pop_Node));
+                                                PN_Arcs_Out (Pop_Node));
                         end;
                      else
                         --  delete Pop
@@ -1222,15 +1224,15 @@ package body Ocarina.Backends.PN.Components is
                            declare
                               New_Arc : Node_Id;
                            begin
-                              New_Arc := Pn_A_New_Proc.all;
-                              Pn_A_Init_Proc (New_Arc,
+                              New_Arc := PN_A_New_Proc.all;
+                              PN_A_Init_Proc (New_Arc,
                                               Th_Instance (Thread_Iter),
                                               End_Node,
                                               Wait_Node,
                                               1);
 
                               Append_Node_To_List (New_Arc,
-                                                   Pn_Arcs_Out (End_Node));
+                                                   PN_Arcs_Out (End_Node));
                            end;
 
                         end if;         --  public interface
@@ -1256,8 +1258,8 @@ package body Ocarina.Backends.PN.Components is
       --  next loop through in ports to connect to interconnection
       --  used to merge all init_dispatch too
       Thread_Iter := OPN.First_Node
-        (Pn_Subcomponents
-         (Pn_Box (Pn_Generated)));
+        (PN_Subcomponents
+         (PN_Box (PN_Generated)));
 
       declare
          Init_Node : constant Node_Id
@@ -1279,10 +1281,10 @@ package body Ocarina.Backends.PN.Components is
                   begin
                      --  look at in arcs
                      Arc_Iter := OPN.First_Node
-                       (Pn_Arcs_In (Current_Init));
+                       (PN_Arcs_In (Current_Init));
                      while Present (Arc_Iter) loop
 
-                        Pn_Dup_Arc_Proc.all
+                        PN_Dup_Arc_Proc.all
                           (Arc_Iter,
                            Th_Instance (Thread_Iter),
                            Init_Node,
@@ -1293,10 +1295,10 @@ package body Ocarina.Backends.PN.Components is
                      end loop;
 
                      --  look at out arcs
-                     Arc_Iter := OPN.First_Node (Pn_Arcs_Out (Current_Init));
+                     Arc_Iter := OPN.First_Node (PN_Arcs_Out (Current_Init));
                      while Present (Arc_Iter) loop
 
-                        Pn_Dup_Arc_Proc.all
+                        PN_Dup_Arc_Proc.all
                           (Arc_Iter,
                            Th_Instance (Thread_Iter),
                            Init_Node,
@@ -1330,10 +1332,10 @@ package body Ocarina.Backends.PN.Components is
                         --  run through in ports
 
                         --  find interconnection place
-                        if not Is_Empty (Pn_Interconnections
-                                         (Pn_Box (Pn_Generated))) then
+                        if not Is_Empty (PN_Interconnections
+                                         (PN_Box (PN_Generated))) then
                            Inter_Iter := OPN.First_Node
-                             (Pn_Interconnections (Pn_Box (Pn_Generated)));
+                             (PN_Interconnections (PN_Box (PN_Generated)));
 
                            while Present (Inter_Iter) loop
 
@@ -1359,29 +1361,29 @@ package body Ocarina.Backends.PN.Components is
                                                         (Port_Iter));
                         end if;
 
-                        if OPN.Kind (Pn_Formalism_Specific_Informations
-                                     (Pn_Generated))
+                        if OPN.Kind (PN_Formalism_Specific_Informations
+                                     (PN_Generated))
                           = K_TPN_Specific_Informations then
 
                            --  create arc
                            declare
                               New_Arc : Node_Id;
                            begin
-                              New_Arc := Pn_A_New_Proc.all;
-                              Pn_A_Init_Proc (New_Arc,
+                              New_Arc := PN_A_New_Proc.all;
+                              PN_A_Init_Proc (New_Arc,
                                               Th_Instance (Thread_Iter),
                                               Interconnection_Node,
                                               Push_Node,
                                               3);
 
                               Append_Node_To_List (New_Arc,
-                                                   Pn_Arcs_In (Push_Node));
+                                                   PN_Arcs_In (Push_Node));
 
                            end;
                         end if;
 
-                        if OPN.Kind (Pn_Formalism_Specific_Informations
-                                     (Pn_Generated))
+                        if OPN.Kind (PN_Formalism_Specific_Informations
+                                     (PN_Generated))
                           = K_CPN_Specific_Informations then
                            --  find ovf node
                            --  and connect to interconnection_node
@@ -1406,10 +1408,10 @@ package body Ocarina.Backends.PN.Components is
                                  begin
                                     --  look at in arcs
                                     Arc_Iter := OPN.First_Node
-                                      (Pn_Arcs_In (Push_Source));
+                                      (PN_Arcs_In (Push_Source));
                                     while Present (Arc_Iter) loop
 
-                                       Pn_Dup_Arc_Proc.all
+                                       PN_Dup_Arc_Proc.all
                                          (Arc_Iter,
                                           Port_Instance (Port_Iter),
                                           Push_Node,
@@ -1421,10 +1423,10 @@ package body Ocarina.Backends.PN.Components is
 
                                     --  look at out arcs
                                     Arc_Iter := OPN.First_Node
-                                      (Pn_Arcs_Out (Push_Source));
+                                      (PN_Arcs_Out (Push_Source));
                                     while Present (Arc_Iter) loop
 
-                                       Pn_Dup_Arc_Proc.all
+                                       PN_Dup_Arc_Proc.all
                                          (Arc_Iter,
                                           Port_Instance (Port_Iter),
                                           Push_Node,
@@ -1441,10 +1443,10 @@ package body Ocarina.Backends.PN.Components is
                                     begin
                                        --  look at in arcs
                                        Arc_Iter := OPN.First_Node
-                                         (Pn_Arcs_In (Push_Source));
+                                         (PN_Arcs_In (Push_Source));
                                        while Present (Arc_Iter) loop
 
-                                          Pn_Dup_Arc_Proc.all
+                                          PN_Dup_Arc_Proc.all
                                             (Arc_Iter,
                                              Port_Instance (Port_Iter),
                                              Ovf_Node,
@@ -1456,10 +1458,10 @@ package body Ocarina.Backends.PN.Components is
 
                                        --  look at out arcs
                                        Arc_Iter := OPN.First_Node
-                                         (Pn_Arcs_Out (Push_Source));
+                                         (PN_Arcs_Out (Push_Source));
                                        while Present (Arc_Iter) loop
 
-                                          Pn_Dup_Arc_Proc.all
+                                          PN_Dup_Arc_Proc.all
                                             (Arc_Iter,
                                              Port_Instance (Port_Iter),
                                              Ovf_Node,
@@ -1473,9 +1475,9 @@ package body Ocarina.Backends.PN.Components is
                               end if;
                               --  delete interconnection_node
                               Delete_Node_From_List (Interconnection_Node,
-                                                     Pn_Interconnections
-                                                     (Pn_Box
-                                                      (Pn_Generated)));
+                                                     PN_Interconnections
+                                                     (PN_Box
+                                                      (PN_Generated)));
                               --  delete push source
                               --  too complicated
                               Set_Handling (Push_Source,
@@ -1498,7 +1500,7 @@ package body Ocarina.Backends.PN.Components is
             Thread_Iter := OPN.Next_Node (Thread_Iter);
          end loop;                         --  next subcomponent
       end;
-   end Pn_Process_Final_System;
+   end PN_Process_Final_System;
 
    --------------------------------
    -- Process_Component_Instance --
@@ -1506,7 +1508,7 @@ package body Ocarina.Backends.PN.Components is
 
    function Process_Component_Instance
      (Instance : Types.Node_Id;
-      Pn_Generated : Types.Node_Id)
+      PN_Generated : Types.Node_Id)
      return Boolean
    is
       use Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -1532,14 +1534,14 @@ package body Ocarina.Backends.PN.Components is
                  | CC_System =>
 
                   Success := Process_Component_Instance
-                    (Corresponding_Instance (List_Node), Pn_Generated)
+                    (Corresponding_Instance (List_Node), PN_Generated)
                     and then Success;
 
                when CC_Thread =>
 
                   Success := Process_Thread_Instance
                     (Corresponding_Instance (List_Node),
-                     Pn_Generated)
+                     PN_Generated)
 
                     and then Success;
                when others =>
@@ -1559,7 +1561,7 @@ package body Ocarina.Backends.PN.Components is
 
    function Process_Thread_Instance
      (Aadl_Instance : Types.Node_Id;
-      Pn_Generated : Types.Node_Id)
+      PN_Generated : Types.Node_Id)
      return Boolean
    is
       use Ocarina.Backends.PN.Nodes;
@@ -1569,66 +1571,66 @@ package body Ocarina.Backends.PN.Components is
 
       Success : constant Boolean := True;
 
-      Pn_Thread : Node_Id;
+      PN_Thread : Node_Id;
    begin
       --  Get a new PN thread pattern box
-      Pn_Thread := Pn_Get_New_Thread_Pattern;
-      Pn_Init_Thread_Pattern (Pn_Thread,
+      PN_Thread := PN_Get_New_Thread_Pattern;
+      PN_Init_Thread_Pattern (PN_Thread,
                               Aadl_Instance);
 
       --  Depending on formalism, compute thread pattern
       declare
-         F : constant Value_Type := Get_Value_Type (Formalism (Pn_Generated));
+         F : constant Value_Type := Get_Value_Type (Formalism (PN_Generated));
       begin
          case F.Ival is
             when 0 =>
                --  CPN Pattern
-               Pn_Process_Thread_Pattern (Aadl_Instance,
-                                          Pn_Thread,
-                                          Pn_Generated,
-                                          Pn_Cpn_Init_Place'Access,
-                                          Pn_Cpn_Get_New_Place'Access,
-                                          Pn_Cpn_Init_Transition'Access,
-                                          Pn_Cpn_Get_New_Transition'Access,
-                                          Pn_Cpn_Init_Arc'Access,
-                                          Pn_Cpn_Get_New_Arc'Access);
+               PN_Process_Thread_Pattern (Aadl_Instance,
+                                          PN_Thread,
+                                          PN_Generated,
+                                          PN_Cpn_Init_Place'Access,
+                                          PN_Cpn_Get_New_Place'Access,
+                                          PN_Cpn_Init_Transition'Access,
+                                          PN_Cpn_Get_New_Transition'Access,
+                                          PN_Cpn_Init_Arc'Access,
+                                          PN_Cpn_Get_New_Arc'Access);
             when 1 =>
                --  TPN Pattern
-               Pn_Process_Thread_Pattern (Aadl_Instance,
-                                          Pn_Thread,
-                                          Pn_Generated,
-                                          Pn_Tpn_Init_Place'Access,
-                                          Pn_Tpn_Get_New_Place'Access,
-                                          Pn_Tpn_Init_Transition'Access,
-                                          Pn_Tpn_Get_New_Transition'Access,
-                                          Pn_Tpn_Init_Arc'Access,
-                                          Pn_Tpn_Get_New_Arc'Access);
+               PN_Process_Thread_Pattern (Aadl_Instance,
+                                          PN_Thread,
+                                          PN_Generated,
+                                          PN_Tpn_Init_Place'Access,
+                                          PN_Tpn_Get_New_Place'Access,
+                                          PN_Tpn_Init_Transition'Access,
+                                          PN_Tpn_Get_New_Transition'Access,
+                                          PN_Tpn_Init_Arc'Access,
+                                          PN_Tpn_Get_New_Arc'Access);
             when others =>
                null;
          end case;
       end;
 
       --  create the standard thread pattern
-      OPU.Append_Node_To_List (Pn_Thread,
-                               Pn_Subcomponents (Pn_Box (Pn_Generated)));
+      OPU.Append_Node_To_List (PN_Thread,
+                               PN_Subcomponents (PN_Box (PN_Generated)));
 
       return Success;
    end Process_Thread_Instance;
 
    -------------------------------------
-   --  Pn_Process_TPN_Thread_Pattern  --
+   --  PN_Process_TPN_Thread_Pattern  --
    -------------------------------------
 
-   procedure Pn_Process_Thread_Pattern
+   procedure PN_Process_Thread_Pattern
      (Aadl_Instance : Types.Node_Id;
-      Pn_Thread : Types.Node_Id;
-      Pn_Generated : Types.Node_Id;
-      Pn_P_Init_Proc : Pn_Init_Node;
-      Pn_P_New_Proc  : Pn_New_Node;
-      Pn_T_Init_Proc : Pn_Init_Node;
-      Pn_T_New_Proc  : Pn_New_Node;
-      Pn_A_Init_Proc : Pn_Init_Arc;
-      Pn_A_New_Proc  : Pn_New_Node)
+      PN_Thread : Types.Node_Id;
+      PN_Generated : Types.Node_Id;
+      PN_P_Init_Proc : PN_Init_Node;
+      PN_P_New_Proc  : PN_New_Node;
+      PN_T_Init_Proc : PN_Init_Node;
+      PN_T_New_Proc  : PN_New_Node;
+      PN_A_Init_Proc : PN_Init_Arc;
+      PN_A_New_Proc  : PN_New_Node)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -1641,7 +1643,7 @@ package body Ocarina.Backends.PN.Components is
       use OPND;
 
       V_Formalism : constant Value_Type
-        := Get_Value_Type (Formalism (Pn_Generated));
+        := Get_Value_Type (Formalism (PN_Generated));
    begin
 
       if Get_Thread_Implementation_Kind (Aadl_Instance)
@@ -1652,15 +1654,15 @@ package body Ocarina.Backends.PN.Components is
       end if;
 
       --  build skeleton pattern
-      Pn_Thread_Skeleton (Aadl_Instance,
-                          Pn_Thread,
-                          Pn_Generated,
-                          Pn_P_Init_Proc,
-                          Pn_P_New_Proc,
-                          Pn_T_Init_Proc,
-                          Pn_T_New_Proc,
-                          Pn_A_Init_Proc,
-                          Pn_A_New_Proc);
+      PN_Thread_Skeleton (Aadl_Instance,
+                          PN_Thread,
+                          PN_Generated,
+                          PN_P_Init_Proc,
+                          PN_P_New_Proc,
+                          PN_T_Init_Proc,
+                          PN_T_New_Proc,
+                          PN_A_Init_Proc,
+                          PN_A_New_Proc);
 
       -------------------------
       --  build compute pattern
@@ -1671,11 +1673,11 @@ package body Ocarina.Backends.PN.Components is
          --  browse call sequences and store them
          declare
             Cs : List_Id;
-            Pn_Cs : Node_Id := No_Node;
+            PN_Cs : Node_Id := No_Node;
          begin
             --  build pn node for call sequence
-            Pn_Cs := Pn_Get_New_Call_Seq_Pattern;
-            Pn_Init_Call_Seq_Pattern (Pn_Cs,
+            PN_Cs := PN_Get_New_Call_Seq_Pattern;
+            PN_Init_Call_Seq_Pattern (PN_Cs,
                                       Aadl_Instance);
 
             if not AINU.Is_Empty (AIN.Calls (Aadl_Instance)) then
@@ -1685,7 +1687,7 @@ package body Ocarina.Backends.PN.Components is
                declare
                   Call_Iter : Node_Id := AIN.First_Node (Cs);
                   Spg_call : Node_Id;
-                  Pn_Spg_Call : Node_Id := No_Node;
+                  PN_Spg_Call : Node_Id := No_Node;
                begin
 
                   while Present (Call_Iter) loop
@@ -1698,8 +1700,8 @@ package body Ocarina.Backends.PN.Components is
 
                         if Present (Spg_Call) then
                            --  build Pn node for spg
-                           Pn_Spg_Call := Pn_Get_New_Spg_Pattern;
-                           Pn_Init_Spg_Pattern (Pn_Spg_Call,
+                           PN_Spg_Call := PN_Get_New_Spg_Pattern;
+                           PN_Init_Spg_Pattern (PN_Spg_Call,
                                                 Aadl_Instance);
                            --  Parent_Sequence (Spg_Call));
 
@@ -1750,18 +1752,18 @@ package body Ocarina.Backends.PN.Components is
 
                                           --  build pn node for out parameter
 
-                                          Pn_Build_Spg_Par
+                                          PN_Build_Spg_Par
                                             (Aadl_Instance,
-                                             Pn_Generated,
+                                             PN_Generated,
                                              Spg_Feat,
-                                             Pn_Spg_Call,
+                                             PN_Spg_Call,
                                              False,
-                                             Pn_P_Init_Proc,
-                                             Pn_P_New_Proc,
-                                             Pn_T_Init_Proc,
-                                             Pn_T_New_Proc,
-                                             Pn_A_Init_Proc,
-                                             Pn_A_New_Proc);
+                                             PN_P_Init_Proc,
+                                             PN_P_New_Proc,
+                                             PN_T_Init_Proc,
+                                             PN_T_New_Proc,
+                                             PN_A_Init_Proc,
+                                             PN_A_New_Proc);
 
                                        elsif AIN.Kind (Spg_Feat)
                                          = AIN.K_Parameter_Instance
@@ -1795,18 +1797,18 @@ package body Ocarina.Backends.PN.Components is
                                           --  Here we have an IN parameter
                                           --  with exactly one
                                           --  destination.
-                                          Pn_Build_Spg_Par
+                                          PN_Build_Spg_Par
                                             (Aadl_Instance,
-                                             Pn_Generated,
+                                             PN_Generated,
                                              Spg_Feat,
-                                             Pn_Spg_Call,
+                                             PN_Spg_Call,
                                              True,
-                                             Pn_P_Init_Proc,
-                                             Pn_P_New_Proc,
-                                             Pn_T_Init_Proc,
-                                             Pn_T_New_Proc,
-                                             Pn_A_Init_Proc,
-                                             Pn_A_New_Proc);
+                                             PN_P_Init_Proc,
+                                             PN_P_New_Proc,
+                                             PN_T_Init_Proc,
+                                             PN_T_New_Proc,
+                                             PN_A_Init_Proc,
+                                             PN_A_New_Proc);
                                        end if;
 
                                        --  next feature of current
@@ -1821,173 +1823,173 @@ package body Ocarina.Backends.PN.Components is
                                     --  transition end
 
                                     declare
-                                       P_Pn_Spg_Comp : Node_Id;
-                                       T1_Pn_Spg_Beg : Node_Id;
-                                       T2_Pn_Spg_End : Node_Id;
+                                       P_PN_Spg_Comp : Node_Id;
+                                       T1_PN_Spg_Beg : Node_Id;
+                                       T2_PN_Spg_End : Node_Id;
                                        P_W1, P_W2    : Node_Id;
                                        Preemp1, Preemp2 : Node_Id;
-                                       A_Pn_Spg_Call : Node_Id;
+                                       A_PN_Spg_Call : Node_Id;
                                     begin
 
-                                       T1_Pn_Spg_Beg :=
-                                         Pn_T_New_Proc.all;
-                                       Pn_T_Init_Proc
-                                         (T1_Pn_Spg_Beg,
+                                       T1_PN_Spg_Beg :=
+                                         PN_T_New_Proc.all;
+                                       PN_T_Init_Proc
+                                         (T1_PN_Spg_Beg,
                                           Aadl_Instance,
                                           Get_String_Name
                                           ("_Begin"),
-                                          Pn_Generated,
+                                          PN_Generated,
                                           0);
 
                                        Append_Node_To_List
-                                         (T1_Pn_Spg_Beg,
+                                         (T1_PN_Spg_Beg,
                                           Public_Interfaces
-                                          (Pn_Spg_Call));
+                                          (PN_Spg_Call));
 
-                                       T2_Pn_Spg_End :=
-                                         Pn_T_New_Proc.all;
-                                       Pn_T_Init_Proc
-                                         (T2_Pn_Spg_End,
+                                       T2_PN_Spg_End :=
+                                         PN_T_New_Proc.all;
+                                       PN_T_Init_Proc
+                                         (T2_PN_Spg_End,
                                           Aadl_Instance,
                                           Get_String_Name
                                           ("_End"),
-                                          Pn_Generated,
+                                          PN_Generated,
                                           0);
 
                                        Append_Node_To_List
-                                         (T2_Pn_Spg_End,
+                                         (T2_PN_Spg_End,
                                           Public_Interfaces
-                                          (Pn_Spg_Call));
+                                          (PN_Spg_Call));
                                        --
-                                       Preemp1 := Pn_T_New_Proc.all;
-                                       Pn_T_Init_Proc
+                                       Preemp1 := PN_T_New_Proc.all;
+                                       PN_T_Init_Proc
                                          (Preemp1,
                                           Aadl_Instance,
                                           Get_String_Name
                                           ("_Preemp1"),
-                                          Pn_Generated,
+                                          PN_Generated,
                                           0);
 
                                        Append_Node_To_List
                                          (Preemp1,
                                           Internal_Transitions
-                                          (Pn_Spg_Call));
+                                          (PN_Spg_Call));
 
-                                       Preemp2 := Pn_T_New_Proc.all;
-                                       Pn_T_Init_Proc
+                                       Preemp2 := PN_T_New_Proc.all;
+                                       PN_T_Init_Proc
                                          (Preemp2,
                                           Aadl_Instance,
                                           Get_String_Name
                                           ("_Preemp2"),
-                                          Pn_Generated,
+                                          PN_Generated,
                                           0);
 
                                        Append_Node_To_List
                                          (Preemp2,
                                           Internal_Transitions
-                                          (Pn_Spg_Call));
+                                          (PN_Spg_Call));
                                        --
-                                       P_W1 := Pn_P_New_Proc.all;
-                                       Pn_P_Init_Proc (P_W1,
+                                       P_W1 := PN_P_New_Proc.all;
+                                       PN_P_Init_Proc (P_W1,
                                                        Aadl_Instance,
                                                        Get_String_Name
                                                        ("_Work1"),
-                                                       Pn_Generated,
+                                                       PN_Generated,
                                                        0);
                                        Append_Node_To_List (P_W1,
                                                             Internal_Places
-                                                            (Pn_Spg_Call));
+                                                            (PN_Spg_Call));
 
-                                       P_W2 := Pn_P_New_Proc.all;
-                                       Pn_P_Init_Proc (P_W2,
+                                       P_W2 := PN_P_New_Proc.all;
+                                       PN_P_Init_Proc (P_W2,
                                                        Aadl_Instance,
                                                        Get_String_Name
                                                        ("_Work2"),
-                                                       Pn_Generated,
+                                                       PN_Generated,
                                                        0);
                                        Append_Node_To_List (P_W2,
                                                             Internal_Places
-                                                            (Pn_Spg_Call));
+                                                            (PN_Spg_Call));
 
-                                       P_Pn_Spg_Comp := Pn_P_New_Proc.all;
-                                       Pn_P_Init_Proc (P_Pn_Spg_Comp,
+                                       P_PN_Spg_Comp := PN_P_New_Proc.all;
+                                       PN_P_Init_Proc (P_PN_Spg_Comp,
                                                        Aadl_Instance,
                                                        Get_String_Name
                                                        ("_ContextSwitch"),
-                                                       Pn_Generated,
+                                                       PN_Generated,
                                                        0);
-                                       Append_Node_To_List (P_Pn_Spg_Comp,
+                                       Append_Node_To_List (P_PN_Spg_Comp,
                                                             Internal_Places
-                                                            (Pn_Spg_Call));
+                                                            (PN_Spg_Call));
                                        --
                                        --  now, build arcs
                                        --  beg -> W1 -> Preemp1 -> Context ->
                                        --  Preemp2 -> W2 -> End
-                                       A_Pn_Spg_Call := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (A_Pn_Spg_Call,
+                                       A_PN_Spg_Call := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (A_PN_Spg_Call,
                                                        Aadl_Instance,
-                                                       T1_Pn_Spg_Beg,
+                                                       T1_PN_Spg_Beg,
                                                        P_W1,
                                                        1);
-                                       Append_Node_To_List (A_Pn_Spg_Call,
-                                                            Pn_Arcs_Out
-                                                            (T1_Pn_Spg_Beg));
+                                       Append_Node_To_List (A_PN_Spg_Call,
+                                                            PN_Arcs_Out
+                                                            (T1_PN_Spg_Beg));
 
-                                       A_Pn_Spg_Call := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (A_Pn_Spg_Call,
+                                       A_PN_Spg_Call := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (A_PN_Spg_Call,
                                                        Aadl_Instance,
                                                        P_W1,
                                                        Preemp1,
                                                        1);
-                                       Append_Node_To_List (A_Pn_Spg_Call,
-                                                            Pn_Arcs_In
+                                       Append_Node_To_List (A_PN_Spg_Call,
+                                                            PN_Arcs_In
                                                             (Preemp1));
 
-                                       A_Pn_Spg_Call := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (A_Pn_Spg_Call,
+                                       A_PN_Spg_Call := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (A_PN_Spg_Call,
                                                        Aadl_Instance,
                                                        Preemp1,
-                                                       P_Pn_Spg_Comp,
+                                                       P_PN_Spg_Comp,
                                                        1);
-                                       Append_Node_To_List (A_Pn_Spg_Call,
-                                                            Pn_Arcs_Out
+                                       Append_Node_To_List (A_PN_Spg_Call,
+                                                            PN_Arcs_Out
                                                             (Preemp1));
 
-                                       A_Pn_Spg_Call := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (A_Pn_Spg_Call,
+                                       A_PN_Spg_Call := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (A_PN_Spg_Call,
                                                        Aadl_Instance,
-                                                       P_Pn_Spg_Comp,
+                                                       P_PN_Spg_Comp,
                                                        Preemp2,
                                                        1);
-                                       Append_Node_To_List (A_Pn_Spg_Call,
-                                                            Pn_Arcs_In
+                                       Append_Node_To_List (A_PN_Spg_Call,
+                                                            PN_Arcs_In
                                                             (Preemp2));
 
-                                       A_Pn_Spg_Call := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (A_Pn_Spg_Call,
+                                       A_PN_Spg_Call := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (A_PN_Spg_Call,
                                                        Aadl_Instance,
                                                        Preemp2,
                                                        P_W2,
                                                        1);
-                                       Append_Node_To_List (A_Pn_Spg_Call,
-                                                            Pn_Arcs_Out
+                                       Append_Node_To_List (A_PN_Spg_Call,
+                                                            PN_Arcs_Out
                                                             (Preemp2));
 
-                                       A_Pn_Spg_Call := Pn_A_New_Proc.all;
-                                       Pn_A_Init_Proc (A_Pn_Spg_Call,
+                                       A_PN_Spg_Call := PN_A_New_Proc.all;
+                                       PN_A_Init_Proc (A_PN_Spg_Call,
                                                        Aadl_Instance,
                                                        P_W2,
-                                                       T2_Pn_Spg_End,
+                                                       T2_PN_Spg_End,
                                                        1);
-                                       Append_Node_To_List (A_Pn_Spg_Call,
-                                                            Pn_Arcs_In
-                                                            (T2_Pn_Spg_End));
+                                       Append_Node_To_List (A_PN_Spg_Call,
+                                                            PN_Arcs_In
+                                                            (T2_PN_Spg_End));
                                     end;
 
                                     --  add spg_call to call_sequence
-                                    Append_Node_To_List (Pn_Spg_Call,
+                                    Append_Node_To_List (PN_Spg_Call,
                                                          OPN.Spg_Call
-                                                         (Pn_Cs));
+                                                         (PN_Cs));
                                     -------------
 
                                  end;
@@ -2009,7 +2011,7 @@ package body Ocarina.Backends.PN.Components is
             end if;
 
             --  add call_sequence to thread_pattern
-            Append_Node_To_List (Pn_Cs, Call_Seq (Pn_Thread));
+            Append_Node_To_List (PN_Cs, Call_Seq (PN_Thread));
 
          end;
 
@@ -2024,179 +2026,179 @@ package body Ocarina.Backends.PN.Components is
          --  for T_CE  : merge dispatch with the "begin" of this sequence
 
          declare
-            Pn_Cs : Node_Id := No_Node;
+            PN_Cs : Node_Id := No_Node;
          begin
             --  build pn node for call sequence
-            Pn_Cs := Pn_Get_New_Call_Seq_Pattern;
-            Pn_Init_Call_Seq_Pattern (Pn_Cs,
+            PN_Cs := PN_Get_New_Call_Seq_Pattern;
+            PN_Init_Call_Seq_Pattern (PN_Cs,
                                       Aadl_Instance);
 
             declare
-               P_Pn_Spg_Comp : Node_Id;
-               T1_Pn_Spg_Beg : Node_Id;
-               T2_Pn_Spg_End : Node_Id;
+               P_PN_Spg_Comp : Node_Id;
+               T1_PN_Spg_Beg : Node_Id;
+               T2_PN_Spg_End : Node_Id;
                P_W1, P_W2    : Node_Id;
                Preemp1, Preemp2 : Node_Id;
-               A_Pn_Spg_Call : Node_Id;
+               A_PN_Spg_Call : Node_Id;
 
-               Pn_Spg_Call : Node_Id := No_Node;
+               PN_Spg_Call : Node_Id := No_Node;
             begin
-               Pn_Spg_Call := Pn_Get_New_Spg_Pattern;
-               Pn_Init_Spg_Pattern (Pn_Spg_Call,
+               PN_Spg_Call := PN_Get_New_Spg_Pattern;
+               PN_Init_Spg_Pattern (PN_Spg_Call,
                                     Aadl_Instance);
 
-               T1_Pn_Spg_Beg := Pn_T_New_Proc.all;
-               Pn_T_Init_Proc (T1_Pn_Spg_Beg,
+               T1_PN_Spg_Beg := PN_T_New_Proc.all;
+               PN_T_Init_Proc (T1_PN_Spg_Beg,
                                Aadl_Instance,
                                Get_String_Name
                                ("_Begin"),
-                               Pn_Generated,
+                               PN_Generated,
                                0);
 
-               Append_Node_To_List (T1_Pn_Spg_Beg,
+               Append_Node_To_List (T1_PN_Spg_Beg,
                                     Public_Interfaces
-                                    (Pn_Spg_Call));
+                                    (PN_Spg_Call));
 
-               T2_Pn_Spg_End := Pn_T_New_Proc.all;
-               Pn_T_Init_Proc (T2_Pn_Spg_End,
+               T2_PN_Spg_End := PN_T_New_Proc.all;
+               PN_T_Init_Proc (T2_PN_Spg_End,
                                Aadl_Instance,
                                Get_String_Name
                                ("_End"),
-                               Pn_Generated,
+                               PN_Generated,
                                0);
 
-               Append_Node_To_List (T2_Pn_Spg_End,
+               Append_Node_To_List (T2_PN_Spg_End,
                                     Public_Interfaces
-                                    (Pn_Spg_Call));
+                                    (PN_Spg_Call));
                --
-               Preemp1 := Pn_T_New_Proc.all;
-               Pn_T_Init_Proc (Preemp1,
+               Preemp1 := PN_T_New_Proc.all;
+               PN_T_Init_Proc (Preemp1,
                                Aadl_Instance,
                                Get_String_Name
                                ("_Preemp1"),
-                               Pn_Generated,
+                               PN_Generated,
                                0);
 
                Append_Node_To_List (Preemp1,
                                     Internal_Transitions
-                                    (Pn_Spg_Call));
+                                    (PN_Spg_Call));
 
-               Preemp2 := Pn_T_New_Proc.all;
-               Pn_T_Init_Proc (Preemp2,
+               Preemp2 := PN_T_New_Proc.all;
+               PN_T_Init_Proc (Preemp2,
                                Aadl_Instance,
                                Get_String_Name
                                ("_Preemp2"),
-                               Pn_Generated,
+                               PN_Generated,
                                0);
 
                Append_Node_To_List (Preemp2,
                                     Internal_Transitions
-                                    (Pn_Spg_Call));
+                                    (PN_Spg_Call));
                --
-               P_W1 := Pn_P_New_Proc.all;
-               Pn_P_Init_Proc (P_W1,
+               P_W1 := PN_P_New_Proc.all;
+               PN_P_Init_Proc (P_W1,
                                Aadl_Instance,
                                Get_String_Name
                                ("_Work1"),
-                               Pn_Generated,
+                               PN_Generated,
                                0);
                Append_Node_To_List (P_W1,
                                     Internal_Places
-                                    (Pn_Spg_Call));
+                                    (PN_Spg_Call));
 
-               P_W2 := Pn_P_New_Proc.all;
-               Pn_P_Init_Proc (P_W2,
+               P_W2 := PN_P_New_Proc.all;
+               PN_P_Init_Proc (P_W2,
                                Aadl_Instance,
                                Get_String_Name
                                ("_Work2"),
-                               Pn_Generated,
+                               PN_Generated,
                                0);
                Append_Node_To_List (P_W2,
                                     Internal_Places
-                                    (Pn_Spg_Call));
+                                    (PN_Spg_Call));
 
-               P_Pn_Spg_Comp := Pn_P_New_Proc.all;
-               Pn_P_Init_Proc (P_Pn_Spg_Comp,
+               P_PN_Spg_Comp := PN_P_New_Proc.all;
+               PN_P_Init_Proc (P_PN_Spg_Comp,
                                Aadl_Instance,
                                Get_String_Name
                                ("_ContextSwitch"),
-                               Pn_Generated,
+                               PN_Generated,
                                0);
-               Append_Node_To_List (P_Pn_Spg_Comp,
+               Append_Node_To_List (P_PN_Spg_Comp,
                                     Internal_Places
-                                    (Pn_Spg_Call));
+                                    (PN_Spg_Call));
                --
                --  now, build arcs
                --  beg -> W1 -> Preemp1 -> Context ->
                --  Preemp2 -> W2 -> End
-               A_Pn_Spg_Call := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A_Pn_Spg_Call,
+               A_PN_Spg_Call := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A_PN_Spg_Call,
                                Aadl_Instance,
-                               T1_Pn_Spg_Beg,
+                               T1_PN_Spg_Beg,
                                P_W1,
                                1);
-               Append_Node_To_List (A_Pn_Spg_Call,
-                                    Pn_Arcs_Out
-                                    (T1_Pn_Spg_Beg));
+               Append_Node_To_List (A_PN_Spg_Call,
+                                    PN_Arcs_Out
+                                    (T1_PN_Spg_Beg));
 
-               A_Pn_Spg_Call := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A_Pn_Spg_Call,
+               A_PN_Spg_Call := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A_PN_Spg_Call,
                                Aadl_Instance,
                                P_W1,
                                Preemp1,
                                1);
-               Append_Node_To_List (A_Pn_Spg_Call,
-                                    Pn_Arcs_In
+               Append_Node_To_List (A_PN_Spg_Call,
+                                    PN_Arcs_In
                                     (Preemp1));
 
-               A_Pn_Spg_Call := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A_Pn_Spg_Call,
+               A_PN_Spg_Call := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A_PN_Spg_Call,
                                Aadl_Instance,
                                Preemp1,
-                               P_Pn_Spg_Comp,
+                               P_PN_Spg_Comp,
                                1);
-               Append_Node_To_List (A_Pn_Spg_Call,
-                                    Pn_Arcs_Out
+               Append_Node_To_List (A_PN_Spg_Call,
+                                    PN_Arcs_Out
                                     (Preemp1));
 
-               A_Pn_Spg_Call := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A_Pn_Spg_Call,
+               A_PN_Spg_Call := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A_PN_Spg_Call,
                                Aadl_Instance,
-                               P_Pn_Spg_Comp,
+                               P_PN_Spg_Comp,
                                Preemp2,
                                1);
-               Append_Node_To_List (A_Pn_Spg_Call,
-                                    Pn_Arcs_In
+               Append_Node_To_List (A_PN_Spg_Call,
+                                    PN_Arcs_In
                                     (Preemp2));
 
-               A_Pn_Spg_Call := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A_Pn_Spg_Call,
+               A_PN_Spg_Call := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A_PN_Spg_Call,
                                Aadl_Instance,
                                Preemp2,
                                P_W2,
                                1);
-               Append_Node_To_List (A_Pn_Spg_Call,
-                                    Pn_Arcs_Out
+               Append_Node_To_List (A_PN_Spg_Call,
+                                    PN_Arcs_Out
                                     (Preemp2));
 
-               A_Pn_Spg_Call := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A_Pn_Spg_Call,
+               A_PN_Spg_Call := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A_PN_Spg_Call,
                                Aadl_Instance,
                                P_W2,
-                               T2_Pn_Spg_End,
+                               T2_PN_Spg_End,
                                1);
-               Append_Node_To_List (A_Pn_Spg_Call,
-                                    Pn_Arcs_In
-                                    (T2_Pn_Spg_End));
+               Append_Node_To_List (A_PN_Spg_Call,
+                                    PN_Arcs_In
+                                    (T2_PN_Spg_End));
 
                --  add spg_call to call_sequence
-               Append_Node_To_List (Pn_Spg_Call,
+               Append_Node_To_List (PN_Spg_Call,
                                     OPN.Spg_Call
-                                    (Pn_Cs));
+                                    (PN_Cs));
             end;
 
             --  add call_sequence to thread_pattern
-            Append_Node_To_List (Pn_Cs, Call_Seq (Pn_Thread));
+            Append_Node_To_List (PN_Cs, Call_Seq (PN_Thread));
 
          end;
       end if;
@@ -2217,79 +2219,79 @@ package body Ocarina.Backends.PN.Components is
                   Clock_T_Pattern : constant Clock_Pattern :=
                     (1 => Get_String_Name ("_Period_Event"));
                   P, T, A : Types.Node_Id;
-                  Pn_Period : Time_Type;
-                  Pn_Hyperperiod : Value_Type;
+                  PN_Period : Time_Type;
+                  PN_Hyperperiod : Value_Type;
                   B : Boolean := True;
                begin
                   for TN in Clock_T_Pattern'First .. Clock_T_Pattern'Last loop
-                     T := Pn_Tpn_Get_New_Transition;
-                     Pn_Tpn_Init_Transition (T,
+                     T := PN_Tpn_Get_New_Transition;
+                     PN_Tpn_Init_Transition (T,
                                              Aadl_Instance,
                                              Clock_T_Pattern (TN),
-                                             Pn_Generated,
+                                             PN_Generated,
                                              0);
                      --  set guard
-                     Pn_Period := Get_Thread_Period (Aadl_Instance);
-                     Pn_Tpn_Set_Guard
+                     PN_Period := Get_Thread_Period (Aadl_Instance);
+                     PN_Tpn_Set_Guard
                        (T,
-                        New_Integer_Value (Pn_Period.T),
-                        New_Integer_Value (Pn_Period.T),
+                        New_Integer_Value (PN_Period.T),
+                        New_Integer_Value (PN_Period.T),
                         New_Integer_Value (0),        --  braces mode
                         New_Integer_Value (0));       --  priority
 
                      --  add new place transition thread box
-                     Append_Node_To_List (T, Internal_Transitions (Pn_Thread));
+                     Append_Node_To_List (T, Internal_Transitions (PN_Thread));
                   end loop;
                   for PN in Clock_P_Pattern'First .. Clock_P_Pattern'Last loop
-                     P := Pn_Tpn_Get_New_Place;
-                     Pn_Tpn_Init_Place (P,
+                     P := PN_Tpn_Get_New_Place;
+                     PN_Tpn_Init_Place (P,
                                         Aadl_Instance,
                                         Clock_P_Pattern (PN),
-                                        Pn_Generated,
+                                        PN_Generated,
                                         0);
                      --  add new place into thread box
-                     Append_Node_To_List (P, Internal_Places (Pn_Thread));
+                     Append_Node_To_List (P, Internal_Places (PN_Thread));
 
                      --  update arcs for period_event transition
-                     A := Pn_Tpn_Get_New_Arc;
+                     A := PN_Tpn_Get_New_Arc;
                      if B then
-                        Pn_Tpn_Init_Arc (A,
+                        PN_Tpn_Init_Arc (A,
                                          Aadl_Instance,
                                          P,
                                          T,
                                          0);
                         Append_Node_To_List (A,
-                                             Pn_Arcs_In
+                                             PN_Arcs_In
                                              (T));
                         B := False;
                      else
-                        Pn_Tpn_Init_Arc (A,
+                        PN_Tpn_Init_Arc (A,
                                          Aadl_Instance,
                                          T,
                                          P,
                                          0);
                         Append_Node_To_List (A,
-                                             Pn_Arcs_Out
+                                             PN_Arcs_Out
                                              (T));
                      end if;
 
                   end loop;
 
                   --  update hyperperiod value
-                  Pn_Hyperperiod :=
+                  PN_Hyperperiod :=
                     Get_Value_Type (Hyperperiod
-                                    (Pn_Formalism_Specific_Informations
-                                     (Pn_Generated)));
+                                    (PN_Formalism_Specific_Informations
+                                     (PN_Generated)));
 
-                  Pn_Hyperperiod := Get_Value_Type
+                  PN_Hyperperiod := Get_Value_Type
                     (New_Integer_Value
-                     (Ppcm (Pn_Hyperperiod.Ival,
-                            Pn_Period.T)));
+                     (Ppcm (PN_Hyperperiod.Ival,
+                            PN_Period.T)));
 
                   Set_Hyperperiod
-                    (Pn_Formalism_Specific_Informations
-                     (Pn_Generated),
-                     New_Integer_Value (Pn_Hyperperiod.Ival));
+                    (PN_Formalism_Specific_Informations
+                     (PN_Generated),
+                     New_Integer_Value (PN_Hyperperiod.Ival));
 
                end;
             when Thread_Aperiodic =>
@@ -2309,7 +2311,7 @@ package body Ocarina.Backends.PN.Components is
       declare
          P : Types.Node_Id;
       begin
-         P := OPN.First_Node (Internal_Places (Pn_Thread));
+         P := OPN.First_Node (Internal_Places (PN_Thread));
          --  Halted place
          if V_Formalism.Ival = 1 then
             Set_Tokens_Number (P, New_Integer_Value (1));
@@ -2320,17 +2322,17 @@ package body Ocarina.Backends.PN.Components is
                Node_Iter : Node_Id;
                Count : constant Value_Type
                  := Get_Value_Type (Threads_Count
-                                    (Pn_Formalism_Specific_Informations
-                                     (Pn_Generated)));
+                                    (PN_Formalism_Specific_Informations
+                                     (PN_Generated)));
             begin
                if Count.Ival /= 0 then
                   Node_Iter := OPN.First_Node
-                    (Threads_Ids (Pn_Formalism_Specific_Informations
-                                  (Pn_Generated)));
+                    (Threads_Ids (PN_Formalism_Specific_Informations
+                                  (PN_Generated)));
 
                   while Present (Node_Iter) loop
                      if OPN.Aadl_Instance (Node_Iter)
-                       = Th_Instance (Pn_Thread) then
+                       = Th_Instance (PN_Thread) then
                         exit;
                      end if;
                      --  next
@@ -2341,9 +2343,9 @@ package body Ocarina.Backends.PN.Components is
                      --  found
                      declare
                         Mark : constant Value_Type
-                          := Get_Value_Type (Pn_Id (Node_Iter));
+                          := Get_Value_Type (PN_Id (Node_Iter));
                      begin
-                        Pn_Init_Pn_Node (Marking_Node,
+                        PN_Init_PN_Node (Marking_Node,
                                          No_Node,
                                          Get_String_Name
                                          (OAV.Image
@@ -2358,21 +2360,21 @@ package body Ocarina.Backends.PN.Components is
                         Th_Id_Node : constant Node_Id
                           := New_Node (K_CPN_Aadl_Id);
                      begin
-                        Pn_Init_Pn_Node (Th_Id_Node,
+                        PN_Init_PN_Node (Th_Id_Node,
                                          No_Node,
                                          Get_String_Name ("::"));
                         Set_Aadl_Instance (Th_Id_Node,
-                                           Th_Instance (Pn_Thread));
-                        Set_Pn_Id (Th_Id_Node,
+                                           Th_Instance (PN_Thread));
+                        Set_PN_Id (Th_Id_Node,
                                    New_Integer_Value (Count.Ival + 1));
 
                         Append_Node_To_List
                           (Th_Id_Node,
                            Threads_Ids
-                           (Pn_Formalism_Specific_Informations
-                            (Pn_Generated)));
+                           (PN_Formalism_Specific_Informations
+                            (PN_Generated)));
 
-                        Pn_Init_Pn_Node (Marking_Node,
+                        PN_Init_PN_Node (Marking_Node,
                                          No_Node,
                                          Get_String_Name
                                          (OAV.Image
@@ -2383,8 +2385,8 @@ package body Ocarina.Backends.PN.Components is
                           (Marking_Node,
                            Tokens (Marking (P)));
 
-                        Set_Threads_Count (Pn_Formalism_Specific_Informations
-                                           (Pn_Generated),
+                        Set_Threads_Count (PN_Formalism_Specific_Informations
+                                           (PN_Generated),
                                         New_Integer_Value (Count.Ival + 1));
                      end;
                   end if;
@@ -2393,26 +2395,26 @@ package body Ocarina.Backends.PN.Components is
                      Th_Id_Node : constant Node_Id
                        := New_Node (K_CPN_Aadl_Id);
                   begin
-                     Pn_Init_Pn_Node (Th_Id_Node,
+                     PN_Init_PN_Node (Th_Id_Node,
                                       No_Node,
                                       Get_String_Name ("::"));
-                     Set_Aadl_Instance (Th_Id_Node, Th_Instance (Pn_Thread));
-                     Set_Pn_Id (Th_Id_Node, New_Integer_Value (1));
+                     Set_Aadl_Instance (Th_Id_Node, Th_Instance (PN_Thread));
+                     Set_PN_Id (Th_Id_Node, New_Integer_Value (1));
 
                      Append_Node_To_List (Th_Id_Node,
                                           Threads_Ids
-                                          (Pn_Formalism_Specific_Informations
-                                           (Pn_Generated)));
+                                          (PN_Formalism_Specific_Informations
+                                           (PN_Generated)));
 
-                     Pn_Init_Pn_Node (Marking_Node,
+                     PN_Init_PN_Node (Marking_Node,
                                       No_Node,
                                       Get_String_Name ("1"));
                      Append_Node_To_List
                        (Marking_Node,
                         Tokens (Marking (P)));
 
-                     Set_Threads_Count (Pn_Formalism_Specific_Informations
-                                        (Pn_Generated),
+                     Set_Threads_Count (PN_Formalism_Specific_Informations
+                                        (PN_Generated),
                                         New_Integer_Value (1));
                   end;
                end if;
@@ -2427,7 +2429,7 @@ package body Ocarina.Backends.PN.Components is
             Ded_Var : constant Node_Id
               := New_Node (K_CPN_Formalism_Variable_Item);
          begin
-            Pn_Init_Pn_Node (Ded_Var,
+            PN_Init_PN_Node (Ded_Var,
                              No_Node,
                              Get_String_Name
                              ("x" & OPND.Image (Aadl_Instance)));
@@ -2435,35 +2437,35 @@ package body Ocarina.Backends.PN.Components is
                                  Variable_List
                                  (OPN.First_Node
                                   (Variables
-                                   (Pn_Formalism_Specific_Informations
-                                    (Pn_Generated)))));
+                                   (PN_Formalism_Specific_Informations
+                                    (PN_Generated)))));
          end;
       end if;
       --  process ports
 
-      Pn_Build_Port (Aadl_Instance,
-                     Pn_Generated,
-                     Pn_Thread,
-                     Formalism (Pn_Generated));
+      PN_Build_Port (Aadl_Instance,
+                     PN_Generated,
+                     PN_Thread,
+                     Formalism (PN_Generated));
 
-   end Pn_Process_Thread_Pattern;
+   end PN_Process_Thread_Pattern;
 
    ------------------------
-   --  Pn_Build_Spg_Par  --
+   --  PN_Build_Spg_Par  --
    ------------------------
 
-   procedure Pn_Build_Spg_Par
+   procedure PN_Build_Spg_Par
      (Aadl_Instance : Types.Node_Id;
-      Pn_Generated  : Types.Node_Id;
+      PN_Generated  : Types.Node_Id;
       Spg_Feat : Types.Node_Id;
-      Pn_Spg_Call : Types.Node_Id;
+      PN_Spg_Call : Types.Node_Id;
       In_Par : Boolean := True;
-      Pn_P_Init_Proc : Pn_Init_Node;
-      Pn_P_New_Proc  : Pn_New_Node;
-      Pn_T_Init_Proc : Pn_Init_Node;
-      Pn_T_New_Proc  : Pn_New_Node;
-      Pn_A_Init_Proc : Pn_Init_Arc;
-      Pn_A_New_Proc  : Pn_New_Node)
+      PN_P_Init_Proc : PN_Init_Node;
+      PN_P_New_Proc  : PN_New_Node;
+      PN_T_Init_Proc : PN_Init_Node;
+      PN_T_New_Proc  : PN_New_Node;
+      PN_A_Init_Proc : PN_Init_Arc;
+      PN_A_New_Proc  : PN_New_Node)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -2473,12 +2475,12 @@ package body Ocarina.Backends.PN.Components is
       use Namet;
       use AIN;
 
-      Pn_Spg_Par : Node_Id;
+      PN_Spg_Par : Node_Id;
       Dest_F : Node_Id;
-      P_Pn_Spg_Par : Node_Id;
-      T1_Pn_Spg_Par : Node_Id;
-      T2_Pn_Spg_Par : Node_Id;
-      A_Pn_Spg_Par : Node_Id;
+      P_PN_Spg_Par : Node_Id;
+      T1_PN_Spg_Par : Node_Id;
+      T2_PN_Spg_Par : Node_Id;
+      A_PN_Spg_Par : Node_Id;
 
       S : String := "In ";
    begin
@@ -2486,9 +2488,9 @@ package body Ocarina.Backends.PN.Components is
          S := "Out";
       end if;
 
-      Pn_Spg_Par :=
-        Pn_Get_New_Spg_Par_Pattern;
-      Pn_Init_Spg_Par_Pattern (Pn_Spg_Par,
+      PN_Spg_Par :=
+        PN_Get_New_Spg_Par_Pattern;
+      PN_Init_Spg_Par_Pattern (PN_Spg_Par,
                                Spg_Feat);
 
       if not In_Par then
@@ -2501,7 +2503,7 @@ package body Ocarina.Backends.PN.Components is
       --  store aadl instance destination
       --  (thread, spg)
 
-      Set_Par_Instance (Pn_Spg_Par, Dest_F);
+      Set_Par_Instance (PN_Spg_Par, Dest_F);
 
       --  make pn pattern for spg parameter
       --  one public transition in param,
@@ -2510,80 +2512,80 @@ package body Ocarina.Backends.PN.Components is
       --  it will be reduced at
       --  assembly phase
 
-      T1_Pn_Spg_Par := Pn_T_New_Proc.all;
-      Pn_T_Init_Proc
-        (T1_Pn_Spg_Par,
+      T1_PN_Spg_Par := PN_T_New_Proc.all;
+      PN_T_Init_Proc
+        (T1_PN_Spg_Par,
          Dest_F,
          Get_String_Name ("_Push_P_"&S),
-         Pn_Generated,
+         PN_Generated,
          0);
 
       Append_Node_To_List
-        (T1_Pn_Spg_Par,
-         Public_Interfaces (Pn_Spg_Par));
+        (T1_PN_Spg_Par,
+         Public_Interfaces (PN_Spg_Par));
 
-      T2_Pn_Spg_Par := Pn_T_New_Proc.all;
-      Pn_T_Init_Proc
-        (T2_Pn_Spg_Par,
+      T2_PN_Spg_Par := PN_T_New_Proc.all;
+      PN_T_Init_Proc
+        (T2_PN_Spg_Par,
          Dest_F,
          Get_String_Name ("_Pop_P_"&S),
-         Pn_Generated,
+         PN_Generated,
          0);
 
       Append_Node_To_List
-        (T2_Pn_Spg_Par,
-         Public_Interfaces (Pn_Spg_Par));
+        (T2_PN_Spg_Par,
+         Public_Interfaces (PN_Spg_Par));
 
-      P_Pn_Spg_Par := Pn_P_New_Proc.all;
-      Pn_P_Init_Proc (P_Pn_Spg_Par,
+      P_PN_Spg_Par := PN_P_New_Proc.all;
+      PN_P_Init_Proc (P_PN_Spg_Par,
                       Dest_F,
                       Get_String_Name ("_Val_P_"&S),
-                      Pn_Generated,
+                      PN_Generated,
                       0);
-      Append_Node_To_List (P_Pn_Spg_Par,
-                           Internal_Places (Pn_Spg_Par));
+      Append_Node_To_List (P_PN_Spg_Par,
+                           Internal_Places (PN_Spg_Par));
 
-      A_Pn_Spg_Par := Pn_A_New_Proc.all;
-      Pn_A_Init_Proc (A_Pn_Spg_Par,
+      A_PN_Spg_Par := PN_A_New_Proc.all;
+      PN_A_Init_Proc (A_PN_Spg_Par,
                       Aadl_Instance,
-                      P_Pn_Spg_Par,
-                      T2_Pn_Spg_Par,
+                      P_PN_Spg_Par,
+                      T2_PN_Spg_Par,
                       2);
       Append_Node_To_List
-        (A_Pn_Spg_Par,
-         Pn_Arcs_In (T2_Pn_Spg_Par));
+        (A_PN_Spg_Par,
+         PN_Arcs_In (T2_PN_Spg_Par));
 
-      A_Pn_Spg_Par := Pn_A_New_Proc.all;
-      Pn_A_Init_Proc (A_Pn_Spg_Par,
+      A_PN_Spg_Par := PN_A_New_Proc.all;
+      PN_A_Init_Proc (A_PN_Spg_Par,
                       Aadl_Instance,
-                      T1_Pn_Spg_Par,
-                      P_Pn_Spg_Par,
+                      T1_PN_Spg_Par,
+                      P_PN_Spg_Par,
                       2);
       Append_Node_To_List
-        (A_Pn_Spg_Par,
-         Pn_Arcs_Out (T1_Pn_Spg_Par));
+        (A_PN_Spg_Par,
+         PN_Arcs_Out (T1_PN_Spg_Par));
 
       --------------
 
       --  add pn_spg_par to spg_call
       if In_Par then
-         Append_Node_To_List (Pn_Spg_Par,
-                              Param_In (Pn_Spg_Call));
+         Append_Node_To_List (PN_Spg_Par,
+                              Param_In (PN_Spg_Call));
       else
-         Append_Node_To_List (Pn_Spg_Par,
-                              Param_Out (Pn_Spg_Call));
+         Append_Node_To_List (PN_Spg_Par,
+                              Param_Out (PN_Spg_Call));
       end if;
       ---------------
 
-   end Pn_Build_Spg_Par;
+   end PN_Build_Spg_Par;
 
    ---------------------
-   --  Pn_Build_Port  --
+   --  PN_Build_Port  --
    ---------------------
 
-   procedure Pn_Build_Port (Aadl_Instance : Types.Node_Id;
-                            Pn_Generated  : Types.Node_Id;
-                            Pn_Thread : Types.Node_Id;
+   procedure PN_Build_Port (Aadl_Instance : Types.Node_Id;
+                            PN_Generated  : Types.Node_Id;
+                            PN_Thread : Types.Node_Id;
                             F : Types.Value_Id)
    is
 
@@ -2597,7 +2599,7 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Iutils;
 
       Port_Iter : Node_Id;
-      Pn_Port : Node_Id := No_Node;
+      PN_Port : Node_Id := No_Node;
 
       V_Formalism : constant Value_Type := Get_Value_Type (F);
    begin
@@ -2610,50 +2612,50 @@ package body Ocarina.Backends.PN.Components is
 
                if Is_Event (Port_Iter) then
                   --  event port
-                  Pn_Port := Pn_Get_New_ED_Port_Pattern;
-                  Pn_Init_ED_Port_Pattern (Pn_Port, Port_Iter);
+                  PN_Port := PN_Get_New_ED_Port_Pattern;
+                  PN_Init_ED_Port_Pattern (PN_Port, Port_Iter);
 
                   if Is_In (Port_Iter)
                     and then Get_Port_Compute_Entrypoint
                     (Port_Iter) /= No_Node then
-                     Set_Has_CEP (Pn_Port, True);
+                     Set_Has_CEP (PN_Port, True);
                   end if;
 
                   --  places and transition for port pattern
                   if V_Formalism.Ival = 1 then
                      --  TPN
-                     Pn_Build_Tpn_Port (Aadl_Instance,
-                                        Pn_Generated,
+                     PN_Build_Tpn_Port (Aadl_Instance,
+                                        PN_Generated,
                                         Port_Iter,
-                                        Pn_Port,
+                                        PN_Port,
                                         False);
                   else
                      --  CPN
-                     Pn_Build_Cpn_Port (Aadl_Instance,
-                                        Pn_Generated,
+                     PN_Build_Cpn_Port (Aadl_Instance,
+                                        PN_Generated,
                                         Port_Iter,
-                                        Pn_Port,
+                                        PN_Port,
                                         False);
                   end if;
                else
                   --  data port
-                  Pn_Port := Pn_Get_New_D_Port_Pattern;
-                  Pn_Init_D_Port_Pattern (Pn_Port, Port_Iter);
+                  PN_Port := PN_Get_New_D_Port_Pattern;
+                  PN_Init_D_Port_Pattern (PN_Port, Port_Iter);
 
                   --  places and transition for port pattern
                   if V_Formalism.Ival = 1 then
                      --  TPN
-                     Pn_Build_Tpn_Port (Aadl_Instance,
-                                        Pn_Generated,
+                     PN_Build_Tpn_Port (Aadl_Instance,
+                                        PN_Generated,
                                         Port_Iter,
-                                        Pn_Port,
+                                        PN_Port,
                                         True);
                   else
                      --  CPN
-                     Pn_Build_Cpn_Port (Aadl_Instance,
-                                        Pn_Generated,
+                     PN_Build_Cpn_Port (Aadl_Instance,
+                                        PN_Generated,
                                         Port_Iter,
-                                        Pn_Port,
+                                        PN_Port,
                                         True);
                   end if;
                end if;
@@ -2661,27 +2663,27 @@ package body Ocarina.Backends.PN.Components is
                --  port
                if Is_In (Port_Iter) then
                   --  in port
-                  Append_Node_To_List (Pn_Port, In_Ports (Pn_Thread));
+                  Append_Node_To_List (PN_Port, In_Ports (PN_Thread));
                else
                   --  out port
-                  Append_Node_To_List (Pn_Port, Out_Ports (Pn_Thread));
+                  Append_Node_To_List (PN_Port, Out_Ports (PN_Thread));
                end if;
             end if;
 
             Port_Iter := AIN.Next_Node (Port_Iter);
          end loop;
       end if;
-   end Pn_Build_Port;
+   end PN_Build_Port;
 
    -------------------------
-   --  Pn_Build_Tpn_Port  --
+   --  PN_Build_Tpn_Port  --
    -------------------------
 
-   procedure Pn_Build_Tpn_Port
+   procedure PN_Build_Tpn_Port
      (Aadl_Instance : Node_Id;
-      Pn_Generated  : Types.Node_Id;
+      PN_Generated  : Types.Node_Id;
       Port_Instance : Node_Id;
-      Pn_Port : Node_Id;
+      PN_Port : Node_Id;
       Is_Data : Boolean := True)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -2694,10 +2696,10 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.Utils;
       use Ocarina.Instances.Queries;
 
-      T_Pn_Push : Node_Id;
-      T_Pn_Pop : Node_Id;
-      P_Pn_Store : Node_Id;
-      A_Pn_Arc : Node_Id;
+      T_PN_Push : Node_Id;
+      T_PN_Pop : Node_Id;
+      P_PN_Store : Node_Id;
+      A_PN_Arc : Node_Id;
       Source_Point : Node_Id;
       Endpoint : Node_Id;
 
@@ -2721,8 +2723,8 @@ package body Ocarina.Backends.PN.Components is
       end if;
 
       --  update attributes for later use
-      Set_Target_Instance (Pn_Port, Endpoint);
-      Set_Source_Instance (Pn_Port, Source_Point);
+      Set_Target_Instance (PN_Port, Endpoint);
+      Set_Source_Instance (PN_Port, Source_Point);
 
       --  build name
       Set_Str_To_Name_Buffer
@@ -2732,17 +2734,17 @@ package body Ocarina.Backends.PN.Components is
       Add_Str_To_Name_Buffer ("_");
 
       Add_Str_To_Name_Buffer ("_Push_Port");
-      T_Pn_Push := Pn_Tpn_Get_New_Transition;
-      Pn_Tpn_Init_Transition
-        (T_Pn_Push,
+      T_PN_Push := PN_Tpn_Get_New_Transition;
+      PN_Tpn_Init_Transition
+        (T_PN_Push,
          Port_Instance,
          Name_Find,
-         Pn_Generated,
+         PN_Generated,
          0);
 
       Append_Node_To_List
-        (T_Pn_Push,
-         Public_Interfaces (Pn_Port));
+        (T_PN_Push,
+         Public_Interfaces (PN_Port));
 
       Set_Str_To_Name_Buffer
         (Get_Name_String
@@ -2750,17 +2752,17 @@ package body Ocarina.Backends.PN.Components is
           (Aadl_Instance, Separator)));
       Add_Str_To_Name_Buffer ("_");
       Add_Str_To_Name_Buffer ("_Pop_Port");
-      T_Pn_Pop := Pn_Tpn_Get_New_Transition;
-      Pn_Tpn_Init_Transition
-        (T_Pn_Pop,
+      T_PN_Pop := PN_Tpn_Get_New_Transition;
+      PN_Tpn_Init_Transition
+        (T_PN_Pop,
          Port_Instance,
          Name_Find,
-         Pn_Generated,
+         PN_Generated,
          0);
 
       Append_Node_To_List
-        (T_Pn_Pop,
-         Public_Interfaces (Pn_Port));
+        (T_PN_Pop,
+         Public_Interfaces (PN_Port));
 
       --
       Set_Str_To_Name_Buffer
@@ -2769,72 +2771,72 @@ package body Ocarina.Backends.PN.Components is
           (Aadl_Instance, Separator)));
       Add_Str_To_Name_Buffer ("_");
       Add_Str_To_Name_Buffer ("_Store_Port");
-      P_Pn_Store := Pn_Tpn_Get_New_Place;
-      Pn_Tpn_Init_Place (P_Pn_Store,
+      P_PN_Store := PN_Tpn_Get_New_Place;
+      PN_Tpn_Init_Place (P_PN_Store,
                          Port_Instance,
                          Name_Find,
-                         Pn_Generated,
+                         PN_Generated,
                          0);
-      Append_Node_To_List (P_Pn_Store,
-                           Internal_Places (Pn_Port));
+      Append_Node_To_List (P_PN_Store,
+                           Internal_Places (PN_Port));
 
       --
-      A_Pn_Arc := Pn_Tpn_Get_New_Arc;
-      Pn_Tpn_Init_Arc (A_Pn_Arc,
+      A_PN_Arc := PN_Tpn_Get_New_Arc;
+      PN_Tpn_Init_Arc (A_PN_Arc,
                        Aadl_Instance,
-                       T_Pn_Push,
-                       P_Pn_Store,
+                       T_PN_Push,
+                       P_PN_Store,
                        0);
       Append_Node_To_List
-        (A_Pn_Arc,
-         Pn_Arcs_Out (T_Pn_Push));
+        (A_PN_Arc,
+         PN_Arcs_Out (T_PN_Push));
 
-      A_Pn_Arc := Pn_Tpn_Get_New_Arc;
-      Pn_Tpn_Init_Arc (A_Pn_Arc,
+      A_PN_Arc := PN_Tpn_Get_New_Arc;
+      PN_Tpn_Init_Arc (A_PN_Arc,
                        Aadl_Instance,
-                       P_Pn_Store,
-                       T_Pn_Pop,
+                       P_PN_Store,
+                       T_PN_Pop,
                        0);
       Append_Node_To_List
-        (A_Pn_Arc,
-         Pn_Arcs_In (T_Pn_Pop));
+        (A_PN_Arc,
+         PN_Arcs_In (T_PN_Pop));
 
       if Build_Data_Port then
          --  add arcs
-         A_Pn_Arc := Pn_Tpn_Get_New_Arc;
-         Pn_Tpn_Init_Arc (A_Pn_Arc,
+         A_PN_Arc := PN_Tpn_Get_New_Arc;
+         PN_Tpn_Init_Arc (A_PN_Arc,
                           Aadl_Instance,
-                          P_Pn_Store,
-                          T_Pn_Push,
+                          P_PN_Store,
+                          T_PN_Push,
                           0);
          Append_Node_To_List
-           (A_Pn_Arc,
-            Pn_Arcs_In (T_Pn_Push));
+           (A_PN_Arc,
+            PN_Arcs_In (T_PN_Push));
 
-         A_Pn_Arc := Pn_Tpn_Get_New_Arc;
-         Pn_Tpn_Init_Arc (A_Pn_Arc,
+         A_PN_Arc := PN_Tpn_Get_New_Arc;
+         PN_Tpn_Init_Arc (A_PN_Arc,
                        Aadl_Instance,
-                          T_Pn_Pop,
-                          P_Pn_Store,
+                          T_PN_Pop,
+                          P_PN_Store,
                           0);
          Append_Node_To_List
-           (A_Pn_Arc,
-            Pn_Arcs_Out (T_Pn_Pop));
+           (A_PN_Arc,
+            PN_Arcs_Out (T_PN_Pop));
          --  set marking
-         Set_Tokens_Number (P_Pn_Store, New_Integer_Value (1));
+         Set_Tokens_Number (P_PN_Store, New_Integer_Value (1));
       end if;
 
-   end Pn_Build_Tpn_Port;
+   end PN_Build_Tpn_Port;
 
    -------------------------
-   --  Pn_Build_Cpn_Port  --
+   --  PN_Build_Cpn_Port  --
    -------------------------
 
-   procedure Pn_Build_Cpn_Port
+   procedure PN_Build_Cpn_Port
      (Aadl_Instance : Node_Id;
-      Pn_Generated  : Types.Node_Id;
+      PN_Generated  : Types.Node_Id;
       Port_Instance : Node_Id;
-      Pn_Port : Node_Id;
+      PN_Port : Node_Id;
       Is_Data : Boolean := True)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -2847,11 +2849,11 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.Utils;
       use Ocarina.Instances.Queries;
 
-      T_Pn_Push : Node_Id;
-      T_Pn_Pop : Node_Id;
-      T_Pn_Ovf : Node_Id;
+      T_PN_Push : Node_Id;
+      T_PN_Pop : Node_Id;
+      T_PN_Ovf : Node_Id;
 
-      A_Pn_Arc : Node_Id;
+      A_PN_Arc : Node_Id;
       Source_Point : Node_Id;
       Endpoint : Node_Id;
 
@@ -2872,8 +2874,8 @@ package body Ocarina.Backends.PN.Components is
       end if;
 
       --  update attributes for later use
-      Set_Target_Instance (Pn_Port, Endpoint);
-      Set_Source_Instance (Pn_Port, Source_Point);
+      Set_Target_Instance (PN_Port, Endpoint);
+      Set_Source_Instance (PN_Port, Source_Point);
 
       --  build name
       Set_Str_To_Name_Buffer
@@ -2883,17 +2885,17 @@ package body Ocarina.Backends.PN.Components is
       --
 
       Add_Str_To_Name_Buffer ("_Push_Port");
-      T_Pn_Push := Pn_Cpn_Get_New_Transition;
-      Pn_Cpn_Init_Transition
-        (T_Pn_Push,
+      T_PN_Push := PN_Cpn_Get_New_Transition;
+      PN_Cpn_Init_Transition
+        (T_PN_Push,
          Port_Instance,
          Name_Find,
-         Pn_Generated,
+         PN_Generated,
          0);
 
       Append_Node_To_List
-        (T_Pn_Push,
-         Public_Interfaces (Pn_Port));
+        (T_PN_Push,
+         Public_Interfaces (PN_Port));
 
       Set_Str_To_Name_Buffer
         (Get_Name_String
@@ -2901,23 +2903,23 @@ package body Ocarina.Backends.PN.Components is
           (Aadl_Instance, Separator)));
       Add_Str_To_Name_Buffer ("_");
       Add_Str_To_Name_Buffer ("_Pop_Port");
-      T_Pn_Pop := Pn_Cpn_Get_New_Transition;
-      Pn_Cpn_Init_Transition
-        (T_Pn_Pop,
+      T_PN_Pop := PN_Cpn_Get_New_Transition;
+      PN_Cpn_Init_Transition
+        (T_PN_Pop,
          Port_Instance,
          Name_Find,
-         Pn_Generated,
+         PN_Generated,
          0);
 
       Append_Node_To_List
-        (T_Pn_Pop,
-         Public_Interfaces (Pn_Port));
+        (T_PN_Pop,
+         Public_Interfaces (PN_Port));
 
       --
 
       if Build_Data_Port then
          declare
-            P_Pn_Store : Node_Id;
+            P_PN_Store : Node_Id;
          begin
             if not Is_Out (Port_Instance) then
                Set_Str_To_Name_Buffer
@@ -2927,59 +2929,59 @@ package body Ocarina.Backends.PN.Components is
 
                Add_Str_To_Name_Buffer ("_");
                Add_Str_To_Name_Buffer ("_Store_Port");
-               P_Pn_Store := Pn_Cpn_Get_New_Place;
-               Pn_Cpn_Init_Place (P_Pn_Store,
+               P_PN_Store := PN_Cpn_Get_New_Place;
+               PN_Cpn_Init_Place (P_PN_Store,
                                   Port_Instance,
                                   Name_Find,
-                                  Pn_Generated,
+                                  PN_Generated,
                                   0);
-               Append_Node_To_List (P_Pn_Store,
-                                    Internal_Places (Pn_Port));
+               Append_Node_To_List (P_PN_Store,
+                                    Internal_Places (PN_Port));
 
                --
-               A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-               Pn_Cpn_Init_Arc (A_Pn_Arc,
+               A_PN_Arc := PN_Cpn_Get_New_Arc;
+               PN_Cpn_Init_Arc (A_PN_Arc,
                                 Aadl_Instance,
-                                T_Pn_Push,
-                                P_Pn_Store,
+                                T_PN_Push,
+                                P_PN_Store,
                                 4);
                Append_Node_To_List
-                 (A_Pn_Arc,
-                  Pn_Arcs_Out (T_Pn_Push));
+                 (A_PN_Arc,
+                  PN_Arcs_Out (T_PN_Push));
 
-               A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-               Pn_Cpn_Init_Arc (A_Pn_Arc,
+               A_PN_Arc := PN_Cpn_Get_New_Arc;
+               PN_Cpn_Init_Arc (A_PN_Arc,
                                 Aadl_Instance,
-                                P_Pn_Store,
-                                T_Pn_Pop,
+                                P_PN_Store,
+                                T_PN_Pop,
                                 2);
                Append_Node_To_List
-                 (A_Pn_Arc,
-                  Pn_Arcs_In (T_Pn_Pop));
+                 (A_PN_Arc,
+                  PN_Arcs_In (T_PN_Pop));
 
                --  add arcs for in
                --  because if we keep this pattern for out, then then due to
                --  bus_interconnection, there will be endless fireable
                --  transition.
-               A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-               Pn_Cpn_Init_Arc (A_Pn_Arc,
+               A_PN_Arc := PN_Cpn_Get_New_Arc;
+               PN_Cpn_Init_Arc (A_PN_Arc,
                                 Aadl_Instance,
-                                P_Pn_Store,
-                                T_Pn_Push,
+                                P_PN_Store,
+                                T_PN_Push,
                                 2);
                Append_Node_To_List
-                 (A_Pn_Arc,
-                  Pn_Arcs_In (T_Pn_Push));
+                 (A_PN_Arc,
+                  PN_Arcs_In (T_PN_Push));
 
-               A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-               Pn_Cpn_Init_Arc (A_Pn_Arc,
+               A_PN_Arc := PN_Cpn_Get_New_Arc;
+               PN_Cpn_Init_Arc (A_PN_Arc,
                                 Aadl_Instance,
-                                T_Pn_Pop,
-                                P_Pn_Store,
+                                T_PN_Pop,
+                                P_PN_Store,
                                 2);
                Append_Node_To_List
-                 (A_Pn_Arc,
-                  Pn_Arcs_Out (T_Pn_Pop));
+                 (A_PN_Arc,
+                  PN_Arcs_Out (T_PN_Pop));
             end if;
          end;
       else
@@ -3007,16 +3009,16 @@ package body Ocarina.Backends.PN.Components is
                   when others =>
                      null;
                end case;
-               T_Pn_Ovf := Pn_Cpn_Get_New_Transition;
-               Pn_Cpn_Init_Transition
-                 (T_Pn_Ovf,
+               T_PN_Ovf := PN_Cpn_Get_New_Transition;
+               PN_Cpn_Init_Transition
+                 (T_PN_Ovf,
                   Port_Instance,
                   Name_Find,
-                  Pn_Generated,
+                  PN_Generated,
                   0);
                Append_Node_To_List
-                 (T_Pn_Ovf,
-                  Public_Interfaces (Pn_Port));
+                 (T_PN_Ovf,
+                  Public_Interfaces (PN_Port));
 
                --  build as many slots as needed according to queue_size
 
@@ -3038,14 +3040,14 @@ package body Ocarina.Backends.PN.Components is
 
                      Add_Str_To_Name_Buffer ("_");
                      Add_Str_To_Name_Buffer ("_Slot_Port");
-                     Slot_Node := Pn_Cpn_Get_New_Place;
-                     Pn_Cpn_Init_Place (Slot_Node,
+                     Slot_Node := PN_Cpn_Get_New_Place;
+                     PN_Cpn_Init_Place (Slot_Node,
                                         Port_Instance,
                                         Name_Find,
-                                        Pn_Generated,
+                                        PN_Generated,
                                         0);
                      Append_Node_To_List (Slot_Node,
-                                          Internal_Places (Pn_Port));
+                                          Internal_Places (PN_Port));
 
                      Set_Str_To_Name_Buffer
                        (Get_Name_String
@@ -3053,76 +3055,76 @@ package body Ocarina.Backends.PN.Components is
                          (Aadl_Instance, Separator)));
                      Add_Str_To_Name_Buffer ("_");
                      Add_Str_To_Name_Buffer ("_Empty_Port");
-                     Empty_Node := Pn_Cpn_Get_New_Place;
-                     Pn_Cpn_Init_Place (Empty_Node,
+                     Empty_Node := PN_Cpn_Get_New_Place;
+                     PN_Cpn_Init_Place (Empty_Node,
                                         Port_Instance,
                                         Name_Find,
-                                        Pn_Generated,
+                                        PN_Generated,
                                         1);
                      Append_Node_To_List (Empty_Node,
-                                          Internal_Places (Pn_Port));
+                                          Internal_Places (PN_Port));
 
                      --  make connections
-                     A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-                     Pn_Cpn_Init_Arc (A_Pn_Arc,
+                     A_PN_Arc := PN_Cpn_Get_New_Arc;
+                     PN_Cpn_Init_Arc (A_PN_Arc,
                                       Aadl_Instance,
-                                      T_Pn_Push,
+                                      T_PN_Push,
                                       Slot_Node,
                                       4);
                      Append_Node_To_List
-                       (A_Pn_Arc,
-                        Pn_Arcs_Out (T_Pn_Push));
+                       (A_PN_Arc,
+                        PN_Arcs_Out (T_PN_Push));
 
-                     A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-                     Pn_Cpn_Init_Arc (A_Pn_Arc,
+                     A_PN_Arc := PN_Cpn_Get_New_Arc;
+                     PN_Cpn_Init_Arc (A_PN_Arc,
                                       Aadl_Instance,
                                       Slot_Node,
-                                      T_Pn_Pop,
+                                      T_PN_Pop,
                                       2);
                      Append_Node_To_List
-                       (A_Pn_Arc,
-                        Pn_Arcs_In (T_Pn_Pop));
+                       (A_PN_Arc,
+                        PN_Arcs_In (T_PN_Pop));
 
-                     A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-                     Pn_Cpn_Init_Arc (A_Pn_Arc,
+                     A_PN_Arc := PN_Cpn_Get_New_Arc;
+                     PN_Cpn_Init_Arc (A_PN_Arc,
                                       Aadl_Instance,
                                       Slot_Node,
-                                      T_Pn_Ovf,
+                                      T_PN_Ovf,
                                       2);
                      Append_Node_To_List
-                       (A_Pn_Arc,
-                        Pn_Arcs_In (T_Pn_Ovf));
+                       (A_PN_Arc,
+                        PN_Arcs_In (T_PN_Ovf));
 
-                     A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-                     Pn_Cpn_Init_Arc (A_Pn_Arc,
+                     A_PN_Arc := PN_Cpn_Get_New_Arc;
+                     PN_Cpn_Init_Arc (A_PN_Arc,
                                       Aadl_Instance,
-                                      T_Pn_Ovf,
+                                      T_PN_Ovf,
                                       Slot_Node,
                                       4);
                      Append_Node_To_List
-                       (A_Pn_Arc,
-                        Pn_Arcs_Out (T_Pn_Ovf));
+                       (A_PN_Arc,
+                        PN_Arcs_Out (T_PN_Ovf));
 
                      --  manage empty slots
-                     A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-                     Pn_Cpn_Init_Arc (A_Pn_Arc,
+                     A_PN_Arc := PN_Cpn_Get_New_Arc;
+                     PN_Cpn_Init_Arc (A_PN_Arc,
                                       Aadl_Instance,
-                                      T_Pn_Pop,
+                                      T_PN_Pop,
                                       Empty_Node,
                                       0);
                      Append_Node_To_List
-                       (A_Pn_Arc,
-                        Pn_Arcs_Out (T_Pn_Pop));
+                       (A_PN_Arc,
+                        PN_Arcs_Out (T_PN_Pop));
 
-                     A_Pn_Arc := Pn_Cpn_Get_New_Arc;
-                     Pn_Cpn_Init_Arc (A_Pn_Arc,
+                     A_PN_Arc := PN_Cpn_Get_New_Arc;
+                     PN_Cpn_Init_Arc (A_PN_Arc,
                                       Aadl_Instance,
                                       Empty_Node,
-                                      T_Pn_Push,
+                                      T_PN_Push,
                                       0);
                      Append_Node_To_List
-                       (A_Pn_Arc,
-                        Pn_Arcs_In (T_Pn_Push));
+                       (A_PN_Arc,
+                        PN_Arcs_In (T_PN_Push));
                   end;
                else
                   while Q_Size > 0 loop
@@ -3142,22 +3144,22 @@ package body Ocarina.Backends.PN.Components is
          end if;                        --  in event port
       end if;
 
-   end Pn_Build_Cpn_Port;
+   end PN_Build_Cpn_Port;
 
    --------------------------
-   --  Pn_Thread_Skeleton  --
+   --  PN_Thread_Skeleton  --
    --------------------------
 
-   procedure Pn_Thread_Skeleton
+   procedure PN_Thread_Skeleton
      (Aadl_Instance : Types.Node_Id;
-      Pn_Thread : Types.Node_Id;
-      Pn_Generated : Types.Node_Id;
-      Pn_P_Init_Proc : Pn_Init_Node;
-      Pn_P_New_Proc : Pn_New_Node;
-      Pn_T_Init_Proc : Pn_Init_Node;
-      Pn_T_New_Proc : Pn_New_Node;
-      Pn_A_Init_Proc : Pn_Init_Arc;
-      Pn_A_New_Proc : Pn_New_Node)
+      PN_Thread : Types.Node_Id;
+      PN_Generated : Types.Node_Id;
+      PN_P_Init_Proc : PN_Init_Node;
+      PN_P_New_Proc : PN_New_Node;
+      PN_T_Init_Proc : PN_Init_Node;
+      PN_T_New_Proc : PN_New_Node;
+      PN_A_Init_Proc : PN_Init_Arc;
+      PN_A_New_Proc : PN_New_Node)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -3180,97 +3182,97 @@ package body Ocarina.Backends.PN.Components is
    begin
       --  local places
       for PN in P_Skeleton'First .. P_Skeleton'Last loop
-         P := Pn_P_New_Proc.all;
-         Pn_P_Init_Proc (P,
+         P := PN_P_New_Proc.all;
+         PN_P_Init_Proc (P,
                          Aadl_Instance,
                          P_Skeleton (PN),
-                         Pn_Generated,
+                         PN_Generated,
                          0);
          --  add new place into thread box
-         Append_Node_To_List (P, Internal_Places (Pn_Thread));
+         Append_Node_To_List (P, Internal_Places (PN_Thread));
       end loop;
       --  local transitions
       for TN in T_Local_Skeleton'First .. T_Local_Skeleton'Last loop
-         T := Pn_T_New_Proc.all;
-         Pn_T_Init_Proc (T,
+         T := PN_T_New_Proc.all;
+         PN_T_Init_Proc (T,
                          Aadl_Instance,
                          T_Local_Skeleton (TN),
-                         Pn_Generated,
+                         PN_Generated,
                          0);
          --  add new transition into thread box
-         Append_Node_To_List (T, Internal_Transitions (Pn_Thread));
+         Append_Node_To_List (T, Internal_Transitions (PN_Thread));
 
          --  arcs in
-         P := First_Node (Internal_Places (Pn_Thread));
+         P := First_Node (Internal_Places (PN_Thread));
          if P /= No_Node then
-            A := Pn_A_New_Proc.all;
-            Pn_A_Init_Proc (A,
+            A := PN_A_New_Proc.all;
+            PN_A_Init_Proc (A,
                             Aadl_Instance,
                             P,
                             T,
                             5);
-            Append_Node_To_List (A, Pn_Arcs_In (T));
+            Append_Node_To_List (A, PN_Arcs_In (T));
 
             P := Next_Node (P);
             if P /= No_Node then
                --  arcs out
-               A := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A,
+               A := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A,
                                Aadl_Instance,
                                T,
                                P,
                                5);
-               Append_Node_To_List (A, Pn_Arcs_Out (T));
+               Append_Node_To_List (A, PN_Arcs_Out (T));
             end if;
          end if;
 
       end loop;
       --  interfaces transitions
       for TN in T_Interface_Skeleton'First .. T_Interface_Skeleton'Last loop
-         T := Pn_T_New_Proc.all;
-         Pn_T_Init_Proc (T,
+         T := PN_T_New_Proc.all;
+         PN_T_Init_Proc (T,
                          Aadl_Instance,
                          T_Interface_Skeleton (TN),
-                         Pn_Generated,
+                         PN_Generated,
                          0);
          --  add new transition into thread box
-         Append_Node_To_List (T, Public_Interfaces (Pn_Thread));
+         Append_Node_To_List (T, Public_Interfaces (PN_Thread));
       end loop;
       --  for T_Interface_Skeleton, arcs
-      P := First_Node (Internal_Places (Pn_Thread));
+      P := First_Node (Internal_Places (PN_Thread));
       if P /= No_Node then
          P := Next_Node (P);            --  wait_for_dispatch
          if P /= No_Node then
-            T := First_Node (Public_Interfaces (Pn_Thread));
+            T := First_Node (Public_Interfaces (PN_Thread));
             if T /= No_Node then
                --  compute
-               A := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A,
+               A := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A,
                                Aadl_Instance,
                                P,
                                T,
                                1);
-               Append_Node_To_List (A, Pn_Arcs_In (T));
+               Append_Node_To_List (A, PN_Arcs_In (T));
 
                T := Next_Node (T);
                --  complete
-               A := Pn_A_New_Proc.all;
-               Pn_A_Init_Proc (A,
+               A := PN_A_New_Proc.all;
+               PN_A_Init_Proc (A,
                                Aadl_Instance,
                                T,
                                P,
                                1);
-               Append_Node_To_List (A, Pn_Arcs_Out (T));
+               Append_Node_To_List (A, PN_Arcs_Out (T));
             end if;
          end if;
       end if;
       ---
 
       --  compilation purpose, to fix
-      if Pn_Generated = No_Node then
+      if PN_Generated = No_Node then
          null;
       end if;
 
-   end Pn_Thread_Skeleton;
+   end PN_Thread_Skeleton;
 
 end Ocarina.Backends.PN.Components;

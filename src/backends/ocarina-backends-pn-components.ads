@@ -35,30 +35,30 @@ package Ocarina.Backends.PN.Components is
 
    function Process_Architecture_Instance
      (Architecture_Instance : Types.Node_Id;
-      F : Unsigned_Long_Long)
+      F : Unsigned_Long_Long)  --  0 for CPN, 1 for TPN
      return Types.Node_Id;
-   --  Transform the ocarina tree of the distributed application
-   --  nodes into a petrinet (pn) tree.
+   --  Transform the Ocarina tree of the distributed application nodes
+   --  into a Petri Net (pn) tree.
 
 private
 
-   type Pn_Init_Node is access procedure (N : Types.Node_Id;
+   type PN_Init_Node is access procedure (N : Types.Node_Id;
                                           A : Types.Node_Id;
                                           Name : Types.Name_Id;
-                                          Pn_G : Types.Node_Id;
+                                          PN_G : Types.Node_Id;
                                           M    : Unsigned_Long_Long);
 
-   type Pn_Init_Arc is access procedure (N : Types.Node_Id;
+   type PN_Init_Arc is access procedure (N : Types.Node_Id;
                                          A : Types.Node_Id;
                                          F : Types.Node_Id;
                                          T : Types.Node_Id;
                                          K : Unsigned_Long_Long);
 
-   type Pn_Dup_Arc is access procedure (A        : Types.Node_Id;
+   type PN_Dup_Arc is access procedure (A        : Types.Node_Id;
                                         A_Inst   : Types.Node_Id;
                                         Endpoint : Types.Node_Id;
                                         From     : Boolean);
 
-   type Pn_New_Node is access function return Types.Node_Id;
+   type PN_New_Node is access function return Types.Node_Id;
 
 end Ocarina.Backends.PN.Components;

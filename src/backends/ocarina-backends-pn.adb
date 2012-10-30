@@ -51,21 +51,24 @@ package body Ocarina.Backends.PN is
    package OPFT renames Ocarina.Backends.PN.Format.Tina;
    package OPFC renames Ocarina.Backends.PN.Format.Cami;
 
-   --------------
-   -- Generate --
-   --------------
+   use Namet;
+   use Ocarina.Instances;
+   use Ocarina.Backends.Expander;
+   use Ocarina.Backends.PN.Components;
+   use Ocarina.Backends.PN.Printer;
+   use OPFT;
+   use OPFC;
+   use Output;
+   use Ocarina.Backends.Utils;
 
-   procedure Generate (AADL_Root : Types.Node_Id) is
-      use Namet;
-      use Ocarina.Instances;
-      use Ocarina.Backends.Expander;
-      use Ocarina.Backends.PN.Components;
-      use Ocarina.Backends.PN.Printer;
-      use OPFT;
-      use OPFC;
-      use Output;
-      use Ocarina.Backends.Utils;
+   procedure Generate_TINA (AADL_Root : Types.Node_Id);
+   procedure Generate_CAMI (AADL_Root : Types.Node_Id);
 
+   -------------------
+   -- Generate_TINA --
+   -------------------
+
+   procedure Generate_TINA (AADL_Root : Types.Node_Id) is
       Pn_Generated, Instance_Root : Node_Id;
       pragma Warnings (Off, Pn_Generated);
 
@@ -101,8 +104,17 @@ package body Ocarina.Backends.PN is
          Write_Line ("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
          Print_Pn_Generated (Pn_Generated);
       end if;
+   end Generate_TINA;
 
-      Reset_Handlings;
+   -------------------
+   -- Generate_CAMI --
+   -------------------
+
+   procedure Generate_CAMI (AADL_Root : Types.Node_Id) is
+      Pn_Generated, Instance_Root : Node_Id;
+      pragma Warnings (Off, Pn_Generated);
+
+   begin
       -----------
       --  work for CPN generation
 
@@ -129,7 +141,17 @@ package body Ocarina.Backends.PN is
          Write_Line ("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
          Print_Pn_Generated (Pn_Generated);
       end if;
+   end Generate_CAMI;
 
+   --------------
+   -- Generate --
+   --------------
+
+   procedure Generate (AADL_Root : Types.Node_Id) is
+   begin
+      Generate_TINA (AADL_Root);
+      Reset_Handlings;
+      Generate_CAMI (AADL_Root);
    end Generate;
 
    ----------
@@ -137,7 +159,6 @@ package body Ocarina.Backends.PN is
    ----------
 
    procedure Init is
-      use Namet;
    begin
       Set_Str_To_Name_Buffer ("_");
       Separator := Name_Find;
