@@ -945,6 +945,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
             Generate (Op);
             if Next_Node (Op) /= No_Node then
                Write (Tok_Colon);
+               Write_Eol;
             end if;
             Op := Next_Node (Op);
          end loop;
