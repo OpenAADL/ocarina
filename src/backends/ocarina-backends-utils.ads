@@ -71,6 +71,12 @@ package Ocarina.Backends.Utils is
    --  in most languages: a-z, 0-9, _.
    --  If Ada_Style is set to True, '.' is replaced by "__"
 
+   function Fully_Qualified_Instance_Name (E : Node_Id) return Name_Id;
+   --  Return a fully qualified name for component instance E, the
+   --  fully qualified name is built from
+   --  <system_name>_<process_name>_<thread_name> to avoid name
+   --  collision
+
    -----------------------------------------------------
    -- Routines that are common to the code generators --
    -----------------------------------------------------
@@ -491,4 +497,5 @@ package Ocarina.Backends.Utils is
       return Boolean;
 
    function Get_Associated_Bus (Port : Node_Id) return Node_Id;
+
 end Ocarina.Backends.Utils;

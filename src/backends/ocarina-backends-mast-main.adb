@@ -576,16 +576,14 @@ package body Ocarina.Backends.MAST.Main is
       Port_Shared_Resource_Op_List  : List_Id;
    begin
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name
-                         (Name (Identifier (Parent_Subcomponent (E)))));
-      Add_Str_To_Name_Buffer ("_operations");
-      Operation_Name := Name_Find;
-
-      Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name
-                         (Name (Identifier (Parent_Subcomponent (E)))));
+      Get_Name_String (Fully_Qualified_Instance_Name (E));
       Add_Str_To_Name_Buffer ("_sched_server");
       Server_Sched_Name := Name_Find;
+
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Fully_Qualified_Instance_Name (E));
+      Add_Str_To_Name_Buffer ("_operations");
+      Operation_Name := Name_Find;
 
       Prio := Get_Thread_Priority (E);
       if Prio = 0 then
@@ -609,13 +607,12 @@ package body Ocarina.Backends.MAST.Main is
       Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
       N := Make_Transaction
-        (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
+        (Fully_Qualified_Instance_Name (E),
          Regular);
       Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name
-                         (Name (Identifier (Parent_Subcomponent (E)))));
+      Get_Name_String (Fully_Qualified_Instance_Name (E));
       Add_Str_To_Name_Buffer ("_activation_event");
       Activation_Event_Name := Name_Find;
 
@@ -662,8 +659,7 @@ package body Ocarina.Backends.MAST.Main is
          (Activation_Event, MTN.External_Events (N));
 
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Normalize_Name
-                         (Name (Identifier (Parent_Subcomponent (E)))));
+      Get_Name_String (Fully_Qualified_Instance_Name (E));
       Add_Str_To_Name_Buffer ("_output_event");
       Output_Event_Name := Name_Find;
 

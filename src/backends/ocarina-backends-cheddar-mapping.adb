@@ -348,7 +348,8 @@ package body Ocarina.Backends.Cheddar.Mapping is
       N := Make_XML_Node ("address_space");
 
       --  name: computed from process instance name
-      P := Map_Node_Identifier_To_XML_Node ("name", Parent_Subcomponent (E));
+      P := Map_Node_Identifier_To_XML_Node
+        ("name", Fully_Qualified_Instance_Name (E));
       Append_Node_To_List (P, XTN.Subitems (N));
 
       --  cpu_name: computed from the processor binding of the
@@ -453,12 +454,14 @@ package body Ocarina.Backends.Cheddar.Mapping is
       --  address_space: name of the enclosing process
       P := Map_Node_Identifier_To_XML_Node
         ("address_space_name",
-         Get_Container_Process (Parent_Subcomponent (E)));
+         Fully_Qualified_Instance_Name
+           (Corresponding_Instance
+              (Get_Container_Process (Parent_Subcomponent (E)))));
       Append_Node_To_List (P, XTN.Subitems (N));
 
       --  name: computed from thread instance name
       P := Map_Node_Identifier_To_XML_Node
-        ("name", Parent_Subcomponent (E));
+        ("name", Fully_Qualified_Instance_Name (E));
       Append_Node_To_List (P, XTN.Subitems (N));
 
       --  capacity: computed from the Compute_Execution_Time property

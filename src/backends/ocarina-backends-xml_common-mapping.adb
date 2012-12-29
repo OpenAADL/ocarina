@@ -132,4 +132,16 @@ package body Ocarina.Backends.XML_Common.Mapping is
       return N;
    end Map_Node_Identifier_To_XML_Node;
 
+   function Map_Node_Identifier_To_XML_Node
+     (Name : String; The_Node : Name_Id) return Node_Id
+   is
+      N, V : Node_Id;
+   begin
+      N := Make_XML_Node (Name);
+      V := Make_Defining_Identifier (The_Node);
+      Append_Node_To_List (V, Subitems (N));
+
+      return N;
+   end Map_Node_Identifier_To_XML_Node;
+
 end Ocarina.Backends.XML_Common.Mapping;

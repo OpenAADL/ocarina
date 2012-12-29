@@ -49,4 +49,7 @@ package Ocarina.Backends.XML_Common.Mapping is
      (Name : String; The_Node : Node_Id) return Node_Id;
    --  Build a node whose structure is <name>the_node'identifier</name>
 
+   function Map_Node_Identifier_To_XML_Node
+     (Name : String; The_Node : Name_Id) return Node_Id;
+
 end Ocarina.Backends.XML_Common.Mapping;

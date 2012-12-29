@@ -345,6 +345,37 @@ package body Ocarina.Backends.Utils is
       return Normalized_Name;
    end Normalize_Name;
 
+   -----------------------------------
+   -- Fully_Qualified_Instance_Name --
+   -----------------------------------
+
+   function Fully_Qualified_Instance_Name (E : Node_Id) return Name_Id is
+      Current_Node : Node_Id := Parent_Subcomponent (E);
+      Current_Name : Name_Id;
+
+   begin
+      Set_Str_To_Name_Buffer ("");
+      Get_Name_String (Normalize_Name (Name (Identifier (Current_Node))));
+      Current_Name := Name_Find;
+      Current_Node := Parent_Component (Current_Node);
+
+      while Present (Current_Node) loop
+         exit when No (Parent_Subcomponent (Current_Node));
+
+         Get_Name_String (Normalize_Name
+                            (Name
+                               (Identifier
+                                  (Parent_Subcomponent (Current_Node)))));
+         Set_Str_To_Name_Buffer (Get_Name_String (Name_Find)
+                                   & "_" & Get_Name_String (Current_Name));
+         Current_Name := Name_Find;
+
+         Current_Node := Parent_Component (Parent_Subcomponent (Current_Node));
+      end loop;
+
+      return Current_Name;
+   end Fully_Qualified_Instance_Name;
+
    ------------------
    -- Is_Namespace --
    ------------------
