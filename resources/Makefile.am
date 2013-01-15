@@ -59,7 +59,7 @@ install-data-local:
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv1 || exit 1; \
 	done
 	rm -f $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl
-	for file in ./AADLv2/components/*.aadl; do \
+	for file in $(srcdir)/AADLv2/components/*.aadl; do \
 	  cat $$file >> $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl || exit 1; \
 	done
 	for file in $(srcdir)/AADLv2/components/devices/*.aadl; do \

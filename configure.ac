@@ -31,7 +31,7 @@ AC_CHECK_PROG(GNATLS, gnatls, gnatls)
 AC_EXEEXT
 AM_PATH_PYTHON
 
-dnl we need a GNU flavoured sed 
+dnl we need a GNU flavoured sed
 AC_CHECK_PROG(HAVE_GNUSED,gnused,yes,no)
 AC_CHECK_PROG(HAVE_GSED,gsed,yes,no)
 AC_CHECK_PROG(HAVE_SED,sed,yes,no)
@@ -232,7 +232,7 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
 	    AM_CONDITIONAL(PO_HI_C, false)
             AM_CONDITIONAL(PO_QOS_ADA, false)
 	    ;;
-	 
+
 	pok )
             if test -d ${root}/resources/runtime/${R}
             then
@@ -367,15 +367,18 @@ AC_SUBST(CYGPATH_U)
 AC_CHECK_PROGS(TEXI2HTML, texi2html)
 
 DOC_DIR=
+DOC_FLAG=
 
 AC_ARG_ENABLE(doc,
 [  --enable-doc            Build documentation [default=no]],
 [if [[ "$enableval" = "yes" ]]; then
         DOC_DIR=doc
+        DOC_FLAG=--enable-doc
 fi],
 [])
 
 AC_SUBST(DOC_DIR)
+AC_SUBST(DOC_FLAG)
 
 ##########################################
 # Output generated files
@@ -383,7 +386,7 @@ AC_SUBST(DOC_DIR)
 
 dnl Important! One file per line, nothing before
 dnl or after except whitespace! This section
-dnl may, one day, be edited automatically to remove 
+dnl may, one day, be edited automatically to remove
 dnl some entries.
 
 AC_OUTPUT([

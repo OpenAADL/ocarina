@@ -41,7 +41,7 @@ reconfig-polyorb-qos-ada:
 
 maybe-configure-pok:
 @POK_TRUE@maybe-configure-pok: configure-pok
-configure-pok: 
+configure-pok:
 	r_dir='pok'; \
 	test -f $${r_dir}/Makefile || exit 0; \
 	cd $${r_dir} && $(MAKE) configure
@@ -54,7 +54,7 @@ configure-polyorb-hi-ada: reconfig-polyorb-hi-ada
 	test -f $${r_dir}/Makefile && exit 0 || true; \
 	test -x $(srcdir)/$${r_dir}/configure || exit 0; \
 	$(mkdir_p) $${r_dir} && cd $${r_dir} || exit 1; \
-	$${s_dir}/$${r_dir}/configure $(DEBUG_FLAG) \
+	$${s_dir}/$${r_dir}/configure $(DEBUG_FLAG) $(DOC_FLAG) \
 	   --with-ocarina-prefix='$(prefix)' --disable-ocarina-version-check
 
 maybe-configure-polyorb-hi-c:
@@ -65,7 +65,7 @@ configure-polyorb-hi-c: reconfig-polyorb-hi-c
 	test -f $${r_dir}/Makefile && exit 0 || true; \
 	test -x $(srcdir)/$${r_dir}/configure || exit 0; \
 	$(mkdir_p) $${r_dir} && cd $${r_dir} || exit 1; \
-	$${s_dir}/$${r_dir}/configure $(DEBUG_FLAG) \
+	$${s_dir}/$${r_dir}/configure $(DEBUG_FLAG) $(DOC_FLAG) \
 	   --with-ocarina-prefix='$(prefix)' --disable-ocarina-version-check
 
 maybe-configure-polyorb-hi-java:
@@ -76,8 +76,8 @@ configure-polyorb-hi-java: reconfig-polyorb-hi-java
 	test -f $${r_dir}/Makefile && exit 0 || true; \
 	test -x $(srcdir)/$${r_dir}/configure || exit 0; \
 	$(mkdir_p) $${r_dir} && cd $${r_dir} || exit 1; \
-	$${s_dir}/$${r_dir}/configure $(DEBUG_FLAG) \
-	   --with-ocarina-prefix='$(prefix)' --disable-ocarina-version-check 
+	$${s_dir}/$${r_dir}/configure $(DEBUG_FLAG) $(DOC_FLAG) \
+	   --with-ocarina-prefix='$(prefix)' --disable-ocarina-version-check
 
 maybe-configure-polyorb-qos-ada:
 @PO_QOS_ADA_TRUE@maybe-configure-polyorb-qos-ada: configure-polyorb-qos-ada
@@ -87,7 +87,7 @@ configure-polyorb-qos-ada: reconfig-polyorb-qos-ada
 	test -f $${r_dir}/Makefile && exit 0 || true; \
 	test -x $(srcdir)/$${r_dir}/configure || exit 0; \
 	$(mkdir_p) $${r_dir} && cd $${r_dir} || exit 1; \
-	$${s_dir}/$${r_dir}/configure $(DEBUG_FLAG) \
+	$${s_dir}/$${r_dir}/configure $(DEBUG_FLAG) $(DOC_FLAG) \
 	   --with-ocarina-prefix='$(prefix)' --disable-ocarina-version-check
 
 ################################################################################
@@ -353,7 +353,7 @@ dist-polyorb-hi-ada: configure-polyorb-hi-ada
 
 maybe-dist-polyorb-hi-c:
 @PO_HI_C_TRUE@maybe-dist-polyorb-hi-c: dist-polyorb-hi-c
-dist-polyorb-hi-c: configure-polyorb-hi-c 
+dist-polyorb-hi-c: configure-polyorb-hi-c
 	r_dir='polyorb-hi-c'; \
 	d_dir='polyorb-hi-c-dist'; \
 	test -f $${r_dir}/Makefile || exit 0; \
@@ -400,7 +400,7 @@ dvi: \
 	maybe-dvi-polyorb-hi-ada \
 	maybe-dvi-polyorb-hi-c \
 	maybe-dvi-polyorb-hi-java \
-	maybe-dvi-polyorb-qos-ada 
+	maybe-dvi-polyorb-qos-ada
 
 install-data-local: \
 	maybe-install-polyorb-hi-ada \
