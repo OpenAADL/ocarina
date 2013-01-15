@@ -5,6 +5,8 @@ property set Taste is
 		(system, package, device, memory, processor, process, access,
        subprogram access, connection, bus, virtual bus);
 
+   HWLibraries : list of aadlstring applies to(package);
+
    Data_Transport : enumeration (legacy,asn1) applies to (device, abstract);
 
    Importance: enumeration (low, medium, high) applies to (system, subprogram access, access);
