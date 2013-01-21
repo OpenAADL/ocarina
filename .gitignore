@@ -1,0 +1,10 @@
+*~
+Makefile
+Makefile.in
+autom4te.cache/
+config.log
+config.status
+configure
+*cheddar.xml
+
+aclocal.m4
