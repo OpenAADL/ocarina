@@ -35,10 +35,11 @@ property set Communication_Properties is
 	Transmission_Type: enumeration (push, pull)
 		applies to (data port, port connection, bus, virtual bus);
 
-	Input_Rate: Rate_Spec => (Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed;)
+
+	Input_Rate: Rate_Spec => [ Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed; ]
 		applies to (port);
 
-	Input_Time: list of IO_Time_Spec => ((Time => Dispatch; Offset => 0 ns .. 0 ns;))
+	Input_Time: list of IO_Time_Spec => ([ Time => Dispatch; Offset => 0 ns .. 0 ns; ])
 		applies to (port);
 
 	IO_Time_Spec: type record (
@@ -48,11 +49,12 @@ property set Communication_Properties is
 
 	IO_Reference_Time: type enumeration (Dispatch, Start, Completion, Deadline, NoIO);
 
-	Output_Rate: Rate_Spec => (Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed;)
+	Output_Rate: Rate_Spec => [ Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed; ]
 		applies to (port);
 
-	Output_Time: list of IO_Time_Spec => ((Time => Completion; Offset => 0 ns .. 0 ns;))
+	Output_Time: list of IO_Time_Spec => ([ Time => Completion; Offset => 0 ns .. 0 ns; ])
 		applies to (port);
+
 
 	Rate_Spec: type record (
 		Value_Range: range of aadlreal;
@@ -60,7 +62,7 @@ property set Communication_Properties is
 		Rate_Distribution: Supported_Distributions;
 	);
 
-	Subprogram_Call_Rate: Rate_Spec => (Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed;)
+	Subprogram_Call_Rate: Rate_Spec => [ Value_Range => 1.0 .. 1.0; Rate_Unit => PerDispatch; Rate_Distribution => Fixed; ]
 		applies to (subprogram access);
 
 	Transmission_Time: record (

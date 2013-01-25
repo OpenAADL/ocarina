@@ -2365,6 +2365,16 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          when T_Left_Parenthesis =>
             return P_Boolean_Or_Record_Term;
 
+         when T_Left_Square_Bracket =>
+            if AADL_Version = AADL_V2 then
+               return P_Record_Term;
+            else
+               DPE (PC_Property_Expression,
+                    EMC_Not_Allowed_In_AADL_V1);
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
+
          when T_Compute =>
             if AADL_Version = AADL_V2 then
                return P_Computed_Term;
@@ -2539,8 +2549,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
    --  AADL_V2
    --  record_term ::=
-   --     ( record_field_identifier => property_expression ;
-   --        ( record_field_identifier => property_expression ; )* )
+   --     [ record_field_identifier => property_expression ;
+   --        ( record_field_identifier => property_expression ; )* ]
 
    function P_Record_Term return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -2567,7 +2577,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Items := P_Items_List (P_Record_Term_Element'Access,
                              No_Node,
                              T_Semicolon,
-                             T_Right_Parenthesis,
+                             T_Right_Square_Bracket,
                              PC_Record_Term,
                              True);
 
