@@ -311,7 +311,7 @@ package body Ocarina.BE_AADL.Properties.Values is
 
       List_Node : Node_Id;
    begin
-      Print_Token (T_Left_Parenthesis);
+      Print_Token (T_Left_Square_Bracket);
       Write_Space;
 
       List_Node := First_Node
@@ -331,7 +331,7 @@ package body Ocarina.BE_AADL.Properties.Values is
       end loop;
 
       Write_Space;
-      Print_Token (T_Right_Parenthesis);
+      Print_Token (T_Right_Square_Bracket);
    end Print_Record_Term;
 
    -------------------------------

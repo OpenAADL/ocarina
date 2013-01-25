@@ -1,0 +1,22 @@
+package PropValue
+public
+
+bus Ethernet_Cable
+end Ethernet_Cable;
+
+bus implementation Ethernet_Cable.ARINC_664
+properties
+    -- The following is legal AADL 2 and accepted by OSATE
+    -- but not by Ocarina.  Ocarina only accepts () and OSATE
+    -- only accepts [] for records.
+    Transmission_Time => [ Fixed => 3360 ns .. 3360 ns; PerByte => 80 ns .. 80 ns; ];
+end Ethernet_Cable.ARINC_664;
+
+system Test
+end Test;
+
+system implementation Test.Imp
+subcomponents
+    aBus : bus Ethernet_Cable.ARINC_664;
+end Test.Imp;
+end PropValue;
