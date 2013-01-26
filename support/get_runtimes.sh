@@ -32,28 +32,14 @@ while test $# -ne 0; do
 	*po*hi*ada* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf polyorb-hi-ada 2>/dev/null
-	    svn co https://eve.enst.fr/svn/aadl/software/polyorb-hi-ada polyorb-hi-ada \
+	    git clone https://github.com/yoogx/polyorb-hi-ada.git \
 		|| exit 2
 	    ;;
 
 	*po*hi*c* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf polyorb-hi-c 2>/dev/null
-	    svn co https://eve.enst.fr/svn/aadl/software/polyorb-hi-c polyorb-hi-c \
-		|| exit 2
-	    ;;
-
-	*po*hi*java* )
-	    cd ${scriptdir}/../resources/runtime || exit 2
-	    rm -rf polyorb-hi-java 2>/dev/null
-	    svn co https://eve.enst.fr/svn/aadl/software/polyorb-hi-java polyorb-hi-java \
-		|| exit 2
-	    ;;
-
-	*po*qos*ada* )
-	    cd ${scriptdir}/../resources/runtime || exit 2
-	    rm -rf polyorb-qos-ada 2>/dev/null
-	    svn co https://eve.enst.fr/svn/aadl/software/polyorb-qos-ada polyorb-qos-ada \
+	    git clone https://github.com/yoogx/polyorb-hi-c.git \
 		|| exit 2
 	    ;;
 
