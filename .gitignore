@@ -8,3 +8,10 @@ configure
 *cheddar.xml
 
 aclocal.m4
+doc/ocarina.info
+doc/stamp-vti
+doc/version.texi
+resources/runtime/polyorb-hi-ada
+resources/runtime/polyorb-hi-c
+support/mdate-sh
+support/texinfo.tex
