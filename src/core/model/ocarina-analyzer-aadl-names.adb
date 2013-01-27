@@ -161,19 +161,32 @@ package body Ocarina.Analyzer.AADL.Names is
                   end if;
                   pragma Assert (Present (Alias));
 
-                  In_Node := Node_Explicitly_In_Scope (Alias, Current_Scope);
-
-                  if In_Node = No_Node then
+                  if Name (Alias) = Name (Build_Package_Identifier
+                                            (Package_Name (Package_Node)))
+                  then
+                     Display_Analyzer_Error
+                       (Alias, "alias definition refer to self package",
+                        Loc => Loc (Name_Visibility_Node));
                      Success := False;
-                     Display_Analyzer_Error (Alias, "is not visible");
+
+                  else
+                     In_Node := Node_Explicitly_In_Scope
+                       (Alias, Current_Scope);
+
+                     if In_Node = No_Node then
+                        Success := False;
+                        Display_Analyzer_Error (Alias, "is not visible");
+                     end if;
                   end if;
                end;
             when others =>
                null;
          end case;
+         exit when not Success;
 
          List_Node := Next_Node (List_Node);
       end loop;
+
       Push_Scope (Entity_Scope (Package_Node));
       return Success;
    end Check_Import_Declaration;
@@ -630,7 +643,6 @@ package body Ocarina.Analyzer.AADL.Names is
    ----------------------------
 
    function Check_Names_In_Package (Node : Node_Id) return Boolean is
-
       pragma Assert (Kind (Node) = K_Package_Specification);
 
       Success   : Boolean := True;
@@ -647,7 +659,9 @@ package body Ocarina.Analyzer.AADL.Names is
                if not Enter_Name_In_Scope (Identifier (List_Node)) then
                   Success := False;
                end if;
+
             end if;
+            exit when not Success;
 
             List_Node := Next_Node (List_Node);
          end loop;
