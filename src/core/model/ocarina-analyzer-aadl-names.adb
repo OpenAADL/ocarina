@@ -163,11 +163,26 @@ package body Ocarina.Analyzer.AADL.Names is
 
                   if Name (Alias) = Name (Build_Package_Identifier
                                             (Package_Name (Package_Node)))
+                    and then Is_All (List_Node)
                   then
                      Display_Analyzer_Error
-                       (Alias, "alias definition refer to self package",
+                       (Alias, "alias definition refers to self package",
                         Loc => Loc (Name_Visibility_Node));
                      Success := False;
+
+                  elsif Present
+                    (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                       (List_Node)) and then
+                    Name
+                    (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                       (List_Node)) = Name (Build_Package_Identifier
+                                              (Package_Name (Package_Node)))
+                  then
+                     Success := False;
+                     Display_Analyzer_Error
+                       (List_Node,
+                        "name conflicts with current package name",
+                        Loc => Loc (List_Node));
 
                   else
                      In_Node := Node_Explicitly_In_Scope
