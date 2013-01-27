@@ -5841,9 +5841,9 @@ Declarations List_Id 7
     Category Byte 11
     Component_Cat Byte 11
     Classifier_Ref Node_Id 0
- 1205 property definition declaration communication_properties.aadl:38:02
+ 1205 property definition declaration communication_properties.aadl:39:02
   Identifier Node_Id 1182
-  1182 identifier communication_properties.aadl:38:02
+  1182 identifier communication_properties.aadl:39:02
    Corresponding_Entity Node_Id 1205
    Display_Name Name_Id "Input_Rate"
    Scope_Entity Node_Id 1049
@@ -5851,13 +5851,13 @@ Declarations List_Id 7
   Is_Access Boolean FALSE
   Is_Inherit Boolean FALSE
   Property_Name_Type Node_Id 1207
-  1207 property type communication_properties.aadl:38:02
+  1207 property type communication_properties.aadl:39:02
    Is_List Boolean FALSE
    Multiplicity Int 0
    Property_Type_Designator Node_Id 1184
-   1184 unique property type identifier communication_properties.aadl:38:12
+   1184 unique property type identifier communication_properties.aadl:39:12
     Identifier Node_Id 1183
-    1183 identifier communication_properties.aadl:38:14
+    1183 identifier communication_properties.aadl:39:14
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "Rate_Spec"
      Scope_Entity Node_Id 0
@@ -5865,56 +5865,56 @@ Declarations List_Id 7
     Entity Node_Id 1326
     Property_Set_Identifier Node_Id 0
    Expanded_Type_Designator Node_Id 1325
-   1325 record type communication_properties.aadl:57:25
+   1325 record type communication_properties.aadl:59:25
     List_Items List_Id 1310
-    1311 record type element communication_properties.aadl:58:03
+    1311 record type element communication_properties.aadl:60:03
      Identifier Node_Id 1312
-     1312 identifier communication_properties.aadl:58:03
+     1312 identifier communication_properties.aadl:60:03
       Corresponding_Entity Node_Id 1311
       Display_Name Name_Id "Value_Range"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1313
-     1313 range type communication_properties.aadl:58:16
+     1313 range type communication_properties.aadl:60:16
       Number_Type Node_Id 1314
-      1314 real type communication_properties.aadl:58:25
+      1314 real type communication_properties.aadl:60:25
        Type_Range Node_Id 0
        Unit_Designator Node_Id 0
-    1315 record type element communication_properties.aadl:59:03
+    1315 record type element communication_properties.aadl:61:03
      Identifier Node_Id 1316
-     1316 identifier communication_properties.aadl:59:03
+     1316 identifier communication_properties.aadl:61:03
       Corresponding_Entity Node_Id 1315
       Display_Name Name_Id "Rate_Unit"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1317
-     1317 enumeration type communication_properties.aadl:59:14
+     1317 enumeration type communication_properties.aadl:61:14
       Identifiers List_Id 1318
-      1319 identifier communication_properties.aadl:59:27
+      1319 identifier communication_properties.aadl:61:27
        Corresponding_Entity Node_Id 1317
        Display_Name Name_Id "PerSecond"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-      1320 identifier communication_properties.aadl:59:38
+      1320 identifier communication_properties.aadl:61:38
        Corresponding_Entity Node_Id 1317
        Display_Name Name_Id "PerDispatch"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Enumeration_Context Node_Id 0
-    1321 record type element communication_properties.aadl:60:03
+    1321 record type element communication_properties.aadl:62:03
      Identifier Node_Id 1322
-     1322 identifier communication_properties.aadl:60:03
+     1322 identifier communication_properties.aadl:62:03
       Corresponding_Entity Node_Id 1321
       Display_Name Name_Id "Rate_Distribution"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1324
-     1324 unique property type identifier communication_properties.aadl:60:20
+     1324 unique property type identifier communication_properties.aadl:62:20
       Identifier Node_Id 1323
-      1323 identifier communication_properties.aadl:60:22
+      1323 identifier communication_properties.aadl:62:22
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Supported_Distributions"
        Scope_Entity Node_Id 0
@@ -5922,61 +5922,61 @@ Declarations List_Id 7
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 1208
-  1208 property value communication_properties.aadl:38:02
+  1208 property value communication_properties.aadl:39:02
    Value_Container Node_Id 1048
    Single_Value Node_Id 1185
-   1185 record term communication_properties.aadl:38:27
+   1185 record term communication_properties.aadl:39:27
     List_Items List_Id 1186
-    1187 record term element communication_properties.aadl:38:28
+    1187 record term element communication_properties.aadl:39:29
      Identifier Node_Id 1188
-     1188 identifier communication_properties.aadl:38:28
+     1188 identifier communication_properties.aadl:39:29
       Corresponding_Entity Node_Id 1187
       Display_Name Name_Id "Value_Range"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1193
-     1193 number range term communication_properties.aadl:38:43
+     1193 number range term communication_properties.aadl:39:44
       Lower_Bound Node_Id 1189
-      1189 signed aadlnumber communication_properties.aadl:38:43
+      1189 signed aadlnumber communication_properties.aadl:39:44
        Number_Value Node_Id 1190
-       1190 literal communication_properties.aadl:38:43
+       1190 literal communication_properties.aadl:39:44
         Value Value_Id 36
        Unit_Identifier Node_Id 0
       Upper_Bound Node_Id 1191
-      1191 signed aadlnumber communication_properties.aadl:38:50
+      1191 signed aadlnumber communication_properties.aadl:39:51
        Number_Value Node_Id 1192
-       1192 literal communication_properties.aadl:38:50
+       1192 literal communication_properties.aadl:39:51
         Value Value_Id 37
        Unit_Identifier Node_Id 0
       Delta_Term Node_Id 0
-    1194 record term element communication_properties.aadl:38:55
+    1194 record term element communication_properties.aadl:39:56
      Identifier Node_Id 1195
-     1195 identifier communication_properties.aadl:38:55
+     1195 identifier communication_properties.aadl:39:56
       Corresponding_Entity Node_Id 1194
       Display_Name Name_Id "Rate_Unit"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1197
-     1197 property term communication_properties.aadl:38:65
+     1197 property term communication_properties.aadl:39:66
       Identifier Node_Id 1196
-      1196 identifier communication_properties.aadl:38:68
+      1196 identifier communication_properties.aadl:39:69
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "PerDispatch"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1198 record term element communication_properties.aadl:38:81
+    1198 record term element communication_properties.aadl:39:82
      Identifier Node_Id 1199
-     1199 identifier communication_properties.aadl:38:81
+     1199 identifier communication_properties.aadl:39:82
       Corresponding_Entity Node_Id 1198
       Display_Name Name_Id "Rate_Distribution"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1201
-     1201 property term communication_properties.aadl:38:99
+     1201 property term communication_properties.aadl:39:100
       Identifier Node_Id 1200
-      1200 identifier communication_properties.aadl:38:102
+      1200 identifier communication_properties.aadl:39:103
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Fixed"
        Scope_Entity Node_Id 0
@@ -5987,17 +5987,17 @@ Declarations List_Id 7
    Expanded_Single_Value Node_Id 0
    Expanded_Multi_Value List_Id 0
   Applies_To Node_Id 1206
-  1206 applies to communication_properties.aadl:38:02
+  1206 applies to communication_properties.aadl:39:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1203
-   1204 named element communication_properties.aadl:39:15
+   1204 named element communication_properties.aadl:40:15
     Identifier Node_Id 0
     Category Byte 14
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
- 1231 property definition declaration communication_properties.aadl:41:02
+ 1231 property definition declaration communication_properties.aadl:42:02
   Identifier Node_Id 1209
-  1209 identifier communication_properties.aadl:41:02
+  1209 identifier communication_properties.aadl:42:02
    Corresponding_Entity Node_Id 1231
    Display_Name Name_Id "Input_Time"
    Scope_Entity Node_Id 1049
@@ -6005,13 +6005,13 @@ Declarations List_Id 7
   Is_Access Boolean FALSE
   Is_Inherit Boolean FALSE
   Property_Name_Type Node_Id 1233
-  1233 property type communication_properties.aadl:41:02
+  1233 property type communication_properties.aadl:42:02
    Is_List Boolean TRUE
    Multiplicity Int 1
    Property_Type_Designator Node_Id 1212
-   1212 unique property type identifier communication_properties.aadl:41:19
+   1212 unique property type identifier communication_properties.aadl:42:19
     Identifier Node_Id 1211
-    1211 identifier communication_properties.aadl:41:22
+    1211 identifier communication_properties.aadl:42:22
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "IO_Time_Spec"
      Scope_Entity Node_Id 0
@@ -6019,38 +6019,38 @@ Declarations List_Id 7
     Entity Node_Id 1246
     Property_Set_Identifier Node_Id 0
    Expanded_Type_Designator Node_Id 1245
-   1245 record type communication_properties.aadl:44:28
+   1245 record type communication_properties.aadl:45:28
     List_Items List_Id 1236
-    1237 record type element communication_properties.aadl:45:03
+    1237 record type element communication_properties.aadl:46:03
      Identifier Node_Id 1238
-     1238 identifier communication_properties.aadl:45:03
+     1238 identifier communication_properties.aadl:46:03
       Corresponding_Entity Node_Id 1237
       Display_Name Name_Id "Offset"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1240
-     1240 unique property type identifier communication_properties.aadl:45:09
+     1240 unique property type identifier communication_properties.aadl:46:09
       Identifier Node_Id 1239
-      1239 identifier communication_properties.aadl:45:11
+      1239 identifier communication_properties.aadl:46:11
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Time_Range"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1241 record type element communication_properties.aadl:46:03
+    1241 record type element communication_properties.aadl:47:03
      Identifier Node_Id 1242
-     1242 identifier communication_properties.aadl:46:03
+     1242 identifier communication_properties.aadl:47:03
       Corresponding_Entity Node_Id 1241
       Display_Name Name_Id "Time"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1244
-     1244 unique property type identifier communication_properties.aadl:46:07
+     1244 unique property type identifier communication_properties.aadl:47:07
       Identifier Node_Id 1243
-      1243 identifier communication_properties.aadl:46:09
+      1243 identifier communication_properties.aadl:47:09
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "IO_Reference_Time"
        Scope_Entity Node_Id 0
@@ -6058,56 +6058,56 @@ Declarations List_Id 7
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 1234
-  1234 property value communication_properties.aadl:41:02
+  1234 property value communication_properties.aadl:42:02
    Value_Container Node_Id 1048
    Single_Value Node_Id 0
    Multi_Value List_Id 1213
-   1214 record term communication_properties.aadl:41:39
+   1214 record term communication_properties.aadl:42:39
     List_Items List_Id 1215
-    1216 record term element communication_properties.aadl:41:40
+    1216 record term element communication_properties.aadl:42:41
      Identifier Node_Id 1217
-     1217 identifier communication_properties.aadl:41:40
+     1217 identifier communication_properties.aadl:42:41
       Corresponding_Entity Node_Id 1216
       Display_Name Name_Id "Time"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1219
-     1219 property term communication_properties.aadl:41:45
+     1219 property term communication_properties.aadl:42:46
       Identifier Node_Id 1218
-      1218 identifier communication_properties.aadl:41:48
+      1218 identifier communication_properties.aadl:42:49
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Dispatch"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1220 record term element communication_properties.aadl:41:58
+    1220 record term element communication_properties.aadl:42:59
      Identifier Node_Id 1221
-     1221 identifier communication_properties.aadl:41:58
+     1221 identifier communication_properties.aadl:42:59
       Corresponding_Entity Node_Id 1220
       Display_Name Name_Id "Offset"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1228
-     1228 number range term communication_properties.aadl:41:68
+     1228 number range term communication_properties.aadl:42:69
       Lower_Bound Node_Id 1222
-      1222 signed aadlnumber communication_properties.aadl:41:68
+      1222 signed aadlnumber communication_properties.aadl:42:69
        Number_Value Node_Id 1223
-       1223 literal communication_properties.aadl:41:68
+       1223 literal communication_properties.aadl:42:69
         Value Value_Id 38
        Unit_Identifier Node_Id 1224
-       1224 identifier communication_properties.aadl:41:70
+       1224 identifier communication_properties.aadl:42:71
         Corresponding_Entity Node_Id 0
         Display_Name Name_Id "ns"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
       Upper_Bound Node_Id 1225
-      1225 signed aadlnumber communication_properties.aadl:41:76
+      1225 signed aadlnumber communication_properties.aadl:42:77
        Number_Value Node_Id 1226
-       1226 literal communication_properties.aadl:41:76
+       1226 literal communication_properties.aadl:42:77
         Value Value_Id 39
        Unit_Identifier Node_Id 1227
-       1227 identifier communication_properties.aadl:41:78
+       1227 identifier communication_properties.aadl:42:79
         Corresponding_Entity Node_Id 0
         Display_Name Name_Id "ns"
         Scope_Entity Node_Id 0
@@ -6116,99 +6116,99 @@ Declarations List_Id 7
    Expanded_Single_Value Node_Id 0
    Expanded_Multi_Value List_Id 0
   Applies_To Node_Id 1232
-  1232 applies to communication_properties.aadl:41:02
+  1232 applies to communication_properties.aadl:42:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1229
-   1230 named element communication_properties.aadl:42:15
+   1230 named element communication_properties.aadl:43:15
     Identifier Node_Id 0
     Category Byte 14
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
- 1246 property type declaration communication_properties.aadl:44:02
+ 1246 property type declaration communication_properties.aadl:45:02
   Identifier Node_Id 1235
-  1235 identifier communication_properties.aadl:44:02
+  1235 identifier communication_properties.aadl:45:02
    Corresponding_Entity Node_Id 1246
    Display_Name Name_Id "IO_Time_Spec"
    Scope_Entity Node_Id 1049
    Backend_Node Node_Id 0
   Property_Type_Designator Node_Id 1245
-  1245 record type communication_properties.aadl:44:28
+  1245 record type communication_properties.aadl:45:28
    List_Items List_Id 1236
-   1237 record type element communication_properties.aadl:45:03
+   1237 record type element communication_properties.aadl:46:03
     Identifier Node_Id 1238
-    1238 identifier communication_properties.aadl:45:03
+    1238 identifier communication_properties.aadl:46:03
      Corresponding_Entity Node_Id 1237
      Display_Name Name_Id "Offset"
      Scope_Entity Node_Id 0
      Backend_Node Node_Id 0
     Is_List Boolean FALSE
     Property_Type_Designator Node_Id 1240
-    1240 unique property type identifier communication_properties.aadl:45:09
+    1240 unique property type identifier communication_properties.aadl:46:09
      Identifier Node_Id 1239
-     1239 identifier communication_properties.aadl:45:11
+     1239 identifier communication_properties.aadl:46:11
       Corresponding_Entity Node_Id 0
       Display_Name Name_Id "Time_Range"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Entity Node_Id 0
      Property_Set_Identifier Node_Id 0
-   1241 record type element communication_properties.aadl:46:03
+   1241 record type element communication_properties.aadl:47:03
     Identifier Node_Id 1242
-    1242 identifier communication_properties.aadl:46:03
+    1242 identifier communication_properties.aadl:47:03
      Corresponding_Entity Node_Id 1241
      Display_Name Name_Id "Time"
      Scope_Entity Node_Id 0
      Backend_Node Node_Id 0
     Is_List Boolean FALSE
     Property_Type_Designator Node_Id 1244
-    1244 unique property type identifier communication_properties.aadl:46:07
+    1244 unique property type identifier communication_properties.aadl:47:07
      Identifier Node_Id 1243
-     1243 identifier communication_properties.aadl:46:09
+     1243 identifier communication_properties.aadl:47:09
       Corresponding_Entity Node_Id 0
       Display_Name Name_Id "IO_Reference_Time"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Entity Node_Id 0
      Property_Set_Identifier Node_Id 0
- 1255 property type declaration communication_properties.aadl:49:02
+ 1255 property type declaration communication_properties.aadl:50:02
   Identifier Node_Id 1247
-  1247 identifier communication_properties.aadl:49:02
+  1247 identifier communication_properties.aadl:50:02
    Corresponding_Entity Node_Id 1255
    Display_Name Name_Id "IO_Reference_Time"
    Scope_Entity Node_Id 1049
    Backend_Node Node_Id 0
   Property_Type_Designator Node_Id 1248
-  1248 enumeration type communication_properties.aadl:49:26
+  1248 enumeration type communication_properties.aadl:50:26
    Identifiers List_Id 1249
-   1250 identifier communication_properties.aadl:49:39
+   1250 identifier communication_properties.aadl:50:39
     Corresponding_Entity Node_Id 1248
     Display_Name Name_Id "Dispatch"
     Scope_Entity Node_Id 0
     Backend_Node Node_Id 0
-   1251 identifier communication_properties.aadl:49:49
+   1251 identifier communication_properties.aadl:50:49
     Corresponding_Entity Node_Id 1248
     Display_Name Name_Id "Start"
     Scope_Entity Node_Id 0
     Backend_Node Node_Id 0
-   1252 identifier communication_properties.aadl:49:56
+   1252 identifier communication_properties.aadl:50:56
     Corresponding_Entity Node_Id 1248
     Display_Name Name_Id "Completion"
     Scope_Entity Node_Id 0
     Backend_Node Node_Id 0
-   1253 identifier communication_properties.aadl:49:68
+   1253 identifier communication_properties.aadl:50:68
     Corresponding_Entity Node_Id 1248
     Display_Name Name_Id "Deadline"
     Scope_Entity Node_Id 0
     Backend_Node Node_Id 0
-   1254 identifier communication_properties.aadl:49:78
+   1254 identifier communication_properties.aadl:50:78
     Corresponding_Entity Node_Id 1248
     Display_Name Name_Id "NoIO"
     Scope_Entity Node_Id 0
     Backend_Node Node_Id 0
    Enumeration_Context Node_Id 0
- 1279 property definition declaration communication_properties.aadl:51:02
+ 1279 property definition declaration communication_properties.aadl:52:02
   Identifier Node_Id 1256
-  1256 identifier communication_properties.aadl:51:02
+  1256 identifier communication_properties.aadl:52:02
    Corresponding_Entity Node_Id 1279
    Display_Name Name_Id "Output_Rate"
    Scope_Entity Node_Id 1049
@@ -6216,13 +6216,13 @@ Declarations List_Id 7
   Is_Access Boolean FALSE
   Is_Inherit Boolean FALSE
   Property_Name_Type Node_Id 1281
-  1281 property type communication_properties.aadl:51:02
+  1281 property type communication_properties.aadl:52:02
    Is_List Boolean FALSE
    Multiplicity Int 0
    Property_Type_Designator Node_Id 1258
-   1258 unique property type identifier communication_properties.aadl:51:13
+   1258 unique property type identifier communication_properties.aadl:52:13
     Identifier Node_Id 1257
-    1257 identifier communication_properties.aadl:51:15
+    1257 identifier communication_properties.aadl:52:15
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "Rate_Spec"
      Scope_Entity Node_Id 0
@@ -6230,56 +6230,56 @@ Declarations List_Id 7
     Entity Node_Id 1326
     Property_Set_Identifier Node_Id 0
    Expanded_Type_Designator Node_Id 1325
-   1325 record type communication_properties.aadl:57:25
+   1325 record type communication_properties.aadl:59:25
     List_Items List_Id 1310
-    1311 record type element communication_properties.aadl:58:03
+    1311 record type element communication_properties.aadl:60:03
      Identifier Node_Id 1312
-     1312 identifier communication_properties.aadl:58:03
+     1312 identifier communication_properties.aadl:60:03
       Corresponding_Entity Node_Id 1311
       Display_Name Name_Id "Value_Range"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1313
-     1313 range type communication_properties.aadl:58:16
+     1313 range type communication_properties.aadl:60:16
       Number_Type Node_Id 1314
-      1314 real type communication_properties.aadl:58:25
+      1314 real type communication_properties.aadl:60:25
        Type_Range Node_Id 0
        Unit_Designator Node_Id 0
-    1315 record type element communication_properties.aadl:59:03
+    1315 record type element communication_properties.aadl:61:03
      Identifier Node_Id 1316
-     1316 identifier communication_properties.aadl:59:03
+     1316 identifier communication_properties.aadl:61:03
       Corresponding_Entity Node_Id 1315
       Display_Name Name_Id "Rate_Unit"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1317
-     1317 enumeration type communication_properties.aadl:59:14
+     1317 enumeration type communication_properties.aadl:61:14
       Identifiers List_Id 1318
-      1319 identifier communication_properties.aadl:59:27
+      1319 identifier communication_properties.aadl:61:27
        Corresponding_Entity Node_Id 1317
        Display_Name Name_Id "PerSecond"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-      1320 identifier communication_properties.aadl:59:38
+      1320 identifier communication_properties.aadl:61:38
        Corresponding_Entity Node_Id 1317
        Display_Name Name_Id "PerDispatch"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Enumeration_Context Node_Id 0
-    1321 record type element communication_properties.aadl:60:03
+    1321 record type element communication_properties.aadl:62:03
      Identifier Node_Id 1322
-     1322 identifier communication_properties.aadl:60:03
+     1322 identifier communication_properties.aadl:62:03
       Corresponding_Entity Node_Id 1321
       Display_Name Name_Id "Rate_Distribution"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1324
-     1324 unique property type identifier communication_properties.aadl:60:20
+     1324 unique property type identifier communication_properties.aadl:62:20
       Identifier Node_Id 1323
-      1323 identifier communication_properties.aadl:60:22
+      1323 identifier communication_properties.aadl:62:22
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Supported_Distributions"
        Scope_Entity Node_Id 0
@@ -6287,61 +6287,61 @@ Declarations List_Id 7
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 1282
-  1282 property value communication_properties.aadl:51:02
+  1282 property value communication_properties.aadl:52:02
    Value_Container Node_Id 1048
    Single_Value Node_Id 1259
-   1259 record term communication_properties.aadl:51:28
+   1259 record term communication_properties.aadl:52:28
     List_Items List_Id 1260
-    1261 record term element communication_properties.aadl:51:29
+    1261 record term element communication_properties.aadl:52:30
      Identifier Node_Id 1262
-     1262 identifier communication_properties.aadl:51:29
+     1262 identifier communication_properties.aadl:52:30
       Corresponding_Entity Node_Id 1261
       Display_Name Name_Id "Value_Range"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1267
-     1267 number range term communication_properties.aadl:51:44
+     1267 number range term communication_properties.aadl:52:45
       Lower_Bound Node_Id 1263
-      1263 signed aadlnumber communication_properties.aadl:51:44
+      1263 signed aadlnumber communication_properties.aadl:52:45
        Number_Value Node_Id 1264
-       1264 literal communication_properties.aadl:51:44
+       1264 literal communication_properties.aadl:52:45
         Value Value_Id 40
        Unit_Identifier Node_Id 0
       Upper_Bound Node_Id 1265
-      1265 signed aadlnumber communication_properties.aadl:51:51
+      1265 signed aadlnumber communication_properties.aadl:52:52
        Number_Value Node_Id 1266
-       1266 literal communication_properties.aadl:51:51
+       1266 literal communication_properties.aadl:52:52
         Value Value_Id 41
        Unit_Identifier Node_Id 0
       Delta_Term Node_Id 0
-    1268 record term element communication_properties.aadl:51:56
+    1268 record term element communication_properties.aadl:52:57
      Identifier Node_Id 1269
-     1269 identifier communication_properties.aadl:51:56
+     1269 identifier communication_properties.aadl:52:57
       Corresponding_Entity Node_Id 1268
       Display_Name Name_Id "Rate_Unit"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1271
-     1271 property term communication_properties.aadl:51:66
+     1271 property term communication_properties.aadl:52:67
       Identifier Node_Id 1270
-      1270 identifier communication_properties.aadl:51:69
+      1270 identifier communication_properties.aadl:52:70
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "PerDispatch"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1272 record term element communication_properties.aadl:51:82
+    1272 record term element communication_properties.aadl:52:83
      Identifier Node_Id 1273
-     1273 identifier communication_properties.aadl:51:82
+     1273 identifier communication_properties.aadl:52:83
       Corresponding_Entity Node_Id 1272
       Display_Name Name_Id "Rate_Distribution"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1275
-     1275 property term communication_properties.aadl:51:100
+     1275 property term communication_properties.aadl:52:101
       Identifier Node_Id 1274
-      1274 identifier communication_properties.aadl:51:103
+      1274 identifier communication_properties.aadl:52:104
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Fixed"
        Scope_Entity Node_Id 0
@@ -6352,17 +6352,17 @@ Declarations List_Id 7
    Expanded_Single_Value Node_Id 0
    Expanded_Multi_Value List_Id 0
   Applies_To Node_Id 1280
-  1280 applies to communication_properties.aadl:51:02
+  1280 applies to communication_properties.aadl:52:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1277
-   1278 named element communication_properties.aadl:52:15
+   1278 named element communication_properties.aadl:53:15
     Identifier Node_Id 0
     Category Byte 14
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
- 1305 property definition declaration communication_properties.aadl:54:02
+ 1305 property definition declaration communication_properties.aadl:55:02
   Identifier Node_Id 1283
-  1283 identifier communication_properties.aadl:54:02
+  1283 identifier communication_properties.aadl:55:02
    Corresponding_Entity Node_Id 1305
    Display_Name Name_Id "Output_Time"
    Scope_Entity Node_Id 1049
@@ -6370,13 +6370,13 @@ Declarations List_Id 7
   Is_Access Boolean FALSE
   Is_Inherit Boolean FALSE
   Property_Name_Type Node_Id 1307
-  1307 property type communication_properties.aadl:54:02
+  1307 property type communication_properties.aadl:55:02
    Is_List Boolean TRUE
    Multiplicity Int 1
    Property_Type_Designator Node_Id 1286
-   1286 unique property type identifier communication_properties.aadl:54:20
+   1286 unique property type identifier communication_properties.aadl:55:20
     Identifier Node_Id 1285
-    1285 identifier communication_properties.aadl:54:23
+    1285 identifier communication_properties.aadl:55:23
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "IO_Time_Spec"
      Scope_Entity Node_Id 0
@@ -6384,38 +6384,38 @@ Declarations List_Id 7
     Entity Node_Id 1246
     Property_Set_Identifier Node_Id 0
    Expanded_Type_Designator Node_Id 1245
-   1245 record type communication_properties.aadl:44:28
+   1245 record type communication_properties.aadl:45:28
     List_Items List_Id 1236
-    1237 record type element communication_properties.aadl:45:03
+    1237 record type element communication_properties.aadl:46:03
      Identifier Node_Id 1238
-     1238 identifier communication_properties.aadl:45:03
+     1238 identifier communication_properties.aadl:46:03
       Corresponding_Entity Node_Id 1237
       Display_Name Name_Id "Offset"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1240
-     1240 unique property type identifier communication_properties.aadl:45:09
+     1240 unique property type identifier communication_properties.aadl:46:09
       Identifier Node_Id 1239
-      1239 identifier communication_properties.aadl:45:11
+      1239 identifier communication_properties.aadl:46:11
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Time_Range"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1241 record type element communication_properties.aadl:46:03
+    1241 record type element communication_properties.aadl:47:03
      Identifier Node_Id 1242
-     1242 identifier communication_properties.aadl:46:03
+     1242 identifier communication_properties.aadl:47:03
       Corresponding_Entity Node_Id 1241
       Display_Name Name_Id "Time"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1244
-     1244 unique property type identifier communication_properties.aadl:46:07
+     1244 unique property type identifier communication_properties.aadl:47:07
       Identifier Node_Id 1243
-      1243 identifier communication_properties.aadl:46:09
+      1243 identifier communication_properties.aadl:47:09
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "IO_Reference_Time"
        Scope_Entity Node_Id 0
@@ -6423,56 +6423,56 @@ Declarations List_Id 7
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 1308
-  1308 property value communication_properties.aadl:54:02
+  1308 property value communication_properties.aadl:55:02
    Value_Container Node_Id 1048
    Single_Value Node_Id 0
    Multi_Value List_Id 1287
-   1288 record term communication_properties.aadl:54:40
+   1288 record term communication_properties.aadl:55:40
     List_Items List_Id 1289
-    1290 record term element communication_properties.aadl:54:41
+    1290 record term element communication_properties.aadl:55:42
      Identifier Node_Id 1291
-     1291 identifier communication_properties.aadl:54:41
+     1291 identifier communication_properties.aadl:55:42
       Corresponding_Entity Node_Id 1290
       Display_Name Name_Id "Time"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1293
-     1293 property term communication_properties.aadl:54:46
+     1293 property term communication_properties.aadl:55:47
       Identifier Node_Id 1292
-      1292 identifier communication_properties.aadl:54:49
+      1292 identifier communication_properties.aadl:55:50
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Completion"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1294 record term element communication_properties.aadl:54:61
+    1294 record term element communication_properties.aadl:55:62
      Identifier Node_Id 1295
-     1295 identifier communication_properties.aadl:54:61
+     1295 identifier communication_properties.aadl:55:62
       Corresponding_Entity Node_Id 1294
       Display_Name Name_Id "Offset"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1302
-     1302 number range term communication_properties.aadl:54:71
+     1302 number range term communication_properties.aadl:55:72
       Lower_Bound Node_Id 1296
-      1296 signed aadlnumber communication_properties.aadl:54:71
+      1296 signed aadlnumber communication_properties.aadl:55:72
        Number_Value Node_Id 1297
-       1297 literal communication_properties.aadl:54:71
+       1297 literal communication_properties.aadl:55:72
         Value Value_Id 42
        Unit_Identifier Node_Id 1298
-       1298 identifier communication_properties.aadl:54:73
+       1298 identifier communication_properties.aadl:55:74
         Corresponding_Entity Node_Id 0
         Display_Name Name_Id "ns"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
       Upper_Bound Node_Id 1299
-      1299 signed aadlnumber communication_properties.aadl:54:79
+      1299 signed aadlnumber communication_properties.aadl:55:80
        Number_Value Node_Id 1300
-       1300 literal communication_properties.aadl:54:79
+       1300 literal communication_properties.aadl:55:80
         Value Value_Id 43
        Unit_Identifier Node_Id 1301
-       1301 identifier communication_properties.aadl:54:81
+       1301 identifier communication_properties.aadl:55:82
         Corresponding_Entity Node_Id 0
         Display_Name Name_Id "ns"
         Scope_Entity Node_Id 0
@@ -6481,81 +6481,81 @@ Declarations List_Id 7
    Expanded_Single_Value Node_Id 0
    Expanded_Multi_Value List_Id 0
   Applies_To Node_Id 1306
-  1306 applies to communication_properties.aadl:54:02
+  1306 applies to communication_properties.aadl:55:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1303
-   1304 named element communication_properties.aadl:55:15
+   1304 named element communication_properties.aadl:56:15
     Identifier Node_Id 0
     Category Byte 14
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
- 1326 property type declaration communication_properties.aadl:57:02
+ 1326 property type declaration communication_properties.aadl:59:02
   Identifier Node_Id 1309
-  1309 identifier communication_properties.aadl:57:02
+  1309 identifier communication_properties.aadl:59:02
    Corresponding_Entity Node_Id 1326
    Display_Name Name_Id "Rate_Spec"
    Scope_Entity Node_Id 1049
    Backend_Node Node_Id 0
   Property_Type_Designator Node_Id 1325
-  1325 record type communication_properties.aadl:57:25
+  1325 record type communication_properties.aadl:59:25
    List_Items List_Id 1310
-   1311 record type element communication_properties.aadl:58:03
+   1311 record type element communication_properties.aadl:60:03
     Identifier Node_Id 1312
-    1312 identifier communication_properties.aadl:58:03
+    1312 identifier communication_properties.aadl:60:03
      Corresponding_Entity Node_Id 1311
      Display_Name Name_Id "Value_Range"
      Scope_Entity Node_Id 0
      Backend_Node Node_Id 0
     Is_List Boolean FALSE
     Property_Type_Designator Node_Id 1313
-    1313 range type communication_properties.aadl:58:16
+    1313 range type communication_properties.aadl:60:16
      Number_Type Node_Id 1314
-     1314 real type communication_properties.aadl:58:25
+     1314 real type communication_properties.aadl:60:25
       Type_Range Node_Id 0
       Unit_Designator Node_Id 0
-   1315 record type element communication_properties.aadl:59:03
+   1315 record type element communication_properties.aadl:61:03
     Identifier Node_Id 1316
-    1316 identifier communication_properties.aadl:59:03
+    1316 identifier communication_properties.aadl:61:03
      Corresponding_Entity Node_Id 1315
      Display_Name Name_Id "Rate_Unit"
      Scope_Entity Node_Id 0
      Backend_Node Node_Id 0
     Is_List Boolean FALSE
     Property_Type_Designator Node_Id 1317
-    1317 enumeration type communication_properties.aadl:59:14
+    1317 enumeration type communication_properties.aadl:61:14
      Identifiers List_Id 1318
-     1319 identifier communication_properties.aadl:59:27
+     1319 identifier communication_properties.aadl:61:27
       Corresponding_Entity Node_Id 1317
       Display_Name Name_Id "PerSecond"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
-     1320 identifier communication_properties.aadl:59:38
+     1320 identifier communication_properties.aadl:61:38
       Corresponding_Entity Node_Id 1317
       Display_Name Name_Id "PerDispatch"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Enumeration_Context Node_Id 0
-   1321 record type element communication_properties.aadl:60:03
+   1321 record type element communication_properties.aadl:62:03
     Identifier Node_Id 1322
-    1322 identifier communication_properties.aadl:60:03
+    1322 identifier communication_properties.aadl:62:03
      Corresponding_Entity Node_Id 1321
      Display_Name Name_Id "Rate_Distribution"
      Scope_Entity Node_Id 0
      Backend_Node Node_Id 0
     Is_List Boolean FALSE
     Property_Type_Designator Node_Id 1324
-    1324 unique property type identifier communication_properties.aadl:60:20
+    1324 unique property type identifier communication_properties.aadl:62:20
      Identifier Node_Id 1323
-     1323 identifier communication_properties.aadl:60:22
+     1323 identifier communication_properties.aadl:62:22
       Corresponding_Entity Node_Id 0
       Display_Name Name_Id "Supported_Distributions"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Entity Node_Id 0
      Property_Set_Identifier Node_Id 0
- 1350 property definition declaration communication_properties.aadl:63:02
+ 1350 property definition declaration communication_properties.aadl:65:02
   Identifier Node_Id 1327
-  1327 identifier communication_properties.aadl:63:02
+  1327 identifier communication_properties.aadl:65:02
    Corresponding_Entity Node_Id 1350
    Display_Name Name_Id "Subprogram_Call_Rate"
    Scope_Entity Node_Id 1049
@@ -6563,13 +6563,13 @@ Declarations List_Id 7
   Is_Access Boolean FALSE
   Is_Inherit Boolean FALSE
   Property_Name_Type Node_Id 1352
-  1352 property type communication_properties.aadl:63:02
+  1352 property type communication_properties.aadl:65:02
    Is_List Boolean FALSE
    Multiplicity Int 0
    Property_Type_Designator Node_Id 1329
-   1329 unique property type identifier communication_properties.aadl:63:22
+   1329 unique property type identifier communication_properties.aadl:65:22
     Identifier Node_Id 1328
-    1328 identifier communication_properties.aadl:63:24
+    1328 identifier communication_properties.aadl:65:24
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "Rate_Spec"
      Scope_Entity Node_Id 0
@@ -6577,56 +6577,56 @@ Declarations List_Id 7
     Entity Node_Id 1326
     Property_Set_Identifier Node_Id 0
    Expanded_Type_Designator Node_Id 1325
-   1325 record type communication_properties.aadl:57:25
+   1325 record type communication_properties.aadl:59:25
     List_Items List_Id 1310
-    1311 record type element communication_properties.aadl:58:03
+    1311 record type element communication_properties.aadl:60:03
      Identifier Node_Id 1312
-     1312 identifier communication_properties.aadl:58:03
+     1312 identifier communication_properties.aadl:60:03
       Corresponding_Entity Node_Id 1311
       Display_Name Name_Id "Value_Range"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1313
-     1313 range type communication_properties.aadl:58:16
+     1313 range type communication_properties.aadl:60:16
       Number_Type Node_Id 1314
-      1314 real type communication_properties.aadl:58:25
+      1314 real type communication_properties.aadl:60:25
        Type_Range Node_Id 0
        Unit_Designator Node_Id 0
-    1315 record type element communication_properties.aadl:59:03
+    1315 record type element communication_properties.aadl:61:03
      Identifier Node_Id 1316
-     1316 identifier communication_properties.aadl:59:03
+     1316 identifier communication_properties.aadl:61:03
       Corresponding_Entity Node_Id 1315
       Display_Name Name_Id "Rate_Unit"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1317
-     1317 enumeration type communication_properties.aadl:59:14
+     1317 enumeration type communication_properties.aadl:61:14
       Identifiers List_Id 1318
-      1319 identifier communication_properties.aadl:59:27
+      1319 identifier communication_properties.aadl:61:27
        Corresponding_Entity Node_Id 1317
        Display_Name Name_Id "PerSecond"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
-      1320 identifier communication_properties.aadl:59:38
+      1320 identifier communication_properties.aadl:61:38
        Corresponding_Entity Node_Id 1317
        Display_Name Name_Id "PerDispatch"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Enumeration_Context Node_Id 0
-    1321 record type element communication_properties.aadl:60:03
+    1321 record type element communication_properties.aadl:62:03
      Identifier Node_Id 1322
-     1322 identifier communication_properties.aadl:60:03
+     1322 identifier communication_properties.aadl:62:03
       Corresponding_Entity Node_Id 1321
       Display_Name Name_Id "Rate_Distribution"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1324
-     1324 unique property type identifier communication_properties.aadl:60:20
+     1324 unique property type identifier communication_properties.aadl:62:20
       Identifier Node_Id 1323
-      1323 identifier communication_properties.aadl:60:22
+      1323 identifier communication_properties.aadl:62:22
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Supported_Distributions"
        Scope_Entity Node_Id 0
@@ -6634,61 +6634,61 @@ Declarations List_Id 7
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 1353
-  1353 property value communication_properties.aadl:63:02
+  1353 property value communication_properties.aadl:65:02
    Value_Container Node_Id 1048
    Single_Value Node_Id 1330
-   1330 record term communication_properties.aadl:63:37
+   1330 record term communication_properties.aadl:65:37
     List_Items List_Id 1331
-    1332 record term element communication_properties.aadl:63:38
+    1332 record term element communication_properties.aadl:65:39
      Identifier Node_Id 1333
-     1333 identifier communication_properties.aadl:63:38
+     1333 identifier communication_properties.aadl:65:39
       Corresponding_Entity Node_Id 1332
       Display_Name Name_Id "Value_Range"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1338
-     1338 number range term communication_properties.aadl:63:53
+     1338 number range term communication_properties.aadl:65:54
       Lower_Bound Node_Id 1334
-      1334 signed aadlnumber communication_properties.aadl:63:53
+      1334 signed aadlnumber communication_properties.aadl:65:54
        Number_Value Node_Id 1335
-       1335 literal communication_properties.aadl:63:53
+       1335 literal communication_properties.aadl:65:54
         Value Value_Id 44
        Unit_Identifier Node_Id 0
       Upper_Bound Node_Id 1336
-      1336 signed aadlnumber communication_properties.aadl:63:60
+      1336 signed aadlnumber communication_properties.aadl:65:61
        Number_Value Node_Id 1337
-       1337 literal communication_properties.aadl:63:60
+       1337 literal communication_properties.aadl:65:61
         Value Value_Id 45
        Unit_Identifier Node_Id 0
       Delta_Term Node_Id 0
-    1339 record term element communication_properties.aadl:63:65
+    1339 record term element communication_properties.aadl:65:66
      Identifier Node_Id 1340
-     1340 identifier communication_properties.aadl:63:65
+     1340 identifier communication_properties.aadl:65:66
       Corresponding_Entity Node_Id 1339
       Display_Name Name_Id "Rate_Unit"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1342
-     1342 property term communication_properties.aadl:63:75
+     1342 property term communication_properties.aadl:65:76
       Identifier Node_Id 1341
-      1341 identifier communication_properties.aadl:63:78
+      1341 identifier communication_properties.aadl:65:79
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "PerDispatch"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1343 record term element communication_properties.aadl:63:91
+    1343 record term element communication_properties.aadl:65:92
      Identifier Node_Id 1344
-     1344 identifier communication_properties.aadl:63:91
+     1344 identifier communication_properties.aadl:65:92
       Corresponding_Entity Node_Id 1343
       Display_Name Name_Id "Rate_Distribution"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1346
-     1346 property term communication_properties.aadl:63:109
+     1346 property term communication_properties.aadl:65:110
       Identifier Node_Id 1345
-      1345 identifier communication_properties.aadl:63:112
+      1345 identifier communication_properties.aadl:65:113
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Fixed"
        Scope_Entity Node_Id 0
@@ -6699,17 +6699,17 @@ Declarations List_Id 7
    Expanded_Single_Value Node_Id 0
    Expanded_Multi_Value List_Id 0
   Applies_To Node_Id 1351
-  1351 applies to communication_properties.aadl:63:02
+  1351 applies to communication_properties.aadl:65:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1348
-   1349 named element communication_properties.aadl:64:15
+   1349 named element communication_properties.aadl:66:15
     Identifier Node_Id 0
     Category Byte 29
     Component_Cat Byte 2
     Classifier_Ref Node_Id 0
- 1368 property definition declaration communication_properties.aadl:66:02
+ 1368 property definition declaration communication_properties.aadl:68:02
   Identifier Node_Id 1354
-  1354 identifier communication_properties.aadl:66:02
+  1354 identifier communication_properties.aadl:68:02
    Corresponding_Entity Node_Id 1368
    Display_Name Name_Id "Transmission_Time"
    Scope_Entity Node_Id 1049
@@ -6717,42 +6717,42 @@ Declarations List_Id 7
   Is_Access Boolean FALSE
   Is_Inherit Boolean FALSE
   Property_Name_Type Node_Id 1370
-  1370 property type communication_properties.aadl:66:02
+  1370 property type communication_properties.aadl:68:02
    Is_List Boolean FALSE
    Multiplicity Int 0
    Property_Type_Designator Node_Id 1364
-   1364 record type communication_properties.aadl:66:28
+   1364 record type communication_properties.aadl:68:28
     List_Items List_Id 1355
-    1356 record type element communication_properties.aadl:67:04
+    1356 record type element communication_properties.aadl:69:04
      Identifier Node_Id 1357
-     1357 identifier communication_properties.aadl:67:04
+     1357 identifier communication_properties.aadl:69:04
       Corresponding_Entity Node_Id 1356
       Display_Name Name_Id "Fixed"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1359
-     1359 unique property type identifier communication_properties.aadl:67:09
+     1359 unique property type identifier communication_properties.aadl:69:09
       Identifier Node_Id 1358
-      1358 identifier communication_properties.aadl:67:11
+      1358 identifier communication_properties.aadl:69:11
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Time_Range"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1360 record type element communication_properties.aadl:68:04
+    1360 record type element communication_properties.aadl:70:04
      Identifier Node_Id 1361
-     1361 identifier communication_properties.aadl:68:04
+     1361 identifier communication_properties.aadl:70:04
       Corresponding_Entity Node_Id 1360
       Display_Name Name_Id "PerByte"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1363
-     1363 unique property type identifier communication_properties.aadl:68:11
+     1363 unique property type identifier communication_properties.aadl:70:11
       Identifier Node_Id 1362
-      1362 identifier communication_properties.aadl:68:13
+      1362 identifier communication_properties.aadl:70:13
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Time_Range"
        Scope_Entity Node_Id 0
@@ -6760,38 +6760,38 @@ Declarations List_Id 7
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
    Expanded_Type_Designator Node_Id 1364
-   1364 record type communication_properties.aadl:66:28
+   1364 record type communication_properties.aadl:68:28
     List_Items List_Id 1355
-    1356 record type element communication_properties.aadl:67:04
+    1356 record type element communication_properties.aadl:69:04
      Identifier Node_Id 1357
-     1357 identifier communication_properties.aadl:67:04
+     1357 identifier communication_properties.aadl:69:04
       Corresponding_Entity Node_Id 1356
       Display_Name Name_Id "Fixed"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1359
-     1359 unique property type identifier communication_properties.aadl:67:09
+     1359 unique property type identifier communication_properties.aadl:69:09
       Identifier Node_Id 1358
-      1358 identifier communication_properties.aadl:67:11
+      1358 identifier communication_properties.aadl:69:11
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Time_Range"
        Scope_Entity Node_Id 0
        Backend_Node Node_Id 0
       Entity Node_Id 0
       Property_Set_Identifier Node_Id 0
-    1360 record type element communication_properties.aadl:68:04
+    1360 record type element communication_properties.aadl:70:04
      Identifier Node_Id 1361
-     1361 identifier communication_properties.aadl:68:04
+     1361 identifier communication_properties.aadl:70:04
       Corresponding_Entity Node_Id 1360
       Display_Name Name_Id "PerByte"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Is_List Boolean FALSE
      Property_Type_Designator Node_Id 1363
-     1363 unique property type identifier communication_properties.aadl:68:11
+     1363 unique property type identifier communication_properties.aadl:70:11
       Identifier Node_Id 1362
-      1362 identifier communication_properties.aadl:68:13
+      1362 identifier communication_properties.aadl:70:13
        Corresponding_Entity Node_Id 0
        Display_Name Name_Id "Time_Range"
        Scope_Entity Node_Id 0
@@ -6800,17 +6800,17 @@ Declarations List_Id 7
       Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 0
   Applies_To Node_Id 1369
-  1369 applies to communication_properties.aadl:66:02
+  1369 applies to communication_properties.aadl:68:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1366
-   1367 named element communication_properties.aadl:69:15
+   1367 named element communication_properties.aadl:71:15
     Identifier Node_Id 0
     Category Byte 11
     Component_Cat Byte 10
     Classifier_Ref Node_Id 0
- 1383 property definition declaration communication_properties.aadl:71:02
+ 1383 property definition declaration communication_properties.aadl:73:02
   Identifier Node_Id 1371
-  1371 identifier communication_properties.aadl:71:02
+  1371 identifier communication_properties.aadl:73:02
    Corresponding_Entity Node_Id 1383
    Display_Name Name_Id "Actual_Latency"
    Scope_Entity Node_Id 1049
@@ -6818,13 +6818,13 @@ Declarations List_Id 7
   Is_Access Boolean FALSE
   Is_Inherit Boolean FALSE
   Property_Name_Type Node_Id 1385
-  1385 property type communication_properties.aadl:71:02
+  1385 property type communication_properties.aadl:73:02
    Is_List Boolean FALSE
    Multiplicity Int 0
    Property_Type_Designator Node_Id 1373
-   1373 unique property type identifier communication_properties.aadl:71:16
+   1373 unique property type identifier communication_properties.aadl:73:16
     Identifier Node_Id 1372
-    1372 identifier communication_properties.aadl:71:18
+    1372 identifier communication_properties.aadl:73:18
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "Time_Range"
      Scope_Entity Node_Id 0
@@ -6871,17 +6871,17 @@ Declarations List_Id 7
       Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 0
   Applies_To Node_Id 1384
-  1384 applies to communication_properties.aadl:71:02
+  1384 applies to communication_properties.aadl:73:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1375
-   1376 named element communication_properties.aadl:72:15
+   1376 named element communication_properties.aadl:74:15
     Identifier Node_Id 0
     Category Byte 13
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
-   1377 named element communication_properties.aadl:72:21
+   1377 named element communication_properties.aadl:74:21
     Identifier Node_Id 1378
-    1378 identifier communication_properties.aadl:72:21
+    1378 identifier communication_properties.aadl:74:21
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "connection"
      Scope_Entity Node_Id 0
@@ -6889,29 +6889,29 @@ Declarations List_Id 7
     Category Byte 37
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
-   1379 named element communication_properties.aadl:72:33
+   1379 named element communication_properties.aadl:74:33
     Identifier Node_Id 0
     Category Byte 11
     Component_Cat Byte 10
     Classifier_Ref Node_Id 0
-   1380 named element communication_properties.aadl:72:38
+   1380 named element communication_properties.aadl:74:38
     Identifier Node_Id 0
     Category Byte 11
     Component_Cat Byte 8
     Classifier_Ref Node_Id 0
-   1381 named element communication_properties.aadl:72:49
+   1381 named element communication_properties.aadl:74:49
     Identifier Node_Id 0
     Category Byte 11
     Component_Cat Byte 12
     Classifier_Ref Node_Id 0
-   1382 named element communication_properties.aadl:72:57
+   1382 named element communication_properties.aadl:74:57
     Identifier Node_Id 0
     Category Byte 14
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
- 1398 property definition declaration communication_properties.aadl:74:02
+ 1398 property definition declaration communication_properties.aadl:76:02
   Identifier Node_Id 1386
-  1386 identifier communication_properties.aadl:74:02
+  1386 identifier communication_properties.aadl:76:02
    Corresponding_Entity Node_Id 1398
    Display_Name Name_Id "Latency"
    Scope_Entity Node_Id 1049
@@ -6919,13 +6919,13 @@ Declarations List_Id 7
   Is_Access Boolean FALSE
   Is_Inherit Boolean FALSE
   Property_Name_Type Node_Id 1400
-  1400 property type communication_properties.aadl:74:02
+  1400 property type communication_properties.aadl:76:02
    Is_List Boolean FALSE
    Multiplicity Int 0
    Property_Type_Designator Node_Id 1388
-   1388 unique property type identifier communication_properties.aadl:74:09
+   1388 unique property type identifier communication_properties.aadl:76:09
     Identifier Node_Id 1387
-    1387 identifier communication_properties.aadl:74:11
+    1387 identifier communication_properties.aadl:76:11
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "Time_Range"
      Scope_Entity Node_Id 0
@@ -6972,17 +6972,17 @@ Declarations List_Id 7
       Property_Set_Identifier Node_Id 0
   Default_Value Node_Id 0
   Applies_To Node_Id 1399
-  1399 applies to communication_properties.aadl:74:02
+  1399 applies to communication_properties.aadl:76:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1390
-   1391 named element communication_properties.aadl:75:15
+   1391 named element communication_properties.aadl:77:15
     Identifier Node_Id 0
     Category Byte 13
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
-   1392 named element communication_properties.aadl:75:21
+   1392 named element communication_properties.aadl:77:21
     Identifier Node_Id 1393
-    1393 identifier communication_properties.aadl:75:21
+    1393 identifier communication_properties.aadl:77:21
      Corresponding_Entity Node_Id 0
      Display_Name Name_Id "connection"
      Scope_Entity Node_Id 0
@@ -6990,22 +6990,22 @@ Declarations List_Id 7
     Category Byte 37
     Component_Cat Byte 14
     Classifier_Ref Node_Id 0
-   1394 named element communication_properties.aadl:75:33
+   1394 named element communication_properties.aadl:77:33
     Identifier Node_Id 0
     Category Byte 11
     Component_Cat Byte 10
     Classifier_Ref Node_Id 0
-   1395 named element communication_properties.aadl:75:38
+   1395 named element communication_properties.aadl:77:38
     Identifier Node_Id 0
     Category Byte 11
     Component_Cat Byte 8
     Classifier_Ref Node_Id 0
-   1396 named element communication_properties.aadl:75:49
+   1396 named element communication_properties.aadl:77:49
     Identifier Node_Id 0
     Category Byte 11
     Component_Cat Byte 12
     Classifier_Ref Node_Id 0
-   1397 named element communication_properties.aadl:75:57
+   1397 named element communication_properties.aadl:77:57
     Identifier Node_Id 0
     Category Byte 14
     Component_Cat Byte 14
@@ -7306,60 +7306,60 @@ Declarations List_Id 7
    Single_Value Node_Id 1455
    1455 record term memory_properties.aadl:19:06
     List_Items List_Id 1456
-    1457 record term element memory_properties.aadl:19:07
+    1457 record term element memory_properties.aadl:19:08
      Identifier Node_Id 1458
-     1458 identifier memory_properties.aadl:19:07
+     1458 identifier memory_properties.aadl:19:08
       Corresponding_Entity Node_Id 1457
       Display_Name Name_Id "First"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1459
-     1459 record term memory_properties.aadl:19:16
+     1459 record term memory_properties.aadl:19:17
       List_Items List_Id 1460
-      1461 record term element memory_properties.aadl:19:17
+      1461 record term element memory_properties.aadl:19:19
        Identifier Node_Id 1462
-       1462 identifier memory_properties.aadl:19:17
+       1462 identifier memory_properties.aadl:19:19
         Corresponding_Entity Node_Id 1461
         Display_Name Name_Id "Time"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 1464
-       1464 property term memory_properties.aadl:19:22
+       1464 property term memory_properties.aadl:19:24
         Identifier Node_Id 1463
-        1463 identifier memory_properties.aadl:19:25
+        1463 identifier memory_properties.aadl:19:27
          Corresponding_Entity Node_Id 0
          Display_Name Name_Id "Start"
          Scope_Entity Node_Id 0
          Backend_Node Node_Id 0
         Entity Node_Id 0
         Property_Set_Identifier Node_Id 0
-      1465 record term element memory_properties.aadl:19:32
+      1465 record term element memory_properties.aadl:19:34
        Identifier Node_Id 1466
-       1466 identifier memory_properties.aadl:19:32
+       1466 identifier memory_properties.aadl:19:34
         Corresponding_Entity Node_Id 1465
         Display_Name Name_Id "Offset"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 1473
-       1473 number range term memory_properties.aadl:19:42
+       1473 number range term memory_properties.aadl:19:44
         Lower_Bound Node_Id 1467
-        1467 signed aadlnumber memory_properties.aadl:19:42
+        1467 signed aadlnumber memory_properties.aadl:19:44
          Number_Value Node_Id 1468
-         1468 literal memory_properties.aadl:19:42
+         1468 literal memory_properties.aadl:19:44
           Value Value_Id 47
          Unit_Identifier Node_Id 1469
-         1469 identifier memory_properties.aadl:19:44
+         1469 identifier memory_properties.aadl:19:46
           Corresponding_Entity Node_Id 0
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
           Backend_Node Node_Id 0
         Upper_Bound Node_Id 1470
-        1470 signed aadlnumber memory_properties.aadl:19:50
+        1470 signed aadlnumber memory_properties.aadl:19:52
          Number_Value Node_Id 1471
-         1471 literal memory_properties.aadl:19:50
+         1471 literal memory_properties.aadl:19:52
           Value Value_Id 48
          Unit_Identifier Node_Id 1472
-         1472 identifier memory_properties.aadl:19:52
+         1472 identifier memory_properties.aadl:19:54
           Corresponding_Entity Node_Id 0
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
@@ -7375,50 +7375,50 @@ Declarations List_Id 7
      Property_Expression Node_Id 1476
      1476 record term memory_properties.aadl:20:12
       List_Items List_Id 1477
-      1478 record term element memory_properties.aadl:20:13
+      1478 record term element memory_properties.aadl:20:14
        Identifier Node_Id 1479
-       1479 identifier memory_properties.aadl:20:13
+       1479 identifier memory_properties.aadl:20:14
         Corresponding_Entity Node_Id 1478
         Display_Name Name_Id "Time"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 1481
-       1481 property term memory_properties.aadl:20:18
+       1481 property term memory_properties.aadl:20:19
         Identifier Node_Id 1480
-        1480 identifier memory_properties.aadl:20:21
+        1480 identifier memory_properties.aadl:20:22
          Corresponding_Entity Node_Id 0
          Display_Name Name_Id "Completion"
          Scope_Entity Node_Id 0
          Backend_Node Node_Id 0
         Entity Node_Id 0
         Property_Set_Identifier Node_Id 0
-      1482 record term element memory_properties.aadl:20:33
+      1482 record term element memory_properties.aadl:20:34
        Identifier Node_Id 1483
-       1483 identifier memory_properties.aadl:20:33
+       1483 identifier memory_properties.aadl:20:34
         Corresponding_Entity Node_Id 1482
         Display_Name Name_Id "Offset"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 1490
-       1490 number range term memory_properties.aadl:20:43
+       1490 number range term memory_properties.aadl:20:44
         Lower_Bound Node_Id 1484
-        1484 signed aadlnumber memory_properties.aadl:20:43
+        1484 signed aadlnumber memory_properties.aadl:20:44
          Number_Value Node_Id 1485
-         1485 literal memory_properties.aadl:20:43
+         1485 literal memory_properties.aadl:20:44
           Value Value_Id 49
          Unit_Identifier Node_Id 1486
-         1486 identifier memory_properties.aadl:20:45
+         1486 identifier memory_properties.aadl:20:46
           Corresponding_Entity Node_Id 0
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
           Backend_Node Node_Id 0
         Upper_Bound Node_Id 1487
-        1487 signed aadlnumber memory_properties.aadl:20:51
+        1487 signed aadlnumber memory_properties.aadl:20:52
          Number_Value Node_Id 1488
-         1488 literal memory_properties.aadl:20:51
+         1488 literal memory_properties.aadl:20:52
           Value Value_Id 50
          Unit_Identifier Node_Id 1489
-         1489 identifier memory_properties.aadl:20:53
+         1489 identifier memory_properties.aadl:20:54
           Corresponding_Entity Node_Id 0
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
@@ -7431,7 +7431,7 @@ Declarations List_Id 7
   1495 applies to memory_properties.aadl:16:02
    Is_All Boolean FALSE
    Owner_Categories List_Id 1492
-   1493 named element memory_properties.aadl:21:15
+   1493 named element memory_properties.aadl:21:37
     Identifier Node_Id 0
     Category Byte 29
     Component_Cat Byte 1
