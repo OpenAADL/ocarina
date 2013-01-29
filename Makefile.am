@@ -58,6 +58,7 @@ install-exec-local:
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/ocarina-config
+	rm -f $(DESTDIR)$(datadir)/doc/ocarina/ChangeLog_ocarina
 
 release:
 	rm -rf release/
@@ -65,3 +66,6 @@ release:
 	$(MAKE) dist
 	cp -f $(DIST_ARCHIVES) release/$(DIST_ARCHIVES)
 
+# We disable checking of the distclean rule, it is a nuisance
+distcleancheck:
+        @:
