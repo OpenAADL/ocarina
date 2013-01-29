@@ -13,7 +13,7 @@ BUILD_PROJECTS=\
 # All project files have to be packaged with "make dist"
 
 EXTRA_DIST=\
-	$(srcdir)/ocarina.gpr \
+	$(srcdir)/ocarina.gpr.in \
 	$(srcdir)/ocarina-frontends.gpr \
 	$(srcdir)/ocarina-backends.gpr \
 	$(srcdir)/ocarina-core.gpr \
@@ -34,7 +34,7 @@ OBJECT_DIRS = $(top_builddir)/src/core/objects \
 	$(top_builddir)/src/frontends/objects \
 	$(top_builddir)/src/backends/objects \
 	$(top_builddir)/src/transfo/objects \
-	$(top_builddir)/src/main/objects 
+	$(top_builddir)/src/main/objects
 
 # Library directories (*.ali, *.a)
 
@@ -43,7 +43,7 @@ LIB_DIRS = $(top_builddir)/src/core/libs \
 	$(top_builddir)/src/backends/libs \
 	$(top_builddir)/src/transfo/libs \
 	$(top_builddir)/src/config/libs \
-	$(top_builddir)/src/main/libs 
+	$(top_builddir)/src/main/libs
 
 # All directories used for the build process. If the configure is
 # performed from a directory different from the top source directory,
@@ -109,7 +109,7 @@ $(BUILD_STAMPS): %-build:
 
 clean-local: $(BUILD_DIRS) $(CLEAN_STAMPS) clean-mknodes
 
-# XXX creating/deleting ocarina-configuration.adb is to please 
+# XXX creating/deleting ocarina-configuration.adb is to please
 # gnatclean that requires this file to be present to delete files ...
 
 $(CLEAN_STAMPS): %-clean:
