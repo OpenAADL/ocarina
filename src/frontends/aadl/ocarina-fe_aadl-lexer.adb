@@ -691,7 +691,9 @@ package body Ocarina.FE_AADL.Lexer is
                else
                   Error_Loc (1) := Token_Location;
                   DE ("non graphic character '|" & Ch &
-                      "' is not allowed in string lateral, ignored");
+                        "' (ASCII code"
+                        & Standard.Character'Pos (Ch)'Img
+                        & ") is not allowed in string lateral, ignored");
 
                   if Token_Location.Scan > Token_Location.EOF then
                      DE ("scanning string, end of file reached, exit");
