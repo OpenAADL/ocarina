@@ -1318,14 +1318,14 @@ package body Ocarina.Backends.Build_Utils is
                      Write_Line (" \");
                      Write_Str (ASCII.HT & "   ");
                   end loop;
+                  Write_Eol;
                end if;
 
                Ada_C_Command_Line_Flags
                  (M.Ada_Sources, M.C_Sources, M.C_Libraries);
 
                if Length (M.Ada_Sources) > 0 then
-                  Write_Line
-                    ("USER_LDFLAGS += `cat link_ada.cmd` -lgnat");
+                  Write_Line ("USER_LD=gnatlink `cat ali_file`");
                end if;
             else
                Write_Str ("C_OBJECTS=");
@@ -1568,34 +1568,23 @@ package body Ocarina.Backends.Build_Utils is
             Write_Str (" ");
          end if;
 
-         --  In case of Ada source files, we add the corresponding .o
-         --  files only for PolyORB-HI/C. For PolyORB-HI/Ada, this is
-         --  handled by the project file.
-
-         if Get_Current_Backend_Kind = PolyORB_HI_C
-           and then Length (Ada_Sources) > 0
-         then
-            for J in Name_Tables.First .. Name_Tables.Last (Ada_Sources) loop
-               Get_Name_String (Ada_Sources.Table (J));
-               Set_Str_To_Name_Buffer
-                 (Base_Name (Name_Buffer (1 .. Name_Len)));
-
-               Name_Buffer (Name_Len - 2 .. Name_Len) := "o  ";
-               Write_Name (Name_Find);
-
-               exit when J = Name_Tables.Last (Ada_Sources);
-
-               Write_Line (" \");
-               Write_Str (ASCII.HT & "   ");
-            end loop;
-            Write_Line (" \");
-            Write_Line (ASCII.HT & "   ada-start.o ");
-         end if;
+         --  In case of Ada source files, link has to be performed by
+         --  gnatlink (as of August 2011 and decision made to get rid
+         --  of C binder file). The actual list of Ada object file is
+         --  retrived form the binder generated file, hence there is
+         --  no need to add them.
 
          --  In case of C source files, we add the corresponding .o
          --  files.
 
          if Length (C_Sources) > 0 then
+            if Get_Current_Backend_Kind = PolyORB_HI_C
+              and then Length (Ada_Sources) > 0
+            then
+               Write_Line (" \");
+               Write_Str (ASCII.HT & "   ");
+            end if;
+
             for J in Name_Tables.First .. Name_Tables.Last (C_Sources) loop
                Get_Name_String (C_Sources.Table (J));
                Set_Str_To_Name_Buffer
@@ -1646,6 +1635,8 @@ package body Ocarina.Backends.Build_Utils is
                Write_Str (ASCII.HT & "   ");
             end loop;
          end if;
+         Write_Eol;
+
       end Ada_C_Command_Line_Flags;
 
       ---------------------
@@ -1684,7 +1675,7 @@ package body Ocarina.Backends.Build_Utils is
                   end if;
 
                   Write_Char (ASCII.HT);
-                  Write_Str ("$(GCC) -c $(INCLUDE) $(CFLAGS) ");
+                  Write_Str ("$(CC) -c $(INCLUDE) $(CFLAGS) ");
 
                   if Include_Dir /= No_Name then
                      Write_Str ("-I");
@@ -1714,6 +1705,7 @@ package body Ocarina.Backends.Build_Utils is
             for J in Name_Tables.First .. Name_Tables.Last (Ada_Sources) loop
                declare
                   O_File : Name_Id;
+                  Ali_File : Name_Id;
                begin
                   Get_Name_String (Ada_Sources.Table (J));
                   Name_Buffer (Name_Len - 2 .. Name_Len) := "o  ";
@@ -1721,21 +1713,28 @@ package body Ocarina.Backends.Build_Utils is
                     (Base_Name (Name_Buffer (1 .. Name_Len)));
                   O_File := Name_Find;
 
+                  Name_Buffer (Name_Len - 2 .. Name_Len) := "ali";
+                  Set_Str_To_Name_Buffer
+                    (Base_Name (Name_Buffer (1 .. Name_Len)));
+                  Ali_File := Name_Find;
+
                   Write_Char (ASCII.HT);
-                  Write_Str ("$(GCC) -c $(INCLUDE) $(CFLAGS) '");
+                  Write_Str ("$(CC) -c $(INCLUDE) $(CFLAGS) '");
                   Write_Name (Ada_Sources.Table (J));
                   Write_Str ("' -o ");
                   Write_Name (O_File);
                   Write_Eol;
+                  Write_Char (ASCII.HT);
+                  Write_Str ("echo ");
+                  Write_Name (Ali_File);
+                  Write_Str (" > ali_file");
+                  Write_Eol;
+
                end;
             end loop;
 
             Write_Char (ASCII.HT);
-            Write_Line ("gnatbind -n *.ali -C -o ada-start.c");
-            Write_Char (ASCII.HT);
-            Write_Line ("grep adalib ada-start.c > link_ada.cmd");
-            Write_Char (ASCII.HT);
-            Write_Line ("$(GCC) -c $(CFLAGS) ada-start.c");
+            Write_Line ("gnatbind -n *.ali");
          end if;
       end Compile_Ada_Files;
 
