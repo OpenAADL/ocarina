@@ -212,7 +212,7 @@ package body Ocarina.Backends.PO_HI_Ada is
       then
          Write_Line ("GNATMAKE = " & Target_Prefix.all & "gnatmake");
          Write_Line ("GNAT = " & Target_Prefix.all & "gnat");
-         Write_Line ("GCC = " & Target_Prefix.all & "gcc");
+         Write_Line ("CC = " & Target_Prefix.all & "gcc");
          Write_Line ("TARGET = " & Target.all);
          Write_Line ("BUILD = Debug");
          Write_Line ("CGCTRL = No");
