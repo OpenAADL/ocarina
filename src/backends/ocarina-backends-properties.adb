@@ -1535,7 +1535,6 @@ package body Ocarina.Backends.Properties is
          when Language_SDL
            | Language_SDL_RTDS
            | Language_System_C
-           | Language_CPP
            | Language_SDL_OpenGEODE
            | Language_VHDL =>
             --  A subprogram having this language as implementation
@@ -1567,6 +1566,32 @@ package body Ocarina.Backends.Properties is
                --  wrong built subprogram.
 
                return Subprogram_Opaque_C;
+            end if;
+
+         when Language_CPP =>
+            if Src_Name /= No_Name or else Src_Files'Length > 0 then
+               if not Is_Empty (AIN.Calls (S)) and then
+                 not Is_Empty (AIN.Subprogram_Calls
+                                 (AIN.First_Node (AIN.Calls (S))))
+               then
+                  --  A subprogram having CPP as implementation
+                  --  language, an implementation name and a *non
+                  --  null* call sequence list is not supported yet.
+
+                  return Subprogram_Unknown;
+               else
+                  --  A subprogram having CPP as implementation
+                  --  language, an implementation name and a *null*
+                  --  call sequence list is an opaque C subprogram.
+
+                  return Subprogram_Opaque_CPP;
+               end if;
+            else
+               --  A subprogram having CPP as implementation language
+               --  and a null source name and a null source text is a
+               --  wrong built subprogram.
+
+               return Subprogram_Opaque_CPP;
             end if;
 
          when Language_RTSJ =>

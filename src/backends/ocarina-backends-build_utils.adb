@@ -336,6 +336,10 @@ package body Ocarina.Backends.Build_Utils is
          --  The C source files that may implement some subprograms of
          --  the current node (absolute or relative path).
 
+         CPP_Sources          : Name_Tables.Instance;
+         --  The C source files that may implement some subprograms of
+         --  the current node (absolute or relative path).
+
          C_Libraries        : Name_Tables.Instance;
          --  The C libraries that may contain the binary code of some
          --  subprograms of the current node (absolute or relative
@@ -385,14 +389,26 @@ package body Ocarina.Backends.Build_Utils is
       procedure Ada_C_Command_Line_Flags
         (Ada_Sources        : Name_Tables.Instance;
          C_Sources          : Name_Tables.Instance;
+         CPP_Sources        : Name_Tables.Instance;
          C_Libraries        : Name_Tables.Instance);
 
       procedure Compile_Ada_Files (Ada_Sources : Name_Tables.Instance);
-
       procedure Compile_C_Files (C_Sources : Name_Tables.Instance);
+      procedure Compile_CPP_Files (CPP_Sources : Name_Tables.Instance);
       --  Generate a makefile target to compile C_Sources C files
 
       procedure Handle_C_Source
+        (E                 : Node_Id;
+         Implem_Name       : Name_Id;
+         Source_Files      : Name_Array;
+         M                 : Makefile_Type;
+         Custom_Source_Dir : Name_Id := No_Name);
+      --  Update the makefile structure by adding necessary paths to
+      --  sources or libraries provided by the 'Source_Files' array. E
+      --  is the node for which the source files are given, it is used
+      --  to resolve relative paths through its absolute location.
+
+      procedure Handle_CPP_Source
         (E                 : Node_Id;
          Implem_Name       : Name_Id;
          Source_Files      : Name_Array;
@@ -518,8 +534,9 @@ package body Ocarina.Backends.Build_Utils is
       begin
          --  Ensure the user gives at most one source file (.c)
 
-         if Source_Files'Length > 1 and then
-            Get_Current_Backend_Kind = PolyORB_HI_Ada then
+         if Source_Files'Length > 1
+           and then Get_Current_Backend_Kind = PolyORB_HI_Ada
+         then
             Display_Located_Error
               (Loc (E),
                "more than one source files for a C subprogram",
@@ -616,6 +633,7 @@ package body Ocarina.Backends.Build_Utils is
                            Source_Dirname);
                         Set_Name_Table_Byte (Name_Find, 1);
                      end if;
+
                   else
                      Set_Str_To_Name_Buffer (Binding_Key);
                      Get_Name_String (Source_Dirname);
@@ -632,6 +650,121 @@ package body Ocarina.Backends.Build_Utils is
             end loop;
          end if;
       end Handle_C_Source;
+
+      -----------------------
+      -- Handle_CPP_Source --
+      -----------------------
+
+      procedure Handle_CPP_Source
+        (E                 : Node_Id;
+         Implem_Name       : Name_Id;
+         Source_Files      : Name_Array;
+         M                 : Makefile_Type;
+         Custom_Source_Dir : Name_Id := No_Name)
+      is
+         Source_Basename : Name_Id;
+         Source_Dirname  : Name_Id;
+         S_Name          : Name_Id;
+         Binding_Key     : constant String := "%user_src_dir%";
+      begin
+         --  Ensure the user gives at most one source file (.cc)
+
+         if Source_Files'Length > 1
+           and then Get_Current_Backend_Kind = PolyORB_HI_Ada
+         then
+            Display_Located_Error
+              (Loc (E),
+               "more than one source files for a C subprogram",
+               Fatal => True);
+         end if;
+
+         if Source_Files'Length = 0 and then Implem_Name /= No_Name then
+            --  This means that the user did not provide source file
+            --  names for the C implementation but did provide the
+            --  implementation name. Therefore, the corresponding
+            --  source files have conventional names and are located
+            --  at the same directory as the AADL file.
+
+            Split_Path
+              (Implem_Name,
+               Loc (E).Dir_Name,
+               Source_Basename,
+               Source_Dirname);
+
+            if Custom_Source_Dir /= No_Name then
+               Source_Dirname := Custom_Source_Dir;
+            end if;
+
+            Set_Str_To_Name_Buffer (Binding_Key);
+            Get_Name_String_And_Append (Source_Dirname);
+            Get_Name_String_And_Append (M.Node_Name);
+
+            if Get_Name_Table_Byte (Name_Find) = 0 then
+               Name_Tables.Append
+                 (M.User_Source_Dirs,
+                  Source_Dirname);
+               Set_Name_Table_Byte (Name_Find, 1);
+            end if;
+
+         elsif Source_Files'Length /= 0 then
+            for J in Source_Files'Range loop
+               --  Ensure the source is added only once per node
+
+               Get_Name_String (Source_Files (J));
+               Get_Name_String_And_Append (M.Node_Name);
+               Add_Str_To_Name_Buffer ("%source_text%");
+               S_Name := Name_Find;
+
+               if Get_Name_Table_Info (S_Name) = 0 then
+                  Set_Name_Table_Info (S_Name, 1);
+
+                  Get_Name_String (Source_Files (J));
+
+                  Split_Path
+                    (Source_Files (J),
+                     Loc (E).Dir_Name,
+                     Source_Basename,
+                     Source_Dirname);
+
+                  if Custom_Source_Dir /= No_Name then
+                     Source_Dirname := Custom_Source_Dir;
+                  end if;
+
+                  Get_Name_String (Source_Basename);
+
+                  if Name_Buffer (Name_Len - 2 .. Name_Len) = ".cc" then
+                     Get_Name_String (Source_Dirname);
+                     Get_Name_String_And_Append (Source_Basename);
+
+                     Name_Tables.Append (M.CPP_Sources, Name_Find);
+
+                     Set_Str_To_Name_Buffer (Binding_Key);
+                     Get_Name_String (Source_Dirname);
+                     Get_Name_String_And_Append (M.Node_Name);
+
+                     if Get_Name_Table_Byte (Name_Find) = 0 then
+                        Name_Tables.Append
+                          (M.User_Source_Dirs,
+                           Source_Dirname);
+                        Set_Name_Table_Byte (Name_Find, 1);
+                     end if;
+
+                  else
+                     Set_Str_To_Name_Buffer (Binding_Key);
+                     Get_Name_String (Source_Dirname);
+                     Get_Name_String_And_Append (M.Node_Name);
+
+                     if Get_Name_Table_Byte (Name_Find) = 0 then
+                        Name_Tables.Append
+                          (M.User_Source_Dirs,
+                           Source_Dirname);
+                        Set_Name_Table_Byte (Name_Find, 1);
+                     end if;
+                  end if;
+               end if;
+            end loop;
+         end if;
+      end Handle_CPP_Source;
 
       -----------
       -- Visit --
@@ -842,6 +975,7 @@ package body Ocarina.Backends.Build_Utils is
          Name_Tables.Init (M.Ada_Sources);
          Name_Tables.Init (M.Asn_Sources);
          Name_Tables.Init (M.C_Sources);
+         Name_Tables.Init (M.CPP_Sources);
          Name_Tables.Init (M.C_Objs);
          Name_Tables.Init (M.C_Libraries);
          Name_Tables.Init (M.User_Source_Dirs);
@@ -1068,6 +1202,15 @@ package body Ocarina.Backends.Build_Utils is
 
                Handle_C_Source (E, Source_Name, Source_Files, M);
 
+            when Subprogram_Opaque_CPP =>
+               --  If the subprogram is implemented by C source files,
+               --  add the files to the C_Files list of the makefile
+               --  structure. If the subprogram is implemented by a C
+               --  library, add the files to the C_Libraries list of
+               --  the makefile structure.
+
+               Handle_CPP_Source (E, Source_Name, Source_Files, M);
+
             when Subprogram_Opaque_Ada_95 =>
                --  If the subprogram is implemented by Ada source files,
                --  add the files to the Ada_Files list of the makefile
@@ -1092,8 +1235,7 @@ package body Ocarina.Backends.Build_Utils is
                Get_Name_String (Simulink_Dir);
                Add_Str_To_Name_Buffer ("/");
                Add_Str_To_Name_Buffer ("/*.o");
-               Name_Tables.Append
-                  (M.C_Objs, Name_Find);
+               Name_Tables.Append (M.C_Objs, Name_Find);
 
             when others =>
                null;
@@ -1322,7 +1464,7 @@ package body Ocarina.Backends.Build_Utils is
                end if;
 
                Ada_C_Command_Line_Flags
-                 (M.Ada_Sources, M.C_Sources, M.C_Libraries);
+                 (M.Ada_Sources, M.C_Sources, M.CPP_Sources, M.C_Libraries);
 
                if Length (M.Ada_Sources) > 0 then
                   Write_Line ("USER_LD=gnatlink `cat ali_file`");
@@ -1330,7 +1472,7 @@ package body Ocarina.Backends.Build_Utils is
             else
                Write_Str ("C_OBJECTS=");
                Ada_C_Command_Line_Flags
-                 (M.Ada_Sources, M.C_Sources, M.C_Libraries);
+                 (M.Ada_Sources, M.C_Sources, M.CPP_Sources, M.C_Libraries);
             end if;
             Write_Eol;
 
@@ -1355,6 +1497,9 @@ package body Ocarina.Backends.Build_Utils is
 
             Write_Eol;
             Compile_C_Files (M.C_Sources);
+            Write_Eol;
+
+            Compile_CPP_Files (M.CPP_Sources);
             Write_Eol;
 
             Compile_Ada_Files (M.Ada_Sources);
@@ -1559,6 +1704,7 @@ package body Ocarina.Backends.Build_Utils is
       procedure Ada_C_Command_Line_Flags
         (Ada_Sources        : Name_Tables.Instance;
          C_Sources          : Name_Tables.Instance;
+         CPP_Sources          : Name_Tables.Instance;
          C_Libraries        : Name_Tables.Instance) is
       begin
          if Length (Ada_Sources) > 0
@@ -1594,6 +1740,22 @@ package body Ocarina.Backends.Build_Utils is
                Write_Name (Name_Find);
 
                exit when J = Name_Tables.Last (C_Sources);
+
+               Write_Line (" \");
+               Write_Str (ASCII.HT & "   ");
+            end loop;
+         end if;
+
+         if Length (CPP_Sources) > 0 then
+            for J in Name_Tables.First .. Name_Tables.Last (CPP_Sources) loop
+               Get_Name_String (CPP_Sources.Table (J));
+               Set_Str_To_Name_Buffer
+                 (Base_Name (Name_Buffer (1 .. Name_Len)));
+
+               Name_Buffer (Name_Len - 1 .. Name_Len) := "o ";
+               Write_Name (Name_Find);
+
+               exit when J = Name_Tables.Last (CPP_Sources);
 
                Write_Line (" \");
                Write_Str (ASCII.HT & "   ");
@@ -1637,6 +1799,9 @@ package body Ocarina.Backends.Build_Utils is
          end if;
          Write_Eol;
 
+         if Length (CPP_Sources) > 0 then
+            Write_Line ("USE_CPP_LINKER = true");
+         end if;
       end Ada_C_Command_Line_Flags;
 
       ---------------------
@@ -1693,6 +1858,61 @@ package body Ocarina.Backends.Build_Utils is
             end loop;
          end if;
       end Compile_C_Files;
+
+      -----------------------
+      -- Compile_CPP_Files --
+      -----------------------
+
+      procedure Compile_CPP_Files (CPP_Sources : Name_Tables.Instance) is
+      begin
+         Write_Line ("compile-cpp-files:");
+         if Length (CPP_Sources) > 0 then
+
+            for J in Name_Tables.First .. Name_Tables.Last (CPP_Sources) loop
+               declare
+                  O_File : Name_Id;
+                  Include_Dir : Name_Id;
+               begin
+                  Get_Name_String (CPP_Sources.Table (J));
+                  Name_Buffer (Name_Len - 1 .. Name_Len) := "o ";
+                  Set_Str_To_Name_Buffer
+                    (Base_Name (Name_Buffer (1 .. Name_Len)));
+                  O_File := Name_Find;
+
+                  Get_Name_String (CPP_Sources.Table (J));
+                  while (Name_Buffer (Name_Len) /= Directory_Separator)
+                    and then
+                     Name_Len > 0 loop
+                     Name_Len := Name_Len - 1;
+                  end loop;
+
+                  if Name_Len > 0 then
+                     Set_Str_To_Name_Buffer
+                        (Name_Buffer (1 .. Name_Len));
+                     Include_Dir := Name_Find;
+                  else
+                     Include_Dir := No_Name;
+                  end if;
+
+                  Write_Char (ASCII.HT);
+                  Write_Str ("$(CC) -c $(INCLUDE) $(CFLAGS) ");
+
+                  if Include_Dir /= No_Name then
+                     Write_Str ("-I");
+                     Write_Str ("'");
+                     Write_Name (Include_Dir);
+                     Write_Str ("'");
+                  end if;
+
+                  Write_Str (" '");
+                  Write_Name (CPP_Sources.Table (J));
+                  Write_Str ("' -o ");
+                  Write_Name (O_File);
+                  Write_Eol;
+               end;
+            end loop;
+         end if;
+      end Compile_CPP_Files;
 
       -----------------------
       -- Compile_Ada_Files --

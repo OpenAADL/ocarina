@@ -514,6 +514,7 @@ package Ocarina.Backends.Properties is
       Subprogram_Opaque_Ada_95,
       Subprogram_Opaque_Ada_95_Transfo,
       Subprogram_Opaque_C,
+      Subprogram_Opaque_CPP,
       Subprogram_Opaque_RTSJ,
       Subprogram_Simulink,
       Subprogram_Scade,

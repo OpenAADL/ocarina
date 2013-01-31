@@ -2320,6 +2320,7 @@ package body Ocarina.Backends.C_Common.Mapping is
               (Spec, Declarations, Statements);
 
          when Subprogram_Opaque_C
+           | Subprogram_Opaque_CPP
            | Subprogram_Default =>
 
             --  Create function to lock the data.
