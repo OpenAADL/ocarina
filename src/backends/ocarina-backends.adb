@@ -59,7 +59,6 @@ with Ocarina.Backends.MAST_Values;
 with Ocarina.Backends.MAST_Tree.Nodes;
 with Ocarina.Backends.MAST_Tree.Nutils;
 with Ocarina.Backends.POK_C;
-with Ocarina.Backends.PO_QoS_Ada;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Ada_Tree.Nodes;
 with Ocarina.Backends.Ada_Tree.Nutils;
@@ -185,7 +184,6 @@ package body Ocarina.Backends is
       BoundT.Init;
       MAST.Init;
       PO_HI_Ada.Init;
-      PO_QoS_Ada.Init;
       PO_HI_C.Init;
       PO_HI_RTSJ.Init;
       POK_C.Init;
@@ -259,7 +257,6 @@ package body Ocarina.Backends is
       Xtratum_Conf.Reset;
       Stats.Reset;
       Carts.Reset;
-      PO_QoS_Ada.Reset;
       Connection_Matrix.Reset;
       Functions_Matrix.Reset;
 
