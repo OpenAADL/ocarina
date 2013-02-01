@@ -43,7 +43,6 @@ Usage:
         boundt
         mast
         polyorb_hi_ada
-        polyorb_qos_ada
         polyorb_hi_c
         polyorb_hi_rtsj
         pok_c
