@@ -14,10 +14,10 @@ bibinputs:=$(srcdir):$(BIBINPUTS)
 export BIBINPUTS:=$(bibinputs)
 
 all-local: $(LATEX_FILE).tex biblio.bib $(REAL_CODE)
-	latex $(srcdir)/$(LATEX_FILE).tex ; 
+	latex $(srcdir)/$(LATEX_FILE).tex ;
 	bibtex $(LATEX_FILE) ;
-	latex $(srcdir)/$(LATEX_FILE).tex ; 
-	latex $(srcdir)/$(LATEX_FILE).tex ; 
+	latex $(srcdir)/$(LATEX_FILE).tex ;
+	latex $(srcdir)/$(LATEX_FILE).tex ;
 	dvipdf $(LATEX_FILE).dvi
 
 $(REAL_CODE):
@@ -25,8 +25,8 @@ $(REAL_CODE):
 	  cp -f $(top_srcdir)/examples/real/lib/`basename $${file}` $(srcdir)/; \
 	done
 
-clean-local: 
-	rm -f *~ *.dvi *.log *.aux *.out  *.toc *.bbl *.blg
+clean-local:
+	rm -f *~ *.dvi *.log *.aux *.out  *.toc *.bbl *.blg $(REAL_CODE)
 
 distclean-local: clean
 	rm -f $(LATEX_FILE).pdf
