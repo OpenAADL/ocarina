@@ -1,0 +1,26 @@
+package test_spg
+public
+
+subprogram group spg_a
+end spg_a;
+
+subprogram group implementation spg_a.impl
+end spg_a.impl;
+
+subprogram group spg_b
+end spg_b;
+
+subprogram group implementation spg_b.impl
+subcomponents
+    spga1 : subprogram group spg_a.impl;
+end spg_b.impl;
+
+system test
+end test;
+
+system implementation test.impl
+subcomponents
+    spg_b1 : subprogram group spg_b.impl;
+end test.impl;
+
+end test_spg;
