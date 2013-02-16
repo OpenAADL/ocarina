@@ -721,7 +721,8 @@ package body Ocarina.Analyzer.AADL.Legality_Rules is
 
                when CC_Subprogram_Group =>
                   case Subcomponent_Categ is
-                     when CC_Subprogram => OK := True;
+                     when CC_Subprogram
+                       | CC_Subprogram_Group => OK := True;
                      when others => OK := False;
                   end case;
 
