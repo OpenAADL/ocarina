@@ -200,7 +200,7 @@ package Ocarina.Analyzer.AADL.Finder is
       Node              : Node_Id)
      return Boolean;
    --  The kind of Package_Container is K_Package_Specification,
-   --  the kind of Node is K_Identifier or K_ENtity_Reference,
+   --  the kind of Node is K_Identifier or K_Entity_Reference,
    --  return True if the Node is 'with' in Package_Container
    --  'with' declarations.
 

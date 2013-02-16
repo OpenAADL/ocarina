@@ -70,9 +70,9 @@ package Ocarina.Analyzer.AADL.Naming_Rules is
       Scope      : Node_Id)
      return Node_Id;
    --  Find whether there is a definition for identifier Identifier in
-   --  scope  Scope or  the above  scopes.  The Homonym  field of  the
-   --  identifier of the  returned node points to the  next homonym of
-   --  the node in  the scopes, so that it is possible  to get all the
+   --  scope Scope or the above scopes. The Homonym field of the
+   --  identifier of the returned node points to the next homonym of
+   --  the node in the scopes, so that it is possible to get all the
    --  homonyms.
 
    function Node_In_Scope
