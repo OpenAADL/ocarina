@@ -1,0 +1,139 @@
+property set ARINC653 is 
+
+--The Partition_Slots property specifies time slot duration for each partition scheduled.
+Partition_Slots : list of Time applies to ( processor, virtual processor, system);
+
+--The Slots_Allocation property specifies the allocation of each slot (which partition is executed in
+--each time slot). This property must be used with the ARINC653::Partition_Slots property and the
+--order of slot allocation is the same than slots description.
+Slots_Allocation : list of reference (virtual processor) applies to ( processor, virtual processor);
+
+--The Module_Major_Frame property specifies the major frame for the ARINC653 module (AADL
+--processor component).
+Module_Major_Frame : Time applies to ( processor, virtual processor );
+
+--The Sampling_Refresh_Period property indicates data arrival rate for an in data port. It
+--corresponds to the concept of refresh time of ARINC653 sampling port.
+Sampling_Refresh_Period : Time applies to ( data port );
+
+--The Supported_Error_Code enumeration corresponds to the possible Error code that can be raised at
+--the different levels of ARINC653 architecture (module, partition, process). The list of possible values may
+--be extended by a given implementation.
+Supported_Error_Code: type enumeration (Module_Config, Module_Init, Module_Scheduling, Partition_Scheduling, Partition_Config, Partition_Handler, Partition_Init, Deadline_Miss, Application_Error, Numeric_Error, Illegal_Request, Stack_Overflow, Memory_Violation, Hardware_Fault, Power_Fail);
+
+--The HM_Errors property specifies in the error handling codes supported at each level of the architecture.
+--In ARINC653, errors can be handled at module-level (AADL processor component), partition level
+--(AADL virtual processor component) or process level (AADL thread component). System
+--designers add this property on each component to describe the potential error at each level.
+HM_Errors: list of ARINC653::Supported_Error_Code applies to ( processor, virtual processor, thread );
+
+--The Supported_Module_Recovery_Action enumeration corresponds to possible recovery action for a
+--module to handle a fault. This list may be extended by a given implementation.
+Supported_Module_Recovery_Action : type enumeration (Ignore, Stop, Reset);
+
+--The HM_Module_Recovery_Actions property indicates what kind of action is taken for each reported
+--error. It describes for the module level what is the action performed according to the error described with
+--the HM_Errors property. The recovery action described order follow the order of the error list provided by
+--the ARINC653::HM_Errors property.
+HM_Module_Recovery_Actions : list of ARINC653::Supported_Module_Recovery_Action applies to ( processor, virtual processor );
+
+--The Multipartitions property defines the set of multi-partitions defined for the associated module. A
+--multi-partition is a concept in ARINC 653 supplement 3 to gather partitions which are functionally or
+--logically linked. To this set, a unique error handling policy may be applied.
+Multipartitions : list of list of reference (virtual processor) applies to ( processor );
+
+--The HM_Multipartitions_Errors property indicates lists of errors related to multipartitions defined
+--for the associated module. Each list defined what kind of error handled at multi-partition level, for the
+--identified multi-partition. The order of lists inside HM_Multipartitions_Errors follows the order of
+--multi-partitions provided by the ARINC653::Multipartitions property.
+HM_Multipartitions_Errors : list of list of ARINC653::Supported_Error_Code applies to (processor);
+
+--The HM_Multipartitions_Recovery_Actions property indicates lists of recovery actions related to
+--multi-partitions defined for the associated module. Each list defined what kind of action is performed for
+--each reported error, at a multi-partition level, for the identified multi-partition. The order of recovery
+--actions inside each list follows the order of errors in the associated errors list given by the
+--ARINC653::HM_ Multipartitions_Errors property.
+HM_Multipartitions_Recovery_Actions : list of list of ARINC653::Supported_Module_Recovery_Action applies to (processor );
+
+--The Supported_Partition_Recovery_Action enumeration corresponds to possible recovery action
+--for a partition to handle a fault. This list may be extended by a given implementation.
+Supported_Partition_Recovery_Action : type enumeration (Ignore, Partition_Stop, Warm_Restart, Cold_Restart);
+
+--The HM_Partition_Recovery_Actions property indicates what kind of action is taken for each
+--reported error. It describes for the partition level what is the action performed according to the error
+--described with the ARINC653::HM_Errors property. The recovery action described order follow the
+--order of the error list provided by the ARINC653::HM_Errors property.
+HM_Partition_Recovery_Actions : list of ARINC653::Supported_Partition_Recovery_Action applies to ( virtual processor );
+
+--The Supported_Recovery_Action enumeration corresponds to possible recovery action to handle a
+--fault. There is no process table in ARINC653 health monitoring service, this property is introduced for
+--model analysis or code generation purposes. This list is may be extended by a given implementation.
+Supported_Process_Recovery_Action : type enumeration (Ignore, Confirm, Partition_Stop, Process_Stop, Process_Stop_And_Start_Another, Process_Restart, Nothing, Cold_Restart, Warm_Restart);
+
+--The HM_Process_Recovery_Actions property indicates what kind of action is taken for each reported
+--error at the process level.
+HM_Process_Recovery_Actions : list of ARINC653::Supported_Process_Recovery_Action applies to (thread );
+
+--The HM_Callback property references a subprogram that is executed when errors are raised. It
+--corresponds to the HM callback function in the Health Monitoring service of the ARINC653 standard
+HM_Callback : reference (subprogram) applies to (processor, virtual processor, thread );
+
+--The Supported_Access_Type enumeration specifies the possible memory access in the ARINC653
+--standard. It is then used on AADL memory components with the Access_Type property to define allowed
+--permissions on each memory segment
+Supported_Access_Type : type enumeration (read, write, execute);
+
+--The Access_Type property specifies the rights (or flags) set on a memory segment.
+Access_Type : list of ARINC653::Supported_Access_Type applies to ( memory );
+
+--The Supported_Memory_Type enumeration describes possible content of an AADL memory component.
+Supported_Memory_Type : type enumeration (Data_Memory, Code_Memory, IO_Memory);
+
+--The Memory_Type property describes the content of an AADL memory component.
+Memory_Type : list of ARINC653::Supported_Memory_Type applies to ( memory );
+
+--The Timeout property specifies the timeout used by an ARINC653 process when sending/receiving a
+--data. Depending on which component is used, the property value could be useful for sender or receiver side.
+Timeout : Time applies to ( event data port, data port, event port, access );
+
+--The Supported_Criticality_Type enumeration corresponds to the different Development
+--Assurance Levels supported by the ARINC653 standard.
+Supported_Criticality_Type : type enumeration (LEVEL_A, LEVEL_B, LEVEL_C, LEVEL_D, LEVEL_E);
+
+--The Criticality property defines the Design Assurance Level of a partition. It is associated to the
+--runtime of each partition (an AADL virtual processor component).
+Criticality : ARINC653::Supported_Criticality_Type applies to (virtual processor, system, abstract);
+
+--The System_Overhead_Time property specifies the time needed for a module or a partition to switch
+--from one partition or process to another. This time may represent the context switch overhead during a
+--process switch inside a partition or the time to clean the hardware while the ARINC653 module switches
+--from one partition to another (perform input/output before releasing the processor, cache flush, etc.). This
+--property is not defined in the ARINC653 and has been defined for analysis purposes.
+System_Overhead_Time : Time applies to (processor, virtual processor );
+
+--Module version description.
+Module_Version : aadlstring applies to (processor);
+
+--Module unique identifier.
+Module_Identifier : aadlstring applies to (processor);
+
+--Partition identifier unique within the module.
+Partition_Identifier : aadlstring applies to (virtual processor);
+
+--Name of a partition name, should be unique within the module.
+Partition_Name : aadlstring applies to (virtual processor);
+
+--When set to true, this property indicates the partition is a system one.
+System_Partition : aadlboolean applies to (virtual processor);
+
+--Overall size of memory areas for process stacks of this partition.
+Partition_Stack : aadlinteger applies to (process);
+
+--This property indicates the name of the initialization procedure which allocates resources for the associated partition.
+Entrypoint : aadlstring applies to (virtual processor);
+
+--When set to true, this property indicates that designated AADL thread (ARINC653 process) is the partition error handler.
+Error_Handling : aadlboolean applies to (thread);
+
+
+end ARINC653;
