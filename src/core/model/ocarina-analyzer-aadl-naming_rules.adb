@@ -440,43 +440,55 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                        (Declarations (Entity));
 
                      while Present (List_Node) loop
-                        if Kind (List_Node)
-                          = K_Name_Visibility_Declaration
-                        then
-                           List_Node_2 :=
-                             Ocarina.ME_AADL.AADL_Tree.Nodes.First_Node
-                             (List_Items (List_Node));
-                           while Present (List_Node_2) loop
-                              if Kind (List_Node_2) = K_Alias_Declaration then
-                                 if Is_All (List_Node_2) then
-                                    List_Node_3 :=
-                                      Ocarina.ME_AADL.AADL_Tree.Nodes.
-                                      First_Node
-                                      (Declarations
-                                         (Parent (Parent (List_Node_2))));
-                                    while Present (List_Node_3) loop
-                                       if Name (Identifier (List_Node_3))
-                                         = Name (Build_Package_Identifier
-                                                   (Package_Name
-                                                      (List_Node_2)))
-                                       then
-                                          Test_Node := Node_In_Scope
-                                            (Name_Of_Identifier,
-                                             Entity_Scope
-                                               (List_Node_3));
+                        case Kind (List_Node) is
+                           when K_Component_Type
+                             | K_Component_Implementation =>
 
-                                          if Present (Test_Node) then
-                                             First_Node := Test_Node;
-                                          end if;
-                                       end if;
-                                       List_Node_3
-                                         := Next_Node (List_Node_3);
-                                    end loop;
-                                 end if;
+                              if Name (Identifier (List_Node))
+                                = Name_Of_Identifier
+                              then
+                                 First_Node := List_Node;
                               end if;
-                              List_Node_2 := Next_Node (List_Node_2);
-                           end loop;
-                        end if;
+
+                           when K_Name_Visibility_Declaration =>
+                              List_Node_2 :=
+                                Ocarina.ME_AADL.AADL_Tree.Nodes.First_Node
+                                (List_Items (List_Node));
+
+                              while Present (List_Node_2) loop
+                                 if Kind (List_Node_2) =
+                                   K_Alias_Declaration then
+                                    if Is_All (List_Node_2) then
+                                       List_Node_3 :=
+                                         Ocarina.ME_AADL.AADL_Tree.Nodes.
+                                         First_Node
+                                         (Declarations
+                                            (Parent (Parent (List_Node_2))));
+                                       while Present (List_Node_3) loop
+                                          if Name (Identifier (List_Node_3))
+                                            = Name (Build_Package_Identifier
+                                                      (Package_Name
+                                                         (List_Node_2)))
+                                          then
+                                             Test_Node := Node_In_Scope
+                                               (Name_Of_Identifier,
+                                                Entity_Scope
+                                                  (List_Node_3));
+
+                                             if Present (Test_Node) then
+                                                First_Node := Test_Node;
+                                             end if;
+                                          end if;
+                                          List_Node_3
+                                            := Next_Node (List_Node_3);
+                                       end loop;
+                                    end if;
+                                 end if;
+                                 List_Node_2 := Next_Node (List_Node_2);
+                              end loop;
+
+                           when others => null;
+                        end case;
                         List_Node := Next_Node (List_Node);
                      end loop;
                   end;
@@ -826,8 +838,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
    -- Internal_Node_In_Scope --
    ----------------------------
 
-   function Internal_Node_In_Scope (N : Name_Id; S : Node_Id) return Node_Id
-   is
+   function Internal_Node_In_Scope (N : Name_Id; S : Node_Id) return Node_Id is
       I_Name : constant Name_Id := Internal_Scope_Name (N, S);
    begin
       return Node_Id (Get_Name_Table_Info (I_Name));
@@ -857,8 +868,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
    -- Internal_Scope_Name --
    -------------------------
 
-   function Internal_Scope_Name (N : Name_Id; S : Node_Id) return Name_Id
-   is
+   function Internal_Scope_Name (N : Name_Id; S : Node_Id) return Name_Id is
    begin
       Get_Name_String (N);
       Add_Str_To_Name_Buffer ("%in_scope%");

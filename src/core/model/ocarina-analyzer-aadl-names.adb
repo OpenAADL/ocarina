@@ -32,6 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Analyzer.Messages;
+with Ocarina.Analyzer.AADL.Finder;
 with Ocarina.Analyzer.AADL.Naming_Rules;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -40,6 +41,7 @@ with Ocarina.ME_AADL.AADL_Tree.Entities;
 
 package body Ocarina.Analyzer.AADL.Names is
 
+   use Ocarina.Analyzer.AADL.Finder;
    use Ocarina.Analyzer.Messages;
    use Ocarina.Analyzer.AADL.Naming_Rules;
 
@@ -89,8 +91,7 @@ package body Ocarina.Analyzer.AADL.Names is
      (Name_Visibility_Node : Node_Id;
       Package_Node         : Node_Id)
      return Boolean;
-   --  Check if package or property in with sublcause
-   --  exists in global scope
+   --  Check if package or property in with sublcause exists in global scope
 
    ------------------------------
    -- Check_Import_Declaration --
@@ -127,12 +128,12 @@ package body Ocarina.Analyzer.AADL.Names is
                   if Kind (Import_Node) = K_Package_Name then
                      Identifier := Build_Package_Identifier (Import_Node);
 
-                     In_Node := Node_Explicitly_In_Scope (Identifier,
-                                                          Current_Scope);
-                  else
-                     In_Node := Node_Explicitly_In_Scope (Import_Node,
-                                                          Current_Scope);
+                     In_Node :=
+                       Node_Explicitly_In_Scope (Identifier, Current_Scope);
 
+                  else
+                     In_Node :=
+                       Node_Explicitly_In_Scope (Import_Node, Current_Scope);
                   end if;
 
                   if In_Node = No_Node then
@@ -185,10 +186,21 @@ package body Ocarina.Analyzer.AADL.Names is
                         Loc => Loc (List_Node));
 
                   else
-                     In_Node := Node_Explicitly_In_Scope
-                       (Alias, Current_Scope);
+                     In_Node := Node_In_Scope (Alias, Current_Scope);
 
-                     if In_Node = No_Node then
+                     if No (In_Node)
+                       and then Present (Corresponding_Entity (Alias))
+                     then
+                        In_Node := Find_Component_Classifier
+                          (Root                 => 1,
+                           Package_Identifier   => Namespace_Identifier
+                             (Corresponding_Entity (Alias)),
+                           Component_Identifier =>
+                             Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                             (Corresponding_Entity (Alias)));
+                     end if;
+
+                     if No (In_Node) then
                         Success := False;
                         Display_Analyzer_Error (Alias, "is not visible");
                      end if;
