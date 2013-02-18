@@ -1,0 +1,21 @@
+package test_renames_a
+public
+with test_renames_b;
+
+Test_B renames system test_renames_b::B; -- This is the line that causes the error
+
+system A
+end A;
+
+system implementation A.impl
+end A.impl;
+
+end test_renames_a;
+
+package test_renames_b
+public
+
+system B
+end B;
+
+end test_renames_b;
