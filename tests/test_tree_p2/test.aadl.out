@@ -12971,7 +12971,7 @@ Declarations List_Id 7
   2433 identifier test.aadl:3:08
    Corresponding_Entity Node_Id 2434
    Display_Name Name_Id "s"
-   Scope_Entity Node_Id 2430
+   Scope_Entity Node_Id 0
    Backend_Node Node_Id 0
   Entity_Scope Node_Id 2435
   Property_Scope Node_Id 2436
@@ -12994,7 +12994,7 @@ Declarations List_Id 7
   2439 identifier test.aadl:6:25
    Corresponding_Entity Node_Id 2442
    Display_Name Name_Id "s.i"
-   Scope_Entity Node_Id 2430
+   Scope_Entity Node_Id 0
    Backend_Node Node_Id 0
   Entity_Scope Node_Id 2440
   Property_Scope Node_Id 2441

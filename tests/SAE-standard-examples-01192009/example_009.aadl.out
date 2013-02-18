@@ -1,3 +1,3 @@
 example_009.aadl:7:06: base_types (identifier) is not a package or a property set visible or existing
-example_009.aadl:78:06: base_types (identifier) is not a package or a property set visible or existing
+example_009.aadl:66:29: "Address.others" conflicts with declaration at line 81
 Cannot analyze AADL specifications
