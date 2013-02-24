@@ -897,7 +897,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
                      Get_Data_Representation (Corresponding_Instance (S)) =
                      Data_With_Accessors then
 
-                     --  For POHIC, generate globvars thathave only accessors.
+                     --  For POHIC, generate globvars that have only accessors
 
                      N := Make_Variable_Declaration
                         (Map_C_Defining_Identifier (S),

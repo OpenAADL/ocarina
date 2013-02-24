@@ -1146,10 +1146,12 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- To_C_Name --
    ---------------
 
-   function To_C_Name (N : Name_Id;
-                       Ada_Style : Boolean := False;
-                       Keyword_Check : Boolean := True)
-                      return Name_Id is
+   function To_C_Name
+     (N : Name_Id;
+      Ada_Style : Boolean := False;
+      Keyword_Check : Boolean := True)
+     return Name_Id
+   is
       Name      : Name_Id;
       Test_Name : Name_Id;
       V         : Types.Byte;
@@ -2182,63 +2184,6 @@ package body Ocarina.Backends.C_Tree.Nutils is
          return Function_Call;
       end if;
    end POK_Make_Function_Call_With_Assert;
-
-   -------------------
-   -- Simulate_WCET --
-   -------------------
-
-   procedure Simulate_WCET
-     (Caller            : Node_Id;
-      Declarations      : List_Id;
-      Statements        : List_Id) is
-      N                 : Node_Id;
-      Parameters        : List_Id;
-      Execution_Times   : constant Time_Array
-               := Get_Execution_Time (Caller);
-   begin
-      if Get_Current_Backend_Kind = PolyORB_HI_C then
-
-         N := Make_Variable_Declaration
-           (Make_Defining_Identifier
-            (Get_String_Name ("wcet_low")),
-           PHCR.RE (PHCR.RE_Time_T));
-         Append_Node_To_List (N, Declarations);
-
-         N := Make_Variable_Declaration
-           (Make_Defining_Identifier
-            (Get_String_Name ("wcet_high")),
-           PHCR.RE (PHCR.RE_Time_T));
-         Append_Node_To_List (N, Declarations);
-
-         if Execution_Times'Length > 0 then
-            Parameters := New_List (CTN.K_Parameter_List);
-
-            N := Map_Time (Execution_Times (0),
-                           Get_String_Name ("wcet_low"));
-            Append_Node_To_List (N, Declarations);
-
-            N := Map_Time (Execution_Times (1),
-                           Get_String_Name ("wcet_high"));
-            Append_Node_To_List (N, Declarations);
-
-            Append_Node_To_List
-               (Make_Variable_Address
-                  (Make_Defining_Identifier
-                  (Get_String_Name ("wcet_low"))),
-               Parameters);
-
-            Append_Node_To_List
-               (Make_Variable_Address
-               (Make_Defining_Identifier
-                  (Get_String_Name ("wcet_high"))),
-               Parameters);
-
-            N := Make_Call_Profile
-               (PHCR.RE (PHCR.RE_Simulate_WCET), Parameters);
-            Append_Node_To_List (N, Statements);
-         end if;
-      end if;
-   end Simulate_WCET;
 
    -------------------
    -- Get_Data_Size --
