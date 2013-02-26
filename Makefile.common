@@ -60,13 +60,17 @@ install-ada-libs:
 	for f in $(ADA_SPECS) $(ADA_BODIES); do \
 	  $(INSTALL) -m 444 $$f $(DESTDIR)$(adadir); \
 	done
+	if [ "$(ls -A libs)" ]; then \
 	for f in libs/*.ali; do \
 	  $(INSTALL) -m 444 $$f $(DESTDIR)$(alidir); \
-	done
+	done \
+	fi
 	$(INSTALL) -d $(DESTDIR)$(libdir)
+	if [ "$(ls -A libs/lib*)" ]; then \
 	for f in libs/lib*; do \
 	  $(INSTALL) -m 444 $$f $(DESTDIR)$(libdir); \
-	done
+	done \
+	fi
 
 uninstall-ada-libs:
 	rm -rf $(DESTDIR)$(adadir) $(DESTDIR)$(alidir)
