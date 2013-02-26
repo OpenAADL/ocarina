@@ -421,10 +421,10 @@ if test ${dotests} = "true" ; then
 	    else
 		total=`expr ${total} + 1`
 		if test -r ${gprfile} ; then
-		    ocarina_gpr="`ocarina-config --prefix`/lib/gnat"
-		    command="ADA_PROJECT_PATH=\"${ocarina_gpr}${path_sep}${ADA_PROJECT_PATH}\" gnatmake -P\"`${path_conv} ${gprfile}`\" -XOBJ_DIR=\"`${path_conv} ${tmpdir}`\""
+		    ocarina_gpr="`ocarina-config --projects`"
+		    command="gnatmake -P\"`${path_conv} ${gprfile}`\" -aP${ocarina_gpr} -XOBJ_DIR=\"`${path_conv} ${tmpdir}`\""
 		    ADA_PROJECT_PATH="${ocarina_gpr}${path_sep}${ADA_PROJECT_PATH}" \
-			gnatmake -P"`${path_conv} ${gprfile}`" \
+			gnatmake -P"`${path_conv} ${gprfile}`" -aP${ocarina_gpr} \
 			-XOBJ_DIR="`${path_conv} ${tmpdir}`" \
 			>${actual_output} 2>&1
 		else
