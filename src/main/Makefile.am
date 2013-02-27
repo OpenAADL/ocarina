@@ -22,9 +22,11 @@ install-data-local: install-ada-libs
 	  $(INSTALL) -m 444 $$f $(DESTDIR)$(alidir); \
 	done
 	$(INSTALL) -d $(DESTDIR)$(libdir)
+	if [ "$(shell ls -A libs/lib*)" ]; then \
 	for f in libs/lib*; do \
 	  $(INSTALL) -m 444 $$f $(DESTDIR)$(libdir); \
-	done
+	done \
+	fi
 
 # When packaging, we remove the "Working Copy from @SVN_REVISION@"
 # from the SVN_Revision variable in ocarina-configuration.adb.in and
