@@ -5,6 +5,7 @@ work_dir=`pwd`
 script_dir=`dirname $0`; cd ${script_dir}; script_dir=`pwd`
 prefix="${script_dir}/.."; cd ${prefix}; prefix=`pwd`;
 prefix_w=`@CYGPATH_W@ ${prefix}`
+projects_w=`@CYGPATH_W@ ${prefix}/lib/gnat`
 cd ${work_dir}
 
 modules="frontends backends"
@@ -34,6 +35,8 @@ Options:
             of all runtimes.
         [--libs]
             Output the linker flags to use for Ocarina.
+        [--projects]
+            Output the path to GNAT Project files for Ocarina
         [--properties]
             Output the location of the standard property file.
         [--resources]
@@ -96,6 +99,9 @@ while test $# -gt 0; do
       ;;  
     --libs)
       echo_libs=true
+      ;;
+    --projects)
+      echo_projects=true
       ;;
 
     --runtime=*)
@@ -163,6 +169,7 @@ if test ! x"${echo_prefix}" = x"true" \
    -a ! x"${echo_exec_prefix}" = x"true" \
    -a ! x"${echo_cflags}" = x"true" \
    -a ! x"${echo_libs}" = x"true" \
+   -a ! x"${echo_projects}" = x"true" \
    -a ! x"${runtime_set}" = x"true"; 
 then
    echo ${ocarina_dir} -largs ${ocarina_lib}
@@ -181,6 +188,10 @@ fi
 
 if test x"${echo_libs}" = x"true"; then
     echo ${ocarina_lib}
+fi
+
+if test x"${echo_projects}" = x"true"; then
+    echo ${projects_w}
 fi
 
 if test x"${runtime_set}" = x"true"; then
