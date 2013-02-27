@@ -18,13 +18,11 @@ install-data-local: install-ada-libs
 	for f in $(ADA_SPECS) $(ADA_BODIES); do \
 	  $(INSTALL) -m 444 $$f $(DESTDIR)$(adadir); \
 	done
-	if [ "$(ls -A libs)" ]; then \
 	for f in objects/*.ali; do \
 	  $(INSTALL) -m 444 $$f $(DESTDIR)$(alidir); \
-	done \
-	fi
+	done
 	$(INSTALL) -d $(DESTDIR)$(libdir)
-	if [ "$(ls -A libs/lib*)" ]; then \
+	if [ "$(shell ls -A libs/lib*)" ]; then \
 	for f in libs/lib*; do \
 	  $(INSTALL) -m 444 $$f $(DESTDIR)$(libdir); \
 	done \
