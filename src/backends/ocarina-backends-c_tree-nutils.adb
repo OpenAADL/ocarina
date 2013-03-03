@@ -1798,6 +1798,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
                        (Make_Defining_Identifier
                         (To_C_Name (AIN.Display_Name (AIN.Identifier (F)))),
                         Make_Defining_Identifier (PN (P_Status)));
+
                   else
                      --  (3) If the calleD parameter is connected to
                      --      the calleR parameter and then then calleR

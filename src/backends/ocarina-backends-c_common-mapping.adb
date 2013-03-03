@@ -1997,7 +1997,6 @@ package body Ocarina.Backends.C_Common.Mapping is
       --  they are used only to close the access chain.
 
       if Get_Subprogram_Kind (S) /= Subprogram_Pure_Call_Sequence then
-
          if not AINU.Is_Empty (Features (S)) then
             F := AIN.First_Node (Features (S));
 

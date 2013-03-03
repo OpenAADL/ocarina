@@ -2918,7 +2918,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Owner_Category := New_Node (K_Named_Element, Token_Location);
 
       case Token is
-
          when T_Abstract | T_System
            | T_Processor | T_Thread
            | T_Process | T_Virtual
@@ -3027,7 +3026,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Set_Identifier (Owner_Category, Identifier);
 
       return Owner_Category;
-
    end P_Named_Element;
 
    -------------------------------
@@ -3218,7 +3216,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Scan_Token;
 
       if Token = T_Identifier then
-
          case Token_Owner is
             when POT_Transition =>
                Save_Lexer (Loc2);
@@ -3415,7 +3412,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Category : Named_Element;
 
    begin
-
       if Token /= T_Identifier then
          DPE (PC_Named_Element_Identifier, T_Identifier);
          Category := PO_Error;
@@ -3477,7 +3473,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       end case;
 
       return Category;
-
    end P_Named_Element_Identifier;
 
    ---------------------------------------------

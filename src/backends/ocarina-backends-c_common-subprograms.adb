@@ -1149,8 +1149,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
                if Kind (Feature) = K_Port_Spec_Instance
                  and then Is_In (Feature)
                  and then Is_Event (Feature)
-                 and then not Is_Data (Feature) then
-
+                 and then not Is_Data (Feature)
+               then
                   if Get_Port_Compute_Entrypoint (Feature) /= No_Node then
                      Visit (Get_Port_Compute_Entrypoint (Feature));
                   end if;
