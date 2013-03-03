@@ -4,7 +4,7 @@ public
   with data_model;
 
   data Boolean
-  properties 
+  properties
     Data_Model::Data_Representation => Boolean;
   end Boolean;
 
@@ -66,25 +66,25 @@ public
   end Unsigned_64;
 
   data Natural extends Integer
-  properties 
+  properties
     Data_Model::Integer_Range => 0 .. Max_Target_Integer;
   end Natural;
 
-  data Float 
+  data Float
   properties
     Data_Model::Data_Representation => Float;
   end Float;
 
-  data Float_32 extends Float 
-  properties 
-    Data_Model::IEEE754_Precision => Simple; 
-    Source_Data_Size => 4 Bytes; 
-  end Float_32; 
+  data Float_32 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Simple;
+    Source_Data_Size => 4 Bytes;
+  end Float_32;
 
-  data Float_64 extends Float 
-  properties 
-    Data_Model::IEEE754_Precision => Double; 
-    Source_Data_Size => 8 Bytes; 
+  data Float_64 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Double;
+    Source_Data_Size => 8 Bytes;
   end Float_64;
 
   data Character
