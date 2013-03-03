@@ -979,6 +979,15 @@ package body Ocarina.Analyzer.AADL.Queries is
                     (Category_Of_Component =
                      Component_Category'Val (Component_Cat (List_Node)));
 
+                  --  if not, then we check that the kind of entity
+                  --  matches one particular meta-model element
+
+                  if not Can_Apply then
+                     Can_Apply := Kind (Entity) = K_Subcomponent
+                       and then Named_Element'Val (Category (List_Node))
+                       = PO_Subcomponent;
+                  end if;
+
                   --  XXX dubious, here we erase the previously
                   --  computed value of Can_Apply, to be investigated.
 
