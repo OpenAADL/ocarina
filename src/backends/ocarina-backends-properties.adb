@@ -2449,13 +2449,17 @@ package body Ocarina.Backends.Properties is
 
    function Get_Location (P : Node_Id) return Name_Id is
    begin
-      pragma Assert (AINU.Is_Processor (P) or else AINU.Is_Device (P));
-
-      if not Is_Defined_String_Property (P, Location) then
-         return No_Name;
+      if AINU.Is_Processor (P) or else AINU.Is_Device (P) then
+         if not Is_Defined_String_Property (P, Location) then
+            return No_Name;
+         else
+            return Get_String_Property (P, Location);
+         end if;
+      elsif AINU.Is_Virtual_Processor (P) then
+         return Get_Location (Parent_Component (Parent_Subcomponent (P)));
+      else
+         raise Program_Error;
       end if;
-
-      return Get_String_Property (P, Location);
    end Get_Location;
 
    ---------------------------
