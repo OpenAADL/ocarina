@@ -156,6 +156,7 @@ package body Ocarina.Analyzer.AADL.Names is
                      Alias := Full_Identifier (Reference (List_Node));
 
                   elsif Present (Package_Name (List_Node)) then
+
                      --  Alias references a package
                      Alias := Build_Package_Identifier
                        (Package_Name (List_Node));
@@ -200,9 +201,21 @@ package body Ocarina.Analyzer.AADL.Names is
                              (Corresponding_Entity (Alias)));
                      end if;
 
+                     if Present (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                                   (List_Node))
+                     then
+                        Success := Enter_Name_In_Scope
+                          (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                             (List_Node));
+                     end if;
+
                      if No (In_Node) then
                         Success := False;
                         Display_Analyzer_Error (Alias, "is not visible");
+
+                     else
+                        Set_Renamed_Entity (List_Node, In_Node);
+
                      end if;
                   end if;
                end;

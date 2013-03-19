@@ -813,7 +813,7 @@ package body Ocarina.Analyzer.AADL.Finder is
         (Root,
          Package_Identifier,
          Component_Identifier,
-         (K_Component_Type, K_Component_Implementation));
+         (K_Component_Type, K_Component_Implementation, K_Alias_Declaration));
    end Find_Component_Classifier;
 
    ---------------------

@@ -242,8 +242,11 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
     octet Category;         // component category
     octet Entity_Category;  // entities category
 
-    Node_Id Package_Name;  // package name
-    Node_Id Reference;
+
+    Node_Id Package_Name;  // name of the package (import)
+    Node_Id Reference;     // entity (renames)
+    Node_Id Renamed_Entity; // in case of renames, referenced entity
+
     Node_Id Parent;
   };
 
