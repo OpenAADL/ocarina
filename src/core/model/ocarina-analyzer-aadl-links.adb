@@ -3226,8 +3226,9 @@ package body Ocarina.Analyzer.AADL.Links is
                  Message2 => ", which is not a component ");
             Success := False;
 
-         elsif Is_Refinement (Node) and then
-           Category (Node) = Component_Category'Pos (CC_Abstract)
+         elsif Is_Refinement (Node)
+           and then Category (Node) = Component_Category'Pos (CC_Abstract)
+           and then Category (Pointed_Node) /= Category (Node)
          then
             DAE (Node1    => Node,
                  Message1 => " cannot be refined into an abstract");
