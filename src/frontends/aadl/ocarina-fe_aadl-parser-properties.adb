@@ -1250,6 +1250,8 @@ package body Ocarina.FE_AADL.Parser.Properties is
       end if;
 
       loop
+         exit when Token = T_End;
+
          if Token /= T_Identifier then
             DPE (PC_Property_Declaration, T_Identifier);
             Skip_Tokens ((T_End, T_Semicolon));
