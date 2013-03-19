@@ -483,7 +483,10 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                                             := Next_Node (List_Node_3);
                                        end loop;
                                     else
-                                       if Name (Identifier (List_Node_2))
+
+                                       if Present (Identifier (List_Node_2))
+                                         and then
+                                         Name (Identifier (List_Node_2))
                                          = Name_Of_Identifier
                                        then
                                           First_Node := List_Node_2;
