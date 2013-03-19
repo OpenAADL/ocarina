@@ -570,12 +570,6 @@ package body Ocarina.Analyzer.AADL.Links is
       --  According to the AADL syntax, the component type must be in
       --  the same namespace as the implementations.
 
-      if Present (Pointed_Node)
-        and then Kind (Pointed_Node) = K_Alias_Declaration
-      then
-         Pointed_Node := Renamed_Entity (Pointed_Node);
-      end if;
-
       if No (Pointed_Node) then
          DAE (Node1    => Node,
               Message1 => " implements a component type that does not exist");
