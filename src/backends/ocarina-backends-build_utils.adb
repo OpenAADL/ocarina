@@ -1434,6 +1434,13 @@ package body Ocarina.Backends.Build_Utils is
               (ASCII.HT
                  & "set -e; for d in $(SUBDIRS); do $(MAKE) -C $$d ; done");
 
+            Write_Line ("clean:");
+            Write_Line
+              (ASCII.HT
+                 &
+                 " set -e; for d in $(SUBDIRS); do $(MAKE) clean -C $$d ; done"
+              );
+
             --  Close the file
 
             Close (Fd);
