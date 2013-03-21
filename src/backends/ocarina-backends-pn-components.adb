@@ -1261,6 +1261,11 @@ package body Ocarina.Backends.PN.Components is
         (PN_Subcomponents
          (PN_Box (PN_Generated)));
 
+      if No (Thread_Iter) then
+         Display_Error ("Petri Net backend : "
+                          & "incomplete AADL model", True);
+      end if;
+
       declare
          Init_Node : constant Node_Id
            := OPN.First_Node (Internal_Transitions (Thread_Iter));
