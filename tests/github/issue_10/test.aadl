@@ -1,0 +1,53 @@
+package vehicle
+    public
+
+    data on_off
+    end on_off;
+
+    process control
+    features
+        command_data: out data port on_off;
+        engage: out data port on_off;
+        disengage: out data port on_off;
+    end control;
+
+    process implementation control.standard
+    end control.standard;
+
+    ------------------------------------------------------------------------------------------
+
+    feature group vehicle_cmd_in
+    features
+        speed_command: out data port on_off;
+        position_command: out data port on_off;
+        airbag_command: out data port on_off;
+        direction_command: out data port on_off;
+    end vehicle_cmd_in;
+
+    system vehicle
+    features
+        vehicle_cmd_input: feature group vehicle_cmd_in;
+    end vehicle;
+
+    system implementation vehicle.standard
+    subcomponents
+        speed_controller: process control.standard;
+        position_controller: process control.standard;
+        airbag_controller: process control.standard;
+        direction_controller: process control.standard;
+    connections
+        event_distribution1: port vehicle_cmd_input.speed_command -> speed_controller.command_data;
+        event_distribution2: port vehicle_cmd_input.position_command -> position_controller.command_data;
+        event_distribution3: port vehicle_cmd_input.airbag_command -> airbag_controller.command_data;
+        event_distribution4: port vehicle_cmd_input.direction_command -> direction_controller.command_data;
+    end vehicle.standard;
+
+    system root
+    end root;
+
+    system implementation root.impl
+    subcomponents
+        vehicle: system vehicle.standard;
+    end root.impl;
+
+end vehicle;
