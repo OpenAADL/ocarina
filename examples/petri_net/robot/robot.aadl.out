@@ -1,61 +1,23 @@
+robot.aadl:178:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
+robot.aadl:178:05: Warning: The value of actual_processor_binding has been converted into a list.
+robot.aadl:179:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
+robot.aadl:179:05: Warning: The value of actual_processor_binding has been converted into a list.
+robot.aadl:181:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
+robot.aadl:181:05: Warning: The value of actual_processor_binding has been converted into a list.
+robot.aadl:183:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
+robot.aadl:183:05: Warning: The value of actual_processor_binding has been converted into a list.
+robot.aadl:184:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
+robot.aadl:184:05: Warning: The value of actual_processor_binding has been converted into a list.
 ------------------------------------------
 ------ Ocarina Petri Nets Generator ------
 ------------------------------------------
  
-robot.aadl:165:03: warning: CPU1 references a component type
+robot.aadl:170:05: warning: CPU1 references a component type
 ocarina: Total: 0 error and 1 warning
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~ Timed Petri Nets ~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 net AADL_TO_TPN_GENERATED
-pr proc_controle_th_ctrl_gauche_Preemp1 > proc_servomoteur_gauche_th_servomoteur_Preemp1
-pr proc_controle_th_ctrl_gauche_Preemp1 > proc_servomoteur_gauche_th_servomoteur_Begin
-pr proc_controle_th_ctrl_gauche_Preemp1 > proc_servomoteur_droit_th_servomoteur_Preemp1
-pr proc_controle_th_ctrl_gauche_Preemp1 > proc_servomoteur_droit_th_servomoteur_Begin
-pr proc_controle_th_ctrl_gauche_Preemp1 > proc_capteur_gauche_th_c_Preemp1
-pr proc_controle_th_ctrl_gauche_Preemp1 > proc_capteur_gauche_th_c_Begin
-pr proc_controle_th_ctrl_gauche_Preemp1 > proc_capteur_droit_th_c_Preemp1
-pr proc_controle_th_ctrl_gauche_Preemp1 > proc_capteur_droit_th_c_Begin
-pr proc_controle_th_ctrl_gauche_Begin > proc_servomoteur_gauche_th_servomoteur_Preemp1
-pr proc_controle_th_ctrl_gauche_Begin > proc_servomoteur_gauche_th_servomoteur_Begin
-pr proc_controle_th_ctrl_gauche_Begin > proc_servomoteur_droit_th_servomoteur_Preemp1
-pr proc_controle_th_ctrl_gauche_Begin > proc_servomoteur_droit_th_servomoteur_Begin
-pr proc_controle_th_ctrl_gauche_Begin > proc_capteur_gauche_th_c_Preemp1
-pr proc_controle_th_ctrl_gauche_Begin > proc_capteur_gauche_th_c_Begin
-pr proc_controle_th_ctrl_gauche_Begin > proc_capteur_droit_th_c_Preemp1
-pr proc_controle_th_ctrl_gauche_Begin > proc_capteur_droit_th_c_Begin
-pr proc_controle_th_ctrl_droit_Preemp1 > proc_servomoteur_gauche_th_servomoteur_Preemp1
-pr proc_controle_th_ctrl_droit_Preemp1 > proc_servomoteur_gauche_th_servomoteur_Begin
-pr proc_controle_th_ctrl_droit_Preemp1 > proc_servomoteur_droit_th_servomoteur_Preemp1
-pr proc_controle_th_ctrl_droit_Preemp1 > proc_servomoteur_droit_th_servomoteur_Begin
-pr proc_controle_th_ctrl_droit_Preemp1 > proc_capteur_gauche_th_c_Preemp1
-pr proc_controle_th_ctrl_droit_Preemp1 > proc_capteur_gauche_th_c_Begin
-pr proc_controle_th_ctrl_droit_Preemp1 > proc_capteur_droit_th_c_Preemp1
-pr proc_controle_th_ctrl_droit_Preemp1 > proc_capteur_droit_th_c_Begin
-pr proc_controle_th_ctrl_droit_Begin > proc_servomoteur_gauche_th_servomoteur_Preemp1
-pr proc_controle_th_ctrl_droit_Begin > proc_servomoteur_gauche_th_servomoteur_Begin
-pr proc_controle_th_ctrl_droit_Begin > proc_servomoteur_droit_th_servomoteur_Preemp1
-pr proc_controle_th_ctrl_droit_Begin > proc_servomoteur_droit_th_servomoteur_Begin
-pr proc_controle_th_ctrl_droit_Begin > proc_capteur_gauche_th_c_Preemp1
-pr proc_controle_th_ctrl_droit_Begin > proc_capteur_gauche_th_c_Begin
-pr proc_controle_th_ctrl_droit_Begin > proc_capteur_droit_th_c_Preemp1
-pr proc_controle_th_ctrl_droit_Begin > proc_capteur_droit_th_c_Begin
-pr proc_servomoteur_gauche_th_servomoteur_Preemp1 > proc_capteur_gauche_th_c_Preemp1
-pr proc_servomoteur_gauche_th_servomoteur_Preemp1 > proc_capteur_gauche_th_c_Begin
-pr proc_servomoteur_gauche_th_servomoteur_Preemp1 > proc_capteur_droit_th_c_Preemp1
-pr proc_servomoteur_gauche_th_servomoteur_Preemp1 > proc_capteur_droit_th_c_Begin
-pr proc_servomoteur_gauche_th_servomoteur_Begin > proc_capteur_gauche_th_c_Preemp1
-pr proc_servomoteur_gauche_th_servomoteur_Begin > proc_capteur_gauche_th_c_Begin
-pr proc_servomoteur_gauche_th_servomoteur_Begin > proc_capteur_droit_th_c_Preemp1
-pr proc_servomoteur_gauche_th_servomoteur_Begin > proc_capteur_droit_th_c_Begin
-pr proc_servomoteur_droit_th_servomoteur_Preemp1 > proc_capteur_gauche_th_c_Preemp1
-pr proc_servomoteur_droit_th_servomoteur_Preemp1 > proc_capteur_gauche_th_c_Begin
-pr proc_servomoteur_droit_th_servomoteur_Preemp1 > proc_capteur_droit_th_c_Preemp1
-pr proc_servomoteur_droit_th_servomoteur_Preemp1 > proc_capteur_droit_th_c_Begin
-pr proc_servomoteur_droit_th_servomoteur_Begin > proc_capteur_gauche_th_c_Preemp1
-pr proc_servomoteur_droit_th_servomoteur_Begin > proc_capteur_gauche_th_c_Begin
-pr proc_servomoteur_droit_th_servomoteur_Begin > proc_capteur_droit_th_c_Preemp1
-pr proc_servomoteur_droit_th_servomoteur_Begin > proc_capteur_droit_th_c_Begin
 tr proc_capteur_droit_th_c_Init_Dispatch [0,w[ proc_capteur_droit_th_c_Halted proc_capteur_gauche_th_c_Halted proc_controle_th_ctrl_droit_Halted proc_controle_th_ctrl_gauche_Halted proc_servomoteur_droit_th_servomoteur_Halted proc_servomoteur_gauche_th_servomoteur_Halted -> proc_capteur_droit_th_c_Wait_For_Dispatch proc_capteur_gauche_th_c_Wait_For_Dispatch proc_controle_th_ctrl_droit_Wait_For_Dispatch proc_controle_th_ctrl_gauche_Wait_For_Dispatch proc_servomoteur_droit_th_servomoteur_Wait_For_Dispatch proc_servomoteur_gauche_th_servomoteur_Wait_For_Dispatch 
 tr proc_capteur_droit_th_c_Period_Event [110,110] proc_capteur_droit_th_c_Hyperperiod -> proc_capteur_droit_th_c_Clock 
 pl proc_capteur_droit_th_c_Halted (1)
@@ -144,7 +106,7 @@ pl proc_capteur_droit_th_c_evenement_Bus (0)
 pl proc_capteur_gauche_th_c_evenement_Bus (0)
 pl proc_controle_th_ctrl_droit_comm_servo_Bus (0)
 pl proc_controle_th_ctrl_gauche_comm_servo_Bus (0)
-robot.aadl:165:03: warning: CPU1 references a component type
+robot.aadl:170:05: warning: CPU1 references a component type
 ocarina: Total: 0 error and 1 warning
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~ Colored Petri Nets ~~~~~~~~~~~
@@ -156,34 +118,34 @@ CM(11:declaration,1,3,1,19:Msg_Types is [msg];)
 CM(11:declaration,1,4,1,6:Domain)
 CM(11:declaration,1,5,1,32:mess is <Threads_Ids,Msg_Types>;)
 CM(11:declaration,1,6,1,3:Var)
-CM(11:declaration,1,7,1,57: x, y, x580, x641, x714, x773, x884, x946 in Threads_Ids;)
+CM(11:declaration,1,7,1,57: x, y, x584, x646, x720, x780, x892, x954 in Threads_Ids;)
 CM(11:declaration,1,8,1,16: m in Msg_Types;)
 CN(10:transition,1123)
 CT(4:name,1123,37:proc_capteur_droit_th_c_Init_Dispatch)
 CA(3:arc,1128,1115,1123)
-CT(9:valuation,1128,6:<x580>)
+CT(9:valuation,1128,6:<x584>)
 CA(3:arc,2597,1294,1123)
-CT(9:valuation,2597,6:<x641>)
+CT(9:valuation,2597,6:<x646>)
 CA(3:arc,2607,1473,1123)
-CT(9:valuation,2607,6:<x714>)
+CT(9:valuation,2607,6:<x720>)
 CA(3:arc,2637,1751,1123)
-CT(9:valuation,2637,6:<x773>)
+CT(9:valuation,2637,6:<x780>)
 CA(3:arc,2667,2029,1123)
-CT(9:valuation,2667,6:<x884>)
+CT(9:valuation,2667,6:<x892>)
 CA(3:arc,2697,2259,1123)
-CT(9:valuation,2697,6:<x946>)
+CT(9:valuation,2697,6:<x954>)
 CA(3:arc,1133,1123,1119)
-CT(9:valuation,1133,6:<x580>)
+CT(9:valuation,1133,6:<x584>)
 CA(3:arc,2602,1123,1298)
-CT(9:valuation,2602,6:<x641>)
+CT(9:valuation,2602,6:<x646>)
 CA(3:arc,2612,1123,1477)
-CT(9:valuation,2612,6:<x714>)
+CT(9:valuation,2612,6:<x720>)
 CA(3:arc,2642,1123,1755)
-CT(9:valuation,2642,6:<x773>)
+CT(9:valuation,2642,6:<x780>)
 CA(3:arc,2672,1123,2033)
-CT(9:valuation,2672,6:<x884>)
+CT(9:valuation,2672,6:<x892>)
 CA(3:arc,2702,1123,2263)
-CT(9:valuation,2702,6:<x946>)
+CT(9:valuation,2702,6:<x954>)
 CN(5:place,1115)
 CT(4:name,1115,30:proc_capteur_droit_th_c_Halted)
 CT(6:domain,1115,11:Threads_Ids)
