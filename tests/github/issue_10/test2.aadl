@@ -1,0 +1,92 @@
+package vehicle
+public
+
+data on_off
+end on_off;
+
+------------------------------------------------------------------------------------------
+
+subprogram vehicle_subprogram
+    features
+        input: in parameter on_off;
+        output: out parameter on_off;
+end vehicle_subprogram;
+
+subprogram implementation vehicle_subprogram.impl
+    properties
+        Compute_Execution_Time => 1 Us .. 1 Us;
+end vehicle_subprogram.impl;
+
+------------------------------------------------------------------------------------------
+
+thread computation
+    features
+        input: in event data port on_off;
+        output: out event data port on_off;
+end computation;
+
+thread implementation computation.standard
+    calls
+        Main: {
+            computation: subprogram vehicle_subprogram.impl;
+        };
+    connections
+        parameter input -> computation.input;
+        parameter computation.output -> output;
+    properties
+        Dispatch_Protocol  => Periodic;
+        Period             => 10 Ms;
+        Compute_Execution_Time => 1 Us .. 1 Us;
+end computation.standard;
+
+------------------------------------------------------------------------------------------
+
+process control
+    features
+        command_data: out event data port on_off;
+        engage: out event data port on_off;
+        disengage: out event data port on_off;
+end control;
+
+process implementation control.standard
+    subcomponents
+        computation: thread computation.standard;
+end control.standard;
+
+------------------------------------------------------------------------------------------
+
+feature group vehicle_cmd_out
+    features
+        speed_command: in data port on_off;
+        position_command: in data port on_off;
+        airbag_command: in data port on_off;
+        direction_command: in data port on_off;
+end vehicle_cmd_out;
+
+system vehicle
+    features
+        vehicle_cmd_input: feature group vehicle_cmd_out;
+end vehicle;
+
+system implementation vehicle.standard
+    subcomponents
+        speed_controller: process control.standard;
+        position_controller: process control.standard;
+        airbag_controller: process control.standard;
+        direction_controller: process control.standard;
+    connections
+        event_distribution1: port vehicle_cmd_input.speed_command -> speed_controller.command_data;
+        event_distribution2: port vehicle_cmd_input.position_command -> position_controller.command_data;
+        event_distribution3: port vehicle_cmd_input.airbag_command -> airbag_controller.command_data;
+        event_distribution4: port vehicle_cmd_input.direction_command -> direction_controller.command_data;
+end vehicle.standard;
+
+system root
+end root;
+
+system implementation root.impl
+    subcomponents
+        vehicle: system vehicle.standard;
+end root.impl;
+
+end vehicle;
