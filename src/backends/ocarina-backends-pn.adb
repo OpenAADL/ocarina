@@ -31,6 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with GNAT.OS_Lib; use GNAT.OS_Lib;
+
 with Namet;
 
 with Ocarina.Backends.Expander;
@@ -69,18 +71,9 @@ package body Ocarina.Backends.PN is
    -------------------
 
    procedure Generate_TINA (AADL_Root : Types.Node_Id) is
-      Pn_Generated, Instance_Root : Node_Id;
-      pragma Warnings (Off, Pn_Generated);
+      PN_Generated, Instance_Root : Node_Id;
 
    begin
-      Write_Line ("------------------------------------------");
-      Write_Line ("------ Ocarina Petri Nets Generator ------");
-      Write_Line ("------------------------------------------");
-      Write_Line (" ");
-
-      -----------
-      --  work for TPN generation
-
       --  Instantiate the AADL tree
 
       Instance_Root := Instantiate_Model (AADL_Root);
@@ -89,20 +82,19 @@ package body Ocarina.Backends.PN is
 
       Expand (Instance_Root);
 
-      if Instance_Root /= No_Node then
-         Pn_Generated := Process_Architecture_Instance (Instance_Root, 1);
-      else
-         Pn_Generated := No_Node;
-      end if;
+      if Present (Instance_Root) then
+         --  Generate Petri Net
 
-      if Pn_Generated /= No_Node then
+         PN_Generated := Process_Architecture_Instance (Instance_Root, 1);
+
+         --  Set TINA printers
          Set_Printers (OPFT.Print_Place'Access,
                        OPFT.Print_Trans'Access,
                        OPFT.Print_Formalism_Information'Access);
-         Write_Line ("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-         Write_Line ("~~~~~~~~~~~ Timed Petri Nets ~~~~~~~~~~~");
-         Write_Line ("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-         Print_Pn_Generated (Pn_Generated);
+
+         Set_Output (Create_File ("model.nd", Binary));
+         Print_PN_Generated (PN_Generated);
+         Set_Standard_Error;
       end if;
    end Generate_TINA;
 
@@ -111,13 +103,9 @@ package body Ocarina.Backends.PN is
    -------------------
 
    procedure Generate_CAMI (AADL_Root : Types.Node_Id) is
-      Pn_Generated, Instance_Root : Node_Id;
-      pragma Warnings (Off, Pn_Generated);
+      PN_Generated, Instance_Root : Node_Id;
 
    begin
-      -----------
-      --  work for CPN generation
-
       --  Instantiate the AADL tree
 
       Instance_Root := Instantiate_Model (AADL_Root);
@@ -127,19 +115,13 @@ package body Ocarina.Backends.PN is
       Expand (Instance_Root);
 
       if Instance_Root /= No_Node then
-         Pn_Generated := Process_Architecture_Instance (Instance_Root, 0);
-      else
-         Pn_Generated := No_Node;
-      end if;
-
-      if Pn_Generated /= No_Node then
+         PN_Generated := Process_Architecture_Instance (Instance_Root, 0);
          Set_Printers (OPFC.Print_Place'Access,
                        OPFC.Print_Trans'Access,
                        OPFC.Print_Formalism_Information'Access);
-         Write_Line ("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-         Write_Line ("~~~~~~~~~~~ Colored Petri Nets ~~~~~~~~~~~");
-         Write_Line ("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-         Print_Pn_Generated (Pn_Generated);
+         Set_Output (Create_File ("model.cami", Binary));
+         Print_PN_Generated (PN_Generated);
+         Set_Standard_Error;
       end if;
    end Generate_CAMI;
 
