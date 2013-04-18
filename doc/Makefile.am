@@ -71,7 +71,9 @@ EXTRA_DIST=\
 info_TEXINFOS = ocarina.texi
 ocarina_TEXINFOS=$(GUIDE_TEXIFILES)
 
-all-local: $(GUIDE).html $(GUIDE).pdf
+man_MANS = ocarina-config.1 ocarina.1
+
+all-local: $(GUIDE).html $(GUIDE).pdf ocarina-config.1
 
 $(GUIDE).html: $(IMAGES) $(GUIDE_TEXIFILES)
 	$(MAKEINFO) --css-include=$(srcdir)/ocarina.css --html $(srcdir)/$(GUIDE).texi -o $(GUIDE).html
@@ -138,6 +140,9 @@ install-data-local: all
 	fi
 	$(INSTALL_DATA)	$(srcdir)/CONTRIBUTING $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_DATA)	$(srcdir)/PROBLEM-REPORT-FORM $(DESTDIR)$(datadir)/doc/ocarina
+	$(INSTALL_DATA)	$(builddir)/ocarina-config.html $(DESTDIR)$(datadir)/doc/ocarina
+	$(INSTALL_DATA)	$(builddir)/ocarina_man.html $(DESTDIR)$(datadir)/doc/ocarina
+	$(INSTALL_DATA)	$(srcdir)/ocarina.css $(DESTDIR)$(datadir)/doc/ocarina
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(datadir)/doc/ocarina
@@ -173,3 +178,17 @@ sed-stamp: $(top_srcdir)/tools/gensedfile $(KW_FILES)
 	  $(SHELL) $(top_srcdir)/tools/gensedfile $$f; \
 	done
 	touch sed-stamp
+
+###############################################################################
+# Building manpages
+
+ocarina-config.1: $(top_srcdir)/ocarina-config.in
+	chmod 755 $(top_builddir)/ocarina-config
+	help2man --no-discard-stderr $(top_builddir)/ocarina-config >  $(top_builddir)/doc/ocarina-config.1
+	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_builddir)/doc/ocarina-config.1
+	groff -man -Thtml $(top_builddir)/doc/ocarina-config.1 > $(top_builddir)/doc/ocarina-config.html
+
+ocarina.1:
+	-help2man --no-discard-stderr --help-option="-help" --version-option="-V" $(top_srcdir)/src/main/ocarina >  $(top_builddir)/doc/ocarina.1
+	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_builddir)/doc/ocarina.1
+	groff -man -Thtml $(top_builddir)/doc/ocarina.1 > $(top_builddir)/doc/ocarina_man.html
