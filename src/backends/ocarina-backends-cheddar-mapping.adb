@@ -305,17 +305,31 @@ package body Ocarina.Backends.Cheddar.Mapping is
                   then
                      M := Make_XML_Node ("resource_user");
                      K := Make_Defining_Identifier
-                       (To_XML_Name
-                          (Display_Name
-                             (Identifier
-                                (Item
-                                   (AIN.First_Node
-                                      (Path (Destination (Connection))))))));
+                       (Fully_Qualified_Instance_Name
+                          (Corresponding_Instance
+                             (Item
+                                (AIN.First_Node
+                                   (Path (Destination (Connection)))))));
                      Append_Node_To_List (K, XTN.Subitems (M));
-                     K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
+
+                     --  For now, we assume all tasks take the
+                     --  resource at the beginning, and release it at
+                     --  the end of their dispatch.
+
+                     K := Make_Literal (XV.New_Numeric_Value (0, 1, 10));
                      Append_Node_To_List (K, XTN.Subitems (M));
-                     K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
+                     K := Make_Literal
+                       (XV.New_Numeric_Value
+                          (To_Milliseconds
+                             (Get_Execution_Time
+                                (Corresponding_Instance
+                                   (Item
+                                      (AIN.First_Node
+                                         (Path (Destination (Connection))))))
+                                (1)),
+                           1, 10));
                      Append_Node_To_List (K, XTN.Subitems (M));
+
                      Append_Node_To_List (M, XTN.Subitems (P));
                   end if;
                end if;
@@ -593,8 +607,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
               (Make_Defining_Identifier (Get_String_Name ("buffer_role")),
                Make_Defining_Identifier (Get_String_Name ("consumer"))),
             XTN.Items (M));
-         K := Make_Defining_Identifier
-           (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
+         K := Make_Defining_Identifier (Fully_Qualified_Instance_Name (E));
          Append_Node_To_List (K, XTN.Subitems (M));
          K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
          Append_Node_To_List (K, XTN.Subitems (M));
