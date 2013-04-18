@@ -42,6 +42,7 @@ with Types;     use Types;
 with Utils;     use Utils;
 
 with Ada.Command_Line; use Ada.Command_Line;
+with Ada.Command_Line.Response_File;
 with Ada.Unchecked_Deallocation;
 with Ada.Exceptions;   use Ada.Exceptions;
 with Ada.IO_Exceptions;
@@ -1046,6 +1047,7 @@ procedure Ocarina_Cmd is
                         & "r: real_lib: real_theorem: boundt_process: "
                         & "disable-annexes=: "
                         & "i p q v V s x t?") is
+
             when 'a' =>
                if Full_Switch = "aadlv2" then
                   AADL_Version := AADL_V2;
@@ -1166,6 +1168,21 @@ procedure Ocarina_Cmd is
 
                   if S (S'First) = '-' then
                      Sources.Init;
+
+                  elsif S (S'First) = '@' then
+                     declare
+                        Files : constant
+                          Ada.Command_Line.Response_File.Argument_List :=
+                          Ada.Command_Line.Response_File.Arguments_From
+                          (S (S'First + 1 .. S'Last));
+                     begin
+                        for J in Files'Range loop
+                           Set_Str_To_Name_Buffer (Files (J).all);
+                           Ocarina.Files.Add_File_To_Parse_List
+                             (Name_Find, Add_Suffix => False);
+                        end loop;
+                        --  Free (Files);
+                     end;
 
                   else
                      Set_Str_To_Name_Buffer (S);
