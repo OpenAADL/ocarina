@@ -16,3 +16,4 @@ resources/runtime/polyorb-hi-c
 support/mdate-sh
 support/texinfo.tex
 tools/compare.py
+log.*
