@@ -73,7 +73,7 @@ ocarina_TEXINFOS=$(GUIDE_TEXIFILES)
 
 man_MANS = ocarina-config.1 ocarina.1
 
-all-local: $(GUIDE).html $(GUIDE).pdf ocarina-config.1
+all-local: $(GUIDE).html $(GUIDE).pdf
 
 $(GUIDE).html: $(IMAGES) $(GUIDE_TEXIFILES)
 	$(MAKEINFO) --css-include=$(srcdir)/ocarina.css --html $(srcdir)/$(GUIDE).texi -o $(GUIDE).html
@@ -182,13 +182,12 @@ sed-stamp: $(top_srcdir)/tools/gensedfile $(KW_FILES)
 ###############################################################################
 # Building manpages
 
-ocarina-config.1: $(top_srcdir)/ocarina-config.in
+
+build_man: $(top_srcdir)/ocarina-config.in
 	chmod 755 $(top_builddir)/ocarina-config
 	help2man --no-discard-stderr $(top_builddir)/ocarina-config >  $(top_builddir)/doc/ocarina-config.1
 	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_builddir)/doc/ocarina-config.1
 	groff -man -Thtml $(top_builddir)/doc/ocarina-config.1 > $(top_builddir)/doc/ocarina-config.html
-
-ocarina.1:
 	-help2man --no-discard-stderr --help-option="-help" --version-option="-V" $(top_srcdir)/src/main/ocarina >  $(top_builddir)/doc/ocarina.1
 	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_builddir)/doc/ocarina.1
 	groff -man -Thtml $(top_builddir)/doc/ocarina.1 > $(top_builddir)/doc/ocarina_man.html
