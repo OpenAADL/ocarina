@@ -26,6 +26,8 @@ data)
   Dimension : list of aadlinteger
     applies to (data);
 
+  Indefinite_Dimension : constant aadlinteger => -1;
+  Infinite_Dimension : constant aadlinteger => -2;
   Element_Names : list of aadlstring
     applies to (data);
 
