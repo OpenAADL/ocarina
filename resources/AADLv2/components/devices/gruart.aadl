@@ -106,7 +106,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRUART.Initialize";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Initialize;
 
    -------------
@@ -119,7 +119,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRUART.Receive";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Receive;
 
    -------------
@@ -132,7 +132,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRUART.Send";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Send;
 
 end GRUART;

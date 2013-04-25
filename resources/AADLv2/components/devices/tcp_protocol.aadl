@@ -102,7 +102,7 @@ public
 
    properties
       Source_Name => "POlyORB_HI_Drivers_Native_TCP_IP.Initialize";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Initialize;
 
    -------------
@@ -113,7 +113,7 @@ public
 
    properties
       Source_Name => "POlyORB_HI_Drivers_Native_TCP_IP.Initialize_Receiver";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Initialize_Receiver;
 
    -------------
@@ -126,7 +126,7 @@ public
 
    properties
       Source_Name => "POlyORB_HI_Drivers_Native_TCP_IP.Receive";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Receive;
 
    -------------
@@ -139,7 +139,7 @@ public
 
    properties
       Source_Name => "POlyORB_HI_Drivers_Native_TCP_IP.Send";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Send;
 
 end TCP_IP_Protocol;

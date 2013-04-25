@@ -7,19 +7,19 @@ with Deployment;
 
 subprogram spg_spacewire_poller_rasta
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_spacewire_rasta_poller";
 end spg_spacewire_poller_rasta;
 
 subprogram spg_spacewire_sender_rasta
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_spacewire_rasta_sender";
 end spg_spacewire_sender_rasta;
 
 subprogram spg_spacewire_init_rasta
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_spacewire_rasta_init";
 end spg_spacewire_init_rasta;
 

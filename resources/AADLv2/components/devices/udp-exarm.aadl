@@ -72,13 +72,13 @@ end protocol.vr;
 
 subprogram init
 properties
-   Source_Language   => C;
+   Source_Language   => (C);
    Source_Name       => "__po_hi_driver_exarm_init";
 end init;
 
 subprogram spg_sender
 properties
-   Source_Language   => C;
+   Source_Language   => (C);
    Source_Name       => "__po_hi_driver_exarm_send";
 end spg_sender;
 
