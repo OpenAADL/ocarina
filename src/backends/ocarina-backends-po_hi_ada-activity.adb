@@ -3536,7 +3536,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          declare
             procedure Implement_Subprogram
               (Spec : Node_Id;
-               RR   : Runtime_Routine);
+               RR   : Runtime_Routine;
+               Add_Error_Management : Boolean := False);
             --  Generate a subprogram implementation from the given
             --  interrogation routine spec. The new subprogram uses
             --  the value of the first parameter in order to invoke
@@ -3556,43 +3557,99 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
             procedure Implement_Subprogram
               (Spec : Node_Id;
-               RR   : Runtime_Routine)
+               RR   : Runtime_Routine;
+               Add_Error_Management : Boolean := False)
             is
                Alternatives : constant List_Id := New_List (ADN.K_List_Id);
+               Declarations : constant List_Id := New_List
+                 (ADN.K_Declaration_List);
                Statements   : constant List_Id := New_List
                  (ADN.K_Statement_List);
                N            : Node_Id;
+               Else_Statements : constant List_Id := New_List (ADN.K_List_Id);
+               Elsif_Statements : constant List_Id := New_List (ADN.K_List_Id);
+
+               Pragma_Warnings_Off_Value : Value_Id;
+
             begin
                --  Initialize the list associated to the current
                --  thread component.
 
                Set_List (E, RR, Alternatives);
 
-               --  Raise an error if thread instance not corresponding
-               --  to the current component are given
+               N := Make_Used_Package
+                 (RU (RU_PolyORB_HI_Generated_Deployment));
+               Append_Node_To_List (N, Declarations);
 
-               N := Make_Case_Statement_Alternative
-                 (No_List,
-                  Make_List_Id
-                  (Make_Raise_Statement
-                   (Make_Designator
-                    (EN (E_Program_Error)))));
-               Append_Node_To_List (N, Alternatives);
+               --  Build a string literal for the pragma Warnings On|Off:
+               --
+               --  if there is no error management, and the
+               --  current subprogram is a function, we need to shut
+               --  down the warning on missing return: by construction
+               --  of the source code, there cannot be situation in
+               --  which we exit without entering one of the if
+               --  statemetns.
+
+               Set_Str_To_Name_Buffer ("*return*");
+               Pragma_Warnings_Off_Value := New_String_Value (Name_Find);
+
+               if (not Add_Error_Management)
+                 and then Present (ADN.Return_Type (Spec))
+               then
+                  N := Make_Pragma_Statement
+                    (Pragma_Warnings,
+                     Make_List_Id
+                       (RE (RE_Off),
+                        Make_Literal (Pragma_Warnings_Off_Value)));
+                  Append_Node_To_List (N, Statements);
+               end if;
+
+               if Add_Error_Management then
+                  N := Make_Qualified_Expression
+                    (RE (RE_Error_Kind),
+                     Make_Record_Aggregate
+                       (Make_List_Id
+                          (RE (RE_Error_Transport))));
+                  N := Make_Return_Statement (N);
+                  Append_Node_To_List (N, Else_Statements);
+               end if;
 
                --  Add the alternative of the current instance
 
                Add_Alternative (Spec, RR);
 
-               --  Make the case statement
+               --  Make the if statement: to avoid a useless if
+               --  statement, we take the head of the Alternatives as
+               --  first statement, and the tail for the elsif part.
 
-               N := Make_Case_Statement
-                 (Make_Defining_Identifier (PN (P_Entity)),
-                  Alternatives);
+               ADN.Set_First_Node (Elsif_Statements,
+                                   ADN.Next_Node
+                                     (ADN.First_Node (Alternatives)));
+
+               N := Make_If_Statement
+                 (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
+                  Then_Statements => ADN.Then_Statements
+                    (ADN.First_Node (Alternatives)),
+                  Elsif_Statements => Elsif_Statements,
+                  Else_Statements => Else_statements);
+
                Append_Node_To_List (N, Statements);
+
+               if (not Add_Error_Management)
+                 and then Present (ADN.Return_Type (Spec))
+               then
+                  N := Make_Pragma_Statement
+                    (Pragma_Warnings,
+                     Make_List_Id
+                       (RE (RE_On),
+                        Make_Literal (Pragma_Warnings_Off_Value)));
+                  Append_Node_To_List (N, Statements);
+               end if;
 
                --  Make the subprogram implementation
 
-               N := Make_Subprogram_Implementation (Spec, No_List, Statements);
+               N := Make_Subprogram_Implementation
+                 (Spec, Declarations, Statements);
                Append_Node_To_List (N, Interrogation_Routine_List);
             end Implement_Subprogram;
 
@@ -3641,22 +3698,22 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
                --  Make the alternative
 
-               N := Make_Case_Statement_Alternative
-                 (Make_List_Id (Extract_Enumerator (E)),
+               N := Make_Elsif_Statement
+                 (Make_Expression
+                    (Make_Defining_Identifier (PN (P_Entity)),
+                     Op_Equal,
+                     Extract_Enumerator (E)),
                   Make_List_Id (N));
+               Append_Node_To_List (N, Alternatives);
 
-               --  We insert N before the 'when others' alternative in
-               --  order to get a correctly formed case statement.
-
-               Insert_Before_Node
-                 (N, ADN.Last_Node (Alternatives), Alternatives);
             end Add_Alternative;
          begin
             --  All the runtime routines below are also generated once
             --  per thread component.
 
             if Not_Handled then
-               Implement_Subprogram (Send_Output_Spec (E), RR_Send_Output);
+               Implement_Subprogram
+                 (Send_Output_Spec (E), RR_Send_Output, True);
                Implement_Subprogram (Put_Value_Spec (E), RR_Put_Value);
                Implement_Subprogram (Receive_Input_Spec (E), RR_Receive_Input);
                Implement_Subprogram (Get_Value_Spec (E), RR_Get_Value);

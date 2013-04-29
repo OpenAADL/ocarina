@@ -1127,6 +1127,10 @@ package body Ocarina.Backends.Ada_Tree.Generator is
    procedure Generate_Elsif_Statement (N : Node_Id) is
       D : Node_Id;
    begin
+      if No (First_Node (Then_Statements (N))) then
+         return;
+      end if;
+
       Write (Tok_Elsif);
       Write_Space;
       Generate (Condition (N));

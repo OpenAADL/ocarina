@@ -313,11 +313,14 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                              Make_Defining_Identifier (PN (P_Message))));
             Append_Node_To_List (N, Declarations);
 
-            N := Make_Raise_Statement
-              (Make_Defining_Identifier (EN (E_Program_Error)));
+            N := Make_Null_Statement;
             Append_Node_To_List (N, Statements);
          else
             --  Declarative part
+
+            N := Make_Used_Package
+              (RU (RU_PolyORB_HI_Generated_Deployment));
+            Append_Node_To_List (N, Declarations);
 
             N := Make_Object_Declaration
               (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
@@ -419,9 +422,11 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                   --  The case statement alternative
 
-                  N := Make_Case_Statement_Alternative
-                    (Make_List_Id
-                     (Extract_Enumerator (Corresponding_Instance (T))),
+                  N := Make_Elsif_Statement
+                    (Make_Expression
+                       (Make_Defining_Identifier (PN (P_Entity)),
+                        Op_Equal,
+                        Extract_Enumerator (Corresponding_Instance (T))),
                      Make_List_Id (N));
                   Append_Node_To_List (N, Alternatives);
                end if;
@@ -429,21 +434,22 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                T := Next_Node (T);
             end loop;
 
-            --  Raise an error if other threads are targeted.
+            declare
+               Elsif_Statements : constant List_Id := New_List (ADN.K_List_Id);
 
-            N := Make_Case_Statement_Alternative
-              (No_List,
-               Make_List_Id
-               (Make_Raise_Statement
-                (Make_Designator
-                 (EN (E_Program_Error)))));
-            Append_Node_To_List (N, Alternatives);
+            begin
+               ADN.Set_First_Node (Elsif_Statements,
+                                   ADN.Next_Node
+                                     (ADN.First_Node (Alternatives)));
 
-            --  The switch case statement
+               N := Make_If_Statement
+                 (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
+                  Then_Statements => ADN.Then_Statements
+                    (ADN.First_Node (Alternatives)),
+                  Elsif_Statements => Elsif_Statements);
 
-            N := Make_Case_Statement
-              (Make_Defining_Identifier (PN (P_Entity)), Alternatives);
-            Append_Node_To_List (N, Statements);
+               Append_Node_To_List (N, Statements);
+            end;
          end if;
 
          N := Make_Subprogram_Implementation (Spec, Declarations, Statements);
@@ -485,6 +491,10 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
          else
             --  Declarative part
+
+            N := Make_Used_Package
+              (RU (RU_PolyORB_HI_Generated_Deployment));
+            Append_Node_To_List (N, Declarations);
 
             N := Make_Object_Declaration
               (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
@@ -531,9 +541,11 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                   --  The case statement alternative
 
-                  N := Make_Case_Statement_Alternative
-                    (Make_List_Id
-                     (Extract_Enumerator (Corresponding_Instance (T))),
+                  N := Make_Elsif_Statement
+                    (Make_Expression
+                       (Make_Defining_Identifier (PN (P_From)),
+                        Op_Equal,
+                        Extract_Enumerator (Corresponding_Instance (T))),
                      Make_List_Id (N));
                   Append_Node_To_List (N, Alternatives);
                end if;
@@ -541,21 +553,32 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                T := Next_Node (T);
             end loop;
 
-            --  Raise an error if other threads are targeted.
+            declare
+               Elsif_Statements : constant List_Id := New_List (ADN.K_List_Id);
+               Else_Statements : constant List_Id := New_List (ADN.K_List_Id);
 
-            N := Make_Case_Statement_Alternative
-              (No_List,
-               Make_List_Id
-               (Make_Raise_Statement
-                (Make_Designator
-                 (EN (E_Program_Error)))));
-            Append_Node_To_List (N, Alternatives);
+            begin
+               N := Make_Qualified_Expression
+                 (RE (RE_Error_Kind),
+                  Make_Record_Aggregate
+                    (Make_List_Id
+                       (RE (RE_Error_Transport))));
+               N := Make_Return_Statement (N);
+               Append_Node_To_List (N, Else_Statements);
 
-            --  The switch case statement
+               ADN.Set_First_Node (Elsif_Statements,
+                                   ADN.Next_Node
+                                     (ADN.First_Node (Alternatives)));
 
-            N := Make_Case_Statement
-              (Make_Defining_Identifier (PN (P_From)), Alternatives);
-            Append_Node_To_List (N, Statements);
+               N := Make_If_Statement
+                 (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
+                  Then_Statements => ADN.Then_Statements
+                    (ADN.First_Node (Alternatives)),
+                  Elsif_Statements => Elsif_Statements,
+                  Else_Statements => Else_Statements);
+
+               Append_Node_To_List (N, Statements);
+            end;
          end if;
 
          N := Make_Subprogram_Implementation (Spec, Declarations, Statements);
@@ -626,6 +649,10 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                Used => True);
 
             --  Declare a local variable of type the thread interface
+
+            N := Make_Used_Package
+              (RU (RU_PolyORB_HI_Generated_Deployment));
+            Append_Node_To_List (N, Declarations);
 
             N := Make_Object_Declaration
               (Defining_Identifier => Make_Defining_Identifier
@@ -716,8 +743,12 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                      --  Create the case statement alternative
 
-                     N := Make_Case_Statement_Alternative
-                       (Make_List_Id (Extract_Enumerator (F)), St);
+                     N := Make_Elsif_Statement
+                       (Make_Expression
+                          (Make_Defining_Identifier (PN (P_Port)),
+                           Op_Equal,
+                           Extract_Enumerator (F)),
+                        St);
                      Append_Node_To_List (N, Alternatives);
                   end;
                end if;
@@ -725,21 +756,22 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                F := Next_Node (F);
             end loop;
 
-            --  Raise an error if other ports are targeted.
+            declare
+               Elsif_Statements : constant List_Id := New_List (ADN.K_List_Id);
 
-            N := Make_Case_Statement_Alternative
-              (No_List,
-               Make_List_Id
-               (Make_Raise_Statement
-                (Make_Designator
-                 (EN (E_Program_Error)))));
-            Append_Node_To_List (N, Alternatives);
+            begin
+               ADN.Set_First_Node (Elsif_Statements,
+                                   ADN.Next_Node
+                                     (ADN.First_Node (Alternatives)));
 
-            --  The switch case statement
+               N := Make_If_Statement
+                 (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
+                  Then_Statements => ADN.Then_Statements
+                    (ADN.First_Node (Alternatives)),
+                  Elsif_Statements => Elsif_Statements);
 
-            N := Make_Case_Statement
-              (Make_Defining_Identifier (PN (P_Port)), Alternatives);
-            Append_Node_To_List (N, Statements);
+               Append_Node_To_List (N, Statements);
+            end;
          end if;
 
          N := Make_Subprogram_Implementation (Spec, Declarations, Statements);
@@ -904,9 +936,12 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                                  --  Create the case statement alternative
 
-                                 N := Make_Case_Statement_Alternative
-                                   (Make_List_Id
-                                      (Extract_Enumerator (Dest_Th)),
+                                 N := Make_Elsif_Statement
+                                   (Make_Expression
+                                      (Make_Defining_Identifier
+                                         (PN (P_Entity)),
+                                       Op_Equal,
+                                       Extract_Enumerator (Dest_th)),
                                     Make_List_Id (K, N));
                                  Append_Node_To_List (N, Alternatives);
 
@@ -985,9 +1020,12 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                                  --  Create the case statement alternative
 
-                                 N := Make_Case_Statement_Alternative
-                                   (Make_List_Id
-                                      (Extract_Enumerator (Dest_Th)),
+                                 N := Make_Elsif_Statement
+                                   (Make_Expression
+                                      (Make_Defining_Identifier
+                                         (PN (P_Entity)),
+                                       Op_Equal,
+                                       Extract_Enumerator (Dest_th)),
                                     Make_List_Id (K, N));
                                  Append_Node_To_List (N, Alternatives);
 
@@ -1019,9 +1057,12 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                                  --  Create the case statement alternative
 
-                                 N := Make_Case_Statement_Alternative
-                                   (Make_List_Id
-                                      (Extract_Enumerator (Dest_Th)),
+                                 N := Make_Elsif_Statement
+                                   (Make_Expression
+                                      (Make_Defining_Identifier
+                                         (PN (P_Entity)),
+                                       Op_Equal,
+                                       Extract_Enumerator (Dest_th)),
                                     Make_List_Id (K, N));
                                  Append_Node_To_List (N, Alternatives);
                               end if;
@@ -1052,19 +1093,39 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
             --  Raise an error if other ports are targeted.
 
             if Length (Alternatives) /= 0 then
-               N := Make_Case_Statement_Alternative
-                 (No_List,
-                  Make_List_Id
-                    (Make_Raise_Statement
-                       (Make_Designator
-                          (EN (E_Program_Error)))));
-               Append_Node_To_List (N, Alternatives);
+               N := Make_Used_Package
+                 (RU (RU_PolyORB_HI_Generated_Deployment));
+               Append_Node_To_List (N, Declarations);
 
-               --  The switch case statement
+               declare
+                  Elsif_Statements : constant List_Id
+                    := New_List (ADN.K_List_Id);
+                  Else_Statements : constant List_Id
+                    := New_List (ADN.K_List_Id);
 
-               N := Make_Case_Statement
-                 (Make_Defining_Identifier (PN (P_Entity)), Alternatives);
-               Append_Node_To_List (N, Statements);
+               begin
+                  N := Make_Qualified_Expression
+                    (RE (RE_Error_Kind),
+                     Make_Record_Aggregate
+                       (Make_List_Id
+                          (RE (RE_Error_Transport))));
+                  N := Make_Return_Statement (N);
+                  Append_Node_To_List (N, Else_Statements);
+
+                  ADN.Set_First_Node (Elsif_Statements,
+                                      ADN.Next_Node
+                                        (ADN.First_Node (Alternatives)));
+
+                  N := Make_If_Statement
+                    (Condition => ADN.Condition
+                       (ADN.First_Node (Alternatives)),
+                     Then_Statements => ADN.Then_Statements
+                       (ADN.First_Node (Alternatives)),
+                     Elsif_Statements => Elsif_Statements,
+                     Else_Statements => Else_Statements);
+
+                  Append_Node_To_List (N, Statements);
+               end;
 
             else
                N := Make_Qualified_Expression
