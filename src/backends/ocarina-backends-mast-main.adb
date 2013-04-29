@@ -84,6 +84,9 @@ package body Ocarina.Backends.MAST.Main is
       return Name_Id;
 
    function Make_Driver_Wrapper (The_Device : Node_Id) return Node_Id;
+   --  Return No_Node if the corresponding device has no impact on
+   --  scheduling, i.e. no attached driver or other properties.
+
    function Map_Operation_Message_Transmission_Name
       (The_Data : Node_Id)
       return Name_Id;
@@ -278,8 +281,10 @@ package body Ocarina.Backends.MAST.Main is
          MTN.Set_Associated_Scheduler
            (M, Map_Scheduler_Name (Get_Bound_Processor (The_Device)));
       else
-         --  XXX this is the sign of an incomplete model for MAST ?
+         --  This device is not bound to a processor, cannot impact
+         --  scheduling.
          MTN.Set_Associated_Scheduler (M, No_Name);
+         return No_Node;
       end if;
 
       MTN.Set_Parameters
@@ -380,6 +385,8 @@ package body Ocarina.Backends.MAST.Main is
       C_Dst : Node_Id;
       Src_Component : Node_Id;
       Dst_Component : Node_Id;
+      Driver_Component : Node_Id;
+
    begin
       N := MTU.Make_Processing_Resource
          (Normalize_Name (Name (Identifier (Parent_Subcomponent (E)))),
@@ -398,12 +405,16 @@ package body Ocarina.Backends.MAST.Main is
                Dst_Component := Parent_Subcomponent
                   (Parent_Component (C_Dst));
 
-               if Src_Component = Parent_Subcomponent (E) and then
-                  Get_Category_Of_Component (Dst_Component) = CC_Device then
-                  Append_Node_To_List
-                     (Make_Driver_Wrapper
-                        (Corresponding_Instance (Dst_Component)),
-                     MTN.List_Of_Drivers (N));
+               if Src_Component = Parent_Subcomponent (E)
+                 and then Get_Category_Of_Component (Dst_Component) = CC_Device
+               then
+                  Driver_Component := Make_Driver_Wrapper
+                    (Corresponding_Instance (Dst_Component));
+                  if Present (Driver_Component) then
+                     Append_Node_To_List
+                       (Driver_Component,
+                        MTN.List_Of_Drivers (N));
+                  end if;
                end if;
             end if;
 
@@ -434,7 +445,11 @@ package body Ocarina.Backends.MAST.Main is
       N        : Node_Id;
    begin
       N := Make_Driver_Wrapper (E);
-      MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
+      if Present (N) then
+         --  Here, we consider (for scheduling) only devices that lead
+         --  to generated MAST stuff
+         MTU.Append_Node_To_List (N, MTN.Declarations (MAST_File));
+      end if;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
@@ -729,19 +744,20 @@ package body Ocarina.Backends.MAST.Main is
          The_Feature := First_Node (Features (E));
 
          while Present (The_Feature) loop
-            if Kind (The_Feature) = K_Port_Spec_Instance and then
-               Is_In (The_Feature) then
-                  Append_Node_To_List
-                     (Make_Defining_Identifier
-                        (Map_Port_Shared_Resource_Operation_Name
-                           (The_Feature)),
-                     Operations_List);
+            if Kind (The_Feature) = K_Port_Spec_Instance
+              and then Is_In (The_Feature)
+            then
+               Append_Node_To_List
+                 (Make_Defining_Identifier
+                    (Map_Port_Shared_Resource_Operation_Name
+                       (The_Feature)),
+                  Operations_List);
 
                Port_Shared_Resource := Make_Shared_Resource
-                     (Immediate_Ceiling,
-                     Map_Port_Shared_Resource_Name (The_Feature));
+                 (Immediate_Ceiling,
+                  Map_Port_Shared_Resource_Name (The_Feature));
                Append_Node_To_List
-                  (Port_Shared_Resource, MTN.Declarations (MAST_File));
+                 (Port_Shared_Resource, MTN.Declarations (MAST_File));
 
                Port_Shared_Resource_Op_List := New_List (MTN.K_List_Id);
 
@@ -803,8 +819,9 @@ package body Ocarina.Backends.MAST.Main is
          The_Feature := First_Node (Features (E));
 
          while Present (The_Feature) loop
-            if Kind (The_Feature) = K_Port_Spec_Instance and then
-               Is_Out (The_Feature) then
+            if Kind (The_Feature) = K_Port_Spec_Instance
+              and then Is_Out (The_Feature)
+            then
                   declare
                      Dest_Ports : constant List_Id
                         := Get_Destination_Ports (The_Feature);
@@ -813,11 +830,19 @@ package body Ocarina.Backends.MAST.Main is
                      if not AINU.Is_Empty (Dest_Ports) then
                         Dest_Port := AIN.First_Node (Dest_Ports);
                         while Present (Dest_Port) loop
-                           Append_Node_To_List
-                              (Make_Defining_Identifier
-                                 (Map_Port_Shared_Resource_Operation_Name
-                                    (Item (Dest_Port))),
-                              Operations_List);
+                           if Get_Category_Of_Component
+                             (Corresponding_Instance
+                                (Parent_Subcomponent
+                                   (Parent_Component
+                                      (Item (Dest_Port))))) /= CC_Device
+                             --  XXX should also consider device driver
+                           then
+                              Append_Node_To_List
+                                (Make_Defining_Identifier
+                                   (Map_Port_Shared_Resource_Operation_Name
+                                      (Item (Dest_Port))),
+                                 Operations_List);
+                           end if;
                            Dest_Port := AIN.Next_Node (Dest_Port);
                         end loop;
                      end if;
