@@ -135,15 +135,23 @@ package body Ocarina.Backends.MAST.Main is
       (The_Port : Node_Id)
       return Name_Id
    is
+      Component_Instance_Name : Name_Id;
       Port_Name : Name_Id;
       N : Name_Id;
    begin
       Set_Str_To_Name_Buffer ("");
-      Port_Name :=
-         (Normalize_Name (Name (Identifier (The_Port))));
+      Component_Instance_Name := Fully_Qualified_Instance_Name
+        (AIN.Parent_Component (The_Port));
+
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Port_Name);
-      Add_Str_To_Name_Buffer ("_shared_resource");
+      Port_Name :=
+        (Normalize_Name (Name (Identifier (The_Port))));
+      Set_Str_To_Name_Buffer ("");
+
+      Set_Str_To_Name_Buffer (Get_Name_String (Component_Instance_Name)
+                                & "_" & Get_Name_String (Port_Name)
+                                & "_shared_resource");
+
       N := Name_Find;
       return N;
    end Map_Port_Shared_Resource_Name;
@@ -156,15 +164,23 @@ package body Ocarina.Backends.MAST.Main is
       (The_Port : Node_Id)
       return Name_Id
    is
+      Component_Instance_Name : Name_Id;
       Port_Name : Name_Id;
       N : Name_Id;
    begin
       Set_Str_To_Name_Buffer ("");
-      Port_Name :=
-         (Normalize_Name (Name (Identifier (The_Port))));
+      Component_Instance_Name := Fully_Qualified_Instance_Name
+        (AIN.Parent_Component (The_Port));
+
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String (Port_Name);
-      Add_Str_To_Name_Buffer ("_shared_resource_operation");
+      Port_Name :=
+        (Normalize_Name (Name (Identifier (The_Port))));
+      Set_Str_To_Name_Buffer ("");
+
+      Set_Str_To_Name_Buffer (Get_Name_String (Component_Instance_Name)
+                                & "_" & Get_Name_String (Port_Name)
+                                & "_shared_resource_operation");
+
       N := Name_Find;
       return N;
    end Map_Port_Shared_Resource_Operation_Name;
