@@ -626,10 +626,8 @@ package body Ocarina.Backends.Cheddar.Mapping is
                while Present (Z) loop
                   M := Make_XML_Node ("buffer_user");
                   K := Make_Defining_Identifier
-                    (To_XML_Name (Display_Name
-                                    (Identifier
-                                       (Parent_Subcomponent
-                                          (Parent_Component (Item (Z)))))));
+                    (Fully_Qualified_Instance_Name
+                       (Parent_Component (Item (Z))));
                   Append_Node_To_List (K, XTN.Subitems (M));
                   K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
                   Append_Node_To_List (K, XTN.Subitems (M));
@@ -669,7 +667,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
          K := Make_Defining_Identifier (Map_Buffer_Name (E, P));
          Append_Node_To_List (K, XTN.Subitems (N));
          K := Make_Defining_Identifier
-           (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
+           (Fully_Qualified_Instance_Name (E));
          Append_Node_To_List (K, XTN.Subitems (N));
       else
          Append_Node_To_List
@@ -678,7 +676,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
                Make_Defining_Identifier (Get_String_Name ("buffer"))),
             XTN.Items (N));
          K := Make_Defining_Identifier
-           (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
+           (Fully_Qualified_Instance_Name (E));
          Append_Node_To_List (K, XTN.Subitems (N));
          K := Make_Defining_Identifier
            (Map_Buffer_Name
