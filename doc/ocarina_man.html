@@ -1,0 +1,474 @@
+<!-- Creator     : groff version 1.19.2 -->
+<!-- CreationDate: Tue Apr 30 08:00:19 2013 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p     { margin-top: 0; margin-bottom: 0; }
+       pre   { margin-top: 0; margin-bottom: 0; }
+       table { margin-top: 0; margin-bottom: 0; }
+</style>
+<title>OCARINA</title>
+
+ <link rel="stylesheet" type="text/css" href="ocarina.css" >
+</head>
+<body>
+
+<h1 align=center>OCARINA</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+
+<hr>
+
+
+<a name="NAME"></a>
+<h2>NAME</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Ocarina &minus;
+manual page for Ocarina 2.0w (Working Copy from )</p>
+
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>Usage:</b></p>
+
+<p style="margin-left:22%;">ocarina [options] files OR
+ocarina <b>&minus;help</b></p>
+
+<p style="margin-left:22%; margin-top: 1em">files are a non
+null sequence of AADL files</p>
+
+<p style="margin-left:22%; margin-top: 1em">General purpose
+options:</p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;V</b></p> </td>
+<td width="8%"></td>
+<td width="64%">
+
+
+<p style="margin-top: 1em" valign="top">Output Ocarina
+version, then exit</p></td>
+<td width="14%">
+</td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;s</b></p> </td>
+<td width="8%"></td>
+<td width="64%">
+
+
+<p style="margin-top: 1em" valign="top">Output Ocarina
+search directory, then exit</p></td>
+<td width="14%">
+</td>
+</table>
+
+<p style="margin-left:22%; margin-top: 1em">Scenario file
+options:</p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;b</b></p> </td>
+<td width="8%"></td>
+<td width="66%">
+
+
+<p style="margin-top: 1em" valign="top">Generate and build
+code from the AADL model</p></td>
+<td width="12%">
+</td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;z</b></p> </td>
+<td width="8%"></td>
+<td width="66%">
+
+
+<p style="margin-top: 1em" valign="top">Clean code
+generated from the AADL model</p></td>
+<td width="12%">
+</td>
+</table>
+
+
+<p style="margin-left:22%; margin-top: 1em"><b>&minus;ec</b>
+Execute the generated application code and</p>
+
+<p style="margin-left:22%; margin-top: 1em">retrieve
+coverage information</p>
+
+
+<p style="margin-left:22%; margin-top: 1em"><b>&minus;er</b>
+Execute the generated application code and</p>
+
+<p style="margin-left:22%; margin-top: 1em">verify that
+there is no regression</p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;p</b></p> </td>
+<td width="8%"></td>
+<td width="73%">
+
+
+<p style="margin-top: 1em" valign="top">Only parse and
+instantiate the application model</p></td>
+<td width="5%">
+</td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;c</b></p> </td>
+<td width="8%"></td>
+<td width="73%">
+
+
+<p style="margin-top: 1em" valign="top">Only perform
+schedulability analysis</p></td>
+<td width="5%">
+</td>
+</table>
+
+<p style="margin-left:22%; margin-top: 1em">Advanced user
+options:</p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;d</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Debug mode for
+developpers</p> </td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;q</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Quiet mode
+(default)</p> </td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;t</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">[script] Run
+Ocarina in terminal interactive mode. If a script is given,
+interpret it then exit.</p></td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;v</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Verbose mode for
+users</p> </td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;x</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Parse AADL file as
+an AADL scenario file</p></td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;y</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Automatically load
+AADL files on demand</p></td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;f</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Parse predefined
+non standard property sets</p></td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;i</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Instantiate the
+AADL model</p></td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;r</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">&lt;name&gt; The
+name of the instance tree root</p></td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;o</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Specify output
+file</p> </td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;I</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Specify the
+inclusion paths</p></td>
+</table>
+
+<p style="margin-left:11%;"><b>&minus;aadlv1</b></p>
+
+<p style="margin-left:22%;">Use AADL v1 standard
+(default)</p>
+
+<p style="margin-left:11%;"><b>&minus;aadlv2</b></p>
+
+<p style="margin-left:22%;">Use AADL v2 standard</p>
+
+
+<p style="margin-left:22%; margin-top: 1em"><b>&minus;real_lib</b>
+Add a REAL file to be used as a theorem library by REAL
+annexes</p>
+
+
+<p style="margin-left:22%; margin-top: 1em"><b>&minus;real_theorem</b>
+&lt;theorem&gt; Evaluate only theorem</p>
+
+
+<p style="margin-left:22%; margin-top: 1em"><b>&minus;real_continue_eval</b>
+Continue evaluation in case of failures</p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;g</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Generate code from
+the AADL instance tree Registered backends:</p></td>
+</table>
+
+<p style="margin-left:22%; margin-top: 1em">arinc653_conf
+petri_nets boundt mast polyorb_hi_ada polyorb_hi_c
+polyorb_hi_rtsj pok_c xtratum_configuration stats
+subprograms real_theorem carts asn1_deployment cheddar
+connection_matrix function_matrix aadl_xml aadl aadl_min
+aadl_annex behavior_specification real_specification</p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;perf</b></p> </td>
+<td width="4%"></td>
+<td width="75%">
+
+
+<p style="margin-top: 1em" valign="top">Enable profiling
+with gprof (PolyORB&minus;HI&minus;C only)</p></td>
+<td width="3%">
+</td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;asn1</b></p> </td>
+<td width="4%"></td>
+<td width="75%">
+
+
+<p style="margin-top: 1em" valign="top">Generate ASN1
+deployment file (PolyORB&minus;HI&minus;C only)</p></td>
+<td width="3%">
+</td>
+</table>
+
+<p style="margin-left:11%;"><b>&minus;arinc653</b></p>
+
+<p style="margin-left:22%;">Generate code for ARINC653 API
+(POK backend only)</p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;b</b></p> </td>
+<td width="8%"></td>
+<td width="66%">
+
+
+<p style="margin-top: 1em" valign="top">Generate and build
+code from the AADL model</p></td>
+<td width="12%">
+</td>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><b>&minus;z</b></p> </td>
+<td width="8%"></td>
+<td width="66%">
+
+
+<p style="margin-top: 1em" valign="top">Clean code
+generated from the AADL model</p></td>
+<td width="12%">
+</td>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;disable&minus;annexes=</b>{annexes}</p>
+
+<p style="margin-left:22%;">Desactive one or all
+annexes</p>
+
+<p style="margin-left:22%; margin-top: 1em">Annexes :</p>
+
+<p style="margin-left:22%; margin-top: 1em">all behavior
+real</p>
+
+<p style="margin-left:11%; margin-top: 1em">Build date:
+Saturday 20 April 2013, 16:54:47 Copyright &copy;
+2003&minus;2009 Telecom ParisTech, 2010&minus;2013 ESA &amp;
+ISAE</p>
+
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">The full
+documentation for <b>Ocarina</b> is maintained as a Texinfo
+manual. If the <b>info</b> and <b>Ocarina</b> programs are
+properly installed at your site, the command</p>
+
+<p style="margin-left:22%; margin-top: 1em"><b>info
+Ocarina</b></p>
+
+<p style="margin-left:11%; margin-top: 1em">should give you
+access to the complete manual.</p>
+<hr>
+</body>
+</html>
