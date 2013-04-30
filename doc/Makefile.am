@@ -188,6 +188,6 @@ build_man: $(top_srcdir)/ocarina-config.in
 	help2man --no-discard-stderr $(top_builddir)/ocarina-config >  $(top_builddir)/doc/ocarina-config.1
 	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_builddir)/doc/ocarina-config.1
 	groff -man -Thtml $(top_builddir)/doc/ocarina-config.1 > $(top_builddir)/doc/ocarina-config.html
-	-help2man --no-discard-stderr --help-option="-help" --version-option="-V" $(top_srcdir)/src/main/ocarina >  $(top_builddir)/doc/ocarina.1
+	-help2man --no-discard-stderr --help-option="-help" --version-option="-V" `which ocarina` >  $(top_builddir)/doc/ocarina.1
 	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_builddir)/doc/ocarina.1
 	groff -man -Thtml $(top_builddir)/doc/ocarina.1 > $(top_builddir)/doc/ocarina_man.html
