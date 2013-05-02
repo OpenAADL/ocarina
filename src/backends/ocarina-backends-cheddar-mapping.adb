@@ -199,6 +199,8 @@ package body Ocarina.Backends.Cheddar.Mapping is
       --  scheduler: computed from Scheduling_Protocol policy
       P := Map_To_XML_Node ("scheduler",
                             Schedulers (Get_Scheduling_Protocol (E)));
+
+      --  quantum: XXX use default value
       if Quantum /= Null_Time then
          declare
             Name : constant Node_Id
@@ -316,7 +318,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
                      --  resource at the beginning, and release it at
                      --  the end of their dispatch.
 
-                     K := Make_Literal (XV.New_Numeric_Value (0, 1, 10));
+                     K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
                      Append_Node_To_List (K, XTN.Subitems (M));
                      K := Make_Literal
                        (XV.New_Numeric_Value
