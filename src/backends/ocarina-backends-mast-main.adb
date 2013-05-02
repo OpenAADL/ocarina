@@ -835,8 +835,9 @@ package body Ocarina.Backends.MAST.Main is
                                 (Parent_Subcomponent
                                    (Parent_Component
                                       (Item (Dest_Port))))) /= CC_Device
-                             --  XXX should also consider device driver
                            then
+                              --  XXX should also consider device driver
+
                               Append_Node_To_List
                                 (Make_Defining_Identifier
                                    (Map_Port_Shared_Resource_Operation_Name
