@@ -57,21 +57,15 @@ GUIDE_TEXIFILES =\
 	$(GEN_TEXIFILES) \
 	gfdl.texi
 
-EXTRA_DIST=\
-	$(srcdir)/CODING_GUIDELINES \
-	$(srcdir)/CONTRIBUTING \
-	$(srcdir)/PROBLEM-REPORT-FORM \
-	$(GUIDE_TEXIFILES)\
-	$(ALL_IMAGES)\
-	$(ADAFILES)\
-	$(AADLFILES)\
-	$(KW_FILES)\
-	$(srcdir)/ocarina.css
-
 info_TEXINFOS = ocarina.texi
 ocarina_TEXINFOS=$(GUIDE_TEXIFILES)
 
 man_MANS = ocarina-config.1 ocarina.1
+
+EXTRA_DIST= $(srcdir)/CODING_GUIDELINES $(srcdir)/CONTRIBUTING		\
+	$(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES) $(ALL_IMAGES)	\
+	$(ADAFILES) $(AADLFILES) $(KW_FILES) $(srcdir)/ocarina.css	\
+	$(man_MANS)
 
 all-local: $(GUIDE).html $(GUIDE).pdf
 
