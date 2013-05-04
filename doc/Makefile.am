@@ -65,7 +65,8 @@ man_MANS = ocarina-config.1 ocarina.1
 EXTRA_DIST= $(srcdir)/CODING_GUIDELINES $(srcdir)/CONTRIBUTING		\
 	$(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES) $(ALL_IMAGES)	\
 	$(ADAFILES) $(AADLFILES) $(KW_FILES) $(srcdir)/ocarina.css	\
-	$(man_MANS)
+	$(man_MANS) $(srcdir)/ocarina-config.html			\
+	$(srcdir)/ocarina_man.html
 
 all-local: $(GUIDE).html $(GUIDE).pdf
 
