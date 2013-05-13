@@ -34,16 +34,10 @@ AADL_V2_COMPONENTS = $(srcdir)/AADLv2/components/*.aadl \
                      $(srcdir)/AADLv2/components/devices/*.aadl \
                      $(srcdir)/AADLv2/components/processors/*.aadl
 
-
-MODE_FILES = $(srcdir)/emacs/aadl-mode.el \
-	$(srcdir)/vim/indent/aadl.vim \
-	$(srcdir)/vim/syntax/aadl.vim
-
 EXTRA_DIST = $(AADL_COMMON_PROPERTIES) \
 	$(AADL_V1_PROPERTIES) \
 	$(AADL_V2_PROPERTIES) \
-	$(AADL_V2_COMPONENTS) \
-	$(MODE_FILES)
+	$(AADL_V2_COMPONENTS)
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(datadir)/ocarina
@@ -72,9 +66,6 @@ install-data-local:
 	echo "s/OCARINA_INCLUDE_PATH/"$(shell echo $(DESTDIR)$(includedir)|$(SED) -e 's/\//\\\\\//g')"/g" > sedscript
 	$(SED) -f sedscript $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl > tmp.aadl
 	mv -f tmp.aadl $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl
-	for file in $(MODE_FILES); do \
-	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina || exit 1; \
-	done
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(datadir)/ocarina
