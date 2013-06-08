@@ -71,7 +71,7 @@ EXTRA_DIST= $(srcdir)/CODING_GUIDELINES $(srcdir)/CONTRIBUTING		\
 all-local: $(GUIDE).html $(GUIDE).pdf
 
 $(GUIDE).html: $(IMAGES) $(GUIDE_TEXIFILES)
-	$(MAKEINFO) --css-include=$(srcdir)/ocarina.css --html $(srcdir)/$(GUIDE).texi -o $(GUIDE).html
+	-$(MAKEINFO) --css-include=$(srcdir)/ocarina.css --force --html --ifhtml --number-sections $(srcdir)/$(GUIDE).texi -o $(GUIDE).html
 	rm -rf $(GUIDE).html/images
 	mkdir -p $(GUIDE).html/images
 	cp -p $(srcdir)/images/*.png $(GUIDE).html/images/
