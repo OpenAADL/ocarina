@@ -142,12 +142,11 @@ package body Ocarina.Backends.Expander is
                   while Present (I) loop
                      if Category = CC_Subprogram then
                         N := Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
-                           (K_Parameter_Instance, No_Location);
+                           (K_Parameter_Instance, AIN.Loc (I));
                      else
                         N := Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
-                          (AIN.Kind (I), No_Location);
-                        AIN.Set_Identifier
-                           (N, AIU.Copy_Node (Identifier (I)));
+                          (AIN.Kind (I), AIN.Loc (I));
+                        AIN.Set_Identifier (N, AIU.Copy_Node (Identifier (I)));
                      end if;
 
                      if Kind (I) = K_Port_Spec_Instance then
@@ -189,14 +188,10 @@ package body Ocarina.Backends.Expander is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Node_Container (L), Sources (N));
-                        Append_Node_To_List
-                           (Make_Node_Container (L), Destinations (N));
+                          (Make_Node_Container (L), Sources (N));
 
                         Append_Node_To_List
-                           (Make_Node_Container (N), Sources (L));
-                        Append_Node_To_List
-                           (Make_Node_Container (N), Destinations (L));
+                          (Make_Node_Container (N), Destinations (L));
                      end if;
 
                      if not Is_Empty (Destinations (F)) then
@@ -222,13 +217,9 @@ package body Ocarina.Backends.Expander is
 
                         Append_Node_To_List
                            (Make_Node_Container (L), Destinations (N));
-                        Append_Node_To_List
-                           (Make_Node_Container (L), Sources (N));
 
                         Append_Node_To_List
                            (Make_Node_Container (N), Sources (L));
-                        Append_Node_To_List
-                           (Make_Node_Container (N), Destinations (L));
                      end if;
 
                      AIU.Append_Node_To_List (N, Features (E));
