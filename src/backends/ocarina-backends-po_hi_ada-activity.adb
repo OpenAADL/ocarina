@@ -3213,8 +3213,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance then
                   --  For OUT ports, we generate an array to indicate
-                  --  their destintions and we put relevant element
-                  --  association in the N_Destinations and the
+                  --  their destinations and we put relevant element
+                  --  associations in the N_Destinations and the
                   --  Destinnations arrays. For IN ports, we generate
                   --  nothing and we put dummy element association.
 
