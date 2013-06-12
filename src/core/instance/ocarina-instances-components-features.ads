@@ -34,11 +34,13 @@
 package Ocarina.Instances.Components.Features is
 
    function Instantiate_Feature
-     (Instance_Root : Node_Id;
-      Feature       : Node_Id;
-      Inverse       : Boolean := False)
+     (Instance_Root   : Node_Id;
+      Feature         : Node_Id;
+      Parent_Instance : Node_Id;
+      Inverse         : Boolean := False)
      return Node_Id;
    --  Instantiates a feature of a component type an returns the
-   --  corresponding instance.
+   --  corresponding instance. Parent_Instance is the AADL instance
+   --  of the component containing the feature.
 
 end Ocarina.Instances.Components.Features;

@@ -61,6 +61,7 @@ package body Ocarina.Instances.Components.Features is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package ATNU renames Ocarina.ME_AADL.AADL_Tree.Nutils;
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
 
    function Instantiate_Corresponding_Entity
      (Instance_Root : Node_Id;
@@ -69,11 +70,12 @@ package body Ocarina.Instances.Components.Features is
      return Node_Id;
 
    function Instantiate_Port_Group_Type
-     (Instance_Root : Node_Id;
-      Port_Group    : Node_Id;
-      Feature_List  : List_Id;
-      Container     : Node_Id;
-      Inverse       : Boolean := False)
+     (Instance_Root   : Node_Id;
+      Port_Group      : Node_Id;
+      Feature_List    : List_Id;
+      Container       : Node_Id;
+      Parent_Instance : Node_Id;
+      Inverse         : Boolean := False)
      return Boolean;
    --  Recursively instantiate a port group type, with extensions, features
    --  and inverses. Return True if everything was OK, else False
@@ -83,9 +85,10 @@ package body Ocarina.Instances.Components.Features is
    -------------------------
 
    function Instantiate_Feature
-     (Instance_Root : Node_Id;
-      Feature       : Node_Id;
-      Inverse       : Boolean := False)
+     (Instance_Root   : Node_Id;
+      Feature         : Node_Id;
+      Parent_Instance : Node_Id;
+      Inverse         : Boolean := False)
      return Node_Id
    is
       pragma Assert (Kind (Instance_Root) = K_Architecture_Instance);
@@ -103,7 +106,7 @@ package body Ocarina.Instances.Components.Features is
    begin
       case ATN.Kind (Feature) is
          when K_Port_Spec =>
-            New_Instance := Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
+            New_Instance := AINU.New_Node
               (K_Port_Spec_Instance, ATN.Loc (Feature));
             AIN.Set_Is_In (New_Instance, ATN.Is_In (Feature));
             AIN.Set_Is_Out (New_Instance, ATN.Is_Out (Feature));
@@ -132,11 +135,11 @@ package body Ocarina.Instances.Components.Features is
             end if;
 
          when K_Feature_Group_Spec =>
-            if Entity_Ref (Feature) /= No_Node
-              and then ATE.Get_Referenced_Entity
-              (Entity_Ref (Feature)) /= No_Node
+            if Present (Entity_Ref (Feature)) and then
+              Present (ATE.Get_Referenced_Entity
+                 (Entity_Ref (Feature)))
             then
-               New_Instance := New_Node (K_Feature_Group_Spec_Instance,
+               New_Instance := AINU.New_Node (K_Feature_Group_Spec_Instance,
                                          ATN.Loc (Feature));
                AIN.Set_Features (New_Instance,
                              New_List (K_List_Id, ATN.Loc (Feature)));
@@ -146,19 +149,20 @@ package body Ocarina.Instances.Components.Features is
                AIN.Set_Sources
                   (New_Instance, New_List (K_List_Id, No_Location));
                AIN.Set_Destinations (New_Instance,
-                                  New_List (K_List_Id, No_Location));
+                                     New_List (K_List_Id, No_Location));
 
                Success := Instantiate_Port_Group_Type
                  (Instance_Root,
                   Port_Group,
-                  Ocarina.ME_AADL.AADL_Instances.Nodes.Features (New_Instance),
+                  AIN.Features (New_Instance),
                   Container,
+                  Parent_Instance,
                   Inverse);
             elsif Inverse_Of (Feature) /= No_Node
               and then ATE.Get_Referenced_Entity
               (Inverse_Of (Feature)) /= No_Node
             then
-               New_Instance := New_Node (K_Feature_Group_Spec_Instance,
+               New_Instance := AINU.New_Node (K_Feature_Group_Spec_Instance,
                                          ATN.Loc (Feature));
                AIN.Set_Features (New_Instance,
                              New_List (K_List_Id, ATN.Loc (Feature)));
@@ -175,6 +179,7 @@ package body Ocarina.Instances.Components.Features is
                   Port_Group,
                   Ocarina.ME_AADL.AADL_Instances.Nodes.Features (New_Instance),
                   Container,
+                  Parent_Instance,
                   Inverse);
             else
                Display_No_Entity_Ref (Feature);
@@ -368,21 +373,22 @@ package body Ocarina.Instances.Components.Features is
    ---------------------------------
 
    function Instantiate_Port_Group_Type
-     (Instance_Root : Node_Id;
-      Port_Group    : Node_Id;
-      Feature_List  : List_Id;
-      Container     : Node_Id;
-      Inverse       : Boolean := False)
+     (Instance_Root   : Node_Id;
+      Port_Group      : Node_Id;
+      Feature_List    : List_Id;
+      Container       : Node_Id;
+      Parent_Instance : Node_Id;
+      Inverse         : Boolean := False)
      return Boolean
    is
       pragma Assert (Feature_List /= No_List);
       pragma Assert (AIN.Kind (Instance_Root) = K_Architecture_Instance);
       pragma Assert (ATN.Kind (Port_Group) = K_Feature_Group_Type);
 
-      Success         : Boolean := True;
-      List_Node       : Node_Id := No_Node;
+      Success              : Boolean := True;
+      List_Node            : Node_Id := No_Node;
       Instantiateable_Node : Node_Id := No_Node;
-      New_Subinstance : Node_Id := No_Node;
+      New_Subinstance      : Node_Id := No_Node;
    begin
       --  Annotate the parent port group with the container node
 
@@ -402,6 +408,7 @@ package body Ocarina.Instances.Components.Features is
               (ATN.Parent (Port_Group)),
             Feature_List,
             Container,
+            Parent_Instance,
             Inverse);
       end if;
 
@@ -421,10 +428,17 @@ package body Ocarina.Instances.Components.Features is
                New_Subinstance := Instantiate_Feature
                  (Instance_Root,
                   Instantiateable_Node,
+                  Parent_Instance,
                   Inverse);
 
                if Present (New_Subinstance) then
                   Append_Node_To_List (New_Subinstance, Feature_List);
+
+                  --  Mark the container component instance as a
+                  --  parent component instance of the feature group
+                  --  features as well.
+
+                  AIN.Set_Parent_Component (New_Subinstance, Parent_Instance);
                else
                   Success := False;
                end if;
@@ -444,6 +458,7 @@ package body Ocarina.Instances.Components.Features is
             ATE.Get_Referenced_Entity (Inverse_Of (Port_Group)),
             Feature_List,
             Container,
+            Parent_Instance,
             not Inverse)
            and then Success;
       end if;

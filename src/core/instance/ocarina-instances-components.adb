@@ -327,7 +327,7 @@ package body Ocarina.Instances.Components is
                        List_Node))
                then
                   Instance_Node := Instantiate_Feature
-                    (Instance_Root, List_Node);
+                    (Instance_Root, List_Node, New_Instance);
 
                   if Present (Instance_Node) then
                      Success := Apply_Properties
@@ -366,7 +366,7 @@ package body Ocarina.Instances.Components is
                        List_Node))
                then
                   Instance_Node := Instantiate_Feature
-                    (Instance_Root, List_Node);
+                    (Instance_Root, List_Node, New_Instance);
 
                   if Present (Instance_Node) then
                      Success := Apply_Properties
