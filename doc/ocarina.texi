@@ -14,7 +14,6 @@
 @documentlanguage en
 @documentencoding ISO-8859-1
 
-
 @c description and copyright
 
 @copying
@@ -31,6 +30,7 @@ this permission are preserved.
 @c title page, contents, copyright
 
 @titlepage
+
 @title Ocarina
 @subtitle A Compiler for the AADL
 @subtitle for Ocarina @value{EDITION}, @value{UPDATED}
@@ -40,18 +40,17 @@ this permission are preserved.
 @insertcopying
 @end titlepage
 
+@iftex
+@contents
+@end iftex
+
 @c top node
 
-@c @ifinfo
-@ifhtml
-@node Top, About This Guide,,
-@top Ocarina User's Guide
-@end ifhtml
-@ifnothtml
+@ifnottex
 @node Top, About This Guide, (dir), (dir)
 @top Ocarina User's Guide
 @insertcopying
-@end ifnothtml
+@end ifnottex
 
 @menu
 * About This Guide::
@@ -70,10 +69,6 @@ this permission are preserved.
 * Terms::
 @end menu
 @c @end ifinfo
-
-@ifhtml
-@insertcopying
-@end ifhtml
 
 @c -------------------------------------------------------------------
 
