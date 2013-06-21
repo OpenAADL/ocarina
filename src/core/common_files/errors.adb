@@ -60,8 +60,7 @@ package body Errors is
    -- Internal_Display_Message --
    ------------------------------
 
-   procedure Internal_Display_Message (S : String)
-   is
+   procedure Internal_Display_Message (S : String) is
       L : Natural := 1;
       I : Natural := 1;
       N : Natural := 1;
