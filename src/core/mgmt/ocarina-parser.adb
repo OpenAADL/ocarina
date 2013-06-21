@@ -32,6 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Charset;   use Charset;
+with Errors;    use Errors;
 with Namet;     use Namet;
 with Output;    use Output;
 
@@ -67,9 +68,10 @@ package body Ocarina.Parser is
          end if;
       end loop;
 
-      Set_Standard_Error;
-      Write_Line ("Cannot find language " & Get_Name_String (Language));
-      Set_Standard_Output;
+      Error_Loc (1) := From;
+      Error_Name (1) := Language;
+      Display_Warning ("no support provided for annex language %");
+
       return AADL_Root;
    end Parse;
 
