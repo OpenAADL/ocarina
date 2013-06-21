@@ -1,4 +1,4 @@
-Cannot find language error_model
+test.aadl:17:20: warning: no support provided for annex language error_model
 test.aadl:21:18: warning: negative exponent in integer literal
 
 
