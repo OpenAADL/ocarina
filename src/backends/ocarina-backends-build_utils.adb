@@ -667,14 +667,14 @@ package body Ocarina.Backends.Build_Utils is
          S_Name          : Name_Id;
          Binding_Key     : constant String := "%user_src_dir%";
       begin
-         --  Ensure the user gives at most one source file (.cc)
+         --  Ensure the user gives at most one source file (.cc or .cpp)
 
          if Source_Files'Length > 1
            and then Get_Current_Backend_Kind = PolyORB_HI_Ada
          then
             Display_Located_Error
               (Loc (E),
-               "more than one source files for a C subprogram",
+               "more than one source files for a C++ subprogram",
                Fatal => True);
          end if;
 
@@ -732,7 +732,9 @@ package body Ocarina.Backends.Build_Utils is
 
                   Get_Name_String (Source_Basename);
 
-                  if Name_Buffer (Name_Len - 2 .. Name_Len) = ".cc" then
+                  if Name_Buffer (Name_Len - 2 .. Name_Len) = ".cc"
+                    or else Name_Buffer (Name_Len - 3 .. Name_Len) = ".cpp"
+                  then
                      Get_Name_String (Source_Dirname);
                      Get_Name_String_And_Append (Source_Basename);
 
@@ -1204,11 +1206,11 @@ package body Ocarina.Backends.Build_Utils is
                Handle_C_Source (E, Source_Name, Source_Files, M);
 
             when Subprogram_Opaque_CPP =>
-               --  If the subprogram is implemented by C source files,
-               --  add the files to the C_Files list of the makefile
-               --  structure. If the subprogram is implemented by a C
-               --  library, add the files to the C_Libraries list of
-               --  the makefile structure.
+               --  If the subprogram is implemented by CPP source
+               --  files, add the files to the CPP_Files list of the
+               --  makefile structure. If the subprogram is
+               --  implemented by a CPP library, add the files to the
+               --  C_Libraries list of the makefile structure.
 
                Handle_CPP_Source (E, Source_Name, Source_Files, M);
 
@@ -1514,7 +1516,6 @@ package body Ocarina.Backends.Build_Utils is
                      Name_Tables.First .. Name_Tables.Last (M.C_Objs)
                   loop
                      Write_Name (M.C_Objs.Table (J));
-
                      exit when J = Name_Tables.Last (M.C_Objs);
 
                      Write_Line (" \");
@@ -1764,7 +1765,7 @@ package body Ocarina.Backends.Build_Utils is
       procedure Ada_C_Command_Line_Flags
         (Ada_Sources        : Name_Tables.Instance;
          C_Sources          : Name_Tables.Instance;
-         CPP_Sources          : Name_Tables.Instance;
+         CPP_Sources        : Name_Tables.Instance;
          C_Libraries        : Name_Tables.Instance) is
       begin
          if Length (Ada_Sources) > 0
@@ -1807,6 +1808,8 @@ package body Ocarina.Backends.Build_Utils is
          end if;
 
          if Length (CPP_Sources) > 0 then
+            Write_Line (" \");
+            Write_Str (ASCII.HT & "   ");
             for J in Name_Tables.First .. Name_Tables.Last (CPP_Sources) loop
                Get_Name_String (CPP_Sources.Table (J));
                Set_Str_To_Name_Buffer
