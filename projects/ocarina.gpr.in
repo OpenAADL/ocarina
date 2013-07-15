@@ -102,7 +102,7 @@ project Ocarina is
    package Builder is
       case Build is
         when "debug" =>
-           for Default_Switches ("Ada") use ("-s", "-g");
+           for Default_Switches ("Ada") use ("-g");
         when "release" =>
            for Default_Switches ("Ada") use ("-s");
       end case;
