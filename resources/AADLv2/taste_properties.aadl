@@ -218,6 +218,10 @@ dataview : list of aadlstring applies to (package);
 
 dataviewpath : list of aadlstring applies to (package);
 
+version: aadlstring applies to (package);
+
+interfacename: aadlstring applies to ((event port, event data port, access, subprogram access);
+
 Encoding_type : type enumeration (native, uper, acn);
 
 Encoding : Taste::Encoding_type applies to (parameter);
