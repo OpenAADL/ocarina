@@ -220,7 +220,7 @@ dataviewpath : list of aadlstring applies to (package);
 
 version: aadlstring applies to (package);
 
-interfacename: aadlstring applies to ((event port, event data port, access, subprogram access);
+interfacename: aadlstring applies to (subprogram access);
 
 Encoding_type : type enumeration (native, uper, acn);
 
