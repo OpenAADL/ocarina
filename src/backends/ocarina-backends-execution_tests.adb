@@ -172,15 +172,16 @@ package body Ocarina.Backends.Execution_Tests is
       end if;
 
       if Trace_Filtered.all'Length < Ref_Filtered.all'Length then
-         Write_Line ("Error : trace length ("
+         Write_Line ("Warning : trace length ("
                        & Trace_Filtered.all'Length'Img
                        & " ) is lower than referencial length ("
                        & Ref_Filtered.all'Length'Img & " )");
-         return False;
       end if;
 
       Padding := Trace_Filtered'First - Ref_Filtered'First;
       for I in Ref_Filtered.all'Range loop
+         exit when I + Padding > Trace_Filtered.all'Last;
+
          if Ref_Filtered.all (I) /= Trace_Filtered.all (I + Padding) then
             Write_Line ("Failed at char position = " & I'Img
                           & " (ref = '" & Ref_Filtered.all (I)
