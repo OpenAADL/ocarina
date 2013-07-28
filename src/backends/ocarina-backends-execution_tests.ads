@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -191,11 +191,11 @@ package Ocarina.Backends.Execution_Tests is
    Write_Log          : Boolean := True;
    --  Decides if we should write log files for referencials and traces
 
-   Parse_Regexp : Pattern_Matcher (128);
+   Parse_Regexp : Pattern_Matcher (4 * 1024);
 
-   Strip_CR_Regexp : Pattern_Matcher (16);
+   Strip_CR_Regexp : Pattern_Matcher (4 * 1024);
 
-   Header_End_Regexp : Pattern_Matcher (24);
+   Header_End_Regexp : Pattern_Matcher (4 * 1024);
 
    Tsim_Traces_Regexp : Pattern_Matcher (56);
 
