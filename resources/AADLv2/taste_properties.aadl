@@ -238,4 +238,6 @@ Associated_Queue_Size : aadlinteger applies to (subprogram);
 
 EncodingDefinitionFile : classifier (data) applies to (data);
 
+labelInheritance : aadlstring applies to (subprogram access);
+
 end Taste;
