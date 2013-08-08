@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -368,6 +368,7 @@ package Ocarina.Backends.Properties is
       Thread_Aperiodic,
       Thread_Sporadic,
       Thread_Hybrid,
+      Thread_Timed,
       Thread_Background,
       Thread_None);
 

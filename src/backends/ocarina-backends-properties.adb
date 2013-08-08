@@ -289,6 +289,7 @@ package body Ocarina.Backends.Properties is
    Thread_Aperiodic_Name  : Name_Id;
    Thread_Sporadic_Name   : Name_Id;
    Thread_Hybrid_Name     : Name_Id;
+   Thread_Timed_Name      : Name_Id;
    Thread_Background_Name : Name_Id;
 
    Time_Ps_Name  : Name_Id;
@@ -1831,6 +1832,8 @@ package body Ocarina.Backends.Properties is
             end if;
 
             return Thread_Hybrid;
+         elsif P_Name = Thread_Timed_Name then
+            return Thread_Timed;
 
          elsif P_Name = Thread_Background_Name then
             return Thread_Background;
@@ -3234,6 +3237,7 @@ package body Ocarina.Backends.Properties is
       Thread_Aperiodic_Name  := Get_String_Name ("aperiodic");
       Thread_Sporadic_Name   := Get_String_Name ("sporadic");
       Thread_Hybrid_Name     := Get_String_Name ("hybrid");
+      Thread_Timed_Name     := Get_String_Name ("timed");
       Thread_Background_Name := Get_String_Name ("background");
 
       Time_Ps_Name  := Get_String_Name ("ps");
