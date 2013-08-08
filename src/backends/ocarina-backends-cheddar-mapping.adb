@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2013 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,6 +40,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Build_Utils;
+with Ocarina.Backends.Messages;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Common.Mapping;
@@ -54,6 +55,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
    use Ocarina.Backends.Build_Utils;
+   use Ocarina.Backends.Messages;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Common.Mapping;
@@ -482,8 +484,19 @@ package body Ocarina.Backends.Cheddar.Mapping is
 
       --  capacity: computed from the Compute_Execution_Time property
       --  XXX for now, we take the first value
-      P := Map_To_XML_Node ("capacity",
-                            To_Milliseconds (Get_Execution_Time (E) (1)));
+      if Get_Execution_Time (E) = Empty_Time_Array then
+         Display_Located_Error
+           (AIN.Loc (E),
+            "Property Compute_Exeuction_Time not set," &
+              " assuming default value of 0",
+            Fatal => False,
+            Warning => true);
+
+         P := Map_To_XML_Node ("capacity", Unsigned_Long_Long'(0));
+      else
+         P := Map_To_XML_Node ("capacity",
+                               To_Milliseconds (Get_Execution_Time (E) (1)));
+      end if;
       Append_Node_To_List (P, XTN.Subitems (N));
 
       --  start_time: computed from First_Dispatch_Time property, XXX units
