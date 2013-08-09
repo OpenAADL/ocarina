@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -146,6 +146,8 @@ package Ocarina.Backends.Utils is
    --  bound to a bus instance, the bus instance will be the
    --  Extra_Item of the node container corresponding to the
    --  destination.
+   --  Note: the list may be empty in the case of an event out port
+   --  connected to a port that triggers a mode change.
 
    function Get_Actual_Owner (Spg_Call : Node_Id) return Node_Id;
    --  Return the data *subcomponent* whose corresponding component
