@@ -684,22 +684,27 @@ package body Ocarina.Backends.Cheddar.Mapping is
          K := Make_Defining_Identifier
            (Fully_Qualified_Instance_Name (E));
          Append_Node_To_List (K, XTN.Subitems (N));
-      else
-         Append_Node_To_List
-           (Make_Assignement
-              (Make_Defining_Identifier (Get_String_Name ("to_type")),
-               Make_Defining_Identifier (Get_String_Name ("buffer"))),
-            XTN.Items (N));
-         K := Make_Defining_Identifier
-           (Fully_Qualified_Instance_Name (E));
-         Append_Node_To_List (K, XTN.Subitems (N));
-         K := Make_Defining_Identifier
-           (Map_Buffer_Name
-              (Parent_Component
-                 (Item (AIN.First_Node (Get_Destination_Ports (P)))),
-               Item (AIN.First_Node (Get_Destination_Ports (P)))));
 
-         Append_Node_To_List (K, XTN.Subitems (N));
+      else
+         if Present (AIN.First_Node (Get_Destination_Ports (P))) then
+            --  We have to defends against the destination being an empty list.
+
+            Append_Node_To_List
+              (Make_Assignement
+                 (Make_Defining_Identifier (Get_String_Name ("to_type")),
+                  Make_Defining_Identifier (Get_String_Name ("buffer"))),
+               XTN.Items (N));
+            K := Make_Defining_Identifier
+              (Fully_Qualified_Instance_Name (E));
+            Append_Node_To_List (K, XTN.Subitems (N));
+            K := Make_Defining_Identifier
+              (Map_Buffer_Name
+                 (Parent_Component
+                    (Item (AIN.First_Node (Get_Destination_Ports (P)))),
+                  Item (AIN.First_Node (Get_Destination_Ports (P)))));
+
+            Append_Node_To_List (K, XTN.Subitems (N));
+         end if;
       end if;
 
       return N;
