@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -53,8 +53,6 @@ package body Ocarina.Backends.Ada_Tree.Generator is
 
    procedure Generate_Access_Type_Definition (N : Node_Id);
    procedure Generate_Ada_Comment (N : Node_Id);
-   procedure Generate_QoS_Distributed_Application (N : Node_Id);
-   procedure Generate_QoS_Node (N : Node_Id);
    procedure Generate_HI_Distributed_Application (N : Node_Id);
    procedure Generate_HI_Node (N : Node_Id);
    procedure Generate_Unit_Packages (N : Node_Id);
@@ -210,19 +208,13 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          when K_Ada_Comment =>
             Generate_Ada_Comment (N);
 
-         when K_QoS_Distributed_Application =>
-            Generate_QoS_Distributed_Application (N);
-
-         when K_QoS_Node =>
-            Generate_QoS_Node (N);
-
          when K_HI_Distributed_Application =>
             Generate_HI_Distributed_Application (N);
 
          when K_HI_Node =>
             Generate_HI_Node (N);
 
-         when K_QoS_Unit | K_HI_Unit =>
+         when K_HI_Unit =>
             Generate_Unit_Packages (N);
 
          when K_Array_Aggregate =>
@@ -593,54 +585,6 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          end if;
       end loop;
    end Generate_Ada_Comment;
-
-   ------------------------------------------
-   -- Generate_QoS_Distributed_Application --
-   ------------------------------------------
-
-   procedure Generate_QoS_Distributed_Application (N : Node_Id) is
-      P                     : Node_Id := First_Node (QoS_Nodes (N));
-      Application_Directory : Name_Id;
-   begin
-      --  Create the application directory (a lower case string)
-
-      Get_Name_String (Name (N));
-      Application_Directory := To_Lower (Name_Find);
-
-      Create_Directory (Application_Directory);
-
-      --  Process the application nodes
-
-      Enter_Directory (Application_Directory);
-
-      while Present (P) loop
-         Generate (P);
-         P := Next_Node (P);
-      end loop;
-
-      Leave_Directory;
-   end Generate_QoS_Distributed_Application;
-
-   -----------------------
-   -- Generate_QoS_Node --
-   -----------------------
-
-   procedure Generate_QoS_Node (N : Node_Id) is
-      U                   : Node_Id := First_Node (Units (N));
-      Partition_Directory : constant Name_Id := To_Lower (Name (N));
-   begin
-      --  Create the partition directory
-
-      Create_Directory (Partition_Directory);
-      Enter_Directory (Partition_Directory);
-
-      while Present (U) loop
-         Generate (U);
-         U := Next_Node (U);
-      end loop;
-
-      Leave_Directory;
-   end Generate_QoS_Node;
 
    ----------------------------
    -- Generate_Unit_Packages --

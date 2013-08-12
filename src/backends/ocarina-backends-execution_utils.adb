@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -206,10 +206,6 @@ package body Ocarina.Backends.Execution_Utils is
          when PolyORB_HI_Ada | PolyORB_HI_C =>
             Get_Name_String_And_Append (Node_Name);
             Add_Str_To_Name_buffer (Dir_Separator & "");
-            Get_Name_String_And_Append (Node_Name);
-         when PolyORB_QoS_Ada =>
-            Add_Str_To_Name_Buffer ("bin");
-            Add_Str_To_Name_Buffer (Dir_Separator & "");
             Get_Name_String_And_Append (Node_Name);
          when PolyORB_Kernel_C =>
             Get_Name_String_And_Append (Node_Name);
