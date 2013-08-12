@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -348,16 +348,26 @@ package body Ocarina.Instances.Components.Modes is
                      --  Fetch the mode instance and append it to the
                      --  mode instance list.
 
-                     AINU.Append_Node_To_List
-                       (Make_Node_Container
-                        (Get_First_Homonym_Instance
-                         (AIN.Modes (Component_Instance),
-                          ATN.Name (ATN.Identifier (MoT)))),
-                        Mode_List);
+                     --  Note: in the case of long inheritance tree,
+                     --  we have to defend against the case we are
+                     --  instanciating a mode present in a child, but
+                     --  not in one of its ancestor.
+
+                     if Present (Get_First_Homonym_Instance
+                                   (AIN.Modes (Component_Instance),
+                                    ATN.Name (ATN.Identifier (MoT))))
+                     then
+                        AINU.Append_Node_To_List
+                          (Make_Node_Container
+                             (Get_First_Homonym_Instance
+                                (AIN.Modes (Component_Instance),
+                                 ATN.Name (ATN.Identifier (MoT)))),
+                           Mode_List);
+                     end if;
 
                   when K_Pair_Of_Entity_References =>
                      --  Fetch the mode transition ends and append
-                     --  them as a two-item node sontainer to the mode
+                     --  them as a two-item node container to the mode
                      --  instance list.
 
                      ATNU.Append_Node_To_List
