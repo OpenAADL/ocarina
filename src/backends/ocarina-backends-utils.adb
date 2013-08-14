@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with GNAT.OS_Lib;
-with GNAT.Directory_Operations;
+with Ada.Directories;
 with GNAT.Table;
 
 with Namet;
@@ -61,7 +61,8 @@ package body Ocarina.Backends.Utils is
    package ADV renames Ocarina.Backends.Ada_Values;
 
    use GNAT.OS_Lib;
-   use GNAT.Directory_Operations;
+   use Ada.Directories;
+
    use Namet;
    use Locations;
    use Ocarina.ME_AADL;
@@ -157,7 +158,7 @@ package body Ocarina.Backends.Utils is
 
       --  The directory name does not clash with anything, create it
 
-      Make_Dir (Dir_Full_String);
+      Create_Directory (Dir_Full_String);
    end Create_Directory;
 
    ---------------------
@@ -167,14 +168,14 @@ package body Ocarina.Backends.Utils is
    procedure Enter_Directory (Dirname : Name_Id) is
       use Directories_Stack;
 
-      Current_Directory : constant Name_Id :=
-        Get_String_Name (Get_Current_Dir);
+      Current_Dir : constant Name_Id := Get_String_Name (Current_Directory);
+
    begin
       Increment_Last;
-      Table (Last) := Current_Directory;
+      Table (Last) := Current_Dir;
       Display_Debug_Message
-        ("Left    : " & Get_Name_String (Current_Directory));
-      Change_Dir (Get_Name_String (Dirname));
+        ("Left    : " & Get_Name_String (Current_Dir));
+      Set_Directory (Get_Name_String (Dirname));
       Display_Debug_Message ("Entered : " & Get_Name_String (Dirname));
    end Enter_Directory;
 
@@ -185,12 +186,12 @@ package body Ocarina.Backends.Utils is
    procedure Leave_Directory is
       use Directories_Stack;
 
-      Last_Directory : constant Name_Id :=
-        Table (Last);
+      Last_Directory : constant Name_Id := Table (Last);
+
    begin
       Decrement_Last;
-      Display_Debug_Message ("Left    : " & Get_Current_Dir);
-      Change_Dir (Get_Name_String (Last_Directory));
+      Display_Debug_Message ("Left    : " & Current_Directory);
+      Set_Directory (Get_Name_String (Last_Directory));
       Display_Debug_Message ("Entered : " & Get_Name_String (Last_Directory));
    end Leave_Directory;
 
