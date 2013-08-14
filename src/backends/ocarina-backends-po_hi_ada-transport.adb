@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -510,7 +510,7 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
             --  Statements
 
-            --  The case statement: for each thread of the current
+            --  The if/elsif statement: for each thread of the current
             --  process, we generate a case statement alternative to
             --  call its specific sending routine.
 
@@ -558,26 +558,37 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                Else_Statements : constant List_Id := New_List (ADN.K_List_Id);
 
             begin
-               N := Make_Qualified_Expression
-                 (RE (RE_Error_Kind),
-                  Make_Record_Aggregate
-                    (Make_List_Id
-                       (RE (RE_Error_Transport))));
-               N := Make_Return_Statement (N);
-               Append_Node_To_List (N, Else_Statements);
+               if Present (ADN.First_Node (Alternatives)) then
+                  N := Make_Qualified_Expression
+                  (RE (RE_Error_Kind),
+                   Make_Record_Aggregate
+                     (Make_List_Id
+                        (RE (RE_Error_Transport))));
+                  N := Make_Return_Statement (N);
+                  Append_Node_To_List (N, Else_Statements);
 
-               ADN.Set_First_Node (Elsif_Statements,
-                                   ADN.Next_Node
-                                     (ADN.First_Node (Alternatives)));
+                  ADN.Set_First_Node (Elsif_Statements,
+                                      ADN.Next_Node
+                                        (ADN.First_Node (Alternatives)));
 
-               N := Make_If_Statement
-                 (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
-                  Then_Statements => ADN.Then_Statements
-                    (ADN.First_Node (Alternatives)),
-                  Elsif_Statements => Elsif_Statements,
-                  Else_Statements => Else_Statements);
+                  N := Make_If_Statement
+                    (Condition => ADN.Condition
+                       (ADN.First_Node (Alternatives)),
+                     Then_Statements => ADN.Then_Statements
+                       (ADN.First_Node (Alternatives)),
+                     Elsif_Statements => Elsif_Statements,
+                     Else_Statements => Else_Statements);
 
-               Append_Node_To_List (N, Statements);
+                  Append_Node_To_List (N, Statements);
+               else
+                  N := Make_Qualified_Expression
+                    (RE (RE_Error_Kind),
+                     Make_Record_Aggregate
+                       (Make_List_Id
+                          (RE (RE_Error_Transport))));
+                  N := Make_Return_Statement (N);
+                  Append_Node_To_List (N, Statements);
+               end if;
             end;
          end if;
 
