@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -1433,12 +1433,13 @@ package body Ocarina.Backends.Utils is
    -----------------------------------
 
    function Map_Ada_Subprogram_Identifier (E : Node_Id) return Node_Id is
-      Spg_Name : Name_Id;
-   begin
-      pragma Assert (Is_Thread (E)     or else
-                     Is_Subprogram (E) or else
-                     Kind (E) = K_Port_Spec_Instance);
+      pragma Assert (Is_Thread (E)
+                       or else Is_Subprogram (E)
+                       or else Kind (E) = K_Port_Spec_Instance);
 
+      Spg_Name : Name_Id;
+
+   begin
       if Is_Subprogram (E)
         and then Get_Source_Language (E) /= Language_Ada_95
       then
@@ -1451,8 +1452,10 @@ package body Ocarina.Backends.Utils is
 
       if Is_Subprogram (E) then
          Spg_Name := Get_Source_Name (E);
+
       elsif Is_Thread (E) then
          Spg_Name := Get_Thread_Compute_Entrypoint (E);
+
       else
          Spg_Name := Get_Port_Compute_Entrypoint (E);
       end if;
