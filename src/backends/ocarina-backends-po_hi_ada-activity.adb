@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2767,24 +2767,11 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             when Thread_With_Compute_Entrypoint =>
                declare
                   use ATN;
-
-                  Value : constant Node_Id := Expanded_Single_Value
-                    (AIN.Property_Association_Value
-                     (Get_Thread_Compute_Entrypoint (E)));
+                  Property : constant Node_Id
+                    := Get_Thread_Compute_Entrypoint (E);
+                  Value : Node_Id;
                begin
-                  if ATN.Kind (Value) = ATN.K_Reference_Term then
-                     --  Get IN ports values and dequeue them
-
-                     if Has_In_Ports (E) then
-                        Make_Fetch_In_Ports;
-                        Make_Dequeue_In_Ports;
-                     end if;
-
-                     --  Handle the thread call sequences
-
-                     Make_Call_Sequence (ATN.Entity
-                                         (ATN.Reference_Term (Value)));
-                  else
+                  if AIN.Kind (Property) = K_Component_Instance then
                      --  Call the compute entrypoint. The code of the
                      --  compute entry point will include the setting
                      --  of the thread OUT ports.
@@ -2793,13 +2780,49 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
                      --  Send OUT ports.
 
-                     --  FIXME: Depending on an AADL property, the
+                     --  XXX: Depending on an AADL property, the
                      --  code of the thread entrypoint may include the
-                     --  sending of OUT ports.
+                     --  sending of OUT ports. Which AADL property?
 
                      if Has_Out_Ports (E) then
                         Make_Set_Out_Ports;
                         Make_Send_Out_Ports;
+                     end if;
+
+                  else
+                     Value := Expanded_Single_Value
+                       (AIN.Property_Association_Value
+                          (Property));
+
+                     if ATN.Kind (Value) = ATN.K_Reference_Term then
+                        --  Get IN ports values and dequeue them
+
+                        if Has_In_Ports (E) then
+                           Make_Fetch_In_Ports;
+                           Make_Dequeue_In_Ports;
+                        end if;
+
+                        --  Handle the thread call sequences
+
+                        Make_Call_Sequence (ATN.Entity
+                                              (ATN.Reference_Term (Value)));
+                     else
+                        --  Call the compute entrypoint. The code of the
+                        --  compute entry point will include the setting
+                        --  of the thread OUT ports.
+
+                        Make_Thread_Compute_Entrypoint;
+
+                        --  Send OUT ports.
+
+                        --  XXX: Depending on an AADL property, the
+                        --  code of the thread entrypoint may include the
+                        --  sending of OUT ports. Which AADL property?
+
+                        if Has_Out_Ports (E) then
+                           Make_Set_Out_Ports;
+                           Make_Send_Out_Ports;
+                        end if;
                      end if;
                   end if;
                end;
