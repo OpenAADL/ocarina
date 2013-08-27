@@ -578,11 +578,19 @@ package body Ocarina.Backends.Properties is
       In_Mode : Name_Id := No_Name)
      return Name_Id
    is
+      Spg_Classifier : Node_Id;
    begin
       if Is_Defined_String_Property
-        (E, Compute_Entrypoint_Source_Text_Name, In_Mode) then
+        (E, Compute_Entrypoint_Source_Text_Name, In_Mode)
+      then
          return Get_String_Property
            (E, Compute_Entrypoint_Source_Text_Name, In_Mode);
+
+      elsif Is_Defined_Property (E, Compute_Entrypoint_Name, In_Mode) then
+         Spg_Classifier := Get_Classifier_Property
+           (E, Compute_Entrypoint_Name, In_Mode);
+         return Get_Source_Name (Spg_Classifier);
+
       end if;
 
       return No_Name;
