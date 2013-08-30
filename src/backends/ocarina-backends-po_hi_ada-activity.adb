@@ -397,6 +397,9 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
       function Background_Task_Instantiation (E : Node_Id) return Node_Id;
       --  Build a package instantiation for a background task
 
+      function ISR_Task_Instantiation (E : Node_Id) return Node_Id;
+      --  Build a package instantiation for a background task
+
       function Task_Job_Spec (E : Node_Id) return Node_Id;
       --  Creates the parameterless subprogram specification that does
       --  the thread's job.
@@ -434,6 +437,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          if Get_Thread_Dispatch_Protocol (E) = Thread_Periodic
            or else Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic
            or else Get_Thread_Dispatch_Protocol (E) = Thread_Hybrid
+           or else Get_Thread_Dispatch_Protocol (E) = Thread_ISR
          then
             --  The task period of minimal interarrival time
 
@@ -721,6 +725,48 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             Parameter_List      => Parameter_List);
          return N;
       end Background_Task_Instantiation;
+
+      ----------------------------
+      -- ISR_Task_Instantiation --
+      ----------------------------
+
+      function ISR_Task_Instantiation (E : Node_Id) return Node_Id is
+         N              : Node_Id;
+         Parameter_List : constant List_Id := New_List (ADN.K_List_Id);
+         Configuration : Name_Id;
+      begin
+         Configuration := Get_Configuration (E);
+         if Configuration = No_Name then
+            Display_Located_Error
+              (Loc (E),
+               "No interrupt configured",
+               Fatal => True);
+         end if;
+
+         N := Make_Withed_Package (RU (RU_Ada_Interrupts_Names));
+         Append_Node_To_List (N, ADN.Withed_Packages (Current_Package));
+         N := Make_Used_Package (RU (RU_Ada_Interrupts_Names));
+         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+         N := Make_Parameter_Association
+           (Selector_Name    => Make_Defining_Identifier
+              (PN (P_Interrupt_Identifier)),
+            Actual_Parameter => Make_Defining_Identifier
+              (Get_Configuration (E)));
+         Append_Node_To_List (N, Parameter_List);
+
+         --  Append the common parameters
+
+         Cyclic_Task_Instantiation_Formals (E, Parameter_List);
+
+         --  Build the package instantiation
+
+         N := Make_Package_Instantiation
+           (Defining_Identifier => Map_Task_Identifier (E),
+            Generic_Package     => RU (RU_PolyORB_HI_ISR_Task),
+            Parameter_List      => Parameter_List);
+         return N;
+      end ISR_Task_Instantiation;
 
       -------------------------------
       -- Hybrid_Task_Instantiation --
@@ -1180,6 +1226,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                   & Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
+            when Thread_ISR =>
+               N := Message_Comment
+                 ("ISR task : "
+                  & Get_Name_String (Display_Name (Identifier (S))));
+               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
             when others =>
                Display_Located_Error
                  (AIN.Loc (E),
@@ -1225,6 +1277,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                --  Instantiate the background task
 
                N := Background_Task_Instantiation (E);
+               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+            when Thread_ISR =>
+               --  Instantiate the ISR task
+
+               N := ISR_Task_Instantiation (E);
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             when others =>
@@ -4121,6 +4179,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             when Thread_Background =>
                N := Message_Comment
                  ("Background task : "
+                  & Get_Name_String (Display_Name (Identifier (S))));
+               Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+            when Thread_ISR =>
+               N := Message_Comment
+                 ("ISR task : "
                   & Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Statements (Current_Package));
 

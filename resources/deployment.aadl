@@ -77,7 +77,7 @@ property set Deployment is
 
   Driver_Name : aadlstring applies to (device);
 
-  Configuration : aadlstring applies to (device);
+  Configuration : aadlstring applies to (device, thread);
 
   Config : aadlstring applies to (device);
 

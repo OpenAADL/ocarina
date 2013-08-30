@@ -290,6 +290,7 @@ package body Ocarina.Backends.Properties is
    Thread_Sporadic_Name   : Name_Id;
    Thread_Hybrid_Name     : Name_Id;
    Thread_Timed_Name      : Name_Id;
+   Thread_Interrupt_Name  : Name_Id;
    Thread_Background_Name : Name_Id;
 
    Time_Ps_Name  : Name_Id;
@@ -1821,6 +1822,9 @@ package body Ocarina.Backends.Properties is
          elsif P_Name = Thread_Aperiodic_Name then
             return Thread_Aperiodic;
 
+         elsif P_Name = Thread_Interrupt_Name then
+            return Thread_ISR;
+
          elsif P_Name = Thread_Sporadic_Name then
             if not Is_Defined_Integer_Property (T, Thread_Period) then
                Display_Located_Error
@@ -1993,7 +1997,10 @@ package body Ocarina.Backends.Properties is
       pragma Assert (Is_Thread (T));
 
       case Get_Thread_Dispatch_Protocol (T) is
-         when Thread_Periodic | Thread_Sporadic | Thread_Hybrid =>
+         when Thread_Periodic
+           | Thread_Sporadic
+           | Thread_Hybrid
+           | Thread_ISR =>
             --  We are sure the thread has a period
 
             The_Period :=  Get_Time_Property_Value (T, Thread_Period);
@@ -2046,7 +2053,10 @@ package body Ocarina.Backends.Properties is
       pragma Assert (Is_Thread (T));
 
       case Get_Thread_Dispatch_Protocol (T) is
-         when Thread_Periodic | Thread_Sporadic | Thread_Hybrid =>
+         when Thread_Periodic
+           | Thread_Sporadic
+           | Thread_Hybrid
+           | Thread_ISR =>
             if Is_Defined_Property (T, Thread_Deadline) then
                return Get_Time_Property_Value (T, Thread_Deadline);
             else
@@ -3245,7 +3255,8 @@ package body Ocarina.Backends.Properties is
       Thread_Aperiodic_Name  := Get_String_Name ("aperiodic");
       Thread_Sporadic_Name   := Get_String_Name ("sporadic");
       Thread_Hybrid_Name     := Get_String_Name ("hybrid");
-      Thread_Timed_Name     := Get_String_Name ("timed");
+      Thread_Timed_Name      := Get_String_Name ("timed");
+      Thread_Interrupt_Name  := Get_String_Name ("interrupt");
       Thread_Background_Name := Get_String_Name ("background");
 
       Time_Ps_Name  := Get_String_Name ("ps");
@@ -4454,6 +4465,21 @@ package body Ocarina.Backends.Properties is
 
       return No_Name;
    end Get_Driver_Name;
+
+   -----------------------
+   -- Get_Configuration --
+   -----------------------
+
+   function Get_Configuration (Device : Node_Id) return Name_Id is
+   begin
+      if Is_Defined_String_Property
+        (Device, Get_String_Name ("deployment::configuration")) then
+         return Get_String_Property
+           (Device, Get_String_Name ("deployment::configuration"));
+      end if;
+
+      return No_Name;
+   end Get_Configuration;
 
    ----------------------------
    -- Get_Send_Function_Name --

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -228,6 +228,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       P_Init,
       P_Initialize_Entrypoint,
       P_Index,
+      P_Interrupt_Identifier,
       P_Item,
       P_Job,
       P_Key,
