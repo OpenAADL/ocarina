@@ -35,7 +35,7 @@ public
 
    device implementation TCP_IP_Device.impl
    properties
-      Implemented_As =>
+      Device_Driver =>
          classifier (TCP_IP_Protocol::Driver_TCP_IP_Protocol.impl);
       Initialize_Entrypoint => classifier (TCP_IP_Protocol::Initialize);
    end TCP_IP_Device.impl;
