@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -268,6 +268,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
         (RUD (RU_Ada_Strings_Wide_Bounded_Generic_Bounded_Length));
       Declare_Subunit (RUD (RU_Ada_Strings_Bounded_Generic_Bounded_Length));
       Declare_Subunit (RUD (RU_PolyORB_HI_Hybrid_Task_Driver_Driver));
+      Declare_Subunit (RUD (RU_Ada_Interrupts_Names));
 
       --  Package Standard is not a subunit but it has to be handled
       --  in a specific way as well as subunit.

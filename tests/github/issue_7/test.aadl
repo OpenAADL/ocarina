@@ -10,6 +10,9 @@ end A;
 system implementation A.impl
 end A.impl;
 
+system implementation Test_B.impl
+end Test_B.impl;
+
 end test_renames_a;
 
 package test_renames_b

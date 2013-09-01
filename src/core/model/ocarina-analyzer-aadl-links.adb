@@ -335,10 +335,20 @@ package body Ocarina.Analyzer.AADL.Links is
       Pointed_Node_Is_Ok       : Boolean;
       Other_Pointed_Node_Is_Ok : Boolean;
    begin
+      --  Either look in available components
+
       Pointed_Node := Find_Component_Classifier
         (Root                 => Root,
          Package_Identifier   => Pack_Identifier,
          Component_Identifier => Identifier (Subprogram_Ref));
+
+      --  or in local subclauses
+
+      if No (Pointed_Node) then
+         Pointed_Node := Find_Subclause
+           (Container_Component (Parent_Sequence (Node)),
+            Identifier (Subprogram_Ref));
+      end if;
 
       if Present (Next_Node (First_Node (Path (Subprogram_Ref)))) then
          Other_Pointed_Node := Find_Component_Classifier
@@ -371,7 +381,9 @@ package body Ocarina.Analyzer.AADL.Links is
       Pointed_Node_Is_Ok := Present (Pointed_Node)
         and then
         ((Kind (Pointed_Node) = K_Component_Type
-          or else Kind (Pointed_Node) = K_Component_Implementation)
+            or else Kind (Pointed_Node) = K_Component_Implementation
+            or else Kind (Pointed_Node) = K_Subcomponent)
+
          and then Component_Category'Val (Category (Pointed_Node)) =
          CC_Subprogram);
 
@@ -574,12 +586,14 @@ package body Ocarina.Analyzer.AADL.Links is
          DAE (Node1    => Node,
               Message1 => " implements a component type that does not exist");
          Success := False;
+
       elsif Kind (Pointed_Node) /= K_Component_Type then
          DAE (Node1    => Node,
               Message1 => " implements ",
               Node2    => Pointed_Node,
               Message2 => ", which is not a component type");
          Success := False;
+
       elsif Category (Pointed_Node) /= Category (Node) then
          DAE (Node1    => Node,
               Message1 => " implements ",
@@ -3218,8 +3232,9 @@ package body Ocarina.Analyzer.AADL.Links is
                  Message2 => ", which is not a component ");
             Success := False;
 
-         elsif Is_Refinement (Node) and then
-           Category (Node) = Component_Category'Pos (CC_Abstract)
+         elsif Is_Refinement (Node)
+           and then Category (Node) = Component_Category'Pos (CC_Abstract)
+           and then Category (Pointed_Node) /= Category (Node)
          then
             DAE (Node1    => Node,
                  Message1 => " cannot be refined into an abstract");

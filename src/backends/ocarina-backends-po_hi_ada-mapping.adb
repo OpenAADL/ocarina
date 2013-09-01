@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -1529,7 +1529,8 @@ package body Ocarina.Backends.PO_HI_Ada.Mapping is
                return 16;
             end;
 
-         when Data_String | Data_Wide_String =>
+         when Data_String
+           | Data_Wide_String =>
             declare
                Dimension : constant ULL_Array := Get_Dimension (E);
                L         : constant Unsigned_Long_Long
@@ -1543,6 +1544,7 @@ package body Ocarina.Backends.PO_HI_Ada.Mapping is
                return Next_Multiple
                  (Elementary_Type_Alignments (Data_Representation), Result);
             end;
+
          when Data_Array =>
             declare
                Dimension : constant ULL_Array := Get_Dimension (E);
@@ -1569,6 +1571,7 @@ package body Ocarina.Backends.PO_HI_Ada.Mapping is
                return Next_Multiple
                  (Elementary_Type_Alignments (Data_Representation), Result);
             end;
+
          when Data_Struct =>
             declare
                Elt      : Node_Id := AIN.First_Node (Subcomponents (E));

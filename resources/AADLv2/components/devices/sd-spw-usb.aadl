@@ -6,19 +6,19 @@ with Deployment;
 
 subprogram spg_poller
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_spw_usb_brick_poller";
 end spg_poller;
 
 subprogram spg_sender
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_spw_usb_brick_sender";
 end spg_sender;
 
 subprogram spg_init
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_spw_usb_brick_init";
 end spg_init;
 

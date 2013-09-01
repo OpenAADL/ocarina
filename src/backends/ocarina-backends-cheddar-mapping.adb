@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2013 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,6 +40,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Build_Utils;
+with Ocarina.Backends.Messages;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Common.Mapping;
@@ -54,6 +55,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
    use Ocarina.Backends.Build_Utils;
+   use Ocarina.Backends.Messages;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Common.Mapping;
@@ -199,6 +201,8 @@ package body Ocarina.Backends.Cheddar.Mapping is
       --  scheduler: computed from Scheduling_Protocol policy
       P := Map_To_XML_Node ("scheduler",
                             Schedulers (Get_Scheduling_Protocol (E)));
+
+      --  quantum: XXX use default value
       if Quantum /= Null_Time then
          declare
             Name : constant Node_Id
@@ -305,17 +309,31 @@ package body Ocarina.Backends.Cheddar.Mapping is
                   then
                      M := Make_XML_Node ("resource_user");
                      K := Make_Defining_Identifier
-                       (To_XML_Name
-                          (Display_Name
-                             (Identifier
-                                (Item
-                                   (AIN.First_Node
-                                      (Path (Destination (Connection))))))));
+                       (Fully_Qualified_Instance_Name
+                          (Corresponding_Instance
+                             (Item
+                                (AIN.First_Node
+                                   (Path (Destination (Connection)))))));
                      Append_Node_To_List (K, XTN.Subitems (M));
+
+                     --  For now, we assume all tasks take the
+                     --  resource at the beginning, and release it at
+                     --  the end of their dispatch.
+
                      K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
                      Append_Node_To_List (K, XTN.Subitems (M));
-                     K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
+                     K := Make_Literal
+                       (XV.New_Numeric_Value
+                          (To_Milliseconds
+                             (Get_Execution_Time
+                                (Corresponding_Instance
+                                   (Item
+                                      (AIN.First_Node
+                                         (Path (Destination (Connection))))))
+                                (1)),
+                           1, 10));
                      Append_Node_To_List (K, XTN.Subitems (M));
+
                      Append_Node_To_List (M, XTN.Subitems (P));
                   end if;
                end if;
@@ -466,8 +484,19 @@ package body Ocarina.Backends.Cheddar.Mapping is
 
       --  capacity: computed from the Compute_Execution_Time property
       --  XXX for now, we take the first value
-      P := Map_To_XML_Node ("capacity",
-                            To_Milliseconds (Get_Execution_Time (E) (1)));
+      if Get_Execution_Time (E) = Empty_Time_Array then
+         Display_Located_Error
+           (AIN.Loc (E),
+            "Property Compute_Exeuction_Time not set," &
+              " assuming default value of 0",
+            Fatal => False,
+            Warning => true);
+
+         P := Map_To_XML_Node ("capacity", Unsigned_Long_Long'(0));
+      else
+         P := Map_To_XML_Node ("capacity",
+                               To_Milliseconds (Get_Execution_Time (E) (1)));
+      end if;
       Append_Node_To_List (P, XTN.Subitems (N));
 
       --  start_time: computed from First_Dispatch_Time property, XXX units
@@ -593,8 +622,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
               (Make_Defining_Identifier (Get_String_Name ("buffer_role")),
                Make_Defining_Identifier (Get_String_Name ("consumer"))),
             XTN.Items (M));
-         K := Make_Defining_Identifier
-           (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
+         K := Make_Defining_Identifier (Fully_Qualified_Instance_Name (E));
          Append_Node_To_List (K, XTN.Subitems (M));
          K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
          Append_Node_To_List (K, XTN.Subitems (M));
@@ -613,10 +641,8 @@ package body Ocarina.Backends.Cheddar.Mapping is
                while Present (Z) loop
                   M := Make_XML_Node ("buffer_user");
                   K := Make_Defining_Identifier
-                    (To_XML_Name (Display_Name
-                                    (Identifier
-                                       (Parent_Subcomponent
-                                          (Parent_Component (Item (Z)))))));
+                    (Fully_Qualified_Instance_Name
+                       (Parent_Component (Item (Z))));
                   Append_Node_To_List (K, XTN.Subitems (M));
                   K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
                   Append_Node_To_List (K, XTN.Subitems (M));
@@ -656,24 +682,29 @@ package body Ocarina.Backends.Cheddar.Mapping is
          K := Make_Defining_Identifier (Map_Buffer_Name (E, P));
          Append_Node_To_List (K, XTN.Subitems (N));
          K := Make_Defining_Identifier
-           (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
+           (Fully_Qualified_Instance_Name (E));
          Append_Node_To_List (K, XTN.Subitems (N));
-      else
-         Append_Node_To_List
-           (Make_Assignement
-              (Make_Defining_Identifier (Get_String_Name ("to_type")),
-               Make_Defining_Identifier (Get_String_Name ("buffer"))),
-            XTN.Items (N));
-         K := Make_Defining_Identifier
-           (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
-         Append_Node_To_List (K, XTN.Subitems (N));
-         K := Make_Defining_Identifier
-           (Map_Buffer_Name
-              (Parent_Component
-                 (Item (AIN.First_Node (Get_Destination_Ports (P)))),
-               Item (AIN.First_Node (Get_Destination_Ports (P)))));
 
-         Append_Node_To_List (K, XTN.Subitems (N));
+      else
+         if Present (AIN.First_Node (Get_Destination_Ports (P))) then
+            --  We have to defends against the destination being an empty list.
+
+            Append_Node_To_List
+              (Make_Assignement
+                 (Make_Defining_Identifier (Get_String_Name ("to_type")),
+                  Make_Defining_Identifier (Get_String_Name ("buffer"))),
+               XTN.Items (N));
+            K := Make_Defining_Identifier
+              (Fully_Qualified_Instance_Name (E));
+            Append_Node_To_List (K, XTN.Subitems (N));
+            K := Make_Defining_Identifier
+              (Map_Buffer_Name
+                 (Parent_Component
+                    (Item (AIN.First_Node (Get_Destination_Ports (P)))),
+                  Item (AIN.First_Node (Get_Destination_Ports (P)))));
+
+            Append_Node_To_List (K, XTN.Subitems (N));
+         end if;
       end if;
 
       return N;

@@ -8,20 +8,20 @@ with ocarina_drivers;
 
 subprogram spg_leon_eth_poller
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_eth_leon_poller";
 end spg_leon_eth_poller;
 
 
 subprogram spg_leon_eth_sender
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_eth_leon_sender";
 end spg_leon_eth_sender;
 
 subprogram spg_leon_eth_init
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_eth_leon_init";
 end spg_leon_eth_init;
 

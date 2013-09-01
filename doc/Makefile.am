@@ -57,24 +57,21 @@ GUIDE_TEXIFILES =\
 	$(GEN_TEXIFILES) \
 	gfdl.texi
 
-EXTRA_DIST=\
-	$(srcdir)/CODING_GUIDELINES \
-	$(srcdir)/CONTRIBUTING \
-	$(srcdir)/PROBLEM-REPORT-FORM \
-	$(GUIDE_TEXIFILES)\
-	$(ALL_IMAGES)\
-	$(ADAFILES)\
-	$(AADLFILES)\
-	$(KW_FILES)\
-	$(srcdir)/ocarina.css
-
 info_TEXINFOS = ocarina.texi
 ocarina_TEXINFOS=$(GUIDE_TEXIFILES)
+
+man_MANS = ocarina-config.1 ocarina.1
+
+EXTRA_DIST= $(srcdir)/CODING_GUIDELINES $(srcdir)/CONTRIBUTING		\
+	$(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES) $(ALL_IMAGES)	\
+	$(ADAFILES) $(AADLFILES) $(KW_FILES) $(srcdir)/ocarina.css	\
+	$(man_MANS) $(srcdir)/ocarina-config.html			\
+	$(srcdir)/ocarina_man.html
 
 all-local: $(GUIDE).html $(GUIDE).pdf
 
 $(GUIDE).html: $(IMAGES) $(GUIDE_TEXIFILES)
-	$(MAKEINFO) --css-include=$(srcdir)/ocarina.css --html $(srcdir)/$(GUIDE).texi -o $(GUIDE).html
+	-$(MAKEINFO) --css-include=$(srcdir)/ocarina.css --force --html --ifhtml --number-sections $(srcdir)/$(GUIDE).texi -o $(GUIDE).html
 	rm -rf $(GUIDE).html/images
 	mkdir -p $(GUIDE).html/images
 	cp -p $(srcdir)/images/*.png $(GUIDE).html/images/
@@ -138,6 +135,9 @@ install-data-local: all
 	fi
 	$(INSTALL_DATA)	$(srcdir)/CONTRIBUTING $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_DATA)	$(srcdir)/PROBLEM-REPORT-FORM $(DESTDIR)$(datadir)/doc/ocarina
+	$(INSTALL_DATA)	$(builddir)/ocarina-config.html $(DESTDIR)$(datadir)/doc/ocarina
+	$(INSTALL_DATA)	$(builddir)/ocarina_man.html $(DESTDIR)$(datadir)/doc/ocarina
+	$(INSTALL_DATA)	$(srcdir)/ocarina.css $(DESTDIR)$(datadir)/doc/ocarina
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(datadir)/doc/ocarina
@@ -173,3 +173,16 @@ sed-stamp: $(top_srcdir)/tools/gensedfile $(KW_FILES)
 	  $(SHELL) $(top_srcdir)/tools/gensedfile $$f; \
 	done
 	touch sed-stamp
+
+###############################################################################
+# Building manpages
+
+
+build_man: $(top_srcdir)/ocarina-config.in
+	chmod 755 $(top_builddir)/ocarina-config
+	help2man --no-discard-stderr $(top_builddir)/ocarina-config >  $(top_builddir)/doc/ocarina-config.1
+	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_builddir)/doc/ocarina-config.1
+	groff -man -Thtml $(top_builddir)/doc/ocarina-config.1 > $(top_builddir)/doc/ocarina-config.html
+	-help2man --no-discard-stderr --help-option="-help" --version-option="-V" `which ocarina` >  $(top_builddir)/doc/ocarina.1
+	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_builddir)/doc/ocarina.1
+	groff -man -Thtml $(top_builddir)/doc/ocarina.1 > $(top_builddir)/doc/ocarina_man.html

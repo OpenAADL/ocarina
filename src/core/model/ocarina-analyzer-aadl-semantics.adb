@@ -320,9 +320,9 @@ package body Ocarina.Analyzer.AADL.Semantics is
       if Applies_To_Prop (Property) = No_List then
          Entity_Of_Property := Container;
       else
-         Pointed_Node := First_Node (List_Items
-                                       (First_Node
-                                          (Applies_To_Prop (Property))));
+         Pointed_Node := First_Node
+           (List_Items (First_Node (Applies_To_Prop (Property))));
+
          if Kind (Pointed_Node) = K_Array_Selection then
             Entity_Of_Property := Corresponding_Entity
               (Identifier (Pointed_Node));

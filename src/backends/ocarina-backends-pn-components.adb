@@ -1261,6 +1261,11 @@ package body Ocarina.Backends.PN.Components is
         (PN_Subcomponents
          (PN_Box (PN_Generated)));
 
+      if No (Thread_Iter) then
+         Display_Error ("Petri Net backend : "
+                          & "incomplete AADL model", True);
+      end if;
+
       declare
          Init_Node : constant Node_Id
            := OPN.First_Node (Internal_Transitions (Thread_Iter));
@@ -2702,20 +2707,35 @@ package body Ocarina.Backends.PN.Components is
       A_PN_Arc : Node_Id;
       Source_Point : Node_Id;
       Endpoint : Node_Id;
-
+      Ports : List_Id;
       Build_Data_Port : Boolean := Is_Data;
    begin
 
       if Is_In (Port_Instance) then
          --  in port
          Endpoint := Port_Instance;
-         Source_Point := Item
-           (AIN.First_Node (Get_Source_Ports (Port_Instance)));
+         Ports := Get_Source_Ports (Port_Instance);
+         if AINU.Is_Empty (Ports) then
+            Display_Located_Error
+              (AIN.Loc (Port_Instance),
+               "This IN port is not connected to any destination",
+               Fatal => True);
+         else
+            Source_Point := Item (AIN.First_Node (Ports));
+         end if;
+
       else
          --  out port
          Source_Point := Port_Instance;
-         Endpoint := Item
-           (AIN.First_Node (Get_Destination_Ports (Port_Instance)));
+         Ports := Get_Destination_Ports (Port_Instance);
+         if AINU.Is_Empty (Ports) then
+            Display_Located_Error
+              (AIN.Loc (Port_Instance),
+               "This OUT port is not connected to any destination",
+               Fatal => True);
+         else
+            Endpoint := Item (AIN.First_Node (Ports));
+         end if;
 
          --  for out data ports only
          --  to avoid endless fireable transition

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -41,7 +41,7 @@ package Ocarina.Instances.Components.Modes is
       Component_Instance : Node_Id;
       Mode               : Node_Id)
      return Node_Id;
-   --  Create a new mode instance correspodning to the mode
+   --  Create a new mode instance corresponding to the mode
    --  declaration 'Mode' of the corresponding component of
    --  'Component_Instance'.
 

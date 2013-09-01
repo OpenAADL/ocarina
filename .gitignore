@@ -15,3 +15,7 @@ resources/runtime/polyorb-hi-ada
 resources/runtime/polyorb-hi-c
 support/mdate-sh
 support/texinfo.tex
+tools/compare.py
+log.*
+support/headers_ocarina*
+

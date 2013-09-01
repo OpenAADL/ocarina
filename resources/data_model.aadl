@@ -24,25 +24,33 @@ property set Data_Model is
    --  types (10**(-scale) is the precision).
 
    Data_Representation : enumeration
-     (Array, Boolean, Character, Enum, Float, 
-      Fixed, Integer, String, Struct, Union) 
+     (Array, Boolean, Character, Enum, Float,
+      Fixed, Integer, String, Struct, Union)
       applies to ( data );
    --  The Data_Representation property may be used to specify the
    --  representation of simple or composite data types within the
    --  programming language source code.
    --  Note: An implementation is allowed to support only a subset of
    --  these structures.
-   
+
    Dimension : list of aadlinteger applies to ( data );
    --  The Dimension property is used to specify the dimensions of a
    --  multi-dimensional array, ordered.  This property shall be used
    --  in conjunction with the Data_Representation property.
 
+   Indefinite_Dimension : constant aadlinteger => -1;
+   -- Use this constant to indicate that one of the dimension of your
+   --  array is non definite for now
+
+   Infinite_Dimension : constant aadlinteger => -2;
+   --  Use this constant to indicate that this array is (potentially) of
+   --  unbounded size.
+
    Element_Names : list of aadlstring applies to ( data );
    --  The Element_Names provides the names of a struct or union
    --  members in order of appearance as defined by the Base_Type
    --  property.
-   
+
    Enumerators : list of aadlstring applies to ( data );
    --  The Enumerators provides the list of enumeration litterals
    --  attached to an enumeration data component.
@@ -82,9 +90,8 @@ property set Data_Model is
    --  data component.  This property is used to represent real range
    --  constraints on data that is of some real type.
 
-   Representation : list of aadlstring applies to ( data ); 
+   Representation : list of aadlstring applies to ( data );
    -- Representation specifies the actual representation of
    -- enumerators value.
 
 end Data_Model;
-

@@ -6,7 +6,7 @@ with Deployment;
 
 subprogram init
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_driver_rtems_ne2000_init";
 end init;
 
@@ -26,14 +26,14 @@ end poller.i;
 
 subprogram spg_poller
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_driver_rtems_ne2000_poller";
 end spg_poller;
 
 
 subprogram spg_sender
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_driver_sockets_send";
 end spg_sender;
 

@@ -55,7 +55,7 @@ property set Deployment is
     applies to (device);
 
   Configuration : aadlstring
-    applies to (device);
+    applies to (device, thread);
 
   Config : aadlstring
     applies to (device);

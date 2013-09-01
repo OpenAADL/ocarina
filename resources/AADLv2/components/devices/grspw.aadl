@@ -38,7 +38,7 @@ public
 
    device implementation GRSPW_Device.impl
    properties
-      Implemented_As =>
+      Device_Driver =>
          classifier (GRSPW::Driver_GRSPW_Protocol.impl);
       Initialize_Entrypoint => classifier (GRSPW::Initialize);
    end GRSPW_Device.impl;
@@ -104,7 +104,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRSPW.Initialize";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Initialize;
 
    -------------
@@ -117,7 +117,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRSPW.Receive";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Receive;
 
    -------------
@@ -130,7 +130,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRSPW.Send";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Send;
 
 end GRSPW;

@@ -5,39 +5,39 @@ with Deployment;
 
 subprogram spg_1553_controller_rasta
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_c_driver_1553_rasta_controller";
 end spg_1553_controller_rasta;
 
 subprogram spg_1553_poller_rasta_terminal
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_c_driver_1553_rasta_terminal_poller";
 end spg_1553_poller_rasta_terminal;
 
 subprogram spg_1553_sender_rasta_controller
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_c_driver_1553_rasta_sender_controller";
 end spg_1553_sender_rasta_controller;
 
 subprogram spg_1553_sender_rasta_terminal
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_c_driver_1553_rasta_sender_terminal";
 end spg_1553_sender_rasta_terminal;
 
 
 subprogram spg_1553_init_rasta_controller
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_c_driver_1553_rasta_init_controller";
 end spg_1553_init_rasta_controller;
 
 
 subprogram spg_1553_init_rasta_terminal
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_c_driver_1553_rasta_init_terminal";
 end spg_1553_init_rasta_terminal;
 

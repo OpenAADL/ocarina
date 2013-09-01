@@ -283,3 +283,5 @@ tests/example_04_05_1/t.aadl
 tests/github/issue_1/test.aadl
 tests/github/issue_6/test_spg.aadl
 tests/github/issue_7/test.aadl
+tests/github/issue_10/test.aadl
+tests/github/issue_10/test2.aadl

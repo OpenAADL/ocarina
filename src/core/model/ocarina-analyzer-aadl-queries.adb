@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -965,19 +965,29 @@ package body Ocarina.Analyzer.AADL.Queries is
             case Category_Of_Property_Owner is
                when PO_Component_Category =>
                   --  Here, we check that the component (or an access
-                  --  to this component matches on of the
+                  --  to this component) matches one of the
                   --  corresponding component types or meta model
                   --  elements in the 'applies to'
 
                   Can_Apply :=
-                    (Named_Element'Val (Category (List_Node)) =
+                    ((Named_Element'Val (Category (List_Node)) =
                      PO_Component_Category
                        or else
                      Named_Element'Val (Category (List_Node)) =
                      PO_Component_Access)
                     and then
                     (Category_Of_Component =
-                     Component_Category'Val (Component_Cat (List_Node)));
+                       Component_Category'Val (Component_Cat (List_Node))))
+                    or else Category_Of_Component = CC_Abstract;
+
+                  --  if not, then we check that the kind of entity
+                  --  matches one particular meta-model element
+
+                  if not Can_Apply then
+                     Can_Apply := Kind (Entity) = K_Subcomponent
+                       and then Named_Element'Val (Category (List_Node))
+                       = PO_Subcomponent;
+                  end if;
 
                   --  XXX dubious, here we erase the previously
                   --  computed value of Can_Apply, to be investigated.

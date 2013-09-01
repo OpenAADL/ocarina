@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -456,7 +456,6 @@ package body Ocarina.Analyzer.AADL.Finder is
    begin
       case Kind (Designator) is
          when K_Unique_Property_Type_Identifier =>
-
             Pointed_Node := Find_Property_Entity
               (Root,
                Identifier
@@ -808,12 +807,25 @@ package body Ocarina.Analyzer.AADL.Finder is
       pragma Assert (No (Package_Identifier)
                      or else Kind (Package_Identifier) = K_Identifier);
       pragma Assert (Kind (Component_Identifier) = K_Identifier);
+
+      Pointed_Node : Node_Id;
+
    begin
-      return Find_AADL_Declaration_Classifier
+      Pointed_Node := Find_AADL_Declaration_Classifier
         (Root,
          Package_Identifier,
          Component_Identifier,
-         (K_Component_Type, K_Component_Implementation));
+         (K_Component_Type, K_Component_Implementation, K_Alias_Declaration));
+
+      --  In case the classifier is an alias, return the renamed entity
+
+      if Present (Pointed_Node)
+        and then Kind (Pointed_Node) = K_Alias_Declaration
+      then
+         Pointed_Node := Renamed_Entity (Pointed_Node);
+      end if;
+
+      return Pointed_Node;
    end Find_Component_Classifier;
 
    ---------------------

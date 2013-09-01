@@ -36,7 +36,7 @@ public
 
    device implementation Native_UART_Device.impl
    properties
-      Implemented_As =>
+      Device_Driver =>
          classifier (Native_UART::Driver_Native_UART_Protocol.impl);
       Initialize_Entrypoint => classifier (Native_UART::Initialize);
    end Native_UART_Device.impl;
@@ -104,7 +104,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_Native_UART.Initialize";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Initialize;
 
    -------------
@@ -117,7 +117,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_Native_UART.Receive";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Receive;
 
    -------------
@@ -130,7 +130,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_Native_UART.Send";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Send;
 
 end Native_UART;

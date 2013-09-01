@@ -580,11 +580,18 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                                 (Map_Ada_Component_Name (F))),
                                Make_Defining_Identifier (PN (P_Message))));
                            Append_Node_To_List (N, Statements);
+                        else
+                           Append_Node_To_List (Make_Null_Statement,
+                                                Statements);
                         end if;
 
-                        N := Make_Case_Statement_Alternative
-                          (Make_List_Id
-                           (Extract_Enumerator (F, False)),
+                        N := Make_Elsif_Statement
+                          (Make_Expression
+                             (Make_Selected_Component
+                                (Make_Designator (PN (P_Data)),
+                                 Make_Designator (PN (P_Port))),
+                              Op_Equal,
+                              Extract_Enumerator (F, False)),
                            Statements);
                         Append_Node_To_List (N, Alternatives);
                      end if;
@@ -592,22 +599,30 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                      F := Next_Node (F);
                   end loop;
 
-                  N := Make_Case_Statement_Alternative
-                    (No_List,
-                     Make_List_Id
-                     (Make_Raise_Statement
-                      (Make_Designator
-                       (EN (E_Program_Error)))));
-                  Append_Node_To_List (N, Alternatives);
+                  declare
+                     Declarations : constant List_Id
+                       := New_List (ADN.K_Declaration_List);
+                     Elsif_Statements : constant List_Id
+                       := New_List (ADN.K_List_Id);
+                  begin
+                     N := Make_Used_Package
+                       (RU (RU_PolyORB_HI_Generated_Activity));
+                     Append_Node_To_List (N, Declarations);
 
-                  N := Make_Case_Statement
-                    (Make_Selected_Component
-                     (Make_Designator (PN (P_Data)),
-                      Make_Designator (PN (P_Port))),
-                     Alternatives);
+                     ADN.Set_First_Node (Elsif_Statements,
+                                         ADN.Next_Node
+                                           (ADN.First_Node (Alternatives)));
 
-                  N := Make_Subprogram_Implementation
-                    (Spec, No_List, Make_List_Id (N));
+                     N := Make_If_Statement
+                       (Condition => ADN.Condition
+                          (ADN.First_Node (Alternatives)),
+                        Then_Statements => ADN.Then_Statements
+                          (ADN.First_Node (Alternatives)),
+                        Elsif_Statements => Elsif_Statements);
+
+                     N := Make_Subprogram_Implementation
+                       (Spec, Declarations, Make_List_Id (N));
+                  end;
 
                else
                   Declarations := New_List (ADN.K_Declaration_List);
@@ -742,23 +757,17 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                             Make_Record_Aggregate (Aggregates)));
                         Append_Node_To_List (N, Statements);
 
-                        N := Make_Case_Statement_Alternative
-                          (Make_List_Id
-                           (Extract_Enumerator (F, False)),
+                        N := Make_Elsif_Statement
+                          (Make_Expression
+                             (Make_Defining_Identifier (PN (P_Port)),
+                              Op_Equal,
+                              Extract_Enumerator (F, False)),
                            Statements);
                         Append_Node_To_List (N, Alternatives);
                      end if;
 
                      F := Next_Node (F);
                   end loop;
-
-                  N := Make_Case_Statement_Alternative
-                    (No_List,
-                     Make_List_Id
-                     (Make_Raise_Statement
-                      (Make_Designator
-                       (EN (E_Program_Error)))));
-                  Append_Node_To_List (N, Alternatives);
 
                   if not Ref_Message then
                      --  Add a pragma unreferenced for 'Message'
@@ -770,12 +779,31 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                      Append_Node_To_List (N, Declarations);
                   end if;
 
-                  N := Make_Case_Statement
-                    (Make_Defining_Identifier (PN (P_Port)),
-                     Alternatives);
+                  declare
+                     --  Declarations : constant List_Id
+                     --    := New_List (ADN.K_Declaration_List);
+                     Elsif_Statements : constant List_Id
+                       := New_List (ADN.K_List_Id);
+                  begin
+                     N := Make_Used_Package
+                       (RU (RU_PolyORB_HI_Generated_Activity));
+                     Append_Node_To_List (N, Declarations);
 
-                  N := Make_Subprogram_Implementation
-                    (Spec, Declarations, Make_List_Id (N));
+                     ADN.Set_First_Node (Elsif_Statements,
+                                         ADN.Next_Node
+                                           (ADN.First_Node (Alternatives)));
+
+                     N := Make_If_Statement
+                       (Condition => ADN.Condition
+                          (ADN.First_Node (Alternatives)),
+                        Then_Statements => ADN.Then_Statements
+                          (ADN.First_Node (Alternatives)),
+                        Elsif_Statements => Elsif_Statements);
+
+                     N := Make_Subprogram_Implementation
+                       (Spec, Declarations, Make_List_Id (N));
+                  end;
+
                else
                   --  Add a pragma unreferenced for parameters
 

@@ -57,9 +57,7 @@ package body Ocarina.Backends.PN.Printer is
    --  Print_Pn_Generated  --
    --------------------------
 
-   procedure Print_Pn_Generated (Pn_Generated : Node_Id)
-   is
-
+   procedure Print_Pn_Generated (Pn_Generated : Node_Id) is
    begin
       Proc_Print_Formalism_Information.all (Pn_Generated);
       Print_Pn_Box (Pn_Generated);
@@ -69,8 +67,7 @@ package body Ocarina.Backends.PN.Printer is
    --  Print_Pn_Box  --
    --------------------
 
-   procedure Print_Pn_Box (Pn_Generated : Node_Id)
-   is
+   procedure Print_Pn_Box (Pn_Generated : Node_Id) is
       use OPN;
       use OPU;
 
@@ -103,9 +100,7 @@ package body Ocarina.Backends.PN.Printer is
    --  Print_Thread  --
    --------------------
 
-   procedure Print_Thread (Pn_Thread : Node_Id;
-                           Pn_Generated : Node_Id)
-   is
+   procedure Print_Thread (Pn_Thread : Node_Id; Pn_Generated : Node_Id) is
       use OPN;
       use OPU;
 
@@ -146,9 +141,7 @@ package body Ocarina.Backends.PN.Printer is
    --  Print_Call_Seq  --
    ----------------------
 
-   procedure Print_Call_Seq (Pn_Call : Node_Id;
-                             Pn_Generated : Node_Id)
-   is
+   procedure Print_Call_Seq (Pn_Call : Node_Id; Pn_Generated : Node_Id) is
       use OPN;
       use OPU;
 
@@ -167,9 +160,7 @@ package body Ocarina.Backends.PN.Printer is
    --  Print_Component  --
    -----------------------
 
-   procedure Print_Component (Pn_Sub : Node_Id;
-                              Pn_Generated : Node_Id)
-   is
+   procedure Print_Component (Pn_Sub : Node_Id; Pn_Generated : Node_Id) is
       use OPN;
       use OPU;
 
@@ -181,6 +172,7 @@ package body Ocarina.Backends.PN.Printer is
             Proc_Print_Trans.all (Pn_Generated, Node_Iter);
             Node_Iter := OPN.Next_Node (Node_Iter);
          end loop;
+
       end if;
       if not Is_Empty (Internal_Transitions (Pn_Sub)) then
          Node_Iter := OPN.First_Node (Internal_Transitions (Pn_Sub));
@@ -189,6 +181,7 @@ package body Ocarina.Backends.PN.Printer is
             Node_Iter := OPN.Next_Node (Node_Iter);
          end loop;
       end if;
+
       if not Is_Empty (Internal_Places (Pn_Sub)) then
          Node_Iter := OPN.First_Node (Internal_Places (Pn_Sub));
          while Present (Node_Iter) loop

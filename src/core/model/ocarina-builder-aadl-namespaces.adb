@@ -339,6 +339,10 @@ package body Ocarina.Builder.AADL.Namespaces is
 
       Set_Parent (Node, Namespace);
       Set_Identifier (Node, Identifier);
+      if Present (Identifier) then
+         Set_Corresponding_Entity (Identifier, Node);
+      end if;
+
       Set_Package_Name (Node, Package_Name);
       Set_Reference (Node, Classifier_Ref);
       Set_Entity_Category (Node,

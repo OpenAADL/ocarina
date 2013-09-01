@@ -468,6 +468,9 @@ package body Ocarina.FE_AADL.Parser is
             File_Name := Search_File (Name_Find);
             if File_Name = No_Name then
                New_Root := No_Node;
+               Exit_On_Error
+                 (No (New_Root), "Cannot find standard property set "
+                 & Image (Standard_Property_Sets (J)));
                exit;
             end if;
             Buffer := Lexer.Load_File (File_Name);

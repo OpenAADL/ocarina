@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,6 +39,8 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
      (RU_Null,
       RU_Ada,
       RU_Ada_Exceptions,
+      RU_Ada_Interrupts,
+      RU_Ada_Interrupts_Names,
       RU_Ada_Real_Time,
       RU_Ada_Strings,
       RU_Ada_Strings_Bounded,
@@ -64,6 +66,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RU_PolyORB_HI_Periodic_Task,
       RU_PolyORB_HI_Sporadic_Task,
       RU_PolyORB_HI_Hybrid_Task,
+      RU_PolyORB_HI_ISR_Task,
       RU_PolyORB_HI_Port_Kinds,
       RU_PolyORB_HI_Marshallers_G,
       RU_PolyORB_HI_Port_Type_Marshallers,
@@ -175,6 +178,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Natural,                    --  Standard.Natural
       RE_Positive,                   --  Standard.Positive
       RE_Float,                      --  Standard.Float
+      RE_Long_Float,                 --  Standard.Long_Float
       RE_String,                     --  Standard.String
       RE_Character,                  --  Standard.Character
       RE_Wide_Character,             --  Standard.Wide_Character
@@ -272,6 +276,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
          RE_Natural                    => RU_Standard,
          RE_Positive                   => RU_Standard,
          RE_Float                      => RU_Standard,
+         RE_Long_Float                 => RU_Standard,
          RE_String                     => RU_Standard,
          RE_Character                  => RU_Standard,
          RE_Wide_Character             => RU_Standard,

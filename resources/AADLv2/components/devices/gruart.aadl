@@ -38,7 +38,7 @@ public
 
    device implementation GRUART_Device.impl
    properties
-      Implemented_As =>
+      Device_Driver =>
          classifier (GRUART::Driver_GRUART_Protocol.impl);
       Initialize_Entrypoint => classifier (GRUART::Initialize);
    end GRUART_Device.impl;
@@ -106,7 +106,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRUART.Initialize";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Initialize;
 
    -------------
@@ -119,7 +119,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRUART.Receive";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Receive;
 
    -------------
@@ -132,7 +132,7 @@ public
 
    properties
       Source_Name => "PolyORB_HI_Drivers_GRUART.Send";
-      Source_Language => Ada;
+      Source_Language => (Ada);
    end Send;
 
 end GRUART;

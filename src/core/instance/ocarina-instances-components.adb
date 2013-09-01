@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -212,9 +212,7 @@ package body Ocarina.Instances.Components is
             --  Instantiate the component type
 
             New_Instance := Instantiate_Component
-              (Instance_Root,
-               Component_Type,
-               New_Instance);
+              (Instance_Root, Component_Type, New_Instance);
          end;
       end if;
 
@@ -327,7 +325,7 @@ package body Ocarina.Instances.Components is
                        List_Node))
                then
                   Instance_Node := Instantiate_Feature
-                    (Instance_Root, List_Node);
+                    (Instance_Root, List_Node, New_Instance);
 
                   if Present (Instance_Node) then
                      Success := Apply_Properties
@@ -366,7 +364,7 @@ package body Ocarina.Instances.Components is
                        List_Node))
                then
                   Instance_Node := Instantiate_Feature
-                    (Instance_Root, List_Node);
+                    (Instance_Root, List_Node, New_Instance);
 
                   if Present (Instance_Node) then
                      Success := Apply_Properties
@@ -414,8 +412,8 @@ package body Ocarina.Instances.Components is
       if Present (Parent (Component)) then
          declare
             The_Parent : constant Node_Id := ATE.Get_Referenced_Entity
-              (Parent
-               (Component));
+              (Parent (Component));
+
          begin
             --  Annotate the parent component with the current
             --  component.

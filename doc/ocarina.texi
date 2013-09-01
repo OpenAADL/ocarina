@@ -8,14 +8,17 @@
 @settitle Ocarina: A Compiler for the AADL
 @afourpaper
 
+@setchapternewpage odd
+@syncodeindex fn cp
+
 @documentlanguage en
 @documentencoding ISO-8859-1
 
 @c description and copyright
 
 @copying
-Copyright @copyright{} 2003-2007 @'{E}cole
-nationale sup@'{e}rieure des t@'{e}l@'{e}communications
+Copyright @copyright{} 2003-2009 Telecom ParisTech, @copyright{}
+ 2009-2013 ISAE, ESA
 
 @noindent
 Permission is granted to make and distribute verbatim copies of this
@@ -27,6 +30,7 @@ this permission are preserved.
 @c title page, contents, copyright
 
 @titlepage
+
 @title Ocarina
 @subtitle A Compiler for the AADL
 @subtitle for Ocarina @value{EDITION}, @value{UPDATED}
@@ -44,30 +48,31 @@ this permission are preserved.
 
 @ifnottex
 @node Top, About This Guide, (dir), (dir)
-@top Ocarina
+@top Ocarina User's Guide
 @insertcopying
 @end ifnottex
 
 @menu
 * About This Guide::
-* Introduction::                
-* AADL::     
-* Installation::        
+* Introduction::
+* AADL::
+* Installation::
 * Using Ocarina::
 * A Tutorial of AADL & Ocarina::
-* Ocarina API Reference Manual::                 
-* Petri Net Mapping Rules:: 
-* AADL modes for Emacs and vim:: 
-* Standard AADL property files::   
+* Ocarina API Reference Manual::
+* Petri Net Mapping Rules::
+* AADL modes for Emacs and vim::
+* Standard AADL property files::
 * Ocarina AADL property files::
 * Conformance to standards::
 * GNU Free Documentation License::
-* Index::
+* Terms::
 @end menu
+@c @end ifinfo
 
-@ifhtml
-@center @code{$LastChangedDate: 2009-10-14 09:28:52 +0200 (Wed, 14 Oct 2009) $}
-@end ifhtml
+@c -------------------------------------------------------------------
+
+@c @contents
 
 @c -------------------------------------------------------------------
 @node About This Guide
@@ -83,8 +88,6 @@ details how to use them to build and exploit AADL models.
 It also details model transformations of AADL models onto
 
 @itemize
-@item Ada code using the ARAO AADL runtime built on top of PolyORB;
-
 @item Petri Net models
 @end itemize
 
@@ -93,11 +96,11 @@ Companion documents describe other add-ons for Ocarina:
 @itemize
 @item PolyORB-HI/Ada, a High-Integrity AADL runtime and its code
 generator built on top of Ocarina that targets Ada targets: Native or
-bare board runtimes; 
+bare board runtimes;
 
 @item PolyORB-HI/C, a High-Integrity AADL runtime and its code
 generator built on top of Ocarina that targets C targets: POSIX and
-RT-POSIX systems, RTEMS; 
+RT-POSIX systems, RTEMS;
 
 @end itemize
 
@@ -132,7 +135,7 @@ Ocarina to generate Petri nets from AADL models
 @item @ref{AADL modes for Emacs and vim} presents the Emacs and vim modes for AADL packaged
 with Ocarina
 
-@item @ref{Standard AADL property files} provides the standard AADL 
+@item @ref{Standard AADL property files} provides the standard AADL
 property sets.
 
 @item @ref{Ocarina AADL property files} lists Ocarina specific
@@ -220,15 +223,13 @@ standards and proposes the following features :
 @item Code generation, using one of the four code generators
 
 @itemize
-@item ARAO/Ada, an Ada AADL runtime built on top of PolyORB;
-
 @item PolyORB-HI/Ada, a High-Integrity AADL runtime and its code
 generator built on top of Ocarina that targets Ada targets: Native or
-bare board runtimes; 
+bare board runtimes;
 
 @item PolyORB-HI/C, a High-Integrity AADL runtime and its code
 generator built on top of Ocarina that targets C targets: POSIX
-systems, RTEMS; 
+systems, RTEMS;
 
 @item POK, a partioned operating system compliant with the ARINC653
  standard.
@@ -243,7 +244,7 @@ tool from Tidorum Ltd.;
 @item REAL, Requirement Enforcement and Analysis Language, an AADLv2 annex
 language to evaluate properties and metrics of AADLv2 architectural models;
 
-@item Scheduling analysis of AADL models, with a gateway to the Cheddar 
+@item Scheduling analysis of AADL models, with a gateway to the Cheddar
 scheduling analysis tool from the Université de Bretagne Occidentale.
 
 @end enumerate
@@ -366,11 +367,10 @@ An Ada compiler:
 @item GNAT GCC 4.4.0 or later
 @end itemize
 
-Optional: 
+Optional:
 
 @itemize @bullet
-@item PolyORB (@url{http://libre.adacore.com/polyorb/}) if you
-want to build distributed applications using Ocarina.
+@item @code{Bound-T}
 @item Xcov and Qemu from the project Couverture if you want to
 get coverage information about the distributed applications.
 (@url{http://forge.open-do.org/projects/couverture/})
@@ -434,18 +434,18 @@ Available options for the @file{configure} script include:
 
 @itemize @bullet
 
-@item  @option{--enable-debug}: enable debugging information generation 
+@item  @option{--enable-debug}: enable debugging information generation
 and supplementary runtime checks. Note that this option has a
 significant space and time cost, and is not recommended for production
 use.
 
-@item  @option{--with-ocarina-runtimes=x}: enable building Ocarina along 
+@item  @option{--with-ocarina-runtimes=x}: enable building Ocarina along
 with the requested runtimes. @option{x} is a set of valid runtimes
 located in the @file{resources/runtimes} directory. @option{x} is case
 insensitive. Examples of use:
 
-@itemize @bullet 
-        
+@itemize @bullet
+
 @item @option{--with-ocarina-runtimes=all}: compile Ocarina
 along with all the runtimes. All the Ocarina runtimes MUST be located
 in the @file{resources/runtimes} directory.
@@ -458,13 +458,13 @@ along with the @option{PolyORB-HI-Ada} runtime. The directory
 @file{polyorb-hi-ada} MUST exist in the @file{resources/runtimes}
 directory.
 
-@item @option{--with-ocarina-runtimes="polyorb-hi-c PolyORB-HI-Ada"}: 
+@item @option{--with-ocarina-runtimes="polyorb-hi-c PolyORB-HI-Ada"}:
 compile Ocarina along with the @option{PolyORB-HI-Ada} and the
 @option{PolyORB-HI-C} runtimes. The directories @file{polyorb-hi-ada}
 and @file{polyorb-hi-c} MUST exist in the @file{resources/runtimes}
 directory.
 
-@item No option: compile Ocarina along with all the runtimes found in 
+@item No option: compile Ocarina along with all the runtimes found in
 the @file{resources/runtimes} directory.
 
 @end itemize
@@ -528,7 +528,7 @@ Ocarina.
 
 @smallexample
 @c XXX check consistency with corresponding script
-Usage: 
+Usage:
       ocarina [options] files
       OR
       ocarina -help
@@ -650,18 +650,18 @@ Options:
             Output all the flags (compiler and linker) required
             to compile your program.
         [--prefix[=DIR]]
-            Output the directory in which Ocarina architecture-independent 
+            Output the directory in which Ocarina architecture-independent
            files are installed, or set this directory to DIR.
         [--exec-prefix[=DIR]]
-            Output the directory in which Ocarina architecture-dependent 
+            Output the directory in which Ocarina architecture-dependent
            files are installed, or set this directory to DIR.
         [--version|-v]
             Output the version of Ocarina.
         [--config]
             Output Ocarina's configuration parameters.
         [--runtime[=<Runtime_Name>]]
-            Checks the validity and the presence of the given runtime and 
-            then, outputs its path. Only one runtime can be requested at 
+            Checks the validity and the presence of the given runtime and
+            then, outputs its path. Only one runtime can be requested at
             a time. If no runtime name is given, outputs the root directory
             of all runtimes.
         [--libs]
@@ -669,7 +669,7 @@ Options:
         [--properties]
             Output the location of the standard property file.
         [--resources]
-            Output the location of resource files 
+            Output the location of resource files
             (typically the standard properties)
         [--cflags]
             Output the compiler flags to use for Ocarina.
@@ -698,20 +698,20 @@ This chapter describes Ocarina's API, an API to manipulate AADL
 models.
 
 @menu
-* The Ocarina Core Library::    
-* Input/Output Modules::        
+* The Ocarina Core Library::
+* Input/Output Modules::
 @end menu
 
 @node The Ocarina Core Library
 @section The Ocarina Core Library
 
 @menu
-* Rationale of the core library::  
-* Code organization::           
-* Low level API to manipulate tree nodes::  
-* API to build and manipulate AADL models::  
-* API to build and manipulate AADL instances::  
-* Core parsing and printing facilities::  
+* Rationale of the core library::
+* Code organization::
+* Low level API to manipulate tree nodes::
+* API to build and manipulate AADL models::
+* API to build and manipulate AADL instances::
+* Core parsing and printing facilities::
 @end menu
 
 @node  Rationale of the core library
@@ -726,12 +726,12 @@ AADL descriptions are usually sets of declarations. Verifications can
 be performed on these representations, but the declarations must be
 instantiated in order to be able to fully compute the
 architectures. Therefore, the processing of an AADL description is
-usually performed in two steps: 
+usually performed in two steps:
 
-@itemize 
-@item 
+@itemize
+@item
 the building of an AADL model that corresponds to the AADL declarations;
-@item 
+@item
 then the instantiation of the model to manipulate the actual architecture.
 @end itemize
 
@@ -842,7 +842,7 @@ This section describes the high level function's to manipulate AADL models:
 
 @enumerate
 
-@item 
+@item
 Builder API~: These functions (declared in the @code{Ocarina.Builder}
 hierarchy) are provided to create the main kinds of nodes: components,
 namespaces, subclauses, annexes, properties, etc. They are named
@@ -851,18 +851,18 @@ parent node, except for the root node. This helps ensure that the
 description structure is valid, since the API only allows valid
 constructions. All these functions take at least three parameters:
 
-@itemize 
-@item 
+@itemize
+@item
 the location of the node; for example the position in a file that
 corresponds to the element that is parsed; the location is of type
 Location as defined in the package @code{Locations};
 
-@item 
+@item
 the name that should be set for the node, since all those nodes can
 have names; the name is an identifier node; for some entities it can be
 set to @code{No_Node} (connections, etc.);
 
-@item 
+@item
 the namespace or the parent node, which shall contain the newly
 created node; this node must be different from @code{No_Node}, and has to
 be of a correct kind, according to the AADL standard BNF.
@@ -879,13 +879,13 @@ add child nodes to their parents. No verification is performed; they
 just ensure the child lists are created before inserting the node in
 them.
 
-@item 
+@item
 Verification API: Functions are provided to check the validity of
 AADL models. They ensure that all referenced AADL entities are
 declared, that their type is correct, etc. They also check that AADL
 properties are consistent.
 
-@item 
+@item
 Interrogation API: These functions (declared in the
 @code{Ocarina.Analyzer} hierarchy) are provided to interrogate AADL
 models in order to find entities, get properties, etc.
@@ -981,15 +981,15 @@ them in the incoming iteration.
 
 Ocarina can handle AADL source files written conforming to the AADL
 grammar.
- 
+
 @itemize
- 
-@item 
+
+@item
 @b{AADL} The @code{Print_Node} procedure provided by this module allows
 to print a node and its subnodes. The result is an AADL source
 file. The printer name associated to this module is @code{aadl}.
 
-@item 
+@item
 @b{Dumper} This module is used for debugging purpose. Its printing
 facility allows to dump the AADL tree or the AADL instance tree. The
 printer names associated to this module are @code{aadl_tree_p} for the
@@ -1007,8 +1007,8 @@ it is possible to achieve verification on AADL architectures before
 generating the corresponding source code.
 
 @menu
-* Mapping Patterns::            
-* Examples::                    
+* Mapping Patterns::
+* Examples::
 @end menu
 
 @node Mapping Patterns
@@ -1049,7 +1049,7 @@ feature : @b{in} @b{data} @b{port};
 
 @subsection Other Components
 
-@example 
+@example
 @b{process} a_process
 @b{features}
   input_1 : @b{in} @b{data} @b{port};
@@ -1094,7 +1094,7 @@ specified by the AADL properties.
 
 Connections between features are modeled by transitions. We
 distinguish connections between subprograms parameters and between
-other component ports. 
+other component ports.
 
 If an AADL port is connected to several other ports at a time, the
 Petri net transition shall be connected to all the corresponding
@@ -1139,7 +1139,7 @@ By applying the mapping, we obtain the following Petri net:
 @chapter AADL modes for Emacs and vim
 @c -------------------------------------------------------------------
 
-@noindent 
+@noindent
 The AADL modes for Emacs and vim provide syntax coloration and
 automatic indentation features when editing AADL files.
 
@@ -1225,8 +1225,8 @@ documentation for more details.
 @include gfdl.texi
 
 @c -------------------------------------------------------------------
-@node Index
-@unnumbered Index
+@node Terms
+@unnumbered Terms
 @c -------------------------------------------------------------------
 
 @printindex cp

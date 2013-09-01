@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -368,7 +368,9 @@ package Ocarina.Backends.Properties is
       Thread_Aperiodic,
       Thread_Sporadic,
       Thread_Hybrid,
+      Thread_Timed,
       Thread_Background,
+      Thread_ISR,
       Thread_None);
 
    type Time_Units is
@@ -821,6 +823,13 @@ package Ocarina.Backends.Properties is
    function Get_ARINC653_Memory_Kind (Memory : Node_Id)
       return ARINC653_Memory_Kind;
    --  Returns the memory_kind property value of a memory component.
+
+   -----------------------
+   -- Device properties --
+   -----------------------
+
+   function Get_Configuration (Device : Node_Id) return Name_Id;
+   --  Returns the configuraton string attached to a device
 
    function Get_Driver_Name (Device : Node_Id) return Name_Id;
    --  Returns the name of the driver.

@@ -132,7 +132,6 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Gqueue_Next_Value,              -- __po_hi_gqueue_next_value
       RE_Gqueue_Wait_For_Incoming_Event, -- __po_hi_gqueue_wait_for_incoming
       RE_Compute_Next_Period,            -- __po_hi_compute_next_period
-      RE_Simulate_WCET,                  -- __po_hi_simulate_wcet
       RE_Sporadic_Wait,                  -- __po_hi_sporadic_wait
       RE_Compute_Miss,                   -- __po_hi_compute_miss
       RE_Deployment_Endiannesses,        -- __po_hi_deployment_endiannesses
@@ -326,7 +325,6 @@ package Ocarina.Backends.PO_HI_C.Runtime is
          RE_Create_Periodic_Task           => RH_PO_HI_Task,
          RE_Main_Deliver                   => RH_Activity,
          RE_Create_Sporadic_Task           => RH_PO_HI_Task,
-         RE_Simulate_WCET                  => RH_PO_HI_Utils,
          RE_Compute_Miss                   => RH_PO_HI_Utils,
          RE_Deployment_Endiannesses        => RH_PO_HI_Transport,
          RE_Task_Wait_Offset               => RH_PO_HI_Task,

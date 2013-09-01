@@ -23,7 +23,7 @@ property set AADL_Project is
   Spin_Lock,
   Semaphore);
 
-  Supported_Dispatch_Protocols: type enumeration (Periodic, Sporadic, Aperiodic, Timed, Hybrid, Background);
+  Supported_Dispatch_Protocols: type enumeration (Periodic, Sporadic, Aperiodic, Timed, Hybrid, Background, Interrupt);
 
   Supported_Queue_Processing_Protocols: type enumeration (Fifo);
 

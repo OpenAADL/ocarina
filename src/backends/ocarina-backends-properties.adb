@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -289,6 +289,8 @@ package body Ocarina.Backends.Properties is
    Thread_Aperiodic_Name  : Name_Id;
    Thread_Sporadic_Name   : Name_Id;
    Thread_Hybrid_Name     : Name_Id;
+   Thread_Timed_Name      : Name_Id;
+   Thread_Interrupt_Name  : Name_Id;
    Thread_Background_Name : Name_Id;
 
    Time_Ps_Name  : Name_Id;
@@ -577,19 +579,23 @@ package body Ocarina.Backends.Properties is
       In_Mode : Name_Id := No_Name)
      return Name_Id
    is
+      Spg_Classifier : Node_Id;
    begin
       if Is_Defined_String_Property
-        (E, Compute_Entrypoint_Source_Text_Name, In_Mode) then
+        (E, Compute_Entrypoint_Source_Text_Name, In_Mode)
+      then
          return Get_String_Property
            (E, Compute_Entrypoint_Source_Text_Name, In_Mode);
+
+      elsif Is_Defined_Property (E, Compute_Entrypoint_Name, In_Mode) then
+         Spg_Classifier := Get_Classifier_Property
+           (E, Compute_Entrypoint_Name, In_Mode);
+         return Get_Source_Name (Spg_Classifier);
+
       end if;
 
       return No_Name;
    end Get_Compute_Entrypoint;
-
-   ----------------------------
-   -- Get_Compute_Entrypoint --
-   ----------------------------
 
    function Get_Compute_Entrypoint
      (E       : Node_Id;
@@ -608,18 +614,21 @@ package body Ocarina.Backends.Properties is
         (E, Compute_Entrypoint_Source_Text_Name, In_Mode) then
          return Get_Property_Association
            (E, Compute_Entrypoint_Source_Text_Name, In_Mode);
+
       elsif Is_Defined_Reference_Property
         (E, Compute_Entrypoint_Call_Sequence, In_Mode) then
          return Get_Property_Association
            (E, Compute_Entrypoint_Call_Sequence, In_Mode);
+
       elsif Is_Defined_Property
          (E, Compute_Entrypoint_Name, In_Mode) then
          return Get_Classifier_Property
             (E, Compute_Entrypoint_Name, In_Mode);
+
       else
          return No_Node;
-      end if;
 
+      end if;
    end Get_Compute_Entrypoint;
 
    ------------------------------------
@@ -632,17 +641,12 @@ package body Ocarina.Backends.Properties is
      return Boolean
    is
    begin
-      if Is_Defined_String_Property
-        (E, Compute_Entrypoint_Source_Text_Name, In_Mode) then
-         return True;
-
-      elsif Is_Defined_Reference_Property
-        (E, Compute_Entrypoint_Call_Sequence, In_Mode) then
-         return True;
-
-      else
-         return False;
-      end if;
+      return Is_Defined_String_Property
+        (E, Compute_Entrypoint_Source_Text_Name, In_Mode)
+        or else Is_Defined_Reference_Property
+        (E, Compute_Entrypoint_Call_Sequence, In_Mode)
+        or else Is_Defined_Property
+         (E, Compute_Entrypoint_Name, In_Mode);
    end Is_Defined_Entrypoint_Property;
 
    -------------------
@@ -1635,9 +1639,9 @@ package body Ocarina.Backends.Properties is
 
                return Subprogram_Default;
             else
-               if not Is_Empty (AIN.Calls (S)) and then
-                 not Is_Empty (AIN.Subprogram_Calls
-                                 (AIN.First_Node (AIN.Calls (S))))
+               if not Is_Empty (AIN.Calls (S))
+                 and then not Is_Empty (AIN.Subprogram_Calls
+                                          (AIN.First_Node (AIN.Calls (S))))
                then
                   --  A subprogram having no implementation language,
                   --  no implementation name and a pure call sequence
@@ -1818,6 +1822,9 @@ package body Ocarina.Backends.Properties is
          elsif P_Name = Thread_Aperiodic_Name then
             return Thread_Aperiodic;
 
+         elsif P_Name = Thread_Interrupt_Name then
+            return Thread_ISR;
+
          elsif P_Name = Thread_Sporadic_Name then
             if not Is_Defined_Integer_Property (T, Thread_Period) then
                Display_Located_Error
@@ -1837,6 +1844,8 @@ package body Ocarina.Backends.Properties is
             end if;
 
             return Thread_Hybrid;
+         elsif P_Name = Thread_Timed_Name then
+            return Thread_Timed;
 
          elsif P_Name = Thread_Background_Name then
             return Thread_Background;
@@ -1988,7 +1997,10 @@ package body Ocarina.Backends.Properties is
       pragma Assert (Is_Thread (T));
 
       case Get_Thread_Dispatch_Protocol (T) is
-         when Thread_Periodic | Thread_Sporadic | Thread_Hybrid =>
+         when Thread_Periodic
+           | Thread_Sporadic
+           | Thread_Hybrid
+           | Thread_ISR =>
             --  We are sure the thread has a period
 
             The_Period :=  Get_Time_Property_Value (T, Thread_Period);
@@ -2041,7 +2053,10 @@ package body Ocarina.Backends.Properties is
       pragma Assert (Is_Thread (T));
 
       case Get_Thread_Dispatch_Protocol (T) is
-         when Thread_Periodic | Thread_Sporadic | Thread_Hybrid =>
+         when Thread_Periodic
+           | Thread_Sporadic
+           | Thread_Hybrid
+           | Thread_ISR =>
             if Is_Defined_Property (T, Thread_Deadline) then
                return Get_Time_Property_Value (T, Thread_Deadline);
             else
@@ -2208,11 +2223,11 @@ package body Ocarina.Backends.Properties is
      (T : Node_Id)
      return Supported_Thread_Implementation
    is
+      pragma Assert (Is_Thread (T));
+
       Result : Supported_Thread_Implementation := Thread_Unknown;
       CS_Cnt : Natural := 0;
    begin
-      pragma Assert (Is_Thread (T));
-
       --  See whether the thread IN ports have their own compute
       --  entrypoints.
       --  Can be call sequences
@@ -2324,10 +2339,6 @@ package body Ocarina.Backends.Properties is
      return Name_Id
      renames Get_Compute_Entrypoint;
 
-   -----------------------------------
-   -- Get_Thread_Compute_Entrypoint --
-   -----------------------------------
-
    function Get_Thread_Compute_Entrypoint
      (T       : Node_Id;
       In_Mode : Name_Id := No_Name)
@@ -2342,8 +2353,10 @@ package body Ocarina.Backends.Properties is
    begin
       if Is_Defined_Property (E, Implemented_As) then
          return Get_Classifier_Property (E, Implemented_As);
+
       elsif Is_Defined_Property (E, Device_Driver_Name) then
          return Get_Classifier_Property (E, Device_Driver_Name);
+
       else
          return No_Node;
       end if;
@@ -2367,10 +2380,6 @@ package body Ocarina.Backends.Properties is
          return No_Name;
       end if;
    end Get_Thread_Initialize_Entrypoint;
-
-   --------------------------------------
-   -- Get_Thread_Initialize_Entrypoint --
-   --------------------------------------
 
    function Get_Thread_Initialize_Entrypoint (T : Node_Id) return Node_Id is
    begin
@@ -2449,13 +2458,17 @@ package body Ocarina.Backends.Properties is
 
    function Get_Location (P : Node_Id) return Name_Id is
    begin
-      pragma Assert (AINU.Is_Processor (P) or else AINU.Is_Device (P));
-
-      if not Is_Defined_String_Property (P, Location) then
-         return No_Name;
+      if AINU.Is_Processor (P) or else AINU.Is_Device (P) then
+         if not Is_Defined_String_Property (P, Location) then
+            return No_Name;
+         else
+            return Get_String_Property (P, Location);
+         end if;
+      elsif AINU.Is_Virtual_Processor (P) then
+         return Get_Location (Parent_Component (Parent_Subcomponent (P)));
+      else
+         raise Program_Error;
       end if;
-
-      return Get_String_Property (P, Location);
    end Get_Location;
 
    ---------------------------
@@ -3242,6 +3255,8 @@ package body Ocarina.Backends.Properties is
       Thread_Aperiodic_Name  := Get_String_Name ("aperiodic");
       Thread_Sporadic_Name   := Get_String_Name ("sporadic");
       Thread_Hybrid_Name     := Get_String_Name ("hybrid");
+      Thread_Timed_Name      := Get_String_Name ("timed");
+      Thread_Interrupt_Name  := Get_String_Name ("interrupt");
       Thread_Background_Name := Get_String_Name ("background");
 
       Time_Ps_Name  := Get_String_Name ("ps");
@@ -4450,6 +4465,21 @@ package body Ocarina.Backends.Properties is
 
       return No_Name;
    end Get_Driver_Name;
+
+   -----------------------
+   -- Get_Configuration --
+   -----------------------
+
+   function Get_Configuration (Device : Node_Id) return Name_Id is
+   begin
+      if Is_Defined_String_Property
+        (Device, Get_String_Name ("deployment::configuration")) then
+         return Get_String_Property
+           (Device, Get_String_Name ("deployment::configuration"));
+      end if;
+
+      return No_Name;
+   end Get_Configuration;
 
    ----------------------------
    -- Get_Send_Function_Name --

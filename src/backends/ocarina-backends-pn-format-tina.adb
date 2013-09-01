@@ -47,17 +47,14 @@ package body Ocarina.Backends.PN.Format.Tina is
    --  Print_Place  --
    -------------------
 
-   procedure Print_Place (Pn_Generated : Node_Id;
-                          Pn_P : Node_Id)
-   is
+   procedure Print_Place (Pn_Generated : Node_Id; Pn_P : Node_Id) is
       use Output;
       use OPN;
       use Namet;
       use OAV;
 
    begin
-
-      if Pn_Generated /= No_Node then
+      if Present (Pn_Generated) then
          Write_Line ("pl "
                      & Get_Name_String (Name (Identifier (Pn_P)))
                      & " ("
@@ -70,9 +67,7 @@ package body Ocarina.Backends.PN.Format.Tina is
    --  Print_Trans  --
    -------------------
 
-   procedure Print_Trans (Pn_Generated : Node_Id;
-                          Pn_T : Node_Id)
-   is
+   procedure Print_Trans (Pn_Generated : Node_Id; Pn_T : Node_Id) is
       use Output;
       use OPN;
       use Namet;

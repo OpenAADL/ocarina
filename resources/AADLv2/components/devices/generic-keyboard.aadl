@@ -7,7 +7,7 @@ with Deployment;
 
 subprogram spg_generic_keyboard_init
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_driver_generic_keyboard_init";
 end spg_generic_keyboard_init;
 
@@ -34,7 +34,7 @@ subprogram spg_generic_keyboard_poller
 features
    key_pressed : out parameter Base_Types::Integer;
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_driver_generic_keyboard_poller";
 end spg_generic_keyboard_poller;
 

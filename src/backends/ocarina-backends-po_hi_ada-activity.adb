@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -397,6 +397,9 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
       function Background_Task_Instantiation (E : Node_Id) return Node_Id;
       --  Build a package instantiation for a background task
 
+      function ISR_Task_Instantiation (E : Node_Id) return Node_Id;
+      --  Build a package instantiation for a background task
+
       function Task_Job_Spec (E : Node_Id) return Node_Id;
       --  Creates the parameterless subprogram specification that does
       --  the thread's job.
@@ -434,6 +437,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          if Get_Thread_Dispatch_Protocol (E) = Thread_Periodic
            or else Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic
            or else Get_Thread_Dispatch_Protocol (E) = Thread_Hybrid
+           or else Get_Thread_Dispatch_Protocol (E) = Thread_ISR
          then
             --  The task period of minimal interarrival time
 
@@ -721,6 +725,48 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             Parameter_List      => Parameter_List);
          return N;
       end Background_Task_Instantiation;
+
+      ----------------------------
+      -- ISR_Task_Instantiation --
+      ----------------------------
+
+      function ISR_Task_Instantiation (E : Node_Id) return Node_Id is
+         N              : Node_Id;
+         Parameter_List : constant List_Id := New_List (ADN.K_List_Id);
+         Configuration : Name_Id;
+      begin
+         Configuration := Get_Configuration (E);
+         if Configuration = No_Name then
+            Display_Located_Error
+              (Loc (E),
+               "No interrupt configured",
+               Fatal => True);
+         end if;
+
+         N := Make_Withed_Package (RU (RU_Ada_Interrupts_Names));
+         Append_Node_To_List (N, ADN.Withed_Packages (Current_Package));
+         N := Make_Used_Package (RU (RU_Ada_Interrupts_Names));
+         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+         N := Make_Parameter_Association
+           (Selector_Name    => Make_Defining_Identifier
+              (PN (P_Interrupt_Identifier)),
+            Actual_Parameter => Make_Defining_Identifier
+              (Get_Configuration (E)));
+         Append_Node_To_List (N, Parameter_List);
+
+         --  Append the common parameters
+
+         Cyclic_Task_Instantiation_Formals (E, Parameter_List);
+
+         --  Build the package instantiation
+
+         N := Make_Package_Instantiation
+           (Defining_Identifier => Map_Task_Identifier (E),
+            Generic_Package     => RU (RU_PolyORB_HI_ISR_Task),
+            Parameter_List      => Parameter_List);
+         return N;
+      end ISR_Task_Instantiation;
 
       -------------------------------
       -- Hybrid_Task_Instantiation --
@@ -1180,6 +1226,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                   & Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
+            when Thread_ISR =>
+               N := Message_Comment
+                 ("ISR task : "
+                  & Get_Name_String (Display_Name (Identifier (S))));
+               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
             when others =>
                Display_Located_Error
                  (AIN.Loc (E),
@@ -1225,6 +1277,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                --  Instantiate the background task
 
                N := Background_Task_Instantiation (E);
+               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+            when Thread_ISR =>
+               --  Instantiate the ISR task
+
+               N := ISR_Task_Instantiation (E);
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             when others =>
@@ -2767,24 +2825,11 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             when Thread_With_Compute_Entrypoint =>
                declare
                   use ATN;
-
-                  Value : constant Node_Id := Expanded_Single_Value
-                    (AIN.Property_Association_Value
-                     (Get_Thread_Compute_Entrypoint (E)));
+                  Property : constant Node_Id
+                    := Get_Thread_Compute_Entrypoint (E);
+                  Value : Node_Id;
                begin
-                  if ATN.Kind (Value) = ATN.K_Reference_Term then
-                     --  Get IN ports values and dequeue them
-
-                     if Has_In_Ports (E) then
-                        Make_Fetch_In_Ports;
-                        Make_Dequeue_In_Ports;
-                     end if;
-
-                     --  Handle the thread call sequences
-
-                     Make_Call_Sequence (ATN.Entity
-                                         (ATN.Reference_Term (Value)));
-                  else
+                  if AIN.Kind (Property) = K_Component_Instance then
                      --  Call the compute entrypoint. The code of the
                      --  compute entry point will include the setting
                      --  of the thread OUT ports.
@@ -2793,13 +2838,49 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
                      --  Send OUT ports.
 
-                     --  FIXME: Depending on an AADL property, the
+                     --  XXX: Depending on an AADL property, the
                      --  code of the thread entrypoint may include the
-                     --  sending of OUT ports.
+                     --  sending of OUT ports. Which AADL property?
 
                      if Has_Out_Ports (E) then
                         Make_Set_Out_Ports;
                         Make_Send_Out_Ports;
+                     end if;
+
+                  else
+                     Value := Expanded_Single_Value
+                       (AIN.Property_Association_Value
+                          (Property));
+
+                     if ATN.Kind (Value) = ATN.K_Reference_Term then
+                        --  Get IN ports values and dequeue them
+
+                        if Has_In_Ports (E) then
+                           Make_Fetch_In_Ports;
+                           Make_Dequeue_In_Ports;
+                        end if;
+
+                        --  Handle the thread call sequences
+
+                        Make_Call_Sequence (ATN.Entity
+                                              (ATN.Reference_Term (Value)));
+                     else
+                        --  Call the compute entrypoint. The code of the
+                        --  compute entry point will include the setting
+                        --  of the thread OUT ports.
+
+                        Make_Thread_Compute_Entrypoint;
+
+                        --  Send OUT ports.
+
+                        --  XXX: Depending on an AADL property, the
+                        --  code of the thread entrypoint may include the
+                        --  sending of OUT ports. Which AADL property?
+
+                        if Has_Out_Ports (E) then
+                           Make_Set_Out_Ports;
+                           Make_Send_Out_Ports;
+                        end if;
                      end if;
                   end if;
                end;
@@ -3213,8 +3294,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance then
                   --  For OUT ports, we generate an array to indicate
-                  --  their destintions and we put relevant element
-                  --  association in the N_Destinations and the
+                  --  their destinations and we put relevant element
+                  --  associations in the N_Destinations and the
                   --  Destinnations arrays. For IN ports, we generate
                   --  nothing and we put dummy element association.
 
@@ -3536,7 +3617,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          declare
             procedure Implement_Subprogram
               (Spec : Node_Id;
-               RR   : Runtime_Routine);
+               RR   : Runtime_Routine;
+               Add_Error_Management : Boolean := False);
             --  Generate a subprogram implementation from the given
             --  interrogation routine spec. The new subprogram uses
             --  the value of the first parameter in order to invoke
@@ -3556,43 +3638,99 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
             procedure Implement_Subprogram
               (Spec : Node_Id;
-               RR   : Runtime_Routine)
+               RR   : Runtime_Routine;
+               Add_Error_Management : Boolean := False)
             is
                Alternatives : constant List_Id := New_List (ADN.K_List_Id);
+               Declarations : constant List_Id := New_List
+                 (ADN.K_Declaration_List);
                Statements   : constant List_Id := New_List
                  (ADN.K_Statement_List);
                N            : Node_Id;
+               Else_Statements : constant List_Id := New_List (ADN.K_List_Id);
+               Elsif_Statements : constant List_Id := New_List (ADN.K_List_Id);
+
+               Pragma_Warnings_Off_Value : Value_Id;
+
             begin
                --  Initialize the list associated to the current
                --  thread component.
 
                Set_List (E, RR, Alternatives);
 
-               --  Raise an error if thread instance not corresponding
-               --  to the current component are given
+               N := Make_Used_Package
+                 (RU (RU_PolyORB_HI_Generated_Deployment));
+               Append_Node_To_List (N, Declarations);
 
-               N := Make_Case_Statement_Alternative
-                 (No_List,
-                  Make_List_Id
-                  (Make_Raise_Statement
-                   (Make_Designator
-                    (EN (E_Program_Error)))));
-               Append_Node_To_List (N, Alternatives);
+               --  Build a string literal for the pragma Warnings On|Off:
+               --
+               --  if there is no error management, and the
+               --  current subprogram is a function, we need to shut
+               --  down the warning on missing return: by construction
+               --  of the source code, there cannot be situation in
+               --  which we exit without entering one of the if
+               --  statemetns.
+
+               Set_Str_To_Name_Buffer ("*return*");
+               Pragma_Warnings_Off_Value := New_String_Value (Name_Find);
+
+               if (not Add_Error_Management)
+                 and then Present (ADN.Return_Type (Spec))
+               then
+                  N := Make_Pragma_Statement
+                    (Pragma_Warnings,
+                     Make_List_Id
+                       (RE (RE_Off),
+                        Make_Literal (Pragma_Warnings_Off_Value)));
+                  Append_Node_To_List (N, Statements);
+               end if;
+
+               if Add_Error_Management then
+                  N := Make_Qualified_Expression
+                    (RE (RE_Error_Kind),
+                     Make_Record_Aggregate
+                       (Make_List_Id
+                          (RE (RE_Error_Transport))));
+                  N := Make_Return_Statement (N);
+                  Append_Node_To_List (N, Else_Statements);
+               end if;
 
                --  Add the alternative of the current instance
 
                Add_Alternative (Spec, RR);
 
-               --  Make the case statement
+               --  Make the if statement: to avoid a useless if
+               --  statement, we take the head of the Alternatives as
+               --  first statement, and the tail for the elsif part.
 
-               N := Make_Case_Statement
-                 (Make_Defining_Identifier (PN (P_Entity)),
-                  Alternatives);
+               ADN.Set_First_Node (Elsif_Statements,
+                                   ADN.Next_Node
+                                     (ADN.First_Node (Alternatives)));
+
+               N := Make_If_Statement
+                 (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
+                  Then_Statements => ADN.Then_Statements
+                    (ADN.First_Node (Alternatives)),
+                  Elsif_Statements => Elsif_Statements,
+                  Else_Statements => Else_statements);
+
                Append_Node_To_List (N, Statements);
+
+               if (not Add_Error_Management)
+                 and then Present (ADN.Return_Type (Spec))
+               then
+                  N := Make_Pragma_Statement
+                    (Pragma_Warnings,
+                     Make_List_Id
+                       (RE (RE_On),
+                        Make_Literal (Pragma_Warnings_Off_Value)));
+                  Append_Node_To_List (N, Statements);
+               end if;
 
                --  Make the subprogram implementation
 
-               N := Make_Subprogram_Implementation (Spec, No_List, Statements);
+               N := Make_Subprogram_Implementation
+                 (Spec, Declarations, Statements);
                Append_Node_To_List (N, Interrogation_Routine_List);
             end Implement_Subprogram;
 
@@ -3641,22 +3779,22 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
                --  Make the alternative
 
-               N := Make_Case_Statement_Alternative
-                 (Make_List_Id (Extract_Enumerator (E)),
+               N := Make_Elsif_Statement
+                 (Make_Expression
+                    (Make_Defining_Identifier (PN (P_Entity)),
+                     Op_Equal,
+                     Extract_Enumerator (E)),
                   Make_List_Id (N));
+               Append_Node_To_List (N, Alternatives);
 
-               --  We insert N before the 'when others' alternative in
-               --  order to get a correctly formed case statement.
-
-               Insert_Before_Node
-                 (N, ADN.Last_Node (Alternatives), Alternatives);
             end Add_Alternative;
          begin
             --  All the runtime routines below are also generated once
             --  per thread component.
 
             if Not_Handled then
-               Implement_Subprogram (Send_Output_Spec (E), RR_Send_Output);
+               Implement_Subprogram
+                 (Send_Output_Spec (E), RR_Send_Output, True);
                Implement_Subprogram (Put_Value_Spec (E), RR_Put_Value);
                Implement_Subprogram (Receive_Input_Spec (E), RR_Receive_Input);
                Implement_Subprogram (Get_Value_Spec (E), RR_Get_Value);
@@ -4041,6 +4179,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             when Thread_Background =>
                N := Message_Comment
                  ("Background task : "
+                  & Get_Name_String (Display_Name (Identifier (S))));
+               Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+            when Thread_ISR =>
+               N := Message_Comment
+                 ("ISR task : "
                   & Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Statements (Current_Package));
 

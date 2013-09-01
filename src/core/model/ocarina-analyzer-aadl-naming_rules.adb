@@ -482,6 +482,15 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                                           List_Node_3
                                             := Next_Node (List_Node_3);
                                        end loop;
+                                    else
+
+                                       if Present (Identifier (List_Node_2))
+                                         and then
+                                         Name (Identifier (List_Node_2))
+                                         = Name_Of_Identifier
+                                       then
+                                          First_Node := List_Node_2;
+                                       end if;
                                     end if;
                                  end if;
                                  List_Node_2 := Next_Node (List_Node_2);
@@ -496,6 +505,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
             when others =>
                null;
+
          end case;
       end Recursive_Node_In_Scope;
 

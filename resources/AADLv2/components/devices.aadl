@@ -40,7 +40,7 @@ public
    properties
       Type_Source_Name                 => "IP-Conf-T";
       Deployment::ASN1_Module_Name     => "POHICDRIVER-IP";
-      Source_Language                  => ASN1;
+      Source_Language                  => (ASN1);
       Source_Text                      => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/ip.asn" , "drivers/configuration/ip.h");
    end configuration_type_ip;
 
@@ -48,7 +48,7 @@ public
    properties
       Type_Source_Name              => "Serial-Conf-T";
       Deployment::ASN1_Module_Name  => "POHICDRIVER-UART";
-      Source_Language               => ASN1;
+      Source_Language               => (ASN1);
       Source_Text                   => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/serial.asn", "drivers/configuration/serial.h");
    end configuration_type_serial;
 
@@ -56,7 +56,7 @@ public
    properties
       Type_Source_Name              => "Spacewire-Conf-T";
       Deployment::ASN1_Module_Name  => "POHICDRIVER-SPACEWIRE";
-      Source_Language               => ASN1;
+      Source_Language               => (ASN1);
       Source_Text                   => ("OCARINA_INCLUDE_PATH/ocarina/runtime/polyorb-hi-c/src/drivers/configuration/spacewire.asn", "drivers/configuration/spacewire.h");
    end configuration_type_spacewire;
 
@@ -163,7 +163,7 @@ public
   device implementation rasta_serial.pohiada
   properties
     Deployment::Driver_Name    => "serial_rasta";
-    Implemented_As =>  classifier (GRUART::Driver_GRUART_Protocol.impl);
+    Device_Driver =>  classifier (GRUART::Driver_GRUART_Protocol.impl);
     Initialize_Entrypoint => classifier (GRUART::Initialize);
     Provided_Virtual_Bus_Class => (classifier (ocarina_buses::raw.i));
   end rasta_serial.pohiada;
@@ -205,7 +205,7 @@ public
   device implementation rasta_spacewire.pohiada
   properties
     Deployment::Driver_Name       => "spacewire_rasta";
-    Implemented_As =>  classifier (GRSPW::Driver_GRSPW_Protocol.impl);
+    Device_Driver =>  classifier (GRSPW::Driver_GRSPW_Protocol.impl);
     Initialize_Entrypoint => classifier (GRSPW::Initialize);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end rasta_spacewire.pohiada;
@@ -248,7 +248,7 @@ public
   device implementation generic_serial.pohiada
   properties
     Deployment::Driver_Name       => "serial_linux";
-    Implemented_As =>
+    Device_Driver =>
          classifier (Native_UART::Driver_Native_UART_Protocol.impl);
     Initialize_Entrypoint => classifier (Native_UART::Initialize);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::raw.i));
@@ -290,7 +290,6 @@ public
   device implementation generic_sockets_ip.pohiada
   properties
     Deployment::Driver_Name       => "socketsnew";
-    Implemented_As => classifier (TCP_IP_Protocol::Driver_TCP_IP_Protocol.impl);
     Device_Driver => classifier (TCP_IP_Protocol::Driver_TCP_IP_Protocol.impl);
     Initialize_Entrypoint => classifier (TCP_IP_Protocol::Initialize);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
@@ -395,4 +394,3 @@ public
   end exarm_ni_6071e_digital.i;
 
 end ocarina_drivers;
-
