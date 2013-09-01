@@ -186,7 +186,7 @@ if test  $# != 0 ; then
 	    ;;
 	--lcov|-l)
 	    lcov -d . -c -o ocarina.gcov-info -t ocarina
-	    genhtml ocarina.gcov-info -o html -s -f
+	    genhtml -o html -s -f ocarina.gcov-info 
 	    exit 0
 	    ;;
 	--clean|-c)
