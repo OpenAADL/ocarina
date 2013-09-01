@@ -38,7 +38,7 @@ public
 
    device implementation GRSPW_Device.impl
    properties
-      Implemented_As =>
+      Device_Driver =>
          classifier (GRSPW::Driver_GRSPW_Protocol.impl);
       Initialize_Entrypoint => classifier (GRSPW::Initialize);
    end GRSPW_Device.impl;

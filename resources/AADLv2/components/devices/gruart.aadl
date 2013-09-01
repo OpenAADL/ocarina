@@ -38,7 +38,7 @@ public
 
    device implementation GRUART_Device.impl
    properties
-      Implemented_As =>
+      Device_Driver =>
          classifier (GRUART::Driver_GRUART_Protocol.impl);
       Initialize_Entrypoint => classifier (GRUART::Initialize);
    end GRUART_Device.impl;
