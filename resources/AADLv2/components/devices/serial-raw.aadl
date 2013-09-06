@@ -7,33 +7,33 @@ with ocarina_drivers;
 
 subprogram spg_serial_poller_linux
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_serial_linux_poller";
 end spg_serial_poller_linux;
 
 
 subprogram spg_serial_sender_linux
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_serial_linux_sender";
 end spg_serial_sender_linux;
 
 
 subprogram spg_serial_init_linux
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_serial_linux_init";
 end spg_serial_init_linux;
 
 subprogram spg_serial_init_linux_sender
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_serial_linux_init_sender";
 end spg_serial_init_linux_sender;
 
 subprogram spg_serial_init_linux_receiver
 properties
-	Source_Language => C;
+	Source_Language => (C);
 	Source_Name => "__po_hi_c_driver_serial_linux_init_receiver";
 end spg_serial_init_linux_receiver;
 

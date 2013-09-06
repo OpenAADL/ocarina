@@ -6,14 +6,14 @@ with ocarina_drivers;
 
 subprogram spg_sockets_init
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_driver_sockets_init";
 end spg_sockets_init;
 
 
 subprogram spg_eth_linux_sender
 properties
-	Source_Language   => C;
+	Source_Language   => (C);
 	Source_Name       => "__po_hi_driver_sockets_send";
 end spg_eth_linux_sender;
 

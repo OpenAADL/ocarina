@@ -7,7 +7,7 @@ with Deployment;
 
 subprogram spg_init
 properties
-   Source_Language   => C;
+   Source_Language   => (C);
    Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_digital_init";
 end spg_init;
 
@@ -17,7 +17,7 @@ features
    data1 : out parameter Base_Types::Unsigned_32;
    data2 : out parameter Base_Types::Unsigned_32;
 properties
-   Source_Language   => C;
+   Source_Language   => (C);
    Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_digital_poller";
 end spg_poller;
 

@@ -7,7 +7,7 @@ with Deployment;
 
 subprogram spg_init
 properties
-   Source_Language   => C;
+   Source_Language   => (C);
    Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_analog_init";
 end spg_init;
 
@@ -31,7 +31,7 @@ features
    data15 : out parameter Base_Types::Float_64;
    data16 : out parameter Base_Types::Float_64;
 properties
-   Source_Language   => C;
+   Source_Language   => (C);
    Source_Name       => "__po_hi_c_driver_exarm_ni_6071e_analog_poller";
 end spg_poller;
 
