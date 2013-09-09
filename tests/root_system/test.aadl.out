@@ -1,0 +1,4 @@
+ocarina: Cannot select a root system among several 
+test.aadl:13:01: r2.i
+test.aadl:7:01: r1.i
+Cannot instantiate full model, exit now

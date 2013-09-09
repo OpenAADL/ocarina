@@ -281,3 +281,4 @@ tests/example_04_03/t.aadl
 tests/example_04_05_1/t.aadl
 
 tests/github/issue_1/test.aadl
+tests/root_system/test.aadl
