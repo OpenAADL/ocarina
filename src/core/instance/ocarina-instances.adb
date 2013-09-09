@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -183,7 +183,7 @@ package body Ocarina.Instances is
 
          else
             Error_Loc (1) := No_Location;
-            DE ("Cannot select a root system among several ");
+            DE ("Please select a root system among ");
             List_Node := Root_Systems.First;
             while Present (List_Node) loop
                Error_Loc (1)  := ATN.Loc (List_Node);
@@ -191,6 +191,7 @@ package body Ocarina.Instances is
                DE ("%");
                List_Node := ATN.Next_Entity (List_Node);
             end loop;
+            Exit_On_Error (True, "Cannot instantiate AADL model");
          end if;
 
       else
@@ -210,6 +211,7 @@ package body Ocarina.Instances is
             Error_Name (2) := ATE.Get_Name_Of_Entity (List_Node);
             DE ("system % is not a root system, use %");
             Root_System := No_Node;
+            Exit_On_Error (True, "Cannot instantiate AADL model");
          end if;
       end if;
 
@@ -219,6 +221,7 @@ package body Ocarina.Instances is
 
       if No (Root_System) then
          Instance_Root := No_Node;
+         Exit_On_Error (True, "Cannot instantiate full model, exit now");
       else
          --  The first step of the instantiation consist of propagate the
          --  properties declared in the AADL packages to the AADL
