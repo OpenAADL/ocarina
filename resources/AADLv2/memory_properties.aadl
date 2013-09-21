@@ -54,6 +54,8 @@ property set Memory_Properties is
 	Byte_Count: aadlinteger 0 .. Max_Byte_Count
 		applies to (memory);
 
+        Memory_Size: Size applies to (memory);
+
 	Word_Size: Size => 8 bits
 		applies to (memory);
 
