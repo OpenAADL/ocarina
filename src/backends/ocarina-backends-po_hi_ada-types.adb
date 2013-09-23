@@ -316,28 +316,31 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                   L : constant Name_Id := Local_Name (Name);
                   P : Node_Id;
                begin
-                  if U = No_Name then
-                     Display_Located_Error
-                       (Loc (E),
-                        "'Type_Source_Name' property value must be a fully"
-                        & " qualified name", Fatal => True);
+                  if U /= No_Name then
+                     --  The user provided a fully qualified name that
+                     --  is not prefixed by Standard, add this fully
+                     --  qualified name in the package
+
+                     P := Make_Designator (U);
+                     ADN.Set_Corresponding_Node
+                       (ADN.Defining_Identifier (P),
+                        New_Node (ADN.K_Package_Specification));
+                     Add_With_Package (P);
+
+                     N := Make_Designator (L);
+                     Set_Homogeneous_Parent_Unit_Name (N, P);
+                  else
+                     --  Otherwise, simply refer to Standard package
+
+                     N := Make_Designator (L);
+                     Set_Homogeneous_Parent_Unit_Name (N, RU (RU_Standard));
                   end if;
-
-                  P := Make_Designator (U);
-                  ADN.Set_Corresponding_Node
-                    (ADN.Defining_Identifier (P),
-                     New_Node (ADN.K_Package_Specification));
-                  Add_With_Package (P);
-
-                  --  Get the full name
-
-                  N := Make_Designator (L);
-                  Set_Homogeneous_Parent_Unit_Name (N, P);
 
                   N := Make_Full_Type_Declaration
                        (Defining_Identifier => Map_Ada_Defining_Identifier (E),
                         Type_Definition     => Make_Derived_Type_Definition
-                          (N));
+                          (N, Is_Subtype => True),
+                       Is_Subtype => True);
                end;
             else
                --  Otherwise, we extract from the Data_Model specific
