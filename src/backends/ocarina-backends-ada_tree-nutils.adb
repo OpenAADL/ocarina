@@ -3245,6 +3245,10 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
             Fatal => True);
       end if;
 
+      if To_Lower (Name_Buffer (1 .. Pos - 1)) = "standard" then
+         return No_Name;
+      end if;
+
       Set_Str_To_Name_Buffer (Name_Buffer (1 .. Pos - 1));
       return Name_Find;
    end Unit_Name;
