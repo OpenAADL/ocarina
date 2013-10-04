@@ -303,8 +303,10 @@ package body Ocarina.Backends.PO_HI_C is
          for J in
            Name_Tables.First .. Name_Tables.Last (User_Source_Dirs) loop
             Write_Space;
-            Write_Name (User_Source_Dirs.Table (J));
-
+            Write_Str ("""-I");
+            Write_Name (Remove_Directory_Separator
+                          (User_Source_Dirs.Table (J)));
+            Write_Str ("""");
             exit when J = Name_Tables.Last (User_Source_Dirs);
 
             Write_Space;
