@@ -263,6 +263,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
         or else Kind (Container) = K_Feature_Group_Type
       then
          Pack_Container := Namespace (Container);
+
       elsif Kind (Container) = K_Subcomponent
         or else Kind (Container) = K_Port_Spec
         or else Kind (Container) = K_Parameter
@@ -271,6 +272,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
         or else Kind (Container) = K_Connection
       then
          Pack_Container := Namespace (Container_Component (Container));
+
       elsif Kind (Container) = K_Package_Specification then
          Pack_Container := Container;
       end if;
