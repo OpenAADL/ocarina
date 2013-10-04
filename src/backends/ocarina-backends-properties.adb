@@ -2688,6 +2688,18 @@ package body Ocarina.Backends.Properties is
    -- Get_Execution_Platform --
    ----------------------------
 
+   function Get_Execution_Platform (P : Node_Id) return Name_Id is
+      pragma Assert (AINU.Is_Processor (P)
+                     or else AINU.Is_Virtual_Processor (P));
+
+   begin
+      if Is_Defined_Enumeration_Property (P, Execution_Platform) then
+         return Get_Enumeration_Property (P, Execution_Platform);
+      else
+         return No_Name;
+      end if;
+   end Get_Execution_Platform;
+
    function Get_Execution_Platform
      (P : Node_Id)
      return Supported_Execution_Platform
@@ -2755,8 +2767,6 @@ package body Ocarina.Backends.Properties is
          elsif P_Name = Platform_VxWorks_Name then
             return Platform_VxWorks;
          else
-            Display_Located_Error
-              (AIN.Loc (P), "Unknown execution platform", Fatal => True);
             return Platform_None;
          end if;
       else

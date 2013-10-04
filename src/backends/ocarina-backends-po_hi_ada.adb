@@ -90,6 +90,7 @@ package body Ocarina.Backends.PO_HI_Ada is
      (Appli_Name         : Name_Id;
       Node_Name          : Name_Id;
       Execution_Platform : Supported_Execution_Platform := Platform_None;
+      Execution_Platform_Name : Name_Id;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
       Asn_Sources        : Name_Tables.Instance;
@@ -137,6 +138,7 @@ package body Ocarina.Backends.PO_HI_Ada is
      (Appli_Name         : Name_Id;
       Node_Name          : Name_Id;
       Execution_Platform : Supported_Execution_Platform := Platform_None;
+      Execution_Platform_Name : Name_Id;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
       Asn_Sources        : Name_Tables.Instance;
@@ -152,6 +154,7 @@ package body Ocarina.Backends.PO_HI_Ada is
    is
       pragma Unreferenced (Appli_Name,
                            Transport_API,
+                           Execution_Platform_Name,
                            Ada_Sources,
                            C_Libraries,
                            User_Source_Dirs,

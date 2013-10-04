@@ -609,6 +609,7 @@ package Ocarina.Backends.Properties is
    function Get_Execution_Platform
      (P : Node_Id)
      return Supported_Execution_Platform;
+   function Get_Execution_Platform (P : Node_Id) return Name_Id;
    --  Return the execution platform of the given processor P
 
    function Get_Location (P : Node_Id) return Name_Id;

@@ -117,6 +117,7 @@ package body Ocarina.Backends.PO_HI_C is
      (Appli_Name         : Name_Id;
       Node_Name          : Name_Id;
       Execution_Platform : Supported_Execution_Platform := Platform_None;
+      Execution_Platform_Name : Name_Id;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
       Asn_Sources        : Name_Tables.Instance;
@@ -138,6 +139,7 @@ package body Ocarina.Backends.PO_HI_C is
      (Appli_Name         : Name_Id;
       Node_Name          : Name_Id;
       Execution_Platform : Supported_Execution_Platform := Platform_None;
+      Execution_Platform_Name : Name_Id;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
       Asn_Sources        : Name_Tables.Instance;
@@ -194,8 +196,15 @@ package body Ocarina.Backends.PO_HI_C is
       Write_Str ("TARGET = ");
 
       case Execution_Platform is
-         when Platform_Native | Platform_None =>
+         when Platform_Native =>
             Write_Str ("native");
+
+         when Platform_None =>
+            if Execution_Platform_Name /= No_Name then
+               Write_Name (Execution_Platform_Name);
+            else
+               Write_Str ("native");
+            end if;
 
          when Platform_Native_Compcert =>
             Write_Str ("compcert");

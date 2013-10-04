@@ -950,10 +950,14 @@ package body Ocarina.Backends.Utils is
             return Get_Container_Process (Parent_Component (E));
 
          when others =>
-            if Is_Thread (E) or else Is_Subprogram (E) then
+            if Is_Thread (E) or else Is_Subprogram (E)
+              or else AAU.Is_Data (E)
+            then
                return Get_Container_Process (Parent_Subcomponent (E));
+
             elsif Is_Process (E) or else Is_Device (E) then
                return Parent_Subcomponent (E);
+
             else
                raise Program_Error with "Wrong node kind in "
                  & "Get_Container_Process: " & Kind (E)'Img

@@ -318,6 +318,7 @@ package body Ocarina.Backends.Build_Utils is
          --  The node name (in lower case)
 
          Execution_Platform : Supported_Execution_Platform := Platform_None;
+         Execution_Platform_Name : Name_Id := No_Name;
          --  The execution platform of the processor the current node
          --  is bound to.
 
@@ -962,6 +963,8 @@ package body Ocarina.Backends.Build_Utils is
 
          M.Execution_Platform := Get_Execution_Platform
            (Get_Bound_Processor (E));
+         M.Execution_Platform_Name := Get_Execution_Platform
+           (Get_Bound_Processor (E));
 
          --  Get the transport API used by this node. It is
          --  important to ensure that the Namings package visitors
@@ -1511,8 +1514,14 @@ package body Ocarina.Backends.Build_Utils is
             Write_Name (M.Node_Name);
             Write_Eol;
 
-            Write_Line ("#  Execution platform           : "
-                          & M.Execution_Platform'Img);
+            Write_Str ("#  Execution platform           : ");
+            Write_Name (M.Execution_Platform_Name);
+            if M.Execution_Platform = Platform_None then
+               Write_Eol;
+               Write_Str ("#   Note: user defined");
+            end if;
+            Write_Eol;
+
             Write_Line ("#  Transport API                : "
                           & M.Transport_API'Img);
 
@@ -1550,6 +1559,7 @@ package body Ocarina.Backends.Build_Utils is
               (M.Appli_Name,
                M.Node_Name,
                M.Execution_Platform,
+               M.Execution_Platform_Name,
                M.Transport_API,
                M.Ada_Sources,
                M.Asn_Sources,
