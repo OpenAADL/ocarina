@@ -2207,7 +2207,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             --  parameter which is the port that triggered the thread.
 
             case  P is
-               when Thread_Periodic =>
+               when Thread_Periodic | Thread_Background =>
                   Call_Profile := Make_List_Id
                     (Extract_Enumerator (E));
 
