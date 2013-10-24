@@ -2609,13 +2609,13 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                      Used : Boolean := False;
                   begin
                      while Present (D) loop
-                        exit when Kind (Item (D)) = K_Port_Spec_Instance;
-
                         if not Used then
                            if Parent_Component (Item (D)) = Wrapper then
                               Used := True;
                            end if;
                         end if;
+
+                        exit when Kind (Item (D)) = K_Port_Spec_Instance;
 
                         D := Next_Node (D);
                      end loop;
