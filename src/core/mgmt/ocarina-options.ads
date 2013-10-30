@@ -48,7 +48,8 @@ package Ocarina.Options is
       Show_Usage,
       Parse_Scenario_Files_First,
       Analyze_With_Cheddar,
-      Shell);
+      Shell,
+      Python_Shell);
 
    Root_System_Name             : Name_Id := No_Name;
    Installation_Directory       : Name_Id := No_Name;
