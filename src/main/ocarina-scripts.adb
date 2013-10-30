@@ -70,7 +70,7 @@ package body Ocarina.Scripts is
       function "+" (S : String) return String_Access;
       procedure Show_Help;
       procedure Free is new Ada.Unchecked_Deallocation (String, String_Access);
-      procedure Print_Status;
+
       function Next return String;
       function Argument (Index : Natural) return String_Access;
       function Count (Prompt : String := "> ") return Natural;
@@ -138,17 +138,6 @@ package body Ocarina.Scripts is
             Write_Line (J'Img & ASCII.HT & Help_Messages (J).all);
          end loop;
       end Show_Help;
-
-      ------------------
-      -- Print_Status --
-      ------------------
-
-      procedure Print_Status is
-      begin
-         Write_Line ("AADL version: " & Ocarina.AADL_Version'Img);
-         Write_Line ("Library Path: "
-                       & Get_Name_String (Default_Library_Path));
-      end Print_Status;
 
       --------------
       -- Argument --

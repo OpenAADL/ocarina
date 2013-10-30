@@ -2,7 +2,7 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                        O C A R I N A . U T I L S                         --
+--                       O C A R I N A . P Y T H O N                        --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
@@ -31,14 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package Ocarina.Utils is
+package Ocarina.Python is
 
-   procedure Version;
-   --  Display version information
+   procedure Run_Python;
 
-   procedure Usage;
-   --  Display a message describing the usage of Ocarina
-
-   procedure Print_Status;
-
-end Ocarina.Utils;
+end Ocarina.Python;

@@ -30,16 +30,19 @@
 --                      (taste-users@lists.tuxfamily.org)                   --
 --                                                                          --
 ------------------------------------------------------------------------------
+
 with Ada.Command_Line;           use Ada.Command_Line;
 with GNAT.Directory_Operations;  use GNAT.Directory_Operations;
 with GNAT.OS_Lib;                use GNAT.OS_Lib;
 
+with Namet;                      use Namet;
 with Output;                     use Output;
 
 with Ocarina.Backends;           use Ocarina.Backends;
 with Ocarina.Configuration;      use Ocarina.Configuration;
 with Ocarina.FE_AADL;            use Ocarina.FE_AADL;
 with Ocarina.FE_REAL;            use Ocarina.FE_REAL;
+with Ocarina.Options; use Ocarina.Options;
 
 package body Ocarina.Utils is
 
@@ -61,6 +64,17 @@ package body Ocarina.Utils is
         ("Copyright (c) 2003-2009 Telecom ParisTech, 2010-"
            & Ocarina_Last_Configure_Year & " ESA & ISAE");
    end Version;
+
+   ------------------
+   -- Print_Status --
+   ------------------
+
+   procedure Print_Status is
+   begin
+      Write_Line ("AADL version: " & Ocarina.AADL_Version'Img);
+      Write_Line ("Library Path: "
+                    & Get_Name_String (Default_Library_Path));
+   end Print_Status;
 
    -----------
    -- Usage --

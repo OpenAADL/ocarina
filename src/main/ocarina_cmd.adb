@@ -69,7 +69,7 @@ with Ocarina.FE_AADL.Parser;           use Ocarina.FE_AADL.Parser;
 with Ocarina.ME_REAL.Tokens;
 with Ocarina.Scripts;                    use Ocarina.Scripts;
 with Ocarina.Utils; use Ocarina.Utils;
-
+with Ocarina.Python; use Ocarina.Python;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 procedure Ocarina_Cmd is
@@ -633,7 +633,10 @@ procedure Ocarina_Cmd is
          case Getopt ("* aadlv1 aadlv2 help o: c d g: "
                         & "r: real_lib: real_theorem: boundt_process: "
                         & "disable-annexes=: "
-                        & "i p q v V s x t?") is
+                        & "i p q v V s x t? z") is
+
+            when 'z' =>
+               Set_Current_Action (Python_Shell);
 
             when 'a' =>
                if Full_Switch = "aadlv2" then
@@ -788,6 +791,7 @@ procedure Ocarina_Cmd is
         and then Get_Current_Action /= Show_Help
         and then Get_Current_Action /= Shell
         and then Get_Current_Action /= Parse_Scenario_Files_First
+        and then Get_Current_Action /= Python_Shell
       then
          Set_Current_Action (Show_Usage);
 
@@ -862,10 +866,15 @@ begin
          Ocarina_Shell;
          OS_Exit (0);
 
+      when Python_Shell =>
+         Run_Python;
+         OS_Exit (0);
+
       when Parse_Scenario_Files_First =>
          Parse_Scenario_Files;
          Reset_Current_Action;
          Set_Current_Action (After_Scenario_Action);
+
       when others =>
          null;
    end case;
@@ -909,8 +918,8 @@ begin
 
       when Generate_Code =>
          if Get_Current_Backend_Name = Get_String_Name ("real_theorem")
-           or else Get_Current_Backend_Name = Get_String_Name ("real_pp") then
-
+           or else Get_Current_Backend_Name = Get_String_Name ("real_pp")
+         then
             AADL_Root := Instantiate_Model (AADL_Root);
             Exit_On_Error (No (AADL_Root), "Cannot instantiate AADL models");
 
