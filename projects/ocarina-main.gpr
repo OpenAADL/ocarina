@@ -6,7 +6,7 @@
 --                                                                          --
 --                              P r o j e c t                               --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,6 +36,7 @@ with "ocarina-core";
 with "ocarina-frontends";
 with "ocarina-backends";
 with "ocarina-transfo";
+with "gnatcoll_python";
 
 project Ocarina.Main is
    Src_Dir := Ocarina.Top_Src_Dir & "/main";
