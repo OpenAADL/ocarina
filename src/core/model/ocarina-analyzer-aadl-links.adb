@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2803,6 +2803,7 @@ package body Ocarina.Analyzer.AADL.Links is
                         Pointed_Node := Find_Subclause
                           (Corresponding_Container,
                            Item (List_Node));
+
                      when AADL_V2 =>
                         --  Search in subclause
 
@@ -2822,11 +2823,17 @@ package body Ocarina.Analyzer.AADL.Links is
                         --  subcomponent.
 
                         if No (Pointed_Node) then
-                           Pointed_Node :=
-                             Find_Subcomponent
-                             (Corresponding_Entity
-                                (Scope_Entity (Identifier (Container))),
-                              List_Node);
+                           if Present
+                             (Scope_Entity (Identifier (Container)))
+                           then
+                              Pointed_Node :=
+                                Find_Subcomponent
+                                (Corresponding_Entity
+                                   (Scope_Entity (Identifier (Container))),
+                                 List_Node);
+                           else
+                              Pointed_Node := No_Node;
+                           end if;
                         end if;
                   end case;
 
