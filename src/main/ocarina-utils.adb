@@ -35,16 +35,30 @@ with Ada.Command_Line;           use Ada.Command_Line;
 with GNAT.Directory_Operations;  use GNAT.Directory_Operations;
 with GNAT.OS_Lib;                use GNAT.OS_Lib;
 
+with Errors;                     use Errors;
+with Locations;                  use Locations;
 with Namet;                      use Namet;
 with Output;                     use Output;
+with Types;                      use Types;
+with Utils;                      use Utils;
 
+with Ocarina.Analyzer;           use Ocarina.Analyzer;
 with Ocarina.Backends;           use Ocarina.Backends;
 with Ocarina.Configuration;      use Ocarina.Configuration;
 with Ocarina.FE_AADL;            use Ocarina.FE_AADL;
+with Ocarina.FE_AADL.Parser;
 with Ocarina.FE_REAL;            use Ocarina.FE_REAL;
-with Ocarina.Options; use Ocarina.Options;
+with Ocarina.Instances;          use Ocarina.Instances;
+with Ocarina.Parser;             use Ocarina.Parser;
+with Ocarina.Options;            use Ocarina.Options;
+with Ocarina.Files;              use Ocarina.Files;
 
 package body Ocarina.Utils is
+
+   AADL_Root             : Node_Id := No_Node;
+   File_Name             : Name_Id;
+   Buffer                : Location;
+   Language              : Name_Id;
 
    -------------
    -- Version --
@@ -74,6 +88,8 @@ package body Ocarina.Utils is
       Write_Line ("AADL version: " & Ocarina.AADL_Version'Img);
       Write_Line ("Library Path: "
                     & Get_Name_String (Default_Library_Path));
+      Write_Line ("Load predefined property sets "
+                    & Ocarina.FE_AADL.Parser.Add_Pre_Prop_Sets'Img);
    end Print_Status;
 
    -----------
@@ -133,5 +149,77 @@ package body Ocarina.Utils is
 
       Free (Exec_Suffix);
    end Usage;
+
+   --------------------
+   -- Load_AADL_File --
+   --------------------
+
+   procedure Load_AADL_File (Filename : String) is
+   begin
+      Language := Get_String_Name ("aadl");
+      Set_Str_To_Name_Buffer (Filename);
+
+      File_Name := Search_File (Name_Find);
+      if File_Name = No_Name then
+         Write_Line ("Cannot find file " & Filename);
+         return;
+      end if;
+
+      Buffer := Load_File (File_Name);
+      if File_Name = No_Name then
+         Write_Line ("Cannot read file " & Filename);
+         return;
+      end if;
+
+      AADL_Root := Parse (Language, AADL_Root, Buffer);
+      Exit_On_Error
+        (No (AADL_Root),
+         "Cannot parse AADL specifications");
+      Write_Line
+        ("File " & Filename
+           & " loaded and parsed sucessfully");
+   end Load_AADL_File;
+
+   -------------
+   -- Analyze --
+   -------------
+
+   procedure Analyze is
+      Success : Boolean;
+   begin
+      Success := Analyze (Language, AADL_Root);
+      if not Success then
+         Write_Line ("Cannot analyze AADL specifications");
+      else
+         Write_Line ("Model analyzed sucessfully");
+      end if;
+   end Analyze;
+
+   -----------------
+   -- Instantiate --
+   -----------------
+
+   procedure Instantiate (Root_System : String) is
+   begin
+      if Root_System /= "" then
+         Root_System_Name := To_Lower
+           (Get_String_Name (Root_System));
+      end if;
+      AADL_Root := Instantiate_Model (AADL_Root);
+      if Present (AADL_Root) then
+         Write_Line ("Model instantiated sucessfully");
+      end if;
+   end Instantiate;
+
+   --------------
+   -- Generate --
+   --------------
+
+   procedure Generate (Backend_Name : String) is
+   begin
+      Set_Current_Backend_Name (Backend_Name);
+      Write_Line ("Generating code using backend " & Backend_Name);
+      Generate_Code (AADL_Root);
+   end Generate;
 
 end Ocarina.Utils;

@@ -81,7 +81,7 @@ package body Ocarina.FE_AADL.Parser is
 
       Initialize_Option_Scan;
       loop
-         C := Getopt ("* y s f I:");
+         C := Getopt ("* y s f w I:");
          case C is
             when ASCII.NUL =>
                exit;
@@ -92,7 +92,7 @@ package body Ocarina.FE_AADL.Parser is
             when 'I' =>
                Add_Library_Path (Parameter);
 
-            when 'f' | 's' =>
+            when 'f' | 's' | 'w' =>
                Add_Pre_Prop_Sets := True;
 
             when others =>

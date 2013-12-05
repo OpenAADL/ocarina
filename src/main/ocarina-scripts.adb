@@ -32,11 +32,9 @@
 ------------------------------------------------------------------------------
 
 with Errors;                           use Errors;
-with Locations;                        use Locations;
 with Namet;                            use Namet;
 with Output;                           use Output;
 with Types;                            use Types;
-with Utils;                            use Utils;
 
 with Ada.Unchecked_Deallocation;
 with Ada.Exceptions;                   use Ada.Exceptions;
@@ -45,13 +43,8 @@ with Ada.Text_IO;
 
 with GNAT.OS_Lib;                      use GNAT.OS_Lib;
 
-with Ocarina.Parser;                   use Ocarina.Parser;
 with Ocarina.Backends;                 use Ocarina.Backends;
-
-with Ocarina.Files;                    use Ocarina.Files;
 with Ocarina.Instances;                use Ocarina.Instances;
-with Ocarina.Options;                  use Ocarina.Options;
-with Ocarina.Analyzer;                 use Ocarina.Analyzer;
 with Ocarina.Transfo.Fusions;          use Ocarina.Transfo.Fusions;
 with Ocarina.Transfo.Move;             use Ocarina.Transfo.Move;
 with Ocarina.Transfo.Optim;            use Ocarina.Transfo.Optim;
@@ -64,7 +57,6 @@ package body Ocarina.Scripts is
    -------------------
 
    procedure Ocarina_Shell is
-
       use Ada.Text_IO;
 
       function "+" (S : String) return String_Access;
@@ -100,10 +92,7 @@ package body Ocarina.Scripts is
       Cmmd    : Command;
       Success : Boolean;
 
-      AADL_Root             : Node_Id := No_Node;
-      File_Name             : Name_Id;
-      Buffer                : Location;
-      Language              : Name_Id;
+      AADL_Root             : constant Node_Id := No_Node;
 
       ---------
       -- "+" --
@@ -251,15 +240,12 @@ package body Ocarina.Scripts is
       end Next;
 
    begin
-      Language := Get_String_Name ("aadl");
-
       if Standard_Input then
          Write_Line ("Ocarina shell, type help for information");
       end if;
 
       --  Console main loop: read inputs and process them
 
-      <<Main>>
       loop
          Argc := Count;
          if Argc > 0
@@ -280,59 +266,26 @@ package body Ocarina.Scripts is
                      Show_Help;
 
                   when Analyze =>
-                     Success := Analyze (Language, AADL_Root);
-                     if not Success then
-                        Write_Line ("Cannot analyze AADL specifications");
-                     else
-                        Write_Line ("Model analyzed sucessfully");
-                     end if;
+                     Ocarina.Utils.Analyze;
 
                   when Instantiate =>
                      if Argc = 2 then
-                        Root_System_Name := To_Lower
-                          (Get_String_Name (Argument (2).all));
-                     end if;
-                     AADL_Root := Instantiate_Model (AADL_Root);
-                     if Present (AADL_Root) then
-                        Write_Line ("Model instantiated sucessfully");
+                        Ocarina.Utils.Instantiate (Argument (2).all);
+                     else
+                        Ocarina.Utils.Instantiate ("");
                      end if;
 
                   when Generate =>
                      if Argc /= 2 then
                         raise Syntax_Error;
                      end if;
-                     Set_Current_Backend_Name (Argument (2).all);
-                     Write_Line ("Generating code for "
-                                 & Argument (2).all);
-                     Generate_Code (AADL_Root);
+                     Ocarina.Utils.Generate (Argument (2).all);
 
                   when Load =>
                      if Argc /= 2 then
                         raise Syntax_Error;
                      end if;
-                     Set_Str_To_Name_Buffer (Argument (2).all);
-
-                     File_Name := Search_File (Name_Find);
-                     if File_Name = No_Name then
-                        Write_Line ("cannot find file "
-                                      & Argument (2).all);
-                        goto Main;
-                     end if;
-
-                     Buffer := Load_File (File_Name);
-                     if File_Name = No_Name then
-                        Write_Line ("cannot read file "
-                                      & Argument (2).all);
-                        goto Main;
-                     end if;
-                     AADL_Root := Parse (Language, AADL_Root, Buffer);
-                     Exit_On_Error
-                       (No (AADL_Root),
-                        "cannot parse AADL specifications");
-
-                     Write_Line
-                       ("File " & Argument (2).all
-                        & " loaded and parsed sucessfully");
+                     Ocarina.Utils.Load_AADL_File (Argument (2).all);
 
                   when Brute_Optimize =>
                      declare

@@ -40,5 +40,11 @@ package Ocarina.Utils is
    --  Display a message describing the usage of Ocarina
 
    procedure Print_Status;
+   --  Display status information on Ocarina
+
+   procedure Load_AADL_File (Filename : String);
+   procedure Analyze;
+   procedure Instantiate (Root_System : String);
+   procedure Generate (Backend_Name : String);
 
 end Ocarina.Utils;

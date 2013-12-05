@@ -31,18 +31,15 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Text_IO;             use Ada.Text_IO;
-with GNATCOLL.Scripts;        use GNATCOLL.Scripts;
-with GNATCOLL.Scripts.Python; use GNATCOLL.Scripts.Python;
+with Ada.Directories;           use Ada.Directories;
+with Ada.Environment_Variables; use Ada.Environment_Variables;
+with Ada.Text_IO;               use Ada.Text_IO;
 
-with Ocarina.Utils;
+with GNATCOLL.Scripts;          use GNATCOLL.Scripts;
+
+with Ocarina.Python_Cmd;
 
 package body Ocarina.Python is
-
-   function Register_Scripts_And_Functions
-     return GNATCOLL.Scripts.Scripts_Repository;
-   --  Register the various scripting languages and the functions we
-   --  export to them
 
    -------------
    -- Console --
@@ -117,91 +114,72 @@ package body Ocarina.Python is
    end Insert_Error;
 
    ----------------
-   -- On_Version --
-   ----------------
-
-   procedure On_Version (Data : in out Callback_Data'Class; Command : String);
-
-   procedure On_Version
-     (Data : in out Callback_Data'Class;
-      Command : String)
-   is
-      pragma Unreferenced (Data, Command);
-   begin
-      Ocarina.Utils.Version;
-   end On_Version;
-
-   ---------------
-   -- On_Status --
-   ---------------
-
-   procedure On_Status (Data : in out Callback_Data'Class; Command : String);
-
-   procedure On_Status
-     (Data : in out Callback_Data'Class;
-      Command : String)
-   is
-      pragma Unreferenced (Data, Command);
-   begin
-      Ocarina.Utils.Print_Status;
-   end On_Status;
-
-   ------------------------------------
-   -- Register_Scripts_And_Functions --
-   ------------------------------------
-
-   function Register_Scripts_And_Functions return Scripts_Repository is
-      Repo : Scripts_Repository;
-   begin
-      --  Register all scripting languages. In practice, you only need to
-      --  register those you intend to support
-
-      Repo := new Scripts_Repository_Record;
-      Register_Python_Scripting (Repo, "Ocarina");
-      Register_Standard_Classes (Repo, "Console");
-
-      --  Register our custom functions
-
-      --  version() function
-      Register_Command
-        (Repo, "version", 0, 0, Handler => On_Version'Unrestricted_Access);
-
-      --  status() function
-      Register_Command
-        (Repo, "status", 0, 0, Handler => On_Status'Unrestricted_Access);
-
-      return Repo;
-   end Register_Scripts_And_Functions;
-
-   ----------------
    -- Run_Python --
    ----------------
 
    procedure Run_Python is
-      Repo   : Scripts_Repository := Register_Scripts_And_Functions;
+      Repo   : Scripts_Repository :=
+        Ocarina.Python_Cmd.Register_Scripts_And_Functions;
       Buffer : String (1 .. 1000);
       Last   : Integer;
       Errors : Boolean;
       Console : aliased Text_Console;
-   begin
-      Put_Line ("Ocarina interactive Python shell");
-      Put_Line ("Please type python commands:");
 
-      Set_Default_Console
-        (Lookup_Scripting_Language (Repo, "python"), Console'Unchecked_Access);
+      File : Ada.Text_IO.File_Type;
+   begin
+      --  Detect whether we are calling Ocarina directly, implying an
+      --  interactive session, or using it through a specific scripts.
+
+      declare
+         Env_Underscore : constant String := Value ("_");
+         --  This magic env. variable stores the name of the current
+         --  function being used.
+
+      begin
+         if Base_Name (Env_Underscore) = "ocarina" then
+            --  XXX to be tested on Windows ...
+
+            Put_Line ("Ocarina interactive Python shell");
+            Put_Line ("Please type python commands:");
+            Set_Default_Console
+              (Lookup_Scripting_Language (Repo, "python"),
+               Console'Unchecked_Access);
+         else
+            Ada.Text_IO.Open (File, Ada.Text_IO.In_File, Env_Underscore);
+            Set_Input (File);
+         end if;
+      end;
+
+      --  Iterate over all lines for the input buffer
 
       loop
-         Get_Line (Buffer, Last);
-         Execute_Command
-           (Script       => Lookup_Scripting_Language (Repo, "python"),
-            Command      => Buffer (1 .. Last),
-            Show_Command => False,
-            Hide_Output  => False,
-            Errors       => Errors);
+         Get_Line (Current_Input, Buffer, Last);
+
+         --  Remove comments
+
+         for J in Buffer'First .. Last loop
+            if Buffer (J) = '#' then
+               Last := J;
+               exit;
+            end if;
+         end loop;
+
+         if Last > Buffer'First then
+            Execute_Command
+              (Script       => Lookup_Scripting_Language (Repo, "python"),
+               Command      => Buffer (Buffer'First .. Last),
+               Show_Command => False,
+               Hide_Output  => False,
+               Errors       => Errors);
+         end if;
       end loop;
+
    exception
       when End_Error =>
          Destroy (Repo);
+         if Is_Open (File) then
+            Close (File);
+         end if;
    end Run_Python;
 
 end Ocarina.Python;

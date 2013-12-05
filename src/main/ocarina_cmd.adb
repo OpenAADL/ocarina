@@ -67,9 +67,9 @@ with Ocarina.Parser;                   use Ocarina.Parser;
 with Ocarina.Property_Sets;            use Ocarina.Property_Sets;
 with Ocarina.FE_AADL.Parser;           use Ocarina.FE_AADL.Parser;
 with Ocarina.ME_REAL.Tokens;
-with Ocarina.Scripts;                    use Ocarina.Scripts;
-with Ocarina.Utils; use Ocarina.Utils;
-with Ocarina.Python; use Ocarina.Python;
+with Ocarina.Scripts;                  use Ocarina.Scripts;
+with Ocarina.Utils;                    use Ocarina.Utils;
+with Ocarina.Python;                   use Ocarina.Python;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 procedure Ocarina_Cmd is
@@ -633,9 +633,9 @@ procedure Ocarina_Cmd is
          case Getopt ("* aadlv1 aadlv2 help o: c d g: "
                         & "r: real_lib: real_theorem: boundt_process: "
                         & "disable-annexes=: "
-                        & "i p q v V s x t? z") is
+                        & "i p q v V s x t? w") is
 
-            when 'z' =>
+            when 'w' =>
                Set_Current_Action (Python_Shell);
 
             when 'a' =>
@@ -832,7 +832,7 @@ begin
    Ocarina.Initialize;
    Language := Get_String_Name ("aadl");
    Default_AADL_Version := Get_Default_AADL_Version;
-   AADL_Version         := Default_AADL_Version;
+   AADL_Version         := Ocarina.AADL_V2;
 
    --  Process the command line
 
@@ -871,6 +871,7 @@ begin
          OS_Exit (0);
 
       when Parse_Scenario_Files_First =>
+         AADL_Version         := Ocarina.AADL_V1;
          Parse_Scenario_Files;
          Reset_Current_Action;
          Set_Current_Action (After_Scenario_Action);
