@@ -1299,7 +1299,7 @@ procedure Ocarina_Cmd is
    begin
       Write_Line
         ("Ocarina " & Ocarina_Version
-           & " (" & Ocarina_SVN_Revision & ")");
+           & " (" & Ocarina_Revision & ")");
 
       if Ocarina_Last_Configure_Date /= "" then
          Write_Line ("Build date: " & Ocarina_Last_Configure_Date);
