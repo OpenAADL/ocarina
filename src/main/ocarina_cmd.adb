@@ -1407,8 +1407,10 @@ begin
          AADL_Root := Instantiate_Model (AADL_Root);
          Exit_On_Error (No (AADL_Root), "Cannot instantiate AADL models");
          if Verbose_Mode then
+            Set_Standard_Error;
             Write_Line ("Model instantiation: completed");
             Write_Eol;
+            Set_Standard_Output;
          end if;
 
       when Generate_Code =>
@@ -1423,8 +1425,10 @@ begin
          end if;
          Generate_Code (AADL_Root);
          if Verbose_Mode then
+            Set_Standard_Error;
             Write_Line ("Code generation: completed");
             Write_Eol;
+            Set_Standard_Output;
          end if;
 
       when Analyze_With_Cheddar =>

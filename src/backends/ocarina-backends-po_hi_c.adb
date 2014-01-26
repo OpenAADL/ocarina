@@ -107,6 +107,7 @@ package body Ocarina.Backends.PO_HI_C is
    Do_Regression_Test          : Boolean := False;
    Do_Coverage_Test            : Boolean := False;
    Generated_Sources_Directory : Name_Id := No_Name;
+   Verbose_Mode : Boolean := False;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -548,6 +549,13 @@ package body Ocarina.Backends.PO_HI_C is
       --  Enter the output directory
 
       Enter_Directory (Generated_Sources_Directory);
+      if Verbose_Mode then
+         Set_Standard_Error;
+         Write_Str ("Generating code in directory: ");
+         Write_Name (Generated_Sources_Directory);
+         Write_Eol;
+         Set_Standard_Output;
+      end if;
 
       if Remove_Generated_Sources then
          Build_Utils.Makefiles.Clean (Instance_Root);
@@ -642,7 +650,7 @@ package body Ocarina.Backends.PO_HI_C is
       Generated_Sources_Directory := Get_String_Name (".");
       Initialize_Option_Scan;
       loop
-         case Getopt ("* b z ec er o: perf asn1") is
+         case Getopt ("* b z ec er o: perf asn1 v") is
             when ASCII.NUL =>
                exit;
 
@@ -653,6 +661,9 @@ package body Ocarina.Backends.PO_HI_C is
 
             when 'b' =>
                Compile_Generated_Sources := True;
+
+            when 'v' =>
+               Verbose_Mode := True;
 
             when 'z' =>
                Remove_Generated_Sources := True;
