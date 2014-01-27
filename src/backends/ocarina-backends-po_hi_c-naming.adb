@@ -131,12 +131,12 @@ package body Ocarina.Backends.PO_HI_C.Naming is
          U                 : Node_Id;
          Root_Sys          : constant Node_Id
            := Parent_Component (Parent_Subcomponent (E));
-         Platform          : constant Supported_Execution_Platform
+         Platform_Name     : constant Name_Id
            := Get_Execution_Platform (Get_Bound_Processor (E));
       begin
          pragma Assert (AAU.Is_System (Root_Sys));
 
-         if Platform = Platform_None then
+         if Platform_Name = No_Name then
             Display_Located_Error
               (Loc (Parent_Subcomponent (E)),
                "This process subcomponent is bound to a processor without"

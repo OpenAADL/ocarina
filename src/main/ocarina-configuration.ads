@@ -40,7 +40,7 @@ package Ocarina.Configuration is
    procedure Reset_Modules;
 
    function Ocarina_Version return String;
-   function Ocarina_SVN_Revision return String;
+   function Ocarina_Revision return String;
    function Ocarina_Last_Configure_Date return String;
    function Ocarina_Last_Configure_Year return String;
    --  Version control routines

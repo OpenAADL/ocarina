@@ -315,7 +315,7 @@ package body Ocarina.Instances.Components.Features is
          --  Abort the instantiation of the corresponding entity if there
          --  is no such corresponding entity.
 
-         Display_Instantiation_Error (Feature, Fatal => False);
+         Display_Type_Instantiation_Error (Feature, Fatal => False);
          return No_Node;
       else
          C := ATE.Get_Referenced_Entity (Entity_Ref (Feature));

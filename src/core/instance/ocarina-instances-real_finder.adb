@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,28 +31,39 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Ocarina.ME_AADL.AADL_Tree.Nodes;
-with Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
+with Locations;
+
+with Ocarina.AADL_Values;
+
 with Ocarina.Instances.Queries;
-use Ocarina.Instances.Queries;
+
+with Ocarina.ME_AADL.AADL_Tree.Nodes;
+
+with Ocarina.ME_AADL.AADL_Instances.Nodes;
+with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
+
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
 with Ocarina.ME_REAL.REAL_Tree.Nutils;
-with Ocarina.REAL_Values;
-with Ocarina.AADL_Values;
-with Locations;
-with Ocarina.ME_AADL.AADL_Instances.Entities;
+
 with Ocarina.Processor.Properties;
 
+with Ocarina.REAL_Values;
+
 package body Ocarina.Instances.REAL_Finder is
+
+   use Ocarina.Instances.Queries;
+   use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
-   use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.REAL_Values;
    use Ocarina.Processor.Properties;
 
-   package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;
+   package OV renames Ocarina.AADL_Values;
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AIEP renames Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
+   package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;
    package RV renames Ocarina.REAL_Values;
 
    ------------------------
@@ -81,10 +92,8 @@ package body Ocarina.Instances.REAL_Finder is
    is
       use Locations;
 
-      package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-      package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-      package OV renames Ocarina.AADL_Values;
       use OV;
+      use type ATN.Node_Kind;
 
       pragma Assert (AIN.Kind (Var) = AIN.K_Component_Instance or else
                      AIN.Kind (Var) = AIN.K_Call_Instance);
@@ -240,9 +249,33 @@ package body Ocarina.Instances.REAL_Finder is
                  (ATN.Name (ATN.Identifier (N)));
 
             when ATN.K_Reference_Term =>
-               Result := RV.New_Elem_Value
-                 (Get_Reference_Property
-                    (Resolved_Var, Property_Name));
+               --  In the case of reference term, we change the logic:
+               --  we use Get_List_Property to fetch all elements, and
+               --  then enqueue them in the Result.
+
+               if not Is_List then
+                  Result := RV.New_Elem_Value
+                    (Get_Reference_Property
+                       (Resolved_Var, Property_Name));
+               else
+                  declare
+                     A_List : constant List_Id := Get_List_Property
+                       (Resolved_Var, Property_Name);
+                     A_Node : Node_Id;
+                  begin
+                     A_Node := ATN.First_Node (A_List);
+                     while Present (A_Node) loop
+                        Result := RV.New_Elem_Value
+                          (ATN.Entity (ATN.Reference_Term (A_Node)));
+                        Val := New_Node (K_Value_Node, No_Location);
+                        Set_Item_Val (Val, Result);
+                        RNU.Append_Node_To_List (Val, Result_List);
+                        A_Node := ATN.Next_Node (A_Node);
+                     end loop;
+
+                     return RV.New_List_Value (Result_List);
+                  end;
+               end if;
 
             when ATN.K_Component_Classifier_Term =>
                Result := RV.New_Elem_Value
@@ -253,7 +286,9 @@ package body Ocarina.Instances.REAL_Finder is
                return RV.No_Value;
          end case;
 
-         if Is_List then
+         if Is_List
+           and then ATN.Kind (N) /= ATN.K_Reference_Term
+         then
             Val := New_Node (K_Value_Node, No_Location);
             Set_Item_Val (Val, Result);
             RNU.Append_Node_To_List (Val, Result_List);

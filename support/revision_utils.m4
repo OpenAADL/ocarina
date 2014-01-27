@@ -8,22 +8,22 @@ AC_DEFUN([AM_REVISION_UTILS],
 [
 # Take the current SVN revision
 
-AC_MSG_CHECKING(whether this is an SVN working copy)
+AC_MSG_CHECKING(whether this is a SCM working copy)
 
-temp_svn_output=`LANG=C svn info [$1] 2>/dev/null | grep "^Revision:" | awk '{print $NF}'`
+temp_scm_output=`(cd $srcdir; git rev-parse --short HEAD)`
 
-if test x"${temp_svn_output}" = x""; then
+if test x"${temp_scm_output}" = x""; then
    # This means we are NOT working on a repository copy, the value of
-   # SVN_REVISION will not be taken into account.
+   # SCM_REVISION will not be taken into account.
 
-   SVN_REVISION=""
+   SCM_REVISION=""
    AC_MSG_RESULT(no.)
 else
-   SVN_REVISION="r${temp_svn_output}"
-   AC_MSG_RESULT(yes: ${SVN_REVISION}.)
+   SCM_REVISION="r${temp_scm_output}"
+   AC_MSG_RESULT(yes: ${SCM_REVISION}.)
 fi
 
-AC_SUBST(SVN_REVISION)
+AC_SUBST(SCM_REVISION)
 
 # Take the configure full date
 

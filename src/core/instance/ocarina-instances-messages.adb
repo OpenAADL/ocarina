@@ -88,4 +88,21 @@ package body Ocarina.Instances.Messages is
       Exit_On_Error (Fatal, "Cannot instantiate full model, exit now");
    end Display_Instantiation_Error;
 
+   procedure Display_Type_Instantiation_Error
+     (Node : Node_Id; Fatal : Boolean := True)
+   is
+      pragma Assert (Present (Node));
+      Error_Msg : constant String
+        := "% (feature) cannot be properly instantiated: requires full type";
+   begin
+      Error_Loc (1) := Loc (Node);
+      Error_Name (1) := Get_Name_Of_Entity (Node);
+      if Fatal then
+         DE (Error_Msg);
+      else
+         DW (Error_Msg);
+      end if;
+      Exit_On_Error (Fatal, "Cannot instantiate full model, exit now");
+   end Display_Type_Instantiation_Error;
+
 end Ocarina.Instances.Messages;

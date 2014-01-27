@@ -68,7 +68,7 @@ package body Ocarina.Configuration is
      @AADL_VERSION@;
 
    pragma Style_Checks (Off);
-   SVN_Revision : constant String := "Working Copy from @SVN_REVISION@";
+   SCM_Revision : constant String := "Working Copy from @SCM_REVISION@";
    pragma Style_Checks (On);
    --  We keep the repository version as "(Working Copy) from ..." to
    --  distinguish modified versions. When packaging Ocarina, we
@@ -245,13 +245,13 @@ package body Ocarina.Configuration is
    end Ocarina_Version;
 
    --------------------------
-   -- Ocarina_SVN_Revision --
+   -- Ocarina_Revision --
    --------------------------
 
-   function Ocarina_SVN_Revision return String is
+   function Ocarina_Revision return String is
    begin
-      return SVN_Revision;
-   end Ocarina_SVN_Revision;
+      return SCM_Revision;
+   end Ocarina_Revision;
 
    ---------------------------------
    -- Ocarina_Last_Configure_Date --

@@ -81,7 +81,7 @@ $(GUIDE).html: $(IMAGES) $(GUIDE_TEXIFILES)
 	mv -f "$$TMP_FILE" "$$INDEX_FILE"
 
 $(GUIDE).pdf: $(IMAGES) $(GUIDE_TEXIFILES)
-	$(TEXI2PDF) $(srcdir)/$(GUIDE).texi
+	-$(TEXI2PDF) $(srcdir)/$(GUIDE).texi
 
 clean-local:
 	rm -f *.aux *.log *.dvi *.info *.tmp

@@ -1299,7 +1299,7 @@ procedure Ocarina_Cmd is
    begin
       Write_Line
         ("Ocarina " & Ocarina_Version
-           & " (" & Ocarina_SVN_Revision & ")");
+           & " (" & Ocarina_Revision & ")");
 
       if Ocarina_Last_Configure_Date /= "" then
          Write_Line ("Build date: " & Ocarina_Last_Configure_Date);
@@ -1329,6 +1329,11 @@ begin
    --  Initialization Modules
 
    Ocarina.Configuration.Init_Modules;
+
+   if Verbose_Mode then
+      Set_Standard_Error;
+      Version;
+   end if;
 
    case Get_Current_Action is
       when Show_Version =>
@@ -1386,6 +1391,12 @@ begin
 
       Success := Analyze (Language, AADL_Root);
       Exit_On_Error (not Success, "Cannot analyze AADL specifications");
+
+      if Verbose_Mode then
+         Write_Line ("Model parsing: completed");
+         Write_Eol;
+      end if;
+
    end if;
 
    case Get_Current_Action is
@@ -1395,6 +1406,12 @@ begin
       when Instantiate_Model =>
          AADL_Root := Instantiate_Model (AADL_Root);
          Exit_On_Error (No (AADL_Root), "Cannot instantiate AADL models");
+         if Verbose_Mode then
+            Set_Standard_Error;
+            Write_Line ("Model instantiation: completed");
+            Write_Eol;
+            Set_Standard_Output;
+         end if;
 
       when Generate_Code =>
          if Get_Current_Backend_Name = Get_String_Name ("real_theorem")
@@ -1407,6 +1424,12 @@ begin
             Exit_On_Error (not Success, "Cannot analyze REAL specifications");
          end if;
          Generate_Code (AADL_Root);
+         if Verbose_Mode then
+            Set_Standard_Error;
+            Write_Line ("Code generation: completed");
+            Write_Eol;
+            Set_Standard_Output;
+         end if;
 
       when Analyze_With_Cheddar =>
          declare

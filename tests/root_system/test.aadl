@@ -1,0 +1,16 @@
+package p1 
+public
+
+system r1
+end r1;
+
+system implementation r1.i
+end r1.i;
+
+system r2
+end r2;
+
+system implementation r2.i
+end r2.i;
+
+end p1;

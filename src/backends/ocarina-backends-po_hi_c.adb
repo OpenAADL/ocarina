@@ -107,6 +107,7 @@ package body Ocarina.Backends.PO_HI_C is
    Do_Regression_Test          : Boolean := False;
    Do_Coverage_Test            : Boolean := False;
    Generated_Sources_Directory : Name_Id := No_Name;
+   Verbose_Mode : Boolean := False;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -117,6 +118,7 @@ package body Ocarina.Backends.PO_HI_C is
      (Appli_Name         : Name_Id;
       Node_Name          : Name_Id;
       Execution_Platform : Supported_Execution_Platform := Platform_None;
+      Execution_Platform_Name : Name_Id;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
       Asn_Sources        : Name_Tables.Instance;
@@ -138,6 +140,7 @@ package body Ocarina.Backends.PO_HI_C is
      (Appli_Name         : Name_Id;
       Node_Name          : Name_Id;
       Execution_Platform : Supported_Execution_Platform := Platform_None;
+      Execution_Platform_Name : Name_Id;
       Transport_API      : Supported_Transport_APIs;
       Ada_Sources        : Name_Tables.Instance;
       Asn_Sources        : Name_Tables.Instance;
@@ -194,8 +197,15 @@ package body Ocarina.Backends.PO_HI_C is
       Write_Str ("TARGET = ");
 
       case Execution_Platform is
-         when Platform_Native | Platform_None =>
+         when Platform_Native =>
             Write_Str ("native");
+
+         when Platform_None =>
+            if Execution_Platform_Name /= No_Name then
+               Write_Name (Execution_Platform_Name);
+            else
+               Write_Str ("native");
+            end if;
 
          when Platform_Native_Compcert =>
             Write_Str ("compcert");
@@ -303,8 +313,10 @@ package body Ocarina.Backends.PO_HI_C is
          for J in
            Name_Tables.First .. Name_Tables.Last (User_Source_Dirs) loop
             Write_Space;
-            Write_Name (User_Source_Dirs.Table (J));
-
+            Write_Str ("""-I");
+            Write_Name (Remove_Directory_Separator
+                          (User_Source_Dirs.Table (J)));
+            Write_Str ("""");
             exit when J = Name_Tables.Last (User_Source_Dirs);
 
             Write_Space;
@@ -537,6 +549,13 @@ package body Ocarina.Backends.PO_HI_C is
       --  Enter the output directory
 
       Enter_Directory (Generated_Sources_Directory);
+      if Verbose_Mode then
+         Set_Standard_Error;
+         Write_Str ("Generating code in directory: ");
+         Write_Name (Generated_Sources_Directory);
+         Write_Eol;
+         Set_Standard_Output;
+      end if;
 
       if Remove_Generated_Sources then
          Build_Utils.Makefiles.Clean (Instance_Root);
@@ -631,7 +650,7 @@ package body Ocarina.Backends.PO_HI_C is
       Generated_Sources_Directory := Get_String_Name (".");
       Initialize_Option_Scan;
       loop
-         case Getopt ("* b z ec er o: perf asn1") is
+         case Getopt ("* b z ec er o: perf asn1 v") is
             when ASCII.NUL =>
                exit;
 
@@ -642,6 +661,9 @@ package body Ocarina.Backends.PO_HI_C is
 
             when 'b' =>
                Compile_Generated_Sources := True;
+
+            when 'v' =>
+               Verbose_Mode := True;
 
             when 'z' =>
                Remove_Generated_Sources := True;

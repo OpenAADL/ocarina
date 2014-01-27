@@ -948,7 +948,8 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    function Unit_Name (N : Name_Id) return Name_Id;
    --  Given an ENTITY fully qualified name A.B.C.D, returns A.B.C
-   --  Raises an arror if the name does not contains any dot.
+   --  Raises an error if the name does not contains any dot.
+   --  Return No_Name is unit name is Standard
 
    function Local_Name (N : Name_Id) return Name_Id;
    --  Given an ENTITY fully qualified name A.B.C.D, returns D

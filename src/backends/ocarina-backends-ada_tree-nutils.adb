@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -3243,6 +3243,10 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
             & Get_Name_String (N)
             & """ is not an Ada fully qualified entity name",
             Fatal => True);
+      end if;
+
+      if To_Lower (Name_Buffer (1 .. Pos - 1)) = "standard" then
+         return No_Name;
       end if;
 
       Set_Str_To_Name_Buffer (Name_Buffer (1 .. Pos - 1));
