@@ -145,4 +145,13 @@ package body Ocarina.Python_Cmd is
       return Repo;
    end Register_Scripts_And_Functions;
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize is
+   begin
+      Repo := Register_Scripts_And_Functions;
+   end Initialize;
+
 end Ocarina.Python_Cmd;
