@@ -147,10 +147,10 @@ AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
 
 
 define(SHARED_LIBRARY_OPTIONS, [dnl
-  GNAT_LIB_FLAGS="-XLIBRARY=dynamic"
+  GNAT_LIB_FLAGS="-XLIBRARY_TYPE=relocatable"
   shared=true])
 define(NO_SHARED_LIBRARY_OPTIONS, [dnl
-  GNAT_LIB_FLAGS="-XLIBRARY=static"
+  GNAT_LIB_FLAGS="-XLIBRARY_TYPE=static"
   shared=false])
 
 AC_ARG_ENABLE(shared,

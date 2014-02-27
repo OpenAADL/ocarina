@@ -43,8 +43,8 @@ project Ocarina is
    type Build_Type is ("release", "debug");
    Build : Build_Type := External ("BUILD", "debug");
 
-   type Lib_Kinds is ("dynamic", "static");
-   Lib_Type : Lib_Kinds := External ("LIBRARY", "static");
+   type Lib_Kinds is ("relocatable", "static");
+   Lib_Type : Lib_Kinds := External ("LIBRARY_TYPE", "static");
 
    package Compiler is
       for  Local_Configuration_Pragmas use Top_Src_Dir
