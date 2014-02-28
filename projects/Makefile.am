@@ -8,7 +8,8 @@ BUILD_PROJECTS=\
 	ocarina-backends.gpr \
 	ocarina-config.gpr \
 	ocarina-transfo.gpr \
-	ocarina-main.gpr
+	ocarina-main.gpr \
+	ocarina-python.gpr
 
 # All project files have to be packaged with "make dist"
 
@@ -34,7 +35,8 @@ OBJECT_DIRS = $(top_builddir)/src/core/objects \
 	$(top_builddir)/src/frontends/objects \
 	$(top_builddir)/src/backends/objects \
 	$(top_builddir)/src/transfo/objects \
-	$(top_builddir)/src/main/objects
+	$(top_builddir)/src/main/objects \
+	$(top_builddir)/src/config/objects
 
 # Library directories (*.ali, *.a)
 
