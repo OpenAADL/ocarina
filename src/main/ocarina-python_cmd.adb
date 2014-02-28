@@ -1,6 +1,7 @@
 with GNATCOLL.Scripts;        use GNATCOLL.Scripts;
 with GNATCOLL.Scripts.Python; use GNATCOLL.Scripts.Python;
 
+with Ocarina.Configuration;            use Ocarina.Configuration;
 with Ocarina.Utils;
 
 package body Ocarina.Python_Cmd is
@@ -144,6 +145,28 @@ package body Ocarina.Python_Cmd is
 
       return Repo;
    end Register_Scripts_And_Functions;
+
+   --------------------
+   -- Initialize_Lib --
+   --------------------
+
+   procedure Initialize_Lib is
+      procedure Adainit;
+      pragma Import (C, Adainit, "adainit");
+
+   begin
+      --  Initialize Ada runtime
+      Adainit;
+
+      --  Initialize Ocarina runtime
+      Ocarina.Initialize;
+      Default_AADL_Version := Get_Default_AADL_Version;
+      AADL_Version         := Ocarina.AADL_V2;
+      Ocarina.Configuration.Init_Modules;
+
+      --  Initialize Python bindings
+      Repo := Register_Scripts_And_Functions;
+   end Initialize_Lib;
 
    ----------------
    -- Initialize --

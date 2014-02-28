@@ -10,8 +10,10 @@ package Ocarina.Python_Cmd is
    --  Register the Python scripting language, and the functions we
    --  export
 
+   procedure Initialize_Lib;
+   pragma Export (C, Initialize_Lib, "initocarina");
+
    procedure Initialize;
-   pragma Export (C, Initialize, "initocarina");
 
 private
 
