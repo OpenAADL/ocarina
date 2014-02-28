@@ -88,7 +88,7 @@ package body Ocarina.Utils is
       Write_Line ("AADL version: " & Ocarina.AADL_Version'Img);
       Write_Line ("Library Path: "
                     & Get_Name_String (Default_Library_Path));
-      Write_Line ("Load predefined property sets "
+      Write_Line ("Load predefined property sets: "
                     & Ocarina.FE_AADL.Parser.Add_Pre_Prop_Sets'Img);
    end Print_Status;
 
