@@ -35,6 +35,9 @@
 --  are passing through a user-provided AADL component instance
 
 with Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates;
+pragma Elaborate_All
+  (Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates);
+
 with Types;
 
 package Ocarina.Instances.REAL_Checker.Queries.Passing_Predicates is
