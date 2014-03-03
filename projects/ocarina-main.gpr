@@ -33,16 +33,17 @@
 
 with "ocarina";
 with "ocarina-core";
+with "ocarina-config";
 with "ocarina-frontends";
 with "ocarina-backends";
 with "ocarina-transfo";
-with "gnatcoll_python";
 
 project Ocarina.Main is
    Src_Dir := Ocarina.Top_Src_Dir & "/main";
+   Src_Dir_2 := Ocarina.Top_Src_Dir & "/python";
    Build_Dir := Ocarina.Top_Build_Dir & "/main";
 
-   for Source_Dirs use (Src_Dir, Build_Dir);
+   for Source_Dirs use (Src_Dir, Build_Dir, src_dir_2);
    for Object_Dir use Build_Dir & "/objects";
    for Library_Dir use Build_Dir & "/libs";
    for Exec_Dir use Build_Dir;
@@ -51,6 +52,7 @@ project Ocarina.Main is
    package Compiler renames Ocarina.Compiler;
    package Binder renames Ocarina.Binder;
    package Linker renames Ocarina.Linker;
+
    package Builder is
       for Executable ("ocarina_cmd") use "ocarina";
       for Default_Switches ("Ada") use

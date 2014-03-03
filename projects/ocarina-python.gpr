@@ -32,25 +32,33 @@
 ------------------------------------------------------------------------------
 
 with "ocarina";
+with "ocarina-config";
 with "ocarina-core";
 with "ocarina-frontends";
 with "ocarina-backends";
 with "ocarina-transfo";
+
 with "gnatcoll_python";
 
 project Ocarina.Python is
-   Src_Dir := Ocarina.Top_Src_Dir & "/main";
-   Build_Dir := Ocarina.Top_Build_Dir & "/main";
+   Src_Dir := Ocarina.Top_Src_Dir & "/python";
+   Build_Dir := Ocarina.Top_Build_Dir & "/python";
 
    for Source_Dirs use (Src_Dir, Build_Dir);
    for Object_Dir use Build_Dir & "/objects";
    for Library_Dir use Build_Dir & "/libs";
 
-   for Library_Name use "ocarina-python";
+   for Library_Name use "ocarina_python";
    for Library_Kind use Ocarina.Lib_Type;
 
+   for Library_Version use "libocarina_python.so";
+
+   for Library_Interface use ("ocarina.python_cmd");
+   for Library_Standalone use "standard";
+--   for Library_Standalone use "encapsulated";
+
    package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Builder renames Ocarina.Builder;
+   package Binder   renames Ocarina.Binder;
+   package Builder  renames Ocarina.Builder;
 
 end Ocarina.Python;

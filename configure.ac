@@ -410,11 +410,13 @@ AC_OUTPUT([
 	resources/runtime/aadl_xml/Makefile
 	projects/ocarina.gpr
 	src/main/Makefile
-	src/main/ocarina-configuration.adb
+	src/config/ocarina-configuration.adb
 	src/frontends/Makefile
+	src/config/Makefile
 	src/core/Makefile
 	src/transfo/Makefile
 	src/backends/Makefile
+	src/python/Makefile
 	src/Makefile
 	support/Makefile
 	support/strip_wrapper.sh

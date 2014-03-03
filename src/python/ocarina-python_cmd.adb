@@ -111,7 +111,9 @@ package body Ocarina.Python_Cmd is
       --  register those you intend to support
 
       Repo := new Scripts_Repository_Record;
-      Register_Python_Scripting (Repo, "ocarina");
+      Register_Python_Scripting (Repo, "libocarina_python");
+      --  Note: it must match the name of the library generated
+
       Register_Standard_Classes (Repo, "Console");
 
       --  Register our custom functions
@@ -152,7 +154,7 @@ package body Ocarina.Python_Cmd is
 
    procedure Initialize_Lib is
       procedure Adainit;
-      pragma Import (C, Adainit, "adainit");
+      pragma Import (C, Adainit, "ocarina_pythoninit");
 
    begin
       --  Initialize Ada runtime
@@ -166,6 +168,7 @@ package body Ocarina.Python_Cmd is
 
       --  Initialize Python bindings
       Repo := Register_Scripts_And_Functions;
+
    end Initialize_Lib;
 
    ----------------

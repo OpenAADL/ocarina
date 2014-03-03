@@ -38,13 +38,12 @@ with "ocarina-backends";
 with "ocarina-transfo";
 
 project Ocarina.Config is
-   Src_Dir := Ocarina.Top_Src_Dir & "/main";
-   Src_Dir_2 := Ocarina.Top_Build_Dir & "/main";
+   Src_Dir := Ocarina.Top_Src_Dir & "/config";
    Build_Dir := Ocarina.Top_Build_Dir & "/config";
 
-   for Source_Dirs use (Src_Dir, Src_Dir_2, Build_Dir);
-   for Source_Files use ("ocarina-configuration.adb", "ocarina-configuration.ads");
+   for Source_Dirs use (Src_Dir, Build_Dir);
    for Object_Dir use Build_Dir & "/objects";
+
    for Library_Dir use Build_Dir & "/libs";
    for Library_Name use "ocarina-config";
    for Library_Kind use Ocarina.Lib_Type;

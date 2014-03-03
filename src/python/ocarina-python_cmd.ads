@@ -11,7 +11,7 @@ package Ocarina.Python_Cmd is
    --  export
 
    procedure Initialize_Lib;
-   pragma Export (C, Initialize_Lib, "initocarina");
+   pragma Export (C, Initialize_Lib, "initlibocarina_python");
 
    procedure Initialize;
 

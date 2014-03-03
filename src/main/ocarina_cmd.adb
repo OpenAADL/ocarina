@@ -69,7 +69,7 @@ with Ocarina.FE_AADL.Parser;           use Ocarina.FE_AADL.Parser;
 with Ocarina.ME_REAL.Tokens;
 with Ocarina.Scripts;                  use Ocarina.Scripts;
 with Ocarina.Utils;                    use Ocarina.Utils;
-with Ocarina.Python;                   use Ocarina.Python;
+--  with Ocarina.Python;                   use Ocarina.Python;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 procedure Ocarina_Cmd is
@@ -867,7 +867,7 @@ begin
          OS_Exit (0);
 
       when Python_Shell =>
-         Run_Python;
+         --         Run_Python;
          OS_Exit (0);
 
       when Parse_Scenario_Files_First =>

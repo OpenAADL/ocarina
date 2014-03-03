@@ -36,6 +36,7 @@ OBJECT_DIRS = $(top_builddir)/src/core/objects \
 	$(top_builddir)/src/backends/objects \
 	$(top_builddir)/src/transfo/objects \
 	$(top_builddir)/src/main/objects \
+	$(top_builddir)/src/python/objects \
 	$(top_builddir)/src/config/objects
 
 # Library directories (*.ali, *.a)
@@ -45,6 +46,7 @@ LIB_DIRS = $(top_builddir)/src/core/libs \
 	$(top_builddir)/src/backends/libs \
 	$(top_builddir)/src/transfo/libs \
 	$(top_builddir)/src/config/libs \
+	$(top_builddir)/src/python/libs \
 	$(top_builddir)/src/main/libs
 
 # All directories used for the build process. If the configure is
