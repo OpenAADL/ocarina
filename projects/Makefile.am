@@ -8,8 +8,7 @@ BUILD_PROJECTS=\
 	ocarina-backends.gpr \
 	ocarina-config.gpr \
 	ocarina-transfo.gpr \
-	ocarina-main.gpr \
-	ocarina-python.gpr
+	ocarina-main.gpr $(PYTHON_PRJ)
 
 # All project files have to be packaged with "make dist"
 
