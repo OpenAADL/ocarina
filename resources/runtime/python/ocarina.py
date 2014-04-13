@@ -4,6 +4,8 @@
 ################################################################################
 import libocarina_python; # Ocarina bindings
 
+class Enum(tuple): __getattr__ = tuple.index
+
 ################################################################################
 def version ():
     '''Print Ocarina version'''
@@ -16,7 +18,16 @@ def status ():
 
 ################################################################################
 def load (filename):
-    '''Load a file'''
+    '''Load a file
+
+    :param filename: name of the file to be loaded, following Ocarina search path
+    :type filename: string
+
+    E.g. to load "foo.aadl":
+
+    >>> load("foo.aadl");
+
+    '''
     libocarina_python.load (filename);
 
 ################################################################################
@@ -30,22 +41,19 @@ def instantiate (root_system):
     libocarina_python.instantiate (root_system);
 
 ################################################################################
+Backends = Enum ([ "polyorb_hi_ada", "polyorb_hi_c"]);
+'''Supported backends'''
+
 def generate (generator):
-    '''Generate code'''
-    libocarina_python.generate (generator);
+    '''Generate code
 
-################################################################################
-def main ():
-    '''Test function'''
-    load("rma.aadl");             # load a file
-    load("deployment.aadl");      # load a file
-    analyze();                    # analyze models
-    instantiate("rma.erc32");     # instantiate
-    generate("polyorb_hi_ada");   # generate code
+    :param generator: one supported backends, from :data:`Backends`
 
-if __name__ == "__main__":
-    main ()
-    sys.exit (0);                         # exit
+    For instance, to use the PolyORB-HI/Ada backend, you may use the following
+
+    >>> generate (Backends.polyorb_hi_ada);
+    '''
+    libocarina_python.generate (Backends[generator]);
 
 ################################################################################
 
