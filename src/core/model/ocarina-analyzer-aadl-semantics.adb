@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -658,12 +658,19 @@ package body Ocarina.Analyzer.AADL.Semantics is
          (Category (Connection_Source)) = CC_Data);
 
       Bus_And_Require_Bus_Access :=
-        Kind (Connection_Source) = K_Subcomponent
+        (Kind (Connection_Source) = K_Subcomponent
         and then Component_Category'Val (Category
                                          (Connection_Source)) = CC_Bus
         and then Kind (Connection_Destination) = K_Subcomponent_Access
         and then Component_Category'Val
-        (Subcomponent_Category (Connection_Destination)) = CC_Bus;
+           (Subcomponent_Category (Connection_Destination)) = CC_Bus)
+        or else
+        (Kind (Connection_Source) = K_Subcomponent_Access
+        and then Component_Category'Val (Subcomponent_Category
+                                         (Connection_Source)) = CC_Bus
+        and then Kind (Connection_Destination) = K_Subcomponent
+        and then Component_Category'Val
+           (Category (Connection_Destination)) = CC_Bus);
 
       Provide_Bus_Access_And_Bus :=
         (Kind (Connection_Destination) = K_Subcomponent_Access
@@ -941,7 +948,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                Directions := True;
             else
                Directions := ((not Source_Is_Local)
-                                and then (not Destination_Is_Local)
+                              and then (not Destination_Is_Local)
                                 and then Is_Out (Connection_Source)
                                 and then Is_In (Connection_Destination))
                  or else (Source_Is_Local
@@ -970,6 +977,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          when K_Subcomponent_Access =>
             Directions :=
+              Is_Bidirectional (Node)
+              or else
               (not Source_Is_Local
                and then not Destination_Is_Local
                and then not Is_Provided (Connection_Destination)
@@ -995,7 +1004,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                and then Kind (Connection_Source) = K_Subcomponent);
 
          when K_Subcomponent =>
-            Directions := False;
+            Directions := Is_Bidirectional (Node);
 
          when others =>
             Directions := True;
