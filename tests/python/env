@@ -1,0 +1,3 @@
+export LD_LIBRARY_PATH=$HOME/local/ocarina/lib:/Users/hugues/local/gnat-gpl-2013/lib:$LD_LIBRARY_PATH:/Users/hugues/local/gnat-gpl-2013/lib/gnatcoll/relocatable:/Users/hugues/local/gnat-gpl-2013/lib/gcc/x86_64-apple-darwin12.2.0/4.7.4/rts-native/adalib
+export PYTHONPATH=$HOME/local/ocarina/include/ocarina/runtime/python:/Users/hugues/local/ocarina/lib:$PYTHONPATH
+export OCARINA_PATH=$HOME/local/ocarina
