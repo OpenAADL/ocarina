@@ -1,0 +1,144 @@
+--EMV2.aadl
+
+property set EMV2
+  is
+
+OccurrenceDistribution : EMV2::DistributionSpecification
+  applies to ({emv2}**error propagation, {emv2}**error flow, {emv2}**error behavior event
+    ,{emv2}**error behavior state,{emv2}**error type,{emv2}**type set);
+
+--needed to separate the property "Occurrence" from its type declaration
+--so other properties may have that type
+DistributionSpecification : type record (
+ProbabilityValue : aadlreal;
+OccurrenceRate : aadlreal;
+MeanValue : aadlreal;
+StandardDeviation : aadlreal;
+ShapeParameter : aadlreal;
+ScaleParameter : aadlreal;
+SuccessCount : aadlreal;
+SampleCount : aadlreal;
+Probability : aadlreal;
+Distribution : EMV2::DistributionFunction;);
+
+--Fixed represents a fixed distribution and takes a single parameter OccurrenceRate or ProbabilityValue.
+--Poisson aka. Exponential represents an exponential distribution and takes a single parameter OccurrenceRate or ProbabilityValue.
+--Normal aka. Gauss represents a distribution with an explicitly specified MeanValue and StandardDeviation.
+--Weibull represents a shaped distribution with a ShapeParameter and a ScaleParameter.
+--Binominal represents represents a discrete distribution with a SuccessCount, a SampleCount, and a Probability parameter.
+
+DistributionFunction : type enumeration (Fixed, Poisson, Exponential, Normal, Gauss, Weibull, Binominal);
+
+DurationDistributionSpecification : type record (
+Duration : Time_Range;
+Distribution : EMV2::DistributionFunction;);
+
+DurationDistribution : EMV2::DurationDistributionSpecification applies to ({emv2}**Repair Event, {emv2}**Recover Event,
+    {emv2}**Error Behavior Transition);
+
+-- A PropagationTimeDelay property indicates the delay in propagating and error as a distribution over a time interval.
+-- For example, as a property associated with a connection it indicates the time delay of the error propagation.
+
+PropagationTimeDelay: EMV2::DurationDistributionSpecification
+    applies to (connection, {emv2}**propagation path);
+
+StateKind : EMV2::StateKindEnum
+  applies to ({emv2}**error behavior state);
+
+StateKindEnum: type enumeration (Working, NonWorking);
+
+-- Indicates whether an error type is detectable
+DetectionMechanism : aadlstring
+  applies to ({emv2}**error detection);
+
+
+-- The FaultKind property allows the user to specify whether an error source,
+-- i.e., the occurrence of a fault activation or a propagation is due to a design fault or an operational fault.
+-- Design faults are faults that could be eliminated at design time, but if present result in an error.
+-- Operational faults are faults that inherently occur during operation and should be detected and managed during operation.
+FaultKind : EMV2::FaultKindEnum
+  applies to ( {emv2}**error event, {emv2}**error propagation, {emv2}**error source, {emv2}**error type, {emv2}**type set);
+
+FaultKindEnum: type enumeration (Design, Operational);
+
+
+-- The Persistence property allows the user to specify whether an error is permanent, transient, or a singleton.
+-- A permanent error typically requires a repair action to the component with the fault occurrence.
+-- A transient error has a limited duration and typically requires a recovery action.
+-- In a discrete event system a transient error may last over several discrete events, e.g., a corrupted message may be sent over multiple periods.
+-- A singleton error occurs in the context of a single discrete event. For example, a divide by zero error may be specific to a computation on a particular input.
+Persistence : EMV2::PersistenceEnum
+  applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
+    {emv2}**error behavior event, {emv2}**error propagation);
+
+PersistenceEnum: type enumeration (Permanent, Transient, Singleton);
+
+-- The severity property value indicates the severity of the hazard ranging from 1 (high) to 5 (low).
+-- MIL-STD 882D refers to it as SeverityCategory with equivalent descriptive labels as SeverityLevel.
+-- Qualify these labels (Catastrophic, Critical, Marginal, Negligible) with MILSTD882::
+
+-- ARP 4761 calls this SeverityClassification with descriptive labels
+-- (Catastrophic, Hazardous, Major, Minor, NoEffect) (qualify with ARP4761::).
+
+Severity : inherit EMV2::SeverityRange applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
+  {emv2}**error source, {emv2}**error propagation, {emv2}**error event);
+
+SeverityRange: type aadlinteger 1 .. 5;
+
+ProbabilityRange: type aadlreal 0.0 .. 1.0;
+
+-- The likelihood property value indicates the likelihood of the hazard ranging from A (high) to E (low).
+-- MIL-STD 882D uses descriptive labels (Frequent, Probable, Occasional, Remote, Improbable) (See property set MILSTD882).
+-- ARP 4761 uses descriptive labels (Frequent, Probable, Remote, ExtremelyRemote, ExtremelyImprobable) (See property set ARP4761).
+
+Likelihood : inherit EMV2::LikelihoodLabels applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
+  {emv2}**error source, {emv2}**error propagation, {emv2}**error event);
+
+LikelihoodLabels: type enumeration (A, B, C, D, E);
+
+-- ARP4761-style labels for likelihood: qualify with ARP4761::
+-- Frequent, Probable, Occasional, Remote, Improbable
+-- MILSTD882-style labels for likelihood: qualify with MILSTD882::
+-- Frequent, Probable, Remote, ExtremelyRemote, ExtremelyImprobable
+
+DALLabels: type enumeration (A,B,C,D,E);
+
+Hazards: list of record
+  (
+   CrossReference : aadlstring;   -- cross reference to an external document
+   HazardTitle : aadlstring;      -- short descriptive phrase for hazard
+   Description : aadlstring;      -- description of the hazard (same as hazardtitle)
+   Failure : aadlstring;          -- system deviation resulting in failure effect
+   FailureEffect : aadlstring;    -- description of the effect of a failure (mode)
+   Phases : list of aadlstring;   -- operational phases in which the hazard is relevant
+   Environment : aadlstring;      -- description of operational environment
+   Mishap : aadlstring;           -- description of event (series) resulting in
+                                  -- unintentional death, etc.(MILSTD882)
+   FailureCondition : aadlstring; -- description of event (series) resulting in
+                                  -- unintentional death, etc.(ARP4761)
+   Risk : aadlstring;             -- description of risk. Risk is characterized by
+                                  -- severity, likelihood, and occurrence probability
+   Severity : EMV2::SeverityRange ;             -- actual risk as severity
+   Likelihood : EMV2::LikelihoodLabels;         -- actual risk as likelihood/probability
+   Probability: EMV2::ProbabilityRange;            -- probability of a hazard
+   TargetSeverity : EMV2::SeverityRange;        -- acceptable risk as severity
+   TargetLikelihood : EMV2::LikelihoodLabels;   -- acceptable risk as likelihood/prob
+   DevelopmentAssuranceLevel : EMV2::DALLabels; -- level of rigor in development
+                                                -- assurance (ARP4761)
+   VerificationMethod : aadlstring; -- verification method to address the hazard
+   SafetyReport : aadlstring;       -- analysis/assessment of hazard
+   Comment : aadlstring;
+   )
+     applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
+                 {emv2}**error source, {emv2}**error propagation, {emv2}**error event);
+
+Description : aadlstring applies to (all);
+
+HazardAllocation: record (
+AssumedProbability : aadlreal;
+ExposureTime : Time;
+Notes : aadlstring;
+) applies to (all);
+
+
+end EMV2;

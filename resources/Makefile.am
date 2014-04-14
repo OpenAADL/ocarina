@@ -19,6 +19,7 @@ AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
 	$(srcdir)/AADLv2/assert_properties.aadl \
 	$(srcdir)/AADLv2/behavior_properties.aadl \
 	$(srcdir)/AADLv2/deployment_properties.aadl \
+	$(srcdir)/AADLv2/emv2.aadl \
 	$(srcdir)/AADLv2/Cheddar_Properties.aadl \
 	$(srcdir)/AADLv2/thread_properties.aadl \
 	$(srcdir)/AADLv2/communication_properties.aadl \
