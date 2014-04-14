@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -981,10 +981,12 @@ package body Ocarina.FE_AADL.Lexer is
    -- Skip_Tokens --
    -----------------
 
-   procedure Skip_Tokens (Delimiters : Token_List_Type) is
+   procedure Skip_Tokens (Delimiters : Token_List_Type;
+                          Include_Delimiter : Boolean := True)
+   is
    begin
       for Index in Delimiters'Range loop
-         Skip_Tokens (Delimiters (Index));
+         Skip_Tokens (Delimiters (Index), Include_Delimiter);
       end loop;
    end Skip_Tokens;
 

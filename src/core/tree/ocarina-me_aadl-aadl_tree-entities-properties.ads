@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -132,7 +132,10 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
       PO_Provides_Subprogram_Access,
 
       PO_Prototype,
-      PO_Package);
+      PO_Package,
+
+      PO_Alien_Meta_Model -- Not support alien meta-model elements, e.g. EMV2
+     );
 
    type Referable_Element_Category is
      (REC_Component_Category,
