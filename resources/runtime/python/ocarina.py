@@ -1,5 +1,14 @@
 #! /usr/bin/python
-'''Python binding to the Ocarina AADL processor'''
+'''
+:mod:`ocarina` -- Python binding to the Ocarina AADL processor
+==============================================================
+
+.. moduleauthor:: Jerome Hugues
+
+This module provides direct access to top-level functions of Ocarina
+to load, parse, instantiate AADL models, and to invoke backends.
+
+'''
 
 ################################################################################
 import libocarina_python; # Ocarina bindings
@@ -37,12 +46,18 @@ def analyze ():
 
 ################################################################################
 def instantiate (root_system):
-    '''Instantiate models'''
+    '''Instantiate model, starting from root_system
+
+    :param root_system: name of the root system to instantiate
+    :type root_system: string
+
+    '''
     libocarina_python.instantiate (root_system);
 
 ################################################################################
 Backends = Enum ([ "polyorb_hi_ada", "polyorb_hi_c"]);
 '''Supported backends'''
+# Note, this list should match backend names as specific in Ocarina CLI
 
 def generate (generator):
     '''Generate code
