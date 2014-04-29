@@ -46,5 +46,6 @@ package Ocarina.Utils is
    procedure Analyze;
    procedure Instantiate (Root_System : String);
    procedure Generate (Backend_Name : String);
+   procedure Reset;
 
 end Ocarina.Utils;

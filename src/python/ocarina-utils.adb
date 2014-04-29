@@ -56,9 +56,34 @@ with Ocarina.Files;              use Ocarina.Files;
 package body Ocarina.Utils is
 
    AADL_Root             : Node_Id := No_Node;
-   File_Name             : Name_Id;
+   File_Name             : Name_Id := No_Name;
    Buffer                : Location;
-   Language              : Name_Id;
+   Language              : Name_Id := No_Name;
+
+   -----------
+   -- Reset --
+   -----------
+
+   procedure Reset is
+   begin
+      --  Reset Ocarina
+
+      Ocarina.Configuration.Reset_Modules;
+      Ocarina.Reset;
+
+      --  Initialize Ocarina
+
+      Ocarina.AADL_Version := Get_Default_AADL_Version;
+      AADL_Version         := Ocarina.AADL_V2;
+      Ocarina.Initialize;
+      Ocarina.Configuration.Init_Modules;
+
+      --  Reset library
+
+      AADL_Root := No_Node;
+      File_Name := No_Name;
+      Language := No_Name;
+   end Reset;
 
    -------------
    -- Version --

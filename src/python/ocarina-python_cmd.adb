@@ -34,10 +34,25 @@
 with GNATCOLL.Scripts;        use GNATCOLL.Scripts;
 with GNATCOLL.Scripts.Python; use GNATCOLL.Scripts.Python;
 
-with Ocarina.Configuration;            use Ocarina.Configuration;
+with Ocarina.Configuration;   use Ocarina.Configuration;
 with Ocarina.Utils;
 
 package body Ocarina.Python_Cmd is
+
+   --------------
+   -- On_Reset --
+   --------------
+
+   procedure On_Reset (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Reset
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Data, Command);
+   begin
+      Ocarina.Utils.Reset;
+   end On_Reset;
 
    ----------------
    -- On_Version --
@@ -150,6 +165,10 @@ package body Ocarina.Python_Cmd is
       Register_Standard_Classes (Repo, "Console");
 
       --  Register our custom functions
+
+      --  reset() function
+      Register_Command
+        (Repo, "reset", 0, 0, Handler => On_Reset'Unrestricted_Access);
 
       --  version() function
       Register_Command

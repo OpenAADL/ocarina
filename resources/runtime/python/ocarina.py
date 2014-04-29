@@ -26,6 +26,11 @@ def status ():
     libocarina_python.status();
 
 ################################################################################
+def reset ():
+    '''Reset Ocarina'''
+    libocarina_python.reset();
+
+################################################################################
 def load (filename):
     '''Load a file
 
