@@ -27,7 +27,11 @@ def status ():
 
 ################################################################################
 def reset ():
-    '''Reset Ocarina'''
+    '''Reset Ocarina internal state
+
+    **Note:** this function must be called before processing a new set of models.
+    '''
+
     libocarina_python.reset();
 
 ################################################################################
@@ -61,8 +65,8 @@ def instantiate (root_system):
 
 ################################################################################
 Backends = Enum ([ "polyorb_hi_ada", "polyorb_hi_c"]);
-'''Supported backends'''
-# Note, this list should match backend names as specific in Ocarina CLI
+'''List of supported backends, used by :data:`generate`'''
+# Note, this list should match backend names as specified by Ocarina CLI
 
 def generate (generator):
     '''Generate code
