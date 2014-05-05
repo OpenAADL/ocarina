@@ -17,6 +17,8 @@ Ocarina User's Guide
    osate-ocarina
    python
    editors
+   bug
    gfdl
    annexes
+
 
