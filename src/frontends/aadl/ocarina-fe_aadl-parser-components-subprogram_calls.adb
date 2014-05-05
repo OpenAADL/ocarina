@@ -44,7 +44,8 @@ with Ocarina.Builder.AADL.Components.Subprogram_Calls;
 
 package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
 
-   function P_Subprogram_Call (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Subprogram_Call
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    function P_Called_Subprogram (Code : Parsing_Code) return Node_Id;
 
    -----------------------
@@ -65,7 +66,9 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
    --     defining_call_identifier : subprogram called_subprogram
    --     [ { { subcomponent_call_property_association }+ } ] ;
 
-   function P_Subprogram_Call (Container : Ocarina.Types.Node_Id) return Node_Id is
+   function P_Subprogram_Call
+     (Container : Ocarina.Types.Node_Id) return Node_Id
+   is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Parser.Properties;

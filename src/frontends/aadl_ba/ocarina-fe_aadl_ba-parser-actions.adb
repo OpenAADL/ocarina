@@ -82,7 +82,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
      (Container : Ocarina.Types.Node_Id)
      return List_Id;
 
-   function P_Parameter_Label (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Parameter_Label
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
 
    ------------------------
    -- P_Behavior_Actions --
@@ -827,7 +828,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    --  parameter_label ::= in_parameter_value_expression | out_parameter_target
 
-   function P_Parameter_Label (Container : Ocarina.Types.Node_Id) return Node_Id
+   function P_Parameter_Label
+     (Container : Ocarina.Types.Node_Id) return Node_Id
    is
       Start_Loc   : Location;
       Parameter   : Node_Id;

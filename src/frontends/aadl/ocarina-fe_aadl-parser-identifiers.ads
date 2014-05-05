@@ -87,7 +87,8 @@ package Ocarina.FE_AADL.Parser.Identifiers is
    --  [ package_name :: ] identifier [.identifier]
    --  Parse Unique_..._Identifier, etc.
 
-   function P_Entity_Reference (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Entity_Reference
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  Allow the possibility to parse entitiy reference in list of items
 
 end Ocarina.FE_AADL.Parser.Identifiers;

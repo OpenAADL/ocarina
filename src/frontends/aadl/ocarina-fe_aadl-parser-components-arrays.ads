@@ -37,7 +37,8 @@ with Ocarina.Types;
 
 package Ocarina.FE_AADL.Parser.Components.Arrays is
 
-   function P_Array_Dimensions (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Array_Dimensions
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
 
    function P_Array_Dimension_Size
      (Container : Ocarina.Types.Node_Id)

@@ -156,7 +156,8 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
    --  prototype_bindings ::=
    --   ( prototype_binding ( , prototype_ binding )* )
 
-   function P_Prototype_Bindings (Container : Ocarina.Types.Node_Id) return Boolean
+   function P_Prototype_Bindings
+     (Container : Ocarina.Types.Node_Id) return Boolean
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -205,7 +206,8 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
    --   prototype_identifier => component_category
    --    ( unique_component_classifier_reference |prototype_identifier )
 
-   function P_Prototype_Binding (Container : Ocarina.Types.Node_Id) return Node_Id
+   function P_Prototype_Binding
+     (Container : Ocarina.Types.Node_Id) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;

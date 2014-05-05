@@ -47,12 +47,15 @@ package Ocarina.Backends.PN.Nutils is
    function Is_Empty (L : Ocarina.Types.List_Id) return Boolean;
    --  Return true if the list is empty, else return false
 
-   procedure Append_Node_To_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
+   procedure Append_Node_To_List
+     (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
    --  Append the node to the list
 
-   procedure Push_Node_Into_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
+   procedure Push_Node_Into_List
+     (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
 
-   procedure Delete_Node_From_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
+   procedure Delete_Node_From_List
+     (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
 
    function Make_Identifier
      (Pn_Entity : Ocarina.Types.Node_Id; Ident_Name : Ocarina.Types.Name_Id)

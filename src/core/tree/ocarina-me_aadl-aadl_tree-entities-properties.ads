@@ -34,7 +34,6 @@
 --  This package provides functions to create or read property names,
 --  types, constants and associations.
 
-with Ocarina.Types;                           use Ocarina.Types;
 with Ocarina.AADL_Values;             use Ocarina.AADL_Values;
 with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 

@@ -37,7 +37,9 @@ package body Ocarina.Backends.PN.Nutils is
    -- Append_Node_To_List --
    -------------------------
 
-   procedure Append_Node_To_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id) is
+   procedure Append_Node_To_List
+     (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id)
+   is
       use OPN;
 
       Last : Node_Id;
@@ -60,7 +62,9 @@ package body Ocarina.Backends.PN.Nutils is
    --  Push_Node_Into_List  --
    ---------------------------
 
-   procedure Push_Node_Into_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id) is
+   procedure Push_Node_Into_List
+     (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id)
+   is
       use OPN;
 
       First : Node_Id;
@@ -82,7 +86,9 @@ package body Ocarina.Backends.PN.Nutils is
    -- Delete_Node_From_List --
    ---------------------------
 
-   procedure Delete_Node_From_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id) is
+   procedure Delete_Node_From_List
+     (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id)
+   is
       use OPN;
 
       Node_Iter : Node_Id;

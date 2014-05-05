@@ -771,7 +771,9 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --                         | subcomponent_access_refinement
    --                         | parameter_refinement
 
-   function P_Feature_Refinement (Container : Ocarina.Types.Node_Id) return Node_Id is
+   function P_Feature_Refinement
+     (Container : Ocarina.Types.Node_Id) return Node_Id
+   is
       use Parser.Identifiers;
       use Lexer;
       use Ocarina.ME_AADL.Tokens;

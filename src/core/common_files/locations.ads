@@ -36,18 +36,26 @@ with Ocarina.Types;
 package Locations is
 
    type Location is record
-      Base_Name : Ocarina.Types.Name_Id;  --  Base name of file
-      Dir_Name  : Ocarina.Types.Name_Id;  --  Directory name of file
-      Line      : Ocarina.Types.Int;      --  Index of current line in buffer
-      First_Pos : Ocarina.Types.Text_Ptr; --  Index of first character in the line
-      Last_Pos  : Ocarina.Types.Text_Ptr; --  Index of last character read on the line
-      Scan      : Ocarina.Types.Text_Ptr; --  Index of current character in the line
-      EOF       : Ocarina.Types.Text_Ptr; --  Index of very last character in buffer
+      Base_Name : Ocarina.Types.Name_Id;
+      --  Base name of file
+      Dir_Name  : Ocarina.Types.Name_Id;
+      --  Directory name of file
+      Line      : Ocarina.Types.Int;
+      --  Index of current line in buffer
+      First_Pos : Ocarina.Types.Text_Ptr;
+      --  Index of first character in the line
+      Last_Pos  : Ocarina.Types.Text_Ptr;
+      --  Index of last character read on the line
+      Scan      : Ocarina.Types.Text_Ptr;
+      --  Index of current character in the line
+      EOF       : Ocarina.Types.Text_Ptr;
+      --  Index of very last character in buffer
       Buffer    : Ocarina.Types.Text_Buffer_Ptr;
    end record;
 
    No_Location : constant Location
-     := Location'(Ocarina.Types.No_Name, Ocarina.Types.No_Name, 0, 0, 0, 0, 0, null);
+     := Location'(Ocarina.Types.No_Name,
+                  Ocarina.Types.No_Name, 0, 0, 0, 0, 0, null);
 
    function Image (Loc : Location) return String;
    --  Return <base_name>:<line>:<column>. If Base_Name is null, then

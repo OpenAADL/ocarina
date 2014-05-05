@@ -75,13 +75,16 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    function P_Behavior_Annex (Container : Node_Id) return Node_Id;
    --  parse an behavior annex node, current token is T_Begin_Annex
 
-   function P_Behavior_Variable (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Behavior_Variable
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an behavior variable node, current token is T_Variables
 
-   function P_Behavior_State (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Behavior_State
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an behavior state node, current token is T_States
 
-   function P_Behavior_Transition (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Behavior_Transition
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an behavior transition node, current token is T_Transitions
 
    function P_Execute_Or_Mode_Behavior_Transition
@@ -234,7 +237,8 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
 
    --  unique_component_classifier_reference ::= <core AADL rule>
 
-   function P_Behavior_Variable (Container : Ocarina.Types.Node_Id) return Node_Id
+   function P_Behavior_Variable
+     (Container : Ocarina.Types.Node_Id) return Node_Id
    is
       Start_Loc         : Location;
       Loc               : Location;

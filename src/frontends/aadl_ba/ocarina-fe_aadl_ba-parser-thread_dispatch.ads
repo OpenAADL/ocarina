@@ -33,7 +33,8 @@
 
 package Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
 
-   function P_Dispatch_Condition (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Dispatch_Condition
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an Dispatch_Condition node, current token is T_On
 
 end Ocarina.FE_AADL_BA.Parser.Thread_Dispatch;

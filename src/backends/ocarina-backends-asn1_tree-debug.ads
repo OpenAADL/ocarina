@@ -39,10 +39,10 @@ package Ocarina.Backends.ASN1_Tree.Debug is
 
    N_Indents : Natural := 0;
 
-   procedure W_Eol         (N : Natural := 1) renames Ocarina.Output.Write_Eol;
-   procedure W_Int         (N : Int)          renames Ocarina.Output.Write_Int;
-   procedure W_Line        (N : String)       renames Ocarina.Output.Write_Line;
-   procedure W_Str         (N : String)       renames Ocarina.Output.Write_Str;
+   procedure W_Eol      (N : Natural := 1) renames Ocarina.Output.Write_Eol;
+   procedure W_Int      (N : Int)          renames Ocarina.Output.Write_Int;
+   procedure W_Line     (N : String)       renames Ocarina.Output.Write_Line;
+   procedure W_Str      (N : String)       renames Ocarina.Output.Write_Str;
    procedure W_Indents;
 
    procedure W_Byte        (N : Byte);

@@ -34,7 +34,8 @@
 with GNAT.Directory_Operations;
 
 with Ocarina.Namet;
-with Ocarina.Types; use type Ocarina.Types.Name_Id, Ocarina.Types.Int, Ocarina.Types.Text_Ptr;
+with Ocarina.Types;
+use type Ocarina.Types.Name_Id, Ocarina.Types.Int, Ocarina.Types.Text_Ptr;
 
 package body Locations is
 

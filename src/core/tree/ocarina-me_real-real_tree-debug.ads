@@ -39,11 +39,11 @@ package Ocarina.ME_REAL.REAL_Tree.Debug is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Ocarina.Types;
 
-   procedure W_Eol         (N : Natural := 1) renames Ocarina.Output.Write_Eol;
-   procedure W_Int         (N : Int)          renames Ocarina.Output.Write_Int;
+   procedure W_Eol      (N : Natural := 1) renames Ocarina.Output.Write_Eol;
+   procedure W_Int      (N : Int)          renames Ocarina.Output.Write_Int;
+   procedure W_Line     (N : String)       renames Ocarina.Output.Write_Line;
+   procedure W_Str      (N : String)       renames Ocarina.Output.Write_Str;
    procedure W_Indentation (N : Natural);
-   procedure W_Line        (N : String)       renames Ocarina.Output.Write_Line;
-   procedure W_Str         (N : String)       renames Ocarina.Output.Write_Str;
 
    procedure W_Boolean     (N : Boolean);
    procedure W_Byte        (N : Byte);

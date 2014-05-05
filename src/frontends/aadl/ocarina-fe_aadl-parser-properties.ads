@@ -47,7 +47,8 @@ package Ocarina.FE_AADL.Parser.Properties is
    --     PAT_Simple_Or_Contained : parse property_association or
    --                                     contained_property_association
 
-   function P_Property_Association (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Property_Association
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    pragma Inline (P_Property_Association);
    --  Call P_Property_Association (PAT_Simple)
 

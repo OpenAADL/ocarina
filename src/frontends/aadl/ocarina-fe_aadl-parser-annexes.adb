@@ -191,7 +191,9 @@ package body Ocarina.FE_AADL.Parser.Annexes is
    --       ( ( {** annex_specific_language_constructs **} ) | none )
    --       [ in_modes ];
 
-   function P_Annex_Subclause (Namespace : Ocarina.Types.Node_Id) return Node_Id is
+   function P_Annex_Subclause
+     (Namespace : Ocarina.Types.Node_Id) return Node_Id
+   is
    begin
       return P_Annex (Namespace, PC_Annex_Subclause, False);
    end P_Annex_Subclause;

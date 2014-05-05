@@ -38,7 +38,8 @@ package Ocarina.FE_AADL_BA.Parser.Expressions is
    function P_Value_Holder (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an Value_Holder node, current token is ...
 
-   function P_Value_Expression (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Value_Expression
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  fixme : todo comment
 
    function P_Relation (Container : Ocarina.Types.Node_Id) return Node_Id;
@@ -47,7 +48,8 @@ package Ocarina.FE_AADL_BA.Parser.Expressions is
    function P_Simple_Expressions (Start_Loc : Location) return List_Id;
    --  return a list of simple_expression and operator nodes
 
-   function P_Simple_Expression (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Simple_Expression
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  fixme : todo comment
 
    function P_Term (Container : Ocarina.Types.Node_Id) return Node_Id;
@@ -62,7 +64,8 @@ package Ocarina.FE_AADL_BA.Parser.Expressions is
    function P_Operator (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse and return an operator node, current token is the operator
 
-   function P_Property_Constant (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Property_Constant
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  fixme : todo comment
 
    function P_Integer_Range (Container : Ocarina.Types.Node_Id) return Node_Id;

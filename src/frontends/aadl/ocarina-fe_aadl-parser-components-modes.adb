@@ -452,7 +452,9 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --  mode_or_transition ::=
    --     mode_identifier | mode_transition_identifier
 
-   function P_Mode_Or_Transition (Container : Ocarina.Types.Node_Id) return Node_Id is
+   function P_Mode_Or_Transition
+     (Container : Ocarina.Types.Node_Id) return Node_Id
+   is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;

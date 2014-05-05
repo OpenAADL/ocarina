@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ocarina.Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.ME_AADL.AADL_Tree.Entities is
 
@@ -39,52 +39,52 @@ package Ocarina.ME_AADL.AADL_Tree.Entities is
    --  This following section is relative to Entities
    --
 
-   function Get_Entity_Category (Node : Ocarina.Types.Node_Id) return Entity_Category;
+   function Get_Entity_Category (Node : Node_Id) return Entity_Category;
 
    function Get_Name_Of_Entity
-     (Entity : Ocarina.Types.Node_Id;
+     (Entity : Node_Id;
       Get_Display_Name : Boolean := True)
-     return Ocarina.Types.Name_Id;
+     return Name_Id;
 
    function Get_Name_Of_Entity
-     (Entity : Ocarina.Types.Node_Id;
+     (Entity : Node_Id;
       Get_Display_Name : Boolean := True)
      return String;
 
    function Get_Name_Of_Entity_Reference
-     (Entity_Ref : Ocarina.Types.Node_Id;
+     (Entity_Ref : Node_Id;
       Get_Display_Name : Boolean := True)
-     return Ocarina.Types.Name_Id;
+     return Name_Id;
 
    function Get_Name_Of_Entity_Reference
-     (Entity_Ref : Ocarina.Types.Node_Id;
+     (Entity_Ref : Node_Id;
       Get_Display_Name : Boolean := True)
      return String;
 
    function Get_Referenced_Entity
-     (Entity_Ref : Ocarina.Types.Node_Id)
-     return Ocarina.Types.Node_Id;
+     (Entity_Ref : Node_Id)
+     return Node_Id;
    --  Return the entity referenced by an entity reference, or No_Node
    --  if nothing is pointed
 
-   procedure Set_Referenced_Entity (Entity_Ref, Entity : Ocarina.Types.Node_Id);
+   procedure Set_Referenced_Entity (Entity_Ref, Entity : Node_Id);
    --  Set the entity that is to be referenced by the entity reference
 
    function Entity_Reference_Path_Has_Several_Elements
-     (Entity_Ref : Ocarina.Types.Node_Id)
+     (Entity_Ref : Node_Id)
      return Boolean;
    --  return True if the path has more than one element.
 
    function Duplicate_Identifier
-     (Identifier : Ocarina.Types.Node_Id)
-     return Ocarina.Types.Node_Id;
+     (Identifier : Node_Id)
+     return Node_Id;
 
    --
    --  This following section is relative to Entities Components
    --
 
    function Get_Category_Of_Component
-     (Component : Ocarina.Types.Node_Id)
+     (Component : Node_Id)
      return Component_Category;
    --  return the category of the component type, implementation or
    --  instance.
@@ -94,28 +94,28 @@ package Ocarina.ME_AADL.AADL_Tree.Entities is
    --
 
    function Get_Category_Of_Connection
-     (Connection : Ocarina.Types.Node_Id)
+     (Connection : Node_Id)
      return Connection_Type;
 
    --
    --  This following section is relative to Entities Components Flows
    --
 
-   function Get_Category_Of_Flow (Flow : Ocarina.Types.Node_Id) return Flow_Category;
+   function Get_Category_Of_Flow (Flow : Node_Id) return Flow_Category;
 
    --
    --  This following section is relative to Entities Components Subcomponents
    --
 
    function Get_Category_Of_Subcomponent
-     (Subcomponent : Ocarina.Types.Node_Id)
+     (Subcomponent : Node_Id)
      return Component_Category;
    --  Return the category of the subcomponent or subcomponent
    --  instance.
 
    function Get_Corresponding_Component
-     (Subcomponent : Ocarina.Types.Node_Id)
-     return Ocarina.Types.Node_Id;
+     (Subcomponent : Node_Id)
+     return Node_Id;
    --  return the corresponding component declaration, if there is
    --  any, or No_Node.
 
@@ -124,8 +124,8 @@ package Ocarina.ME_AADL.AADL_Tree.Entities is
    --
 
    function Get_Corresponding_Subprogram
-     (Call : Ocarina.Types.Node_Id)
-     return Ocarina.Types.Node_Id;
+     (Call : Node_Id)
+     return Node_Id;
    --  return the corresponding subprogram declaration, if there is
    --  any, or No_Node.
 
@@ -134,13 +134,13 @@ package Ocarina.ME_AADL.AADL_Tree.Entities is
    --
 
    function Package_Has_Public_Declarations_Or_Properties
-     (Pack : Ocarina.Types.Node_Id)
+     (Pack : Node_Id)
      return Boolean;
    --  Returns True if the package has public elements, else
    --  False. Pack must reference a package specification.
 
    function Package_Has_Private_Declarations_Or_Properties
-     (Pack : Ocarina.Types.Node_Id)
+     (Pack : Node_Id)
      return Boolean;
    --  Returns True if the package has private elements, else
    --  False. Pack must reference a package specification.
@@ -150,14 +150,14 @@ package Ocarina.ME_AADL.AADL_Tree.Entities is
    --
 
    function Display_Node_Kind_Error
-     (Node : Ocarina.Types.Node_Id)
+     (Node : Node_Id)
      return Boolean;
 
-   function DNKE (Node : Ocarina.Types.Node_Id) return Boolean
+   function DNKE (Node : Node_Id) return Boolean
      renames Display_Node_Kind_Error;
 
    procedure Add_Path_Element_To_Entity_Reference
-     (Entity_Ref, Item : Ocarina.Types.Node_Id);
+     (Entity_Ref, Item : Node_Id);
    --  Add Item to the end of the path that constitutes the reference
    --  to the entity.
 

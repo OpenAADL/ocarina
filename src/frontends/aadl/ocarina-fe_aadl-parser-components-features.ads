@@ -40,7 +40,8 @@ package Ocarina.FE_AADL.Parser.Components.Features is
    --  Parse Feature and Feature_Refinement
    --  If Refinable = FALSE, Feature_Refinement is not allowed
 
-   function P_Feature_Refinement (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Feature_Refinement
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  Parse Feature_Refinement exclusively, useful in parsing 'refines type'
 
    function P_Feature_Group_Or_Port_Group_Or_Port_Spec

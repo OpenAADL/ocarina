@@ -57,7 +57,8 @@ package Ocarina.FE_AADL.Parser.Components is
    --  Parse _Group_Type and _Group_Type_Extension
 
    function P_Component_Category return Component_Category;
-   function P_Component_Category (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Component_Category
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  Parse Component_Category, current token is the first token of
    --  Component_Category
 

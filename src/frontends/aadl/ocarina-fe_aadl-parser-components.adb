@@ -273,7 +273,9 @@ package body Ocarina.FE_AADL.Parser.Components is
    -- P_Component_Category --
    --------------------------
 
-   function P_Component_Category (Container : Ocarina.Types.Node_Id) return Node_Id is
+   function P_Component_Category
+     (Container : Ocarina.Types.Node_Id) return Node_Id
+   is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;

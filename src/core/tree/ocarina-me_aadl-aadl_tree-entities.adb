@@ -49,7 +49,7 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    -------------------------
 
    function Get_Entity_Category
-     (Node : Ocarina.Types.Node_Id)
+     (Node : Node_Id)
      return Entity_Category
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -123,12 +123,11 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ------------------------
 
    function Get_Name_Of_Entity
-     (Entity : Ocarina.Types.Node_Id;
+     (Entity : Node_Id;
       Get_Display_Name : Boolean := True)
-     return Ocarina.Types.Name_Id
+     return Name_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.Types;
 
       pragma Assert
         (Kind (Entity) = K_Component_Implementation
@@ -177,11 +176,10 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ------------------------
 
    function Get_Name_Of_Entity
-     (Entity : Ocarina.Types.Node_Id;
+     (Entity : Node_Id;
       Get_Display_Name : Boolean := True)
      return String
    is
-      use Ocarina.Types;
       use Ocarina.Namet;
 
       Name : constant Name_Id := Get_Name_Of_Entity (Entity, Get_Display_Name);
@@ -198,11 +196,10 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ----------------------------------
 
    function Get_Name_Of_Entity_Reference
-     (Entity_Ref : Ocarina.Types.Node_Id;
+     (Entity_Ref : Node_Id;
       Get_Display_Name : Boolean := True)
-     return Ocarina.Types.Name_Id
+     return Name_Id
    is
-      use Ocarina.Types;
       use Ocarina.Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
@@ -243,12 +240,11 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ----------------------------------
 
    function Get_Name_Of_Entity_Reference
-     (Entity_Ref : Ocarina.Types.Node_Id;
+     (Entity_Ref : Node_Id;
       Get_Display_Name : Boolean := True)
      return String
    is
       use Ocarina.Namet;
-      use Ocarina.Types;
 
       Name : constant Name_Id := Get_Name_Of_Entity_Reference
         (Entity_Ref, Get_Display_Name);
@@ -265,11 +261,10 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ---------------------------
 
    function Get_Referenced_Entity
-     (Entity_Ref : Ocarina.Types.Node_Id)
-     return Ocarina.Types.Node_Id
+     (Entity_Ref : Node_Id)
+     return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.Types;
 
       pragma Assert
         (Kind (Entity_Ref) = K_Entity_Reference
@@ -301,9 +296,8 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    -- Set_Referenced_Entity --
    ---------------------------
 
-   procedure Set_Referenced_Entity (Entity_Ref, Entity : Ocarina.Types.Node_Id) is
+   procedure Set_Referenced_Entity (Entity_Ref, Entity : Node_Id) is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.Types;
 
       pragma Assert
         (Entity_Ref /= No_Node
@@ -326,10 +320,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ------------------------------------------------
 
    function Entity_Reference_Path_Has_Several_Elements
-     (Entity_Ref : Ocarina.Types.Node_Id)
+     (Entity_Ref : Node_Id)
      return Boolean
    is
-      use Ocarina.Types;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
       use Ocarina.Me_AADL.AADL_Tree.Nutils;
 
@@ -347,11 +340,10 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    --------------------------
 
    function Duplicate_Identifier
-     (Identifier : Ocarina.Types.Node_Id)
-     return Ocarina.Types.Node_Id
+     (Identifier : Node_Id)
+     return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       pragma Assert (Identifier = No_Node
@@ -380,10 +372,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    -------------------------------
 
    function Get_Category_Of_Component
-     (Component : Ocarina.Types.Node_Id)
+     (Component : Node_Id)
      return Component_Category
    is
-      use Ocarina.Types;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert
@@ -402,11 +393,10 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    --------------------------------
 
    function Get_Category_Of_Connection
-     (Connection : Ocarina.Types.Node_Id)
+     (Connection : Node_Id)
      return Connection_Type
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.Types;
 
       pragma Assert
         (Connection /= No_Node
@@ -424,8 +414,7 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    -- Get_Category_Of_Flow --
    --------------------------
 
-   function Get_Category_Of_Flow (Flow : Ocarina.Types.Node_Id) return Flow_Category is
-      use Ocarina.Types;
+   function Get_Category_Of_Flow (Flow : Node_Id) return Flow_Category is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Flow /= No_Node
@@ -445,10 +434,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ----------------------------------
 
    function Get_Category_Of_Subcomponent
-     (Subcomponent : Ocarina.Types.Node_Id)
+     (Subcomponent : Node_Id)
      return Component_Category
    is
-      use Ocarina.Types;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert
@@ -463,10 +451,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ---------------------------------
 
    function Get_Corresponding_Component
-     (Subcomponent : Ocarina.Types.Node_Id)
-     return Ocarina.Types.Node_Id
+     (Subcomponent : Node_Id)
+     return Node_Id
    is
-      use Ocarina.Types;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Subcomponent /= No_Node
@@ -488,10 +475,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ----------------------------------
 
    function Get_Corresponding_Subprogram
-     (Call : Ocarina.Types.Node_Id)
-     return Ocarina.Types.Node_Id
+     (Call : Node_Id)
+     return Node_Id
    is
-      use Ocarina.Types;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Call /= No_Node
@@ -513,11 +499,10 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ---------------------------------------------------
 
    function Package_Has_Public_Declarations_Or_Properties
-     (Pack : Ocarina.Types.Node_Id)
+     (Pack : Node_Id)
      return Boolean
    is
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
-      use Ocarina.Types;
 
       pragma Assert (Pack /= No_Node
                      and then Kind (Pack) = K_Package_Specification);
@@ -530,11 +515,10 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ----------------------------------------------------
 
    function Package_Has_Private_Declarations_Or_Properties
-     (Pack : Ocarina.Types.Node_Id)
+     (Pack : Node_Id)
      return Boolean
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.Types;
 
       pragma Assert (Pack /= No_Node
                      and then Kind (Pack) = K_Package_Specification);
@@ -550,10 +534,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    -----------------------------
 
    function Display_Node_Kind_Error
-     (Node : Ocarina.Types.Node_Id)
+     (Node : Node_Id)
      return Boolean
    is
-      use Ocarina.Types;
       use Ocarina.Output;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Debug;
@@ -577,9 +560,8 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    ------------------------------------------
 
    procedure Add_Path_Element_To_Entity_Reference
-     (Entity_Ref, Item : Ocarina.Types.Node_Id)
+     (Entity_Ref, Item : Node_Id)
    is
-      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 

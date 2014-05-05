@@ -47,7 +47,8 @@ package Ocarina.FE_AADL.Parser.Components.Modes is
    --  Parse Mode, Mode_Refinement and Mode_Transition
    --  If Refinable = FALSE, Mode_Refinement is not allowed
 
-   function P_Mode_Or_Transition (Container : Ocarina.Types.Node_Id) return Node_Id;
+   function P_Mode_Or_Transition
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    pragma Inline (P_Mode_Or_Transition);
    --  Parse Mode_Or_Transition return a node of K_Identifier_Identifier
 
