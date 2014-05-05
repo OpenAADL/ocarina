@@ -9,6 +9,12 @@ Editor support
 The AADL modes for Emacs and vim provide syntax coloration and
 automatic indentation features when editing AADL files.
 
+.. figure:: aadl-editors.png
+   :align: center
+   :scale: 75 %
+
+   AADL mode for emacs and vim
+
 Emacs
 =====
 
@@ -19,10 +25,6 @@ your emacs configuration file (usually located in :file:`~/.emacs`) ::
 
 For more details on this mode, please refer to the emacs contextual help.
 
-.. figure:: aadl-mode.png
-   :align: center
-
-   AADL mode for Emacs
 
 vim
 ===
@@ -40,10 +42,3 @@ named :file:`~/.vim/filetype.vim`, in which you write::
      augroup END
 
 For more details, please read the documentation of vim.
-
-
-.. figure:: aadl-mode_vim.png
-   :align: center
-
-   AADL mode for vim
-
