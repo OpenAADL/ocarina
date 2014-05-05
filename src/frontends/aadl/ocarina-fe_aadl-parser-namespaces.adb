@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,7 +35,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.FE_AADL.Lexer;
 with Ocarina.ME_AADL.Tokens;
 with Ocarina.FE_AADL.Parser.Annexes;

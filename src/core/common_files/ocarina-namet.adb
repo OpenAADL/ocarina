@@ -31,10 +31,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output; use Output;
+with Ocarina.Output; use Ocarina.Output;
 with GNAT.Spelling_Checker;
 
-package body Namet is
+package body Ocarina.Namet is
 
    Hash_Num : constant Int := 2**12;
    --  Number of headers in the hash table. Current hash algorithm is closely
@@ -446,7 +446,7 @@ package body Namet is
       --  Otherwise search hash table for existing matching entry
 
       else
-         Hash_Index := Namet.Hash;
+         Hash_Index := Ocarina.Namet.Hash;
          New_Id := Hash_Table (Hash_Index);
 
          if New_Id = No_Name then
@@ -619,4 +619,4 @@ package body Namet is
       end loop;
    end Is_Bad_Spelling;
 
-end Namet;
+end Ocarina.Namet;

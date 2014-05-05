@@ -14,9 +14,14 @@ def main ():
     instantiate("rma.erc32");     # instantiate
     generate (Backends.polyorb_hi_ada);
 
+    reset();
+
+    load("rma.aadl");             # load a file
+    load("deployment.aadl");      # load a file
+    analyze();                    # analyze models
+    instantiate("rma.erc32");     # instantiate
+    generate (Backends.polyorb_hi_ada);
+
 if __name__ == "__main__":
     main ()
     sys.exit (0);                         # exit
-
-################################################################################
-

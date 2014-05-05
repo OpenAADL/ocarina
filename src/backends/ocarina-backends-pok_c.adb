@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -55,8 +55,8 @@ with Ocarina.Backends.XML_Tree.Generator;
 with GNAT.Command_Line; use GNAT.Command_Line;
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
-with Namet; use Namet;
-with Output; use Output;
+with Ocarina.Namet; use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
 
 package body Ocarina.Backends.POK_C is
    use Ocarina.Instances;

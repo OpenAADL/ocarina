@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,12 +31,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 with Ocarina.Backends.PN.Debug;
 
 with Ocarina.Backends.PN.Nodes;
 with Ocarina.Backends.PN.Nutils;
-with Namet;
+with Ocarina.Namet;
 with Ocarina.AADL_Values;
 with Ocarina.Backends.Utils;
 
@@ -53,10 +53,10 @@ package body Ocarina.Backends.PN.Format.Cami is
    procedure Print_Place (Pn_Generated : Node_Id;
                           Pn_P : Node_Id)
    is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Backends.PN.Debug;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
 
    begin
@@ -171,10 +171,10 @@ package body Ocarina.Backends.PN.Format.Cami is
    procedure Print_Trans (Pn_Generated : Node_Id;
                           Pn_T : Node_Id)
    is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Backends.PN.Debug;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
       use OPU;
       use Ocarina.Backends.Utils;
@@ -345,9 +345,9 @@ package body Ocarina.Backends.PN.Format.Cami is
    procedure Print_Formalism_Information
      (Pn_Generated : Node_Id)
    is
-      use Output;
+      use Ocarina.Output;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
       use OPU;
 

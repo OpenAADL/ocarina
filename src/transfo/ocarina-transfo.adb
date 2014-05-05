@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,7 +38,7 @@ with Ocarina.ME_AADL.AADL_Tree.Debug;
 with Ocarina.ME_AADl.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Utils;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.Transfo is
    use Ocarina.ME_AADL;
@@ -46,7 +46,7 @@ package body Ocarina.Transfo is
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.ME_AADL.AADL_Tree.Debug;
    use Utils;
-   use Namet;
+   use Ocarina.Namet;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;

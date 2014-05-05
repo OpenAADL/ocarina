@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,14 +35,14 @@ with Ada.Characters.Handling;
 
 with Charset;
 with Errors;
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.AADL_Values;
 
 package body Ocarina.FE_AADL_BA.Lexer is
 
    use ASCII;
-   use Namet;
+   use Ocarina.Namet;
    use Errors;
    use Ocarina.Files;
 

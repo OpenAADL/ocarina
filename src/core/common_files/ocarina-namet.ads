@@ -35,7 +35,7 @@ with GNAT.Table;
 
 with Types; use Types;
 
-package Namet is
+package Ocarina.Namet is
 
 --  This package contains routines for handling the names table. The table
 --  is used to store character strings for identifiers and operator symbols,
@@ -234,4 +234,4 @@ private
      Table_Initial        => 6_000,
      Table_Increment      => 100);
 
-end Namet;
+end Ocarina.Namet;

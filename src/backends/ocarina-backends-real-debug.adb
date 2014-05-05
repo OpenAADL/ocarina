@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,14 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
-with Namet;
+with Ocarina.Output;
+with Ocarina.Namet;
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
 
 package body Ocarina.Backends.REAL.Debug is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    --------------------
    -- Print_All_Sets --

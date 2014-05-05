@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 with Charset;
 with Locations;
-with Namet;
+with Ocarina.Namet;
 
 with Ada.Characters.Handling;
 with Ada.Numerics.Generic_Elementary_Functions;
@@ -108,7 +108,7 @@ package body Ocarina.REAL_Values is
 
    function Image (Value : Value_Type; Quoted : Boolean := True) return String
    is
-      use Namet;
+      use Ocarina.Namet;
    begin
       Name_Len := 0;
 

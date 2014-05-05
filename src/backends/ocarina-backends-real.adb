@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,8 +32,8 @@
 ------------------------------------------------------------------------------
 
 with Ada.Numerics.Generic_Elementary_Functions;
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 with Locations; use Locations;
 
 with Ocarina.Analyzer.REAL;
@@ -70,8 +70,8 @@ package body Ocarina.Backends.REAL is
    use Ocarina.REAL_Values;
    use Ocarina.Instances.REAL_Finder;
    use Ocarina.Backends.Messages;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    package RN renames Ocarina.ME_REAL.REAL_Tree.Nodes;
    package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;

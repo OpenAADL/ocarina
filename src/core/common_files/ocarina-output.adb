@@ -35,7 +35,7 @@ pragma License (GPL);
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
-package body Output is
+package body Ocarina.Output is
 
    Current_FD : File_Descriptor := Standout;
    --  File descriptor for current output
@@ -276,4 +276,4 @@ package body Output is
       end loop;
    end Write_Str;
 
-end Output;
+end Ocarina.Output;

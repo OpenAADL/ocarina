@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,7 +35,7 @@ with GNAT.Table;
 
 with Charset;
 with Locations;
-with Namet;
+with Ocarina.Namet;
 with Utils;
 
 with Ocarina.Annotations;
@@ -44,7 +44,7 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Debug is
 
    use Charset;
    use Locations;
-   use Namet;
+   use Ocarina.Namet;
    use Utils;
    use Ocarina.Annotations;
 

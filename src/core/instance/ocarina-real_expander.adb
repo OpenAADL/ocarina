@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,7 +37,7 @@ with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.Builder.REAL;
 with Ocarina.Analyzer.REAL.Finder;
 with Ocarina.REAL_Values;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.REAL_Expander is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
@@ -45,7 +45,7 @@ package body Ocarina.REAL_Expander is
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.Builder.REAL;
    use Ocarina.Analyzer.REAL.Finder;
-   use Namet;
+   use Ocarina.Namet;
 
    ------------
    -- Expand --

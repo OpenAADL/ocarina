@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,16 +35,16 @@ with Ada.Characters.Handling;
 
 with Locations;
 with Charset;
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 with Ocarina.FE_AADL.Lexer;
 
 package body Ocarina.FE_AADL.Parser_Errors is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.FE_AADL.Lexer;
    use Locations;
-   use Namet;
+   use Ocarina.Namet;
    use Charset;
 
    procedure Display_Parsing_Code (Code : Parsing_Code);

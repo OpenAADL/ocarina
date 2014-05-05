@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 with GNAT.Directory_Operations;
 
-with Namet;
+with Ocarina.Namet;
 with Types; use type Types.Name_Id, Types.Int, Types.Text_Ptr;
 
 package body Locations is
@@ -58,26 +58,26 @@ package body Locations is
          --  other words, this function must not have side effect.
 
          --  Save name buffer to restore it later on
-         Backup := Namet.Name_Find;
+         Backup := Ocarina.Namet.Name_Find;
 
-         Namet.Get_Name_String (Loc.Base_Name);
-         Namet.Add_Char_To_Name_Buffer (':');
-         Namet.Add_Nat_To_Name_Buffer (Types.Nat (Loc.Line));
-         Namet.Add_Char_To_Name_Buffer (':');
+         Ocarina.Namet.Get_Name_String (Loc.Base_Name);
+         Ocarina.Namet.Add_Char_To_Name_Buffer (':');
+         Ocarina.Namet.Add_Nat_To_Name_Buffer (Types.Nat (Loc.Line));
+         Ocarina.Namet.Add_Char_To_Name_Buffer (':');
          if Column < 10 then
-            Namet.Add_Char_To_Name_Buffer ('0');
+            Ocarina.Namet.Add_Char_To_Name_Buffer ('0');
          end if;
-         Namet.Add_Nat_To_Name_Buffer (Column);
-         Result := Namet.Name_Find;
+         Ocarina.Namet.Add_Nat_To_Name_Buffer (Column);
+         Result := Ocarina.Namet.Name_Find;
 
          --  Restore backup into name buffer
 
          if Backup /= Types.No_Name then
-            Namet.Get_Name_String (Backup);
+            Ocarina.Namet.Get_Name_String (Backup);
          end if;
 
          --  Return result using a Get_Name_String variant with no side effect
-         return Namet.Get_Name_String (Result);
+         return Ocarina.Namet.Get_Name_String (Result);
       end if;
    end Image;
 
@@ -93,11 +93,11 @@ package body Locations is
    is
    begin
       Loc.Base_Name :=
-        Namet.Get_String_Name (GNAT.Directory_Operations.Base_Name
-                                 (Namet.Get_Name_String (Name)));
+        Ocarina.Namet.Get_String_Name (GNAT.Directory_Operations.Base_Name
+                                 (Ocarina.Namet.Get_Name_String (Name)));
       Loc.Dir_Name  :=
-        Namet.Get_String_Name (GNAT.Directory_Operations.Dir_Name
-                                 (Namet.Get_Name_String (Name)));
+        Ocarina.Namet.Get_String_Name (GNAT.Directory_Operations.Dir_Name
+                                 (Ocarina.Namet.Get_Name_String (Name)));
       Loc.Line      := 1;
       Loc.First_Pos := 1;
       Loc.Last_Pos  := 1;
@@ -118,11 +118,11 @@ package body Locations is
    begin
       Loc.Line      := Line;
       Loc.Base_Name :=
-        Namet.Get_String_Name (GNAT.Directory_Operations.Base_Name
-                                 (Namet.Get_Name_String (Name)));
+        Ocarina.Namet.Get_String_Name (GNAT.Directory_Operations.Base_Name
+                                 (Ocarina.Namet.Get_Name_String (Name)));
       Loc.Dir_Name  :=
-        Namet.Get_String_Name (GNAT.Directory_Operations.Dir_Name
-                                 (Namet.Get_Name_String (Name)));
+        Ocarina.Namet.Get_String_Name (GNAT.Directory_Operations.Dir_Name
+                                 (Ocarina.Namet.Get_Name_String (Name)));
    end Update_Name_And_Line;
 
 end Locations;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Charset;   use Charset;
-with Namet;     use Namet;
+with Ocarina.Namet;     use Ocarina.Namet;
 
 package body Utils is
 

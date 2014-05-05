@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Errors;
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.AADL_Values;
 
@@ -51,7 +51,7 @@ with Ocarina.Processor.Properties;
 package body Ocarina.Analyzer.AADL.Semantics is
 
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
 
    use Ocarina.AADL_Values;
    use Ocarina.Analyzer.Messages;

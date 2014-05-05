@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 
 with Ocarina.Me_AADL.AADL_Tree.Debug;
 with Ocarina.Me_AADL.AADL_Tree.Entities.Properties;
@@ -56,7 +56,7 @@ package body Ocarina.Analyzer.Messages is
    -----------------------
 
    procedure Display_Node_Link (Node1 : Node_Id; Node2 : Node_Id) is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
    begin
@@ -95,9 +95,9 @@ package body Ocarina.Analyzer.Messages is
       Loc      : Location := No_Location)
    is
       use Ocarina.Me_AADL.AADL_Tree.Debug;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
-      use Output;
+      use Ocarina.Output;
       use Ocarina.ME_AADL;
 
    begin
@@ -160,8 +160,8 @@ package body Ocarina.Analyzer.Messages is
       Name : Name_Id;
       Loc2 : Location)
    is
-      use Namet;
-      use Output;
+      use Ocarina.Namet;
+      use Ocarina.Output;
 
    begin
       Set_Standard_Error;
@@ -183,8 +183,8 @@ package body Ocarina.Analyzer.Messages is
      (Ident1 : Node_Id;
       Ident2 : Node_Id)
    is
-      use Namet;
-      use Output;
+      use Ocarina.Namet;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
    begin
@@ -215,7 +215,7 @@ package body Ocarina.Analyzer.Messages is
      (Loc  : Location;
       Kind : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind)
    is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Debug;
    begin
       Write_Str (Image (Loc));
@@ -232,8 +232,8 @@ package body Ocarina.Analyzer.Messages is
       Kind : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind;
       Name : Name_Id)
    is
-      use Namet;
-      use Output;
+      use Ocarina.Namet;
+      use Ocarina.Output;
 
    begin
       Set_Standard_Error;
@@ -254,8 +254,8 @@ package body Ocarina.Analyzer.Messages is
       Item : Node_Id)
    is
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
-      use Output;
-      use Namet;
+      use Ocarina.Output;
+      use Ocarina.Namet;
 
    begin
       Set_Standard_Error;
@@ -279,8 +279,8 @@ package body Ocarina.Analyzer.Messages is
       Loc          : Location)
    is
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
-      use Output;
-      use Namet;
+      use Ocarina.Output;
+      use Ocarina.Namet;
 
    begin
       Set_Standard_Error;
@@ -309,8 +309,8 @@ package body Ocarina.Analyzer.Messages is
       Loc           : Location)
    is
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
-      use Output;
-      use Namet;
+      use Ocarina.Output;
+      use Ocarina.Namet;
 
    begin
       Set_Standard_Error;
@@ -362,7 +362,7 @@ package body Ocarina.Analyzer.Messages is
    -------------------
 
    procedure Debug_Message (Location : String; Message : String) is
-      use Output;
+      use Ocarina.Output;
    begin
       if D_Analyzer then
          Set_Standard_Error;
@@ -380,7 +380,7 @@ package body Ocarina.Analyzer.Messages is
    ------------------------------
 
    procedure Display_Cyclic_Extension (Cycling_Node : Node_Id) is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Present (Cycling_Node));
@@ -398,7 +398,7 @@ package body Ocarina.Analyzer.Messages is
    ------------------------------
 
    procedure Display_Cyclic_Inversion (Cycling_Node : Node_Id) is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Present (Cycling_Node));
@@ -416,7 +416,7 @@ package body Ocarina.Analyzer.Messages is
    ----------------------------------
 
    procedure Display_Cyclic_Subcomponents (Cycling_Node : Node_Id) is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Present (Cycling_Node));
@@ -437,7 +437,7 @@ package body Ocarina.Analyzer.Messages is
      (Initial_Mode          : Node_Id;
       Existing_Initial_Mode : Node_Id)
    is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Initial_Mode) = K_Mode);
@@ -465,9 +465,9 @@ package body Ocarina.Analyzer.Messages is
    is
       use Ocarina.ME_AADL;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Me_AADL.AADL_Tree.Debug;
-      use Output;
+      use Ocarina.Output;
 
       pragma Assert (Present (Node));
 
@@ -528,7 +528,7 @@ package body Ocarina.Analyzer.Messages is
       Property_Value       : Node_Id;
       Property_Name        : Node_Id)
    is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Property_Name) = K_Property_Definition_Declaration);
@@ -566,7 +566,7 @@ package body Ocarina.Analyzer.Messages is
    ----------------------------------------
 
    procedure Display_Inconsistent_Property_Type (Property_Type : Node_Id) is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Present (Property_Type));
@@ -586,8 +586,8 @@ package body Ocarina.Analyzer.Messages is
       Property_Value2    : Node_Id;
       Reference_Property : Node_Id)
    is
-      use Output;
-      use Namet;
+      use Ocarina.Output;
+      use Ocarina.Namet;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
       use Ocarina.Me_AADL.AADL_Tree.Debug;
 
@@ -655,7 +655,7 @@ package body Ocarina.Analyzer.Messages is
      (Property_Association : Node_Id;
       Property_Name        : Node_Id)
    is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Property_Name) = K_Property_Definition_Declaration);
@@ -695,7 +695,7 @@ package body Ocarina.Analyzer.Messages is
      (Property_Association : Node_Id;
       Property_Name        : Node_Id)
    is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Property_Name) = K_Property_Definition_Declaration);
@@ -727,7 +727,7 @@ package body Ocarina.Analyzer.Messages is
      (Property_Association : Node_Id;
       Entity               : Node_Id)
    is
-      use Output;
+      use Ocarina.Output;
       use Ocarina.Me_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Property_Association) = K_Property_Association);

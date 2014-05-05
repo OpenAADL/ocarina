@@ -39,8 +39,8 @@ with GNAT.OS_Lib;
 
 with Types; use Types;
 
-package Output is
-   pragma Elaborate_Body (Output);
+package Ocarina.Output is
+   pragma Elaborate_Body (Ocarina.Output);
 
    -----------------
    -- Subprograms --
@@ -102,4 +102,4 @@ package Output is
    procedure Write_Indentation (Offset : Integer := 0);
    procedure Write_Space;
 
-end Output;
+end Ocarina.Output;

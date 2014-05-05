@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.AADL_Values;
-with Namet;
+with Ocarina.Namet;
 with Ocarina.Instances.Queries;
 
 with Ocarina.Backends.PN.Nodes;
@@ -577,7 +577,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
-      use Namet;
+      use Ocarina.Namet;
 
    begin
 
@@ -603,7 +603,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
 
    begin
@@ -813,7 +813,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Aadl_Values;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
 
@@ -850,7 +850,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Aadl_Values;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
 
    begin
@@ -898,7 +898,7 @@ package body Ocarina.Backends.PN.Iutils is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Aadl_Values;
-      use Namet;
+      use Ocarina.Namet;
 
       I : constant Node_Id := New_Node (K_CPN_Specific_Informations);
    begin
@@ -1041,7 +1041,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.AADL_Values;
       use Ocarina.ME_AADL.AADL_Instances.Entities;
       use Ocarina.ME_AADL;
@@ -1181,7 +1181,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Aadl_Values;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
       use OPND;
@@ -1277,7 +1277,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Aadl_Values;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
 

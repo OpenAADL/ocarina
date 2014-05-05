@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Instances.Queries;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.Instances.REAL_Checker.Queries.Bound_Predicates is
    use Ocarina.Instances.Queries;
@@ -48,7 +48,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Bound_Predicates is
      return Boolean
    is
       pragma Unreferenced (Option);
-      use Namet;
+      use Ocarina.Namet;
 
       Str_1  : constant Name_Id := Get_String_Name
         ("actual_processor_binding");

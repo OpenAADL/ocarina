@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Errors;
 with Ocarina.Me_AADL.AADL_Tree.Nutils;
 with Ocarina.Me_AADL.AADL_Instances.Nutils;
@@ -44,9 +44,9 @@ package body Ocarina is
    ----------------
 
    procedure Initialize is
-      use Namet;
+      use Ocarina.Namet;
    begin
-      Namet.Initialize;
+      Ocarina.Namet.Initialize;
       Errors.Initialize;
       V_Zero := New_Integer_Value (0);
       V_One  := New_Integer_Value (1);
@@ -58,7 +58,7 @@ package body Ocarina is
 
    procedure Reset is
    begin
-      Namet.Initialize;
+      Ocarina.Namet.Initialize;
       Errors.Initialize;
       Ocarina.Me_AADL.AADL_Tree.Nutils.Reset_Nodes;
       Ocarina.Me_AADL.AADL_Instances.Nutils.Reset_Nodes;

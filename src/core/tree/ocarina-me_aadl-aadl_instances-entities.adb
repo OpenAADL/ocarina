@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -99,7 +99,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
      return String
    is
       use Types;
-      use Namet;
+      use Ocarina.Namet;
 
       Name : constant Name_Id := Get_Name_Of_Entity (Entity, Get_Display_Name);
    begin
@@ -313,7 +313,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
      return Boolean
    is
       use Types;
-      use Output;
+      use Ocarina.Output;
       use AIN;
       use Ocarina.ME_AADL.AADL_Instances.Debug;
    begin

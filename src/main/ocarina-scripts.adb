@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2013 ESA & ISAE.                       --
+--                   Copyright (C) 2013-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,8 +32,8 @@
 ------------------------------------------------------------------------------
 
 with Errors;                           use Errors;
-with Namet;                            use Namet;
-with Output;                           use Output;
+with Ocarina.Namet;                            use Ocarina.Namet;
+with Ocarina.Output;                           use Ocarina.Output;
 with Types;                            use Types;
 
 with Ada.Unchecked_Deallocation;

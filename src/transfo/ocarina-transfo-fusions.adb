@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,7 +42,7 @@ with Ocarina.ME_AADl.AADL_Instances.Nodes;
 with Ocarina.ME_AADl.AADL_Instances.Nutils;
 with Ocarina.Transfo.Fusions.Scheduler;
 with Errors;
-with Namet;
+with Ocarina.Namet;
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 with GNAT.Dynamic_Tables;
 with Ocarina.Builder.AADL.Components;
@@ -75,7 +75,7 @@ package body Ocarina.Transfo.Fusions is
    use Ocarina.Backends.Messages;
 
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
    use Locations;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;

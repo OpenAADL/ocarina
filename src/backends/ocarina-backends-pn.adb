@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.PN.Components;
@@ -45,7 +45,7 @@ with Ocarina.Backends.PN.Format.Cami;
 
 with Ocarina.Backends.PN.Printer;
 
-with Output;
+with Ocarina.Output;
 with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.PN is
@@ -53,14 +53,14 @@ package body Ocarina.Backends.PN is
    package OPFT renames Ocarina.Backends.PN.Format.Tina;
    package OPFC renames Ocarina.Backends.PN.Format.Cami;
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Instances;
    use Ocarina.Backends.Expander;
    use Ocarina.Backends.PN.Components;
    use Ocarina.Backends.PN.Printer;
    use OPFT;
    use OPFC;
-   use Output;
+   use Ocarina.Output;
    use Ocarina.Backends.Utils;
 
    procedure Generate_TINA (AADL_Root : Types.Node_Id);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,7 +34,7 @@
 with GNAT.OS_Lib;
 
 with Errors;
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.Options;       use Ocarina.Options;
 
@@ -44,7 +44,7 @@ package body Ocarina.Files is
    use GNAT.OS_Lib;
 
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
 
    ----------------------------
    -- Add_File_To_Parse_List --

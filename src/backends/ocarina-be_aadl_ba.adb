@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.Backends;
 
@@ -42,7 +42,7 @@ with Ocarina.BE_AADL_BA.Specifications;
 
 package body Ocarina.BE_AADL_BA is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.Backends;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
    use Ocarina.ME_AADL_BA.BA_Tree.Debug;
