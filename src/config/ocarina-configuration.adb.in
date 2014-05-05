@@ -52,8 +52,8 @@ with GNAT.OS_Lib;      use GNAT.OS_Lib;
 with Ada.Command_Line; use Ada.Command_Line;
 
 with Charset; use Charset;
-with Namet;   use Namet;
-with Types;   use Types;
+with Ocarina.Namet;   use Ocarina.Namet;
+with Ocarina.Types;   use Ocarina.Types;
 
 package body Ocarina.Configuration is
 
