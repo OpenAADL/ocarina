@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -75,17 +75,17 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    function P_Behavior_Annex (Container : Node_Id) return Node_Id;
    --  parse an behavior annex node, current token is T_Begin_Annex
 
-   function P_Behavior_Variable (Container : Types.Node_Id) return Node_Id;
+   function P_Behavior_Variable (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an behavior variable node, current token is T_Variables
 
-   function P_Behavior_State (Container : Types.Node_Id) return Node_Id;
+   function P_Behavior_State (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an behavior state node, current token is T_States
 
-   function P_Behavior_Transition (Container : Types.Node_Id) return Node_Id;
+   function P_Behavior_Transition (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an behavior transition node, current token is T_Transitions
 
    function P_Execute_Or_Mode_Behavior_Transition
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id;
    --  parse an execute behavior transition node or an mode behavior transition
    --  node, current token is T_Transitions
@@ -103,7 +103,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    --  Behavior_Specification, return an behavior annex node (K_Behavior_Annex)
 
    function P_Behavior_Specification
-     (Annex_Subcl_Node : Types.Node_Id)
+     (Annex_Subcl_Node : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use ATN;
@@ -234,7 +234,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
 
    --  unique_component_classifier_reference ::= <core AADL rule>
 
-   function P_Behavior_Variable (Container : Types.Node_Id) return Node_Id
+   function P_Behavior_Variable (Container : Ocarina.Types.Node_Id) return Node_Id
    is
       Start_Loc         : Location;
       Loc               : Location;
@@ -301,7 +301,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
 
    --  behavior_state_kind ::= [ initial ] [ complete ] [ final ]
 
-   function P_Behavior_State (Container : Types.Node_Id) return Node_Id
+   function P_Behavior_State (Container : Ocarina.Types.Node_Id) return Node_Id
    is
       Start_Loc      : Location;
       Loc            : Location;
@@ -411,7 +411,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    --    execution_behavior_transition | mode_transition
 
    function P_Behavior_Transition
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       Start_Loc           : Location;
@@ -456,7 +456,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    --        destination_mode_identifier [ { behavior_actions } ] ;
 
    function P_Execute_Or_Mode_Behavior_Transition
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       Start_Loc : Location;

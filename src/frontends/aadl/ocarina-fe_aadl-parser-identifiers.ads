@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -59,7 +59,7 @@ package Ocarina.FE_AADL.Parser.Identifiers is
    --  This function is useful for parsing 'end' clause for example
    --  Return TRUE if everything is OK
 
-   function P_Identifier (Container : Types.Node_Id) return Node_Id;
+   function P_Identifier (Container : Ocarina.Types.Node_Id) return Node_Id;
 
    procedure P_Identifier_Refined_To
      (Option              : Refinement_Type;
@@ -87,7 +87,7 @@ package Ocarina.FE_AADL.Parser.Identifiers is
    --  [ package_name :: ] identifier [.identifier]
    --  Parse Unique_..._Identifier, etc.
 
-   function P_Entity_Reference (Container : Types.Node_Id) return Node_Id;
+   function P_Entity_Reference (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  Allow the possibility to parse entitiy reference in list of items
 
 end Ocarina.FE_AADL.Parser.Identifiers;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 --  This package gathers all functions related to component parsing.
 
-with Types;
+with Ocarina.Types;
 with Ocarina.ME_AADL;
 with Locations;
 
@@ -43,21 +43,21 @@ package Ocarina.FE_AADL.Parser.Components is
    --  Component categories
 
    function P_Component
-     (Namespace : Types.Node_Id;
+     (Namespace : Ocarina.Types.Node_Id;
       Private_Declaration : Boolean := False)
      return Node_Id;
    --  Parse Component_Type, Component_Type_Extension
    --        Component_Implementation, Component_Implementation_Extension
 
    function P_Feature_Group_Type
-     (Namespace : Types.Node_Id;
+     (Namespace : Ocarina.Types.Node_Id;
       Start_Loc : Locations.Location;
       Private_Declaration : Boolean := False)
      return Node_Id;
    --  Parse _Group_Type and _Group_Type_Extension
 
    function P_Component_Category return Component_Category;
-   function P_Component_Category (Container : Types.Node_Id) return Node_Id;
+   function P_Component_Category (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  Parse Component_Category, current token is the first token of
    --  Component_Category
 

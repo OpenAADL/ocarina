@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -41,13 +41,13 @@ package Ocarina.FE_AADL.Parser.Components.Modes is
    --  Current token is 'in' and will be ignored in this function
 
    function P_Mode_Or_Mode_Transition
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Refinable : Boolean)
      return Node_Id;
    --  Parse Mode, Mode_Refinement and Mode_Transition
    --  If Refinable = FALSE, Mode_Refinement is not allowed
 
-   function P_Mode_Or_Transition (Container : Types.Node_Id) return Node_Id;
+   function P_Mode_Or_Transition (Container : Ocarina.Types.Node_Id) return Node_Id;
    pragma Inline (P_Mode_Or_Transition);
    --  Parse Mode_Or_Transition return a node of K_Identifier_Identifier
 

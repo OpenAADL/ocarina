@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -62,7 +62,7 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
    --      component_category [ unique_component_classifier_reference ] ;
 
    function P_Prototype_Or_Prototype_Refinement
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Refinable : Boolean)
      return Node_Id
    is
@@ -156,7 +156,7 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
    --  prototype_bindings ::=
    --   ( prototype_binding ( , prototype_ binding )* )
 
-   function P_Prototype_Bindings (Container : Types.Node_Id) return Boolean
+   function P_Prototype_Bindings (Container : Ocarina.Types.Node_Id) return Boolean
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -205,7 +205,7 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
    --   prototype_identifier => component_category
    --    ( unique_component_classifier_reference |prototype_identifier )
 
-   function P_Prototype_Binding (Container : Types.Node_Id) return Node_Id
+   function P_Prototype_Binding (Container : Ocarina.Types.Node_Id) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;

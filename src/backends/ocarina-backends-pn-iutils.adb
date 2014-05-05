@@ -56,8 +56,8 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------
 
    procedure PN_Init_PN_Generated
-     (G : Types.Node_Id;
-      F : Types.Value_Id)
+     (G : Ocarina.Types.Node_Id;
+      F : Ocarina.Types.Value_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -90,7 +90,7 @@ package body Ocarina.Backends.PN.Iutils is
    -----------------------------
 
    function PN_Get_New_PN_Generated
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Nodes;
@@ -111,7 +111,7 @@ package body Ocarina.Backends.PN.Iutils is
    ---------------------------------
 
    function PN_Get_New_TPN_Informations
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Nodes;
@@ -131,7 +131,7 @@ package body Ocarina.Backends.PN.Iutils is
    -----------------------------------
 
    function PN_Get_New_Processor_Priority
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Nodes;
@@ -146,8 +146,8 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------------
 
    procedure PN_Init_Processor_Priority
-     (PN_Proc : Types.Node_Id;
-      Aadl_P : Types.Node_Id)
+     (PN_Proc : Ocarina.Types.Node_Id;
+      Aadl_P : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Nodes;
@@ -161,8 +161,8 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------------
 
    procedure Append_Trans_To_Processor
-     (PN_T : Types.Node_Id;
-      PN_Proc : Types.Node_Id)
+     (PN_T : Ocarina.Types.Node_Id;
+      PN_Proc : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Nodes;
@@ -280,7 +280,7 @@ package body Ocarina.Backends.PN.Iutils is
    ----------------------------------
 
    function PN_Get_New_Processor_Pattern
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -295,8 +295,8 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------------
 
    procedure PN_Init_Processor_Pattern
-     (PN_Proc : Types.Node_Id;
-      Aadl_P : Types.Node_Id)
+     (PN_Proc : Ocarina.Types.Node_Id;
+      Aadl_P : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -317,7 +317,7 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------------
 
    function PN_Get_New_Thread_Pattern
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -332,8 +332,8 @@ package body Ocarina.Backends.PN.Iutils is
    ----------------------------
 
    procedure PN_Init_Thread_Pattern
-     (PN_T : Types.Node_Id;
-      Aadl_T : Types.Node_Id)
+     (PN_T : Ocarina.Types.Node_Id;
+      Aadl_T : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -358,7 +358,7 @@ package body Ocarina.Backends.PN.Iutils is
    -----------------------------
 
    function PN_Get_New_Port_Pattern
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -373,8 +373,8 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------
 
    procedure PN_Init_Port_Pattern
-     (PN_P : Types.Node_Id;
-      Aadl_P : Types.Node_Id)
+     (PN_P : Ocarina.Types.Node_Id;
+      Aadl_P : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -397,7 +397,7 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------------
 
    function PN_Get_New_D_Port_Pattern
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -412,8 +412,8 @@ package body Ocarina.Backends.PN.Iutils is
    ----------------------------
 
    procedure PN_Init_D_Port_Pattern
-     (PN_DP : Types.Node_Id;
-      Aadl_DP : Types.Node_Id)
+     (PN_DP : Ocarina.Types.Node_Id;
+      Aadl_DP : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -431,7 +431,7 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------------
 
    function PN_Get_New_ED_Port_Pattern
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -446,8 +446,8 @@ package body Ocarina.Backends.PN.Iutils is
    -----------------------------
 
    procedure PN_Init_ED_Port_Pattern
-     (PN_DEP : Types.Node_Id;
-      Aadl_DEP : Types.Node_Id)
+     (PN_DEP : Ocarina.Types.Node_Id;
+      Aadl_DEP : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -469,7 +469,7 @@ package body Ocarina.Backends.PN.Iutils is
    ---------------------------------
 
    function PN_Get_New_Call_Seq_Pattern
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -485,8 +485,8 @@ package body Ocarina.Backends.PN.Iutils is
    ------------------------------
 
    procedure PN_Init_Call_Seq_Pattern
-     (PN_CS : Types.Node_Id;
-      Aadl_T : Types.Node_Id)
+     (PN_CS : Ocarina.Types.Node_Id;
+      Aadl_T : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -505,7 +505,7 @@ package body Ocarina.Backends.PN.Iutils is
    ----------------------------
 
    function PN_Get_New_Spg_Pattern
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -520,8 +520,8 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------
 
    procedure PN_Init_Spg_Pattern
-     (PN_Spg : Types.Node_Id;
-      Aadl_Spg : Types.Node_Id)
+     (PN_Spg : Ocarina.Types.Node_Id;
+      Aadl_Spg : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -539,7 +539,7 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------------
 
    function PN_Get_New_Spg_Par_Pattern
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -554,8 +554,8 @@ package body Ocarina.Backends.PN.Iutils is
    -----------------------------
 
    procedure PN_Init_Spg_Par_Pattern
-     (PN_Spg_Par : Types.Node_Id;
-      Aadl_Spg_Par : Types.Node_Id)
+     (PN_Spg_Par : Ocarina.Types.Node_Id;
+      Aadl_Spg_Par : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -572,8 +572,8 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------
 
    procedure PN_Init_PN_Component
-     (PN_C : Types.Node_Id;
-      Aadl_C : Types.Node_Id)
+     (PN_C : Ocarina.Types.Node_Id;
+      Aadl_C : Ocarina.Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -597,9 +597,9 @@ package body Ocarina.Backends.PN.Iutils is
    ---------------------
 
    procedure PN_Init_PN_Node
-     (PN_N : Types.Node_Id;
-      Aadl_N : Types.Node_Id;
-      Name : Types.Name_id)
+     (PN_N : Ocarina.Types.Node_Id;
+      Aadl_N : Ocarina.Types.Node_Id;
+      Name : Ocarina.Types.Name_id)
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
@@ -632,7 +632,7 @@ package body Ocarina.Backends.PN.Iutils is
    -- PN_Init_Node --
    ------------------
 
-   procedure PN_Init_Node (N : Types.Node_Id) is
+   procedure PN_Init_Node (N : Ocarina.Types.Node_Id) is
       use Ocarina.Backends.PN.Nodes;
 
    begin
@@ -646,10 +646,10 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------
 
    procedure PN_TPN_Init_Place
-     (P : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      Name : Types.Name_Id;
-      PN_G : Types.Node_Id;
+     (P : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      Name : Ocarina.Types.Name_Id;
+      PN_G : Ocarina.Types.Node_Id;
       M    : Unsigned_Long_Long)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -672,9 +672,9 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------
 
    procedure PN_Init_Place
-     (P : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      Name : Types.Name_Id)
+     (P : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      Name : Ocarina.Types.Name_Id)
    is
    begin
       if P /= No_Node then
@@ -687,12 +687,12 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------
 
    function PN_TPN_Get_New_Place
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
 
-      P : constant Types.Node_Id := New_Node (K_TPN_Place);
+      P : constant Ocarina.Types.Node_Id := New_Node (K_TPN_Place);
    begin
       return P;
    end PN_TPN_Get_New_Place;
@@ -702,10 +702,10 @@ package body Ocarina.Backends.PN.Iutils is
    ----------------------------
 
    procedure PN_TPN_Init_Transition
-     (T : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      Name : Types.Name_Id;
-      PN_G : Types.Node_Id;
+     (T : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      Name : Ocarina.Types.Name_Id;
+      PN_G : Ocarina.Types.Node_Id;
       M    : Unsigned_Long_Long)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -736,9 +736,9 @@ package body Ocarina.Backends.PN.Iutils is
    ------------------------
 
    procedure PN_Init_Transition
-     (T : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      Name : Types.Name_Id)
+     (T : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      Name : Ocarina.Types.Name_Id)
    is
       pragma Assert (Present (T));
       use Ocarina.Backends.PN.Nodes;
@@ -755,12 +755,12 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------------
 
    function PN_TPN_Get_New_Transition
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
 
-      P : constant Types.Node_Id := New_Node (K_TPN_Transition);
+      P : constant Ocarina.Types.Node_Id := New_Node (K_TPN_Transition);
    begin
       return P;
    end PN_TPN_Get_New_Transition;
@@ -770,10 +770,10 @@ package body Ocarina.Backends.PN.Iutils is
    ----------------------
 
    procedure PN_TPN_Set_Guard
-     (T : Types.Node_Id;
-      Low, Up : Types.Value_Id;
-      Braces_Mode : Types.Value_Id;
-      Priority : Types.Value_Id)
+     (T : Ocarina.Types.Node_Id;
+      Low, Up : Ocarina.Types.Value_Id;
+      Braces_Mode : Ocarina.Types.Value_Id;
+      Priority : Ocarina.Types.Value_Id)
    is
       pragma Assert (Present (T));
       use Ocarina.Backends.PN.Nodes;
@@ -791,12 +791,12 @@ package body Ocarina.Backends.PN.Iutils is
    ------------------------
 
    function PN_TPN_Get_New_Arc
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
 
-      A : constant Types.Node_Id := New_Node (K_TPN_Arc);
+      A : constant Ocarina.Types.Node_Id := New_Node (K_TPN_Arc);
    begin
       return A;
    end PN_TPN_Get_New_Arc;
@@ -806,9 +806,9 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------
 
    procedure PN_TPN_Duplicate_Arc
-     (A : Types.Node_Id;
-      A_Inst : Types.Node_Id;
-      Endpoint : Types.Node_Id;
+     (A : Ocarina.Types.Node_Id;
+      A_Inst : Ocarina.Types.Node_Id;
+      Endpoint : Ocarina.Types.Node_Id;
       From : Boolean := False)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -817,7 +817,7 @@ package body Ocarina.Backends.PN.Iutils is
       use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
 
-      New_Arc : Types.Node_Id;
+      New_Arc : Ocarina.Types.Node_Id;
    begin
       New_Arc := PN_TPN_Get_New_Arc;
       if From then
@@ -842,10 +842,10 @@ package body Ocarina.Backends.PN.Iutils is
    ---------------------
 
    procedure PN_TPN_Init_Arc
-     (A : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      From : Types.Node_Id := No_Node;
-      To : Types.Node_Id := No_Node;
+     (A : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      From : Ocarina.Types.Node_Id := No_Node;
+      To : Ocarina.Types.Node_Id := No_Node;
       K : Unsigned_Long_Long := 0)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -868,11 +868,11 @@ package body Ocarina.Backends.PN.Iutils is
    -----------------
 
    procedure PN_Init_Arc
-     (A : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      From : Types.Node_Id;
-      To : Types.Node_Id;
-      Name : Types.Name_Id)
+     (A : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      From : Ocarina.Types.Node_Id;
+      To : Ocarina.Types.Node_Id;
+      Name : Ocarina.Types.Name_Id)
    is
       use Ocarina.Backends.PN.Nodes;
 
@@ -893,7 +893,7 @@ package body Ocarina.Backends.PN.Iutils is
    ---------------------------------
 
    function PN_Get_New_CPN_Informations
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Nodes;
@@ -1018,12 +1018,12 @@ package body Ocarina.Backends.PN.Iutils is
    ----------------------------
 
    function PN_CPN_Get_New_Place
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
 
-      P : constant Types.Node_Id := New_Node (K_CPN_Place);
+      P : constant Ocarina.Types.Node_Id := New_Node (K_CPN_Place);
    begin
       return P;
    end PN_CPN_Get_New_Place;
@@ -1033,10 +1033,10 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------
 
    procedure PN_CPN_Init_Place
-     (P : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      Name : Types.Name_Id;
-      PN_G : Types.Node_Id;
+     (P : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      Name : Ocarina.Types.Name_Id;
+      PN_G : Ocarina.Types.Node_Id;
       M    : Unsigned_Long_Long)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -1114,12 +1114,12 @@ package body Ocarina.Backends.PN.Iutils is
    -------------------------------
 
    function PN_CPN_Get_New_Transition
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
 
-      T : constant Types.Node_Id := New_Node (K_CPN_Transition);
+      T : constant Ocarina.Types.Node_Id := New_Node (K_CPN_Transition);
    begin
       return T;
    end PN_CPN_Get_New_Transition;
@@ -1129,10 +1129,10 @@ package body Ocarina.Backends.PN.Iutils is
    ----------------------------
 
    procedure PN_CPN_Init_Transition
-     (T : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      Name : Types.Name_Id;
-      PN_G : Types.Node_Id;
+     (T : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      Name : Ocarina.Types.Name_Id;
+      PN_G : Ocarina.Types.Node_Id;
       M    : Unsigned_Long_Long)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -1158,12 +1158,12 @@ package body Ocarina.Backends.PN.Iutils is
    ------------------------
 
    function PN_CPN_Get_New_Arc
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
 
-      A : constant Types.Node_Id := New_Node (K_CPN_Arc);
+      A : constant Ocarina.Types.Node_Id := New_Node (K_CPN_Arc);
    begin
       return A;
    end PN_CPN_Get_New_Arc;
@@ -1173,10 +1173,10 @@ package body Ocarina.Backends.PN.Iutils is
    ---------------------
 
    procedure PN_CPN_Init_Arc
-     (A : Types.Node_Id;
-      Aadl : Types.Node_Id;
-      From : Types.Node_Id := No_Node;
-      To : Types.Node_Id := No_Node;
+     (A : Ocarina.Types.Node_Id;
+      Aadl : Ocarina.Types.Node_Id;
+      From : Ocarina.Types.Node_Id := No_Node;
+      To : Ocarina.Types.Node_Id := No_Node;
       K : Unsigned_Long_Long)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -1270,9 +1270,9 @@ package body Ocarina.Backends.PN.Iutils is
    --------------------------
 
    procedure PN_CPN_Duplicate_Arc
-     (A : Types.Node_Id;
-      A_Inst : Types.Node_Id;
-      Endpoint : Types.Node_Id;
+     (A : Ocarina.Types.Node_Id;
+      A_Inst : Ocarina.Types.Node_Id;
+      Endpoint : Ocarina.Types.Node_Id;
       From : Boolean := False)
    is
       use Ocarina.Backends.PN.Nodes;
@@ -1281,7 +1281,7 @@ package body Ocarina.Backends.PN.Iutils is
       use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
 
-      New_Arc : Types.Node_Id;
+      New_Arc : Ocarina.Types.Node_Id;
    begin
       New_Arc := PN_CPN_Get_New_Arc;
       if From then

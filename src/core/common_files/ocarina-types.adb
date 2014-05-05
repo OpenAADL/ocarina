@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package body Types is
+package body Ocarina.Types is
 
    --------
    -- No --
@@ -75,4 +75,4 @@ package body Types is
       end if;
    end Change_If_Empty;
 
-end Types;
+end Ocarina.Types;

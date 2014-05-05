@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,31 +34,31 @@
 package Ocarina.Backends.PN.Components is
 
    function Process_Architecture_Instance
-     (Architecture_Instance : Types.Node_Id;
+     (Architecture_Instance : Ocarina.Types.Node_Id;
       F : Unsigned_Long_Long)  --  0 for CPN, 1 for TPN
-     return Types.Node_Id;
+     return Ocarina.Types.Node_Id;
    --  Transform the Ocarina tree of the distributed application nodes
    --  into a Petri Net (pn) tree.
 
 private
 
-   type PN_Init_Node is access procedure (N : Types.Node_Id;
-                                          A : Types.Node_Id;
-                                          Name : Types.Name_Id;
-                                          PN_G : Types.Node_Id;
+   type PN_Init_Node is access procedure (N : Ocarina.Types.Node_Id;
+                                          A : Ocarina.Types.Node_Id;
+                                          Name : Ocarina.Types.Name_Id;
+                                          PN_G : Ocarina.Types.Node_Id;
                                           M    : Unsigned_Long_Long);
 
-   type PN_Init_Arc is access procedure (N : Types.Node_Id;
-                                         A : Types.Node_Id;
-                                         F : Types.Node_Id;
-                                         T : Types.Node_Id;
+   type PN_Init_Arc is access procedure (N : Ocarina.Types.Node_Id;
+                                         A : Ocarina.Types.Node_Id;
+                                         F : Ocarina.Types.Node_Id;
+                                         T : Ocarina.Types.Node_Id;
                                          K : Unsigned_Long_Long);
 
-   type PN_Dup_Arc is access procedure (A        : Types.Node_Id;
-                                        A_Inst   : Types.Node_Id;
-                                        Endpoint : Types.Node_Id;
+   type PN_Dup_Arc is access procedure (A        : Ocarina.Types.Node_Id;
+                                        A_Inst   : Ocarina.Types.Node_Id;
+                                        Endpoint : Ocarina.Types.Node_Id;
                                         From     : Boolean);
 
-   type PN_New_Node is access function return Types.Node_Id;
+   type PN_New_Node is access function return Ocarina.Types.Node_Id;
 
 end Ocarina.Backends.PN.Components;

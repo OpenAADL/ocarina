@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,7 +52,7 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
 
    --  AADL_V2
 
-   function P_Array_Dimensions (Container : Types.Node_Id)
+   function P_Array_Dimensions (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
 
@@ -105,7 +105,7 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
    --  array_dimension_size ::= numeral | unique_property_constant_identifier
 
    function P_Array_Dimension_Size
-   (Container : Types.Node_Id)
+   (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Locations;
@@ -167,7 +167,7 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
    --  range_selection ::= numeral [ .. numeral ]
 
    function P_Array_Selection
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Lexer;

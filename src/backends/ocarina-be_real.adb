@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 with Ocarina.Output;
 with Ocarina.Namet;
 with Ocarina.Backends;
@@ -42,7 +42,7 @@ with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.ME_REAL.REAL_Tree.Utils;
 
 package body Ocarina.BE_REAL is
-   use Types;
+   use Ocarina.Types;
    use Ocarina.Output;
    use Ocarina.ME_REAL.Tokens;
    use Ocarina.ME_REAL.REAL_Tree.Nodes;

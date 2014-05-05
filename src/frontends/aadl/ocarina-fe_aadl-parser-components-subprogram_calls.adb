@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -44,7 +44,7 @@ with Ocarina.Builder.AADL.Components.Subprogram_Calls;
 
 package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
 
-   function P_Subprogram_Call (Container : Types.Node_Id) return Node_Id;
+   function P_Subprogram_Call (Container : Ocarina.Types.Node_Id) return Node_Id;
    function P_Called_Subprogram (Code : Parsing_Code) return Node_Id;
 
    -----------------------
@@ -65,7 +65,7 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
    --     defining_call_identifier : subprogram called_subprogram
    --     [ { { subcomponent_call_property_association }+ } ] ;
 
-   function P_Subprogram_Call (Container : Types.Node_Id) return Node_Id is
+   function P_Subprogram_Call (Container : Ocarina.Types.Node_Id) return Node_Id is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Parser.Properties;
@@ -156,7 +156,7 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
    --     [ { { call_sequence_property_association }+ } ] [ in_modes ] ;
 
    function P_Subprogram_Call_Sequence
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Locations;

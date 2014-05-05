@@ -33,8 +33,8 @@
 
 with Unchecked_Deallocation;
 
-package Types is
-pragma Preelaborate (Types);
+package Ocarina.Types is
+--  pragma Preelaborate (Ocarina.Types);
 
 --  This package contains host independent type definitions which are used
 --  in more than one unit in the compiler. They are gathered here for easy
@@ -303,4 +303,4 @@ pragma Preelaborate (Types);
    pragma Import (Intrinsic, Shift_Left);
    pragma Import (Intrinsic, Shift_Right);
 
-end Types;
+end Ocarina.Types;

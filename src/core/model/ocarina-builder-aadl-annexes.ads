@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,14 +34,14 @@
 --  This package provides functions to build annex nodes into the AADL
 --  tree.
 
-with Types;
+with Ocarina.Types;
 with Locations;
 
 package Ocarina.Builder.AADL.Annexes is
 
    function Set_Annex_Content
-     (Annex : Types.Node_Id;
-      Text  : Types.Name_Id)
+     (Annex : Ocarina.Types.Node_Id;
+      Text  : Ocarina.Types.Name_Id)
      return Boolean;
    --  Set the text of the annex. Annex is the Node_Id of the annex
    --  library or subclause, returned by Add_New_Annex_Subclause or
@@ -50,10 +50,10 @@ package Ocarina.Builder.AADL.Annexes is
 
    function Add_New_Annex_Subclause
      (Loc        : Locations.Location;
-      Annex_Name : Types.Node_Id;
-      Namespace  : Types.Node_Id;
-      In_Modes   : Types.Node_Id)
-     return Types.Node_Id;
+      Annex_Name : Ocarina.Types.Node_Id;
+      Namespace  : Ocarina.Types.Node_Id;
+      In_Modes   : Ocarina.Types.Node_Id)
+     return Ocarina.Types.Node_Id;
    --  Create a new annex subclause. An annex subclause can be
    --  inserted into a component declaration (type or implementation)
    --  or a port group declaration. Loc is the location of the annex
@@ -65,10 +65,10 @@ package Ocarina.Builder.AADL.Annexes is
 
    function Add_New_Annex_Library
      (Loc        : Locations.Location;
-      Annex_Name : Types.Node_Id;
-      Namespace  : Types.Node_Id;
+      Annex_Name : Ocarina.Types.Node_Id;
+      Namespace  : Ocarina.Types.Node_Id;
       Is_Private : Boolean             := False)
-     return Types.Node_Id;
+     return Ocarina.Types.Node_Id;
    --  Create a new annex library. An annex library can be inserted
    --  into a package or the top level AADL specification (i.e. the
    --  unnamed namespace). Loc is the location of the annex in the
@@ -80,10 +80,10 @@ package Ocarina.Builder.AADL.Annexes is
 
    function Add_New_Annex_Path
      (Loc              : Locations.Location;
-      Container        : Types.Node_Id;
-      Annex_Identifier : Types.Node_Id;
-      List_Identifiers : Types.List_Id)
-     return Types.Node_Id;
+      Container        : Ocarina.Types.Node_Id;
+      Annex_Identifier : Ocarina.Types.Node_Id;
+      List_Identifiers : Ocarina.Types.List_Id)
+     return Ocarina.Types.Node_Id;
    --  Create a new annex path node. Loc is the location of the annex
    --  path in the parsed text. Container is the namespace which contain
    --  the annex path declaration. Annex_Identifier is the identifier of

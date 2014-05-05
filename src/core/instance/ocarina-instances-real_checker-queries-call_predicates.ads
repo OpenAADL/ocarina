@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,13 +38,13 @@ with Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates;
 pragma Elaborate_All
   (Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates);
 
-with Types;
+with Ocarina.Types;
 
 package Ocarina.Instances.REAL_Checker.Queries.Call_Predicates is
 
    function Is_Called_Predicate
-     (E      : Types.Node_Id;
-      D      : Types.Node_Id;
+     (E      : Ocarina.Types.Node_Id;
+      D      : Ocarina.Types.Node_Id;
       Option : Predicates_Search_Options := PSO_Direct)
      return Boolean;
    --  Check if the instance E is called by the instance D

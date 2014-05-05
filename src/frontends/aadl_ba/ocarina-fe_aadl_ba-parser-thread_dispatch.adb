@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -55,17 +55,17 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
    use Ocarina.Builder.Aadl_Ba.Thread_Dispatch;
 
    function P_Dispatch_Trigger
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
     return Node_Id;
    pragma Unreferenced (P_Dispatch_Trigger);
 
    function P_Dispatch_Trigger_Conjunction
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Start_Loc : Location)
      return Node_Id;
 
    function P_Dispatch_Trigger_Condition
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id;
 
    --------------------------
@@ -78,7 +78,7 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
    --  frozen_ports ::=
    --    in_port_identifier { , in_port_identifier }*
 
-   function P_Dispatch_Condition (Container : Types.Node_Id)
+   function P_Dispatch_Condition (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       Start_Loc             : Location;
@@ -152,7 +152,7 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
    --    in_event_port_identifier
    --  | in_event_data_port_identifier
 
-   function P_Dispatch_Trigger (Container : Types.Node_Id)
+   function P_Dispatch_Trigger (Container : Ocarina.Types.Node_Id)
     return Node_Id
    is
       Start_Loc             : Location;
@@ -258,7 +258,7 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
    --    timeout
 
    function P_Dispatch_Trigger_Condition
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       Start_Loc             : Location;
@@ -366,7 +366,7 @@ package body Ocarina.FE_AADL_BA.Parser.Thread_Dispatch is
    --  | provides_subprogram_access_identifier
 
    function P_Dispatch_Trigger_Conjunction
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Start_Loc : Location)
      return Node_Id
    is

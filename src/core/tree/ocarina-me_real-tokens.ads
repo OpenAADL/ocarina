@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,13 +33,13 @@
 
 --  Description of REAL tokens
 
-with Types;
+with Ocarina.Types;
 with Locations;
 with Ocarina.Files;
 
 package Ocarina.ME_REAL.Tokens is
    use Locations;
-   use Types;
+   use Ocarina.Types;
    use Ocarina.Files;
 
    type Token_Type is

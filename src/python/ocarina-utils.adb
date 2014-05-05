@@ -39,7 +39,7 @@ with Errors;                     use Errors;
 with Locations;                  use Locations;
 with Ocarina.Namet;                      use Ocarina.Namet;
 with Ocarina.Output;                     use Ocarina.Output;
-with Types;                      use Types;
+with Ocarina.Types;                      use Ocarina.Types;
 with Utils;                      use Utils;
 
 with Ocarina.Analyzer;           use Ocarina.Analyzer;

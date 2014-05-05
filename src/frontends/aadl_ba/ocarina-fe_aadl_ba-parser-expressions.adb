@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -72,7 +72,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    --  | port_id ’ count
    --  | port_id ’ fresh
 
-   function P_Value_Holder (Container : Types.Node_Id) return Node_Id is
+   function P_Value_Holder (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc    : Location;
       Loc          : Location;
       Loc_Fst_Id   : Location;
@@ -177,7 +177,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    --  value_expression ::= relation { logical_operator relation}*
 
-   function P_Value_Expression (Container : Types.Node_Id) return Node_Id is
+   function P_Value_Expression (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc     : Location;
       Loc           : Location;
       Value_Expr    : Node_Id;
@@ -259,7 +259,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    --    boolean_value
    --  | simple_expression [relational_operator simple_expression]
 
-   function P_Relation (Container : Types.Node_Id) return Node_Id is
+   function P_Relation (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc     : Location;
       Bool_Val      : Boolean  := False;
       Spl_Expr_List : List_Id  := No_List;
@@ -359,7 +359,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    --  simple_expression ::=
    --    [unary_adding_operator] term {binary_adding_operator term}*
 
-   function P_Simple_Expression (Container : Types.Node_Id) return Node_Id is
+   function P_Simple_Expression (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc        : Location;
       Loc              : Location;
       Simple_Expr_Node : Node_Id;
@@ -455,7 +455,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    --  term ::= factor {multiplying_operator factor}*
 
-   function P_Term (Container : Types.Node_Id) return Node_Id is
+   function P_Term (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc     : Location;
       Loc           : Location;
       Term_Node     : Node_Id;
@@ -525,7 +525,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    --  factor ::= primary [** primary] | abs primary | not primary
 
-   function P_Factor (Container : Types.Node_Id) return Node_Id is
+   function P_Factor (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc   : Location;
       Loc         : Location;
       Factor_Node : Node_Id;
@@ -585,7 +585,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    --  primary ::= value_holder | value_constant | ( value_expression )
 
-   function P_Primary (Container : Types.Node_Id) return Node_Id is
+   function P_Primary (Container : Ocarina.Types.Node_Id) return Node_Id is
       Loc  : Location;
       Node : Node_Id;
    begin
@@ -660,7 +660,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    -- P_Operator --
    ----------------
 
-   function P_Operator (Container : Types.Node_Id) return Node_Id is
+   function P_Operator (Container : Ocarina.Types.Node_Id) return Node_Id is
       Operator_Cat  : Operator_Kind;
       Operator_Node : Node_Id;
       Loc           : Location;
@@ -747,7 +747,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    --  property_constant ::=
    --    [ property_set_identifier :: ] property_constant_identifier
 
-   function P_Property_Constant (Container : Types.Node_Id) return Node_Id is
+   function P_Property_Constant (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc       : Location;
       Loc             : Location;
 
@@ -792,7 +792,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    --  integer_range ::= integer_value .. integer_value
 
-   function P_Integer_Range (Container : Types.Node_Id) return Node_Id is
+   function P_Integer_Range (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc     : Location;
       Integer_Range : Node_Id;
       Lower_Bound   : Node_Id;
@@ -838,7 +838,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    --  | integer_numerical_literal
    --  | integer_property_constant
 
-   function P_Integer_Value (Container : Types.Node_Id) return Node_Id is
+   function P_Integer_Value (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc   : Location;
 
       Integer_Cst  : Node_Id;
@@ -895,7 +895,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    --  behavior_time ::= integer_value unit_identifier
 
-   function P_Behavior_Time (Container : Types.Node_Id) return Node_Id is
+   function P_Behavior_Time (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc     : Location;
       Behavior_Time : Node_Id;
       Integer_Val   : Node_Id;

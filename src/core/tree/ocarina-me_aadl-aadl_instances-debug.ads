@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Output; use Ocarina.Output;
-with Types;  use Types;
+with Ocarina.Types;  use Ocarina.Types;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 use Ocarina.ME_AADL.AADL_Instances.Nodes;

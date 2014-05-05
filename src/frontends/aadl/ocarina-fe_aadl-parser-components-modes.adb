@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -53,19 +53,19 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --        error message (for list of expected tokens)
 
    function P_Mode_Transition
-     (Mode_Transition : Types.Node_Id;
+     (Mode_Transition : Ocarina.Types.Node_Id;
       Source_Modes : List_Id)
      return Node_Id;
    --  Current token is '-[' and will be ignored in this function
 
    function P_Unique_Port_Or_Transition_Trigger
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id;
    --  Parse Unique_Port_Identifier when AADL_V1
    --  Parse Transition_Trigger when AADL_V2
 
    function P_Mode_Transition_Trigger
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id;
 
    ----------------
@@ -452,7 +452,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --  mode_or_transition ::=
    --     mode_identifier | mode_transition_identifier
 
-   function P_Mode_Or_Transition (Container : Types.Node_Id) return Node_Id is
+   function P_Mode_Or_Transition (Container : Ocarina.Types.Node_Id) return Node_Id is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -620,7 +620,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --   | processor . event_source_identifier
 
    function P_Unique_Port_Or_Transition_Trigger
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -648,7 +648,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --   | processor . event_source_identifier
 
    function P_Mode_Transition_Trigger
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;

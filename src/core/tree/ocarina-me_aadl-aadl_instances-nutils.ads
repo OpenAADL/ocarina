@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,14 +32,14 @@
 ------------------------------------------------------------------------------
 
 with Locations;
-with Types;
+with Ocarina.Types;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 package Ocarina.Me_AADL.AADL_Instances.Nutils is
 
    use Locations;
-   use Types;
+   use Ocarina.Types;
    use Ocarina.Me_AADL.AADL_Instances.Nodes;
 
    procedure Append_List_To_List (S : List_Id; D : in out List_Id);

@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Output; use Ocarina.Output;
-with Types;  use Types;
+with Ocarina.Types;  use Ocarina.Types;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;  use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package Ocarina.ME_AADL.AADL_Tree.Debug is

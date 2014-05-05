@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,14 +35,14 @@
 --  of Behavior specification.
 
 with Locations;
-with Types;
+with Ocarina.Types;
 
 with Ocarina.ME_AADL_BA.Tokens;
 with Ocarina.FE_AADL_BA.Parser_Errors;
 
 package Ocarina.FE_AADL_BA.Parser is
 
-   use Types;
+   use Ocarina.Types;
    use Ocarina.FE_AADL_BA.Parser_Errors;
 
    function Process

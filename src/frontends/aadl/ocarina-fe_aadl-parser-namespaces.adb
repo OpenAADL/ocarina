@@ -55,21 +55,21 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
      return Boolean;
 
    function P_Package_Declaration
-     (Package_Spec : Types.Node_Id;
+     (Package_Spec : Ocarina.Types.Node_Id;
       Private_Declarations : Boolean)
      return Integer;
 
    function P_Name_Visibility_Declaration
-     (Namespace : Types.Node_Id;
+     (Namespace : Ocarina.Types.Node_Id;
       Start_Loc : Locations.Location;
       Private_Declarations : Boolean)
      return Node_Id;
 
    function P_Alias_Declaration
-     (Namespace : Types.Node_Id;
+     (Namespace : Ocarina.Types.Node_Id;
       Start_Loc : Locations.Location;
       Private_Declarations : Boolean)
-     return Types.Node_Id;
+     return Ocarina.Types.Node_Id;
 
    ------------------------
    -- P_AADL_Declaration --
@@ -96,7 +96,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --     annex_library           begins with 'annex'
 
    function P_AADL_Declaration
-     (AADL_Specification : Types.Node_Id)
+     (AADL_Specification : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Locations;
@@ -176,7 +176,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --  AADL_specification ::= { AADL_global_declaration | AADL_declaration }+
 
    function P_AADL_Specification
-     (AADL_Specification : Types.Node_Id)
+     (AADL_Specification : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Ocarina.ME_AADL.Tokens;
@@ -296,7 +296,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --  package_declaration ::= { name_visibility }* { AADL_declaration }+
 
    function P_Package_Declaration
-     (Package_Spec : Types.Node_Id;
+     (Package_Spec : Ocarina.Types.Node_Id;
       Private_Declarations : Boolean)
      return Integer
    is
@@ -466,7 +466,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --  end defining_package_name ;
 
    function P_Package_Specification
-     (Namespace : Types.Node_Id)
+     (Namespace : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Locations;
@@ -704,7 +704,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --     import_declaration | alias_declaration
 
    function P_Name_Visibility_Declaration
-     (Namespace : Types.Node_Id;
+     (Namespace : Ocarina.Types.Node_Id;
       Start_Loc : Locations.Location;
       Private_Declarations : Boolean)
      return Node_Id
@@ -772,10 +772,10 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --         { , ( package_name | property_set_identifier ) }+ ;
 
    function P_Import_Declaration
-     (Namespace            : Types.Node_Id;
+     (Namespace            : Ocarina.Types.Node_Id;
       Start_Loc            : Locations.Location;
       Private_Declarations : Boolean             := False)
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
@@ -903,10 +903,10 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --    | ( renames package_name::all ; )
 
    function P_Alias_Declaration
-     (Namespace : Types.Node_Id;
+     (Namespace : Ocarina.Types.Node_Id;
       Start_Loc : Locations.Location;
       Private_Declarations : Boolean)
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;

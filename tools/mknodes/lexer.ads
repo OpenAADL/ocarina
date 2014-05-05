@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,7 +34,7 @@
 with GNAT.OS_Lib;
 
 with Locations;
-with Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Lexer is
 pragma Elaborate_Body (Lexer);
@@ -86,7 +86,7 @@ pragma Elaborate_Body (Lexer);
      range T_Interface .. T_Octet;
 
    Token          : Token_Type;
-   Token_Name     : Types.Name_Id;
+   Token_Name     : Name_Id;
    Token_Location : Locations.Location;
 
    function Image (T : Token_Type) return String;
@@ -128,7 +128,7 @@ pragma Elaborate_Body (Lexer);
 
    procedure Process
      (Source_File : GNAT.OS_Lib.File_Descriptor;
-      Source_Name : Types.Name_Id);
+      Source_Name : Name_Id);
    --  Load file Source in the lexer
 
    procedure Write (T : Token_Type);
@@ -178,7 +178,7 @@ private
    procedure Skip_Spaces;
    --  Skip all spaces
 
-   function To_Token (Name : Types.Name_Id) return Token_Type;
+   function To_Token (Name : Name_Id) return Token_Type;
    --  Return the token matching Name. Otherwise, return T_Error.
 
 end Lexer;

@@ -65,7 +65,7 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
    -- P_Identifier --
    ------------------
 
-   function P_Identifier (Container : Types.Node_Id) return Node_Id is
+   function P_Identifier (Container : Ocarina.Types.Node_Id) return Node_Id is
       use Locations;
       use Ocarina.ME_AADL_BA.Tokens;
       use Ocarina.FE_AADL_BA.Lexer;
@@ -90,7 +90,7 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
    --  in_event_data_port_identifier ( ( value_constant | others ) )
 
    function P_Identifier_With_Value
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id is
       use Locations;
       use Ocarina.AADL_Values;
@@ -204,7 +204,7 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
    --    { package_identifier :: }* package_identifier
 
    function P_Unique_Classifier_Reference
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id
    is
       use Locations;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,15 +36,15 @@ package Ocarina.FE_AADL_BA.Parser.Identifiers is
    function Make_Current_Identifier (Entity : Node_Id) return Node_Id;
    --  Make an identifier from current token
 
-   function P_Identifier (Container : Types.Node_Id) return Node_Id;
+   function P_Identifier (Container : Ocarina.Types.Node_Id) return Node_Id;
 
    function P_Identifier_With_Value
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id;
    --  Return an Identifier or an Identifier_With_Value node
 
    function P_Unique_Classifier_Reference
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id;
 
 end Ocarina.FE_AADL_BA.Parser.Identifiers;

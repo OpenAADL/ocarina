@@ -325,7 +325,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
          Set_Str_To_Name_Buffer (Image (T));
          Name := Name_Find;
          Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-         Set_Name_Table_Byte (Name, Types.Byte (Token_Type'Pos (T) + 1));
+         Set_Name_Table_Byte (Name, Ocarina.Types.Byte (Token_Type'Pos (T) + 1));
 
          Set_Str_To_Name_Buffer (Image (T));
       else
@@ -675,7 +675,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    function To_RTSJ_Name (N : Name_Id) return Name_Id is
       Name      : Name_Id;
       Test_Name : Name_Id;
-      V         : Types.Byte;
+      V         : Ocarina.Types.Byte;
    begin
       Get_Name_String (Normalize_Name (N));
       Name := Name_Find;

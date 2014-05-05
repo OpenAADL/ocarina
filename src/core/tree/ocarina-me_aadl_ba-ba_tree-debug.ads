@@ -32,14 +32,14 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Output;
-with Types;
+with Ocarina.Types;
 
 with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 package Ocarina.ME_AADL_BA.BA_Tree.Debug is
 
    use Ocarina.Output;
-   use Types;
+   use Ocarina.Types;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
    N_Indents : Integer := -1;

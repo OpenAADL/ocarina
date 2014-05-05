@@ -418,7 +418,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
          Set_Str_To_Name_Buffer (Image (T));
          Name := Name_Find;
          Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-         Set_Name_Table_Byte (Name, Types.Byte (Token_Type'Pos (T) + 1));
+         Set_Name_Table_Byte (Name, Ocarina.Types.Byte (Token_Type'Pos (T) + 1));
 
          Set_Str_To_Name_Buffer (Image (T));
       else
@@ -484,7 +484,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
       First     : Natural := 1;
       Name      : Name_Id;
       Test_Name : Name_Id;
-      V         : Types.Byte;
+      V         : Ocarina.Types.Byte;
    begin
       Get_Name_String (Normalize_Name (N));
       while First <= Name_Len

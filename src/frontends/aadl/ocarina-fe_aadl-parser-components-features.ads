@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,17 +34,17 @@
 package Ocarina.FE_AADL.Parser.Components.Features is
 
    function P_Feature
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Refinable : Boolean)
      return Node_Id;
    --  Parse Feature and Feature_Refinement
    --  If Refinable = FALSE, Feature_Refinement is not allowed
 
-   function P_Feature_Refinement (Container : Types.Node_Id) return Node_Id;
+   function P_Feature_Refinement (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  Parse Feature_Refinement exclusively, useful in parsing 'refines type'
 
    function P_Feature_Group_Or_Port_Group_Or_Port_Spec
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Refinable : Boolean)
      return Node_Id;
    --  Parse Feature_Group_Spec or Feature_Group_Refinement or

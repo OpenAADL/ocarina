@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,13 +33,13 @@
 
 --  Defines types for REAL
 
-with Types;
+with Ocarina.Types;
 with Ocarina.ME_REAL.Tokens;
 with Ocarina.ME_REAL.REAL_Tree.Debug;
 
 package Ocarina.ME_REAL.REAL_Tree.Utils is
 
-   use Types;
+   use Ocarina.Types;
    use Ocarina.ME_REAL.Tokens;
 
    --  Operators values

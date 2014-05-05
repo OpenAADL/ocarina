@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 --  Lexer for the REAL frontend
 
-with Types;
+with Ocarina.Types;
 with Locations;
 with Ocarina.Files;
 with Ocarina.ME_REAL.Tokens;
@@ -43,7 +43,7 @@ package Ocarina.FE_REAL.Lexer is
    pragma Elaborate_Body (Lexer);
 
    use Ocarina.ME_REAL.Tokens;
-   use Types;
+   use Ocarina.Types;
    use Locations;
 
    procedure Scan_Token;

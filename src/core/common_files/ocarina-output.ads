@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                               O U T P U T                                --
+--                       O C A R I N A . O U T P U T                        --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 1992-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 1992-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,7 +37,7 @@
 
 with GNAT.OS_Lib;
 
-with Types; use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.Output is
    pragma Elaborate_Body (Ocarina.Output);

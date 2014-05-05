@@ -38,7 +38,7 @@ with Errors;    use Errors;
 with Locations; use Locations;
 with Ocarina.Namet;     use Ocarina.Namet;
 with Ocarina.Output;    use Ocarina.Output;
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 with Utils;     use Utils;
 
 with Ada.Command_Line; use Ada.Command_Line;
@@ -378,7 +378,7 @@ procedure Ocarina_Cmd is
 
       package OIQ renames Ocarina.Instances.Queries;
 
-      F : Types.Int;
+      F : Ocarina.Types.Int;
       N : Node_Id;
 
    begin
@@ -885,7 +885,7 @@ begin
 
       AADL_Root := No_Node;
       declare
-         F : Types.Int := Sources.First;
+         F : Ocarina.Types.Int := Sources.First;
       begin
          loop
             File_Name := Search_File (Sources.Table (F));

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -74,9 +74,9 @@ package Ocarina.Builder.AADL.Components.Modes is
 
    function Add_New_Mode_Transition_Trigger
      (Loc : Locations.Location;
-      Identifier : Types.Node_Id;
+      Identifier : Ocarina.Types.Node_Id;
       Is_Self : Boolean;
       Is_Processor : Boolean)
-     return Types.Node_Id;
+     return Ocarina.Types.Node_Id;
 
 end Ocarina.Builder.AADL.Components.Modes;

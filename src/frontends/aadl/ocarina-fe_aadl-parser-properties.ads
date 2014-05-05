@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,18 +47,18 @@ package Ocarina.FE_AADL.Parser.Properties is
    --     PAT_Simple_Or_Contained : parse property_association or
    --                                     contained_property_association
 
-   function P_Property_Association (Container : Types.Node_Id) return Node_Id;
+   function P_Property_Association (Container : Ocarina.Types.Node_Id) return Node_Id;
    pragma Inline (P_Property_Association);
    --  Call P_Property_Association (PAT_Simple)
 
    function P_Property_Association_In_Component_Implementation
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return Node_Id;
    pragma Inline (P_Property_Association_In_Component_Implementation);
    --  Call P_Property_Association (PAT_Simple_Or_Contained)
 
    function P_Property_Association
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Property_Type : Property_Association_Type)
      return Node_Id;
    --  Parse Property_Association, property type depends on parameter
@@ -68,7 +68,7 @@ package Ocarina.FE_AADL.Parser.Properties is
    --                                     contained_property_association
 
    function P_Property_Associations
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Optional : Boolean;
       Property_Type : Property_Association_Type;
       Code : Parsing_Code)
@@ -77,7 +77,7 @@ package Ocarina.FE_AADL.Parser.Properties is
    --                     else parse (   { { Property_Association }+ }   )
 
    function P_Property_Set
-     (AADL_Spec : Types.Node_Id;
+     (AADL_Spec : Ocarina.Types.Node_Id;
       Start_Loc : Location)
      return Node_Id;
    --  Current token must be 'set'

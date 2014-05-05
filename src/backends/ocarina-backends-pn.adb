@@ -63,14 +63,14 @@ package body Ocarina.Backends.PN is
    use Ocarina.Output;
    use Ocarina.Backends.Utils;
 
-   procedure Generate_TINA (AADL_Root : Types.Node_Id);
-   procedure Generate_CAMI (AADL_Root : Types.Node_Id);
+   procedure Generate_TINA (AADL_Root : Ocarina.Types.Node_Id);
+   procedure Generate_CAMI (AADL_Root : Ocarina.Types.Node_Id);
 
    -------------------
    -- Generate_TINA --
    -------------------
 
-   procedure Generate_TINA (AADL_Root : Types.Node_Id) is
+   procedure Generate_TINA (AADL_Root : Ocarina.Types.Node_Id) is
       PN_Generated, Instance_Root : Node_Id;
 
    begin
@@ -102,7 +102,7 @@ package body Ocarina.Backends.PN is
    -- Generate_CAMI --
    -------------------
 
-   procedure Generate_CAMI (AADL_Root : Types.Node_Id) is
+   procedure Generate_CAMI (AADL_Root : Ocarina.Types.Node_Id) is
       PN_Generated, Instance_Root : Node_Id;
 
    begin
@@ -129,7 +129,7 @@ package body Ocarina.Backends.PN is
    -- Generate --
    --------------
 
-   procedure Generate (AADL_Root : Types.Node_Id) is
+   procedure Generate (AADL_Root : Ocarina.Types.Node_Id) is
    begin
       Generate_TINA (AADL_Root);
       Reset_Handlings;

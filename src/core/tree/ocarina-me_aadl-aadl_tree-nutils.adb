@@ -477,9 +477,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Nutils is
    ------------------------------
 
    function Build_Package_Identifier
-     (Pack_Name : Types.Node_Id;
+     (Pack_Name : Ocarina.Types.Node_Id;
       Loc       : Locations.Location := No_Location)
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       pragma Assert (Kind (Pack_Name) = K_Package_Name);
 

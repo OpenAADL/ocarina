@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,32 +31,32 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 with Ocarina.Backends.PN.Nodes;
 
 package Ocarina.Backends.PN.Nutils is
 
    package OPN renames Ocarina.Backends.PN.Nodes;
 
-   function New_Node (Kind : OPN.Node_Kind) return Types.Node_Id;
+   function New_Node (Kind : OPN.Node_Kind) return Ocarina.Types.Node_Id;
    --  Create a new node
 
-   function New_List (Kind : OPN.Node_Kind) return Types.List_Id;
+   function New_List (Kind : OPN.Node_Kind) return Ocarina.Types.List_Id;
    --  Create a new list
 
-   function Is_Empty (L : Types.List_Id) return Boolean;
+   function Is_Empty (L : Ocarina.Types.List_Id) return Boolean;
    --  Return true if the list is empty, else return false
 
-   procedure Append_Node_To_List (E : Types.Node_Id; L : Types.List_Id);
+   procedure Append_Node_To_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
    --  Append the node to the list
 
-   procedure Push_Node_Into_List (E : Types.Node_Id; L : Types.List_Id);
+   procedure Push_Node_Into_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
 
-   procedure Delete_Node_From_List (E : Types.Node_Id; L : Types.List_Id);
+   procedure Delete_Node_From_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id);
 
    function Make_Identifier
-     (Pn_Entity : Types.Node_Id; Ident_Name : Types.Name_Id)
-     return Types.Node_Id;
+     (Pn_Entity : Ocarina.Types.Node_Id; Ident_Name : Ocarina.Types.Name_Id)
+     return Ocarina.Types.Node_Id;
    --  Create a new identifier
 
 end Ocarina.Backends.PN.Nutils;

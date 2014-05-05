@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,17 +35,17 @@
 --  withing a given set, accordingly to a user-provided selection
 --  criterium, where criterium involves another AADL node.
 
-with Types;
+with Ocarina.Types;
 
 generic
    with function Predicate
-     (E      : Types.Node_Id;
-      D      : Types.Node_Id;
+     (E      : Ocarina.Types.Node_Id;
+      D      : Ocarina.Types.Node_Id;
       Option : Predicates_Search_Options := PSO_Direct)
      return Boolean;
 
 package Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates is
-   use Types;
+   use Ocarina.Types;
 
    function Get_Instances_Verifying_Predicate
      (D      : Node_Id;

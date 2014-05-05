@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -79,10 +79,10 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
      return Node_Id;
 
    function P_Subprogram_Parameter_List
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return List_Id;
 
-   function P_Parameter_Label (Container : Types.Node_Id) return Node_Id;
+   function P_Parameter_Label (Container : Ocarina.Types.Node_Id) return Node_Id;
 
    ------------------------
    -- P_Behavior_Actions --
@@ -812,7 +812,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    --  subprogram_parameter_list ::= parameter_label { , parameter_label } *
 
    function P_Subprogram_Parameter_List
-     (Container : Types.Node_Id)
+     (Container : Ocarina.Types.Node_Id)
      return List_Id
    is
    begin
@@ -827,7 +827,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    --  parameter_label ::= in_parameter_value_expression | out_parameter_target
 
-   function P_Parameter_Label (Container : Types.Node_Id) return Node_Id
+   function P_Parameter_Label (Container : Ocarina.Types.Node_Id) return Node_Id
    is
       Start_Loc   : Location;
       Parameter   : Node_Id;
@@ -858,7 +858,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    --  id ::= identifier { [ integer_value_holder ] }*
 
-   function P_Id (Container : Types.Node_Id) return Node_Id is
+   function P_Id (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc    : Location;
       Loc          : Location;
       Id_Node      : Node_Id;

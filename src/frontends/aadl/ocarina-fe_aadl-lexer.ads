@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,7 +35,7 @@
 --  by the parser for scanning AADL source files.  This package is
 --  conformant to the AADL v1.0 issued on 2004-09
 
-with Types;         use Types;
+with Ocarina.Types;         use Ocarina.Types;
 with Locations;     use Locations;
 
 with Ocarina.Files;

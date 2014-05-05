@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -45,7 +45,7 @@ with Ocarina.Options;
 package body Ocarina.FE_AADL.Parser.Annexes is
 
    function P_Annex
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Code                : Parsing_Code;
       Private_Declaration : Boolean)
      return Node_Id;
@@ -56,7 +56,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
    -------------
 
    function P_Annex
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Code                : Parsing_Code;
       Private_Declaration : Boolean)
      return Node_Id is
@@ -175,7 +175,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
    --       ( ( {** annex_specific_reusable_constructs **} ) | none ) ;
 
    function P_Annex_Library
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Private_Declaration : Boolean := False)
      return Node_Id is
    begin
@@ -191,7 +191,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
    --       ( ( {** annex_specific_language_constructs **} ) | none )
    --       [ in_modes ];
 
-   function P_Annex_Subclause (Namespace : Types.Node_Id) return Node_Id is
+   function P_Annex_Subclause (Namespace : Ocarina.Types.Node_Id) return Node_Id is
    begin
       return P_Annex (Namespace, PC_Annex_Subclause, False);
    end P_Annex_Subclause;
@@ -204,7 +204,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
    --  annex_path ::=
    --     [ { annex_identifier } ] { ** model_element_identifier }+
 
-   function P_Annex_Path (Container : Types.Node_Id) return Node_Id is
+   function P_Annex_Path (Container : Ocarina.Types.Node_Id) return Node_Id is
 
       use Lexer;
       use Locations;

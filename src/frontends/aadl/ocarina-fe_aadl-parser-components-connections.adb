@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,7 +47,7 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
 
    function P_Connection_Reference
      (Code : Parsing_Code)
-     return Types.Node_Id;
+     return Ocarina.Types.Node_Id;
 
    ------------------
    -- P_Connection --
@@ -175,9 +175,9 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
    --     feature group
 
    function P_Connection
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Refinable : Boolean)
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -628,7 +628,7 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
 
    function P_Connection_Reference
      (Code : Parsing_Code)
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;

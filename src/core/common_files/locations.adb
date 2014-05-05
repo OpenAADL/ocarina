@@ -34,7 +34,7 @@
 with GNAT.Directory_Operations;
 
 with Ocarina.Namet;
-with Types; use type Types.Name_Id, Types.Int, Types.Text_Ptr;
+with Ocarina.Types; use type Ocarina.Types.Name_Id, Ocarina.Types.Int, Ocarina.Types.Text_Ptr;
 
 package body Locations is
 
@@ -43,15 +43,15 @@ package body Locations is
    -----------
 
    function Image (Loc : Location) return String is
-      Column : constant Types.Nat
-        := Types.Nat (Loc.Last_Pos - Loc.First_Pos + 1);
-      Backup : Types.Name_Id;
+      Column : constant Ocarina.Types.Nat
+        := Ocarina.Types.Nat (Loc.Last_Pos - Loc.First_Pos + 1);
+      Backup : Ocarina.Types.Name_Id;
       --  Backup name buffer
-      Result : Types.Name_Id;
+      Result : Ocarina.Types.Name_Id;
       --  Store returned value before restoring name buffer
    begin
-      if Loc.Base_Name = Types.No_Name then
-         return Types.No_Str;
+      if Loc.Base_Name = Ocarina.Types.No_Name then
+         return Ocarina.Types.No_Str;
 
       else
          --  A critical issue consist in preserving Name_Buffer. In
@@ -62,7 +62,7 @@ package body Locations is
 
          Ocarina.Namet.Get_Name_String (Loc.Base_Name);
          Ocarina.Namet.Add_Char_To_Name_Buffer (':');
-         Ocarina.Namet.Add_Nat_To_Name_Buffer (Types.Nat (Loc.Line));
+         Ocarina.Namet.Add_Nat_To_Name_Buffer (Ocarina.Types.Nat (Loc.Line));
          Ocarina.Namet.Add_Char_To_Name_Buffer (':');
          if Column < 10 then
             Ocarina.Namet.Add_Char_To_Name_Buffer ('0');
@@ -72,7 +72,7 @@ package body Locations is
 
          --  Restore backup into name buffer
 
-         if Backup /= Types.No_Name then
+         if Backup /= Ocarina.Types.No_Name then
             Ocarina.Namet.Get_Name_String (Backup);
          end if;
 
@@ -87,9 +87,9 @@ package body Locations is
 
    procedure Initialize
      (Loc    : in out Location;
-      Name   : Types.Name_Id;
-      Size   : Types.Int;
-      Buffer : Types.Text_Buffer_Ptr)
+      Name   : Ocarina.Types.Name_Id;
+      Size   : Ocarina.Types.Int;
+      Buffer : Ocarina.Types.Text_Buffer_Ptr)
    is
    begin
       Loc.Base_Name :=
@@ -102,7 +102,7 @@ package body Locations is
       Loc.First_Pos := 1;
       Loc.Last_Pos  := 1;
       Loc.Scan      := 1;
-      Loc.EOF       := Types.Text_Ptr (Size);
+      Loc.EOF       := Ocarina.Types.Text_Ptr (Size);
       Loc.Buffer    := Buffer;
    end Initialize;
 
@@ -112,8 +112,8 @@ package body Locations is
 
    procedure Update_Name_And_Line
      (Loc  : in out Location;
-      Name : Types.Name_Id;
-      Line : Types.Int)
+      Name : Ocarina.Types.Name_Id;
+      Line : Ocarina.Types.Int)
    is
    begin
       Loc.Line      := Line;

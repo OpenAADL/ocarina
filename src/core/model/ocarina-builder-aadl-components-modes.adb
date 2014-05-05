@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -41,8 +41,8 @@ package body Ocarina.Builder.AADL.Components.Modes is
    ------------------------------
 
    function Add_Property_Association
-     (Mode : Types.Node_Id;
-      Property_Association : Types.Node_Id)
+     (Mode : Ocarina.Types.Node_Id;
+      Property_Association : Ocarina.Types.Node_Id)
      return Boolean
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -68,9 +68,9 @@ package body Ocarina.Builder.AADL.Components.Modes is
 
    function Add_New_Mode
      (Loc : Locations.Location;
-      Identifier : Types.Node_Id;
-      Component : Types.Node_Id)
-     return Types.Node_Id
+      Identifier : Ocarina.Types.Node_Id;
+      Component : Ocarina.Types.Node_Id)
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -107,8 +107,8 @@ package body Ocarina.Builder.AADL.Components.Modes is
 
    function Add_New_Mode_Transition
      (Loc : Locations.Location;
-      Component : Types.Node_Id)
-     return Types.Node_Id
+      Component : Ocarina.Types.Node_Id)
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Builder.AADL.Components;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -135,10 +135,10 @@ package body Ocarina.Builder.AADL.Components.Modes is
 
    function Add_New_Mode_Transition_Trigger
      (Loc : Locations.Location;
-      Identifier : Types.Node_Id;
+      Identifier : Ocarina.Types.Node_Id;
       Is_Self : Boolean;
       Is_Processor : Boolean)
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.Builder.AADL.Components;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;

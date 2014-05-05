@@ -70,19 +70,19 @@ package body Ocarina.Backends.PN.Components is
       PN_Dup_Arc_Proc : PN_Dup_Arc);
 
    function Process_Component_Instance
-     (Instance : Types.Node_Id;
-      PN_Generated : Types.Node_Id)
+     (Instance : Ocarina.Types.Node_Id;
+      PN_Generated : Ocarina.Types.Node_Id)
      return Boolean;
 
    function Process_Thread_Instance
-     (Aadl_Instance : Types.Node_Id;
-      PN_Generated : Types.Node_Id)
+     (Aadl_Instance : Ocarina.Types.Node_Id;
+      PN_Generated : Ocarina.Types.Node_Id)
      return Boolean;
 
    procedure PN_Process_Thread_Pattern
-     (Aadl_Instance : Types.Node_Id;
-      PN_Thread : Types.Node_Id;
-      PN_Generated : Types.Node_Id;
+     (Aadl_Instance : Ocarina.Types.Node_Id;
+      PN_Thread : Ocarina.Types.Node_Id;
+      PN_Generated : Ocarina.Types.Node_Id;
       PN_P_Init_Proc : PN_Init_Node;
       PN_P_New_Proc : PN_New_Node;
       PN_T_Init_Proc : PN_Init_Node;
@@ -91,9 +91,9 @@ package body Ocarina.Backends.PN.Components is
       PN_A_New_Proc : PN_New_Node);
 
    procedure PN_Thread_Skeleton
-     (Aadl_Instance : Types.Node_Id;
-      PN_Thread : Types.Node_Id;
-      PN_Generated : Types.Node_Id;
+     (Aadl_Instance : Ocarina.Types.Node_Id;
+      PN_Thread : Ocarina.Types.Node_Id;
+      PN_Generated : Ocarina.Types.Node_Id;
       PN_P_Init_Proc : PN_Init_Node;
       PN_P_New_Proc : PN_New_Node;
       PN_T_Init_Proc : PN_Init_Node;
@@ -102,10 +102,10 @@ package body Ocarina.Backends.PN.Components is
       PN_A_New_Proc : PN_New_Node);
 
    procedure PN_Build_Spg_Par
-     (Aadl_Instance : Types.Node_Id;
-      PN_Generated  : Types.Node_Id;
-      Spg_Feat : Types.Node_Id;
-      PN_Spg_Call : Types.Node_Id;
+     (Aadl_Instance : Ocarina.Types.Node_Id;
+      PN_Generated  : Ocarina.Types.Node_Id;
+      Spg_Feat : Ocarina.Types.Node_Id;
+      PN_Spg_Call : Ocarina.Types.Node_Id;
       In_Par : Boolean := True;
       PN_P_Init_Proc : PN_Init_Node;
       PN_P_New_Proc  : PN_New_Node;
@@ -114,21 +114,21 @@ package body Ocarina.Backends.PN.Components is
       PN_A_Init_Proc : PN_Init_Arc;
       PN_A_New_Proc  : PN_New_Node);
 
-   procedure PN_Build_Port (Aadl_Instance : Types.Node_Id;
-                            PN_Generated  : Types.Node_Id;
-                            PN_Thread : Types.Node_Id;
-                            F : Types.Value_Id);
+   procedure PN_Build_Port (Aadl_Instance : Ocarina.Types.Node_Id;
+                            PN_Generated  : Ocarina.Types.Node_Id;
+                            PN_Thread : Ocarina.Types.Node_Id;
+                            F : Ocarina.Types.Value_Id);
 
    procedure PN_Build_Tpn_Port
      (Aadl_Instance : Node_Id;
-      PN_Generated  : Types.Node_Id;
+      PN_Generated  : Ocarina.Types.Node_Id;
       Port_Instance : Node_Id;
       PN_Port : Node_Id;
       Is_Data : Boolean := True);
 
    procedure PN_Build_Cpn_Port
      (Aadl_Instance : Node_Id;
-      PN_Generated  : Types.Node_Id;
+      PN_Generated  : Ocarina.Types.Node_Id;
       Port_Instance : Node_Id;
       PN_Port : Node_Id;
       Is_Data : Boolean := True);
@@ -138,9 +138,9 @@ package body Ocarina.Backends.PN.Components is
    -----------------------------------
 
    function Process_Architecture_Instance
-     (Architecture_Instance : Types.Node_Id;
+     (Architecture_Instance : Ocarina.Types.Node_Id;
       F : Unsigned_Long_Long)
-     return Types.Node_Id
+     return Ocarina.Types.Node_Id
    is
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       use Ocarina.Backends.PN.Iutils;
@@ -1097,7 +1097,7 @@ package body Ocarina.Backends.PN.Components is
             --  to in ports
             declare
                Port_Iter : Node_Id;
-               Interconnection_Node : Types.Node_Id;
+               Interconnection_Node : Ocarina.Types.Node_Id;
                Pop_Node : Node_Id;
             begin
                if not Is_Empty (Out_Ports (Thread_Iter)) then
@@ -1512,8 +1512,8 @@ package body Ocarina.Backends.PN.Components is
    --------------------------------
 
    function Process_Component_Instance
-     (Instance : Types.Node_Id;
-      PN_Generated : Types.Node_Id)
+     (Instance : Ocarina.Types.Node_Id;
+      PN_Generated : Ocarina.Types.Node_Id)
      return Boolean
    is
       use Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -1565,8 +1565,8 @@ package body Ocarina.Backends.PN.Components is
    -----------------------------
 
    function Process_Thread_Instance
-     (Aadl_Instance : Types.Node_Id;
-      PN_Generated : Types.Node_Id)
+     (Aadl_Instance : Ocarina.Types.Node_Id;
+      PN_Generated : Ocarina.Types.Node_Id)
      return Boolean
    is
       use Ocarina.Backends.PN.Nodes;
@@ -1627,9 +1627,9 @@ package body Ocarina.Backends.PN.Components is
    -------------------------------------
 
    procedure PN_Process_Thread_Pattern
-     (Aadl_Instance : Types.Node_Id;
-      PN_Thread : Types.Node_Id;
-      PN_Generated : Types.Node_Id;
+     (Aadl_Instance : Ocarina.Types.Node_Id;
+      PN_Thread : Ocarina.Types.Node_Id;
+      PN_Generated : Ocarina.Types.Node_Id;
       PN_P_Init_Proc : PN_Init_Node;
       PN_P_New_Proc  : PN_New_Node;
       PN_T_Init_Proc : PN_Init_Node;
@@ -2223,7 +2223,7 @@ package body Ocarina.Backends.PN.Components is
                      Get_String_Name ("_Clock"));
                   Clock_T_Pattern : constant Clock_Pattern :=
                     (1 => Get_String_Name ("_Period_Event"));
-                  P, T, A : Types.Node_Id;
+                  P, T, A : Ocarina.Types.Node_Id;
                   PN_Period : Time_Type;
                   PN_Hyperperiod : Value_Type;
                   B : Boolean := True;
@@ -2314,7 +2314,7 @@ package body Ocarina.Backends.PN.Components is
 
       --  set place initial marking
       declare
-         P : Types.Node_Id;
+         P : Ocarina.Types.Node_Id;
       begin
          P := OPN.First_Node (Internal_Places (PN_Thread));
          --  Halted place
@@ -2460,10 +2460,10 @@ package body Ocarina.Backends.PN.Components is
    ------------------------
 
    procedure PN_Build_Spg_Par
-     (Aadl_Instance : Types.Node_Id;
-      PN_Generated  : Types.Node_Id;
-      Spg_Feat : Types.Node_Id;
-      PN_Spg_Call : Types.Node_Id;
+     (Aadl_Instance : Ocarina.Types.Node_Id;
+      PN_Generated  : Ocarina.Types.Node_Id;
+      Spg_Feat : Ocarina.Types.Node_Id;
+      PN_Spg_Call : Ocarina.Types.Node_Id;
       In_Par : Boolean := True;
       PN_P_Init_Proc : PN_Init_Node;
       PN_P_New_Proc  : PN_New_Node;
@@ -2588,10 +2588,10 @@ package body Ocarina.Backends.PN.Components is
    --  PN_Build_Port  --
    ---------------------
 
-   procedure PN_Build_Port (Aadl_Instance : Types.Node_Id;
-                            PN_Generated  : Types.Node_Id;
-                            PN_Thread : Types.Node_Id;
-                            F : Types.Value_Id)
+   procedure PN_Build_Port (Aadl_Instance : Ocarina.Types.Node_Id;
+                            PN_Generated  : Ocarina.Types.Node_Id;
+                            PN_Thread : Ocarina.Types.Node_Id;
+                            F : Ocarina.Types.Value_Id)
    is
 
       use Ocarina.Namet;
@@ -2686,7 +2686,7 @@ package body Ocarina.Backends.PN.Components is
 
    procedure PN_Build_Tpn_Port
      (Aadl_Instance : Node_Id;
-      PN_Generated  : Types.Node_Id;
+      PN_Generated  : Ocarina.Types.Node_Id;
       Port_Instance : Node_Id;
       PN_Port : Node_Id;
       Is_Data : Boolean := True)
@@ -2854,7 +2854,7 @@ package body Ocarina.Backends.PN.Components is
 
    procedure PN_Build_Cpn_Port
      (Aadl_Instance : Node_Id;
-      PN_Generated  : Types.Node_Id;
+      PN_Generated  : Ocarina.Types.Node_Id;
       Port_Instance : Node_Id;
       PN_Port : Node_Id;
       Is_Data : Boolean := True)
@@ -3171,9 +3171,9 @@ package body Ocarina.Backends.PN.Components is
    --------------------------
 
    procedure PN_Thread_Skeleton
-     (Aadl_Instance : Types.Node_Id;
-      PN_Thread : Types.Node_Id;
-      PN_Generated : Types.Node_Id;
+     (Aadl_Instance : Ocarina.Types.Node_Id;
+      PN_Thread : Ocarina.Types.Node_Id;
+      PN_Generated : Ocarina.Types.Node_Id;
       PN_P_Init_Proc : PN_Init_Node;
       PN_P_New_Proc : PN_New_Node;
       PN_T_Init_Proc : PN_Init_Node;
@@ -3198,7 +3198,7 @@ package body Ocarina.Backends.PN.Components is
       T_Local_Skeleton : constant Thread_Pattern :=
         (1 => Get_String_Name ("_Init_Dispatch"));
 
-      P, T, A : Types.Node_Id;
+      P, T, A : Ocarina.Types.Node_Id;
    begin
       --  local places
       for PN in P_Skeleton'First .. P_Skeleton'Last loop

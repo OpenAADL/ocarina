@@ -33,11 +33,11 @@
 
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
 with Ocarina.Output; use Ocarina.Output;
-with Types;
+with Ocarina.Types;
 
 package Ocarina.ME_REAL.REAL_Tree.Debug is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
-   use Types;
+   use Ocarina.Types;
 
    procedure W_Eol         (N : Natural := 1) renames Ocarina.Output.Write_Eol;
    procedure W_Int         (N : Int)          renames Ocarina.Output.Write_Int;

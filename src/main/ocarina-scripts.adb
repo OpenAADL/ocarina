@@ -34,7 +34,7 @@
 with Errors;                           use Errors;
 with Ocarina.Namet;                            use Ocarina.Namet;
 with Ocarina.Output;                           use Ocarina.Output;
-with Types;                            use Types;
+with Ocarina.Types;                            use Ocarina.Types;
 
 with Ada.Unchecked_Deallocation;
 with Ada.Exceptions;                   use Ada.Exceptions;

@@ -38,7 +38,7 @@ with Charset;   use Charset;
 with Locations; use Locations;
 with Ocarina.Namet;     use Ocarina.Namet;
 with Ocarina.Output;    use Ocarina.Output;
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 with Utils;     use Utils;
 
 with Ocarina.Backends.Ada_Values; use Ocarina.Backends.Ada_Values;

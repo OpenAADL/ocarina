@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,7 +42,7 @@ with Ocarina.Builder.AADL.Components.Features;
 
 package body Ocarina.FE_AADL.Parser.Components.Features is
 
-   function P_In_Out_Item (Container     : Types.Node_Id;
+   function P_In_Out_Item (Container     : Ocarina.Types.Node_Id;
                            Identifier    : Node_Id;
                            Is_Refinement : Boolean;
                            Code          : Parsing_Code)
@@ -50,7 +50,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --  Parse item begins with 'in' or 'out'
    --  Examples: Port_Spec, Parameter, ... and refinements
 
-   function P_Feature_Group_Spec (Container     : Types.Node_Id;
+   function P_Feature_Group_Spec (Container     : Ocarina.Types.Node_Id;
                                   Identifier    : Node_Id;
                                   Is_Refinement : Boolean) return Node_Id;
    --  Current token must be reserved word 'feature' or 'port'
@@ -77,7 +77,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
      return Node_Id;
    --  Parse Parameter and Parameter_Refinement
 
-   function P_Subprogram_Spec (Container     : Types.Node_Id;
+   function P_Subprogram_Spec (Container     : Ocarina.Types.Node_Id;
                                Identifier    : Node_Id;
                                Is_Refinement : Boolean)
                               return Node_Id;
@@ -86,7 +86,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --                                 Server_Subprogram_Refinement
    --  else, parse Data_Subprogram_Spec or Server_Subprogram
 
-   function P_Subcomponent_Access (Container     : Types.Node_Id;
+   function P_Subcomponent_Access (Container     : Ocarina.Types.Node_Id;
                                    Identifier    : Node_Id;
                                    Is_Refinement : Boolean)
                                   return Node_Id;
@@ -96,7 +96,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    -- P_In_Out_Item --
    -------------------
 
-   function P_In_Out_Item (Container     : Types.Node_Id;
+   function P_In_Out_Item (Container     : Ocarina.Types.Node_Id;
                            Identifier    : Node_Id;
                            Is_Refinement : Boolean;
                            Code          : Parsing_Code)
@@ -418,7 +418,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --  subprogram_feature_classifier_reference ::=
    --     [ package_name :: ] data_type_identifier . subprogram_identifier
 
-   function P_Subprogram_Spec (Container     : Types.Node_Id;
+   function P_Subprogram_Spec (Container     : Ocarina.Types.Node_Id;
                                Identifier    : Node_Id;
                                Is_Refinement : Boolean)
                               return Node_Id
@@ -552,7 +552,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --            | prototype_identifier ]
    --      [ { { access_property_association }+ } ] ;
 
-   function P_Subcomponent_Access (Container     : Types.Node_Id;
+   function P_Subcomponent_Access (Container     : Ocarina.Types.Node_Id;
                                    Identifier    : Node_Id;
                                    Is_Refinement : Boolean)
                                   return Node_Id
@@ -691,7 +691,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --                         | parameter_refinement
 
    function P_Feature
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Refinable : Boolean)
      return Node_Id
    is
@@ -771,7 +771,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --                         | subcomponent_access_refinement
    --                         | parameter_refinement
 
-   function P_Feature_Refinement (Container : Types.Node_Id) return Node_Id is
+   function P_Feature_Refinement (Container : Ocarina.Types.Node_Id) return Node_Id is
       use Parser.Identifiers;
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
@@ -867,7 +867,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --  unique_feature_group_type_reference ::=
    --     [ package_name :: ] feature_group_type_identifier
 
-   function P_Feature_Group_Spec (Container     : Types.Node_Id;
+   function P_Feature_Group_Spec (Container     : Ocarina.Types.Node_Id;
                                   Identifier    : Node_Id;
                                   Is_Refinement : Boolean)
                                  return Node_Id
@@ -984,7 +984,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    -------------------------------------------------
 
    function P_Feature_Group_Or_Port_Group_Or_Port_Spec
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Refinable : Boolean)
      return Node_Id
    is

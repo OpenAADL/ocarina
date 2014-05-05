@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,7 +37,7 @@ package body Ocarina.Backends.PN.Nutils is
    -- Append_Node_To_List --
    -------------------------
 
-   procedure Append_Node_To_List (E : Types.Node_Id; L : Types.List_Id) is
+   procedure Append_Node_To_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id) is
       use OPN;
 
       Last : Node_Id;
@@ -60,7 +60,7 @@ package body Ocarina.Backends.PN.Nutils is
    --  Push_Node_Into_List  --
    ---------------------------
 
-   procedure Push_Node_Into_List (E : Types.Node_Id; L : Types.List_Id) is
+   procedure Push_Node_Into_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id) is
       use OPN;
 
       First : Node_Id;
@@ -82,7 +82,7 @@ package body Ocarina.Backends.PN.Nutils is
    -- Delete_Node_From_List --
    ---------------------------
 
-   procedure Delete_Node_From_List (E : Types.Node_Id; L : Types.List_Id) is
+   procedure Delete_Node_From_List (E : Ocarina.Types.Node_Id; L : Ocarina.Types.List_Id) is
       use OPN;
 
       Node_Iter : Node_Id;
@@ -115,7 +115,7 @@ package body Ocarina.Backends.PN.Nutils is
    -- New_List --
    --------------
 
-   function New_List (Kind : OPN.Node_Kind) return Types.List_Id is
+   function New_List (Kind : OPN.Node_Kind) return Ocarina.Types.List_Id is
       use Ocarina.Backends.PN.Nodes;
    begin
       return List_Id (New_Node (Kind));
@@ -125,7 +125,7 @@ package body Ocarina.Backends.PN.Nutils is
    -- Is_Empty --
    --------------
 
-   function Is_Empty (L : Types.List_Id) return Boolean is
+   function Is_Empty (L : Ocarina.Types.List_Id) return Boolean is
       use OPN;
 
    begin
@@ -136,7 +136,7 @@ package body Ocarina.Backends.PN.Nutils is
    -- New_Node --
    --------------
 
-   function New_Node (Kind : OPN.Node_Kind) return Types.Node_Id is
+   function New_Node (Kind : OPN.Node_Kind) return Ocarina.Types.Node_Id is
       use OPN;
 
       N : Node_Id;
@@ -154,9 +154,9 @@ package body Ocarina.Backends.PN.Nutils is
    ---------------------
 
    function Make_Identifier
-     (Pn_Entity : Types.Node_Id;
-      Ident_Name : Types.Name_Id)
-     return Types.Node_Id
+     (Pn_Entity : Ocarina.Types.Node_Id;
+      Ident_Name : Ocarina.Types.Name_Id)
+     return Ocarina.Types.Node_Id
    is
       use OPN;
 

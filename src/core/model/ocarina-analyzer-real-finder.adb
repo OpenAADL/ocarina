@@ -62,8 +62,8 @@ package body Ocarina.Analyzer.REAL.Finder is
    is
       use Ocarina.Analyzer.AADL.Finder;
 
-      L1 : Types.Node_List;
-      L2 : Types.Node_List;
+      L1 : Ocarina.Types.Node_List;
+      L2 : Ocarina.Types.Node_List;
       N1 : Node_Id;
       N2 : Node_Id;
       NA : Node;

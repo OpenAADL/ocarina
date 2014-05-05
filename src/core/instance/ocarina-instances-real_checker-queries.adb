@@ -465,10 +465,10 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    ------------------------
 
    function Get_Property_Value
-     (E : Types.Node_Id; Name : String)
-     return Types.Node_Id
+     (E : Ocarina.Types.Node_Id; Name : String)
+     return Ocarina.Types.Node_Id
    is
-      N : Types.Node_Id;
+      N : Ocarina.Types.Node_Id;
    begin
       case AIN.Kind (E) is
          when K_Call_Instance | K_Call_Sequence_Instance =>
