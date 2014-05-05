@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                              M K N O D E S                               --
+--                                T Y P E S                                 --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--                     Copyright (C) 2014 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,20 +31,48 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
+package body Types is
 
-project Mknodes is
+   --------
+   -- No --
+   --------
 
- for Source_Dirs use (".");
-   for Object_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes/objects";
-   for Exec_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes";
-   for Main use ("mknodes");
+   function No (E : Node_Id) return Boolean is
+   begin
+      return E = No_Node;
+   end No;
 
-   Build : Ocarina.Build_Type := External ("BUILD", "debug");
+   -------------
+   -- Present --
+   -------------
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Linker renames Ocarina.Linker;
-   package Builder renames Ocarina.Builder;
+   function Present (E : Node_Id) return Boolean is
+   begin
+      return E /= No_Node;
+   end Present;
 
-end Mknodes;
+   --------------
+   -- Safe_XOR --
+   --------------
+
+   function Safe_XOR (Right : Boolean; Left : Boolean) return Boolean is
+   begin
+      return (Right and then not Left) or else (Left and then not Right);
+   end Safe_XOR;
+
+   ---------------------
+   -- Change_If_Empty --
+   ---------------------
+
+   procedure Change_If_Empty (Str_Ptr : in out String_Ptr; Value : String) is
+   begin
+      if Str_Ptr = null or else Str_Ptr.all = "" then
+         if Str_Ptr /= null then
+            Free (Str_Ptr);
+         end if;
+
+         Str_Ptr := new String'(Value);
+      end if;
+   end Change_If_Empty;
+
+end Types;

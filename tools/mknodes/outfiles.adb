@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                              M K N O D E S                               --
+--                             O U T F I L E S                              --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--                     Copyright (C) 2014 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,20 +31,52 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
+with Namet;  use Namet;
+with Output; use Output;
 
-project Mknodes is
+package body Outfiles is
 
- for Source_Dirs use (".");
-   for Object_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes/objects";
-   for Exec_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes";
-   for Main use ("mknodes");
+   ----------------
+   -- Set_Output --
+   ----------------
 
-   Build : Ocarina.Build_Type := External ("BUILD", "debug");
+   function Set_Output (File_Name : Name_Id) return File_Descriptor is
+   begin
+      if not Print_On_Stdout then
+         declare
+            Fd : File_Descriptor;
+         begin
+            Get_Name_String (File_Name);
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Linker renames Ocarina.Linker;
-   package Builder renames Ocarina.Builder;
+            --  Create a new file and overwrites existing file with
+            --  the same name
 
-end Mknodes;
+            Fd := Create_File (Name_Buffer (1 .. Name_Len), Text);
+
+            if Fd = Invalid_FD then
+               raise Program_Error;
+            end if;
+
+            --  Setting the output
+
+            Set_Output (Fd);
+            return Fd;
+         end;
+      end if;
+
+      return Invalid_FD;
+   end Set_Output;
+
+   --------------------
+   -- Release_Output --
+   --------------------
+
+   procedure Release_Output (Fd : File_Descriptor) is
+   begin
+      if not Print_On_Stdout and then Fd /= Invalid_FD then
+         Close (Fd);
+         Set_Standard_Output;
+      end if;
+   end Release_Output;
+
+end Outfiles;

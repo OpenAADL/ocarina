@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                              M K N O D E S                               --
+--                               E R R O R S                                --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--                     Copyright (C) 2014 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,20 +31,43 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
+with Locations; use Locations;
+with Types;     use Types;
+with Ada.Exceptions;
 
-project Mknodes is
+package Errors is
 
- for Source_Dirs use (".");
-   for Object_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes/objects";
-   for Exec_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes";
-   for Main use ("mknodes");
+   procedure Display_Error  (S : String);
+   procedure DE (S : String) renames Display_Error;
+   procedure Display_Warning (S : String);
+   procedure DW (S : String) renames Display_Warning;
+   procedure Display_Message (S : String);
+   procedure DM (S : String) renames Display_Message;
+   --  Display an error and output error message S. S may include
+   --  meta-characters.
+   --
+   --  '%' designates a string representing Error_Name (N) where N is
+   --  the number of '%' and '#' in the substring.
+   --
+   --  '#' designates a quoted string representing Error_Name (N).
+   --
+   --  '!' designates a location representing Error_Loc (L) where L is
+   --  the number of '!' in the substring.
+   --
+   --  '$' designates an integer representing Error_Int (I) where I is
+   --  the number of '$' in the substring.
 
-   Build : Ocarina.Build_Type := External ("BUILD", "debug");
+   procedure Initialize;
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Linker renames Ocarina.Linker;
-   package Builder renames Ocarina.Builder;
+   Error_Loc  : array (1 .. 2) of Location;
+   Error_Int  : array (1 .. 2) of Int;
+   Error_Name : array (1 .. 2) of Name_Id;
 
-end Mknodes;
+   N_Errors   : Int := 0;
+   N_Warnings : Int := 0;
+
+   procedure Display_Bug_Box (E : Ada.Exceptions.Exception_Occurrence);
+
+   procedure Exit_On_Error (Error : Boolean; Reason : String);
+
+end Errors;

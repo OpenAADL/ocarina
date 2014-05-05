@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                              M K N O D E S                               --
+--                              C H A R S E T                               --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--                     Copyright (C) 2014 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,20 +31,22 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
+package Charset is
 
-project Mknodes is
+   function Is_Alphabetic_Character (C : Character) return Boolean;
+   --  Alphabetic characters of ISO Latin-1
 
- for Source_Dirs use (".");
-   for Object_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes/objects";
-   for Exec_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes";
-   for Main use ("mknodes");
+   function Is_Identifier_Character (C : Character) return Boolean;
+   --  Alphabetic character or digit or underscore character
 
-   Build : Ocarina.Build_Type := External ("BUILD", "debug");
+   procedure To_Lower (S : in out String);
+   function To_Lower (S : String) return String;
+   function To_Lower (C : Character) return Character;
+   --  Translate into lower case form
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Linker renames Ocarina.Linker;
-   package Builder renames Ocarina.Builder;
+   procedure To_Upper (S : in out String);
+   function To_Upper (S : String) return String;
+   function To_Upper (C : Character) return Character;
+   --  Translate into upper case form
 
-end Mknodes;
+end Charset;

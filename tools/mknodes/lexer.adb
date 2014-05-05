@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,19 +33,21 @@
 
 with Charset;
 with Errors;
-with Ocarina.Namet;
-with Ocarina.Output; use Ocarina.Output;
-with Ocarina.Types; use Ocarina.Types;
+with Namet;
+with Output;
+with Types;
+use type Types.Text_Buffer_Ptr, Types.Text_Ptr;
+use type Types.Int, Types.Byte;
 
 package body Lexer is
 
-   Buffer : Text_Buffer_Ptr;
+   Buffer : Types.Text_Buffer_Ptr;
    --  Once preprocessed, the idl file is loaded in Buffer and
    --  Token_Location.Scan is used to scan the source file.
 
    Initialized : Boolean := False;
 
-   type Token_Image_Array is array (Token_Type) of Name_Id;
+   type Token_Image_Array is array (Token_Type) of Types.Name_Id;
    Token_Image : Token_Image_Array;
 
    -----------
@@ -54,7 +56,7 @@ package body Lexer is
 
    function Image (T : Token_Type) return String is
    begin
-      return Ocarina.Namet.Get_Name_String (Token_Image (T));
+      return Namet.Get_Name_String (Token_Image (T));
    end Image;
 
    ---------------
@@ -71,13 +73,13 @@ package body Lexer is
 
       Len := Integer (GNAT.OS_Lib.File_Length (Source_File));
       if Buffer /= null then
-         Free (Buffer);
+         Types.Free (Buffer);
       end if;
-      Buffer := new Text_Buffer (1 .. Text_Ptr (Len + 1));
+      Buffer := new Types.Text_Buffer (1 .. Types.Text_Ptr (Len + 1));
 
       --  Force the last character to be EOF
 
-      Buffer (Text_Ptr (Len + 1)) := EOF;
+      Buffer (Types.Text_Ptr (Len + 1)) := Types.EOF;
 
       Token_Location.Scan := 1;
       loop
@@ -88,7 +90,7 @@ package body Lexer is
             Errors.DE ("cannot read preprocessor output");
             GNAT.OS_Lib.OS_Exit (4);
          end if;
-         Token_Location.Scan := Token_Location.Scan + Text_Ptr (Code);
+         Token_Location.Scan := Token_Location.Scan + Types.Text_Ptr (Code);
          Len := Len - Code;
       end loop;
       GNAT.OS_Lib.Close (Source_File);
@@ -115,16 +117,16 @@ package body Lexer is
      (Token : Token_Type;
       Image : String) is
    begin
-      Ocarina.Namet.Set_Str_To_Name_Buffer (Image);
-      Token_Image (Token) := Ocarina.Namet.Name_Find;
+      Namet.Set_Str_To_Name_Buffer (Image);
+      Token_Image (Token) := Namet.Name_Find;
 
       if Token in Keyword_Type then
-         for I in Natural range 1 .. Ocarina.Namet.Name_Len loop
-            Ocarina.Namet.Name_Buffer (I)
-              := Charset.To_Lower (Ocarina.Namet.Name_Buffer (I));
+         for I in Natural range 1 .. Namet.Name_Len loop
+            Namet.Name_Buffer (I)
+              := Charset.To_Lower (Namet.Name_Buffer (I));
          end loop;
-         Ocarina.Namet.Set_Name_Table_Byte
-           (Ocarina.Namet.Name_Find, Byte (Token_Type'Pos (Token)));
+         Namet.Set_Name_Table_Byte
+           (Namet.Name_Find, Types.Byte (Token_Type'Pos (Token)));
       end if;
    end New_Token;
 
@@ -133,7 +135,7 @@ package body Lexer is
    ----------------
 
    function Next_Token return Token_Type is
-      Current_Token_Name     : Name_Id;
+      Current_Token_Name     : Types.Name_Id;
       Current_Token          : Token_Type;
       Current_Token_Location : Locations.Location;
       Next_Token_Value       : Token_Type;
@@ -155,7 +157,7 @@ package body Lexer is
 
    procedure Process
      (Source_File : GNAT.OS_Lib.File_Descriptor;
-      Source_Name : Name_Id)
+      Source_Name : Types.Name_Id)
    is
    begin
 
@@ -208,13 +210,13 @@ package body Lexer is
    function Quoted_Image (T : Token_Type) return String is
    begin
       if T in T_Interface .. T_Octet then
-         Ocarina.Namet.Set_Char_To_Name_Buffer ('"');
-         Ocarina.Namet.Add_Str_To_Name_Buffer
-           (Ocarina.Namet.Get_Name_String (Token_Image (T)));
-         Ocarina.Namet.Add_Char_To_Name_Buffer ('"');
-         return Ocarina.Namet.Get_Name_String (Ocarina.Namet.Name_Find);
+         Namet.Set_Char_To_Name_Buffer ('"');
+         Namet.Add_Str_To_Name_Buffer
+           (Namet.Get_Name_String (Token_Image (T)));
+         Namet.Add_Char_To_Name_Buffer ('"');
+         return Namet.Get_Name_String (Namet.Name_Find);
       end if;
-      return Ocarina.Namet.Get_Name_String (Token_Image (T));
+      return Namet.Get_Name_String (Token_Image (T));
    end Quoted_Image;
 
    -------------------
@@ -252,23 +254,23 @@ package body Lexer is
 
       --  Read identifier
 
-      Ocarina.Namet.Name_Len := 0;
+      Namet.Name_Len := 0;
       while Charset.Is_Identifier_Character (Buffer (Token_Location.Scan)) loop
-         Ocarina.Namet.Name_Len := Ocarina.Namet.Name_Len + 1;
-         Ocarina.Namet.Name_Buffer (Ocarina.Namet.Name_Len) := Buffer (Token_Location.Scan);
+         Namet.Name_Len := Namet.Name_Len + 1;
+         Namet.Name_Buffer (Namet.Name_Len) := Buffer (Token_Location.Scan);
          Token_Location.Scan := Token_Location.Scan + 1;
       end loop;
 
-      if Ocarina.Namet.Name_Len = 0 then
+      if Namet.Name_Len = 0 then
          if Fatal then
             Errors.Error_Loc (1) := Token_Location;
             Errors.DE ("identifier must start with alphabetic character");
          end if;
-         Ocarina.Namet.Name_Buffer (1) := ' ';
-         Ocarina.Namet.Name_Len := 1;
+         Namet.Name_Buffer (1) := ' ';
+         Namet.Name_Len := 1;
 
       else
-         Token_Name := Ocarina.Namet.Name_Find;
+         Token_Name := Namet.Name_Find;
          Token      := T_Identifier;
 
          --  Check whether it is a keyword or a pragma
@@ -283,7 +285,7 @@ package body Lexer is
          --  Check that identifier is well-formed
 
          if Token = T_Identifier then
-            if not Charset.Is_Alphabetic_Character (Ocarina.Namet.Name_Buffer (1)) then
+            if not Charset.Is_Alphabetic_Character (Namet.Name_Buffer (1)) then
                if Escaped then
                   if Fatal then
                      Errors.Error_Loc (1) := Token_Location;
@@ -347,19 +349,19 @@ package body Lexer is
       end loop;
 
       if not Found then
-         Ocarina.Namet.Set_Str_To_Name_Buffer ("expected token");
+         Namet.Set_Str_To_Name_Buffer ("expected token");
          if L'Length > 1 then
-            Ocarina.Namet.Add_Char_To_Name_Buffer ('s');
+            Namet.Add_Char_To_Name_Buffer ('s');
          end if;
-         Ocarina.Namet.Add_Char_To_Name_Buffer (' ');
-         Ocarina.Namet.Add_Str_To_Name_Buffer (Quoted_Image (L (L'First)));
+         Namet.Add_Char_To_Name_Buffer (' ');
+         Namet.Add_Str_To_Name_Buffer (Quoted_Image (L (L'First)));
          for Index in Natural range L'First + 1 .. L'Last loop
-            Ocarina.Namet.Add_Str_To_Name_Buffer (" or ");
-            Ocarina.Namet.Add_Str_To_Name_Buffer (Quoted_Image (L (Index)));
+            Namet.Add_Str_To_Name_Buffer (" or ");
+            Namet.Add_Str_To_Name_Buffer (Quoted_Image (L (Index)));
          end loop;
 
          Errors.Error_Loc (1) := Token_Location;
-         Errors.DE (Ocarina.Namet.Get_Name_String (Ocarina.Namet.Name_Find));
+         Errors.DE (Namet.Get_Name_String (Namet.Name_Find));
 
          Token := T_Error;
       end if;
@@ -435,7 +437,7 @@ package body Lexer is
 
                   elsif Buffer (Token_Location.Scan + 1) = '*' then
                      Token_Location.Scan := Token_Location.Scan + 2;
-                     while Buffer (Token_Location.Scan) /= EOF
+                     while Buffer (Token_Location.Scan) /= Types.EOF
                        and then
                        (Buffer (Token_Location.Scan) /= '*'
                           or else Buffer (Token_Location.Scan + 1) /= '/')
@@ -448,7 +450,7 @@ package body Lexer is
                         end case;
                      end loop;
 
-                     if Buffer (Token_Location.Scan) = EOF then
+                     if Buffer (Token_Location.Scan) = Types.EOF then
                         Errors.Error_Loc (1) := Token_Location;
                         Errors.DE ("unterminated comment");
                      end if;
@@ -466,7 +468,7 @@ package body Lexer is
                when '_' =>
                   Scan_Identifier (Fatal);
 
-               when EOF =>
+               when Types.EOF =>
                   Token_Location.Scan := Token_Location.Scan + 1;
                   Token := T_EOF;
 
@@ -573,15 +575,14 @@ package body Lexer is
    -- To_Token --
    --------------
 
-   function To_Token (Name : Name_Id) return Token_Type is
-      B : Byte;
+   function To_Token (Name : Types.Name_Id) return Token_Type is
+      B : Types.Byte;
    begin
-      Ocarina.Namet.Get_Name_String (Name);
-      for I in Natural range 1 .. Ocarina.Namet.Name_Len loop
-         Ocarina.Namet.Name_Buffer (I)
-           := Charset.To_Lower (Ocarina.Namet.Name_Buffer (I));
+      Namet.Get_Name_String (Name);
+      for I in Natural range 1 .. Namet.Name_Len loop
+         Namet.Name_Buffer (I) := Charset.To_Lower (Namet.Name_Buffer (I));
       end loop;
-      B := Ocarina.Namet.Get_Name_Table_Byte (Ocarina.Namet.Name_Find);
+      B := Namet.Get_Name_Table_Byte (Namet.Name_Find);
       if B <= Last_Token_Pos then
          return Token_Type'Val (B);
       end if;
@@ -594,7 +595,7 @@ package body Lexer is
 
    procedure Write (T : Token_Type) is
    begin
-      Write_Str (Image (T));
+      Output.Write_Str (Image (T));
    end Write;
 
 end Lexer;

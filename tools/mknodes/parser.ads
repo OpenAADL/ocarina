@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Locations;
-with Ocarina.Types; use Ocarina.Types;
+with Types;
 
 package Parser is
 
@@ -52,57 +52,57 @@ private
    type Node_Type is record
       Kind         : Node_Kind;
       Loc          : Locations.Location;
-      Identifier   : Name_Id;
-      Type_Spec    : Node_Id;
-      Scope_Entity : Node_Id;
-      First_Entity : Node_Id;
-      Last_Entity  : Node_Id;
-      Next_Entity  : Node_Id;
+      Identifier   : Types.Name_Id;
+      Type_Spec    : Types.Node_Id;
+      Scope_Entity : Types.Node_Id;
+      First_Entity : Types.Node_Id;
+      Last_Entity  : Types.Node_Id;
+      Next_Entity  : Types.Node_Id;
    end record;
 
    Default_Node : constant Node_Type :=
      Node_Type'(K_None,
                 Locations.No_Location,
-                No_Name,
-                No_Node,
-                No_Node,
-                No_Node,
-                No_Node,
-                No_Node);
+                Types.No_Name,
+                Types.No_Node,
+                Types.No_Node,
+                Types.No_Node,
+                Types.No_Node,
+                Types.No_Node);
 
    --------------------------
    -- Node tree facilities --
    --------------------------
 
    function New_Node (Kind : Node_Kind; Loc : Locations.Location)
-     return Node_Id;
+     return Types.Node_Id;
 
-   function Kind (N : Node_Id) return Node_Kind;
-   function Loc  (N : Node_Id) return Locations.Location;
+   function Kind (N : Types.Node_Id) return Node_Kind;
+   function Loc  (N : Types.Node_Id) return Locations.Location;
 
-   function  First_Entity     (N : Node_Id) return Node_Id;
-   procedure Set_First_Entity (N : Node_Id; V : Node_Id);
+   function  First_Entity     (N : Types.Node_Id) return Types.Node_Id;
+   procedure Set_First_Entity (N : Types.Node_Id; V : Types.Node_Id);
 
-   function  Identifier     (N : Node_Id) return Name_Id;
-   procedure Set_Identifier (N : Node_Id; V : Name_Id);
+   function  Identifier     (N : Types.Node_Id) return Types.Name_Id;
+   procedure Set_Identifier (N : Types.Node_Id; V : Types.Name_Id);
 
-   function  Last_Entity     (N : Node_Id) return Node_Id;
-   procedure Set_Last_Entity (N : Node_Id; V : Node_Id);
+   function  Last_Entity     (N : Types.Node_Id) return Types.Node_Id;
+   procedure Set_Last_Entity (N : Types.Node_Id; V : Types.Node_Id);
 
-   function  Next_Entity     (N : Node_Id) return Node_Id;
-   procedure Set_Next_Entity (N : Node_Id; V : Node_Id);
+   function  Next_Entity     (N : Types.Node_Id) return Types.Node_Id;
+   procedure Set_Next_Entity (N : Types.Node_Id; V : Types.Node_Id);
 
-   function  Scope_Entity     (N : Node_Id) return Node_Id;
-   procedure Set_Scope_Entity (N : Node_Id; V : Node_Id);
+   function  Scope_Entity     (N : Types.Node_Id) return Types.Node_Id;
+   procedure Set_Scope_Entity (N : Types.Node_Id; V : Types.Node_Id);
 
-   function  Type_Spec     (N : Node_Id) return Node_Id;
-   procedure Set_Type_Spec (N : Node_Id; V : Node_Id);
+   function  Type_Spec     (N : Types.Node_Id) return Types.Node_Id;
+   procedure Set_Type_Spec (N : Types.Node_Id; V : Types.Node_Id);
 
    -----------------------
    -- Naming facilities --
    -----------------------
 
-   function GNS (N : Name_Id) return String;
+   function GNS (N : Types.Name_Id) return String;
    function Quote (S : String) return String;
    function WS (S : String) return String;
    function W (S : String) return String;
@@ -111,45 +111,45 @@ private
    -- Parsing facilities --
    ------------------------
 
-   function P_Attribute return Node_Id;
-   function P_Interface return Node_Id;
-   function P_Definition return Node_Id;
-   function P_Typedef return Node_Id;
+   function P_Attribute return Types.Node_Id;
+   function P_Interface return Types.Node_Id;
+   function P_Definition return Types.Node_Id;
+   function P_Typedef return Types.Node_Id;
 
    ----------------------------------
    -- Semantic analysis facilities --
    ----------------------------------
 
-   function Base_Kind (T : Node_Id) return Node_Kind;
+   function Base_Kind (T : Types.Node_Id) return Node_Kind;
    --  As interfaces are represented as Node_Id and as Node_Id is
    --  represented as a long integer, the base type of an interface is
    --  K_Long. For defined types, return the kind of T base type.
 
-   function Resolve_Type (N : Name_Id) return Node_Id;
+   function Resolve_Type (N : Types.Name_Id) return Types.Node_Id;
 
-   function Has_Attribute (I : Node_Id) return Boolean;
+   function Has_Attribute (I : Types.Node_Id) return Boolean;
 
    procedure Add_Attribute_To_Interface
-     (Attribute : Node_Id;
-      Intf     : Node_Id);
+     (Attribute : Types.Node_Id;
+      Intf     : Types.Node_Id);
    --  Add attribute into interface using First_Entity, Last_Entity of
    --  Interfaces and Next_Entity of Attributes.
 
    function Is_Attribute_In_Interface
-     (Attribute : Node_Id;
-      Intf      : Node_Id)
+     (Attribute : Types.Node_Id;
+      Intf      : Types.Node_Id)
      return Boolean;
    --  Return True when interface I has at least on attribute Look for
    --  attribute through a depth exploration of the inheritance spec
    --  of interface.
 
-   procedure Declare_Attribute (A : Node_Id);
-   procedure Declare_Type (N : Node_Id);
+   procedure Declare_Attribute (A : Types.Node_Id);
+   procedure Declare_Type (N : Types.Node_Id);
 
    subtype Node_Array_Range is Natural range 1 .. 16;
-   type Node_Array is array (Node_Array_Range) of Node_Id;
+   type Node_Array is array (Node_Array_Range) of Types.Node_Id;
 
-   function Inheritance_Tree (I : Node_Id) return Node_Array;
+   function Inheritance_Tree (I : Types.Node_Id) return Node_Array;
    --  Return the inheritance tree. The oldest ancestors are
    --  first. The interface itself is last.
 
@@ -157,48 +157,48 @@ private
    -- Code generation facilities --
    --------------------------------
 
-   Max_Color : constant Int := 127;
-   subtype Color_Type is Int range 0 .. Max_Color;
+   Max_Color : constant Types.Int := 127;
+   subtype Color_Type is Types.Int range 0 .. Max_Color;
    No_Color : constant Color_Type := 0;
 
    subtype Color_Flag_Range is Color_Type;
    type Color_Flag_Array is array (Color_Flag_Range) of Boolean;
 
-   function Are_Adjacent (A, B : Node_Id) return Boolean;
+   function Are_Adjacent (A, B : Types.Node_Id) return Boolean;
    --  Return True if the attribute A and B have been marked as
    --  adjacent. The order of passed parameters is with no importance
    --  for this function.
 
-   procedure Mark_As_Adjacent (A : Node_Id; B : Node_Id);
+   procedure Mark_As_Adjacent (A : Types.Node_Id; B : Types.Node_Id);
    --  Mark attributes A and B as adjacent. Adjacent attributes are
    --  attributes belonging to a same interface. Therefore, they
    --  cannot have the same color. The order of passed parameters is
    --  with no importance for this procedure.
 
-   function Color (N : Node_Id) return Color_Type;
-   procedure Set_Color (N : Node_Id; V : Color_Type);
+   function Color (N : Types.Node_Id) return Color_Type;
+   procedure Set_Color (N : Types.Node_Id; V : Color_Type);
    --  To allocate a slot for an attribute in a base type array, we
    --  use classical coloration algorithm. The base types are also
    --  colored to store the greatest color used for them.
 
-   procedure Assign_Color_To_Attribute (Attribute : Node_Id);
+   procedure Assign_Color_To_Attribute (Attribute : Types.Node_Id);
    --  Compute adjacent attributes that is attributes included in the
    --  same interfaces than Attribute. Then find a color not already
    --  assigned to these adjacent attributes.
 
-   function Generated (N : Node_Id) return Boolean;
-   procedure Set_Generated (N : Node_Id; B : Boolean);
+   function Generated (N : Types.Node_Id) return Boolean;
+   procedure Set_Generated (N : Types.Node_Id; B : Boolean);
    --  Set to True when we already have generated code for this node.
 
    -----------------------
    -- Output facilities --
    -----------------------
 
-   procedure W_Pragma_Assert  (Attribute : Node_Id);
+   procedure W_Pragma_Assert  (Attribute : Types.Node_Id);
    procedure W_Attribute_Body (A : String; N : String; T : String);
    procedure W_Attribute_Spec (A : String; N : String; T : String);
-   procedure W_Attribute_Body (A : Node_Id);
-   procedure W_Attribute_Spec (A : Node_Id);
+   procedure W_Attribute_Body (A : Types.Node_Id);
+   procedure W_Attribute_Spec (A : Types.Node_Id);
    procedure W_Indentation    (N : Natural);
    procedure W_Comment_Message;
    procedure W_Package_Body;
@@ -266,7 +266,7 @@ private
    --     -p     : output files on stdout
 
    function Copy_Str_At_End_Of_Name
-     (Name  : Name_Id;
+     (Name  : Types.Name_Id;
       Str   : String)
      return String;
 

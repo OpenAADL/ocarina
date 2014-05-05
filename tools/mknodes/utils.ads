@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                              M K N O D E S                               --
+--                                U T I L S                                 --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--                     Copyright (C) 2014 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,20 +31,58 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
+with Types;     use Types;
 
-project Mknodes is
+package Utils is
 
- for Source_Dirs use (".");
-   for Object_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes/objects";
-   for Exec_Dir use Ocarina.Top_Build_Dir & "/../tools/mknodes";
-   for Main use ("mknodes");
+   function Add_Prefix_To_Name
+     (Prefix : String;
+      Name   : Name_Id)
+     return Name_Id;
 
-   Build : Ocarina.Build_Type := External ("BUILD", "debug");
+   function Add_Suffix_To_Name
+     (Suffix : String;
+      Name   : Name_Id)
+     return Name_Id;
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Linker renames Ocarina.Linker;
-   package Builder renames Ocarina.Builder;
+   function Remove_Prefix_From_Name
+     (Prefix : String;
+      Name   : Name_Id)
+     return Name_Id;
+   --  This function returns a new name without the prefix. If the
+   --  prefix does not exist, the returned name is equal to the given
+   --  name
 
-end Mknodes;
+   function Remove_Suffix_From_Name
+     (Suffix : String;
+      Name   : Name_Id)
+     return Name_Id;
+   --  This function returns a new name without the suffix. If the
+   --  suffix does not exist, the returned name is equal to the given
+   --  name.
+
+   procedure Capitalize (S : in out String);
+   --  Change in S any leading character or any successor of an
+   --  underscore into its corresponding uppercase character.
+
+   function Quoted (S : String; D : Character := '"') return String; --  "
+   function Quoted (S : String; D : Character := '"') return Name_Id; --  "
+   function Quoted (N : Name_Id; D : Character := '"') return String; --  "
+   function Quoted (N : Name_Id; D : Character := '"') return Name_Id; --  "
+   --  Embrace string S or name N with character D
+
+   function To_Lower  (N : Name_Id) return Name_Id;
+   function To_Upper  (N : Name_Id) return Name_Id;
+
+   function Replace_Char (Name : Name_Id; O : Character; N : Character)
+      return Name_Id;
+   --  Replace occurence of character O in the Name by character N.
+
+   function Remove_Char (Name : Name_Id; O : Character)
+      return Name_Id;
+   --  Remove occurences of character O in the Name.
+
+   function Is_Prefix (N1 : Name_Id; N2 : Name_Id) return Boolean;
+   --  Is N1 a prefix of N2
+
+end Utils;
