@@ -73,6 +73,7 @@ property set POK is
   Available_BSP : type enumeration
   (
       x86_qemu,
+      x86_qemu_vmm,
       prep,
       leon3
   );
