@@ -111,7 +111,7 @@ property set POK is
 
   Additional_Features : list of POK::Supported_Additional_Features applies to (virtual processor, processor);
 
-  Supported_Additional_Features: type enumeration (libmath, libc_stdlib, libc_stdio, libc_string, io, pci, console, libc);
+  Supported_Additional_Features: type enumeration (libmath, libc_stdlib, libc_stdio, libc_string, io, pci, console, libc, x86_vmm);
 
   Des_Key : aadlstring applies to (virtual bus);
 

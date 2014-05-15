@@ -1224,6 +1224,32 @@ package body Ocarina.Backends.POK_C.Deployment is
 
                            Set_Deployment_Header;
                         end if;
+                        
+			if Get_Name_String
+                           (ATN.Name
+                              (ATN.Identifier (S))) = "x86_vmm"
+                        then
+                           CTU.Pop_Entity;
+                           CTU.Pop_Entity;
+
+                           Push_Entity (Kernel_Unit);
+                           Set_Deployment_Header;
+
+                           N := CTU.Make_Define_Statement
+                              (Defining_Identifier =>
+                                 RE (RE_Pok_Needs_X86_Vmm),
+                              Value => CTU.Make_Literal
+                                 (CV.New_Int_Value (1, 1, 10)));
+                           CTU.Append_Node_To_List
+                              (N, CTN.Declarations (CTU.Current_File));
+
+                           Pop_Entity;
+
+                           CTU.Push_Entity (P);
+                           CTU.Push_Entity (U);
+
+                           Set_Deployment_Header;
+                        end if;
 
                      S := ATN.Next_Node (S);
                   end loop;
