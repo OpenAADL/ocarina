@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -204,7 +204,7 @@ package Ocarina.Backends.POK_C.Runtime is
       RE_Pok_Needs_Ports_Virtual,        --  POK_NEEDS_PORTS_VIRTUAL
       RE_Pok_Needs_Gettick,              --  POK_NEEDS_GETTICK
       RE_Pok_Needs_Ports_Queueing,       --  POK_NEEDS_PORTS_QUEUEING
-      RE_Pok_Needs_X86_Vmm,		 --  POK_NEEDS_X86_VMM
+      RE_Pok_Needs_X86_Vmm,              --  POK_NEEDS_X86_VMM
       RE_Pok_Errno_Empty,                --  POK_ERRNO_EMPTY
       RE_Pok_Errno_Ok,                   --  POK_ERRNO_OK
       RE_Pok_Hw_Addr,                    --  POK_HW_ADDR
@@ -713,7 +713,7 @@ package Ocarina.Backends.POK_C.Runtime is
          RE_Pok_Needs_Ports_Virtual        => RH_Deployment,
          RE_Pok_Needs_Gettick              => RH_Null,
          RE_Pok_Needs_Ports_Queueing       => RH_Deployment,
-	 RE_Pok_Needs_X86_Vmm		   => RH_Deployment,
+         RE_Pok_Needs_X86_Vmm              => RH_Deployment,
          RE_Pok_Errno_Empty                => RH_Errno,
          RE_Pok_Errno_Ok                   => RH_Errno,
          RE_Pok_Hw_Addr                    => RH_Deployment,
