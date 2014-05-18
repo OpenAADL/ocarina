@@ -116,6 +116,7 @@ package Ocarina.Backends.Properties is
 
    type Supported_POK_BSP is
      (POK_BSP_x86_qemu,
+      POK_BSP_x86_qemu_vmm,
       POK_BSP_Leon,
       POK_BSP_prep,
       Invalid_BSP);

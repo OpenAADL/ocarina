@@ -1,0 +1,17 @@
+--  This property set is derived from the Behavior Annex language
+--  specification, as part of the AS5506/2 standard.
+
+property set Behavior_Properties is
+
+   Subprogram_Call_Protocol: enumeration (HSER,LSER,ASER) => HSER
+      applies to (subprogram access); 
+   -- The Behavior Annex introduces more precise communication
+   -- protocols that can be used to better control the blocking
+   -- duration of a client thread during a remote call to a server
+   -- thread. These protocols are derived from the main HOOD
+   -- functional execution requests:
+   --  * HSER for Highly Synchronous Execution Request.
+   --  * LSER for Loosely Synchronous Execution Request.
+   --  * ASER for ASynchronous Execution Request. 
+
+end Behavior_Properties;

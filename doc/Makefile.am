@@ -135,8 +135,8 @@ install-data-local: all
 	fi
 	$(INSTALL_DATA)	$(srcdir)/CONTRIBUTING $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_DATA)	$(srcdir)/PROBLEM-REPORT-FORM $(DESTDIR)$(datadir)/doc/ocarina
-	$(INSTALL_DATA)	$(builddir)/ocarina-config.html $(DESTDIR)$(datadir)/doc/ocarina
-	$(INSTALL_DATA)	$(builddir)/ocarina_man.html $(DESTDIR)$(datadir)/doc/ocarina
+	$(INSTALL_DATA)	$(srcdir)/ocarina-config.html $(DESTDIR)$(datadir)/doc/ocarina
+	$(INSTALL_DATA)	$(srcdir)/ocarina_man.html $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_DATA)	$(srcdir)/ocarina.css $(DESTDIR)$(datadir)/doc/ocarina
 
 uninstall-local:

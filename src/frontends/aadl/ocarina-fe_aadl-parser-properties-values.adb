@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2918,6 +2918,14 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Owner_Category := New_Node (K_Named_Element, Token_Location);
 
       case Token is
+         when T_Left_Curly_Bracket =>
+            --  For now, we simply skip annex-dependent properties
+
+            Save_Lexer (Loc);
+            Skip_Tokens ((T_Comma, T_Right_Parenthesis), False);
+            Category := PO_Alien_Meta_Model;
+            Comp_Cat := CC_Unknown;
+
          when T_Abstract | T_System
            | T_Processor | T_Thread
            | T_Process | T_Virtual
