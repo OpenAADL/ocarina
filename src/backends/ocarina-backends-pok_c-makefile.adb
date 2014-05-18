@@ -658,6 +658,8 @@ package body Ocarina.Backends.POK_C.Makefile is
       case BSP is
          when POK_BSP_x86_qemu =>
             Write_Line ("export BSP=x86-qemu");
+         when POK_BSP_x86_qemu_vmm =>
+            Write_Line ("export BSP=x86-qemu-vmm");
          when POK_BSP_Leon =>
             Write_Line ("export BSP=leon3");
          when POK_BSP_prep =>
