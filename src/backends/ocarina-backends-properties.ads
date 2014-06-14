@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -116,6 +116,7 @@ package Ocarina.Backends.Properties is
 
    type Supported_POK_BSP is
      (POK_BSP_x86_qemu,
+      POK_BSP_x86_qemu_vmm,
       POK_BSP_Leon,
       POK_BSP_prep,
       Invalid_BSP);

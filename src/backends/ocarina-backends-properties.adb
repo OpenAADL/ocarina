@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -366,6 +366,7 @@ package body Ocarina.Backends.Properties is
 
    POK_Arch_x86_Name                : Name_Id;
    POK_BSP_x86_qemu_Name            : Name_Id;
+   POK_BSP_x86_qemu_vmm_Name        : Name_Id;
    POK_Arch_Sparc_Name              : Name_Id;
    POK_BSP_Leon_Name                : Name_Id;
    POK_Arch_ppc_Name                : Name_Id;
@@ -3485,6 +3486,7 @@ package body Ocarina.Backends.Properties is
 
       POK_Arch_x86_Name          := Get_String_Name ("x86");
       POK_BSP_x86_qemu_Name      := Get_String_Name ("x86_qemu");
+      POK_BSP_x86_qemu_vmm_Name  := Get_String_Name ("x86_qemu_vmm");
       POK_Arch_Sparc_Name        := Get_String_Name ("sparc");
       POK_BSP_Leon_Name          := Get_String_Name ("leon3");
       POK_Arch_ppc_Name          := Get_String_Name ("ppc");
@@ -3631,6 +3633,8 @@ package body Ocarina.Backends.Properties is
 
          if P_Name = POK_BSP_x86_qemu_Name then
             return POK_BSP_x86_qemu;
+         elsif P_Name = POK_BSP_x86_qemu_vmm_Name then
+            return POK_BSP_x86_qemu_vmm;
          elsif P_Name = POK_BSP_prep_Name then
             return POK_BSP_prep;
          elsif P_Name = POK_BSP_Leon_Name then

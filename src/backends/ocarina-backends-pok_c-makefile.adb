@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -658,6 +658,8 @@ package body Ocarina.Backends.POK_C.Makefile is
       case BSP is
          when POK_BSP_x86_qemu =>
             Write_Line ("export BSP=x86-qemu");
+         when POK_BSP_x86_qemu_vmm =>
+            Write_Line ("export BSP=x86-qemu-vmm");
          when POK_BSP_Leon =>
             Write_Line ("export BSP=leon3");
          when POK_BSP_prep =>

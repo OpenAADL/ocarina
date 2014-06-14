@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -1212,6 +1212,32 @@ package body Ocarina.Backends.POK_C.Deployment is
                            N := CTU.Make_Define_Statement
                               (Defining_Identifier =>
                                  RE (RE_Pok_Needs_Console),
+                              Value => CTU.Make_Literal
+                                 (CV.New_Int_Value (1, 1, 10)));
+                           CTU.Append_Node_To_List
+                              (N, CTN.Declarations (CTU.Current_File));
+
+                           Pop_Entity;
+
+                           CTU.Push_Entity (P);
+                           CTU.Push_Entity (U);
+
+                           Set_Deployment_Header;
+                        end if;
+
+                        if Get_Name_String
+                           (ATN.Name
+                              (ATN.Identifier (S))) = "x86_vmm"
+                        then
+                           CTU.Pop_Entity;
+                           CTU.Pop_Entity;
+
+                           Push_Entity (Kernel_Unit);
+                           Set_Deployment_Header;
+
+                           N := CTU.Make_Define_Statement
+                              (Defining_Identifier =>
+                                 RE (RE_Pok_Needs_X86_Vmm),
                               Value => CTU.Make_Literal
                                  (CV.New_Int_Value (1, 1, 10)));
                            CTU.Append_Node_To_List
