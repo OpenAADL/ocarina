@@ -13,8 +13,9 @@ pragma Initialize_Scalars;
 --pragma Profile_Warnings (Ravenscar);
 --pragma Restrictions (No_Task_Allocators);
 --pragma Restrictions (No_Protected_Types);
+
 --  pragma Restrictions (No_Fixed_Point);
---  violated by use of GNATCOll
+--  violated by use of GNATColl
 
 --  pragma Restrictions (No_Wide_Characters);
 --  violated in ocarina-backends-utils.adb:2505
