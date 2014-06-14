@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -493,6 +493,8 @@ package body Ocarina.Backends.PO_HI_Ada is
       Write_Line ("package Linker renames PolyORB_HI.Linker;");
       Write_Indentation;
       Write_Line ("package Check renames PolyORB_HI.Check;");
+      Write_Indentation;
+      Write_Line ("package Prove renames PolyORB_HI.Prove;");
       Write_Eol;
 
       Decrement_Indentation;
