@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -180,8 +180,8 @@ package body Ocarina.Backends.PN.Components is
                if Instance /= No_Node and then PN_Generated /= No_Node then
                   Success := Process_Component_Instance (Instance,
                                                          PN_Generated);
-                  if Success then
-                     null;
+                  if not Success then
+                     return No_Node;
                   end if;
                end if;
 
@@ -202,8 +202,8 @@ package body Ocarina.Backends.PN.Components is
                if Instance /= No_Node and then PN_Generated /= No_Node then
                   Success := Process_Component_Instance (Instance,
                                                          PN_Generated);
-                  if Success then
-                     null;
+                  if not Success then
+                     return No_Node;
                   end if;
                end if;
 
@@ -3288,10 +3288,10 @@ package body Ocarina.Backends.PN.Components is
       end if;
       ---
 
-      --  compilation purpose, to fix
-      if PN_Generated = No_Node then
-         null;
-      end if;
+      --  XXX compilation purpose, to fix
+      --  if PN_Generated = No_Node then
+      --     null;
+      --  end if;
 
    end PN_Thread_Skeleton;
 

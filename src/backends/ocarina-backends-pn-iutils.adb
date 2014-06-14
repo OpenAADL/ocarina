@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -662,7 +662,7 @@ package body Ocarina.Backends.PN.Iutils is
          Set_Tokens_Number (P, New_Integer_Value (0));
          --  compilation
          if M = 0 then
-            null; --  XXX
+            raise Program_Error;   --  XXX
          end if;
       end if;
    end PN_TPN_Init_Place;
@@ -726,7 +726,7 @@ package body Ocarina.Backends.PN.Iutils is
 
          --  compilation
          if M = 0 then
-            null;
+            raise Program_Error;   --  XXX
          end if;
       end if;
    end PN_TPN_Init_Transition;
@@ -1148,7 +1148,7 @@ package body Ocarina.Backends.PN.Iutils is
 
          --  compilation
          if M = 0 then
-            null;
+            raise Program_Error; --  XXX
          end if;
       end if;
    end PN_CPN_Init_Transition;
