@@ -1033,6 +1033,9 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                  & "POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL or"
                  & " ROUND_ROBIN_PROTOCOL",
                Fatal => True);
+
+            --  XXX In case of Round robin, we should also check that
+            --  the scheduler is set to non-preemptive mode.
          end if;
 
          --  Visit all the subcomponents of the process
