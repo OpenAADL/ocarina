@@ -180,9 +180,10 @@ package body Ocarina.Backends.PN.Components is
                if Instance /= No_Node and then PN_Generated /= No_Node then
                   Success := Process_Component_Instance (Instance,
                                                          PN_Generated);
-                  if not Success then
-                     return No_Node;
-                  end if;
+                  --  XXX ?
+                  --                    if not Success then
+                  --                       return No_Node;
+                  --                  end if;
                end if;
 
                --  assembly and final processing
@@ -202,9 +203,10 @@ package body Ocarina.Backends.PN.Components is
                if Instance /= No_Node and then PN_Generated /= No_Node then
                   Success := Process_Component_Instance (Instance,
                                                          PN_Generated);
-                  if not Success then
-                     return No_Node;
-                  end if;
+                  --  XXX ?
+                  --                    if not Success then
+                  --                       return No_Node;
+                  --                    end if;
                end if;
 
                --  assembly and final processing

@@ -661,9 +661,9 @@ package body Ocarina.Backends.PN.Iutils is
 
          Set_Tokens_Number (P, New_Integer_Value (0));
          --  compilation
-         if M = 0 then
-            raise Program_Error;   --  XXX
-         end if;
+--           if M = 0 then
+--              null;
+--           end if;
       end if;
    end PN_TPN_Init_Place;
 
@@ -711,7 +711,7 @@ package body Ocarina.Backends.PN.Iutils is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Aadl_Values;
       use Ocarina.Backends.PN.Nutils;
-
+      pragma Unreferenced (M);
    begin
       if T /= No_Node and then PN_G /= No_Node then
          PN_Init_Transition (T, Aadl, Name);
@@ -725,9 +725,9 @@ package body Ocarina.Backends.PN.Iutils is
          Set_Priority (T, New_Integer_Value (0));
 
          --  compilation
-         if M = 0 then
-            raise Program_Error;   --  XXX
-         end if;
+--           if M = 0 then
+--              raise Program_Error;   --  XXX
+--           end if;
       end if;
    end PN_TPN_Init_Transition;
 
@@ -1138,6 +1138,7 @@ package body Ocarina.Backends.PN.Iutils is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Aadl_Values;
       use Ocarina.Backends.PN.Nutils;
+      pragma Unreferenced (M);
 
    begin
       if T /= No_Node and then PN_G /= No_Node then
@@ -1147,9 +1148,9 @@ package body Ocarina.Backends.PN.Iutils is
          Set_Guards (T, New_List (K_List_Id));
 
          --  compilation
-         if M = 0 then
-            raise Program_Error; --  XXX
-         end if;
+--           if M = 0 then
+--              raise Program_Error; --  XXX
+--         end if;
       end if;
    end PN_CPN_Init_Transition;
 
