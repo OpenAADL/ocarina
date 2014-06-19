@@ -654,6 +654,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Aadl_Values;
+      pragma Unreferenced (M);
 
    begin
       if P /= No_Node and then PN_G /= No_Node then
