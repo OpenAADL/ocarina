@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -93,8 +93,10 @@ package body Ocarina.Backends.XML_Common.Mapping is
    -- Map_To_XML_Node --
    ---------------------
 
-   function Map_To_XML_Node (Name : String; Value : Unsigned_Long_Long)
-                            return Node_Id is
+   function Map_To_XML_Node
+     (Name  : String;
+      Value : Unsigned_Long_Long) return Node_Id
+   is
       N, V : Node_Id;
    begin
       N := Make_XML_Node (Name);
@@ -104,8 +106,7 @@ package body Ocarina.Backends.XML_Common.Mapping is
       return N;
    end Map_To_XML_Node;
 
-   function Map_To_XML_Node (Name : String; Value : Name_Id)
-                            return Node_Id is
+   function Map_To_XML_Node (Name : String; Value : Name_Id) return Node_Id is
       N, V : Node_Id;
    begin
       N := Make_XML_Node (Name);
@@ -120,20 +121,23 @@ package body Ocarina.Backends.XML_Common.Mapping is
    -------------------------------------
 
    function Map_Node_Identifier_To_XML_Node
-     (Name : String; The_Node : Node_Id) return Node_Id
+     (Name     : String;
+      The_Node : Node_Id) return Node_Id
    is
       N, V : Node_Id;
    begin
       N := Make_XML_Node (Name);
-      V := Make_Defining_Identifier
-        (To_XML_Name (Display_Name (Identifier (The_Node))));
+      V :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (The_Node))));
       Append_Node_To_List (V, Subitems (N));
 
       return N;
    end Map_Node_Identifier_To_XML_Node;
 
    function Map_Node_Identifier_To_XML_Node
-     (Name : String; The_Node : Name_Id) return Node_Id
+     (Name     : String;
+      The_Node : Name_Id) return Node_Id
    is
       N, V : Node_Id;
    begin

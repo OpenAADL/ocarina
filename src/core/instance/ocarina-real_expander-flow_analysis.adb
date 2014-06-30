@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Locations;                use Locations;
+with Locations; use Locations;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -74,8 +74,8 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package ATNU renames Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-   Flow_Lists         : Flow.Instance;
-   End_To_End_Flows   : Flow.Instance;
+   Flow_Lists       : Flow.Instance;
+   End_To_End_Flows : Flow.Instance;
 
    procedure Build_Flows (Branch : List_Id; E : Node_Id);
    --  From a node E, explore the following flow
@@ -137,8 +137,8 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
 
                      C := First_Node (AIN.Sources (F));
                      while Present (C) and then not Found_Input loop
-                        Found_Input := (Kind (Item (C)) =
-                                        K_Port_Spec_Instance);
+                        Found_Input :=
+                          (Kind (Item (C)) = K_Port_Spec_Instance);
                         C := Next_Node (C);
                      end loop;
 
@@ -194,14 +194,15 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
          Id : Node_Id;
       begin
          for I in First .. Last (Confirmed_Flow_Src) loop
-            L := New_List (K_List_Id, No_Location);
+            L       := New_List (K_List_Id, No_Location);
             SF.List := L;
             Flow.Append (Flow_Lists, SF);
-            Id := Make_Identifier
-              (No_Location,
-               Name (Identifier (Confirmed_Flow_Src.Table (I).Node)),
-               Name (Identifier (Confirmed_Flow_Src.Table (I).Node)),
-               Confirmed_Flow_Src.Table (I).Node);
+            Id :=
+              Make_Identifier
+                (No_Location,
+                 Name (Identifier (Confirmed_Flow_Src.Table (I).Node)),
+                 Name (Identifier (Confirmed_Flow_Src.Table (I).Node)),
+                 Confirmed_Flow_Src.Table (I).Node);
             Build_Flows (Branch => L, E => Id);
          end loop;
       end;
@@ -218,7 +219,7 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
 
       pragma Assert
         (Kind (Corresponding_Entity (E)) = K_Port_Spec_Instance
-           or else Kind (Corresponding_Entity (E)) = K_Parameter_Instance);
+         or else Kind (Corresponding_Entity (E)) = K_Parameter_Instance);
 
       Successors : Flow_List.Instance;
       S          : Node_Id;
@@ -241,7 +242,7 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
          for I in First .. Last (Flow_Lists) loop
             if Flow_Lists.Table (I).List = Branch then
                SF.List := No_List;
-               Set_Item (Flow_lists, I, SF);
+               Set_Item (Flow_Lists, I, SF);
                exit;
             end if;
          end loop;
@@ -264,11 +265,12 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
          S := First_Node (Destinations (Corresponding_Entity (E)));
          while Present (S) loop
             if Kind (Item (S)) = K_Parameter_Instance then
-               Id := Make_Identifier
-                 (No_Location,
-                  Name (Identifier (Item (S))),
-                  Name (Identifier (Item (S))),
-                  Item (S));
+               Id :=
+                 Make_Identifier
+                   (No_Location,
+                    Name (Identifier (Item (S))),
+                    Name (Identifier (Item (S))),
+                    Item (S));
                FE.Node := Id;
                Flow_List.Append (Successors, FE);
                NB_Output := NB_Output + 1;
@@ -281,11 +283,12 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
             S := First_Node (Destinations (Corresponding_Entity (E)));
             while Present (S) loop
                if Kind (Item (S)) = K_Port_Spec_Instance then
-                  Id := Make_Identifier
-                    (No_Location,
-                     Name (Identifier (Item (S))),
-                     Name (Identifier (Item (S))),
-                     Item (S));
+                  Id :=
+                    Make_Identifier
+                      (No_Location,
+                       Name (Identifier (Item (S))),
+                       Name (Identifier (Item (S))),
+                       Item (S));
                   FE.Node := Id;
                   Flow_List.Append (Successors, FE);
                   NB_Output := NB_Output + 1;
@@ -295,9 +298,12 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
          end if;
       end if;
 
-      Id := Make_Identifier
-        (No_Location, Name (E), Name (E),
-         Corresponding_Entity (E));
+      Id :=
+        Make_Identifier
+          (No_Location,
+           Name (E),
+           Name (E),
+           Corresponding_Entity (E));
       Append_Node_To_List (Id, Branch);
 
       --  In leaf component (ie terminal subprograms),
@@ -305,21 +311,27 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
       --  Our policy is to consider that any leaving flow
       --  is dependant of the incoming flows.
 
-      if NB_Output = 0 and then not Is_Empty
-        (Features (Parent_Component (Corresponding_Entity (E)))) then
+      if NB_Output = 0
+        and then not Is_Empty
+          (Features (Parent_Component (Corresponding_Entity (E))))
+      then
 
          --  We search all potential successors
          declare
-            F : Node_Id := First_Node
-              (Features (Parent_Component (Corresponding_Entity (E))));
+            F : Node_Id :=
+              First_Node
+                (Features (Parent_Component (Corresponding_Entity (E))));
          begin
             --  We add all accessed subcomponents to the flow
 
             while Present (F) loop
                if Kind (F) = K_Subcomponent_Access_Instance then
-                  Id := Make_Identifier
-                    (No_Location, Name (Identifier (F)),
-                     Name (Identifier (F)), F);
+                  Id :=
+                    Make_Identifier
+                      (No_Location,
+                       Name (Identifier (F)),
+                       Name (Identifier (F)),
+                       F);
                   Append_Node_To_List (Id, Branch);
                end if;
                F := Next_Node (F);
@@ -329,14 +341,20 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
             --  begining by subprograms parameters,
             --  and only then exploring out features
 
-            F := First_Node (Features (Parent_Component
-                                       (Corresponding_Entity (E))));
+            F :=
+              First_Node
+                (Features (Parent_Component (Corresponding_Entity (E))));
             while Present (F) loop
-               if Kind (F) = K_Parameter_Instance and then
-                 F /= Corresponding_Entity (E) and then Is_Out (F) then
-                  Id := Make_Identifier
-                    (No_Location, Name (Identifier (F)),
-                     Name (Identifier (F)), F);
+               if Kind (F) = K_Parameter_Instance
+                 and then F /= Corresponding_Entity (E)
+                 and then Is_Out (F)
+               then
+                  Id :=
+                    Make_Identifier
+                      (No_Location,
+                       Name (Identifier (F)),
+                       Name (Identifier (F)),
+                       F);
                   FE.Node := Id;
                   Flow_List.Append (Successors, FE);
                   NB_Output := NB_Output + 1;
@@ -344,18 +362,23 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
                F := Next_Node (F);
             end loop;
 
-            if NB_Output = 0 and then
-              Get_Category_Of_Component
-              (Parent_Component (Corresponding_Entity (E))) = CC_Thread then
-               F := First_Node (Features (Parent_Component
-                                          (Corresponding_Entity (E))));
+            if NB_Output = 0
+              and then
+                Get_Category_Of_Component
+                  (Parent_Component (Corresponding_Entity (E))) =
+                CC_Thread
+            then
+               F :=
+                 First_Node
+                   (Features (Parent_Component (Corresponding_Entity (E))));
                while Present (F) loop
                   if Kind (F) = K_Port_Spec_Instance and then Is_Out (F) then
-                     Id := Make_Identifier
-                       (No_Location,
-                        Name (Identifier (F)),
-                        Name (Identifier (F)),
-                        F);
+                     Id :=
+                       Make_Identifier
+                         (No_Location,
+                          Name (Identifier (F)),
+                          Name (Identifier (F)),
+                          F);
                      FE.Node := Id;
                      Flow_List.Append (Successors, FE);
                      NB_Output := NB_Output + 1;
@@ -370,7 +393,7 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
                for I in First .. Last (Flow_Lists) loop
                   if Flow_Lists.Table (I).List = Branch then
                      SF.List := No_List;
-                     Set_Item (Flow_lists, I, SF);
+                     Set_Item (Flow_Lists, I, SF);
                      exit;
                   end if;
                end loop;
@@ -388,24 +411,25 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
       if NB_Output = 1 then
          --  Check if the connection from E to S is bound to a bus
 
-         if Kind (Corresponding_Entity (Successors.Table (First).Node))
-           = K_Port_Spec_Instance
+         if Kind (Corresponding_Entity (Successors.Table (First).Node)) =
+           K_Port_Spec_Instance
          then
-            Bus := Bound_Bus (Corresponding_Entity (E),
-                              Corresponding_Entity
-                                (Successors.Table (First).Node));
+            Bus :=
+              Bound_Bus
+                (Corresponding_Entity (E),
+                 Corresponding_Entity (Successors.Table (First).Node));
             if Present (Bus) then
-               Id := Make_Identifier
-                 (No_Location,
-                  Name (Identifier (Bus)),
-                  Name (Identifier (Bus)),
-                  Bus);
+               Id :=
+                 Make_Identifier
+                   (No_Location,
+                    Name (Identifier (Bus)),
+                    Name (Identifier (Bus)),
+                    Bus);
                Append_Node_To_List (Id, Branch);
             end if;
          end if;
 
-         Build_Flows (Branch => Branch,
-                      E => Successors.Table (First).Node);
+         Build_Flows (Branch => Branch, E => Successors.Table (First).Node);
          Flow_List.Free (Successors);
          return;
       end if;
@@ -426,8 +450,12 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
 
             S := First_Node (Branch);
             while Present (S) loop
-               Id := Make_Identifier
-                 (No_Location, Name (S), Name (S), Corresponding_Entity (S));
+               Id :=
+                 Make_Identifier
+                   (No_Location,
+                    Name (S),
+                    Name (S),
+                    Corresponding_Entity (S));
                Append_Node_To_List (Id, TFL);
                S := Next_Node (S);
             end loop;
@@ -439,15 +467,17 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
 
             if Kind (Successors.Table (I).Node) = K_Port_Spec_Instance then
 
-               Bus := Bound_Bus (Corresponding_Entity (E),
-                                 Corresponding_Entity
-                                   (Successors.Table (I).Node));
+               Bus :=
+                 Bound_Bus
+                   (Corresponding_Entity (E),
+                    Corresponding_Entity (Successors.Table (I).Node));
                if Present (Bus) then
-                  Id := Make_Identifier
-                    (No_Location,
-                     Name (Identifier (Bus)),
-                     Name (Identifier (Bus)),
-                     Bus);
+                  Id :=
+                    Make_Identifier
+                      (No_Location,
+                       Name (Identifier (Bus)),
+                       Name (Identifier (Bus)),
+                       Bus);
                   Append_Node_To_List (Id, TFL);
                end if;
             end if;
@@ -540,10 +570,9 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
       --      use Namet;
 
-      Owner : Node_Id;
-      S     : Node_Id;
-      Str   : constant Name_Id := Get_String_Name
-        ("actual_connection_binding");
+      Owner       : Node_Id;
+      S           : Node_Id;
+      Str : constant Name_Id := Get_String_Name ("actual_connection_binding");
       Src_Process : Node_Id;
       Dst_Process : Node_Id;
 
@@ -556,7 +585,8 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
 
       if Get_Category_Of_Component (Parent_Component (Src)) /= CC_Process
         or else
-        Get_Category_Of_Component (Parent_Component (Dst)) /= CC_Process
+          Get_Category_Of_Component (Parent_Component (Dst)) /=
+          CC_Process
       then
          --  A bus can only be bound to an inter-process connection
          return No_Node;
@@ -574,12 +604,15 @@ package body Ocarina.REAL_Expander.Flow_Analysis is
               and then Is_Defined_Property (S, Str)
             then
                if Item (First_Node (Path (Source (S)))) = Src_Process
-                 and then Item (Next_Node (First_Node (Path (Source (S)))))
-                 = Src
-                 and then Item (First_Node (Path (Destination (S))))
-                 = Dst_Process
-                 and then Item
-                 (Next_Node (First_Node (Path (Destination (S))))) = Dst
+                 and then
+                   Item (Next_Node (First_Node (Path (Source (S))))) =
+                   Src
+                 and then
+                   Item (First_Node (Path (Destination (S)))) =
+                   Dst_Process
+                 and then
+                   Item (Next_Node (First_Node (Path (Destination (S))))) =
+                   Dst
                then
                   return Get_Reference_Property (S, Str);
                end if;

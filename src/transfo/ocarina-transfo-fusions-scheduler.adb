@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -74,7 +74,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    Thread        : Node_Id;
    Mode_Schedule : Mode_Table.Instance;
 
-   function Get_Single_Mode (Call_Sequence : Node_id) return Node_Id;
+   function Get_Single_Mode (Call_Sequence : Node_Id) return Node_Id;
    --  Returns the call sequence mode, if any
    --  if their is more than one mode, raises an error
    --  if their is zero mode, returns no_node
@@ -95,8 +95,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Compute_GCD --
    -----------------
 
-   function Compute_GCD (V1, V2 : Int) return Int
-   is
+   function Compute_GCD (V1, V2 : Int) return Int is
    begin
       if V2 = 0 then
          return V1;
@@ -109,8 +108,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Get_Quantum --
    -----------------
 
-   function Get_Quantum return Natural
-   is
+   function Get_Quantum return Natural is
    begin
       return Quantum;
    end Get_Quantum;
@@ -119,10 +117,9 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Sort_Call_Sequences --
    -------------------------
 
-   function Sort_Call_Sequences return CS_Table.Instance
-   is
+   function Sort_Call_Sequences return CS_Table.Instance is
       procedure Insert
-        (Call_Seq  : Node_Id;
+        (Call_Seq  :        Node_Id;
          List      : in out CS_Table.Instance;
          Real_Size : in out Natural);
       --  Insert a call sequence element regarding to the period order
@@ -132,7 +129,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
       ------------
 
       procedure Insert
-        (Call_Seq  : Node_Id;
+        (Call_Seq  :        Node_Id;
          List      : in out CS_Table.Instance;
          Real_Size : in out Natural)
       is
@@ -148,15 +145,15 @@ package body Ocarina.Transfo.Fusions.Scheduler is
             It := It + 1;
          end loop;
 
-         CS := List.Table (It).Node;
+         CS                   := List.Table (It).Node;
          List.Table (It).Node := Call_Seq;
-         It := It + 1;
+         It                   := It + 1;
 
          while It <= Real_Size loop
-            CS2 := List.Table (It).Node;
+            CS2                  := List.Table (It).Node;
             List.Table (It).Node := CS;
-            CS := CS2;
-            It := It + 1;
+            CS                   := CS2;
+            It                   := It + 1;
          end loop;
          List.Table (It).Node := CS;
 
@@ -203,7 +200,8 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Get_Call_Sequence_Period --
    ------------------------------
 
-   function Get_Call_Sequence_Period (Call_Sequence : Node_Id) return Natural
+   function Get_Call_Sequence_Period
+     (Call_Sequence : Node_Id) return Natural
    is
       use Ocarina.Transfo.Fusions;
 
@@ -216,9 +214,8 @@ package body Ocarina.Transfo.Fusions.Scheduler is
          raise Program_Error;
       end if;
 
-      Wrapper := Entity (Entity_Ref
-                         (First_Node
-                          (Subprogram_Calls (Call_Sequence))));
+      Wrapper :=
+        Entity (Entity_Ref (First_Node (Subprogram_Calls (Call_Sequence))));
 
       if Kind (Wrapper) = K_Subcomponent_Access then
          Wrapper := Entity (Entity_Ref (Wrapper));
@@ -237,7 +234,8 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Get_Call_Sequence_Priority --
    --------------------------------
 
-   function Get_Call_Sequence_Priority (Call_Sequence : Node_Id) return Natural
+   function Get_Call_Sequence_Priority
+     (Call_Sequence : Node_Id) return Natural
    is
       use Ocarina.Transfo.Fusions;
 
@@ -251,25 +249,23 @@ package body Ocarina.Transfo.Fusions.Scheduler is
          raise Program_Error;
       end if;
 
-      Wrapper := Entity (Entity_Ref
-                         (First_Node
-                          (Subprogram_Calls (Call_Sequence))));
+      Wrapper :=
+        Entity (Entity_Ref (First_Node (Subprogram_Calls (Call_Sequence))));
 
       if Kind (Wrapper) = K_Subcomponent_Access then
          Data := Container_Component (Wrapper);
 
          if OTF.Is_Defined_Property (Data, Raw_Priority) then
-            Per := Natural
-              (OTF.Get_Integer_Property (Data, Raw_Priority));
+            Per := Natural (OTF.Get_Integer_Property (Data, Raw_Priority));
          else
-            DE ("Data " & Get_Name_String (Name (Identifier (Data))) &
-                " must be protected if it offer a subprogram access");
+            DE ("Data " &
+               Get_Name_String (Name (Identifier (Data))) &
+               " must be protected if it offer a subprogram access");
             raise Program_Error;
          end if;
 
       elsif OTF.Is_Defined_Property (Wrapper, Transfo_Priority) then
-         Per := Natural
-           (OTF.Get_Integer_Property (Wrapper, Transfo_Priority));
+         Per := Natural (OTF.Get_Integer_Property (Wrapper, Transfo_Priority));
 
       else
          Per := 0;
@@ -282,14 +278,13 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Get_Thread_Quantum --
    ------------------------
 
-   procedure Get_Thread_Quantum (Thr : Node_Id; GCD, LCM : out Natural)
-   is
+   procedure Get_Thread_Quantum (Thr : Node_Id; GCD, LCM : out Natural) is
       use Ocarina.Transfo.Fusions;
 
-      C        : Node_Id;
-      Tmp_GCD  : Int := 0;
-      Tmp_LCM  : Int := 0;
-      Current  : Int := -1;
+      C       : Node_Id;
+      Tmp_GCD : Int := 0;
+      Tmp_LCM : Int := 0;
+      Current : Int := -1;
    begin
       LCM := 0;
       if Is_Empty (Calls (Thr)) then
@@ -304,15 +299,15 @@ package body Ocarina.Transfo.Fusions.Scheduler is
 
          if Tmp_GCD > 0 then
             if Current > 0 then
-               Tmp_GCD := Compute_Gcd (Current, Tmp_LCM);
+               Tmp_GCD := Compute_GCD (Current, Tmp_LCM);
 
                --  Since GCD (a, b) * LCM (a, b) = a * b
                --  LCM (a, b) = (a * b) / GCD (a, b)
                Tmp_LCM := (Current * Tmp_LCM) / Tmp_GCD;
             end if;
          elsif Current > 0 then
-            TMP_GCD := Current;
-            TMP_LCM := Current;
+            Tmp_GCD := Current;
+            Tmp_LCM := Current;
          end if;
 
          C := Next_Node (C);
@@ -338,9 +333,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Initialize --
    ----------------
 
-   procedure Initialize
-     (New_Thread, Old_Thread_1, Old_Thread_2 : Node_Id)
-   is
+   procedure Initialize (New_Thread, Old_Thread_1, Old_Thread_2 : Node_Id) is
       Th1_GCD : Natural;
       Th2_GCD : Natural;
       Th1_LCM : Natural;
@@ -360,12 +353,12 @@ package body Ocarina.Transfo.Fusions.Scheduler is
             DE ("No need for a scheduler when no threads are periodic");
             raise Program_Error;
          else
-            Quantum := Th2_GCD;
+            Quantum     := Th2_GCD;
             Hyperperiod := Th2_LCM;
          end if;
       else
          if Th2_GCD = 0 then
-            Quantum := Th1_GCD;
+            Quantum     := Th1_GCD;
             Hyperperiod := Th1_LCM;
          else
             if Th1_LCM > Th2_LCM then
@@ -386,8 +379,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Generate_Schedule --
    -----------------------
 
-   procedure Generate_Schedule
-   is
+   procedure Generate_Schedule is
       use CS_Table;
 
       Iter      : Natural := 0;
@@ -395,7 +387,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
       CS        : Node_Id;
       Ptr       : Natural := First;
       CS_Per    : Natural;
-      --  Per       : Natural;
+   --  Per       : Natural;
    begin
       Sorted_CS := Sort_Call_Sequences;
 
@@ -408,7 +400,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
       while Iter < Hyperperiod loop
          Ptr := First;
          while Ptr <= Last (Sorted_CS) loop
-            CS := Sorted_CS.Table (Ptr).Node;
+            CS     := Sorted_CS.Table (Ptr).Node;
             CS_Per := Get_Call_Sequence_Period (CS);
 
             if CS_Per /= 0 then
@@ -417,7 +409,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
 
                if Iter mod CS_Per = 0 then
                   declare
-                     Ref       : Node_Ref;
+                     Ref : Node_Ref;
                   begin
                      Ref.Node := Get_Single_Mode (CS);
                      Mode_Table.Append (Mode_Schedule, Ref);
@@ -440,8 +432,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Find_Initial_Mode --
    -----------------------
 
-   function Find_Initial_Mode return Node_Id
-   is
+   function Find_Initial_Mode return Node_Id is
    begin
       if No (Initial_Mode) then
          DE ("generate_scheduler must be call before find_initial_mode");
@@ -455,25 +446,26 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Print_Schedule --
    --------------------
 
-   procedure Print_Schedule (Package_Name, Thread_Inst_Name : Name_Id)
-   is
+   procedure Print_Schedule (Package_Name, Thread_Inst_Name : Name_Id) is
       use Ada.Text_IO;
       use Mode_Table;
 
-      Scheduler   : constant Name_Id := Get_String_Name
-        ("PolyORB_HI.Scheduler");
-      Thread_Name : constant Name_Id := Get_String_Name
-        (Get_Name_string (Package_Name) & "_" &
-         Get_Name_string (Thread_Inst_Name));
-      Sched_Base  : constant Name_Id := Get_String_Name
-        (Get_Name_String (Thread_Name) & "_scheduler_instance");
-      Sched_File  : constant String := Get_Name_String (Sched_Base) & ".ads";
-      Pkg_Name    : constant Name_Id := Sched_Base;
-      Type_Name   : constant Name_Id := Get_String_Name
-        ("Sched_" & Get_Name_String (Thread_Name) & "_T");
-      Mode_Type   : constant Name_Id :=
+      Scheduler : constant Name_Id := Get_String_Name ("PolyORB_HI.Scheduler");
+      Thread_Name : constant Name_Id :=
+        Get_String_Name
+          (Get_Name_String (Package_Name) &
+           "_" &
+           Get_Name_String (Thread_Inst_Name));
+      Sched_Base : constant Name_Id :=
+        Get_String_Name
+          (Get_Name_String (Thread_Name) & "_scheduler_instance");
+      Sched_File : constant String  := Get_Name_String (Sched_Base) & ".ads";
+      Pkg_Name   : constant Name_Id := Sched_Base;
+      Type_Name  : constant Name_Id :=
+        Get_String_Name ("Sched_" & Get_Name_String (Thread_Name) & "_T");
+      Mode_Type : constant Name_Id :=
         Get_String_Name (Get_Name_String (Thread_Name) & "_Mode_Type");
-      Inst_Pkg    : constant Name_Id :=
+      Inst_Pkg : constant Name_Id :=
         Get_String_Name (Get_Name_String (Thread_Name) & "_Mode");
       Function_name : constant Name_Id := Get_String_Name ("Change_Mode");
 
@@ -496,12 +488,19 @@ package body Ocarina.Transfo.Fusions.Scheduler is
       --  Should use primitives from the Ada backend
       --  Current form is code redundency
 
-      Put_Line (FD, "   type " & Get_Name_String (Type_Name) &
-                " is array (Integer range <>) of");
+      Put_Line
+        (FD,
+         "   type " &
+         Get_Name_String (Type_Name) &
+         " is array (Integer range <>) of");
       Put_Line (FD, "     " & Get_Name_String (Mode_Type) & ";");
       Put_Line (FD, "");
-      Put_Line (FD, "   package " & Get_Name_String (Inst_Pkg)
-                & " is new " & Get_Name_String (Scheduler));
+      Put_Line
+        (FD,
+         "   package " &
+         Get_Name_String (Inst_Pkg) &
+         " is new " &
+         Get_Name_String (Scheduler));
 
       Put_Line (FD, "     (" & Get_Name_String (Mode_Type) & ",");
       Put_Line (FD, "      " & Get_Name_String (Type_Name) & ",");
@@ -528,7 +527,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
       end loop;
 
       Put_Line (FD, "     " & Int'Image (Int (It - First)) & ",");
-      Put_Line (FD, "      " & Get_Name_String (Function_Name) & ");");
+      Put_Line (FD, "      " & Get_Name_String (Function_name) & ");");
       Put_Line (FD, "");
       Put_Line (FD, "end  " & Get_Name_String (Pkg_Name) & ";");
       Close (FD);
@@ -538,20 +537,20 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    -- Get_Single_Mode --
    ---------------------
 
-   function Get_Single_Mode (Call_Sequence : Node_id) return Node_Id
-   is
+   function Get_Single_Mode (Call_Sequence : Node_Id) return Node_Id is
       pragma Assert (Kind (Call_Sequence) = K_Subprogram_Call_Sequence);
 
       M : Node_Id;
    begin
-      if No (In_Modes (Call_Sequence)) or else
-        Is_Empty (Modes (In_Modes (Call_Sequence))) then
+      if No (In_Modes (Call_Sequence))
+        or else Is_Empty (Modes (In_Modes (Call_Sequence)))
+      then
          return No_Node;
       else
          M := First_Node (Modes (In_Modes (Call_Sequence)));
          if Present (Next_Node (M)) then
             DE ("More than one mode in " &
-                Get_Name_String (Name (Identifier (Call_Sequence))));
+               Get_Name_String (Name (Identifier (Call_Sequence))));
             raise Program_Error;
          else
             return ATN.Entity (M);

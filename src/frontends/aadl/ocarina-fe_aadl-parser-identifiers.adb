@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -45,7 +45,7 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
    -- Make_Current_Identifier --
    -----------------------------
 
-   function Make_Current_Identifier (Entity  : Node_Id) return Node_Id is
+   function Make_Current_Identifier (Entity : Node_Id) return Node_Id is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -76,8 +76,7 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
    begin
       Save_Lexer (Loc);
       Scan_Token;
-      if Token = T_Identifier
-        and then Token_Name = Name (Expected_Id) then
+      if Token = T_Identifier and then Token_Name = Name (Expected_Id) then
          return True;
       else
          DPE (PC_Defining_Identifier, Display_Name (Expected_Id));
@@ -92,8 +91,7 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
 
    function P_Expected_Identifiers
      (Identifiers : List_Id;
-      Delimiter : Ocarina.ME_AADL.Tokens.Token_Type)
-     return Boolean
+      Delimiter   : Ocarina.ME_AADL.Tokens.Token_Type) return Boolean
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
@@ -177,11 +175,11 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
    --  ( Identifier : [ refined to ] ) or ( [ Identifier : ] [ refined to ] )
 
    procedure P_Identifier_Refined_To
-     (Option              : Refinement_Type;
-      Optional_Identifier : Boolean;
-      Code                : Parsing_Code;
-      Refinement_Code     : Parsing_Code;
-      Skip_Until_Token    : Ocarina.ME_AADL.Tokens.Token_Type;
+     (Option              :     Refinement_Type;
+      Optional_Identifier :     Boolean;
+      Code                :     Parsing_Code;
+      Refinement_Code     :     Parsing_Code;
+      Skip_Until_Token    :     Ocarina.ME_AADL.Tokens.Token_Type;
       Identifier          : out Node_Id;
       Is_Refinement       : out Boolean;
       OK                  : out Boolean)
@@ -192,7 +190,7 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      Loc       : Location;
+      Loc : Location;
 
    begin
       Save_Lexer (Loc);
@@ -292,8 +290,8 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
       Loc2                 : Location;
       Entity_Loc           : Location;
       Current_Identifier   : Node_Id;
-      Processing_Namespace : Boolean := True;
-      Location_Set         : Boolean := False;
+      Processing_Namespace : Boolean          := True;
+      Location_Set         : Boolean          := False;
       Unique_Name          : constant Node_Id :=
         New_Node (K_Entity_Reference, No_Location);
    begin
@@ -319,11 +317,13 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
             Set_Display_Name (Current_Identifier, Token_Display_Name);
 
             if Processing_Namespace then
-               Append_Node_To_List (Current_Identifier,
-                                    Namespace_Path (Unique_Name));
+               Append_Node_To_List
+                 (Current_Identifier,
+                  Namespace_Path (Unique_Name));
             else
-               Add_Path_Element_To_Entity_Reference (Unique_Name,
-                                                     Current_Identifier);
+               Add_Path_Element_To_Entity_Reference
+                 (Unique_Name,
+                  Current_Identifier);
             end if;
 
             Save_Lexer (Loc2);
@@ -341,8 +341,9 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
                   Node : Node_Id;
                begin
                   if Processing_Namespace then
-                     Node := Remove_Last_Node_From_List
-                       (Namespace_Path (Unique_Name));
+                     Node :=
+                       Remove_Last_Node_From_List
+                         (Namespace_Path (Unique_Name));
 
                      if Node /= No_Node then
                         --  The last identifier was in fact the first
@@ -350,7 +351,8 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
                         --  of the namespace name.
 
                         Add_Path_Element_To_Entity_Reference
-                          (Unique_Name, Node);
+                          (Unique_Name,
+                           Node);
                      else
                         DPE (Code, T_Identifier);
                         Restore_Lexer (Loc);
@@ -368,12 +370,14 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
                   declare
                      Node : Node_Id;
                   begin
-                     Node := Remove_Last_Node_From_List
-                       (Namespace_Path (Unique_Name));
+                     Node :=
+                       Remove_Last_Node_From_List
+                         (Namespace_Path (Unique_Name));
 
                      if Node /= No_Node then
-                        Add_Path_Element_To_Entity_Reference (Unique_Name,
-                                                              Node);
+                        Add_Path_Element_To_Entity_Reference
+                          (Unique_Name,
+                           Node);
                      else
                         DPE (Code, T_Identifier);
                         Restore_Lexer (Loc);
@@ -391,15 +395,17 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
                      --  set the namespace name
 
                      Set_Namespace_Identifier
-                       (Unique_Name, New_Node (K_Identifier, Entity_Loc));
+                       (Unique_Name,
+                        New_Node (K_Identifier, Entity_Loc));
                      Set_Corresponding_Entity
-                       (Namespace_Identifier (Unique_Name), Unique_Name);
+                       (Namespace_Identifier (Unique_Name),
+                        Unique_Name);
 
                      List_Node := First_Node (Namespace_Path (Unique_Name));
 
                      while List_Node /= No_Node loop
-                        if List_Node = First_Node
-                          (Namespace_Path (Unique_Name))
+                        if List_Node =
+                          First_Node (Namespace_Path (Unique_Name))
                         then
                            Get_Name_String (Name (List_Node));
                         else
@@ -417,8 +423,8 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
                      List_Node := First_Node (Namespace_Path (Unique_Name));
 
                      while List_Node /= No_Node loop
-                        if List_Node = First_Node
-                          (Namespace_Path (Unique_Name))
+                        if List_Node =
+                          First_Node (Namespace_Path (Unique_Name))
                         then
                            Get_Name_String (Display_Name (List_Node));
                         else
@@ -430,18 +436,21 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
                         List_Node := Next_Node (List_Node);
                      end loop;
 
-                     Set_Display_Name (Namespace_Identifier (Unique_Name),
-                                       Name_Find);
+                     Set_Display_Name
+                       (Namespace_Identifier (Unique_Name),
+                        Name_Find);
                   else
                      Set_Namespace_Identifier (Unique_Name, No_Node);
                   end if;
 
                   --  set the entity name
 
-                  Set_Identifier (Unique_Name,
-                                  New_Node (K_Identifier, Entity_Loc));
-                  Set_Corresponding_Entity (Identifier (Unique_Name),
-                                            Unique_Name);
+                  Set_Identifier
+                    (Unique_Name,
+                     New_Node (K_Identifier, Entity_Loc));
+                  Set_Corresponding_Entity
+                    (Identifier (Unique_Name),
+                     Unique_Name);
                   List_Node := First_Node (Path (Unique_Name));
 
                   while List_Node /= No_Node loop
@@ -464,8 +473,7 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
                   while List_Node /= No_Node loop
                      if List_Node = First_Node (Path (Unique_Name)) then
                         Set_Str_To_Name_Buffer
-                          (Get_Name_String
-                           (Display_Name (Item (List_Node))));
+                          (Get_Name_String (Display_Name (Item (List_Node))));
                      else
                         Add_Str_To_Name_Buffer (Image (T_Dot));
                         Get_Name_String_And_Append
@@ -478,27 +486,31 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
                   Set_Display_Name (Identifier (Unique_Name), Name_Find);
                end;
 
-               Set_Full_Identifier (Unique_Name,
-                                    New_Node (K_Identifier, Entity_Loc));
-               Set_Corresponding_Entity (Full_Identifier (Unique_Name),
-                                         Unique_Name);
+               Set_Full_Identifier
+                 (Unique_Name,
+                  New_Node (K_Identifier, Entity_Loc));
+               Set_Corresponding_Entity
+                 (Full_Identifier (Unique_Name),
+                  Unique_Name);
 
                if Namespace_Identifier (Unique_Name) /= No_Node then
                   Get_Name_String (Name (Namespace_Identifier (Unique_Name)));
                   Add_Str_To_Name_Buffer (Image (T_Colon_Colon));
                   Get_Name_String_And_Append (Name (Identifier (Unique_Name)));
                   Set_Name (Full_Identifier (Unique_Name), Name_Find);
-                  Get_Name_String (Display_Name
-                                   (Namespace_Identifier (Unique_Name)));
+                  Get_Name_String
+                    (Display_Name (Namespace_Identifier (Unique_Name)));
                   Add_Str_To_Name_Buffer (Image (T_Colon_Colon));
-                  Get_Name_String_And_Append (Display_Name
-                                              (Identifier (Unique_Name)));
+                  Get_Name_String_And_Append
+                    (Display_Name (Identifier (Unique_Name)));
                   Set_Display_Name (Full_Identifier (Unique_Name), Name_Find);
                else
-                  Set_Name (Full_Identifier (Unique_Name),
-                            Name (Identifier (Unique_Name)));
-                  Set_Display_Name (Full_Identifier (Unique_Name),
-                                    Display_Name (Identifier (Unique_Name)));
+                  Set_Name
+                    (Full_Identifier (Unique_Name),
+                     Name (Identifier (Unique_Name)));
+                  Set_Display_Name
+                    (Full_Identifier (Unique_Name),
+                     Display_Name (Identifier (Unique_Name)));
                end if;
 
                return Unique_Name;

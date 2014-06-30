@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,9 +34,9 @@
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 with GNAT.Case_Util;
 
-with Utils; use Utils;
+with Utils;   use Utils;
 with Charset; use Charset;
-with Namet; use Namet;
+with Namet;   use Namet;
 
 with Ocarina.Backends.RTSJ_Tree.Nodes;
 with Ocarina.Backends.RTSJ_Tree.Nutils;
@@ -58,7 +58,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
       Into : String_Access;
    end record;
 
-   Rules : array (1 .. 64) of Casing_Rule;
+   Rules      : array (1 .. 64) of Casing_Rule;
    Rules_Last : Natural := 0;
 
    procedure Apply_Casing_Rules (S : in out String);
@@ -71,9 +71,9 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
    -- Apply_Casing_Rules --
    ------------------------
    procedure Apply_Casing_Rules (S : in out String) is
-      New_Word : Boolean := True;
-      Length : Natural := S'Length;
-      S1 : constant String := To_Lower (S);
+      New_Word : Boolean         := True;
+      Length   : Natural         := S'Length;
+      S1       : constant String := To_Lower (S);
    begin
       GNAT.Case_Util.To_Mixed (S);
 
@@ -82,7 +82,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
             New_Word := False;
             for J in 1 .. Rules_Last loop
                if Rules (J).Size <= Length
-               and then S1 (I .. I + Rules (J).Size - 1) = Rules (J).From.all
+                 and then S1 (I .. I + Rules (J).Size - 1) = Rules (J).From.all
                then
                   S (I .. I + Rules (J).Size - 1) := Rules (J).Into.all;
                end if;
@@ -93,7 +93,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
             New_Word := True;
             for J in 1 .. Rules_Last loop
                if Rules (J).Size <= Length
-               and then S1 (I .. I + Rules (J).Size - 1) = Rules (J).From.all
+                 and then S1 (I .. I + Rules (J).Size - 1) = Rules (J).From.all
                then
                   S (I .. I + Rules (J).Size - 1) := Rules (J).Into.all;
                end if;
@@ -108,7 +108,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
    ----------------
    procedure Initialize is
       Name : Name_Id;
-      N : Node_Id;
+      N    : Node_Id;
    begin
       --  Initialize the runtime only once
       if Initialized then
@@ -124,10 +124,12 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
          Set_Str_To_Name_Buffer (Name_Buffer (4 .. Name_Len));
          Apply_Casing_Rules (Name_Buffer (1 .. Name_Len));
 
-         Name := To_RTSJ_Conventional_Name
-           (Get_String_Name (Name_Buffer (1 .. Name_Len)), True);
-         Name := Add_Prefix_To_Name
-            ("fr.enst.ocarina.polyORB_HI_runtime.", Name);
+         Name :=
+           To_RTSJ_Conventional_Name
+             (Get_String_Name (Name_Buffer (1 .. Name_Len)),
+              True);
+         Name :=
+           Add_Prefix_To_Name ("fr.enst.ocarina.polyORB_HI_runtime.", Name);
 
          N := New_Node (K_Defining_Identifier);
          Set_Name (N, Name);
@@ -140,8 +142,10 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
          Set_Str_To_Name_Buffer (Name_Buffer (4 .. Name_Len));
          Apply_Casing_Rules (Name_Buffer (1 .. Name_Len));
 
-         Name := To_RTSJ_Conventional_Name
-           (Get_String_Name (Name_Buffer (1 .. Name_Len)), True);
+         Name :=
+           To_RTSJ_Conventional_Name
+             (Get_String_Name (Name_Buffer (1 .. Name_Len)),
+              True);
          Name := Add_Prefix_To_Name ("javax.realtime.", Name);
 
          N := New_Node (K_Defining_Identifier);
@@ -155,7 +159,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
          Set_Str_To_Name_Buffer (Name_Buffer (4 .. Name_Len));
          Apply_Casing_Rules (Name_Buffer (1 .. Name_Len));
 
-         Name := To_Upper (Name_Find);
+         Name    := To_Upper (Name_Find);
          RED (E) := New_Node (K_Defining_Identifier);
          Set_Name (RED (E), Name);
       end loop;
@@ -165,8 +169,10 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
          Set_Str_To_Name_Buffer (Name_Buffer (4 .. Name_Len));
          Apply_Casing_Rules (Name_Buffer (1 .. Name_Len));
 
-         Name := To_RTSJ_Conventional_Name
-           (Get_String_Name (Name_Buffer (1 .. Name_Len)), False);
+         Name :=
+           To_RTSJ_Conventional_Name
+             (Get_String_Name (Name_Buffer (1 .. Name_Len)),
+              False);
          RED (E) := New_Node (K_Defining_Identifier);
          Set_Name (RED (E), Name);
       end loop;
@@ -176,8 +182,10 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
          Set_Str_To_Name_Buffer (Name_Buffer (4 .. Name_Len));
          Apply_Casing_Rules (Name_Buffer (1 .. Name_Len));
 
-         Name := To_RTSJ_Conventional_Name
-           (Get_String_Name (Name_Buffer (1 .. Name_Len)), True);
+         Name :=
+           To_RTSJ_Conventional_Name
+             (Get_String_Name (Name_Buffer (1 .. Name_Len)),
+              True);
          RED (E) := New_Node (K_Defining_Identifier);
          Set_Name (RED (E), Name);
       end loop;
@@ -189,8 +197,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
    -----------
    procedure Reset is
    begin
-      RED := (RE_Id'Range => No_Node);
-      RHD := (RH_Id'Range => No_Node);
+      RED        := (RE_Id'Range => No_Node);
+      RHD        := (RH_Id'Range => No_Node);
       Rules_Last := 0;
 
       Initialized := False;
@@ -220,7 +228,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Runtime is
    --------------------------
    procedure Register_Casing_Rule (S : String) is
    begin
-      Rules_Last := Rules_Last + 1;
+      Rules_Last              := Rules_Last + 1;
       Rules (Rules_Last).Size := S'Length;
       Rules (Rules_Last).Into := new String'(S);
       Rules (Rules_Last).From := new String'(S);

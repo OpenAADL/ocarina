@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,7 +34,7 @@
 with Unchecked_Deallocation;
 
 package Types is
-pragma Preelaborate (Types);
+   pragma Preelaborate (Types);
 
 --  This package contains host independent type definitions which are used
 --  in more than one unit in the compiler. They are gathered here for easy
@@ -48,10 +48,10 @@ pragma Preelaborate (Types);
    -- General Use Integer Types --
    -------------------------------
 
-   type Int is range -2 ** 31 .. +2 ** 31 - 1;
+   type Int is range -2**31 .. +2**31 - 1;
    --  Signed 32-bit integer
 
-   type Dint is range -2 ** 63 .. +2 ** 63 - 1;
+   type Dint is range -2**63 .. +2**63 - 1;
    --  Double length (64-bit) integer
 
    subtype Nat is Int range 0 .. Int'Last;
@@ -62,14 +62,14 @@ pragma Preelaborate (Types);
    subtype Pos is Int range 1 .. Int'Last;
    --  Positive Int values
 
-   type Word is mod 2 ** 32;
+   type Word is mod 2**32;
    --  Unsigned 32-bit integer
 
-   type Byte is mod 2 ** 8;
+   type Byte is mod 2**8;
    for Byte'Size use 8;
    --  8-bit unsigned integer
 
-   type size_t is mod 2 ** Standard'Address_Size;
+   type size_t is mod 2**Standard'Address_Size;
    --  Memory size value, for use in calls to C routines
 
    --------------------------------------
@@ -102,7 +102,7 @@ pragma Preelaborate (Types);
    --  Characters with the upper bit set
 
    type Character_Ptr is access all Character;
-   type String_Ptr    is access all String;
+   type String_Ptr is access all String;
    --  Standard character and string pointers
 
    procedure Free is new Unchecked_Deallocation (String, String_Ptr);
@@ -185,7 +185,7 @@ pragma Preelaborate (Types);
    for Name_Id'Size use 32;
    --  Type used to identify entries in the names table
 
-   No_Str   : constant String := "";
+   No_Str : constant String := "";
 
    No_Name : constant Name_Id := Names_Low_Bound;
    --  The special Name_Id value No_Name is used in the parser to indicate
@@ -232,31 +232,31 @@ pragma Preelaborate (Types);
 
    type Base_Type is new Node_Id;
 
-   type Short_Short  is range -2 **  7 .. 2 **  7 - 1;
-   for Short_Short'Size use  8;
+   type Short_Short is range -2**7 .. 2**7 - 1;
+   for Short_Short'Size use 8;
 
-   type Short is range -2 ** 15 .. 2 ** 15 - 1;
+   type Short is range -2**15 .. 2**15 - 1;
    for Short'Size use 16;
 
-   type Long is range -2 ** 31 .. 2 ** 31 - 1;
+   type Long is range -2**31 .. 2**31 - 1;
    for Long'Size use 32;
 
-   type Long_Long is range -2 ** 63 .. 2 ** 63 - 1;
+   type Long_Long is range -2**63 .. 2**63 - 1;
    for Long_Long'Size use 64;
 
-   type Octet  is mod 2 **  8;
-   for Octet'Size use  8;
+   type Octet is mod 2**8;
+   for Octet'Size use 8;
 
-   type Unsigned_Short_Short is mod 2 **  8;
+   type Unsigned_Short_Short is mod 2**8;
    for Unsigned_Short_Short'Size use 8;
 
-   type Unsigned_Short is mod 2 ** 16;
+   type Unsigned_Short is mod 2**16;
    for Unsigned_Short'Size use 16;
 
-   type Unsigned_Long is mod 2 ** 32;
+   type Unsigned_Long is mod 2**32;
    for Unsigned_Long'Size use 32;
 
-   type Unsigned_Long_Long is mod 2 ** 64;
+   type Unsigned_Long_Long is mod 2**64;
    for Unsigned_Long_Long'Size use 64;
 
    --  Floating point types. We assume that we are on an IEEE machine, and
@@ -267,8 +267,8 @@ pragma Preelaborate (Types);
    --  types in interfaces, so it is not wrong to have IEEE_Extended_Float
    --  defined even if the extended format is not available.
 
-   type Float       is new Short_Float;
-   type Double      is new Long_Float;
+   type Float is new Short_Float;
+   type Double is new Long_Float;
    type Long_Double is new Long_Long_Float;
 
    FSS  : constant := Short_Short'First;
@@ -292,13 +292,11 @@ pragma Preelaborate (Types);
 
    function Shift_Left
      (Value  : Unsigned_Long_Long;
-      Amount : Natural)
-     return    Unsigned_Long_Long;
+      Amount : Natural) return Unsigned_Long_Long;
 
    function Shift_Right
      (Value  : Unsigned_Long_Long;
-      Amount : Natural)
-      return   Unsigned_Long_Long;
+      Amount : Natural) return Unsigned_Long_Long;
 
    pragma Import (Intrinsic, Shift_Left);
    pragma Import (Intrinsic, Shift_Right);

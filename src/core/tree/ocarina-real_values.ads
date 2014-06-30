@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,8 +38,15 @@ package Ocarina.REAL_Values is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Types;
 
-   type Literal_Type is (LT_Integer, LT_Real, LT_String, LT_Boolean,
-                         LT_Enumeration, LT_List, LT_Range, LT_Element);
+   type Literal_Type is
+     (LT_Integer,
+      LT_Real,
+      LT_String,
+      LT_Boolean,
+      LT_Enumeration,
+      LT_List,
+      LT_Range,
+      LT_Element);
 
    type Value_Type (T : Literal_Type := LT_Integer) is record
       case T is
@@ -64,18 +71,18 @@ package Ocarina.REAL_Values is
          when LT_Element =>     --  Element of a set
             ELVal : Node_Id;
          when LT_Range =>
-            RVal_Left  : Long_Long_Float;      --  Absolute value
-            RSign_Left : Boolean;              --  True => Negative
+            RVal_Left   : Long_Long_Float;      --  Absolute value
+            RSign_Left  : Boolean;              --  True => Negative
             RVal_Right  : Long_Long_Float;      --  Absolute value
             RSign_Right : Boolean;              --  True => Negative
-            RVBase : Unsigned_Short_Short; --  For printing purpose only
-            RVExp  : Integer;              --  For printing purpose only
+            RVBase      : Unsigned_Short_Short; --  For printing purpose only
+            RVExp       : Integer;              --  For printing purpose only
       end case;
    end record;
 
    No_Value : constant Value_Id;
-   V_Zero   : Value_Id;
-   V_One    : Value_Id;
+   V_Zero : Value_Id;
+   V_One  : Value_Id;
 
    function Get_Value_Type (Value : Value_Id) return Value_Type;
 
@@ -87,8 +94,7 @@ package Ocarina.REAL_Values is
       LNegative : Boolean              := False;
       RNegative : Boolean              := False;
       Base      : Unsigned_Short_Short := 10;
-      Exp       : Integer              := 0)
-     return Value_Id;
+      Exp       : Integer              := 0) return Value_Id;
 
    function New_List_Value (Value : List_Id) return Value_Id;
 
@@ -96,15 +102,13 @@ package Ocarina.REAL_Values is
      (Value    : Long_Long_Float;
       Negative : Boolean              := False;
       Base     : Unsigned_Short_Short := 10;
-      Exp      : Integer              := 0)
-     return Value_Id;
+      Exp      : Integer              := 0) return Value_Id;
 
    function New_Integer_Value
      (Value    : Unsigned_Long_Long;
       Negative : Boolean              := False;
       Base     : Unsigned_Short_Short := 10;
-      Exp      : Integer              := 0)
-     return Value_Id;
+      Exp      : Integer              := 0) return Value_Id;
 
    function New_String_Value (Value : Name_Id) return Value_Id;
 
@@ -118,14 +122,8 @@ package Ocarina.REAL_Values is
 
    function AADL_Value (V : Value_Id) return Value_Id;
 
-   function Image
-     (Value  : Value_Type;
-      Quoted : Boolean    := True)
-     return String;
-   function Image
-     (Value  : Value_Id;
-      Quoted : Boolean  := True)
-     return String;
+   function Image (Value : Value_Type; Quoted : Boolean := True) return String;
+   function Image (Value : Value_Id; Quoted : Boolean := True) return String;
 
    function Power (Base : Integer; Exp : Integer) return Long_Long_Float;
    --  Return (Base ** Exp)
@@ -143,14 +141,12 @@ package Ocarina.REAL_Values is
    function Image
      (V    : Long_Long_Float;
       Base : Unsigned_Short_Short;
-      Exp  : Integer)
-     return String;
+      Exp  : Integer) return String;
 
    function Image
      (V    : Unsigned_Long_Long;
       Base : Unsigned_Short_Short;
-      Exp  : Integer)
-     return String;
+      Exp  : Integer) return String;
 
    function Image (Kind : Node_Kind) return String;
    --  Return corresponding string of node kind

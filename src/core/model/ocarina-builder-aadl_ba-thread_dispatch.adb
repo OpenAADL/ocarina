@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,7 +34,7 @@
 with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
-package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
+package body Ocarina.Builder.Aadl_Ba.Thread_Dispatch is
 
    use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
@@ -47,21 +47,22 @@ package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
      (Loc              : Location;
       Container        : Node_Id;
       Expressions      : List_Id;
-      Frozen_Port_List : List_Id)
-     return Node_Id
+      Frozen_Port_List : List_Id) return Node_Id
    is
-      pragma Assert (False
-                       or else No (Container)
-                       or else Kind (Container) = K_Behavior_Condition);
+      pragma Assert
+        (False
+         or else No (Container)
+         or else Kind (Container) = K_Behavior_Condition);
 
-      Dispatch_Condition : constant Node_Id
-        := New_Node (K_Dispatch_Condition, Loc);
+      Dispatch_Condition : constant Node_Id :=
+        New_Node (K_Dispatch_Condition, Loc);
 
    begin
-      Add_New_Dispatch_Condition (Dispatch_Condition,
-                                  Container,
-                                  Expressions,
-                                  Frozen_Port_List);
+      Add_New_Dispatch_Condition
+        (Dispatch_Condition,
+         Container,
+         Expressions,
+         Frozen_Port_List);
 
       if No (Dispatch_Condition) then
          return No_Node;
@@ -72,12 +73,12 @@ package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
 
    procedure Add_New_Dispatch_Condition
      (Dispatch_Condition : Node_Id;
-      Container          : Node_Id  := No_Node;
-      Expressions        : List_Id  := No_List;
-      Frozen_Port_List   : List_Id  := No_List)
+      Container          : Node_Id := No_Node;
+      Expressions        : List_Id := No_List;
+      Frozen_Port_List   : List_Id := No_List)
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Behavior_Condition);
+      pragma Assert
+        (No (Container) or else Kind (Container) = K_Behavior_Condition);
       pragma Assert (Kind (Dispatch_Condition) = K_Dispatch_Condition);
 
    begin
@@ -101,25 +102,26 @@ package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
       Container           : Node_Id;
       Trig_Kind           : Dispatch_Trigger_Kind;
       Trigger_Conjunction : Node_Id;
-      Behavior_Time_Node  : Node_Id)
-     return Node_Id
+      Behavior_Time_Node  : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Container) = K_Dispatch_Condition);
 
-      Dispatch_Trigger : constant Node_Id := New_Node (K_Dispatch_Trigger,
-                                                       Loc);
+      Dispatch_Trigger : constant Node_Id :=
+        New_Node (K_Dispatch_Trigger, Loc);
    begin
       Set_BE_Container (Dispatch_Trigger, Container);
 
       if Present (Trigger_Conjunction) then
-         Set_Dispatch_Trigger_Conjunction (Dispatch_Trigger,
-                                           Trigger_Conjunction);
+         Set_Dispatch_Trigger_Conjunction
+           (Dispatch_Trigger,
+            Trigger_Conjunction);
          Set_BE_Container (Trigger_Conjunction, Dispatch_Trigger);
       end if;
 
       if Trig_Kind /= TRI_Error then
-         Set_Trigger_Kind (Dispatch_Trigger,
-                           Dispatch_Trigger_Kind'Pos (Trig_Kind));
+         Set_Trigger_Kind
+           (Dispatch_Trigger,
+            Dispatch_Trigger_Kind'Pos (Trig_Kind));
       end if;
 
       if Present (Behavior_Time_Node) then
@@ -146,14 +148,14 @@ package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
       Trigger_Events : List_Id;
       Numeral        : Node_Id;
       Is_Ormore      : Boolean;
-      Is_Orless      : Boolean)
-     return Node_Id
+      Is_Orless      : Boolean) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Dispatch_Trigger);
-      pragma Assert (No (Trigger_Event)
-                       or else Kind (Trigger_Event) = K_Identifier
-                       or else Kind (Trigger_Event) = K_Identifier_With_Value);
+      pragma Assert
+        (No (Container) or else Kind (Container) = K_Dispatch_Trigger);
+      pragma Assert
+        (No (Trigger_Event)
+         or else Kind (Trigger_Event) = K_Identifier
+         or else Kind (Trigger_Event) = K_Identifier_With_Value);
 
       Trigger_Conjunction : constant Node_Id :=
         New_Node (K_Dispatch_Trigger_Conjunction, Loc);
@@ -177,4 +179,4 @@ package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
 
    end Add_New_Dispatch_Trigger_Conjunction;
 
-end Ocarina.Builder.AADL_BA.Thread_Dispatch;
+end Ocarina.Builder.Aadl_Ba.Thread_Dispatch;

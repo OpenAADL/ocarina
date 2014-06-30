@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,9 +52,7 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
 
    --  AADL_V2
 
-   function P_Array_Dimensions (Container : Types.Node_Id)
-     return Node_Id
-   is
+   function P_Array_Dimensions (Container : Types.Node_Id) return Node_Id is
 
       use Locations;
       use Ocarina.ME_AADL.Tokens;
@@ -62,14 +60,16 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      pragma Assert (Container /= No_Node
-                       and then (Kind (Container) = K_Subcomponent
-                                   or else Kind (Container) = K_Port_Spec));
+      pragma Assert
+        (Container /= No_Node
+         and then
+         (Kind (Container) = K_Subcomponent
+          or else Kind (Container) = K_Port_Spec));
 
       Loc            : Location;
-      List_Array_Dim : List_Id := No_List;
-      Node_Array     : constant Node_Id := New_Node (K_Array_Dimensions,
-                                                     Token_Location);
+      List_Array_Dim : List_Id          := No_List;
+      Node_Array     : constant Node_Id :=
+        New_Node (K_Array_Dimensions, Token_Location);
 
    begin
       Save_Lexer (Loc);
@@ -86,9 +86,11 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
          return No_Node;
       end if;
 
-      List_Array_Dim := P_Items_List (P_Array_Dimension_Size'Access,
-                                      Node_Array,
-                                      T_Left_Square_Bracket);
+      List_Array_Dim :=
+        P_Items_List
+          (P_Array_Dimension_Size'Access,
+           Node_Array,
+           T_Left_Square_Bracket);
 
       Set_Array_List_Dim (Node_Array, List_Array_Dim);
 
@@ -105,8 +107,7 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
    --  array_dimension_size ::= numeral | unique_property_constant_identifier
 
    function P_Array_Dimension_Size
-   (Container : Types.Node_Id)
-     return Node_Id
+     (Container : Types.Node_Id) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -166,10 +167,7 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
    --  array_selection ::= {[range_selection]}*
    --  range_selection ::= numeral [ .. numeral ]
 
-   function P_Array_Selection
-     (Container : Types.Node_Id)
-     return Node_Id
-   is
+   function P_Array_Selection (Container : Types.Node_Id) return Node_Id is
       use Lexer;
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -183,10 +181,10 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
       Start_Loc       : Location;
       Identifier      : Node_Id;
       Array_Selection : Node_Id;
-      Range_Selection : Node_Id   := No_Node;
+      Range_Selection : Node_Id := No_Node;
       First_Term      : Node_Id;
-      Second_Term     : Node_Id   := No_Node;
-      Range_List      : List_Id   := No_List;
+      Second_Term     : Node_Id := No_Node;
+      Range_List      : List_Id := No_List;
    begin
       Save_Lexer (Start_Loc);
 
@@ -226,9 +224,11 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
                   Skip_Tokens (T_Semicolon);
                   return No_Node;
                else
-                  Range_Selection := Add_New_Range_Selection (Container,
-                                                              First_Term,
-                                                              Second_Term);
+                  Range_Selection :=
+                    Add_New_Range_Selection
+                      (Container,
+                       First_Term,
+                       Second_Term);
 
                   if No (Range_Selection) then
                      DPE (PC_Array_Selection);
@@ -249,10 +249,8 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
          Range_List := No_List;
       end if;
 
-      Array_Selection := Add_New_Array_Selection (Start_Loc,
-                                                  Container,
-                                                  Identifier,
-                                                  Range_List);
+      Array_Selection :=
+        Add_New_Array_Selection (Start_Loc, Container, Identifier, Range_List);
       if No (Array_Selection) then
          DPE (PC_Array_Selection);
          Skip_Tokens (T_Semicolon);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 package Ocarina.Backends.ASN1_Tree.Generator is
 
-   Var_Name_Len    : Natural := 0;
+   Var_Name_Len : Natural := 0;
 
    procedure Generate (N : Node_Id);
    --  All code generation is performed in the current directory. It

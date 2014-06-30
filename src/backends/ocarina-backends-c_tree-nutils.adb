@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -70,7 +70,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package CV  renames Ocarina.Backends.C_Values;
+   package CV renames Ocarina.Backends.C_Values;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package PHCR renames Ocarina.Backends.PO_HI_C.Runtime;
@@ -80,19 +80,21 @@ package body Ocarina.Backends.C_Tree.Nutils is
    --  Used to mark C keywords and avoid collision with other languages
 
    type Entity_Stack_Entry is record
-      Current_File    : Node_Id;
-      Current_Entity  : Node_Id;
+      Current_File   : Node_Id;
+      Current_Entity : Node_Id;
    end record;
 
    No_Depth : constant Int := -1;
-   package Entity_Stack is
-      new GNAT.Table (Entity_Stack_Entry, Int, No_Depth + 1, 10, 10);
+   package Entity_Stack is new GNAT.Table
+     (Entity_Stack_Entry,
+      Int,
+      No_Depth + 1,
+      10,
+      10);
 
    use Entity_Stack;
 
-   procedure New_Operator
-     (O : Operator_Type;
-      I : String := "");
+   procedure New_Operator (O : Operator_Type; I : String := "");
 
    ------------------------
    -- Add_Prefix_To_Name --
@@ -100,8 +102,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Set_Str_To_Name_Buffer (Prefix);
@@ -115,8 +116,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Get_Name_String (Name);
@@ -130,8 +130,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
       Length   : Natural;
       Temp_Str : String (1 .. Suffix'Length);
@@ -218,14 +217,14 @@ package body Ocarina.Backends.C_Tree.Nutils is
          when K_Function_Specification =>
             C := New_Node (K_Function_Specification);
             CTN.Set_Defining_Identifier
-              (C, CTU.Copy_Node (Defining_Identifier (N)));
+              (C,
+               CTU.Copy_Node (Defining_Identifier (N)));
             CTN.Set_Parameters (C, CTN.Parameters (N));
             CTN.Set_Return_Type (C, CTN.Return_Type (N));
 
          when K_Include_Clause =>
             C := New_Node (K_Include_Clause);
-            CTN.Set_Header_Name
-               (C, CTU.Copy_Node (Header_Name (N)));
+            CTN.Set_Header_Name (C, CTU.Copy_Node (Header_Name (N)));
             CTN.Set_Is_Local (C, CTN.Is_Local (N));
 
          when K_Literal =>
@@ -466,8 +465,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_C_Comment
      (N                 : Name_Id;
-      Has_Header_Spaces : Boolean := True)
-     return Node_Id
+      Has_Header_Spaces : Boolean := True) return Node_Id
    is
       C : Node_Id;
    begin
@@ -484,8 +482,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Assignment_Statement
      (Variable_Identifier : Node_Id;
-      Expression          : Node_Id)
-     return Node_Id
+      Expression          : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -500,11 +497,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ------------------------------
 
    function Make_Defining_Identifier
-     (Name         : Name_Id;
-      C_Conversion : Boolean := True;
+     (Name           : Name_Id;
+      C_Conversion   : Boolean := True;
       Ada_Conversion : Boolean := False;
-      Pointer      : Boolean := False)
-     return Node_Id
+      Pointer        : Boolean := False) return Node_Id
    is
       N : Node_Id;
 
@@ -530,8 +526,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    function Make_Expression
      (Left_Expr  : Node_Id;
       Operator   : Operator_Type := Op_None;
-      Right_Expr : Node_Id := No_Node)
-     return Node_Id
+      Right_Expr : Node_Id       := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
@@ -551,8 +546,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       Pre_Cond            : Node_Id;
       Condition           : Node_Id;
       Post_Cond           : Node_Id;
-      Statements          : List_Id)
-     return Node_Id
+      Statements          : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -582,9 +576,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -------------------------
 
    function Make_While_Statement
-     (Condition           : Node_Id;
-      Statements          : List_Id)
-     return Node_Id
+     (Condition  : Node_Id;
+      Statements : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -600,8 +593,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Full_Type_Declaration
      (Defining_Identifier : Node_Id;
-      Type_Definition     : Node_Id)
-     return Node_Id
+      Type_Definition     : Node_Id) return Node_Id
    is
       N : Node_Id;
 
@@ -617,10 +609,9 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -----------------------
 
    function Make_If_Statement
-     (Condition        : Node_Id;
-      Statements       : List_Id;
-      Else_Statements  : List_Id := No_List)
-     return Node_Id
+     (Condition       : Node_Id;
+      Statements      : List_Id;
+      Else_Statements : List_Id := No_List) return Node_Id
    is
       N : Node_Id;
    begin
@@ -638,8 +629,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    function Make_List_Id
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
-      N3 : Node_Id := No_Node)
-     return List_Id
+      N3 : Node_Id := No_Node) return List_Id
    is
       L : List_Id;
    begin
@@ -661,8 +651,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Parameter_Specification
      (Defining_Identifier : Node_Id;
-      Parameter_Type      : Node_Id := No_Node)
-     return                Node_Id
+      Parameter_Type      : Node_Id := No_Node) return Node_Id
    is
       P : Node_Id;
 
@@ -678,8 +667,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ---------------------------
 
    function Make_Return_Statement
-     (Expression : Node_Id := No_Node)
-     return Node_Id
+     (Expression : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
@@ -695,17 +683,16 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ---------------------------------
 
    function Make_Function_Specification
-     (Defining_Identifier     : Node_Id;
-      Parameters              : List_Id := No_List;
-      Return_Type             : Node_Id := No_Node)
-     return Node_Id
+     (Defining_Identifier : Node_Id;
+      Parameters          : List_Id := No_List;
+      Return_Type         : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
-      N := New_Node           (K_Function_Specification);
-      Set_Parameters          (N, Parameters);
+      N := New_Node (K_Function_Specification);
+      Set_Parameters (N, Parameters);
       Set_Defining_Identifier (N, Defining_Identifier);
-      Set_Return_Type         (N, Return_Type);
+      Set_Return_Type (N, Return_Type);
       return N;
    end Make_Function_Specification;
 
@@ -716,9 +703,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    function Make_Function_Implementation
      (Specification : Node_Id;
       Declarations  : List_Id;
-      Statements    : List_Id)
-
-     return Node_Id
+      Statements    : List_Id) return Node_Id
    is
       N : Node_Id;
 
@@ -736,8 +721,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Member_Declaration
      (Defining_Identifier : Node_Id;
-      Used_Type           : Node_Id)
-     return                Node_Id
+      Used_Type           : Node_Id) return Node_Id
    is
       P : Node_Id;
    begin
@@ -753,8 +737,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Variable_Declaration
      (Defining_Identifier : Node_Id;
-      Used_Type           : Node_Id)
-     return                Node_Id
+      Used_Type           : Node_Id) return Node_Id
    is
       P : Node_Id;
    begin
@@ -768,10 +751,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Make_Variable_Address --
    ---------------------------
 
-   function Make_Variable_Address
-     (Expression : Node_Id)
-     return                Node_Id
-   is
+   function Make_Variable_Address (Expression : Node_Id) return Node_Id is
       P : Node_Id;
    begin
       P := New_Node (K_Variable_Address);
@@ -783,10 +763,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Make_Extern_Entity_Declaration --
    ------------------------------------
 
-   function Make_Extern_Entity_Declaration
-     (Entity : Node_Id)
-     return                Node_Id
-   is
+   function Make_Extern_Entity_Declaration (Entity : Node_Id) return Node_Id is
       P : Node_Id;
    begin
       P := New_Node (K_Extern_Entity_Declaration);
@@ -800,8 +777,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Struct_Aggregate
      (Defining_Identifier : Node_Id := No_Node;
-      Members             : List_Id)
-     return Node_Id
+      Members             : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -819,8 +795,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Union_Aggregate
      (Defining_Identifier : Node_Id := No_Node;
-      Members             : List_Id)
-     return Node_Id
+      Members             : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -836,10 +811,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Make_Enum_Aggregate --
    -------------------------
 
-   function Make_Enum_Aggregate
-     (Members    : List_Id)
-     return Node_Id
-   is
+   function Make_Enum_Aggregate (Members : List_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Enum_Aggregate);
@@ -852,9 +824,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -----------------------
 
    function Make_Call_Profile
-     (Defining_Identifier   : Node_Id;
-      Parameters : List_Id := No_List)
-     return Node_Id
+     (Defining_Identifier : Node_Id;
+      Parameters          : List_Id := No_List) return Node_Id
    is
       N : Node_Id;
    begin
@@ -869,9 +840,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ---------------------
 
    function Make_Macro_Call
-     (Defining_Identifier   : Node_Id;
-      Parameters : List_Id := No_List)
-     return Node_Id
+     (Defining_Identifier : Node_Id;
+      Parameters          : List_Id := No_List) return Node_Id
    is
       N : Node_Id;
    begin
@@ -887,8 +857,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Type_Attribute
      (Designator : Node_Id;
-      Attribute  : Attribute_Id)
-     return Node_Id
+      Attribute  : Attribute_Id) return Node_Id
    is
       procedure Get_Scoped_Name_String (S : Node_Id);
 
@@ -915,8 +884,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Type_Conversion
      (Subtype_Mark : Node_Id;
-      Expression   : Node_Id)
-     return Node_Id
+      Expression   : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -982,19 +950,19 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function New_List
      (Kind : CTN.Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id is
+      From : Node_Id := No_Node) return List_Id
+   is
       N : Node_Id;
 
    begin
       CTN.Entries.Increment_Last;
-      N := CTN.Entries.Last;
+      N                     := CTN.Entries.Last;
       CTN.Entries.Table (N) := CTN.Default_Node;
       Set_Kind (N, Kind);
       if Present (From) then
-         CTN.Set_Loc  (N, CTN.Loc (From));
+         CTN.Set_Loc (N, CTN.Loc (From));
       else
-         CTN.Set_Loc  (N, No_Location);
+         CTN.Set_Loc (N, No_Location);
       end if;
       return List_Id (N);
    end New_List;
@@ -1005,13 +973,12 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function New_Node
      (Kind : CTN.Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id
+      From : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
       CTN.Entries.Increment_Last;
-      N := CTN.Entries.Last;
+      N                     := CTN.Entries.Last;
       CTN.Entries.Table (N) := CTN.Default_Node;
       CTN.Set_Kind (N, Kind);
 
@@ -1028,10 +995,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- New_Token --
    ---------------
 
-   procedure New_Token
-     (T : Token_Type;
-      I : String := "")
-   is
+   procedure New_Token (T : Token_Type; I : String := "") is
       Name : Name_Id;
    begin
       if T in Keyword_Type then
@@ -1055,9 +1019,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- New_Operator --
    ------------------
 
-   procedure New_Operator
-     (O : Operator_Type;
-      I : String := "") is
+   procedure New_Operator (O : Operator_Type; I : String := "") is
    begin
       if O in Keyword_Operator then
          Set_Str_To_Name_Buffer (Image (O));
@@ -1147,10 +1109,9 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ---------------
 
    function To_C_Name
-     (N : Name_Id;
-      Ada_Style : Boolean := False;
-      Keyword_Check : Boolean := True)
-     return Name_Id
+     (N             : Name_Id;
+      Ada_Style     : Boolean := False;
+      Keyword_Check : Boolean := True) return Name_Id
    is
       Name      : Name_Id;
       Test_Name : Name_Id;
@@ -1165,7 +1126,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
          --  "AADL_" string before the identifier.
 
          Test_Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-         V := Get_Name_Table_Byte (Test_Name);
+         V         := Get_Name_Table_Byte (Test_Name);
          if V > 0 then
             Set_Str_To_Name_Buffer ("AADL_");
             Get_Name_String_And_Append (Name);
@@ -1437,11 +1398,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Add_Include --
    -----------------
 
-   procedure Add_Include (E : Node_Id; Preserve_Case : Boolean := False)
-   is
-      W             : Node_Id;
-      N             : Name_Id;
-      M             : Name_Id;
+   procedure Add_Include (E : Node_Id; Preserve_Case : Boolean := False) is
+      W                : Node_Id;
+      N                : Name_Id;
+      M                : Name_Id;
       Existing_Include : Node_Id;
    begin
       --  Get the info associated to the obtained name in the hash
@@ -1456,8 +1416,9 @@ package body Ocarina.Backends.C_Tree.Nutils is
          --  If the included file is the file in which we add the
          --  include, we return immediatly, because a file don't
          --  include itself
-         if To_Lower (CTN.Name (CTN.Header_Name (E)))
-           = To_Lower (CTN.Name (Defining_Identifier (Current_File))) then
+         if To_Lower (CTN.Name (CTN.Header_Name (E))) =
+           To_Lower (CTN.Name (Defining_Identifier (Current_File)))
+         then
             return;
          end if;
 
@@ -1467,17 +1428,17 @@ package body Ocarina.Backends.C_Tree.Nutils is
       end if;
 
       Get_Name_String_And_Append (CTN.Name (CTN.Header_Name (E)));
-      Get_Name_String_And_Append (CTN.Name
-                   (CTN.Entity (Distributed_Application_Unit (Current_File))));
+      Get_Name_String_And_Append
+        (CTN.Name (CTN.Entity (Distributed_Application_Unit (Current_File))));
 
       if Distributed_Application
-         (Entity
-            (Distributed_Application_Unit (Current_File))) /= No_Node then
+          (Entity (Distributed_Application_Unit (Current_File))) /=
+        No_Node
+      then
          Get_Name_String_And_Append
-            (CTN.Name
-               (Distributed_Application
-                  (Entity
-                     (Distributed_Application_Unit (Current_File)))));
+           (CTN.Name
+              (Distributed_Application
+                 (Entity (Distributed_Application_Unit (Current_File)))));
       end if;
 
       if Preserve_Case then
@@ -1497,9 +1458,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
       Get_Name_String (CTN.Name (Header_Name ((E))));
 
       M := Name_Find;
-      W := Make_Include_Clause
-            (Make_Defining_Identifier (M, not Preserve_Case),
-             Is_Local (E));
+      W :=
+        Make_Include_Clause
+          (Make_Defining_Identifier (M, not Preserve_Case),
+           Is_Local (E));
       Set_Name_Table_Info (N, Int (W));
 
       Append_Node_To_List (W, Included_Headers (Current_File));
@@ -1509,8 +1471,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Make_Define_Statement --
    ---------------------------
 
-   function Make_Define_Statement (Defining_Identifier : Node_Id;
-                                   Value : Node_Id) return Node_Id is
+   function Make_Define_Statement
+     (Defining_Identifier : Node_Id;
+      Value               : Node_Id) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Define_Statement);
@@ -1550,8 +1514,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
    function Make_Member_Designator
      (Defining_Identifier : Node_Id;
       Aggregate_Name      : Node_Id;
-      Is_Pointer          : Boolean := False)
-     return Node_Id is
+      Is_Pointer          : Boolean := False) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Member_Designator);
@@ -1567,7 +1531,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Array_Declaration
      (Defining_Identifier : Node_Id;
-      Array_Size          : Node_Id) return Node_Id is
+      Array_Size          : Node_Id) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Array_Declaration);
@@ -1580,8 +1545,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Make_Array_Values --
    -----------------------
 
-   function Make_Array_Values
-     (Values : List_Id := No_List) return Node_Id is
+   function Make_Array_Values (Values : List_Id := No_List) return Node_Id is
       L : List_Id;
       N : Node_Id;
    begin
@@ -1599,8 +1563,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Make_Array_Value --
    ----------------------
 
-   function Make_Array_Value (Array_Name : Node_Id; Array_Item : Node_Id)
-      return Node_Id is
+   function Make_Array_Value
+     (Array_Name : Node_Id;
+      Array_Item : Node_Id) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Array_Value);
@@ -1614,9 +1580,9 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ---------------------------
 
    function Make_Switch_Statement
-     (Expression          : Node_Id;
-      Alternatives        : List_Id)
-     return Node_Id is
+     (Expression   : Node_Id;
+      Alternatives : List_Id) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Switch_Statement);
@@ -1630,8 +1596,9 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -----------------------------
 
    function Make_Switch_Alternative
-     (Labels : List_Id;
-      Statements : List_Id) return Node_Id is
+     (Labels     : List_Id;
+      Statements : List_Id) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Switch_Alternative);
@@ -1651,28 +1618,30 @@ package body Ocarina.Backends.C_Tree.Nutils is
       Statements        : List_Id;
       Containing_Device : Node_Id := No_Node)
    is
-      Destination_F  : Node_Id;
-      Source_F       : Node_Id;
-      Source_Parent  : Node_Id;
-      Param_Value    : Node_Id;
-      Call_Profile   : List_Id;
-      Spg            : Node_Id;
-      Spg_Call       : Node_Id;
-      N              : Node_Id;
-      F              : Node_Id;
-      M              : Node_Id;
-      Owner          : Node_Id;
-      Declaration    : Node_Id;
-      Hybrid         : constant Boolean :=
-        AINU.Is_Subprogram (Caller) and then
-        Properties.Get_Subprogram_Kind (Caller) =
-        Properties.Subprogram_Hybrid_Ada_95; --  XXX why Ada ?
+      Destination_F : Node_Id;
+      Source_F      : Node_Id;
+      Source_Parent : Node_Id;
+      Param_Value   : Node_Id;
+      Call_Profile  : List_Id;
+      Spg           : Node_Id;
+      Spg_Call      : Node_Id;
+      N             : Node_Id;
+      F             : Node_Id;
+      M             : Node_Id;
+      Owner         : Node_Id;
+      Declaration   : Node_Id;
+      Hybrid        : constant Boolean :=
+        AINU.Is_Subprogram (Caller)
+        and then
+          Properties.Get_Subprogram_Kind (Caller) =
+          Properties.Subprogram_Hybrid_Ada_95; --  XXX why Ada ?
    begin
       --  The lists have to be created
 
       if Declarations = No_List or else Statements = No_List then
-         raise Program_Error with "Lists have to be created before any call "
-           & "to Handle_Call_Sequence";
+         raise Program_Error
+           with "Lists have to be created before any call " &
+           "to Handle_Call_Sequence";
       end if;
 
       --  The call sequence generally contains at least one call to a
@@ -1689,7 +1658,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       Spg_Call := AIN.First_Node (AIN.Subprogram_Calls (Call_Seq));
 
       while Present (Spg_Call) loop
-         Spg := AIN.Corresponding_Instance (Spg_Call);
+         Spg          := AIN.Corresponding_Instance (Spg_Call);
          Call_Profile := New_List (CTN.K_List_Id);
 
          if not AINU.Is_Empty (AIN.Features (Spg)) then
@@ -1702,9 +1671,9 @@ package body Ocarina.Backends.C_Tree.Nutils is
                   --  handle the shared data with the same patterns as
                   --  in PolyORB-HI-C. This could be updated later.
 
-                  Param_Value := Make_Variable_Address
-                           (Map_C_Defining_Identifier
-                              (Get_Accessed_Data (F)));
+                  Param_Value :=
+                    Make_Variable_Address
+                      (Map_C_Defining_Identifier (Get_Accessed_Data (F)));
 
                   Append_Node_To_List (Param_Value, Call_Profile);
 
@@ -1717,8 +1686,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
                   if AINU.Length (AIN.Destinations (F)) = 0 then
                      Display_Located_Error
                        (AIN.Loc (F),
-                        "This OUT parameter is not connected to"
-                         & " any destination",
+                        "This OUT parameter is not connected to" &
+                        " any destination",
                         Fatal => True);
                   elsif AINU.Length (AIN.Destinations (F)) > 1 then
                      Display_Located_Error
@@ -1730,8 +1699,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
                   --  At this point, we have a subprogram call
                   --  parameter that has exactly one destination.
 
-                  Destination_F := AIN.Item
-                    (AIN.First_Node (AIN.Destinations (F)));
+                  Destination_F :=
+                    AIN.Item (AIN.First_Node (AIN.Destinations (F)));
 
                   --  For each OUT parameter, we declare a local
                   --  variable if the OUT parameter is connected to
@@ -1751,38 +1720,43 @@ package body Ocarina.Backends.C_Tree.Nutils is
                      --  calls twice the same subprogram.
 
                      if Get_Current_Backend_Kind = PolyORB_HI_C then
-                        M := Map_C_Data_Type_Designator
-                           (Corresponding_Instance (F));
+                        M :=
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (F));
                         Declaration :=
-                           Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 Make_Defining_Identifier
-                                    (Map_C_Variable_Name
-                                       (F, Request_Variable => True)),
-                              Used_Type => M);
-
-                        Append_Node_To_List
-                           (Declaration, Declarations);
-
-                        M := Make_Defining_Identifier
-                           (Map_C_Variable_Name
-                              (F, Request_Variable => True));
-
-                     elsif Get_Current_Backend_Kind = PolyORB_Kernel_C then
-                        M := Map_C_Data_Type_Designator
-                          (Corresponding_Instance (F));
-
-                        Declaration :=
-                           Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 Make_Defining_Identifier
-                                    (Map_Port_Data (Destination_F)),
-                              Used_Type => M);
+                          Make_Variable_Declaration
+                            (Defining_Identifier =>
+                               Make_Defining_Identifier
+                                 (Map_C_Variable_Name
+                                    (F,
+                                     Request_Variable => True)),
+                             Used_Type => M);
 
                         Append_Node_To_List (Declaration, Declarations);
 
-                        M := Make_Defining_Identifier
-                          (Map_Port_Data (Destination_F));
+                        M :=
+                          Make_Defining_Identifier
+                            (Map_C_Variable_Name
+                               (F,
+                                Request_Variable => True));
+
+                     elsif Get_Current_Backend_Kind = PolyORB_Kernel_C then
+                        M :=
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (F));
+
+                        Declaration :=
+                          Make_Variable_Declaration
+                            (Defining_Identifier =>
+                               Make_Defining_Identifier
+                                 (Map_Port_Data (Destination_F)),
+                             Used_Type => M);
+
+                        Append_Node_To_List (Declaration, Declarations);
+
+                        M :=
+                          Make_Defining_Identifier
+                            (Map_Port_Data (Destination_F));
                      end if;
 
                      Param_Value := Make_Variable_Address (M);
@@ -1794,10 +1768,12 @@ package body Ocarina.Backends.C_Tree.Nutils is
                      --      record field corresponding to the calleR
                      --      parameter.
 
-                     Param_Value := Make_Member_Designator
-                       (Make_Defining_Identifier
-                        (To_C_Name (AIN.Display_Name (AIN.Identifier (F)))),
-                        Make_Defining_Identifier (PN (P_Status)));
+                     Param_Value :=
+                       Make_Member_Designator
+                         (Make_Defining_Identifier
+                            (To_C_Name
+                               (AIN.Display_Name (AIN.Identifier (F)))),
+                          Make_Defining_Identifier (PN (P_Status)));
 
                   else
                      --  (3) If the calleD parameter is connected to
@@ -1805,11 +1781,11 @@ package body Ocarina.Backends.C_Tree.Nutils is
                      --      is NOT hybrid, then we use simply the
                      --      corresponding parameter of the calleR.
 
-                     Param_Value := Make_Defining_Identifier
-                       (To_C_Name
-                        (AIN.Display_Name
-                         (AIN.Identifier
-                          (Destination_F))));
+                     Param_Value :=
+                       Make_Defining_Identifier
+                         (To_C_Name
+                            (AIN.Display_Name
+                               (AIN.Identifier (Destination_F))));
                   end if;
 
                   --  For each OUT parameter we build a parameter
@@ -1828,8 +1804,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
                   if AINU.Length (AIN.Sources (F)) = 0 then
                      Display_Located_Error
                        (AIN.Loc (F),
-                        "This IN parameter is not connected to"
-                        & " any source",
+                        "This IN parameter is not connected to" &
+                        " any source",
                         Fatal => True);
                   elsif AINU.Length (AIN.Sources (F)) > 1 then
                      Display_Located_Error
@@ -1859,39 +1835,39 @@ package body Ocarina.Backends.C_Tree.Nutils is
                      if Get_Current_Backend_Kind = PolyORB_HI_C then
                         Param_Value :=
                           Make_Member_Designator
-                             (Defining_Identifier =>
-                                Make_Member_Designator
-                                   (Defining_Identifier =>
-                                      Make_Member_Designator
-                                         (Defining_Identifier =>
-                                            Make_Defining_Identifier
-                                             (Map_C_Enumerator_Name
-                                                (Source_F)),
-                                          Aggregate_Name =>
-                                             Make_Defining_Identifier
-                                                (Map_C_Enumerator_Name
-                                                   (Source_F))),
-                                    Aggregate_Name =>
-                                       Make_Defining_Identifier (MN (M_Vars))),
-                              Aggregate_Name =>
-                                 Make_Defining_Identifier
-                                    (Map_C_Variable_Name
-                                       (Source_F, Port_Request => True)));
+                            (Defining_Identifier =>
+                               Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    Make_Member_Designator
+                                      (Defining_Identifier =>
+                                         Make_Defining_Identifier
+                                           (Map_C_Enumerator_Name (Source_F)),
+                                       Aggregate_Name =>
+                                         Make_Defining_Identifier
+                                           (Map_C_Enumerator_Name (Source_F))),
+                                  Aggregate_Name =>
+                                    Make_Defining_Identifier (MN (M_Vars))),
+                             Aggregate_Name =>
+                               Make_Defining_Identifier
+                                 (Map_C_Variable_Name
+                                    (Source_F,
+                                     Port_Request => True)));
                      else
-                        M := Map_C_Data_Type_Designator
-                           (Corresponding_Instance (F));
+                        M :=
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (F));
 
                         Declaration :=
-                           Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 Make_Defining_Identifier
-                                    (Map_Port_Data (Source_F)),
-                              Used_Type => M);
+                          Make_Variable_Declaration
+                            (Defining_Identifier =>
+                               Make_Defining_Identifier
+                                 (Map_Port_Data (Source_F)),
+                             Used_Type => M);
 
                         Append_Node_To_List (Declaration, Declarations);
 
-                        Param_Value := Make_Defining_Identifier
-                           (Map_Port_Data (Source_F));
+                        Param_Value :=
+                          Make_Defining_Identifier (Map_Port_Data (Source_F));
                      end if;
 
                   elsif Source_Parent /= Caller then
@@ -1899,9 +1875,11 @@ package body Ocarina.Backends.C_Tree.Nutils is
                      --      the englobing subprogram, we use the
                      --      formerly declared variable.
 
-                     Param_Value := Make_Defining_Identifier
-                       (Map_C_Variable_Name
-                          (Source_F, Request_Variable => True));
+                     Param_Value :=
+                       Make_Defining_Identifier
+                         (Map_C_Variable_Name
+                            (Source_F,
+                             Request_Variable => True));
 
                   elsif Hybrid then
                      --  (3) If the calleD parameter is connected to
@@ -1909,22 +1887,22 @@ package body Ocarina.Backends.C_Tree.Nutils is
                      --      hybrid, then we use the 'Status' record field
                      --      corresponding to the calleR parameter.
 
-                     Param_Value := Make_Member_Designator
-                       (Make_Defining_Identifier
-                        (To_C_Name
-                         (AIN.Display_Name
-                          (AIN.Identifier (Source_F)))),
-                        Make_Defining_Identifier
-                        (PN (P_Status)));
+                     Param_Value :=
+                       Make_Member_Designator
+                         (Make_Defining_Identifier
+                            (To_C_Name
+                               (AIN.Display_Name (AIN.Identifier (Source_F)))),
+                          Make_Defining_Identifier (PN (P_Status)));
                   else
                      --  (4) If the calleD parameter is connected to
                      --      the calleR parameter and then then calleR
                      --      is NOT hybrid, then we use simply the
                      --      corresponding paremeter of the calleR.
 
-                     Param_Value := Make_Defining_Identifier
-                       (To_C_Name (AIN.Display_Name
-                                   (AIN.Identifier (Source_F))));
+                     Param_Value :=
+                       Make_Defining_Identifier
+                         (To_C_Name
+                            (AIN.Display_Name (AIN.Identifier (Source_F))));
                   end if;
 
                   --  For each IN parameter we build a parameter
@@ -1949,9 +1927,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
             CTU.Append_Node_To_List (N, Statements);
             Owner := Get_Actual_Owner (Spg_Call);
 
-            N := Make_Variable_Address
-              (CTN.Defining_Identifier
-               (CTN.Object_Node (Backend_Node (Identifier (Owner)))));
+            N :=
+              Make_Variable_Address
+                (CTN.Defining_Identifier
+                   (CTN.Object_Node (Backend_Node (Identifier (Owner)))));
 
             Append_Node_To_List (N, Call_Profile);
 
@@ -1960,9 +1939,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
             --  of the 'Path' list) and from the actual data component
             --  instance the call is connected to.
 
-            N := Map_C_Feature_Subprogram
-              (Item (AIN.Last_Node (Path (Spg_Call))),
-               Corresponding_Instance (Get_Actual_Owner (Spg_Call)));
+            N :=
+              Map_C_Feature_Subprogram
+                (Item (AIN.Last_Node (Path (Spg_Call))),
+                 Corresponding_Instance (Get_Actual_Owner (Spg_Call)));
 
             N := Make_Call_Profile (N, Call_Profile);
             CTU.Append_Node_To_List (N, Statements);
@@ -1984,8 +1964,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
                N := Map_C_Defining_Identifier (Spg);
                if Containing_Device /= No_Node then
                   CTU.Append_Node_To_List
-                     (Make_Defining_Identifier
-                        (Map_C_Enumerator_Name (Containing_Device)),
+                    (Make_Defining_Identifier
+                       (Map_C_Enumerator_Name (Containing_Device)),
                      Call_Profile);
                end if;
             elsif Get_Current_Backend_Kind = PolyORB_Kernel_C then
@@ -2015,33 +1995,30 @@ package body Ocarina.Backends.C_Tree.Nutils is
          when Data_Integer =>
             --  For integers, default value is 0
 
-            Result := CTU.Make_Literal
-              (CV.New_Int_Value (0, 1, 10));
+            Result := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
 
          when Data_Float | Data_Fixed =>
             --  For reals, the default value is 0.0
 
-            Result := CTU.Make_Literal
-              (CV.New_Floating_Point_Value (0.0));
+            Result := CTU.Make_Literal (CV.New_Floating_Point_Value (0.0));
 
          when Data_Boolean =>
             --  For booleans, the default value is FALSE
 
-            Result := CTU.Make_Literal
-              (CV.New_Int_Value (0, 1, 10));
+            Result := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
 
          when Data_Character =>
             --  For characters, the default value is the space ' '
 
-            Result := CTU.Make_Literal
-              (CV.New_Char_Value (Character'Pos (' ')));
+            Result :=
+              CTU.Make_Literal (CV.New_Char_Value (Character'Pos (' ')));
 
          when Data_Wide_Character =>
             --  For wide characters, the default value is the wide
             --  space ' '.
 
-            Result := CTU.Make_Literal
-              (CV.New_Char_Value (Character'Pos (' ')));
+            Result :=
+              CTU.Make_Literal (CV.New_Char_Value (Character'Pos (' ')));
 
          when Data_String =>
             Display_Located_Error
@@ -2064,8 +2041,9 @@ package body Ocarina.Backends.C_Tree.Nutils is
          when Data_With_Accessors =>
             --  This is definitely a code generation error
 
-            raise Program_Error with "Data types with accessors should"
-              & " not have default values";
+            raise Program_Error
+              with "Data types with accessors should" &
+              " not have default values";
 
          when others =>
             raise Program_Error with "Unsupported data type default value!";
@@ -2080,9 +2058,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -------------------------
 
    function Make_Include_Clause
-     (Header_Name  : Node_Id;
-      Local        : Boolean := False)
-     return Node_Id
+     (Header_Name : Node_Id;
+      Local       : Boolean := False) return Node_Id
    is
       N : Node_Id;
    begin
@@ -2097,18 +2074,17 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Add_Define_Deployment --
    ---------------------------
 
-   procedure Add_Define_Deployment (E : Node_Id)
-   is
-      W             : Node_Id;
-      N             : Name_Id;
-      F             : Node_Id;
-      Existing_Def  : Node_Id;
+   procedure Add_Define_Deployment (E : Node_Id) is
+      W            : Node_Id;
+      N            : Name_Id;
+      F            : Node_Id;
+      Existing_Def : Node_Id;
    begin
       Set_Str_To_Name_Buffer ("deployment");
       Get_Name_String_And_Append (CTN.Name (E));
 
       Get_Name_String_And_Append
-         (CTN.Name (CTN.Entity (Table (Last).Current_Entity)));
+        (CTN.Name (CTN.Entity (Table (Last).Current_Entity)));
       N := Name_Find;
 
       Existing_Def := Node_Id (Get_Name_Table_Info (N));
@@ -2119,16 +2095,16 @@ package body Ocarina.Backends.C_Tree.Nutils is
       end if;
 
       --  Else, we add the corresponding header file to included files
-      W := CTU.Make_Define_Statement
-            (Defining_Identifier => Copy_Node (E),
-               Value => CTU.Make_Literal
-                  (CV.New_Int_Value (1, 1, 10)));
+      W :=
+        CTU.Make_Define_Statement
+          (Defining_Identifier => Copy_Node (E),
+           Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
 
       Set_Name_Table_Info (N, Int (W));
 
-      F := Table (Last).Current_File;
-      Table (Last).Current_File := Deployment_Header
-                                 (Table (Last).Current_Entity);
+      F                         := Table (Last).Current_File;
+      Table (Last).Current_File :=
+        Deployment_Header (Table (Last).Current_Entity);
       Append_Node_To_List (W, CTN.Declarations (Current_File));
       Table (Last).Current_File := F;
    end Add_Define_Deployment;
@@ -2138,7 +2114,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    --------------------------
 
    procedure POK_Add_Return_Assertion
-     (Statements  : List_Id;
+     (Statements      : List_Id;
       Exception_Error : Node_Id := No_Node)
    is
    begin
@@ -2148,16 +2124,16 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
       if Exception_Error = No_Node then
          Append_Node_To_List
-            (Make_Macro_Call
-               (PKR.RE (PKR.RE_Assert_Ret),
+           (Make_Macro_Call
+              (PKR.RE (PKR.RE_Assert_Ret),
                Make_List_Id (Make_Defining_Identifier (VN (V_Ret)))),
             Statements);
       else
          Append_Node_To_List
-            (Make_Macro_Call
-               (PKR.RE (PKR.RE_Assert_Ret_With_Exception),
+           (Make_Macro_Call
+              (PKR.RE (PKR.RE_Assert_Ret_With_Exception),
                Make_List_Id
-                  (Make_Defining_Identifier (VN (V_Ret)),
+                 (Make_Defining_Identifier (VN (V_Ret)),
                   Exception_Error)),
             Statements);
       end if;
@@ -2168,19 +2144,18 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ----------------------------------------
 
    function POK_Make_Function_Call_With_Assert
-      (Function_Name : Node_Id; Parameters : List_Id)
-   return Node_Id
+     (Function_Name : Node_Id;
+      Parameters    : List_Id) return Node_Id
    is
       use Ocarina.Backends.POK_C;
       Function_Call : Node_Id;
    begin
       Function_Call := Make_Call_Profile (Function_Name, Parameters);
-      if POK_C.Add_Assertions
-         and then POK_Flavor = POK then
+      if POK_C.Add_Assertions and then POK_Flavor = POK then
          return Make_Expression
-                  (Make_Defining_Identifier (VN (V_Ret)),
-                  Op_Equal,
-                  Function_Call);
+             (Make_Defining_Identifier (VN (V_Ret)),
+              Op_Equal,
+              Function_Call);
       else
          return Function_Call;
       end if;
@@ -2191,16 +2166,16 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -------------------
 
    function Get_Data_Size (Data : Node_Id) return Node_Id is
-      Data_Representation  : Supported_Data_Representation;
-      Value_UUL            : Unsigned_Long_Long;
-      Value_Node           : Node_Id := No_Node;
-      Dimension            : constant ULL_Array := Get_Dimension (Data);
-      Type_Size            : Size_Type;
+      Data_Representation : Supported_Data_Representation;
+      Value_UUL           : Unsigned_Long_Long;
+      Value_Node          : Node_Id            := No_Node;
+      Dimension           : constant ULL_Array := Get_Dimension (Data);
+      Type_Size           : Size_Type;
    begin
       pragma Assert (AINU.Is_Data (Data));
 
       Data_Representation := Get_Data_Representation (Data);
-      Type_Size := Get_Data_Size (Data);
+      Type_Size           := Get_Data_Size (Data);
 
       if Get_Data_Size (Data) /= Null_Size then
          Value_UUL := To_Bytes (Type_Size);
@@ -2209,52 +2184,57 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
       if Is_Defined_Property (Data, "type_source_name") then
          return Make_Call_Profile
-            (Make_Defining_Identifier (FN (F_Sizeof)),
-            Make_List_Id
-               (Make_Defining_Identifier
-                  (To_C_Name
-                     (Get_String_Property
-                        (Data, "type_source_name")))));
+             (Make_Defining_Identifier (FN (F_Sizeof)),
+              Make_List_Id
+                (Make_Defining_Identifier
+                   (To_C_Name
+                      (Get_String_Property (Data, "type_source_name")))));
       end if;
 
       case Data_Representation is
          when Data_Integer | Data_Boolean =>
-            Value_Node := Make_Call_Profile
-               (Make_Defining_Identifier (FN (F_Sizeof)),
-                Make_List_Id (Make_Defining_Identifier (TN (T_Int))));
+            Value_Node :=
+              Make_Call_Profile
+                (Make_Defining_Identifier (FN (F_Sizeof)),
+                 Make_List_Id (Make_Defining_Identifier (TN (T_Int))));
 
          when Data_Float =>
-            Value_Node := Make_Call_Profile
-               (Make_Defining_Identifier (FN (F_Sizeof)),
-                Make_List_Id (Make_Defining_Identifier (TN (T_Float))));
+            Value_Node :=
+              Make_Call_Profile
+                (Make_Defining_Identifier (FN (F_Sizeof)),
+                 Make_List_Id (Make_Defining_Identifier (TN (T_Float))));
 
          when Data_String | Data_Wide_String =>
             Value_UUL := Dimension (1);
 
          when Data_Array =>
-            Value_Node := Make_Expression
-               (Left_Expr =>
-                  Make_Literal (New_Int_Value (Dimension (1), 1, 10)),
-                Operator => Op_Asterisk,
-                Right_Expr => Get_Data_Size
+            Value_Node :=
+              Make_Expression
+                (Left_Expr =>
+                   Make_Literal (New_Int_Value (Dimension (1), 1, 10)),
+                 Operator   => Op_Asterisk,
+                 Right_Expr =>
+                   Get_Data_Size
                      (ATN.Entity (ATN.First_Node (Get_Base_Type (Data)))));
 
          when Data_None =>
-            Value_Node := Make_Call_Profile
-              (Make_Defining_Identifier (FN (F_Sizeof)),
-                Make_List_Id (Map_C_Defining_Identifier (Data)));
+            Value_Node :=
+              Make_Call_Profile
+                (Make_Defining_Identifier (FN (F_Sizeof)),
+                 Make_List_Id (Map_C_Defining_Identifier (Data)));
 
          when others =>
-            Value_Node := Make_Call_Profile
-                  (Make_Defining_Identifier (FN (F_Sizeof)),
-                   Make_List_Id (Map_C_Defining_Identifier (Data)));
+            Value_Node :=
+              Make_Call_Profile
+                (Make_Defining_Identifier (FN (F_Sizeof)),
+                 Make_List_Id (Map_C_Defining_Identifier (Data)));
       end case;
 
       if Value_Node /= No_Node then
          return Value_Node;
       else
-         raise Program_Error with
-           "Impossible to get the data size of this data";
+         raise Program_Error
+           with "Impossible to get the data size of this data";
       end if;
    end Get_Data_Size;
 
@@ -2265,7 +2245,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    procedure Add_Return_Variable_In_Parameters (Parameters : List_Id) is
    begin
       Append_Node_To_List
-         (Make_Variable_Address (Make_Defining_Identifier (VN (V_Ret))),
+        (Make_Variable_Address (Make_Defining_Identifier (VN (V_Ret))),
          Parameters);
    end Add_Return_Variable_In_Parameters;
 
@@ -2273,23 +2253,24 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Declare_Return_Variable_In_Function_Declaration --
    -----------------------------------------------------
 
-   procedure POK_Declare_Return_Variable
-      (Declarations : List_Id) is
+   procedure POK_Declare_Return_Variable (Declarations : List_Id) is
       use Ocarina.Backends.POK_C;
       use Ocarina.Backends.POK_C.Runtime;
       N : Node_Id;
    begin
-         if POK_C.Add_Assertions and then POK_Flavor = POK then
-            N := Make_Variable_Declaration
-               (Defining_Identifier => Make_Defining_Identifier (VN (V_Ret)),
-               Used_Type => RE (RE_Pok_Ret_T));
-            Append_Node_To_List (N, Declarations);
-         elsif POK_Flavor = ARINC653 then
-            N := Make_Variable_Declaration
-               (Defining_Identifier => Make_Defining_Identifier (VN (V_Ret)),
-               Used_Type => RE (RE_Return_Code_Type));
-            Append_Node_To_List (N, Declarations);
-         end if;
+      if POK_C.Add_Assertions and then POK_Flavor = POK then
+         N :=
+           Make_Variable_Declaration
+             (Defining_Identifier => Make_Defining_Identifier (VN (V_Ret)),
+              Used_Type           => RE (RE_Pok_Ret_T));
+         Append_Node_To_List (N, Declarations);
+      elsif POK_Flavor = ARINC653 then
+         N :=
+           Make_Variable_Declaration
+             (Defining_Identifier => Make_Defining_Identifier (VN (V_Ret)),
+              Used_Type           => RE (RE_Return_Code_Type));
+         Append_Node_To_List (N, Declarations);
+      end if;
    end POK_Declare_Return_Variable;
 
    -------------------------
@@ -2297,10 +2278,11 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -------------------------
 
    function Make_Ifdef_Clause
-      (Clause : Node_Id;
-      Negation : Boolean := False;
+     (Clause          : Node_Id;
+      Negation        : Boolean := False;
       Then_Statements : List_Id;
-      Else_Statements : List_Id) return Node_Id is
+      Else_Statements : List_Id) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Ifdef_Clause);
@@ -2317,19 +2299,20 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Get_Inter_Partition_Port_Size (Port : Node_Id) return Node_Id is
 
-      Type_Found        : Node_Id;
+      Type_Found : Node_Id;
 
-      function Get_Inter_Partition_Port_Size_Rec (Port : Node_Id;
-                                                  Method : Browsing_Kind)
-                                                  return Node_Id is
-         Source_Port       : Node_Id;
-         Destination_Port  : Node_Id;
-         Tmp               : Node_Id;
-         Associated_Type   : Node_Id;
+      function Get_Inter_Partition_Port_Size_Rec
+        (Port   : Node_Id;
+         Method : Browsing_Kind) return Node_Id
+      is
+         Source_Port      : Node_Id;
+         Destination_Port : Node_Id;
+         Tmp              : Node_Id;
+         Associated_Type  : Node_Id;
       begin
 
-         Associated_Type := Get_Instance_Type_Associated_With_Virtual_Bus
-            (Port);
+         Associated_Type :=
+           Get_Instance_Type_Associated_With_Virtual_Bus (Port);
 
          if Associated_Type /= No_Node then
             return CTU.Get_Data_Size (Associated_Type);
@@ -2343,15 +2326,16 @@ package body Ocarina.Backends.C_Tree.Nutils is
          --  no virtual bus was found so we fallback to the thread application
          --  data.
 
-         if Method = By_Source and then
-            not AINU.Is_Empty (AIN.Sources (Port)) then
+         if Method = By_Source
+           and then not AINU.Is_Empty (AIN.Sources (Port))
+         then
             Tmp := AIN.First_Node (AIN.Sources (Port));
 
             while Present (Tmp) loop
                Source_Port := AIN.Item (Tmp);
 
-               Associated_Type := Get_Inter_Partition_Port_Size_Rec
-                  (Source_Port, Method);
+               Associated_Type :=
+                 Get_Inter_Partition_Port_Size_Rec (Source_Port, Method);
 
                if Associated_Type /= No_Node then
                   return Associated_Type;
@@ -2362,15 +2346,16 @@ package body Ocarina.Backends.C_Tree.Nutils is
             end loop;
          end if;
 
-         if Method = By_Destination and then
-            not AINU.Is_Empty (AIN.Destinations (Port)) then
+         if Method = By_Destination
+           and then not AINU.Is_Empty (AIN.Destinations (Port))
+         then
             Tmp := AIN.First_Node (AIN.Destinations (Port));
 
             while Present (Tmp) loop
                Destination_Port := AIN.Item (Tmp);
 
-               Associated_Type := Get_Inter_Partition_Port_Size_Rec
-                  (Destination_Port, Method);
+               Associated_Type :=
+                 Get_Inter_Partition_Port_Size_Rec (Destination_Port, Method);
 
                if Associated_Type /= No_Node then
                   return Associated_Type;
@@ -2387,15 +2372,15 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    begin
       if not AIN.Is_Data (Port) then
-         raise Program_Error with
-           "Call to Get_Inter_Partition_Port_Size with non DATA port";
+         raise Program_Error
+           with "Call to Get_Inter_Partition_Port_Size with non DATA port";
       end if;
 
       if AIN.Is_In (Port) then
          Type_Found := Get_Inter_Partition_Port_Size_Rec (Port, By_Source);
       else
-         Type_Found := Get_Inter_Partition_Port_Size_Rec
-            (Port, By_Destination);
+         Type_Found :=
+           Get_Inter_Partition_Port_Size_Rec (Port, By_Destination);
       end if;
 
       if Type_Found = No_Node then
@@ -2409,29 +2394,30 @@ package body Ocarina.Backends.C_Tree.Nutils is
    --  Get_Inter_Partition_Port_Type  --
    -------------------------------------
 
-   function Get_Inter_Partition_Port_Type (Port    : Node_Id)
-                                          return Node_Id is
+   function Get_Inter_Partition_Port_Type (Port : Node_Id) return Node_Id is
 
       Type_Found : Node_Id;
 
-      function Get_Inter_Partition_Port_Type_Rec (Port : Node_Id;
-                                                  Method : Browsing_Kind)
-                                                  return Node_Id is
-         Source_Port       : Node_Id;
-         Destination_Port  : Node_Id;
-         Tmp               : Node_Id;
-         Associated_Type   : Node_Id;
+      function Get_Inter_Partition_Port_Type_Rec
+        (Port   : Node_Id;
+         Method : Browsing_Kind) return Node_Id
+      is
+         Source_Port      : Node_Id;
+         Destination_Port : Node_Id;
+         Tmp              : Node_Id;
+         Associated_Type  : Node_Id;
       begin
 
-         Associated_Type := Get_Instance_Type_Associated_With_Virtual_Bus
-            (Port);
+         Associated_Type :=
+           Get_Instance_Type_Associated_With_Virtual_Bus (Port);
 
          if Associated_Type /= No_Node then
             if Is_Defined_Property (Associated_Type, "type_source_name") then
                return Make_Defining_Identifier
-                  (To_C_Name
-                     (Get_String_Property
-                        (Associated_Type, "type_source_name")));
+                   (To_C_Name
+                      (Get_String_Property
+                         (Associated_Type,
+                          "type_source_name")));
             else
                return Map_C_Data_Type_Designator (Associated_Type);
             end if;
@@ -2445,15 +2431,16 @@ package body Ocarina.Backends.C_Tree.Nutils is
          --  no virtual bus was found so we fallback to the thread application
          --  data.
 
-         if Method = By_Source and then
-            not AINU.Is_Empty (AIN.Sources (Port)) then
+         if Method = By_Source
+           and then not AINU.Is_Empty (AIN.Sources (Port))
+         then
             Tmp := AIN.First_Node (AIN.Sources (Port));
 
             while Present (Tmp) loop
                Source_Port := AIN.Item (Tmp);
 
-               Associated_Type := Get_Inter_Partition_Port_Type_Rec
-                  (Source_Port, Method);
+               Associated_Type :=
+                 Get_Inter_Partition_Port_Type_Rec (Source_Port, Method);
 
                if Associated_Type /= No_Node then
                   return Associated_Type;
@@ -2464,15 +2451,16 @@ package body Ocarina.Backends.C_Tree.Nutils is
             end loop;
          end if;
 
-         if Method = By_Destination and then
-            not AINU.Is_Empty (AIN.Destinations (Port)) then
+         if Method = By_Destination
+           and then not AINU.Is_Empty (AIN.Destinations (Port))
+         then
             Tmp := AIN.First_Node (AIN.Destinations (Port));
 
             while Present (Tmp) loop
                Destination_Port := AIN.Item (Tmp);
 
-               Associated_Type := Get_Inter_Partition_Port_Type_Rec
-                  (Destination_Port, Method);
+               Associated_Type :=
+                 Get_Inter_Partition_Port_Type_Rec (Destination_Port, Method);
 
                if Associated_Type /= No_Node then
                   return Associated_Type;
@@ -2489,8 +2477,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    begin
       if not AIN.Is_Data (Port) then
-         raise Program_Error with
-           "Call to Get_Inter_Partition_Port_Type with non DATA port";
+         raise Program_Error
+           with "Call to Get_Inter_Partition_Port_Type with non DATA port";
       end if;
 
       Type_Found := Get_Inter_Partition_Port_Type_Rec (Port, By_Source);
@@ -2513,22 +2501,21 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ----------------------------
 
    function Make_Doxygen_C_Comment
-     (Desc                 : String;
-      Brief                : String := "";
-      Element_Name         : String := "";
-      Is_Struct            : Boolean := False;
-      Is_Union             : Boolean := False;
-      Is_Enum              : Boolean := False;
-      Is_Function          : Boolean := False;
-      Is_Variable          : Boolean := False;
-      Is_Define            : Boolean := False;
-      Is_Typedef           : Boolean := False;
-      Is_File              : Boolean := False;
-      Is_Namespace         : Boolean := False;
-      Is_Package           : Boolean := False;
-      Is_Interface         : Boolean := False;
-      Has_Header_Spaces    : Boolean := True)
-     return Node_Id
+     (Desc              : String;
+      Brief             : String  := "";
+      Element_Name      : String  := "";
+      Is_Struct         : Boolean := False;
+      Is_Union          : Boolean := False;
+      Is_Enum           : Boolean := False;
+      Is_Function       : Boolean := False;
+      Is_Variable       : Boolean := False;
+      Is_Define         : Boolean := False;
+      Is_Typedef        : Boolean := False;
+      Is_File           : Boolean := False;
+      Is_Namespace      : Boolean := False;
+      Is_Package        : Boolean := False;
+      Is_Interface      : Boolean := False;
+      Has_Header_Spaces : Boolean := True) return Node_Id
    is
       C : Node_Id;
    begin
@@ -2551,24 +2538,18 @@ package body Ocarina.Backends.C_Tree.Nutils is
       CTN.Set_Has_Header_Spaces (C, Has_Header_Spaces);
 
       if Desc /= "" then
-         Set_Description
-            (C, New_Node (K_Defining_Identifier));
-         CTN.Set_Name
-            (Description (C), Get_String_Name (Desc));
+         Set_Description (C, New_Node (K_Defining_Identifier));
+         CTN.Set_Name (Description (C), Get_String_Name (Desc));
       end if;
 
       if Element_Name /= "" then
-         Set_Element
-            (C, New_Node (K_Defining_Identifier));
-         CTN.Set_Name
-            (Element (C), Get_String_Name (Element_Name));
+         Set_Element (C, New_Node (K_Defining_Identifier));
+         CTN.Set_Name (Element (C), Get_String_Name (Element_Name));
       end if;
 
       if Brief /= "" then
-         Set_Summary
-            (C, New_Node (K_Defining_Identifier));
-         CTN.Set_Name
-            (Summary (C), Get_String_Name (Brief));
+         Set_Summary (C, New_Node (K_Defining_Identifier));
+         CTN.Set_Name (Summary (C), Get_String_Name (Brief));
       end if;
 
       CTN.Set_For_Struct (C, Is_Struct);

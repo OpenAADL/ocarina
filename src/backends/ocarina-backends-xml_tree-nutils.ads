@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,11 +35,11 @@ with Ocarina.Backends.XML_Tree.Nodes; use Ocarina.Backends.XML_Tree.Nodes;
 
 package Ocarina.Backends.XML_Tree.Nutils is
 
-   Int0_Val             : Value_Id;
-   Int1_Val             : Value_Id;
+   Int0_Val : Value_Id;
+   Int1_Val : Value_Id;
 
-   Var_Suffix           : constant String := "_j";
-   Initialized          : Boolean  := False;
+   Var_Suffix  : constant String := "_j";
+   Initialized : Boolean         := False;
 
    Output_Tree_Warnings : Boolean := False;
    Output_Unit_Withing  : Boolean := False;
@@ -47,20 +47,19 @@ package Ocarina.Backends.XML_Tree.Nutils is
 
    type Token_Type is
      (
-      --   Token name      Token type
-      --   Keywords
-      Tok_Null,            -- NULL   **** First Keyword
-      Tok_Typedef,         -- TYPEDEF
+   --   Token name      Token type
+   --   Keywords
+   Tok_Null,            -- NULL   **** First Keyword
+     Tok_Typedef,         -- TYPEDEF
 
-      Tok_Slash,           -- /
-      Tok_Less,            -- <
-      Tok_Equal,           -- =
-      Tok_Greater);        -- >
+Tok_Slash,           -- /
+     Tok_Less,            -- <
+     Tok_Equal,           -- =
+     Tok_Greater);        -- >
 
    Token_Image : array (Token_Type) of Name_Id;
 
-   subtype Keyword_Type is Token_Type
-     range Tok_Null .. Tok_Typedef;
+   subtype Keyword_Type is Token_Type range Tok_Null .. Tok_Typedef;
 
    type Component_Id is
      (C_Address,
@@ -90,24 +89,19 @@ package Ocarina.Backends.XML_Tree.Nutils is
 
    TN : array (Type_Id) of Name_Id;
 
-   type XML_New_Node_Kind is
-   (K_String,
-    K_Nameid);
+   type XML_New_Node_Kind is (K_String, K_Nameid);
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-      return Name_Id;
+      Name   : Name_Id) return Name_Id;
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
    --  This function returns a new name without the suffix. If the
    --  suffix does not exist, the returned name is equal to the given
    --  name.
@@ -118,22 +112,18 @@ package Ocarina.Backends.XML_Tree.Nutils is
 
    procedure Push_Entity (E : Node_Id);
    procedure Pop_Entity;
-   function  Current_Entity return Node_Id;
-   function  Current_File return Node_Id;
+   function Current_Entity return Node_Id;
+   function Current_File return Node_Id;
 
-   function Copy_Node
-     (N : Node_Id)
-     return Node_Id;
+   function Copy_Node (N : Node_Id) return Node_Id;
 
    function New_Node
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id;
+      From : Node_Id := No_Node) return Node_Id;
 
    function New_List
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id;
+      From : Node_Id := No_Node) return List_Id;
 
    function Image (T : Token_Type) return String;
 
@@ -150,17 +140,13 @@ package Ocarina.Backends.XML_Tree.Nutils is
    pragma Inline (Is_Empty);
    --  Return True when L is empty
 
-   function Make_XML_Comment
-     (N                 : Name_Id)
-     return Node_Id;
+   function Make_XML_Comment (N : Name_Id) return Node_Id;
    --  This function does only the fllowing thing: it creates a node
    --  whose name is the full text of the comment. It does not split
    --  the comment into many lines. This is done in the code
    --  generation phase
 
-   function Make_Defining_Identifier
-     (Name         : Name_Id)
-     return  Node_Id;
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id;
 
    --  No_Node as Type_Definition made type declaration without actual
    --  definition (eg. "type X;").
@@ -168,8 +154,7 @@ package Ocarina.Backends.XML_Tree.Nutils is
    function Make_List_Id
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
-      N3 : Node_Id := No_Node)
-     return List_Id;
+      N3 : Node_Id := No_Node) return List_Id;
 
    function Next_N_Node (N : Node_Id; Num : Natural) return Node_Id;
    --  This function executes Next_Node Num times
@@ -186,19 +171,18 @@ package Ocarina.Backends.XML_Tree.Nutils is
    --  Return a lower case name of N
 
    function Make_XML_File
-     (Identifier : Node_Id; DTD : Node_Id := No_Node)
-     return Node_Id;
+     (Identifier : Node_Id;
+      DTD        : Node_Id := No_Node) return Node_Id;
 
    function Make_Literal (Value : Value_Id) return Node_Id;
 
    function Make_Container (Content : Node_Id) return Node_Id;
 
-   function Make_XML_Node (Name_String : String := "";
-                           Name_Nameid : Name_Id := No_Name;
-                           Kind : XML_New_Node_Kind := K_String)
-                           return Node_Id;
+   function Make_XML_Node
+     (Name_String : String            := "";
+      Name_Nameid : Name_Id           := No_Name;
+      Kind        : XML_New_Node_Kind := K_String) return Node_Id;
 
-   function Make_Assignement (Left : Node_Id; Right : Node_Id)
-                              return Node_Id;
+   function Make_Assignement (Left : Node_Id; Right : Node_Id) return Node_Id;
 
 end Ocarina.Backends.XML_Tree.Nutils;

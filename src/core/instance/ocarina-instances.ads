@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;  use Types;
+with Types; use Types;
 
 package Ocarina.Instances is
 
@@ -53,8 +53,7 @@ private
 
    function Get_First_Homonym
      (Declaration_List    : List_Id;
-      Name_Of_Declaration : Name_Id)
-     return Node_Id;
+      Name_Of_Declaration : Name_Id) return Node_Id;
    --  Find if an entity of Declaration_List has the same name as
    --  Name_Of_Declaration. If so, return it, else return
    --  No_Node. Note that the list is NOT a list of identifiers, but a
@@ -63,45 +62,38 @@ private
 
    function Get_First_Homonym_Instance
      (Declaration_List    : List_Id;
-      Name_Of_Declaration : Name_Id)
-     return Node_Id;
+      Name_Of_Declaration : Name_Id) return Node_Id;
    --  XXX TODO Add comment or merge this function
 
    function Get_First_Homonym_Instance
      (Declaration_List : List_Id;
-      Declaration      : Node_Id)
-     return Node_Id;
+      Declaration      : Node_Id) return Node_Id;
    --  XXX TODO Add comment or merge this function
 
    function Get_First_Homonym
      (Declaration_List : List_Id;
-      Declaration      : Node_Id)
-     return Node_Id;
+      Declaration      : Node_Id) return Node_Id;
    --  Same as above but with an AADL declaration
 
    function Get_First_Contained_Homonym
      (Declaration_List    : List_Id;
-      Name_Of_Declaration : Name_Id)
-     return Node_Id;
+      Name_Of_Declaration : Name_Id) return Node_Id;
    --  The same as above but assumes the list Declaration_List is a
    --  node container list.
 
    function Get_First_Contained_Homonym_Instance
      (Declaration_List    : List_Id;
-      Name_Of_Declaration : Name_Id)
-     return Node_Id;
+      Name_Of_Declaration : Name_Id) return Node_Id;
    --  XXX TODO Add comment or merge this function
 
    function Get_First_Contained_Homonym
      (Declaration_List : List_Id;
-      Declaration      : Node_Id)
-     return Node_Id;
+      Declaration      : Node_Id) return Node_Id;
    --  Same as above but with an AADL declaration
 
    function Get_First_Contained_Homonym_Instance
      (Declaration_List : List_Id;
-      Declaration      : Node_Id)
-     return Node_Id;
+      Declaration      : Node_Id) return Node_Id;
    --  XXX TODO Add comment or merge this function
 
    procedure Append_To_Namespace_Instance

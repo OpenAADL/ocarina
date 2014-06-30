@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,12 +31,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;     use Namet;
-with Output;    use Output;
-with Utils;     use Utils;
-with Outfiles;  use Outfiles;
+with Namet;    use Namet;
+with Output;   use Output;
+with Utils;    use Utils;
+with Outfiles; use Outfiles;
 
-with GNAT.OS_Lib;  use GNAT.OS_Lib;
+with GNAT.OS_Lib; use GNAT.OS_Lib;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.RTSJ_Tree.Nodes;
@@ -92,7 +92,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
 
    procedure Write (T : Token_Type);
    procedure Write_Line (T : Token_Type);
-   procedure Write_List (L : List_Id; Has_Brackets : boolean);
+   procedure Write_List (L : List_Id; Has_Brackets : Boolean);
    function Get_File_Name (N : Node_Id) return Name_Id;
 
    --------------
@@ -211,7 +211,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -----------------------------------
    procedure Generate_Variable_Declaration (N : Node_Id) is
       Vis : constant List_Id := Visibility (N);
-      P : Node_Id;
+      P   : Node_Id;
    begin
       --  Visibility
       if not Is_Empty (Vis) then
@@ -276,8 +276,8 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_Try_Statement --
    ----------------------------
    procedure Generate_Try_Statement (N : Node_Id) is
-      D : constant List_Id := Statements (N);
-      C : constant List_Id := Catch_Statements (N);
+      D   : constant List_Id := Statements (N);
+      C   : constant List_Id := Catch_Statements (N);
       Tmp : Node_Id;
    begin
       Write (Tok_Try);
@@ -317,8 +317,8 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_Catch_Statement --
    ------------------------------
    procedure Generate_Catch_Statement (N : Node_Id) is
-      D : constant Node_Id := Exception_Caught (N);
-      S : constant List_Id := Statements (N);
+      D   : constant Node_Id := Exception_Caught (N);
+      S   : constant List_Id := Statements (N);
       Tmp : Node_Id;
    begin
       Write (Tok_Catch);
@@ -362,7 +362,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_Class_Statement --
    ------------------------------
    procedure Generate_Class_Statement (N : Node_Id) is
-      Vis : Node_Id := First_Node (Visibility (N));
+      Vis : Node_Id          := First_Node (Visibility (N));
       Ext : constant Node_Id := Extends_Statement (N);
       Imp : constant List_Id := Implements_Statement (N);
       Thr : constant List_Id := Throws_Statement (N);
@@ -382,7 +382,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
       Write_Space;
       Generate (Defining_Identifier (N));
 
-      if Ext /= No_Node  then
+      if Ext /= No_Node then
          Write_Space;
          Write (Tok_Extends);
          Write_Space;
@@ -539,7 +539,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
             L := 1;
          else
             L := 0;
-            while L + 1 <= Name_Len and then  Name_Buffer (L + 1) /= ' ' loop
+            while L + 1 <= Name_Len and then Name_Buffer (L + 1) /= ' ' loop
                L := L + 1;
             end loop;
          end if;
@@ -569,7 +569,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
          end if;
       end Get_Next_Word;
 
-      First_Line : Boolean := True;
+      First_Line   : Boolean := True;
       Used_Columns : Natural;
    begin
       Get_Name_String (Name (Defining_Identifier (N)));
@@ -615,9 +615,9 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_New_Statement --
    ----------------------------
    procedure Generate_New_Statement (N : Node_Id) is
-      Params : constant List_Id := Parameters (N);
+      Params    : constant List_Id := Parameters (N);
       New_Array : constant Boolean := Is_Array (N);
-      P : Node_Id;
+      P         : Node_Id;
    begin
       Write (Tok_New);
       Write_Space;
@@ -678,11 +678,11 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    procedure Generate_Enumerator (N : Node_Id) is
       L   : constant List_Id := Enum_Members (N);
       P   : Node_Id;
-      Len : Natural := 0;
+      Len : Natural          := 0;
    begin
       if not Is_Empty (L) then
          Len := Length (L);
-         P := First_Node (L);
+         P   := First_Node (L);
          while Present (P) loop
             Write_Indentation;
             Generate (P);
@@ -690,7 +690,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
                Generate_Statement_Delimiter (P);
             end if;
             Len := Len - 1;
-            P := Next_Node (P);
+            P   := Next_Node (P);
          end loop;
       end if;
    end Generate_Enumerator;
@@ -707,9 +707,9 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_Expression --
    -------------------------
    procedure Generate_Expression (N : Node_Id) is
-      L_Expr : constant Node_Id := Left_Expression (N);
+      L_Expr : constant Node_Id     := Left_Expression (N);
       Op     : constant Operator_Id := Operator_Expression (N);
-      R_Expr : constant Node_Id := Right_Expression (N);
+      R_Expr : constant Node_Id     := Right_Expression (N);
    begin
       Generate (L_Expr);
       Write_Space;
@@ -774,15 +774,15 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    procedure Generate_Full_Array_Declaration (N : Node_Id) is
       S   : constant Node_Id := Array_Declaration (N);
       L   : constant List_Id := Array_Assignments (N);
-      P : Node_Id;
-      Len : Natural := 0;
+      P   : Node_Id;
+      Len : Natural          := 0;
    begin
       Generate (S);
       Generate_Statement_Delimiter (S);
 
       if not Is_Empty (L) then
          Len := Length (L);
-         P := First_Node (L);
+         P   := First_Node (L);
          while Present (P) loop
             Write_Indentation;
             Generate (P);
@@ -790,7 +790,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
                Generate_Statement_Delimiter (P);
             end if;
             Len := Len - 1;
-            P := Next_Node (P);
+            P   := Next_Node (P);
          end loop;
       end if;
    end Generate_Full_Array_Declaration;
@@ -852,10 +852,10 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_Function_Implementation --
    --------------------------------------
    procedure Generate_Function_Implementation (N : Node_Id) is
-      Dec  : constant List_Id := Declarations (N);
+      Dec : constant List_Id := Declarations (N);
       Spe : constant Node_Id := Specification (N);
       Sta : constant List_Id := Statements (N);
-      P : Node_Id;
+      P   : Node_Id;
    begin
       Generate_Comment_Box (Name (Defining_Identifier (Spe)));
       Write_Indentation;
@@ -959,13 +959,13 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_Case_Statement --
    -----------------------------
    procedure Generate_Case_Statement (N : Node_Id) is
-      P : Node_Id;
+      P   : Node_Id;
       Len : Natural := 0;
    begin
       Write (Tok_Case);
       Write_Space;
 
-      P := First_Node (Labels (N));
+      P   := First_Node (Labels (N));
       Len := Length (Labels (N));
       while Present (P) loop
          Generate (P);
@@ -975,7 +975,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
             Write_Space;
          end if;
          Len := Len - 1;
-         P := Next_Node (P);
+         P   := Next_Node (P);
       end loop;
       Write (Tok_Colon);
       Write_Space;
@@ -1063,8 +1063,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
          return;
       end if;
 
-      Desc := Set_Output
-        (To_RTSJ_Conventional_Name (Get_File_Name (N), True));
+      Desc := Set_Output (To_RTSJ_Conventional_Name (Get_File_Name (N), True));
 
       while Present (D) loop
          Generate (D);
@@ -1105,7 +1104,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_HI_Distributed_Application --
    -----------------------------------------
    procedure Generate_HI_Distributed_Application (N : Node_Id) is
-      P : Node_Id := First_Node (HI_Nodes (N));
+      P                     : Node_Id := First_Node (HI_Nodes (N));
       Application_Directory : Name_Id;
    begin
       --  Create the application directory (a lower case string)
@@ -1129,7 +1128,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    -- Generate_HI_Node --
    ----------------------
    procedure Generate_HI_Node (N : Node_Id) is
-      U : Node_Id := First_Node (Units (N));
+      U                   : Node_Id          := First_Node (Units (N));
       Partition_Directory : constant Name_Id := To_Lower (Name (N));
    begin
       --  Create the node directory
@@ -1241,9 +1240,7 @@ package body Ocarina.Backends.RTSJ_Tree.Generator is
    begin
       --  The file name corresponding is the lowerd name of N
       Get_Name_String
-        (Conventional_Base_Name
-           (Name
-              (Defining_Identifier (N))));
+        (Conventional_Base_Name (Name (Defining_Identifier (N))));
 
       --  Adding File_Suffix
       Add_Str_To_Name_Buffer (Source_Suffix);

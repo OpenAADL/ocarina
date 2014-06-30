@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,15 +39,15 @@ package Ocarina.Backends.C_Tree.Debug is
 
    N_Indents : Natural := 0;
 
-   procedure W_Eol         (N : Natural := 1) renames Output.Write_Eol;
-   procedure W_Int         (N : Int)          renames Output.Write_Int;
-   procedure W_Line        (N : String)       renames Output.Write_Line;
-   procedure W_Str         (N : String)       renames Output.Write_Str;
+   procedure W_Eol (N : Natural := 1) renames Output.Write_Eol;
+   procedure W_Int (N : Int) renames Output.Write_Int;
+   procedure W_Line (N : String) renames Output.Write_Line;
+   procedure W_Str (N : String) renames Output.Write_Str;
    procedure W_Indents;
 
-   procedure W_Byte        (N : Byte);
-   procedure W_List_Id     (L : List_Id);
-   procedure W_Node_Id     (N : Node_Id);
+   procedure W_Byte (N : Byte);
+   procedure W_List_Id (L : List_Id);
+   procedure W_Node_Id (N : Node_Id);
    procedure W_Node_Header (N : Node_Id);
 
    procedure W_Node_Attribute

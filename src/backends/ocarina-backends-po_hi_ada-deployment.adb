@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -126,21 +126,21 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
       --  Builds the Max_Node_Image_Size constant declaration
       --  corresponding to node E.
 
-      Max_Node_Image_Size    : Unsigned_Long_Long := 1;
+      Max_Node_Image_Size : Unsigned_Long_Long := 1;
       --  Value of Max_Node_Image_Size
 
       function Max_Entity_Image_Size_Declaration (E : Node_Id) return Node_Id;
       --  Builds the Max_Entity_Image_Size constant declaration
       --  corresponding to node E.
 
-      Max_Entity_Image_Size    : Unsigned_Long_Long := 1;
+      Max_Entity_Image_Size : Unsigned_Long_Long := 1;
       --  Value of Max_Entity_Image_Size
 
       function Max_Port_Image_Size_Declaration (E : Node_Id) return Node_Id;
       --  Builds the Max_Port_Image_Size constant declaration
       --  corresponding to node E.
 
-      Max_Port_Image_Size    : Unsigned_Long_Long := 1;
+      Max_Port_Image_Size : Unsigned_Long_Long := 1;
       --  Value of Max_Port_Image_Size
 
       ------------------
@@ -355,8 +355,9 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          Position_N : Nat;
          Position_M : Nat;
       begin
-         pragma Assert (Kind (N) = K_Defining_Identifier or else
-                        Kind (N) = K_Element_Association);
+         pragma Assert
+           (Kind (N) = K_Defining_Identifier
+            or else Kind (N) = K_Element_Association);
 
          case ADN.Kind (N) is
             when ADN.K_Defining_Identifier =>
@@ -379,8 +380,8 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                   when ADN.K_Element_Association =>
                      Position_M := Get_Enum_Pos (ADN.Name (Index (M)));
                   when others =>
-                     raise Program_Error with
-                       "Inconsistency in Insert_Node_In_List";
+                     raise Program_Error
+                       with "Inconsistency in Insert_Node_In_List";
                end case;
 
                if Position_N < Position_M then
@@ -420,13 +421,14 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          --  doing a Ada.Real_Time.Time'Size because 'Size for private
          --  Ada types is not a static expression.
 
-         N := Make_Object_Declaration
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Max_Payload_Size)),
-            Constant_Present    => True,
-            Object_Definition   => RE (RE_Integer),
-            Expression          => Make_Literal
-              (New_Integer_Value (Max_Payload, 1, 10)));
+         N :=
+           Make_Object_Declaration
+             (Defining_Identifier =>
+                Make_Defining_Identifier (PN (P_Max_Payload_Size)),
+              Constant_Present  => True,
+              Object_Definition => RE (RE_Integer),
+              Expression        =>
+                Make_Literal (New_Integer_Value (Max_Payload, 1, 10)));
 
          return N;
       end Max_Payload_Size_Declaration;
@@ -435,19 +437,19 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
       -- Max_Node_Image_Size_Declaration --
       -------------------------------------
 
-      function Max_Node_Image_Size_Declaration (E : Node_Id)
-                                               return Node_Id is
+      function Max_Node_Image_Size_Declaration (E : Node_Id) return Node_Id is
          pragma Unreferenced (E);
 
          N : Node_Id;
       begin
-         N := Make_Object_Declaration
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Max_Node_Image_Size)),
-            Constant_Present    => True,
-            Object_Definition   => RE (RE_Integer),
-            Expression          => Make_Literal
-              (New_Integer_Value (Max_Node_Image_Size, 1, 10)));
+         N :=
+           Make_Object_Declaration
+             (Defining_Identifier =>
+                Make_Defining_Identifier (PN (P_Max_Node_Image_Size)),
+              Constant_Present  => True,
+              Object_Definition => RE (RE_Integer),
+              Expression        =>
+                Make_Literal (New_Integer_Value (Max_Node_Image_Size, 1, 10)));
          return N;
       end Max_Node_Image_Size_Declaration;
 
@@ -455,19 +457,22 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
       -- Max_Entity_Image_Size_Declaration --
       ---------------------------------------
 
-      function Max_Entity_Image_Size_Declaration (E : Node_Id)
-                                                 return Node_Id is
+      function Max_Entity_Image_Size_Declaration
+        (E : Node_Id) return Node_Id
+      is
          pragma Unreferenced (E);
 
          N : Node_Id;
       begin
-         N := Make_Object_Declaration
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Max_Entity_Image_Size)),
-            Constant_Present    => True,
-            Object_Definition   => RE (RE_Integer),
-            Expression          => Make_Literal
-              (New_Integer_Value (Max_Entity_Image_Size, 1, 10)));
+         N :=
+           Make_Object_Declaration
+             (Defining_Identifier =>
+                Make_Defining_Identifier (PN (P_Max_Entity_Image_Size)),
+              Constant_Present  => True,
+              Object_Definition => RE (RE_Integer),
+              Expression        =>
+                Make_Literal
+                  (New_Integer_Value (Max_Entity_Image_Size, 1, 10)));
          return N;
       end Max_Entity_Image_Size_Declaration;
 
@@ -475,19 +480,19 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
       -- Max_Port_Image_Size_Declaration --
       -------------------------------------
 
-      function Max_Port_Image_Size_Declaration (E : Node_Id)
-                                               return Node_Id is
+      function Max_Port_Image_Size_Declaration (E : Node_Id) return Node_Id is
          pragma Unreferenced (E);
 
          N : Node_Id;
       begin
-         N := Make_Object_Declaration
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Max_Port_Image_Size)),
-            Constant_Present    => True,
-            Object_Definition   => RE (RE_Integer),
-            Expression          => Make_Literal
-              (New_Integer_Value (Max_Port_Image_Size, 1, 10)));
+         N :=
+           Make_Object_Declaration
+             (Defining_Identifier =>
+                Make_Defining_Identifier (PN (P_Max_Port_Image_Size)),
+              Constant_Present  => True,
+              Object_Definition => RE (RE_Integer),
+              Expression        =>
+                Make_Literal (New_Integer_Value (Max_Port_Image_Size, 1, 10)));
          return N;
       end Max_Port_Image_Size_Declaration;
 
@@ -523,8 +528,8 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -560,8 +565,8 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             if Get_Source_Language (E) = Language_Ada_95 then
                Display_Located_Error
                  (Loc (E),
-                  "This data type cannot be used in thread or process"
-                  & " features",
+                  "This data type cannot be used in thread or process" &
+                  " features",
                   Fatal => True);
             end if;
 
@@ -595,8 +600,8 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         Implementation  : constant Node_Id := Get_Implementation (E);
-         N : Node_Id;
+         Implementation : constant Node_Id := Get_Implementation (E);
+         N              : Node_Id;
       begin
          if Implementation /= No_Node then
             if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
@@ -614,20 +619,20 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         P        : constant Node_Id := Map_HI_Node (E);
-         U        : Node_Id;
-         S        : constant Node_Id := Parent_Subcomponent (E);
-         Img_Len  : Unsigned_Long_Long := Get_Name_String
-           (Map_Ada_Enumerator_Name (S))'Length;
-         N        : Node_Id;
-         C        : Node_Id;
-         F        : Node_Id;
-         Src      : Node_Id;
-         Dst      : Node_Id;
-         Parent   : Node_Id;
-         S_Parent : Node_Id;
-         The_System : constant Node_Id := Parent_Component
-           (Parent_Subcomponent (E));
+         P       : constant Node_Id   := Map_HI_Node (E);
+         U       : Node_Id;
+         S       : constant Node_Id   := Parent_Subcomponent (E);
+         Img_Len : Unsigned_Long_Long :=
+           Get_Name_String (Map_Ada_Enumerator_Name (S))'Length;
+         N          : Node_Id;
+         C          : Node_Id;
+         F          : Node_Id;
+         Src        : Node_Id;
+         Dst        : Node_Id;
+         Parent     : Node_Id;
+         S_Parent   : Node_Id;
+         The_System : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
       begin
          Push_Entity (P);
 
@@ -677,25 +682,30 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
 
          --  Build the representation clause of the enumerator
 
-         N := Make_Element_Association
-           (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
-            Make_Literal
-            (New_Integer_Value
-             (Unsigned_Long_Long
-              (Get_Node_Enum_Pos (Map_Ada_Enumerator_Name (S))), 1, 10)));
+         N :=
+           Make_Element_Association
+             (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
+              Make_Literal
+                (New_Integer_Value
+                   (Unsigned_Long_Long
+                      (Get_Node_Enum_Pos (Map_Ada_Enumerator_Name (S))),
+                    1,
+                    10)));
          Insert_Node_In_List
-           (N, Node_Enumerator_Pos_List, Get_Node_Enum_Pos'Access);
+           (N,
+            Node_Enumerator_Pos_List,
+            Get_Node_Enum_Pos'Access);
 
          if Max_Node_Image_Size < Img_Len then
             Max_Node_Image_Size := Img_Len;
          end if;
 
-         N := Make_Element_Association
-           (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
-            Make_Literal (New_String_Value (Map_Ada_Enumerator_Name (S))));
+         N :=
+           Make_Element_Association
+             (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
+              Make_Literal (New_String_Value (Map_Ada_Enumerator_Name (S))));
 
-         Insert_Node_In_List
-           (N, Node_Image_List, Get_Node_Enum_Pos'Access);
+         Insert_Node_In_List (N, Node_Image_List, Get_Node_Enum_Pos'Access);
 
          --  Visit all the subcomponents of the process
 
@@ -716,16 +726,17 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
                if AAU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (C)) =
+                   Get_Bound_Processor (E)
                then
                   --  Build the enumerator corresponding to the device
                   --  Note: we reuse the process name XXX
 
                   N := Make_Defining_Identifier (Map_Ada_Enumerator_Name (S));
                   Bind_AADL_To_Enumerator
-                    (Identifier (Corresponding_Instance (C)), N);
+                    (Identifier (Corresponding_Instance (C)),
+                     N);
 
                   Visit_Device_Instance (Corresponding_Instance (C));
                end if;
@@ -758,10 +769,12 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                         --  enumerators of E.
 
                         S_Parent := Parent_Subcomponent (Parent);
-                        Img_Len := Get_Name_String
-                          (Map_Ada_Enumerator_Name (S_Parent))'Length;
-                        N := Make_Defining_Identifier
-                          (Map_Ada_Enumerator_Name (S_Parent));
+                        Img_Len  :=
+                          Get_Name_String (Map_Ada_Enumerator_Name (S_Parent))'
+                            Length;
+                        N :=
+                          Make_Defining_Identifier
+                            (Map_Ada_Enumerator_Name (S_Parent));
                         Insert_Node_In_List
                           (N,
                            Node_Enumerator_List,
@@ -770,14 +783,17 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                         --  Add a representation clause for the
                         --  enumerator corresponding to Parent.
 
-                        N := Make_Element_Association
-                          (Make_Defining_Identifier
-                           (Map_Ada_Enumerator_Name (S_Parent)),
-                           Make_Literal
-                           (New_Integer_Value
-                            (Unsigned_Long_Long
-                             (Get_Node_Enum_Pos
-                              (Map_Ada_Enumerator_Name (S_Parent))), 1, 10)));
+                        N :=
+                          Make_Element_Association
+                            (Make_Defining_Identifier
+                               (Map_Ada_Enumerator_Name (S_Parent)),
+                             Make_Literal
+                               (New_Integer_Value
+                                  (Unsigned_Long_Long
+                                     (Get_Node_Enum_Pos
+                                        (Map_Ada_Enumerator_Name (S_Parent))),
+                                   1,
+                                   10)));
                         Insert_Node_In_List
                           (N,
                            Node_Enumerator_Pos_List,
@@ -787,13 +803,13 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                            Max_Node_Image_Size := Img_Len;
                         end if;
 
-                        N := Make_Element_Association
-                          (Make_Defining_Identifier
-                             (Map_Ada_Enumerator_Name
-                                (S_Parent)),
-                           Make_Literal (New_String_Value
-                                           (Map_Ada_Enumerator_Name
-                                              (S_Parent))));
+                        N :=
+                          Make_Element_Association
+                            (Make_Defining_Identifier
+                               (Map_Ada_Enumerator_Name (S_Parent)),
+                             Make_Literal
+                               (New_String_Value
+                                  (Map_Ada_Enumerator_Name (S_Parent))));
 
                         Insert_Node_In_List
                           (N,
@@ -837,10 +853,12 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                         --  enumerators of E.
 
                         S_Parent := Parent_Subcomponent (Parent);
-                        Img_Len := Get_Name_String
-                          (Map_Ada_Enumerator_Name (S_Parent))'Length;
-                        N := Make_Defining_Identifier
-                          (Map_Ada_Enumerator_Name (S_Parent));
+                        Img_Len  :=
+                          Get_Name_String (Map_Ada_Enumerator_Name (S_Parent))'
+                            Length;
+                        N :=
+                          Make_Defining_Identifier
+                            (Map_Ada_Enumerator_Name (S_Parent));
                         Insert_Node_In_List
                           (N,
                            Node_Enumerator_List,
@@ -849,14 +867,17 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                         --  Add a representation clause for the
                         --  enumerator corresponding to P.
 
-                        N := Make_Element_Association
-                          (Make_Defining_Identifier
-                           (Map_Ada_Enumerator_Name (S_Parent)),
-                           Make_Literal
-                           (New_Integer_Value
-                            (Unsigned_Long_Long
-                             (Get_Node_Enum_Pos
-                              (Map_Ada_Enumerator_Name (S_Parent))), 1, 10)));
+                        N :=
+                          Make_Element_Association
+                            (Make_Defining_Identifier
+                               (Map_Ada_Enumerator_Name (S_Parent)),
+                             Make_Literal
+                               (New_Integer_Value
+                                  (Unsigned_Long_Long
+                                     (Get_Node_Enum_Pos
+                                        (Map_Ada_Enumerator_Name (S_Parent))),
+                                   1,
+                                   10)));
                         Insert_Node_In_List
                           (N,
                            Node_Enumerator_Pos_List,
@@ -866,13 +887,13 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                            Max_Node_Image_Size := Img_Len;
                         end if;
 
-                        N := Make_Element_Association
-                          (Make_Defining_Identifier
-                             (Map_Ada_Enumerator_Name
-                                (S_Parent)),
-                           Make_Literal (New_String_Value
-                                           (Map_Ada_Enumerator_Name
-                                              (S_Parent))));
+                        N :=
+                          Make_Element_Association
+                            (Make_Defining_Identifier
+                               (Map_Ada_Enumerator_Name (S_Parent)),
+                             Make_Literal
+                               (New_String_Value
+                                  (Map_Ada_Enumerator_Name (S_Parent))));
 
                         Insert_Node_In_List
                           (N,
@@ -909,30 +930,36 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          --  is incomplete. We can do this in the first traversal
          --  since we are sure that the enumerator list is not empty.
 
-         N := Message_Comment ("For each node in the distributed"
-                               & " application add an enumerator");
+         N :=
+           Message_Comment
+             ("For each node in the distributed" &
+              " application add an enumerator");
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         N := Make_Full_Type_Declaration
-           (Defining_Identifier => Make_Defining_Identifier
-              (TN (T_Node_Type)),
-            Type_Definition     => Make_Enumeration_Type_Definition
-              (Node_Enumerator_List));
+         N :=
+           Make_Full_Type_Declaration
+             (Defining_Identifier =>
+                Make_Defining_Identifier (TN (T_Node_Type)),
+              Type_Definition =>
+                Make_Enumeration_Type_Definition (Node_Enumerator_List));
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
          --  Create the enumeration representation clause so that all
          --  the enumerators in all the generated deployment packages
          --  have coherent position.
 
-         N := Message_Comment ("Representation clause to have consistent"
-                               & " positions for enumerators");
+         N :=
+           Message_Comment
+             ("Representation clause to have consistent" &
+              " positions for enumerators");
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         N := Make_Enumeration_Representation_Clause
-           (Defining_Identifier => Make_Defining_Identifier
-              (TN (T_Node_Type)),
-            Array_Aggregate     => Make_Array_Aggregate
-              (Node_Enumerator_Pos_List));
+         N :=
+           Make_Enumeration_Representation_Clause
+             (Defining_Identifier =>
+                Make_Defining_Identifier (TN (T_Node_Type)),
+              Array_Aggregate =>
+                Make_Array_Aggregate (Node_Enumerator_Pos_List));
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
          --  Fix the size of type Node_Type to Node_Type_Size bit
@@ -940,44 +967,49 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          --  now. This implies a maximum value of 256 nodes per
          --  application.
 
-         N := Message_Comment ("Size of Node_Type fixed to"
-                               & Integer'Image (Node_Type_Size)
-                               & " bits");
+         N :=
+           Message_Comment
+             ("Size of Node_Type fixed to" &
+              Integer'Image (Node_Type_Size) &
+              " bits");
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         N := Make_Attribute_Definition_Clause
-           (Defining_Identifier  => Make_Defining_Identifier
-              (TN (T_Node_Type)),
-            Attribute_Designator => A_Size,
-            Expression           => Make_Literal
-              (New_Integer_Value (Node_Type_Size, 1, 10)));
+         N :=
+           Make_Attribute_Definition_Clause
+             (Defining_Identifier =>
+                Make_Defining_Identifier (TN (T_Node_Type)),
+              Attribute_Designator => A_Size,
+              Expression           =>
+                Make_Literal (New_Integer_Value (Node_Type_Size, 1, 10)));
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
          N := Max_Node_Image_Size_Declaration (E);
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         N := Message_Comment ("Maximal Node_Image size for this"
-                                 & " node");
+         N := Message_Comment ("Maximal Node_Image size for this" & " node");
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
          N := Message_Comment ("Node Image");
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         N := Make_Array_Type_Definition
-           (Range_Constraints    => Make_List_Id
-              (Make_Range_Constraint
-                 (No_Node,
-                  No_Node,
-                  Make_Attribute_Designator
-                    (Make_Designator
-                       (TN (T_Node_Type)), A_Range))),
-            Component_Definition => Make_Indexed_Component
-              (RE (RE_String),
-               Make_List_Id
-                 (Make_Range_Constraint
-                    (Make_Literal (New_Integer_Value (1, 0, 10)),
-                     Make_Defining_Identifier
-                       (PN (P_Max_Node_Image_Size))))));
+         N :=
+           Make_Array_Type_Definition
+             (Range_Constraints =>
+                Make_List_Id
+                  (Make_Range_Constraint
+                     (No_Node,
+                      No_Node,
+                      Make_Attribute_Designator
+                        (Make_Designator (TN (T_Node_Type)),
+                         A_Range))),
+              Component_Definition =>
+                Make_Indexed_Component
+                  (RE (RE_String),
+                   Make_List_Id
+                     (Make_Range_Constraint
+                        (Make_Literal (New_Integer_Value (1, 0, 10)),
+                         Make_Defining_Identifier
+                           (PN (P_Max_Node_Image_Size))))));
 
          --  Normalize Node image strings to fit in the Node_Image
          --  array constraint (Max_Node_Image_Size)
@@ -987,42 +1019,42 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          begin
             for J in 1 .. Length (Node_Image_List) loop
                declare
-                  Str : constant String := Image (ADN.Value
-                                                    (ADN.Expression (Cur)));
+                  Str : constant String :=
+                    Image (ADN.Value (ADN.Expression (Cur)));
                   Res : String (1 .. Integer (Max_Node_Image_Size));
                begin
                   --  Get the string without the quotes
                   Res (1 .. Str'Last - 2) := Str (2 .. Str'Last - 1);
                   --  Fill the end with spaces
-                  for I in Str'Last - 1 .. Integer (Max_Node_Image_Size)
-                  loop
+                  for I in Str'Last - 1 .. Integer (Max_Node_Image_Size) loop
                      Res (I) := ' ';
                   end loop;
-                  ADN.Set_Value (ADN.Expression (Cur),
-                                 New_String_Value (Get_String_Name (Res)));
+                  ADN.Set_Value
+                    (ADN.Expression (Cur),
+                     New_String_Value (Get_String_Name (Res)));
                end;
                Cur := ADN.Next_Node (Cur);
             end loop;
          end;
 
-         N := Make_Object_Declaration
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Node_Image)),
-            Constant_Present    => True,
-            Object_Definition   => N,
-            Expression          => Make_Array_Aggregate
-              (Node_Image_List));
+         N :=
+           Make_Object_Declaration
+             (Defining_Identifier =>
+                Make_Defining_Identifier (PN (P_Node_Image)),
+              Constant_Present  => True,
+              Object_Definition => N,
+              Expression        => Make_Array_Aggregate (Node_Image_List));
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
          --  Declare the constant that represents the current node
 
-         N := Make_Object_Declaration
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_My_Node)),
-            Constant_Present    => True,
-            Object_Definition   => Make_Designator (TN (T_Node_Type)),
-            Expression          => Make_Defining_Identifier
-              (Map_Ada_Enumerator_Name (S)));
+         N :=
+           Make_Object_Declaration
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_My_Node)),
+              Constant_Present    => True,
+              Object_Definition   => Make_Designator (TN (T_Node_Type)),
+              Expression          =>
+                Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)));
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
          --  Create the thread enumeration type declaration. Note that
@@ -1030,31 +1062,37 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          --  is incomplete.
 
          if not Is_Empty (Thread_Enumerator_List) then
-            N := Message_Comment ("For each thread in the distributed"
-                                  & " application nodes, add an"
-                                  & " enumerator");
+            N :=
+              Message_Comment
+                ("For each thread in the distributed" &
+                 " application nodes, add an" &
+                 " enumerator");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Full_Type_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (TN (T_Entity_Type)),
-               Type_Definition     => Make_Enumeration_Type_Definition
-                 (Thread_Enumerator_List));
+            N :=
+              Make_Full_Type_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (TN (T_Entity_Type)),
+                 Type_Definition =>
+                   Make_Enumeration_Type_Definition (Thread_Enumerator_List));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             --  Create the enumeration representation clause so that
             --  all the enumerators in all the generated deployment
             --  packages have coherent position.
 
-            N := Message_Comment ("Representation clause to have consistent"
-                                  & " positions for enumerators");
+            N :=
+              Message_Comment
+                ("Representation clause to have consistent" &
+                 " positions for enumerators");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Enumeration_Representation_Clause
-              (Defining_Identifier => Make_Defining_Identifier
-                 (TN (T_Entity_Type)),
-               Array_Aggregate     => Make_Array_Aggregate
-                 (Thread_Enumerator_Pos_List));
+            N :=
+              Make_Enumeration_Representation_Clause
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (TN (T_Entity_Type)),
+                 Array_Aggregate =>
+                   Make_Array_Aggregate (Thread_Enumerator_Pos_List));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             --  Fix the size of type Entity_Type to Entity_Type_Size
@@ -1062,17 +1100,20 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             --  it for now. This implies a maximum value of 256 nodes
             --  per application.
 
-            N := Message_Comment ("Size of Entity_Type fixed to"
-                                  & Integer'Image (Entity_Type_Size)
-                                  & " bits");
+            N :=
+              Message_Comment
+                ("Size of Entity_Type fixed to" &
+                 Integer'Image (Entity_Type_Size) &
+                 " bits");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Attribute_Definition_Clause
-              (Defining_Identifier  => Make_Defining_Identifier
-                 (TN (T_Entity_Type)),
-               Attribute_Designator => A_Size,
-               Expression           => Make_Literal
-                 (New_Integer_Value (Entity_Type_Size, 1, 10)));
+            N :=
+              Make_Attribute_Definition_Clause
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (TN (T_Entity_Type)),
+                 Attribute_Designator => A_Size,
+                 Expression           =>
+                   Make_Literal (New_Integer_Value (Entity_Type_Size, 1, 10)));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
          end if;
 
@@ -1082,51 +1123,56 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             N := Message_Comment ("Entity Table");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Array_Type_Definition
-              (Range_Constraints    => Make_List_Id
-                 (Make_Range_Constraint
-                  (No_Node,
-                   No_Node,
-                   Make_Attribute_Designator
-                   (Make_Designator
-                    (TN (T_Entity_Type)), A_Range))),
-               Component_Definition => Make_Defining_Identifier
-                 (TN (T_Node_Type)));
+            N :=
+              Make_Array_Type_Definition
+                (Range_Constraints =>
+                   Make_List_Id
+                     (Make_Range_Constraint
+                        (No_Node,
+                         No_Node,
+                         Make_Attribute_Designator
+                           (Make_Designator (TN (T_Entity_Type)),
+                            A_Range))),
+                 Component_Definition =>
+                   Make_Defining_Identifier (TN (T_Node_Type)));
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (PN (P_Entity_Table)),
-               Constant_Present    => True,
-               Object_Definition   => N,
-               Expression          => Make_Array_Aggregate
-                 (Entity_Table_List));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (PN (P_Entity_Table)),
+                 Constant_Present  => True,
+                 Object_Definition => N,
+                 Expression => Make_Array_Aggregate (Entity_Table_List));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             N := Max_Entity_Image_Size_Declaration (E);
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Message_Comment ("Maximal Entity_Image size for this"
-                                    & " node");
+            N :=
+              Message_Comment ("Maximal Entity_Image size for this" & " node");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             N := Message_Comment ("Entity Image");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Array_Type_Definition
-              (Range_Constraints    => Make_List_Id
-                 (Make_Range_Constraint
-                  (No_Node,
-                   No_Node,
-                   Make_Attribute_Designator
-                   (Make_Designator
-                    (TN (T_Entity_Type)), A_Range))),
-               Component_Definition => Make_Indexed_Component
-                 (RE (RE_String),
-                  Make_List_Id
-                    (Make_Range_Constraint
-                       (Make_Literal (New_Integer_Value (1, 0, 10)),
-                        Make_Defining_Identifier
-                          (PN (P_Max_Entity_Image_Size))))));
+            N :=
+              Make_Array_Type_Definition
+                (Range_Constraints =>
+                   Make_List_Id
+                     (Make_Range_Constraint
+                        (No_Node,
+                         No_Node,
+                         Make_Attribute_Designator
+                           (Make_Designator (TN (T_Entity_Type)),
+                            A_Range))),
+                 Component_Definition =>
+                   Make_Indexed_Component
+                     (RE (RE_String),
+                      Make_List_Id
+                        (Make_Range_Constraint
+                           (Make_Literal (New_Integer_Value (1, 0, 10)),
+                            Make_Defining_Identifier
+                              (PN (P_Max_Entity_Image_Size))))));
 
             --  Normalize Entity image strings to fit in the Entity_Image
             --  array constraint (Max_Entity_Image_Size)
@@ -1136,8 +1182,8 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             begin
                for J in 1 .. Length (Entity_Image_List) loop
                   declare
-                     Str : constant String := Image (ADN.Value
-                                                       (ADN.Expression (Cur)));
+                     Str : constant String :=
+                       Image (ADN.Value (ADN.Expression (Cur)));
                      Res : String (1 .. Integer (Max_Entity_Image_Size));
                   begin
                      --  Get the string without the quotes
@@ -1147,20 +1193,21 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                      loop
                         Res (I) := ' ';
                      end loop;
-                     ADN.Set_Value (ADN.Expression (Cur),
-                                    New_String_Value (Get_String_Name (Res)));
+                     ADN.Set_Value
+                       (ADN.Expression (Cur),
+                        New_String_Value (Get_String_Name (Res)));
                   end;
                   Cur := ADN.Next_Node (Cur);
                end loop;
             end;
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (PN (P_Entity_Image)),
-               Constant_Present    => True,
-               Object_Definition   => N,
-               Expression          => Make_Array_Aggregate
-                 (Entity_Image_List));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (PN (P_Entity_Image)),
+                 Constant_Present  => True,
+                 Object_Definition => N,
+                 Expression => Make_Array_Aggregate (Entity_Image_List));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
          end if;
 
@@ -1169,47 +1216,56 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          --  is incomplete.
 
          if not Is_Empty (Port_Enumerator_List) then
-            N := Message_Comment ("For each thread port in the distributed"
-                                  & " application nodes, add an"
-                                  & " enumerator");
+            N :=
+              Message_Comment
+                ("For each thread port in the distributed" &
+                 " application nodes, add an" &
+                 " enumerator");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Full_Type_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (TN (T_Port_Type)),
-               Type_Definition     => Make_Enumeration_Type_Definition
-                 (Port_Enumerator_List));
+            N :=
+              Make_Full_Type_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (TN (T_Port_Type)),
+                 Type_Definition =>
+                   Make_Enumeration_Type_Definition (Port_Enumerator_List));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             --  Create the enumeration representation clause so that
             --  all the enumerators in all the generated deployment
             --  packages have coherent position.
 
-            N := Message_Comment ("Representation clause to have consistent"
-                                  & " positions for enumerators");
+            N :=
+              Message_Comment
+                ("Representation clause to have consistent" &
+                 " positions for enumerators");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Enumeration_Representation_Clause
-              (Defining_Identifier => Make_Defining_Identifier
-                 (TN (T_Port_Type)),
-               Array_Aggregate     => Make_Array_Aggregate
-                 (Port_Enumerator_Pos_List));
+            N :=
+              Make_Enumeration_Representation_Clause
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (TN (T_Port_Type)),
+                 Array_Aggregate =>
+                   Make_Array_Aggregate (Port_Enumerator_Pos_List));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             --  Fix the size of type Port_Type to Port_Type_Size bits
             --  to be able to instanciate a Marshallers_G for it.
 
-            N := Message_Comment ("Size of Port_Type fixed to"
-                                  & Integer'Image (Port_Type_Size)
-                                  & " bits");
+            N :=
+              Message_Comment
+                ("Size of Port_Type fixed to" &
+                 Integer'Image (Port_Type_Size) &
+                 " bits");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Attribute_Definition_Clause
-              (Defining_Identifier  => Make_Defining_Identifier
-                 (TN (T_Port_Type)),
-               Attribute_Designator => A_Size,
-               Expression           => Make_Literal
-                 (New_Integer_Value (Port_Type_Size, 1, 10)));
+            N :=
+              Make_Attribute_Definition_Clause
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (TN (T_Port_Type)),
+                 Attribute_Designator => A_Size,
+                 Expression           =>
+                   Make_Literal (New_Integer_Value (Port_Type_Size, 1, 10)));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
          end if;
 
@@ -1219,44 +1275,48 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             N := Message_Comment ("Port Table");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Make_Array_Type_Definition
-              (Range_Constraints    => Make_List_Id
-                 (Make_Range_Constraint
-                  (No_Node,
-                   No_Node,
-                   Make_Attribute_Designator
-                   (Make_Designator
-                    (TN (T_Port_Type)), A_Range))),
-               Component_Definition => Make_Defining_Identifier
-                 (TN (T_Entity_Type)));
+            N :=
+              Make_Array_Type_Definition
+                (Range_Constraints =>
+                   Make_List_Id
+                     (Make_Range_Constraint
+                        (No_Node,
+                         No_Node,
+                         Make_Attribute_Designator
+                           (Make_Designator (TN (T_Port_Type)),
+                            A_Range))),
+                 Component_Definition =>
+                   Make_Defining_Identifier (TN (T_Entity_Type)));
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (PN (P_Port_Table)),
-               Constant_Present    => True,
-               Object_Definition   => N,
-               Expression          => Make_Array_Aggregate
-                 (Port_Table_List));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (PN (P_Port_Table)),
+                 Constant_Present  => True,
+                 Object_Definition => N,
+                 Expression        => Make_Array_Aggregate (Port_Table_List));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             N := Max_Port_Image_Size_Declaration (E);
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Message_Comment ("Maximal Port_Image size for this"
-                                    & " node");
+            N :=
+              Message_Comment ("Maximal Port_Image size for this" & " node");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-            N := Message_Comment ("A String subtype with Port_Image_Size"
-                                    & " constraint");
-            N := Make_Full_Type_Declaration
-              (Make_Defining_Identifier (PN (P_Port_Sized_String)),
-               Make_Indexed_Component
-                 (RE (RE_String),
-                  Make_List_Id
-                    (Make_Range_Constraint
-                       (Make_Literal (New_Integer_Value (1, 0, 10)),
-                     RE (RE_Max_Port_Image_Size)))),
-               Is_Subtype => True);
+            N :=
+              Message_Comment
+                ("A String subtype with Port_Image_Size" & " constraint");
+            N :=
+              Make_Full_Type_Declaration
+                (Make_Defining_Identifier (PN (P_Port_Sized_String)),
+                 Make_Indexed_Component
+                   (RE (RE_String),
+                    Make_List_Id
+                      (Make_Range_Constraint
+                         (Make_Literal (New_Integer_Value (1, 0, 10)),
+                          RE (RE_Max_Port_Image_Size)))),
+                 Is_Subtype => True);
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             N := Message_Comment ("Port Image");
@@ -1270,8 +1330,8 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             begin
                for J in 1 .. Length (Port_Image_List) loop
                   declare
-                     Str : constant String := Image (ADN.Value
-                                                       (ADN.Expression (Cur)));
+                     Str : constant String :=
+                       Image (ADN.Value (ADN.Expression (Cur)));
                      Res : String (1 .. Integer (Max_Port_Image_Size));
                   begin
                      --  Get the string without the quotes
@@ -1281,31 +1341,34 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                      loop
                         Res (I) := ' ';
                      end loop;
-                     ADN.Set_Value (ADN.Expression (Cur),
-                                    New_String_Value (Get_String_Name (Res)));
+                     ADN.Set_Value
+                       (ADN.Expression (Cur),
+                        New_String_Value (Get_String_Name (Res)));
                   end;
                   Cur := ADN.Next_Node (Cur);
                end loop;
             end;
 
-            N := Make_Array_Type_Definition
-              (Range_Constraints    => Make_List_Id
-                 (Make_Range_Constraint
-                  (No_Node,
-                   No_Node,
-                   Make_Attribute_Designator
-                   (Make_Designator
-                    (TN (T_Port_Type)), A_Range))),
-               Component_Definition =>
-                 Make_Defining_Identifier (PN (P_Port_Sized_String)));
+            N :=
+              Make_Array_Type_Definition
+                (Range_Constraints =>
+                   Make_List_Id
+                     (Make_Range_Constraint
+                        (No_Node,
+                         No_Node,
+                         Make_Attribute_Designator
+                           (Make_Designator (TN (T_Port_Type)),
+                            A_Range))),
+                 Component_Definition =>
+                   Make_Defining_Identifier (PN (P_Port_Sized_String)));
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (PN (P_Port_Image)),
-               Constant_Present    => True,
-               Object_Definition   => N,
-               Expression          => Make_Array_Aggregate
-                 (Port_Image_List));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (PN (P_Port_Image)),
+                 Constant_Present  => True,
+                 Object_Definition => N,
+                 Expression        => Make_Array_Aggregate (Port_Image_List));
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
          end if;
 
@@ -1314,8 +1377,9 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          --  nodes.
 
          if Need_Deliver (E) or else Need_Send (E) then
-            N := Message_Comment ("Maximal message payload size for this"
-                                  & " node (in bits)");
+            N :=
+              Message_Comment
+                ("Maximal message payload size for this" & " node (in bits)");
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             N := Max_Payload_Size_Declaration (E);
@@ -1327,8 +1391,9 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             --  or event data communication between threads or nodes
 
             if Max_Payload_Of /= No_Name then
-               N := Message_Comment ("Biggest type: "
-                                     & Get_Name_String (Max_Payload_Of));
+               N :=
+                 Message_Comment
+                   ("Biggest type: " & Get_Name_String (Max_Payload_Of));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
             end if;
          end if;
@@ -1372,12 +1437,12 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
       ---------------------------
 
       procedure Visit_Thread_Instance (E : Node_Id) is
-         N : Node_Id;
-         P : Node_Id;
-         F : Node_Id;
-         S : constant Node_Id := Parent_Subcomponent (E);
-         Img_Length : constant Unsigned_Long_Long := Get_Name_String
-           (Map_Ada_Enumerator_Name (S))'Length;
+         N          : Node_Id;
+         P          : Node_Id;
+         F          : Node_Id;
+         S          : constant Node_Id            := Parent_Subcomponent (E);
+         Img_Length : constant Unsigned_Long_Long :=
+           Get_Name_String (Map_Ada_Enumerator_Name (S))'Length;
       begin
          --  Build the enumerator corresponding to the thread
 
@@ -1390,12 +1455,15 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
 
          --  Build the representation clause for the enumerator
 
-         N := Make_Element_Association
-           (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
-            Make_Literal
-            (New_Integer_Value
-             (Unsigned_Long_Long
-              (Get_Thread_Enum_Pos (Map_Ada_Enumerator_Name (S))), 1, 10)));
+         N :=
+           Make_Element_Association
+             (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
+              Make_Literal
+                (New_Integer_Value
+                   (Unsigned_Long_Long
+                      (Get_Thread_Enum_Pos (Map_Ada_Enumerator_Name (S))),
+                    1,
+                    10)));
          Insert_Node_In_List
            (N,
             Thread_Enumerator_Pos_List,
@@ -1407,21 +1475,20 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
          --  Get the Process parent of the thread
 
          P := Parent_Component (S);
-         pragma Assert (AAU.Is_Process (P)
-                       or else AAU.Is_Abstract (P));
+         pragma Assert (AAU.Is_Process (P) or else AAU.Is_Abstract (P));
 
          if AAU.Is_Process (P) then
-            N := Make_Element_Association
-              (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
-               Make_Defining_Identifier
-                 (Map_Ada_Enumerator_Name
-                    (Parent_Subcomponent
-                       (P))));
+            N :=
+              Make_Element_Association
+                (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
+                 Make_Defining_Identifier
+                   (Map_Ada_Enumerator_Name (Parent_Subcomponent (P))));
 
          elsif AAU.Is_Abstract (P) then
-            N := Make_Element_Association
-              (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
-               Make_Defining_Identifier (PN (P_My_Node)));
+            N :=
+              Make_Element_Association
+                (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
+                 Make_Defining_Identifier (PN (P_My_Node)));
 
          end if;
          Insert_Node_In_List
@@ -1433,9 +1500,10 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             Max_Entity_Image_Size := Img_Length;
          end if;
 
-         N := Make_Element_Association
-           (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
-            Make_Literal (New_String_Value (Map_Ada_Enumerator_Name (S))));
+         N :=
+           Make_Element_Association
+             (Make_Defining_Identifier (Map_Ada_Enumerator_Name (S)),
+              Make_Literal (New_String_Value (Map_Ada_Enumerator_Name (S))));
 
          Insert_Node_In_List
            (N,
@@ -1452,8 +1520,8 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance then
                   declare
-                     Enum_Name : constant Name_Id := Map_Ada_Full_Feature_Name
-                       (F, 'K');
+                     Enum_Name : constant Name_Id :=
+                       Map_Ada_Full_Feature_Name (F, 'K');
                      Port_Img_Length : constant Unsigned_Long_Long :=
                        Get_Name_String (Enum_Name)'Length;
                   begin
@@ -1478,12 +1546,15 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                      --  Build the representation clause for the
                      --  enumerator.
 
-                     N := Make_Element_Association
-                       (Make_Defining_Identifier (Enum_Name),
-                        Make_Literal
-                        (New_Integer_Value
-                         (Unsigned_Long_Long
-                          (Get_Port_Enum_Pos (Enum_Name)), 1, 10)));
+                     N :=
+                       Make_Element_Association
+                         (Make_Defining_Identifier (Enum_Name),
+                          Make_Literal
+                            (New_Integer_Value
+                               (Unsigned_Long_Long
+                                  (Get_Port_Enum_Pos (Enum_Name)),
+                                1,
+                                10)));
                      Insert_Node_In_List
                        (N,
                         Port_Enumerator_Pos_List,
@@ -1493,10 +1564,11 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                      --  element association and append it to the
                      --  association list.
 
-                     N := Make_Element_Association
-                       (Make_Defining_Identifier (Enum_Name),
-                        Make_Defining_Identifier
-                        (Map_Ada_Enumerator_Name (S)));
+                     N :=
+                       Make_Element_Association
+                         (Make_Defining_Identifier (Enum_Name),
+                          Make_Defining_Identifier
+                            (Map_Ada_Enumerator_Name (S)));
                      Insert_Node_In_List
                        (N,
                         Port_Table_List,
@@ -1510,11 +1582,10 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                         Max_Port_Image_Size := Port_Img_Length;
                      end if;
 
-                     N := Make_Element_Association
-                       (Make_Defining_Identifier (Enum_Name),
-                        Make_Literal
-                          (New_String_Value
-                             (Enum_Name)));
+                     N :=
+                       Make_Element_Association
+                         (Make_Defining_Identifier (Enum_Name),
+                          Make_Literal (New_String_Value (Enum_Name)));
                      Insert_Node_In_List
                        (N,
                         Port_Image_List,

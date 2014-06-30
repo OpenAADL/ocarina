@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -49,8 +49,8 @@ package Ocarina.Backends.REAL is
    --  Reset the REAL module
 
    procedure Compute_Theorem_Call
-     (E         : Node_Id;
-      Local_Set : Result_Set;
+     (E         :     Node_Id;
+      Local_Set :     Result_Set;
       Result    : out Value_Id;
       Success   : out Boolean);
    --  Allows to call directly returning theorems with user-specified
@@ -60,8 +60,9 @@ private
 
    --  Internal types declarations
 
-   type Set_Table is array (Integer range <>)
-     of Ocarina.Instances.REAL_Checker.Queries.Result_Set;
+   type Set_Table is
+     array
+       (Integer range <>) of Ocarina.Instances.REAL_Checker.Queries.Result_Set;
 
    type Set_Table_Access is access Set_Table;
 

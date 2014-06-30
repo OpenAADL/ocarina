@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -51,18 +51,13 @@ package body Ocarina.Instances.REAL_Checker.Queries.Call_Predicates is
    function Is_Called_Predicate
      (E      : Node_Id;
       D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
-      function Find_Called_Subprograms
-        (E : Node_Id)
-        return Result_Set;
+      function Find_Called_Subprograms (E : Node_Id) return Result_Set;
       --  Return the set of subprograms instances called by the
       --  component
 
-      function Find_Calls
-        (E : Node_Id)
-        return Result_Set;
+      function Find_Calls (E : Node_Id) return Result_Set;
       --  Return the set of subprograms calls instances called by the
       --  component
 
@@ -70,14 +65,10 @@ package body Ocarina.Instances.REAL_Checker.Queries.Call_Predicates is
       -- Find_Called_Subprograms --
       -----------------------------
 
-      function Find_Called_Subprograms
-        (E : Node_Id)
-        return Result_Set
-      is
+      function Find_Called_Subprograms (E : Node_Id) return Result_Set is
          Set : Result_Set := Empty_Set;
       begin
-         if E /= No_Node and then
-           not AINU.Is_Empty (Calls (E)) then
+         if E /= No_Node and then not AINU.Is_Empty (Calls (E)) then
             declare
                Call_Seq : Node_Id := First_Node (Calls (E));
                N        : Node_Id;
@@ -86,7 +77,9 @@ package body Ocarina.Instances.REAL_Checker.Queries.Call_Predicates is
                   if not AINU.Is_Empty (Subprogram_Calls (Call_Seq)) then
                      N := First_Node (Subprogram_Calls (Call_Seq));
                      while Present (N) loop
-                        Add (Set, Corresponding_Declaration
+                        Add
+                          (Set,
+                           Corresponding_Declaration
                              (Corresponding_Instance (N)));
                         N := Next_Node (N);
                      end loop;
@@ -103,13 +96,10 @@ package body Ocarina.Instances.REAL_Checker.Queries.Call_Predicates is
       -- Find_Calls --
       ----------------
 
-      function Find_Calls
-        (E : Node_Id)
-        return Result_Set is
+      function Find_Calls (E : Node_Id) return Result_Set is
          Set : Result_Set := Empty_Set;
       begin
-         if E /= No_Node and then
-           not AINU.Is_Empty (Calls (E)) then
+         if E /= No_Node and then not AINU.Is_Empty (Calls (E)) then
             declare
                Call_Seq : Node_Id := First_Node (Calls (E));
                N        : Node_Id;
@@ -133,9 +123,11 @@ package body Ocarina.Instances.REAL_Checker.Queries.Call_Predicates is
       Direct_Calls_Set : Result_Set;
       Final_Set        : Result_Set := Empty_Set;
    begin
-      if Kind (E) /= K_Call_Instance and then
-        (Kind (E) /= K_Component_Instance or else
-         Get_Category_Of_Component (E) /= CC_Subprogram) then
+      if Kind (E) /= K_Call_Instance
+        and then
+        (Kind (E) /= K_Component_Instance
+         or else Get_Category_Of_Component (E) /= CC_Subprogram)
+      then
          return False;
       end if;
 
@@ -167,17 +159,18 @@ package body Ocarina.Instances.REAL_Checker.Queries.Call_Predicates is
                Direct_Calls_Set := Find_Called_Subprograms (D);
             end if;
 
-            while not Is_Empty (Direct_Calls_Set)  loop
+            while not Is_Empty (Direct_Calls_Set) loop
                for I in 1 .. Cardinal (Direct_Calls_Set) loop
                   if Kind (E) = K_Call_Instance then
                      Tmp_Set := Find_Calls (Get (Direct_Calls_Set, I));
                   else
-                     Tmp_Set := Find_Called_Subprograms
-                       (Corresponding_Instance (Get (Direct_Calls_Set, I)));
+                     Tmp_Set :=
+                       Find_Called_Subprograms
+                         (Corresponding_Instance (Get (Direct_Calls_Set, I)));
                   end if;
                   Direct_Calls_Set := Union (Tmp_Set, Direct_Calls_Set);
                end loop;
-               Final_Set := Union (Final_Set, Direct_Calls_Set);
+               Final_Set        := Union (Final_Set, Direct_Calls_Set);
                Direct_Calls_Set := Empty_Set;
             end loop;
          end;

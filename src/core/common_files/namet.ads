@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -54,7 +54,7 @@ package Namet is
 --  names table entry and subprograms are provided for setting and retrieving
 --  these associated values. The usage of these values is up to the client.
 
-   Name_Buffer : String (1 .. 16*1024);
+   Name_Buffer : String (1 .. 16 * 1024);
    --  This buffer is used to set the name to be stored in the table for the
    --  Name_Find call, and to retrieve the name for the Get_Name_String call.
    --  The plus 1 in the length allows for cases of adding ASCII.NUL. The
@@ -197,12 +197,12 @@ private
    --  in the name entry table), we still store a NUL character at the end
    --  of every name (for convenience in interfacing to the C world).
 
-   package Name_Chars is new GNAT.Table (
-     Table_Component_Type => Character,
-     Table_Index_Type     => Int,
-     Table_Low_Bound      => 0,
-     Table_Initial        => 50_000,
-     Table_Increment      => 100);
+   package Name_Chars is new GNAT.Table
+     (Table_Component_Type => Character,
+      Table_Index_Type     => Int,
+      Table_Low_Bound      => 0,
+      Table_Initial        => 50_000,
+      Table_Increment      => 100);
 
    type Name_Entry is record
       Name_Chars_Index : Int;
@@ -227,11 +227,11 @@ private
    --  This is the table that is referenced by Name_Id entries.
    --  It contains one entry for each unique name in the table.
 
-   package Name_Entries is new GNAT.Table (
-     Table_Component_Type => Name_Entry,
-     Table_Index_Type     => Name_Id,
-     Table_Low_Bound      => First_Name_Id,
-     Table_Initial        => 6_000,
-     Table_Increment      => 100);
+   package Name_Entries is new GNAT.Table
+     (Table_Component_Type => Name_Entry,
+      Table_Index_Type     => Name_Id,
+      Table_Low_Bound      => First_Name_Id,
+      Table_Initial        => 6_000,
+      Table_Increment      => 100);
 
 end Namet;

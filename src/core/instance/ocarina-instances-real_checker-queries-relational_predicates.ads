@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -41,34 +41,30 @@ generic
    with function Predicate
      (E      : Types.Node_Id;
       D      : Types.Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean;
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean;
 
 package Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates is
    use Types;
 
    function Get_Instances_Verifying_Predicate
      (D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Result_Set;
+      Option : Predicates_Search_Options := PSO_Direct) return Result_Set;
    --  search in Node_Id table components verifying the Predicate
    --  property, with respect to the D node
 
    function Get_Instances_Verifying_Predicate
      (Set    : Result_Set;
       D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Result_Set;
+      Option : Predicates_Search_Options := PSO_Direct) return Result_Set;
    --  search in a given Result_Set components verifying the
    --  Predicate property
 
    function Apply
      (Set_1    : Result_Set;
       Set_2    : Result_Set;
-      Reversed : Boolean := False;
-      Distinct : Boolean := False;
-      Option   : Predicates_Search_Options := PSO_Direct)
-     return Result_Set;
+      Reversed : Boolean                   := False;
+      Distinct : Boolean                   := False;
+      Option   : Predicates_Search_Options := PSO_Direct) return Result_Set;
    --  search in Set_1 components verifying the
    --  Predicate property with *any* element of Set_2
    --  * Reversed : all elements of set_2 which comply to the relation

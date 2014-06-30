@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,9 +31,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Charset;   use Charset;
-with Errors;    use Errors;
-with Namet;     use Namet;
+with Charset; use Charset;
+with Errors;  use Errors;
+with Namet;   use Namet;
 
 package body Ocarina.ME_REAL.REAL_Tree.Utils is
 
@@ -43,8 +43,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
    -- To_Lower --
    --------------
 
-   function To_Lower (Str : Name_Id) return Name_Id
-   is
+   function To_Lower (Str : Name_Id) return Name_Id is
       N : constant String := To_Lower (Get_Name_String (Str));
    begin
       return Get_String_Name (N);
@@ -115,9 +114,9 @@ package body Ocarina.ME_REAL.REAL_Tree.Utils is
 
    function Remove_Prefix (N : Name_Id) return Name_Id is
       M : constant Natural := Name_Len;
-      S : constant String := Get_Name_String (N);
-      P : Boolean := False;
-      L : Natural := 0;
+      S : constant String  := Get_Name_String (N);
+      P : Boolean          := False;
+      L : Natural          := 0;
    begin
       --  Search the last occurence of "::"
 

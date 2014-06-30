@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,7 +34,7 @@
 --  This package gathers all the functions that are related to
 --  component parsing.
 
-with Locations;    use Locations;
+with Locations; use Locations;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Namet;
@@ -57,30 +57,26 @@ with Ocarina.Builder.AADL.Components;
 package body Ocarina.FE_AADL.Parser.Components is
 
    function P_Expected_Component_Implementation_Name
-     (Expected_Id : Node_Id)
-     return Boolean;
+     (Expected_Id : Node_Id) return Boolean;
 
    function P_Component_Implementation
-     (Namespace : Types.Node_Id;
-      Start_Loc : Location;
-      Category  : Component_Category;
-      Private_Declaration : Boolean)
-     return Node_Id;
+     (Namespace           : Types.Node_Id;
+      Start_Loc           : Location;
+      Category            : Component_Category;
+      Private_Declaration : Boolean) return Node_Id;
    --  Parse Component_Implementation, Component_Implementation_Extension
 
    function P_Component_Type
-     (Namespace : Types.Node_Id;
-      Start_Loc : Location;
-      Category  : Component_Category;
-      Private_Declaration : Boolean)
-     return Node_Id;
+     (Namespace           : Types.Node_Id;
+      Start_Loc           : Location;
+      Category            : Component_Category;
+      Private_Declaration : Boolean) return Node_Id;
    --  Parse Component_Type, Component_Type_Extension
 
    function P_Unique_Component_Impl_Name return Node_Id;
 
    function Is_A_Component_Implementation_Name
-     (Identifier : Types.Node_Id)
-     return Boolean;
+     (Identifier : Types.Node_Id) return Boolean;
    --  Check if the identifier name contains a T_Dot
 
    ----------------------------------------------
@@ -88,8 +84,8 @@ package body Ocarina.FE_AADL.Parser.Components is
    ----------------------------------------------
 
    function P_Expected_Component_Implementation_Name
-     (Expected_Id : Node_Id)
-     return Boolean is
+     (Expected_Id : Node_Id) return Boolean
+   is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -152,9 +148,8 @@ package body Ocarina.FE_AADL.Parser.Components is
    -----------------
 
    function P_Component
-     (Namespace : Types.Node_Id;
-      Private_Declaration : Boolean := False)
-     return Node_Id
+     (Namespace           : Types.Node_Id;
+      Private_Declaration : Boolean := False) return Node_Id
    is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -169,12 +164,18 @@ package body Ocarina.FE_AADL.Parser.Components is
       Save_Lexer (Loc);
       Scan_Token;
       if Token = T_Implementation then
-         return P_Component_Implementation (Namespace, Start_Loc, Category,
-                                            Private_Declaration);
+         return P_Component_Implementation
+             (Namespace,
+              Start_Loc,
+              Category,
+              Private_Declaration);
       else
          Restore_Lexer (Loc);
-         return P_Component_Type (Namespace, Start_Loc, Category,
-                                  Private_Declaration);
+         return P_Component_Type
+             (Namespace,
+              Start_Loc,
+              Category,
+              Private_Declaration);
       end if;
    end P_Component;
 
@@ -380,11 +381,10 @@ package body Ocarina.FE_AADL.Parser.Components is
    --  end   defining_component_implementation_name ;
 
    function P_Component_Implementation
-     (Namespace : Types.Node_Id;
-      Start_Loc : Location;
-      Category  : Component_Category;
-      Private_Declaration : Boolean)
-     return Node_Id
+     (Namespace           : Types.Node_Id;
+      Start_Loc           : Location;
+      Category            : Component_Category;
+      Private_Declaration : Boolean) return Node_Id
    is
       use Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -403,19 +403,19 @@ package body Ocarina.FE_AADL.Parser.Components is
       use Parser.Properties;
       use Parser.Components.Subprogram_Calls;
 
-      Impl            : Node_Id;    --  output
-      Loc             : Location;
-      Success         : Boolean;
+      Impl    : Node_Id;    --  output
+      Loc     : Location;
+      Success : Boolean;
 
       Comp_Identifier : Node_Id;    --  component_identifier
       Impl_Identifier : Node_Id;    --  implementation_identifier
       Parent          : Node_Id;
       Refinable       : Boolean;    --  Is Component_Implementation_Extension ?
 
-      Code            : Parsing_Code := PC_Component_Implementation;
-      Current_Annex   : Node_Id;
+      Code          : Parsing_Code := PC_Component_Implementation;
+      Current_Annex : Node_Id;
 
-      Nb_Items        : Integer;
+      Nb_Items : Integer;
    begin
       Comp_Identifier := P_Identifier (No_Node);
       if No (Comp_Identifier) then
@@ -444,16 +444,20 @@ package body Ocarina.FE_AADL.Parser.Components is
       Set_Name (Impl_Identifier, Name_Find);
       Get_Name_String (Display_Name (Comp_Identifier));
       Add_Str_To_Name_Buffer (Image (T_Dot));
-      Add_Str_To_Name_Buffer (Get_Name_String
-                              (Display_Name (Impl_Identifier)));
+      Add_Str_To_Name_Buffer
+        (Get_Name_String (Display_Name (Impl_Identifier)));
       Set_Display_Name (Impl_Identifier, Name_Find);
       --  The implementation name is actually the concatenation of the
       --  type and the implementation. Thus we have a unique
       --  identifier.
 
-      Impl := Add_New_Component_Implementation
-        (Start_Loc, Impl_Identifier, Namespace, Category,
-         Is_Private => Private_Declaration);
+      Impl :=
+        Add_New_Component_Implementation
+          (Start_Loc,
+           Impl_Identifier,
+           Namespace,
+           Category,
+           Is_Private => Private_Declaration);
 
       if Impl = No_Node then
          Skip_Tokens ((T_End, T_Semicolon));
@@ -488,9 +492,7 @@ package body Ocarina.FE_AADL.Parser.Components is
       --  Prototypes Bindings
       --
 
-      if AADL_Version = AADL_V2
-        and then Refinable
-      then
+      if AADL_Version = AADL_V2 and then Refinable then
          Save_Lexer (Loc);
          Scan_Token;
 
@@ -515,11 +517,13 @@ package body Ocarina.FE_AADL.Parser.Components is
       Scan_Token;
 
       if Token = T_Prototypes then
-         Nb_Items := P_Items_List (P_Prototype_Or_Prototype_Refinement'Access,
-                                   Impl,
-                                   Refinable,
-                                   PC_Prototype_Or_Prototype_Refinement,
-                                   True);
+         Nb_Items :=
+           P_Items_List
+             (P_Prototype_Or_Prototype_Refinement'Access,
+              Impl,
+              Refinable,
+              PC_Prototype_Or_Prototype_Refinement,
+              True);
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
@@ -535,9 +539,7 @@ package body Ocarina.FE_AADL.Parser.Components is
       Save_Lexer (Loc);
       Scan_Token;
 
-      if Token = T_Refines and then
-        AADL_Version = AADL_V1
-      then
+      if Token = T_Refines and then AADL_Version = AADL_V1 then
          Scan_Token;     --  parse 'type'
          if Token /= T_Type then
             DPE (PC_Refines_Type, T_Type);
@@ -545,18 +547,15 @@ package body Ocarina.FE_AADL.Parser.Components is
             return No_Node;
          end if;
 
-         Nb_Items := P_Items_List (P_Feature_Refinement'Access,
-                                   Impl,
-                                   PC_Refines_Type);
+         Nb_Items :=
+           P_Items_List (P_Feature_Refinement'Access, Impl, PC_Refines_Type);
 
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
          end if;
 
-      elsif Token = T_Refines and then
-        AADL_Version = AADL_V2
-      then
+      elsif Token = T_Refines and then AADL_Version = AADL_V2 then
          DPE (Code, EMC_Not_Allowed_In_AADL_V2);
          Skip_Tokens ((T_End, T_Semicolon));
          return No_Node;
@@ -572,10 +571,12 @@ package body Ocarina.FE_AADL.Parser.Components is
       --
 
       if Token = T_Subcomponents then
-         Nb_Items := P_Items_List (P_Subcomponent'Access,
-                                   Impl,
-                                   Refinable,
-                                   PC_Subcomponents);
+         Nb_Items :=
+           P_Items_List
+             (P_Subcomponent'Access,
+              Impl,
+              Refinable,
+              PC_Subcomponents);
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
@@ -592,9 +593,11 @@ package body Ocarina.FE_AADL.Parser.Components is
       --
 
       if Token = T_Calls then
-         Nb_Items := P_Items_List (P_Subprogram_Call_Sequence'Access,
-                                   Impl,
-                                   PC_Subprogram_Call_Sequences);
+         Nb_Items :=
+           P_Items_List
+             (P_Subprogram_Call_Sequence'Access,
+              Impl,
+              PC_Subprogram_Call_Sequences);
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
@@ -611,10 +614,8 @@ package body Ocarina.FE_AADL.Parser.Components is
       --
 
       if Token = T_Connections then
-         Nb_Items := P_Items_List (P_Connection'Access,
-                                   Impl,
-                                   Refinable,
-                                   PC_Connections);
+         Nb_Items :=
+           P_Items_List (P_Connection'Access, Impl, Refinable, PC_Connections);
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
@@ -632,8 +633,11 @@ package body Ocarina.FE_AADL.Parser.Components is
 
       if Token = T_Flows then
          Nb_Items :=
-           P_Items_List (P_Flow_Implementation_Or_End_To_End_Flow_Spec'Access,
-                         Impl, Refinable, PC_Flow_Implementations);
+           P_Items_List
+             (P_Flow_Implementation_Or_End_To_End_Flow_Spec'Access,
+              Impl,
+              Refinable,
+              PC_Flow_Implementations);
 
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
@@ -650,14 +654,14 @@ package body Ocarina.FE_AADL.Parser.Components is
       --  Modes
       --
 
-      if Token = T_Modes
-        or else Token = T_Requires
-      then
-         Nb_Items := P_Items_List (Func => P_Mode_Or_Mode_Transition'Access,
-                                   Container => Impl,
-                                   Refinable => Refinable,
-                                   Code => PC_Mode_Or_Mode_Transition,
-                                   At_Least_One => True);
+      if Token = T_Modes or else Token = T_Requires then
+         Nb_Items :=
+           P_Items_List
+             (Func         => P_Mode_Or_Mode_Transition'Access,
+              Container    => Impl,
+              Refinable    => Refinable,
+              Code         => PC_Mode_Or_Mode_Transition,
+              At_Least_One => True);
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
@@ -674,9 +678,11 @@ package body Ocarina.FE_AADL.Parser.Components is
       --
 
       if Token = T_Properties then
-         Nb_Items := P_Items_List
-           (P_Property_Association_In_Component_Implementation'Access,
-            Impl, PC_Properties);
+         Nb_Items :=
+           P_Items_List
+             (P_Property_Association_In_Component_Implementation'Access,
+              Impl,
+              PC_Properties);
 
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
@@ -791,11 +797,11 @@ package body Ocarina.FE_AADL.Parser.Components is
    --    { annex_subclause }*
    --  end defining_component_type_identifier ;
 
-   function P_Component_Type (Namespace : Types.Node_Id;
-                              Start_Loc : Location;
-                              Category  : Component_Category;
-                              Private_Declaration : Boolean)
-                             return Node_Id
+   function P_Component_Type
+     (Namespace           : Types.Node_Id;
+      Start_Loc           : Location;
+      Category            : Component_Category;
+      Private_Declaration : Boolean) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -810,18 +816,18 @@ package body Ocarina.FE_AADL.Parser.Components is
       use Parser.Properties;
       use Ocarina.Builder.AADL.Components;
 
-      Component       : Node_Id;
-      Loc             : Location;
-      Success         : Boolean;
+      Component : Node_Id;
+      Loc       : Location;
+      Success   : Boolean;
 
-      Identifier      : Node_Id;     --  component identifier
-      Parent          : Node_Id;
-      Refinable       : Boolean;     --  Is Component_Type_Extension ?
+      Identifier : Node_Id;     --  component identifier
+      Parent     : Node_Id;
+      Refinable  : Boolean;     --  Is Component_Type_Extension ?
 
-      Current_Annex   : Node_Id;
-      Code            : Parsing_Code := PC_Component_Type;
+      Current_Annex : Node_Id;
+      Code          : Parsing_Code := PC_Component_Type;
 
-      Nb_Items        : Integer;
+      Nb_Items : Integer;
    begin
       Identifier := P_Identifier (No_Node);
       if No (Identifier) then
@@ -830,9 +836,13 @@ package body Ocarina.FE_AADL.Parser.Components is
          return No_Node;
       end if;
 
-      Component := Add_New_Component_Type
-        (Start_Loc, Identifier, Namespace, Category,
-         Is_Private => Private_Declaration);
+      Component :=
+        Add_New_Component_Type
+          (Start_Loc,
+           Identifier,
+           Namespace,
+           Category,
+           Is_Private => Private_Declaration);
 
       if No_Node = Component then
          Skip_Tokens ((T_End, T_Semicolon));
@@ -849,8 +859,9 @@ package body Ocarina.FE_AADL.Parser.Components is
 
          --         if Second_Id (Parent) /= No_Node then
          if Next_Node (First_Node (Path (Parent))) /= No_Node then
-            Display_Parsing_Error (PC_Unique_Component_Type_Identifier,
-                                   EMC_Extends_Incompatible_Entity);
+            Display_Parsing_Error
+              (PC_Unique_Component_Type_Identifier,
+               EMC_Extends_Incompatible_Entity);
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
          end if;
@@ -870,9 +881,7 @@ package body Ocarina.FE_AADL.Parser.Components is
 
       --  Parse prototypes bindings
 
-      if AADL_Version = AADL_V2
-        and then Refinable
-      then
+      if AADL_Version = AADL_V2 and then Refinable then
          Save_Lexer (Loc);
          Scan_Token;
 
@@ -895,12 +904,13 @@ package body Ocarina.FE_AADL.Parser.Components is
       Scan_Token;
 
       if Token = T_Prototypes then
-         Nb_Items := P_Items_List
-           (Func => P_Prototype_Or_Prototype_Refinement'Access,
-            Container => Component,
-            Refinable => Refinable,
-            Code => PC_Prototype_Or_Prototype_Refinement,
-            At_Least_One => True);
+         Nb_Items :=
+           P_Items_List
+             (Func         => P_Prototype_Or_Prototype_Refinement'Access,
+              Container    => Component,
+              Refinable    => Refinable,
+              Code         => PC_Prototype_Or_Prototype_Refinement,
+              At_Least_One => True);
 
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
@@ -920,11 +930,13 @@ package body Ocarina.FE_AADL.Parser.Components is
       --
 
       if Token = T_Features then
-         Nb_Items := P_Items_List (Func => P_Feature'Access,
-                                   Container => Component,
-                                   Refinable => Refinable,
-                                   Code => PC_Features,
-                                   At_Least_One => True);
+         Nb_Items :=
+           P_Items_List
+             (Func         => P_Feature'Access,
+              Container    => Component,
+              Refinable    => Refinable,
+              Code         => PC_Features,
+              At_Least_One => True);
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
@@ -941,11 +953,13 @@ package body Ocarina.FE_AADL.Parser.Components is
       --
 
       if Token = T_Flows then
-         Nb_Items := P_Items_List (Func => P_Flow_Spec'Access,
-                                   Container => Component,
-                                   Refinable => Refinable,
-                                   Code => PC_Flow_Specifications,
-                                   At_Least_One => True);
+         Nb_Items :=
+           P_Items_List
+             (Func         => P_Flow_Spec'Access,
+              Container    => Component,
+              Refinable    => Refinable,
+              Code         => PC_Flow_Specifications,
+              At_Least_One => True);
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
@@ -962,11 +976,13 @@ package body Ocarina.FE_AADL.Parser.Components is
       --
 
       if Token = T_Modes then
-         Nb_Items := P_Items_List (Func => P_Mode_Or_Mode_Transition'Access,
-                                   Container => Component,
-                                   Refinable => Refinable,
-                                   Code => PC_Mode_Or_Mode_Transition,
-                                   At_Least_One => True);
+         Nb_Items :=
+           P_Items_List
+             (Func         => P_Mode_Or_Mode_Transition'Access,
+              Container    => Component,
+              Refinable    => Refinable,
+              Code         => PC_Mode_Or_Mode_Transition,
+              At_Least_One => True);
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
@@ -983,8 +999,11 @@ package body Ocarina.FE_AADL.Parser.Components is
       --
 
       if Token = T_Properties then
-         Nb_Items := P_Items_List (P_Property_Association'Access,
-                                   Component, PC_Properties);
+         Nb_Items :=
+           P_Items_List
+             (P_Property_Association'Access,
+              Component,
+              PC_Properties);
 
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
@@ -1075,7 +1094,7 @@ package body Ocarina.FE_AADL.Parser.Components is
          --  [package::]type.implementation
 
          if Is_A_Component_Implementation_Name
-           (Identifier (Comp_Impl_Name))
+             (Identifier (Comp_Impl_Name))
          then
             return Comp_Impl_Name;
          else
@@ -1090,18 +1109,17 @@ package body Ocarina.FE_AADL.Parser.Components is
    ----------------------------------------
 
    function Is_A_Component_Implementation_Name
-     (Identifier : Types.Node_Id)
-     return Boolean
+     (Identifier : Types.Node_Id) return Boolean
    is
       use Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.Tokens;
 
-      pragma Assert (Identifier /= No_Node
-                     and then Kind (Identifier) = K_Identifier);
+      pragma Assert
+        (Identifier /= No_Node and then Kind (Identifier) = K_Identifier);
 
-      Name : constant Name_Id := Ocarina.ME_AADL.AADL_Tree.Nodes.Name
-        (Identifier);
+      Name : constant Name_Id :=
+        Ocarina.ME_AADL.AADL_Tree.Nodes.Name (Identifier);
    begin
       Get_Name_String (Name);
 
@@ -1167,10 +1185,10 @@ package body Ocarina.FE_AADL.Parser.Components is
    --  end defining_identifier ;
 
    function P_Feature_Group_Type
-     (Namespace : Types.Node_Id;
-      Start_Loc : Location;
-      Private_Declaration : Boolean := False)
-     return Node_Id is
+     (Namespace           : Types.Node_Id;
+      Start_Loc           : Location;
+      Private_Declaration : Boolean := False) return Node_Id
+   is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;
@@ -1185,15 +1203,15 @@ package body Ocarina.FE_AADL.Parser.Components is
       Feature_Group_Type : Node_Id;
       Loc                : Location;
 
-      Identifier         : Node_Id;
-      Inverse_Of         : Node_Id := No_Node;
-      Parent             : Node_Id;
-      Refinable          : Boolean;
+      Identifier : Node_Id;
+      Inverse_Of : Node_Id := No_Node;
+      Parent     : Node_Id;
+      Refinable  : Boolean;
 
-      Code               : Parsing_Code := PC_Feature_Group_Type;
-      Current_Annex      : Node_Id;
-      Nb_Items           : Integer;
-      Success            : Boolean;
+      Code          : Parsing_Code := PC_Feature_Group_Type;
+      Current_Annex : Node_Id;
+      Nb_Items      : Integer;
+      Success       : Boolean;
    begin
       Scan_Token;
 
@@ -1207,11 +1225,12 @@ package body Ocarina.FE_AADL.Parser.Components is
       Set_Name (Identifier, Token_Name);
       Set_Display_Name (Identifier, Token_Display_Name);
 
-      Feature_Group_Type := Add_New_Feature_Group
-        (Loc => Start_Loc,
-         Name => Identifier,
-         Namespace => Namespace,
-         Is_Private => Private_Declaration);
+      Feature_Group_Type :=
+        Add_New_Feature_Group
+          (Loc        => Start_Loc,
+           Name       => Identifier,
+           Namespace  => Namespace,
+           Is_Private => Private_Declaration);
 
       if Feature_Group_Type = No_Node then
          Skip_Tokens ((T_End, T_Semicolon));
@@ -1241,9 +1260,7 @@ package body Ocarina.FE_AADL.Parser.Components is
 
       --  Parse prototypes bindings
 
-      if AADL_Version = AADL_V2
-        and then Refinable
-      then
+      if AADL_Version = AADL_V2 and then Refinable then
          Save_Lexer (Loc);
          Scan_Token;
 
@@ -1266,12 +1283,13 @@ package body Ocarina.FE_AADL.Parser.Components is
       Scan_Token;
 
       if Token = T_Prototypes then
-         Nb_Items := P_Items_List
-           (Func => P_Prototype_Or_Prototype_Refinement'Access,
-            Container => Feature_Group_Type,
-            Refinable => Refinable,
-            Code => PC_Prototype_Or_Prototype_Refinement,
-            At_Least_One => True);
+         Nb_Items :=
+           P_Items_List
+             (Func         => P_Prototype_Or_Prototype_Refinement'Access,
+              Container    => Feature_Group_Type,
+              Refinable    => Refinable,
+              Code         => PC_Prototype_Or_Prototype_Refinement,
+              At_Least_One => True);
 
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
@@ -1288,12 +1306,13 @@ package body Ocarina.FE_AADL.Parser.Components is
 
       --  Features
       if Token = T_Features then
-         Nb_Items := P_Items_List
-           (Func => P_Feature_Group_Or_Port_Group_Or_Port_Spec'Access,
-            Container => Feature_Group_Type,
-            Refinable => Refinable,
-            Code => Code,
-            At_Least_One => False);
+         Nb_Items :=
+           P_Items_List
+             (Func => P_Feature_Group_Or_Port_Group_Or_Port_Spec'Access,
+              Container    => Feature_Group_Type,
+              Refinable    => Refinable,
+              Code         => Code,
+              At_Least_One => False);
 
          if Nb_Items < 0 then
             Skip_Tokens ((T_End, T_Semicolon));
@@ -1318,7 +1337,7 @@ package body Ocarina.FE_AADL.Parser.Components is
 
          if No (Inverse_Of) then
             --  Error when parsing
-                  --  Unique_Feature_Group_Type_Reference, quit
+            --  Unique_Feature_Group_Type_Reference, quit
             Skip_Tokens ((T_End, T_Semicolon));
             return No_Node;
          end if;
@@ -1341,10 +1360,11 @@ package body Ocarina.FE_AADL.Parser.Components is
          Scan_Token;
          case Token is
             when T_Properties =>
-               Nb_Items := P_Items_List
-                 (Func => P_Property_Association'Access,
-                  Container => Feature_Group_Type,
-                  Code => PC_Properties);
+               Nb_Items :=
+                 P_Items_List
+                   (Func      => P_Property_Association'Access,
+                    Container => Feature_Group_Type,
+                    Code      => PC_Properties);
 
                if Nb_Items <= 0 then
                   Skip_Tokens ((T_End, T_Semicolon));

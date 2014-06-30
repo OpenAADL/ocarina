@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -58,7 +58,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Subprograms is
    package RTN renames Ocarina.Backends.RTSJ_Tree.Nodes;
    package RTU renames Ocarina.Backends.RTSJ_Tree.Nutils;
 
-   Main_Class : Node_Id;
+   Main_Class    : Node_Id;
    Class_Methods : List_Id;
 
    -----------------
@@ -102,8 +102,9 @@ package body Ocarina.Backends.PO_HI_RTSJ.Subprograms is
       -- Visit_Process_Instance --
       ----------------------------
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := RTN.Distributed_Application_Unit
-           (RTN.Naming_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           RTN.Distributed_Application_Unit
+             (RTN.Naming_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := RTN.Entity (U);
          S : Node_Id;
       begin
@@ -129,11 +130,12 @@ package body Ocarina.Backends.PO_HI_RTSJ.Subprograms is
          end if;
 
          --  Subprograms class
-         Main_Class := Make_Class_Statement
-           (Visibility => Make_List_Id (RE (RE_Public)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (ON (O_Subprograms)),
-            Methods => Class_Methods);
+         Main_Class :=
+           Make_Class_Statement
+             (Visibility          => Make_List_Id (RE (RE_Public)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (ON (O_Subprograms)),
+              Methods => Class_Methods);
          RTU.Append_Node_To_List (Main_Class, RTN.Statements (Current_File));
 
          --  Unmark all the marked subprograms
@@ -177,26 +179,28 @@ package body Ocarina.Backends.PO_HI_RTSJ.Subprograms is
       -- Visit_Subprogram_Instance --
       -------------------------------
       procedure Visit_Subprogram_Instance (E : Node_Id) is
-         N        : Node_Id;
-         Call_Seq : Node_Id;
-         Spg_Call : Node_Id;
-         Spec     : Node_Id;
-         Impl     : Node_Id;
-         Subprogram_Statements : constant List_Id := New_List
-           (K_Statement_List);
+         N                     : Node_Id;
+         Call_Seq              : Node_Id;
+         Spg_Call              : Node_Id;
+         Spec                  : Node_Id;
+         Impl                  : Node_Id;
+         Subprogram_Statements : constant List_Id :=
+           New_List (K_Statement_List);
       begin
          --  Generate the body of the subprogram
          if No (Get_Handling (E, By_Name, H_RTSJ_Subprogram_Body)) then
             N := Map_RTSJ_Subprogram_Body (E);
             Append_Node_To_List (N, Subprogram_Statements);
 
-            Spec := Make_Function_Specification
-              (Visibility => Make_List_Id (RE (RE_Public), RE (RE_Static)),
-               Defining_Identifier => Map_RTSJ_Defining_Identifier (E),
-               Return_Type => New_Node (K_Void));
-            Impl := Make_Function_Implementation
-              (Specification => Spec,
-               Statements => Subprogram_Statements);
+            Spec :=
+              Make_Function_Specification
+                (Visibility => Make_List_Id (RE (RE_Public), RE (RE_Static)),
+                 Defining_Identifier => Map_RTSJ_Defining_Identifier (E),
+                 Return_Type         => New_Node (K_Void));
+            Impl :=
+              Make_Function_Implementation
+                (Specification => Spec,
+                 Statements    => Subprogram_Statements);
             RTU.Append_Node_To_List (Impl, Class_Methods);
 
             --  Mark the data type as being handled
@@ -255,8 +259,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Subprograms is
       -- Visit_Component_Instance --
       ------------------------------
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>

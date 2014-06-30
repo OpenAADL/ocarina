@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -41,7 +41,7 @@ with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
-with GNAT.OS_Lib; use GNAT.OS_Lib;
+with GNAT.OS_Lib;       use GNAT.OS_Lib;
 
 with Namet; use Namet;
 
@@ -56,8 +56,8 @@ package body Ocarina.Backends.Cheddar is
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
    Generated_Sources_Directory : Name_Id := No_Name;
-   Invoke_Cheddar : Boolean := False;
-   Cheddarlite_Path : String_Access;
+   Invoke_Cheddar              : Boolean := False;
+   Cheddarlite_Path            : String_Access;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -102,7 +102,7 @@ package body Ocarina.Backends.Cheddar is
          end if;
 
          declare
-            Args : GNAT.OS_Lib.Argument_List (1 .. 4);
+            Args    : GNAT.OS_Lib.Argument_List (1 .. 4);
             Success : Boolean;
          begin
             Args (1) := new String'("-file");

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -85,15 +85,13 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    --  parse an behavior transition node, current token is T_Transitions
 
    function P_Execute_Or_Mode_Behavior_Transition
-     (Container : Types.Node_Id)
-     return Node_Id;
+     (Container : Types.Node_Id) return Node_Id;
    --  parse an execute behavior transition node or an mode behavior transition
    --  node, current token is T_Transitions
 
    function P_Behavior_Condition
-     (Locate : Location;
-      Container : Node_Id)
-     return Node_Id;
+     (Locate    : Location;
+      Container : Node_Id) return Node_Id;
    --  parse an behavior condition node, current token is T_Right_Step_Bracket
 
    ------------------------------
@@ -103,8 +101,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    --  Behavior_Specification, return an behavior annex node (K_Behavior_Annex)
 
    function P_Behavior_Specification
-     (Annex_Subcl_Node : Types.Node_Id)
-     return Node_Id
+     (Annex_Subcl_Node : Types.Node_Id) return Node_Id
    is
       use ATN;
 
@@ -158,8 +155,13 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    begin
       Save_Lexer (Start_Loc);
 
-      Behavior_Annex := Add_New_Behavior_Annex (Start_Loc, Container,
-                                                No_List, No_List, No_List);
+      Behavior_Annex :=
+        Add_New_Behavior_Annex
+          (Start_Loc,
+           Container,
+           No_List,
+           No_List,
+           No_List);
       if No (Behavior_Annex) then
          DPE (PC_Behavior_Annex, EMC_Failed);
          return No_Node;
@@ -169,10 +171,12 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       Scan_Token;
 
       if Token = T_Variables then
-         Behavior_Variables := P_Elements_List (P_Behavior_Variable'Access,
-                                                Behavior_Annex,
-                                                (T_States, T_End_Annex),
-                                                PC_Behavior_Variable);
+         Behavior_Variables :=
+           P_Elements_List
+             (P_Behavior_Variable'Access,
+              Behavior_Annex,
+              (T_States, T_End_Annex),
+              PC_Behavior_Variable);
 
          if Is_Empty (Behavior_Variables) then
             Skip_Tokens (T_Semicolon);
@@ -186,10 +190,12 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       Scan_Token;
 
       if Token = T_States then
-         Behavior_States := P_Elements_List (P_Behavior_State'Access,
-                                             Behavior_Annex,
-                                             (T_Transitions, T_End_Annex),
-                                             PC_Behavior_State);
+         Behavior_States :=
+           P_Elements_List
+             (P_Behavior_State'Access,
+              Behavior_Annex,
+              (T_Transitions, T_End_Annex),
+              PC_Behavior_State);
 
          if Is_Empty (Behavior_States) then
             Skip_Tokens (T_Semicolon);
@@ -203,10 +209,12 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       Scan_Token;
 
       if Token = T_Transitions then
-         Behavior_Transitions := P_Elements_List (P_Behavior_Transition'Access,
-                                                  Behavior_Annex,
-                                                  (T_End_Annex, T_None),
-                                                  PC_Behavior_Transition);
+         Behavior_Transitions :=
+           P_Elements_List
+             (P_Behavior_Transition'Access,
+              Behavior_Annex,
+              (T_End_Annex, T_None),
+              PC_Behavior_Transition);
 
          if Is_Empty (Behavior_Transitions) then
             Skip_Tokens (T_Semicolon);
@@ -214,11 +222,12 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          end if;
       end if;
 
-      Add_New_Behavior_Annex (Behavior_Annex,
-                              No_Node,             --  container
-                              Behavior_Variables,
-                              Behavior_States,
-                              Behavior_Transitions);
+      Add_New_Behavior_Annex
+        (Behavior_Annex,
+         No_Node,             --  container
+         Behavior_Variables,
+         Behavior_States,
+         Behavior_Transitions);
 
       return Behavior_Annex;
 
@@ -234,10 +243,9 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
 
    --  unique_component_classifier_reference ::= <core AADL rule>
 
-   function P_Behavior_Variable (Container : Types.Node_Id) return Node_Id
-   is
-      Start_Loc         : Location;
-      Loc               : Location;
+   function P_Behavior_Variable (Container : Types.Node_Id) return Node_Id is
+      Start_Loc : Location;
+      Loc       : Location;
 
       Identifiers       : List_Id := No_List;
       Classifier_Ref    : Node_Id := No_Node;
@@ -245,16 +253,14 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    begin
       Save_Lexer (Start_Loc);
 
-      Behavior_Variable := Add_New_Behavior_Variable (Start_Loc, Container,
-                                                      No_List, No_Node);
+      Behavior_Variable :=
+        Add_New_Behavior_Variable (Start_Loc, Container, No_List, No_Node);
       if No (Behavior_Variable) then
          DPE (PC_Behavior_Variable, EMC_Failed);
          return No_Node;
       end if;
 
-      Identifiers := P_Items_List (P_Identifier'Access,
-                                   Container,
-                                   T_Comma);
+      Identifiers := P_Items_List (P_Identifier'Access, Container, T_Comma);
       if Is_Empty (Identifiers) then
          DPE (PC_Behavior_Variable, Expected_Token => T_Identifier);
          Skip_Tokens (T_Semicolon);
@@ -283,10 +289,11 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          return No_Node;
       end if;
 
-      Add_New_Behavior_Variable (Behavior_Variable,
-                                 Container,
-                                 Identifiers,
-                                 Classifier_Ref);
+      Add_New_Behavior_Variable
+        (Behavior_Variable,
+         Container,
+         Identifiers,
+         Classifier_Ref);
       return Behavior_Variable;
 
    end P_Behavior_Variable;
@@ -301,27 +308,24 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
 
    --  behavior_state_kind ::= [ initial ] [ complete ] [ final ]
 
-   function P_Behavior_State (Container : Types.Node_Id) return Node_Id
-   is
-      Start_Loc      : Location;
-      Loc            : Location;
+   function P_Behavior_State (Container : Types.Node_Id) return Node_Id is
+      Start_Loc : Location;
+      Loc       : Location;
 
-      Ident_List     : List_Id             := No_List;
+      Ident_List     : List_Id := No_List;
       Behavior_State : Node_Id;
       State_Kind     : Behavior_State_Kind;
    begin
       Save_Lexer (Start_Loc);
 
-      Behavior_State := Add_New_Behavior_State (Start_Loc, Container,
-                                                No_List, BSK_Error);
+      Behavior_State :=
+        Add_New_Behavior_State (Start_Loc, Container, No_List, BSK_Error);
       if No (Behavior_State) then
          DPE (PC_Behavior_State, EMC_Failed);
          return No_Node;
       end if;
 
-      Ident_List := P_Items_List (P_Identifier'Access,
-                                   Container,
-                                   T_Comma);
+      Ident_List := P_Items_List (P_Identifier'Access, Container, T_Comma);
       if Is_Empty (Ident_List) then
          Skip_Tokens (T_Semicolon);
          return No_Node;
@@ -394,10 +398,11 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          return No_Node;
       end if;
 
-      Add_New_Behavior_State (Behavior_State,
-                              Container,
-                              Ident_List,
-                              State_Kind);
+      Add_New_Behavior_State
+        (Behavior_State,
+         Container,
+         Ident_List,
+         State_Kind);
 
       return Behavior_State;
 
@@ -410,11 +415,8 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    --  behavior_transition ::=
    --    execution_behavior_transition | mode_transition
 
-   function P_Behavior_Transition
-     (Container : Types.Node_Id)
-     return Node_Id
-   is
-      Start_Loc           : Location;
+   function P_Behavior_Transition (Container : Types.Node_Id) return Node_Id is
+      Start_Loc : Location;
 
       Transition_Node     : Node_Id;
       Behavior_Transition : Node_Id;
@@ -427,9 +429,8 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          return No_Node;
       end if;
 
-      Behavior_Transition := Add_New_Behavior_Transition (Start_Loc,
-                                                          Container,
-                                                          Transition_Node);
+      Behavior_Transition :=
+        Add_New_Behavior_Transition (Start_Loc, Container, Transition_Node);
 
       if No (Behavior_Transition) then
          DPE (PC_Behavior_Transition, EMC_Failed);
@@ -456,8 +457,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    --        destination_mode_identifier [ { behavior_actions } ] ;
 
    function P_Execute_Or_Mode_Behavior_Transition
-     (Container : Types.Node_Id)
-     return Node_Id
+     (Container : Types.Node_Id) return Node_Id
    is
       Start_Loc : Location;
       Loc       : Location;
@@ -473,10 +473,16 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
    begin
       Save_Lexer (Start_Loc);
 
-      Execute_Transition := Add_New_Execute_Transition (Start_Loc, Container,
-                                                        No_Node, No_Node,
-                                                        No_List, No_Node,
-                                                        No_Node, No_list);
+      Execute_Transition :=
+        Add_New_Execute_Transition
+          (Start_Loc,
+           Container,
+           No_Node,
+           No_Node,
+           No_List,
+           No_Node,
+           No_Node,
+           No_List);
       if No (Execute_Transition) then
          DPE (PC_Execute_Behavior_Transition, EMC_Failed);
          return No_Node;
@@ -489,9 +495,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       end if;
 
       Scan_Token;
-      if Token = T_Comma
-        or else Token = T_Left_Step_Bracket
-      then
+      if Token = T_Comma or else Token = T_Left_Step_Bracket then
          Restore_Lexer (Start_Loc);
 
       elsif Token = T_Left_Square_Bracket then
@@ -500,41 +504,46 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          Scan_Token;
          case Token is
             when T_Real_Literal =>
-               Transition_Priority := New_Node (BATN.K_Literal,
-                                                Token_Location);
-               BATN.Set_Value (Transition_Priority,
-                               New_Real_Value (Float_Literal_Value,
-                                               False,
-                                               Numeric_Literal_Base,
-                                               Numeric_Literal_Exp));
+               Transition_Priority :=
+                 New_Node (BATN.K_Literal, Token_Location);
+               BATN.Set_Value
+                 (Transition_Priority,
+                  New_Real_Value
+                    (Float_Literal_Value,
+                     False,
+                     Numeric_Literal_Base,
+                     Numeric_Literal_Exp));
 
             when T_Integer_Literal =>
-               Transition_Priority := New_Node (BATN.K_Literal,
-                                                Token_Location);
-               BATN.Set_Value (Transition_Priority,
-                               New_Integer_Value (Integer_Literal_Value,
-                                                  False,
-                                                  Numeric_Literal_Base,
-                                                  Numeric_Literal_Exp));
+               Transition_Priority :=
+                 New_Node (BATN.K_Literal, Token_Location);
+               BATN.Set_Value
+                 (Transition_Priority,
+                  New_Integer_Value
+                    (Integer_Literal_Value,
+                     False,
+                     Numeric_Literal_Base,
+                     Numeric_Literal_Exp));
             when others =>
-               DPE (PC_Execute_Behavior_Transition,
-                    Expected_Tokens => (T_Real_Literal, T_Integer_Literal));
+               DPE
+                 (PC_Execute_Behavior_Transition,
+                  Expected_Tokens => (T_Real_Literal, T_Integer_Literal));
                Skip_Tokens (T_Semicolon);
                return No_Node;
          end case;
 
          Scan_Token;
          if Token /= T_Right_Square_Bracket then
-            DPE (PC_Execute_Behavior_Transition,
-                 Expected_Token => T_Right_Square_Bracket);
+            DPE
+              (PC_Execute_Behavior_Transition,
+               Expected_Token => T_Right_Square_Bracket);
             Skip_Tokens (T_Semicolon);
             return No_Node;
          end if;
 
          Scan_Token;
          if Token /= T_Colon then
-            DPE (PC_Execute_Behavior_Transition,
-                 Expected_Token => T_Colon);
+            DPE (PC_Execute_Behavior_Transition, Expected_Token => T_Colon);
             Skip_Tokens (T_Semicolon);
             return No_Node;
          end if;
@@ -543,9 +552,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          Transition_Idt := Ident;
       end if;
 
-      Sources := P_Items_List (P_Identifier'Access,
-                               Container,
-                               T_Comma);
+      Sources := P_Items_List (P_Identifier'Access, Container, T_Comma);
       if Is_Empty (Sources) then
          DPE (PC_Execute_Behavior_Transition, EMC_List_Is_Empty);
          Skip_Tokens (T_Semicolon);
@@ -554,8 +561,9 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
 
       Scan_Token; --  consume token -[
       if Token /= T_Left_Step_Bracket then
-         DPE (PC_Execute_Behavior_Transition,
-              Expected_Token => T_Left_Step_Bracket);
+         DPE
+           (PC_Execute_Behavior_Transition,
+            Expected_Token => T_Left_Step_Bracket);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
@@ -578,8 +586,7 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       Save_Lexer (Loc);
       Scan_Token;
       if Token /= T_Right_Step_Bracket then
-         DPE (PC_Behavior_Transition,
-              Expected_Token => T_Right_Step_Bracket);
+         DPE (PC_Behavior_Transition, Expected_Token => T_Right_Step_Bracket);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
@@ -614,20 +621,20 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          Ada.Text_IO.Put_Line (Token'Img);
 
       elsif Token /= T_Semicolon then
-         DPE (PC_Behavior_Transition,
-              Expected_Token => T_Semicolon);
+         DPE (PC_Behavior_Transition, Expected_Token => T_Semicolon);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
-      Add_New_Execute_Transition (Execute_Transition,
-                                  Container => Container,
-                                  Transition_Idt => Transition_Idt,
-                                  Transition_Priority => Transition_Priority,
-                                  Sources => Sources,
-                                  Behavior_Condition => Behavior_Condition,
-                                  Destination => Destination,
-                                  Behavior_Act_List => Behavior_Act_List);
+      Add_New_Execute_Transition
+        (Execute_Transition,
+         Container           => Container,
+         Transition_Idt      => Transition_Idt,
+         Transition_Priority => Transition_Priority,
+         Sources             => Sources,
+         Behavior_Condition  => Behavior_Condition,
+         Destination         => Destination,
+         Behavior_Act_List   => Behavior_Act_List);
       if No (Execute_Transition) then
          DPE (PC_Execute_Behavior_Transition, EMC_Failed);
          return No_Node;
@@ -644,12 +651,11 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
 
    function P_Behavior_Condition
      (Locate    : Location;
-      Container : Node_Id)
-     return Node_Id
+      Container : Node_Id) return Node_Id
    is
-      Start_Loc          : Location;
+      Start_Loc : Location;
 
-      Condition_Node     : Node_Id  := No_Node;
+      Condition_Node     : Node_Id := No_Node;
       Behavior_Condition : Node_Id;
    begin
       Save_Lexer (Start_Loc);
@@ -670,9 +676,8 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
          return No_Node;
       end if;
 
-      Behavior_Condition := Add_New_Behavior_Condition (Locate,
-                                                        Container,
-                                                        Condition_Node);
+      Behavior_Condition :=
+        Add_New_Behavior_Condition (Locate, Container, Condition_Node);
       if No (Behavior_Condition) then
          DPE (PC_Behavior_Condition, EMC_Failed);
          return No_Node;

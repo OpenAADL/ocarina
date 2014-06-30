@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -63,8 +63,7 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
 
    function P_Prototype_Or_Prototype_Refinement
      (Container : Types.Node_Id;
-      Refinable : Boolean)
-     return Node_Id
+      Refinable : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -126,19 +125,18 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
          Restore_Lexer (Loc);
       end if;
 
-      Prototype := Add_New_Prototype
-        (Loc            => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Name           => Identifier,
-         Container      => Container,
-         Classifier_Ref => Classifier_Ref,
-         Category       => Category,
-         Is_Refinement  => Is_Refinement);
+      Prototype :=
+        Add_New_Prototype
+          (Loc            => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Name           => Identifier,
+           Container      => Container,
+           Classifier_Ref => Classifier_Ref,
+           Category       => Category,
+           Is_Refinement  => Is_Refinement);
 
       Save_Lexer (Loc);
       Scan_Token;
-      if Token /= T_Semicolon
-        or else Prototype = No_Node
-      then
+      if Token /= T_Semicolon or else Prototype = No_Node then
          DPE (Code, T_Semicolon);
          Restore_Lexer (Loc);
          return No_Node;
@@ -156,8 +154,7 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
    --  prototype_bindings ::=
    --   ( prototype_binding ( , prototype_ binding )* )
 
-   function P_Prototype_Bindings (Container : Types.Node_Id) return Boolean
-   is
+   function P_Prototype_Bindings (Container : Types.Node_Id) return Boolean is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -166,7 +163,7 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
 
       Loc                : Location;
       Prototype_Bindings : List_Id;
-      Success            : Boolean   := True;
+      Success            : Boolean := True;
    begin
       Save_Lexer (Loc);
 
@@ -176,12 +173,14 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
          Success := False;
       end if;
 
-      Prototype_Bindings := P_Items_List (P_Prototype_Binding'Access,
-                                Container,
-                                T_Comma,
-                                T_Right_Parenthesis,
-                                PC_Prototype_Bindings,
-                                False);
+      Prototype_Bindings :=
+        P_Items_List
+          (P_Prototype_Binding'Access,
+           Container,
+           T_Comma,
+           T_Right_Parenthesis,
+           PC_Prototype_Bindings,
+           False);
       if Is_Empty (Prototype_Bindings) then
          DPE (PC_Prototype_Bindings, EMC_List_Is_Empty);
          Skip_Tokens (T_Semicolon);
@@ -205,8 +204,7 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
    --   prototype_identifier => component_category
    --    ( unique_component_classifier_reference |prototype_identifier )
 
-   function P_Prototype_Binding (Container : Types.Node_Id) return Node_Id
-   is
+   function P_Prototype_Binding (Container : Types.Node_Id) return Node_Id is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -254,11 +252,13 @@ package body Ocarina.FE_AADL.Parser.Components.Prototypes is
          return No_Node;
       end if;
 
-      Prototype_Binding := Add_New_Prototype_Binding (Start_Loc,
-                                                      Identifier,
-                                                      Container,
-                                                      Classifier_Ref,
-                                                      Category);
+      Prototype_Binding :=
+        Add_New_Prototype_Binding
+          (Start_Loc,
+           Identifier,
+           Container,
+           Classifier_Ref,
+           Category);
 
       if Prototype_Binding = No_Node then
          DPE (PC_Prototype_Binding);

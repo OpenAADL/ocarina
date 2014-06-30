@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,16 +42,16 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
    use Utils;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
-   package AIN renames Ocarina.Me_AADL.AADL_Instances.Nodes;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
 
    -----------------------
    -- Push_Node_To_List --
    -----------------------
 
    procedure Push_Node_To_List (E : Node_Id; L : List_Id) is
-      First_L  : constant Node_Id := First_Node (L);
-      Last_E   : Node_Id;  --  the last element of E
-      Next_E   : Node_Id;
+      First_L : constant Node_Id := First_Node (L);
+      Last_E  : Node_Id;  --  the last element of E
+      Next_E  : Node_Id;
    begin
       Set_First_Node (L, E);
 
@@ -80,8 +80,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
       Old_Node : Node_Id;
       New_Node : Node_Id)
    is
-      Node  : Node_Id;
-      Next  : Node_Id := No_Node;
+      Node : Node_Id;
+      Next : Node_Id := No_Node;
    begin
       if Old_Node = First_Node (List) then
          if Present (Next_Node (First_Node (List))) then
@@ -230,12 +230,9 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Make_Node_Container
      (Item       : Node_Id;
-      Extra_Item : Node_Id := No_Node)
-     return Node_Id
+      Extra_Item : Node_Id := No_Node) return Node_Id
    is
-      Container : constant Node_Id := New_Node
-        (K_Node_Container,
-         Loc (Item));
+      Container : constant Node_Id := New_Node (K_Node_Container, Loc (Item));
    begin
       Set_Item (Container, Item);
       Set_Extra_Item (Container, Extra_Item);
@@ -260,10 +257,10 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
       N : Node_Id;
    begin
       Entries.Increment_Last;
-      N := Entries.Last;
+      N                 := Entries.Last;
       Entries.Table (N) := Default_Node;
       Set_Kind (N, Kind);
-      Set_Loc  (N, Loc);
+      Set_Loc (N, Loc);
 
       return N;
    end New_Node;
@@ -308,7 +305,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
          Next := Next_Node (Current);
          exit when No (Next);
          Previous := Current;
-         Current := Next;
+         Current  := Next;
       end loop;
 
       Set_Next_Node (Previous, No_Node);
@@ -354,17 +351,17 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
    function Compute_Full_Name_Of_Instance
      (Instance         : Node_Id;
       Display_Name     : Boolean := False;
-      Keep_Root_System : Boolean := True)
-     return Name_Id
+      Keep_Root_System : Boolean := True) return Name_Id
    is
-      pragma Assert (Kind (Instance) = K_Component_Instance
-                     or else Kind (Instance) = K_Subcomponent_Instance
-                     or else Kind (Instance) = K_Namespace_Instance
-                     or else Kind (Instance) = K_Connection_Instance
-                     or else Kind (Instance) = K_Port_Spec_Instance
-                     or else Kind (Instance) = K_Parameter_Instance
-                     or else Kind (Instance) = K_Call_Sequence_Instance
-                     or else Kind (Instance) = K_Call_Instance);
+      pragma Assert
+        (Kind (Instance) = K_Component_Instance
+         or else Kind (Instance) = K_Subcomponent_Instance
+         or else Kind (Instance) = K_Namespace_Instance
+         or else Kind (Instance) = K_Connection_Instance
+         or else Kind (Instance) = K_Port_Spec_Instance
+         or else Kind (Instance) = K_Parameter_Instance
+         or else Kind (Instance) = K_Call_Sequence_Instance
+         or else Kind (Instance) = K_Call_Instance);
 
       Parent_Name : Name_Id := No_Name;
       Entity_Name : Name_Id := No_Name;
@@ -390,7 +387,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
                   while Present (N) loop
                      if Display_Name then
                         Get_Name_String_And_Append
-                          (Ocarina.Me_AADL.AADL_Instances.Nodes.Display_Name
+                          (Ocarina.ME_AADL.AADL_Instances.Nodes.Display_Name
                              (N));
                      else
                         Get_Name_String_And_Append (Name (N));
@@ -403,8 +400,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
                end if;
 
                Get_Name_String_And_Append
-                 (Get_Name_Of_Entity
-                  (Instance, Display_Name));
+                 (Get_Name_Of_Entity (Instance, Display_Name));
                Full_Name := Name_Find;
 
             elsif No (Parent_Subcomponent (Instance)) then
@@ -422,7 +418,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
                Full_Name := Get_Name_Of_Entity (Instance, Display_Name);
 
             elsif Get_Category_Of_Component
-              (Parent_Component (Parent_Subcomponent (Instance))) = CC_System
+                (Parent_Component (Parent_Subcomponent (Instance))) =
+              CC_System
               and then not Keep_Root_System
             then
                --  If there is a corresponding subcomponent but its
@@ -430,23 +427,26 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
                --  subcomponent unless the user wanted to go upper in
                --  the instance tree
 
-               Full_Name := Get_Name_Of_Entity
-                 (Parent_Subcomponent (Instance),
-                  Display_Name);
+               Full_Name :=
+                 Get_Name_Of_Entity
+                   (Parent_Subcomponent (Instance),
+                    Display_Name);
             else
                --  General case, we go upper in the instance tree
 
-               Full_Name := Compute_Full_Name_Of_Instance
-                 (Parent_Subcomponent (Instance),
-                  Display_Name,
-                  Keep_Root_System);
+               Full_Name :=
+                 Compute_Full_Name_Of_Instance
+                   (Parent_Subcomponent (Instance),
+                    Display_Name,
+                    Keep_Root_System);
             end if;
 
          when K_Call_Instance =>
-            Parent_Name := Compute_Full_Name_Of_Instance
-              (Parent_Sequence (Instance),
-               Display_Name,
-               Keep_Root_System);
+            Parent_Name :=
+              Compute_Full_Name_Of_Instance
+                (Parent_Sequence (Instance),
+                 Display_Name,
+                 Keep_Root_System);
             Get_Name_String (Parent_Name);
             Add_Str_To_Name_Buffer ("_");
             Get_Name_String_And_Append
@@ -454,10 +454,11 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
             Full_Name := Name_Find;
 
          when others =>
-            Parent_Name := Compute_Full_Name_Of_Instance
-              (Parent_Component (Instance),
-               Display_Name,
-               Keep_Root_System);
+            Parent_Name :=
+              Compute_Full_Name_Of_Instance
+                (Parent_Component (Instance),
+                 Display_Name,
+                 Keep_Root_System);
             Get_Name_String (Parent_Name);
             Entity_Name := Get_Name_Of_Entity (Instance, Display_Name);
 
@@ -494,10 +495,10 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
          Add_Char_To_Name_Buffer (':');
 
          declare
-            Package_Name : constant String
-              := Name_Buffer (Name_Buffer'First .. Name_Len);
+            Package_Name : constant String :=
+              Name_Buffer (Name_Buffer'First .. Name_Len);
             Lower_Index, Upper_Index : Natural := Package_Name'First;
-            Identifier  : Node_Id;
+            Identifier               : Node_Id;
          begin
             Name_List := New_List (K_List_Id, No_Location);
 
@@ -515,11 +516,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
                   D_Name := Name_Find;
                   L_Name := To_Lower (D_Name);
 
-                  Identifier := Make_Identifier
-                    (No_Location,
-                     L_Name,
-                     D_Name,
-                     No_Node);
+                  Identifier :=
+                    Make_Identifier (No_Location, L_Name, D_Name, No_Node);
                   Append_Node_To_List (Identifier, Name_List);
 
                   --  skip the second ':'
@@ -550,8 +548,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
          Copy := New_Node (K_Identifier, AIN.Loc (Original));
          Set_Name (Copy, AIN.Name (Original));
          Set_Display_Name (Copy, AIN.Display_Name (Original));
-         Set_Corresponding_Entity (Copy,
-                                   AIN.Corresponding_Entity (Original));
+         Set_Corresponding_Entity (Copy, AIN.Corresponding_Entity (Original));
          return Copy;
       end if;
 
@@ -566,8 +563,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
      (Loc          : Location;
       Name         : Name_Id;
       Display_Name : Name_Id;
-      Entity       : Node_Id)
-     return Node_Id
+      Entity       : Node_Id) return Node_Id
    is
       Node : constant Node_Id := New_Node (K_Identifier, Loc);
    begin
@@ -582,8 +578,9 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
    -- Find_Name_In_List --
    -----------------------
 
-   function Find_Name_In_List (Name_Node : Name_Id; List : List_Id)
-      return Node_Id
+   function Find_Name_In_List
+     (Name_Node : Name_Id;
+      List      : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -608,8 +605,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Abstract (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-         Get_Category_Of_Component (C) = CC_Abstract;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Abstract;
    end Is_Abstract;
 
    -------------
@@ -618,8 +615,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Data (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-         Get_Category_Of_Component (C) = CC_Data;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Data;
    end Is_Data;
 
    -------------------
@@ -628,8 +625,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Subprogram (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_Subprogram;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Subprogram;
    end Is_Subprogram;
 
    ----------------
@@ -638,8 +635,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Process (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_Process;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Process;
    end Is_Process;
 
    ---------------
@@ -667,8 +664,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Thread (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_Thread;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Thread;
    end Is_Thread;
 
    ---------------
@@ -677,8 +674,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Memory (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_Memory;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Memory;
    end Is_Memory;
 
    ---------------
@@ -687,8 +684,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_System (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_System;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_System;
    end Is_System;
 
    ------------------
@@ -697,8 +694,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Processor (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_Processor;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Processor;
    end Is_Processor;
 
    --------------------------
@@ -707,8 +704,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Virtual_Processor (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_Virtual_Processor;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Virtual_Processor;
    end Is_Virtual_Processor;
 
    --------------------------
@@ -717,8 +714,10 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Subprogram_Access (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Subcomponent_Access_Instance and then
-        Get_Category_Of_Component (Corresponding_Instance (C)) = CC_Subprogram;
+      return Kind (C) = K_Subcomponent_Access_Instance
+        and then
+          Get_Category_Of_Component (Corresponding_Instance (C)) =
+          CC_Subprogram;
    end Is_Subprogram_Access;
 
    ------------
@@ -727,8 +726,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Bus (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_Bus;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Bus;
    end Is_Bus;
 
    --------------------
@@ -737,8 +736,8 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    function Is_Virtual_Bus (C : Node_Id) return Boolean is
    begin
-      return Kind (C) = K_Component_Instance and then
-        Get_Category_Of_Component (C) = CC_Virtual_Bus;
+      return Kind (C) = K_Component_Instance
+        and then Get_Category_Of_Component (C) = CC_Virtual_Bus;
    end Is_Virtual_Bus;
 
    -------------

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -97,8 +97,8 @@ package body Ocarina.Backends.POK_C.Naming is
       --------------------------------
 
       procedure Visit_First_Pass_Component (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -128,25 +128,24 @@ package body Ocarina.Backends.POK_C.Naming is
       -- Visit_First_Pass_Process_or_Device --
       ----------------------------------------
 
-      procedure Visit_First_Pass_Process_or_Device (E : Node_Id) is
-         N : Node_Id;
+      procedure Visit_First_Pass_Process_Or_Device (E : Node_Id) is
+         N              : Node_Id;
          Processes_List : List_Id;
       begin
-         Processes_List := CTN.Processes
-            (Backend_Node (Identifier (Get_Bound_Processor (E))));
+         Processes_List :=
+           CTN.Processes (Backend_Node (Identifier (Get_Bound_Processor (E))));
 
          N := AINU.Make_Node_Container (E);
 
-         AINU.Append_Node_To_List
-            (N, Processes_List);
-      end Visit_First_Pass_Process_or_Device;
+         AINU.Append_Node_To_List (N, Processes_List);
+      end Visit_First_Pass_Process_Or_Device;
 
       --------------------------
       -- Visit_First_Pass_Bus --
       --------------------------
 
       procedure Visit_First_Pass_Bus (E : Node_Id) is
-         N : Node_Id;
+         N             : Node_Id;
          Accessed_List : List_Id;
       begin
          N := New_Node (CTN.K_HI_Tree_Bindings);
@@ -181,10 +180,10 @@ package body Ocarina.Backends.POK_C.Naming is
       --------------------------------
 
       procedure Visit_First_Pass_Processor (E : Node_Id) is
-         A        : constant Node_Id := Map_Distributed_Application (E);
-         S        : Node_Id;
-         P        : Node_Id;
-         U        : Node_Id;
+         A         : constant Node_Id := Map_Distributed_Application (E);
+         S         : Node_Id;
+         P         : Node_Id;
+         U         : Node_Id;
          N         : Node_Id;
          Processes : List_Id;
       begin
@@ -231,7 +230,7 @@ package body Ocarina.Backends.POK_C.Naming is
       -----------------------------
 
       procedure Visit_First_Pass_System (E : Node_Id) is
-         S        : Node_Id;
+         S                  : Node_Id;
          Component_Instance : Node_Id;
       begin
          if not AINU.Is_Empty (Subcomponents (E)) then
@@ -284,8 +283,8 @@ package body Ocarina.Backends.POK_C.Naming is
       --------------------------------
 
       procedure Visit_Second_Pass_Component (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -313,8 +312,8 @@ package body Ocarina.Backends.POK_C.Naming is
       -------------------------------
 
       procedure Visit_Second_Pass_Process_Or_Device (E : Node_Id) is
-         P                 : constant Node_Id := Map_HI_Node (E);
-         U                 : Node_Id;
+         P : constant Node_Id := Map_HI_Node (E);
+         U : Node_Id;
       begin
          Push_Entity (P);
          U := Map_HI_Unit (E);
@@ -332,8 +331,8 @@ package body Ocarina.Backends.POK_C.Naming is
 
       procedure Visit_Second_Pass_Processor (E : Node_Id) is
          S : Node_Id;
-         A : constant Node_Id := CTN.Deployment_Node
-            (Backend_Node (Identifier (E)));
+         A : constant Node_Id :=
+           CTN.Deployment_Node (Backend_Node (Identifier (E)));
       begin
          Push_Entity (C_Root);
          Push_Entity (A);
@@ -358,12 +357,12 @@ package body Ocarina.Backends.POK_C.Naming is
       -----------------------------------------
 
       procedure Visit_Second_Pass_Virtual_Processor (E : Node_Id) is
-         Processes   : List_Id;
-         S           : Node_Id;
+         Processes : List_Id;
+         S         : Node_Id;
       begin
          if Present (Backend_Node (Identifier (E))) then
             Processes := CTN.Processes (Backend_Node (Identifier (E)));
-            S := AIN.First_Node (Processes);
+            S         := AIN.First_Node (Processes);
             while Present (S) loop
                Visit_Second_Pass (AIN.Item (S));
                S := AIN.Next_Node (S);
@@ -376,8 +375,8 @@ package body Ocarina.Backends.POK_C.Naming is
       -----------------------------
 
       procedure Visit_Second_Pass_System (E : Node_Id) is
-         Component_Instance   : Node_Id;
-         S                    : Node_Id;
+         Component_Instance : Node_Id;
+         S                  : Node_Id;
       begin
          if not AINU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -57,8 +57,7 @@ package body Ocarina.Analyzer.REAL.Finder is
    ----------------------------
 
    function Get_REAL_Annexes_List
-     (AADL_Root : Node_Id)
-     return RNU.Node_List.Instance
+     (AADL_Root : Node_Id) return RNU.Node_List.Instance
    is
       use Ocarina.Analyzer.AADL.Finder;
 
@@ -71,9 +70,10 @@ package body Ocarina.Analyzer.REAL.Finder is
    begin
       RNU.Node_List.Init (NL);
 
-      L1 := Find_All_Declarations (AADL_Root,
-                                   (ATN.K_Component_Type,
-                                    ATN.K_Component_Implementation));
+      L1 :=
+        Find_All_Declarations
+          (AADL_Root,
+           (ATN.K_Component_Type, ATN.K_Component_Implementation));
       N1 := L1.First;
       while Present (N1) loop
          L2 := Find_All_Subclauses (N1, (1 => ATN.K_Annex_Subclause));
@@ -81,10 +81,10 @@ package body Ocarina.Analyzer.REAL.Finder is
          N2 := L2.First;
          while Present (N2) loop
             if Get_Name_String
-              (Utils.To_Lower
-               (ATN.Name (ATN.Identifier (N2)))) =
-              Ocarina.ME_REAL.Tokens.Language and then
-              Present (ATN.Corresponding_Annex (N2)) then
+                (Utils.To_Lower (ATN.Name (ATN.Identifier (N2)))) =
+              Ocarina.ME_REAL.Tokens.Language
+              and then Present (ATN.Corresponding_Annex (N2))
+            then
                NA.Node := N2;
                RNU.Node_List.Append (NL, NA);
             end if;
@@ -101,8 +101,7 @@ package body Ocarina.Analyzer.REAL.Finder is
    -- Get_Set_Type --
    ------------------
 
-   function Get_Set_Type (S : Node_Id) return Value_Id
-   is
+   function Get_Set_Type (S : Node_Id) return Value_Id is
       pragma Assert (Kind (S) = K_Set_Reference);
 
       R : constant Node_Id := REAL_Root;
@@ -130,19 +129,17 @@ package body Ocarina.Analyzer.REAL.Finder is
 
             T := Predefined_Type (S);
             Set_Str_To_Name_Buffer
-              (Ocarina.ME_REAL.Tokens.Image
-               (Translate_Predefined_Sets (T)));
+              (Ocarina.ME_REAL.Tokens.Image (Translate_Predefined_Sets (T)));
 
          elsif Get_Name_String (Name (S)) = "local_set" then
             T := SV_Local_Set;
             Set_Str_To_Name_Buffer
-              (Ocarina.ME_REAL.Tokens.Image
-               (Translate_Predefined_Sets (T)));
+              (Ocarina.ME_REAL.Tokens.Image (Translate_Predefined_Sets (T)));
          else
             Display_Analyzer_Error
               (No_Node,
-               "unable to determine actual type of "
-               & Get_Name_String (Name (S)),
+               "unable to determine actual type of " &
+               Get_Name_String (Name (S)),
                Loc => Loc (S));
             return Value_Id (0);
          end if;
@@ -166,10 +163,9 @@ package body Ocarina.Analyzer.REAL.Finder is
    -- Compute_Expression_Type --
    -----------------------------
 
-   function Compute_Expression_Type (E : Node_Id) return Value_Id
-   is
-      pragma Assert (Kind (E) = K_Set_Expression or else
-                     Kind (E) = K_Set_Reference);
+   function Compute_Expression_Type (E : Node_Id) return Value_Id is
+      pragma Assert
+        (Kind (E) = K_Set_Expression or else Kind (E) = K_Set_Reference);
 
       T1, T2 : Value_Id;
    begin
@@ -181,9 +177,7 @@ package body Ocarina.Analyzer.REAL.Finder is
 
       --  Parameter is a set expression
 
-      if Present (Left_Expr (E)) and then
-        Present (Right_Expr (E))
-      then
+      if Present (Left_Expr (E)) and then Present (Right_Expr (E)) then
          T1 := Compute_Expression_Type (Left_Expr (E));
          T2 := Compute_Expression_Type (Right_Expr (E));
          if T1 = Value_Id (0) or else T2 = Value_Id (0) then
@@ -202,8 +196,8 @@ package body Ocarina.Analyzer.REAL.Finder is
                when OV_Star =>
                   Display_Analyzer_Error
                     (No_Node,
-                     "can not perform an Intersection "
-                     & "between two sets of different types",
+                     "can not perform an Intersection " &
+                     "between two sets of different types",
                      Loc => Loc (E));
                   return Value_Id (0);
 
@@ -214,8 +208,8 @@ package body Ocarina.Analyzer.REAL.Finder is
                when others =>
                   Display_Analyzer_Error
                     (No_Node,
-                     "Parsing error : Impossible operator for "
-                     & "Set expressions",
+                     "Parsing error : Impossible operator for " &
+                     "Set expressions",
                      Loc => Loc (E));
                   return Value_Id (0);
             end case;
@@ -232,8 +226,8 @@ package body Ocarina.Analyzer.REAL.Finder is
 
       Display_Analyzer_Error
         (No_Node,
-         "Parsing error : An expression must have "
-         & "at least a right operand",
+         "Parsing error : An expression must have " &
+         "at least a right operand",
          Loc => Loc (E));
       return Value_Id (0);
 

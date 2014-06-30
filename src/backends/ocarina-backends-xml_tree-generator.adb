@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -106,9 +106,9 @@ package body Ocarina.Backends.XML_Tree.Generator is
    begin
       if not Print_On_Stdout then
          declare
-            File_Name : constant Name_Id := Get_File_Name (N);
-            File_Name_String : constant String := Get_Name_String (File_Name);
-            Fd : File_Descriptor;
+            File_Name        : constant Name_Id := Get_File_Name (N);
+            File_Name_String : constant String  := Get_Name_String (File_Name);
+            Fd               : File_Descriptor;
 
          begin
             if Present (XML_DTD (N)) then
@@ -249,7 +249,7 @@ package body Ocarina.Backends.XML_Tree.Generator is
             L := 1;
          else
             L := 0;
-            while L + 1 <= Name_Len and then  Name_Buffer (L + 1) /= ' ' loop
+            while L + 1 <= Name_Len and then Name_Buffer (L + 1) /= ' ' loop
                L := L + 1;
             end loop;
          end if;
@@ -279,7 +279,7 @@ package body Ocarina.Backends.XML_Tree.Generator is
          end if;
       end Get_Next_Word;
 
-      First_Line : Boolean := True;
+      First_Line   : Boolean := True;
       Used_Columns : Natural;
    begin
       Get_Name_String (Name (Defining_Identifier (N)));
@@ -360,7 +360,7 @@ package body Ocarina.Backends.XML_Tree.Generator is
    ----------------------
 
    procedure Generate_HI_Node (N : Node_Id) is
-      U                   : Node_Id := First_Node (Units (N));
+      U : Node_Id := First_Node (Units (N));
    begin
       while Present (U) loop
          Generate (U);

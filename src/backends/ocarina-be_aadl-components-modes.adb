@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -160,21 +160,24 @@ package body Ocarina.BE_AADL.Components.Modes is
                Write_Space;
             end if;
 
-            if Ocarina.ME_AADL.AADL_Tree.Nodes.Kind
-              (List_Node) = K_Entity_Reference then
+            if Ocarina.ME_AADL.AADL_Tree.Nodes.Kind (List_Node) =
+              K_Entity_Reference
+            then
                Print_Entity_Reference (List_Node);
-            elsif Ocarina.ME_AADL.AADL_Tree.Nodes.Kind
-              (List_Node) = K_Mode_Transition_Trigger then
+            elsif Ocarina.ME_AADL.AADL_Tree.Nodes.Kind (List_Node) =
+              K_Mode_Transition_Trigger
+            then
                if Ocarina.ME_AADL.AADL_Tree.Nodes.Is_Self (List_Node) then
                   Print_Token (T_Self);
                   Print_Token (T_Dot);
                elsif Ocarina.ME_AADL.AADL_Tree.Nodes.Is_Processor
-                 (List_Node) then
+                   (List_Node)
+               then
                   Print_Token (T_Processor);
                   Print_Token (T_Dot);
                end if;
-               Print_Identifier (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
-                                   (List_Node));
+               Print_Identifier
+                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier (List_Node));
             end if;
 
             List_Node := Next_Node (List_Node);

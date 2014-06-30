@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,8 +39,7 @@ package Ocarina.Transfo.Fusions.Scheduler is
    Max_Priority : Int;
    --  Minimum and maximum priorities amongst the threads call sequences'
 
-   procedure Initialize
-     (New_Thread, Old_Thread_1, Old_Thread_2 : Node_Id);
+   procedure Initialize (New_Thread, Old_Thread_1, Old_Thread_2 : Node_Id);
    --  By looking at both threads' call sequences, initialize
    --  hyperperiod, quantum and mode array dimensions
    --  FIXME : AADL : add call sequences to period property validity list

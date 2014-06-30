@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -116,37 +116,40 @@ package Ocarina.FE_AADL_BA.Parser_Errors is
    procedure Display_Parsing_Error
      (Code      : Parsing_Code;
       Error_Msg : Error_Message_Code;
-      Fatal     : Boolean            := False;
-      Warning   : Boolean            := False);
-   procedure DPE (Code      : Parsing_Code;
-                  Error_Msg : Error_Message_Code;
-                  Fatal     : Boolean            := False;
-                  Warning   : Boolean            := False)
-     renames Display_Parsing_Error;
+      Fatal     : Boolean := False;
+      Warning   : Boolean := False);
+   procedure DPE
+     (Code      : Parsing_Code;
+      Error_Msg : Error_Message_Code;
+      Fatal     : Boolean := False;
+      Warning   : Boolean := False) renames
+     Display_Parsing_Error;
    --  Display an output message:
    --     Location: parsing ..., <Msg>
 
    procedure Display_Parsing_Error
      (Code           : Parsing_Code;
       Expected_Token : BA_Token_Type;
-      Fatal          : Boolean       := False;
-      Warning        : Boolean       := False);
-   procedure DPE (Code           : Parsing_Code;
-                  Expected_Token : BA_Token_Type;
-                  Fatal          : Boolean       := False;
-                  Warning        : Boolean       := False)
-     renames Display_Parsing_Error;
+      Fatal          : Boolean := False;
+      Warning        : Boolean := False);
+   procedure DPE
+     (Code           : Parsing_Code;
+      Expected_Token : BA_Token_Type;
+      Fatal          : Boolean := False;
+      Warning        : Boolean := False) renames
+     Display_Parsing_Error;
 
    procedure Display_Parsing_Error
      (Code            : Parsing_Code;
       Expected_Tokens : BA_Token_List_Type;
-      Fatal           : Boolean             := False;
-      Warning         : Boolean             := False);
-   procedure DPE (Code            : Parsing_Code;
-                  Expected_Tokens : BA_Token_List_Type;
-                  Fatal           : Boolean            := False;
-                  Warning         : Boolean            := False)
-     renames Display_Parsing_Error;
+      Fatal           : Boolean := False;
+      Warning         : Boolean := False);
+   procedure DPE
+     (Code            : Parsing_Code;
+      Expected_Tokens : BA_Token_List_Type;
+      Fatal           : Boolean := False;
+      Warning         : Boolean := False) renames
+     Display_Parsing_Error;
 
    function Image (Code : Parsing_Code) return String;
    --  Return corresponding string of given parsing code

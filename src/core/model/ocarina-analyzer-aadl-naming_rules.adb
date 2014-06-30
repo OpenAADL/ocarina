@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,9 +47,9 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
    use Namet;
    use Ocarina.Analyzer.Messages;
    use Ocarina.ME_AADL;
-   use Ocarina.Me_AADL.AADL_Tree.Nodes;
-   use Ocarina.Me_AADL.AADL_Tree.Nutils;
-   use Ocarina.Me_AADL.AADL_Tree.Entities;
+   use Ocarina.ME_AADL.AADL_Tree.Nodes;
+   use Ocarina.ME_AADL.AADL_Tree.Nutils;
+   use Ocarina.ME_AADL.AADL_Tree.Entities;
    use Scope_Stack;
 
    type Entity_Conflict_Status is (Replacement, Conflict, No_Conflict);
@@ -57,24 +57,19 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    function Is_A_Refinement (Node : Node_Id) return Boolean;
 
-   function Merge_Packages
-     (Pack1 : Node_Id;
-      Pack2 : Node_Id)
-     return Node_Id;
+   function Merge_Packages (Pack1 : Node_Id; Pack2 : Node_Id) return Node_Id;
    --  Integrate Pack2 into Pack1 and return Pack1
 
    function Have_Common_Applies_To
      (Applies_To_1 : List_Id;
-      Applies_To_2 : List_Id)
-     return Boolean;
+      Applies_To_2 : List_Id) return Boolean;
    --  Return True if the two property association declarations apply
    --  to the same thing. This means that the two lists contain the
    --  same identifiers.
 
    function Resolve_Conflict
      (Entity        : Node_Id;
-      Former_Entity : Node_Id)
-     return Entity_Conflict_Status;
+      Former_Entity : Node_Id) return Entity_Conflict_Status;
    --  Resolve name conflicts if Entity and Former_Entity have the
    --  same name, Entity being added in a scope that already contains
    --  Former_Entity.
@@ -108,8 +103,8 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    procedure Display_Conflict (N : Node_Id; C : Node_Id) is
    begin
-      Error_Loc  (1) := Loc (N);
-      Error_Loc  (2) := Loc (C);
+      Error_Loc (1)  := Loc (N);
+      Error_Loc (2)  := Loc (C);
       Error_Name (1) := Display_Name (N);
       DE ("#conflicts with declaration!");
    end Display_Conflict;
@@ -153,19 +148,18 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
    function Enter_Name_In_Scope (Identifier : Node_Id) return Node_Id is
       pragma Assert (Kind (Identifier) = K_Identifier);
 
-      Entity                : constant Node_Id := Corresponding_Entity
-        (Identifier);
-      Local_Scope           : constant Node_Id := Current_Scope;
-      Former_Entity         : constant Node_Id := Node_In_Scope
-        (Identifier, Local_Scope);
+      Entity        : constant Node_Id := Corresponding_Entity (Identifier);
+      Local_Scope   : constant Node_Id := Current_Scope;
+      Former_Entity : constant Node_Id :=
+        Node_In_Scope (Identifier, Local_Scope);
       Kind_Of_Former_Entity : Node_Kind;
       Kind_Of_Entity        : constant Node_Kind := Kind (Entity);
       Entity_Identifier     : Node_Id;
    begin
       if Present (Former_Entity) then
          Kind_Of_Former_Entity := Kind (Former_Entity);
-         Entity_Identifier :=
-           Ocarina.Me_AADL.AADL_Tree.Nodes.Identifier (Former_Entity);
+         Entity_Identifier     :=
+           Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier (Former_Entity);
 
          --  This same entity is already in the scope The
          --  Node_In_Scope functions returns only one node. We must
@@ -200,8 +194,9 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
          else
             declare
                Conflict_Status : constant Entity_Conflict_Status :=
-                 Resolve_Conflict (Entity        => Entity,
-                                   Former_Entity => Former_Entity);
+                 Resolve_Conflict
+                   (Entity        => Entity,
+                    Former_Entity => Former_Entity);
             begin
                if Conflict_Status = Replacement then
                   --  A connection refinement must inherit the source
@@ -214,8 +209,9 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                   end if;
 
                   Remove_From_Scope
-                   (Ocarina.Me_AADL.AADL_Tree.Nodes.Identifier (Former_Entity),
-                    Current_Scope);
+                    (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                       (Former_Entity),
+                     Current_Scope);
 
                elsif Conflict_Status = Conflict then
                   Display_Conflict (Identifier, Former_Entity);
@@ -225,8 +221,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
          end if;
 
       elsif Is_A_Refinement (Entity) then
-         DAE (Node1    => Identifier,
-              Message1 => "does not refines anything");
+         DAE (Node1 => Identifier, Message1 => "does not refines anything");
          return No_Node;
       end if;
 
@@ -253,21 +248,20 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
       pragma Assert (Present (Node));
    begin
       case Kind (Node) is
-         when K_Subcomponent
-           | K_Flow_Spec
-           | K_Port_Spec
-           | K_Feature_Group_Spec
-           | K_Subprogram_Spec
-           | K_Parameter
-           | K_Subcomponent_Access
-           | K_Mode
-           | K_Mode_Transition
-           | K_Connection
-           => return Is_Refinement (Node);
+         when K_Subcomponent     |
+           K_Flow_Spec           |
+           K_Port_Spec           |
+           K_Feature_Group_Spec  |
+           K_Subprogram_Spec     |
+           K_Parameter           |
+           K_Subcomponent_Access |
+           K_Mode                |
+           K_Mode_Transition     |
+           K_Connection          =>
+            return Is_Refinement (Node);
 
-         when K_Flow_Implementation
-           | K_End_To_End_Flow_Spec
-           => return False;
+         when K_Flow_Implementation | K_End_To_End_Flow_Spec =>
+            return False;
 
          when K_Flow_Implementation_Refinement =>
             case AADL_Version is
@@ -277,8 +271,8 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                   return False;
             end case;
 
-         when K_End_To_End_Flow_Refinement
-           => return True;
+         when K_End_To_End_Flow_Refinement =>
+            return True;
 
          when others =>
             return False;
@@ -291,8 +285,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    function Node_Explicitly_In_Scope
      (Identifier : Node_Id;
-      Scope      : Node_Id)
-     return Node_Id
+      Scope      : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Identifier) = K_Identifier);
    begin
@@ -301,8 +294,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    function Node_Explicitly_In_Scope
      (Name_Of_Identifier : Name_Id;
-      Scope              : Node_Id)
-     return Node_Id
+      Scope              : Node_Id) return Node_Id
    is
       pragma Assert (Name_Of_Identifier /= No_Name);
       pragma Assert (No (Scope) or else Kind (Scope) = K_Scope_Definition);
@@ -310,8 +302,8 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
       Scoped_Identifier : Node_Id;
    begin
       if Present (Scope) then
-         Scoped_Identifier := Internal_Node_In_Scope
-           (Name_Of_Identifier, Scope);
+         Scoped_Identifier :=
+           Internal_Node_In_Scope (Name_Of_Identifier, Scope);
       else
          return No_Node;
       end if;
@@ -329,8 +321,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    function Node_In_Scope
      (Identifier : Node_Id;
-      Scope      : Node_Id)
-     return Node_Id
+      Scope      : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Identifier) = K_Identifier);
    begin
@@ -339,13 +330,14 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    function Node_In_Scope
      (Name_Of_Identifier : Name_Id;
-      Scope              : Node_Id)
-     return Node_Id
+      Scope              : Node_Id) return Node_Id
    is
       pragma Assert (Name_Of_Identifier /= No_Name);
-      pragma Assert (No (Scope) or else
-                     (Kind (Scope) = K_Scope_Definition and then
-                      Present (Corresponding_Entity (Scope))));
+      pragma Assert
+        (No (Scope)
+         or else
+         (Kind (Scope) = K_Scope_Definition
+          and then Present (Corresponding_Entity (Scope))));
 
       First_Node            : Node_Id := No_Node;
       Homonym_Node          : Node_Id := No_Node;
@@ -370,20 +362,20 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
          --  Start with the given scope
 
-         Scoped_Identifier := Internal_Node_In_Scope
-           (Name_Of_Identifier, The_Scope);
+         Scoped_Identifier :=
+           Internal_Node_In_Scope (Name_Of_Identifier, The_Scope);
 
          if Present (Scoped_Identifier) then
             if No (First_Node) then
                First_Node := Corresponding_Entity (Scoped_Identifier);
             else
                Homonym_Node :=
-                 Ocarina.Me_AADL.AADL_Tree.Nodes.Identifier (First_Node);
+                 Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier (First_Node);
                Previous_Homonym_Node := No_Node;
 
                while Present (Homonym_Node) loop
                   Previous_Homonym_Node := Homonym_Node;
-                  Homonym_Node := Homonym (Homonym_Node);
+                  Homonym_Node          := Homonym (Homonym_Node);
                end loop;
 
                Set_Homonym (Previous_Homonym_Node, Scoped_Identifier);
@@ -402,19 +394,15 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                if Present (Component_Type_Identifier (Entity)) then
                   Recursive_Node_In_Scope
                     (Entity_Scope
-                     (Corresponding_Entity
-                      (Component_Type_Identifier
-                       (Entity))));
+                       (Corresponding_Entity
+                          (Component_Type_Identifier (Entity))));
                end if;
 
                --  Fetch recursively the scope of the parent
 
                if Present (Parent (Entity)) then
                   Recursive_Node_In_Scope
-                    (Entity_Scope
-                     (Get_Referenced_Entity
-                      (Parent
-                       (Entity))));
+                    (Entity_Scope (Get_Referenced_Entity (Parent (Entity))));
                end if;
 
             when K_Component_Type | K_Feature_Group_Type =>
@@ -422,10 +410,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
                if Present (Parent (Entity)) then
                   Recursive_Node_In_Scope
-                    (Entity_Scope
-                     (Get_Referenced_Entity
-                      (Parent
-                       (Entity))));
+                    (Entity_Scope (Get_Referenced_Entity (Parent (Entity))));
                end if;
 
             when K_Package_Specification =>
@@ -434,18 +419,19 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                then
                   declare
                      List_Node, List_Node_2, List_Node_3 : Node_Id;
-                     Test_Node : Node_Id;
+                     Test_Node                           : Node_Id;
                   begin
-                     List_Node := Ocarina.ME_AADL.AADL_Tree.Nodes.First_Node
-                       (Declarations (Entity));
+                     List_Node :=
+                       Ocarina.ME_AADL.AADL_Tree.Nodes.First_Node
+                         (Declarations (Entity));
 
                      while Present (List_Node) loop
                         case Kind (List_Node) is
-                           when K_Component_Type
-                             | K_Component_Implementation =>
+                           when K_Component_Type        |
+                             K_Component_Implementation =>
 
-                              if Name (Identifier (List_Node))
-                                = Name_Of_Identifier
+                              if Name (Identifier (List_Node)) =
+                                Name_Of_Identifier
                               then
                                  First_Node := List_Node;
                               end if;
@@ -453,41 +439,42 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                            when K_Name_Visibility_Declaration =>
                               List_Node_2 :=
                                 Ocarina.ME_AADL.AADL_Tree.Nodes.First_Node
-                                (List_Items (List_Node));
+                                  (List_Items (List_Node));
 
                               while Present (List_Node_2) loop
                                  if Kind (List_Node_2) =
-                                   K_Alias_Declaration then
+                                   K_Alias_Declaration
+                                 then
                                     if Is_All (List_Node_2) then
                                        List_Node_3 :=
-                                         Ocarina.ME_AADL.AADL_Tree.Nodes.
-                                         First_Node
-                                         (Declarations
-                                            (Parent (Parent (List_Node_2))));
+                                         Ocarina.ME_AADL.AADL_Tree.Nodes
+                                           .First_Node
+                                           (Declarations
+                                              (Parent (Parent (List_Node_2))));
                                        while Present (List_Node_3) loop
-                                          if Name (Identifier (List_Node_3))
-                                            = Name (Build_Package_Identifier
-                                                      (Package_Name
-                                                         (List_Node_2)))
+                                          if Name (Identifier (List_Node_3)) =
+                                            Name
+                                              (Build_Package_Identifier
+                                                 (Package_Name (List_Node_2)))
                                           then
-                                             Test_Node := Node_In_Scope
-                                               (Name_Of_Identifier,
-                                                Entity_Scope
-                                                  (List_Node_3));
+                                             Test_Node :=
+                                               Node_In_Scope
+                                                 (Name_Of_Identifier,
+                                                  Entity_Scope (List_Node_3));
 
                                              if Present (Test_Node) then
                                                 First_Node := Test_Node;
                                              end if;
                                           end if;
-                                          List_Node_3
-                                            := Next_Node (List_Node_3);
+                                          List_Node_3 :=
+                                            Next_Node (List_Node_3);
                                        end loop;
                                     else
 
                                        if Present (Identifier (List_Node_2))
                                          and then
-                                         Name (Identifier (List_Node_2))
-                                         = Name_Of_Identifier
+                                           Name (Identifier (List_Node_2)) =
+                                           Name_Of_Identifier
                                        then
                                           First_Node := List_Node_2;
                                        end if;
@@ -496,7 +483,8 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                                  List_Node_2 := Next_Node (List_Node_2);
                               end loop;
 
-                           when others => null;
+                           when others =>
+                              null;
                         end case;
                         List_Node := Next_Node (List_Node);
                      end loop;
@@ -573,7 +561,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
       Set_Has_Public_Part (Pack1, True);
       Set_Has_Private_Part (Pack1, True);
       Declaration_List := Declarations (Pack1);
-      Property_List := Properties (Pack1);
+      Property_List    := Properties (Pack1);
       Append_List_To_List (Declarations (Pack2), Declaration_List);
       Append_List_To_List (Properties (Pack2), Property_List);
       Set_Declarations (Pack1, Declaration_List);
@@ -587,8 +575,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    function Remove_From_Homonyms
      (First_Homonym     : Node_Id;
-      Homonym_To_Remove : Node_Id)
-     return Node_Id
+      Homonym_To_Remove : Node_Id) return Node_Id
    is
       pragma Assert (Kind (First_Homonym) = K_Identifier);
       pragma Assert (Kind (Homonym_To_Remove) = K_Identifier);
@@ -596,11 +583,10 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
       List_Homonym          : Node_Id := First_Homonym;
       Previous_List_Homonym : Node_Id := First_Homonym;
    begin
-      while Present (List_Homonym)
-        and then List_Homonym /= Homonym_To_Remove
+      while Present (List_Homonym) and then List_Homonym /= Homonym_To_Remove
       loop
          Previous_List_Homonym := List_Homonym;
-         List_Homonym := Homonym (List_Homonym);
+         List_Homonym          := Homonym (List_Homonym);
       end loop;
 
       if No (List_Homonym) then
@@ -623,8 +609,7 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    function Have_Common_Applies_To
      (Applies_To_1 : List_Id;
-      Applies_To_2 : List_Id)
-     return Boolean
+      Applies_To_2 : List_Id) return Boolean
    is
 
       List_Item_1 : Node_Id;
@@ -644,8 +629,8 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
          while Present (List_Item_1) loop
             pragma Assert (Kind (List_Item_1) = K_Identifier);
-            pragma Assert (No (List_Item_2)
-                           or else Kind (List_Item_2) = K_Identifier);
+            pragma Assert
+              (No (List_Item_2) or else Kind (List_Item_2) = K_Identifier);
 
             if No (List_Item_2) then
                return False;
@@ -671,16 +656,13 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    function Resolve_Conflict
      (Entity        : Node_Id;
-      Former_Entity : Node_Id)
-     return Entity_Conflict_Status
+      Former_Entity : Node_Id) return Entity_Conflict_Status
    is
       pragma Assert (Present (Former_Entity));
 
-      Category_Of_Entity :
-        constant Ocarina.Me_AADL.Entity_Category
-        := Get_Entity_Category (Entity);
-      Category_Of_Former_Entity :
-        Ocarina.Me_AADL.Entity_Category;
+      Category_Of_Entity : constant Ocarina.ME_AADL.Entity_Category :=
+        Get_Entity_Category (Entity);
+      Category_Of_Former_Entity : Ocarina.ME_AADL.Entity_Category;
       Homonym_Of_Former_Entity  : Node_Id := Identifier (Former_Entity);
       Current_Former_Entity     : Node_Id;
       Result                    : Entity_Conflict_Status := No_Conflict;
@@ -702,17 +684,18 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                Current_Former_Entity :=
                  Corresponding_Entity (Homonym_Of_Former_Entity);
                if Kind (Current_Former_Entity) = K_Property_Association
-                 and then Is_Private (Entity) =
-                 Is_Private (Current_Former_Entity)
+                 and then
+                   Is_Private (Entity) =
+                   Is_Private (Current_Former_Entity)
                  and then Have_Common_Statements
-                 (In_Modes (Entity),
-                  In_Modes (Current_Former_Entity))
+                   (In_Modes (Entity),
+                    In_Modes (Current_Former_Entity))
                  and then Have_Common_Applies_To
-                 (Applies_To_Prop (Entity),
-                  Applies_To_Prop (Current_Former_Entity))
+                   (Applies_To_Prop (Entity),
+                    Applies_To_Prop (Current_Former_Entity))
                  and then Have_Common_Statements
-                 (In_Binding (Entity),
-                  In_Binding (Current_Former_Entity))
+                   (In_Binding (Entity),
+                    In_Binding (Current_Former_Entity))
                then
                   Result := Conflict;
                   exit;
@@ -721,73 +704,78 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                Homonym_Of_Former_Entity := Homonym (Homonym_Of_Former_Entity);
             end loop;
 
-         when K_Flow_Implementation
-           | K_Flow_Implementation_Refinement
-           | K_End_To_End_Flow_Spec
-           | K_End_To_End_Flow_Refinement =>
+         when K_Flow_Implementation         |
+           K_Flow_Implementation_Refinement |
+           K_End_To_End_Flow_Spec           |
+           K_End_To_End_Flow_Refinement     =>
             --  Flow implementations and end to end flows are also
             --  allowed to have the same name within the same
             --  namespace. But they have to be active in different
             --  modes.
 
             while Present (Homonym_Of_Former_Entity) loop
-               Current_Former_Entity := Corresponding_Entity
-                 (Homonym_Of_Former_Entity);
-               Category_Of_Former_Entity := Get_Entity_Category
-                 (Corresponding_Entity (Homonym_Of_Former_Entity));
+               Current_Former_Entity :=
+                 Corresponding_Entity (Homonym_Of_Former_Entity);
+               Category_Of_Former_Entity :=
+                 Get_Entity_Category
+                   (Corresponding_Entity (Homonym_Of_Former_Entity));
 
-               if Category_Of_Entity = Category_Of_Former_Entity and then
-                 Have_Common_Statements
+               if Category_Of_Entity = Category_Of_Former_Entity
+                 and then Have_Common_Statements
                    (In_Modes (Entity),
                     In_Modes (Current_Former_Entity))
                then
                   if Is_A_Refinement (Entity)
-                    and then Scope_Entity (Identifier (Current_Former_Entity))
-                    /= Current_Scope
+                    and then
+                      Scope_Entity (Identifier (Current_Former_Entity)) /=
+                      Current_Scope
                   then
                      Result := Replacement;
-                     --  There is replacement only if the new entity
-                     --  is a refinement of the same category as the
-                     --  former entity, and the former entity is not
-                     --  part of the current scope (we assume that the
-                     --  new entity is to be inserted in the current
-                     --  scope).
+                  --  There is replacement only if the new entity
+                  --  is a refinement of the same category as the
+                  --  former entity, and the former entity is not
+                  --  part of the current scope (we assume that the
+                  --  new entity is to be inserted in the current
+                  --  scope).
 
                   else
                      Result := Conflict;
                      exit;
                   end if;
-               elsif Category_Of_Entity = Category_Of_Former_Entity and then
-                 not Have_Common_Statements
-                       (In_Modes (Entity),
-                        In_Modes (Current_Former_Entity))
+               elsif Category_Of_Entity = Category_Of_Former_Entity
+                 and then not Have_Common_Statements
+                   (In_Modes (Entity),
+                    In_Modes (Current_Former_Entity))
                then
                   if Is_A_Refinement (Entity)
-                    and then Scope_Entity (Identifier (Current_Former_Entity))
-                    /= Current_Scope
+                    and then
+                      Scope_Entity (Identifier (Current_Former_Entity)) /=
+                      Current_Scope
                   then
                      Result := Replacement;
-                     --  There is replacement only if the new entity
-                     --  is a refinement of the same category as the
-                     --  former entity, and the former entity is not
-                     --  part of the current scope (we assume that the
-                     --  new entity is to be inserted in the current
-                     --  scope).
+                  --  There is replacement only if the new entity
+                  --  is a refinement of the same category as the
+                  --  former entity, and the former entity is not
+                  --  part of the current scope (we assume that the
+                  --  new entity is to be inserted in the current
+                  --  scope).
                   elsif not Is_A_Refinement (Entity)
-                    and then Scope_Entity (Identifier (Current_Former_Entity))
-                    = Current_Scope
+                    and then
+                      Scope_Entity (Identifier (Current_Former_Entity)) =
+                      Current_Scope
                   then
                      Result := No_Conflict;
-                     --  There is no conflict if two flow
-                     --  implementations having different modes are
-                     --  declared within the same immediate scope.
+                  --  There is no conflict if two flow
+                  --  implementations having different modes are
+                  --  declared within the same immediate scope.
                   else
                      Result := Conflict;
                      exit;
                   end if;
 
-               elsif (Kind (Entity) = K_Flow_Implementation or else
-                      Kind (Entity) = K_Flow_Implementation_Refinement)
+               elsif
+                 (Kind (Entity) = K_Flow_Implementation
+                  or else Kind (Entity) = K_Flow_Implementation_Refinement)
                  and then Kind (Current_Former_Entity) = K_Flow_Spec
                then
                   if Kind (Entity) = K_Flow_Implementation then
@@ -795,12 +783,13 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
                      --  spec.
 
                      Set_Corresponding_Flow_Spec
-                       (Entity, Current_Former_Entity);
+                       (Entity,
+                        Current_Former_Entity);
                   end if;
 
                   Result := No_Conflict;
-                  --  A flow implementation does not conflict with the
-                  --  corresponding flow spec.
+               --  A flow implementation does not conflict with the
+               --  corresponding flow spec.
                else
                   Result := Conflict;
                   exit;
@@ -816,21 +805,22 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
             while Present (Homonym_Of_Former_Entity) loop
                Current_Former_Entity :=
                  Corresponding_Entity (Homonym_Of_Former_Entity);
-               Category_Of_Former_Entity
-                 := Get_Entity_Category (Corresponding_Entity
-                                         (Homonym_Of_Former_Entity));
+               Category_Of_Former_Entity :=
+                 Get_Entity_Category
+                   (Corresponding_Entity (Homonym_Of_Former_Entity));
 
                if Is_A_Refinement (Entity)
-                 and then Scope_Entity (Identifier (Current_Former_Entity))
-                 /= Current_Scope
+                 and then
+                   Scope_Entity (Identifier (Current_Former_Entity)) /=
+                   Current_Scope
                then
                   Result := Replacement;
-                  --  There is replacement only if the new entity
-                  --  is a refinement of the same category as the
-                  --  former entity, and the former entity is not
-                  --  part of the current scope (we assume that the
-                  --  new entity is to be inserted in the current
-                  --  scope).
+               --  There is replacement only if the new entity
+               --  is a refinement of the same category as the
+               --  former entity, and the former entity is not
+               --  part of the current scope (we assume that the
+               --  new entity is to be inserted in the current
+               --  scope).
 
                else
                   Result := Conflict;

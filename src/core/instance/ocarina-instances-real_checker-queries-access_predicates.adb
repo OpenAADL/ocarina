@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,8 +43,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Access_Predicates is
    function Is_Accessed_Predicate
      (E      : Node_Id;
       D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       pragma Unreferenced (Option);
 
@@ -52,9 +51,11 @@ package body Ocarina.Instances.REAL_Checker.Queries.Access_Predicates is
       N : Node_Id;
       K : Node_Id;
    begin
-      if Kind (D) /= K_Connection_Instance  and then
-        (Kind (D) /= K_Component_Instance or else
-         Kind (E) /= K_Subcomponent_Access_Instance) then
+      if Kind (D) /= K_Connection_Instance
+        and then
+        (Kind (D) /= K_Component_Instance
+         or else Kind (E) /= K_Subcomponent_Access_Instance)
+      then
          return False;
       end if;
 
@@ -64,8 +65,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Access_Predicates is
             return True;
          else
             P := Source (D);
-            return (Corresponding_Instance
-                    (Item (First_Node (Path (P)))) = E);
+            return (Corresponding_Instance (Item (First_Node (Path (P)))) = E);
          end if;
       end if;
 

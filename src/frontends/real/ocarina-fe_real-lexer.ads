@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -61,11 +61,13 @@ package Ocarina.FE_REAL.Lexer is
    --  Return next token but do not update the lexer state that is
    --  Token, Token_Name and Token_Location.
 
-   procedure Restore_Lexer (State : Location)
-     renames Ocarina.Files.Restore_Location;
+   procedure Restore_Lexer
+     (State : Location) renames
+     Ocarina.Files.Restore_Location;
 
-   procedure Save_Lexer (State : out Location)
-     renames Ocarina.Files.Save_Location;
+   procedure Save_Lexer
+     (State : out Location) renames
+     Ocarina.Files.Save_Location;
 
    procedure Skip_Declaration (Delimiter : Token_Type);
    --  Skip until we find a potential end of declaration. Delimiter

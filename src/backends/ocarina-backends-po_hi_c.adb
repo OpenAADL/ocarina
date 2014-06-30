@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -107,7 +107,7 @@ package body Ocarina.Backends.PO_HI_C is
    Do_Regression_Test          : Boolean := False;
    Do_Coverage_Test            : Boolean := False;
    Generated_Sources_Directory : Name_Id := No_Name;
-   Verbose_Mode : Boolean := False;
+   Verbose_Mode                : Boolean := False;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -115,56 +115,52 @@ package body Ocarina.Backends.PO_HI_C is
    --  compilation unit to be generated.
 
    procedure PolyORB_HI_C_Makefile
-     (Appli_Name         : Name_Id;
-      Node_Name          : Name_Id;
-      Execution_Platform : Supported_Execution_Platform := Platform_None;
+     (Appli_Name              : Name_Id;
+      Node_Name               : Name_Id;
+      Execution_Platform      : Supported_Execution_Platform := Platform_None;
       Execution_Platform_Name : Name_Id;
-      Transport_API      : Supported_Transport_APIs;
-      Ada_Sources        : Name_Tables.Instance;
-      Asn_Sources        : Name_Tables.Instance;
-      C_Sources          : Name_Tables.Instance;
-      C_Libraries        : Name_Tables.Instance;
-      User_Source_Dirs   : Name_Tables.Instance;
-      Use_Transport      : Boolean;
-      Use_Simulink       : Boolean;
-      Simulink_Directory : Name_Id;
-      Simulink_Node      : Name_Id;
-      Use_Scade          : Boolean;
-      Scade_Directory    : Name_Id);
+      Transport_API           : Supported_Transport_APIs;
+      Ada_Sources             : Name_Tables.Instance;
+      Asn_Sources             : Name_Tables.Instance;
+      C_Sources               : Name_Tables.Instance;
+      C_Libraries             : Name_Tables.Instance;
+      User_Source_Dirs        : Name_Tables.Instance;
+      Use_Transport           : Boolean;
+      Use_Simulink            : Boolean;
+      Simulink_Directory      : Name_Id;
+      Simulink_Node           : Name_Id;
+      Use_Scade               : Boolean;
+      Scade_Directory         : Name_Id);
 
    ---------------------------
    -- PolyORB_HI_C_Makefile --
    ---------------------------
 
    procedure PolyORB_HI_C_Makefile
-     (Appli_Name         : Name_Id;
-      Node_Name          : Name_Id;
-      Execution_Platform : Supported_Execution_Platform := Platform_None;
+     (Appli_Name              : Name_Id;
+      Node_Name               : Name_Id;
+      Execution_Platform      : Supported_Execution_Platform := Platform_None;
       Execution_Platform_Name : Name_Id;
-      Transport_API      : Supported_Transport_APIs;
-      Ada_Sources        : Name_Tables.Instance;
-      Asn_Sources        : Name_Tables.Instance;
-      C_Sources          : Name_Tables.Instance;
-      C_Libraries        : Name_Tables.Instance;
-      User_Source_Dirs   : Name_Tables.Instance;
-      Use_Transport      : Boolean;
-      Use_Simulink       : Boolean;
-      Simulink_Directory : Name_Id;
-      Simulink_Node      : Name_Id;
-      Use_Scade          : Boolean;
-      Scade_Directory    : Name_Id)
+      Transport_API           : Supported_Transport_APIs;
+      Ada_Sources             : Name_Tables.Instance;
+      Asn_Sources             : Name_Tables.Instance;
+      C_Sources               : Name_Tables.Instance;
+      C_Libraries             : Name_Tables.Instance;
+      User_Source_Dirs        : Name_Tables.Instance;
+      Use_Transport           : Boolean;
+      Use_Simulink            : Boolean;
+      Simulink_Directory      : Name_Id;
+      Simulink_Node           : Name_Id;
+      Use_Scade               : Boolean;
+      Scade_Directory         : Name_Id)
    is
-      pragma Unreferenced (Transport_API,
-                           C_Sources,
-                           Ada_Sources,
-                           C_Libraries);
-      O_File             : Name_Id;
+      pragma Unreferenced (Transport_API, C_Sources, Ada_Sources, C_Libraries);
+      O_File : Name_Id;
    begin
-      if Use_Asn1_Deployment then
+      if Use_ASN1_Deployment then
          Write_Str ("ASN_OBJS += asn1_deployment.o ");
          if Length (Asn_Sources) > 0 then
-            for J in
-              Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
+            for J in Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
 
                Get_Name_String (Asn_Sources.Table (J));
                Name_Buffer (Name_Len - 2) := 'o';
@@ -268,8 +264,9 @@ package body Ocarina.Backends.PO_HI_C is
             Write_Str ("linux32-xenomai-posix");
 
          when others =>
-            Display_Error ("Unsupported platform " & Execution_Platform'Img,
-                           Fatal => True);
+            Display_Error
+              ("Unsupported platform " & Execution_Platform'Img,
+               Fatal => True);
       end case;
 
       Write_Eol;
@@ -310,12 +307,11 @@ package body Ocarina.Backends.PO_HI_C is
 
       Write_Str ("USER_SOURCES_DIRS=");
       if Length (User_Source_Dirs) > 0 then
-         for J in
-           Name_Tables.First .. Name_Tables.Last (User_Source_Dirs) loop
+         for J in Name_Tables.First .. Name_Tables.Last (User_Source_Dirs) loop
             Write_Space;
             Write_Str ("""-I");
-            Write_Name (Remove_Directory_Separator
-                          (User_Source_Dirs.Table (J)));
+            Write_Name
+              (Remove_Directory_Separator (User_Source_Dirs.Table (J)));
             Write_Str ("""");
             exit when J = Name_Tables.Last (User_Source_Dirs);
 
@@ -334,8 +330,7 @@ package body Ocarina.Backends.PO_HI_C is
       end if;
 
       if Length (Asn_Sources) > 0 then
-         for J in
-           Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
+         for J in Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
             Write_Str ("");
             Write_Name (Asn_Sources.Table (J));
 
@@ -356,14 +351,12 @@ package body Ocarina.Backends.PO_HI_C is
    -- Generate_Doxygen_Configuration --
    ------------------------------------
 
-   procedure Generate_Doxygen_Configuration
-     (My_System : Node_Id)
-   is
+   procedure Generate_Doxygen_Configuration (My_System : Node_Id) is
       use Ocarina.Backends.C_Tree.Nodes;
       procedure Visit_Architecture_Instance (E : Node_Id);
-      procedure Visit_Component_Instance    (E : Node_Id);
-      procedure Visit_System_Instance       (E : Node_Id);
-      procedure Visit_Process_Instance      (E : Node_Id);
+      procedure Visit_Component_Instance (E : Node_Id);
+      procedure Visit_System_Instance (E : Node_Id);
+      procedure Visit_Process_Instance (E : Node_Id);
 
       -----------
       -- Visit --
@@ -397,8 +390,8 @@ package body Ocarina.Backends.PO_HI_C is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -417,10 +410,10 @@ package body Ocarina.Backends.PO_HI_C is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         S  : constant Node_Id := AAN.Parent_Subcomponent (E);
-         A  : constant Node_Id :=
-            AAN.Parent_Component (AAN.Parent_Subcomponent (E));
-         Fd : File_Descriptor;
+         S : constant Node_Id := AAN.Parent_Subcomponent (E);
+         A : constant Node_Id :=
+           AAN.Parent_Component (AAN.Parent_Subcomponent (E));
+         Fd    : File_Descriptor;
          Rpath : constant String := Get_Runtime_Path ("polyorb-hi-c");
       begin
          Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (A))));
@@ -435,8 +428,7 @@ package body Ocarina.Backends.PO_HI_C is
          Set_Output (Fd);
 
          Write_Str ("PROJECT_NAME           = ");
-         Write_Name
-            (Normalize_Name (AAN.Name (AAN.Identifier (S))));
+         Write_Name (Normalize_Name (AAN.Name (AAN.Identifier (S))));
          Write_Eol;
          Write_Line ("OUTPUT_DIRECTORY       = generated-documentation");
          Write_Line ("GENERATE_LATEX         = YES");
@@ -524,8 +516,9 @@ package body Ocarina.Backends.PO_HI_C is
       Instance_Root : Node_Id;
       Success       : Boolean := True;
 
-      procedure Generate_PolyORB_HI_C_Makefile is new
-        Build_Utils.Makefiles.Generate (PolyORB_HI_C_Makefile);
+      procedure Generate_PolyORB_HI_C_Makefile is new Build_Utils.Makefiles
+        .Generate
+        (PolyORB_HI_C_Makefile);
 
    begin
       --  Instantiate the AADL tree
@@ -605,9 +598,11 @@ package body Ocarina.Backends.PO_HI_C is
          Execution_Tests.Init;
 
          if Do_Regression_Test then
-            Success := Execute_Regression_Test (Scenario_Dir.all,
-                                                Ref_Map,
-                                                Integer (Timeout))
+            Success :=
+              Execute_Regression_Test
+                (Scenario_Dir.all,
+                 Ref_Map,
+                 Integer (Timeout))
               and then Success;
 
             if not Create_Referencial then
@@ -621,8 +616,8 @@ package body Ocarina.Backends.PO_HI_C is
          end if;
 
          if Do_Coverage_Test then
-            Success := Execute_Coverage_Test (Integer (Timeout))
-              and then Success;
+            Success :=
+              Execute_Coverage_Test (Integer (Timeout)) and then Success;
          end if;
 
          --  Free memory

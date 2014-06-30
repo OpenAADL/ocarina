@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,8 +52,7 @@ package body Ocarina.Instances.Components.Connections is
 
    function Find_Connection_End
      (Component_Instance : Node_Id;
-      Connection_End     : Node_Id)
-     return Node_Id;
+      Connection_End     : Node_Id) return Node_Id;
    --  Find the entity (feature, subcomponent, etc.) instance pointed
    --  by the connection end.
 
@@ -63,11 +62,11 @@ package body Ocarina.Instances.Components.Connections is
 
    function Find_Connection_End
      (Component_Instance : Node_Id;
-      Connection_End     : Node_Id)
-     return Node_Id
+      Connection_End     : Node_Id) return Node_Id
    is
-      pragma Assert (AIN.Kind (Component_Instance) = K_Component_Instance
-                     and then ATN.Kind (Connection_End) = K_Entity_Reference);
+      pragma Assert
+        (AIN.Kind (Component_Instance) = K_Component_Instance
+         and then ATN.Kind (Connection_End) = K_Entity_Reference);
 
       Entity      : Node_Id;
       Entity_Path : Node_Id;
@@ -75,27 +74,30 @@ package body Ocarina.Instances.Components.Connections is
       if No (ATN.First_Node (ATN.Path (Connection_End))) then
          Entity_Path := No_Node;
       else
-         Entity_Path := New_Node (K_Entity_Reference_Instance,
-                                  ATN.Loc (Connection_End));
+         Entity_Path :=
+           New_Node (K_Entity_Reference_Instance, ATN.Loc (Connection_End));
 
-         case ATN.Kind (ATN.Corresponding_Entity
-                    (ATN.Item (ATN.First_Node (ATN.Path (Connection_End)))))
+         case ATN.Kind
+           (ATN.Corresponding_Entity
+              (ATN.Item (ATN.First_Node (ATN.Path (Connection_End)))))
          is
-            when K_Port_Spec
-              | K_Subcomponent_Access
-              | K_Feature_Group_Spec
-              | K_Parameter
-              | K_Subprogram_Spec =>
-               Entity := Get_First_Homonym_Instance
-                 (AIN.Features (Component_Instance),
-                  ATN.Name
-                    (ATN.Item (ATN.First_Node (ATN.Path (Connection_End)))));
+            when K_Port_Spec        |
+              K_Subcomponent_Access |
+              K_Feature_Group_Spec  |
+              K_Parameter           |
+              K_Subprogram_Spec     =>
+               Entity :=
+                 Get_First_Homonym_Instance
+                   (AIN.Features (Component_Instance),
+                    ATN.Name
+                      (ATN.Item (ATN.First_Node (ATN.Path (Connection_End)))));
 
             when K_Subcomponent =>
-               Entity := Get_First_Homonym_Instance
-                 (AIN.Subcomponents (Component_Instance),
-                  ATN.Name
-                    (ATN.Item (ATN.First_Node (ATN.Path (Connection_End)))));
+               Entity :=
+                 Get_First_Homonym_Instance
+                   (AIN.Subcomponents (Component_Instance),
+                    ATN.Name
+                      (ATN.Item (ATN.First_Node (ATN.Path (Connection_End)))));
 
             when K_Subprogram_Call =>
                if not Is_Empty (AIN.Calls (Component_Instance)) then
@@ -104,12 +106,13 @@ package body Ocarina.Instances.Components.Connections is
                        AIN.First_Node (AIN.Calls (Component_Instance));
                   begin
                      while Present (List_Node) loop
-                        Entity := Get_First_Homonym_Instance
-                          (AIN.Subprogram_Calls (List_Node),
-                           ATN.Name
-                             (ATN.Item
-                                (ATN.First_Node
-                                   (ATN.Path (Connection_End)))));
+                        Entity :=
+                          Get_First_Homonym_Instance
+                            (AIN.Subprogram_Calls (List_Node),
+                             ATN.Name
+                               (ATN.Item
+                                  (ATN.First_Node
+                                     (ATN.Path (Connection_End)))));
                         exit when Present (Entity);
                         List_Node := AIN.Next_Node (List_Node);
                      end loop;
@@ -127,32 +130,37 @@ package body Ocarina.Instances.Components.Connections is
 
             Add_Path_Element_To_Entity_Reference (Entity_Path, Entity);
 
-            if Present (ATN.Next_Node
-                          (ATN.First_Node
-                             (ATN.Path (Connection_End)))) then
-               case ATN.Kind (ATN.Corresponding_Entity
-                                (ATN.Item
-                                   (ATN.First_Node
-                                      (ATN.Path (Connection_End)))))
+            if Present
+                (ATN.Next_Node (ATN.First_Node (ATN.Path (Connection_End))))
+            then
+               case ATN.Kind
+                 (ATN.Corresponding_Entity
+                    (ATN.Item (ATN.First_Node (ATN.Path (Connection_End)))))
                is
                   when K_Subcomponent_Access =>
                      Entity := No_Node;
-                     --  XXX we have to find the feature instance of the
-                     --  corresponding subcomponent instance.
+                  --  XXX we have to find the feature instance of the
+                  --  corresponding subcomponent instance.
 
-                  when K_Feature_Group_Spec  =>
-                     Entity := Get_First_Homonym_Instance
-                       (AIN.Features (Entity),
-                        ATN.Name (ATN.Item (ATN.Next_Node (ATN.First_Node
-                                   (ATN.Path (Connection_End))))));
+                  when K_Feature_Group_Spec =>
+                     Entity :=
+                       Get_First_Homonym_Instance
+                         (AIN.Features (Entity),
+                          ATN.Name
+                            (ATN.Item
+                               (ATN.Next_Node
+                                  (ATN.First_Node
+                                     (ATN.Path (Connection_End))))));
 
                   when K_Subcomponent | K_Subprogram_Call =>
-                     Entity := Get_First_Homonym_Instance
-                       (AIN.Features (Corresponding_Instance (Entity)),
-                        ATN.Name (ATN.Item
-                                    (ATN.Next_Node
-                                       (ATN.First_Node
-                                          (ATN.Path (Connection_End))))));
+                     Entity :=
+                       Get_First_Homonym_Instance
+                         (AIN.Features (Corresponding_Instance (Entity)),
+                          ATN.Name
+                            (ATN.Item
+                               (ATN.Next_Node
+                                  (ATN.First_Node
+                                     (ATN.Path (Connection_End))))));
 
                   when others =>
                      raise Program_Error;
@@ -175,13 +183,13 @@ package body Ocarina.Instances.Components.Connections is
    function Instantiate_Connection
      (Instance_Root      : Node_Id;
       Component_Instance : Node_Id;
-      Connection         : Node_Id)
-     return Node_Id
+      Connection         : Node_Id) return Node_Id
    is
-      pragma Assert (AIN.Kind (Instance_Root) = K_Architecture_Instance
-                     and then ATN.Kind (Connection) = K_Connection);
+      pragma Assert
+        (AIN.Kind (Instance_Root) = K_Architecture_Instance
+         and then ATN.Kind (Connection) = K_Connection);
 
-      New_Instance   : constant Node_Id :=
+      New_Instance : constant Node_Id :=
         New_Node (K_Connection_Instance, ATN.Loc (Connection));
       Connection_Src : Node_Id;
       Connection_Dst : Node_Id;
@@ -189,23 +197,25 @@ package body Ocarina.Instances.Components.Connections is
    begin
       Set_Corresponding_Declaration (New_Instance, Connection);
       Set_Parent_Component (New_Instance, Component_Instance);
-      AIN.Set_Identifier (New_Instance,
-                          Duplicate_Identifier (ATN.Identifier (Connection)));
+      AIN.Set_Identifier
+        (New_Instance,
+         Duplicate_Identifier (ATN.Identifier (Connection)));
 
       if AIN.Identifier (New_Instance) /= No_Node then
-         AIN.Set_Corresponding_Entity (AIN.Identifier (New_Instance),
-                                       New_Instance);
+         AIN.Set_Corresponding_Entity
+           (AIN.Identifier (New_Instance),
+            New_Instance);
       end if;
 
       --  Set the connection ends and link them to the the connection
       --  instance.
 
-      Connection_Src := Find_Connection_End
-        (Component_Instance, ATN.Source (Connection));
+      Connection_Src :=
+        Find_Connection_End (Component_Instance, ATN.Source (Connection));
       AIN.Set_Source (New_Instance, Connection_Src);
 
-      Connection_Dst := Find_Connection_End
-        (Component_Instance, ATN.Destination (Connection));
+      Connection_Dst :=
+        Find_Connection_End (Component_Instance, ATN.Destination (Connection));
       AIN.Set_Destination (New_Instance, Connection_Dst);
 
       --  Make the connection ends aware of themselves and of the
@@ -213,17 +223,15 @@ package body Ocarina.Instances.Components.Connections is
 
       --  FIXME XXX : Update Connection_Dst instead of if then else case
       Append_Node_To_List
-         (Make_Node_Container
-            (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Dst))),
+        (Make_Node_Container
+           (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Dst))),
             New_Instance),
-         Destinations (AIN.Item
-                          (AIN.Last_Node
-                             (AIN.Path (Connection_Src)))));
+         Destinations (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Src)))));
 
       Append_Node_To_List
-         (Make_Node_Container
-            (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Src))),
-               New_Instance),
+        (Make_Node_Container
+           (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Src))),
+            New_Instance),
          Sources (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Dst)))));
 
       --  Set the connection type
@@ -233,11 +241,12 @@ package body Ocarina.Instances.Components.Connections is
       --  Apply the properties of the connection to the connection
       --  instance.
 
-      Success := Apply_Properties
-        (Instance_Root,
-         New_Instance,
-         ATN.Properties (Connection),
-         Override_Mode => True);
+      Success :=
+        Apply_Properties
+          (Instance_Root,
+           New_Instance,
+           ATN.Properties (Connection),
+           Override_Mode => True);
 
       if not Success then
          return No_Node;

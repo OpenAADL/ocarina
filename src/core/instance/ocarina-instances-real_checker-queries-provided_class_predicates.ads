@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2012 ESA & ISAE.                       --
+--                   Copyright (C) 2012-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,14 +39,13 @@ package Ocarina.Instances.REAL_Checker.Queries.Provided_Class_Predicates is
    function Is_Provided_Class_Predicate
      (E      : Types.Node_Id;
       D      : Types.Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean;
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean;
    --  Check if a component of same class than the instance E is provided
    --  to the instance D
    --  with the relation Provided_Virtual_Bus_Class property
 
-   package Provided_Class_Query is
-      new Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates
+   package Provided_Class_Query is new Ocarina.Instances.REAL_Checker.Queries
+     .Relational_Predicates
      (Is_Provided_Class_Predicate);
    --  Allows to search for all instances bound to a given
    --  instance in a Result_Set or in the global node table.

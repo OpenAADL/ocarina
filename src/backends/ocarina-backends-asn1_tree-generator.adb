@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,9 +32,9 @@
 ------------------------------------------------------------------------------
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
-with Outfiles; use Outfiles;
-with Namet;    use Namet;
-with Output;   use Output;
+with Outfiles;    use Outfiles;
+with Namet;       use Namet;
+with Output;      use Output;
 
 with Ocarina.Backends.ASN1_Values;
 with Ocarina.Backends.ASN1_Tree.Nodes;
@@ -320,8 +320,9 @@ package body Ocarina.Backends.ASN1_Tree.Generator is
    begin
       Generate (Type_Name (N));
       if Cons /= No_Node then
-         if Size_Down (Cons) /= No_Value and then
-            Size_Up (Cons) /= No_Value then
+         if Size_Down (Cons) /= No_Value
+           and then Size_Up (Cons) /= No_Value
+         then
             Write_Str (" (SIZE (");
             Write_Str (Image (Size_Down (Cons)));
             Write_Str (" .. ");

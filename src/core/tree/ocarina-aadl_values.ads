@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,13 +34,13 @@
 --  This package contains the functions related to value management
 --  inside the Ocarina tree.
 
-with Ocarina.Me_AADL.AADL_Tree.Nodes; use Ocarina.Me_AADL.AADL_Tree.Nodes;
-with Types;         use Types;
+with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
+with Types;                           use Types;
 
 package Ocarina.AADL_Values is
 
-   type Literal_Type is (LT_Integer, LT_Real, LT_String, LT_Boolean,
-                         LT_Enumeration);
+   type Literal_Type is
+     (LT_Integer, LT_Real, LT_String, LT_Boolean, LT_Enumeration);
 
    type Value_Type (T : Literal_Type := LT_Integer) is record
       case T is
@@ -64,8 +64,8 @@ package Ocarina.AADL_Values is
    end record;
 
    No_Value : constant Value_Id;
-   V_Zero  :  Value_Id;
-   V_One   :  Value_Id;
+   V_Zero : Value_Id;
+   V_One  : Value_Id;
 
    function Get_Value_Type (Value : Value_Id) return Value_Type;
 
@@ -75,15 +75,13 @@ package Ocarina.AADL_Values is
      (Value    : Long_Long_Float;
       Negative : Boolean              := False;
       Base     : Unsigned_Short_Short := 10;
-      Exp      : Integer              := 0)
-     return Value_Id;
+      Exp      : Integer              := 0) return Value_Id;
 
    function New_Integer_Value
      (Value    : Unsigned_Long_Long;
       Negative : Boolean              := False;
       Base     : Unsigned_Short_Short := 10;
-      Exp      : Integer              := 0)
-     return Value_Id;
+      Exp      : Integer              := 0) return Value_Id;
 
    function New_String_Value (Value : Name_Id) return Value_Id;
 
@@ -93,14 +91,8 @@ package Ocarina.AADL_Values is
    function Value (V : Value_Id) return Value_Type;
    procedure Set_Value (V : Value_Id; X : Value_Type);
 
-   function Image
-     (Value  : Value_Type;
-      Quoted : Boolean    := True)
-     return String;
-   function Image
-     (Value  : Value_Id;
-      Quoted : Boolean  := True)
-     return String;
+   function Image (Value : Value_Type; Quoted : Boolean := True) return String;
+   function Image (Value : Value_Id; Quoted : Boolean := True) return String;
    --  Return the image of the given value. These routines edit the
    --  name buffer.
 
@@ -120,14 +112,12 @@ package Ocarina.AADL_Values is
    function Image
      (V    : Long_Long_Float;
       Base : Unsigned_Short_Short;
-      Exp  : Integer)
-     return String;
+      Exp  : Integer) return String;
 
    function Image
      (V    : Unsigned_Long_Long;
       Base : Unsigned_Short_Short;
-      Exp  : Integer)
-     return String;
+      Exp  : Integer) return String;
 
    function Image (Kind : Node_Kind) return String;
    --  Return corresponding string of node kind

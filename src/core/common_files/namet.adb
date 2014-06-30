@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -68,7 +68,7 @@ package body Namet is
    procedure Add_Char_To_Name_Buffer (C : Character) is
    begin
       if Name_Len < Name_Buffer'Last then
-         Name_Len := Name_Len + 1;
+         Name_Len               := Name_Len + 1;
          Name_Buffer (Name_Len) := C;
       end if;
    end Add_Char_To_Name_Buffer;
@@ -120,7 +120,7 @@ package body Namet is
    begin
       pragma Assert (Id in Name_Entries.First .. Name_Entries.Last);
 
-      S := Name_Entries.Table (Id).Name_Chars_Index;
+      S        := Name_Entries.Table (Id).Name_Chars_Index;
       Name_Len := Natural (Name_Entries.Table (Id).Name_Len);
 
       for J in 1 .. Name_Len loop
@@ -160,7 +160,7 @@ package body Namet is
       S := Name_Entries.Table (Id).Name_Chars_Index;
 
       for J in 1 .. Natural (Name_Entries.Table (Id).Name_Len) loop
-         Name_Len := Name_Len + 1;
+         Name_Len               := Name_Len + 1;
          Name_Buffer (Name_Len) := Name_Chars.Table (S + Int (J));
       end loop;
    end Get_Name_String_And_Append;
@@ -208,7 +208,7 @@ package body Namet is
       --  Used to avoid when others on case jump below
 
       Even_Name_Len : Integer;
-      --  Last even numbered position (used for >12 case)
+   --  Last even numbered position (used for >12 case)
 
    begin
 
@@ -223,19 +223,35 @@ package body Namet is
       if Name_Len > 12 then
          Even_Name_Len := (Name_Len) / 2 * 2;
 
-         return ((((((((((((
-           Character'Pos (Name_Buffer (01))) * 2 +
-           Character'Pos (Name_Buffer (Even_Name_Len - 10))) * 2 +
-           Character'Pos (Name_Buffer (03))) * 2 +
-           Character'Pos (Name_Buffer (Even_Name_Len - 08))) * 2 +
-           Character'Pos (Name_Buffer (05))) * 2 +
-           Character'Pos (Name_Buffer (Even_Name_Len - 06))) * 2 +
-           Character'Pos (Name_Buffer (07))) * 2 +
-           Character'Pos (Name_Buffer (Even_Name_Len - 04))) * 2 +
-           Character'Pos (Name_Buffer (09))) * 2 +
-           Character'Pos (Name_Buffer (Even_Name_Len - 02))) * 2 +
-           Character'Pos (Name_Buffer (11))) * 2 +
-           Character'Pos (Name_Buffer (Even_Name_Len))) mod Hash_Num;
+         return
+           ((
+             ((
+               ((
+                 ((
+                   ((
+                     ((Character'Pos (Name_Buffer (01))) * 2 +
+                      Character'Pos (Name_Buffer (Even_Name_Len - 10))) *
+                     2 +
+                     Character'Pos (Name_Buffer (03))) *
+                    2 +
+                    Character'Pos (Name_Buffer (Even_Name_Len - 08))) *
+                   2 +
+                   Character'Pos (Name_Buffer (05))) *
+                  2 +
+                  Character'Pos (Name_Buffer (Even_Name_Len - 06))) *
+                 2 +
+                 Character'Pos (Name_Buffer (07))) *
+                2 +
+                Character'Pos (Name_Buffer (Even_Name_Len - 04))) *
+               2 +
+               Character'Pos (Name_Buffer (09))) *
+              2 +
+              Character'Pos (Name_Buffer (Even_Name_Len - 02))) *
+             2 +
+             Character'Pos (Name_Buffer (11))) *
+            2 +
+            Character'Pos (Name_Buffer (Even_Name_Len))) mod
+           Hash_Num;
       end if;
 
       --  For the cases of 1-12 characters, all characters participate in the
@@ -245,118 +261,208 @@ package body Namet is
       case Int_1_12 (Name_Len) is
 
          when 1 =>
-            return
-               Character'Pos (Name_Buffer (1));
+            return Character'Pos (Name_Buffer (1));
 
          when 2 =>
-            return ((
-              Character'Pos (Name_Buffer (1))) * 64 +
-              Character'Pos (Name_Buffer (2))) mod Hash_Num;
+            return
+              ((Character'Pos (Name_Buffer (1))) * 64 +
+               Character'Pos (Name_Buffer (2))) mod
+              Hash_Num;
 
          when 3 =>
-            return (((
-              Character'Pos (Name_Buffer (1))) * 16 +
-              Character'Pos (Name_Buffer (3))) * 16 +
-              Character'Pos (Name_Buffer (2))) mod Hash_Num;
+            return
+              (((Character'Pos (Name_Buffer (1))) * 16 +
+                Character'Pos (Name_Buffer (3))) *
+               16 +
+               Character'Pos (Name_Buffer (2))) mod
+              Hash_Num;
 
          when 4 =>
-            return ((((
-              Character'Pos (Name_Buffer (1))) * 8 +
-              Character'Pos (Name_Buffer (2))) * 8 +
-              Character'Pos (Name_Buffer (3))) * 8 +
-              Character'Pos (Name_Buffer (4))) mod Hash_Num;
+            return
+              ((
+                ((Character'Pos (Name_Buffer (1))) * 8 +
+                 Character'Pos (Name_Buffer (2))) *
+                8 +
+                Character'Pos (Name_Buffer (3))) *
+               8 +
+               Character'Pos (Name_Buffer (4))) mod
+              Hash_Num;
 
          when 5 =>
-            return (((((
-              Character'Pos (Name_Buffer (4))) * 8 +
-              Character'Pos (Name_Buffer (1))) * 4 +
-              Character'Pos (Name_Buffer (3))) * 4 +
-              Character'Pos (Name_Buffer (5))) * 8 +
-              Character'Pos (Name_Buffer (2))) mod Hash_Num;
+            return
+              ((
+                (((Character'Pos (Name_Buffer (4))) * 8 +
+                  Character'Pos (Name_Buffer (1))) *
+                 4 +
+                 Character'Pos (Name_Buffer (3))) *
+                4 +
+                Character'Pos (Name_Buffer (5))) *
+               8 +
+               Character'Pos (Name_Buffer (2))) mod
+              Hash_Num;
 
          when 6 =>
-            return ((((((
-              Character'Pos (Name_Buffer (5))) * 4 +
-              Character'Pos (Name_Buffer (1))) * 4 +
-              Character'Pos (Name_Buffer (4))) * 4 +
-              Character'Pos (Name_Buffer (2))) * 4 +
-              Character'Pos (Name_Buffer (6))) * 4 +
-              Character'Pos (Name_Buffer (3))) mod Hash_Num;
+            return
+              ((
+                ((
+                  ((Character'Pos (Name_Buffer (5))) * 4 +
+                   Character'Pos (Name_Buffer (1))) *
+                  4 +
+                  Character'Pos (Name_Buffer (4))) *
+                 4 +
+                 Character'Pos (Name_Buffer (2))) *
+                4 +
+                Character'Pos (Name_Buffer (6))) *
+               4 +
+               Character'Pos (Name_Buffer (3))) mod
+              Hash_Num;
 
          when 7 =>
-            return (((((((
-              Character'Pos (Name_Buffer (4))) * 4 +
-              Character'Pos (Name_Buffer (3))) * 4 +
-              Character'Pos (Name_Buffer (1))) * 4 +
-              Character'Pos (Name_Buffer (2))) * 2 +
-              Character'Pos (Name_Buffer (5))) * 2 +
-              Character'Pos (Name_Buffer (7))) * 2 +
-              Character'Pos (Name_Buffer (6))) mod Hash_Num;
+            return
+              ((
+                ((
+                  (((Character'Pos (Name_Buffer (4))) * 4 +
+                    Character'Pos (Name_Buffer (3))) *
+                   4 +
+                   Character'Pos (Name_Buffer (1))) *
+                  4 +
+                  Character'Pos (Name_Buffer (2))) *
+                 2 +
+                 Character'Pos (Name_Buffer (5))) *
+                2 +
+                Character'Pos (Name_Buffer (7))) *
+               2 +
+               Character'Pos (Name_Buffer (6))) mod
+              Hash_Num;
 
          when 8 =>
-            return ((((((((
-              Character'Pos (Name_Buffer (2))) * 4 +
-              Character'Pos (Name_Buffer (1))) * 4 +
-              Character'Pos (Name_Buffer (3))) * 2 +
-              Character'Pos (Name_Buffer (5))) * 2 +
-              Character'Pos (Name_Buffer (7))) * 2 +
-              Character'Pos (Name_Buffer (6))) * 2 +
-              Character'Pos (Name_Buffer (4))) * 2 +
-              Character'Pos (Name_Buffer (8))) mod Hash_Num;
+            return
+              ((
+                ((
+                  ((
+                    ((Character'Pos (Name_Buffer (2))) * 4 +
+                     Character'Pos (Name_Buffer (1))) *
+                    4 +
+                    Character'Pos (Name_Buffer (3))) *
+                   2 +
+                   Character'Pos (Name_Buffer (5))) *
+                  2 +
+                  Character'Pos (Name_Buffer (7))) *
+                 2 +
+                 Character'Pos (Name_Buffer (6))) *
+                2 +
+                Character'Pos (Name_Buffer (4))) *
+               2 +
+               Character'Pos (Name_Buffer (8))) mod
+              Hash_Num;
 
          when 9 =>
-            return (((((((((
-              Character'Pos (Name_Buffer (2))) * 4 +
-              Character'Pos (Name_Buffer (1))) * 4 +
-              Character'Pos (Name_Buffer (3))) * 4 +
-              Character'Pos (Name_Buffer (4))) * 2 +
-              Character'Pos (Name_Buffer (8))) * 2 +
-              Character'Pos (Name_Buffer (7))) * 2 +
-              Character'Pos (Name_Buffer (5))) * 2 +
-              Character'Pos (Name_Buffer (6))) * 2 +
-              Character'Pos (Name_Buffer (9))) mod Hash_Num;
+            return
+              ((
+                ((
+                  ((
+                    (((Character'Pos (Name_Buffer (2))) * 4 +
+                      Character'Pos (Name_Buffer (1))) *
+                     4 +
+                     Character'Pos (Name_Buffer (3))) *
+                    4 +
+                    Character'Pos (Name_Buffer (4))) *
+                   2 +
+                   Character'Pos (Name_Buffer (8))) *
+                  2 +
+                  Character'Pos (Name_Buffer (7))) *
+                 2 +
+                 Character'Pos (Name_Buffer (5))) *
+                2 +
+                Character'Pos (Name_Buffer (6))) *
+               2 +
+               Character'Pos (Name_Buffer (9))) mod
+              Hash_Num;
 
          when 10 =>
-            return ((((((((((
-              Character'Pos (Name_Buffer (01))) * 2 +
-              Character'Pos (Name_Buffer (02))) * 2 +
-              Character'Pos (Name_Buffer (08))) * 2 +
-              Character'Pos (Name_Buffer (03))) * 2 +
-              Character'Pos (Name_Buffer (04))) * 2 +
-              Character'Pos (Name_Buffer (09))) * 2 +
-              Character'Pos (Name_Buffer (06))) * 2 +
-              Character'Pos (Name_Buffer (05))) * 2 +
-              Character'Pos (Name_Buffer (07))) * 2 +
-              Character'Pos (Name_Buffer (10))) mod Hash_Num;
+            return
+              ((
+                ((
+                  ((
+                    ((
+                      ((Character'Pos (Name_Buffer (01))) * 2 +
+                       Character'Pos (Name_Buffer (02))) *
+                      2 +
+                      Character'Pos (Name_Buffer (08))) *
+                     2 +
+                     Character'Pos (Name_Buffer (03))) *
+                    2 +
+                    Character'Pos (Name_Buffer (04))) *
+                   2 +
+                   Character'Pos (Name_Buffer (09))) *
+                  2 +
+                  Character'Pos (Name_Buffer (06))) *
+                 2 +
+                 Character'Pos (Name_Buffer (05))) *
+                2 +
+                Character'Pos (Name_Buffer (07))) *
+               2 +
+               Character'Pos (Name_Buffer (10))) mod
+              Hash_Num;
 
          when 11 =>
-            return (((((((((((
-              Character'Pos (Name_Buffer (05))) * 2 +
-              Character'Pos (Name_Buffer (01))) * 2 +
-              Character'Pos (Name_Buffer (06))) * 2 +
-              Character'Pos (Name_Buffer (09))) * 2 +
-              Character'Pos (Name_Buffer (07))) * 2 +
-              Character'Pos (Name_Buffer (03))) * 2 +
-              Character'Pos (Name_Buffer (08))) * 2 +
-              Character'Pos (Name_Buffer (02))) * 2 +
-              Character'Pos (Name_Buffer (10))) * 2 +
-              Character'Pos (Name_Buffer (04))) * 2 +
-              Character'Pos (Name_Buffer (11))) mod Hash_Num;
+            return
+              ((
+                ((
+                  ((
+                    ((
+                      (((Character'Pos (Name_Buffer (05))) * 2 +
+                        Character'Pos (Name_Buffer (01))) *
+                       2 +
+                       Character'Pos (Name_Buffer (06))) *
+                      2 +
+                      Character'Pos (Name_Buffer (09))) *
+                     2 +
+                     Character'Pos (Name_Buffer (07))) *
+                    2 +
+                    Character'Pos (Name_Buffer (03))) *
+                   2 +
+                   Character'Pos (Name_Buffer (08))) *
+                  2 +
+                  Character'Pos (Name_Buffer (02))) *
+                 2 +
+                 Character'Pos (Name_Buffer (10))) *
+                2 +
+                Character'Pos (Name_Buffer (04))) *
+               2 +
+               Character'Pos (Name_Buffer (11))) mod
+              Hash_Num;
 
          when 12 =>
-            return ((((((((((((
-              Character'Pos (Name_Buffer (03))) * 2 +
-              Character'Pos (Name_Buffer (02))) * 2 +
-              Character'Pos (Name_Buffer (05))) * 2 +
-              Character'Pos (Name_Buffer (01))) * 2 +
-              Character'Pos (Name_Buffer (06))) * 2 +
-              Character'Pos (Name_Buffer (04))) * 2 +
-              Character'Pos (Name_Buffer (08))) * 2 +
-              Character'Pos (Name_Buffer (11))) * 2 +
-              Character'Pos (Name_Buffer (07))) * 2 +
-              Character'Pos (Name_Buffer (09))) * 2 +
-              Character'Pos (Name_Buffer (10))) * 2 +
-              Character'Pos (Name_Buffer (12))) mod Hash_Num;
+            return
+              ((
+                ((
+                  ((
+                    ((
+                      ((
+                        ((Character'Pos (Name_Buffer (03))) * 2 +
+                         Character'Pos (Name_Buffer (02))) *
+                        2 +
+                        Character'Pos (Name_Buffer (05))) *
+                       2 +
+                       Character'Pos (Name_Buffer (01))) *
+                      2 +
+                      Character'Pos (Name_Buffer (06))) *
+                     2 +
+                     Character'Pos (Name_Buffer (04))) *
+                    2 +
+                    Character'Pos (Name_Buffer (08))) *
+                   2 +
+                   Character'Pos (Name_Buffer (11))) *
+                  2 +
+                  Character'Pos (Name_Buffer (07))) *
+                 2 +
+                 Character'Pos (Name_Buffer (09))) *
+                2 +
+                Character'Pos (Name_Buffer (10))) *
+               2 +
+               Character'Pos (Name_Buffer (12))) mod
+              Hash_Num;
 
       end case;
    end Hash;
@@ -432,7 +538,7 @@ package body Namet is
       --  Pointer into string table
 
       Hash_Index : Hash_Index_Type;
-      --  Computed hash index
+   --  Computed hash index
 
    begin
       --  Quick handling for one character names
@@ -447,13 +553,14 @@ package body Namet is
 
       else
          Hash_Index := Namet.Hash;
-         New_Id := Hash_Table (Hash_Index);
+         New_Id     := Hash_Table (Hash_Index);
 
          if New_Id = No_Name then
             Hash_Table (Hash_Index) := Name_Entries.Last + 1;
 
          else
-            Search : loop
+            Search :
+            loop
                if Name_Len /=
                  Integer (Name_Entries.Table (New_Id).Name_Len)
                then
@@ -473,13 +580,13 @@ package body Namet is
                --  Current entry in hash chain does not match
 
                <<No_Match>>
-                  if Name_Entries.Table (New_Id).Hash_Link /= No_Name then
-                     New_Id := Name_Entries.Table (New_Id).Hash_Link;
-                  else
-                     Name_Entries.Table (New_Id).Hash_Link :=
-                       Name_Entries.Last + 1;
-                     exit Search;
-                  end if;
+               if Name_Entries.Table (New_Id).Hash_Link /= No_Name then
+                  New_Id := Name_Entries.Table (New_Id).Hash_Link;
+               else
+                  Name_Entries.Table (New_Id).Hash_Link :=
+                    Name_Entries.Last + 1;
+                  exit Search;
+               end if;
 
             end loop Search;
          end if;

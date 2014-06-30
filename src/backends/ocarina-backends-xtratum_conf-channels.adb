@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -60,7 +60,7 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
-   package XV  renames Ocarina.Backends.XML_Values;
+   package XV renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -102,8 +102,7 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -141,24 +140,24 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S                    : Node_Id;
-      C                    : Node_Id;
-      U                    : Node_Id;
-      R                    : Node_Id;
-      P                    : Node_Id;
-      Q                    : Node_Id;
-      Queue_Size                 : Unsigned_Long_Long;
-      Source_Port_Name           : Name_Id;
-      Destination_Port_Name      : Name_Id;
-      Destination_Partition      : Node_Id;
-      Source_Partition           : Node_Id;
-      Source_Port                : Node_Id;
-      Associated_Data_Size       : Unsigned_Long_Long;
-      Destination_Port           : Node_Id;
-      Channels_Node              : Node_Id;
-      Channel_Node               : Node_Id;
-      Source_Node                : Node_Id;
-      Destination_Node           : Node_Id;
+      S                     : Node_Id;
+      C                     : Node_Id;
+      U                     : Node_Id;
+      R                     : Node_Id;
+      P                     : Node_Id;
+      Q                     : Node_Id;
+      Queue_Size            : Unsigned_Long_Long;
+      Source_Port_Name      : Name_Id;
+      Destination_Port_Name : Name_Id;
+      Destination_Partition : Node_Id;
+      Source_Partition      : Node_Id;
+      Source_Port           : Node_Id;
+      Associated_Data_Size  : Unsigned_Long_Long;
+      Destination_Port      : Node_Id;
+      Channels_Node         : Node_Id;
+      Channel_Node          : Node_Id;
+      Source_Node           : Node_Id;
+      Destination_Node      : Node_Id;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       R := XTN.Node (Backend_Node (Identifier (E)));
@@ -177,52 +176,42 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
             if Kind (C) = K_Connection_Instance then
 
                Source_Port :=
-                  (AIN.Item
-                     (AIN.Next_Node
-                        (AIN.First_Node
-                           (AIN.Path
-                              (AIN.Source (C))))));
+                 (AIN.Item
+                    (AIN.Next_Node
+                       (AIN.First_Node (AIN.Path (AIN.Source (C))))));
 
                Destination_Port :=
-                  AIN.Item
-                     (AIN.Next_Node
-                        (AIN.First_Node
-                           (AIN.Path
-                              (AIN.Destination (C)))));
+                 AIN.Item
+                   (AIN.Next_Node
+                      (AIN.First_Node (AIN.Path (AIN.Destination (C)))));
 
                Source_Port_Name :=
-                  AIN.Name
-                     (AIN.Identifier
-                        (AIN.Item
-                           (AIN.Next_Node
-                              (AIN.First_Node
-                                 (AIN.Path
-                                    (AIN.Source (C)))))));
+                 AIN.Name
+                   (AIN.Identifier
+                      (AIN.Item
+                         (AIN.Next_Node
+                            (AIN.First_Node (AIN.Path (AIN.Source (C)))))));
 
                Destination_Port_Name :=
-                  AIN.Name
-                     (AIN.Identifier
-                        (AIN.Item
-                           (AIN.Next_Node
-                              (AIN.First_Node
-                                 (AIN.Path
-                                    (AIN.Destination (C)))))));
+                 AIN.Name
+                   (AIN.Identifier
+                      (AIN.Item
+                         (AIN.Next_Node
+                            (AIN.First_Node
+                               (AIN.Path (AIN.Destination (C)))))));
 
                Source_Partition :=
-                     AIN.Corresponding_Instance
-                        (AIN.Item
-                          (AIN.First_Node
-                             (AIN.Path (AIN.Source (C)))));
+                 AIN.Corresponding_Instance
+                   (AIN.Item (AIN.First_Node (AIN.Path (AIN.Source (C)))));
 
                Destination_Partition :=
-                     AIN.Corresponding_Instance
-                        (AIN.Item
-                          (AIN.First_Node
-                             (AIN.Path (AIN.Destination (C)))));
+                 AIN.Corresponding_Instance
+                   (AIN.Item
+                      (AIN.First_Node (AIN.Path (AIN.Destination (C)))));
                if not Is_Event (Source_Port) then
-                  Channel_Node      := Make_XML_Node ("SamplingChannel");
+                  Channel_Node := Make_XML_Node ("SamplingChannel");
                else
-                  Channel_Node      := Make_XML_Node ("QueuingChannel");
+                  Channel_Node := Make_XML_Node ("QueuingChannel");
                   Set_Str_To_Name_Buffer ("maxNoMessages");
                   P := Make_Defining_Identifier (Name_Find);
                   Get_Name_String (Source_Port_Name);
@@ -230,90 +219,99 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
                   if Get_Queue_Size (Destination_Port) = -1 then
                      Queue_Size := 1;
                   else
-                     Queue_Size := Unsigned_Long_Long
-                        (Get_Queue_Size (Destination_Port));
+                     Queue_Size :=
+                       Unsigned_Long_Long (Get_Queue_Size (Destination_Port));
                   end if;
-                  Q := Make_Literal
-                     (XV.New_Numeric_Value
-                        (Queue_Size, 1, 10));
+                  Q := Make_Literal (XV.New_Numeric_Value (Queue_Size, 1, 10));
                   Append_Node_To_List
-                     (Make_Assignement (P, Q), XTN.Items (Channel_Node));
+                    (Make_Assignement (P, Q),
+                     XTN.Items (Channel_Node));
                end if;
 
-               Source_Node       := Make_XML_Node ("Source");
-               Destination_Node  := Make_XML_Node ("Destination");
+               Source_Node      := Make_XML_Node ("Source");
+               Destination_Node := Make_XML_Node ("Destination");
 
                Set_Str_To_Name_Buffer ("maxMessageLength");
                P := Make_Defining_Identifier (Name_Find);
                Get_Name_String (Source_Port_Name);
 
-               if Get_Data_Size (Corresponding_Instance
-                  (Source_Port)) /= Null_Size then
+               if Get_Data_Size (Corresponding_Instance (Source_Port)) /=
+                 Null_Size
+               then
                   Associated_Data_Size :=
-                        To_Bytes (Get_Data_Size
-                           (Corresponding_Instance (Source_Port)));
+                    To_Bytes
+                      (Get_Data_Size (Corresponding_Instance (Source_Port)));
                else
                   Associated_Data_Size := 1;
                end if;
 
                Set_Str_To_Name_Buffer
-                  (Unsigned_Long_Long'Image (Associated_Data_Size));
+                 (Unsigned_Long_Long'Image (Associated_Data_Size));
                Add_Str_To_Name_Buffer ("B");
                Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
                Append_Node_To_List
-                  (Make_Assignement (P, Q), XTN.Items (Channel_Node));
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Channel_Node));
 
                Set_Str_To_Name_Buffer ("portName");
                P := Make_Defining_Identifier (Name_Find);
                Get_Name_String (Source_Port_Name);
                Q := Make_Defining_Identifier (Name_Find);
                Append_Node_To_List
-                  (Make_Assignement (P, Q), XTN.Items (Source_Node));
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Source_Node));
 
                Set_Str_To_Name_Buffer ("partitionId");
                P := Make_Defining_Identifier (Name_Find);
                Get_Name_String (Source_Port_Name);
-               Q := Copy_Node
-                  (Backend_Node
-                     (Identifier (Get_Bound_Processor (Source_Partition))));
+               Q :=
+                 Copy_Node
+                   (Backend_Node
+                      (Identifier (Get_Bound_Processor (Source_Partition))));
                Append_Node_To_List
-                  (Make_Assignement (P, Q), XTN.Items (Source_Node));
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Source_Node));
 
                Set_Str_To_Name_Buffer ("partitionId");
                P := Make_Defining_Identifier (Name_Find);
                Get_Name_String (Source_Port_Name);
-               Q := Copy_Node
-                  (Backend_Node
-                     (Identifier
-                        (Get_Bound_Processor (Destination_Partition))));
+               Q :=
+                 Copy_Node
+                   (Backend_Node
+                      (Identifier
+                         (Get_Bound_Processor (Destination_Partition))));
                Append_Node_To_List
-                  (Make_Assignement (P, Q), XTN.Items (Destination_Node));
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Destination_Node));
 
                Set_Str_To_Name_Buffer ("portName");
                P := Make_Defining_Identifier (Name_Find);
                Get_Name_String (Destination_Port_Name);
                Q := Make_Defining_Identifier (Name_Find);
                Append_Node_To_List
-                  (Make_Assignement (P, Q), XTN.Items (Destination_Node));
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Destination_Node));
 
                Set_Str_To_Name_Buffer ("partitionName");
                P := Make_Defining_Identifier (Name_Find);
                Get_Name_String
-                  (To_Lower
-                     (Display_Name
-                        (Identifier
-                           (Parent_Subcomponent
-                              (Destination_Partition)))));
+                 (To_Lower
+                    (Display_Name
+                       (Identifier
+                          (Parent_Subcomponent (Destination_Partition)))));
                Q := Make_Defining_Identifier (Name_Find);
                Append_Node_To_List
-                  (Make_Assignement (P, Q), XTN.Items (Destination_Node));
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Destination_Node));
 
                Append_Node_To_List (Source_Node, XTN.Subitems (Channel_Node));
                Append_Node_To_List
-                  (Destination_Node, XTN.Subitems (Channel_Node));
+                 (Destination_Node,
+                  XTN.Subitems (Channel_Node));
                Append_Node_To_List
-                  (Channel_Node, XTN.Subitems (Channels_Node));
+                 (Channel_Node,
+                  XTN.Subitems (Channels_Node));
             end if;
 
             C := Next_Node (C);
@@ -325,8 +323,8 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -342,13 +340,13 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S                    : Node_Id;
+      S : Node_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -361,13 +359,13 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S           : Node_Id;
+      S : Node_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -91,10 +91,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       --  The File name corresponding is the lowerd name of N
 
       Get_Name_String
-        (Conventional_Base_Name
-         (Name
-          (Defining_Identifier
-           (N))));
+        (Conventional_Base_Name (Name (Defining_Identifier (N))));
 
       --  Adding file suffix
 
@@ -111,17 +108,15 @@ package body Ocarina.Backends.MAST_Tree.Generator is
    begin
       if not Print_On_Stdout then
          declare
-            File_Name : constant Name_Id
-              := Get_File_Name (N);
-            Fd : File_Descriptor;
+            File_Name : constant Name_Id := Get_File_Name (N);
+            Fd        : File_Descriptor;
          begin
             Get_Name_String (File_Name);
 
             --  Create a new file and overwrites existing file with
             --  the same name
 
-            Fd := Create_File
-               (Name_Buffer (1 .. Name_Len), Text);
+            Fd := Create_File (Name_Buffer (1 .. Name_Len), Text);
 
             if Fd = Invalid_FD then
                raise Program_Error;
@@ -247,7 +242,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
 
    procedure Generate_MAST_File (N : Node_Id) is
       Fd : File_Descriptor;
-      F : Node_Id;
+      F  : Node_Id;
    begin
       if No (N) then
          return;
@@ -288,8 +283,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
       Write_Name (Node_Name (N));
       Write_Line (Tok_Colon);
 
-      if Fixed_Priority_Processor (N) or else
-         Regular_Processor (N) then
+      if Fixed_Priority_Processor (N) or else Regular_Processor (N) then
          Write_Indentation (-1);
          Write (Tok_Avg_ISR_Switch);
          Write_Space;
@@ -890,7 +884,7 @@ package body Ocarina.Backends.MAST_Tree.Generator is
          Write (Tok_Colon);
          Write_Eol;
          Write_Indentation (-1);
-         Write (Tok_Best_Case_Execution_Time);
+         Write (Tok_Best_Case_Execution_time);
          Write_Space;
          Write (Tok_Assign);
          Write_Space;

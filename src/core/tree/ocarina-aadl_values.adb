@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -68,7 +68,9 @@ package body Ocarina.AADL_Values is
    -- Image --
    -----------
 
-   function Image (Value : Value_Type; Quoted : Boolean := True) return String
+   function Image
+     (Value  : Value_Type;
+      Quoted : Boolean := True) return String
    is
       use Namet;
 
@@ -126,8 +128,7 @@ package body Ocarina.AADL_Values is
    -- Image --
    -----------
 
-   function Image (Value : Value_Id; Quoted : Boolean := True) return String
-   is
+   function Image (Value : Value_Id; Quoted : Boolean := True) return String is
    begin
       if Value = No_Value then
          return "NoValue";
@@ -153,8 +154,7 @@ package body Ocarina.AADL_Values is
      (Value    : Long_Long_Float;
       Negative : Boolean              := False;
       Base     : Unsigned_Short_Short := 10;
-      Exp      : Integer              := 0)
-     return Value_Id
+      Exp      : Integer              := 0) return Value_Id
    is
    begin
       return New_Value (Value_Type'(LT_Real, Value, Negative, Base, Exp));
@@ -168,8 +168,7 @@ package body Ocarina.AADL_Values is
      (Value    : Unsigned_Long_Long;
       Negative : Boolean              := False;
       Base     : Unsigned_Short_Short := 10;
-      Exp      : Integer              := 0)
-     return Value_Id
+      Exp      : Integer              := 0) return Value_Id
    is
    begin
       return New_Value (Value_Type'(LT_Integer, Value, Negative, Base, Exp));
@@ -201,7 +200,7 @@ package body Ocarina.AADL_Values is
       V : Value_Id;
    begin
       VT.Increment_Last;
-      V := VT.Last;
+      V            := VT.Last;
       VT.Table (V) := Value;
       return V;
    end New_Value;
@@ -226,8 +225,7 @@ package body Ocarina.AADL_Values is
 
    function Image
      (V    : Long_Long_Float;
-      Base : Unsigned_Short_Short)
-     return String;
+      Base : Unsigned_Short_Short) return String;
 
    function Remove_Ending_Zeros (Str : String) return String;
    --  Remove ending zeros '0'
@@ -238,20 +236,19 @@ package body Ocarina.AADL_Values is
    function Remove_Leading_Spaces (Str : String) return String;
    --  Remove leading spaces
 
-   Minus_Character     : constant Character := '-';
-   Base_Separator      : constant Character := '#';
-   Exp_Separator       : constant Character := 'E';
-   Real_Separator      : constant Character := '.';
+   Minus_Character : constant Character := '-';
+   Base_Separator  : constant Character := '#';
+   Exp_Separator   : constant Character := 'E';
+   Real_Separator  : constant Character := '.';
 
    Real_Epsilon        : constant Long_Long_Float := 1.0E-10;
-   Fraction_Max_Digits : constant Integer := 4 * 10;
+   Fraction_Max_Digits : constant Integer         := 4 * 10;
    --  Max digits = digits (Real_Epsilon) in base 2 (not in base 10 !!)
    --             = about (4 * digits (Real_Epsilon) in base 10)
 
    function Image
      (V    : Unsigned_Long_Long;
-      Base : Unsigned_Short_Short)
-     return String;
+      Base : Unsigned_Short_Short) return String;
 
    -----------
    -- Image --
@@ -274,14 +271,13 @@ package body Ocarina.AADL_Values is
 
    function Image
      (V    : Unsigned_Long_Long;
-      Base : Unsigned_Short_Short)
-     return String
+      Base : Unsigned_Short_Short) return String
    is
-      Str     : String (1 .. Unsigned_Long_Long'Size + 4);
+      Str : String (1 .. Unsigned_Long_Long'Size + 4);
       --  Max digits = BB # (Max Bits) #
 
-      Str_Pos : Integer := Str'Last;
-      Rest    : Unsigned_Long_Long := V;
+      Str_Pos : Integer                     := Str'Last;
+      Rest    : Unsigned_Long_Long          := V;
       LBase   : constant Unsigned_Long_Long := Unsigned_Long_Long (Base);
       Digit   : Unsigned_Short_Short;
       Ch      : Character;
@@ -312,8 +308,7 @@ package body Ocarina.AADL_Values is
    function Image
      (V    : Unsigned_Long_Long;
       Base : Unsigned_Short_Short;
-      Exp  : Integer)
-     return String
+      Exp  : Integer) return String
    is
       New_Value : Unsigned_Long_Long;
 
@@ -324,28 +319,33 @@ package body Ocarina.AADL_Values is
             return Image (V);
          else
             --  based integer without exponent
-            return Image (Base) & Base_Separator &
-                   Image (V, Base) & Base_Separator;
+            return Image (Base) &
+              Base_Separator &
+              Image (V, Base) &
+              Base_Separator;
          end if;
       else
-         New_Value := Unsigned_Long_Long (Long_Long_Float (V) /
-                                          Power (Integer (Base), Exp));
+         New_Value :=
+           Unsigned_Long_Long
+             (Long_Long_Float (V) / Power (Integer (Base), Exp));
          if Base = 10 then
             --  decimal integer with exponent
-            return Image (New_Value) &
-                   Exp_Separator & Image (Exp);
+            return Image (New_Value) & Exp_Separator & Image (Exp);
          else
             --  based intgeger with exponent
-            return Image (Base) & Base_Separator &
-                   Image (New_Value, Base) & Base_Separator &
-                   Exp_Separator & Image (Exp);
+            return Image (Base) &
+              Base_Separator &
+              Image (New_Value, Base) &
+              Base_Separator &
+              Exp_Separator &
+              Image (Exp);
          end if;
       end if;
    end Image;
 
    function Image (V : Long_Long_Float) return String is
       Str : String (1 .. 2 * Long_Long_Float'Digits + 2);
-      --  Max digits = [+/-] Fore . Aft
+   --  Max digits = [+/-] Fore . Aft
 
    begin
       Ada.Long_Long_Float_Text_IO.Put (Str, V, Long_Long_Float'Digits, 0);
@@ -354,8 +354,7 @@ package body Ocarina.AADL_Values is
 
    function Image
      (V    : Long_Long_Float;
-      Base : Unsigned_Short_Short)
-     return String
+      Base : Unsigned_Short_Short) return String
    is
       Str          : String (1 .. Fraction_Max_Digits);
       Sign         : Boolean;
@@ -364,7 +363,7 @@ package body Ocarina.AADL_Values is
       Fraction     : Long_Long_Float;
       LBase        : constant Long_Long_Float := Long_Long_Float (Base);
       Digit        : Unsigned_Short_Short;
-      Str_Len      : Integer := 0;
+      Str_Len      : Integer                  := 0;
       Ch           : Character;
 
    begin
@@ -381,8 +380,8 @@ package body Ocarina.AADL_Values is
       Fraction     := 1.0 / LBase;
 
       loop
-         Digit := Unsigned_Short_Short
-                     (Long_Long_Float'Truncation (Rest / Fraction));
+         Digit :=
+           Unsigned_Short_Short (Long_Long_Float'Truncation (Rest / Fraction));
          if Digit < 10 then
             Ch := Character'Val (Character'Pos ('0') + Digit);
          else
@@ -398,19 +397,21 @@ package body Ocarina.AADL_Values is
       end loop;
 
       if Sign then
-         return Minus_Character & Image (Integer_Part, Base) &
-                Real_Separator & Str (1 .. Str_Len);
+         return Minus_Character &
+           Image (Integer_Part, Base) &
+           Real_Separator &
+           Str (1 .. Str_Len);
       else
          return Image (Integer_Part, Base) &
-                Real_Separator & Str (1 .. Str_Len);
+           Real_Separator &
+           Str (1 .. Str_Len);
       end if;
    end Image;
 
    function Image
      (V    : Long_Long_Float;
       Base : Unsigned_Short_Short;
-      Exp  : Integer)
-     return String
+      Exp  : Integer) return String
    is
       New_Value : Long_Long_Float;
 
@@ -421,21 +422,25 @@ package body Ocarina.AADL_Values is
             return Image (V);
          else
             --  based real without exponent
-            return Image (Base) & Base_Separator &
-                   Image (V, Base) & Base_Separator;
+            return Image (Base) &
+              Base_Separator &
+              Image (V, Base) &
+              Base_Separator;
          end if;
       else
          New_Value := V / Power (Integer (Base), Exp);
 
          if Base = 10 then
             --  decimal real with exponent
-            return Image (New_Value) &
-                   Exp_Separator & Image (Exp);
+            return Image (New_Value) & Exp_Separator & Image (Exp);
          else
             --  based real with exponent
-            return Image (Base) & Base_Separator &
-                   Image (New_Value, Base) & Base_Separator &
-                   Exp_Separator & Image (Exp);
+            return Image (Base) &
+              Base_Separator &
+              Image (New_Value, Base) &
+              Base_Separator &
+              Exp_Separator &
+              Image (Exp);
          end if;
       end if;
    end Image;
@@ -443,7 +448,7 @@ package body Ocarina.AADL_Values is
    function Image (Kind : Node_Kind) return String is
       use Charset;
 
-      S       : String := Node_Kind'Image (Kind);
+      S       : String  := Node_Kind'Image (Kind);
       Capital : Boolean := False;
 
    begin
@@ -467,9 +472,9 @@ package body Ocarina.AADL_Values is
    -----------
 
    function Power (Base : Integer; Exp : Integer) return Long_Long_Float is
-      Result : Long_Long_Float := 1.0;
+      Result : Long_Long_Float          := 1.0;
       LBase  : constant Long_Long_Float := Long_Long_Float (Base);
-      PExp   : constant Integer := abs (Exp);
+      PExp   : constant Integer         := abs (Exp);
 
    begin
       for J in 1 .. PExp loop
@@ -535,8 +540,8 @@ package body Ocarina.AADL_Values is
                   begin
                      Result.IBase := 10;
                      Result.ISign := Safe_XOR (L.ISign, R.ISign);
-                     Result.IVal := L.IVal * R.IVal;
-                     Result.IExp := 0;
+                     Result.IVal  := L.IVal * R.IVal;
+                     Result.IExp  := 0;
                      return Result;
                   end;
 
@@ -545,8 +550,8 @@ package body Ocarina.AADL_Values is
                      Result : Value_Type (LT_Real);
                   begin
                      Result.RSign := Safe_XOR (L.ISign, R.RSign);
-                     Result.RExp := 0;
-                     Result.RVal := Long_Long_Float (L.IVal) * R.RVal;
+                     Result.RExp  := 0;
+                     Result.RVal  := Long_Long_Float (L.IVal) * R.RVal;
                      return Result;
                   end;
 
@@ -562,8 +567,8 @@ package body Ocarina.AADL_Values is
                      Result : Value_Type (LT_Real);
                   begin
                      Result.RSign := Safe_XOR (L.RSign, R.ISign);
-                     Result.RExp := 0;
-                     Result.RVal := L.RVal * Long_Long_Float (R.IVal);
+                     Result.RExp  := 0;
+                     Result.RVal  := L.RVal * Long_Long_Float (R.IVal);
                      Result.RBase := 10;
                      return Result;
                   end;
@@ -573,8 +578,8 @@ package body Ocarina.AADL_Values is
                      Result : Value_Type (LT_Real);
                   begin
                      Result.RSign := Safe_XOR (L.RSign, R.RSign);
-                     Result.RExp := 0;
-                     Result.RVal := L.RVal * R.RVal;
+                     Result.RExp  := 0;
+                     Result.RVal  := L.RVal * R.RVal;
                      Result.RBase := 10;
                      return Result;
                   end;

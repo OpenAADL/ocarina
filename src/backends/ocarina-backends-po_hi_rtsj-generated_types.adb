@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -68,7 +68,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
    package RTU renames Ocarina.Backends.RTSJ_Tree.Nutils;
 
    --  Global variables declaration
-   Main_Class : Node_Id;
+   Main_Class    : Node_Id;
    Types_Classes : List_Id;
 
    -----------------
@@ -113,8 +113,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
       -- Visit_Component_Instance --
       ------------------------------
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -158,8 +158,9 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
       -- Visit_Process_Instance --
       ----------------------------
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := RTN.Distributed_Application_Unit
-           (RTN.Deployment_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           RTN.Distributed_Application_Unit
+             (RTN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := RTN.Entity (U);
          S : Node_Id;
       begin
@@ -191,12 +192,12 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
          Reset_Handlings;
 
          --  Main class declaration
-         Main_Class := Make_Class_Statement
-           (Visibility => Make_List_Id (RE (RE_Public)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (ON (O_Generated_Types)),
-            Classes => Types_Classes
-           );
+         Main_Class :=
+           Make_Class_Statement
+             (Visibility          => Make_List_Id (RE (RE_Public)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (ON (O_Generated_Types)),
+              Classes => Types_Classes);
          RTU.Append_Node_To_List (Main_Class, RTN.Statements (Current_File));
 
          Pop_Entity; --  U
@@ -209,7 +210,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
       procedure Visit_Thread_Instance (E : Node_Id) is
          Call_Seq : Node_Id;
          Spg_Call : Node_Id;
-         P : Node_Id;
+         P        : Node_Id;
       begin
          --  Declare all necessary data types. We cannot rely only on
          --  subprogram calls to generate necessary data type becaus
@@ -254,7 +255,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
       procedure Visit_Subprogram_Instance (E : Node_Id) is
          Call_Seq : Node_Id;
          Spg_Call : Node_Id;
-         P : Node_Id;
+         P        : Node_Id;
       begin
          --  Declare all necessary data types
          if not AINU.Is_Empty (Features (E)) then
@@ -295,21 +296,18 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
       -------------------------
       procedure Visit_Data_Instance (E : Node_Id) is
          Data_Representation : Supported_Data_Representation;
-         N : Node_Id;
-         Spec : Node_Id;
-         Impl : Node_Id;
-         Param : Node_Id;
-         Statement : Node_Id;
+         N                   : Node_Id;
+         Spec                : Node_Id;
+         Impl                : Node_Id;
+         Param               : Node_Id;
+         Statement           : Node_Id;
          --  Put_Method : Node_Id;
          --  Get_Method : Node_Id;
-         Name : Name_Id;
-         Language_Type : Supported_Source_Language;
-         Class_Attributes : constant List_Id := New_List
-           (K_Attribute_List);
-         Method_Statements : constant List_Id := New_List
-           (K_Statement_List);
-         Class_Methods : constant List_Id := New_List
-           (K_Method_List);
+         Name              : Name_Id;
+         Language_Type     : Supported_Source_Language;
+         Class_Attributes  : constant List_Id := New_List (K_Attribute_List);
+         Method_Statements : constant List_Id := New_List (K_Statement_List);
+         Class_Methods     : constant List_Id := New_List (K_Method_List);
       begin
          --  Do not generate RTSJ type more than once
          if No (Get_Handling (E, By_Name, H_RTSJ_Type)) then
@@ -327,8 +325,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
 
                   Display_Located_Error
                     (AIN.Loc (E),
-                     "RTSJ opaque types require the definition of the "
-                       & "'Type_Source_Name' property",
+                     "RTSJ opaque types require the definition of the " &
+                     "'Type_Source_Name' property",
                      Fatal => True);
                end if;
 
@@ -341,140 +339,156 @@ package body Ocarina.Backends.PO_HI_RTSJ.Generated_Types is
                   when Data_Integer =>
                      --  Put_Method := RE (RE_Put_Int);
                      --  Get_Method := RE (RE_Get_Int);
-                     N := Make_Variable_Declaration
-                       (Visibility => No_List,
-                        Used_Type => New_Node (K_Int),
-                        Defining_Identifier =>
-                          (Make_Defining_Identifier (VN (V_Value))));
+                     N :=
+                       Make_Variable_Declaration
+                         (Visibility          => No_List,
+                          Used_Type           => New_Node (K_Int),
+                          Defining_Identifier =>
+                            (Make_Defining_Identifier (VN (V_Value))));
                      RTU.Append_Node_To_List (N, Class_Attributes);
 
-                  when others => null;
+                  when others =>
+                     null;
                end case;
 
                --  Constructor
-               Param := Make_Parameter_Specification
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier (VN (V_Value)),
-                  Parameter_Type => New_Node (K_Int));
-               Spec := Make_Function_Specification
-                 (Visibility => Make_List_Id (RE (RE_Public)),
-                  Defining_Identifier =>
-                    Map_RTSJ_Defining_Identifier (E),
-                  Parameters => Make_List_Id (Param));
-               Statement := Make_Assignment_Statement
-                 (Defining_Identifier =>
-                    Make_Pointed_Notation
-                    (Left_Member => RE (RE_This),
-                     Right_Member =>
-                       Make_Defining_Identifier (VN (V_Value))),
-                  Expression =>
-                    Make_Defining_Identifier (VN (V_Value)));
-               Impl := Make_Function_Implementation
-                 (Specification => Spec,
-                  Statements => Make_List_Id (Statement));
+               Param :=
+                 Make_Parameter_Specification
+                   (Defining_Identifier =>
+                      Make_Defining_Identifier (VN (V_Value)),
+                    Parameter_Type => New_Node (K_Int));
+               Spec :=
+                 Make_Function_Specification
+                   (Visibility          => Make_List_Id (RE (RE_Public)),
+                    Defining_Identifier => Map_RTSJ_Defining_Identifier (E),
+                    Parameters          => Make_List_Id (Param));
+               Statement :=
+                 Make_Assignment_Statement
+                   (Defining_Identifier =>
+                      Make_Pointed_Notation
+                        (Left_Member  => RE (RE_This),
+                         Right_Member =>
+                           Make_Defining_Identifier (VN (V_Value))),
+                    Expression => Make_Defining_Identifier (VN (V_Value)));
+               Impl :=
+                 Make_Function_Implementation
+                   (Specification => Spec,
+                    Statements    => Make_List_Id (Statement));
                RTU.Append_Node_To_List (Impl, Class_Methods);
 
                --  Store method
-               Param := Make_Parameter_Specification
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier (VN (V_Msg)),
-                  Parameter_Type =>
-                    Make_Defining_Identifier (ON (O_Message)));
-               Spec := Make_Function_Specification
-                 (Visibility => Make_List_Id (RE (RE_Public)),
-                  Return_Type => New_Node (K_Void),
-                  Defining_Identifier => RE (RE_Store),
-                  Parameters => Make_List_Id (Param)
-                 );
-               Statement := Make_Pointed_Notation
-                 (Left_Member =>
-                    Make_Defining_Identifier (VN (V_Msg)),
-                  Right_Member =>
-                    Make_Call_Function
-                    (Defining_Identifier => RE (RE_Put_Int),
-                     Parameters =>
-                       Make_List_Id
-                       (Make_Defining_Identifier (VN (V_Value)))));
-               Impl := Make_Function_Implementation
-                 (Specification => Spec,
-                  Statements => Make_List_Id (Statement));
+               Param :=
+                 Make_Parameter_Specification
+                   (Defining_Identifier =>
+                      Make_Defining_Identifier (VN (V_Msg)),
+                    Parameter_Type =>
+                      Make_Defining_Identifier (ON (O_Message)));
+               Spec :=
+                 Make_Function_Specification
+                   (Visibility          => Make_List_Id (RE (RE_Public)),
+                    Return_Type         => New_Node (K_Void),
+                    Defining_Identifier => RE (RE_Store),
+                    Parameters          => Make_List_Id (Param));
+               Statement :=
+                 Make_Pointed_Notation
+                   (Left_Member  => Make_Defining_Identifier (VN (V_Msg)),
+                    Right_Member =>
+                      Make_Call_Function
+                        (Defining_Identifier => RE (RE_Put_Int),
+                         Parameters          =>
+                           Make_List_Id
+                             (Make_Defining_Identifier (VN (V_Value)))));
+               Impl :=
+                 Make_Function_Implementation
+                   (Specification => Spec,
+                    Statements    => Make_List_Id (Statement));
                RTU.Append_Node_To_List (Impl, Class_Methods);
 
                --  Set method
-               Param := Make_Parameter_Specification
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier (VN (V_Msg)),
-                  Parameter_Type =>
-                    Make_Defining_Identifier (ON (O_Message)));
-               Spec := Make_Function_Specification
-                 (Visibility => Make_List_Id (RE (RE_Public)),
-                  Return_Type => New_Node (K_Void),
-                  Defining_Identifier => RE (RE_Set),
-                  Parameters => Make_List_Id (Param)
-                 );
-               Statement := Make_Assignment_Statement
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier (VN (V_Value)),
-                  Expression => Make_Expression
-                    (Make_Pointed_Notation
-                       (Left_Member =>
-                          Make_Defining_Identifier (VN (V_Msg)),
-                        Right_Member =>
-                          Make_Call_Function
-                          (Defining_Identifier => RE (RE_Get_Int)))));
-               Impl := Make_Function_Implementation
-                 (Specification => Spec,
-                  Statements => Make_List_Id (Statement));
+               Param :=
+                 Make_Parameter_Specification
+                   (Defining_Identifier =>
+                      Make_Defining_Identifier (VN (V_Msg)),
+                    Parameter_Type =>
+                      Make_Defining_Identifier (ON (O_Message)));
+               Spec :=
+                 Make_Function_Specification
+                   (Visibility          => Make_List_Id (RE (RE_Public)),
+                    Return_Type         => New_Node (K_Void),
+                    Defining_Identifier => RE (RE_Set),
+                    Parameters          => Make_List_Id (Param));
+               Statement :=
+                 Make_Assignment_Statement
+                   (Defining_Identifier =>
+                      Make_Defining_Identifier (VN (V_Value)),
+                    Expression =>
+                      Make_Expression
+                        (Make_Pointed_Notation
+                           (Left_Member =>
+                              Make_Defining_Identifier (VN (V_Msg)),
+                            Right_Member =>
+                              Make_Call_Function
+                                (Defining_Identifier => RE (RE_Get_Int)))));
+               Impl :=
+                 Make_Function_Implementation
+                   (Specification => Spec,
+                    Statements    => Make_List_Id (Statement));
                RTU.Append_Node_To_List (Impl, Class_Methods);
 
                --  Copy method
-               Param := Make_Parameter_Specification
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier (VN (V_New_Value)),
-                  Parameter_Type =>
-                    Make_Defining_Identifier (ON (O_Generated_Type)));
-               Spec := Make_Function_Specification
-                 (Visibility => Make_List_Id (RE (RE_Public)),
-                  Return_Type => New_Node (K_Void),
-                  Defining_Identifier => RE (RE_Copy),
-                  Parameters => Make_List_Id (Param)
-                 );
-               Statement := Make_Variable_Declaration
-                 (Used_Type => Map_RTSJ_Defining_Identifier (E),
-                  Defining_Identifier =>
-                    Make_Defining_Identifier (VN (V_Tmp)),
-                  Value => Make_Cast_Statement
-                    (Cast_Type =>
-                       Map_RTSJ_Defining_Identifier (E),
-                     Defining_Identifier =>
-                       Make_Defining_Identifier (VN (V_New_Value))));
+               Param :=
+                 Make_Parameter_Specification
+                   (Defining_Identifier =>
+                      Make_Defining_Identifier (VN (V_New_Value)),
+                    Parameter_Type =>
+                      Make_Defining_Identifier (ON (O_Generated_Type)));
+               Spec :=
+                 Make_Function_Specification
+                   (Visibility          => Make_List_Id (RE (RE_Public)),
+                    Return_Type         => New_Node (K_Void),
+                    Defining_Identifier => RE (RE_Copy),
+                    Parameters          => Make_List_Id (Param));
+               Statement :=
+                 Make_Variable_Declaration
+                   (Used_Type           => Map_RTSJ_Defining_Identifier (E),
+                    Defining_Identifier =>
+                      Make_Defining_Identifier (VN (V_Tmp)),
+                    Value =>
+                      Make_Cast_Statement
+                        (Cast_Type => Map_RTSJ_Defining_Identifier (E),
+                         Defining_Identifier =>
+                           Make_Defining_Identifier (VN (V_New_Value))));
                RTU.Append_Node_To_List (Statement, Method_Statements);
-               Statement := Make_Assignment_Statement
-                 (Defining_Identifier =>
-                    Make_Pointed_Notation
-                    (Left_Member => RE (RE_This),
-                     Right_Member =>
-                       Make_Defining_Identifier (VN (V_Value))),
-                  Expression =>
-                    Make_Pointed_Notation
-                    (Left_Member =>
-                       Make_Defining_Identifier (VN (V_Tmp)),
-                     Right_Member =>
-                       Make_Defining_Identifier (VN (V_Value))));
+               Statement :=
+                 Make_Assignment_Statement
+                   (Defining_Identifier =>
+                      Make_Pointed_Notation
+                        (Left_Member  => RE (RE_This),
+                         Right_Member =>
+                           Make_Defining_Identifier (VN (V_Value))),
+                    Expression =>
+                      Make_Pointed_Notation
+                        (Left_Member  => Make_Defining_Identifier (VN (V_Tmp)),
+                         Right_Member =>
+                           Make_Defining_Identifier (VN (V_Value))));
                RTU.Append_Node_To_List (Statement, Method_Statements);
-               Impl := Make_Function_Implementation
-                 (Specification => Spec,
-                  Statements => Method_Statements);
+               Impl :=
+                 Make_Function_Implementation
+                   (Specification => Spec,
+                    Statements    => Method_Statements);
                RTU.Append_Node_To_List (Impl, Class_Methods);
 
-               N := Make_Class_Statement
-                 (Visibility => Make_List_Id (RE (RE_Public), RE (RE_Static)),
-                  Defining_Identifier =>
-                    Map_RTSJ_Defining_Identifier (E, True),
-                  Implements => Make_List_Id
-                    (Make_Defining_Identifier (ON (O_Generated_Type))),
-                  Attributes => Class_Attributes,
-                  Methods => Class_Methods);
+               N :=
+                 Make_Class_Statement
+                   (Visibility =>
+                      Make_List_Id (RE (RE_Public), RE (RE_Static)),
+                    Defining_Identifier =>
+                      Map_RTSJ_Defining_Identifier (E, True),
+                    Implements =>
+                      Make_List_Id
+                        (Make_Defining_Identifier (ON (O_Generated_Type))),
+                    Attributes => Class_Attributes,
+                    Methods    => Class_Methods);
                RTU.Append_Node_To_List (N, Types_Classes);
 
                --  Mark the data type as being handled

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,8 +38,7 @@ package Ocarina.Instances.Queries is
 
    function Compute_Absolute_Name_Of_Entity
      (Entity    : Node_Id;
-      Separator : Name_Id := No_Name)
-     return Name_Id;
+      Separator : Name_Id := No_Name) return Name_Id;
    --  Concatenate the names of all the parent entities of Entity,
    --  including its name, separated by dots.
 
@@ -48,96 +47,84 @@ package Ocarina.Instances.Queries is
    function Is_Defined_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Property
 
    function Is_Defined_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Property
 
    function Is_Defined_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_String_Property
 
    function Is_Defined_Integer_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Integer_Property
 
    function Is_Defined_Boolean_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Boolean_Property
 
    function Is_Defined_Float_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Float_Property
 
    function Is_Defined_Reference_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Reference_Property
 
    function Is_Defined_Classifier_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Classifier_Property
 
    function Is_Defined_Range_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Range_Property
 
    function Is_Defined_List_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_List_Property
 
    function Is_Defined_List_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_List_Property
 
    function Is_Defined_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Enumeration_Property
 
@@ -146,142 +133,123 @@ package Ocarina.Instances.Queries is
    function Get_Property_Association
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Property_Association
 
    function Get_Value_Of_Property_Association
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Value_Of_Property_Association
 
    function Get_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return String;
+      In_Mode : Name_Id := No_Name) return String;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_String_Property
 
    function Get_String_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id;
+      In_Mode : Name_Id := No_Name) return Name_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_String_Property
 
    function Get_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id;
+      In_Mode : Name_Id := No_Name) return Name_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_String_Property
 
    function Get_Integer_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Unsigned_Long_Long;
+      In_Mode : Name_Id := No_Name) return Unsigned_Long_Long;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Integer_Property
 
    function Get_Integer_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Unsigned_Long_Long;
+      In_Mode : Name_Id := No_Name) return Unsigned_Long_Long;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Integer_Property
 
    function Get_Float_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Long_Long_Float;
+      In_Mode : Name_Id := No_Name) return Long_Long_Float;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Float_Property
 
    function Get_Boolean_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Boolean_Property
 
    function Get_Reference_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Reference_Property
 
    function Get_Classifier_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Classifier_Property
 
    function Get_Classifier_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Classifier_Property
 
    function Get_List_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return List_Id;
+      In_Mode : Name_Id := No_Name) return List_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_List_Property
 
    function Get_List_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return List_Id;
+      In_Mode : Name_Id := No_Name) return List_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_List_Property
 
    function Get_Range_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Range_Property
 
    function Get_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return String;
+      In_Mode : Name_Id := No_Name) return String;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Enumeration_Property
 
    function Get_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id;
+      In_Mode : Name_Id := No_Name) return Name_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Get_Enumeration_Property
 
-   function Compute_Property_Value
-     (Property_Value : Node_Id)
-     return Node_Id;
+   function Compute_Property_Value (Property_Value : Node_Id) return Node_Id;
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Compute_Property_Value
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;      use Types;
+with Types; use Types;
 
 with Ocarina.ME_AADL.Tokens; use Ocarina.ME_AADL.Tokens;
 
@@ -280,8 +280,10 @@ package Ocarina.FE_AADL.Parser_Errors is
    procedure Display_Parsing_Error
      (Code      : Parsing_Code;
       Error_Msg : Error_Message_Code);
-   procedure DPE (Code : Parsing_Code; Error_Msg : Error_Message_Code)
-     renames Display_Parsing_Error;
+   procedure DPE
+     (Code      : Parsing_Code;
+      Error_Msg : Error_Message_Code) renames
+     Display_Parsing_Error;
    --  Display an output message:
    --     Location: parsing ..., <Msg>
 
@@ -290,36 +292,45 @@ package Ocarina.FE_AADL.Parser_Errors is
    --  Display an output error message:
    --     Location: parsing ..., unexpected `Current_Token_Image`
 
-   procedure Display_Parsing_Error (Code : Parsing_Code;
-                                    Error_Msg : Error_Message_Code;
-                                    Current_Token : Token_Type);
-   procedure DPE (Code : Parsing_Code;
-                  Error_Msg : Error_Message_Code;
-                  Current_Token : Token_Type) renames Display_Parsing_Error;
+   procedure Display_Parsing_Error
+     (Code          : Parsing_Code;
+      Error_Msg     : Error_Message_Code;
+      Current_Token : Token_Type);
+   procedure DPE
+     (Code          : Parsing_Code;
+      Error_Msg     : Error_Message_Code;
+      Current_Token : Token_Type) renames
+     Display_Parsing_Error;
    --  Display an output error message:
    --     Location: parsing ..., unexpected `Current_Token_Image`,
    --               error message code
 
-   procedure Display_Parsing_Error (Code       : Parsing_Code;
-                                    Identifier : Name_Id);
-   procedure DPE (Code       : Parsing_Code;
-                  Identifier : Name_Id) renames Display_Parsing_Error;
+   procedure Display_Parsing_Error (Code : Parsing_Code; Identifier : Name_Id);
+   procedure DPE
+     (Code       : Parsing_Code;
+      Identifier : Name_Id) renames
+     Display_Parsing_Error;
    --  Display an output error message:
    --     Location: parsing ..., identifier <...> expected, found
    --     Current_Token_Image
 
-   procedure Display_Parsing_Error (Code           : Parsing_Code;
-                                    Expected_Token : Token_Type);
-   procedure DPE (Code           : Parsing_Code;
-                  Expected_Token : Token_Type) renames Display_Parsing_Error;
+   procedure Display_Parsing_Error
+     (Code           : Parsing_Code;
+      Expected_Token : Token_Type);
+   procedure DPE
+     (Code           : Parsing_Code;
+      Expected_Token : Token_Type) renames
+     Display_Parsing_Error;
    --  Display an output error message:
    --     Location: parsing ..., token ... expected, found Current_Token_Image
 
-   procedure Display_Parsing_Error (Code            : Parsing_Code;
-                                    Expected_Tokens : Token_List_Type);
-   procedure DPE (Code            : Parsing_Code;
-                  Expected_Tokens : Token_List_Type)
-     renames Display_Parsing_Error;
+   procedure Display_Parsing_Error
+     (Code            : Parsing_Code;
+      Expected_Tokens : Token_List_Type);
+   procedure DPE
+     (Code            : Parsing_Code;
+      Expected_Tokens : Token_List_Type) renames
+     Display_Parsing_Error;
    --  Display an output error message:
    --     Location: parsing ..., token ... or ... or ... expected,
    --     found Current_Token_Image

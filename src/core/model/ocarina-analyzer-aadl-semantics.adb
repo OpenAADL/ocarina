@@ -65,30 +65,25 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Classifier_Matching_Rule
      (Source_Type      : Node_Id;
-      Destination_Type : Node_Id)
-     return Boolean;
+      Destination_Type : Node_Id) return Boolean;
 
    function Check_Cycles_In_Component_Implementation
      (Node         : Node_Id;
-      Initial_Node : Node_Id := No_Node)
-     return Boolean;
+      Initial_Node : Node_Id := No_Node) return Boolean;
 
    function Check_Cycles_In_Port_Group_Or_Component_Type
      (Node         : Node_Id;
-      Initial_Node : Node_Id := No_Node)
-     return Boolean;
+      Initial_Node : Node_Id := No_Node) return Boolean;
 
    function Check_Cycles_In_Inversions_Of_Port_Groups
      (Node         : Node_Id;
-      Initial_Node : Node_Id := No_Node)
-     return Boolean;
+      Initial_Node : Node_Id := No_Node) return Boolean;
 
    function Check_For_A_Unique_Initial_Mode (Node : Node_Id) return Boolean;
 
    function Check_Cycles_In_Subcomponents
      (Node         : Node_Id;
-      Initial_Node : Node_Id := No_Node)
-     return Boolean;
+      Initial_Node : Node_Id := No_Node) return Boolean;
 
    function Check_Connections (Node : Node_Id) return Boolean;
 
@@ -105,8 +100,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Connection_End_Consistency
      (Connection_End      : Node_Id;
-      Connection_Category : Connection_Type)
-     return Boolean;
+      Connection_Category : Connection_Type) return Boolean;
    --  Check if the connection end (source or destination) is of a
    --  consistent type regarding the connection type.
 
@@ -116,8 +110,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Property_Associations
      (Properties : List_Id;
-      Container  : Node_Id)
-     return Boolean;
+      Container  : Node_Id) return Boolean;
    --  Return True if the value type of the property association
    --  Property is consistent with the one specified in the property
    --  name declaration. Container is the entity declaration in which
@@ -125,41 +118,34 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Applies_To
      (Property  : Node_Id;
-      Container : Node_Id)
-     return Boolean;
+      Container : Node_Id) return Boolean;
    --  Return True if the property association can be applied to the
    --  container or to the entity designated by the 'applies to'
    --  statement, if any.
 
    function Check_Values_Of_Property_Association
-     (Property_Association : Node_Id)
-     return Boolean;
+     (Property_Association : Node_Id) return Boolean;
    --  Check wether the values of the property association are
    --  conformant with the type associated with the corresponding
    --  property name.
 
    function Check_Properties_Of_Component_Type
-     (Component : Node_Id)
-     return Boolean;
+     (Component : Node_Id) return Boolean;
 
    function Check_Properties_Of_Component_Implementation
-     (Component : Node_Id)
-     return Boolean;
+     (Component : Node_Id) return Boolean;
 
    function Check_Properties_Of_Port_Group_Type
-     (Port_Group : Node_Id)
-     return Boolean;
+     (Port_Group : Node_Id) return Boolean;
 
    function Check_Property_Type
      (Property_Type         : Node_Id;
-      Display_Error_Message : Boolean := True)
-     return Boolean;
+      Display_Error_Message : Boolean := True) return Boolean;
    --  Return True if the property type is consistent, else False
 
    function Compare_Numbers
      (Number_1 : Node_Id;
-      Number_2 : Node_Id)
-     return Integer;
+      Number_2 : Node_Id) return Integer;
    --  Return -1 if Number_1 > Number_2, 1 if Number_2 > Number_1, or
    --  0 if Number_1 and Number_2 are equal. Return -2 if there is an
    --  error. If Number_1 and Number_2 are two unit number, the
@@ -177,22 +163,21 @@ package body Ocarina.Analyzer.AADL.Semantics is
    --  to 1000 and Literal_2 is set to 500.
 
    function Convert_Single_Value_To_List
-     (Property_Association : Node_Id)
-     return Boolean;
+     (Property_Association : Node_Id) return Boolean;
    --  Edit the value of the property association in order to create a
    --  list with its single value
 
    function Test_Property_Type_Equivalence
-     (Type_Of_Property_Name :
-      Ocarina.Me_AADL.AADL_Tree.Entities.Properties.Property_Type;
-      Type_Of_Property_Association :
-      Ocarina.Me_AADL.AADL_Tree.Entities.Properties.Property_Type)
-     return Boolean;
+     (Type_Of_Property_Name : Ocarina.ME_AADL.AADL_Tree.Entities.Properties
+        .Property_Type;
+      Type_Of_Property_Association : Ocarina.ME_AADL.AADL_Tree.Entities
+        .Properties
+        .Property_Type)
+      return Boolean;
 
    function Test_Property_Value_Validity
      (Property_Type  : Node_Id;
-      Property_Value : Node_Id)
-     return Boolean;
+      Property_Value : Node_Id) return Boolean;
 
    ------------------------------------
    -- Check_Classifier_Matching_Rule --
@@ -200,8 +185,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Classifier_Matching_Rule
      (Source_Type      : Node_Id;
-      Destination_Type : Node_Id)
-     return Boolean
+      Destination_Type : Node_Id) return Boolean
    is
    begin
       --  This function implements a check for the classifier_matching
@@ -221,8 +205,9 @@ package body Ocarina.Analyzer.AADL.Semantics is
          return True;
 
       elsif Kind (Source_Type) = K_Component_Implementation
-        and then Corresponding_Entity
-        (Component_Type_Identifier (Source_Type)) = Destination_Type
+        and then
+          Corresponding_Entity (Component_Type_Identifier (Source_Type)) =
+          Destination_Type
       then
          --  b) source is an implementation of the destination
          return True;
@@ -237,26 +222,27 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Qualified_References
      (Container           : Node_Id;
-      Qualified_Reference : Node_Id)
-     return Boolean
+      Qualified_Reference : Node_Id) return Boolean
    is
       use Ocarina.Analyzer.AADL.Finder;
 
-      pragma Assert (Kind (Container) = K_Package_Specification
-                       or else Kind (Container) = K_Component_Type
-                       or else Kind (Container) = K_Component_Implementation
-                       or else Kind (Container) = K_Feature_Group_Type
-                       or else Kind (Container) = K_Subcomponent
-                       or else Kind (Container) = K_Subcomponent_Access
-                       or else Kind (Container) = K_Port_Spec
-                       or else Kind (Container) = K_Parameter
-                       or else Kind (Container) = K_Connection);
+      pragma Assert
+        (Kind (Container) = K_Package_Specification
+         or else Kind (Container) = K_Component_Type
+         or else Kind (Container) = K_Component_Implementation
+         or else Kind (Container) = K_Feature_Group_Type
+         or else Kind (Container) = K_Subcomponent
+         or else Kind (Container) = K_Subcomponent_Access
+         or else Kind (Container) = K_Port_Spec
+         or else Kind (Container) = K_Parameter
+         or else Kind (Container) = K_Connection);
 
-      pragma Assert (Kind (Qualified_Reference) = K_Entity_Reference
-             or else Kind (Qualified_Reference) = K_Identifier);
+      pragma Assert
+        (Kind (Qualified_Reference) = K_Entity_Reference
+         or else Kind (Qualified_Reference) = K_Identifier);
 
-      Pack_Container : Node_Id  := No_Node;
-      Success        : Boolean  := False;
+      Pack_Container : Node_Id := No_Node;
+      Success        : Boolean := False;
    begin
       if Kind (Container) = K_Component_Type
         or else Kind (Container) = K_Component_Implementation
@@ -278,19 +264,21 @@ package body Ocarina.Analyzer.AADL.Semantics is
       end if;
 
       if Kind (Qualified_Reference) = K_Entity_Reference
-        and then Name (Identifier (Pack_Container)) =
-                    Name (Namespace_Identifier (Qualified_Reference))
+        and then
+          Name (Identifier (Pack_Container)) =
+          Name (Namespace_Identifier (Qualified_Reference))
       then
          Success := True;
 
       elsif Kind (Qualified_Reference) = K_Identifier
-        and then Name (Identifier (Pack_Container)) =
-                    Name (Qualified_Reference)
+        and then
+          Name (Identifier (Pack_Container)) =
+          Name (Qualified_Reference)
       then
          Success := True;
       else
-         Success := Find_In_Import_Declaration (Pack_Container,
-                                                Qualified_Reference);
+         Success :=
+           Find_In_Import_Declaration (Pack_Container, Qualified_Reference);
       end if;
 
       if Success = False then
@@ -309,8 +297,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Applies_To
      (Property  : Node_Id;
-      Container : Node_Id)
-     return Boolean
+      Container : Node_Id) return Boolean
    is
       pragma Assert (Kind (Property) = K_Property_Association);
       pragma Assert (Present (Container));
@@ -322,12 +309,12 @@ package body Ocarina.Analyzer.AADL.Semantics is
       if Applies_To_Prop (Property) = No_List then
          Entity_Of_Property := Container;
       else
-         Pointed_Node := First_Node
-           (List_Items (First_Node (Applies_To_Prop (Property))));
+         Pointed_Node :=
+           First_Node (List_Items (First_Node (Applies_To_Prop (Property))));
 
          if Kind (Pointed_Node) = K_Array_Selection then
-            Entity_Of_Property := Corresponding_Entity
-              (Identifier (Pointed_Node));
+            Entity_Of_Property :=
+              Corresponding_Entity (Identifier (Pointed_Node));
          else
             Entity_Of_Property := Corresponding_Entity (Pointed_Node);
             --  XXX Here we must make this verification OK for all contained
@@ -338,8 +325,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
       if Kind (Entity_Of_Property) = K_Package_Specification then
          Success := True;
       else
-         Success := Property_Can_Apply_To_Entity
-           (Property, Entity_Of_Property);
+         Success :=
+           Property_Can_Apply_To_Entity (Property, Entity_Of_Property);
       end if;
 
       if not Success then
@@ -354,12 +341,12 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Cycles_In_Component_Implementation
      (Node         : Node_Id;
-      Initial_Node : Node_Id := No_Node)
-     return Boolean
+      Initial_Node : Node_Id := No_Node) return Boolean
    is
       pragma Assert (Kind (Node) = K_Component_Implementation);
-      pragma Assert (No (Initial_Node)
-                     or else Kind (Initial_Node) = K_Component_Implementation);
+      pragma Assert
+        (No (Initial_Node)
+         or else Kind (Initial_Node) = K_Component_Implementation);
 
       First_Extension_Node : Node_Id;
       Success              : Boolean := True;
@@ -385,12 +372,14 @@ package body Ocarina.Analyzer.AADL.Semantics is
       if Parent (Node) /= No_Node
         and then Get_Referenced_Entity (Parent (Node)) /= No_Node
       then
-         Success := Check_Cycles_In_Component_Implementation
-           (Get_Referenced_Entity (Parent (Node)),
-            First_Extension_Node);
+         Success :=
+           Check_Cycles_In_Component_Implementation
+             (Get_Referenced_Entity (Parent (Node)),
+              First_Extension_Node);
       else
-         Success := Check_Cycles_In_Port_Group_Or_Component_Type
-           (Corresponding_Entity (Component_Type_Identifier (Node)));
+         Success :=
+           Check_Cycles_In_Port_Group_Or_Component_Type
+             (Corresponding_Entity (Component_Type_Identifier (Node)));
       end if;
 
       Set_First_Visited_Node (Node, No_Node);
@@ -403,12 +392,11 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Cycles_In_Inversions_Of_Port_Groups
      (Node         : Node_Id;
-      Initial_Node : Node_Id := No_Node)
-     return Boolean
+      Initial_Node : Node_Id := No_Node) return Boolean
    is
       pragma Assert (Kind (Node) = K_Feature_Group_Type);
-      pragma Assert (No (Initial_Node)
-                     or else Kind (Initial_Node) = K_Feature_Group_Type);
+      pragma Assert
+        (No (Initial_Node) or else Kind (Initial_Node) = K_Feature_Group_Type);
 
       First_Inversion_Node : Node_Id;
       Success              : Boolean := True;
@@ -434,9 +422,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
       if Inverse_Of (Node) /= No_Node
         and then Get_Referenced_Entity (Inverse_Of (Node)) /= No_Node
       then
-         Success := Check_Cycles_In_Inversions_Of_Port_Groups
-           (Get_Referenced_Entity (Inverse_Of (Node)),
-            First_Inversion_Node);
+         Success :=
+           Check_Cycles_In_Inversions_Of_Port_Groups
+             (Get_Referenced_Entity (Inverse_Of (Node)),
+              First_Inversion_Node);
       end if;
 
       Set_First_Visited_Node (Node, No_Node);
@@ -449,14 +438,15 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Cycles_In_Port_Group_Or_Component_Type
      (Node         : Node_Id;
-      Initial_Node : Node_Id := No_Node)
-     return Boolean
+      Initial_Node : Node_Id := No_Node) return Boolean
    is
-      pragma Assert (Kind (Node) = K_Component_Type
-                     or else Kind (Node) = K_Feature_Group_Type);
-      pragma Assert (No (Initial_Node)
-                     or else Kind (Initial_Node) = K_Component_Type
-                     or else Kind (Initial_Node) = K_Feature_Group_Type);
+      pragma Assert
+        (Kind (Node) = K_Component_Type
+         or else Kind (Node) = K_Feature_Group_Type);
+      pragma Assert
+        (No (Initial_Node)
+         or else Kind (Initial_Node) = K_Component_Type
+         or else Kind (Initial_Node) = K_Feature_Group_Type);
 
       First_Extension_Node : Node_Id;
       Success              : Boolean := True;
@@ -482,9 +472,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
       if Parent (Node) /= No_Node
         and then Get_Referenced_Entity (Parent (Node)) /= No_Node
       then
-         Success := Check_Cycles_In_Port_Group_Or_Component_Type
-           (Get_Referenced_Entity (Parent (Node)),
-            First_Extension_Node);
+         Success :=
+           Check_Cycles_In_Port_Group_Or_Component_Type
+             (Get_Referenced_Entity (Parent (Node)),
+              First_Extension_Node);
       end if;
 
       Set_First_Visited_Node (Node, No_Node);
@@ -497,11 +488,11 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Cycles_In_Subcomponents
      (Node         : Node_Id;
-      Initial_Node : Node_Id := No_Node)
-     return Boolean
+      Initial_Node : Node_Id := No_Node) return Boolean
    is
-      pragma Assert (Kind (Node) = K_Component_Implementation
-                     or else Kind (Node) = K_Component_Type);
+      pragma Assert
+        (Kind (Node) = K_Component_Implementation
+         or else Kind (Node) = K_Component_Type);
 
       List_Node           : Node_Id;
       First_Instance_Node : Node_Id;
@@ -527,13 +518,15 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
             while Present (List_Node) loop
                if Entity_Ref (List_Node) /= No_Node
-                 and then Get_Referenced_Entity
-                 (Entity_Ref (List_Node)) /= No_Node
+                 and then
+                   Get_Referenced_Entity (Entity_Ref (List_Node)) /=
+                   No_Node
                then
-                  Success := Success
+                  Success :=
+                    Success
                     and then Check_Cycles_In_Subcomponents
-                    (Get_Referenced_Entity (Entity_Ref (List_Node)),
-                     First_Instance_Node);
+                      (Get_Referenced_Entity (Entity_Ref (List_Node)),
+                       First_Instance_Node);
                end if;
 
                List_Node := Next_Node (List_Node);
@@ -560,29 +553,32 @@ package body Ocarina.Analyzer.AADL.Semantics is
       end if;
 
       if not Check_Connection_End_Consistency
-        (Connection_End      => Get_Referenced_Entity (Destination (Node)),
-         Connection_Category => Connection_Type'Val (Category (Node)))
+          (Connection_End      => Get_Referenced_Entity (Destination (Node)),
+           Connection_Category => Connection_Type'Val (Category (Node)))
       then
-         DAE (Node1    => Destination (Node),
-              Message1 => " points to ",
-              Node2    => Get_Referenced_Entity (Destination (Node)),
-              Message2 => ", which is not of a proper type");
+         DAE
+           (Node1    => Destination (Node),
+            Message1 => " points to ",
+            Node2    => Get_Referenced_Entity (Destination (Node)),
+            Message2 => ", which is not of a proper type");
          Success := False;
       end if;
 
       if not Check_Connection_End_Consistency
-        (Connection_End => Get_Referenced_Entity (Source (Node)),
-         Connection_Category => Connection_Type'Val (Category (Node)))
+          (Connection_End      => Get_Referenced_Entity (Source (Node)),
+           Connection_Category => Connection_Type'Val (Category (Node)))
       then
-         DAE (Node1 => Source (Node),
-              Message1 => " points to ",
-              Node2 => Get_Referenced_Entity (Source (Node)),
-              Message2 => ", which is not of a proper type");
+         DAE
+           (Node1    => Source (Node),
+            Message1 => " points to ",
+            Node2    => Get_Referenced_Entity (Source (Node)),
+            Message2 => ", which is not of a proper type");
          Success := False;
       end if;
 
       if Success then
-         Success := Check_End_Types_Consistency (Node)
+         Success :=
+           Check_End_Types_Consistency (Node)
            and then Check_Connection_Ends_Consistency (Node)
            and then Check_End_Directions_Consistency (Node);
       end if;
@@ -595,15 +591,14 @@ package body Ocarina.Analyzer.AADL.Semantics is
    ---------------------------------------
 
    function Check_Connection_Ends_Consistency
-     (Node : Node_Id)
-     return Boolean
+     (Node : Node_Id) return Boolean
    is
       pragma Assert (Kind (Node) = K_Connection);
 
-      Connection_Source      : constant Node_Id := Get_Referenced_Entity
-        (Source (Node));
-      Connection_Destination : constant Node_Id := Get_Referenced_Entity
-        (Destination (Node));
+      Connection_Source : constant Node_Id :=
+        Get_Referenced_Entity (Source (Node));
+      Connection_Destination : constant Node_Id :=
+        Get_Referenced_Entity (Destination (Node));
 
       Same_Kind                                : Boolean := False;
       Data_Port_And_Parameter                  : Boolean := False;
@@ -636,87 +631,110 @@ package body Ocarina.Analyzer.AADL.Semantics is
         (Kind (Connection_Source) = K_Port_Spec
          and then Is_Data (Connection_Source)
          and then Kind (Connection_Destination) = K_Parameter)
-        or else (Kind (Connection_Destination) = K_Port_Spec
-                 and then Is_Data (Connection_Destination)
-                 and then Kind (Connection_Source) = K_Parameter);
+        or else
+        (Kind (Connection_Destination) = K_Port_Spec
+         and then Is_Data (Connection_Destination)
+         and then Kind (Connection_Source) = K_Parameter);
 
       Data_And_Require_Data_Access :=
         Kind (Connection_Source) = K_Subcomponent
-        and then Component_Category'Val (Category
-                                         (Connection_Source)) = CC_Data
+        and then
+          Component_Category'Val (Category (Connection_Source)) =
+          CC_Data
         and then Kind (Connection_Destination) = K_Subcomponent_Access
-        and then Component_Category'Val
-        (Subcomponent_Category (Connection_Destination)) = CC_Data;
+        and then
+          Component_Category'Val
+            (Subcomponent_Category (Connection_Destination)) =
+          CC_Data;
 
       Provide_Data_Access_And_Data :=
         (Kind (Connection_Destination) = K_Subcomponent_Access
-         and then Component_Category'Val
-         (Subcomponent_Category (Connection_Destination)) = CC_Data
+         and then
+           Component_Category'Val
+             (Subcomponent_Category (Connection_Destination)) =
+           CC_Data
          and then Is_Provided (Connection_Destination)
          and then Kind (Connection_Source) = K_Subcomponent
-         and then Component_Category'Val
-         (Category (Connection_Source)) = CC_Data);
+         and then
+           Component_Category'Val (Category (Connection_Source)) =
+           CC_Data);
 
       Bus_And_Require_Bus_Access :=
         (Kind (Connection_Source) = K_Subcomponent
-        and then Component_Category'Val (Category
-                                         (Connection_Source)) = CC_Bus
-        and then Kind (Connection_Destination) = K_Subcomponent_Access
-        and then Component_Category'Val
-           (Subcomponent_Category (Connection_Destination)) = CC_Bus)
+         and then
+           Component_Category'Val (Category (Connection_Source)) =
+           CC_Bus
+         and then Kind (Connection_Destination) = K_Subcomponent_Access
+         and then
+           Component_Category'Val
+             (Subcomponent_Category (Connection_Destination)) =
+           CC_Bus)
         or else
         (Kind (Connection_Source) = K_Subcomponent_Access
-        and then Component_Category'Val (Subcomponent_Category
-                                         (Connection_Source)) = CC_Bus
-        and then Kind (Connection_Destination) = K_Subcomponent
-        and then Component_Category'Val
-           (Category (Connection_Destination)) = CC_Bus);
+         and then
+           Component_Category'Val (Subcomponent_Category (Connection_Source)) =
+           CC_Bus
+         and then Kind (Connection_Destination) = K_Subcomponent
+         and then
+           Component_Category'Val (Category (Connection_Destination)) =
+           CC_Bus);
 
       Provide_Bus_Access_And_Bus :=
         (Kind (Connection_Destination) = K_Subcomponent_Access
-         and then Component_Category'Val
-        (Subcomponent_Category (Connection_Destination)) = CC_Bus
+         and then
+           Component_Category'Val
+             (Subcomponent_Category (Connection_Destination)) =
+           CC_Bus
          and then Is_Provided (Connection_Destination)
          and then Kind (Connection_Source) = K_Subcomponent
-         and then Component_Category'Val
-         (Category (Connection_Source)) = CC_Bus);
+         and then
+           Component_Category'Val (Category (Connection_Source)) =
+           CC_Bus);
 
       Subprogram_And_Require_Subprogram_Access :=
         Kind (Connection_Source) = K_Subcomponent
-        and then Component_Category'Val (Category
-                                         (Connection_Source)) = CC_Subprogram
+        and then
+          Component_Category'Val (Category (Connection_Source)) =
+          CC_Subprogram
         and then Kind (Connection_Destination) = K_Subcomponent_Access
-        and then Component_Category'Val
-        (Subcomponent_Category (Connection_Destination)) = CC_Subprogram;
+        and then
+          Component_Category'Val
+            (Subcomponent_Category (Connection_Destination)) =
+          CC_Subprogram;
 
       Provide_Subprogram_Access_And_Subprogram :=
         (Kind (Connection_Destination) = K_Subcomponent_Access
-         and then Component_Category'Val
-        (Subcomponent_Category (Connection_Destination)) = CC_Subprogram
+         and then
+           Component_Category'Val
+             (Subcomponent_Category (Connection_Destination)) =
+           CC_Subprogram
          and then Is_Provided (Connection_Destination)
          and then Kind (Connection_Source) = K_Subcomponent
-         and then Component_Category'Val
-         (Category (Connection_Source)) = CC_Subprogram);
+         and then
+           Component_Category'Val (Category (Connection_Source)) =
+           CC_Subprogram);
 
       --  We assume that the only possibility is to connect a
       --  subcomponent into a component requires. The contrary
       --  (connecting a component requires into a subcomponent) is
       --  forbidden.
 
-      if not (Bus_And_Require_Bus_Access
-              or else Provide_Bus_Access_And_Bus
-              or else Provide_Data_Access_And_Data
-              or else Data_And_Require_Data_Access
-              or else Subprogram_And_Require_Subprogram_Access
-              or else Provide_Subprogram_Access_And_Subprogram
-              or else Data_Port_And_Parameter
-              or else Same_Kind)
+      if not
+        (Bus_And_Require_Bus_Access
+         or else Provide_Bus_Access_And_Bus
+         or else Provide_Data_Access_And_Data
+         or else Data_And_Require_Data_Access
+         or else Subprogram_And_Require_Subprogram_Access
+         or else Provide_Subprogram_Access_And_Subprogram
+         or else Data_Port_And_Parameter
+         or else Same_Kind)
       then
-         DAE (Loc      => Ocarina.Me_AADL.AADL_Tree.Nodes.Loc (Node),
-              Node1    => Get_Referenced_Entity (Source (Node)),
-              Message1 => " and ",
-              Node2    => Get_Referenced_Entity (Destination (Node)),
-              Message2 => " are not compatible");
+         DAE
+           (Loc      => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Node),
+            Node1    => Get_Referenced_Entity (Source (Node)),
+            Message1 => " and ",
+            Node2    => Get_Referenced_Entity (Destination (Node)),
+            Message2 => " are not compatible");
          return False;
       else
          return True;
@@ -729,8 +747,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Connection_End_Consistency
      (Connection_End      : Node_Id;
-      Connection_Category : Connection_Type)
-     return Boolean
+      Connection_Category : Connection_Type) return Boolean
    is
       pragma Assert
         (Kind (Connection_End) = K_Port_Spec
@@ -746,27 +763,29 @@ package body Ocarina.Analyzer.AADL.Semantics is
          when CT_Error =>
             Success := False;
 
-         when CT_Port_Connection
-           | CT_Feature
-           | CT_Access_Subprogram_Group
-           | CT_Access_Virtual_Bus
-           | CT_Access =>
+         when CT_Port_Connection      |
+           CT_Feature                 |
+           CT_Access_Subprogram_Group |
+           CT_Access_Virtual_Bus      |
+           CT_Access                  =>
             Success := True;
-            --  XXX Incomplete TODO
+         --  XXX Incomplete TODO
 
-         when CT_Data
-           | CT_Data_Delayed =>
-            Success := Kind (Connection_End) = K_Port_Spec
+         when CT_Data | CT_Data_Delayed =>
+            Success :=
+              Kind (Connection_End) = K_Port_Spec
               and then Is_Data (Connection_End)
               and then not Is_Event (Connection_End);
 
          when CT_Event =>
-            Success := Kind (Connection_End) = K_Port_Spec
+            Success :=
+              Kind (Connection_End) = K_Port_Spec
               and then not Is_Data (Connection_End)
               and then Is_Event (Connection_End);
 
          when CT_Event_Data =>
-            Success := Kind (Connection_End) = K_Port_Spec
+            Success :=
+              Kind (Connection_End) = K_Port_Spec
               and then Is_Data (Connection_End)
               and then Is_Event (Connection_End);
 
@@ -778,34 +797,50 @@ package body Ocarina.Analyzer.AADL.Semantics is
             --  to subprogram parameters, since parameter have the
             --  same semantic as (event) data ports.
 
-            Success :=  Kind (Connection_End) = K_Parameter
-              or else (Kind (Connection_End) = K_Port_Spec
-                       and then Is_Data (Connection_End));
+            Success :=
+              Kind (Connection_End) = K_Parameter
+              or else
+              (Kind (Connection_End) = K_Port_Spec
+               and then Is_Data (Connection_End));
 
          when CT_Access_Bus =>
-            Success := (Kind (Connection_End) = K_Subcomponent_Access
-                         and then Component_Category'Val
-                         (Subcomponent_Category (Connection_End)) = CC_Bus)
-              or else (Kind (Connection_End) = K_Subcomponent
-                       and then Component_Category'Val
-                       (Category (Connection_End)) = CC_Bus);
+            Success :=
+              (Kind (Connection_End) = K_Subcomponent_Access
+               and then
+                 Component_Category'Val
+                   (Subcomponent_Category (Connection_End)) =
+                 CC_Bus)
+              or else
+              (Kind (Connection_End) = K_Subcomponent
+               and then
+                 Component_Category'Val (Category (Connection_End)) =
+                 CC_Bus);
 
          when CT_Access_Data =>
-            Success := (Kind (Connection_End) = K_Subcomponent_Access
-                        and then Component_Category'Val
-                        (Subcomponent_Category (Connection_End)) = CC_Data)
-              or else (Kind (Connection_End) = K_Subcomponent
-                       and then Component_Category'Val
-                       (Category (Connection_End)) = CC_Data);
+            Success :=
+              (Kind (Connection_End) = K_Subcomponent_Access
+               and then
+                 Component_Category'Val
+                   (Subcomponent_Category (Connection_End)) =
+                 CC_Data)
+              or else
+              (Kind (Connection_End) = K_Subcomponent
+               and then
+                 Component_Category'Val (Category (Connection_End)) =
+                 CC_Data);
 
          when CT_Access_Subprogram =>
             Success :=
               (Kind (Connection_End) = K_Subcomponent_Access
-               and then Component_Category'Val
-               (Subcomponent_Category (Connection_End)) = CC_Subprogram)
-              or else (Kind (Connection_End) = K_Subcomponent
-                       and then Component_Category'Val
-                       (Category (Connection_End)) = CC_Subprogram);
+               and then
+                 Component_Category'Val
+                   (Subcomponent_Category (Connection_End)) =
+                 CC_Subprogram)
+              or else
+              (Kind (Connection_End) = K_Subcomponent
+               and then
+                 Component_Category'Val (Category (Connection_End)) =
+                 CC_Subprogram);
       end case;
 
       return Success;
@@ -822,23 +857,24 @@ package body Ocarina.Analyzer.AADL.Semantics is
       List_Node : Node_Id;
       Success   : Boolean := True;
    begin
-      if not Is_Empty (Ocarina.Me_AADL.AADL_Tree.Nodes.Connections (Node)) then
-         List_Node := First_Node
-           (Ocarina.Me_AADL.AADL_Tree.Nodes.Connections (Node));
+      if not Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Node)) then
+         List_Node :=
+           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Node));
 
          while Present (List_Node) loop
-            Success := Check_Connection (List_Node) and then Success;
+            Success   := Check_Connection (List_Node) and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
       end if;
 
       --  Check whether there are duplicate connections
 
-      if Success and then
-        not Is_Empty (Ocarina.Me_AADL.AADL_Tree.Nodes.Connections (Node))
+      if Success
+        and then not Is_Empty
+          (Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Node))
       then
-         List_Node := First_Node
-           (Ocarina.Me_AADL.AADL_Tree.Nodes.Connections (Node));
+         List_Node :=
+           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Node));
 
          while Present (List_Node) loop
             declare
@@ -880,20 +916,21 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
                Add_Str_To_Name_Buffer ("dup%cnx%check");
                I_Name := Name_Find;
-               Info := Get_Name_Table_Info (I_Name);
+               Info   := Get_Name_Table_Info (I_Name);
 
                if Info /= 0 then
                   --  Check whether the two connections have common
                   --  modes.
 
-                  if Have_Common_Statements (In_Modes (List_Node),
-                                             In_Modes (Node_Id (Info)))
+                  if Have_Common_Statements
+                      (In_Modes (List_Node),
+                       In_Modes (Node_Id (Info)))
                   then
                      Error_Loc (1) := Loc (List_Node);
                      Error_Loc (2) := Loc (Node_Id (Info));
 
-                     DE ("This connection is a duplication of the"
-                         & " connection declared!");
+                     DE ("This connection is a duplication of the" &
+                        " connection declared!");
 
                      Success := False;
                   end if;
@@ -917,14 +954,14 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       pragma Assert (Kind (Node) = K_Connection);
 
-      Connection_Source      : constant Node_Id := Get_Referenced_Entity
-        (Source (Node));
-      Source_Is_Local        : constant Boolean := Connection_End_Is_Local
-        (Source (Node));
-      Connection_Destination : constant Node_Id := Get_Referenced_Entity
-        (Destination (Node));
-      Destination_Is_Local   : constant Boolean := Connection_End_Is_Local
-        (Destination (Node));
+      Connection_Source : constant Node_Id :=
+        Get_Referenced_Entity (Source (Node));
+      Source_Is_Local : constant Boolean :=
+        Connection_End_Is_Local (Source (Node));
+      Connection_Destination : constant Node_Id :=
+        Get_Referenced_Entity (Destination (Node));
+      Destination_Is_Local : constant Boolean :=
+        Connection_End_Is_Local (Destination (Node));
 
       Directions : Boolean := False;
    begin
@@ -937,43 +974,52 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       case Kind (Connection_Destination) is
          when K_Port_Spec | K_Parameter =>
-            if (Present (Inversed_Entity (Connection_Source))
-                  and then Connection_Source
-                  /= Inversed_Entity (Connection_Source))
-              or else (Present (Inversed_Entity (Connection_Destination))
-                         and then Connection_Destination
-                         /= Inversed_Entity (Connection_Destination))
+            if
+              (Present (Inversed_Entity (Connection_Source))
+               and then
+                 Connection_Source /=
+                 Inversed_Entity (Connection_Source))
+              or else
+              (Present (Inversed_Entity (Connection_Destination))
+               and then
+                 Connection_Destination /=
+                 Inversed_Entity (Connection_Destination))
             then
                --  XXX to be refined
                Directions := True;
             else
-               Directions := ((not Source_Is_Local)
-                              and then (not Destination_Is_Local)
-                                and then Is_Out (Connection_Source)
-                                and then Is_In (Connection_Destination))
-                 or else (Source_Is_Local
-                            and then (not Destination_Is_Local)
-                            and then Is_In (Connection_Source)
-                            and then Is_In (Connection_Destination))
-                 or else ((not Source_Is_Local)
-                            and then Destination_Is_Local
-                            and then Is_Out (Connection_Source)
-                            and then Is_Out (Connection_Destination))
-                 or else (Source_Is_Local
-                            and then Destination_Is_Local
-                            and then Is_In (Connection_Source)
-                            and then Is_Out (Connection_Destination))
-                 or else (Is_In (Connection_Source)
-                            and then Is_Out (Connection_Source)
-                            and then Is_Out (Connection_Destination)
-                            and then Is_In (Connection_Destination));
+               Directions :=
+                 ((not Source_Is_Local)
+                  and then (not Destination_Is_Local)
+                  and then Is_Out (Connection_Source)
+                  and then Is_In (Connection_Destination))
+                 or else
+                 (Source_Is_Local
+                  and then (not Destination_Is_Local)
+                  and then Is_In (Connection_Source)
+                  and then Is_In (Connection_Destination))
+                 or else
+                 ((not Source_Is_Local)
+                  and then Destination_Is_Local
+                  and then Is_Out (Connection_Source)
+                  and then Is_Out (Connection_Destination))
+                 or else
+                 (Source_Is_Local
+                  and then Destination_Is_Local
+                  and then Is_In (Connection_Source)
+                  and then Is_Out (Connection_Destination))
+                 or else
+                 (Is_In (Connection_Source)
+                  and then Is_Out (Connection_Source)
+                  and then Is_Out (Connection_Destination)
+                  and then Is_In (Connection_Destination));
                --  XXX The latest test may be redudant with the previous
                --  ones
             end if;
 
          when K_Feature_Group_Spec =>
             Directions := True;
-            --  There is no direction for a port group
+         --  There is no direction for a port group
 
          when K_Subcomponent_Access =>
             Directions :=
@@ -988,9 +1034,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
               (Source_Is_Local
                and then not Destination_Is_Local
                and then not Is_Provided (Connection_Destination)
-               and then ((Kind (Connection_Source) = K_Subcomponent_Access
-                          and then not Is_Provided (Connection_Source))
-                         or else Kind (Connection_Source) = K_Subcomponent))
+               and then
+               ((Kind (Connection_Source) = K_Subcomponent_Access
+                 and then not Is_Provided (Connection_Source))
+                or else Kind (Connection_Source) = K_Subcomponent))
               or else
               (not Source_Is_Local
                and then Destination_Is_Local
@@ -1011,11 +1058,12 @@ package body Ocarina.Analyzer.AADL.Semantics is
       end case;
 
       if not Directions then
-         DAE (Loc      => Ocarina.Me_AADL.AADL_Tree.Nodes.Loc (Node),
-              Node1    => Get_Referenced_Entity (Source (Node)),
-              Message1 => " and ",
-              Node2    => Get_Referenced_Entity (Destination (Node)),
-              Message2 => " do not have compatible directions");
+         DAE
+           (Loc      => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Node),
+            Node1    => Get_Referenced_Entity (Source (Node)),
+            Message1 => " and ",
+            Node2    => Get_Referenced_Entity (Destination (Node)),
+            Message2 => " do not have compatible directions");
          Directions := False;
       end if;
 
@@ -1030,14 +1078,13 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       pragma Assert (Kind (Node) = K_Connection);
 
-      Source_Node          : constant Node_Id := Get_Referenced_Entity
-        (Source (Node));
-      Destination_Node     : constant Node_Id := Get_Referenced_Entity
-        (Destination (Node));
-      Source_Is_Local      : constant Boolean := Connection_End_Is_Local
-        (Source (Node));
-      Destination_Is_Local : constant Boolean := Connection_End_Is_Local
-        (Destination (Node));
+      Source_Node : constant Node_Id := Get_Referenced_Entity (Source (Node));
+      Destination_Node : constant Node_Id :=
+        Get_Referenced_Entity (Destination (Node));
+      Source_Is_Local : constant Boolean :=
+        Connection_End_Is_Local (Source (Node));
+      Destination_Is_Local : constant Boolean :=
+        Connection_End_Is_Local (Destination (Node));
 
       Source_Type      : Node_Id;
       Destination_Type : Node_Id;
@@ -1079,26 +1126,27 @@ package body Ocarina.Analyzer.AADL.Semantics is
          when CT_Error =>
             Success := False;
 
-         when CT_Feature
-           | CT_Access_Subprogram_Group
-           | CT_Access_Virtual_Bus
-           | CT_Access =>
+         when CT_Feature              |
+           CT_Access_Subprogram_Group |
+           CT_Access_Virtual_Bus      |
+           CT_Access                  =>
             Success := True;
-            --  XXX incomplete TODO
+         --  XXX incomplete TODO
 
-         when CT_Port_Connection
-           | CT_Data
-           | CT_Data_Delayed
-           | CT_Event_Data
-           | CT_Parameter =>
+         when CT_Port_Connection |
+           CT_Data               |
+           CT_Data_Delayed       |
+           CT_Event_Data         |
+           CT_Parameter          =>
             if Source_Type = Destination_Type then
                Success := True;
             else
-               DAE (Loc      => Loc (Node),
-                    Node1    => Source (Node),
-                    Message1 => " and ",
-                    Node2    => Destination (Node),
-                    Message2 => " do not have compatible types");
+               DAE
+                 (Loc      => Loc (Node),
+                  Node1    => Source (Node),
+                  Message1 => " and ",
+                  Node2    => Destination (Node),
+                  Message2 => " do not have compatible types");
                Success := False;
             end if;
 
@@ -1107,41 +1155,45 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          when CT_Feature_Group =>
             if Source_Is_Local = Destination_Is_Local then
-               Success := (Present (Inverse_Of (Source_Type))
-                           and then Get_Referenced_Entity
-                           (Inverse_Of (Source_Type)) = Destination_Type)
-                 or else (Present (Inverse_Of (Destination_Type))
-                          and then Get_Referenced_Entity
-                          (Inverse_Of (Destination_Type)) = Source_Type);
+               Success :=
+                 (Present (Inverse_Of (Source_Type))
+                  and then
+                    Get_Referenced_Entity (Inverse_Of (Source_Type)) =
+                    Destination_Type)
+                 or else
+                 (Present (Inverse_Of (Destination_Type))
+                  and then
+                    Get_Referenced_Entity (Inverse_Of (Destination_Type)) =
+                    Source_Type);
             else
                Success := (Source_Type = Destination_Type);
             end if;
 
             if not Success then
-               DAE (Loc      => Loc (Node),
-                    Node1    => Source (Node),
-                    Message1 => " and ",
-                    Node2    => Destination (Node),
-                    Message2 => " do not have compatible types");
+               DAE
+                 (Loc      => Loc (Node),
+                  Node1    => Source (Node),
+                  Message1 => " and ",
+                  Node2    => Destination (Node),
+                  Message2 => " do not have compatible types");
                Success := False;
             end if;
 
-            --  XXX This comparison is too basic. We should compare
-            --  the content of the port groups instead
+         --  XXX This comparison is too basic. We should compare
+         --  the content of the port groups instead
 
-         when CT_Access_Bus
-           | CT_Access_Data
-           | CT_Access_Subprogram =>
+         when CT_Access_Bus | CT_Access_Data | CT_Access_Subprogram =>
 
-            Success := Check_Classifier_Matching_Rule
-              (Source_Type, Destination_Type);
+            Success :=
+              Check_Classifier_Matching_Rule (Source_Type, Destination_Type);
 
             if not Success then
-               DAE (Loc      => Loc (Node),
-                    Node1    => Source (Node),
-                    Message1 => " and ",
-                    Node2    => Destination (Node),
-                    Message2 => " do not have compatible types");
+               DAE
+                 (Loc      => Loc (Node),
+                  Node1    => Source (Node),
+                  Message1 => " and ",
+                  Node2    => Destination (Node),
+                  Message2 => " do not have compatible types");
             end if;
       end case;
 
@@ -1179,10 +1231,12 @@ package body Ocarina.Analyzer.AADL.Semantics is
                      else
                         if Component = Node then
                            Display_Conflicting_Initial_Modes
-                             (List_Node, First_Initial_Mode);
+                             (List_Node,
+                              First_Initial_Mode);
                         else
                            Display_Conflicting_Initial_Modes
-                             (First_Initial_Mode, List_Node);
+                             (First_Initial_Mode,
+                              List_Node);
                         end if;
                         Success := False;
                      end if;
@@ -1201,8 +1255,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
       end loop;
 
       if No (First_Initial_Mode) and then Number_Of_Modes /= 0 then
-         DAE (Node1    => Node,
-              Message1 => " has no initial mode");
+         DAE (Node1 => Node, Message1 => " has no initial mode");
          Success := False;
       end if;
 
@@ -1214,8 +1267,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
    --------------------------------------------------
 
    function Check_Properties_Of_Component_Implementation
-     (Component : Node_Id)
-     return Boolean
+     (Component : Node_Id) return Boolean
    is
       pragma Assert (Kind (Component) = K_Component_Implementation);
 
@@ -1229,9 +1281,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
          List_Node := First_Node (Refines_Type (Component));
 
          while Present (List_Node) loop
-            Success := Check_Property_Associations
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               List_Node)
+            Success :=
+              Check_Property_Associations
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1243,9 +1296,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
          List_Node := First_Node (Subcomponents (Component));
 
          while Present (List_Node) loop
-            Success := Check_Property_Associations
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               List_Node)
+            Success :=
+              Check_Property_Associations
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1262,10 +1316,11 @@ package body Ocarina.Analyzer.AADL.Semantics is
                Call_List_Node := First_Node (Subprogram_Calls (List_Node));
 
                while Present (Call_List_Node) loop
-                  Success := Check_Property_Associations
-                    (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties
-                       (Call_List_Node),
-                     Call_List_Node)
+                  Success :=
+                    Check_Property_Associations
+                      (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
+                         (Call_List_Node),
+                       Call_List_Node)
                     and then Success;
                   Call_List_Node := Next_Node (Call_List_Node);
                end loop;
@@ -1278,18 +1333,21 @@ package body Ocarina.Analyzer.AADL.Semantics is
       --  Connections
       --  Some connections are anonymous
 
-      if Ocarina.Me_AADL.AADL_Tree.Nodes.Connections
-        (Component) /= No_List then
-         List_Node := First_Node
-           (Ocarina.Me_AADL.AADL_Tree.Nodes.Connections (Component));
+      if Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Component) /=
+        No_List
+      then
+         List_Node :=
+           First_Node
+             (Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Component));
 
          while Present (List_Node) loop
-            Success := Check_Property_Associations
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               List_Node)
+            Success :=
+              Check_Property_Associations
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 List_Node)
               and then Success;
 
-               List_Node := Next_Node (List_Node);
+            List_Node := Next_Node (List_Node);
          end loop;
       end if;
 
@@ -1299,9 +1357,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
          List_Node := First_Node (Flows (Component));
 
          while Present (List_Node) loop
-            Success := Check_Property_Associations
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               List_Node)
+            Success :=
+              Check_Property_Associations
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1314,9 +1373,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          while Present (List_Node) loop
             if Kind (List_Node) = K_Mode then
-               Success := Check_Property_Associations
-                 (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-                  List_Node)
+               Success :=
+                 Check_Property_Associations
+                   (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                    List_Node)
                  and then Success;
             end if;
 
@@ -1326,8 +1386,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       --  Properties
 
-      Success := Check_Property_Associations
-        (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (Component), Component)
+      Success :=
+        Check_Property_Associations
+          (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Component),
+           Component)
         and then Success;
 
       return Success;
@@ -1338,8 +1400,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
    ----------------------------------------
 
    function Check_Properties_Of_Component_Type
-     (Component : Node_Id)
-     return Boolean
+     (Component : Node_Id) return Boolean
    is
       pragma Assert (Kind (Component) = K_Component_Type);
 
@@ -1352,9 +1413,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
          List_Node := First_Node (Features (Component));
 
          while Present (List_Node) loop
-            Success := Check_Property_Associations
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               List_Node)
+            Success :=
+              Check_Property_Associations
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1366,9 +1428,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
          List_Node := First_Node (Flows (Component));
 
          while Present (List_Node) loop
-            Success := Check_Property_Associations
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               List_Node)
+            Success :=
+              Check_Property_Associations
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1376,8 +1439,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       --  Properties
 
-      Success := Check_Property_Associations
-        (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (Component), Component)
+      Success :=
+        Check_Property_Associations
+          (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Component),
+           Component)
         and then Success;
 
       return Success;
@@ -1388,8 +1453,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
    -----------------------------------------
 
    function Check_Properties_Of_Port_Group_Type
-     (Port_Group : Node_Id)
-     return Boolean
+     (Port_Group : Node_Id) return Boolean
    is
       pragma Assert (Kind (Port_Group) = K_Feature_Group_Type);
 
@@ -1402,9 +1466,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
          List_Node := First_Node (Features (Port_Group));
 
          while Present (List_Node) loop
-            Success := Check_Property_Associations
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               List_Node)
+            Success :=
+              Check_Property_Associations
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1412,8 +1477,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       --  Properties
 
-      Success := Check_Property_Associations
-        (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (Port_Group), Port_Group)
+      Success :=
+        Check_Property_Associations
+          (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Port_Group),
+           Port_Group)
         and then Success;
 
       return Success;
@@ -1425,8 +1492,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Property_Associations
      (Properties : List_Id;
-      Container  : Node_Id)
-     return Boolean
+      Container  : Node_Id) return Boolean
    is
       pragma Assert (Present (Container));
 
@@ -1439,7 +1505,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
          while Present (List_Node) loop
             pragma Assert (Kind (List_Node) = K_Property_Association);
 
-            Success := Check_Applies_To (List_Node, Container)
+            Success :=
+              Check_Applies_To (List_Node, Container)
               and then Check_Values_Of_Property_Association (List_Node)
               and then Success;
 
@@ -1456,8 +1523,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Property_Type
      (Property_Type         : Node_Id;
-      Display_Error_Message : Boolean := True)
-     return Boolean
+      Display_Error_Message : Boolean := True) return Boolean
    is
       pragma Assert
         (Kind (Property_Type) = K_Property_Type_Declaration
@@ -1487,28 +1553,31 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       if Present (Type_Designator) then
          case Kind (Type_Designator) is
-            when K_Integer_Type
-              | K_Real_Type =>
+            when K_Integer_Type | K_Real_Type =>
                if Present (Type_Range (Type_Designator))
                  and then Present (Lower_Bound (Type_Range (Type_Designator)))
-                 and then Kind (Lower_Bound (Type_Range (Type_Designator)))
-                 = K_Literal
+                 and then
+                   Kind (Lower_Bound (Type_Range (Type_Designator))) =
+                   K_Literal
                  and then Present (Upper_Bound (Type_Range (Type_Designator)))
-                 and then Kind (Upper_Bound (Type_Range (Type_Designator)))
-                 = K_Literal
+                 and then
+                   Kind (Upper_Bound (Type_Range (Type_Designator))) =
+                   K_Literal
                then
                   --  We only check the types that are completely
                   --  defined. Typically, the types that have been
                   --  expanded.
 
-                  Success := Compare_Numbers
-                    (Lower_Bound (Type_Range (Type_Designator)),
-                     Upper_Bound (Type_Range (Type_Designator))) >= 0;
+                  Success :=
+                    Compare_Numbers
+                      (Lower_Bound (Type_Range (Type_Designator)),
+                       Upper_Bound (Type_Range (Type_Designator))) >=
+                    0;
                end if;
 
             when K_Range_Type =>
-               Success := Check_Property_Type
-                 (Number_Type (Type_Designator), False);
+               Success :=
+                 Check_Property_Type (Number_Type (Type_Designator), False);
 
             when others =>
                Success := True;
@@ -1526,17 +1595,16 @@ package body Ocarina.Analyzer.AADL.Semantics is
    -- Reset_Connections --
    -----------------------
 
-   procedure Reset_Connections (Node : Node_Id)
-   is
+   procedure Reset_Connections (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Component_Implementation);
 
       List_Node : Node_Id;
    begin
       --  Reset connections info on name table
 
-      if not Is_Empty (Ocarina.Me_AADL.AADL_Tree.Nodes.Connections (Node)) then
-         List_Node := First_Node
-           (Ocarina.Me_AADL.AADL_Tree.Nodes.Connections (Node));
+      if not Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Node)) then
+         List_Node :=
+           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Node));
 
          while Present (List_Node) loop
             declare
@@ -1600,7 +1668,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          while Present (List_Node) loop
             case Kind (List_Node) is
-               when  K_Component_Implementation =>
+               when K_Component_Implementation =>
                   Reset_Connections (List_Node);
 
                when K_Package_Specification =>
@@ -1610,7 +1678,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
                      while Present (Package_List_Node) loop
                         case Kind (Package_List_Node) is
-                           when  K_Component_Implementation =>
+                           when K_Component_Implementation =>
                               Reset_Connections (Package_List_Node);
 
                            when others =>
@@ -1648,8 +1716,9 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          while Present (List_Node) loop
             case Kind (List_Node) is
-               when  K_Component_Implementation =>
-                  Success := Check_For_A_Unique_Initial_Mode (List_Node)
+               when K_Component_Implementation =>
+                  Success :=
+                    Check_For_A_Unique_Initial_Mode (List_Node)
                     and then Check_Cycles_In_Subcomponents (List_Node)
                     and then Check_Connections (List_Node)
                     and then Success;
@@ -1661,12 +1730,12 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
                      while Present (Package_List_Node) loop
                         case Kind (Package_List_Node) is
-                           when  K_Component_Implementation =>
+                           when K_Component_Implementation =>
                               Success :=
                                 Check_For_A_Unique_Initial_Mode
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Check_Cycles_In_Subcomponents
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Check_Connections (Package_List_Node)
                                 and then Success;
 
@@ -1706,21 +1775,20 @@ package body Ocarina.Analyzer.AADL.Semantics is
          while Present (List_Node) loop
             case Kind (List_Node) is
                when K_Component_Type =>
-                  Success := Check_Cycles_In_Port_Group_Or_Component_Type
-                    (List_Node)
+                  Success :=
+                    Check_Cycles_In_Port_Group_Or_Component_Type (List_Node)
                     and then Success;
 
-               when  K_Component_Implementation =>
-                  Success := Check_Cycles_In_Component_Implementation
-                    (List_Node)
+               when K_Component_Implementation =>
+                  Success :=
+                    Check_Cycles_In_Component_Implementation (List_Node)
                     and then Success;
 
                when K_Feature_Group_Type =>
                   Success :=
-                    (Check_Cycles_In_Port_Group_Or_Component_Type
-                     (List_Node)
+                    (Check_Cycles_In_Port_Group_Or_Component_Type (List_Node)
                      and then Check_Cycles_In_Inversions_Of_Port_Groups
-                     (List_Node))
+                       (List_Node))
                     and then Success;
 
                when K_Package_Specification =>
@@ -1733,22 +1801,22 @@ package body Ocarina.Analyzer.AADL.Semantics is
                            when K_Component_Type =>
                               Success :=
                                 Check_Cycles_In_Port_Group_Or_Component_Type
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Success;
 
-                           when  K_Component_Implementation =>
+                           when K_Component_Implementation =>
                               Success :=
                                 Check_Cycles_In_Component_Implementation
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Success;
 
                            when K_Feature_Group_Type =>
                               Success :=
                                 (Check_Cycles_In_Port_Group_Or_Component_Type
-                                 (Package_List_Node)
-                                 and then
-                                 Check_Cycles_In_Inversions_Of_Port_Groups
-                                 (Package_List_Node))
+                                   (Package_List_Node)
+                                   and then
+                                   Check_Cycles_In_Inversions_Of_Port_Groups
+                                   (Package_List_Node))
                                 and then Success;
 
                            when others =>
@@ -1788,7 +1856,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          while Present (List_Node) loop
             case Kind (List_Node) is
-               when  K_Component_Implementation =>
+               when K_Component_Implementation =>
                   Success :=
                     Check_Properties_Of_Component_Implementation (List_Node)
                     and then Success;
@@ -1804,9 +1872,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
                     and then Success;
 
                when K_Package_Specification =>
-                  Success := Check_Property_Associations
-                    (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (List_Node),
-                     List_Node)
+                  Success :=
+                    Check_Property_Associations
+                      (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                       List_Node)
                     and then Success;
 
                   if Declarations (List_Node) /= No_List then
@@ -1815,22 +1884,22 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
                      while Present (Package_List_Node) loop
                         case Kind (Package_List_Node) is
-                           when  K_Component_Implementation =>
+                           when K_Component_Implementation =>
                               Success :=
                                 Check_Properties_Of_Component_Implementation
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Success;
 
                            when K_Component_Type =>
                               Success :=
                                 Check_Properties_Of_Component_Type
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Success;
 
                            when K_Feature_Group_Type =>
                               Success :=
                                 Check_Properties_Of_Port_Group_Type
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Success;
 
                            when others =>
@@ -1848,7 +1917,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
                      while Present (Package_List_Node) loop
                         case Kind (Package_List_Node) is
-                           when  K_Property_Type_Declaration =>
+                           when K_Property_Type_Declaration =>
                               Success :=
                                 Check_Property_Type (Package_List_Node)
                                 and then Success;
@@ -1876,15 +1945,16 @@ package body Ocarina.Analyzer.AADL.Semantics is
    ------------------------------------------
 
    function Check_Values_Of_Property_Association
-     (Property_Association : Node_Id)
-     return Boolean
+     (Property_Association : Node_Id) return Boolean
    is
       pragma Assert (Kind (Property_Association) = K_Property_Association);
 
-      Property_Name         : constant Node_Id := Get_Referenced_Entity
-        (Ocarina.Me_AADL.AADL_Tree.Nodes.Property_Name (Property_Association));
-      Type_Of_Property_Name : constant Property_Type := Get_Type_Of_Property
-        (Property_Name);
+      Property_Name : constant Node_Id :=
+        Get_Referenced_Entity
+          (Ocarina.ME_AADL.AADL_Tree.Nodes.Property_Name
+             (Property_Association));
+      Type_Of_Property_Name : constant Property_Type :=
+        Get_Type_Of_Property (Property_Name);
 
       List_Node            : Node_Id;
       Success              : Boolean := True;
@@ -1912,9 +1982,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
          if Is_Additive_Association (Property_Association)
            and then Present
-           (Expanded_Single_Value
-            (Property_Association_Value
-             (Property_Association)))
+             (Expanded_Single_Value
+                (Property_Association_Value (Property_Association)))
          then
             --  Additive association allowed only for list properties
 
@@ -1941,22 +2010,23 @@ package body Ocarina.Analyzer.AADL.Semantics is
          --  properties.
 
          if Expanded_Multi_Value
-           (Property_Association_Value
-            (Property_Association)) /= No_List
+             (Property_Association_Value (Property_Association)) /=
+           No_List
          then
             if Type_Of_Property_Is_A_List (Property_Name) then
-               List_Node := First_Node
-                 (Expanded_Multi_Value
-                  (Property_Association_Value
-                   (Property_Association)));
+               List_Node :=
+                 First_Node
+                   (Expanded_Multi_Value
+                      (Property_Association_Value (Property_Association)));
 
                while Present (List_Node) loop
-                  Types_Are_Compatible := Test_Property_Type_Equivalence
-                    (Type_Of_Property_Name,
-                     Get_Type_Of_Property_Value
-                     (List_Node))
+                  Types_Are_Compatible :=
+                    Test_Property_Type_Equivalence
+                      (Type_Of_Property_Name,
+                       Get_Type_Of_Property_Value (List_Node))
                     and then Test_Property_Value_Validity
-                    (Property_Name_Type (Property_Name), List_Node);
+                      (Property_Name_Type (Property_Name),
+                       List_Node);
 
                   if not Types_Are_Compatible then
                      Display_Incompatible_Property_Types
@@ -1980,7 +2050,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
             end if;
 
          elsif Expanded_Single_Value
-           (Property_Association_Value (Property_Association)) /= No_Node
+             (Property_Association_Value (Property_Association)) /=
+           No_Node
          then
             if Type_Of_Property_Is_A_List (Property_Name) then
                --  If the value is a single element while we are
@@ -1991,29 +2062,29 @@ package body Ocarina.Analyzer.AADL.Semantics is
                Display_Conversion_To_Property_List
                  (Property_Association => Property_Association,
                   Property_Name        => Property_Name);
-               Success := Convert_Single_Value_To_List (Property_Association)
+               Success :=
+                 Convert_Single_Value_To_List (Property_Association)
                  and then Check_Values_Of_Property_Association
-                 (Property_Association);
+                   (Property_Association);
             else
-               Success := Test_Property_Type_Equivalence
-                 (Type_Of_Property_Name,
-                  Get_Type_Of_Property_Value
-                  (Expanded_Single_Value
-                   (Property_Association_Value
-                      (Property_Association))))
+               Success :=
+                 Test_Property_Type_Equivalence
+                   (Type_Of_Property_Name,
+                    Get_Type_Of_Property_Value
+                      (Expanded_Single_Value
+                         (Property_Association_Value (Property_Association))))
                  and then Test_Property_Value_Validity
-                 (Property_Name_Type (Property_Name),
-                  Expanded_Single_Value
-                    (Property_Association_Value
-                       (Property_Association)));
+                   (Property_Name_Type (Property_Name),
+                    Expanded_Single_Value
+                      (Property_Association_Value (Property_Association)));
 
                if not Success then
                   Display_Incompatible_Property_Types
                     (Property_Association => Property_Association,
-                     Property_Value       => Expanded_Single_Value
-                       (Property_Association_Value
-                        (Property_Association)),
-                     Property_Name        => Property_Name);
+                     Property_Value       =>
+                       Expanded_Single_Value
+                         (Property_Association_Value (Property_Association)),
+                     Property_Name => Property_Name);
                end if;
             end if;
 
@@ -2033,13 +2104,14 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Compare_Numbers
      (Number_1 : Node_Id;
-      Number_2 : Node_Id)
-     return Integer
+      Number_2 : Node_Id) return Integer
    is
-      pragma Assert (Kind (Number_1) = K_Literal or else
-                     Kind (Number_1) = K_Signed_AADLNumber);
-      pragma Assert (Kind (Number_2) = K_Literal or else
-                     Kind (Number_2) = K_Signed_AADLNumber);
+      pragma Assert
+        (Kind (Number_1) = K_Literal
+         or else Kind (Number_1) = K_Signed_AADLNumber);
+      pragma Assert
+        (Kind (Number_2) = K_Literal
+         or else Kind (Number_2) = K_Signed_AADLNumber);
 
       Literal_1 : Node_Id;
       Literal_2 : Node_Id;
@@ -2081,9 +2153,9 @@ package body Ocarina.Analyzer.AADL.Semantics is
       pragma Assert (Kind (Node) = K_Entity_Reference);
    begin
       return Next_Node (First_Node (Path (Node))) = No_Node
-        or else Kind (Corresponding_Entity
-                      (Item (First_Node (Path (Node))))) =
-                      K_Feature_Group_Spec;
+        or else
+          Kind (Corresponding_Entity (Item (First_Node (Path (Node))))) =
+          K_Feature_Group_Spec;
    end Connection_End_Is_Local;
 
    ----------------------------------
@@ -2091,29 +2163,30 @@ package body Ocarina.Analyzer.AADL.Semantics is
    ----------------------------------
 
    function Convert_Single_Value_To_List
-     (Property_Association : Node_Id)
-     return Boolean
+     (Property_Association : Node_Id) return Boolean
    is
       pragma Assert (Kind (Property_Association) = K_Property_Association);
    begin
       Set_Expanded_Multi_Value
         (Property_Association_Value (Property_Association),
-         New_List (K_List_Id,
-                   Loc (Expanded_Single_Value
-                        (Property_Association_Value
-                         (Property_Association)))));
+         New_List
+           (K_List_Id,
+            Loc
+              (Expanded_Single_Value
+                 (Property_Association_Value (Property_Association)))));
       Append_Node_To_List
         (Expanded_Single_Value
-         (Property_Association_Value (Property_Association)),
+           (Property_Association_Value (Property_Association)),
          Expanded_Multi_Value
-         (Property_Association_Value (Property_Association)));
+           (Property_Association_Value (Property_Association)));
 
       Set_Multi_Value
         (Property_Association_Value (Property_Association),
-         New_List (K_List_Id,
-                   Loc (Single_Value
-                        (Property_Association_Value
-                         (Property_Association)))));
+         New_List
+           (K_List_Id,
+            Loc
+              (Single_Value
+                 (Property_Association_Value (Property_Association)))));
       Append_Node_To_List
         (Single_Value (Property_Association_Value (Property_Association)),
          Multi_Value (Property_Association_Value (Property_Association)));
@@ -2208,25 +2281,29 @@ package body Ocarina.Analyzer.AADL.Semantics is
    ------------------------------------
 
    function Test_Property_Type_Equivalence
-     (Type_Of_Property_Name        :
-      Ocarina.Me_AADL.AADL_Tree.Entities.Properties.Property_Type;
-      Type_Of_Property_Association :
-      Ocarina.Me_AADL.AADL_Tree.Entities.Properties.Property_Type)
-     return Boolean
+     (Type_Of_Property_Name : Ocarina.ME_AADL.AADL_Tree.Entities.Properties
+        .Property_Type;
+      Type_Of_Property_Association : Ocarina.ME_AADL.AADL_Tree.Entities
+        .Properties
+        .Property_Type)
+      return Boolean
    is
       Success : Boolean;
    begin
       case Type_Of_Property_Name is
          when PT_Boolean =>
-            Success := Type_Of_Property_Association = PT_Boolean_Expression
+            Success :=
+              Type_Of_Property_Association = PT_Boolean_Expression
               or else Type_Of_Property_Association = PT_Boolean;
 
          when PT_Integer =>
-            Success := Type_Of_Property_Association = PT_Integer
+            Success :=
+              Type_Of_Property_Association = PT_Integer
               or else Type_Of_Property_Association = PT_Unsigned_Integer;
 
          when PT_Float =>
-            Success := Type_Of_Property_Association = PT_Float
+            Success :=
+              Type_Of_Property_Association = PT_Float
               or else Type_Of_Property_Association = PT_Unsigned_Float
               or else Type_Of_Property_Association = PT_Integer
               or else Type_Of_Property_Association = PT_Unsigned_Integer;
@@ -2250,16 +2327,16 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
    function Test_Property_Value_Validity
      (Property_Type  : Node_Id;
-      Property_Value : Node_Id)
-     return Boolean
+      Property_Value : Node_Id) return Boolean
    is
       pragma Assert (Kind (Property_Type) = K_Property_Type);
-      pragma Assert (Kind (Property_Value) = K_Component_Classifier_Term
-                     or else Kind (Property_Value) = K_Reference_Term
-                     or else Kind (Property_Value) = K_Enumeration_Term
-                     or else Kind (Property_Value) = K_Number_Range_Term
-                     or else Kind (Property_Value) = K_Literal
-                     or else Kind (Property_Value) = K_Signed_AADLNumber);
+      pragma Assert
+        (Kind (Property_Value) = K_Component_Classifier_Term
+         or else Kind (Property_Value) = K_Reference_Term
+         or else Kind (Property_Value) = K_Enumeration_Term
+         or else Kind (Property_Value) = K_Number_Range_Term
+         or else Kind (Property_Value) = K_Literal
+         or else Kind (Property_Value) = K_Signed_AADLNumber);
 
       List_Node       : Node_Id;
       Temp_Node       : Node_Id;
@@ -2269,14 +2346,13 @@ package body Ocarina.Analyzer.AADL.Semantics is
       Success         : Boolean := True;
    begin
       Type_Designator := Expanded_Type_Designator (Property_Type);
-      Success := Check_Property_Type (Type_Designator);
+      Success         := Check_Property_Type (Type_Designator);
 
       if Success then
          case Kind (Type_Designator) is
             when K_Classifier_Type =>
-               List_Node :=
-                 First_Node (List_Items (Type_Designator));
-               Success := False;
+               List_Node := First_Node (List_Items (Type_Designator));
+               Success   := False;
 
                if Kind (Property_Value) = K_Component_Classifier_Term then
                   Temp_Node := Get_Referenced_Entity (Property_Value);
@@ -2304,8 +2380,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                if List_Items (Type_Designator) = No_List then
                   List_Node := No_Node;
                else
-                  List_Node :=
-                    First_Node (List_Items (Type_Designator));
+                  List_Node := First_Node (List_Items (Type_Designator));
                end if;
 
                if Present (List_Node) then
@@ -2318,16 +2393,17 @@ package body Ocarina.Analyzer.AADL.Semantics is
                end if;
 
                if Kind (Property_Value) = K_Reference_Term then
-                  Temp_Node := Get_Referenced_Entity
-                    (Reference_Term (Property_Value));
+                  Temp_Node :=
+                    Get_Referenced_Entity (Reference_Term (Property_Value));
 
                   if Present (Temp_Node) then
                      while Present (List_Node) loop
                         case AADL_Version is
                            when AADL_V1 =>
-                              case (Referable_Element_Category'Val
-                                      (Category (List_Node)))
-                                 is
+                              case
+                              (Referable_Element_Category'Val
+                                 (Category (List_Node)))
+                              is
                                  when REC_Component_Category =>
                                     if Get_Entity_Category (Temp_Node) =
                                       EC_Subcomponent
@@ -2342,10 +2418,10 @@ package body Ocarina.Analyzer.AADL.Semantics is
                                        if No (Entity_Ref (Temp_Node)) then
                                           Success := True;
                                        elsif Get_Category_Of_Component
-                                         (Get_Referenced_Entity
-                                            (Entity_Ref (Temp_Node))) =
+                                           (Get_Referenced_Entity
+                                              (Entity_Ref (Temp_Node))) =
                                          Component_Category'Val
-                                         (Component_Cat (List_Node))
+                                           (Component_Cat (List_Node))
                                        then
                                           Success := True;
                                        end if;
@@ -2401,20 +2477,18 @@ package body Ocarina.Analyzer.AADL.Semantics is
                   else
                      Success :=
                        (Compare_Numbers
-                        (Lower_Bound
-                         (Type_Range
-                          (Type_Designator)),
-                         Actual_Literal) >= 0)
+                          (Lower_Bound (Type_Range (Type_Designator)),
+                           Actual_Literal) >=
+                        0)
                        and then
                        (Compare_Numbers
-                        (Actual_Literal,
-                         Upper_Bound
-                         (Type_Range
-                          (Type_Designator))) >= 0);
+                          (Actual_Literal,
+                           Upper_Bound (Type_Range (Type_Designator))) >=
+                        0);
                      if not Success then
                         Error_Loc (1) := Loc (Property_Value);
-                        DE ("Property value is not in the range"
-                              & " defined for this property type");
+                        DE ("Property value is not in the range" &
+                           " defined for this property type");
                      end if;
                   end if;
                else
@@ -2427,14 +2501,12 @@ package body Ocarina.Analyzer.AADL.Semantics is
                   Is_Integer := Value (Value (Actual_Literal)).T = LT_Integer;
                elsif Kind (Property_Value) = K_Signed_AADLNumber then
                   Actual_Literal := Property_Value;
-                  Is_Integer := Value
-                    (Value
-                     (Number_Value
-                      (Actual_Literal))).T =
+                  Is_Integer     :=
+                    Value (Value (Number_Value (Actual_Literal))).T =
                     LT_Integer;
                else
                   Actual_Literal := No_Node;
-                  Is_Integer := False;
+                  Is_Integer     := False;
                end if;
 
                if Is_Integer then
@@ -2446,17 +2518,19 @@ package body Ocarina.Analyzer.AADL.Semantics is
                        and then
                        (Compare_Numbers
                           (Lower_Bound (Type_Range (Type_Designator)),
-                           Actual_Literal) >= 0)
-                       and then
-                       Present (Upper_Bound (Type_Range (Type_Designator)))
+                           Actual_Literal) >=
+                        0)
+                       and then Present
+                         (Upper_Bound (Type_Range (Type_Designator)))
                        and then
                        (Compare_Numbers
-                        (Actual_Literal,
-                         Upper_Bound (Type_Range (Type_Designator))) >= 0);
+                          (Actual_Literal,
+                           Upper_Bound (Type_Range (Type_Designator))) >=
+                        0);
                      if not Success then
                         Error_Loc (1) := Loc (Property_Value);
-                        DE ("Property value is not in the range"
-                              & " defined for this property type");
+                        DE ("Property value is not in the range" &
+                           " defined for this property type");
                      end if;
                   end if;
                else
@@ -2467,29 +2541,35 @@ package body Ocarina.Analyzer.AADL.Semantics is
                Success := True;
 
             when K_Boolean_Type =>
-               Success := Kind (Property_Value) = K_Literal
+               Success :=
+                 Kind (Property_Value) = K_Literal
                  and then Value (Value (Property_Value)).T = LT_Boolean;
 
             when K_String_Type =>
-               Success := Kind (Property_Value) = K_Literal
+               Success :=
+                 Kind (Property_Value) = K_Literal
                  and then Value (Value (Property_Value)).T = LT_String;
 
             when K_Enumeration_Type =>
                case AADL_Version is
                   when AADL_V1 =>
-                     Success := Kind (Property_Value) = K_Literal
-                       and then Value (Value
-                                         (Property_Value)).T = LT_Enumeration;
+                     Success :=
+                       Kind (Property_Value) = K_Literal
+                       and then
+                         Value (Value (Property_Value)).T =
+                         LT_Enumeration;
 
                      if Success then
-                        Success := False;
-                        List_Node := First_Node (Identifiers
-                                                   (Type_Designator));
+                        Success   := False;
+                        List_Node :=
+                          First_Node (Identifiers (Type_Designator));
 
                         while Present (List_Node) loop
-                           Success := Success
-                             or else Name (List_Node) =
-                             Value (Value (Property_Value)).EVal;
+                           Success :=
+                             Success
+                             or else
+                               Name (List_Node) =
+                               Value (Value (Property_Value)).EVal;
 
                            List_Node := Next_Node (List_Node);
                         end loop;
@@ -2499,14 +2579,16 @@ package body Ocarina.Analyzer.AADL.Semantics is
                      Success := Kind (Property_Value) = K_Enumeration_Term;
 
                      if Success then
-                        Success := False;
-                        List_Node := First_Node (Identifiers
-                                                   (Type_Designator));
+                        Success   := False;
+                        List_Node :=
+                          First_Node (Identifiers (Type_Designator));
 
                         while Present (List_Node) loop
-                           Success := Success
-                             or else Name (List_Node) =
-                             Name (Identifier (Property_Value));
+                           Success :=
+                             Success
+                             or else
+                               Name (List_Node) =
+                               Name (Identifier (Property_Value));
 
                            List_Node := Next_Node (List_Node);
                         end loop;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -139,10 +139,11 @@ package body Ocarina.Backends.Ada_Tree.Generator is
    -------------------
 
    function Get_File_Name (N : Node_Id) return Name_Id is
-      pragma Assert (Kind (N) = K_Package_Specification      or else
-                     Kind (N) = K_Package_Implementation     or else
-                     Kind (N) = K_Subprogram_Specification   or else
-                     Kind (N) = K_Subprogram_Implementation);
+      pragma Assert
+        (Kind (N) = K_Package_Specification
+         or else Kind (N) = K_Package_Implementation
+         or else Kind (N) = K_Subprogram_Specification
+         or else Kind (N) = K_Subprogram_Implementation);
 
       Package_Spec_Suffix : constant String := ".ads";
       Package_Body_Suffix : constant String := ".adb";
@@ -161,10 +162,8 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          else
             Get_Name_String
               (Conventional_Base_Name
-               (Fully_Qualified_Name
-                (Defining_Identifier
-                 (Main_Subprogram_Unit
-                  (N)))));
+                 (Fully_Qualified_Name
+                    (Defining_Identifier (Main_Subprogram_Unit (N)))));
          end if;
       else
          if Has_Custom_File_Name (Package_Declaration (N)) then
@@ -172,10 +171,8 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          else
             Get_Name_String
               (Conventional_Base_Name
-               (Fully_Qualified_Name
-                (Defining_Identifier
-                 (Package_Declaration
-                  (N)))));
+                 (Fully_Qualified_Name
+                    (Defining_Identifier (Package_Declaration (N)))));
          end if;
       end if;
 
@@ -497,7 +494,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
             L := 1;
          else
             L := 0;
-            while L + 1 <= Name_Len and then  Name_Buffer (L + 1) /= ' ' loop
+            while L + 1 <= Name_Len and then Name_Buffer (L + 1) /= ' ' loop
                L := L + 1;
             end loop;
          end if;
@@ -764,20 +761,15 @@ package body Ocarina.Backends.Ada_Tree.Generator is
                --  Generate the different part of the component
                --  association but add a new line after "=>"
 
-               Generate
-                 (Defining_Identifier
-                  (Excp_Handler_Alternative));
+               Generate (Defining_Identifier (Excp_Handler_Alternative));
                Write_Space;
                Write (Tok_Arrow);
                Write_Eol;
                Increment_Indentation;
                Write_Indentation;
-               Generate
-                 (Expression
-                  (Excp_Handler_Alternative));
+               Generate (Expression (Excp_Handler_Alternative));
                Generate_Statement_Delimiter
-                 (Expression
-                  (Excp_Handler_Alternative));
+                 (Expression (Excp_Handler_Alternative));
                Decrement_Indentation;
 
                Excp_Handler_Alternative :=
@@ -1171,9 +1163,9 @@ package body Ocarina.Backends.Ada_Tree.Generator is
    -------------------------
 
    procedure Generate_Expression (N : Node_Id) is
-      L_Expr  : constant Node_Id     := Left_Expr (N);
-      Op      : constant Operator_Id := Operator (N);
-      R_Expr  : constant Node_Id     := Right_Expr (N);
+      L_Expr : constant Node_Id     := Left_Expr (N);
+      Op     : constant Operator_Id := Operator (N);
+      R_Expr : constant Node_Id     := Right_Expr (N);
    begin
       --  Each expression having a right part and a left part is
       --  systematically put between two parentheses.
@@ -1455,7 +1447,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
    ---------------------------------------------
 
    procedure Generate_Main_Subprogram_Implementation (N : Node_Id) is
-      Fd           : File_Descriptor;
+      Fd : File_Descriptor;
    begin
       if Present (Subprogram_Specification (N)) then
          Fd := Set_Output (Get_File_Name (Subprogram_Specification (N)));
@@ -1537,8 +1529,8 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          Generate (Renamed_Entity (N));
          Decrement_Indentation;
 
-         --  If an object renames another object, it cannot be
-         --  initialized,
+      --  If an object renames another object, it cannot be
+      --  initialized,
       else
          if Present (Expression (N)) then
             Write_Space;
@@ -1584,8 +1576,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
       --  If the user wants to generates only the spec, or if the
       --  package body is empty, we don't generate it.
 
-      if Disable_Pkg_Body_Gen
-        or else Is_Empty (Statements (N)) then
+      if Disable_Pkg_Body_Gen or else Is_Empty (Statements (N)) then
          return;
       end if;
 
@@ -1648,12 +1639,11 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          Write_Indentation;
       end if;
 
-      Write  (Tok_End);
+      Write (Tok_End);
       Write_Space;
       Generate (Defining_Identifier (Package_Declaration (N)));
       Generate_Statement_Delimiter
-        (Defining_Identifier
-         (Package_Declaration (N)));
+        (Defining_Identifier (Package_Declaration (N)));
 
       Release_Output (Fd);
    end Generate_Package_Implementation;
@@ -1712,9 +1702,9 @@ package body Ocarina.Backends.Ada_Tree.Generator is
 
       --  Do not generate empty non instanciated specs
 
-      if not Is_Instantiated_Package (N) and then
-        Is_Empty (Visible_Part (N)) and then
-        Is_Empty (Private_Part (N))
+      if not Is_Instantiated_Package (N)
+        and then Is_Empty (Visible_Part (N))
+        and then Is_Empty (Private_Part (N))
       then
          return;
       end if;
@@ -1792,8 +1782,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          Write_Space;
          Generate (Defining_Identifier (Package_Declaration (N)));
          Generate_Statement_Delimiter
-           (Defining_Identifier
-            (Package_Declaration (N)));
+           (Defining_Identifier (Package_Declaration (N)));
       end if;
 
       Release_Output (Fd);
@@ -1814,7 +1803,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
 
       Write_Str (Name_Buffer (1 .. Name_Len));
       Write_Space;
-      Write  (Tok_Colon);
+      Write (Tok_Colon);
       Write_Space;
 
       if Kind (Parameter_Type (N)) /= K_Access_Type_Definition then
@@ -2285,7 +2274,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
       Write (Tok_Is);
       Write_Eol;
 
-      if not Is_Empty (D)  then
+      if not Is_Empty (D) then
          Increment_Indentation;
          M := First_Node (D);
          while Present (M) loop
@@ -2491,8 +2480,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          C := First_Node (Discrete_Choices (V));
 
          if No (C)
-           or else (Kind (C) = K_Literal
-                    and then Value (C) = No_Value)
+           or else (Kind (C) = K_Literal and then Value (C) = No_Value)
          then
             O := V;
          else
@@ -2625,7 +2613,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
    ----------------------
 
    procedure Generate_HI_Node (N : Node_Id) is
-      U                   : Node_Id := First_Node (Units (N));
+      U                   : Node_Id          := First_Node (Units (N));
       Partition_Directory : constant Name_Id := To_Lower (Name (N));
    begin
       --  Create the node directory

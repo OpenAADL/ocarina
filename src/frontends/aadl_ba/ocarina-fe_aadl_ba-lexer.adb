@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -46,17 +46,17 @@ package body Ocarina.FE_AADL_BA.Lexer is
    use Errors;
    use Ocarina.Files;
 
-   Prefix   : constant String := "%ba%";
+   Prefix : constant String := "%ba%";
    --  This suffix is used to avoid conflict when we initialize
    --  tokens with multiple parsers
 
    Display_Name_Buffer : String (1 .. 1024);
    --  This buffer is used to store temporarily an AADL identifier
 
-   Display_Name_Len    : Natural;
+   Display_Name_Len : Natural;
    --  Length of name stored in AADL_Name_Buffer
 
-   Max_Integer_Value : constant Unsigned_Long_Long := 2**63 -1;
+   Max_Integer_Value : constant Unsigned_Long_Long := 2**63 - 1;
    --  Largest value the parser is willing to handle
 
    procedure Scan_Based_Fraction_Value (Base : Unsigned_Short_Short);
@@ -130,25 +130,28 @@ package body Ocarina.FE_AADL_BA.Lexer is
             return "keyword " & Quoted_Image (Token);
 
          when T_Real_Literal =>
-            return "real value ["
-              & Ocarina.AADL_Values.Image (Float_Literal_Value,
-                                           Numeric_Literal_Base,
-                                           Numeric_Literal_Exp)
-              & "]";
+            return "real value [" &
+              Ocarina.AADL_Values.Image
+                (Float_Literal_Value,
+                 Numeric_Literal_Base,
+                 Numeric_Literal_Exp) &
+              "]";
 
          when T_Integer_Literal =>
-            return "integer value ["
-              & Ocarina.AADL_Values.Image (Integer_Literal_Value,
-                                           Numeric_Literal_Base,
-                                           Numeric_Literal_Exp)
-              & "]";
+            return "integer value [" &
+              Ocarina.AADL_Values.Image
+                (Integer_Literal_Value,
+                 Numeric_Literal_Base,
+                 Numeric_Literal_Exp) &
+              "]";
 
          when T_String_Literal =>
             if String_Literal_Value = No_Name then
                return "null string literal";
             else
-               return
-                 "string """ & Get_Name_String (String_Literal_Value) & """";
+               return "string """ &
+                 Get_Name_String (String_Literal_Value) &
+                 """";
             end if;
 
          when others =>
@@ -168,8 +171,8 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
    begin
       Float_Literal_Value := 0.0;
-      Factor := 1.0 / Long_Long_Float (Base);
-      Token := T_Real_Literal;
+      Factor              := 1.0 / Long_Long_Float (Base);
+      Token               := T_Real_Literal;
 
       loop
          Ch := Ada.Characters.Handling.To_Upper (Buffer (Token_Location.Scan));
@@ -187,14 +190,16 @@ package body Ocarina.FE_AADL_BA.Lexer is
          if Ch /= '_' then
             if Digit >= Base then
                Error_Loc (1) := Token_Location;
-               DE ("digit '|" & Ch & "' is invalid in base " &
-                   Unsigned_Short_Short'Image (Base));
-               Token := T_Error;
+               DE ("digit '|" &
+                  Ch &
+                  "' is invalid in base " &
+                  Unsigned_Short_Short'Image (Base));
+               Token               := T_Error;
                Float_Literal_Value := 0.0;
                return;
             end if;
 
-            Size := Size + 1;
+            Size                := Size + 1;
             Token_Location.Scan := Token_Location.Scan + 1;
 
             Float_Literal_Value :=
@@ -221,7 +226,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
    begin
       Integer_Literal_Value := 0;
-      Token := T_Integer_Literal;
+      Token                 := T_Integer_Literal;
 
       loop
          Ch := Ada.Characters.Handling.To_Upper (Buffer (Token_Location.Scan));
@@ -238,14 +243,16 @@ package body Ocarina.FE_AADL_BA.Lexer is
          if Ch /= '_' then
             if Digit >= Base then
                Error_Loc (1) := Token_Location;
-               DE ("digit '|" & Ch & "' is invalid in base " &
-                   Unsigned_Short_Short'Image (Base));
-               Token := T_Error;
+               DE ("digit '|" &
+                  Ch &
+                  "' is invalid in base " &
+                  Unsigned_Short_Short'Image (Base));
+               Token                 := T_Error;
                Integer_Literal_Value := 0;
                return;
             end if;
 
-            Size := Size + 1;
+            Size                := Size + 1;
             Token_Location.Scan := Token_Location.Scan + 1;
 
             Integer_Literal_Value :=
@@ -273,18 +280,18 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
    begin
       Float_Literal_Value := 0.0;
-      Factor := 0.1;
-      Token := T_Real_Literal;
+      Factor              := 0.1;
+      Token               := T_Real_Literal;
 
       loop
          Ch := Buffer (Token_Location.Scan);
 
          if Ch in '0' .. '9' then
-            Digit := Character'Pos (Ch) - Character'Pos ('0');
-            Float_Literal_Value := Float_Literal_Value +
-              Long_Long_Float (Digit) *  Factor;
-            Factor := Factor / 10.0;
-            Size   := Size + 1;
+            Digit               := Character'Pos (Ch) - Character'Pos ('0');
+            Float_Literal_Value :=
+              Float_Literal_Value + Long_Long_Float (Digit) * Factor;
+            Factor              := Factor / 10.0;
+            Size                := Size + 1;
             Token_Location.Scan := Token_Location.Scan + 1;
          elsif Ch = '_' then
             Token_Location.Scan := Token_Location.Scan + 1;  --  '_' ignored
@@ -309,7 +316,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
       Size : Integer := 0;  --  number of scanned digits
    begin
       Integer_Literal_Value := 0;
-      Token := T_Integer_Literal;
+      Token                 := T_Integer_Literal;
 
       loop
          Ch := Buffer (Token_Location.Scan);
@@ -318,7 +325,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
                --  we remove all remaining digits from the buffer
                loop
                   if Ch in '0' .. '9' or else Ch = '_' then
-                     Ch := Buffer (Token_Location.Scan);
+                     Ch                  := Buffer (Token_Location.Scan);
                      Token_Location.Scan := Token_Location.Scan + 1;
                   else
                      exit;
@@ -329,8 +336,10 @@ package body Ocarina.FE_AADL_BA.Lexer is
                DW ("too long number, digit ignored");
                return;
             else
-               Integer_Literal_Value := Integer_Literal_Value * 10 +
-                 Character'Pos (Ch) - Character'Pos ('0');
+               Integer_Literal_Value :=
+                 Integer_Literal_Value * 10 +
+                 Character'Pos (Ch) -
+                 Character'Pos ('0');
                Size := Size + 1;
             end if;
             Token_Location.Scan := Token_Location.Scan + 1;
@@ -369,7 +378,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
       Add_Char_To_Name_Buffer (To_Lower (Buffer (Token_Location.Scan)));
 
-      Display_Name_Len := 1;
+      Display_Name_Len                       := 1;
       Display_Name_Buffer (Display_Name_Len) := Buffer (Token_Location.Scan);
 
       Token_Location.Scan := Token_Location.Scan + 1;
@@ -377,7 +386,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
       while Is_Identifier_Character (Buffer (Token_Location.Scan)) loop
          Add_Char_To_Name_Buffer (To_Lower (Buffer (Token_Location.Scan)));
 
-         Display_Name_Len := Display_Name_Len + 1;
+         Display_Name_Len                       := Display_Name_Len + 1;
          Display_Name_Buffer (Display_Name_Len) :=
            Buffer (Token_Location.Scan);
 
@@ -392,12 +401,12 @@ package body Ocarina.FE_AADL_BA.Lexer is
       if B in BA_First_Reserved_Word_Pos .. BA_Last_Reserved_Word_Pos then
          if Token_Name = BA_Token_Image (BA_Token_Type'Val (B)) then
             Token := BA_Token_Type'Val (B);
-            --  Token_Name is not necessairy here
+         --  Token_Name is not necessairy here
          else
             raise Program_Error;
          end if;
       else
-         Token := T_Identifier;
+         Token         := T_Identifier;
          Is_Identifier := True;
       end if;
 
@@ -427,7 +436,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
    begin
       Scan_Decimal_Integer_Value;
       Numeric_Literal_Base := 10;  --  by default, base is ten
-      Numeric_Literal_Exp := 0;    --  by default, exponent is zero
+      Numeric_Literal_Exp  := 0;    --  by default, exponent is zero
 
       if Token /= T_Error then
          Ch := Buffer (Token_Location.Scan);
@@ -437,16 +446,16 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
             if Integer_Literal_Value < 2 then
                Error_Loc (1) := Token_Location;
-               DE ("numeric base "
-                   & Ocarina.AADL_Values.Image (Integer_Literal_Value) &
-                   " is too small, must be at least 2");
+               DE ("numeric base " &
+                  Ocarina.AADL_Values.Image (Integer_Literal_Value) &
+                  " is too small, must be at least 2");
                Token := T_Error;
                return;
             elsif Integer_Literal_Value > 16 then
                Error_Loc (1) := Token_Location;
-               DE ("numeric base "
-                   & Ocarina.AADL_Values.Image (Integer_Literal_Value) &
-                   " is too big, must be at most 16");
+               DE ("numeric base " &
+                  Ocarina.AADL_Values.Image (Integer_Literal_Value) &
+                  " is too big, must be at most 16");
                Token := T_Error;
                return;
             else          --  base is OK
@@ -467,14 +476,15 @@ package body Ocarina.FE_AADL_BA.Lexer is
                      --  dot. If there are two, then it may be a
                      --  range.
 
-                     Is_Real := True;
+                     Is_Real             := True;
                      Token_Location.Scan := Token_Location.Scan + 1;
                      Scan_Based_Fraction_Value (Numeric_Literal_Base);
 
                      if Token /= T_Error then
                         --  Mix two parts
 
-                        Float_Literal_Value := Float_Literal_Value +
+                        Float_Literal_Value :=
+                          Float_Literal_Value +
                           Long_Long_Float (Integer_Literal_Value);
                      else
                         return;
@@ -498,15 +508,15 @@ package body Ocarina.FE_AADL_BA.Lexer is
          elsif Ch = '.'
            and then Buffer (Token_Location.Scan + 1) /= '.'
          then   --  decimal real number
-            Is_Real := True;
+            Is_Real             := True;
             Token_Location.Scan := Token_Location.Scan + 1;
             Scan_Decimal_Fraction_Value;
 
             if Token /= T_Error then
                --  Mix two parts
 
-               Float_Literal_Value := Float_Literal_Value +
-                 Long_Long_Float (Integer_Literal_Value);
+               Float_Literal_Value :=
+                 Float_Literal_Value + Long_Long_Float (Integer_Literal_Value);
             else
                return;
             end if;
@@ -518,7 +528,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
          if Ch = 'E' or else Ch = 'e' then
             Token_Location.Scan := Token_Location.Scan + 1;
-            Ch := Buffer (Token_Location.Scan);
+            Ch                  := Buffer (Token_Location.Scan);
 
             if Ch = '-' then
                Exp_Sign := True;
@@ -536,7 +546,8 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
             if Token /= T_Error then
                if Integer_Literal_Value >
-                 Unsigned_Long_Long (Integer'Last) then
+                 Unsigned_Long_Long (Integer'Last)
+               then
                   Error_Loc (1) := Token_Location;
                   DW ("exponent too big");
                   return;
@@ -554,10 +565,12 @@ package body Ocarina.FE_AADL_BA.Lexer is
                   return;
                end if;
 
-               Factor := Ocarina.AADL_Values.Power
-                 (Integer (Numeric_Literal_Base), Numeric_Literal_Exp);
+               Factor :=
+                 Ocarina.AADL_Values.Power
+                   (Integer (Numeric_Literal_Base),
+                    Numeric_Literal_Exp);
                if Is_Real then
-                  Float_Literal_Value   := Float_Literal_Value * Factor;
+                  Float_Literal_Value := Float_Literal_Value * Factor;
                else
                   Integer_Literal_Value :=
                     Unsigned_Long_Long (Long_Long_Float (Int_Save) * Factor);
@@ -652,8 +665,9 @@ package body Ocarina.FE_AADL_BA.Lexer is
                   Add_Char_To_Name_Buffer (Ch);
                else
                   Error_Loc (1) := Token_Location;
-                  DE ("non graphic character '|" & Ch &
-                      "' is not allowed in string lateral, ignored");
+                  DE ("non graphic character '|" &
+                     Ch &
+                     "' is not allowed in string lateral, ignored");
 
                   if Token_Location.Scan > Token_Location.EOF then
                      DE ("scanning string, end of file reached, exit");
@@ -681,7 +695,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
    procedure Scan_Token is
       use Charset;
    begin
-      Token       := T_Error;
+      Token := T_Error;
 
       while Token = T_Error loop  --  loop to ignore all invalid tokens
          Skip_Spaces;
@@ -702,27 +716,27 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
             when '#' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Number_Sign;
+               Token               := T_Number_Sign;
 
             when '_' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Underline;
+               Token               := T_Underline;
 
             when '(' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Left_Parenthesis;
+               Token               := T_Left_Parenthesis;
 
             when ')' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Right_Parenthesis;
+               Token               := T_Right_Parenthesis;
 
             when ',' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Comma;
+               Token               := T_Comma;
 
             when '+' =>      --  '+'
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Plus;
+               Token               := T_Plus;
 
             when '-' =>      --  '-' or '-[' or '--'
                Token_Location.Scan := Token_Location.Scan + 1;
@@ -731,7 +745,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
                   Skip_Line; --  continue to loop
                elsif Buffer (Token_Location.Scan) = '[' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Left_Step_Bracket;
+                  Token               := T_Left_Step_Bracket;
                else
                   Token := T_Minus;
                end if;
@@ -744,7 +758,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
                   if Buffer (Token_Location.Scan) = '}' then
                      Token_Location.Scan := Token_Location.Scan + 1;
-                     Token := T_End_Annex;
+                     Token               := T_End_Annex;
                   else
                      Token := T_Exponent;
                   end if;
@@ -754,14 +768,14 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
             when '/' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Divide;
+               Token               := T_Divide;
 
             when '.' =>     --  '.' or '..'
                Token_Location.Scan := Token_Location.Scan + 1;
 
                if Buffer (Token_Location.Scan) = '.' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Interval;
+                  Token               := T_Interval;
                else
                   Token := T_Dot;
                end if;
@@ -771,47 +785,47 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
                if Buffer (Token_Location.Scan) = ':' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Colon_Colon;
+                  Token               := T_Colon_Colon;
                elsif Buffer (Token_Location.Scan) = '=' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Assignment;
+                  Token               := T_Assignment;
                else
                   Token := T_Colon;
                end if;
 
             when ';' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Semicolon;
+               Token               := T_Semicolon;
 
             when '<' =>      --  '<' or '<='
                Token_Location.Scan := Token_Location.Scan + 1;
                if Buffer (Token_Location.Scan) = '=' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Less_Or_Equal;
+                  Token               := T_Less_Or_Equal;
                else
                   Token := T_Less_Than_Sign;
                end if;
 
             when '=' =>      --  '='
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Equals_Sign;
+               Token               := T_Equals_Sign;
 
             when '>' =>      -- '>' or '>>' or '>='
                Token_Location.Scan := Token_Location.Scan + 1;
 
                if Buffer (Token_Location.Scan) = '>' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Greater_Greater_Than;
+                  Token               := T_Greater_Greater_Than;
                elsif Buffer (Token_Location.Scan) = '=' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Greater_Or_Equal;
+                  Token               := T_Greater_Or_Equal;
                else
                   Token := T_Greater_Than_Sign;
                end if;
 
             when '[' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Left_Square_Bracket;
+               Token               := T_Left_Square_Bracket;
 
             when ']' =>     --  ']' or ']->'
                Token_Location.Scan := Token_Location.Scan + 1;
@@ -819,10 +833,10 @@ package body Ocarina.FE_AADL_BA.Lexer is
                   Token_Location.Scan := Token_Location.Scan + 1;
                   if Buffer (Token_Location.Scan) = '>' then
                      Token_Location.Scan := Token_Location.Scan + 1;
-                     Token := T_Right_Step_Bracket;
+                     Token               := T_Right_Step_Bracket;
                   else
                      Token_Location.Scan := Token_Location.Scan - 1;
-                     Token := T_Right_Square_Bracket;
+                     Token               := T_Right_Square_Bracket;
                   end if;
                else
                   Token := T_Right_Square_Bracket;
@@ -834,10 +848,10 @@ package body Ocarina.FE_AADL_BA.Lexer is
                   Token_Location.Scan := Token_Location.Scan + 1;
                   if Buffer (Token_Location.Scan) = '*' then
                      Token_Location.Scan := Token_Location.Scan + 1;
-                     Token := T_Begin_Annex;
+                     Token               := T_Begin_Annex;
                   else
                      Token_Location.Scan := Token_Location.Scan - 1;
-                     Token := T_Left_Curly_Bracket;
+                     Token               := T_Left_Curly_Bracket;
                   end if;
                else
                   Token := T_Left_Curly_Bracket;
@@ -845,28 +859,28 @@ package body Ocarina.FE_AADL_BA.Lexer is
 
             when '}' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Right_Curly_Bracket;
+               Token               := T_Right_Curly_Bracket;
 
             when ''' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Tick;
+               Token               := T_Tick;
 
             when '?' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Interrogative;
+               Token               := T_Interrogative;
 
             when '!' =>      --  '!' or '!='
                Token_Location.Scan := Token_Location.Scan + 1;
                if Buffer (Token_Location.Scan) = '=' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Non_Equal;
+                  Token               := T_Non_Equal;
                else
                   Token := T_Exclamation;
                end if;
 
             when '&' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Concat;
+               Token               := T_Concat;
 
             when '0' .. '9' =>
                Scan_Numeric_Literal_Value;
@@ -876,8 +890,9 @@ package body Ocarina.FE_AADL_BA.Lexer is
                   Scan_Identifier;
                else
                   Error_Loc (1) := Token_Location;
-                  DE ("character '|" & Buffer (Token_Location.Scan) &
-                        "' is invalid, ignored");
+                  DE ("character '|" &
+                     Buffer (Token_Location.Scan) &
+                     "' is invalid, ignored");
                   Token_Location.Scan := Token_Location.Scan + 1;
                end if;
          end case;
@@ -892,7 +907,7 @@ package body Ocarina.FE_AADL_BA.Lexer is
      (Delimiter         : BA_Token_Type;
       Include_Delimiter : Boolean := True)
    is
-      Braces : Integer := 0;   --  number of Opening Delimiters
+      Braces : Integer  := 0;   --  number of Opening Delimiters
       Loc    : Location := Token_Location;
    begin
       if Token = Delimiter then
@@ -909,17 +924,14 @@ package body Ocarina.FE_AADL_BA.Lexer is
             Braces := Braces - 1;
          end if;
 
-         exit when Braces <= 0
-           and then Token = Delimiter;
+         exit when Braces <= 0 and then Token = Delimiter;
       end loop;
 
       --  When EOF is reached, we restore the lexer (the next
       --  procedure call Scan_Token gives T_EOF to terminate the
       --  program).
 
-      if Token = T_EOF
-        or else not Include_Delimiter
-      then
+      if Token = T_EOF or else not Include_Delimiter then
          Restore_Lexer (Loc);
       end if;
    end Skip_Tokens;

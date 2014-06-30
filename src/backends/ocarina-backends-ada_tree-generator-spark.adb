@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;    use Namet;
-with Output;   use Output;
+with Namet;  use Namet;
+with Output; use Output;
 
 with Ocarina.Backends.Ada_Tree.Nodes;
 with Ocarina.Backends.Ada_Tree.Nutils;
@@ -67,22 +67,25 @@ package body Ocarina.Backends.Ada_Tree.Generator.Spark is
       --  Initialize withed package lists for a package specification
       if Kind (N) = K_Package_Specification then
          LS := Withed_Packages (N);
-         LB := Withed_Packages (Package_Implementation
-                                  (Package_Declaration (N)));
-         --  Initialize withed package lists for a subprogram specification
+         LB :=
+           Withed_Packages (Package_Implementation (Package_Declaration (N)));
+      --  Initialize withed package lists for a subprogram specification
       elsif Kind (N) = K_Subprogram_Specification then
          LS := Withed_Packages (N);
-         if Subprogram_Implementation
-           (Main_Subprogram_Unit (N)) /= No_Node then
-            LB := Withed_Packages (Subprogram_Implementation
-                                     (Main_Subprogram_Unit (N)));
+         if Subprogram_Implementation (Main_Subprogram_Unit (N)) /=
+           No_Node
+         then
+            LB :=
+              Withed_Packages
+                (Subprogram_Implementation (Main_Subprogram_Unit (N)));
          end if;
-         --  Initialize withed package lists for a subprogram implementation
-      elsif  Kind (N) = K_Subprogram_Implementation then
+      --  Initialize withed package lists for a subprogram implementation
+      elsif Kind (N) = K_Subprogram_Implementation then
          LS := Withed_Packages (N);
          if Subprogram_Specification (Main_Subprogram_Unit (N)) /= No_Node then
-            LB := Withed_Packages (Subprogram_Specification
-                                     (Main_Subprogram_Unit (N)));
+            LB :=
+              Withed_Packages
+                (Subprogram_Specification (Main_Subprogram_Unit (N)));
          end if;
       end if;
 

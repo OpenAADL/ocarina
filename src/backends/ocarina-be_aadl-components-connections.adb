@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -55,11 +55,10 @@ package body Ocarina.BE_AADL.Components.Connections is
    ----------------------
 
    procedure Print_Connection (Node : Node_Id) is
-      Ident            : constant Node_Id := Identifier (Node);
-      Is_Refined       : constant Boolean := Is_Refinement (Node);
-      Connection_Modes : constant Node_Id := In_Modes (Node);
-      Cat              : constant Connection_Type :=
-        Get_Category_Of_Connection (Node);
+      Ident            : constant Node_Id         := Identifier (Node);
+      Is_Refined       : constant Boolean         := Is_Refinement (Node);
+      Connection_Modes : constant Node_Id         := In_Modes (Node);
+      Cat : constant Connection_Type := Get_Category_Of_Connection (Node);
    begin
       Write_Indentation;
 
@@ -78,8 +77,7 @@ package body Ocarina.BE_AADL.Components.Connections is
       case Cat is
          when CT_Port_Connection =>
             Print_Token (T_Port);
-         when CT_Data
-           | CT_Data_Delayed =>
+         when CT_Data | CT_Data_Delayed =>
             case AADL_Version is
                when AADL_V1 =>
                   Print_Tokens ((T_Data, T_Port));

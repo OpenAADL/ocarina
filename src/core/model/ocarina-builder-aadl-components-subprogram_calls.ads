@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,8 +35,7 @@ package Ocarina.Builder.AADL.Components.Subprogram_Calls is
 
    function Add_Property_Association
      (Subprogram_Call      : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean;
+      Property_Association : Node_Id) return Boolean;
    --  Add a property association to the subprogram
    --  call. Subprogram_Call must reference a subprogram call (not a
    --  call sequence). Property_Association references the property
@@ -44,8 +43,7 @@ package Ocarina.Builder.AADL.Components.Subprogram_Calls is
 
    function Add_Subprogram_Call
      (Call_Sequence   : Node_Id;
-      Subprogram_Call : Node_Id)
-     return Boolean;
+      Subprogram_Call : Node_Id) return Boolean;
    --  Add a subprogram call to the subprogram call
    --  sequence. Subprogram_Call must reference a subprogram call (not
    --  a call sequence). Call_Sequence references the subprogram call
@@ -54,8 +52,7 @@ package Ocarina.Builder.AADL.Components.Subprogram_Calls is
    function Add_New_Subprogram_Call
      (Loc           : Location;
       Name          : Node_Id;
-      Call_Sequence : Node_Id)
-     return Node_Id;
+      Call_Sequence : Node_Id) return Node_Id;
    --  Create and add a new subprogram call into a subprogram call
    --  sequence. Loc is the location of the call sequence in the
    --  parsed text. Name references an identifier which contains the
@@ -68,8 +65,7 @@ package Ocarina.Builder.AADL.Components.Subprogram_Calls is
      (Loc       : Location;
       Name      : Node_Id;
       Comp_Impl : Node_Id;
-      In_Modes  : Node_Id := No_Node)
-     return Node_Id;
+      In_Modes  : Node_Id := No_Node) return Node_Id;
    --  Create and add a new subprogram call sequence into a component
    --  implementation. Loc is the location of the call sequence in the
    --  parsed text. Name references an identifier which contains the

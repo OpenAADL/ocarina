@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -89,8 +89,8 @@ package body Ocarina.FE_AADL_BA.Parser_Errors is
    procedure Display_Parsing_Error
      (Code      : Parsing_Code;
       Error_Msg : Error_Message_Code;
-      Fatal     : Boolean            := False;
-      Warning   : Boolean            := False)
+      Fatal     : Boolean := False;
+      Warning   : Boolean := False)
    is
    begin
       Set_Standard_Error;
@@ -111,8 +111,8 @@ package body Ocarina.FE_AADL_BA.Parser_Errors is
    procedure Display_Parsing_Error
      (Code           : Parsing_Code;
       Expected_Token : BA_Token_Type;
-      Fatal          : Boolean       := False;
-      Warning        : Boolean       := False)
+      Fatal          : Boolean := False;
+      Warning        : Boolean := False)
    is
    begin
       Set_Standard_Error;
@@ -121,8 +121,8 @@ package body Ocarina.FE_AADL_BA.Parser_Errors is
 
       if Expected_Token = T_Identifier then
          Write_Str ("an identifier");
-         --  Write_Name (Identifier)
-         --  print here name of identifier
+      --  Write_Name (Identifier)
+      --  print here name of identifier
       else
          Write_Str ("token ");
          Write_Str (Quoted_Image (Expected_Token));
@@ -145,8 +145,8 @@ package body Ocarina.FE_AADL_BA.Parser_Errors is
    procedure Display_Parsing_Error
      (Code            : Parsing_Code;
       Expected_Tokens : BA_Token_List_Type;
-      Fatal           : Boolean            := False;
-      Warning         : Boolean            := False)
+      Fatal           : Boolean := False;
+      Warning         : Boolean := False)
    is
       Index : Integer;
    begin
@@ -178,7 +178,7 @@ package body Ocarina.FE_AADL_BA.Parser_Errors is
    -----------
 
    function Image (Code : Parsing_Code) return String is
-      S       : String := Parsing_Code'Image (Code);
+      S       : String  := Parsing_Code'Image (Code);
       Capital : Boolean := False;
    begin
       To_Lower (S);

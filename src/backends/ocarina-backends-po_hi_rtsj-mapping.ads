@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -45,7 +45,8 @@ package Ocarina.Backends.PO_HI_RTSJ.Mapping is
    function Map_HI_Unit (E : Node_Id) return Node_Id;
 
    function Map_RTSJ_Defining_Identifier
-     (E : Node_Id; Is_Obj : Boolean := False) return Node_Id;
+     (E      : Node_Id;
+      Is_Obj : Boolean := False) return Node_Id;
 
    function Map_RTSJ_Enumerator_Name (E : Node_Id) return Name_Id;
 
@@ -56,60 +57,36 @@ package Ocarina.Backends.PO_HI_RTSJ.Mapping is
    function Map_RTSJ_Subprogram_Body (E : Node_Id) return Node_Id;
 
    function Map_Handler_Identifier
-     (E  : Node_Id;
-      TaskHandler : Boolean := False;
-      EventHandler : Boolean := False)
-     return Node_Id;
+     (E            : Node_Id;
+      TaskHandler  : Boolean := False;
+      EventHandler : Boolean := False) return Node_Id;
 
    function Map_Handler_Class_Identifier
-     (E  : Node_Id;
-      TaskHandler : Boolean := False;
-      EventHandler : Boolean := False)
-     return Node_Id;
+     (E            : Node_Id;
+      TaskHandler  : Boolean := False;
+      EventHandler : Boolean := False) return Node_Id;
 
-   function Map_Priority_Identifier
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Priority_Identifier (E : Node_Id) return Node_Id;
 
-   function Map_Task_Job_Identifier
-     (E  : Node_Id)
-     return Node_Id;
+   function Map_Task_Job_Identifier (E : Node_Id) return Node_Id;
 
-   function Map_Task_Ports_Router_Identifier
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Task_Ports_Router_Identifier (E : Node_Id) return Node_Id;
 
-   function Map_Task_Port_Identifier
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Task_Port_Identifier (E : Node_Id) return Node_Id;
 
-   function Map_Task_Entries_Identifier
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Task_Entries_Identifier (E : Node_Id) return Node_Id;
 
-   function Map_Task_Deliver_Identifier
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Task_Deliver_Identifier (E : Node_Id) return Node_Id;
 
-   function Map_Task_Send_Identifier
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Task_Send_Identifier (E : Node_Id) return Node_Id;
 
-   function Map_Port_Default_Entry
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Port_Default_Entry (E : Node_Id) return Node_Id;
 
-   function Map_Port_Default_Value
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Port_Default_Value (E : Node_Id) return Node_Id;
 
-   function Map_Port_Destinations_Tab
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Port_Destinations_Tab (E : Node_Id) return Node_Id;
 
-   function Map_Subprogram_Param_Identifier
-     (E : Node_Id)
-     return Node_Id;
+   function Map_Subprogram_Param_Identifier (E : Node_Id) return Node_Id;
 
    function Map_Time_Unit (T : Time_Type) return Node_Id;
 
@@ -121,7 +98,6 @@ package Ocarina.Backends.PO_HI_RTSJ.Mapping is
    procedure Bind_AADL_To_Subprogram (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Naming (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Generated_Types (G : Node_Id; A : Node_Id);
-   procedure Bind_AADL_To_Transport_High_Level
-     (G : Node_Id; A : Node_Id);
+   procedure Bind_AADL_To_Transport_High_Level (G : Node_Id; A : Node_Id);
 
 end Ocarina.Backends.PO_HI_RTSJ.Mapping;

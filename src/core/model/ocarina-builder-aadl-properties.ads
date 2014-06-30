@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,8 +42,7 @@ package Ocarina.Builder.AADL.Properties is
    function Add_New_Property_Set
      (Loc       : Location;
       Name      : Node_Id;
-      Namespace : Node_Id)
-     return Node_Id;
+      Namespace : Node_Id) return Node_Id;
 
    function Add_New_Property_Constant_Declaration
      (Loc             : Location;
@@ -52,8 +51,7 @@ package Ocarina.Builder.AADL.Properties is
       Constant_Type   : Node_Id;
       Unit_Identifier : Node_Id;
       Single_Value    : Node_Id;
-      Multiple_Values : List_Id)
-     return Node_Id;
+      Multiple_Values : List_Id) return Node_Id;
    --  Either Single_Value /= No_Node and Mulitple_Values = No_Node,
    --  then we have a single valued constant; or Single_Value =
    --  No_Node, then we have a muli valued constant
@@ -62,8 +60,7 @@ package Ocarina.Builder.AADL.Properties is
      (Loc             : Location;
       Name            : Node_Id;
       Property_Set    : Node_Id;
-      Type_Designator : Node_Id)
-     return Node_Id;
+      Type_Designator : Node_Id) return Node_Id;
 
    function Add_New_Property_Definition_Declaration
      (Loc                     : Location;
@@ -76,8 +73,7 @@ package Ocarina.Builder.AADL.Properties is
       Property_Name_Type      : Node_Id;
       Property_Type_Is_A_List : Boolean;
       Applies_To_All          : Boolean;
-      Applies_To              : List_Id)
-     return Node_Id;
+      Applies_To              : List_Id) return Node_Id;
    --  Either Applies_To_All is set to True and Applies_To is empty,
    --  or Applies_To_All is False and Applies_To is not empty
 
@@ -94,8 +90,7 @@ package Ocarina.Builder.AADL.Properties is
       Is_Additive         : Boolean;
       Applies_To          : List_Id;
       Check_For_Conflicts : Boolean := False;
-      Override            : Boolean := False)
-     return Node_Id;
+      Override            : Boolean := False) return Node_Id;
    --  If Check_For_Conflicts is set to True, then the function checks
    --  whether there is a property association of that name
    --  already. If override is set to True and there is a conflict,
@@ -107,7 +102,6 @@ package Ocarina.Builder.AADL.Properties is
      (Loc             : Location;
       Container       : Node_Id;
       Applies_To_Elts : List_Id;
-      Annex_Path : Node_Id)
-     return Node_Id;
+      Annex_Path      : Node_Id) return Node_Id;
 
 end Ocarina.Builder.AADL.Properties;

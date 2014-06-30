@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -53,8 +53,7 @@ package Ocarina.ME_AADL is
       EC_Undefined);
 
    type Component_Category is
-     (
-      CC_Abstract,
+     (CC_Abstract,
       CC_Data,
       CC_Subprogram,
       CC_Subprogram_Group,
@@ -73,11 +72,11 @@ package Ocarina.ME_AADL is
    type Connection_Type is
      (CT_Error,
 
-      --  AADL_V1
+   --  AADL_V1
       CT_Event_Data,
       CT_Data_Delayed,
 
-      --  AADL_V1 and AADL_V2
+   --  AADL_V1 and AADL_V2
       CT_Data,
       CT_Event,
       CT_Feature_Group,
@@ -86,7 +85,7 @@ package Ocarina.ME_AADL is
       CT_Access_Data,
       CT_Access_Subprogram,
 
-      --  AADL_V2
+   --  AADL_V2
       CT_Access_Virtual_Bus,
       CT_Feature,
       CT_Port_Connection,
@@ -95,8 +94,10 @@ package Ocarina.ME_AADL is
 
    --  Note: CT_Data represents Data_Immediate in AADL_V1
 
-   subtype Port_Connection_Type is Connection_Type
-     range CT_Data .. CT_Event_Data; --  XXX is this type empty ????
+   subtype Port_Connection_Type is
+     Connection_Type range
+       CT_Data ..
+         CT_Event_Data; --  XXX is this type empty ????
 
    type Flow_Category is (FC_Source, FC_Sink, FC_Path);
 

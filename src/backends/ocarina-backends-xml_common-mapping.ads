@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,16 +40,18 @@ package Ocarina.Backends.XML_Common.Mapping is
    function Map_Time (T : Time_Type) return Node_Id;
 
    function Map_To_XML_Node
-     (Name : String; Value : Unsigned_Long_Long) return Node_Id;
-   function Map_To_XML_Node
-     (Name : String; Value : Name_Id) return Node_Id;
+     (Name  : String;
+      Value : Unsigned_Long_Long) return Node_Id;
+   function Map_To_XML_Node (Name : String; Value : Name_Id) return Node_Id;
    --  Build a node whose structure is <name>value</name>
 
    function Map_Node_Identifier_To_XML_Node
-     (Name : String; The_Node : Node_Id) return Node_Id;
+     (Name     : String;
+      The_Node : Node_Id) return Node_Id;
    --  Build a node whose structure is <name>the_node'identifier</name>
 
    function Map_Node_Identifier_To_XML_Node
-     (Name : String; The_Node : Name_Id) return Node_Id;
+     (Name     : String;
+      The_Node : Name_Id) return Node_Id;
 
 end Ocarina.Backends.XML_Common.Mapping;

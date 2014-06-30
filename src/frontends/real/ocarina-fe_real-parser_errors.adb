@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -119,7 +119,7 @@ package body Ocarina.FE_REAL.Parser_Errors is
    -----------
 
    function Image (Code : Parsing_Code) return String is
-      S       : String := Parsing_Code'Image (Code);
+      S       : String  := Parsing_Code'Image (Code);
       Capital : Boolean := False;
    begin
       case Code is
@@ -150,15 +150,15 @@ package body Ocarina.FE_REAL.Parser_Errors is
       case Code is
 
          when EMC_Subtheorem_Parameter =>
-            return "First sub-theorem parameter must be either "
-              & "a set or a variable";
+            return "First sub-theorem parameter must be either " &
+              "a set or a variable";
 
          when EMC_Variable_Declaration =>
             return "expected 'var' or 'global'";
 
          when EMC_Wrong_List_Connector =>
-            return "wrong list connector, expected 'and' or <left "
-              & "parenthesis>";
+            return "wrong list connector, expected 'and' or <left " &
+              "parenthesis>";
 
          when EMC_Declaration_Parameter =>
             return "expected a valid declaration parameter (either " &
@@ -166,12 +166,12 @@ package body Ocarina.FE_REAL.Parser_Errors is
               "return or check)";
 
          when EMC_Used_Keyword =>
-            return "used a keyword instead of a valid identifier "
-              & "or function name";
+            return "used a keyword instead of a valid identifier " &
+              "or function name";
 
          when EMC_Testing_Token_Expected =>
-            return "expected testing expression (either 'return' "
-              & "or 'check' tokens";
+            return "expected testing expression (either 'return' " &
+              "or 'check' tokens";
 
          when others =>
             To_Lower (S);

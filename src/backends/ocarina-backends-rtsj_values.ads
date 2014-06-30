@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -45,29 +45,25 @@ package Ocarina.Backends.RTSJ_Values is
          when K_String =>
             PCVal : Name_Id;
 
-         when others => null;
+         when others =>
+            null;
 
       end case;
    end record;
 
    Bad_Value : constant Value_Type;
-   No_Value  : constant Value_Id;
+   No_Value : constant Value_Id;
 
    procedure Reset;
 
    function New_Int_Value
      (Value : Unsigned_Long_Long;
-      Sign : Short_Short;
-      Base : Unsigned_Short_Short)
-      return Value_Id;
+      Sign  : Short_Short;
+      Base  : Unsigned_Short_Short) return Value_Id;
 
-   function New_String_Value
-     (Value : Name_Id)
-     return Value_Id;
+   function New_String_Value (Value : Name_Id) return Value_Id;
 
-   function New_Value
-     (Value : Value_Type)
-      return Value_Id;
+   function New_Value (Value : Value_Type) return Value_Id;
 
    function Get_Value (V : Value_Id) return Value_Type;
    procedure Set_Value (V : Value_Id; X : Value_Type);
@@ -81,6 +77,6 @@ package Ocarina.Backends.RTSJ_Values is
 private
 
    Bad_Value : constant Value_Type := Value_Type'((K => K_Node_Id));
-   No_Value  : constant Value_Id := 0;
+   No_Value  : constant Value_Id   := 0;
 
 end Ocarina.Backends.RTSJ_Values;

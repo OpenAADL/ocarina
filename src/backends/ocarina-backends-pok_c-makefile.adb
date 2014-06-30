@@ -79,21 +79,21 @@ package body Ocarina.Backends.POK_C.Makefile is
    procedure Build_Processor_Instance (E : Node_Id);
    procedure Handle_Source_File (N : Name_Id);
 
-   Partition_Names         : List_Id;
-   Partition_Object_Files  : List_Id;
-   Kernel_Object_Files     : List_Id;
-   Lustre_Directory        : Name_Id;
-   Use_Lustre              : boolean;
-   Current_Processor       : Node_Id;
-   Current_Partition       : Node_Id;
-   Mac_Addr                : Name_Id;
-   Nb_Ports_Intra          : Unsigned_Long_Long := 0;
-   Nb_Shared_Data          : Unsigned_Long_Long := 0;
-   Nb_Ports_Inter          : Unsigned_Long_Long := 0;
-   Use_HM_Services         : Boolean := False;
-   Qemu_Server             : Boolean := True;
+   Partition_Names        : List_Id;
+   Partition_Object_Files : List_Id;
+   Kernel_Object_Files    : List_Id;
+   Lustre_Directory       : Name_Id;
+   Use_Lustre             : Boolean;
+   Current_Processor      : Node_Id;
+   Current_Partition      : Node_Id;
+   Mac_Addr               : Name_Id;
+   Nb_Ports_Intra         : Unsigned_Long_Long := 0;
+   Nb_Shared_Data         : Unsigned_Long_Long := 0;
+   Nb_Ports_Inter         : Unsigned_Long_Long := 0;
+   Use_HM_Services        : Boolean            := False;
+   Qemu_Server            : Boolean            := True;
 
-   Kernel_Mode             : Boolean := True;
+   Kernel_Mode : Boolean := True;
 
    --  The kernel mode variable indicates where we are
    --  in the generation and which part of the system
@@ -111,17 +111,12 @@ package body Ocarina.Backends.POK_C.Makefile is
       Set_Str_To_Name_Buffer ("%POK%Makefile%");
       Get_Name_String_And_Append (N);
       Get_Name_String_And_Append
-         (Display_Name
-            (Identifier
-               (Parent_Subcomponent
-                  (Current_Processor))));
+        (Display_Name (Identifier (Parent_Subcomponent (Current_Processor))));
 
       if not Kernel_Mode then
          Get_Name_String_And_Append
-            (Display_Name
-               (Identifier
-                  (Parent_Subcomponent
-                     (Current_Partition))));
+           (Display_Name
+              (Identifier (Parent_Subcomponent (Current_Partition))));
       end if;
 
       M := Name_Find;
@@ -134,11 +129,11 @@ package body Ocarina.Backends.POK_C.Makefile is
 
       if Kernel_Mode then
          Append_Node_To_List
-            (Make_Defining_Identifier (N, False),
+           (Make_Defining_Identifier (N, False),
             Kernel_Object_Files);
       else
          Append_Node_To_List
-            (Make_Defining_Identifier (N, False),
+           (Make_Defining_Identifier (N, False),
             Partition_Object_Files);
       end if;
    end Handle_Source_File;
@@ -175,8 +170,7 @@ package body Ocarina.Backends.POK_C.Makefile is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -210,11 +204,11 @@ package body Ocarina.Backends.POK_C.Makefile is
    -------------------------------
 
    procedure Visit_Subprogram_Instance (E : Node_Id) is
-      N               : Name_Id;
-      Source_Files    : constant Name_Array := Get_Source_Text (E);
+      N            : Name_Id;
+      Source_Files : constant Name_Array := Get_Source_Text (E);
    begin
       if Get_Subprogram_Kind (E) = Subprogram_Lustre then
-         Use_Lustre := True;
+         Use_Lustre       := True;
          Lustre_Directory := Get_Source_Location (E);
          Set_Str_To_Name_Buffer ("");
          Get_Name_String_And_Append (Get_Source_Location (E));
@@ -282,8 +276,10 @@ package body Ocarina.Backends.POK_C.Makefile is
                   Nb_Ports_Intra := Nb_Ports_Intra + 1;
                end if;
 
-               if Is_In (F) and then Is_Event (F) and then
-                  Get_Port_Compute_Entrypoint (F) /= No_Node then
+               if Is_In (F)
+                 and then Is_Event (F)
+                 and then Get_Port_Compute_Entrypoint (F) /= No_Node
+               then
                   Visit (Get_Port_Compute_Entrypoint (F));
                end if;
             end if;
@@ -298,12 +294,13 @@ package body Ocarina.Backends.POK_C.Makefile is
    --------------------------------------
 
    procedure Visit_Process_Or_Device_Instance (E : Node_Id) is
-      U               : constant Node_Id := CTN.Distributed_Application_Unit
-        (CTN.Naming_Node (Backend_Node (Identifier (E))));
-      P               : constant Node_Id := CTN.Entity (U);
-      N               : Node_Id;
-      S               : Node_Id;
-      Fd              : File_Descriptor;
+      U : constant Node_Id :=
+        CTN.Distributed_Application_Unit
+          (CTN.Naming_Node (Backend_Node (Identifier (E))));
+      P                   : constant Node_Id := CTN.Entity (U);
+      N                   : Node_Id;
+      S                   : Node_Id;
+      Fd                  : File_Descriptor;
       Inspected_Component : Node_Id;
    begin
       Push_Entity (P);
@@ -318,12 +315,10 @@ package body Ocarina.Backends.POK_C.Makefile is
          Mac_Addr := Get_String_Property (E, "pok::hw_addr");
       end if;
 
-      Enter_Directory (To_C_Name
-                        (AIN.Name
-                           (AIN.Identifier
-                              (AIN.Parent_Subcomponent
-                                 (E))),
-                        Keyword_Check => False));
+      Enter_Directory
+        (To_C_Name
+           (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E))),
+            Keyword_Check => False));
       Fd := Create_File ("Makefile", Text);
 
       Partition_Object_Files := CTU.New_List (CTN.K_Element_List);
@@ -331,21 +326,25 @@ package body Ocarina.Backends.POK_C.Makefile is
       Add_Str_To_Name_Buffer (".elf");
 
       if AINU.Is_Device (E) then
-         Inspected_Component := Corresponding_Instance (First_Node
-            (AIN.Subcomponents
-               (Get_Classifier_Property (E, "implemented_as"))));
+         Inspected_Component :=
+           Corresponding_Instance
+             (First_Node
+                (AIN.Subcomponents
+                   (Get_Classifier_Property (E, "implemented_as"))));
       else
          Inspected_Component := E;
       end if;
 
-      if Inspected_Component /= No_Node and then
-         not AINU.Is_Empty (Subcomponents (Inspected_Component)) then
+      if Inspected_Component /= No_Node
+        and then not AINU.Is_Empty (Subcomponents (Inspected_Component))
+      then
          S := First_Node (Subcomponents (Inspected_Component));
          while Present (S) loop
             --  Visit the component instance corresponding to the
             --  subcomponent S.
-            if AINU.Is_Data (Corresponding_Instance (S)) and then
-               Is_Protected_Data (Corresponding_Instance (S)) then
+            if AINU.Is_Data (Corresponding_Instance (S))
+              and then Is_Protected_Data (Corresponding_Instance (S))
+            then
                Nb_Shared_Data := Nb_Shared_Data + 1;
             else
                Visit (Corresponding_Instance (S));
@@ -359,16 +358,13 @@ package body Ocarina.Backends.POK_C.Makefile is
       end if;
 
       Set_Str_To_Name_Buffer ("");
-      Get_Name_String_And_Append (AIN.Name
-            (AIN.Identifier
-             (AIN.Parent_Subcomponent
-              (E))));
+      Get_Name_String_And_Append
+        (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E))));
 
       Append_Node_To_List
-         (Make_Defining_Identifier
-            (AIN.Name (AIN.Identifier
-               (AIN.Parent_Subcomponent (E)))),
-          Partition_Names);
+        (Make_Defining_Identifier
+           (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E)))),
+         Partition_Names);
 
       Add_Str_To_Name_Buffer (".elf");
 
@@ -422,9 +418,9 @@ package body Ocarina.Backends.POK_C.Makefile is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      Fd             : File_Descriptor;
-      S              : Node_Id;
-      System_Nodes   : List_Id;
+      Fd           : File_Descriptor;
+      S            : Node_Id;
+      System_Nodes : List_Id;
    begin
       --  Visit all the subcomponents of the system
       Push_Entity (C_Root);
@@ -442,8 +438,8 @@ package body Ocarina.Backends.POK_C.Makefile is
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
                AINU.Append_Node_To_List
-                  (AINU.Make_Node_Container
-                     (Corresponding_Instance (S)), System_Nodes);
+                 (AINU.Make_Node_Container (Corresponding_Instance (S)),
+                  System_Nodes);
             end if;
             S := Next_Node (S);
          end loop;
@@ -464,10 +460,8 @@ package body Ocarina.Backends.POK_C.Makefile is
             Write_Char (ASCII.HT);
             Write_Str ("$(MAKE) -C ");
             Write_Name
-               (AIN.Display_Name
-                  (AIN.Identifier
-                     (AIN.Parent_Subcomponent
-                        (Item (S)))));
+              (AIN.Display_Name
+                 (AIN.Identifier (AIN.Parent_Subcomponent (Item (S)))));
             Write_Str (" all");
             Write_Eol;
             S := Next_Node (S);
@@ -483,10 +477,8 @@ package body Ocarina.Backends.POK_C.Makefile is
             Write_Char (ASCII.HT);
             Write_Str ("$(MAKE) -C ");
             Write_Name
-               (AIN.Display_Name
-                  (AIN.Identifier
-                     (AIN.Parent_Subcomponent
-                        (Item (S)))));
+              (AIN.Display_Name
+                 (AIN.Identifier (AIN.Parent_Subcomponent (Item (S)))));
             Write_Str (" clean");
             Write_Eol;
             S := Next_Node (S);
@@ -502,10 +494,8 @@ package body Ocarina.Backends.POK_C.Makefile is
             Write_Char (ASCII.HT);
             Write_Str ("$(MAKE) -C ");
             Write_Name
-               (AIN.Display_Name
-                  (AIN.Identifier
-                     (AIN.Parent_Subcomponent
-                        (Item (S)))));
+              (AIN.Display_Name
+                 (AIN.Identifier (AIN.Parent_Subcomponent (Item (S)))));
             Write_Str (" run&");
             Write_Eol;
             S := Next_Node (S);
@@ -526,22 +516,23 @@ package body Ocarina.Backends.POK_C.Makefile is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
-      U : Node_Id;
+      S         : Node_Id;
+      U         : Node_Id;
       Processes : List_Id;
    begin
 
       Current_Partition := E;
 
-      if Is_Defined_Property (E, "arinc653::hm_errors") or else
-         Is_Defined_Property (E, "pok::recovery_errors") then
+      if Is_Defined_Property (E, "arinc653::hm_errors")
+        or else Is_Defined_Property (E, "pok::recovery_errors")
+      then
          Use_HM_Services := True;
       end if;
 
       if Is_Defined_Property (E, "arinc653::hm_callback") then
          Kernel_Mode := True;
          Visit_Subprogram_Instance
-            (Get_Classifier_Property (E, "arinc653::hm_callback"));
+           (Get_Classifier_Property (E, "arinc653::hm_callback"));
          Kernel_Mode := False;
       end if;
 
@@ -553,7 +544,7 @@ package body Ocarina.Backends.POK_C.Makefile is
 
       if Present (Backend_Node (Identifier (E))) then
          Processes := CTN.Processes (Backend_Node (Identifier (E)));
-         S := AIN.First_Node (Processes);
+         S         := AIN.First_Node (Processes);
          while Present (S) loop
             U := Current_Entity;
             Pop_Entity;
@@ -569,15 +560,13 @@ package body Ocarina.Backends.POK_C.Makefile is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S  : Node_Id;
-      U  : Node_Id;
-      P  : Node_Id;
-      Fd : File_Descriptor;
-      N  : Node_Id;
-      Arch     : constant Supported_POK_Architectures
-                  := Get_POK_Architecture (E);
-      BSP      : constant Supported_POK_BSP
-                  := Get_POK_BSP (E);
+      S    : Node_Id;
+      U    : Node_Id;
+      P    : Node_Id;
+      Fd   : File_Descriptor;
+      N    : Node_Id;
+      Arch : constant Supported_POK_Architectures := Get_POK_Architecture (E);
+      BSP  : constant Supported_POK_BSP           := Get_POK_BSP (E);
    begin
 
       Kernel_Object_Files := CTU.New_List (CTN.K_Element_List);
@@ -605,8 +594,9 @@ package body Ocarina.Backends.POK_C.Makefile is
       --  Reset the partition names table for this node.
 
       Enter_Directory
-         (To_C_Name (AIN.Name (AIN.Identifier (Parent_Subcomponent (E))),
-                         Keyword_Check => False));
+        (To_C_Name
+           (AIN.Name (AIN.Identifier (Parent_Subcomponent (E))),
+            Keyword_Check => False));
 
       Kernel_Mode := False;
 
@@ -625,14 +615,15 @@ package body Ocarina.Backends.POK_C.Makefile is
 
       Kernel_Mode := True;
 
-      if Is_Defined_Property (E, "arinc653::hm_errors") or else
-         Is_Defined_Property (E, "pok::recovery_errors") then
+      if Is_Defined_Property (E, "arinc653::hm_errors")
+        or else Is_Defined_Property (E, "pok::recovery_errors")
+      then
          Use_HM_Services := True;
       end if;
 
       if Is_Defined_Property (E, "arinc653::hm_callback") then
          Visit_Subprogram_Instance
-            (Get_Classifier_Property (E, "arinc653::hm_callback"));
+           (Get_Classifier_Property (E, "arinc653::hm_callback"));
       end if;
 
       Fd := Create_File ("Makefile", Text);
@@ -651,8 +642,7 @@ package body Ocarina.Backends.POK_C.Makefile is
          when POK_Arch_Ppc =>
             Write_Line ("export ARCH=ppc");
          when others =>
-            Display_Error ("Unknown architecture",
-                           Fatal => True);
+            Display_Error ("Unknown architecture", Fatal => True);
       end case;
 
       case BSP is
@@ -665,8 +655,7 @@ package body Ocarina.Backends.POK_C.Makefile is
          when POK_BSP_prep =>
             Write_Line ("export BSP=prep");
          when others =>
-            Display_Error ("Unknown BSP",
-                           Fatal => True);
+            Display_Error ("Unknown BSP", Fatal => True);
       end case;
 
       Write_Line ("export POK_CONFIG_OPTIMIZE_FOR_GENERATED_CODE=1");
@@ -858,8 +847,7 @@ package body Ocarina.Backends.POK_C.Makefile is
    ------------------------------
 
    procedure Build_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -907,28 +895,25 @@ package body Ocarina.Backends.POK_C.Makefile is
 
       Set_Str_To_Name_Buffer ("generated-code");
       Enter_Directory (Name_Find);
-      Enter_Directory (To_C_Name
-                         (AIN.Name
-                            (AIN.Identifier
-                               (AIN.Parent_Subcomponent
-                                  (E)))));
+      Enter_Directory
+        (To_C_Name (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E)))));
 
       --  If the user set the BUILD environment variable to some
       --  value, we pass it the GNU make command.
 
       declare
          Build_Kind    : String_Access := Getenv ("BUILD");
-         GNU_Make_Path : String_Access := Locate_Exec_On_Path
-           (GNU_Make_Cmd);
+         GNU_Make_Path : String_Access := Locate_Exec_On_Path (GNU_Make_Cmd);
       begin
          Change_If_Empty (String_Ptr (Build_Kind), "Debug");
          Args (1) := new String'("BUILD=" & Build_Kind.all);
 
          --  Invoke the 'make' command
 
-         Pid := Non_Blocking_Spawn
-           (Program_Name => GNU_Make_Path.all,
-            Args         => Args);
+         Pid :=
+           Non_Blocking_Spawn
+             (Program_Name => GNU_Make_Path.all,
+              Args         => Args);
 
          --  Wait until the command achieves its execution
 
@@ -939,12 +924,14 @@ package body Ocarina.Backends.POK_C.Makefile is
 
          if Out_Pid = Pid then
             if not Success then
-               Display_Error (GNU_Make_Path.all & " died unexpectedly",
-                              Fatal => True);
+               Display_Error
+                 (GNU_Make_Path.all & " died unexpectedly",
+                  Fatal => True);
             else
-               pragma Debug (Display_Debug_Message
-                             (GNU_Make_Cmd & " terminated normally",
-                              Force => True));
+               pragma Debug
+                 (Display_Debug_Message
+                    (GNU_Make_Cmd & " terminated normally",
+                     Force => True));
                null;
             end if;
          end if;

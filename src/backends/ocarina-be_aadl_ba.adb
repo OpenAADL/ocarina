@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -60,9 +60,10 @@ package body Ocarina.BE_AADL_BA is
 
    procedure Init is
    begin
-      Register_Backend ("behavior_specification",
-                        Generate_Behavior_Spec'Access,
-                        Behavior_PP);
+      Register_Backend
+        ("behavior_specification",
+         Generate_Behavior_Spec'Access,
+         Behavior_PP);
    end Init;
 
    -------------------
@@ -75,7 +76,7 @@ package body Ocarina.BE_AADL_BA is
 
    begin
       case Kind (Node) is
-         when K_Behavior_Annex  =>
+         when K_Behavior_Annex =>
             Print_Behavior_Annex (Node);
 
          when others =>
@@ -110,9 +111,7 @@ package body Ocarina.BE_AADL_BA is
    -- Print_Token --
    -----------------
 
-   procedure Print_Token
-     (Token : Ocarina.ME_AADL_BA.Tokens.BA_Token_Type)
-   is
+   procedure Print_Token (Token : Ocarina.ME_AADL_BA.Tokens.BA_Token_Type) is
    begin
       Write_Str (Image (Token));
    end Print_Token;

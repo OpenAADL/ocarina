@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -41,15 +41,15 @@ package body Ocarina.Instances.REAL_Checker.Queries.Connected_Predicates is
    function Is_Connected_Predicate
      (E      : Node_Id;
       D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       pragma Unreferenced (Option);
 
       N : Node_Id;
    begin
-      if Kind (E) /= K_Component_Instance or else
-        Kind (D) /= K_Component_Instance then
+      if Kind (E) /= K_Component_Instance
+        or else Kind (D) /= K_Component_Instance
+      then
          return False;
       end if;
 

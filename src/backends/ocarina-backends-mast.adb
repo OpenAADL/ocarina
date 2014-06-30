@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -78,7 +78,7 @@ package body Ocarina.Backends.MAST is
       Visit_Architecture_Instance (Instance_Root);
       --  Abort if the construction of the XML tree failed
 
-      if No (Mast_File) then
+      if No (MAST_File) then
          Display_Error ("MAST generation failed", Fatal => True);
       end if;
 
@@ -139,9 +139,9 @@ package body Ocarina.Backends.MAST is
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
    begin
-      MAST_File := MTU.Make_MAST_File
-         (MTU.Make_Defining_Identifier
-            (Get_String_Name ("mast-model")));
+      MAST_File :=
+        MTU.Make_MAST_File
+          (MTU.Make_Defining_Identifier (Get_String_Name ("mast-model")));
       MAST.Main.Visit (E);
    end Visit_Architecture_Instance;
 
@@ -149,8 +149,7 @@ package body Ocarina.Backends.MAST is
    -- Get_MAST_File --
    -------------------
 
-   function Get_MAST_File return Node_Id
-   is
+   function Get_MAST_File return Node_Id is
    begin
       return MAST_File;
    end Get_MAST_File;

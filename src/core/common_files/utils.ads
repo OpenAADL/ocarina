@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,32 +31,28 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;     use Types;
+with Types; use Types;
 
 package Utils is
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
 
    function Remove_Prefix_From_Name
      (Prefix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
    --  This function returns a new name without the prefix. If the
    --  prefix does not exist, the returned name is equal to the given
    --  name
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
    --  This function returns a new name without the suffix. If the
    --  suffix does not exist, the returned name is equal to the given
    --  name.
@@ -71,15 +67,16 @@ package Utils is
    function Quoted (N : Name_Id; D : Character := '"') return Name_Id; --  "
    --  Embrace string S or name N with character D
 
-   function To_Lower  (N : Name_Id) return Name_Id;
-   function To_Upper  (N : Name_Id) return Name_Id;
+   function To_Lower (N : Name_Id) return Name_Id;
+   function To_Upper (N : Name_Id) return Name_Id;
 
-   function Replace_Char (Name : Name_Id; O : Character; N : Character)
-      return Name_Id;
+   function Replace_Char
+     (Name : Name_Id;
+      O    : Character;
+      N    : Character) return Name_Id;
    --  Replace occurence of character O in the Name by character N.
 
-   function Remove_Char (Name : Name_Id; O : Character)
-      return Name_Id;
+   function Remove_Char (Name : Name_Id; O : Character) return Name_Id;
    --  Remove occurences of character O in the Name.
 
    function Is_Prefix (N1 : Name_Id; N2 : Name_Id) return Boolean;

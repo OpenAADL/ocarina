@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -126,7 +126,7 @@ package body Ocarina.Backends.Connection_Matrix is
       end loop;
 
       Register_Backend
-         ("Connection_Matrix",
+        ("Connection_Matrix",
          Generate'Access,
          Connection_Matrix_Analysis);
    end Init;

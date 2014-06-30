@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -79,13 +79,15 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
    begin
       pragma Assert (Get_Data_Representation (E) = Data_Array);
 
-      N := Make_Subprogram_Specification
-        (Defining_Identifier => Make_Defining_Identifier (SN (S_Length)),
-         Parameter_Profile   => Make_List_Id
-           (Make_Parameter_Specification
-            (Defining_Identifier => Make_Defining_Identifier (PN (P_A)),
-             Subtype_Mark        => Map_Ada_Defining_Identifier (E))),
-         Return_Type         => RE (RE_Integer));
+      N :=
+        Make_Subprogram_Specification
+          (Defining_Identifier => Make_Defining_Identifier (SN (S_Length)),
+           Parameter_Profile   =>
+             Make_List_Id
+               (Make_Parameter_Specification
+                  (Defining_Identifier => Make_Defining_Identifier (PN (P_A)),
+                   Subtype_Mark        => Map_Ada_Defining_Identifier (E))),
+           Return_Type => RE (RE_Integer));
 
       return N;
    end Length_Spec;
@@ -122,8 +124,9 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
          P       : Node_Id;
          Spg     : Node_Id;
       begin
-         pragma Assert (Kind (E) = K_Subprogram_Spec_Instance
-                          or else Kind (E) = K_Subcomponent_Access_Instance);
+         pragma Assert
+           (Kind (E) = K_Subprogram_Spec_Instance
+            or else Kind (E) = K_Subcomponent_Access_Instance);
 
          Spg := Corresponding_Instance (E);
 
@@ -149,11 +152,13 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                      Visit_Component_Instance (Corresponding_Instance (P));
                   end if;
 
-                  N := Make_Parameter_Specification
-                    (Defining_Identifier => Map_Ada_Defining_Identifier (P),
-                     Subtype_Mark        => Map_Ada_Data_Type_Designator
-                       (Corresponding_Instance (P)),
-                     Parameter_Mode      => Mode);
+                  N :=
+                    Make_Parameter_Specification
+                      (Defining_Identifier => Map_Ada_Defining_Identifier (P),
+                       Subtype_Mark        =>
+                         Map_Ada_Data_Type_Designator
+                           (Corresponding_Instance (P)),
+                       Parameter_Mode => Mode);
                   Append_Node_To_List (N, Profile);
                end if;
 
@@ -161,9 +166,10 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
             end loop;
          end if;
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Map_Ada_Defining_Identifier (E),
-            Parameter_Profile   => Profile);
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier => Map_Ada_Defining_Identifier (E),
+              Parameter_Profile   => Profile);
 
          return N;
       end Feature_Spg_Spec;
@@ -177,14 +183,14 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       begin
          pragma Assert (Get_Data_Representation (E) = Data_Array);
 
-         N := Make_Pragma_Statement
-           (Pragma_Export,
-            Make_List_Id
-            (Make_Defining_Identifier (PN (P_C)),
-             Make_Defining_Identifier (SN (S_Length)),
-             Make_Literal
-             (New_String_Value
-              (Map_Exported_Length_Symbol (E)))));
+         N :=
+           Make_Pragma_Statement
+             (Pragma_Export,
+              Make_List_Id
+                (Make_Defining_Identifier (PN (P_C)),
+                 Make_Defining_Identifier (SN (S_Length)),
+                 Make_Literal
+                   (New_String_Value (Map_Exported_Length_Symbol (E)))));
 
          return N;
       end Pragma_Export_Length;
@@ -221,8 +227,8 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -250,17 +256,17 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       -------------------------
 
       procedure Visit_Data_Instance (E : Node_Id) is
-         Data_Representation : Supported_Data_Representation;
-         Language_Type       : Supported_Source_Language;
-         N                   : Node_Id;
-         S                   : Node_Id;
-         Name                : Name_Id;
-         Actual_Data_Size    : Unsigned_Long_Long;
-         Data_Size           : Size_Type;
-         Number_Representation : constant Supported_Number_Representation
-           := Get_Number_Representation (E);
-         Is_Signed : constant Boolean
-           := (Number_Representation = Representation_Signed);
+         Data_Representation   : Supported_Data_Representation;
+         Language_Type         : Supported_Source_Language;
+         N                     : Node_Id;
+         S                     : Node_Id;
+         Name                  : Name_Id;
+         Actual_Data_Size      : Unsigned_Long_Long;
+         Data_Size             : Size_Type;
+         Number_Representation : constant Supported_Number_Representation :=
+           Get_Number_Representation (E);
+         Is_Signed : constant Boolean :=
+           (Number_Representation = Representation_Signed);
       begin
          --  Do not generate Ada type more than once
 
@@ -292,9 +298,10 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                      Fatal => True);
                end if;
 
-               N := Make_Designator
-                 (Name,
-                  Fully_Qualified_Name (RU (RU_ASN1_Types)));
+               N :=
+                 Make_Designator
+                   (Name,
+                    Fully_Qualified_Name (RU (RU_ASN1_Types)));
 
             elsif Language_Type = Language_Ada_95 then
                --  If the type is defined through as an Ada type, then
@@ -306,8 +313,8 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                if Name = No_Name then
                   Display_Located_Error
                     (Loc (E),
-                     "Ada opaque types require the definition of the "
-                     & "'Type_Source_Name' property",
+                     "Ada opaque types require the definition of the " &
+                     "'Type_Source_Name' property",
                      Fatal => True);
                end if;
 
@@ -336,10 +343,11 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                      Set_Homogeneous_Parent_Unit_Name (N, RU (RU_Standard));
                   end if;
 
-                  N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_Ada_Defining_Identifier (E),
-                        Type_Definition     => Make_Derived_Type_Definition
-                          (N, Is_Subtype => True),
+                  N :=
+                    Make_Full_Type_Declaration
+                      (Defining_Identifier => Map_Ada_Defining_Identifier (E),
+                       Type_Definition     =>
+                         Make_Derived_Type_Definition (N, Is_Subtype => True),
                        Is_Subtype => True);
                end;
             else
@@ -348,61 +356,74 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                --  generate its definition.
 
                Data_Representation := Get_Data_Representation (E);
-               Data_Size := Get_Data_Size (E);
-               Actual_Data_Size := To_Bytes (Data_Size);
+               Data_Size           := Get_Data_Size (E);
+               Actual_Data_Size    := To_Bytes (Data_Size);
 
                case Data_Representation is
                   when Data_Array =>
                      declare
                         Dimension : constant ULL_Array := Get_Dimension (E);
-                        RC        : constant List_Id   := New_List
-                          (ADN.K_List_Id);
+                        RC : constant List_Id   := New_List (ADN.K_List_Id);
                      begin
-                        Visit (ATN.Entity (ATN.First_Node
-                                             (Get_Base_Type (E))));
+                        Visit
+                          (ATN.Entity (ATN.First_Node (Get_Base_Type (E))));
 
                         for Index in Dimension'Range loop
-                           N := Make_Range_Constraint
-                             (Make_Literal (New_Integer_Value (1, 1, 10)),
-                              Make_Literal (New_Integer_Value
-                                            (Dimension (Index), 1, 10)),
-                              RE (RE_Positive));
+                           N :=
+                             Make_Range_Constraint
+                               (Make_Literal (New_Integer_Value (1, 1, 10)),
+                                Make_Literal
+                                  (New_Integer_Value
+                                     (Dimension (Index),
+                                      1,
+                                      10)),
+                                RE (RE_Positive));
                            Append_Node_To_List (N, RC);
                         end loop;
 
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier => Map_Ada_Defining_Identifier
-                             (E),
-                           Type_Definition     => Make_Array_Type_Definition
-                             (Range_Constraints    => RC,
-                              Component_Definition =>
-                                Map_Ada_Data_Type_Designator
-                                (ATN.Entity
-                                   (ATN.First_Node (Get_Base_Type (E))))));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Array_Type_Definition
+                                 (Range_Constraints    => RC,
+                                  Component_Definition =>
+                                    Map_Ada_Data_Type_Designator
+                                      (ATN.Entity
+                                         (ATN.First_Node
+                                            (Get_Base_Type (E))))));
                      end;
 
                   when Data_Boolean =>
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_Ada_Defining_Identifier (E),
-                        Type_Definition     => Make_Derived_Type_Definition
-                        (RE (RE_Boolean)));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier =>
+                            Map_Ada_Defining_Identifier (E),
+                          Type_Definition =>
+                            Make_Derived_Type_Definition (RE (RE_Boolean)));
 
                   when Data_Character =>
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_Ada_Defining_Identifier (E),
-                        Type_Definition     => Make_Derived_Type_Definition
-                        (RE (RE_Character)));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier =>
+                            Map_Ada_Defining_Identifier (E),
+                          Type_Definition =>
+                            Make_Derived_Type_Definition (RE (RE_Character)));
 
                   when Data_Wide_Character =>
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_Ada_Defining_Identifier (E),
-                        Type_Definition     => Make_Derived_Type_Definition
-                          (RE (RE_Wide_Character)));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier =>
+                            Map_Ada_Defining_Identifier (E),
+                          Type_Definition =>
+                            Make_Derived_Type_Definition
+                              (RE (RE_Wide_Character)));
 
                   when Data_Enum =>
                      declare
-                        Enumerators      : constant Name_Array
-                          := Get_Enumerators (E);
+                        Enumerators : constant Name_Array :=
+                          Get_Enumerators (E);
                         Enumeration_List : constant List_Id :=
                           New_List (ADN.K_Enumeration_Literals);
                      begin
@@ -411,36 +432,39 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                            Append_Node_To_List (N, Enumeration_List);
                         end loop;
 
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Enumeration_Type_Definition
-                             (Enumeration_List));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Enumeration_Type_Definition
+                                 (Enumeration_List));
                      end;
 
                   when Data_Float =>
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_Ada_Defining_Identifier (E),
-                        Type_Definition     => Make_Derived_Type_Definition
-                        (RE (RE_Long_Float)));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier =>
+                            Map_Ada_Defining_Identifier (E),
+                          Type_Definition =>
+                            Make_Derived_Type_Definition (RE (RE_Long_Float)));
 
                   when Data_Fixed =>
                      declare
-                        Data_Digits : constant Unsigned_Long_Long
-                          := Get_Data_Digits (E);
-                        Data_Scale : constant Unsigned_Long_Long
-                          := Get_Data_Scale (E);
+                        Data_Digits : constant Unsigned_Long_Long :=
+                          Get_Data_Digits (E);
+                        Data_Scale : constant Unsigned_Long_Long :=
+                          Get_Data_Scale (E);
                      begin
                         if Data_Digits /= 0 and then Data_Scale /= 0 then
-                           N := Make_Full_Type_Declaration
-                             (Defining_Identifier
-                              => Map_Ada_Defining_Identifier
-                              (E),
-                              Type_Definition
-                              => Make_Decimal_Type_Definition
-                              (Data_Digits,
-                               Data_Scale));
+                           N :=
+                             Make_Full_Type_Declaration
+                               (Defining_Identifier =>
+                                  Map_Ada_Defining_Identifier (E),
+                                Type_Definition =>
+                                  Make_Decimal_Type_Definition
+                                    (Data_Digits,
+                                     Data_Scale));
 
                         else
                            if Data_Digits = 0 then
@@ -464,152 +488,173 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                         --  If no size info is given, we default to a
                         --  standard integer
 
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition (RE (RE_Integer)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition (RE (RE_Integer)));
 
                      elsif Actual_Data_Size = 1 and then Is_Signed then
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition (RE (RE_Integer_8)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (RE (RE_Integer_8)));
 
                      elsif Actual_Data_Size = 1 and then not Is_Signed then
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition
-                             (RE (RE_Unsigned_8)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (RE (RE_Unsigned_8)));
 
                      elsif Actual_Data_Size = 2 and then Is_Signed then
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition
-                             (RE (RE_Integer_16)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (RE (RE_Integer_16)));
 
                      elsif Actual_Data_Size = 2 and then not Is_Signed then
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition
-                             (RE (RE_Unsigned_16)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (RE (RE_Unsigned_16)));
 
                      elsif Actual_Data_Size = 4 and then Is_Signed then
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition
-                             (RE (RE_Integer_32)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (RE (RE_Integer_32)));
 
                      elsif Actual_Data_Size = 4 and then not Is_Signed then
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition
-                             (RE (RE_Unsigned_32)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (RE (RE_Unsigned_32)));
 
                      elsif Actual_Data_Size = 8 and then Is_Signed then
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition
-                             (RE (RE_Integer_64)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (RE (RE_Integer_64)));
 
                      elsif Actual_Data_Size = 8 and then not Is_Signed then
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Type_Definition     =>
-                             Make_Derived_Type_Definition
-                             (RE (RE_Unsigned_64)));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (RE (RE_Unsigned_64)));
 
                      else
                         Display_Located_Error
-                          (Loc (E), "Unsupported data size"
-                             & Actual_Data_Size'Img, Fatal => True);
+                          (Loc (E),
+                           "Unsupported data size" & Actual_Data_Size'Img,
+                           Fatal => True);
                      end if;
 
                   when Data_String =>
                      declare
                         Dimension : constant ULL_Array := Get_Dimension (E);
                      begin
-                        N := Make_Package_Instantiation
-                          (Defining_Identifier =>
-                             Map_Ada_Package_Identifier (E),
-                           Generic_Package     => RU
-                             (RU_Ada_Strings_Bounded_Generic_Bounded_Length),
-                           Parameter_List      => Make_List_Id
-                             (Make_Literal
-                              (New_Integer_Value
-                               (Dimension (Dimension'First),
-                                1,
-                                10))));
+                        N :=
+                          Make_Package_Instantiation
+                            (Defining_Identifier =>
+                               Map_Ada_Package_Identifier (E),
+                             Generic_Package =>
+                               RU
+                               (RU_Ada_Strings_Bounded_Generic_Bounded_Length),
+                             Parameter_List =>
+                               Make_List_Id
+                                 (Make_Literal
+                                    (New_Integer_Value
+                                       (Dimension (Dimension'First),
+                                        1,
+                                        10))));
                         Append_Node_To_List
-                          (N, ADN.Visible_Part (Current_Package));
+                          (N,
+                           ADN.Visible_Part (Current_Package));
 
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Is_Subtype          => True,
-                           Type_Definition     => Make_Derived_Type_Definition
-                             (Make_Selected_Component
-                              (Map_Ada_Package_Identifier (E),
-                               Make_Defining_Identifier
-                               (TN (T_Bounded_String))),
-                              Is_Subtype          => True));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Is_Subtype      => True,
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (Make_Selected_Component
+                                    (Map_Ada_Package_Identifier (E),
+                                     Make_Defining_Identifier
+                                       (TN (T_Bounded_String))),
+                                  Is_Subtype => True));
                      end;
 
                   when Data_Wide_String =>
                      declare
                         Dimension : constant ULL_Array := Get_Dimension (E);
-                        RU_Wi_Str  : constant RU_Id :=
+                        RU_Wi_Str : constant RU_Id     :=
                           RU_Ada_Strings_Wide_Bounded_Generic_Bounded_Length;
                      begin
-                        N := Make_Package_Instantiation
-                          (Defining_Identifier =>
-                             Map_Ada_Package_Identifier (E),
-                           Generic_Package     => RU
-                             (RU_Wi_Str),
-                           Parameter_List      => Make_List_Id
-                             (Make_Literal
-                              (New_Integer_Value
-                               (Dimension (Dimension'First),
-                                1,
-                                10))));
+                        N :=
+                          Make_Package_Instantiation
+                            (Defining_Identifier =>
+                               Map_Ada_Package_Identifier (E),
+                             Generic_Package => RU (RU_Wi_Str),
+                             Parameter_List  =>
+                               Make_List_Id
+                                 (Make_Literal
+                                    (New_Integer_Value
+                                       (Dimension (Dimension'First),
+                                        1,
+                                        10))));
                         Append_Node_To_List
-                          (N, ADN.Visible_Part (Current_Package));
+                          (N,
+                           ADN.Visible_Part (Current_Package));
 
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                             Map_Ada_Defining_Identifier (E),
-                           Is_Subtype          => True,
-                           Type_Definition     => Make_Derived_Type_Definition
-                             (Make_Selected_Component
-                              (Map_Ada_Package_Identifier (E),
-                               Make_Defining_Identifier
-                               (TN (T_Bounded_Wide_String))),
-                              Is_Subtype          => True));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_Ada_Defining_Identifier (E),
+                             Is_Subtype      => True,
+                             Type_Definition =>
+                               Make_Derived_Type_Definition
+                                 (Make_Selected_Component
+                                    (Map_Ada_Package_Identifier (E),
+                                     Make_Defining_Identifier
+                                       (TN (T_Bounded_Wide_String))),
+                                  Is_Subtype => True));
                      end;
 
                   when Data_Struct | Data_With_Accessors =>
                      declare
-                        Components : constant List_Id := New_List
-                          (ADN.K_Component_List);
-                        C          : Node_Id := First_Node (Subcomponents (E));
-                        Visible_P  : List_Id;
-                        Private_P  : List_Id;
-                        I          : Unsigned_Long_Long;
-                        O          : Node_Id;
+                        Components : constant List_Id :=
+                          New_List (ADN.K_Component_List);
+                        C         : Node_Id := First_Node (Subcomponents (E));
+                        Visible_P : List_Id;
+                        Private_P : List_Id;
+                        I         : Unsigned_Long_Long;
+                        O         : Node_Id;
                      begin
                         --  Build the component list
 
@@ -622,13 +667,13 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                            --  Make the record or private type component
 
                            if AAU.Is_Data (Corresponding_Instance (C)) then
-                              N := Make_Component_Declaration
-                                (Defining_Identifier
-                                   => Map_Ada_Defining_Identifier
-                                   (C),
-                                 Subtype_Indication
-                                   => Map_Ada_Data_Type_Designator
-                                   (Corresponding_Instance (C)));
+                              N :=
+                                Make_Component_Declaration
+                                  (Defining_Identifier =>
+                                     Map_Ada_Defining_Identifier (C),
+                                   Subtype_Indication =>
+                                     Map_Ada_Data_Type_Designator
+                                       (Corresponding_Instance (C)));
                               Append_Node_To_List (N, Components);
                            end if;
 
@@ -638,13 +683,13 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                         if Data_Representation = Data_Struct then
                            --  Record type
 
-                           N := Make_Full_Type_Declaration
-                             (Defining_Identifier =>
-                                Map_Ada_Defining_Identifier (E),
-                              Type_Definition     =>
-                                Make_Record_Type_Definition
-                                (Make_Record_Definition
-                                 (Components)));
+                           N :=
+                             Make_Full_Type_Declaration
+                               (Defining_Identifier =>
+                                  Map_Ada_Defining_Identifier (E),
+                                Type_Definition =>
+                                  Make_Record_Type_Definition
+                                    (Make_Record_Definition (Components)));
                         else
                            --  Protected type
 
@@ -660,9 +705,9 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                               if CCP /= Concurrency_Priority_Ceiling then
                                  Display_Located_Error
                                    (Loc (E),
-                                    "Incompatible concurrency protocol, "
-                                      & "PolyORB-HI/Ada requires "
-                                      & "Priority_Ceiling",
+                                    "Incompatible concurrency protocol, " &
+                                    "PolyORB-HI/Ada requires " &
+                                    "Priority_Ceiling",
                                     True);
                               end if;
                            end;
@@ -684,7 +729,8 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
 
                               N := Feature_Spg_Spec (S);
                               Bind_AADL_To_Feature_Subprogram
-                                (Identifier (S), N);
+                                (Identifier (S),
+                                 N);
                               Append_Node_To_List (N, Visible_P);
 
                               S := Next_Node (S);
@@ -692,13 +738,13 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
 
                            --  Build the private type spec
 
-                           N := Make_Protected_Object_Spec
-                             (Defining_Identifier
-                              => Map_Ada_Defining_Identifier
-                              (E),
-                              Visible_Part        => Visible_P,
-                              Private_Part        => Private_P,
-                              Is_Type             => True);
+                           N :=
+                             Make_Protected_Object_Spec
+                               (Defining_Identifier =>
+                                  Map_Ada_Defining_Identifier (E),
+                                Visible_Part => Visible_P,
+                                Private_Part => Private_P,
+                                Is_Type      => True);
 
                            I := Get_Priority_Celing_Of_Data_Access (E);
 
@@ -707,10 +753,10 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                               --  use it for the ceiling priority of the
                               --  protected object.
 
-                              O :=  Make_Pragma_Statement
-                                (Pragma_Priority,
-                                 Make_List_Id
-                                 (Map_Ada_Priority (I)));
+                              O :=
+                                Make_Pragma_Statement
+                                  (Pragma_Priority,
+                                   Make_List_Id (Map_Ada_Priority (I)));
                               Append_Node_To_List (O, ADN.Private_Part (N));
 
                            else
@@ -720,15 +766,19 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                               --  object.
 
                               Display_Located_Error
-                                (Loc (E), "No  priority defined, will use"
-                                   & " default value: System.Priority'Last",
-                                 False, True);
+                                (Loc (E),
+                                 "No  priority defined, will use" &
+                                 " default value: System.Priority'Last",
+                                 False,
+                                 True);
 
-                              O :=  Make_Pragma_Statement
-                                (Pragma_Priority,
-                                 Make_List_Id
-                                 (Make_Attribute_Designator (RE (RE_Priority),
-                                                             A_Last)));
+                              O :=
+                                Make_Pragma_Statement
+                                  (Pragma_Priority,
+                                   Make_List_Id
+                                     (Make_Attribute_Designator
+                                        (RE (RE_Priority),
+                                         A_Last)));
                               Append_Node_To_List (O, ADN.Private_Part (N));
                            end if;
                         end if;
@@ -736,14 +786,17 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
 
                   when Data_Union =>
                      Display_Located_Error
-                       (Loc (E), "unsupported data type ("
-                        & Supported_Data_Representation'Image
-                        (Data_Representation) & ")",
+                       (Loc (E),
+                        "unsupported data type (" &
+                        Supported_Data_Representation'Image
+                          (Data_Representation) &
+                        ")",
                         Fatal => True);
 
                   when Data_None =>
                      Display_Located_Error
-                       (Loc (E), "unspecified data representation",
+                       (Loc (E),
+                        "unspecified data representation",
                         Fatal => True);
                end case;
             end if;
@@ -780,12 +833,15 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
             --  generate a corresponding Ada clause.
 
             if Get_Data_Size (E) /= Null_Size then
-               N := Make_Attribute_Definition_Clause
-                 (Map_Ada_Defining_Identifier (E),
-                  A_Size,
-                  Make_Literal
-                  (New_Integer_Value
-                   (To_Bits (Get_Data_Size (E)), 1, 10)));
+               N :=
+                 Make_Attribute_Definition_Clause
+                   (Map_Ada_Defining_Identifier (E),
+                    A_Size,
+                    Make_Literal
+                      (New_Integer_Value
+                         (To_Bits (Get_Data_Size (E)),
+                          1,
+                          10)));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
             end if;
 
@@ -801,21 +857,23 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
 
                   --  A documentary comment for the data size
 
-                  N := Message_Comment
-                    (Get_Name_String (To_Ada_Name (AIN.Name (Identifier (E))))
-                     & "'Object_Size ~="
-                     & Unsigned_Long_Long'Image (Data_Size)
-                     & " bits");
+                  N :=
+                    Message_Comment
+                      (Get_Name_String
+                         (To_Ada_Name (AIN.Name (Identifier (E)))) &
+                       "'Object_Size ~=" &
+                       Unsigned_Long_Long'Image (Data_Size) &
+                       " bits");
                   Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
                end;
             end if;
 
-            if Get_Data_Representation (E)  = Data_Struct then
-               N := Make_Attribute_Definition_Clause
-                 (Map_Ada_Defining_Identifier (E),
-                  Attribute_Designator => A_Alignment,
-                  Expression           => Make_Literal
-                    (New_Integer_Value (8, 1, 10)));
+            if Get_Data_Representation (E) = Data_Struct then
+               N :=
+                 Make_Attribute_Definition_Clause
+                   (Map_Ada_Defining_Identifier (E),
+                    Attribute_Designator => A_Alignment,
+                    Expression => Make_Literal (New_Integer_Value (8, 1, 10)));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
             end if;
 
@@ -851,10 +909,12 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
             --  protected types.
 
             if Data_Representation /= Data_With_Accessors then
-               N := Make_Object_Declaration
-                 (Defining_Identifier => Map_Ada_Default_Value_Identifier (E),
-                  Object_Definition   => Map_Ada_Defining_Identifier (E),
-                  Expression          => Get_Ada_Default_Value (E));
+               N :=
+                 Make_Object_Declaration
+                   (Defining_Identifier =>
+                      Map_Ada_Default_Value_Identifier (E),
+                    Object_Definition => Map_Ada_Defining_Identifier (E),
+                    Expression        => Get_Ada_Default_Value (E));
 
                Set_Handling (E, By_Name, H_Ada_Type_Default_Value, N);
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
@@ -878,8 +938,9 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := ADN.Entity (U);
          S : Node_Id;
       begin
@@ -1050,9 +1111,7 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       procedure Visit_Subprogram_Instance (E : Node_Id);
       procedure Visit_Data_Instance (E : Node_Id);
 
-      function Feature_Spg_Body
-        (E    : Node_Id;
-         Data : Node_Id) return Node_Id;
+      function Feature_Spg_Body (E : Node_Id; Data : Node_Id) return Node_Id;
       --  Builds a body for a protected object procedure from an AADL
       --  subprogram spec E.
 
@@ -1063,10 +1122,7 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       -- Feature_Spg_Body --
       ----------------------
 
-      function Feature_Spg_Body
-        (E    : Node_Id;
-         Data : Node_Id) return Node_Id
-      is
+      function Feature_Spg_Body (E : Node_Id; Data : Node_Id) return Node_Id is
          N            : Node_Id;
          Call_Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
          Param        : Node_Id;
@@ -1075,8 +1131,9 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Spg          : Node_Id;
       begin
-         pragma Assert (Kind (E) = K_Subprogram_Spec_Instance
-                          or else Kind (E) = K_Subcomponent_Access_Instance);
+         pragma Assert
+           (Kind (E) = K_Subprogram_Spec_Instance
+            or else Kind (E) = K_Subcomponent_Access_Instance);
 
          Spg := Corresponding_Instance (E);
 
@@ -1102,9 +1159,11 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                if Kind (Param) = K_Parameter_Instance then
                   --  Create a parameter association
 
-                  N := Make_Parameter_Association
-                    (Selector_Name    => Map_Ada_Defining_Identifier (Param),
-                     Actual_Parameter => Map_Ada_Defining_Identifier (Param));
+                  N :=
+                    Make_Parameter_Association
+                      (Selector_Name    => Map_Ada_Defining_Identifier (Param),
+                       Actual_Parameter =>
+                         Map_Ada_Defining_Identifier (Param));
                   Append_Node_To_List (N, Call_Profile);
                end if;
 
@@ -1120,8 +1179,9 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
          --  (passing through intermediate variables, to prevent the
          --  user from cheating).
 
-         if not AAU.Is_Empty (Features (Spg)) and then
-           not Is_Priority_Shifter (Data) then
+         if not AAU.Is_Empty (Features (Spg))
+           and then not Is_Priority_Shifter (Data)
+         then
 
             C_Access := First_Node (Features (Spg));
 
@@ -1136,12 +1196,14 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                         --  Create a parameter association
 
                         if AAU.Is_Data (Corresponding_Instance (Param)) then
-                           N := Make_Parameter_Association
-                             (Selector_Name    =>
-                                Map_Ada_Protected_Aggregate_Identifier
-                                (C_Access, Param),
-                              Actual_Parameter => Map_Ada_Defining_Identifier
-                                (Param));
+                           N :=
+                             Make_Parameter_Association
+                               (Selector_Name =>
+                                  Map_Ada_Protected_Aggregate_Identifier
+                                    (C_Access,
+                                     Param),
+                                Actual_Parameter =>
+                                  Map_Ada_Defining_Identifier (Param));
 
                            Append_Node_To_List (N, Call_Profile);
                         end if;
@@ -1157,24 +1219,21 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
 
          --  Call the implementation subprogram with the built profile
 
-         N := Make_Subprogram_Call
-           (Extract_Designator
-            (ADN.Subprogram_Node
-             (Backend_Node
-              (Identifier
-               (Corresponding_Instance
-                (E))))),
-            Call_Profile);
+         N :=
+           Make_Subprogram_Call
+             (Extract_Designator
+                (ADN.Subprogram_Node
+                   (Backend_Node (Identifier (Corresponding_Instance (E))))),
+              Call_Profile);
          Append_Node_To_List (N, Statements);
 
          --  Build the subprogram implementation
 
-         N := Make_Subprogram_Implementation
-           (ADN.Feature_Subprogram_Node
-            (Backend_Node
-             (Identifier (E))),
-            No_List,
-            Statements);
+         N :=
+           Make_Subprogram_Implementation
+             (ADN.Feature_Subprogram_Node (Backend_Node (Identifier (E))),
+              No_List,
+              Statements);
 
          return N;
       end Feature_Spg_Body;
@@ -1186,14 +1245,15 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       function Length_Body (E : Node_Id) return Node_Id is
          N : Node_Id;
       begin
-         N := Make_Subprogram_Implementation
-           (Length_Spec (E),
-            No_List,
-            Make_List_Id
-            (Make_Return_Statement
-             (Make_Attribute_Designator
-              (Make_Defining_Identifier (PN (P_A)),
-               A_Length))));
+         N :=
+           Make_Subprogram_Implementation
+             (Length_Spec (E),
+              No_List,
+              Make_List_Id
+                (Make_Return_Statement
+                   (Make_Attribute_Designator
+                      (Make_Defining_Identifier (PN (P_A)),
+                       A_Length))));
 
          return N;
       end Length_Body;
@@ -1230,8 +1290,8 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -1285,10 +1345,10 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
 
                when Data_With_Accessors =>
                   declare
-                     Statements : constant List_Id := New_List
-                       (ADN.K_Statement_List);
-                     C          : Node_Id := First_Node (Subcomponents (E));
-                     S          : Node_Id;
+                     Statements : constant List_Id :=
+                       New_List (ADN.K_Statement_List);
+                     C : Node_Id := First_Node (Subcomponents (E));
+                     S : Node_Id;
                   begin
                      --  Visit the subcomponents
 
@@ -1313,9 +1373,11 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
 
                      --  Build the private type body
 
-                     N := Make_Protected_Object_Body
-                       (Defining_Identifier => Map_Ada_Defining_Identifier (E),
-                        Statements          => Statements);
+                     N :=
+                       Make_Protected_Object_Body
+                         (Defining_Identifier =>
+                            Map_Ada_Defining_Identifier (E),
+                          Statements => Statements);
 
                      --  Append the type declaration to the package body
 
@@ -1349,8 +1411,9 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := ADN.Entity (U);
          S : Node_Id;
       begin

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,8 +35,8 @@ with Ocarina.Backends.Ada_Tree.Nodes; use Ocarina.Backends.Ada_Tree.Nodes;
 
 package Ocarina.Backends.Ada_Tree.Nutils is
 
-   Int0_Val             : Value_Id;
-   Int1_Val             : Value_Id;
+   Int0_Val : Value_Id;
+   Int1_Val : Value_Id;
 
    Output_Tree_Warnings : Boolean := False;
    Output_Unit_Withing  : Boolean := False;
@@ -44,9 +44,9 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    type Token_Type is
      (
-      --   Token name      Token type
-      --   Keywords
-      Tok_Mod,             -- MOD   **** First Keyword
+   --   Token name      Token type
+   --   Keywords
+   Tok_Mod,             -- MOD   **** First Keyword
       Tok_Rem,             -- REM
       Tok_New,             -- NEW
       Tok_Abs,             -- ABS
@@ -120,7 +120,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Tok_With,            -- WITH
       Tok_Separate,        -- SEPARATE **** Last Keyword
 
-      --  Graphic Characters
+   --  Graphic Characters
       Tok_Double_Asterisk, -- **
       Tok_Ampersand,       -- &
       Tok_Minus,           -- -
@@ -149,7 +149,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Tok_Dot_Dot,         -- ..
       Tok_Minus_Minus,     -- --
 
-      --  SPARK
+   --  SPARK
       Tok_Annotation,      -- --#
       Tok_Own,             -- Own
       Tok_Inherit,
@@ -157,13 +157,11 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    Token_Image : array (Token_Type) of Name_Id;
 
-   subtype Keyword_Type is Token_Type
-     range Tok_Mod .. Tok_Separate;
+   subtype Keyword_Type is Token_Type range Tok_Mod .. Tok_Separate;
 
-   subtype Spark_Keyword_Type is Token_Type
-     range Tok_Own .. Tok_Initialized;
+   subtype Spark_Keyword_Type is Token_Type range Tok_Own .. Tok_Initialized;
 
-   type Operator_Type  is
+   type Operator_Type is
      (Op_Not,             -- not
       Op_And,             -- and
       Op_In,              -- in
@@ -193,11 +191,11 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Op_None);           -- No operation
 
    Operator_Image : array
-     (Operator_Type'Pos (Op_And) ..  Operator_Type'Pos (Op_Vertical_Bar))
-     of Name_Id;
+   (Operator_Type'Pos (Op_And) ..
+        Operator_Type'Pos (Op_Vertical_Bar)) of Name_Id;
 
-   subtype Keyword_Operator is Operator_Type
-     range Operator_Type'First .. Op_Or_Else;
+   subtype Keyword_Operator is
+     Operator_Type range Operator_Type'First .. Op_Or_Else;
 
    type Parameter_Id is
      (P_A,
@@ -436,10 +434,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    GN : array (Pragma_Id) of Name_Id;
 
-   type Error_Id is
-     (E_Program_Error,
-      E_Constraint_Error,
-      E_NYI);
+   type Error_Id is (E_Program_Error, E_Constraint_Error, E_NYI);
 
    EN : array (Error_Id) of Name_Id;
 
@@ -459,29 +454,23 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    procedure Push_Entity (E : Node_Id);
    procedure Pop_Entity;
-   function  Current_Entity return Node_Id;
-   function  Current_Package return Node_Id;
+   function Current_Entity return Node_Id;
+   function Current_Package return Node_Id;
 
-   function Copy_Node
-     (N : Node_Id)
-     return Node_Id;
+   function Copy_Node (N : Node_Id) return Node_Id;
 
-   function Create_Subtype_From_Range_Constraint
-     (R : Node_Id)
-     return Node_Id;
+   function Create_Subtype_From_Range_Constraint (R : Node_Id) return Node_Id;
    --  This function takes a range_constraint, creates a node for
    --  the anonymous type of the range constraint and returns it.
    --  It's called only by Remove_Anonymous_Array_Type_Definition
 
    function New_Node
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id;
+      From : Node_Id := No_Node) return Node_Id;
 
    function New_List
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id;
+      From : Node_Id := No_Node) return List_Id;
 
    function Image (T : Token_Type) return String;
    function Image (O : Operator_Type) return String;
@@ -502,27 +491,23 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    function Copy_Designator
      (Designator : Node_Id;
-      Withed     : Boolean := True)
-     return Node_Id;
+      Withed     : Boolean := True) return Node_Id;
 
    function Defining_Identifier_To_Designator
      (N                       : Node_Id;
       Copy                    : Boolean := False;
       Keep_Parent             : Boolean := True;
-      Keep_Corresponding_Node : Boolean := True)
-     return Node_Id;
+      Keep_Corresponding_Node : Boolean := True) return Node_Id;
 
    function Make_Access_Type_Definition
      (Subtype_Indication : Node_Id;
       Is_All             : Boolean := False;
       Is_Constant        : Boolean := False;
-      Is_Not_Null        : Boolean := False)
-     return Node_Id;
+      Is_Not_Null        : Boolean := False) return Node_Id;
 
    function Make_Ada_Comment
      (N                 : Name_Id;
-      Has_Header_Spaces : Boolean := True)
-     return Node_Id;
+      Has_Header_Spaces : Boolean := True) return Node_Id;
    --  This function does only the fllowing thing: it creates a node
    --  whose name is the full text of the comment. It does not split
    --  the comment into many lines. This is done in the code
@@ -533,136 +518,111 @@ package Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Array_Type_Definition
      (Range_Constraints    : List_Id;
       Component_Definition : Node_Id;
-      Aliased_Present      : Boolean := False)
-     return Node_Id;
+      Aliased_Present      : Boolean := False) return Node_Id;
    --  Usually used with Make_Full_Type_Declaration
 
    function Make_Assignment_Statement
      (Variable_Identifier : Node_Id;
-      Expression          : Node_Id)
-     return Node_Id;
+      Expression          : Node_Id) return Node_Id;
 
    function Make_Attribute_Definition_Clause
      (Defining_Identifier  : Node_Id;
       Attribute_Designator : Attribute_Id;
-      Expression           : Node_Id)
-     return Node_Id;
+      Expression           : Node_Id) return Node_Id;
 
    function Make_Attribute_Designator
      (Prefix    : Node_Id;
-      Attribute : Attribute_Id)
-     return Node_Id;
+      Attribute : Attribute_Id) return Node_Id;
 
    function Make_Block_Statement
      (Statement_Identifier : Node_Id := No_Node;
       Declarative_Part     : List_Id;
       Statements           : List_Id;
-      Exception_Handler    : List_Id := No_List)
-     return Node_Id;
+      Exception_Handler    : List_Id := No_List) return Node_Id;
 
    function Make_Case_Label (Value : Value_Id) return Node_Id;
 
    function Make_Case_Statement
      (Expression                  : Node_Id;
-      Case_Statement_Alternatives : List_Id)
-     return Node_Id;
+      Case_Statement_Alternatives : List_Id) return Node_Id;
 
    function Make_Case_Statement_Alternative
      (Discret_Choice_List : List_Id;
-      Statements          : List_Id)
-     return Node_Id;
+      Statements          : List_Id) return Node_Id;
 
    function Make_Component_Association
      (Selector_Name : Node_Id;
-      Expression    : Node_Id)
-     return Node_Id;
+      Expression    : Node_Id) return Node_Id;
 
    function Make_Component_Declaration
      (Defining_Identifier : Node_Id;
       Subtype_Indication  : Node_Id;
       Expression          : Node_Id := No_Node;
-      Aliased_Present     : Boolean := False)
-     return Node_Id;
+      Aliased_Present     : Boolean := False) return Node_Id;
 
    function Make_Decimal_Type_Definition
      (D_Digits : Unsigned_Long_Long;
-      D_Scale  : Unsigned_Long_Long)
-     return Node_Id;
+      D_Scale  : Unsigned_Long_Long) return Node_Id;
 
-   function Make_Defining_Identifier (Name : Name_Id) return  Node_Id;
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id;
 
    function Make_Delay_Statement
      (Expression : Node_Id;
-      Is_Until   : Boolean := False)
-     return Node_Id;
+      Is_Until   : Boolean := False) return Node_Id;
 
    function Make_Derived_Type_Definition
      (Subtype_Indication    : Node_Id;
       Record_Extension_Part : Node_Id := No_Node;
       Is_Abstract_Type      : Boolean := False;
       Is_Private_Extention  : Boolean := False;
-      Is_Subtype            : Boolean := False)
-     return Node_Id;
+      Is_Subtype            : Boolean := False) return Node_Id;
 
    function Make_Designator
      (Designator : Name_Id;
       Parent     : Name_Id := No_Name;
-      Is_All     : Boolean := False)
-     return Node_Id;
+      Is_All     : Boolean := False) return Node_Id;
 
    function Make_Elsif_Statement
      (Condition       : Node_Id;
-      Then_Statements : List_Id)
-     return Node_Id;
+      Then_Statements : List_Id) return Node_Id;
 
    function Make_Element_Association
      (Index      : Node_Id;
-      Expression : Node_Id)
-     return Node_Id;
+      Expression : Node_Id) return Node_Id;
    --  If 'Index' is No_Node, then 'others => <Expression>' will be
    --  generated
 
    function Make_Enumeration_Type_Definition
-     (Enumeration_Literals : List_Id)
-     return Node_Id;
+     (Enumeration_Literals : List_Id) return Node_Id;
 
    function Make_Enumeration_Representation_Clause
      (Defining_Identifier : Node_Id;
-      Array_Aggregate     : Node_Id)
-     return Node_Id;
+      Array_Aggregate     : Node_Id) return Node_Id;
 
    function Make_Exception_Declaration
      (Defining_Identifier : Node_Id;
-      Renamed_Exception   : Node_Id := No_Node)
-     return Node_Id;
+      Renamed_Exception   : Node_Id := No_Node) return Node_Id;
 
-   function Make_Explicit_Dereference
-     (Prefix : Node_Id)
-     return Node_Id;
+   function Make_Explicit_Dereference (Prefix : Node_Id) return Node_Id;
 
    function Make_Expression
      (Left_Expr  : Node_Id;
       Operator   : Operator_Type := Op_None;
-      Right_Expr : Node_Id := No_Node)
-     return Node_Id;
+      Right_Expr : Node_Id       := No_Node) return Node_Id;
 
    function Make_For_Statement
      (Defining_Identifier : Node_Id;
       Range_Constraint    : Node_Id;
-      Statements          : List_Id)
-     return Node_Id;
+      Statements          : List_Id) return Node_Id;
 
-   function Make_Loop_Statement
-     (Statements          : List_Id)
-     return Node_Id;
+   function Make_Loop_Statement (Statements : List_Id) return Node_Id;
 
    function Make_Full_Type_Declaration
      (Defining_Identifier : Node_Id;
       Type_Definition     : Node_Id;
       Discriminant_Spec   : Node_Id := No_Node;
       Parent              : Node_Id := No_Node;
-      Is_Subtype          : Boolean := False)
-     return Node_Id;
+      Is_Subtype          : Boolean := False) return Node_Id;
    --  No_Node as Type_Definition made type declaration without actual
    --  definition (eg. "type X;").
 
@@ -670,31 +630,26 @@ package Ocarina.Backends.Ada_Tree.Nutils is
      (Condition        : Node_Id;
       Then_Statements  : List_Id;
       Elsif_Statements : List_Id := No_List;
-      Else_Statements  : List_Id := No_List)
-     return Node_Id;
+      Else_Statements  : List_Id := No_List) return Node_Id;
 
    function Make_Indexed_Component
      (Prefix      : Node_Id;
-      Expressions : List_Id)
-     return Node_Id;
+      Expressions : List_Id) return Node_Id;
 
    function Make_List_Id
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
       N3 : Node_Id := No_Node;
-      N4 : Node_Id := No_Node)
-     return List_Id;
+      N4 : Node_Id := No_Node) return List_Id;
 
    function Make_Literal
      (Value             : Value_Id;
-      Parent_Designator : Node_Id := No_Node)
-     return Node_Id;
+      Parent_Designator : Node_Id := No_Node) return Node_Id;
 
    function Make_Main_Subprogram_Implementation
      (Identifier : Node_Id;
       Build_Spec : Boolean := False;
-      Build_Body : Boolean := True)
-     return Node_Id;
+      Build_Body : Boolean := True) return Node_Id;
    --  If Build_Body is false generate only the spec of a main
    --  subprogram
 
@@ -708,111 +663,87 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Parent              : Node_Id := No_Node;
       Renamed_Object      : Node_Id := No_Node;
       Aliased_Present     : Boolean := False;
-      Discriminant_Spec   : Node_Id := No_Node)
-     return                Node_Id;
+      Discriminant_Spec   : Node_Id := No_Node) return Node_Id;
 
    function Make_Object_Instantiation
-     (Qualified_Expression : Node_Id)
-     return Node_Id;
+     (Qualified_Expression : Node_Id) return Node_Id;
 
    function Make_SPARK_Own_Annotation
      (Variable       : Node_Id;
       Own_Mode       : Mode_Id := Mode_In;
       Is_Initialized : Boolean := True;
-      Is_Protected   : Boolean := False)
-   return Node_Id;
+      Is_Protected   : Boolean := False) return Node_Id;
 
-   function Make_Package_Declaration
-     (Identifier : Node_Id)
-     return Node_Id;
+   function Make_Package_Declaration (Identifier : Node_Id) return Node_Id;
 
    function Make_Package_Instantiation
      (Defining_Identifier : Node_Id;
       Generic_Package     : Node_Id;
-      Parameter_List      : List_Id := No_List)
-     return Node_Id;
+      Parameter_List      : List_Id := No_List) return Node_Id;
 
    function Make_Private_Type_Definition return Node_Id;
 
    function Make_Parameter_Association
      (Selector_Name    : Node_Id;
-      Actual_Parameter : Node_Id)
-     return Node_Id;
+      Actual_Parameter : Node_Id) return Node_Id;
 
    function Make_Parameter_Specification
      (Defining_Identifier : Node_Id;
       Subtype_Mark        : Node_Id;
       Parameter_Mode      : Mode_Id := Mode_In;
-      Expression          : Node_Id := No_Node)
-      return                Node_Id;
+      Expression          : Node_Id := No_Node) return Node_Id;
 
    function Make_Pragma_Statement
      (The_Pragma    : Pragma_Id;
-      Argument_List : List_Id := No_List)
-     return Node_Id;
+      Argument_List : List_Id := No_List) return Node_Id;
 
    function Make_Protected_Object_Spec
      (Defining_Identifier : Node_Id;
       Visible_Part        : List_Id;
       Private_Part        : List_Id;
       Parent              : Node_Id := Current_Package;
-      Is_Type             : Boolean := False)
-     return Node_Id;
+      Is_Type             : Boolean := False) return Node_Id;
 
    function Make_Protected_Object_Body
      (Defining_Identifier : Node_Id;
-      Statements          : List_Id)
-     return Node_Id;
+      Statements          : List_Id) return Node_Id;
 
    function Make_Qualified_Expression
-     (Subtype_Mark  : Node_Id;
-      Aggregate     : Node_Id)
-     return Node_Id;
+     (Subtype_Mark : Node_Id;
+      Aggregate    : Node_Id) return Node_Id;
 
    function Make_Raise_Statement
-     (Raised_Error  : Node_Id := No_Node)
-     return Node_Id;
+     (Raised_Error : Node_Id := No_Node) return Node_Id;
 
    function Make_Range_Constraint
      (First      : Node_Id;
       Last       : Node_Id;
-      Index_Type : Node_Id := No_Node)
-     return Node_Id;
+      Index_Type : Node_Id := No_Node) return Node_Id;
 
-   function Make_Record_Aggregate
-     (L : List_Id)
-     return Node_Id;
+   function Make_Record_Aggregate (L : List_Id) return Node_Id;
 
-   function Make_Record_Definition
-     (Component_List : List_Id)
-     return Node_Id;
+   function Make_Record_Definition (Component_List : List_Id) return Node_Id;
 
    function Make_Record_Type_Definition
      (Record_Definition : Node_Id;
       Is_Abstract_Type  : Boolean := False;
       Is_Tagged_Type    : Boolean := False;
-      Is_Limited_Type   : Boolean := False)
-      return              Node_Id;
+      Is_Limited_Type   : Boolean := False) return Node_Id;
 
-   function Make_Return_Statement
-     (Expression : Node_Id)
-     return Node_Id;
+   function Make_Return_Statement (Expression : Node_Id) return Node_Id;
 
    function Make_Subprogram_Call
      (Defining_Identifier   : Node_Id;
-      Actual_Parameter_Part : List_Id := No_List)
-     return Node_Id;
+      Actual_Parameter_Part : List_Id := No_List) return Node_Id;
 
    function Make_Selected_Component
      (Prefix        : Node_Id;
-      Selector_Name : Node_Id)
-     return Node_Id;
+      Selector_Name : Node_Id) return Node_Id;
 
    function Make_Subprogram_Implementation
      (Specification : Node_Id;
       Declarations  : List_Id;
-      Statements    : List_Id)
-      return          Node_Id;
+      Statements    : List_Id) return Node_Id;
 
    function Make_Subprogram_Specification
      (Defining_Identifier     : Node_Id;
@@ -820,45 +751,33 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Return_Type             : Node_Id := No_Node;
       Parent                  : Node_Id := Current_Package;
       Renamed_Subprogram      : Node_Id := No_Node;
-      Instantiated_Subprogram : Node_Id := No_Node)
-     return Node_Id;
+      Instantiated_Subprogram : Node_Id := No_Node) return Node_Id;
 
    function Make_Type_Attribute
      (Designator : Node_Id;
-      Attribute  : Attribute_Id)
-     return Node_Id;
+      Attribute  : Attribute_Id) return Node_Id;
 
    function Make_Type_Conversion
      (Subtype_Mark : Node_Id;
-      Expression   : Node_Id)
-     return Node_Id;
+      Expression   : Node_Id) return Node_Id;
 
    function Make_Withed_Package
      (Defining_Identifier : Node_Id;
       Used                : Boolean := False;
       Warnings_Off        : Boolean := False;
-      Elaborated          : Boolean := False)
-     return Node_Id;
+      Elaborated          : Boolean := False) return Node_Id;
 
-   function Make_Exit_When_Statement
-     (Condition : Node_Id)
-     return Node_Id;
+   function Make_Exit_When_Statement (Condition : Node_Id) return Node_Id;
 
-   function Make_Used_Package
-     (The_Used_Package : Node_Id)
-     return Node_Id;
+   function Make_Used_Package (The_Used_Package : Node_Id) return Node_Id;
 
-   function Make_Used_Type
-     (The_Used_Type : Node_Id)
-     return Node_Id;
+   function Make_Used_Type (The_Used_Type : Node_Id) return Node_Id;
 
    function Make_Variant_Part
-     (Discriminant        : Node_Id;
-      Variant_List        : List_Id)
-     return                Node_Id;
+     (Discriminant : Node_Id;
+      Variant_List : List_Id) return Node_Id;
 
-   procedure Make_Comment_Header
-     (Package_Header     : List_Id);
+   procedure Make_Comment_Header (Package_Header : List_Id);
    --  This procedure generates a comment header for the generated
    --  packages.
 
@@ -870,17 +789,14 @@ package Ocarina.Backends.Ada_Tree.Nutils is
    --  Return a comment message. Used by all the tree
    --  converters
 
-   function Qualified_Designator
-     (P : Node_Id)
-     return Node_Id;
+   function Qualified_Designator (P : Node_Id) return Node_Id;
 
    function Remove_Anonymous_Array_Type_Definition
      (Range_Constraints    : List_Id;
       Component_Definition : Node_Id;
       Aliased_Present      : Boolean := False;
       Variable_Name        : Node_Id;
-      Is_Full_Type         : Boolean := False)
-     return Node_Id;
+      Is_Full_Type         : Boolean := False) return Node_Id;
    --  This function removes the anonymous arrays type definition
    --  by creating subtypes, and returns the identifier of type
    --  replacing the anonymous type. Only Make_Full_Type_Declaration
@@ -961,8 +877,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    function Extract_Designator
      (N               : Node_Id;
-      Add_With_Clause : Boolean := True)
-     return Node_Id;
+      Add_With_Clause : Boolean := True) return Node_Id;
    --  Extracts the designator of the *Ada* entity N and return a copy
    --  of it after adding the proper 'with' clause to the current
    --  package if 'Add_With_Clause' is True. N may be:

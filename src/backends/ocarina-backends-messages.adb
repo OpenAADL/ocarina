@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -78,7 +78,8 @@ package body Ocarina.Backends.Messages is
    procedure Display_Error
      (Message : String;
       Fatal   : Boolean;
-      Warning : Boolean := False) is
+      Warning : Boolean := False)
+   is
    begin
       Display_Error_Message (Message, Fatal, Warning);
 
@@ -115,7 +116,8 @@ package body Ocarina.Backends.Messages is
 
    procedure Display_Debug_Message
      (Message : String;
-      Force   : Boolean := False) is
+      Force   : Boolean := False)
+   is
    begin
       if Debug_Mode or else Force then
          Write_Str ("Backends message: ");

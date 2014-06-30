@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -58,9 +58,10 @@ package body Ocarina.Backends.AADL_XML.Mapping is
    function Map_HI_Node (E : Node_Id) return Node_Id is
       N : constant Node_Id := New_Node (XTN.K_HI_Node);
    begin
-      pragma Assert (AINU.Is_Process (E)
-                     or else AINU.Is_System (E)
-                     or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_Process (E)
+         or else AINU.Is_System (E)
+         or else AINU.Is_Processor (E));
 
       if AINU.Is_System (E) then
          Set_Str_To_Name_Buffer ("general");
@@ -85,16 +86,16 @@ package body Ocarina.Backends.AADL_XML.Mapping is
    -- Map_HI_Unit --
    -----------------
 
-   function Map_HI_Unit (E : Node_Id)
-      return Node_Id is
-      U        : Node_Id;
-      N        : Node_Id;
-      P        : Node_Id;
-      Root     : Node_Id;
+   function Map_HI_Unit (E : Node_Id) return Node_Id is
+      U    : Node_Id;
+      N    : Node_Id;
+      P    : Node_Id;
+      Root : Node_Id;
    begin
-      pragma Assert (AINU.Is_System (E)
-                     or else AINU.Is_Process (E)
-                     or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_System (E)
+         or else AINU.Is_Process (E)
+         or else AINU.Is_Processor (E));
 
       U := New_Node (XTN.K_HI_Unit, Identifier (E));
 
@@ -105,8 +106,7 @@ package body Ocarina.Backends.AADL_XML.Mapping is
 
       else
          Get_Name_String
-           (To_XML_Name
-              (Display_Name (Identifier (Parent_Subcomponent (E)))));
+           (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       end if;
 
       Add_Str_To_Name_Buffer ("_aadl_xml");

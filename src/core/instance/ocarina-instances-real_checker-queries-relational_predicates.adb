@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,9 +47,8 @@ package body Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates is
    ---------------------------------------
 
    function Get_Instances_Verifying_Predicate
-     (D : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Result_Set
+     (D      : Node_Id;
+      Option : Predicates_Search_Options := PSO_Direct) return Result_Set
    is
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       Result : Result_Set;
@@ -58,10 +57,9 @@ package body Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates is
       Init (Result);
       Find_All_Instances
         (Root_Instance,
-         (K_Component_Instance,
-          K_Call_Instance,
-          K_Call_Sequence_Instance),
-         EL.First, EL.Last);
+         (K_Component_Instance, K_Call_Instance, K_Call_Sequence_Instance),
+         EL.First,
+         EL.Last);
       while Present (EL.First) loop
          if Predicate (EL.First, D, Option) then
             Append (Result, EL.First);
@@ -87,8 +85,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates is
    function Get_Instances_Verifying_Predicate
      (Set    : Result_Set;
       D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Result_Set
+      Option : Predicates_Search_Options := PSO_Direct) return Result_Set
    is
       Result : Result_Set;
    begin
@@ -109,10 +106,9 @@ package body Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates is
    function Apply
      (Set_1    : Result_Set;
       Set_2    : Result_Set;
-      Reversed : Boolean := False;
-      Distinct : Boolean := False;
-      Option   : Predicates_Search_Options := PSO_Direct)
-     return Result_Set
+      Reversed : Boolean                   := False;
+      Distinct : Boolean                   := False;
+      Option   : Predicates_Search_Options := PSO_Direct) return Result_Set
    is
       M      : Natural;
       Result : Result_Set;
@@ -129,11 +125,11 @@ package body Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates is
       end if;
 
       for N in First .. Last (R1) loop
-         M := 1;
+         M     := 1;
          Found := False;
 
-         while M < (Last (R2) + 1)
-           and then (not Distinct or else not found) loop
+         while M < (Last (R2) + 1) and then (not Distinct or else not Found)
+         loop
             if Predicate (R1.Table (N), R2.Table (M), Option) then
                if not Reversed then
                   Append (Result, R1.Table (N));

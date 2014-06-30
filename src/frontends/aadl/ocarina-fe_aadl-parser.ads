@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,10 +36,10 @@
 --  (e.g. identifier parsing).
 
 with Locations;
-with Types;     use Types;
+with Types; use Types;
 
 with Ocarina.ME_AADL.Tokens;
-with Ocarina.FE_AADL.Parser_Errors;  use Ocarina.FE_AADL.Parser_Errors;
+with Ocarina.FE_AADL.Parser_Errors; use Ocarina.FE_AADL.Parser_Errors;
 
 package Ocarina.FE_AADL.Parser is
 
@@ -51,8 +51,7 @@ package Ocarina.FE_AADL.Parser is
    function Process
      (AADL_Root : Node_Id;
       From      : Locations.Location;
-      To        : Locations.Location := Locations.No_Location)
-     return Node_Id;
+      To        : Locations.Location := Locations.No_Location) return Node_Id;
    --  Parse the file described by buffer locations and return the
    --  Node_Id or the root of the resulting AADL tree, or No_Node if
    --  the parsing failed. If AADL_Root is not No_Node, then return
@@ -64,17 +63,14 @@ package Ocarina.FE_AADL.Parser is
    --  parser.
 
    function Process_Predefined_Property_Sets
-     (AADL_Root : Node_Id)
-     return Node_Id;
+     (AADL_Root : Node_Id) return Node_Id;
 
    type P_Item_Function_Ptr is access function
-     (Container : Node_Id)
-     return Node_Id;
+     (Container : Node_Id) return Node_Id;
 
    type P_Refinable_Item_Function_Ptr is access function
      (Container : Node_Id;
-      Refinable : Boolean)
-     return Node_Id;
+      Refinable : Boolean) return Node_Id;
    --  Pointer to a function which parses an item
 
 private
@@ -82,14 +78,12 @@ private
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
-      Code      : Parsing_Code)
-     return Integer;
+      Code      : Parsing_Code) return Integer;
 
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
-      Code      : Parsing_Code)
-     return List_Id;
+      Code      : Parsing_Code) return List_Id;
    --  Parse list items of syntax: ( { Item }+ | none_statement )
 
    function P_Items_List
@@ -97,14 +91,12 @@ private
       Container    : Node_Id;
       Refinable    : Boolean;
       Code         : Parsing_Code;
-      At_Least_One : Boolean                        := True)
-     return Integer;
+      At_Least_One : Boolean := True) return Integer;
 
    function P_Items_List
-     (Func         : P_Item_Function_Ptr;
-      Container    : Node_Id;
-      Separator    : Ocarina.ME_AADL.Tokens.Token_Type)
-     return List_Id;
+     (Func      : P_Item_Function_Ptr;
+      Container : Node_Id;
+      Separator : Ocarina.ME_AADL.Tokens.Token_Type) return List_Id;
    --  Parse ( { Item Separator }* Item )
 
    function P_Items_List
@@ -113,8 +105,7 @@ private
       Separator       : Ocarina.ME_AADL.Tokens.Token_Type;
       Delimiter       : Ocarina.ME_AADL.Tokens.Token_Type;
       Code            : Parsing_Code;
-      With_Terminator : Boolean                            := False)
-     return List_Id;
+      With_Terminator : Boolean := False) return List_Id;
    --  ( [ { Item Separator }* Item Delimiter ] )
    --    or ( [ { Item Separator }* Item Separator Delimiter ] )
 
@@ -122,10 +113,9 @@ private
    --  Code indicates the object that we are parsing
 
    function P_Elements_List
-      (Func         : P_Item_Function_Ptr;
-       Container    : Node_Id;
-       Delimiter    : Ocarina.ME_AADL.Tokens.Token_Type)
-     return List_Id;
+     (Func      : P_Item_Function_Ptr;
+      Container : Node_Id;
+      Delimiter : Ocarina.ME_AADL.Tokens.Token_Type) return List_Id;
    --  parse ( { Element }* Element Delimiter )
 
    function P_None_Statement return Boolean;

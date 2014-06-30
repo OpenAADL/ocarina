@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,13 +33,10 @@
 
 package Ocarina.Backends.PN.Format.Cami is
 
-   procedure Print_Place (Pn_Generated : Node_Id;
-                          Pn_P : Node_Id);
+   procedure Print_Place (Pn_Generated : Node_Id; Pn_P : Node_Id);
 
-   procedure Print_Trans (Pn_Generated : Node_Id;
-                          Pn_T : Node_Id);
+   procedure Print_Trans (Pn_Generated : Node_Id; Pn_T : Node_Id);
 
-   procedure Print_Formalism_Information
-     (Pn_Generated : Node_Id);
+   procedure Print_Formalism_Information (Pn_Generated : Node_Id);
 
 end Ocarina.Backends.PN.Format.Cami;

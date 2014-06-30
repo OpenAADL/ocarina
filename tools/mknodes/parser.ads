@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -61,41 +61,43 @@ private
    end record;
 
    Default_Node : constant Node_Type :=
-     Node_Type'(K_None,
-                Locations.No_Location,
-                Types.No_Name,
-                Types.No_Node,
-                Types.No_Node,
-                Types.No_Node,
-                Types.No_Node,
-                Types.No_Node);
+     Node_Type'
+       (K_None,
+        Locations.No_Location,
+        Types.No_Name,
+        Types.No_Node,
+        Types.No_Node,
+        Types.No_Node,
+        Types.No_Node,
+        Types.No_Node);
 
    --------------------------
    -- Node tree facilities --
    --------------------------
 
-   function New_Node (Kind : Node_Kind; Loc : Locations.Location)
-     return Types.Node_Id;
+   function New_Node
+     (Kind : Node_Kind;
+      Loc  : Locations.Location) return Types.Node_Id;
 
    function Kind (N : Types.Node_Id) return Node_Kind;
-   function Loc  (N : Types.Node_Id) return Locations.Location;
+   function Loc (N : Types.Node_Id) return Locations.Location;
 
-   function  First_Entity     (N : Types.Node_Id) return Types.Node_Id;
+   function First_Entity (N : Types.Node_Id) return Types.Node_Id;
    procedure Set_First_Entity (N : Types.Node_Id; V : Types.Node_Id);
 
-   function  Identifier     (N : Types.Node_Id) return Types.Name_Id;
+   function Identifier (N : Types.Node_Id) return Types.Name_Id;
    procedure Set_Identifier (N : Types.Node_Id; V : Types.Name_Id);
 
-   function  Last_Entity     (N : Types.Node_Id) return Types.Node_Id;
+   function Last_Entity (N : Types.Node_Id) return Types.Node_Id;
    procedure Set_Last_Entity (N : Types.Node_Id; V : Types.Node_Id);
 
-   function  Next_Entity     (N : Types.Node_Id) return Types.Node_Id;
+   function Next_Entity (N : Types.Node_Id) return Types.Node_Id;
    procedure Set_Next_Entity (N : Types.Node_Id; V : Types.Node_Id);
 
-   function  Scope_Entity     (N : Types.Node_Id) return Types.Node_Id;
+   function Scope_Entity (N : Types.Node_Id) return Types.Node_Id;
    procedure Set_Scope_Entity (N : Types.Node_Id; V : Types.Node_Id);
 
-   function  Type_Spec     (N : Types.Node_Id) return Types.Node_Id;
+   function Type_Spec (N : Types.Node_Id) return Types.Node_Id;
    procedure Set_Type_Spec (N : Types.Node_Id; V : Types.Node_Id);
 
    -----------------------
@@ -131,14 +133,13 @@ private
 
    procedure Add_Attribute_To_Interface
      (Attribute : Types.Node_Id;
-      Intf     : Types.Node_Id);
+      Intf      : Types.Node_Id);
    --  Add attribute into interface using First_Entity, Last_Entity of
    --  Interfaces and Next_Entity of Attributes.
 
    function Is_Attribute_In_Interface
      (Attribute : Types.Node_Id;
-      Intf      : Types.Node_Id)
-     return Boolean;
+      Intf      : Types.Node_Id) return Boolean;
    --  Return True when interface I has at least on attribute Look for
    --  attribute through a depth exploration of the inheritance spec
    --  of interface.
@@ -194,19 +195,16 @@ private
    -- Output facilities --
    -----------------------
 
-   procedure W_Pragma_Assert  (Attribute : Types.Node_Id);
+   procedure W_Pragma_Assert (Attribute : Types.Node_Id);
    procedure W_Attribute_Body (A : String; N : String; T : String);
    procedure W_Attribute_Spec (A : String; N : String; T : String);
    procedure W_Attribute_Body (A : Types.Node_Id);
    procedure W_Attribute_Spec (A : Types.Node_Id);
-   procedure W_Indentation    (N : Natural);
+   procedure W_Indentation (N : Natural);
    procedure W_Comment_Message;
    procedure W_Package_Body;
    procedure W_Package_Spec;
-   procedure W_Subprogram_Call
-     (I   : Natural;
-      F   : String;
-      PN1 : String);
+   procedure W_Subprogram_Call (I : Natural; F : String; PN1 : String);
    procedure W_Subprogram_Call
      (I   : Natural;
       F   : String;
@@ -246,13 +244,11 @@ private
       PT1 : String;
       PN2 : Character;
       PT2 : String);
-   procedure W_Subprogram_Definition_End
-     (I   : Natural;
-      F   : String);
-   procedure W_Table_Access   (N : Character; A : String);
+   procedure W_Subprogram_Definition_End (I : Natural; F : String);
+   procedure W_Table_Access (N : Character; A : String);
    procedure W_Type_Attribute (K : Node_Kind);
    procedure W_Type_Attribute (A : String; T : String);
-   procedure W_With           (P : String);
+   procedure W_With (P : String);
 
    ------------------------
    -- General facilities --
@@ -266,8 +262,7 @@ private
    --     -p     : output files on stdout
 
    function Copy_Str_At_End_Of_Name
-     (Name  : Types.Name_Id;
-      Str   : String)
-     return String;
+     (Name : Types.Name_Id;
+      Str  : String) return String;
 
 end Parser;

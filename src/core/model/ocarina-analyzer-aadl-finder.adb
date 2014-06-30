@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -59,19 +59,16 @@ package body Ocarina.Analyzer.AADL.Finder is
      (Root                   : Node_Id;
       Package_Identifier     : Node_Id;
       Declaration_Identifier : Node_Id;
-      Declaration_Kinds      : Node_Kind_Array)
-     return Node_Id;
+      Declaration_Kinds      : Node_Kind_Array) return Node_Id;
 
    function Find_Subclause_Declaration_Classifier
      (Component              : Node_Id;
       Declaration_Identifier : Node_Id;
-      Subclause_Kinds        : Node_Kind_Array)
-     return Node_Id;
+      Subclause_Kinds        : Node_Kind_Array) return Node_Id;
 
    function Filter_Declarations_According_To_Modes
      (Declaration_Node : Node_Id;
-      In_Modes         : Node_Id)
-     return Node_Id;
+      In_Modes         : Node_Id) return Node_Id;
    --  Given a chained list of homonyms 'Declaration_Node', if
    --  In_Modes is not nul, return the node coprresponding to the
    --  declaration that matches these modes or else the declaration
@@ -85,8 +82,7 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Filter_Declarations_According_To_Modes
      (Declaration_Node : Node_Id;
-      In_Modes         : Node_Id)
-     return Node_Id
+      In_Modes         : Node_Id) return Node_Id
    is
       Pointed_Node       : Node_Id := Declaration_Node;
       Homonym_Node       : Node_Id;
@@ -109,71 +105,79 @@ package body Ocarina.Analyzer.AADL.Finder is
       Homonym_Node := Pointed_Node;
 
       while Present (Homonym_Node) loop
-         Success := True;
+         Success           := True;
          Was_First_Homonym := (Homonym_Node = Pointed_Node);
 
          if Have_Modes (In_Modes) then
             if Present
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.In_Modes (Homonym_Node))
-              and then
-              not Have_Modes
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.In_Modes (Homonym_Node))
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.In_Modes (Homonym_Node))
+              and then not Have_Modes
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.In_Modes (Homonym_Node))
             then
                --  This means that the declarator has an 'in modes
                --  (none)' clause. This is not good for us.
 
                Success := False;
             elsif Have_Modes
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.In_Modes (Homonym_Node)) then
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.In_Modes (Homonym_Node))
+            then
                --  All the modes of
 
                Required_Mode := First_Node (Modes (In_Modes));
-               Success := False;
+               Success       := False;
 
                --  For each required mode, we look for it in the
                --  in_modes statement.
 
                while Present (Required_Mode) loop
-                  Present_Mode := First_Node
-                    (Modes (Ocarina.Me_AADL.AADL_Tree.Nodes.In_Modes
-                              (Homonym_Node)));
+                  Present_Mode :=
+                    First_Node
+                      (Modes
+                         (Ocarina.ME_AADL.AADL_Tree.Nodes.In_Modes
+                            (Homonym_Node)));
 
                   while Present (Present_Mode) loop
                      if Kind (Present_Mode) = Kind (Required_Mode) then
                         if Kind (Required_Mode) = K_Entity_Reference then
-                           Name_Id_1 := Get_Name_Of_Entity_Reference
-                             (Present_Mode);
-                           Name_Id_2 := Get_Name_Of_Entity_Reference
-                             (Required_Mode);
-                           Success := (Name_Id_1 = Name_Id_2)
-                             or else Success;
+                           Name_Id_1 :=
+                             Get_Name_Of_Entity_Reference (Present_Mode);
+                           Name_Id_2 :=
+                             Get_Name_Of_Entity_Reference (Required_Mode);
+                           Success := (Name_Id_1 = Name_Id_2) or else Success;
 
                         elsif Kind (Required_Mode) =
                           K_Pair_Of_Entity_References
-                          and then (Second_Reference (Required_Mode) /=
-                                    No_Node)
-                          =  (Second_Reference (Present_Mode) /= No_Node)
+                          and then
+                            (Second_Reference (Required_Mode) /= No_Node) =
+                            (Second_Reference (Present_Mode) /= No_Node)
                         then
                            if Second_Reference (Required_Mode) = No_Node then
-                              Name_Id_1 := Get_Name_Of_Entity_Reference
-                                (First_Reference (Present_Mode));
-                              Name_Id_2 := Get_Name_Of_Entity_Reference
-                                (First_Reference (Required_Mode));
-                              Success := (Name_Id_1 = Name_Id_2)
-                                or else Success;
+                              Name_Id_1 :=
+                                Get_Name_Of_Entity_Reference
+                                  (First_Reference (Present_Mode));
+                              Name_Id_2 :=
+                                Get_Name_Of_Entity_Reference
+                                  (First_Reference (Required_Mode));
+                              Success :=
+                                (Name_Id_1 = Name_Id_2) or else Success;
 
                            else
-                              Name_Id_1 := Get_Name_Of_Entity_Reference
-                                (First_Reference (Present_Mode));
-                              Name_Id_2 := Get_Name_Of_Entity_Reference
-                                (First_Reference (Required_Mode));
-                              Name_Id_1b := Get_Name_Of_Entity_Reference
-                                (Second_Reference (Present_Mode));
-                              Name_Id_2b := Get_Name_Of_Entity_Reference
-                                (Second_Reference (Required_Mode));
+                              Name_Id_1 :=
+                                Get_Name_Of_Entity_Reference
+                                  (First_Reference (Present_Mode));
+                              Name_Id_2 :=
+                                Get_Name_Of_Entity_Reference
+                                  (First_Reference (Required_Mode));
+                              Name_Id_1b :=
+                                Get_Name_Of_Entity_Reference
+                                  (Second_Reference (Present_Mode));
+                              Name_Id_2b :=
+                                Get_Name_Of_Entity_Reference
+                                  (Second_Reference (Required_Mode));
 
-                              Success := ((Name_Id_1 = Name_Id_2)
-                                          and then (Name_Id_1b = Name_Id_2b))
+                              Success :=
+                                ((Name_Id_1 = Name_Id_2)
+                                 and then (Name_Id_1b = Name_Id_2b))
                                 or else Success;
                            end if;
                         end if;
@@ -213,12 +217,12 @@ package body Ocarina.Analyzer.AADL.Finder is
      (Root                   : Node_Id;
       Package_Identifier     : Node_Id;
       Declaration_Identifier : Node_Id;
-      Declaration_Kinds      : Node_Kind_Array)
-     return Node_Id
+      Declaration_Kinds      : Node_Kind_Array) return Node_Id
    is
       pragma Assert (Kind (Root) = K_AADL_Specification);
-      pragma Assert (No (Package_Identifier)
-                     or else Kind (Package_Identifier) = K_Identifier);
+      pragma Assert
+        (No (Package_Identifier)
+         or else Kind (Package_Identifier) = K_Identifier);
       pragma Assert (Kind (Declaration_Identifier) = K_Identifier);
       pragma Assert (Declaration_Kinds'Length > 0);
 
@@ -237,8 +241,7 @@ package body Ocarina.Analyzer.AADL.Finder is
          --  have to look for a package in this list. Naming rules
          --  ensure there is at most one package in the list.
 
-         while Present (Pack)
-           and then Kind (Pack) /= K_Package_Specification
+         while Present (Pack) and then Kind (Pack) /= K_Package_Specification
          loop
             Homonym_Identifier := Homonym (Identifier (Pack));
 
@@ -252,8 +255,8 @@ package body Ocarina.Analyzer.AADL.Finder is
          --  If the package has been found, we look for the declaration
 
          if Present (Pack) then
-            Pointed_Node := Node_In_Scope
-              (Declaration_Identifier, Entity_Scope (Pack));
+            Pointed_Node :=
+              Node_In_Scope (Declaration_Identifier, Entity_Scope (Pack));
 
             if Current_Scope /= Entity_Scope (Pack) then
                --  If the search is not done from the local package,
@@ -263,14 +266,15 @@ package body Ocarina.Analyzer.AADL.Finder is
 
                while Present (Homonym_Node) loop
                   Was_First_Homonym := (Homonym_Node = Pointed_Node);
-                  Success := not Is_Private (Homonym_Node);
+                  Success           := not Is_Private (Homonym_Node);
 
                   if not Success then
-                     Homonym_Identifier := Remove_From_Homonyms
-                       (Identifier (Pointed_Node),
-                        Identifier (Homonym_Node));
-                     --  Beware: Remove_From_Homonyms only handles
-                     --  identifiers.
+                     Homonym_Identifier :=
+                       Remove_From_Homonyms
+                         (Identifier (Pointed_Node),
+                          Identifier (Homonym_Node));
+                  --  Beware: Remove_From_Homonyms only handles
+                  --  identifiers.
                   else
                      Homonym_Identifier := Homonym (Identifier (Homonym_Node));
                   end if;
@@ -297,19 +301,20 @@ package body Ocarina.Analyzer.AADL.Finder is
       Homonym_Node := Pointed_Node;
 
       while Present (Homonym_Node) loop
-         Success := False;
+         Success           := False;
          Was_First_Homonym := (Homonym_Node = Pointed_Node);
 
          for K in Declaration_Kinds'Range loop
-            Success := (Kind (Pointed_Node) = Declaration_Kinds (K))
-              or else Success;
+            Success :=
+              (Kind (Pointed_Node) = Declaration_Kinds (K)) or else Success;
          end loop;
 
          if not Success then
-            Homonym_Identifier := Remove_From_Homonyms
-              (Identifier (Pointed_Node),
-               Identifier (Homonym_Node));
-            --  Beware: Remove_From_Homonyms only handles identifiers.
+            Homonym_Identifier :=
+              Remove_From_Homonyms
+                (Identifier (Pointed_Node),
+                 Identifier (Homonym_Node));
+         --  Beware: Remove_From_Homonyms only handles identifiers.
          else
             Homonym_Identifier := Homonym (Identifier (Homonym_Node));
          end if;
@@ -334,8 +339,7 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_All_Component_Types
      (Root      : Node_Id;
-      Namespace : Node_Id := No_Node)
-     return Node_List
+      Namespace : Node_Id := No_Node) return Node_List
    is
    begin
       return Find_All_Declarations (Root, (1 => K_Component_Type), Namespace);
@@ -348,36 +352,39 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Find_All_Declarations
      (Root      : Node_Id;
       Kinds     : Node_Kind_Array;
-      Namespace : Node_Id := No_Node)
-     return Node_List
+      Namespace : Node_Id := No_Node) return Node_List
    is
       pragma Assert (Kind (Root) = K_AADL_Specification);
-      pragma Assert (No (Namespace)
-                     or else Kind (Namespace) = K_AADL_Specification
-                     or else Kind (Namespace) = K_Package_Specification);
+      pragma Assert
+        (No (Namespace)
+         or else Kind (Namespace) = K_AADL_Specification
+         or else Kind (Namespace) = K_Package_Specification);
 
       EL        : Node_List;
       List_Node : Node_Id;
    begin
       if No (Namespace) then
-         Select_Nodes (Ocarina.Me_AADL.AADL_Tree.Nodes.Declarations (Root),
-                       Kinds,
-                       EL.First,
-                       EL.Last);
+         Select_Nodes
+           (Ocarina.ME_AADL.AADL_Tree.Nodes.Declarations (Root),
+            Kinds,
+            EL.First,
+            EL.Last);
 
          --  We first get the declarations of the unnamed namespace
 
          if not Is_Empty
-           (Ocarina.Me_AADL.AADL_Tree.Nodes.Declarations (Root)) then
-            List_Node := Ocarina.Me_AADL.AADL_Tree.Nodes.First_Node
-              (Ocarina.Me_AADL.AADL_Tree.Nodes.Declarations (Root));
+             (Ocarina.ME_AADL.AADL_Tree.Nodes.Declarations (Root))
+         then
+            List_Node :=
+              Ocarina.ME_AADL.AADL_Tree.Nodes.First_Node
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Declarations (Root));
 
             while Present (List_Node) loop
                if Kind (List_Node) = K_Package_Specification then
                   --  Then those of the packages
 
                   Select_Nodes
-                    (Ocarina.Me_AADL.AADL_Tree.Nodes.Declarations (List_Node),
+                    (Ocarina.ME_AADL.AADL_Tree.Nodes.Declarations (List_Node),
                      Kinds,
                      EL.First,
                      EL.Last);
@@ -387,11 +394,11 @@ package body Ocarina.Analyzer.AADL.Finder is
             end loop;
          end if;
       else
-         Select_Nodes (Ocarina.Me_AADL.AADL_Tree.Nodes.Declarations
-                         (Namespace),
-                       Kinds,
-                       EL.First,
-                       EL.Last);
+         Select_Nodes
+           (Ocarina.ME_AADL.AADL_Tree.Nodes.Declarations (Namespace),
+            Kinds,
+            EL.First,
+            EL.Last);
       end if;
 
       return EL;
@@ -401,17 +408,14 @@ package body Ocarina.Analyzer.AADL.Finder is
    -- Find_All_Features --
    -----------------------
 
-   function Find_All_Features
-     (AADL_Declaration : Node_Id)
-     return Node_List
-   is
+   function Find_All_Features (AADL_Declaration : Node_Id) return Node_List is
    begin
       return Find_All_Subclauses
-        (AADL_Declaration,
-         (K_Port_Spec,
-          K_Parameter,
-          K_Feature_Group_Spec,
-          K_Subcomponent_Access));
+          (AADL_Declaration,
+           (K_Port_Spec,
+            K_Parameter,
+            K_Feature_Group_Spec,
+            K_Subcomponent_Access));
    end Find_All_Features;
 
    ------------------------------------
@@ -419,13 +423,12 @@ package body Ocarina.Analyzer.AADL.Finder is
    ------------------------------------
 
    function Find_All_Property_Associations
-     (AADL_Declaration : Node_Id)
-     return Node_List
+     (AADL_Declaration : Node_Id) return Node_List
    is
    begin
       return Find_All_Subclauses
-        (AADL_Declaration,
-         (1 => K_Property_Association));
+          (AADL_Declaration,
+           (1 => K_Property_Association));
    end Find_All_Property_Associations;
 
    -------------------------------
@@ -437,39 +440,36 @@ package body Ocarina.Analyzer.AADL.Finder is
       Container          : Node_Id;
       Property_Container : Node_Id;
       Default_Value      : Node_Id;
-      Designator         : Node_Id)
-     return Node_Id
+      Designator         : Node_Id) return Node_Id
    is
       pragma Assert (Present (Root));
       pragma Assert (Present (Container));
       pragma Assert
-        (Kind (Property_Container) = K_Property_Association or else
-         Kind (Property_Container) = K_Constant_Property_Declaration or else
-         Kind (Property_Container) = K_Property_Type or else
-         Kind (Property_Container) = K_Property_Definition_Declaration or else
-         Kind (Property_Container) = K_Property_Type_Declaration);
+        (Kind (Property_Container) = K_Property_Association
+         or else Kind (Property_Container) = K_Constant_Property_Declaration
+         or else Kind (Property_Container) = K_Property_Type
+         or else Kind (Property_Container) = K_Property_Definition_Declaration
+         or else Kind (Property_Container) = K_Property_Type_Declaration);
 
-      List_Node     : Node_Id  := No_Node;
+      List_Node     : Node_Id := No_Node;
       Property_Type : Node_Id;
       Pointed_Node  : Node_Id;
 
    begin
       case Kind (Designator) is
          when K_Unique_Property_Type_Identifier =>
-            Pointed_Node := Find_Property_Entity
-              (Root,
-               Identifier
-               (Corresponding_Entity
-                (Scope_Entity
-                 (Identifier
-                  (Entity
-                   (Designator))))),
-               Identifier (Designator));
+            Pointed_Node :=
+              Find_Property_Entity
+                (Root,
+                 Identifier
+                   (Corresponding_Entity
+                      (Scope_Entity (Identifier (Entity (Designator))))),
+                 Identifier (Designator));
 
             if Present (Pointed_Node) then
                if Kind (Pointed_Node) = K_Property_Type_Declaration then
                   Property_Type := Property_Type_Designator (Pointed_Node);
-               elsif  Kind (Pointed_Node) =
+               elsif Kind (Pointed_Node) =
                  K_Property_Definition_Declaration
                then
                   Property_Type := Property_Name_Type (Pointed_Node);
@@ -482,12 +482,13 @@ package body Ocarina.Analyzer.AADL.Finder is
                end if;
 
                while Present (List_Node) loop
-                  if Ocarina.Me_AADL.AADL_Tree.Nodes.Name (List_Node) =
+                  if Ocarina.ME_AADL.AADL_Tree.Nodes.Name (List_Node) =
                     Name (Identifier (Default_Value))
                   then
-                     Resolve_Term_In_Property (Property_Container,
-                                               Default_Value,
-                                               K_Enumeration_Term);
+                     Resolve_Term_In_Property
+                       (Property_Container,
+                        Default_Value,
+                        K_Enumeration_Term);
                      return Pointed_Node;
                   end if;
 
@@ -500,12 +501,13 @@ package body Ocarina.Analyzer.AADL.Finder is
                List_Node := First_Node (Identifiers (Designator));
 
                while Present (List_Node) loop
-                  if Ocarina.Me_AADL.AADL_Tree.Nodes.Name (List_Node) =
+                  if Ocarina.ME_AADL.AADL_Tree.Nodes.Name (List_Node) =
                     Name (Identifier (Default_Value))
                   then
-                     Resolve_Term_In_Property (Property_Container,
-                                               Default_Value,
-                                               K_Enumeration_Term);
+                     Resolve_Term_In_Property
+                       (Property_Container,
+                        Default_Value,
+                        K_Enumeration_Term);
 
                      return Property_Container;
                   end if;
@@ -527,26 +529,25 @@ package body Ocarina.Analyzer.AADL.Finder is
    -------------------------------------------------------
 
    function Find_All_Subclause_Declarations_Except_Properties
-     (AADL_Declaration : Node_Id)
-     return Node_List
+     (AADL_Declaration : Node_Id) return Node_List
    is
    begin
       return Find_All_Subclauses
-        (AADL_Declaration,
-         (K_Annex_Subclause,
-          K_Port_Spec,
-          K_Parameter,
-          K_Feature_Group_Spec,
-          K_Subcomponent_Access,
-          K_Flow_Spec,
-          K_Flow_Implementation,
-          K_End_To_End_Flow_Spec,
-          K_Flow_Implementation_Refinement,
-          K_End_To_End_Flow_Refinement,
-          K_Mode,
-          K_Connection,
-          K_Subprogram_Call,
-          K_Subprogram_Call_Sequence));
+          (AADL_Declaration,
+           (K_Annex_Subclause,
+            K_Port_Spec,
+            K_Parameter,
+            K_Feature_Group_Spec,
+            K_Subcomponent_Access,
+            K_Flow_Spec,
+            K_Flow_Implementation,
+            K_End_To_End_Flow_Spec,
+            K_Flow_Implementation_Refinement,
+            K_End_To_End_Flow_Refinement,
+            K_Mode,
+            K_Connection,
+            K_Subprogram_Call,
+            K_Subprogram_Call_Sequence));
    end Find_All_Subclause_Declarations_Except_Properties;
 
    -------------------------
@@ -555,12 +556,12 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_All_Subclauses
      (AADL_Declaration : Node_Id;
-      Kinds            : Node_Kind_Array)
-     return Node_List
+      Kinds            : Node_Kind_Array) return Node_List
    is
-      pragma Assert (Kind (AADL_Declaration) = K_Component_Implementation
-                     or else Kind (AADL_Declaration) = K_Component_Type
-                     or else Kind (AADL_Declaration) = K_Feature_Group_Type);
+      pragma Assert
+        (Kind (AADL_Declaration) = K_Component_Implementation
+         or else Kind (AADL_Declaration) = K_Component_Type
+         or else Kind (AADL_Declaration) = K_Feature_Group_Type);
 
       EL               : Node_List;
       List_Node        : Node_Id;
@@ -573,29 +574,32 @@ package body Ocarina.Analyzer.AADL.Finder is
             while Present (Declaration_Node)
               and then Kind (Declaration_Node) = K_Component_Type
             loop
-               Select_Nodes (Annexes (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Features (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Flows (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties
-                               (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
+               Select_Nodes
+                 (Annexes (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Features (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Flows (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
+                    (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
 
                if Present (Parent (Declaration_Node)) then
-                  Declaration_Node := Corresponding_Entity
-                    (Identifier
-                     (Parent
-                      (Declaration_Node)));
+                  Declaration_Node :=
+                    Corresponding_Entity
+                      (Identifier (Parent (Declaration_Node)));
                else
                   Declaration_Node := No_Node;
                end if;
@@ -607,35 +611,39 @@ package body Ocarina.Analyzer.AADL.Finder is
             --  parents
 
             if Component_Type_Identifier (AADL_Declaration) /= No_Node then
-               Declaration_Node := Corresponding_Entity
-                 (Component_Type_Identifier (AADL_Declaration));
+               Declaration_Node :=
+                 Corresponding_Entity
+                   (Component_Type_Identifier (AADL_Declaration));
 
                while Present (Declaration_Node)
                  and then Kind (Declaration_Node) = K_Component_Type
                loop
-                  Select_Nodes (Annexes (Declaration_Node),
-                                Kinds,
-                                EL.First,
-                                EL.Last);
-                  Select_Nodes (Features (Declaration_Node),
-                                Kinds,
-                                EL.First,
-                                EL.Last);
-                  Select_Nodes (Flows (Declaration_Node),
-                                Kinds,
-                                EL.First,
-                                EL.Last);
-                  Select_Nodes (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties
-                                  (Declaration_Node),
-                                Kinds,
-                                EL.First,
-                                EL.Last);
+                  Select_Nodes
+                    (Annexes (Declaration_Node),
+                     Kinds,
+                     EL.First,
+                     EL.Last);
+                  Select_Nodes
+                    (Features (Declaration_Node),
+                     Kinds,
+                     EL.First,
+                     EL.Last);
+                  Select_Nodes
+                    (Flows (Declaration_Node),
+                     Kinds,
+                     EL.First,
+                     EL.Last);
+                  Select_Nodes
+                    (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
+                       (Declaration_Node),
+                     Kinds,
+                     EL.First,
+                     EL.Last);
 
                   if Present (Parent (Declaration_Node)) then
-                     Declaration_Node := Corresponding_Entity
-                       (Identifier
-                        (Parent
-                         (Declaration_Node)));
+                     Declaration_Node :=
+                       Corresponding_Entity
+                         (Identifier (Parent (Declaration_Node)));
                   else
                      Declaration_Node := No_Node;
                   end if;
@@ -650,59 +658,68 @@ package body Ocarina.Analyzer.AADL.Finder is
             while Present (Declaration_Node)
               and then Kind (Declaration_Node) = K_Component_Implementation
             loop
-               Select_Nodes (Refines_Type (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Subcomponents (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Calls (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
+               Select_Nodes
+                 (Refines_Type (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Subcomponents (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Calls (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
 
                if not Is_Empty (Calls (Declaration_Node)) then
-                  List_Node := Ocarina.Me_AADL.AADL_Tree.Nodes.First_Node
-                    (Calls (Declaration_Node));
+                  List_Node :=
+                    Ocarina.ME_AADL.AADL_Tree.Nodes.First_Node
+                      (Calls (Declaration_Node));
 
                   while Present (List_Node) loop
-                     Select_Nodes (Subprogram_Calls (List_Node),
-                                   Kinds,
-                                   EL.First,
-                                   EL.Last);
+                     Select_Nodes
+                       (Subprogram_Calls (List_Node),
+                        Kinds,
+                        EL.First,
+                        EL.Last);
                      List_Node := Next_Node (List_Node);
                   end loop;
                end if;
 
-               Select_Nodes (Annexes (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Connections (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Flows (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Modes (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties
-                               (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
+               Select_Nodes
+                 (Annexes (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Connections (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Flows (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Modes (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
+                    (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
 
                if Present (Parent (Declaration_Node)) then
-                  Declaration_Node := Corresponding_Entity
-                    (Identifier
-                     (Parent
-                      (Declaration_Node)));
+                  Declaration_Node :=
+                    Corresponding_Entity
+                      (Identifier (Parent (Declaration_Node)));
                else
                   Declaration_Node := No_Node;
                end if;
@@ -714,29 +731,31 @@ package body Ocarina.Analyzer.AADL.Finder is
             while Present (Declaration_Node)
               and then Kind (Declaration_Node) = K_Feature_Group_Type
             loop
-               Select_Nodes (Features (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
-               Select_Nodes (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties
-                               (Declaration_Node),
-                             Kinds,
-                             EL.First,
-                             EL.Last);
+               Select_Nodes
+                 (Features (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
+               Select_Nodes
+                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
+                    (Declaration_Node),
+                  Kinds,
+                  EL.First,
+                  EL.Last);
 
                if Present (Parent (Declaration_Node)) then
-                  Declaration_Node := Corresponding_Entity
-                    (Identifier
-                     (Parent
-                      (Declaration_Node)));
+                  Declaration_Node :=
+                    Corresponding_Entity
+                      (Identifier (Parent (Declaration_Node)));
                else
                   Declaration_Node := No_Node;
                end if;
             end loop;
 
          when others =>
-            DAE (Node1 => AADL_Declaration,
-                 Message1 => " is not an adequate AADL declaration");
+            DAE
+              (Node1    => AADL_Declaration,
+               Message1 => " is not an adequate AADL declaration");
             return (No_Node, No_Node);
       end case;
 
@@ -756,8 +775,11 @@ package body Ocarina.Analyzer.AADL.Finder is
       List_Node         : Node_Id;
       Kept_Node         : Node_Id;
    begin
-      System_List := Find_All_Declarations
-        (Root, (1 => K_Component_Implementation), No_Node);
+      System_List :=
+        Find_All_Declarations
+          (Root,
+           (1 => K_Component_Implementation),
+           No_Node);
 
       --  First, we only retrieve the component implementations
 
@@ -765,9 +787,9 @@ package body Ocarina.Analyzer.AADL.Finder is
 
       while Present (List_Node) loop
          if Component_Category'Val (Category (List_Node)) = CC_System
-           and then Is_Empty (Features
-                              (Corresponding_Entity
-                               (Component_Type_Identifier (List_Node))))
+           and then Is_Empty
+             (Features
+                (Corresponding_Entity (Component_Type_Identifier (List_Node))))
          then
             --  If the system implementation corresponds to a type
             --  that does not have any feature, we keep it.
@@ -800,22 +822,25 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Find_Component_Classifier
      (Root                 : Node_Id;
       Package_Identifier   : Node_Id;
-      Component_Identifier : Node_Id)
-     return Node_Id
+      Component_Identifier : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Root) = K_AADL_Specification);
-      pragma Assert (No (Package_Identifier)
-                     or else Kind (Package_Identifier) = K_Identifier);
+      pragma Assert
+        (No (Package_Identifier)
+         or else Kind (Package_Identifier) = K_Identifier);
       pragma Assert (Kind (Component_Identifier) = K_Identifier);
 
       Pointed_Node : Node_Id;
 
    begin
-      Pointed_Node := Find_AADL_Declaration_Classifier
-        (Root,
-         Package_Identifier,
-         Component_Identifier,
-         (K_Component_Type, K_Component_Implementation, K_Alias_Declaration));
+      Pointed_Node :=
+        Find_AADL_Declaration_Classifier
+          (Root,
+           Package_Identifier,
+           Component_Identifier,
+           (K_Component_Type,
+            K_Component_Implementation,
+            K_Alias_Declaration));
 
       --  In case the classifier is an alias, return the renamed entity
 
@@ -835,22 +860,21 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Find_Connection
      (Component             : Node_Id;
       Connection_Identifier : Node_Id;
-      In_Modes              : Node_Id := No_Node)
-     return Node_Id
+      In_Modes              : Node_Id := No_Node) return Node_Id
    is
       pragma Assert (Kind (Component) = K_Component_Implementation);
       pragma Assert (Kind (Connection_Identifier) = K_Identifier);
 
       Pointed_Node : Node_Id;
    begin
-      Pointed_Node := Find_Subclause_Declaration_Classifier
-        (Component,
-         Connection_Identifier,
-         (1 => K_Connection));
+      Pointed_Node :=
+        Find_Subclause_Declaration_Classifier
+          (Component,
+           Connection_Identifier,
+           (1 => K_Connection));
 
-      Pointed_Node := Filter_Declarations_According_To_Modes
-        (Pointed_Node,
-         In_Modes);
+      Pointed_Node :=
+        Filter_Declarations_According_To_Modes (Pointed_Node, In_Modes);
 
       return Pointed_Node;
    end Find_Connection;
@@ -861,30 +885,35 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_Feature
      (Component          : Node_Id;
-      Feature_Identifier : Node_Id)
-     return Node_Id
+      Feature_Identifier : Node_Id) return Node_Id
    is
-      pragma Assert (Kind (Component) = K_Component_Implementation
-                       or else Kind (Component) = K_Component_Type
-                       or else Kind (Component) = K_Subcomponent_Access
-                       or else Kind (Component) = K_Feature_Group_Type);
+      pragma Assert
+        (Kind (Component) = K_Component_Implementation
+         or else Kind (Component) = K_Component_Type
+         or else Kind (Component) = K_Subcomponent_Access
+         or else Kind (Component) = K_Feature_Group_Type);
       pragma Assert (Kind (Feature_Identifier) = K_Identifier);
 
       Pointed_Node : Node_Id;
    begin
-      Pointed_Node := Find_Subclause_Declaration_Classifier
-        (Component, Feature_Identifier,
-         (K_Port_Spec, K_Parameter,
-          K_Feature_Group_Spec, K_Subcomponent_Access,
-          K_Subprogram_Spec));
+      Pointed_Node :=
+        Find_Subclause_Declaration_Classifier
+          (Component,
+           Feature_Identifier,
+           (K_Port_Spec,
+            K_Parameter,
+            K_Feature_Group_Spec,
+            K_Subcomponent_Access,
+            K_Subprogram_Spec));
 
       if No (Pointed_Node)
         and then Kind (Component) = K_Feature_Group_Type
         and then Present (Inverse_Of (Component))
       then
-         Pointed_Node := Find_Feature
-           (Get_Referenced_Entity (Inverse_Of (Component)),
-            Feature_Identifier);
+         Pointed_Node :=
+           Find_Feature
+             (Get_Referenced_Entity (Inverse_Of (Component)),
+              Feature_Identifier);
 
          Pointed_Node := Inversed_Entity (Pointed_Node);
       end if;
@@ -898,17 +927,17 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_Flow_Spec
      (Component       : Node_Id;
-      Flow_Identifier : Node_Id)
-     return Node_Id
+      Flow_Identifier : Node_Id) return Node_Id
    is
-      pragma Assert (Kind (Component) = K_Component_Implementation
-                     or else Kind (Component) = K_Component_Type);
+      pragma Assert
+        (Kind (Component) = K_Component_Implementation
+         or else Kind (Component) = K_Component_Type);
       pragma Assert (Kind (Flow_Identifier) = K_Identifier);
    begin
       return Find_Subclause_Declaration_Classifier
-        (Component,
-         Flow_Identifier,
-         (1 => K_Flow_Spec));
+          (Component,
+           Flow_Identifier,
+           (1 => K_Flow_Spec));
    end Find_Flow_Spec;
 
    ---------------
@@ -917,18 +946,18 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_Mode
      (Component       : Node_Id;
-      Mode_Identifier : Node_Id)
-     return Node_Id
+      Mode_Identifier : Node_Id) return Node_Id
    is
-      pragma Assert (Kind (Component) = K_Component_Implementation
-                     or else Kind (Component) = K_Component_Type
-                     or else Kind (Component) = K_Feature_Group_Type);
+      pragma Assert
+        (Kind (Component) = K_Component_Implementation
+         or else Kind (Component) = K_Component_Type
+         or else Kind (Component) = K_Feature_Group_Type);
       pragma Assert (Kind (Mode_Identifier) = K_Identifier);
    begin
       return Find_Subclause_Declaration_Classifier
-        (Component,
-         Mode_Identifier,
-         (1 => K_Mode));
+          (Component,
+           Mode_Identifier,
+           (1 => K_Mode));
    end Find_Mode;
 
    --------------------------------
@@ -938,18 +967,19 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Find_Port_Group_Classifier
      (Root                  : Node_Id;
       Package_Identifier    : Node_Id;
-      Port_Group_Identifier : Node_Id)
-     return Node_Id
+      Port_Group_Identifier : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Root) = K_AADL_Specification);
-      pragma Assert (No (Package_Identifier)
-                     or else Kind (Package_Identifier) = K_Identifier);
+      pragma Assert
+        (No (Package_Identifier)
+         or else Kind (Package_Identifier) = K_Identifier);
       pragma Assert (Kind (Port_Group_Identifier) = K_Identifier);
    begin
       return Find_AADL_Declaration_Classifier
-        (Root,
-         Package_Identifier, Port_Group_Identifier,
-         (1 => K_Feature_Group_Type));
+          (Root,
+           Package_Identifier,
+           Port_Group_Identifier,
+           (1 => K_Feature_Group_Type));
    end Find_Port_Group_Classifier;
 
    -------------------------------
@@ -958,14 +988,13 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_Property_Association
      (AADL_Declaration          : Node_Id;
-      Property_Association_Name : Name_Id)
-     return Node_Id
+      Property_Association_Name : Name_Id) return Node_Id
    is
       pragma Assert (Present (AADL_Declaration));
 
-      All_Properties : constant Node_List
-        := Find_All_Property_Associations (AADL_Declaration);
-      List_Node      : Node_Id;
+      All_Properties : constant Node_List :=
+        Find_All_Property_Associations (AADL_Declaration);
+      List_Node : Node_Id;
    begin
       if All_Properties.First /= No_Node then
          List_Node := All_Properties.First;
@@ -989,12 +1018,12 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Find_Property_Entity
      (Root                    : Node_Id;
       Property_Set_Identifier : Node_Id;
-      Property_Identifier     : Node_Id)
-     return Node_Id
+      Property_Identifier     : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Root) = K_AADL_Specification);
-      pragma Assert (No (Property_Set_Identifier)
-                     or else Kind (Property_Set_Identifier) = K_Identifier);
+      pragma Assert
+        (No (Property_Set_Identifier)
+         or else Kind (Property_Set_Identifier) = K_Identifier);
       pragma Assert (Kind (Property_Identifier) = K_Identifier);
 
       Property_Set               : Node_Id;
@@ -1005,15 +1034,15 @@ package body Ocarina.Analyzer.AADL.Finder is
       --  pre-declared property sets.
 
       if Present (Property_Set_Identifier) then
-         Property_Set := Node_In_Scope
-           (Property_Set_Identifier, Entity_Scope (Root));
+         Property_Set :=
+           Node_In_Scope (Property_Set_Identifier, Entity_Scope (Root));
 
          --  If we found the corresponding property set, then we look
          --  for the property in it.
 
          if Present (Property_Set) then
-            Found_Property_Declaration := Node_In_Scope
-              (Property_Identifier, Entity_Scope (Property_Set));
+            Found_Property_Declaration :=
+              Node_In_Scope (Property_Identifier, Entity_Scope (Property_Set));
          else
             Found_Property_Declaration := No_Node;
          end if;
@@ -1027,8 +1056,10 @@ package body Ocarina.Analyzer.AADL.Finder is
             Property_Set := Node_In_Scope (Name_Find, Entity_Scope (Root));
 
             if Present (Property_Set) then
-               Found_Property_Declaration := Node_In_Scope
-                 (Property_Identifier, Entity_Scope (Property_Set));
+               Found_Property_Declaration :=
+                 Node_In_Scope
+                   (Property_Identifier,
+                    Entity_Scope (Property_Set));
             end if;
 
             exit when Present (Found_Property_Declaration);
@@ -1044,30 +1075,30 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_Subclause
      (Component  : Node_Id;
-      Identifier : Node_Id)
-     return Node_Id
+      Identifier : Node_Id) return Node_Id
    is
-      pragma Assert (Kind (Component) = K_Component_Implementation
-                     or else Kind (Component) = K_Component_Type);
+      pragma Assert
+        (Kind (Component) = K_Component_Implementation
+         or else Kind (Component) = K_Component_Type);
       pragma Assert (Kind (Identifier) = K_Identifier);
    begin
       return Find_Subclause_Declaration_Classifier
-        (Component,
-         Identifier,
-         (K_Flow_Spec,
-          K_Flow_Implementation,
-          K_Flow_Implementation_Refinement,
-          K_End_To_End_Flow_Spec,
-          K_End_To_End_Flow_Refinement,
-          K_Connection,
-          K_Subcomponent,
-          K_Port_Spec,
-          K_Parameter,
-          K_Feature_Group_Spec,
-          K_Subcomponent_Access,
-          K_Subprogram_Spec,
-          K_Mode,
-          K_Subprogram_Call));
+          (Component,
+           Identifier,
+           (K_Flow_Spec,
+            K_Flow_Implementation,
+            K_Flow_Implementation_Refinement,
+            K_End_To_End_Flow_Spec,
+            K_End_To_End_Flow_Refinement,
+            K_Connection,
+            K_Subcomponent,
+            K_Port_Spec,
+            K_Parameter,
+            K_Feature_Group_Spec,
+            K_Subcomponent_Access,
+            K_Subprogram_Spec,
+            K_Mode,
+            K_Subprogram_Call));
    end Find_Subclause;
 
    -------------------------------------------
@@ -1077,28 +1108,30 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Find_Subclause_Declaration_Classifier
      (Component              : Node_Id;
       Declaration_Identifier : Node_Id;
-      Subclause_Kinds        : Node_Kind_Array)
-     return Node_Id
+      Subclause_Kinds        : Node_Kind_Array) return Node_Id
    is
-      pragma Assert (Kind (Component) = K_Component_Implementation
-                       or else Kind (Component) = K_Component_Type
-                       or else Kind (Component) = K_Feature_Group_Type
-                       or else Kind (Component) = K_Subcomponent_Access);
+      pragma Assert
+        (Kind (Component) = K_Component_Implementation
+         or else Kind (Component) = K_Component_Type
+         or else Kind (Component) = K_Feature_Group_Type
+         or else Kind (Component) = K_Subcomponent_Access);
       pragma Assert (Kind (Declaration_Identifier) = K_Identifier);
       pragma Assert (Subclause_Kinds'Length > 0);
 
       Pointed_Node : Node_Id := No_Node;
    begin
       if Kind (Component) = K_Subcomponent_Access
-        and then Component_Category'Val (Subcomponent_Category
-                                           (Component)) = CC_Subprogram
+        and then
+          Component_Category'Val (Subcomponent_Category (Component)) =
+          CC_Subprogram
       then
-         Pointed_Node := Node_In_Scope
-           (Declaration_Identifier, Entity_Scope
-              (Get_Referenced_Entity (Entity_Ref (Component))));
+         Pointed_Node :=
+           Node_In_Scope
+             (Declaration_Identifier,
+              Entity_Scope (Get_Referenced_Entity (Entity_Ref (Component))));
       else
-         Pointed_Node := Node_In_Scope
-           (Declaration_Identifier, Entity_Scope (Component));
+         Pointed_Node :=
+           Node_In_Scope (Declaration_Identifier, Entity_Scope (Component));
       end if;
 
       return Pointed_Node;
@@ -1111,22 +1144,21 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Find_Subcomponent
      (Component               : Node_Id;
       Subcomponent_Identifier : Node_Id;
-      In_Modes                : Node_Id := No_Node)
-     return Node_Id
+      In_Modes                : Node_Id := No_Node) return Node_Id
    is
       pragma Assert (Kind (Component) = K_Component_Implementation);
       pragma Assert (Kind (Subcomponent_Identifier) = K_Identifier);
 
       Pointed_Node : Node_Id;
    begin
-      Pointed_Node := Find_Subclause_Declaration_Classifier
-        (Component,
-         Subcomponent_Identifier,
-         (1 => K_Subcomponent));
+      Pointed_Node :=
+        Find_Subclause_Declaration_Classifier
+          (Component,
+           Subcomponent_Identifier,
+           (1 => K_Subcomponent));
 
-      Pointed_Node := Filter_Declarations_According_To_Modes
-        (Pointed_Node,
-         In_Modes);
+      Pointed_Node :=
+        Filter_Declarations_According_To_Modes (Pointed_Node, In_Modes);
 
       return Pointed_Node;
    end Find_Subcomponent;
@@ -1137,18 +1169,18 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_Prototype
      (Component            : Node_Id;
-      Prototype_Identifier : Node_Id)
-     return Node_Id
+      Prototype_Identifier : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Component) = K_Component_Type);
       pragma Assert (Kind (Prototype_Identifier) = K_Identifier);
 
       Pointed_Node : Node_Id;
    begin
-      Pointed_Node := Find_Subclause_Declaration_Classifier
-        (Component,
-         Prototype_Identifier,
-         (1 => K_Prototype));
+      Pointed_Node :=
+        Find_Subclause_Declaration_Classifier
+          (Component,
+           Prototype_Identifier,
+           (1 => K_Prototype));
 
       return Pointed_Node;
    end Find_Prototype;
@@ -1160,22 +1192,21 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Find_Subprogram_Call
      (Component       : Node_Id;
       Call_Identifier : Node_Id;
-      In_Modes        : Node_Id := No_Node)
-     return Node_Id
+      In_Modes        : Node_Id := No_Node) return Node_Id
    is
       pragma Assert (Kind (Component) = K_Component_Implementation);
       pragma Assert (Kind (Call_Identifier) = K_Identifier);
 
       Pointed_Node : Node_Id;
    begin
-      Pointed_Node := Find_Subclause_Declaration_Classifier
-        (Component,
-         Call_Identifier,
-         (1 => K_Subprogram_Call));
+      Pointed_Node :=
+        Find_Subclause_Declaration_Classifier
+          (Component,
+           Call_Identifier,
+           (1 => K_Subprogram_Call));
 
-      Pointed_Node := Filter_Declarations_According_To_Modes
-        (Pointed_Node,
-         In_Modes);
+      Pointed_Node :=
+        Filter_Declarations_According_To_Modes (Pointed_Node, In_Modes);
 
       return Pointed_Node;
    end Find_Subprogram_Call;
@@ -1186,15 +1217,14 @@ package body Ocarina.Analyzer.AADL.Finder is
 
    function Find_In_Import_Declaration
      (Package_Container : Node_Id;
-      Node              : Node_Id)
-     return Boolean
+      Node              : Node_Id) return Boolean
    is
-      Identifier           : Node_Id  := No_Node;
+      Identifier           : Node_Id := No_Node;
       Pack_Identifier      : Node_Id;
       Import_Node          : Node_Id;
       List_Node            : Node_Id;
       Name_Visibility_Node : Node_Id;
-      Success              : Boolean  := False;
+      Success              : Boolean := False;
    begin
       if Kind (Node) = K_Identifier then
          Identifier := Node;
@@ -1204,8 +1234,9 @@ package body Ocarina.Analyzer.AADL.Finder is
 
       if Present (Package_Container)
         and then not Is_Empty (Declarations (Package_Container))
-        and then (Kind (First_Node (Declarations
-                     (Package_Container)))) = K_Name_Visibility_Declaration
+        and then
+          (Kind (First_Node (Declarations (Package_Container)))) =
+          K_Name_Visibility_Declaration
       then
          Name_Visibility_Node := First_Node (Declarations (Package_Container));
 
@@ -1261,20 +1292,19 @@ package body Ocarina.Analyzer.AADL.Finder is
    begin
       if not Is_Empty (Decl_List) then
          Local_List_Node :=
-           Ocarina.Me_AADL.AADL_Tree.Nodes.First_Node (Decl_List);
+           Ocarina.ME_AADL.AADL_Tree.Nodes.First_Node (Decl_List);
 
          while Present (Local_List_Node) loop
             Success := False;
 
             for K in Kinds'Range loop
-               Success := Success
-                 or else (Kind (Local_List_Node) = Kinds (K));
+               Success := Success or else (Kind (Local_List_Node) = Kinds (K));
             end loop;
 
             if Success then
                if No (First_Node) then
                   First_Node := Local_List_Node;
-                  Last_Node := Local_List_Node;
+                  Last_Node  := Local_List_Node;
                else
                   Set_Next_Entity (Last_Node, Local_List_Node);
                   Set_Next_Entity (Local_List_Node, No_Node);

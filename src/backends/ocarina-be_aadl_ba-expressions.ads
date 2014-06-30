@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,12 +33,12 @@
 
 package Ocarina.BE_AADL_BA.Expressions is
 
-   procedure Print_Value_Holder      (Node : Node_Id);
-   procedure Print_Value_Expression  (Node : Node_Id);
+   procedure Print_Value_Holder (Node : Node_Id);
+   procedure Print_Value_Expression (Node : Node_Id);
    procedure Print_Property_Constant (Node : Node_Id);
-   procedure Print_Integer_Range     (Node : Node_Id);
-   procedure Print_Integer_Value     (Node : Node_Id);
-   procedure Print_Behavior_Time     (Node : Node_Id);
-   procedure Print_Literal           (Node : Node_Id);
+   procedure Print_Integer_Range (Node : Node_Id);
+   procedure Print_Integer_Value (Node : Node_Id);
+   procedure Print_Behavior_Time (Node : Node_Id);
+   procedure Print_Literal (Node : Node_Id);
 
 end Ocarina.BE_AADL_BA.Expressions;

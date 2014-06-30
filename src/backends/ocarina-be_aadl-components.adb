@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -74,22 +74,37 @@ package body Ocarina.BE_AADL.Components is
       use Ocarina.ME_AADL;
    begin
       case Component_Category'Val (Category) is
-         when CC_Data              => Print_Token  (T_Data);
-         when CC_Subprogram        => Print_Token  (T_Subprogram);
-         when CC_Subprogram_Group  => Print_Tokens ((T_Subprogram, T_Group));
-         when CC_Thread            => Print_Token  (T_Thread);
-         when CC_Thread_Group      => Print_Tokens ((T_Thread, T_Group));
-         when CC_Process           => Print_Token  (T_Process);
-         when CC_Memory            => Print_Token  (T_Memory);
-         when CC_Processor         => Print_Token  (T_Processor);
-         when CC_Bus               => Print_Token  (T_Bus);
-         when CC_Device            => Print_Token  (T_Device);
-         when CC_System            => Print_Token  (T_System);
-         when CC_Virtual_Processor => Print_Tokens ((T_Virtual, T_Processor));
-         when CC_Virtual_Bus       => Print_Tokens ((T_Virtual, T_Bus));
-         when CC_Abstract          => Print_Token  (T_Abstract);
+         when CC_Data =>
+            Print_Token (T_Data);
+         when CC_Subprogram =>
+            Print_Token (T_Subprogram);
+         when CC_Subprogram_Group =>
+            Print_Tokens ((T_Subprogram, T_Group));
+         when CC_Thread =>
+            Print_Token (T_Thread);
+         when CC_Thread_Group =>
+            Print_Tokens ((T_Thread, T_Group));
+         when CC_Process =>
+            Print_Token (T_Process);
+         when CC_Memory =>
+            Print_Token (T_Memory);
+         when CC_Processor =>
+            Print_Token (T_Processor);
+         when CC_Bus =>
+            Print_Token (T_Bus);
+         when CC_Device =>
+            Print_Token (T_Device);
+         when CC_System =>
+            Print_Token (T_System);
+         when CC_Virtual_Processor =>
+            Print_Tokens ((T_Virtual, T_Processor));
+         when CC_Virtual_Bus =>
+            Print_Tokens ((T_Virtual, T_Bus));
+         when CC_Abstract =>
+            Print_Token (T_Abstract);
 
-         when others               => Write_Line (Bug_Str);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Component_Category;
 
@@ -289,8 +304,7 @@ package body Ocarina.BE_AADL.Components is
          Write_Space;
 
          while Present (List_Node) loop
-            if List_Node /=
-              First_Node (ATN.Prototype_Bindings (Node)) then
+            if List_Node /= First_Node (ATN.Prototype_Bindings (Node)) then
                Print_Token (T_Comma);
                Write_Eol;
                Write_Indentation;
@@ -504,8 +518,7 @@ package body Ocarina.BE_AADL.Components is
          Write_Space;
 
          while Present (List_Node) loop
-            if List_Node /=
-              First_Node (Prototype_Bindings (Node)) then
+            if List_Node /= First_Node (Prototype_Bindings (Node)) then
                Print_Token (T_Comma);
                Write_Eol;
                Write_Indentation;
@@ -537,9 +550,7 @@ package body Ocarina.BE_AADL.Components is
          Write_Eol;
       end if;
 
-      if Is_Empty (ATN.Features (Node))
-        and then not Present (Inverse_Ref)
-      then
+      if Is_Empty (ATN.Features (Node)) and then not Present (Inverse_Ref) then
          if AADL_Version = AADL_V1 then
             Write_Indentation;
             Print_Token (T_Features);

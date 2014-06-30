@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -88,8 +88,7 @@ package body Ocarina.FE_AADL.Parser.Components.Subcomponents is
 
    function P_Subcomponent
      (Container : Types.Node_Id;
-      Refinable : Boolean)
-     return Node_Id
+      Refinable : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -110,7 +109,7 @@ package body Ocarina.FE_AADL.Parser.Components.Subcomponents is
       Component_Ref      : Node_Id;
       Component_Modes    : Node_Id;
       Array_Dimensions   : Node_Id;
-      Prototype_Bindings : List_Id             := No_List;
+      Prototype_Bindings : List_Id := No_List;
       Code               : Parsing_Code;
       Loc                : Location;
       OK                 : Boolean;
@@ -164,12 +163,14 @@ package body Ocarina.FE_AADL.Parser.Components.Subcomponents is
             Scan_Token;
 
             if Token = T_Left_Parenthesis then
-               Prototype_Bindings := P_Items_List (P_Prototype_Binding'Access,
-                                                   No_Node,
-                                                   T_Comma,
-                                                   T_Right_Parenthesis,
-                                                   PC_Prototype_Bindings,
-                                                   False);
+               Prototype_Bindings :=
+                 P_Items_List
+                   (P_Prototype_Binding'Access,
+                    No_Node,
+                    T_Comma,
+                    T_Right_Parenthesis,
+                    PC_Prototype_Bindings,
+                    False);
 
                if Is_Empty (Prototype_Bindings) then
                   DPE (PC_Subcomponent, EMC_List_Is_Empty);
@@ -185,15 +186,15 @@ package body Ocarina.FE_AADL.Parser.Components.Subcomponents is
          Restore_Lexer (Loc);
       end if;
 
-      Subcomponent := Add_New_Subcomponent
-        (Loc                 =>
-           Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Name                => Identifier,
-         Comp_Impl           => Container,
-         Is_Refinement       => Is_Refinement,
-         Category            => Category,
-         In_Modes            => No_Node,
-         Prototypes_Bindings => Prototype_Bindings);
+      Subcomponent :=
+        Add_New_Subcomponent
+          (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Name                => Identifier,
+           Comp_Impl           => Container,
+           Is_Refinement       => Is_Refinement,
+           Category            => Category,
+           In_Modes            => No_Node,
+           Prototypes_Bindings => Prototype_Bindings);
 
       Save_Lexer (Loc);
       Scan_Token;
@@ -209,7 +210,7 @@ package body Ocarina.FE_AADL.Parser.Components.Subcomponents is
                Set_Array_Dimensions (Subcomponent, Array_Dimensions);
 
             when AADL_V1 =>
-               DPE (CODE, EMC_Not_Allowed_In_AADL_V1);
+               DPE (Code, EMC_Not_Allowed_In_AADL_V1);
                Skip_Tokens (T_Semicolon);
                return No_Node;
          end case;
@@ -218,11 +219,12 @@ package body Ocarina.FE_AADL.Parser.Components.Subcomponents is
          Restore_Lexer (Loc);
       end if;
 
-      OK := P_Property_Associations
-        (Subcomponent,
-         True,
-         PAT_Simple_Or_Contained,
-         Code);
+      OK :=
+        P_Property_Associations
+          (Subcomponent,
+           True,
+           PAT_Simple_Or_Contained,
+           Code);
 
       if not OK then
          return No_Node;

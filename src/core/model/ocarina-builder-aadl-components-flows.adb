@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -46,23 +46,25 @@ package body Ocarina.Builder.AADL.Components.Flows is
 
    function Add_Property_Association
      (Flow                 : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean
+      Property_Association : Node_Id) return Boolean
    is
-      pragma Assert (Kind (Flow) = K_Flow_Spec
-                     or else Kind (Flow) = K_Flow_Implementation
-                     or else Kind (Flow) = K_End_To_End_Flow_Spec
-                     or else Kind (Flow) = K_Flow_Implementation_Refinement
-                     or else Kind (Flow) = K_End_To_End_Flow_Refinement);
+      pragma Assert
+        (Kind (Flow) = K_Flow_Spec
+         or else Kind (Flow) = K_Flow_Implementation
+         or else Kind (Flow) = K_End_To_End_Flow_Spec
+         or else Kind (Flow) = K_Flow_Implementation_Refinement
+         or else Kind (Flow) = K_End_To_End_Flow_Refinement);
       pragma Assert (Present (Property_Association));
    begin
-      if Is_Empty (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (Flow)) then
-         Set_Properties (Flow,
-                         New_List (K_List_Id, Loc (Property_Association)));
+      if Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Flow)) then
+         Set_Properties
+           (Flow,
+            New_List (K_List_Id, Loc (Property_Association)));
       end if;
 
-      Append_Node_To_List (Property_Association,
-                           Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (Flow));
+      Append_Node_To_List
+        (Property_Association,
+         Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Flow));
       return True;
    end Add_Property_Association;
 
@@ -77,12 +79,11 @@ package body Ocarina.Builder.AADL.Components.Flows is
       Category      : Flow_Category;
       Source_Flow   : Node_Id;
       Sink_Flow     : Node_Id;
-      Is_Refinement : Boolean := False)
-     return Node_Id
+      Is_Refinement : Boolean := False) return Node_Id
    is
       pragma Assert (Kind (Comp_Type) = K_Component_Type);
 
-      Node : constant Node_Id := New_Node (K_Flow_Spec, Loc);
+      Node    : constant Node_Id := New_Node (K_Flow_Spec, Loc);
       Success : Boolean;
    begin
       Set_Identifier (Node, Name);
@@ -116,13 +117,12 @@ package body Ocarina.Builder.AADL.Components.Flows is
       In_Modes      : Node_Id;
       Is_Refinement : Boolean;
       Source_Flow   : Node_Id;
-      Sink_Flow     : Node_id)
-     return Node_Id
+      Sink_Flow     : Node_Id) return Node_Id
    is
       pragma Assert (Present (Name));
       pragma Assert (Kind (Container) = K_Component_Implementation);
-      pragma Assert (not Is_Refinement or else
-                     (No (Source_Flow) and then No (Sink_Flow)));
+      pragma Assert
+        (not Is_Refinement or else (No (Source_Flow) and then No (Sink_Flow)));
 
       Node : Node_Id;
    begin
@@ -163,13 +163,12 @@ package body Ocarina.Builder.AADL.Components.Flows is
       In_Modes      : Node_Id;
       Is_Refinement : Boolean;
       Source_Flow   : Node_Id;
-      Sink_Flow     : Node_id)
-     return Node_Id
+      Sink_Flow     : Node_Id) return Node_Id
    is
       pragma Assert (Present (Name));
       pragma Assert (Kind (Container) = K_Component_Implementation);
-      pragma Assert (not Is_Refinement or else
-                     (No (Source_Flow) and then No (Sink_Flow)));
+      pragma Assert
+        (not Is_Refinement or else (No (Source_Flow) and then No (Sink_Flow)));
 
       Node : Node_Id;
    begin

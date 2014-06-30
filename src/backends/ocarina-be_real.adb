@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -96,9 +96,10 @@ package body Ocarina.BE_REAL is
    procedure Init is
       use Ocarina.Backends;
    begin
-      Register_Backend ("real_specification",
-                        Generate_REAL_Spec'Access,
-                        REAL_PP);
+      Register_Backend
+        ("real_specification",
+         Generate_REAL_Spec'Access,
+         REAL_PP);
    end Init;
 
    ------------------------
@@ -131,9 +132,7 @@ package body Ocarina.BE_REAL is
    begin
       case Kind (Node) is
 
-         when K_Var_Reference
-           | K_Identifier
-           | K_Set_Reference =>
+         when K_Var_Reference | K_Identifier | K_Set_Reference =>
             Print_Identifier (Node);
 
          when K_Literal =>
@@ -142,9 +141,7 @@ package body Ocarina.BE_REAL is
          when K_Check_Subprogram_Call =>
             Print_Check_Subprogram_Call (Node);
 
-         when K_Check_Expression
-           | K_Set_Expression
-           | K_Expression =>
+         when K_Check_Expression | K_Set_Expression | K_Expression =>
             Print_Expression (Node);
 
          when others =>
@@ -356,9 +353,10 @@ package body Ocarina.BE_REAL is
    -------------------------
 
    procedure Print_Variable_Decl (Node : Node_Id) is
-      pragma Assert (Kind (Node) = K_Variable_Declaration or else
-                     Kind (Node) = K_Variable_Decl_Compute or else
-                     Kind (Node) = K_Variable_Decl_Expression);
+      pragma Assert
+        (Kind (Node) = K_Variable_Declaration
+         or else Kind (Node) = K_Variable_Decl_Compute
+         or else Kind (Node) = K_Variable_Decl_Expression);
    begin
       if Int (Is_Global (Node)) = 0 then
          Print_Token (T_Var);
@@ -443,9 +441,10 @@ package body Ocarina.BE_REAL is
    ----------------------
 
    procedure Print_Expression (Node : Node_Id) is
-      pragma Assert (Kind (Node) = K_Expression or else
-                     Kind (Node) = K_Set_Expression or else
-                     Kind (Node) = K_Check_Expression);
+      pragma Assert
+        (Kind (Node) = K_Expression
+         or else Kind (Node) = K_Set_Expression
+         or else Kind (Node) = K_Check_Expression);
 
       procedure Print_Operator (Op : Operator_Id);
 
@@ -503,8 +502,7 @@ package body Ocarina.BE_REAL is
 
          --  In case of boolean binary operator, we break the line
 
-         if Operator (Node) = OV_And or else
-           Operator (Node) = OV_Or then
+         if Operator (Node) = OV_And or else Operator (Node) = OV_Or then
             Write_Eol;
             Increment_Indentation;
             Print (Right_Expr (Node));
@@ -593,9 +591,10 @@ package body Ocarina.BE_REAL is
    ----------------------
 
    procedure Print_Identifier (Node : Node_Id) is
-      pragma Assert (Kind (Node) = K_Identifier or else
-                     Kind (Node) = K_Var_Reference or else
-                     Kind (Node) = K_Set_Reference);
+      pragma Assert
+        (Kind (Node) = K_Identifier
+         or else Kind (Node) = K_Var_Reference
+         or else Kind (Node) = K_Set_Reference);
       use Namet;
    begin
       Write_Name (Name (Node));
@@ -605,8 +604,7 @@ package body Ocarina.BE_REAL is
    -- Print_Token --
    -----------------
 
-   procedure Print_Token (Token : Token_Type)
-   is
+   procedure Print_Token (Token : Token_Type) is
       use Namet;
    begin
       Write_Str (Image (Token));

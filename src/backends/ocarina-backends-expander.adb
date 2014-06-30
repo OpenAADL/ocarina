@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -93,8 +93,10 @@ package body Ocarina.Backends.Expander is
       end case;
 
       if No (E) then
-         Display_Error ("Cannot expand AADL models",
-                        Fatal => True, Warning => False);
+         Display_Error
+           ("Cannot expand AADL models",
+            Fatal   => True,
+            Warning => False);
       end if;
    end Expand;
 
@@ -114,13 +116,12 @@ package body Ocarina.Backends.Expander is
    -------------------------------
 
    procedure Expand_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
-      N : Node_Id;
-      I : Node_Id;
-      F : Node_Id;
-      K : Node_Id;
-      L : Node_Id;
+      Category : constant Component_Category := Get_Category_Of_Component (E);
+      N        : Node_Id;
+      I        : Node_Id;
+      F        : Node_Id;
+      K        : Node_Id;
+      L        : Node_Id;
    begin
       if Expanded (E) then
          return;
@@ -141,11 +142,15 @@ package body Ocarina.Backends.Expander is
 
                   while Present (I) loop
                      if Category = CC_Subprogram then
-                        N := Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
-                           (K_Parameter_Instance, AIN.Loc (I));
+                        N :=
+                          Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
+                            (K_Parameter_Instance,
+                             AIN.Loc (I));
                      else
-                        N := Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
-                          (AIN.Kind (I), AIN.Loc (I));
+                        N :=
+                          Ocarina.ME_AADL.AADL_Instances.Nutils.New_Node
+                            (AIN.Kind (I),
+                             AIN.Loc (I));
                         AIN.Set_Identifier (N, AIU.Copy_Node (Identifier (I)));
                      end if;
 
@@ -157,13 +162,11 @@ package body Ocarina.Backends.Expander is
                      end if;
 
                      AIN.Set_Corresponding_Instance
-                        (N, AIN.Corresponding_Instance (I));
-                     AIN.Set_Sources
-                        (N, AIN.Sources (I));
-                     AIN.Set_Destinations
-                        (N, AIN.Destinations (I));
-                     AIN.Set_Parent_Component
-                        (N, AIN.Parent_Component (F));
+                       (N,
+                        AIN.Corresponding_Instance (I));
+                     AIN.Set_Sources (N, AIN.Sources (I));
+                     AIN.Set_Destinations (N, AIN.Destinations (I));
+                     AIN.Set_Parent_Component (N, AIN.Parent_Component (F));
 
                      if not Is_Empty (Sources (F)) then
 
@@ -172,8 +175,10 @@ package body Ocarina.Backends.Expander is
                         L := No_Node;
 
                         while Present (K) loop
-                           L := Find_Name_In_List
-                              (Name (Identifier (I)), Features (Item (K)));
+                           L :=
+                             Find_Name_In_List
+                               (Name (Identifier (I)),
+                                Features (Item (K)));
 
                            if L /= No_Node then
                               exit;
@@ -183,15 +188,19 @@ package body Ocarina.Backends.Expander is
                         end loop;
 
                         if L = No_Node then
-                           Display_Error ("Cannot expand port/feature group",
-                              Fatal => True, Warning => False);
+                           Display_Error
+                             ("Cannot expand port/feature group",
+                              Fatal   => True,
+                              Warning => False);
                         end if;
 
                         Append_Node_To_List
-                          (Make_Node_Container (L), Sources (N));
+                          (Make_Node_Container (L),
+                           Sources (N));
 
                         Append_Node_To_List
-                          (Make_Node_Container (N), Destinations (L));
+                          (Make_Node_Container (N),
+                           Destinations (L));
                      end if;
 
                      if not Is_Empty (Destinations (F)) then
@@ -200,8 +209,10 @@ package body Ocarina.Backends.Expander is
                         L := No_Node;
 
                         while Present (K) loop
-                           L := Find_Name_In_List
-                              (Name (Identifier (I)), Features (Item (K)));
+                           L :=
+                             Find_Name_In_List
+                               (Name (Identifier (I)),
+                                Features (Item (K)));
 
                            if L /= No_Node then
                               exit;
@@ -211,15 +222,19 @@ package body Ocarina.Backends.Expander is
                         end loop;
 
                         if L = No_Node then
-                           Display_Error ("Cannot expand port/feature group",
-                              Fatal => True, Warning => False);
+                           Display_Error
+                             ("Cannot expand port/feature group",
+                              Fatal   => True,
+                              Warning => False);
                         end if;
 
                         Append_Node_To_List
-                           (Make_Node_Container (L), Destinations (N));
+                          (Make_Node_Container (L),
+                           Destinations (N));
 
                         Append_Node_To_List
-                           (Make_Node_Container (N), Sources (L));
+                          (Make_Node_Container (N),
+                           Sources (L));
                      end if;
 
                      AIU.Append_Node_To_List (N, Features (E));
@@ -313,22 +328,22 @@ package body Ocarina.Backends.Expander is
                else
                   Display_Located_Error
                     (AIN.Loc (E),
-                     "A data component cannot have both subcomponents"
-                       & " and Element_Names",
+                     "A data component cannot have both subcomponents" &
+                     " and Element_Names",
                      Fatal => False);
                end if;
 
                F := ATN.First_Node (Types);
 
                for J in Fields'Range loop
-                  N :=  New_Node (K_Subcomponent_Instance, AIN.Loc (E));
+                  N := New_Node (K_Subcomponent_Instance, AIN.Loc (E));
                   AIN.Set_Identifier
                     (N,
                      Make_Identifier
-                     (AIN.Loc (E),
-                      To_Lower (Fields (J)),
-                      Fields (J),
-                      N));
+                       (AIN.Loc (E),
+                        To_Lower (Fields (J)),
+                        Fields (J),
+                        N));
                   Set_Corresponding_Declaration (N, No_Node);
                   Set_Destinations (N, New_List (K_List_Id, No_Location));
                   Set_Corresponding_Instance
@@ -366,28 +381,27 @@ package body Ocarina.Backends.Expander is
             --  subcomponents.
 
             declare
-               Types  : constant List_Id := Get_Base_Type (E);
-               F      : Node_Id;
-               N      : Node_Id;
+               Types : constant List_Id := Get_Base_Type (E);
+               F     : Node_Id;
+               N     : Node_Id;
             begin
                if AIN.Subcomponents (E) = No_List then
                   AIN.Set_Subcomponents (E, New_List (K_List_Id, No_Location));
                else
                   Display_Located_Error
                     (AIN.Loc (E),
-                     "A data component cannot have both subcomponents"
-                       & " and Element_Names",
+                     "A data component cannot have both subcomponents" &
+                     " and Element_Names",
                      Fatal => False);
                end if;
 
                F := ATN.First_Node (Types);
 
                while Present (F) loop
-                  N :=  New_Node (K_Subcomponent_Instance, AIN.Loc (E));
+                  N := New_Node (K_Subcomponent_Instance, AIN.Loc (E));
                   AIN.Set_Identifier
                     (N,
-                     Ocarina.ME_AADL.
-                       AADL_Instances.Nodes.Identifier (E));
+                     Ocarina.ME_AADL.AADL_Instances.Nodes.Identifier (E));
                   Set_Corresponding_Declaration (N, No_Node);
                   Set_Destinations (N, New_List (K_List_Id, No_Location));
                   Set_Corresponding_Instance
@@ -455,7 +469,8 @@ package body Ocarina.Backends.Expander is
 
          while Present (F) loop
             if Kind (F) /= K_Feature_Group_Spec_Instance
-               and then Present (Corresponding_Instance (F)) then
+              and then Present (Corresponding_Instance (F))
+            then
                Expand (Corresponding_Instance (F));
             end if;
 
@@ -463,7 +478,7 @@ package body Ocarina.Backends.Expander is
          end loop;
       end if;
 
-         --  Expand all the call sequences of the subprogram
+      --  Expand all the call sequences of the subprogram
 
       if not Is_Empty (Calls (E)) then
          Call_Seq := First_Node (Calls (E));
@@ -516,12 +531,12 @@ package body Ocarina.Backends.Expander is
       Call_Seq : Node_Id;
       Spg_Call : Node_Id;
       F        : Node_Id;
-      P        : constant Supported_Thread_Dispatch_Protocol
-        := Get_Thread_Dispatch_Protocol (E);
-      K        : constant Supported_Thread_Implementation
-        := Get_Thread_Implementation_Kind (E);
-      N        : Node_Id;
-      G        : Node_Id;
+      P        : constant Supported_Thread_Dispatch_Protocol :=
+        Get_Thread_Dispatch_Protocol (E);
+      K : constant Supported_Thread_Implementation :=
+        Get_Thread_Implementation_Kind (E);
+      N : Node_Id;
+      G : Node_Id;
    begin
       --  Expand all data types
 
@@ -530,7 +545,8 @@ package body Ocarina.Backends.Expander is
 
          while Present (F) loop
             if Kind (F) = K_Port_Spec_Instance
-              and then Ocarina.ME_AADL.AADL_Instances.Nodes.Is_Data (F) then
+              and then Ocarina.ME_AADL.AADL_Instances.Nodes.Is_Data (F)
+            then
                Expand (Corresponding_Instance (F));
             end if;
 
@@ -572,10 +588,12 @@ package body Ocarina.Backends.Expander is
          Set_Is_Event (N, True);
          Set_Is_Data (N, False);
          Set_Identifier
-           (N, Make_Identifier (No_Location,
-                                Get_String_Name ("period_event_ü"),
-                                Get_String_Name ("Period_Event_Ü"),
-                                N));
+           (N,
+            Make_Identifier
+              (No_Location,
+               Get_String_Name ("period_event_ü"),
+               Get_String_Name ("Period_Event_Ü"),
+               N));
          Set_Sources (N, New_List (K_List_Id, No_Location));
          Set_Destinations (N, New_List (K_List_Id, No_Location));
          Set_Parent_Component (N, E);
@@ -597,8 +615,7 @@ package body Ocarina.Backends.Expander is
                Success : Boolean := True;
                M       : Node_Id;
             begin
-               AIN.Set_Properties (N, New_List
-                                   (AIN.K_List_Id, No_Location));
+               AIN.Set_Properties (N, New_List (AIN.K_List_Id, No_Location));
 
                if Has_Modes (E) then
 
@@ -609,34 +626,38 @@ package body Ocarina.Backends.Expander is
                   G := AIN.First_Node (AIN.Modes (E));
                   while Present (G) loop
                      Mode := AIN.Name (AIN.Identifier (G));
-                     CE := Get_Thread_Compute_Entrypoint (E, Mode);
+                     CE   := Get_Thread_Compute_Entrypoint (E, Mode);
                      if Present (CE) then
                         C := CE;
 
                         pragma Assert (Present (Instance_Root));
 
-                        Success :=  Add_Property_Instance
-                          (Instance_Root,
-                           N,
-                           AIN.Corresponding_Declaration (CE),
-                           Override_Mode => False);
+                        Success :=
+                          Add_Property_Instance
+                            (Instance_Root,
+                             N,
+                             AIN.Corresponding_Declaration (CE),
+                             Override_Mode => False);
 
                         M := Get_Port_Compute_Entrypoint (N, Mode);
 
-                        if ATN.Kind (ATN.Expanded_Single_Value
-                                     (AIN.Property_Association_Value (M))) =
-                          ATN.K_Reference_Term then
+                        if ATN.Kind
+                            (ATN.Expanded_Single_Value
+                               (AIN.Property_Association_Value (M))) =
+                          ATN.K_Reference_Term
+                        then
                            --  FIXME :
                            --  Should be do by the replace_property_instance
 
                            ATN.Set_Entity
                              (ATN.Reference_Term
-                              (ATN.Expanded_Single_Value
-                               (AIN.Property_Association_Value (M))),
-                              (ATN.entity
-                               (ATN.Reference_Term
                                 (ATN.Expanded_Single_Value
-                                 (AIN.Property_Association_Value (CE))))));
+                                   (AIN.Property_Association_Value (M))),
+                              (ATN.Entity
+                                 (ATN.Reference_Term
+                                    (ATN.Expanded_Single_Value
+                                       (AIN.Property_Association_Value
+                                          (CE))))));
                         end if;
                         Remove_Node_From_List (CE, AIN.Properties (E));
 
@@ -646,35 +667,39 @@ package body Ocarina.Backends.Expander is
                   end loop;
                else
                   CE := Get_Thread_Compute_Entrypoint (E);
-                  C := CE;
+                  C  := CE;
 
-                  AIN.Set_Properties (N, New_List
-                                      (AIN.K_List_Id, No_Location));
+                  AIN.Set_Properties
+                    (N,
+                     New_List (AIN.K_List_Id, No_Location));
 
                   pragma Assert (Present (Instance_Root));
 
-                  Success := Replace_Property_Instance
-                    (Instance_Root,
-                     N,
-                     CE,
-                     Override_Mode => True);
+                  Success :=
+                    Replace_Property_Instance
+                      (Instance_Root,
+                       N,
+                       CE,
+                       Override_Mode => True);
 
                   M := Get_Port_Compute_Entrypoint (N);
 
-                  if ATN.Kind (ATN.Expanded_Single_Value
-                               (AIN.Property_Association_Value (M))) =
-                    ATN.K_Reference_Term then
+                  if ATN.Kind
+                      (ATN.Expanded_Single_Value
+                         (AIN.Property_Association_Value (M))) =
+                    ATN.K_Reference_Term
+                  then
                      --  FIXME :
                      --  Should be do by the replace_property_instance
 
                      ATN.Set_Entity
                        (ATN.Reference_Term
-                        (ATN.Expanded_Single_Value
-                         (AIN.Property_Association_Value (M))),
-                        (ATN.entity
-                         (ATN.Reference_Term
                           (ATN.Expanded_Single_Value
-                           (AIN.Property_Association_Value (CE))))));
+                             (AIN.Property_Association_Value (M))),
+                        (ATN.Entity
+                           (ATN.Reference_Term
+                              (ATN.Expanded_Single_Value
+                                 (AIN.Property_Association_Value (CE))))));
                   end if;
                end if;
 

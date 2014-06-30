@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,11 +35,11 @@ with Ocarina.Backends.MAST_Tree.Nodes; use Ocarina.Backends.MAST_Tree.Nodes;
 
 package Ocarina.Backends.MAST_Tree.Nutils is
 
-   Int0_Val             : Value_Id;
-   Int1_Val             : Value_Id;
+   Int0_Val : Value_Id;
+   Int1_Val : Value_Id;
 
-   Var_Suffix           : constant String := "_mast";
-   Initialized          : Boolean  := False;
+   Var_Suffix  : constant String := "_mast";
+   Initialized : Boolean         := False;
 
    Output_Tree_Warnings : Boolean := False;
    Output_Unit_Withing  : Boolean := False;
@@ -47,9 +47,9 @@ package Ocarina.Backends.MAST_Tree.Nutils is
 
    type Token_Type is
      (
-      --   Token name      Token type
-      --   Keywords
-      Tok_First_Keyword,
+   --   Token name      Token type
+   --   Keywords
+   Tok_First_Keyword,
       Tok_Activity_Operation,
       Tok_Activity_Server,
       Tok_Avg_Case_Execution_Time,
@@ -129,25 +129,22 @@ package Ocarina.Backends.MAST_Tree.Nutils is
 
    Token_Image : array (Token_Type) of Name_Id;
 
-   subtype Keyword_Type is Token_Type
-     range Tok_First_Keyword .. Tok_Last_Keyword;
+   subtype Keyword_Type is
+     Token_Type range Tok_First_Keyword .. Tok_Last_Keyword;
 
    procedure Reset;
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-      return Name_Id;
+      Name   : Name_Id) return Name_Id;
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
    --  This function returns a new name without the suffix. If the
    --  suffix does not exist, the returned name is equal to the given
    --  name.
@@ -158,26 +155,20 @@ package Ocarina.Backends.MAST_Tree.Nutils is
 
    procedure Push_Entity (E : Node_Id);
    procedure Pop_Entity;
-   function  Current_Entity return Node_Id;
-   function  Current_File return Node_Id;
+   function Current_Entity return Node_Id;
+   function Current_File return Node_Id;
 
-   function Make_Defining_Identifier
-     (Name         : Name_Id)
-     return  Node_Id;
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id;
 
-   function Copy_Node
-     (N : Node_Id)
-     return Node_Id;
+   function Copy_Node (N : Node_Id) return Node_Id;
 
    function New_Node
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id;
+      From : Node_Id := No_Node) return Node_Id;
 
    function New_List
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id;
+      From : Node_Id := No_Node) return List_Id;
 
    function Image (T : Token_Type) return String;
 
@@ -197,8 +188,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
    function Make_List_Id
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
-      N3 : Node_Id := No_Node)
-     return List_Id;
+      N3 : Node_Id := No_Node) return List_Id;
 
    function Next_N_Node (N : Node_Id; Num : Natural) return Node_Id;
    --  This function executes Next_Node Num times
@@ -213,90 +203,71 @@ package Ocarina.Backends.MAST_Tree.Nutils is
    function Make_Container (Content : Node_Id) return Node_Id;
 
    type Processing_Resource_Kind is
-     (
-         PR_Regular_Processor,
-         PR_Fixed_Priority_Processor,
-         PR_Packet_Based_Network
-     );
+     (PR_Regular_Processor,
+      PR_Fixed_Priority_Processor,
+      PR_Packet_Based_Network);
 
-   type Transmission_Kind is
-      (Simplex, Half_Duplex, Full_Duplex);
+   type Transmission_Kind is (Simplex, Half_Duplex, Full_Duplex);
 
    function Make_Processing_Resource
-      (PR_Name : Name_Id; PR_Type : Processing_Resource_Kind)
-      return Node_Id;
+     (PR_Name : Name_Id;
+      PR_Type : Processing_Resource_Kind) return Node_Id;
 
-   type Scheduling_Server_Parameter_Kind is
-     (
-         Fixed_Priority,
-         Unknown
-     );
+   type Scheduling_Server_Parameter_Kind is (Fixed_Priority, Unknown);
 
    function Make_Scheduling_Server_Parameters
-      (Server_Kind : Scheduling_Server_Parameter_Kind;
-      Prio         : Unsigned_Long_Long)
-      return Node_Id;
+     (Server_Kind : Scheduling_Server_Parameter_Kind;
+      Prio        : Unsigned_Long_Long) return Node_Id;
 
    function Make_Scheduling_Server
-      (Server_Name : Name_Id;
-       Associated_Processor : Name_Id)
-      return Node_Id;
+     (Server_Name          : Name_Id;
+      Associated_Processor : Name_Id) return Node_Id;
 
-   type Event_Kind is
-     (Periodic, Sporadic, Regular);
+   type Event_Kind is (Periodic, Sporadic, Regular);
 
-   function Make_Event
-      (E_Name : Name_Id;
-      E_Kind : Event_Kind) return Node_Id;
+   function Make_Event (E_Name : Name_Id; E_Kind : Event_Kind) return Node_Id;
 
-   type Event_Handler_Kind is
-     (Activity);
+   type Event_Handler_Kind is (Activity);
 
    function Make_Event_Handler
-      (Kind          : Event_Handler_Kind;
-      Input_Event    : Name_Id;
-      Output_Event   : Name_Id;
-      Operation      : Name_Id;
-      Server         : Name_Id) return Node_Id;
+     (Kind         : Event_Handler_Kind;
+      Input_Event  : Name_Id;
+      Output_Event : Name_Id;
+      Operation    : Name_Id;
+      Server       : Name_Id) return Node_Id;
 
-   type Transaction_Kind is
-     (Regular);
+   type Transaction_Kind is (Regular);
 
    function Make_Transaction
-      (Trans_Name : Name_Id;
-       Trans_Type : Transaction_Kind)
-      return Node_Id;
+     (Trans_Name : Name_Id;
+      Trans_Type : Transaction_Kind) return Node_Id;
 
-   type Operation_Kind is
-     (Enclosing, Simple, Composite, Message_Transmission);
+   type Operation_Kind is (Enclosing, Simple, Composite, Message_Transmission);
 
    function Make_Operation
-      (Op_Name       : Name_Id;
-      Op_Kind        : Operation_Kind;
-      Op_List        : List_Id := No_List)
-      return Node_Id;
+     (Op_Name : Name_Id;
+      Op_Kind : Operation_Kind;
+      Op_List : List_Id := No_List) return Node_Id;
 
-   type Event_Timing_Requirement_Kind is
-     (Hard_Deadline);
+   type Event_Timing_Requirement_Kind is (Hard_Deadline);
 
    function Make_Event_Timing_Requirement
-      (Req_Kind      : Event_Timing_Requirement_Kind;
-      Deadline       : Unsigned_Long_Long;
-      Ref_Event      : Name_Id)
-      return Node_Id;
+     (Req_Kind  : Event_Timing_Requirement_Kind;
+      Deadline  : Unsigned_Long_Long;
+      Ref_Event : Name_Id) return Node_Id;
 
    type Shared_Resource_Kind is (Immediate_Ceiling, Unknown);
 
    function Make_Shared_Resource
-      (Res_Kind : Shared_Resource_Kind; Res_Name : Name_Id)
-   return Node_Id;
+     (Res_Kind : Shared_Resource_Kind;
+      Res_Name : Name_Id) return Node_Id;
 
    type RTA_Overhead_Model_Kind is (Coupled, Decoupled);
 
    type Driver_Kind is (Character, Packet);
 
    function Make_Driver
-      (Driver_Name      : Name_Id;
+     (Driver_Name       : Name_Id;
       Drv_Kind          : Driver_Kind;
       Server_Sched_Name : Name_Id;
       Send_Name         : Name_Id;
@@ -304,6 +275,7 @@ package Ocarina.Backends.MAST_Tree.Nutils is
       Partitioning      : Boolean;
       Overhead_Kind     : RTA_Overhead_Model_Kind) return Node_Id;
 
-   function Make_Scheduler (Sched_Name : Name_Id; Host_Name : Name_Id)
-      return Node_Id;
+   function Make_Scheduler
+     (Sched_Name : Name_Id;
+      Host_Name  : Name_Id) return Node_Id;
 end Ocarina.Backends.MAST_Tree.Nutils;

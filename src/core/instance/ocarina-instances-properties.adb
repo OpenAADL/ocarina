@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -62,30 +62,27 @@ package body Ocarina.Instances.Properties is
    use Ocarina.Instances.Messages;
    use Ocarina.Instances.Finder;
 
-   package ATN  renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package AIN  renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package ATE  renames Ocarina.ME_AADL.AADL_Tree.Entities;
-   package AIE  renames Ocarina.ME_AADL.AADL_Instances.Entities;
+   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
+   package AIE renames Ocarina.ME_AADL.AADL_Instances.Entities;
 
    function Duplicate_Property_Value
      (Instance_Root                  : Node_Id;
       Property_Value                 : Node_Id;
       Instance                       : Node_Id;
-      Former_Property_Instance_Value : Node_Id := No_Node)
-     return Node_Id;
+      Former_Property_Instance_Value : Node_Id := No_Node) return Node_Id;
 
    function Instantiate_Property_Value
      (Instance_Root  : Node_Id;
       Property_Value : Node_Id;
-      Instance       : Node_Id)
-     return Node_Id;
+      Instance       : Node_Id) return Node_Id;
 
    function Instantiate_Reference_Term
      (Instance_Root      : Node_Id;
       Reference_Instance : Node_Id;
-      Reference_Term     : Node_Id)
-     return Node_Id;
+      Reference_Term     : Node_Id) return Node_Id;
    pragma Unreferenced (Instantiate_Reference_Term);
    --  Return an equivalent of Path, but containing instances instead
    --  of declarations.
@@ -98,8 +95,7 @@ package body Ocarina.Instances.Properties is
      (Instance_Root : Node_Id;
       Instance      : Node_Id;
       Property_List : List_Id;
-      Override_Mode : Boolean)
-     return Boolean
+      Override_Mode : Boolean) return Boolean
    is
       pragma Assert (Kind (Instance_Root) = K_Architecture_Instance);
       pragma Assert (Present (Instance));
@@ -113,8 +109,12 @@ package body Ocarina.Instances.Properties is
          Property_List_Node := ATN.First_Node (Property_List);
 
          while Present (Property_List_Node) loop
-            Success := Add_Property_Instance
-              (Instance_Root, Instance, Property_List_Node, Override_Mode)
+            Success :=
+              Add_Property_Instance
+                (Instance_Root,
+                 Instance,
+                 Property_List_Node,
+                 Override_Mode)
               and then Success;
 
             Property_List_Node := ATN.Next_Node (Property_List_Node);
@@ -132,19 +132,18 @@ package body Ocarina.Instances.Properties is
      (Instance_Root        : Node_Id;
       Entity_Instance      : Node_Id;
       Property_Association : Node_Id;
-      Override_Mode        : Boolean)
-     return Boolean
+      Override_Mode        : Boolean) return Boolean
    is
       pragma Assert
         (Kind (Entity_Instance) = K_Component_Instance
-           or else Kind (Entity_Instance) = K_Port_Spec_Instance
-           or else Kind (Entity_Instance) = K_Feature_Group_Spec_Instance
-           or else Kind (Entity_Instance) = K_Parameter_Instance
-           or else Kind (Entity_Instance) = K_Subcomponent_Access_Instance
-           or else Kind (Entity_Instance) = K_Subcomponent_Instance
-           or else Kind (Entity_Instance) = K_Subprogram_Spec_Instance
-           or else Kind (Entity_Instance) = K_Connection_Instance
-           or else Kind (Entity_Instance) = K_Mode_Instance);
+         or else Kind (Entity_Instance) = K_Port_Spec_Instance
+         or else Kind (Entity_Instance) = K_Feature_Group_Spec_Instance
+         or else Kind (Entity_Instance) = K_Parameter_Instance
+         or else Kind (Entity_Instance) = K_Subcomponent_Access_Instance
+         or else Kind (Entity_Instance) = K_Subcomponent_Instance
+         or else Kind (Entity_Instance) = K_Subprogram_Spec_Instance
+         or else Kind (Entity_Instance) = K_Connection_Instance
+         or else Kind (Entity_Instance) = K_Mode_Instance);
 
       Property_Instance : Node_Id;
       Pointed_Instance  : Node_Id;
@@ -153,25 +152,29 @@ package body Ocarina.Instances.Properties is
    begin
       --  We first find the instance on which the property applies
 
-      Pointed_Instance := Find_Instance
-        (Instance_Root,
-         Entity_Instance,
-         ATN.Applies_To_Prop (Property_Association));
+      Pointed_Instance :=
+        Find_Instance
+          (Instance_Root,
+           Entity_Instance,
+           ATN.Applies_To_Prop (Property_Association));
 
       if Present (Pointed_Instance) then
          if Ocarina.ME_AADL.AADL_Instances.Nodes.Properties
-           (Pointed_Instance) = No_List
+             (Pointed_Instance) =
+           No_List
          then
-            AIN.Set_Properties (Pointed_Instance,
-                                AINU.New_List (K_List_Id, No_Location));
+            AIN.Set_Properties
+              (Pointed_Instance,
+               AINU.New_List (K_List_Id, No_Location));
          end if;
 
          --  We then check if the property is already set in the pointed
          --  instance
 
-         Property_Instance := Get_First_Homonym_Instance
-           (AIN.Properties (Pointed_Instance),
-            Property_Association);
+         Property_Instance :=
+           Get_First_Homonym_Instance
+             (AIN.Properties (Pointed_Instance),
+              Property_Association);
 
          if Present (Property_Instance)
            and then ATN.Is_Additive_Association (Property_Association)
@@ -179,38 +182,47 @@ package body Ocarina.Instances.Properties is
             --  Append the current value to the old value list
 
             AIN.Set_Property_Association_Value
-                 (Property_Instance,
-                  Duplicate_Property_Value
-                  (Instance_Root,
-                   ATN.Property_Association_Value (Property_Association),
-                   Entity_Instance,
-                   ATN.Property_Association_Value (Property_Instance)));
+              (Property_Instance,
+               Duplicate_Property_Value
+                 (Instance_Root,
+                  ATN.Property_Association_Value (Property_Association),
+                  Entity_Instance,
+                  ATN.Property_Association_Value (Property_Instance)));
 
          else
-            Property_Instance := AINU.New_Node
-              (K_Property_Association_Instance,
-               ATN.Loc (Property_Association));
-            AIN.Set_Identifier (Property_Instance,
-                                AIE.Duplicate_Identifier (ATN.Identifier
-                                                      (Property_Association)));
-            AIN.Set_Corresponding_Entity (AIN.Identifier (Property_Instance),
-                                          Property_Instance);
-            AIN.Set_Corresponding_Declaration (Property_Instance,
-                                               Property_Association);
-            AIN.Set_Property_Name (Property_Instance,
-                               ATN.Property_Name (Property_Association));
+            Property_Instance :=
+              AINU.New_Node
+                (K_Property_Association_Instance,
+                 ATN.Loc (Property_Association));
+            AIN.Set_Identifier
+              (Property_Instance,
+               AIE.Duplicate_Identifier
+                 (ATN.Identifier (Property_Association)));
+            AIN.Set_Corresponding_Entity
+              (AIN.Identifier (Property_Instance),
+               Property_Instance);
+            AIN.Set_Corresponding_Declaration
+              (Property_Instance,
+               Property_Association);
+            AIN.Set_Property_Name
+              (Property_Instance,
+               ATN.Property_Name (Property_Association));
             AIN.Set_Is_Additive_Association
               (Property_Instance,
                ATN.Is_Additive_Association (Property_Association));
-            AIN.Set_Is_Constant (Property_Instance,
-                             ATN.Is_Constant (Property_Association));
-            AIN.Set_Is_Private (Property_Instance,
-                                ATN.Is_Private (Property_Association));
-            AIN.Set_Is_Access (Property_Instance,
-                           ATN.Is_Access (Property_Association));
+            AIN.Set_Is_Constant
+              (Property_Instance,
+               ATN.Is_Constant (Property_Association));
+            AIN.Set_Is_Private
+              (Property_Instance,
+               ATN.Is_Private (Property_Association));
+            AIN.Set_Is_Access
+              (Property_Instance,
+               ATN.Is_Access (Property_Association));
             AIN.Set_Applies_To_Prop (Property_Instance, No_List);
-            AIN.Set_In_Binding (Property_Instance,
-                            ATN.In_Binding (Property_Association));
+            AIN.Set_In_Binding
+              (Property_Instance,
+               ATN.In_Binding (Property_Association));
 
             --  Instantiate property "in modes". The fact that a property
             --  association of a mode has an "in modes" clause, has
@@ -227,12 +239,12 @@ package body Ocarina.Instances.Properties is
                   when K_Component_Instance =>
                      Container_Component := Entity_Instance;
 
-                  when K_Port_Spec_Instance |
-                    K_Feature_Group_Spec_Instance |
-                    K_Parameter_Instance |
+                  when K_Port_Spec_Instance        |
+                    K_Feature_Group_Spec_Instance  |
+                    K_Parameter_Instance           |
                     K_Subcomponent_Access_Instance |
-                    K_Subprogram_Spec_Instance |
-                    K_Connection_Instance =>
+                    K_Subprogram_Spec_Instance     |
+                    K_Connection_Instance          =>
                      Container_Component := Parent_Component (Entity_Instance);
 
                   when others =>
@@ -243,23 +255,26 @@ package body Ocarina.Instances.Properties is
                --  property association since there is no
                --  property_association_instance node kind.
 
-               AIN.Set_In_Modes (Property_Instance,
-                                 ATN.In_Modes (Property_Association));
+               AIN.Set_In_Modes
+                 (Property_Instance,
+                  ATN.In_Modes (Property_Association));
 
                if Present (Container_Component) then
                   Instantiate_In_Modes
-                    (Container_Component, Property_Instance);
+                    (Container_Component,
+                     Property_Instance);
                end if;
             end;
 
             if Present
-              (ATN.Property_Association_Value (Property_Association)) then
+                (ATN.Property_Association_Value (Property_Association))
+            then
                AIN.Set_Property_Association_Value
                  (Property_Instance,
                   Duplicate_Property_Value
-                  (Instance_Root,
-                   ATN.Property_Association_Value (Property_Association),
-                   Entity_Instance));
+                    (Instance_Root,
+                     ATN.Property_Association_Value (Property_Association),
+                     Entity_Instance));
 
                --  IMPORTANT: we use entity instance where the property
                --  has been declared, as the reference node to
@@ -285,8 +300,8 @@ package body Ocarina.Instances.Properties is
 
             else
                AINU.Append_Node_To_List
-                (Property_Instance,
-                 AIN.Properties (Pointed_Instance));
+                 (Property_Instance,
+                  AIN.Properties (Pointed_Instance));
             end if;
          end if;
       else
@@ -305,8 +320,7 @@ package body Ocarina.Instances.Properties is
      (Instance_Root        : Node_Id;
       Entity_Instance      : Node_Id;
       Property_Association : Node_Id;
-      Override_Mode        : Boolean)
-     return Boolean
+      Override_Mode        : Boolean) return Boolean
    is
       pragma Assert
         (Kind (Entity_Instance) = K_Component_Instance
@@ -318,8 +332,8 @@ package body Ocarina.Instances.Properties is
          or else Kind (Entity_Instance) = K_Connection_Instance
          or else Kind (Entity_Instance) = K_Mode_Instance);
 
-      pragma Assert (AIN.Kind (Property_Association)
-                       = K_Property_Association_Instance);
+      pragma Assert
+        (AIN.Kind (Property_Association) = K_Property_Association_Instance);
 
       Property_Instance : Node_Id;
       Pointed_Instance  : Node_Id;
@@ -327,64 +341,78 @@ package body Ocarina.Instances.Properties is
    begin
       --  We first find the instance on which the property applies
 
-      Pointed_Instance := Find_Instance_In_Instance
-        (Instance_Root,
-         Entity_Instance,
-         AIN.Applies_To_Prop (Property_Association));
+      Pointed_Instance :=
+        Find_Instance_In_Instance
+          (Instance_Root,
+           Entity_Instance,
+           AIN.Applies_To_Prop (Property_Association));
 
       if Present (Pointed_Instance) then
          if Ocarina.ME_AADL.AADL_Instances.Nodes.Properties
-           (Pointed_Instance) = No_List then
-            AIN.Set_Properties (Pointed_Instance,
-                                AINU.New_List (K_List_Id, No_Location));
+             (Pointed_Instance) =
+           No_List
+         then
+            AIN.Set_Properties
+              (Pointed_Instance,
+               AINU.New_List (K_List_Id, No_Location));
          end if;
 
          --  We then check if the property is already set in the pointed
          --  instance
 
-         Property_Instance := Get_First_Homonym_Instance
-           (AIN.Properties (Pointed_Instance),
-            AIE.Get_Name_Of_Entity (Property_Association, False));
+         Property_Instance :=
+           Get_First_Homonym_Instance
+             (AIN.Properties (Pointed_Instance),
+              AIE.Get_Name_Of_Entity (Property_Association, False));
 
-         if Present (Property_Instance) and then
-           AIN.Is_Additive_Association (Property_Association)
+         if Present (Property_Instance)
+           and then AIN.Is_Additive_Association (Property_Association)
          then
             --  Append the current value to the old value list
 
             AIN.Set_Property_Association_Value
-                 (Property_Instance,
-                  Duplicate_Property_Value
-                  (Instance_Root,
-                   AIN.Property_Association_Value (Property_Association),
-                   Entity_Instance,
-                   AIN.Property_Association_Value (Property_Instance)));
+              (Property_Instance,
+               Duplicate_Property_Value
+                 (Instance_Root,
+                  AIN.Property_Association_Value (Property_Association),
+                  Entity_Instance,
+                  AIN.Property_Association_Value (Property_Instance)));
 
          else
-            Property_Instance := AINU.New_Node
-              (K_Property_Association_Instance,
-               ATN.Loc (Property_Association));
+            Property_Instance :=
+              AINU.New_Node
+                (K_Property_Association_Instance,
+                 ATN.Loc (Property_Association));
             --  XXX TODO CRAP Must Duplicate_Identifier
-            AIN.Set_Identifier (Property_Instance,
-                                AIN.Identifier (Property_Association));
+            AIN.Set_Identifier
+              (Property_Instance,
+               AIN.Identifier (Property_Association));
 
-            AIN.Set_Corresponding_Entity (AIN.Identifier (Property_Instance),
-                                          Property_Instance);
-            AIN.Set_Corresponding_Declaration (Property_Instance,
-                                               Property_Association);
-            AIN.Set_Property_Name (Property_Instance,
-                               AIN.Property_Name (Property_Association));
+            AIN.Set_Corresponding_Entity
+              (AIN.Identifier (Property_Instance),
+               Property_Instance);
+            AIN.Set_Corresponding_Declaration
+              (Property_Instance,
+               Property_Association);
+            AIN.Set_Property_Name
+              (Property_Instance,
+               AIN.Property_Name (Property_Association));
             AIN.Set_Is_Additive_Association
               (Property_Instance,
                AIN.Is_Additive_Association (Property_Association));
-            AIN.Set_Is_Constant (Property_Instance,
-                             AIN.Is_Constant (Property_Association));
-            AIN.Set_Is_Private (Property_Instance,
-                                AIN.Is_Private (Property_Association));
-            AIN.Set_Is_Access (Property_Instance,
-                           AIN.Is_Access (Property_Association));
+            AIN.Set_Is_Constant
+              (Property_Instance,
+               AIN.Is_Constant (Property_Association));
+            AIN.Set_Is_Private
+              (Property_Instance,
+               AIN.Is_Private (Property_Association));
+            AIN.Set_Is_Access
+              (Property_Instance,
+               AIN.Is_Access (Property_Association));
             AIN.Set_Applies_To_Prop (Property_Instance, No_List);
-            AIN.Set_In_Binding (Property_Instance,
-                            AIN.In_Binding (Property_Association));
+            AIN.Set_In_Binding
+              (Property_Instance,
+               AIN.In_Binding (Property_Association));
 
             --  Instantiate property "in modes". The fact that a property
             --  association of a mode has an "in modes" clause, has
@@ -401,12 +429,12 @@ package body Ocarina.Instances.Properties is
                   when K_Component_Instance =>
                      Container_Component := Entity_Instance;
 
-                  when K_Port_Spec_Instance |
-                    K_Feature_Group_Spec_Instance |
-                    K_Parameter_Instance |
+                  when K_Port_Spec_Instance        |
+                    K_Feature_Group_Spec_Instance  |
+                    K_Parameter_Instance           |
                     K_Subcomponent_Access_Instance |
-                    K_Subprogram_Spec_Instance |
-                    K_Connection_Instance =>
+                    K_Subprogram_Spec_Instance     |
+                    K_Connection_Instance          =>
                      Container_Component := Parent_Component (Entity_Instance);
 
                   when others =>
@@ -417,8 +445,9 @@ package body Ocarina.Instances.Properties is
                --  property association scince there is no
                --  property_association_instance node kind.
 
-               AIN.Set_In_Modes (Property_Instance,
-                                 AIN.In_Modes (Property_Association));
+               AIN.Set_In_Modes
+                 (Property_Instance,
+                  AIN.In_Modes (Property_Association));
 
                if Present (Container_Component) then
                   Instantiate_In_Modes
@@ -427,14 +456,15 @@ package body Ocarina.Instances.Properties is
                end if;
             end;
 
-            if Present (AIN.Property_Association_Value
-                          (Property_Association)) then
+            if Present
+                (AIN.Property_Association_Value (Property_Association))
+            then
                AIN.Set_Property_Association_Value
                  (Property_Instance,
                   Duplicate_Property_Value
-                  (Instance_Root,
-                   AIN.Property_Association_Value (Property_Association),
-                   Entity_Instance));
+                    (Instance_Root,
+                     AIN.Property_Association_Value (Property_Association),
+                     Entity_Instance));
 
                --  IMPORTANT: we use entity instance where the property
                --  has been declared, as the reference node to
@@ -456,8 +486,8 @@ package body Ocarina.Instances.Properties is
                   AIN.Properties (Pointed_Instance));
             else
                AINU.Append_Node_To_List
-                (Property_Instance,
-                 AIN.Properties (Pointed_Instance));
+                 (Property_Instance,
+                  AIN.Properties (Pointed_Instance));
             end if;
          end if;
       else
@@ -476,11 +506,10 @@ package body Ocarina.Instances.Properties is
      (Instance_Root                  : Node_Id;
       Property_Value                 : Node_Id;
       Instance                       : Node_Id;
-      Former_Property_Instance_Value : Node_Id := No_Node)
-     return Node_Id
+      Former_Property_Instance_Value : Node_Id := No_Node) return Node_Id
    is
-      pragma Assert (No (Property_Value)
-                     or else Kind (Property_Value) = K_Property_Value);
+      pragma Assert
+        (No (Property_Value) or else Kind (Property_Value) = K_Property_Value);
       pragma Assert
         (No (Former_Property_Instance_Value)
          or else No (Single_Value (Former_Property_Instance_Value)));
@@ -495,9 +524,8 @@ package body Ocarina.Instances.Properties is
             Duplicated_Property_Value := No_Node;
 
          else
-            Duplicated_Property_Value := New_Node
-              (K_Property_Value,
-               ATN.Loc (Property_Value));
+            Duplicated_Property_Value :=
+              New_Node (K_Property_Value, ATN.Loc (Property_Value));
 
             if Present (Single_Value (Property_Value)) then
                --  We set the value calculated at analysis time
@@ -505,9 +533,9 @@ package body Ocarina.Instances.Properties is
                Set_Single_Value
                  (Duplicated_Property_Value,
                   Instantiate_Property_Value
-                  (Instance_Root,
-                   Expanded_Single_Value (Property_Value),
-                   Instance));
+                    (Instance_Root,
+                     Expanded_Single_Value (Property_Value),
+                     Instance));
                Set_Expanded_Single_Value
                  (Duplicated_Property_Value,
                   Single_Value (Duplicated_Property_Value));
@@ -519,22 +547,22 @@ package body Ocarina.Instances.Properties is
                Set_Multi_Value
                  (Duplicated_Property_Value,
                   New_List
-                  (K_List_Id,
-                   ATN.Loc (Node_Id (Multi_Value (Property_Value)))));
+                    (K_List_Id,
+                     ATN.Loc (Node_Id (Multi_Value (Property_Value)))));
                Set_Expanded_Multi_Value
                  (Duplicated_Property_Value,
                   Multi_Value (Duplicated_Property_Value));
 
-               List_Node := ATN.First_Node (Expanded_Multi_Value
-                                              (Property_Value));
+               List_Node :=
+                 ATN.First_Node (Expanded_Multi_Value (Property_Value));
 
                while Present (List_Node) loop
-                  Append_Node_To_List (Instantiate_Property_Value
-                                       (Instance_Root,
-                                        List_Node,
-                                        Instance),
-                                       Multi_Value
-                                       (Duplicated_Property_Value));
+                  Append_Node_To_List
+                    (Instantiate_Property_Value
+                       (Instance_Root,
+                        List_Node,
+                        Instance),
+                     Multi_Value (Duplicated_Property_Value));
                   List_Node := ATN.Next_Node (List_Node);
                end loop;
             end if;
@@ -544,30 +572,25 @@ package body Ocarina.Instances.Properties is
          --  We first duplicate the values of the former property
          --  association.
 
-         Duplicated_Property_Value := New_Node
-           (K_Property_Value,
-            ATN.Loc (Property_Value));
+         Duplicated_Property_Value :=
+           New_Node (K_Property_Value, ATN.Loc (Property_Value));
 
          Set_Multi_Value
            (Duplicated_Property_Value,
             New_List
-            (K_List_Id,
-             ATN.Loc (Node_Id (Multi_Value (Property_Value)))));
+              (K_List_Id,
+               ATN.Loc (Node_Id (Multi_Value (Property_Value)))));
          Set_Expanded_Multi_Value
            (Duplicated_Property_Value,
             Multi_Value (Duplicated_Property_Value));
 
-         List_Node := ATN.First_Node
-           (Multi_Value (Former_Property_Instance_Value));
+         List_Node :=
+           ATN.First_Node (Multi_Value (Former_Property_Instance_Value));
 
          while Present (List_Node) loop
             Append_Node_To_List
-              (Instantiate_Property_Value
-               (Instance_Root,
-                List_Node,
-                Instance),
-               Multi_Value
-               (Duplicated_Property_Value));
+              (Instantiate_Property_Value (Instance_Root, List_Node, Instance),
+               Multi_Value (Duplicated_Property_Value));
             List_Node := ATN.Next_Node (List_Node);
          end loop;
 
@@ -576,20 +599,21 @@ package body Ocarina.Instances.Properties is
          if Present (Single_Value (Property_Value)) then
             Append_Node_To_List
               (Instantiate_Property_Value
-               (Instance_Root,
-                Single_Value (Property_Value),
-                Instance),
+                 (Instance_Root,
+                  Single_Value (Property_Value),
+                  Instance),
                Multi_Value (Duplicated_Property_Value));
 
          elsif Multi_Value (Property_Value) /= No_List then
             List_Node := ATN.First_Node (Multi_Value (Property_Value));
 
             while Present (List_Node) loop
-               Append_Node_To_List (Instantiate_Property_Value
-                                    (Instance_Root,
-                                     List_Node,
-                                     Instance),
-                                    Multi_Value (Duplicated_Property_Value));
+               Append_Node_To_List
+                 (Instantiate_Property_Value
+                    (Instance_Root,
+                     List_Node,
+                     Instance),
+                  Multi_Value (Duplicated_Property_Value));
                List_Node := ATN.Next_Node (List_Node);
             end loop;
          end if;
@@ -610,8 +634,7 @@ package body Ocarina.Instances.Properties is
    function Instantiate_Property_Value
      (Instance_Root  : Node_Id;
       Property_Value : Node_Id;
-      Instance       : Node_Id)
-     return Node_Id
+      Instance       : Node_Id) return Node_Id
    is
       pragma Assert
         (No (Property_Value)
@@ -630,8 +653,8 @@ package body Ocarina.Instances.Properties is
       pragma Assert (Present (Instance));
 
       Instantiated_Value : Node_Id := No_Node;
-      List_Node : Node_Id := No_Node;
-      Node : Node_Id;
+      List_Node          : Node_Id := No_Node;
+      Node               : Node_Id;
 
    begin
       if No (Property_Value) then
@@ -640,67 +663,71 @@ package body Ocarina.Instances.Properties is
 
       case ATN.Kind (Property_Value) is
          when K_Literal =>
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
             Set_Value (Instantiated_Value, Value (Property_Value));
 
          when K_Property_Term | K_Enumeration_Term =>
 
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
-            ATN.Set_Identifier (Instantiated_Value,
-                                ATE.Duplicate_Identifier
-                                  (ATN.Identifier (Property_Value)));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
+            ATN.Set_Identifier
+              (Instantiated_Value,
+               ATE.Duplicate_Identifier (ATN.Identifier (Property_Value)));
             Set_Entity (Instantiated_Value, Entity (Property_Value));
-            Set_Property_Set_Identifier (Instantiated_Value,
-                                         Property_Set_Identifier
-                                           (Property_Value));
+            Set_Property_Set_Identifier
+              (Instantiated_Value,
+               Property_Set_Identifier (Property_Value));
 
          when K_Number_Range_Term =>
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
             Set_Lower_Bound (Instantiated_Value, Lower_Bound (Property_Value));
             Set_Upper_Bound (Instantiated_Value, Upper_Bound (Property_Value));
             Set_Delta_Term (Instantiated_Value, Delta_Term (Property_Value));
 
          when K_Reference_Term =>
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
-            Node := New_Node (Kind (Reference_Term (Property_Value)),
-                              ATN.Loc (Reference_Term (Property_Value)));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
+            Node :=
+              New_Node
+                (Kind (Reference_Term (Property_Value)),
+                 ATN.Loc (Reference_Term (Property_Value)));
 
             case AADL_Version is
                when AADL_V1 =>
                   --  Node is an Entity_Reference
 
-                  ATN.Set_Path (Node, ATN.Path (Reference_Term
-                                                 (Property_Value)));
-                  ATN.Set_Identifier (Node,
-                                      ATE.Duplicate_Identifier
-                                        (ATN.Identifier (Reference_Term
-                                                         (Property_Value))));
+                  ATN.Set_Path
+                    (Node,
+                     ATN.Path (Reference_Term (Property_Value)));
+                  ATN.Set_Identifier
+                    (Node,
+                     ATE.Duplicate_Identifier
+                       (ATN.Identifier (Reference_Term (Property_Value))));
 
                when AADL_V2 =>
                   --  Node is a Contained_Element_Path
 
-                  Set_List_Items (Node,
-                                  New_List (K_List_Id,
-                                            ATN.Loc (Node_Id
-                                                      (List_Items
-                                                        (Reference_Term
-                                                         (Property_Value))))));
+                  Set_List_Items
+                    (Node,
+                     New_List
+                       (K_List_Id,
+                        ATN.Loc
+                          (Node_Id
+                             (List_Items (Reference_Term (Property_Value))))));
 
-                  if  List_Items (Reference_Term
-                                    (Property_Value)) /= No_List
+                  if List_Items (Reference_Term (Property_Value)) /=
+                    No_List
                   then
-                     List_Node := ATN.First_Node (List_Items
-                                                   (Reference_Term
-                                                     (Property_Value)));
+                     List_Node :=
+                       ATN.First_Node
+                         (List_Items (Reference_Term (Property_Value)));
 
                      while Present (List_Node) loop
-                        Append_Node_To_List (ATE.Duplicate_Identifier
-                                               (List_Node),
-                                             List_Items (Node));
+                        Append_Node_To_List
+                          (ATE.Duplicate_Identifier (List_Node),
+                           List_Items (Node));
                         List_Node := ATN.Next_Node (List_Node);
                      end loop;
                   end if;
@@ -711,53 +738,60 @@ package body Ocarina.Instances.Properties is
             Set_Reference_Term (Instantiated_Value, Node);
 
          when K_Minus_Numeric_Term =>
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
-            Set_Numeric_Term (Instantiated_Value,
-                              Numeric_Term (Property_Value));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
+            Set_Numeric_Term
+              (Instantiated_Value,
+               Numeric_Term (Property_Value));
 
          when K_Signed_AADLNumber =>
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
-            Set_Number_Value (Instantiated_Value,
-                              Number_Value (Property_Value));
-            Set_Unit_Identifier (Instantiated_Value,
-                                 Unit_Identifier (Property_Value));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
+            Set_Number_Value
+              (Instantiated_Value,
+               Number_Value (Property_Value));
+            Set_Unit_Identifier
+              (Instantiated_Value,
+               Unit_Identifier (Property_Value));
 
          when K_And_Boolean_Term | K_Or_Boolean_Term =>
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
-            Set_First_Term (Instantiated_Value,
-                            Instantiate_Property_Value
-                            (Instance_Root,
-                             First_Term (Property_Value),
-                             Instance));
-            Set_Second_Term (Instantiated_Value,
-                             Instantiate_Property_Value
-                             (Instance_Root,
-                              Second_Term (Property_Value),
-                              Instance));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
+            Set_First_Term
+              (Instantiated_Value,
+               Instantiate_Property_Value
+                 (Instance_Root,
+                  First_Term (Property_Value),
+                  Instance));
+            Set_Second_Term
+              (Instantiated_Value,
+               Instantiate_Property_Value
+                 (Instance_Root,
+                  Second_Term (Property_Value),
+                  Instance));
 
          when K_Not_Boolean_Term | K_Parenthesis_Boolean_Term =>
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
-            Set_Boolean_Term (Instantiated_Value,
-                              Instantiate_Property_Value
-                              (Instance_Root,
-                               Boolean_Term (Property_Value),
-                               Instance));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
+            Set_Boolean_Term
+              (Instantiated_Value,
+               Instantiate_Property_Value
+                 (Instance_Root,
+                  Boolean_Term (Property_Value),
+                  Instance));
 
          when K_Component_Classifier_Term =>
-            Instantiated_Value := New_Node (Kind (Property_Value),
-                                            ATN.Loc (Property_Value));
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
             Set_Referenced_Entity
               (Instantiated_Value,
                Instantiate_Component
-               (Instance_Root,
-                ATE.Get_Referenced_Entity (Property_Value)));
+                 (Instance_Root,
+                  ATE.Get_Referenced_Entity (Property_Value)));
 
-            Set_Component_Cat (Instantiated_Value,
-                               Component_Cat (Property_Value));
+            Set_Component_Cat
+              (Instantiated_Value,
+               Component_Cat (Property_Value));
 
          when others =>
             raise Program_Error;
@@ -773,8 +807,7 @@ package body Ocarina.Instances.Properties is
    function Instantiate_Reference_Term
      (Instance_Root      : Node_Id;
       Reference_Instance : Node_Id;
-      Reference_Term     : Node_Id)
-     return Node_Id
+      Reference_Term     : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Instance_Root) = K_Architecture_Instance);
       pragma Assert (Present (Reference_Instance));
@@ -785,9 +818,9 @@ package body Ocarina.Instances.Properties is
       List_Node              : Node_Id;
       Identifier_Of_Instance : Node_Id;
       Pointed_Instance       : Node_Id;
-      New_Reference_Term     : constant Node_Id := New_Node
-        (K_Reference_Term, ATN.Loc (Reference_Term));
-      Initial_Path           : constant List_Id := ATN.Path (Reference_Term);
+      New_Reference_Term     : constant Node_Id :=
+        New_Node (K_Reference_Term, ATN.Loc (Reference_Term));
+      Initial_Path : constant List_Id := ATN.Path (Reference_Term);
    begin
       --  The instantiation of a reference path returns a path that leads
       --  to the component instance, while the reference path itself
@@ -808,8 +841,8 @@ package body Ocarina.Instances.Properties is
          while Present (List_Node) loop
             pragma Assert (ATN.Kind (ATN.Item (List_Node)) = K_Identifier);
 
-            Pointed_Instance := Find_Local_Instance
-              (Pointed_Instance, ATN.Item (List_Node));
+            Pointed_Instance :=
+              Find_Local_Instance (Pointed_Instance, ATN.Item (List_Node));
 
             if No (Pointed_Instance) then
                ATN.Set_Path (New_Reference_Term, No_List);
@@ -820,16 +853,20 @@ package body Ocarina.Instances.Properties is
                Identifier_Of_Instance :=
                  AIE.Duplicate_Identifier (AIN.Identifier (Pointed_Instance));
                AIE.Add_Path_Element_To_Entity_Reference
-                 (New_Reference_Term, Identifier_Of_Instance);
-               Pointed_Instance := Duplicate_Subprogram_Call_Instance
-                 (Instance_Root, Pointed_Instance);
+                 (New_Reference_Term,
+                  Identifier_Of_Instance);
+               Pointed_Instance :=
+                 Duplicate_Subprogram_Call_Instance
+                   (Instance_Root,
+                    Pointed_Instance);
 
             elsif Kind (Pointed_Instance) = K_Subcomponent_Instance then
                Pointed_Instance := Corresponding_Instance (Pointed_Instance);
                Identifier_Of_Instance :=
                  AIE.Duplicate_Identifier (AIN.Identifier (Pointed_Instance));
                AIE.Add_Path_Element_To_Entity_Reference
-                 (New_Reference_Term, Identifier_Of_Instance);
+                 (New_Reference_Term,
+                  Identifier_Of_Instance);
             end if;
 
             List_Node := ATN.Next_Node (List_Node);

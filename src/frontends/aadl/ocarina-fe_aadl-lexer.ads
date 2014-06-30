@@ -35,8 +35,8 @@
 --  by the parser for scanning AADL source files.  This package is
 --  conformant to the AADL v1.0 issued on 2004-09
 
-with Types;         use Types;
-with Locations;     use Locations;
+with Types;     use Types;
+with Locations; use Locations;
 
 with Ocarina.Files;
 with Ocarina.ME_AADL.Tokens; use Ocarina.ME_AADL.Tokens;
@@ -47,31 +47,33 @@ package Ocarina.FE_AADL.Lexer is
    -- Global variables updated by the token scanner --
    ---------------------------------------------------
 
-   Token                : Token_Type;
-   Token_Location       : Location renames Ocarina.Files.Buffer_Location;
+   Token : Token_Type;
+   Token_Location : Location renames Ocarina.Files.Buffer_Location;
    Token_Name           : Name_Id;   --  for T_Identifier (Lower case)
    Token_Display_Name   : Name_Id;   --  for T_Identifier (Carbon copy)
    String_Literal_Value : Name_Id;   --  for T_String
    Raw_Text_Value       : Name_Id;   --  for T_Raw_Text
 
-   Token_Owner          : Property_Owner_Token;
+   Token_Owner : Property_Owner_Token;
    --  for property owner categories which have right to a special
    --  treatement between Identifiers and Keywords
 
    function Current_Token_Image return String;
    --  Return an image of the current token
 
-   function Load_File (File_Name : Name_Id) return Location
-     renames Ocarina.Files.Load_File;
+   function Load_File
+     (File_Name : Name_Id) return Location renames
+     Ocarina.Files.Load_File;
 
-   procedure Save_Lexer (State : out Location)
-     renames Ocarina.Files.Save_Location;
+   procedure Save_Lexer
+     (State : out Location) renames
+     Ocarina.Files.Save_Location;
 
-   procedure Restore_Lexer (State : Location)
-     renames Ocarina.Files.Restore_Location;
+   procedure Restore_Lexer
+     (State : Location) renames
+     Ocarina.Files.Restore_Location;
 
-   function End_Of_File return Boolean
-     renames Ocarina.Files.End_Of_File;
+   function End_Of_File return Boolean renames Ocarina.Files.End_Of_File;
 
    procedure Scan_Token (Ignore_Invalid_Character : Boolean := False);
    --  Scan token and update the global variables declared above.
@@ -86,8 +88,9 @@ package Ocarina.FE_AADL.Lexer is
    --  Skip tokens until we find Delimiter
    --  This procedure verifies that skipped tokens are well embraced
 
-   procedure Skip_Tokens (Delimiters : Token_List_Type;
-                          Include_Delimiter : Boolean := True);
+   procedure Skip_Tokens
+     (Delimiters        : Token_List_Type;
+      Include_Delimiter : Boolean := True);
    --  Same as above, with each token T in given list, calls Skip_Tokens (T)
 
 end Ocarina.FE_AADL.Lexer;

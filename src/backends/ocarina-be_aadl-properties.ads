@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,7 +35,7 @@ package Ocarina.BE_AADL.Properties is
 
    procedure Print_Property_Association
      (Node      : Node_Id;
-      Contained : Boolean        := False);
+      Contained : Boolean := False);
    --  If Contained is set to True, the statement will be
    --  indented. Set to False if the indentation is done by the
    --  calling procedure (this is the case for a contained property

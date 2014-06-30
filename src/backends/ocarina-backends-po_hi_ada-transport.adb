@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -91,24 +91,27 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       begin
          --  Entity
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
-            Subtype_Mark        => RE (RE_Entity_Type),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
+              Subtype_Mark        => RE (RE_Entity_Type),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
          --  Message
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
-            Subtype_Mark        => RE (RE_Stream_Element_Array),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
+              Subtype_Mark        => RE (RE_Stream_Element_Array),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Make_Defining_Identifier (SN (S_Deliver)),
-            Parameter_Profile   => Profile,
-            Return_Type         => No_Node);
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier => Make_Defining_Identifier (SN (S_Deliver)),
+              Parameter_Profile   => Profile,
+              Return_Type         => No_Node);
 
          return N;
       end Deliver_Spec;
@@ -125,32 +128,36 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       begin
          --  From
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_From)),
-            Subtype_Mark        => RE (RE_Entity_Type),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_From)),
+              Subtype_Mark        => RE (RE_Entity_Type),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
          --  Entity
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
-            Subtype_Mark        => RE (RE_Entity_Type),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
+              Subtype_Mark        => RE (RE_Entity_Type),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
          --  Message
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
-            Subtype_Mark        => RE (RE_Message_Type),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
+              Subtype_Mark        => RE (RE_Message_Type),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Make_Defining_Identifier (SN (S_Send)),
-            Parameter_Profile   => Profile,
-            Return_Type         => RE (RE_Error_Kind));
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier => Make_Defining_Identifier (SN (S_Send)),
+              Parameter_Profile   => Profile,
+              Return_Type         => RE (RE_Error_Kind));
 
          return N;
       end Send_Spec;
@@ -187,8 +194,8 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -207,8 +214,9 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := ADN.Entity (U);
          N : Node_Id;
       begin
@@ -294,8 +302,8 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       ------------------
 
       function Deliver_Body (E : Node_Id) return Node_Id is
-         Spec         : constant Node_Id := ADN.Deliver_Node
-           (Backend_Node (Identifier (E)));
+         Spec : constant Node_Id :=
+           ADN.Deliver_Node (Backend_Node (Identifier (E)));
          Declarations : constant List_Id := New_List (ADN.K_Declaration_List);
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Alternatives : constant List_Id := New_List (ADN.K_List_Id);
@@ -307,10 +315,12 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
          if not Need_Deliver (E) then
             --  Generate a dummy Deliver
 
-            N := Make_Pragma_Statement
-              (Pragma_Unreferenced,
-               Make_List_Id (Make_Defining_Identifier (PN (P_Entity)),
-                             Make_Defining_Identifier (PN (P_Message))));
+            N :=
+              Make_Pragma_Statement
+                (Pragma_Unreferenced,
+                 Make_List_Id
+                   (Make_Defining_Identifier (PN (P_Entity)),
+                    Make_Defining_Identifier (PN (P_Message))));
             Append_Node_To_List (N, Declarations);
 
             N := Make_Null_Statement;
@@ -318,23 +328,26 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
          else
             --  Declarative part
 
-            N := Make_Used_Package
-              (RU (RU_PolyORB_HI_Generated_Deployment));
+            N := Make_Used_Package (RU (RU_PolyORB_HI_Generated_Deployment));
             Append_Node_To_List (N, Declarations);
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
-               Object_Definition   => RE (RE_Message_Type));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
+                 Object_Definition   => RE (RE_Message_Type));
             Append_Node_To_List (N, Declarations);
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier (PN (P_Value)),
-               Object_Definition   => RE (RE_Unsigned_16));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (PN (P_Value)),
+                 Object_Definition => RE (RE_Unsigned_16));
             Append_Node_To_List (N, Declarations);
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier (PN (P_Port)),
-               Object_Definition   => RE (RE_Port_Type_1));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier => Make_Defining_Identifier (PN (P_Port)),
+                 Object_Definition   => RE (RE_Port_Type_1));
             Append_Node_To_List (N, Declarations);
 
             --  Add a use clause for the
@@ -348,44 +361,50 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
             --  Get the message payload
 
-            N := Make_Expression
-              (Make_Attribute_Designator
-               (Make_Designator (PN (P_Message)), A_First),
-               Op_Plus,
-               RE (RE_Header_Size));
+            N :=
+              Make_Expression
+                (Make_Attribute_Designator
+                   (Make_Designator (PN (P_Message)),
+                    A_First),
+                 Op_Plus,
+                 RE (RE_Header_Size));
 
-            N := Make_Range_Constraint
-              (N,
-               Make_Attribute_Designator
-               (Make_Designator (PN (P_Message)), A_Last));
+            N :=
+              Make_Range_Constraint
+                (N,
+                 Make_Attribute_Designator
+                   (Make_Designator (PN (P_Message)),
+                    A_Last));
 
-            N := Make_Subprogram_Call
-              (Make_Designator (PN (P_Message)), Make_List_Id (N));
+            N :=
+              Make_Subprogram_Call
+                (Make_Designator (PN (P_Message)),
+                 Make_List_Id (N));
 
-            N := Make_Subprogram_Call
-              (RE (RE_Write),
-               Make_List_Id
-               (Make_Defining_Identifier (PN (P_Msg)),
-                N));
+            N :=
+              Make_Subprogram_Call
+                (RE (RE_Write),
+                 Make_List_Id (Make_Defining_Identifier (PN (P_Msg)), N));
             Append_Node_To_List (N, Statements);
 
             --  Unmarshall the destination port
 
-            N := Make_Subprogram_Call
-              (RE (RE_Unmarshall_1),
-               Make_List_Id
-               (Make_Defining_Identifier (PN (P_Value)),
-                Make_Defining_Identifier (PN (P_Msg))));
+            N :=
+              Make_Subprogram_Call
+                (RE (RE_Unmarshall_1),
+                 Make_List_Id
+                   (Make_Defining_Identifier (PN (P_Value)),
+                    Make_Defining_Identifier (PN (P_Msg))));
             Append_Node_To_List (N, Statements);
 
-            N := Make_Subprogram_Call
-              (RE (RE_Corresponding_Port),
-               Make_List_Id
-                 (Make_Defining_Identifier (PN (P_Value))));
-            N := Make_Assignment_Statement
-              (Variable_Identifier =>
-                 Make_Defining_Identifier (PN (P_Port)),
-               Expression => N);
+            N :=
+              Make_Subprogram_Call
+                (RE (RE_Corresponding_Port),
+                 Make_List_Id (Make_Defining_Identifier (PN (P_Value))));
+            N :=
+              Make_Assignment_Statement
+                (Variable_Identifier => Make_Defining_Identifier (PN (P_Port)),
+                 Expression          => N);
 
             Append_Node_To_List (N, Statements);
 
@@ -410,24 +429,26 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                   --  Call the internal delivery routine of the thread
 
-                  N := Make_Subprogram_Call
-                    (Make_Defining_Identifier
-                     (Map_Deliver_Name (Corresponding_Instance (T))),
-                     Make_List_Id
-                     (Make_Defining_Identifier (PN (P_Port)),
-                      Make_Subprogram_Call
-                      (RE (RE_Sender),
-                       Make_List_Id (Make_Designator (PN (P_Message)))),
-                      Make_Defining_Identifier (PN (P_Msg))));
+                  N :=
+                    Make_Subprogram_Call
+                      (Make_Defining_Identifier
+                         (Map_Deliver_Name (Corresponding_Instance (T))),
+                       Make_List_Id
+                         (Make_Defining_Identifier (PN (P_Port)),
+                          Make_Subprogram_Call
+                            (RE (RE_Sender),
+                             Make_List_Id (Make_Designator (PN (P_Message)))),
+                          Make_Defining_Identifier (PN (P_Msg))));
 
                   --  The case statement alternative
 
-                  N := Make_Elsif_Statement
-                    (Make_Expression
-                       (Make_Defining_Identifier (PN (P_Entity)),
-                        Op_Equal,
-                        Extract_Enumerator (Corresponding_Instance (T))),
-                     Make_List_Id (N));
+                  N :=
+                    Make_Elsif_Statement
+                      (Make_Expression
+                         (Make_Defining_Identifier (PN (P_Entity)),
+                          Op_Equal,
+                          Extract_Enumerator (Corresponding_Instance (T))),
+                       Make_List_Id (N));
                   Append_Node_To_List (N, Alternatives);
                end if;
 
@@ -438,15 +459,16 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                Elsif_Statements : constant List_Id := New_List (ADN.K_List_Id);
 
             begin
-               ADN.Set_First_Node (Elsif_Statements,
-                                   ADN.Next_Node
-                                     (ADN.First_Node (Alternatives)));
+               ADN.Set_First_Node
+                 (Elsif_Statements,
+                  ADN.Next_Node (ADN.First_Node (Alternatives)));
 
-               N := Make_If_Statement
-                 (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
-                  Then_Statements => ADN.Then_Statements
-                    (ADN.First_Node (Alternatives)),
-                  Elsif_Statements => Elsif_Statements);
+               N :=
+                 Make_If_Statement
+                   (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
+                    Then_Statements =>
+                      ADN.Then_Statements (ADN.First_Node (Alternatives)),
+                    Elsif_Statements => Elsif_Statements);
 
                Append_Node_To_List (N, Statements);
             end;
@@ -461,8 +483,8 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       ---------------
 
       function Send_Body (E : Node_Id) return Node_Id is
-         Spec         : constant Node_Id := ADN.Send_Node
-           (Backend_Node (Identifier (E)));
+         Spec : constant Node_Id :=
+           ADN.Send_Node (Backend_Node (Identifier (E)));
          Declarations : constant List_Id := New_List (ADN.K_Declaration_List);
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Alternatives : constant List_Id := New_List (ADN.K_List_Id);
@@ -474,38 +496,41 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
          if not Need_Send (E) then
             --  Generate a dummy Send
 
-            N := Make_Pragma_Statement
-              (Pragma_Unreferenced,
-               Make_List_Id (Make_Defining_Identifier (PN (P_From)),
-                             Make_Defining_Identifier (PN (P_Entity)),
-                             Make_Defining_Identifier (PN (P_Message))));
+            N :=
+              Make_Pragma_Statement
+                (Pragma_Unreferenced,
+                 Make_List_Id
+                   (Make_Defining_Identifier (PN (P_From)),
+                    Make_Defining_Identifier (PN (P_Entity)),
+                    Make_Defining_Identifier (PN (P_Message))));
             Append_Node_To_List (N, Declarations);
 
-            N := Make_Qualified_Expression
-              (RE (RE_Error_Kind),
-               Make_Record_Aggregate
-                 (Make_List_Id
-                    (RE (RE_Error_Transport))));
+            N :=
+              Make_Qualified_Expression
+                (RE (RE_Error_Kind),
+                 Make_Record_Aggregate
+                   (Make_List_Id (RE (RE_Error_Transport))));
             N := Make_Return_Statement (N);
             Append_Node_To_List (N, Statements);
 
          else
             --  Declarative part
 
-            N := Make_Used_Package
-              (RU (RU_PolyORB_HI_Generated_Deployment));
+            N := Make_Used_Package (RU (RU_PolyORB_HI_Generated_Deployment));
             Append_Node_To_List (N, Declarations);
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
-               Constant_Present    => True,
-               Object_Definition   => RE (RE_Stream_Element_Array),
-               Expression          => Make_Subprogram_Call
-                 (RE (RE_Encapsulate),
-                  Make_List_Id
-                  (Make_Defining_Identifier (PN (P_Message)),
-                   Make_Defining_Identifier (PN (P_From)),
-                   Make_Defining_Identifier (PN (P_Entity)))));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
+                 Constant_Present    => True,
+                 Object_Definition   => RE (RE_Stream_Element_Array),
+                 Expression          =>
+                   Make_Subprogram_Call
+                     (RE (RE_Encapsulate),
+                      Make_List_Id
+                        (Make_Defining_Identifier (PN (P_Message)),
+                         Make_Defining_Identifier (PN (P_From)),
+                         Make_Defining_Identifier (PN (P_Entity)))));
             Append_Node_To_List (N, Declarations);
 
             --  Statements
@@ -531,22 +556,24 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                   --  Call the internal sending routine of the thread
 
-                  N := Make_Subprogram_Call
-                    (Make_Defining_Identifier
-                     (Map_Send_Name (Corresponding_Instance (T))),
-                     Make_List_Id
-                     (Make_Defining_Identifier (PN (P_Entity)),
-                      Make_Defining_Identifier (PN (P_Msg))));
+                  N :=
+                    Make_Subprogram_Call
+                      (Make_Defining_Identifier
+                         (Map_Send_Name (Corresponding_Instance (T))),
+                       Make_List_Id
+                         (Make_Defining_Identifier (PN (P_Entity)),
+                          Make_Defining_Identifier (PN (P_Msg))));
                   N := Make_Return_Statement (N);
 
                   --  The case statement alternative
 
-                  N := Make_Elsif_Statement
-                    (Make_Expression
-                       (Make_Defining_Identifier (PN (P_From)),
-                        Op_Equal,
-                        Extract_Enumerator (Corresponding_Instance (T))),
-                     Make_List_Id (N));
+                  N :=
+                    Make_Elsif_Statement
+                      (Make_Expression
+                         (Make_Defining_Identifier (PN (P_From)),
+                          Op_Equal,
+                          Extract_Enumerator (Corresponding_Instance (T))),
+                       Make_List_Id (N));
                   Append_Node_To_List (N, Alternatives);
                end if;
 
@@ -555,37 +582,38 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
             declare
                Elsif_Statements : constant List_Id := New_List (ADN.K_List_Id);
-               Else_Statements : constant List_Id := New_List (ADN.K_List_Id);
+               Else_Statements  : constant List_Id := New_List (ADN.K_List_Id);
 
             begin
                if Present (ADN.First_Node (Alternatives)) then
-                  N := Make_Qualified_Expression
-                  (RE (RE_Error_Kind),
-                   Make_Record_Aggregate
-                     (Make_List_Id
-                        (RE (RE_Error_Transport))));
+                  N :=
+                    Make_Qualified_Expression
+                      (RE (RE_Error_Kind),
+                       Make_Record_Aggregate
+                         (Make_List_Id (RE (RE_Error_Transport))));
                   N := Make_Return_Statement (N);
                   Append_Node_To_List (N, Else_Statements);
 
-                  ADN.Set_First_Node (Elsif_Statements,
-                                      ADN.Next_Node
-                                        (ADN.First_Node (Alternatives)));
+                  ADN.Set_First_Node
+                    (Elsif_Statements,
+                     ADN.Next_Node (ADN.First_Node (Alternatives)));
 
-                  N := Make_If_Statement
-                    (Condition => ADN.Condition
-                       (ADN.First_Node (Alternatives)),
-                     Then_Statements => ADN.Then_Statements
-                       (ADN.First_Node (Alternatives)),
-                     Elsif_Statements => Elsif_Statements,
-                     Else_Statements => Else_Statements);
+                  N :=
+                    Make_If_Statement
+                      (Condition =>
+                         ADN.Condition (ADN.First_Node (Alternatives)),
+                       Then_Statements =>
+                         ADN.Then_Statements (ADN.First_Node (Alternatives)),
+                       Elsif_Statements => Elsif_Statements,
+                       Else_Statements  => Else_Statements);
 
                   Append_Node_To_List (N, Statements);
                else
-                  N := Make_Qualified_Expression
-                    (RE (RE_Error_Kind),
-                     Make_Record_Aggregate
-                       (Make_List_Id
-                          (RE (RE_Error_Transport))));
+                  N :=
+                    Make_Qualified_Expression
+                      (RE (RE_Error_Kind),
+                       Make_Record_Aggregate
+                         (Make_List_Id (RE (RE_Error_Transport))));
                   N := Make_Return_Statement (N);
                   Append_Node_To_List (N, Statements);
                end if;
@@ -606,35 +634,39 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       begin
          --  The Port parameter
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Port)),
-            Subtype_Mark        => RE (RE_Port_Type_1),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Port)),
+              Subtype_Mark        => RE (RE_Port_Type_1),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
          --  The Sender parameter
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_From)),
-            Subtype_Mark        => RE (RE_Entity_Type),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_From)),
+              Subtype_Mark        => RE (RE_Entity_Type),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
          --  The Msg parameter
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
-            Subtype_Mark        => RE (RE_Message_Type),
-            Parameter_Mode      => Mode_Inout);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
+              Subtype_Mark        => RE (RE_Message_Type),
+              Parameter_Mode      => Mode_Inout);
          Append_Node_To_List (N, Profile);
 
          --  The subprogram spec
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Make_Defining_Identifier
-              (Map_Deliver_Name (E)),
-            Parameter_Profile   => Profile,
-            Return_Type         => No_Node);
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier =>
+                Make_Defining_Identifier (Map_Deliver_Name (E)),
+              Parameter_Profile => Profile,
+              Return_Type       => No_Node);
          return N;
       end Internal_Deliver_Spec;
 
@@ -661,15 +693,15 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
             --  Declare a local variable of type the thread interface
 
-            N := Make_Used_Package
-              (RU (RU_PolyORB_HI_Generated_Deployment));
+            N := Make_Used_Package (RU (RU_PolyORB_HI_Generated_Deployment));
             Append_Node_To_List (N, Declarations);
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (VN (V_Thread_Interface)),
-               Object_Definition   => Make_Defining_Identifier
-                 (Map_Port_Interface_Name (E)));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (VN (V_Thread_Interface)),
+                 Object_Definition =>
+                   Make_Defining_Identifier (Map_Port_Interface_Name (E)));
             Append_Node_To_List (N, Declarations);
 
             --  For each port of the thread, create a switch case
@@ -681,8 +713,7 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance and then Is_In (F) then
                   declare
-                     St           : constant List_Id :=
-                       New_List (ADN.K_Statement_List);
+                     St : constant List_Id := New_List (ADN.K_Statement_List);
                      Call_Profile : constant List_Id :=
                        New_List (ADN.K_List_Id);
                   begin
@@ -694,42 +725,45 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                         --  it has not been done yet.
 
                         if not Time_Stamp_Declared then
-                           N := Make_Object_Declaration
-                             (Defining_Identifier => Make_Defining_Identifier
-                                (VN (V_Time_Stamp)),
-                              Object_Definition => RE (RE_Time));
+                           N :=
+                             Make_Object_Declaration
+                               (Defining_Identifier =>
+                                  Make_Defining_Identifier (VN (V_Time_Stamp)),
+                                Object_Definition => RE (RE_Time));
                            Append_Node_To_List (N, Declarations);
 
                            Time_Stamp_Declared := True;
                         end if;
 
-                        N := Make_Subprogram_Call
-                          (RE (RE_Unmarshall_2),
-                           Make_List_Id
-                           (Make_Defining_Identifier (VN (V_Time_Stamp)),
-                            Make_Defining_Identifier (PN (P_Msg))));
+                        N :=
+                          Make_Subprogram_Call
+                            (RE (RE_Unmarshall_2),
+                             Make_List_Id
+                               (Make_Defining_Identifier (VN (V_Time_Stamp)),
+                                Make_Defining_Identifier (PN (P_Msg))));
                         Append_Node_To_List (N, St);
                      end if;
 
                      --  Unmarshall the received message
 
-                     N := Make_Subprogram_Call
-                       (Extract_Designator
-                        (ADN.Unmarshall_Node
-                         (Backend_Node
-                          (Identifier (E)))),
-                        Make_List_Id
-                        (Map_Ada_Defining_Identifier (F),
-                         Make_Defining_Identifier (VN (V_Thread_Interface)),
-                         Make_Defining_Identifier (PN (P_Msg))));
+                     N :=
+                       Make_Subprogram_Call
+                         (Extract_Designator
+                            (ADN.Unmarshall_Node
+                               (Backend_Node (Identifier (E)))),
+                          Make_List_Id
+                            (Map_Ada_Defining_Identifier (F),
+                             Make_Defining_Identifier
+                               (VN (V_Thread_Interface)),
+                             Make_Defining_Identifier (PN (P_Msg))));
                      Append_Node_To_List (N, St);
 
                      --  Store the received message
 
-                     N := Extract_Designator
-                       (ADN.Store_Received_Message_Node
-                        (Backend_Node
-                         (Identifier (E))));
+                     N :=
+                       Extract_Designator
+                         (ADN.Store_Received_Message_Node
+                            (Backend_Node (Identifier (E))));
 
                      Append_Node_To_List
                        (Extract_Enumerator (E),
@@ -754,12 +788,13 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
                      --  Create the case statement alternative
 
-                     N := Make_Elsif_Statement
-                       (Make_Expression
-                          (Make_Defining_Identifier (PN (P_Port)),
-                           Op_Equal,
-                           Extract_Enumerator (F)),
-                        St);
+                     N :=
+                       Make_Elsif_Statement
+                         (Make_Expression
+                            (Make_Defining_Identifier (PN (P_Port)),
+                             Op_Equal,
+                             Extract_Enumerator (F)),
+                          St);
                      Append_Node_To_List (N, Alternatives);
                   end;
                end if;
@@ -771,15 +806,16 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                Elsif_Statements : constant List_Id := New_List (ADN.K_List_Id);
 
             begin
-               ADN.Set_First_Node (Elsif_Statements,
-                                   ADN.Next_Node
-                                     (ADN.First_Node (Alternatives)));
+               ADN.Set_First_Node
+                 (Elsif_Statements,
+                  ADN.Next_Node (ADN.First_Node (Alternatives)));
 
-               N := Make_If_Statement
-                 (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
-                  Then_Statements => ADN.Then_Statements
-                    (ADN.First_Node (Alternatives)),
-                  Elsif_Statements => Elsif_Statements);
+               N :=
+                 Make_If_Statement
+                   (Condition => ADN.Condition (ADN.First_Node (Alternatives)),
+                    Then_Statements =>
+                      ADN.Then_Statements (ADN.First_Node (Alternatives)),
+                    Elsif_Statements => Elsif_Statements);
 
                Append_Node_To_List (N, Statements);
             end;
@@ -799,27 +835,30 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       begin
          --  Entity
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
-            Subtype_Mark        => RE (RE_Entity_Type),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
+              Subtype_Mark        => RE (RE_Entity_Type),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
          --  Message
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
-            Subtype_Mark        => RE (RE_Stream_Element_Array),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
+              Subtype_Mark        => RE (RE_Stream_Element_Array),
+              Parameter_Mode      => Mode_In);
          Append_Node_To_List (N, Profile);
 
          --  The subprogram spec
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Make_Defining_Identifier
-              (Map_Send_Name (E)),
-            Parameter_Profile   => Profile,
-            Return_Type         => RE (RE_Error_Kind));
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier =>
+                Make_Defining_Identifier (Map_Send_Name (E)),
+              Parameter_Profile => Profile,
+              Return_Type       => RE (RE_Error_Kind));
          return N;
       end Internal_Send_Spec;
 
@@ -839,8 +878,9 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
          ----------------
 
          function Is_Handled (T : Node_Id) return Boolean is
-            I_Name : constant Name_Id := Get_String_Name
-              (Node_Id'Image (T) & Handled_Thread & Node_Id'Image (E));
+            I_Name : constant Name_Id :=
+              Get_String_Name
+                (Node_Id'Image (T) & Handled_Thread & Node_Id'Image (E));
          begin
             return Get_Name_Table_Byte (I_Name) = 1;
          end Is_Handled;
@@ -850,8 +890,9 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
          -----------------
 
          procedure Set_Handled (T : Node_Id) is
-            I_Name : constant Name_Id := Get_String_Name
-              (Node_Id'Image (T) & Handled_Thread & Node_Id'Image (E));
+            I_Name : constant Name_Id :=
+              Get_String_Name
+                (Node_Id'Image (T) & Handled_Thread & Node_Id'Image (E));
          begin
             Set_Name_Table_Byte (I_Name, 1);
          end Set_Handled;
@@ -870,19 +911,19 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
             --  destination of E to send the message using the proper
             --  transport layer.
 
-            N := Make_Pragma_Statement
-              (Pragma_Warnings,
-               Make_List_Id
-                 (RE (RE_Off),
-                  Make_Defining_Identifier
-                    (PN (P_Message))));
+            N :=
+              Make_Pragma_Statement
+                (Pragma_Warnings,
+                 Make_List_Id
+                   (RE (RE_Off),
+                    Make_Defining_Identifier (PN (P_Message))));
             Append_Node_To_List (N, Declarations);
-            N := Make_Pragma_Statement
-              (Pragma_Warnings,
-               Make_List_Id
-                 (RE (RE_Off),
-                  Make_Defining_Identifier
-                    (PN (P_Entity))));
+            N :=
+              Make_Pragma_Statement
+                (Pragma_Warnings,
+                 Make_List_Id
+                   (RE (RE_Off),
+                    Make_Defining_Identifier (PN (P_Entity))));
             Append_Node_To_List (N, Declarations);
 
             F := First_Node (Features (E));
@@ -924,120 +965,130 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                                  --  local communication: use the
                                  --  deliver routine.
 
-                                 K := Make_Subprogram_Call
-                                   (Make_Defining_Identifier
-                                    (SN (S_Deliver)),
-                                    Make_List_Id
-                                    (Make_Defining_Identifier
-                                     (PN (P_Entity)),
-                                     Make_Defining_Identifier
-                                     (PN (P_Message))));
+                                 K :=
+                                   Make_Subprogram_Call
+                                     (Make_Defining_Identifier
+                                        (SN (S_Deliver)),
+                                      Make_List_Id
+                                        (Make_Defining_Identifier
+                                           (PN (P_Entity)),
+                                         Make_Defining_Identifier
+                                           (PN (P_Message))));
 
                                  --  Local delivery implies no
                                  --  potential error, we return
                                  --  Error_None.
 
-                                 N := Make_Qualified_Expression
-                                   (RE (RE_Error_Kind),
-                                    Make_Record_Aggregate
-                                      (Make_List_Id
-                                         (RE (RE_Error_None))));
+                                 N :=
+                                   Make_Qualified_Expression
+                                     (RE (RE_Error_Kind),
+                                      Make_Record_Aggregate
+                                        (Make_List_Id (RE (RE_Error_None))));
 
                                  N := Make_Return_Statement (N);
 
                                  --  Create the case statement alternative
 
-                                 N := Make_Elsif_Statement
-                                   (Make_Expression
-                                      (Make_Defining_Identifier
-                                         (PN (P_Entity)),
-                                       Op_Equal,
-                                       Extract_Enumerator (Dest_th)),
-                                    Make_List_Id (K, N));
+                                 N :=
+                                   Make_Elsif_Statement
+                                     (Make_Expression
+                                        (Make_Defining_Identifier
+                                           (PN (P_Entity)),
+                                         Op_Equal,
+                                         Extract_Enumerator (Dest_Th)),
+                                      Make_List_Id (K, N));
                                  Append_Node_To_List (N, Alternatives);
 
                               elsif Device /= No_Node
                                 and then AAU.Is_Device
-                                (Corresponding_Instance (Device))
+                                  (Corresponding_Instance (Device))
                               then
-                                 K := Message_Comment
-                                   ("User-provided transport mechanism, "
-                                      & "device "
-                                      & Get_Name_String
-                                      (Name (Identifier (Device))));
+                                 K :=
+                                   Message_Comment
+                                     ("User-provided transport mechanism, " &
+                                      "device " &
+                                      Get_Name_String
+                                        (Name (Identifier (Device))));
 
                                  declare
-                                    Profile : constant List_Id
-                                      := New_List (ADN.K_Parameter_Profile);
+                                    Profile : constant List_Id :=
+                                      New_List (ADN.K_Parameter_Profile);
                                     A : Node_Id;
                                  begin
                                     --  Entity
 
-                                    A := Make_Parameter_Specification
-                                      (Make_Defining_Identifier
-                                         (PN (P_Node)),
-                                       RE (RE_Node_Type),
-                                       Mode_In);
+                                    A :=
+                                      Make_Parameter_Specification
+                                        (Make_Defining_Identifier
+                                           (PN (P_Node)),
+                                         RE (RE_Node_Type),
+                                         Mode_In);
                                     Append_Node_To_List (A, Profile);
 
                                     --  Message
 
-                                    A := Make_Parameter_Specification
-                                      (Make_Defining_Identifier
-                                         (PN (P_Message)),
-                                       RE (RE_Stream_Element_Array),
-                                       Mode_In);
+                                    A :=
+                                      Make_Parameter_Specification
+                                        (Make_Defining_Identifier
+                                           (PN (P_Message)),
+                                         RE (RE_Stream_Element_Array),
+                                         Mode_In);
                                     Append_Node_To_List (A, Profile);
 
-                                    A := Make_Parameter_Specification
-                                      (Make_Defining_Identifier
-                                         (PN (P_Size)),
-                                       RE (RE_Stream_Element_Offset),
-                                       Mode_In);
+                                    A :=
+                                      Make_Parameter_Specification
+                                        (Make_Defining_Identifier
+                                           (PN (P_Size)),
+                                         RE (RE_Stream_Element_Offset),
+                                         Mode_In);
                                     Append_Node_To_List (A, Profile);
                                  end;
 
-                                 N := Make_Designator
-                                   (Unit_Name
-                                      (Get_Send_Function_Name
-                                         (Corresponding_Instance (Device))));
+                                 N :=
+                                   Make_Designator
+                                     (Unit_Name
+                                        (Get_Send_Function_Name
+                                           (Corresponding_Instance (Device))));
                                  Add_With_Package (N);
 
-                                 N := Make_Designator
-                                   (Local_Name
-                                      (Get_Send_Function_Name
-                                         (Corresponding_Instance (Device))),
-                                    Unit_Name
-                                      (Get_Send_Function_Name
-                                         (Corresponding_Instance (Device))));
+                                 N :=
+                                   Make_Designator
+                                     (Local_Name
+                                        (Get_Send_Function_Name
+                                           (Corresponding_Instance (Device))),
+                                      Unit_Name
+                                        (Get_Send_Function_Name
+                                           (Corresponding_Instance (Device))));
 
-                                 N := Make_Subprogram_Call
-                                   (ADN.Defining_Identifier (N),
-                                    Make_List_Id
-                                    (Make_Indexed_Component
-                                     (RE (RE_Entity_Table),
+                                 N :=
+                                   Make_Subprogram_Call
+                                     (ADN.Defining_Identifier (N),
                                       Make_List_Id
-                                      (Make_Defining_Identifier
-                                       (PN (P_Entity)))),
-                                     Make_Defining_Identifier
-                                       (PN (P_Message)),
-                                     Make_Attribute_Designator
-                                       (Prefix =>
-                                          Make_Defining_Identifier
-                                          (PN (P_Message)),
-                                        Attribute => A_Length)));
+                                        (Make_Indexed_Component
+                                           (RE (RE_Entity_Table),
+                                            Make_List_Id
+                                              (Make_Defining_Identifier
+                                                 (PN (P_Entity)))),
+                                         Make_Defining_Identifier
+                                           (PN (P_Message)),
+                                         Make_Attribute_Designator
+                                           (Prefix =>
+                                              Make_Defining_Identifier
+                                                (PN (P_Message)),
+                                            Attribute => A_Length)));
 
                                  N := Make_Return_Statement (N);
 
                                  --  Create the case statement alternative
 
-                                 N := Make_Elsif_Statement
-                                   (Make_Expression
-                                      (Make_Defining_Identifier
-                                         (PN (P_Entity)),
-                                       Op_Equal,
-                                       Extract_Enumerator (Dest_th)),
-                                    Make_List_Id (K, N));
+                                 N :=
+                                   Make_Elsif_Statement
+                                     (Make_Expression
+                                        (Make_Defining_Identifier
+                                           (PN (P_Entity)),
+                                         Op_Equal,
+                                         Extract_Enumerator (Dest_Th)),
+                                      Make_List_Id (K, N));
                                  Append_Node_To_List (N, Alternatives);
 
                               else
@@ -1047,41 +1098,45 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
                                  --  mechanism provided by the
                                  --  runtime.
 
-                                 pragma Assert (Get_Transport_API (B)
-                                                  /= Transport_None);
+                                 pragma Assert
+                                   (Get_Transport_API (B) /= Transport_None);
 
-                                 K := Message_Comment
-                                   ("Default transport mechanism");
+                                 K :=
+                                   Message_Comment
+                                     ("Default transport mechanism");
 
-                                 N := Make_Subprogram_Call
-                                   (RE (RE_Send_3),
-                                    Make_List_Id
-                                    (Make_Indexed_Component
-                                     (RE (RE_Entity_Table),
+                                 N :=
+                                   Make_Subprogram_Call
+                                     (RE (RE_Send_3),
                                       Make_List_Id
-                                      (Make_Defining_Identifier
-                                       (PN (P_Entity)))),
-                                     Make_Defining_Identifier
-                                     (PN (P_Message))));
+                                        (Make_Indexed_Component
+                                           (RE (RE_Entity_Table),
+                                            Make_List_Id
+                                              (Make_Defining_Identifier
+                                                 (PN (P_Entity)))),
+                                         Make_Defining_Identifier
+                                           (PN (P_Message))));
 
                                  N := Make_Return_Statement (N);
 
                                  --  Create the case statement alternative
 
-                                 N := Make_Elsif_Statement
-                                   (Make_Expression
-                                      (Make_Defining_Identifier
-                                         (PN (P_Entity)),
-                                       Op_Equal,
-                                       Extract_Enumerator (Dest_th)),
-                                    Make_List_Id (K, N));
+                                 N :=
+                                   Make_Elsif_Statement
+                                     (Make_Expression
+                                        (Make_Defining_Identifier
+                                           (PN (P_Entity)),
+                                         Op_Equal,
+                                         Extract_Enumerator (Dest_Th)),
+                                      Make_List_Id (K, N));
                                  Append_Node_To_List (N, Alternatives);
                               end if;
 
                               Set_Handled (Dest_Th);
 
                            elsif AAU.Is_Device (Dest_Th)
-                             and then not Is_Handled (Dest_Th) then
+                             and then not Is_Handled (Dest_Th)
+                           then
 
                               N := Message_Comment ("Device");
                               Append_Node_To_List (N, Statements);
@@ -1104,46 +1159,47 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
             --  Raise an error if other ports are targeted.
 
             if Length (Alternatives) /= 0 then
-               N := Make_Used_Package
-                 (RU (RU_PolyORB_HI_Generated_Deployment));
+               N :=
+                 Make_Used_Package (RU (RU_PolyORB_HI_Generated_Deployment));
                Append_Node_To_List (N, Declarations);
 
                declare
-                  Elsif_Statements : constant List_Id
-                    := New_List (ADN.K_List_Id);
-                  Else_Statements : constant List_Id
-                    := New_List (ADN.K_List_Id);
+                  Elsif_Statements : constant List_Id :=
+                    New_List (ADN.K_List_Id);
+                  Else_Statements : constant List_Id :=
+                    New_List (ADN.K_List_Id);
 
                begin
-                  N := Make_Qualified_Expression
-                    (RE (RE_Error_Kind),
-                     Make_Record_Aggregate
-                       (Make_List_Id
-                          (RE (RE_Error_Transport))));
+                  N :=
+                    Make_Qualified_Expression
+                      (RE (RE_Error_Kind),
+                       Make_Record_Aggregate
+                         (Make_List_Id (RE (RE_Error_Transport))));
                   N := Make_Return_Statement (N);
                   Append_Node_To_List (N, Else_Statements);
 
-                  ADN.Set_First_Node (Elsif_Statements,
-                                      ADN.Next_Node
-                                        (ADN.First_Node (Alternatives)));
+                  ADN.Set_First_Node
+                    (Elsif_Statements,
+                     ADN.Next_Node (ADN.First_Node (Alternatives)));
 
-                  N := Make_If_Statement
-                    (Condition => ADN.Condition
-                       (ADN.First_Node (Alternatives)),
-                     Then_Statements => ADN.Then_Statements
-                       (ADN.First_Node (Alternatives)),
-                     Elsif_Statements => Elsif_Statements,
-                     Else_Statements => Else_Statements);
+                  N :=
+                    Make_If_Statement
+                      (Condition =>
+                         ADN.Condition (ADN.First_Node (Alternatives)),
+                       Then_Statements =>
+                         ADN.Then_Statements (ADN.First_Node (Alternatives)),
+                       Elsif_Statements => Elsif_Statements,
+                       Else_Statements  => Else_Statements);
 
                   Append_Node_To_List (N, Statements);
                end;
 
             else
-               N := Make_Qualified_Expression
-                 (RE (RE_Error_Kind),
-                  Make_Record_Aggregate
-                    (Make_List_Id
-                       (RE (RE_Error_Transport))));
+               N :=
+                 Make_Qualified_Expression
+                   (RE (RE_Error_Kind),
+                    Make_Record_Aggregate
+                      (Make_List_Id (RE (RE_Error_Transport))));
                N := Make_Return_Statement (N);
                Append_Node_To_List (N, Statements);
             end if;
@@ -1185,8 +1241,8 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -1208,8 +1264,9 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := ADN.Entity (U);
          S : Node_Id;
          N : Node_Id;

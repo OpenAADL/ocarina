@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,8 +39,7 @@ package Ocarina.Builder.AADL.Components.Prototypes is
       Container      : Node_Id;
       Classifier_Ref : Node_Id;
       Category       : Ocarina.ME_AADL.Component_Category;
-      Is_Refinement  : Boolean := False)
-     return Node_Id;
+      Is_Refinement  : Boolean := False) return Node_Id;
    --  Create and add a new prototype into a component
    --  implementation or component type. Loc is the location of the
    --  prototype in the parsed text. Name references an identifier
@@ -56,8 +55,7 @@ package Ocarina.Builder.AADL.Components.Prototypes is
       Name           : Node_Id;
       Container      : Node_Id;
       Classifier_Ref : Node_Id;
-      Category       : Ocarina.ME_AADL.Component_Category)
-     return Node_Id;
+      Category       : Ocarina.ME_AADL.Component_Category) return Node_Id;
    --  Create a new prototype binding. Loc is the location of the prototype
    --  binding in the parsed text. Name references an identifier which
    --  contains the name of the prototype binding. Container references

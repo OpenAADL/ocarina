@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -97,33 +97,34 @@ package body Ocarina.Analyzer.AADL is
       --  Link the identifiers and designators to their corresponding
       --  AADL components and namespaces.
 
-      Success := Success
+      Success :=
+        Success
         and then Check_Names_In_Namespaces (Root)
         and then Link_Declarations_Of_Namespaces (Root);
 
       --  Check the semantics of the AADL specification in order to
       --  display the maximum amount of error messages.
 
-      Success := Success
-        and then Check_Semantics_In_Namespaces (Root);
+      Success := Success and then Check_Semantics_In_Namespaces (Root);
 
       --  Link the identifiers and designators to their corresponding
       --  AADL subcomponents, subclauses or port groups.
 
-      Success := Success
+      Success :=
+        Success
         and then Check_Names_In_Components_And_Feature_Groups (Root)
         and then Link_Subclauses_In_Components_And_Feature_Groups (Root);
 
       --  Check the semantics of subclauses and port groups
 
-      Success := Success
-        and then Check_Semantics_In_Components (Root);
+      Success := Success and then Check_Semantics_In_Components (Root);
 
       --  Link the identifiers and designators to their corresponding
       --  AADL property types and constants and check the semantics of
       --  the properties.
 
-      Success := Success
+      Success :=
+        Success
         and then Link_Properties_Of_AADL_Description (Root)
         and then Check_Semantics_Of_Properties (Root);
 
@@ -133,7 +134,7 @@ package body Ocarina.Analyzer.AADL is
       then
          Print_AADL_Tree
            (Root,
-            Ocarina.Me_AADL.AADL_Tree.Debug.W_Node_Id'Access);
+            Ocarina.ME_AADL.AADL_Tree.Debug.W_Node_Id'Access);
       end if;
 
       return Success;
@@ -145,8 +146,7 @@ package body Ocarina.Analyzer.AADL is
 
    function Have_Common_Statements
      (Node_1 : Node_Id;
-      Node_2 : Node_Id)
-     return Boolean
+      Node_2 : Node_Id) return Boolean
    is
       List_1      : List_Id;
       List_2      : List_Id;
@@ -210,7 +210,7 @@ package body Ocarina.Analyzer.AADL is
                      Name_Id_1 := Get_Name_Of_Entity_Reference (List_Item_1);
                      Name_Id_2 := Get_Name_Of_Entity_Reference (List_Item_2);
 
-                     if Name_Id_1 = Name_Id_2  then
+                     if Name_Id_1 = Name_Id_2 then
                         return True;
                         --  XXX We only consider identifers or modes,
                         --  not classifier references, etc. Hence this

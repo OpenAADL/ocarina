@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,7 +35,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Tree.Debug;
-with Ocarina.ME_AADl.AADL_Instances.Nodes;
+with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Utils;
 with Namet;
@@ -56,14 +56,15 @@ package body Ocarina.Transfo is
    -----------------------
 
    function Build_Unique_Name
-     (List : List_Id; Prefix : Name_Id; Shift : Natural := 0) return Name_Id
+     (List   : List_Id;
+      Prefix : Name_Id;
+      Shift  : Natural := 0) return Name_Id
    is
       ----------------
       -- Is_Natural --
       ----------------
 
-      function Is_Natural (Str : String) return Boolean
-      is
+      function Is_Natural (Str : String) return Boolean is
       begin
          for I in 1 .. Str'Length loop
             if Str (I) not in '0' .. '9' then
@@ -75,21 +76,22 @@ package body Ocarina.Transfo is
       end Is_Natural;
 
       Prefix_Str : constant String := Get_Name_String (Prefix);
-      N          : Node_Id := No_Node;
+      N          : Node_Id         := No_Node;
       T, Sup     : Name_Id;
       I          : Int;
-      Max        : Int := -1;
+      Max        : Int             := -1;
    begin
       if not Is_Empty (List) then
          N := First_Node (List);
       end if;
 
       while Present (N) loop
-         if Kind (N) = K_Subcomponent or else
-           Kind (N) = K_Component_Type or else
-           Kind (N) = K_Component_Implementation or else
-           Kind (N) = K_Port_Spec or else
-           Kind (N) = K_Connection then
+         if Kind (N) = K_Subcomponent
+           or else Kind (N) = K_Component_Type
+           or else Kind (N) = K_Component_Implementation
+           or else Kind (N) = K_Port_Spec
+           or else Kind (N) = K_Connection
+         then
 
             --  We search for the greater value of <Id>
             --  in all <Prefix>_<id>
@@ -123,7 +125,8 @@ package body Ocarina.Transfo is
    ---------------------------------
 
    function Build_Unique_Component_Name
-     (Pkg : Node_Id; Prefix : Name_Id) return Name_Id
+     (Pkg    : Node_Id;
+      Prefix : Name_Id) return Name_Id
    is
       pragma Assert (Kind (Pkg) = K_Package_Specification);
    begin
@@ -135,7 +138,8 @@ package body Ocarina.Transfo is
    ------------------------------------
 
    function Build_Unique_Subcomponent_Name
-     (Container : Node_Id; Prefix : Name_Id) return Name_Id
+     (Container : Node_Id;
+      Prefix    : Name_Id) return Name_Id
    is
       pragma Assert (Kind (Container) = K_Component_Implementation);
    begin
@@ -148,12 +152,12 @@ package body Ocarina.Transfo is
 
    procedure Init is
    begin
-      Thread_Prefix := Get_String_Name ("thr_");
-      Process_Prefix := Get_String_Name ("proc_");
+      Thread_Prefix     := Get_String_Name ("thr_");
+      Process_Prefix    := Get_String_Name ("proc_");
       Subprogram_Prefix := Get_String_Name ("func_");
-      Data_Prefix := Get_String_Name ("dat_");
-      Feature_Prefix := Get_String_Name ("msg_");
-      Wrapper_Prefix := Get_String_Name ("wrapper_");
+      Data_Prefix       := Get_String_Name ("dat_");
+      Feature_Prefix    := Get_String_Name ("msg_");
+      Wrapper_Prefix    := Get_String_Name ("wrapper_");
       Connection_Prefix := Get_String_Name ("cnx_");
    end Init;
 
@@ -161,8 +165,9 @@ package body Ocarina.Transfo is
    -- Search_Thread_By_Name --
    ---------------------------
 
-   function Search_Thread_By_Name (Process : Node_Id; Thread_Name : String)
-     return Node_Id
+   function Search_Thread_By_Name
+     (Process     : Node_Id;
+      Thread_Name : String) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Instances.Entities;
 
@@ -174,9 +179,7 @@ package body Ocarina.Transfo is
             declare
                Raw_Name : constant String :=
                  Get_Name_String
-                 (Name
-                  (Identifier
-                   (AIN.Corresponding_Declaration (T))));
+                   (Name (Identifier (AIN.Corresponding_Declaration (T))));
             begin
                if Raw_Name = Thread_Name then
                   return T;
@@ -193,9 +196,7 @@ package body Ocarina.Transfo is
    -- Search_Process_By_Name --
    ----------------------------
 
-   function Search_Process_By_Name (Process_Name : String)
-     return Node_Id
-   is
+   function Search_Process_By_Name (Process_Name : String) return Node_Id is
       use Ocarina.ME_AADL.AADL_Instances.Entities;
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
 
@@ -209,11 +210,12 @@ package body Ocarina.Transfo is
          if AIN.Kind (N) = AIN.K_Component_Instance then
             if Get_Category_Of_Component (N) = CC_Process then
                if Get_Name_String
-                 (ATN.Name
-                  (ATN.Identifier
-                   (AIN.Corresponding_Declaration
-                    (AIN.Parent_Subcomponent
-                     (N))))) = Process_Name then
+                   (ATN.Name
+                      (ATN.Identifier
+                         (AIN.Corresponding_Declaration
+                            (AIN.Parent_Subcomponent (N))))) =
+                 Process_Name
+               then
                   Node := N;
                end if;
             end if;
@@ -227,8 +229,7 @@ package body Ocarina.Transfo is
    -- Build_Name_From_Path --
    --------------------------
 
-   function Build_Name_From_Path (Path : List_Id) return Name_Id
-   is
+   function Build_Name_From_Path (Path : List_Id) return Name_Id is
       N     : Node_Id := First_Node (Path);
       First : Boolean := True;
    begin
@@ -251,16 +252,17 @@ package body Ocarina.Transfo is
    -- Concat_Names --
    ------------------
 
-   function Concat_Names (N1, N2 : Node_Id) return Name_Id
-   is
-      pragma Assert (Kind (N1) = K_Component_Type or else
-                     Kind (N1) = K_Component_Implementation);
-      pragma Assert (Kind (N2) = K_Component_Type or else
-                     Kind (N2) = K_Component_Implementation);
+   function Concat_Names (N1, N2 : Node_Id) return Name_Id is
+      pragma Assert
+        (Kind (N1) = K_Component_Type
+         or else Kind (N1) = K_Component_Implementation);
+      pragma Assert
+        (Kind (N2) = K_Component_Type
+         or else Kind (N2) = K_Component_Implementation);
       NM1 : constant Name_Id := Name (Identifier (N1));
       NM2 : constant Name_Id := Name (Identifier (N2));
-      Str : constant String := Get_Name_String (NM1) & "_" &
-        Get_Name_String (NM2);
+      Str : constant String  :=
+        Get_Name_String (NM1) & "_" & Get_Name_String (NM2);
    begin
       return Get_String_Name (Str);
    end Concat_Names;

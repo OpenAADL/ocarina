@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -84,9 +84,7 @@ package Ocarina.Backends is
    procedure Set_Current_Backend_Name (Name : String);
    function Get_Current_Backend_Name return Name_Id;
 
-   procedure Generate_Code
-     (Root         : Node_Id;
-      Backend_Name : Name_Id  := No_Name);
+   procedure Generate_Code (Root : Node_Id; Backend_Name : Name_Id := No_Name);
    --  Call the backend name if it is set or the current backend name
    --  set in the command line. If the backend name and the current
    --  backend name are set, backend name has the priority.

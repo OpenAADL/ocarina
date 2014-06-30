@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -65,8 +65,8 @@ package body Ocarina.BE_AADL.Namespaces is
      (Node      : Node_Id;
       Criterion : Node_Id)
    is
-      Ident      : constant Node_Id := Identifier (Node);
-      List_Node  : Node_Id;
+      Ident     : constant Node_Id := Identifier (Node);
+      List_Node : Node_Id;
 
       Someting_To_Print : Boolean := False;
    begin
@@ -84,8 +84,8 @@ package body Ocarina.BE_AADL.Namespaces is
 
          while Present (List_Node) loop
 
-            Someting_To_Print := Is_Printable (List_Node, Criterion)
-              or else Someting_To_Print;
+            Someting_To_Print :=
+              Is_Printable (List_Node, Criterion) or else Someting_To_Print;
 
             exit when Someting_To_Print;
 
@@ -161,8 +161,9 @@ package body Ocarina.BE_AADL.Namespaces is
    ------------------------
 
    procedure Print_Property_Set (Node : Node_Id) is
-      procedure Internal_Print_Property_Set is new
-        Print_Constrained_Property_Set (Always_Printable);
+      procedure Internal_Print_Property_Set is
+         new Print_Constrained_Property_Set
+        (Always_Printable);
    begin
       Internal_Print_Property_Set (Node, No_Node);
    end Print_Property_Set;
@@ -176,9 +177,9 @@ package body Ocarina.BE_AADL.Namespaces is
 
       Pack_Identifier   : constant Node_Id := Identifier (Node);
       List_Node         : Node_Id;
-      Someting_To_Print : Boolean := False;
-      Has_Public        : Boolean := False;
-      Has_Private       : Boolean := False;
+      Someting_To_Print : Boolean          := False;
+      Has_Public        : Boolean          := False;
+      Has_Private       : Boolean          := False;
    begin
       --  First of all see whether the constraint let us some
       --  declarations to print.
@@ -187,11 +188,11 @@ package body Ocarina.BE_AADL.Namespaces is
          List_Node := First_Node (Declarations (Node));
 
          while Present (List_Node) loop
-            Someting_To_Print := Is_Printable (List_Node, Criterion)
-              or else Someting_To_Print;
+            Someting_To_Print :=
+              Is_Printable (List_Node, Criterion) or else Someting_To_Print;
 
-            Has_Public  := Has_Public  or else not Is_Private (List_Node);
-            Has_Private := Has_Private or else     Is_Private (List_Node);
+            Has_Public  := Has_Public or else not Is_Private (List_Node);
+            Has_Private := Has_Private or else Is_Private (List_Node);
 
             List_Node := Next_Node (List_Node);
          end loop;
@@ -249,8 +250,9 @@ package body Ocarina.BE_AADL.Namespaces is
             declare
                Number_Of_Properties : Integer := 0;
             begin
-               List_Node := First_Node
-                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
+               List_Node :=
+                 First_Node
+                   (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
 
                while Present (List_Node) loop
                   if not Is_Private (List_Node)
@@ -268,8 +270,8 @@ package body Ocarina.BE_AADL.Namespaces is
                end if;
             end;
 
-            List_Node := First_Node
-              (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
+            List_Node :=
+              First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
 
             while Present (List_Node) loop
                if not Is_Private (List_Node)
@@ -287,8 +289,8 @@ package body Ocarina.BE_AADL.Namespaces is
 
       if not Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Annexes (Node)) then
          Increment_Indentation;
-         List_Node := First_Node
-           (Ocarina.ME_AADL.AADL_Tree.Nodes.Annexes (Node));
+         List_Node :=
+           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Annexes (Node));
 
          while Present (List_Node) loop
             Print_Annex_Subclause (List_Node);
@@ -339,8 +341,9 @@ package body Ocarina.BE_AADL.Namespaces is
             declare
                Number_Of_Properties : Integer := 0;
             begin
-               List_Node := First_Node
-                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
+               List_Node :=
+                 First_Node
+                   (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
 
                while Present (List_Node) loop
                   if Is_Private (List_Node)
@@ -358,8 +361,8 @@ package body Ocarina.BE_AADL.Namespaces is
                end if;
             end;
 
-            List_Node := First_Node
-              (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
+            List_Node :=
+              First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
 
             while Present (List_Node) loop
                if Is_Private (List_Node)
@@ -374,10 +377,11 @@ package body Ocarina.BE_AADL.Namespaces is
       end if;
 
       if AADL_Version = AADL_V2 then
-         if not Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
-                            (Node)) then
-            List_Node := First_Node
-              (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
+         if not Is_Empty
+             (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node))
+         then
+            List_Node :=
+              First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Node));
 
             while Present (List_Node) loop
                if Is_Printable (List_Node, Criterion) then
@@ -402,8 +406,8 @@ package body Ocarina.BE_AADL.Namespaces is
    -------------------
 
    procedure Print_Package (Node : Node_Id) is
-      procedure Internal_Print_Package is new
-        Print_Constrained_Package (Always_Printable);
+      procedure Internal_Print_Package is new Print_Constrained_Package
+        (Always_Printable);
    begin
       Internal_Print_Package (Node, No_Node);
    end Print_Package;
@@ -420,10 +424,11 @@ package body Ocarina.BE_AADL.Namespaces is
 
       --  Some internal procedures
 
-      procedure Internal_Print_Package is new
-        Print_Constrained_Package (Is_Printable);
-      procedure Internal_Print_Property_Set is new
-        Print_Constrained_Property_Set  (Is_Printable);
+      procedure Internal_Print_Package is new Print_Constrained_Package
+        (Is_Printable);
+      procedure Internal_Print_Property_Set is
+         new Print_Constrained_Property_Set
+        (Is_Printable);
 
       List_Node : Node_Id;
    begin
@@ -468,8 +473,9 @@ package body Ocarina.BE_AADL.Namespaces is
    ------------------------------
 
    procedure Print_AADL_Specification (Node : Node_Id) is
-      procedure Internal_Print_AADL_Specification is new
-        Print_Constrained_AADL_Specification (Always_Printable);
+      procedure Internal_Print_AADL_Specification is
+         new Print_Constrained_AADL_Specification
+        (Always_Printable);
    begin
       Internal_Print_AADL_Specification (Node, No_Node);
    end Print_AADL_Specification;
@@ -526,11 +532,13 @@ package body Ocarina.BE_AADL.Namespaces is
                Print_Identifier (List_Node);
 
             when K_Package_Name =>
-               Name_Node := First_Node
-                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (List_Node));
+               Name_Node :=
+                 First_Node
+                   (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (List_Node));
                while Present (Name_Node) loop
-                  if Name_Node /= First_Node
-                    (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (List_Node))
+                  if Name_Node /=
+                    First_Node
+                      (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (List_Node))
                   then
                      Print_Token (T_Colon_Colon);
                   end if;
@@ -559,8 +567,9 @@ package body Ocarina.BE_AADL.Namespaces is
       Is_All     : Boolean := False;
 
    begin
-      Entity_Cat := Ocarina.ME_AADL.Entity_Category'Val
-        (Ocarina.ME_AADL.AADL_Tree.Nodes.Entity_Category (Node));
+      Entity_Cat :=
+        Ocarina.ME_AADL.Entity_Category'Val
+          (Ocarina.ME_AADL.AADL_Tree.Nodes.Entity_Category (Node));
 
       Is_All := Ocarina.ME_AADL.AADL_Tree.Nodes.Is_All (Node);
 
@@ -576,13 +585,15 @@ package body Ocarina.BE_AADL.Namespaces is
 
             Write_Space;
 
-            List_Node := First_Node
-              (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers
-                 (Package_Name (Node)));
+            List_Node :=
+              First_Node
+                (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers
+                   (Package_Name (Node)));
             while Present (List_Node) loop
-               if List_Node /= First_Node
-                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers
-                    (Package_Name (Node)))
+               if List_Node /=
+                 First_Node
+                   (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers
+                      (Package_Name (Node)))
                then
                   Print_Token (T_Colon_Colon);
                end if;

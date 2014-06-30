@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,20 +31,20 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Locations;                         use Locations;
-with Namet;                             use Namet;
-with Output;                            use Output;
+with Locations; use Locations;
+with Namet;     use Namet;
+with Output;    use Output;
 
 with Ocarina.FE_AADL.Lexer;             use Ocarina.FE_AADL.Lexer;
 with Ocarina.FE_AADL.Parser.Namespaces; use Ocarina.FE_AADL.Parser.Namespaces;
 with Ocarina.ME_AADL.Tokens;            use Ocarina.ME_AADL.Tokens;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;   use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-with Ocarina.Files;                     use Ocarina.Files;
-with Ocarina.ME_AADL.AADL_Tree.Nutils;  use Ocarina.ME_AADL.AADL_Tree.Nutils;
-with Ocarina.Options;                   use Ocarina.Options;
-with Ocarina.Parser;                    use Ocarina.Parser;
-with Ocarina.Property_Sets;             use Ocarina.Property_Sets;
+with Ocarina.Files;                    use Ocarina.Files;
+with Ocarina.ME_AADL.AADL_Tree.Nutils; use Ocarina.ME_AADL.AADL_Tree.Nutils;
+with Ocarina.Options;                  use Ocarina.Options;
+with Ocarina.Parser;                   use Ocarina.Parser;
+with Ocarina.Property_Sets;            use Ocarina.Property_Sets;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 with GNAT.OS_Lib;       use GNAT.OS_Lib;
@@ -87,7 +87,7 @@ package body Ocarina.FE_AADL.Parser is
                exit;
 
             when 'y' =>
-               Auto_Load_Aadl_Files := True;
+               Auto_Load_AADL_Files := True;
 
             when 'I' =>
                Add_Library_Path (Parameter);
@@ -114,12 +114,11 @@ package body Ocarina.FE_AADL.Parser is
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
-      Code      : Parsing_Code)
-     return Integer
+      Code      : Parsing_Code) return Integer
    is
-      Loc   : Location;
+      Loc      : Location;
       Nb_Items : Integer := 0;
-      Item  : Node_Id;
+      Item     : Node_Id;
 
    begin
       Save_Lexer (Loc);
@@ -160,8 +159,7 @@ package body Ocarina.FE_AADL.Parser is
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
-      Code      : Parsing_Code)
-     return List_Id
+      Code      : Parsing_Code) return List_Id
    is
       Loc   : Location;
       Items : List_Id;
@@ -207,8 +205,7 @@ package body Ocarina.FE_AADL.Parser is
       Container    : Node_Id;
       Refinable    : Boolean;
       Code         : Parsing_Code;
-      At_Least_One : Boolean                       := True)
-     return Integer
+      At_Least_One : Boolean := True) return Integer
    is
       Loc   : Location;
       Item  : Node_Id;
@@ -254,10 +251,9 @@ package body Ocarina.FE_AADL.Parser is
    --  parse ( { Element }* Element Delimiter )
 
    function P_Elements_List
-     (Func         : P_Item_Function_Ptr;
-      Container    : Node_Id;
-      Delimiter    : Ocarina.ME_AADL.Tokens.Token_Type)
-     return List_Id
+     (Func      : P_Item_Function_Ptr;
+      Container : Node_Id;
+      Delimiter : Ocarina.ME_AADL.Tokens.Token_Type) return List_Id
    is
       Element       : Node_Id;
       Elements_List : List_Id;
@@ -284,9 +280,9 @@ package body Ocarina.FE_AADL.Parser is
          end if;
       end loop;
 
-      Set_Loc (Node_Id (Elements_List),
-               Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (First_Node
-                                                      (Elements_List)));
+      Set_Loc
+        (Node_Id (Elements_List),
+         Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (First_Node (Elements_List)));
       return Elements_List;
    end P_Elements_List;
 
@@ -297,10 +293,9 @@ package body Ocarina.FE_AADL.Parser is
    --  ( { Item Separator }* Item )
 
    function P_Items_List
-     (Func         : P_Item_Function_Ptr;
-      Container    : Node_Id;
-      Separator    : Ocarina.ME_AADL.Tokens.Token_Type)
-     return List_Id
+     (Func      : P_Item_Function_Ptr;
+      Container : Node_Id;
+      Separator : Ocarina.ME_AADL.Tokens.Token_Type) return List_Id
    is
       Item  : Node_Id;
       Items : List_Id;
@@ -324,8 +319,9 @@ package body Ocarina.FE_AADL.Parser is
          end if;
       end loop;
 
-      Set_Loc (Node_Id (Items),
-               Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (First_Node (Items)));
+      Set_Loc
+        (Node_Id (Items),
+         Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (First_Node (Items)));
       return Items;
    end P_Items_List;
 
@@ -342,8 +338,7 @@ package body Ocarina.FE_AADL.Parser is
       Separator       : Ocarina.ME_AADL.Tokens.Token_Type;
       Delimiter       : Ocarina.ME_AADL.Tokens.Token_Type;
       Code            : Parsing_Code;
-      With_Terminator : Boolean                            := False)
-     return List_Id
+      With_Terminator : Boolean := False) return List_Id
    is
       Item      : Node_Id;
       Items     : List_Id;
@@ -384,8 +379,9 @@ package body Ocarina.FE_AADL.Parser is
          end if;
       end loop;
 
-      Set_Loc (Node_Id (Items),
-               Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (First_Node (Items)));
+      Set_Loc
+        (Node_Id (Items),
+         Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (First_Node (Items)));
       return Items;
    end P_Items_List;
 
@@ -415,8 +411,7 @@ package body Ocarina.FE_AADL.Parser is
    --------------------------------------
 
    function Process_Predefined_Property_Sets
-     (AADL_Root : Node_Id)
-     return Node_Id
+     (AADL_Root : Node_Id) return Node_Id
    is
       New_Root  : Node_Id := AADL_Root;
       File_Name : Name_Id;
@@ -437,8 +432,7 @@ package body Ocarina.FE_AADL.Parser is
          end if;
          New_Root := Process (New_Root, Buffer);
       end loop;
-      Exit_On_Error
-        (No (New_Root), "Cannot parse ocarina property sets");
+      Exit_On_Error (No (New_Root), "Cannot parse ocarina property sets");
       return New_Root;
    end Process_Predefined_Property_Sets;
 
@@ -449,8 +443,7 @@ package body Ocarina.FE_AADL.Parser is
    function Process
      (AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location)
-     return Node_Id
+      To        : Location := No_Location) return Node_Id
    is
       New_Root  : Node_Id := AADL_Root;
       File_Name : Name_Id;
@@ -469,8 +462,9 @@ package body Ocarina.FE_AADL.Parser is
             if File_Name = No_Name then
                New_Root := No_Node;
                Exit_On_Error
-                 (No (New_Root), "Cannot find standard property set "
-                 & Image (Standard_Property_Sets (J)));
+                 (No (New_Root),
+                  "Cannot find standard property set " &
+                  Image (Standard_Property_Sets (J)));
                exit;
             end if;
             Buffer := Lexer.Load_File (File_Name);
@@ -480,8 +474,7 @@ package body Ocarina.FE_AADL.Parser is
             end if;
             New_Root := Process (New_Root, Buffer);
          end loop;
-         Exit_On_Error
-           (No (New_Root), "Cannot parse standard property sets");
+         Exit_On_Error (No (New_Root), "Cannot parse standard property sets");
 
          --  When the user explicitely wants to, parse the files
          --  declaring the Ocarina property sets.

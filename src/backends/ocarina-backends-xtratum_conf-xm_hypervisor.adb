@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -103,8 +103,7 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -142,9 +141,9 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S                    : Node_Id;
-      U                    : Node_Id;
-      R                    : Node_Id;
+      S : Node_Id;
+      U : Node_Id;
+      R : Node_Id;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       R := XTN.Node (Backend_Node (Identifier (E)));
@@ -157,8 +156,8 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -174,13 +173,13 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S                 : Node_Id;
-      Xm_Hypervisor_Node   : Node_Id;
-      Memory_Area_Node     : Node_Id;
-      Area_Node            : Node_Id;
+      S                  : Node_Id;
+      Xm_Hypervisor_Node : Node_Id;
+      Memory_Area_Node   : Node_Id;
+      Area_Node          : Node_Id;
 --      Associated_Memory    : Node_Id;
-      P                    : Node_Id;
-      Q                    : Node_Id;
+      P : Node_Id;
+      Q : Node_Id;
    begin
 
 --      Associated_Memory := Get_Bound_Memory (E);
@@ -202,14 +201,16 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
       Q := Make_Defining_Identifier (Name_Find);
 
       Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Xm_Hypervisor_Node));
+        (Make_Assignement (P, Q),
+         XTN.Items (Xm_Hypervisor_Node));
 
       --  Create the PhysicalMemoryAreas node associated
       --  to the HMHypervisor node.
       Memory_Area_Node := Make_XML_Node ("PhysicalMemoryAreas");
 
-      Append_Node_To_List (Memory_Area_Node,
-                           XTN.Subitems (Xm_Hypervisor_Node));
+      Append_Node_To_List
+        (Memory_Area_Node,
+         XTN.Subitems (Xm_Hypervisor_Node));
 
       --  Create the PhysicalMemoryArea node associated
       --  to the PhysicalMemoryAreas node.
@@ -224,8 +225,7 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
 ---            (Get_Integer_Property
 --               (Associated_Memory, "base_address"), 0, 10));
 
-      Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Area_Node));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Area_Node));
 
       Set_Str_To_Name_Buffer ("size");
       P := Make_Defining_Identifier (Name_Find);
@@ -236,20 +236,19 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
 --            (Get_Integer_Property
 --              (Associated_Memory, "byte_count"), 0, 10));
 
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Area_Node));
+
+      Append_Node_To_List (Area_Node, XTN.Subitems (Memory_Area_Node));
+
       Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Area_Node));
-
-      Append_Node_To_List (Area_Node,
-                           XTN.Subitems (Memory_Area_Node));
-
-      Append_Node_To_List (Xm_Hypervisor_Node,
-                           XTN.Subitems (Current_XML_Node));
+        (Xm_Hypervisor_Node,
+         XTN.Subitems (Current_XML_Node));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -262,13 +261,13 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S           : Node_Id;
+      S : Node_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);

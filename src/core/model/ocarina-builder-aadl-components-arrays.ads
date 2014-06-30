@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,24 +36,21 @@ package Ocarina.Builder.AADL.Components.Arrays is
    function Add_New_Array_Dimension_Size
      (Loc            : Location;
       Container      : Node_Id;
-      Dimension_Size : Node_Id)
-     return Node_Id;
+      Dimension_Size : Node_Id) return Node_Id;
    --  Create a new array_dimension node. Container is the array which
    --  contain one or many dimensions. Dimension_Size is the size
    --  associate to the dimension. When the Dimension_Size is not specify
    --  the declaration is incomplete.
 
    function Add_New_Array_Selection
-     (Loc             : Location;
-      Container       : Node_Id;
-      Identifier      : Node_Id;
-      Range_List      : List_Id)
-     return Node_Id;
+     (Loc        : Location;
+      Container  : Node_Id;
+      Identifier : Node_Id;
+      Range_List : List_Id) return Node_Id;
 
    function Add_New_Range_Selection
      (Container   : Node_Id;
       Lower_Bound : Node_Id;
-      Upper_Bound : Node_Id)
-     return Node_Id;
+      Upper_Bound : Node_Id) return Node_Id;
 
 end Ocarina.Builder.AADL.Components.Arrays;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,13 +43,14 @@ package body Ocarina.Backends.PN.Printer is
    --  Set_Printers  --
    --------------------
 
-   procedure Set_Printers (P_Place : P_Print_Place;
-                           P_Trans : P_Print_Trans;
-                           P_Form_Inf : P_Print_Formalism_Information)
+   procedure Set_Printers
+     (P_Place    : P_Print_Place;
+      P_Trans    : P_Print_Trans;
+      P_Form_Inf : P_Print_Formalism_Information)
    is
    begin
-      Proc_Print_Place := P_Place;
-      Proc_Print_Trans := P_Trans;
+      Proc_Print_Place                 := P_Place;
+      Proc_Print_Trans                 := P_Trans;
       Proc_Print_Formalism_Information := P_Form_Inf;
    end Set_Printers;
 
@@ -74,8 +75,8 @@ package body Ocarina.Backends.PN.Printer is
       Node_Iter : Node_Id;
    begin
       if not Is_Empty (Pn_Subcomponents (Pn_Box (Pn_Generated))) then
-         Node_Iter := OPN.First_Node (Pn_Subcomponents
-                                      (Pn_Box (Pn_Generated)));
+         Node_Iter :=
+           OPN.First_Node (Pn_Subcomponents (Pn_Box (Pn_Generated)));
          while Present (Node_Iter) loop
             if OPN.Kind (Node_Iter) = K_Thread_Pattern then
                Print_Thread (Node_Iter, Pn_Generated);
@@ -87,8 +88,8 @@ package body Ocarina.Backends.PN.Printer is
          end loop;
       end if;
       if not Is_Empty (Pn_Interconnections (Pn_Box (Pn_Generated))) then
-         Node_Iter := OPN.First_Node
-           (Pn_Interconnections (Pn_Box (Pn_Generated)));
+         Node_Iter :=
+           OPN.First_Node (Pn_Interconnections (Pn_Box (Pn_Generated)));
          while Present (Node_Iter) loop
             Proc_Print_Place.all (Pn_Generated, Node_Iter);
             Node_Iter := OPN.Next_Node (Node_Iter);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,21 +34,20 @@
 with Namet;
 with Output;
 
-with Ocarina.Me_AADL.AADL_Tree.Debug;
-with Ocarina.Me_AADL.AADL_Tree.Entities.Properties;
+with Ocarina.ME_AADL.AADL_Tree.Debug;
+with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
 package body Ocarina.Analyzer.Messages is
 
-   use Ocarina.Me_AADL.AADL_Tree.Entities;
-   use Ocarina.Me_AADL.AADL_Tree.Entities.Properties;
+   use Ocarina.ME_AADL.AADL_Tree.Entities;
+   use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
    procedure Display_Location_And_Node_Kind
      (Loc  : Location;
-      Kind : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind);
+      Kind : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind);
 
    function Image
-     (Category : Ocarina.Me_AADL.Component_Category)
-     return String;
+     (Category : Ocarina.ME_AADL.Component_Category) return String;
    --  Return component category image
 
    -----------------------
@@ -57,7 +56,7 @@ package body Ocarina.Analyzer.Messages is
 
    procedure Display_Node_Link (Node1 : Node_Id; Node2 : Node_Id) is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
    begin
       if D_Analyzer then
@@ -94,9 +93,9 @@ package body Ocarina.Analyzer.Messages is
       Message0 : String   := "";
       Loc      : Location := No_Location)
    is
-      use Ocarina.Me_AADL.AADL_Tree.Debug;
+      use Ocarina.ME_AADL.AADL_Tree.Debug;
       use Namet;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Output;
       use Ocarina.ME_AADL;
 
@@ -108,7 +107,7 @@ package body Ocarina.Analyzer.Messages is
       else
          if Present (Node1) then
             Write_Str
-              (Image (Ocarina.Me_AADL.AADL_Tree.Nodes.Loc (Node1)) & ": ");
+              (Image (Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Node1)) & ": ");
          end if;
       end if;
 
@@ -120,8 +119,8 @@ package body Ocarina.Analyzer.Messages is
          if Get_Entity_Category (Node1) /= EC_Undefined then
             Write_Name (Get_Name_Of_Entity (Node1, Get_Display_Name => True));
          elsif Kind (Node1) = K_Entity_Reference then
-            Write_Name (Get_Name_Of_Entity_Reference
-                          (Node1, Get_Display_Name => True));
+            Write_Name
+              (Get_Name_Of_Entity_Reference (Node1, Get_Display_Name => True));
          elsif Kind (Node1) = K_Identifier then
             Write_Name (Display_Name (Node1));
          end if;
@@ -133,11 +132,10 @@ package body Ocarina.Analyzer.Messages is
 
       if Present (Node2) then
          if Get_Entity_Category (Node2) /= EC_Undefined then
-            Write_Name (Get_Name_Of_Entity (Node2,
-                                            Get_Display_Name => True));
+            Write_Name (Get_Name_Of_Entity (Node2, Get_Display_Name => True));
          elsif Kind (Node2) = K_Entity_Reference then
-            Write_Name (Get_Name_Of_Entity_Reference
-                        (Node2, Get_Display_Name => True));
+            Write_Name
+              (Get_Name_Of_Entity_Reference (Node2, Get_Display_Name => True));
 
          elsif Kind (Node2) = K_Identifier then
             Write_Name (Name (Node2));
@@ -156,7 +154,7 @@ package body Ocarina.Analyzer.Messages is
 
    procedure Display_Conflict_Declaration
      (Loc1 : Location;
-      Kind : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind;
+      Kind : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind;
       Name : Name_Id;
       Loc2 : Location)
    is
@@ -185,19 +183,21 @@ package body Ocarina.Analyzer.Messages is
    is
       use Namet;
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
    begin
       Set_Standard_Error;
 
-      Display_Location_And_Node_Kind (Loc (Ident1),
-                                      Kind (Corresponding_Entity (Ident1)));
+      Display_Location_And_Node_Kind
+        (Loc (Ident1),
+         Kind (Corresponding_Entity (Ident1)));
       Write_Str (" '");
       Write_Name (Display_Name (Ident1));
       Write_Str ("' conflicts with declaration ");
 
-      Write_Str (Ocarina.Me_AADL.AADL_Tree.Debug.Image
-                   (Kind (Corresponding_Entity (Ident2))));
+      Write_Str
+        (Ocarina.ME_AADL.AADL_Tree.Debug.Image
+           (Kind (Corresponding_Entity (Ident2))));
       Write_Str (" '");
       Write_Name (Display_Name (Ident2));
       Write_Str ("' at ");
@@ -213,14 +213,14 @@ package body Ocarina.Analyzer.Messages is
 
    procedure Display_Location_And_Node_Kind
      (Loc  : Location;
-      Kind : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind)
+      Kind : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind)
    is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Debug;
+      use Ocarina.ME_AADL.AADL_Tree.Debug;
    begin
       Write_Str (Image (Loc));
       Write_Str (": ");
-      Write_Str (Ocarina.Me_AADL.AADL_Tree.Debug.Image (Kind));
+      Write_Str (Ocarina.ME_AADL.AADL_Tree.Debug.Image (Kind));
    end Display_Location_And_Node_Kind;
 
    ----------------------------
@@ -229,7 +229,7 @@ package body Ocarina.Analyzer.Messages is
 
    procedure Display_Undefined_Item
      (Loc  : Location;
-      Kind : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind;
+      Kind : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind;
       Name : Name_Id)
    is
       use Namet;
@@ -250,10 +250,10 @@ package body Ocarina.Analyzer.Messages is
    -- Display_Undefined_Item --
    ----------------------------
    procedure Display_Undefined_Item
-     (Kind : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind;
+     (Kind : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind;
       Item : Node_Id)
    is
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Output;
       use Namet;
 
@@ -273,19 +273,19 @@ package body Ocarina.Analyzer.Messages is
    -------------------------------------------
 
    procedure Display_Unexpected_Component_Category
-     (Expected_Cat : Ocarina.Me_AADL.Component_Category;
-      Found_Cat    : Ocarina.Me_AADL.Component_Category;
+     (Expected_Cat : Ocarina.ME_AADL.Component_Category;
+      Found_Cat    : Ocarina.ME_AADL.Component_Category;
       Item         : Node_Id;
       Loc          : Location)
    is
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Output;
       use Namet;
 
    begin
       Set_Standard_Error;
 
-      Write_Str (Image (Ocarina.Me_AADL.AADL_Tree.Nodes.Loc (Item)));
+      Write_Str (Image (Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Item)));
       Write_Str (": expected component category ");
       Write_Str (Image (Expected_Cat));
       Write_Str (", found ");
@@ -303,23 +303,23 @@ package body Ocarina.Analyzer.Messages is
    -----------------------------
 
    procedure Display_Unexpected_Type
-     (Expected_Type : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind;
-      Found_Type    : Ocarina.Me_AADL.AADL_Tree.Nodes.Node_Kind;
+     (Expected_Type : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind;
+      Found_Type    : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind;
       Item          : Node_Id;
       Loc           : Location)
    is
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Output;
       use Namet;
 
    begin
       Set_Standard_Error;
 
-      Write_Str (Image (Ocarina.Me_AADL.AADL_Tree.Nodes.Loc (Item)));
+      Write_Str (Image (Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Item)));
       Write_Str (": expected type ");
-      Write_Str (Ocarina.Me_AADL.AADL_Tree.Debug.Image (Expected_Type));
+      Write_Str (Ocarina.ME_AADL.AADL_Tree.Debug.Image (Expected_Type));
       Write_Str (", found type ");
-      Write_Str (Ocarina.Me_AADL.AADL_Tree.Debug.Image (Found_Type));
+      Write_Str (Ocarina.ME_AADL.AADL_Tree.Debug.Image (Found_Type));
       Write_Str (" '");
       Write_Str (Get_Name_String (Display_Name (Item)));
       Write_Str ("' defined at ");
@@ -333,27 +333,41 @@ package body Ocarina.Analyzer.Messages is
    -----------
 
    function Image
-     (Category : Ocarina.ME_AADL.Component_Category)
-     return String
+     (Category : Ocarina.ME_AADL.Component_Category) return String
    is
       use Ocarina.ME_AADL;
    begin
       case Category is
-         when CC_Abstract          => return "Abstract";
-         when CC_Data              => return "Data";
-         when CC_Subprogram        => return "Subprogram";
-         when CC_Subprogram_Group  => return "Subprogram Group";
-         when CC_Thread            => return "Thread";
-         when CC_Thread_Group      => return "Thread Group";
-         when CC_Process           => return "Process";
-         when CC_Memory            => return "Memory";
-         when CC_Processor         => return "Processor";
-         when CC_Virtual_Processor => return "Virtual Processor";
-         when CC_Virtual_Bus       => return "Virtual Bus";
-         when CC_Bus               => return "Bus";
-         when CC_Device            => return "Device";
-         when CC_System            => return "System";
-         when CC_Unknown           => return "UNKNOWN";
+         when CC_Abstract =>
+            return "Abstract";
+         when CC_Data =>
+            return "Data";
+         when CC_Subprogram =>
+            return "Subprogram";
+         when CC_Subprogram_Group =>
+            return "Subprogram Group";
+         when CC_Thread =>
+            return "Thread";
+         when CC_Thread_Group =>
+            return "Thread Group";
+         when CC_Process =>
+            return "Process";
+         when CC_Memory =>
+            return "Memory";
+         when CC_Processor =>
+            return "Processor";
+         when CC_Virtual_Processor =>
+            return "Virtual Processor";
+         when CC_Virtual_Bus =>
+            return "Virtual Bus";
+         when CC_Bus =>
+            return "Bus";
+         when CC_Device =>
+            return "Device";
+         when CC_System =>
+            return "System";
+         when CC_Unknown =>
+            return "UNKNOWN";
       end case;
    end Image;
 
@@ -381,7 +395,7 @@ package body Ocarina.Analyzer.Messages is
 
    procedure Display_Cyclic_Extension (Cycling_Node : Node_Id) is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Present (Cycling_Node));
    begin
@@ -399,7 +413,7 @@ package body Ocarina.Analyzer.Messages is
 
    procedure Display_Cyclic_Inversion (Cycling_Node : Node_Id) is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Present (Cycling_Node));
    begin
@@ -417,7 +431,7 @@ package body Ocarina.Analyzer.Messages is
 
    procedure Display_Cyclic_Subcomponents (Cycling_Node : Node_Id) is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Present (Cycling_Node));
    begin
@@ -438,7 +452,7 @@ package body Ocarina.Analyzer.Messages is
       Existing_Initial_Mode : Node_Id)
    is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Initial_Mode) = K_Mode);
       pragma Assert (Kind (Initial_Mode) = K_Mode);
@@ -464,16 +478,16 @@ package body Ocarina.Analyzer.Messages is
       Non_Existent : Boolean := False)
    is
       use Ocarina.ME_AADL;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Namet;
-      use Ocarina.Me_AADL.AADL_Tree.Debug;
+      use Ocarina.ME_AADL.AADL_Tree.Debug;
       use Output;
 
       pragma Assert (Present (Node));
 
    begin
       Set_Standard_Error;
-      Write_Str (Image (Ocarina.Me_AADL.AADL_Tree.Nodes.Loc (Node)) & ": ");
+      Write_Str (Image (Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Node)) & ": ");
 
       if Warning then
          Write_Str ("warning: ");
@@ -482,8 +496,8 @@ package body Ocarina.Analyzer.Messages is
       if Get_Entity_Category (Node) /= EC_Undefined then
          Write_Name (Get_Name_Of_Entity (Node, Get_Display_Name => True));
       elsif Kind (Node) = K_Entity_Reference then
-         Write_Name (Get_Name_Of_Entity_Reference (Node,
-                                                   Get_Display_Name => True));
+         Write_Name
+           (Get_Name_Of_Entity_Reference (Node, Get_Display_Name => True));
       end if;
 
       Write_Str (" (" & Image (Kind (Node)) & ")");
@@ -492,27 +506,29 @@ package body Ocarina.Analyzer.Messages is
          Write_Str (" points to ");
 
          if Get_Entity_Category (Pointed_Node) /= EC_Undefined then
-            Write_Name (Get_Name_Of_Entity (Pointed_Node,
-                                            Get_Display_Name => True));
+            Write_Name
+              (Get_Name_Of_Entity (Pointed_Node, Get_Display_Name => True));
          elsif Kind (Pointed_Node) = K_Entity_Reference then
-            Write_Name (Get_Name_Of_Entity_Reference
-                        (Pointed_Node, Get_Display_Name => True));
+            Write_Name
+              (Get_Name_Of_Entity_Reference
+                 (Pointed_Node,
+                  Get_Display_Name => True));
          end if;
          Write_Str (" (" & Image (Kind (Pointed_Node)) & ")");
 
          if Non_Existent then
             Write_Str (", which does not exist. ");
             if Kind (Pointed_Node) = K_Entity_Reference then
-               Is_Bad_Spelling (Get_Name_Of_Entity_Reference
-                                  (Pointed_Node,
-                                   Get_Display_Name => True));
+               Is_Bad_Spelling
+                 (Get_Name_Of_Entity_Reference
+                    (Pointed_Node,
+                     Get_Display_Name => True));
             end if;
          else
             Write_Str (", which is not of an adequate kind");
          end if;
       else
-         Write_Str
-           (" does not point to anything or to something unreachable");
+         Write_Str (" does not point to anything or to something unreachable");
       end if;
 
       Write_Eol;
@@ -529,7 +545,7 @@ package body Ocarina.Analyzer.Messages is
       Property_Name        : Node_Id)
    is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Property_Name) = K_Property_Definition_Declaration);
       pragma Assert (Present (Property_Value));
@@ -544,19 +560,19 @@ package body Ocarina.Analyzer.Messages is
       Write_Str (", the value");
 
       if Kind (Property_Value) /= K_Property_Value then
-         Write_Str (" ("
-                    & Property_Type'Image
-                    (Get_Type_Of_Property_Value (Property_Value))
-                    & ")");
+         Write_Str
+           (" (" &
+            Property_Type'Image (Get_Type_Of_Property_Value (Property_Value)) &
+            ")");
          --  We only display the type if the property value is explicit
       end if;
 
       Write_Str (" is not conformant with declaration at ");
       Write_Str (Image (Loc (Property_Name)));
-      Write_Line (" ("
-                  & Property_Type'Image
-                  (Get_Type_Of_Property (Property_Name))
-                  & ")");
+      Write_Line
+        (" (" &
+         Property_Type'Image (Get_Type_Of_Property (Property_Name)) &
+         ")");
 
       Set_Standard_Output;
    end Display_Incompatible_Property_Types;
@@ -567,7 +583,7 @@ package body Ocarina.Analyzer.Messages is
 
    procedure Display_Inconsistent_Property_Type (Property_Type : Node_Id) is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Present (Property_Type));
    begin
@@ -588,8 +604,8 @@ package body Ocarina.Analyzer.Messages is
    is
       use Output;
       use Namet;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
-      use Ocarina.Me_AADL.AADL_Tree.Debug;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Debug;
 
       pragma Assert (Present (Property_Value1));
       pragma Assert (Present (Property_Value2));
@@ -623,8 +639,7 @@ package body Ocarina.Analyzer.Messages is
          Write_Str (Image (Kind (Property_Value1)));
       end if;
 
-      Write_Str (") is inconsistent with "
-                 & "the other one declared at ");
+      Write_Str (") is inconsistent with " & "the other one declared at ");
       Write_Str (Image (Loc (Property_Value2)));
       Write_Str (" (");
 
@@ -656,7 +671,7 @@ package body Ocarina.Analyzer.Messages is
       Property_Name        : Node_Id)
    is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Property_Name) = K_Property_Definition_Declaration);
       pragma Assert (Kind (Property_Association) = K_Property_Association);
@@ -680,8 +695,7 @@ package body Ocarina.Analyzer.Messages is
       if Type_Of_Property_Is_A_List (Property_Name) then
          Write_Line (" is a list.");
       else
-         Write_Line
-           (" is not a list.");
+         Write_Line (" is not a list.");
       end if;
 
       Set_Standard_Output;
@@ -696,7 +710,7 @@ package body Ocarina.Analyzer.Messages is
       Property_Name        : Node_Id)
    is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Property_Name) = K_Property_Definition_Declaration);
       pragma Assert (Kind (Property_Association) = K_Property_Association);
@@ -728,7 +742,7 @@ package body Ocarina.Analyzer.Messages is
       Entity               : Node_Id)
    is
       use Output;
-      use Ocarina.Me_AADL.AADL_Tree.Nodes;
+      use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
       pragma Assert (Kind (Property_Association) = K_Property_Association);
       pragma Assert (Present (Entity));

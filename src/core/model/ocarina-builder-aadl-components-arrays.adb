@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,14 +43,13 @@ package body Ocarina.Builder.AADL.Components.Arrays is
    function Add_New_Array_Dimension_Size
      (Loc            : Location;
       Container      : Node_Id;
-      Dimension_Size : Node_Id)
-     return Node_Id
+      Dimension_Size : Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      pragma Assert (Container /= No_Node
-                     and then Kind (Container) = K_Array_Dimensions);
+      pragma Assert
+        (Container /= No_Node and then Kind (Container) = K_Array_Dimensions);
 
       Node : constant Node_Id := New_Node (K_Array_Dimension_Size, Loc);
 
@@ -67,11 +66,10 @@ package body Ocarina.Builder.AADL.Components.Arrays is
    -----------------------------
 
    function Add_New_Array_Selection
-     (Loc             : Location;
-      Container       : Node_Id;
-      Identifier      : Node_Id;
-      Range_List      : List_Id)
-     return Node_Id
+     (Loc        : Location;
+      Container  : Node_Id;
+      Identifier : Node_Id;
+      Range_List : List_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -94,8 +92,7 @@ package body Ocarina.Builder.AADL.Components.Arrays is
    function Add_New_Range_Selection
      (Container   : Node_Id;
       Lower_Bound : Node_Id;
-      Upper_Bound : Node_Id)
-     return Node_Id
+      Upper_Bound : Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -103,8 +100,10 @@ package body Ocarina.Builder.AADL.Components.Arrays is
       pragma Unreferenced (Container);
       pragma Assert (Present (Lower_Bound));
 
-      Node : constant Node_Id := New_Node (K_Range_Selection,
-                            Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Lower_Bound));
+      Node : constant Node_Id :=
+        New_Node
+          (K_Range_Selection,
+           Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Lower_Bound));
    begin
 
       Set_Lower_Bound (Node, Lower_Bound);

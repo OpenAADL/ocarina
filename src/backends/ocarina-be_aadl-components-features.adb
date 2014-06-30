@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -216,7 +216,7 @@ package body Ocarina.BE_AADL.Components.Features is
    ---------------------------
 
    procedure Print_Subprogram_Spec (Node : Node_Id) is
-      Subprog_Ref  : constant Node_Id := Entity_Ref (Node);
+      Subprog_Ref : constant Node_Id := Entity_Ref (Node);
 
    begin
       Print_Item_Refined_To (Node);

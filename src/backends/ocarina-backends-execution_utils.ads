@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,10 +40,10 @@ package Ocarina.Backends.Execution_Utils is
    use Ocarina.Backends.Properties;
 
    type Process_Rec is record
-      Appli_Name         : Name_Id;
+      Appli_Name : Name_Id;
       --  The distributed application name
 
-      Node_Name          : Name_Id;
+      Node_Name : Name_Id;
       --  The node name (in lower case)
 
       Execution_Platform : Supported_Execution_Platform := Platform_None;
@@ -56,11 +56,15 @@ package Ocarina.Backends.Execution_Utils is
 
    type Process_Type is access all Process_Rec;
 
-   package Ref_Name_Tables is new GNAT.Dynamic_Tables (Process_Type, Nat,
-                                                       1, 10, 10);
+   package Ref_Name_Tables is new GNAT.Dynamic_Tables
+     (Process_Type,
+      Nat,
+      1,
+      10,
+      10);
    --  Provides a flexible Makefile_Type list
 
-   Process_List             : Ref_Name_Tables.Instance;
+   Process_List : Ref_Name_Tables.Instance;
    --  List of all programs to invoke
 
    procedure Visit (E : Node_Id);
@@ -69,7 +73,6 @@ package Ocarina.Backends.Execution_Utils is
 
    function Get_Binary_Location
      (Backend   : Backend_Kind;
-      Node_Name : Name_Id)
-     return String;
+      Node_Name : Name_Id) return String;
 
 end Ocarina.Backends.Execution_Utils;

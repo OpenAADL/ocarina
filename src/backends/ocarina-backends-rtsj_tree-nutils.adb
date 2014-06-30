@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,7 +38,7 @@ with Locations; use Locations;
 with Namet;     use Namet;
 with Utils;     use Utils;
 
-with Ocarina.Backends.Utils;      use Ocarina.Backends.Utils;
+with Ocarina.Backends.Utils; use Ocarina.Backends.Utils;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 
@@ -52,14 +52,18 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    --  Used to mark Java keywords and avoid collision with other languages
 
    type Entity_Stack_Entry is record
-      Current_File    : Node_Id;
-      Current_Entity  : Node_Id;
+      Current_File   : Node_Id;
+      Current_Entity : Node_Id;
    end record;
 
    No_Depth : constant Int := -1;
 
-   package Entity_Stack is
-      new GNAT.Table (Entity_Stack_Entry, Int, No_Depth + 1, 10, 10);
+   package Entity_Stack is new GNAT.Table
+     (Entity_Stack_Entry,
+      Int,
+      No_Depth + 1,
+      10,
+      10);
 
    use Entity_Stack;
 
@@ -187,7 +191,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
 
          while Present (N) loop
             Cpt := Cpt + 1;
-            N := Next_Node (N);
+            N   := Next_Node (N);
          end loop;
       end if;
 
@@ -199,8 +203,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ------------------------
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Get_Name_String (Name);
@@ -212,27 +215,25 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    --  Add_Import --
    -----------------
    procedure Add_Import (E : Node_Id) is
-      M : Name_Id;
-      N : Name_Id;
-      W : Node_Id;
+      M                : Name_Id;
+      N                : Name_Id;
+      W                : Node_Id;
       Existing_Include : Node_Id;
    begin
       Get_Name_String (RTN.Name (Defining_Identifier (Current_File)));
 
       Get_Name_String_And_Append (RTN.Name (Import_Name (E)));
-      Get_Name_String_And_Append (RTN.Name
-                                    (RTN.Entity
-                                       (Distributed_Application_Unit
-                                          (Current_File))));
+      Get_Name_String_And_Append
+        (RTN.Name (RTN.Entity (Distributed_Application_Unit (Current_File))));
 
       if Distributed_Application
-        (Entity
-           (Distributed_Application_Unit (Current_File))) /= No_Node then
+          (Entity (Distributed_Application_Unit (Current_File))) /=
+        No_Node
+      then
          Get_Name_String_And_Append
            (RTN.Name
               (Distributed_Application
-                 (Entity
-                    (Distributed_Application_Unit (Current_File)))));
+                 (Entity (Distributed_Application_Unit (Current_File)))));
       end if;
 
       N := Name_Find;
@@ -248,8 +249,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
       Get_Name_String (RTN.Name (Import_Name ((E))));
 
       M := Name_Find;
-      W := Make_Import_Statement
-        (Make_Defining_Identifier (M));
+      W := Make_Import_Statement (Make_Defining_Identifier (M));
       Set_Name_Table_Info (N, Int (W));
 
       RTU.Append_Node_To_List (W, Imported_Headers (Current_File));
@@ -259,8 +259,8 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- To_RTSJ_Conventional_Name --
    -------------------------------
    function To_RTSJ_Conventional_Name
-     (Name : Name_Id; Is_Obj : Boolean)
-     return Name_Id
+     (Name   : Name_Id;
+      Is_Obj : Boolean) return Name_Id
    is
    begin
       Get_Name_String (Name);
@@ -276,10 +276,9 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
          end if;
 
          if Name_Buffer (I) = '_' then
-            Name_Buffer (I + 1) := To_Upper (Name_Buffer (I + 1));
-            Name_Buffer (I .. Name_Len - 1)
-              := Name_Buffer (I + 1 .. Name_Len);
-            Name_Len := Name_Len - 1;
+            Name_Buffer (I + 1)             := To_Upper (Name_Buffer (I + 1));
+            Name_Buffer (I .. Name_Len - 1) := Name_Buffer (I + 1 .. Name_Len);
+            Name_Len                        := Name_Len - 1;
          elsif I /= 1 then
             Name_Buffer (I) := To_Lower (Name_Buffer (I));
          end if;
@@ -315,10 +314,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------
    -- New Token --
    ---------------
-   procedure New_Token
-     (T : Token_Type;
-      I : String := "")
-   is
+   procedure New_Token (T : Token_Type; I : String := "") is
       Name : Name_Id;
    begin
       if T in Keyword_Type then
@@ -352,9 +348,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ------------------
    -- New Operator --
    ------------------
-   procedure New_Operator
-     (O : Operator_Type;
-      I : String := "") is
+   procedure New_Operator (O : Operator_Type; I : String := "") is
    begin
       if O in Keyword_Operator then
          Set_Str_To_Name_Buffer (Image (O));
@@ -452,8 +446,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
 
          when K_Import_Statement =>
             Res := New_Node (K_Import_Statement);
-            RTN.Set_Import_Name
-              (Res, RTU.Copy_Node (Import_Name (N)));
+            RTN.Set_Import_Name (Res, RTU.Copy_Node (Import_Name (N)));
 
          when others =>
             raise Program_Error;
@@ -489,8 +482,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    --------------
    function New_Node
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id
+      From : Node_Id := No_Node) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -520,8 +512,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    --------------
    function New_List
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id
+      From : Node_Id := No_Node) return List_Id
    is
       N : Node_Id;
    begin
@@ -552,8 +543,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    function Make_List_Id
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
-      N3 : Node_Id := No_Node)
-     return List_Id
+      N3 : Node_Id := No_Node) return List_Id
    is
       L : List_Id;
    begin
@@ -646,16 +636,13 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -------------------------------------
    -- Set_Transport_High_Level_Source --
    -------------------------------------
-   procedure Set_Transport_High_Level_Source
-     (N : Node_Id := No_Node)
-   is
+   procedure Set_Transport_High_Level_Source (N : Node_Id := No_Node) is
       X : Node_Id := N;
    begin
       if No (X) then
          X := Table (Last).Current_Entity;
       end if;
-      Table (Last).Current_File
-        := Transport_High_Level_Source (X);
+      Table (Last).Current_File := Transport_High_Level_Source (X);
    end Set_Transport_High_Level_Source;
 
    ---------------------
@@ -683,7 +670,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
       --  If the identifier collides with a Java reserved word,
       --  insert "AADL_" string beofre the identifier.
       Test_Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-      V := Get_Name_Table_Byte (Test_Name);
+      V         := Get_Name_Table_Byte (Test_Name);
       if V > 0 then
          Set_Str_To_Name_Buffer ("AADL_");
          Get_Name_String_And_Append (Name);
@@ -698,8 +685,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -------------------------------
    function Make_Assignment_Statement
      (Defining_Identifier : Node_Id;
-      Expression : Node_Id)
-      return Node_Id
+      Expression          : Node_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -717,11 +703,10 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Variable_Declaration --
    -------------------------------
    function Make_Variable_Declaration
-     (Visibility : List_Id := No_List;
-      Used_Type : Node_Id;
+     (Visibility          : List_Id := No_List;
+      Used_Type           : Node_Id;
       Defining_Identifier : Node_Id;
-      Value : Node_Id := No_Node)
-     return Node_Id
+      Value               : Node_Id := No_Node) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -737,10 +722,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------------------
    -- Make_Return_Statement --
    ---------------------------
-   function Make_Return_Statement
-     (Expression : Node_Id)
-      return Node_Id
-   is
+   function Make_Return_Statement (Expression : Node_Id) return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Return_Statement);
@@ -754,8 +736,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------------------
    -- Make_Null_Statement --
    ---------------------------
-   function Make_Null_Statement return Node_Id
-   is
+   function Make_Null_Statement return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Null_Statement);
@@ -767,9 +748,8 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Try_Statement --
    ------------------------
    function Make_Try_Statement
-     (Statements : List_Id;
-      Catch_Statements : List_Id)
-     return Node_Id
+     (Statements       : List_Id;
+      Catch_Statements : List_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -789,8 +769,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    --------------------------
    function Make_Catch_Statement
      (Exception_Caught : Node_Id;
-      Statements : List_Id)
-      return Node_Id
+      Statements       : List_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -809,8 +788,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Package_Statement --
    ----------------------------
    function Make_Package_Statement
-     (Defining_Identifier : Node_Id)
-      return Node_Id
+     (Defining_Identifier : Node_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -825,10 +803,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------------------
    -- Make_Import_Statement --
    --------------------------
-   function Make_Import_Statement
-     (Import_Name : Node_Id)
-      return Node_Id
-   is
+   function Make_Import_Statement (Import_Name : Node_Id) return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Import_Statement);
@@ -850,8 +825,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
       Throws              : List_Id := No_List;
       Attributes          : List_Id := No_List;
       Methods             : List_Id := No_List;
-      Classes             : List_Id := No_List)
-      return Node_Id
+      Classes             : List_Id := No_List) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -888,9 +862,8 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Java_Comment --
    -----------------------
    function Make_Java_Comment
-     (N : Name_Id;
-      Has_Header_Spaces : Boolean := True)
-      return Node_Id
+     (N                 : Name_Id;
+      Has_Header_Spaces : Boolean := True) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -906,10 +879,9 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_New_Statement --
    ------------------------
    function Make_New_Statement
-     (Defining_Identifier  : Node_Id;
-      Parameters           : List_Id := No_List;
-      Is_Array             : Boolean := False)
-      return Node_Id
+     (Defining_Identifier : Node_Id;
+      Parameters          : List_Id := No_List;
+      Is_Array            : Boolean := False) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -929,8 +901,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------------------
    -- Make_Public_Statement --
    ---------------------------
-   function Make_Public_Statement return Node_Id
-   is
+   function Make_Public_Statement return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Public);
@@ -941,8 +912,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ------------------------------
    -- Make_Protected_Statement --
    ------------------------------
-   function Make_Protected_Statement return Node_Id
-   is
+   function Make_Protected_Statement return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Protected);
@@ -953,8 +923,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ----------------------------
    -- Make_Private_Statement --
    ----------------------------
-   function Make_Private_Statement return Node_Id
-   is
+   function Make_Private_Statement return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Private);
@@ -965,8 +934,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -----------------------------
    -- Make_Abstract_Statement --
    -----------------------------
-   function Make_Abstract_Statement return Node_Id
-   is
+   function Make_Abstract_Statement return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Abstract);
@@ -977,8 +945,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------------------
    -- Make_Static_Statement --
    ---------------------------
-   function Make_Static_Statement return Node_Id
-   is
+   function Make_Static_Statement return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Static);
@@ -989,8 +956,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    --------------------------
    -- Make_Final_Statement --
    --------------------------
-   function Make_Final_Statement return Node_Id
-   is
+   function Make_Final_Statement return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Final);
@@ -1001,10 +967,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------------
    -- Make_Enumerator --
    ---------------------
-   function Make_Enumerator
-     (Enum_Members : List_Id)
-      return Node_Id
-   is
+   function Make_Enumerator (Enum_Members : List_Id) return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Enumerator);
@@ -1018,10 +981,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ------------------------------
    -- Make_Defining_Identifier --
    ------------------------------
-   function Make_Defining_Identifier
-     (Name : Name_Id)
-      return Node_Id
-   is
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Defining_Identifier);
@@ -1035,8 +995,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------------------
    function Make_Pointed_Notation
      (Left_Member  : Node_Id;
-      Right_Member : Node_Id)
-     return Node_Id
+      Right_Member : Node_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1051,17 +1010,17 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Expression --
    ---------------------
    function Make_Expression
-     (Left_Expression : Node_Id;
+     (Left_Expression     : Node_Id;
       Operator_Expression : Operator_Type := Op_None;
-      Right_Expression : Node_Id := No_Node)
-      return Node_Id
+      Right_Expression    : Node_Id       := No_Node) return Node_Id
    is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Expression);
       Set_Left_Expression (Result_Node, Left_Expression);
-      Set_Operator_Expression (Result_Node,
-                               Operator_Type'Pos (Operator_Expression));
+      Set_Operator_Expression
+        (Result_Node,
+         Operator_Type'Pos (Operator_Expression));
       Set_Right_Expression (Result_Node, Right_Expression);
 
       return Result_Node;
@@ -1075,8 +1034,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
       Return_Type         : Node_Id := No_Node;
       Defining_Identifier : Node_Id;
       Parameters          : List_Id := No_List;
-      Throws              : List_Id := No_List)
-     return Node_Id
+      Throws              : List_Id := No_List) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1096,8 +1054,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    function Make_Function_Implementation
      (Specification : Node_Id;
       Declarations  : List_Id := No_List;
-      Statements    : List_Id := No_List)
-     return Node_Id
+      Statements    : List_Id := No_List) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1114,8 +1071,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ------------------------
    function Make_Call_Function
      (Defining_Identifier : Node_Id;
-      Parameters      : List_Id := No_List)
-     return Node_Id
+      Parameters          : List_Id := No_List) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1131,8 +1087,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ----------------------------------
    function Make_Parameter_Specification
      (Defining_Identifier : Node_Id;
-      Parameter_Type      : Node_Id)
-     return Node_Id
+      Parameter_Type      : Node_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1148,8 +1103,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ----------------------------
    function Make_Array_Declaration
      (Defining_Identifier : Node_Id;
-      Array_Size          : Node_Id := No_Node)
-     return Node_Id
+      Array_Size          : Node_Id := No_Node) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1165,8 +1119,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ----------------------
    function Make_Array_Value
      (Defining_Identifier : Node_Id;
-      Array_Item          : Node_Id := No_Node)
-     return Node_Id
+      Array_Item          : Node_Id := No_Node) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1182,8 +1135,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ---------------------------------
    function Make_Full_Array_Declaration
      (Array_Declaration : Node_Id;
-      Array_Assignments : List_Id)
-     return Node_Id
+      Array_Assignments : List_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1198,9 +1150,8 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Cast_Statement --
    -------------------------
    function Make_Cast_Statement
-     (Cast_Type      : Node_Id;
-      Defining_Identifier : Node_Id)
-     return Node_Id
+     (Cast_Type           : Node_Id;
+      Defining_Identifier : Node_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1215,9 +1166,8 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Switch_Statement --
    ---------------------------
    function Make_Switch_Statement
-     (Expr : Node_Id;
-      Case_Statements : List_Id)
-     return Node_Id
+     (Expr            : Node_Id;
+      Case_Statements : List_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1232,9 +1182,8 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Case_Statement --
    -------------------------
    function Make_Case_Statement
-     (Labels : List_Id;
-      Statements : List_Id)
-     return Node_Id
+     (Labels     : List_Id;
+      Statements : List_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1249,8 +1198,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_Throw_Statement --
    --------------------------
    function Make_Throw_Statement
-     (Defining_Identifier : Node_Id)
-     return Node_Id
+     (Defining_Identifier : Node_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1264,11 +1212,10 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    -- Make_For_Statement --
    ------------------------
    function Make_For_Statement
-     (Init_Statement : Node_Id := No_Node;
+     (Init_Statement      : Node_Id := No_Node;
       Iteration_Condition : Node_Id := No_Node;
-      Step_Expression : Node_Id := No_Node;
-      Statements : List_Id)
-     return Node_Id
+      Step_Expression     : Node_Id := No_Node;
+      Statements          : List_Id) return Node_Id
    is
       Result_Node : Node_Id;
    begin
@@ -1284,10 +1231,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ------------------
    -- Make_Literal --
    ------------------
-   function Make_Literal
-     (Value_Literal : Value_Id)
-     return Node_Id
-   is
+   function Make_Literal (Value_Literal : Value_Id) return Node_Id is
       Result_Node : Node_Id;
    begin
       Result_Node := New_Node (K_Literal);
@@ -1299,10 +1243,7 @@ package body Ocarina.Backends.RTSJ_Tree.Nutils is
    ----------------------
    -- Make_Source_File --
    ----------------------
-   function Make_Source_File
-     (Identifier : Node_Id)
-     return Node_Id
-   is
+   function Make_Source_File (Identifier : Node_Id) return Node_Id is
       File : Node_Id;
    begin
       File := New_Node (K_Source_File);

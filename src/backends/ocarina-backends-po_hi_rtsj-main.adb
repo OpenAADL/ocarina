@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -97,8 +97,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Main is
       -- Visit_Component_Instance --
       ------------------------------
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -139,25 +139,24 @@ package body Ocarina.Backends.PO_HI_RTSJ.Main is
       -- Visit_Process_Instance --
       ----------------------------
       procedure Visit_Process_Instance (E : Node_Id) is
-         U              : constant Node_Id
-           := RTN.Distributed_Application_Unit
-           (RTN.Naming_Node (Backend_Node (Identifier (E))));
-         P              : constant Node_Id := RTN.Entity (U);
-         Exec_Logic     : Node_Id;
-         Thread_Init    : Node_Id;
-         Spec           : Node_Id;
-         Impl           : Node_Id;
-         N              : Node_Id;
-         Thread_Init_Methods : constant List_Id := New_List
-           (RTN.K_Method_List);
-         Main_Statements     : constant List_Id := New_List
-           (RTN.K_Statement_List);
-         Exec_Logic_Statements : constant List_Id := New_List
-           (RTN.K_Statement_List);
-         Constructor_Statements : constant List_Id := New_List
-           (RTN.K_Statement_List);
-         Thread_Init_Statements : constant List_Id := New_List
-           (RTN.K_Statement_List);
+         U : constant Node_Id :=
+           RTN.Distributed_Application_Unit
+             (RTN.Naming_Node (Backend_Node (Identifier (E))));
+         P                   : constant Node_Id := RTN.Entity (U);
+         Exec_Logic          : Node_Id;
+         Thread_Init         : Node_Id;
+         Spec                : Node_Id;
+         Impl                : Node_Id;
+         N                   : Node_Id;
+         Thread_Init_Methods : constant List_Id :=
+           New_List (RTN.K_Method_List);
+         Main_Statements : constant List_Id := New_List (RTN.K_Statement_List);
+         Exec_Logic_Statements : constant List_Id :=
+           New_List (RTN.K_Statement_List);
+         Constructor_Statements : constant List_Id :=
+           New_List (RTN.K_Statement_List);
+         Thread_Init_Statements : constant List_Id :=
+           New_List (RTN.K_Statement_List);
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -167,195 +166,216 @@ package body Ocarina.Backends.PO_HI_RTSJ.Main is
          Add_Import (RH (RH_No_Heap_Realtime_Thread));
 
          --  ExecutionLogic class
-         N := Make_Variable_Declaration
-           (Used_Type =>
-              Make_Defining_Identifier (ON (O_Thread_Initializer)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (VN (V_Initializer)),
-            Value               => Make_Null_Statement);
+         N :=
+           Make_Variable_Declaration
+             (Used_Type =>
+                Make_Defining_Identifier (ON (O_Thread_Initializer)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (VN (V_Initializer)),
+              Value => Make_Null_Statement);
          RTU.Append_Node_To_List (N, Exec_Logic_Statements);
 
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Defining_Identifier (VN (V_Initializer)),
-            Expression => Make_New_Statement
-              (Defining_Identifier =>
-                 Make_Defining_Identifier (ON (O_Thread_Initializer))));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Defining_Identifier (VN (V_Initializer)),
+              Expression =>
+                Make_New_Statement
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (ON (O_Thread_Initializer))));
          RTU.Append_Node_To_List (N, Exec_Logic_Statements);
 
-         N := Make_Pointed_Notation
-           (Left_Member =>
-              Make_Defining_Identifier (VN (V_Initializer)),
-            Right_Member =>
-              Make_Call_Function
-              (Defining_Identifier =>
-                 Make_Defining_Identifier (MN (M_Start))));
+         N :=
+           Make_Pointed_Notation
+             (Left_Member  => Make_Defining_Identifier (VN (V_Initializer)),
+              Right_Member =>
+                Make_Call_Function
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (MN (M_Start))));
          RTU.Append_Node_To_List (N, Exec_Logic_Statements);
 
-         Spec := Make_Function_Specification
-           (Visibility => Make_List_Id (RE (RE_Public)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (MN (M_Run)),
-            Return_Type => New_Node (K_Void));
+         Spec :=
+           Make_Function_Specification
+             (Visibility          => Make_List_Id (RE (RE_Public)),
+              Defining_Identifier => Make_Defining_Identifier (MN (M_Run)),
+              Return_Type         => New_Node (K_Void));
 
-         Impl := Make_Function_Implementation
-           (Specification => Spec,
-            Statements    => Exec_Logic_Statements);
+         Impl :=
+           Make_Function_Implementation
+             (Specification => Spec,
+              Statements    => Exec_Logic_Statements);
 
-         Exec_Logic := Make_Class_Statement
-           (Visibility          => Make_List_Id (RE (RE_Static)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (ON (O_Execution_Logic)),
-            Implements          =>
-              Make_List_Id
-              (Make_Defining_Identifier (ON (O_Runnable))),
-            Methods             => Make_List_Id (Impl));
+         Exec_Logic :=
+           Make_Class_Statement
+             (Visibility          => Make_List_Id (RE (RE_Static)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (ON (O_Execution_Logic)),
+              Implements =>
+                Make_List_Id (Make_Defining_Identifier (ON (O_Runnable))),
+              Methods => Make_List_Id (Impl));
 
          --  ThreadInitializer class
 
          --  Constructor of class ThreadInitializer
-         N := Make_Call_Function
-           (Defining_Identifier =>
-              Make_Defining_Identifier (MN (M_Super)),
-            Parameters => Make_List_Id
-              (Make_Pointed_Notation
-                 (Left_Member =>
-                    Make_Defining_Identifier (ON (O_Utils)),
-                  Right_Member => RE (RE_Max_Priority_Parameters)),
-               (Make_Pointed_Notation
-                  (Left_Member =>
-                     Make_Defining_Identifier (ON (O_Immortal_Memory)),
-                   Right_Member        => Make_Call_Function
-                     (Defining_Identifier =>
-                        Make_Defining_Identifier (MN (M_Instance)))))));
+         N :=
+           Make_Call_Function
+             (Defining_Identifier => Make_Defining_Identifier (MN (M_Super)),
+              Parameters          =>
+                Make_List_Id
+                  (Make_Pointed_Notation
+                     (Left_Member  => Make_Defining_Identifier (ON (O_Utils)),
+                      Right_Member => RE (RE_Max_Priority_Parameters)),
+                   (Make_Pointed_Notation
+                      (Left_Member =>
+                         Make_Defining_Identifier (ON (O_Immortal_Memory)),
+                       Right_Member =>
+                         Make_Call_Function
+                           (Defining_Identifier =>
+                              Make_Defining_Identifier (MN (M_Instance)))))));
          RTU.Append_Node_To_List (N, Constructor_Statements);
 
-         Spec := Make_Function_Specification
-           (Visibility          => Make_List_Id (RE (RE_Public)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (ON (O_Thread_Initializer)),
-            Return_Type         => New_Node (K_Void));
+         Spec :=
+           Make_Function_Specification
+             (Visibility          => Make_List_Id (RE (RE_Public)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (ON (O_Thread_Initializer)),
+              Return_Type => New_Node (K_Void));
 
-         Impl := Make_Function_Implementation
-           (Specification => Spec,
-            Statements    => Constructor_Statements);
+         Impl :=
+           Make_Function_Implementation
+             (Specification => Spec,
+              Statements    => Constructor_Statements);
          RTU.Append_Node_To_List (Impl, Thread_Init_Methods);
 
-         N := Make_Pointed_Notation
-           (Left_Member =>
-              Make_Defining_Identifier (ON (O_Activity)),
-            Right_Member        => Make_Call_Function
-            (Defining_Identifier =>
-               Make_Defining_Identifier (MN (M_Initialization))));
+         N :=
+           Make_Pointed_Notation
+             (Left_Member  => Make_Defining_Identifier (ON (O_Activity)),
+              Right_Member =>
+                Make_Call_Function
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (MN (M_Initialization))));
          RTU.Append_Node_To_List (N, Thread_Init_Statements);
 
          N := Message_Comment ("Unblock all users tasks");
          RTU.Append_Node_To_List (N, Thread_Init_Statements);
 
-         N := Make_Pointed_Notation
-           (Left_Member =>
-              Make_Defining_Identifier (ON (O_Suspenders)),
-            Right_Member        => Make_Call_Function
-            (Defining_Identifier => RE (RE_Unblock_All_Tasks)));
+         N :=
+           Make_Pointed_Notation
+             (Left_Member  => Make_Defining_Identifier (ON (O_Suspenders)),
+              Right_Member =>
+                Make_Call_Function
+                  (Defining_Identifier => RE (RE_Unblock_All_Tasks)));
          RTU.Append_Node_To_List (N, Thread_Init_Statements);
 
-         N := Message_Comment
-           ("Suspend forever instead of putting an endless loop."
-            & "This saves the CPU resources");
+         N :=
+           Message_Comment
+             ("Suspend forever instead of putting an endless loop." &
+              "This saves the CPU resources");
          RTU.Append_Node_To_List (N, Thread_Init_Statements);
 
-         N := Make_Pointed_Notation
-           (Left_Member =>
-              Make_Defining_Identifier (ON (O_Suspenders)),
-            Right_Member        => Make_Call_Function
-            (Defining_Identifier => RE (RE_Suspend_Forever)));
+         N :=
+           Make_Pointed_Notation
+             (Left_Member  => Make_Defining_Identifier (ON (O_Suspenders)),
+              Right_Member =>
+                Make_Call_Function
+                  (Defining_Identifier => RE (RE_Suspend_Forever)));
          RTU.Append_Node_To_List (N, Thread_Init_Statements);
 
-         Spec := Make_Function_Specification
-           (Visibility          => Make_List_Id (RE (RE_Public)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (MN (M_Run)),
-            Return_Type         => New_Node (K_Void));
+         Spec :=
+           Make_Function_Specification
+             (Visibility          => Make_List_Id (RE (RE_Public)),
+              Defining_Identifier => Make_Defining_Identifier (MN (M_Run)),
+              Return_Type         => New_Node (K_Void));
 
-         Impl := Make_Function_Implementation
-           (Specification => Spec,
-            Statements    => Thread_Init_Statements);
+         Impl :=
+           Make_Function_Implementation
+             (Specification => Spec,
+              Statements    => Thread_Init_Statements);
          RTU.Append_Node_To_List (Impl, Thread_Init_Methods);
 
-         Thread_Init := Make_Class_Statement
-           (Visibility          => Make_List_Id (RE (RE_Static)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (ON (O_Thread_Initializer)),
-            Extends             =>
-              Make_Defining_Identifier (ON (O_No_Heap_Realtime_Thread)),
-            Methods             => Thread_Init_Methods);
+         Thread_Init :=
+           Make_Class_Statement
+             (Visibility          => Make_List_Id (RE (RE_Static)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (ON (O_Thread_Initializer)),
+              Extends =>
+                Make_Defining_Identifier (ON (O_No_Heap_Realtime_Thread)),
+              Methods => Thread_Init_Methods);
 
          --  Main class
-         N := Make_Variable_Declaration
-           (Used_Type              =>
-              Make_Defining_Identifier (ON (O_Execution_Logic)),
-            Defining_Identifier    =>
-              Make_Defining_Identifier (VN (V_Init_Logic)),
-            Value                  => Make_Null_Statement);
+         N :=
+           Make_Variable_Declaration
+             (Used_Type => Make_Defining_Identifier (ON (O_Execution_Logic)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (VN (V_Init_Logic)),
+              Value => Make_Null_Statement);
          RTU.Append_Node_To_List (N, Main_Statements);
 
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Defining_Identifier (VN (V_Init_Logic)),
-            Expression => Make_New_Statement
-              (Defining_Identifier =>
-                 Make_Defining_Identifier (ON (O_Execution_Logic))));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Defining_Identifier (VN (V_Init_Logic)),
+              Expression =>
+                Make_New_Statement
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (ON (O_Execution_Logic))));
          RTU.Append_Node_To_List (N, Main_Statements);
 
-         N := Make_Pointed_Notation
-           (Left_Member =>
-              Make_Defining_Identifier (ON (O_Immortal_Memory)),
-            Right_Member        => Make_Pointed_Notation
-            (Left_Member => Make_Call_Function
-             (Defining_Identifier =>
-                Make_Defining_Identifier (MN (M_Instance))),
-             Right_Member => Make_Call_Function
-             (Defining_Identifier =>
-           Make_Defining_Identifier (MN (M_Execute_In_Area)),
-              Parameters          =>
-                Make_List_Id
-                (Make_Defining_Identifier (VN (V_Init_Logic))))));
+         N :=
+           Make_Pointed_Notation
+             (Left_Member => Make_Defining_Identifier (ON (O_Immortal_Memory)),
+              Right_Member =>
+                Make_Pointed_Notation
+                  (Left_Member =>
+                     Make_Call_Function
+                       (Defining_Identifier =>
+                          Make_Defining_Identifier (MN (M_Instance))),
+                   Right_Member =>
+                     Make_Call_Function
+                       (Defining_Identifier =>
+                          Make_Defining_Identifier (MN (M_Execute_In_Area)),
+                        Parameters =>
+                          Make_List_Id
+                            (Make_Defining_Identifier (VN (V_Init_Logic))))));
          RTU.Append_Node_To_List (N, Main_Statements);
 
          N := Message_Comment ("Main thread is also suspended forever");
          RTU.Append_Node_To_List (N, Main_Statements);
 
-         N := Make_Pointed_Notation
-           (Left_Member =>
-              Make_Defining_Identifier (ON (O_Suspenders)),
-            Right_Member        => Make_Call_Function
-            (Defining_Identifier => RE (RE_Suspend_Forever)));
+         N :=
+           Make_Pointed_Notation
+             (Left_Member  => Make_Defining_Identifier (ON (O_Suspenders)),
+              Right_Member =>
+                Make_Call_Function
+                  (Defining_Identifier => RE (RE_Suspend_Forever)));
          RTU.Append_Node_To_List (N, Main_Statements);
 
-         Spec := Make_Function_Specification
-           (Visibility => Make_List_Id (RE (RE_Public),
-                                            RE (RE_Static)),
-            Return_Type => New_Node (K_Void),
-            Defining_Identifier =>
-              Make_Defining_Identifier (MN (M_Main)),
-            Parameters => Make_List_Id
-              (Make_Parameter_Specification
-                 (Parameter_Type => New_Node (K_String),
-                  Defining_Identifier => Make_Array_Declaration
-                       (Defining_Identifier =>
-                          Make_Defining_Identifier (VN (V_Args))))));
+         Spec :=
+           Make_Function_Specification
+             (Visibility => Make_List_Id (RE (RE_Public), RE (RE_Static)),
+              Return_Type         => New_Node (K_Void),
+              Defining_Identifier => Make_Defining_Identifier (MN (M_Main)),
+              Parameters          =>
+                Make_List_Id
+                  (Make_Parameter_Specification
+                     (Parameter_Type      => New_Node (K_String),
+                      Defining_Identifier =>
+                        Make_Array_Declaration
+                          (Defining_Identifier =>
+                             Make_Defining_Identifier (VN (V_Args))))));
 
-         Impl := Make_Function_Implementation
-           (Specification => Spec,
-            Statements => Main_Statements);
+         Impl :=
+           Make_Function_Implementation
+             (Specification => Spec,
+              Statements    => Main_Statements);
 
-         Main_Class := Make_Class_Statement
-           (Visibility          => Make_List_Id (RE (RE_Public)),
-            Defining_Identifier =>
-              Map_RTSJ_Defining_Identifier
-              (Parent_Subcomponent (E)),
-            Methods             => Make_List_Id (Impl),
-            Classes             => Make_List_Id (Exec_Logic, Thread_Init));
+         Main_Class :=
+           Make_Class_Statement
+             (Visibility          => Make_List_Id (RE (RE_Public)),
+              Defining_Identifier =>
+                Map_RTSJ_Defining_Identifier (Parent_Subcomponent (E)),
+              Methods => Make_List_Id (Impl),
+              Classes => Make_List_Id (Exec_Logic, Thread_Init));
          RTU.Append_Node_To_List (Main_Class, RTN.Statements (Current_File));
 
          Pop_Entity;  --  U

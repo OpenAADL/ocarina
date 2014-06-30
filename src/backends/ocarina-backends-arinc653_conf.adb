@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -81,7 +81,8 @@ package body Ocarina.Backends.ARINC653_Conf is
 
       if No (XML_Root) then
          Display_Error
-            ("ARINC653 configuration generation failed", Fatal => True);
+           ("ARINC653 configuration generation failed",
+            Fatal => True);
       end if;
 
       --  At this point, we have a valid tree, we can begin the XML
@@ -175,8 +176,7 @@ package body Ocarina.Backends.ARINC653_Conf is
    -- Get_XML_Root --
    ------------------
 
-   function Get_XML_Root return Node_Id
-   is
+   function Get_XML_Root return Node_Id is
    begin
       return XML_Root;
    end Get_XML_Root;

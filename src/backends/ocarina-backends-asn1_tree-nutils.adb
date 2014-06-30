@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,19 +52,21 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    --  Used to mark C keywords and avoid collision with other languages
 
    type Entity_Stack_Entry is record
-      Current_File    : Node_Id;
-      Current_Entity  : Node_Id;
+      Current_File   : Node_Id;
+      Current_Entity : Node_Id;
    end record;
 
    No_Depth : constant Int := -1;
-   package Entity_Stack is
-      new GNAT.Table (Entity_Stack_Entry, Int, No_Depth + 1, 10, 10);
+   package Entity_Stack is new GNAT.Table
+     (Entity_Stack_Entry,
+      Int,
+      No_Depth + 1,
+      10,
+      10);
 
    use Entity_Stack;
 
-   procedure New_Operator
-     (O : Operator_Type;
-      I : String := "");
+   procedure New_Operator (O : Operator_Type; I : String := "");
 
    ------------------------
    -- Add_Prefix_To_Name --
@@ -72,8 +74,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Set_Str_To_Name_Buffer (Prefix);
@@ -87,8 +88,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Get_Name_String (Name);
@@ -102,8 +102,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
       Length   : Natural;
       Temp_Str : String (1 .. Suffix'Length);
@@ -125,18 +124,20 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- New_List --
    --------------
 
-   function New_List (Kind : ASN1_Nodes.Node_Kind; From : Node_Id := No_Node)
-     return List_Id is
+   function New_List
+     (Kind : ASN1_Nodes.Node_Kind;
+      From : Node_Id := No_Node) return List_Id
+   is
       N : Node_Id;
    begin
       ASN1_Nodes.Entries.Increment_Last;
-      N := ASN1_Nodes.Entries.Last;
+      N                            := ASN1_Nodes.Entries.Last;
       ASN1_Nodes.Entries.Table (N) := ASN1_Nodes.Default_Node;
       Set_Kind (N, Kind);
       if Present (From) then
-         ASN1_Nodes.Set_Loc  (N, ASN1_Nodes.Loc (From));
+         ASN1_Nodes.Set_Loc (N, ASN1_Nodes.Loc (From));
       else
-         ASN1_Nodes.Set_Loc  (N, No_Location);
+         ASN1_Nodes.Set_Loc (N, No_Location);
       end if;
       return List_Id (N);
    end New_List;
@@ -206,7 +207,8 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
             C := New_Node (ASN1_Nodes.K_Defining_Identifier);
             ASN1_Nodes.Set_Name (C, ASN1_Nodes.Name (N));
             ASN1_Nodes.Set_Corresponding_Node
-               (C, ASN1_Nodes.Corresponding_Node (N));
+              (C,
+               ASN1_Nodes.Corresponding_Node (N));
 
          when others =>
             raise Program_Error;
@@ -368,13 +370,12 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
 
    function New_Node
      (Kind : ASN1_Nodes.Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id
+      From : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
       ASN1_Nodes.Entries.Increment_Last;
-      N := ASN1_Nodes.Entries.Last;
+      N                            := ASN1_Nodes.Entries.Last;
       ASN1_Nodes.Entries.Table (N) := ASN1_Nodes.Default_Node;
       ASN1_Nodes.Set_Kind (N, Kind);
 
@@ -391,10 +392,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- New_Token --
    ---------------
 
-   procedure New_Token
-     (T : Token_Type;
-      I : String := "")
-   is
+   procedure New_Token (T : Token_Type; I : String := "") is
       Name : Name_Id;
    begin
       if T in Keyword_Type then
@@ -418,9 +416,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- New_Operator --
    ------------------
 
-   procedure New_Operator
-     (O : Operator_Type;
-      I : String := "") is
+   procedure New_Operator (O : Operator_Type; I : String := "") is
    begin
       if O in Keyword_Operator then
          Set_Str_To_Name_Buffer (Image (O));
@@ -442,11 +438,8 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       Set_Corresponding_Node (Identifier, File);
 
       Set_Module_Node (File, New_Node (K_ASN1_Module));
-      Set_Name
-         (Module_Node (File),
-         Get_String_Name ("unknownmodule"));
-      Set_Definitions
-         (Module_Node (File), New_List (K_List_Id));
+      Set_Name (Module_Node (File), Get_String_Name ("unknownmodule"));
+      Set_Definitions (Module_Node (File), New_List (K_List_Id));
       return File;
    end Make_ASN1_File;
 
@@ -454,9 +447,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Defining_Identifier --
    ------------------------------
 
-   function Make_Defining_Identifier (Name : Name_Id)
-     return Node_Id
-   is
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Defining_Identifier);
@@ -468,9 +459,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Enumerated_Value --
    ---------------------------
 
-   function Make_Enumerated_Value (Name : Name_Id)
-     return Node_Id
-   is
+   function Make_Enumerated_Value (Name : Name_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Enumerated_Value);
@@ -483,8 +472,9 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Enumerated_Value --
    ---------------------------
 
-   function Make_Enumerated_Value (Name : Name_Id; V : Unsigned_Long_Long)
-     return Node_Id
+   function Make_Enumerated_Value
+     (Name : Name_Id;
+      V    : Unsigned_Long_Long) return Node_Id
    is
       N : Node_Id;
    begin
@@ -497,8 +487,9 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Type_Definition --
    --------------------------
 
-   function Make_Type_Definition (Name : Name_Id; Decl : Node_Id)
-     return Node_Id
+   function Make_Type_Definition
+     (Name : Name_Id;
+      Decl : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -512,8 +503,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Enumerated --
    ---------------------
 
-   function Make_Enumerated return Node_Id
-   is
+   function Make_Enumerated return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Enumerated);
@@ -525,8 +515,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Enumerated --
    ---------------------
 
-   function Make_Enumerated (L : List_Id) return Node_Id
-   is
+   function Make_Enumerated (L : List_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Enumerated);
@@ -538,8 +527,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Sequence --
    -------------------
 
-   function Make_Sequence (Sequence_Members : List_Id) return Node_Id
-   is
+   function Make_Sequence (Sequence_Members : List_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Sequence);
@@ -552,7 +540,8 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    --------------------------
 
    function Make_Sequence_Member
-      (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id
+     (Member_Name : Name_Id;
+      Member_Type : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -566,8 +555,7 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Choice --
    -----------------
 
-   function Make_Choice (Choice_Members : List_Id) return Node_Id
-   is
+   function Make_Choice (Choice_Members : List_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Choice);
@@ -580,7 +568,8 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    ------------------------
 
    function Make_Choice_Member
-      (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id
+     (Member_Name : Name_Id;
+      Member_Type : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -607,9 +596,9 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    ---------------------------
 
    function Make_Type_Constraints
-      (Size_Up  : Value_Id := No_Value;
-      Size_Down : Value_Id := No_Value)
-   return Node_Id is
+     (Size_Up   : Value_Id := No_Value;
+      Size_Down : Value_Id := No_Value) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Type_Constraints);
@@ -622,9 +611,9 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
    -- Make_Type_Designator --
    --------------------------
 
-   function Make_Type_Designator (Type_Name       : Node_Id;
-                                 Type_Constraints : Node_Id := No_Node)
-   return Node_Id
+   function Make_Type_Designator
+     (Type_Name        : Node_Id;
+      Type_Constraints : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin

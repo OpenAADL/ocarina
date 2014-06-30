@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,19 +37,17 @@
 package Ocarina.Builder.AADL.Components.Modes is
 
    function Add_Property_Association
-     (Mode : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean;
+     (Mode                 : Node_Id;
+      Property_Association : Node_Id) return Boolean;
    --  Add a property association to the mode declaration or mode
    --  transition. Mode must either reference a mode declaration or a
    --  mode transition. Property_Association references the property
    --  association. Return True if everything went right, else False.
 
    function Add_New_Mode
-     (Loc : Location;
+     (Loc        : Location;
       Identifier : Node_Id;
-      Component : Node_Id)
-     return Node_Id;
+      Component  : Node_Id) return Node_Id;
    --  Add a new mode declaration into a component implementation. Loc
    --  is the location of the mode declaration in the parsed
    --  text. Identifier references an identifier containing the name
@@ -60,9 +58,8 @@ package Ocarina.Builder.AADL.Components.Modes is
    --  everything went right, else False.
 
    function Add_New_Mode_Transition
-     (Loc : Location;
-      Component : Node_Id)
-     return Node_Id;
+     (Loc       : Location;
+      Component : Node_Id) return Node_Id;
    --  Add a new empty mode transition into a component
    --  implementation. Source, Destination, etc. of the mode
    --  transition must be added manually after the node has been
@@ -73,10 +70,9 @@ package Ocarina.Builder.AADL.Components.Modes is
    --  mode if everything went right, else False.
 
    function Add_New_Mode_Transition_Trigger
-     (Loc : Locations.Location;
-      Identifier : Types.Node_Id;
-      Is_Self : Boolean;
-      Is_Processor : Boolean)
-     return Types.Node_Id;
+     (Loc          : Locations.Location;
+      Identifier   : Types.Node_Id;
+      Is_Self      : Boolean;
+      Is_Processor : Boolean) return Types.Node_Id;
 
 end Ocarina.Builder.AADL.Components.Modes;

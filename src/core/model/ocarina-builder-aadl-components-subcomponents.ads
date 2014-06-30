@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,8 +37,7 @@ package Ocarina.Builder.AADL.Components.Subcomponents is
 
    function Add_Property_Association
      (Subcomponent         : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean;
+      Property_Association : Node_Id) return Boolean;
    --  Add a property association to the subcomponent
    --  declaration. Subcomponent must reference a Subcomponent
    --  declaration. Property_Association references the property
@@ -51,8 +50,7 @@ package Ocarina.Builder.AADL.Components.Subcomponents is
       Category            : Ocarina.ME_AADL.Component_Category;
       Is_Refinement       : Boolean := False;
       In_Modes            : Node_Id := No_Node;
-      Prototypes_Bindings : List_Id := No_List)
-     return Node_Id;
+      Prototypes_Bindings : List_Id := No_List) return Node_Id;
    --  Create and add a new subcomponent into a component
    --  implementation. Loc is the location of the subcomponent in the
    --  parsed text. Name references an identifier which contains the

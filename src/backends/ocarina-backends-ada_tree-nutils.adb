@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,8 +52,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    package ADN renames Ocarina.Backends.Ada_Tree.Nodes;
    package AAN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-   Var_Suffix           : constant String := "_Ü";
-   Initialized          : Boolean  := False;
+   Var_Suffix  : constant String := "_Ü";
+   Initialized : Boolean         := False;
 
    Keyword_Suffix : constant String := "%Ada";
    --  Used to mark Ada keywords and avoid collision with other
@@ -65,15 +65,18 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    end record;
 
    No_Depth : constant Int := -1;
-   package Entity_Stack is
-      new GNAT.Table (Entity_Stack_Entry, Int, No_Depth + 1, 10, 10);
+   package Entity_Stack is new GNAT.Table
+     (Entity_Stack_Entry,
+      Int,
+      No_Depth + 1,
+      10,
+      10);
 
    use Entity_Stack;
 
    function Create_Unique_Identifier
-     (Name : Name_Id;
-      Suffix : String := "")
-     return Name_Id;
+     (Name   : Name_Id;
+      Suffix : String := "") return Name_Id;
    --  This function returns a unique identifier for Name with a UT_ prefix,
    --  followed by the name of the node, name of the package, Name
    --  and Suffix if exists.
@@ -83,9 +86,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    --  to the pragma style_checks. The 'Off' value is does not ignore
    --  line length.
 
-   procedure New_Operator
-     (O : Operator_Type;
-      I : String := "");
+   procedure New_Operator (O : Operator_Type; I : String := "");
 
    ----------------------
    -- Add_With_Package --
@@ -118,7 +119,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
          if No (U) then
             if Output_Tree_Warnings then
-               Write_Str  ("WARNING: node ");
+               Write_Str ("WARNING: node ");
                Write_Name (Name (Defining_Identifier (E)));
                Write_Line (" has a null corresponding node");
             end if;
@@ -129,8 +130,9 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
             U := Package_Specification (U);
          end if;
 
-         pragma Assert (Kind (U) = K_Package_Specification
-                        or else Kind (U) = K_Package_Instantiation);
+         pragma Assert
+           (Kind (U) = K_Package_Specification
+            or else Kind (U) = K_Package_Instantiation);
 
          --  This is a subunit and we do not need to add a with for
          --  this unit but for one of its parents.  If the kind of the
@@ -138,7 +140,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
          --  consider it as a subunit.
 
          if Kind (U) = K_Package_Instantiation
-           or else Is_Subunit_Package (U) then
+           or else Is_Subunit_Package (U)
+         then
             U := Parent_Unit_Name (E);
 
             --  This is a special case to handle package Standard
@@ -179,10 +182,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
          if To_Lower (Fully_Qualified_Name (P)) =
            To_Lower
-           (Fully_Qualified_Name
-            (Defining_Identifier
-             (Package_Declaration
-              (Current_Package))))
+             (Fully_Qualified_Name
+                (Defining_Identifier (Package_Declaration (Current_Package))))
          then
             return;
          end if;
@@ -219,10 +220,9 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
          --  package generated for a root node
 
          if Present
-           (Main_Subprogram
-              (Distributed_Application_Unit
-                 (Package_Declaration
-                    (Current_Package))))
+             (Main_Subprogram
+                (Distributed_Application_Unit
+                   (Package_Declaration (Current_Package))))
          then
             Add_Char_To_Name_Buffer (' ');
             Get_Name_String_And_Append
@@ -230,8 +230,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
                  (Defining_Identifier
                     (Main_Subprogram
                        (Distributed_Application_Unit
-                          (Package_Declaration
-                             (Current_Package))))));
+                          (Package_Declaration (Current_Package))))));
          end if;
 
       elsif Kind (Current_Package) /= K_Subprogram_Specification then
@@ -261,7 +260,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
            (Existing_With,
             ADN.Warnings_Off (Existing_With) or else Warnings_Off);
          Set_Elaborated
-           (Existing_With, ADN.Elaborated (Existing_With) or else Elaborated);
+           (Existing_With,
+            ADN.Elaborated (Existing_With) or else Elaborated);
          return;
       end if;
 
@@ -288,8 +288,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Append_Node_To_Current_Package --
    ------------------------------------
 
-   procedure Append_Node_To_Current_Package (N : Node_Id)
-   is
+   procedure Append_Node_To_Current_Package (N : Node_Id) is
    begin
       case Kind (Current_Package) is
          when K_Package_Specification =>
@@ -360,8 +359,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Copy_Designator
      (Designator : Node_Id;
-      Withed     : Boolean := True)
-     return Node_Id
+      Withed     : Boolean := True) return Node_Id
    is
       D : Node_Id;
       P : Node_Id := Parent_Unit_Name (Designator);
@@ -421,7 +419,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Create_Subtype_From_Range_Constraint --
    ------------------------------------------
 
-   function Create_Subtype_From_Range_Constraint (R : Node_Id) return Node_Id
+   function Create_Subtype_From_Range_Constraint
+     (R : Node_Id) return Node_Id
    is
       N         : Node_Id := No_Node;
       C_First   : Node_Id := No_Node;
@@ -443,20 +442,22 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
          case Kind (Nodes.First (R)) is
             when K_Attribute_Designator =>
                C_First := Defining_Identifier (Nodes.Prefix (Nodes.First (R)));
-               Ident := C_First;
+               Ident   := C_First;
 
             when K_Designator =>
                C_First := Defining_Identifier (Nodes.First (R));
-               Ident := C_First;
+               Ident   := C_First;
 
             when K_Literal =>
                C_First := Nodes.First (R);
-               Ident := Make_Defining_Identifier
-                 (Get_String_Name (Ada_Values.Image (Nodes.Value (C_First))));
+               Ident   :=
+                 Make_Defining_Identifier
+                   (Get_String_Name
+                      (Ada_Values.Image (Nodes.Value (C_First))));
 
             when K_Defining_Identifier =>
                C_First := Nodes.First (R);
-               Ident := C_First;
+               Ident   := C_First;
             when others =>
                null;
          end case;
@@ -473,8 +474,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
             when K_Literal =>
                C_Last :=
                  Make_Defining_Identifier
-                 (Get_String_Name
-                  (Ada_Values.Image (Nodes.Value (Nodes.Last (R)))));
+                   (Get_String_Name
+                      (Ada_Values.Image (Nodes.Value (Nodes.Last (R)))));
 
             when K_Defining_Identifier =>
                C_Last := Nodes.Last (R);
@@ -495,21 +496,21 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
             when K_Attribute_Designator =>
                Ident := Defining_Identifier (Nodes.Prefix (Index_Type (R)));
 
-               if C_First = No_Node and then
-                 C_Last = No_Node then
+               if C_First = No_Node and then C_Last = No_Node then
 
                   --  Consider only Range attribute. Can be problematic
                   --  with a size attribute for instance.
-                  C_Index := Make_Range_Constraint
-                    (Make_Attribute_Designator (Ident, A_First),
-                     Make_Attribute_Designator (Ident, A_Last),
-                     Ident);
+                  C_Index :=
+                    Make_Range_Constraint
+                      (Make_Attribute_Designator (Ident, A_First),
+                       Make_Attribute_Designator (Ident, A_Last),
+                       Ident);
 
-                  Sub_Ident := Make_Defining_Identifier
-                                (Name (Index_Type (R)));
+                  Sub_Ident :=
+                    Make_Defining_Identifier (Name (Index_Type (R)));
                end if;
             when K_Designator =>
-               Ident := Defining_Identifier (Index_Type (R));
+               Ident   := Defining_Identifier (Index_Type (R));
                C_Index := Index_Type (R);
 
             when others =>
@@ -519,74 +520,93 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
       --  Case of unconstraint array (range <>)
       --  or a range attribute (Index'Range).
-      if (C_First = No_Node) and then (C_Last = No_Node)
+      if (C_First = No_Node)
+        and then (C_Last = No_Node)
         and then (C_Index /= No_Node)
-        and then Ident /= No_Node then
+        and then Ident /= No_Node
+      then
 
          --  if C_Index is an unconstraint array (range <>)
          --  return a range constraint, else return created type.
          if Kind (C_Index) = K_Designator then
             N := Make_Range_Constraint (No_Node, No_Node, Ident);
          else
-            Sub_Ident := Make_Defining_Identifier
-              (Create_Unique_Identifier
-                 (Name (Ident), Get_Name_String (Name (Sub_Ident))));
+            Sub_Ident :=
+              Make_Defining_Identifier
+                (Create_Unique_Identifier
+                   (Name (Ident),
+                    Get_Name_String (Name (Sub_Ident))));
             if Get_Name_Table_Info (Name (Sub_Ident)) = Int (No_Node) then
-               N := Make_Full_Type_Declaration
-                 (Defining_Identifier => Sub_Ident,
-                  Type_Definition => C_Index,
-                  Is_Subtype => true);
+               N :=
+                 Make_Full_Type_Declaration
+                   (Defining_Identifier => Sub_Ident,
+                    Type_Definition     => C_Index,
+                    Is_Subtype          => True);
                Set_Name_Table_Info (Name (Sub_Ident), Int (Sub_Ident));
                Append_Node_To_Current_Package (N);
             else
-               N := Corresponding_Node
-                 (Node_Id (Get_Name_Table_Info (Name (Sub_Ident))));
+               N :=
+                 Corresponding_Node
+                   (Node_Id (Get_Name_Table_Info (Name (Sub_Ident))));
             end if;
          end if;
 
       --  Case range constraint is of the form :
       --  My_Type range Range_First .. Range_Last
       --  create a type : subtype UT_Type is My_Type Range_First ..Range_Last
-      elsif (C_First /= No_Node) and then (C_Last /= No_Node)
-        and then (C_Index /= No_Node) then
+      elsif (C_First /= No_Node)
+        and then (C_Last /= No_Node)
+        and then (C_Index /= No_Node)
+      then
 
-         Sub_Ident := Make_Defining_Identifier
-           (Create_Unique_Identifier (Name (Sub_Ident)));
+         Sub_Ident :=
+           Make_Defining_Identifier
+             (Create_Unique_Identifier (Name (Sub_Ident)));
 
-         N := Make_Full_Type_Declaration
-           (Defining_Identifier => Sub_Ident,
-            Type_Definition => Make_Range_Constraint (C_First, C_Last, Ident),
-            Is_Subtype => true);
+         N :=
+           Make_Full_Type_Declaration
+             (Defining_Identifier => Sub_Ident,
+              Type_Definition     =>
+                Make_Range_Constraint (C_First, C_Last, Ident),
+              Is_Subtype => True);
 
          if Get_Name_Table_Info (Name (Sub_Ident)) = Int (No_Node) then
             Set_Name_Table_Info (Name (Sub_Ident), Int (Sub_Ident));
             Append_Node_To_Current_Package (N);
          else
-            N := Corresponding_Node
-              (Node_Id (Get_Name_Table_Info (Name (Sub_Ident))));
+            N :=
+              Corresponding_Node
+                (Node_Id (Get_Name_Table_Info (Name (Sub_Ident))));
          end if;
 
       --  Case range constraint is of the form : 1 .. Max_Size,
       --  create a type : type UT_Type is Integer range 1 .. Max_Size
-      elsif (C_First /= No_Node) and then (C_Last /= No_Node)
-        and then (C_Index = No_Node) then
+      elsif (C_First /= No_Node)
+        and then (C_Last /= No_Node)
+        and then (C_Index = No_Node)
+      then
 
-         Sub_Ident := Make_Defining_Identifier
-           (Create_Unique_Identifier (Name (Sub_Ident)));
+         Sub_Ident :=
+           Make_Defining_Identifier
+             (Create_Unique_Identifier (Name (Sub_Ident)));
 
-         N := Make_Full_Type_Declaration
-           (Defining_Identifier => Sub_Ident,
-            Type_Definition =>
-              Make_Range_Constraint
-              (C_First, C_Last, Make_Defining_Identifier (TN (T_Integer))),
-            Is_Subtype => true);
+         N :=
+           Make_Full_Type_Declaration
+             (Defining_Identifier => Sub_Ident,
+              Type_Definition     =>
+                Make_Range_Constraint
+                  (C_First,
+                   C_Last,
+                   Make_Defining_Identifier (TN (T_Integer))),
+              Is_Subtype => True);
 
          if Get_Name_Table_Info (Name (Sub_Ident)) = Int (No_Node) then
             Set_Name_Table_Info (Name (Sub_Ident), Int (Sub_Ident));
             Append_Node_To_Current_Package (N);
          else
-            N := Corresponding_Node
-                 (Node_Id (Get_Name_Table_Info (Name (Sub_Ident))));
+            N :=
+              Corresponding_Node
+                (Node_Id (Get_Name_Table_Info (Name (Sub_Ident))));
          end if;
       end if;
 
@@ -627,8 +647,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (N                       : Node_Id;
       Copy                    : Boolean := False;
       Keep_Parent             : Boolean := True;
-      Keep_Corresponding_Node : Boolean := True)
-     return Node_Id
+      Keep_Corresponding_Node : Boolean := True) return Node_Id
    is
       P      : Node_Id;
       Def_Id : Node_Id := N;
@@ -644,9 +663,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       end if;
 
       if Keep_Corresponding_Node then
-         Set_Corresponding_Node
-           (Def_Id,
-            Corresponding_Node (N));
+         Set_Corresponding_Node (Def_Id, Corresponding_Node (N));
       end if;
 
       P := New_Node (K_Designator);
@@ -963,15 +980,14 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (Subtype_Indication : Node_Id;
       Is_All             : Boolean := False;
       Is_Constant        : Boolean := False;
-      Is_Not_Null        : Boolean := False)
-     return Node_Id
+      Is_Not_Null        : Boolean := False) return Node_Id
    is
       N : Node_Id;
    begin
       N := New_Node (K_Access_Type_Definition);
       Set_Subtype_Indication (N, Subtype_Indication);
 
-      Set_Is_All      (N, Is_All);
+      Set_Is_All (N, Is_All);
       Set_Is_Constant (N, Is_Constant);
       Set_Is_Not_Null (N, Is_Not_Null);
       return N;
@@ -983,8 +999,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Ada_Comment
      (N                 : Name_Id;
-      Has_Header_Spaces : Boolean := True)
-     return Node_Id
+      Has_Header_Spaces : Boolean := True) return Node_Id
    is
       C : Node_Id;
    begin
@@ -1013,13 +1028,13 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    ------------------------------
 
    function Create_Unique_Identifier
-     (Name : Name_Id;
-      Suffix : String := "")
-     return Name_Id
+     (Name   : Name_Id;
+      Suffix : String := "") return Name_Id
    is
       Name_Returned : Name_Id;
-      Pack          : constant Name_Id := Nodes.Name
-        (Defining_Identifier (Package_Declaration (Current_Package)));
+      Pack          : constant Name_Id :=
+        Nodes.Name
+          (Defining_Identifier (Package_Declaration (Current_Package)));
    begin
       Set_Str_To_Name_Buffer ("");
       Get_Name_String (Pack);
@@ -1029,15 +1044,15 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
            (Defining_Identifier
               (Main_Subprogram
                  (Distributed_Application_Unit
-                    (Package_Declaration
-                       (Current_Package))))));
-      GNAT.Case_Util.To_Mixed
-        (Name_Buffer (1 .. Name_Len));
+                    (Package_Declaration (Current_Package))))));
+      GNAT.Case_Util.To_Mixed (Name_Buffer (1 .. Name_Len));
       Add_Char_To_Name_Buffer ('_');
       Get_Name_String_And_Append (Name);
       if Suffix /= "" then
-         Name_Returned := Add_Prefix_To_Name
-           ("UT_", Add_Suffix_To_Name ("_" & Suffix, Name_Find));
+         Name_Returned :=
+           Add_Prefix_To_Name
+             ("UT_",
+              Add_Suffix_To_Name ("_" & Suffix, Name_Find));
       else
          Name_Returned := Add_Prefix_To_Name ("UT_", Name_Find);
       end if;
@@ -1051,8 +1066,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Array_Type_Definition
      (Range_Constraints    : List_Id;
       Component_Definition : Node_Id;
-      Aliased_Present      : Boolean := False)
-     return Node_Id
+      Aliased_Present      : Boolean := False) return Node_Id
    is
       N : Node_Id;
 
@@ -1070,8 +1084,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Assignment_Statement
      (Variable_Identifier : Node_Id;
-      Expression          : Node_Id)
-     return Node_Id
+      Expression          : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1088,8 +1101,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Attribute_Definition_Clause
      (Defining_Identifier  : Node_Id;
       Attribute_Designator : Attribute_Id;
-      Expression           : Node_Id)
-     return Node_Id
+      Expression           : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1107,8 +1119,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Attribute_Designator
      (Prefix    : Node_Id;
-      Attribute : Attribute_Id)
-     return Node_Id
+      Attribute : Attribute_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1126,8 +1137,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (Statement_Identifier : Node_Id := No_Node;
       Declarative_Part     : List_Id;
       Statements           : List_Id;
-      Exception_Handler    : List_Id := No_List)
-     return Node_Id
+      Exception_Handler    : List_Id := No_List) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1162,8 +1172,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Case_Statement
      (Expression                  : Node_Id;
-      Case_Statement_Alternatives : List_Id)
-     return Node_Id
+      Case_Statement_Alternatives : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1179,8 +1188,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Case_Statement_Alternative
      (Discret_Choice_List : List_Id;
-      Statements          : List_Id)
-     return Node_Id
+      Statements          : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1196,8 +1204,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Component_Association
      (Selector_Name : Node_Id;
-      Expression    : Node_Id)
-     return Node_Id
+      Expression    : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1215,8 +1222,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (Defining_Identifier : Node_Id;
       Subtype_Indication  : Node_Id;
       Expression          : Node_Id := No_Node;
-      Aliased_Present     : Boolean := False)
-     return Node_Id is
+      Aliased_Present     : Boolean := False) return Node_Id
+   is
       N : Node_Id;
 
    begin
@@ -1234,23 +1241,20 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Decimal_Type_Definition
      (D_Digits : Unsigned_Long_Long;
-      D_Scale  : Unsigned_Long_Long)
-     return Node_Id
+      D_Scale  : Unsigned_Long_Long) return Node_Id
    is
       N : Node_Id;
       V : Value_Id;
    begin
       N := New_Node (K_Decimal_Type_Definition);
 
-      V := New_Floating_Point_Value
-        (Long_Double (1.0 / (10 ** (Integer (D_Scale)))));
+      V :=
+        New_Floating_Point_Value
+          (Long_Double (1.0 / (10**(Integer (D_Scale)))));
 
       Set_Scale (N, Make_Literal (V));
 
-      V := New_Integer_Value
-        (D_Digits,
-         1,
-         10);
+      V := New_Integer_Value (D_Digits, 1, 10);
       Set_Total (N, V);
 
       return N;
@@ -1260,10 +1264,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Defining_Identifier --
    ------------------------------
 
-   function Make_Defining_Identifier
-     (Name   : Name_Id)
-     return Node_Id
-   is
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id is
       N : Node_Id;
 
    begin
@@ -1278,8 +1279,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Delay_Statement
      (Expression : Node_Id;
-      Is_Until   : Boolean := False)
-     return Node_Id
+      Is_Until   : Boolean := False) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1298,8 +1298,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Record_Extension_Part : Node_Id := No_Node;
       Is_Abstract_Type      : Boolean := False;
       Is_Private_Extention  : Boolean := False;
-      Is_Subtype            : Boolean := False)
-     return Node_Id
+      Is_Subtype            : Boolean := False) return Node_Id
    is
       N : Node_Id;
 
@@ -1320,8 +1319,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Designator
      (Designator : Name_Id;
       Parent     : Name_Id := No_Name;
-      Is_All     : Boolean := False)
-     return Node_Id
+      Is_All     : Boolean := False) return Node_Id
    is
       N : Node_Id;
       P : Node_Id;
@@ -1345,8 +1343,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Element_Association
      (Index      : Node_Id;
-      Expression : Node_Id)
-     return Node_Id
+      Expression : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1362,8 +1359,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Elsif_Statement
      (Condition       : Node_Id;
-      Then_Statements : List_Id)
-     return Node_Id
+      Then_Statements : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1378,8 +1374,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    --------------------------------------
 
    function Make_Enumeration_Type_Definition
-     (Enumeration_Literals : List_Id)
-     return Node_Id
+     (Enumeration_Literals : List_Id) return Node_Id
    is
       N : Node_Id;
 
@@ -1395,14 +1390,13 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Enumeration_Representation_Clause
      (Defining_Identifier : Node_Id;
-      Array_Aggregate     : Node_Id)
-     return Node_Id
+      Array_Aggregate     : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
-      N := New_Node           (K_Enumeration_Representation_Clause);
+      N := New_Node (K_Enumeration_Representation_Clause);
       Set_Defining_Identifier (N, Defining_Identifier);
-      Set_Array_Aggregate     (N, Array_Aggregate);
+      Set_Array_Aggregate (N, Array_Aggregate);
       return N;
    end Make_Enumeration_Representation_Clause;
 
@@ -1410,10 +1404,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Explicit_Dereference --
    -------------------------------
 
-   function Make_Explicit_Dereference
-     (Prefix : Node_Id)
-     return Node_Id
-   is
+   function Make_Explicit_Dereference (Prefix : Node_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Explicit_Dereference);
@@ -1427,17 +1418,16 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Exception_Declaration
      (Defining_Identifier : Node_Id;
-      Renamed_Exception   : Node_Id := No_Node)
-     return Node_Id
+      Renamed_Exception   : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
 
    begin
-      N := New_Node           (K_Exception_Declaration);
+      N := New_Node (K_Exception_Declaration);
       Set_Defining_Identifier (N, Defining_Identifier);
-      Set_Renamed_Entity      (N, Renamed_Exception);
-      Set_Corresponding_Node  (Defining_Identifier, N);
-      Set_Parent              (N, Current_Package);
+      Set_Renamed_Entity (N, Renamed_Exception);
+      Set_Corresponding_Node (Defining_Identifier, N);
+      Set_Parent (N, Current_Package);
       return N;
    end Make_Exception_Declaration;
 
@@ -1448,8 +1438,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Expression
      (Left_Expr  : Node_Id;
       Operator   : Operator_Type := Op_None;
-      Right_Expr : Node_Id := No_Node)
-     return Node_Id
+      Right_Expr : Node_Id       := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1467,8 +1456,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_For_Statement
      (Defining_Identifier : Node_Id;
       Range_Constraint    : Node_Id;
-      Statements          : List_Id)
-     return Node_Id
+      Statements          : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1483,10 +1471,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Loop_Statement --
    -------------------------
 
-   function Make_Loop_Statement
-     (Statements          : List_Id)
-     return Node_Id
-   is
+   function Make_Loop_Statement (Statements : List_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Loop_Statement);
@@ -1503,20 +1488,20 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Type_Definition     : Node_Id;
       Discriminant_Spec   : Node_Id := No_Node;
       Parent              : Node_Id := No_Node;
-      Is_Subtype          : Boolean := False)
-     return Node_Id
+      Is_Subtype          : Boolean := False) return Node_Id
    is
-      N : Node_Id;
+      N            : Node_Id;
       T_Definition : Node_Id := Type_Definition;
    begin
       --  Remove anonymous type if necessary.
       if Kind (Type_Definition) = K_Array_Type_Definition then
-         T_Definition := Remove_Anonymous_Array_Type_Definition
-           (Range_Constraints (Type_Definition),
-            Component_Definition (Type_Definition),
-            Nodes.Aliased_Present (Type_Definition),
-            Defining_Identifier,
-            True);
+         T_Definition :=
+           Remove_Anonymous_Array_Type_Definition
+             (Range_Constraints (Type_Definition),
+              Component_Definition (Type_Definition),
+              Nodes.Aliased_Present (Type_Definition),
+              Defining_Identifier,
+              True);
       end if;
 
       N := New_Node (K_Full_Type_Declaration);
@@ -1537,10 +1522,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Exit_When_Statement --
    ------------------------------
 
-   function Make_Exit_When_Statement
-     (Condition        : Node_Id)
-     return Node_Id
-   is
+   function Make_Exit_When_Statement (Condition : Node_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Exit_When_Statement);
@@ -1556,8 +1538,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (Condition        : Node_Id;
       Then_Statements  : List_Id;
       Elsif_Statements : List_Id := No_List;
-      Else_Statements  : List_Id := No_List)
-     return Node_Id
+      Else_Statements  : List_Id := No_List) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1575,8 +1556,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Indexed_Component
      (Prefix      : Node_Id;
-      Expressions : List_Id)
-     return Node_Id
+      Expressions : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1594,8 +1574,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
       N3 : Node_Id := No_Node;
-      N4 : Node_Id := No_Node)
-     return List_Id
+      N4 : Node_Id := No_Node) return List_Id
    is
       L : List_Id;
    begin
@@ -1621,8 +1600,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Literal
      (Value             : Value_Id;
-      Parent_Designator : Node_Id := No_Node)
-     return Node_Id is
+      Parent_Designator : Node_Id := No_Node) return Node_Id
+   is
       N : Node_Id;
 
    begin
@@ -1639,12 +1618,11 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Main_Subprogram_Implementation
      (Identifier : Node_Id;
       Build_Spec : Boolean := False;
-      Build_Body : Boolean := True)
-     return Node_Id
+      Build_Body : Boolean := True) return Node_Id
    is
-      Unit : Node_Id;
-      Spg  : Node_Id;
-      N    : Node_Id;
+      Unit        : Node_Id;
+      Spg         : Node_Id;
+      N           : Node_Id;
       Style_State : constant Value_Id := Get_Style_State;
    begin
       Unit := New_Node (K_Main_Subprogram_Implementation);
@@ -1655,12 +1633,13 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       -- Spec --
       ----------
 
-      Spg := Make_Subprogram_Specification
-        (Defining_Identifier  => Copy_Node (Identifier),
-         Parameter_Profile    => No_List,
-         Return_Type          => No_Node,
-         Parent               => No_Node,
-         Renamed_Subprogram   => No_Node);
+      Spg :=
+        Make_Subprogram_Specification
+          (Defining_Identifier => Copy_Node (Identifier),
+           Parameter_Profile   => No_List,
+           Return_Type         => No_Node,
+           Parent              => No_Node,
+           Renamed_Subprogram  => No_Node);
 
       if Build_Spec then
          Set_Withed_Packages (Spg, New_List (K_Withed_Packages));
@@ -1672,9 +1651,10 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
          --  Disabling style checks
 
-         N := Make_Pragma_Statement
-           (Pragma_Style_Checks,
-            Make_List_Id (Make_Literal (Style_State)));
+         N :=
+           Make_Pragma_Statement
+             (Pragma_Style_Checks,
+              Make_List_Id (Make_Literal (Style_State)));
          Append_Node_To_List (N, Package_Headers (Spg));
 
          --  Binding
@@ -1689,10 +1669,11 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
          -- Body --
          ----------
 
-         Spg := Make_Subprogram_Implementation
-           (Specification => Spg,
-            Declarations  => New_List (K_Declaration_List),
-            Statements    => New_List (K_Statement_List));
+         Spg :=
+           Make_Subprogram_Implementation
+             (Specification => Spg,
+              Declarations  => New_List (K_Declaration_List),
+              Statements    => New_List (K_Statement_List));
          Set_Withed_Packages (Spg, New_List (K_Withed_Packages));
          Set_Package_Headers (Spg, New_List (K_Package_Headers));
 
@@ -1702,9 +1683,10 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
          --  Disabling style checks
 
-         N := Make_Pragma_Statement
-           (Pragma_Style_Checks,
-            Make_List_Id (Make_Literal (Style_State)));
+         N :=
+           Make_Pragma_Statement
+             (Pragma_Style_Checks,
+              Make_List_Id (Make_Literal (Style_State)));
          Append_Node_To_List (N, Package_Headers (Spg));
 
          --  Binding
@@ -1739,37 +1721,35 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Parent              : Node_Id := No_Node;
       Renamed_Object      : Node_Id := No_Node;
       Aliased_Present     : Boolean := False;
-      Discriminant_Spec   : Node_Id := No_Node)
-     return Node_Id
+      Discriminant_Spec   : Node_Id := No_Node) return Node_Id
    is
-      N : Node_Id;
+      N              : Node_Id;
       Obj_Definition : Node_Id := Object_Definition;
       Exp            : Node_Id := Expression;
    begin
       --  Remove anonymous type if necessary.
       if Kind (Obj_Definition) = K_Array_Type_Definition then
-         Obj_Definition := Remove_Anonymous_Array_Type_Definition
-           (Range_Constraints (Object_Definition),
-            Component_Definition (Object_Definition),
-            Nodes.Aliased_Present (Object_Definition),
-            Defining_Identifier);
+         Obj_Definition :=
+           Remove_Anonymous_Array_Type_Definition
+             (Range_Constraints (Object_Definition),
+              Component_Definition (Object_Definition),
+              Nodes.Aliased_Present (Object_Definition),
+              Defining_Identifier);
 
          --  Fully qualify aggregates
          if Kind (Exp) = K_Array_Aggregate then
-            Exp := Make_Qualified_Expression
-              (Obj_Definition,
-               Expression);
+            Exp := Make_Qualified_Expression (Obj_Definition, Expression);
          end if;
       end if;
-      N := New_Node           (K_Object_Declaration);
+      N := New_Node (K_Object_Declaration);
       Set_Defining_Identifier (N, Defining_Identifier);
-      Set_Corresponding_Node  (Defining_Identifier, N);
-      Set_Constant_Present    (N, Constant_Present);
-      Set_Aliased_Present     (N, Aliased_Present);
-      Set_Object_Definition   (N, Obj_Definition);
-      Set_Expression          (N, Exp);
-      Set_Renamed_Entity      (N, Renamed_Object);
-      Set_Discriminant_Spec   (N, Discriminant_Spec);
+      Set_Corresponding_Node (Defining_Identifier, N);
+      Set_Constant_Present (N, Constant_Present);
+      Set_Aliased_Present (N, Aliased_Present);
+      Set_Object_Definition (N, Obj_Definition);
+      Set_Expression (N, Exp);
+      Set_Renamed_Entity (N, Renamed_Object);
+      Set_Discriminant_Spec (N, Discriminant_Spec);
 
       if No (Parent) then
          Set_Parent (N, Current_Package);
@@ -1785,8 +1765,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -------------------------------
 
    function Make_Object_Instantiation
-     (Qualified_Expression : Node_Id)
-     return Node_Id
+     (Qualified_Expression : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1799,12 +1778,11 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Spark_Own_Annotation --
    -------------------------------
 
-   function Make_Spark_Own_Annotation
+   function Make_SPARK_Own_Annotation
      (Variable       : Node_Id;
       Own_Mode       : Mode_Id := Mode_In;
       Is_Initialized : Boolean := True;
-      Is_Protected   : Boolean := False)
-     return Node_Id
+      Is_Protected   : Boolean := False) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1814,16 +1792,16 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Set_Is_Initialized (N, Is_Initialized);
       Set_Is_Protected (N, Is_Protected);
       return N;
-   end Make_Spark_Own_Annotation;
+   end Make_SPARK_Own_Annotation;
 
    ------------------------------
    -- Make_Package_Declaration --
    ------------------------------
 
    function Make_Package_Declaration (Identifier : Node_Id) return Node_Id is
-      Pkg  : Node_Id;
-      Unit : Node_Id;
-      N    : Node_Id;
+      Pkg         : Node_Id;
+      Unit        : Node_Id;
+      N           : Node_Id;
       Style_State : constant Value_Id := Get_Style_State;
    begin
       Unit := New_Node (K_Package_Declaration);
@@ -1846,13 +1824,15 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
       --  Disabling style checks
 
-      N := Make_Pragma_Statement (Pragma_Style_Checks,
-                                  Make_List_Id (Make_Literal (Style_State)));
+      N :=
+        Make_Pragma_Statement
+          (Pragma_Style_Checks,
+           Make_List_Id (Make_Literal (Style_State)));
       Append_Node_To_List (N, Package_Headers (Pkg));
 
       Set_Visible_Part (Pkg, New_List (K_Declaration_List));
       Set_Private_Part (Pkg, New_List (K_Declaration_List));
-      Set_SPARK_Own_Annotations (Pkg, New_List (K_Annotation_List));
+      Set_SPARK_Own_Annotations (Pkg, New_List (K_Annotation_list));
       Set_Package_Declaration (Pkg, Unit);
       Set_Package_Specification (Unit, Pkg);
 
@@ -1870,8 +1850,10 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
       --  Disabling style checks
 
-      N := Make_Pragma_Statement (Pragma_Style_Checks,
-                                  Make_List_Id (Make_Literal (Style_State)));
+      N :=
+        Make_Pragma_Statement
+          (Pragma_Style_Checks,
+           Make_List_Id (Make_Literal (Style_State)));
       Append_Node_To_List (N, Package_Headers (Pkg));
 
       Set_Declarations (Pkg, New_List (K_Declaration_List));
@@ -1889,8 +1871,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Package_Instantiation
      (Defining_Identifier : Node_Id;
       Generic_Package     : Node_Id;
-      Parameter_List      : List_Id := No_List)
-     return Node_Id
+      Parameter_List      : List_Id := No_List) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1917,8 +1898,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Parameter_Association
      (Selector_Name    : Node_Id;
-      Actual_Parameter : Node_Id)
-     return Node_Id
+      Actual_Parameter : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1936,8 +1916,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (Defining_Identifier : Node_Id;
       Subtype_Mark        : Node_Id;
       Parameter_Mode      : Mode_Id := Mode_In;
-      Expression          : Node_Id := No_Node)
-     return                Node_Id
+      Expression          : Node_Id := No_Node) return Node_Id
    is
       P : Node_Id;
 
@@ -1956,8 +1935,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Pragma_Statement
      (The_Pragma    : Pragma_Id;
-      Argument_List : List_Id := No_List)
-     return Node_Id
+      Argument_List : List_Id := No_List) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1977,8 +1955,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Visible_Part        : List_Id;
       Private_Part        : List_Id;
       Parent              : Node_Id := Current_Package;
-      Is_Type             : Boolean := False)
-     return Node_Id
+      Is_Type             : Boolean := False) return Node_Id
    is
       N : Node_Id;
    begin
@@ -1997,8 +1974,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Protected_Object_Body
      (Defining_Identifier : Node_Id;
-      Statements          : List_Id)
-     return Node_Id
+      Statements          : List_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -2013,9 +1989,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -------------------------------
 
    function Make_Qualified_Expression
-     (Subtype_Mark  : Node_Id;
-      Aggregate     : Node_Id)
-     return Node_Id
+     (Subtype_Mark : Node_Id;
+      Aggregate    : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -2030,8 +2005,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    --------------------------
 
    function Make_Raise_Statement
-     (Raised_Error  : Node_Id := No_Node)
-     return Node_Id is
+     (Raised_Error : Node_Id := No_Node) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (K_Raise_Statement);
@@ -2046,8 +2021,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Range_Constraint
      (First      : Node_Id;
       Last       : Node_Id;
-      Index_Type : Node_Id := No_Node)
-     return Node_Id
+      Index_Type : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
@@ -2062,10 +2036,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Record_Aggregate --
    ---------------------------
 
-   function Make_Record_Aggregate
-     (L : List_Id)
-     return Node_Id
-   is
+   function Make_Record_Aggregate (L : List_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Record_Aggregate);
@@ -2077,9 +2048,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Record_Definition --
    ----------------------------
 
-   function Make_Record_Definition
-     (Component_List : List_Id)
-     return Node_Id is
+   function Make_Record_Definition (Component_List : List_Id) return Node_Id is
       N : Node_Id;
 
    begin
@@ -2096,8 +2065,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (Record_Definition : Node_Id;
       Is_Abstract_Type  : Boolean := False;
       Is_Tagged_Type    : Boolean := False;
-      Is_Limited_Type   : Boolean := False)
-     return Node_Id is
+      Is_Limited_Type   : Boolean := False) return Node_Id
+   is
       N : Node_Id;
 
    begin
@@ -2113,10 +2082,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Return_Statement --
    ---------------------------
 
-   function Make_Return_Statement
-     (Expression : Node_Id)
-     return Node_Id
-   is
+   function Make_Return_Statement (Expression : Node_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Return_Statement);
@@ -2130,8 +2096,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Selected_Component
      (Prefix        : Node_Id;
-      Selector_Name : Node_Id)
-     return Node_Id
+      Selector_Name : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -2147,8 +2112,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Subprogram_Call
      (Defining_Identifier   : Node_Id;
-      Actual_Parameter_Part : List_Id := No_List)
-     return Node_Id
+      Actual_Parameter_Part : List_Id := No_List) return Node_Id
    is
       N : Node_Id;
    begin
@@ -2165,9 +2129,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    function Make_Subprogram_Implementation
      (Specification : Node_Id;
       Declarations  : List_Id;
-      Statements    : List_Id)
-
-     return Node_Id
+      Statements    : List_Id) return Node_Id
    is
       N : Node_Id;
 
@@ -2189,17 +2151,16 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Return_Type             : Node_Id := No_Node;
       Parent                  : Node_Id := Current_Package;
       Renamed_Subprogram      : Node_Id := No_Node;
-      Instantiated_Subprogram : Node_Id := No_Node)
-     return Node_Id
+      Instantiated_Subprogram : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
-      N := New_Node           (K_Subprogram_Specification);
+      N := New_Node (K_Subprogram_Specification);
       Set_Defining_Identifier (N, Defining_Identifier);
-      Set_Parameter_Profile   (N, Parameter_Profile);
-      Set_Return_Type         (N, Return_Type);
-      Set_Parent              (N, Parent);
-      Set_Renamed_Entity      (N, Renamed_Subprogram);
+      Set_Parameter_Profile (N, Parameter_Profile);
+      Set_Return_Type (N, Return_Type);
+      Set_Parent (N, Parent);
+      Set_Renamed_Entity (N, Renamed_Subprogram);
       Set_Instantiated_Entity (N, Instantiated_Subprogram);
       return N;
    end Make_Subprogram_Specification;
@@ -2210,8 +2171,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Type_Attribute
      (Designator : Node_Id;
-      Attribute  : Attribute_Id)
-     return Node_Id
+      Attribute  : Attribute_Id) return Node_Id
    is
       procedure Get_Scoped_Name_String (S : Node_Id);
 
@@ -2245,8 +2205,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Type_Conversion
      (Subtype_Mark : Node_Id;
-      Expression   : Node_Id)
-     return Node_Id
+      Expression   : Node_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -2260,10 +2219,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Used_Type --
    --------------------
 
-   function Make_Used_Type
-     (The_Used_Type : Node_Id)
-     return Node_Id
-   is
+   function Make_Used_Type (The_Used_Type : Node_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Used_Type);
@@ -2280,8 +2236,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (Defining_Identifier : Node_Id;
       Used                : Boolean := False;
       Warnings_Off        : Boolean := False;
-      Elaborated          : Boolean := False)
-     return Node_Id
+      Elaborated          : Boolean := False) return Node_Id
    is
       N : Node_Id;
    begin
@@ -2289,7 +2244,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Set_Defining_Identifier (N, Defining_Identifier);
       Set_Used (N, Used);
       Set_Warnings_Off (N, Warnings_Off);
-      Set_Elaborated (N,  Elaborated);
+      Set_Elaborated (N, Elaborated);
       return N;
    end Make_Withed_Package;
 
@@ -2297,10 +2252,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Used_Package --
    -----------------------
 
-   function Make_Used_Package
-     (The_Used_Package : Node_Id)
-     return Node_Id
-   is
+   function Make_Used_Package (The_Used_Package : Node_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Used_Package);
@@ -2314,9 +2266,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -----------------------
 
    function Make_Variant_Part
-     (Discriminant        : Node_Id;
-      Variant_List        : List_Id)
-     return                Node_Id
+     (Discriminant : Node_Id;
+      Variant_List : List_Id) return Node_Id
    is
       N : Node_Id;
 
@@ -2331,10 +2282,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Comment_Header --
    -------------------------
 
-   procedure Make_Comment_Header
-     (Package_Header : List_Id)
-   is
-      N            : Node_Id;
+   procedure Make_Comment_Header (Package_Header : List_Id) is
+      N : Node_Id;
    begin
       --  Appending the comment header lines to the package header
 
@@ -2385,19 +2334,19 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function New_List
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id is
+      From : Node_Id := No_Node) return List_Id
+   is
       N : Node_Id;
 
    begin
       Entries.Increment_Last;
-      N := Entries.Last;
+      N                 := Entries.Last;
       Entries.Table (N) := Default_Node;
       Set_Kind (N, Kind);
       if Present (From) then
-         Set_Loc  (N, Loc (From));
+         Set_Loc (N, Loc (From));
       else
-         Set_Loc  (N, No_Location);
+         Set_Loc (N, No_Location);
       end if;
       return List_Id (N);
    end New_List;
@@ -2408,13 +2357,12 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function New_Node
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id
+      From : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
       Entries.Increment_Last;
-      N := Entries.Last;
+      N                 := Entries.Last;
       Entries.Table (N) := Default_Node;
       Set_Kind (N, Kind);
 
@@ -2431,10 +2379,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- New_Token --
    ---------------
 
-   procedure New_Token
-     (T : Token_Type;
-      I : String := "")
-   is
+   procedure New_Token (T : Token_Type; I : String := "") is
       Name : Name_Id;
    begin
       if T in Keyword_Type or else T in Spark_Keyword_Type then
@@ -2458,9 +2403,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- New_Operator --
    ------------------
 
-   procedure New_Operator
-     (O : Operator_Type;
-      I : String := "") is
+   procedure New_Operator (O : Operator_Type; I : String := "") is
    begin
       if O in Keyword_Operator then
          Set_Str_To_Name_Buffer (Image (O));
@@ -2499,11 +2442,11 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       N : Node_Id;
    begin
       N := New_Node (K_Designator);
-      Set_Defining_Identifier
-        (N, Make_Defining_Identifier (Name (P)));
+      Set_Defining_Identifier (N, Make_Defining_Identifier (Name (P)));
       if Present (Parent_Unit_Name (P)) then
          Set_Homogeneous_Parent_Unit_Name
-           (N, Qualified_Designator (Parent_Unit_Name (P)));
+           (N,
+            Qualified_Designator (Parent_Unit_Name (P)));
       else
          Set_Homogeneous_Parent_Unit_Name (N, No_Node);
       end if;
@@ -2520,12 +2463,11 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Component_Definition : Node_Id;
       Aliased_Present      : Boolean := False;
       Variable_Name        : Node_Id;
-      Is_Full_Type         : Boolean := False)
-     return Node_Id
+      Is_Full_Type         : Boolean := False) return Node_Id
    is
       N                : Node_Id;
       R                : Node_Id;
-      Comp             : Node_Id := No_Node;
+      Comp             : Node_Id          := No_Node;
       T_Def            : Node_Id;
       Tmp_Id           : Node_Id;
       List_Constraints : constant List_Id := New_List (K_List_Id);
@@ -2549,7 +2491,8 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
                if Kind (N) = K_Full_Type_Declaration then
                   Append_Node_To_List
-                    (Defining_Identifier (N), List_Constraints);
+                    (Defining_Identifier (N),
+                     List_Constraints);
                else
                   Append_Node_To_List (N, List_Constraints);
                end if;
@@ -2586,19 +2529,22 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
                exit when No (R);
             end loop;
 
-            Comp := Make_Indexed_Component
-              (Prefix => Nodes.Prefix (Component_Definition),
-               Expressions => List_Comp);
+            Comp :=
+              Make_Indexed_Component
+                (Prefix      => Nodes.Prefix (Component_Definition),
+                 Expressions => List_Comp);
 
             --  Create a unique name for component type
 
-            Tmp_Id := Make_Defining_Identifier
-              (Create_Unique_Identifier (Name (Variable_Name), "Component"));
+            Tmp_Id :=
+              Make_Defining_Identifier
+                (Create_Unique_Identifier (Name (Variable_Name), "Component"));
 
-            N := Make_Full_Type_Declaration
-              (Defining_Identifier => Tmp_Id,
-               Type_Definition => Comp,
-               Is_Subtype => True);
+            N :=
+              Make_Full_Type_Declaration
+                (Defining_Identifier => Tmp_Id,
+                 Type_Definition     => Comp,
+                 Is_Subtype          => True);
 
             Comp := Defining_Identifier (N);
 
@@ -2611,16 +2557,17 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
             Comp := Component_Definition;
       end case;
 
-      N := Make_Array_Type_Definition
-        (List_Constraints, Comp, Aliased_Present);
+      N :=
+        Make_Array_Type_Definition (List_Constraints, Comp, Aliased_Present);
 
       --  Add a full type node, only if the caller of
       --  Remove_Anonymous_Array_Type_Definition is Make_Object_Declaration.
 
       if not Is_Full_Type then
 
-         Tmp_Id := Make_Defining_Identifier
-           (Create_Unique_Identifier (Name (Variable_Name), "Array"));
+         Tmp_Id :=
+           Make_Defining_Identifier
+             (Create_Unique_Identifier (Name (Variable_Name), "Array"));
 
          --  We don't call Make_Full_Type_Declaration in order to
          --  avoid recursive calls.
@@ -2681,47 +2628,43 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Parent : Node_Id)
    is
    begin
-      pragma Assert (ADN.Kind (Child) = K_Defining_Identifier
-                     or else ADN.Kind (Child) = K_Designator);
+      pragma Assert
+        (ADN.Kind (Child) = K_Defining_Identifier
+         or else ADN.Kind (Child) = K_Designator);
 
-      pragma Assert (Parent = No_Node
-                     or else ADN.Kind (Parent) = K_Defining_Identifier
-                     or else ADN.Kind (Parent) = K_Designator);
+      pragma Assert
+        (Parent = No_Node
+         or else ADN.Kind (Parent) = K_Defining_Identifier
+         or else ADN.Kind (Parent) = K_Designator);
 
       case ADN.Kind (Child) is
 
          when K_Defining_Identifier =>
             if Parent = No_Node then
-               Set_Parent_Unit_Name
-                 (Child, Parent);
+               Set_Parent_Unit_Name (Child, Parent);
             elsif ADN.Kind (Parent) = K_Defining_Identifier then
-               Set_Parent_Unit_Name
-                 (Child, Parent);
+               Set_Parent_Unit_Name (Child, Parent);
             elsif ADN.Kind (Parent) = K_Designator then
-               Set_Parent_Unit_Name
-                 (Child, Defining_Identifier (Parent));
+               Set_Parent_Unit_Name (Child, Defining_Identifier (Parent));
             else
                raise Program_Error;
             end if;
 
          when K_Designator =>
             if Parent = No_Node then
-               Set_Parent_Unit_Name
-                 (Child, Parent);
+               Set_Parent_Unit_Name (Child, Parent);
                if Present (Defining_Identifier (Child)) then
-                  Set_Parent_Unit_Name
-                    (Defining_Identifier (Child), Parent);
+                  Set_Parent_Unit_Name (Defining_Identifier (Child), Parent);
                end if;
             elsif ADN.Kind (Parent) = K_Defining_Identifier then
                Set_Parent_Unit_Name
-                 (Child, Defining_Identifier_To_Designator (Parent));
+                 (Child,
+                  Defining_Identifier_To_Designator (Parent));
                if Present (Defining_Identifier (Child)) then
-                  Set_Parent_Unit_Name
-                    (Defining_Identifier (Child), Parent);
+                  Set_Parent_Unit_Name (Defining_Identifier (Child), Parent);
                end if;
             elsif ADN.Kind (Parent) = K_Designator then
-               Set_Parent_Unit_Name
-                 (Child, Parent);
+               Set_Parent_Unit_Name (Child, Parent);
                if Present (Defining_Identifier (Child)) then
                   Set_Parent_Unit_Name
                     (Defining_Identifier (Child),
@@ -3098,9 +3041,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       V         : Byte;
    begin
       Get_Name_String (Normalize_Name (N));
-      while First <= Name_Len
-        and then Name_Buffer (First) = '_'
-      loop
+      while First <= Name_Len and then Name_Buffer (First) = '_' loop
          First := First + 1;
       end loop;
 
@@ -3122,7 +3063,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       --  "AADL_" string before the identifier.
 
       Test_Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-      V := Get_Name_Table_Byte (Test_Name);
+      V         := Get_Name_Table_Byte (Test_Name);
       if V > 0 then
          Set_Str_To_Name_Buffer ("AADL_");
          Get_Name_String_And_Append (Name);
@@ -3138,8 +3079,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    function Extract_Designator
      (N               : Node_Id;
-      Add_With_Clause : Boolean := True)
-     return Node_Id
+      Add_With_Clause : Boolean := True) return Node_Id
    is
       P  : Node_Id;
       D  : Node_Id := No_Node;
@@ -3148,13 +3088,11 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
    begin
       case Kind (N) is
-         when K_Full_Type_Declaration |
-           K_Subprogram_Specification =>
+         when K_Full_Type_Declaration | K_Subprogram_Specification =>
             P  := Parent (X);
             FE := Frontend_Node (X);
 
-         when K_Object_Declaration
-           | K_Exception_Declaration =>
+         when K_Object_Declaration | K_Exception_Declaration =>
             P  := Parent (X);
             FE := Frontend_Node (X);
 
@@ -3180,9 +3118,10 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
             raise Program_Error;
       end case;
 
-      D := Defining_Identifier_To_Designator
-        (N           => Defining_Identifier (X),
-         Keep_Parent => False);
+      D :=
+        Defining_Identifier_To_Designator
+          (N           => Defining_Identifier (X),
+           Keep_Parent => False);
       Set_Frontend_Node (D, FE);
 
       if No (P) then
@@ -3193,19 +3132,17 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
       if Kind (N) = K_Full_Type_Declaration
         and then Present (Parent_Unit_Name (Defining_Identifier (N)))
-        and then Kind
-        (Corresponding_Node
-         (Parent_Unit_Name
-          (Defining_Identifier
-           (N)))) = K_Package_Instantiation
+        and then
+          Kind
+            (Corresponding_Node (Parent_Unit_Name (Defining_Identifier (N)))) =
+          K_Package_Instantiation
       then
          Set_Homogeneous_Parent_Unit_Name
            (D,
             Parent_Unit_Name (Defining_Identifier (N)));
          P := Extract_Designator (P);
       else
-         Set_Homogeneous_Parent_Unit_Name
-           (D, Extract_Designator (P, False));
+         Set_Homogeneous_Parent_Unit_Name (D, Extract_Designator (P, False));
          P := Parent_Unit_Name (D);
       end if;
 
@@ -3239,9 +3176,9 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
       if Pos = 0 or else Pos = 1 then
          Display_Error
-           (""""
-            & Get_Name_String (N)
-            & """ is not an Ada fully qualified entity name",
+           ("""" &
+            Get_Name_String (N) &
+            """ is not an Ada fully qualified entity name",
             Fatal => True);
       end if;
 
@@ -3271,9 +3208,9 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
       if Pos = Name_Len or else Pos = Name_Len - 1 then
          Display_Error
-           (""""
-            & Get_Name_String (N)
-            & """ is not an Ada fully qualified entity name",
+           ("""" &
+            Get_Name_String (N) &
+            """ is not an Ada fully qualified entity name",
             Fatal => True);
       end if;
 

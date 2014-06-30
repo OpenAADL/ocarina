@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -91,8 +91,7 @@ package body Ocarina.Backends.ARINC653_Conf.Connections is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -127,16 +126,16 @@ package body Ocarina.Backends.ARINC653_Conf.Connections is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S                    : Node_Id;
-      C                    : Node_Id;
-      Connection_Table     : Node_Id;
-      Channel_Identifier   : Unsigned_Long_Long := 0;
+      S                  : Node_Id;
+      C                  : Node_Id;
+      Connection_Table   : Node_Id;
+      Channel_Identifier : Unsigned_Long_Long := 0;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
 
@@ -144,17 +143,18 @@ package body Ocarina.Backends.ARINC653_Conf.Connections is
                --  processor, we can use it.
                if not AINU.Is_Empty (AIN.Connections (E)) then
                   Connection_Table := Make_XML_Node ("Connection_Table");
-                  C := First_Node (AIN.Connections (E));
-                     while Present (C) loop
-                        if Get_Category_Of_Connection (C) /= CT_Access_Bus then
-                           Channel_Identifier := Channel_Identifier + 1;
-                           Append_Node_To_List
-                              (Map_Connection (C, Channel_Identifier),
-                              XTN.Subitems (Connection_Table));
-                        end if;
-                        C := Next_Node (C);
-                     end loop;
-                  Append_Node_To_List (Connection_Table,
+                  C                := First_Node (AIN.Connections (E));
+                  while Present (C) loop
+                     if Get_Category_Of_Connection (C) /= CT_Access_Bus then
+                        Channel_Identifier := Channel_Identifier + 1;
+                        Append_Node_To_List
+                          (Map_Connection (C, Channel_Identifier),
+                           XTN.Subitems (Connection_Table));
+                     end if;
+                     C := Next_Node (C);
+                  end loop;
+                  Append_Node_To_List
+                    (Connection_Table,
                      XTN.Subitems (Current_XML_Node));
                end if;
             end if;
@@ -178,14 +178,13 @@ package body Ocarina.Backends.ARINC653_Conf.Connections is
       Push_Entity (U);
       Push_Entity (P);
 
-      Current_XML_Node := XTN.Root_Node
-                              (XTN.XML_File (U));
+      Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -201,14 +200,14 @@ package body Ocarina.Backends.ARINC653_Conf.Connections is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      Processes   : List_Id;
-      S           : Node_Id;
+      Processes : List_Id;
+      S         : Node_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -217,7 +216,7 @@ package body Ocarina.Backends.ARINC653_Conf.Connections is
 
       if Present (Backend_Node (Identifier (E))) then
          Processes := XTN.Processes (Backend_Node (Identifier (E)));
-         S := XTN.First_Node (Processes);
+         S         := XTN.First_Node (Processes);
          while Present (S) loop
             Visit (XTN.Content (S));
             S := XTN.Next_Node (S);

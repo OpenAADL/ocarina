@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 1992-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 1992-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-pragma License (GPL);
+pragma License (Gpl);
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
@@ -118,7 +118,7 @@ package body Output is
             --  reporting a failure and quitting.
 
             else
-               Current_FD := Standerr;
+               Current_FD  := Standerr;
                Next_Column := 1;
                Write_Line ("fatal error: disk full");
                OS_Exit (2);
@@ -148,7 +148,7 @@ package body Output is
    begin
       Flush_Buffer;
       Next_Column := 1;
-      Current_FD := New_Output;
+      Current_FD  := New_Output;
    end Set_Output;
 
    -------------------------
@@ -168,7 +168,7 @@ package body Output is
    begin
       Flush_Buffer;
       Next_Column := 1;
-      Current_FD := Standerr;
+      Current_FD  := Standerr;
    end Set_Standard_Error;
 
    -------------------------
@@ -179,7 +179,7 @@ package body Output is
    begin
       Flush_Buffer;
       Next_Column := 1;
-      Current_FD := Standout;
+      Current_FD  := Standout;
    end Set_Standard_Output;
 
    ----------------
@@ -190,7 +190,7 @@ package body Output is
    begin
       if Next_Column < Buffer'Length then
          Buffer (Natural (Next_Column)) := C;
-         Next_Column := Next_Column + 1;
+         Next_Column                    := Next_Column + 1;
       end if;
    end Write_Char;
 
@@ -202,7 +202,7 @@ package body Output is
    begin
       for I in 1 .. N loop
          Buffer (Natural (Next_Column)) := ASCII.LF;
-         Next_Column := Next_Column + 1;
+         Next_Column                    := Next_Column + 1;
          Flush_Buffer;
       end loop;
    end Write_Eol;

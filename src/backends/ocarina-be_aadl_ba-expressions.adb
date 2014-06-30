@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -54,12 +54,12 @@ package body Ocarina.BE_AADL_BA.Expressions is
 
    package BAN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
-   procedure Print_Relation          (Node : Node_Id);
+   procedure Print_Relation (Node : Node_Id);
    procedure Print_Simple_Expression (Node : Node_Id);
-   procedure Print_Term              (Node : Node_Id);
-   procedure Print_Factor            (Node : Node_Id);
-   procedure Print_Primary           (Node : Node_Id);
-   procedure Print_Operator          (Node : Node_Id);
+   procedure Print_Term (Node : Node_Id);
+   procedure Print_Factor (Node : Node_Id);
+   procedure Print_Primary (Node : Node_Id);
+   procedure Print_Operator (Node : Node_Id);
 
    ------------------------
    -- Print_Value_Holder --
@@ -71,12 +71,14 @@ package body Ocarina.BE_AADL_BA.Expressions is
       Ident : constant Node_Id := BAN.Identifier (Node);
    begin
       case Kind (Ident) is
-         when K_Id   => Print_Id (Ident);
+         when K_Id =>
+            Print_Id (Ident);
 
          when K_Data_Component_Reference =>
             Print_Data_Component_Reference (Ident);
 
-         when others => Write_Line (Bug_Str);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
 
       if Is_Interrogative (Node) then
@@ -111,9 +113,12 @@ package body Ocarina.BE_AADL_BA.Expressions is
          Write_Space;
 
          case Kind (List_Node) is
-            when K_Relation => Print_Relation (List_Node);
-            when K_Operator => Print_Operator (List_Node);
-            when others     => Write_Line     (Bug_Str);
+            when K_Relation =>
+               Print_Relation (List_Node);
+            when K_Operator =>
+               Print_Operator (List_Node);
+            when others =>
+               Write_Line (Bug_Str);
          end case;
 
          List_Node := Next_Node (List_Node);
@@ -144,9 +149,12 @@ package body Ocarina.BE_AADL_BA.Expressions is
             Write_Space;
 
             case Kind (List_Node) is
-               when K_Simple_Expression => Print_Simple_Expression (List_Node);
-               when K_Operator          => Print_Operator          (List_Node);
-               when others              => Write_Line              (Bug_Str);
+               when K_Simple_Expression =>
+                  Print_Simple_Expression (List_Node);
+               when K_Operator =>
+                  Print_Operator (List_Node);
+               when others =>
+                  Write_Line (Bug_Str);
             end case;
 
             List_Node := Next_Node (List_Node);
@@ -162,7 +170,7 @@ package body Ocarina.BE_AADL_BA.Expressions is
       pragma Assert (Kind (Node) = K_Simple_Expression);
       pragma Assert (not Is_Empty (Term_And_Operator (Node)));
 
-      No_First  : Boolean  := False;
+      No_First  : Boolean := False;
       List_Node : Node_Id;
    begin
       List_Node := First_Node (Term_And_Operator (Node));
@@ -174,9 +182,12 @@ package body Ocarina.BE_AADL_BA.Expressions is
          No_First := True;
 
          case Kind (List_Node) is
-            when K_Operator => Print_Operator (List_Node);
-            when K_Term     => Print_Term     (List_Node);
-            when others     => Write_Line     (Bug_Str);
+            when K_Operator =>
+               Print_Operator (List_Node);
+            when K_Term =>
+               Print_Term (List_Node);
+            when others =>
+               Write_Line (Bug_Str);
          end case;
 
          List_Node := Next_Node (List_Node);
@@ -203,9 +214,12 @@ package body Ocarina.BE_AADL_BA.Expressions is
          No_First := True;
 
          case Kind (List_Node) is
-            when K_Operator => Print_Operator (List_Node);
-            when K_Factor   => Print_Factor   (List_Node);
-            when others     => Write_Line     (Bug_Str);
+            when K_Operator =>
+               Print_Operator (List_Node);
+            when K_Factor =>
+               Print_Factor (List_Node);
+            when others =>
+               Write_Line (Bug_Str);
          end case;
 
          List_Node := Next_Node (List_Node);
@@ -243,22 +257,28 @@ package body Ocarina.BE_AADL_BA.Expressions is
    -------------------
 
    procedure Print_Primary (Node : Node_Id) is
-      pragma Assert (Kind (Node) = K_Value_Holder
-                       or else Kind (Node) = K_Value_Expression
-                       or else Kind (Node) = K_Literal
-                       or else Kind (Node) = K_Property_Constant
-                       or else Kind (Node) = K_Identifier);
+      pragma Assert
+        (Kind (Node) = K_Value_Holder
+         or else Kind (Node) = K_Value_Expression
+         or else Kind (Node) = K_Literal
+         or else Kind (Node) = K_Property_Constant
+         or else Kind (Node) = K_Identifier);
    begin
       case Kind (Node) is
-         when K_Value_Holder      => Print_Value_Holder      (Node);
-         when K_Literal           => Print_Literal           (Node);
-         when K_Property_Constant => Print_Property_Constant (Node);
-         when K_Value_Expression  =>
+         when K_Value_Holder =>
+            Print_Value_Holder (Node);
+         when K_Literal =>
+            Print_Literal (Node);
+         when K_Property_Constant =>
+            Print_Property_Constant (Node);
+         when K_Value_Expression =>
             Print_Token (T_Left_Parenthesis);
             Print_Value_Expression (Node);
             Print_Token (T_Right_Parenthesis);
-         when K_Identifier        => Print_Identifier        (Node);
-         when others              => Write_Line              (Bug_Str);
+         when K_Identifier =>
+            Print_Identifier (Node);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Primary;
 
@@ -289,38 +309,60 @@ package body Ocarina.BE_AADL_BA.Expressions is
       case Operator_Kind'Val (Operator_Category (Node)) is
 
          --  logical operator
-         when OK_And              => Print_Token (T_And);
-         when OK_Or               => Print_Token (T_Or);
-         when OK_Xor              => Print_Token (T_Xor);
-         when OK_Cand             => Print_Token (T_Cand);
-         when OK_Cor              => Print_Token (T_Cor);
+         when OK_And =>
+            Print_Token (T_And);
+         when OK_Or =>
+            Print_Token (T_Or);
+         when OK_Xor =>
+            Print_Token (T_Xor);
+         when OK_Cand =>
+            Print_Token (T_Cand);
+         when OK_Cor =>
+            Print_Token (T_Cor);
 
          --  relational_operator
-         when OK_Equal            => Print_Token (T_Equals_Sign);
-         when OK_Non_Equal        => Print_Token (T_Non_Equal);
-         when OK_Less_Than        => Print_Token (T_Less_Than_Sign);
-         when OK_Less_Or_Equal    => Print_Token (T_Less_Or_Equal);
-         when OK_Greater_Than     => Print_Token (T_Greater_Than_Sign);
-         when OK_Greater_Or_Equal => Print_Token (T_Greater_Or_Equal);
+         when OK_Equal =>
+            Print_Token (T_Equals_Sign);
+         when OK_Non_Equal =>
+            Print_Token (T_Non_Equal);
+         when OK_Less_Than =>
+            Print_Token (T_Less_Than_Sign);
+         when OK_Less_Or_Equal =>
+            Print_Token (T_Less_Or_Equal);
+         when OK_Greater_Than =>
+            Print_Token (T_Greater_Than_Sign);
+         when OK_Greater_Or_Equal =>
+            Print_Token (T_Greater_Or_Equal);
 
          --  unary_adding_opetor
          --  binary_adding_operator
-         when OK_Plus             => Print_Token (T_Plus);
-         when OK_Minus            => Print_Token (T_Minus);
-         when OK_Concat           => Print_Token (T_Concat);
+         when OK_Plus =>
+            Print_Token (T_Plus);
+         when OK_Minus =>
+            Print_Token (T_Minus);
+         when OK_Concat =>
+            Print_Token (T_Concat);
 
          --  multiplying operator
-         when OK_Multiply         => Print_Token (T_Multiply);
-         when OK_Divide           => Print_Token (T_Divide);
-         when OK_Mod              => Print_Token (T_Mod);
-         when OK_Rem              => Print_Token (T_Rem);
+         when OK_Multiply =>
+            Print_Token (T_Multiply);
+         when OK_Divide =>
+            Print_Token (T_Divide);
+         when OK_Mod =>
+            Print_Token (T_Mod);
+         when OK_Rem =>
+            Print_Token (T_Rem);
 
          --  highest precedence operator
-         when OK_Exponent         => Print_Token (T_Exponent);
-         when OK_Abs              => Print_Token (T_Abs);
-         when OK_Not              => Print_Token (T_Not);
+         when OK_Exponent =>
+            Print_Token (T_Exponent);
+         when OK_Abs =>
+            Print_Token (T_Abs);
+         when OK_Not =>
+            Print_Token (T_Not);
 
-         when others              => Write_Line  (Bug_Str);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Operator;
 
@@ -348,17 +390,22 @@ package body Ocarina.BE_AADL_BA.Expressions is
 
    procedure Print_Integer_Value (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Integer_Value);
-      pragma Assert (Kind (Entity (Node)) = K_Value_Holder
-                       or else Kind (Entity (Node)) = K_Literal
-                       or else Kind (Entity (Node)) = K_Property_Constant);
+      pragma Assert
+        (Kind (Entity (Node)) = K_Value_Holder
+         or else Kind (Entity (Node)) = K_Literal
+         or else Kind (Entity (Node)) = K_Property_Constant);
 
       Entity_Node : constant Node_Id := Entity (Node);
    begin
       case Kind (Entity_Node) is
-         when K_Value_Holder      => Print_Value_Holder      (Entity_Node);
-         when K_Literal           => Print_Literal           (Entity_Node);
-         when K_Property_Constant => Print_Property_Constant (Entity_Node);
-         when others              => Write_Line              (Bug_Str);
+         when K_Value_Holder =>
+            Print_Value_Holder (Entity_Node);
+         when K_Literal =>
+            Print_Literal (Entity_Node);
+         when K_Property_Constant =>
+            Print_Property_Constant (Entity_Node);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Integer_Value;
 

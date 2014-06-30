@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -51,10 +51,10 @@ package body Ocarina.BE_AADL_BA.Thread_Dispatch is
    use Ocarina.BE_AADL_BA.Expressions;
 
    procedure Print_Dispatch_Logical_Expressions (List : List_Id);
-   procedure Print_Dispatch_Trigger             (Node : Node_Id);
-   procedure Print_Dispatch_Trigger_Kind        (Trigger_Kind : Byte);
+   procedure Print_Dispatch_Trigger (Node : Node_Id);
+   procedure Print_Dispatch_Trigger_Kind (Trigger_Kind : Byte);
    procedure Print_Dispatch_Trigger_Conjunction (Node : Node_Id);
-   procedure Print_Frozen_Ports                 (List : List_Id);
+   procedure Print_Frozen_Ports (List : List_Id);
 
    ------------------------------
    -- Print_Dispatch_Condition --
@@ -128,10 +128,14 @@ package body Ocarina.BE_AADL_BA.Thread_Dispatch is
    procedure Print_Dispatch_Trigger_Kind (Trigger_Kind : Byte) is
    begin
       case Dispatch_Trigger_Kind'Val (Trigger_Kind) is
-         when TRI_Abort   => Print_Token (T_Abort);
-         when TRI_Stop    => Print_Token (T_Stop);
-         when TRI_Timeout => Print_Token (T_Timeout);
-         when others      => Write_Line  (Bug_Str);
+         when TRI_Abort =>
+            Print_Token (T_Abort);
+         when TRI_Stop =>
+            Print_Token (T_Stop);
+         when TRI_Timeout =>
+            Print_Token (T_Timeout);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Dispatch_Trigger_Kind;
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,4 +37,4 @@ package Ocarina.BE_AADL.Components.Prototypes is
 
    procedure Print_Prototype_Bindings (Node : Node_Id);
 
-end  Ocarina.BE_AADL.Components.Prototypes;
+end Ocarina.BE_AADL.Components.Prototypes;

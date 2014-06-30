@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,8 +40,7 @@ package Ocarina.BE_AADL.Namespaces is
    generic
       with function Is_Printable
         (Node      : Node_Id;
-         Criterion : Node_Id)
-        return Boolean;
+         Criterion : Node_Id) return Boolean;
       --  This is a general purpose comparison routine. The Criterion
       --  may not be necessary in some cases.
 
@@ -58,14 +57,11 @@ package Ocarina.BE_AADL.Namespaces is
    generic
       with function Is_Printable
         (Node      : Node_Id;
-         Criterion : Node_Id)
-        return Boolean;
+         Criterion : Node_Id) return Boolean;
       --  This is a general purpose comparison routine. The Criterion
       --  may not be necessary in some cases.
 
-   procedure Print_Constrained_Package
-     (Node      : Node_Id;
-      Criterion : Node_Id);
+   procedure Print_Constrained_Package (Node : Node_Id; Criterion : Node_Id);
    --  Same as above but only prints the AADL declarations for which
    --  the given Is_Printable (<Node>, Criterion) is True.
 
@@ -76,12 +72,11 @@ package Ocarina.BE_AADL.Namespaces is
    generic
       with function Is_Printable
         (Node      : Node_Id;
-         Criterion : Node_Id)
-        return Boolean;
+         Criterion : Node_Id) return Boolean;
       --  This is a general purpose comparison routine. The Criterion
       --  may not be necessary in some cases.
 
-   procedure  Print_Constrained_Property_Set
+   procedure Print_Constrained_Property_Set
      (Node      : Node_Id;
       Criterion : Node_Id);
    --  Same as above but only prints the AADL declarations for which

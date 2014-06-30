@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -71,9 +71,9 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
    package body Source_File is
 
-      Main_Function              : Node_Id;
-      Current_Device             : Node_Id := No_Node;
-      Period_Variable_Declared   : Boolean := False;
+      Main_Function            : Node_Id;
+      Current_Device           : Node_Id := No_Node;
+      Period_Variable_Declared : Boolean := False;
 
       procedure Visit_Architecture_Instance (E : Node_Id);
       procedure Visit_Component_Instance (E : Node_Id);
@@ -106,39 +106,43 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          --  Add the task name to the parameters list
 
-         N := Make_Defining_Identifier
-            (Map_C_Enumerator_Name
-               (S,
-               Custom_Parent => Current_Device));
+         N :=
+           Make_Defining_Identifier
+             (Map_C_Enumerator_Name (S, Custom_Parent => Current_Device));
          Append_Node_To_List (N, Parameters);
 
          --  Add the period of the task to the parameters list. We use
          --  the fact that an aperiodic thread is sporadic, with
          --  period of 0.
          if Period_Variable_Declared = False then
-            N := Make_Doxygen_C_Comment
-               (Brief => "Variable for task period",
-               Is_Variable => True,
-               Desc => "This variable is used to store the value" &
-               "of the period of a task when we create it. The " &
-               "value put in the variable is set according to " &
-               "AADL model description",
-               Element_Name => Get_Name_String (VN (V_Period)),
-               Has_Header_Spaces => False);
+            N :=
+              Make_Doxygen_C_Comment
+                (Brief       => "Variable for task period",
+                 Is_Variable => True,
+                 Desc        =>
+                   "This variable is used to store the value" &
+                   "of the period of a task when we create it. The " &
+                   "value put in the variable is set according to " &
+                   "AADL model description",
+                 Element_Name      => Get_Name_String (VN (V_Period)),
+                 Has_Header_Spaces => False);
             Append_Node_To_List (N, CTN.Declarations (Main_Function));
 
-            N := Make_Variable_Declaration
-            (Make_Defining_Identifier (VN (V_Period)),
-               RE (RE_Time_T));
+            N :=
+              Make_Variable_Declaration
+                (Make_Defining_Identifier (VN (V_Period)),
+                 RE (RE_Time_T));
             Append_Node_To_List (N, CTN.Declarations (Main_Function));
 
             Period_Variable_Declared := True;
          end if;
 
-         N := Make_Doxygen_C_Comment
-            (Desc => "Store the period time for task " &
-               Get_Name_String (Name (Identifier (S))),
-            Has_Header_Spaces => False);
+         N :=
+           Make_Doxygen_C_Comment
+             (Desc =>
+                "Store the period time for task " &
+                Get_Name_String (Name (Identifier (S))),
+              Has_Header_Spaces => False);
          Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          if Get_Thread_Dispatch_Protocol (E) /= Thread_Aperiodic
@@ -151,8 +155,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
          end if;
 
          Append_Node_To_List
-            (Make_Variable_Address
-               (Make_Defining_Identifier (VN (V_Period))),
+           (Make_Variable_Address (Make_Defining_Identifier (VN (V_Period))),
             Parameters);
 
          Append_Node_To_List (N, CTN.Statements (Main_Function));
@@ -172,67 +175,76 @@ package body Ocarina.Backends.PO_HI_C.Main is
          --  Add thread stack size
 
          Stack_Size := To_Bytes (Get_Thread_Stack_Size (E));
-         N := Make_Literal (New_Int_Value (Stack_Size, 1, 10));
+         N          := Make_Literal (New_Int_Value (Stack_Size, 1, 10));
          Append_Node_To_List (N, Parameters);
 
          --  Add the name of function executed by the task in the
          --  parameters list.
 
-         N := Copy_Node
-           (CTN.Defining_Identifier
-            (CTN.Job_Node
-             (Backend_Node
-              (Identifier (S)))));
+         N :=
+           Copy_Node
+             (CTN.Defining_Identifier
+                (CTN.Job_Node (Backend_Node (Identifier (S)))));
          Append_Node_To_List (N, Parameters);
 
          case Get_Thread_Dispatch_Protocol (E) is
             when Thread_Periodic =>
-               N := Make_Doxygen_C_Comment
-                  (Brief => "Making Periodic Task " &
-                   Get_Name_String (Name (Identifier (S))),
-                  Desc => "Make a periodic task according to " &
-                           "AADL model requirements. The first " &
-                           "parameter is the task identifier defined " &
-                           "in deployment.h (" &
-                           Get_Name_String
-                              (Map_C_Enumerator_Name (S,
-                              Custom_Parent => Current_Device)) &
-                           ") the second is the period " &
-                           "defined in the AADL model. Third is the task " &
-                           "priority (" &
-                           Unsigned_Long_Long'Image (Get_Thread_Priority (E)) &
-                           "), fourth is the stack size ("&
-                           Unsigned_Long_Long'Image
-                              (To_Bytes (Get_Thread_Stack_Size (E))) &
-                           " bytes) and last is the subprogram executed "&
-                           "by the task",
-                  Has_Header_Spaces => False);
+               N :=
+                 Make_Doxygen_C_Comment
+                   (Brief =>
+                      "Making Periodic Task " &
+                      Get_Name_String (Name (Identifier (S))),
+                    Desc =>
+                      "Make a periodic task according to " &
+                      "AADL model requirements. The first " &
+                      "parameter is the task identifier defined " &
+                      "in deployment.h (" &
+                      Get_Name_String
+                        (Map_C_Enumerator_Name
+                           (S,
+                            Custom_Parent => Current_Device)) &
+                      ") the second is the period " &
+                      "defined in the AADL model. Third is the task " &
+                      "priority (" &
+                      Unsigned_Long_Long'Image (Get_Thread_Priority (E)) &
+                      "), fourth is the stack size (" &
+                      Unsigned_Long_Long'Image
+                        (To_Bytes (Get_Thread_Stack_Size (E))) &
+                      " bytes) and last is the subprogram executed " &
+                      "by the task",
+                    Has_Header_Spaces => False);
                Append_Node_To_List (N, CTN.Statements (Main_Function));
 
                Append_Node_To_List
                  (CTU.Make_Call_Profile
-                    (RE (RE_Create_Periodic_Task), Parameters),
+                    (RE (RE_Create_Periodic_Task),
+                     Parameters),
                   CTN.Statements (Main_Function));
 
-            when Thread_Sporadic
-              | Thread_Aperiodic =>
-               N := Make_Doxygen_C_Comment
-                  ("Making Sporadic task", Has_Header_Spaces => False);
+            when Thread_Sporadic | Thread_Aperiodic =>
+               N :=
+                 Make_Doxygen_C_Comment
+                   ("Making Sporadic task",
+                    Has_Header_Spaces => False);
                Append_Node_To_List (N, CTN.Statements (Main_Function));
 
                Append_Node_To_List
                  (CTU.Make_Call_Profile
-                    (RE (RE_Create_Sporadic_Task), Parameters),
+                    (RE (RE_Create_Sporadic_Task),
+                     Parameters),
                   CTN.Statements (Main_Function));
 
             when Thread_Background =>
-               N := Make_Doxygen_C_Comment
-                  ("Making background task", Has_Header_Spaces => False);
+               N :=
+                 Make_Doxygen_C_Comment
+                   ("Making background task",
+                    Has_Header_Spaces => False);
                Append_Node_To_List (N, CTN.Statements (Main_Function));
 
                Append_Node_To_List
                  (CTU.Make_Call_Profile
-                    (RE (RE_Create_Sporadic_Task), Parameters),
+                    (RE (RE_Create_Sporadic_Task),
+                     Parameters),
                   CTN.Statements (Main_Function));
 
             when others =>
@@ -275,8 +287,8 @@ package body Ocarina.Backends.PO_HI_C.Main is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -301,18 +313,18 @@ package body Ocarina.Backends.PO_HI_C.Main is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U               : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P               : constant Node_Id := CTN.Entity (U);
-         N               : Node_Id;
-         C               : Node_Id;
-         S               : Node_Id;
-         Spec            : Node_Id;
-         Declarations    : constant List_Id := New_List
-           (CTN.K_Declaration_List);
-         Statements      : constant List_Id := New_List (CTN.K_Statement_List);
-         The_System      : constant Node_Id := Parent_Component
-           (Parent_Subcomponent (E));
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P            : constant Node_Id := CTN.Entity (U);
+         N            : Node_Id;
+         C            : Node_Id;
+         S            : Node_Id;
+         Spec         : Node_Id;
+         Declarations : constant List_Id := New_List (CTN.K_Declaration_List);
+         Statements   : constant List_Id := New_List (CTN.K_Statement_List);
+         The_System   : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -327,13 +339,13 @@ package body Ocarina.Backends.PO_HI_C.Main is
          --  Make the main function specification and add it in the current
          --  file (main.c).
 
-         Spec := Make_Function_Specification
-           (Defining_Identifier => RE (RE_Main_Name),
-            Parameters          => No_List,
-            Return_Type         => RE (RE_Main_Type)
-           );
-         Main_Function := Make_Function_Implementation
-           (Spec, Declarations, Statements);
+         Spec :=
+           Make_Function_Specification
+             (Defining_Identifier => RE (RE_Main_Name),
+              Parameters          => No_List,
+              Return_Type         => RE (RE_Main_Type));
+         Main_Function :=
+           Make_Function_Implementation (Spec, Declarations, Statements);
 
          N := CTU.Make_Call_Profile (RE (RE_Initialize_Early));
          Append_Node_To_List (N, CTN.Statements (Main_Function));
@@ -346,19 +358,20 @@ package body Ocarina.Backends.PO_HI_C.Main is
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
                if AAU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (C)) =
+                   Get_Bound_Processor (E)
                then
-                  Visit_Device_Instance
-                    (Corresponding_Instance (C));
+                  Visit_Device_Instance (Corresponding_Instance (C));
                end if;
                C := Next_Node (C);
             end loop;
          end if;
 
-         N := Make_Doxygen_C_Comment
-            ("Initialize the runtime", Has_Header_Spaces => False);
+         N :=
+           Make_Doxygen_C_Comment
+             ("Initialize the runtime",
+              Has_Header_Spaces => False);
          Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          N := CTU.Make_Call_Profile (RE (RE_Initialize));
@@ -366,15 +379,14 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          if Process_Use_Defaults_Sockets (E) then
             Add_Include
-               (Make_Include_Clause
-                  (Make_Defining_Identifier
-                     (Get_String_Name
-                        ("drivers/po_hi_driver_sockets"))));
-            N := Make_Call_Profile
-               (Make_Defining_Identifier
-                  (Get_String_Name ("__po_hi_driver_sockets_init")),
-               Make_List_Id
-                  (Make_Literal (New_Int_Value (0, 0, 10))));
+              (Make_Include_Clause
+                 (Make_Defining_Identifier
+                    (Get_String_Name ("drivers/po_hi_driver_sockets"))));
+            N :=
+              Make_Call_Profile
+                (Make_Defining_Identifier
+                   (Get_String_Name ("__po_hi_driver_sockets_init")),
+                 Make_List_Id (Make_Literal (New_Int_Value (0, 0, 10))));
             Append_Node_To_List (N, CTN.Statements (Main_Function));
          end if;
 
@@ -392,50 +404,56 @@ package body Ocarina.Backends.PO_HI_C.Main is
                --  First, handle the case when the initialize_entrypoint
                --  is a subprogram classifier reference.
 
-               if AAU.Is_Thread (Corresponding_Instance (C)) and then
-                  Get_Thread_Initialize_Entrypoint
-                     (Corresponding_Instance (C)) /= No_Node
+               if AAU.Is_Thread (Corresponding_Instance (C))
+                 and then
+                   Get_Thread_Initialize_Entrypoint
+                     (Corresponding_Instance (C)) /=
+                   No_Node
                then
                   Append_Node_To_List
-                     (Make_Extern_Entity_Declaration
-                        (Make_Function_Specification
-                              (Map_C_Subprogram_Identifier
-                                 (Get_Thread_Initialize_Entrypoint
-                                    (Corresponding_Instance (C))),
-                           Parameters   => No_List,
-                           Return_Type  => New_Node (CTN.K_Void))),
+                    (Make_Extern_Entity_Declaration
+                       (Make_Function_Specification
+                          (Map_C_Subprogram_Identifier
+                             (Get_Thread_Initialize_Entrypoint
+                                (Corresponding_Instance (C))),
+                           Parameters  => No_List,
+                           Return_Type => New_Node (CTN.K_Void))),
                      CTN.Declarations (Current_File));
 
                   Append_Node_To_List
-                     (Make_Call_Profile
-                        (Map_C_Subprogram_Identifier
-                           (Get_Thread_Initialize_Entrypoint
-                              (Corresponding_Instance (C))), No_List),
+                    (Make_Call_Profile
+                       (Map_C_Subprogram_Identifier
+                          (Get_Thread_Initialize_Entrypoint
+                             (Corresponding_Instance (C))),
+                        No_List),
                      CTN.Statements (Main_Function));
                end if;
 
                --  Then, handle the case when the initialize entrypoint
                --  is just a string.
 
-               if AAU.Is_Thread (Corresponding_Instance (C)) and then
-                  Get_Thread_Initialize_Entrypoint
-                     (Corresponding_Instance (C)) /= No_Name
+               if AAU.Is_Thread (Corresponding_Instance (C))
+                 and then
+                   Get_Thread_Initialize_Entrypoint
+                     (Corresponding_Instance (C)) /=
+                   No_Name
                then
                   Append_Node_To_List
-                     (Make_Extern_Entity_Declaration
-                        (Make_Function_Specification
-                              (Make_Defining_Identifier
-                                 (Get_Thread_Initialize_Entrypoint
-                                    (Corresponding_Instance (C))),
-                           Parameters   => No_List,
-                           Return_Type  => New_Node (CTN.K_Void))),
+                    (Make_Extern_Entity_Declaration
+                       (Make_Function_Specification
+                          (Make_Defining_Identifier
+                             (Get_Thread_Initialize_Entrypoint
+                                (Corresponding_Instance (C))),
+                           Parameters  => No_List,
+                           Return_Type => New_Node (CTN.K_Void))),
                      CTN.Declarations (Current_File));
 
                   Append_Node_To_List
-                     (Make_Call_Profile
-                        (Make_Defining_Identifier
-                           (Get_Thread_Initialize_Entrypoint
-                              (Corresponding_Instance (C))), No_List),
+                    (Make_Call_Profile
+                       (Make_Defining_Identifier
+                          (Get_Thread_Initialize_Entrypoint
+                             (Corresponding_Instance (C))),
+                        No_List),
                      CTN.Statements (Main_Function));
                end if;
 
@@ -459,28 +477,26 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
                   Add_Include (RH (RH_Types));
 
-                  N := Make_Variable_Declaration
-                    (Map_C_Defining_Identifier (S),
-                     Map_C_Data_Type_Designator
-                     (Corresponding_Instance (S)));
+                  N :=
+                    Make_Variable_Declaration
+                      (Map_C_Defining_Identifier (S),
+                       Map_C_Data_Type_Designator
+                         (Corresponding_Instance (S)));
 
-                  Append_Node_To_List
-                    (N, CTN.Declarations (Current_File));
+                  Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-                  N := Make_Expression
-                    (Left_Expr =>
-                       Make_Member_Designator
-                       (Defining_Identifier =>
-                          Make_Defining_Identifier (MN (M_Protected_Id)),
-                        Aggregate_Name =>
-                          Map_C_Defining_Identifier (S)),
-                     Operator => Op_Equal,
-                     Right_Expr =>
-                       CTN.Default_Value_Node
-                       (Backend_Node
-                        (Identifier (S))));
-                  Append_Node_To_List
-                    (N, CTN.Statements (Main_Function));
+                  N :=
+                    Make_Expression
+                      (Left_Expr =>
+                         Make_Member_Designator
+                           (Defining_Identifier =>
+                              Make_Defining_Identifier (MN (M_Protected_Id)),
+                            Aggregate_Name => Map_C_Defining_Identifier (S)),
+                       Operator   => Op_Equal,
+                       Right_Expr =>
+                         CTN.Default_Value_Node
+                           (Backend_Node (Identifier (S))));
+                  Append_Node_To_List (N, CTN.Statements (Main_Function));
                else
                   --  Visit the component instance corresponding to the
                   --  subcomponent S.
@@ -491,36 +507,38 @@ package body Ocarina.Backends.PO_HI_C.Main is
             end loop;
          end if;
 
-         N := Make_Doxygen_C_Comment
-            (Is_Function => True,
-            Element_Name => "__PO_HI_MAIN_TYPE __PO_HI_MAIN_NAME (void)",
-            Brief => "Main function executed by the system",
-            Desc =>
-               "Full function name and return types are available " &
-               " in the PolyORB-HI-C runtime header files.",
-               Has_Header_Spaces => False);
+         N :=
+           Make_Doxygen_C_Comment
+             (Is_Function  => True,
+              Element_Name => "__PO_HI_MAIN_TYPE __PO_HI_MAIN_NAME (void)",
+              Brief        => "Main function executed by the system",
+              Desc         =>
+                "Full function name and return types are available " &
+                " in the PolyORB-HI-C runtime header files.",
+              Has_Header_Spaces => False);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          Append_Node_To_List (Main_Function, CTN.Declarations (Current_File));
          --  Call __po_hi_wait_initialization(). With this function,
          --  the main function will wait all other tasks initialization.
 
-         N := Make_Doxygen_C_Comment
-            ("Waiting for other tasks initialization",
-               Has_Header_Spaces => False);
+         N :=
+           Make_Doxygen_C_Comment
+             ("Waiting for other tasks initialization",
+              Has_Header_Spaces => False);
          Append_Node_To_List (N, Statements);
 
-         N := CTU.Make_Call_Profile (RE (RE_Wait_Initialization),
-                                     No_List);
+         N := CTU.Make_Call_Profile (RE (RE_Wait_Initialization), No_List);
          Append_Node_To_List (N, Statements);
 
          --  Make the call to __po_hi_wait_for_tasks(). This function will wait
          --  all other task. In fact, no task will terminate, so this function
          --  will only switch the main task to the sleep state all the time.
 
-         N := Make_Doxygen_C_Comment
-            ("Used to switch the main task to sleep all the time",
-            Has_Header_Spaces => False);
+         N :=
+           Make_Doxygen_C_Comment
+             ("Used to switch the main task to sleep all the time",
+              Has_Header_Spaces => False);
          Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          if not PO_HI_C.Use_Performance_Analysis then
@@ -531,8 +549,10 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          Append_Node_To_List (N, CTN.Statements (Main_Function));
 
-         N := Make_Doxygen_C_Comment
-               ("Return Statement", Has_Header_Spaces => False);
+         N :=
+           Make_Doxygen_C_Comment
+             ("Return Statement",
+              Has_Header_Spaces => False);
          Append_Node_To_List (N, CTN.Statements (Main_Function));
 
          N := CTU.Make_Return_Statement (RE (RE_Main_Return));
@@ -621,9 +641,10 @@ package body Ocarina.Backends.PO_HI_C.Main is
       begin
          if Get_Subprogram_Kind (E) = Subprogram_Simulink then
             Add_Include
-               (Make_Include_Clause
-                  (Make_Defining_Identifier
-                     (Get_Source_Name (E), False), False), True);
+              (Make_Include_Clause
+                 (Make_Defining_Identifier (Get_Source_Name (E), False),
+                  False),
+               True);
 
 --            Set_Str_To_Name_Buffer ("MdlInitialize");
 
@@ -646,8 +667,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
 --               CTN.Declarations (Main_Function));
 
             Append_Node_To_List
-              (CTU.Make_Call_Profile
-                 (RE (RE_Simulink_Init), No_List),
+              (CTU.Make_Call_Profile (RE (RE_Simulink_Init), No_List),
                CTN.Declarations (Main_Function));
 
          elsif Get_Subprogram_Kind (E) = Subprogram_Opaque_Ada_95
@@ -655,23 +675,24 @@ package body Ocarina.Backends.PO_HI_C.Main is
          then
             Ada_Initialized := True;
             declare
-               Parameter_List : constant List_Id :=
-                 New_List (CTN.K_List_Id);
-               N : Node_Id;
+               Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
+               N              : Node_Id;
 
             begin
                Set_Str_To_Name_Buffer ("adainit");
-               N := Make_Extern_Entity_Declaration
-                 (Make_Function_Specification
-                    (Make_Defining_Identifier (Name_Find),
-                     Parameters          => Parameter_List, --  XXX
-                     Return_Type         => New_Node (CTN.K_Void)));
+               N :=
+                 Make_Extern_Entity_Declaration
+                   (Make_Function_Specification
+                      (Make_Defining_Identifier (Name_Find),
+                       Parameters  => Parameter_List, --  XXX
+                       Return_Type => New_Node (CTN.K_Void)));
                Append_Node_To_List (N, CTN.Declarations (Main_Function));
 
                Set_Str_To_Name_Buffer ("adainit");
                Append_Node_To_List
                  (CTU.Make_Call_Profile
-                    (Make_Defining_Identifier (Name_Find), No_List),
+                    (Make_Defining_Identifier (Name_Find),
+                     No_List),
                   CTN.Statements (Main_Function));
             end;
          end if;
@@ -684,28 +705,28 @@ package body Ocarina.Backends.PO_HI_C.Main is
       procedure Visit_Device_Instance (E : Node_Id) is
          N          : Node_Id;
          S          : Node_Id;
-         Entrypoint : constant Node_Id
-           := Get_Thread_Initialize_Entrypoint (E);
+         Entrypoint : constant Node_Id := Get_Thread_Initialize_Entrypoint (E);
          Impl       : constant Node_Id := Get_Implementation (E);
       begin
          Current_Device := E;
 
          if Entrypoint /= No_Node then
-            N := Make_Extern_Entity_Declaration
-              (Make_Function_Specification
-                  (Map_C_Subprogram_Identifier (Entrypoint),
-                  Make_List_Id
-                     (Make_Parameter_Specification
-                        (Make_Defining_Identifier (Get_String_Name ("id")),
-                        RE (RE_Device_Id))),
-                  New_Node (CTN.K_Void)));
+            N :=
+              Make_Extern_Entity_Declaration
+                (Make_Function_Specification
+                   (Map_C_Subprogram_Identifier (Entrypoint),
+                    Make_List_Id
+                      (Make_Parameter_Specification
+                         (Make_Defining_Identifier (Get_String_Name ("id")),
+                          RE (RE_Device_Id))),
+                    New_Node (CTN.K_Void)));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Call_Profile
-              (Map_C_Subprogram_Identifier (Entrypoint),
-              Make_List_Id
-               (Make_Defining_Identifier
-                  (Map_C_Enumerator_Name (E))));
+            N :=
+              Make_Call_Profile
+                (Map_C_Subprogram_Identifier (Entrypoint),
+                 Make_List_Id
+                   (Make_Defining_Identifier (Map_C_Enumerator_Name (E))));
             Append_Node_To_List (N, CTN.Statements (Main_Function));
          end if;
 

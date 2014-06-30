@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,8 +42,7 @@ package body Ocarina.Builder.AADL.Components.Subcomponents is
 
    function Add_Property_Association
      (Subcomponent         : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean
+      Property_Association : Node_Id) return Boolean
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -52,14 +51,16 @@ package body Ocarina.Builder.AADL.Components.Subcomponents is
       pragma Assert (Present (Property_Association));
    begin
       if Is_Empty
-        (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Subcomponent)) then
-         Set_Properties (Subcomponent,
-                         New_List (K_List_Id, Loc (Property_Association)));
+          (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Subcomponent))
+      then
+         Set_Properties
+           (Subcomponent,
+            New_List (K_List_Id, Loc (Property_Association)));
       end if;
 
-      Append_Node_To_List (Property_Association,
-                           Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
-                             (Subcomponent));
+      Append_Node_To_List
+        (Property_Association,
+         Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Subcomponent));
       return True;
    end Add_Property_Association;
 
@@ -71,19 +72,18 @@ package body Ocarina.Builder.AADL.Components.Subcomponents is
      (Loc                 : Location;
       Name                : Node_Id;
       Comp_Impl           : Node_Id;
-      Category            :
-      Ocarina.ME_AADL.Component_Category;
+      Category            : Ocarina.ME_AADL.Component_Category;
       Is_Refinement       : Boolean := False;
       In_Modes            : Node_Id := No_Node;
-      Prototypes_Bindings : List_Id := No_List)
-     return Node_Id
+      Prototypes_Bindings : List_Id := No_List) return Node_Id
    is
       use Ocarina.ME_AADL;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      pragma Assert (Comp_Impl /= No_Node
-                     and then Kind (Comp_Impl) = K_Component_Implementation);
+      pragma Assert
+        (Comp_Impl /= No_Node
+         and then Kind (Comp_Impl) = K_Component_Implementation);
 
       Node      : Node_Id;
       List_Node : Node_Id;
@@ -109,8 +109,8 @@ package body Ocarina.Builder.AADL.Components.Subcomponents is
          end loop;
       end if;
 
-      Success := Add_Subcomponent (Component => Comp_Impl,
-                                   Subcomponent => Node);
+      Success :=
+        Add_Subcomponent (Component => Comp_Impl, Subcomponent => Node);
 
       if Success then
          return Node;

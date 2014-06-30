@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -50,26 +50,21 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
 
    use Ocarina.ME_AADL;
 
-   function P_Expected_Package_Name
-     (Expected_Id : Node_Id)
-     return Boolean;
+   function P_Expected_Package_Name (Expected_Id : Node_Id) return Boolean;
 
    function P_Package_Declaration
-     (Package_Spec : Types.Node_Id;
-      Private_Declarations : Boolean)
-     return Integer;
+     (Package_Spec         : Types.Node_Id;
+      Private_Declarations : Boolean) return Integer;
 
    function P_Name_Visibility_Declaration
-     (Namespace : Types.Node_Id;
-      Start_Loc : Locations.Location;
-      Private_Declarations : Boolean)
-     return Node_Id;
+     (Namespace            : Types.Node_Id;
+      Start_Loc            : Locations.Location;
+      Private_Declarations : Boolean) return Node_Id;
 
    function P_Alias_Declaration
-     (Namespace : Types.Node_Id;
-      Start_Loc : Locations.Location;
-      Private_Declarations : Boolean)
-     return Types.Node_Id;
+     (Namespace            : Types.Node_Id;
+      Start_Loc            : Locations.Location;
+      Private_Declarations : Boolean) return Types.Node_Id;
 
    ------------------------
    -- P_AADL_Declaration --
@@ -96,8 +91,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --     annex_library           begins with 'annex'
 
    function P_AADL_Declaration
-     (AADL_Specification : Types.Node_Id)
-     return Node_Id
+     (AADL_Specification : Types.Node_Id) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
@@ -125,9 +119,17 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
                return No_Node;
             end if;
 
-         when T_Abstract | T_Data | T_Subprogram | T_Thread
-           | T_Process | T_Memory | T_Processor | T_Bus
-           | T_Device  | T_Virtual | T_System =>
+         when T_Abstract |
+           T_Data        |
+           T_Subprogram  |
+           T_Thread      |
+           T_Process     |
+           T_Memory      |
+           T_Processor   |
+           T_Bus         |
+           T_Device      |
+           T_Virtual     |
+           T_System      =>
             if AADL_Version = AADL_V1 then
                return P_Component (AADL_Specification);
             else
@@ -144,7 +146,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
                if Token = T_Group then
                   case AADL_Version is
                      when AADL_V1 =>
-                     return P_Feature_Group_Type (AADL_Specification, Loc);
+                        return P_Feature_Group_Type (AADL_Specification, Loc);
                      when others =>
                         DPE (PC_Port_Group_Type, EMC_Not_Allowed_In_AADL_V2);
                         Skip_Tokens (T_Semicolon);
@@ -176,8 +178,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --  AADL_specification ::= { AADL_global_declaration | AADL_declaration }+
 
    function P_AADL_Specification
-     (AADL_Specification : Types.Node_Id)
-     return Node_Id
+     (AADL_Specification : Types.Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -222,9 +223,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    -- P_Expected_Package_Name --
    -----------------------------
 
-   function P_Expected_Package_Name
-     (Expected_Id : Node_Id)
-     return Boolean is
+   function P_Expected_Package_Name (Expected_Id : Node_Id) return Boolean is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -296,9 +295,8 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --  package_declaration ::= { name_visibility }* { AADL_declaration }+
 
    function P_Package_Declaration
-     (Package_Spec : Types.Node_Id;
-      Private_Declarations : Boolean)
-     return Integer
+     (Package_Spec         : Types.Node_Id;
+      Private_Declarations : Boolean) return Integer
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -311,12 +309,12 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
 
       pragma Assert (Kind (Package_Spec) = K_Package_Specification);
 
-      Properties       : List_Id := No_List;
-      Declaration      : Node_Id;
-      Name_Visibility  : Node_Id := No_Node;
-      Loc              : Location;
-      Nb_Items         : Integer := 0;
-      Success          : Boolean := True;
+      Properties      : List_Id := No_List;
+      Declaration     : Node_Id;
+      Name_Visibility : Node_Id := No_Node;
+      Loc             : Location;
+      Nb_Items        : Integer := 0;
+      Success         : Boolean := True;
    begin
       Save_Lexer (Loc);
       Scan_Token;
@@ -325,8 +323,11 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          when AADL_V2 =>
             case Token is
                when T_With | T_Identifier | T_Renames =>
-                  Name_Visibility := P_Name_Visibility_Declaration
-                    (Package_Spec, Loc, Private_Declarations);
+                  Name_Visibility :=
+                    P_Name_Visibility_Declaration
+                      (Package_Spec,
+                       Loc,
+                       Private_Declarations);
 
                   if Name_Visibility /= No_Node then
                      Nb_Items := Nb_Items + 1;
@@ -344,23 +345,34 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          Scan_Token;
 
          case Token is
-            when T_Abstract | T_Data | T_Subprogram | T_Thread
-              | T_Process | T_Memory | T_Processor | T_Bus
-              | T_Device  | T_Virtual | T_System =>
-               Declaration := P_Component
-                 (Package_Spec, Private_Declaration => Private_Declarations);
+            when T_Abstract |
+              T_Data        |
+              T_Subprogram  |
+              T_Thread      |
+              T_Process     |
+              T_Memory      |
+              T_Processor   |
+              T_Bus         |
+              T_Device      |
+              T_Virtual     |
+              T_System      =>
+               Declaration :=
+                 P_Component
+                   (Package_Spec,
+                    Private_Declaration => Private_Declarations);
 
             when T_Port =>  --  Port group
                Scan_Token;
                if Token = T_Group then
                   case AADL_Version is
                      when AADL_V1 =>
-                        Declaration := P_Feature_Group_Type
-                          (Package_Spec, Loc,
-                           Private_Declaration => Private_Declarations);
+                        Declaration :=
+                          P_Feature_Group_Type
+                            (Package_Spec,
+                             Loc,
+                             Private_Declaration => Private_Declarations);
                      when others =>
-                        DPE (PC_Port_Group_Type,
-                             EMC_Not_Allowed_In_AADL_V2);
+                        DPE (PC_Port_Group_Type, EMC_Not_Allowed_In_AADL_V2);
                         Skip_Tokens (T_Semicolon);
                         Success := False;
                   end case;
@@ -375,12 +387,15 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
                if Token = T_Group then
                   case AADL_Version is
                      when AADL_V2 =>
-                        Declaration := P_Feature_Group_Type
-                          (Package_Spec, Loc,
-                           Private_Declaration => Private_Declarations);
+                        Declaration :=
+                          P_Feature_Group_Type
+                            (Package_Spec,
+                             Loc,
+                             Private_Declaration => Private_Declarations);
                      when others =>
-                        DPE (PC_Feature_Group_Type,
-                             EMC_Not_Allowed_In_AADL_V1);
+                        DPE
+                          (PC_Feature_Group_Type,
+                           EMC_Not_Allowed_In_AADL_V1);
                         Skip_Tokens (T_Semicolon);
                         Success := False;
                   end case;
@@ -416,9 +431,11 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          Scan_Token;
 
          if Token = T_Properties then
-            Properties := P_Items_List (P_Property_Association'Access,
-                                        Package_Spec,
-                                        PC_Properties);
+            Properties :=
+              P_Items_List
+                (P_Property_Association'Access,
+                 Package_Spec,
+                 PC_Properties);
 
             if No (Properties) then
                --  Error when parsing properties, quit
@@ -466,8 +483,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --  end defining_package_name ;
 
    function P_Package_Specification
-     (Namespace : Types.Node_Id)
-     return Node_Id
+     (Namespace : Types.Node_Id) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -478,16 +494,17 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       use Parser.Properties;
       use Ocarina.Builder.AADL.Namespaces;
 
-      pragma Assert (Namespace /= No_Node
-                     and then Kind (Namespace) = K_AADL_Specification);
+      pragma Assert
+        (Namespace /= No_Node
+         and then Kind (Namespace) = K_AADL_Specification);
 
-      Package_Spec     : Node_Id;    --  result
-      Defining_Name    : Node_Id;    --  package name
-      Properties       : List_Id   := No_List;
-      Loc              : Location;
-      Success          : Boolean   := True;
-      Nb_Public_Items  : Integer   := 0;
-      Nb_Private_Items : Integer   := 0;
+      Package_Spec                    : Node_Id;    --  result
+      Defining_Name                   : Node_Id;    --  package name
+      Properties                      : List_Id := No_List;
+      Loc                             : Location;
+      Success                         : Boolean := True;
+      Nb_Public_Items                 : Integer := 0;
+      Nb_Private_Items                : Integer := 0;
       Private_Section, Public_Section : Boolean := False;
    begin
 
@@ -500,9 +517,8 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          return No_Node;
       end if;
 
-      Package_Spec := Add_New_Package (Token_Location,
-                                       Defining_Name,
-                                       Namespace);
+      Package_Spec :=
+        Add_New_Package (Token_Location, Defining_Name, Namespace);
 
       --  we do not know the parent of this package context
       --  Ex: P1::P2 is parent of P1::P2::P3 but NOT the unnamed namespace
@@ -523,8 +539,8 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
             return No_Node;
          end if;
 
-         Nb_Public_Items := P_Package_Declaration
-           (Package_Spec, Private_Declarations => False);
+         Nb_Public_Items :=
+           P_Package_Declaration (Package_Spec, Private_Declarations => False);
 
          if Nb_Public_Items = 0 then
             Save_Lexer (Loc);
@@ -554,15 +570,13 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       if Token = T_Private then
          Private_Section := True;
 
-         if Package_Has_Private_Declarations_Or_Properties
-           (Package_Spec)
-         then
+         if Package_Has_Private_Declarations_Or_Properties (Package_Spec) then
             Success := False;
             DPE (PC_Package_Specification);
          end if;
 
-         Nb_Private_Items := P_Package_Declaration
-           (Package_Spec, Private_Declarations => True);
+         Nb_Private_Items :=
+           P_Package_Declaration (Package_Spec, Private_Declarations => True);
 
          if Nb_Private_Items = 0 then
             while Token /= T_End loop
@@ -585,9 +599,11 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          Scan_Token;
 
          if Token = T_Properties then
-            Properties := P_Items_List (P_Property_Association'Access,
-                                        Package_Spec,
-                                        PC_Properties);
+            Properties :=
+              P_Items_List
+                (P_Property_Association'Access,
+                 Package_Spec,
+                 PC_Properties);
 
             if No (Properties) then
                --  Error when parsing properties, quit
@@ -669,15 +685,15 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       use Identifiers;
       use Ocarina.Builder.AADL.Namespaces;
 
-      Start_Loc     : Location;
-      Package_Name  : Node_Id;
-      List_Names    : List_Id;
+      Start_Loc    : Location;
+      Package_Name : Node_Id;
+      List_Names   : List_Id;
 
    begin
       Save_Lexer (Start_Loc);
 
-      List_Names := P_Items_List (P_Identifier'Access, Container,
-                                  T_Colon_Colon);
+      List_Names :=
+        P_Items_List (P_Identifier'Access, Container, T_Colon_Colon);
 
       if Is_Empty (List_Names) then
          DPE (PC_Package_Name, EMC_List_Is_Empty);
@@ -704,10 +720,9 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --     import_declaration | alias_declaration
 
    function P_Name_Visibility_Declaration
-     (Namespace : Types.Node_Id;
-      Start_Loc : Locations.Location;
-      Private_Declarations : Boolean)
-     return Node_Id
+     (Namespace            : Types.Node_Id;
+      Start_Loc            : Locations.Location;
+      Private_Declarations : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
@@ -720,7 +735,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       List_Items      : List_Id;
       Item            : Node_Id;
       Name_Visibility : Node_Id;
-      Nb_Items        : Integer  := 0;
+      Nb_Items        : Integer := 0;
    begin
       Save_Lexer (Loc);
       List_Items := New_List (K_List_Id, Loc);
@@ -728,12 +743,12 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       loop
          case Token is
             when T_With =>
-               Item := P_Import_Declaration (Namespace, Loc,
-                                             Private_Declarations);
+               Item :=
+                 P_Import_Declaration (Namespace, Loc, Private_Declarations);
 
             when T_Renames | T_Identifier =>
-               Item := P_Alias_Declaration (Namespace, Loc,
-                                            Private_Declarations);
+               Item :=
+                 P_Alias_Declaration (Namespace, Loc, Private_Declarations);
             when others =>
                Restore_Lexer (Loc);
                exit;
@@ -752,8 +767,12 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       end loop;
 
       if Nb_Items /= 0 then
-         Name_Visibility := Add_New_Name_Visibility_Declaration
-           (Start_Loc, Namespace, List_Items, Private_Declarations);
+         Name_Visibility :=
+           Add_New_Name_Visibility_Declaration
+             (Start_Loc,
+              Namespace,
+              List_Items,
+              Private_Declarations);
       else
          DPE (PC_Name_Visibility_Declaration);
          return No_Node;
@@ -774,8 +793,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    function P_Import_Declaration
      (Namespace            : Types.Node_Id;
       Start_Loc            : Locations.Location;
-      Private_Declarations : Boolean             := False)
-     return Types.Node_Id
+      Private_Declarations : Boolean := False) return Types.Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
@@ -828,8 +846,9 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
                exit;
 
             when others =>
-               DPE (PC_Import_Declaration,
-                    (T_Comma, T_Colon_Colon, T_Semicolon));
+               DPE
+                 (PC_Import_Declaration,
+                  (T_Comma, T_Colon_Colon, T_Semicolon));
                Skip_Tokens (T_Semicolon);
                return No_Node;
          end case;
@@ -846,9 +865,12 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          Skip_Tokens (T_Semicolon);
          return No_Node;
       else
-         Import_Node := Add_New_Import_Declaration (Start_Loc, Namespace,
-                                                    Imports_List,
-                                                    Private_Declarations);
+         Import_Node :=
+           Add_New_Import_Declaration
+             (Start_Loc,
+              Namespace,
+              Imports_List,
+              Private_Declarations);
 
          if Ocarina.Options.Auto_Load_AADL_Files
            and then AADL_Version = AADL_V2
@@ -866,8 +888,9 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
                      declare
                         J : Node_Id;
                      begin
-                        J := First_Node
-                          (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (I));
+                        J :=
+                          First_Node
+                            (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (I));
                         if Present (J) then
                            Get_Name_String (Name (J));
                            J := Next_Node (J);
@@ -903,10 +926,9 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    --    | ( renames package_name::all ; )
 
    function P_Alias_Declaration
-     (Namespace : Types.Node_Id;
-      Start_Loc : Locations.Location;
-      Private_Declarations : Boolean)
-     return Types.Node_Id
+     (Namespace            : Types.Node_Id;
+      Start_Loc            : Locations.Location;
+      Private_Declarations : Boolean) return Types.Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
@@ -919,15 +941,15 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       use Ocarina.ME_AADL.AADL_Tree.Entities;
 
       Loc, Loc2      : Location;
-      Is_All         : Boolean                          := False;
-      Name           : Node_Id                          := No_Node;
-      Package_Name   : Node_Id                          := No_Node;
-      Identifier     : Node_Id                          := No_Node;
-      Node           : Node_Id                          := No_Node;
-      Classifier_Ref : Node_Id                          := No_Node;
-      Identifiers    : List_Id                          := No_List;
-      Component_Cat  : Component_Category               := CC_Unknown;
-      Entity_Cat     : Ocarina.ME_AADL.Entity_Category  := EC_Undefined;
+      Is_All         : Boolean                         := False;
+      Name           : Node_Id                         := No_Node;
+      Package_Name   : Node_Id                         := No_Node;
+      Identifier     : Node_Id                         := No_Node;
+      Node           : Node_Id                         := No_Node;
+      Classifier_Ref : Node_Id                         := No_Node;
+      Identifiers    : List_Id                         := No_List;
+      Component_Cat  : Component_Category              := CC_Unknown;
+      Entity_Cat     : Ocarina.ME_AADL.Entity_Category := EC_Undefined;
    begin
 
       if Token = T_Identifier then
@@ -946,14 +968,22 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
 
       case Token is
          when T_Package =>
-            Entity_Cat := EC_Package;
+            Entity_Cat   := EC_Package;
             Package_Name := P_Package_Name (Namespace);
 
-         when T_Abstract | T_Data | T_Thread | T_Subprogram
-           | T_Process | T_Processor | T_Virtual | T_Memory
-           | T_Bus | T_Device | T_System =>
-            Entity_Cat := EC_Component;
-            Component_Cat := P_Component_Category;
+         when T_Abstract |
+           T_Data        |
+           T_Thread      |
+           T_Subprogram  |
+           T_Process     |
+           T_Processor   |
+           T_Virtual     |
+           T_Memory      |
+           T_Bus         |
+           T_Device      |
+           T_System      =>
+            Entity_Cat     := EC_Component;
+            Component_Cat  := P_Component_Category;
             Classifier_Ref := P_Entity_Reference (PC_Alias_Declaration);
 
          when T_Feature =>
@@ -965,7 +995,7 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
                Skip_Tokens (T_Semicolon);
                return No_Node;
             else
-               Entity_Cat := EC_Feature_Group_Type;
+               Entity_Cat     := EC_Feature_Group_Type;
                Classifier_Ref := P_Entity_Reference (PC_Alias_Declaration);
             end if;
 
@@ -1023,11 +1053,17 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
          Skip_Tokens (T_Semicolon);
          return No_Node;
       else
-         Node := Add_New_Alias_Declaration (Start_Loc, Namespace,
-                                            Identifier, Package_Name,
-                                            Classifier_Ref, Entity_Cat,
-                                            Component_Cat, Is_All,
-                                            Private_Declarations);
+         Node :=
+           Add_New_Alias_Declaration
+             (Start_Loc,
+              Namespace,
+              Identifier,
+              Package_Name,
+              Classifier_Ref,
+              Entity_Cat,
+              Component_Cat,
+              Is_All,
+              Private_Declarations);
       end if;
 
       return Node;

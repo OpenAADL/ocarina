@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -58,8 +58,7 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
       Container     : Node_Id;
       Is_Refinement : Boolean;
       Is_End_To_End : Boolean;
-      Category      : Flow_Category)
-     return Node_Id;
+      Category      : Flow_Category) return Node_Id;
    --  Parse Flow_Implementation, Flow_Implementation_Refinement
    --  End_To_End_Flow_Spec and End_To_End_Flow_Refinement
 
@@ -67,8 +66,7 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
      (Identifier    : Node_Id;
       Container     : Node_Id;
       Is_Refinement : Boolean;
-      Category      : Flow_Category)
-     return Node_Id;
+      Category      : Flow_Category) return Node_Id;
    --  This function is called in P_Flow_Spec (Boolean) to make this
    --  function body shorter and easier to read
 
@@ -126,8 +124,7 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
       Container     : Node_Id;
       Is_Refinement : Boolean;
       Is_End_To_End : Boolean;
-      Category      : Flow_Category)
-     return Node_Id
+      Category      : Flow_Category) return Node_Id
    is
       Flow_Impl   : Node_Id;
       Connections : List_Id;
@@ -319,8 +316,8 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
                      --  of element in the connection list must be
                      --  zero or odd.
 
-                     if Length (Connections) /= 0 and then
-                       Length (Connections) mod 2 = 0
+                     if Length (Connections) /= 0
+                       and then Length (Connections) mod 2 = 0
                      then
                         --  We display en error message expecting an
                         --  odd number because we already removed two.
@@ -333,32 +330,35 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
             end if;
 
             if not Is_Empty (Connections) then
-               Set_Loc (Node_Id (Connections),
-                        Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (First_Node
-                                                               (Connections)));
+               Set_Loc
+                 (Node_Id (Connections),
+                  Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
+                    (First_Node (Connections)));
             end if;
          end if;
       end if;
 
       if Is_End_To_End then
-         Flow_Impl := Add_New_End_To_End_Flow_Spec
-           (Loc           => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-            Container     => Container,
-            Name          => Identifier,
-            Is_Refinement => Is_Refinement,
-            In_Modes      => Modes_Trans,
-            Source_Flow   => Source_Flow,
-            Sink_Flow     => Sink_Flow);
+         Flow_Impl :=
+           Add_New_End_To_End_Flow_Spec
+             (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+              Container     => Container,
+              Name          => Identifier,
+              Is_Refinement => Is_Refinement,
+              In_Modes      => Modes_Trans,
+              Source_Flow   => Source_Flow,
+              Sink_Flow     => Sink_Flow);
       else
-         Flow_Impl := Add_New_Flow_Implementation
-           (Loc           => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-            Container     => Container,
-            Name          => Identifier,
-            Category      => Category,
-            Is_Refinement => Is_Refinement,
-            In_Modes      => Modes_Trans,
-            Source_Flow   => Source_Flow,
-            Sink_Flow     => Sink_Flow);
+         Flow_Impl :=
+           Add_New_Flow_Implementation
+             (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+              Container     => Container,
+              Name          => Identifier,
+              Category      => Category,
+              Is_Refinement => Is_Refinement,
+              In_Modes      => Modes_Trans,
+              Source_Flow   => Source_Flow,
+              Sink_Flow     => Sink_Flow);
       end if;
 
       OK := P_Property_Associations (Flow_Impl, True, PAT_Simple, Code);
@@ -425,12 +425,11 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
 
    function P_Flow_Implementation_Or_End_To_End_Flow_Spec
      (Container : Node_Id;
-      Refinable : Boolean)
-     return Node_Id
+      Refinable : Boolean) return Node_Id
    is
       Loc           : Location;
       Identifier    : Node_Id;
-      Is_Refinement : Boolean        := False;
+      Is_Refinement : Boolean      := False;
       Is_End_To_End : Boolean;
       Category      : Flow_Category;
       Code          : Parsing_Code := PC_Flow_Implementation;
@@ -490,12 +489,12 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
             case Token is
                when T_Source =>
                   Category := FC_Source;
-               when T_Sink   =>
+               when T_Sink =>
                   Category := FC_Sink;
-               when T_Path   =>
+               when T_Path =>
                   Category := FC_Path;
 
-               when others   =>
+               when others =>
                   DPE (Code, (T_Source, T_Sink, T_Path));
                   Skip_Tokens (T_Semicolon);
                   return No_Node;
@@ -543,11 +542,11 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
       end case;
 
       return P_Flow_Implementation
-        (Identifier    => Identifier,
-         Container     => Container,
-         Is_Refinement => Is_Refinement,
-         Is_End_To_End => Is_End_To_End,
-         Category      => Category);
+          (Identifier    => Identifier,
+           Container     => Container,
+           Is_Refinement => Is_Refinement,
+           Is_End_To_End => Is_End_To_End,
+           Category      => Category);
    end P_Flow_Implementation_Or_End_To_End_Flow_Spec;
 
    -----------------
@@ -620,8 +619,7 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
 
    function P_Flow_Spec
      (Container : Node_Id;
-      Refinable : Boolean)
-     return Node_Id
+      Refinable : Boolean) return Node_Id
    is
       Identifier    : Node_Id;
       Is_Refinement : Boolean;
@@ -657,12 +655,12 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
          case Token is
             when T_Source =>
                Category := FC_Source;
-            when T_Sink   =>
+            when T_Sink =>
                Category := FC_Sink;
-            when T_Path   =>
+            when T_Path =>
                Category := FC_Path;
 
-            when others   =>
+            when others =>
                DPE (Code, (T_Source, T_Sink, T_Path));
                Skip_Tokens (T_Semicolon);
                return No_Node;
@@ -673,10 +671,11 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
          return No_Node;
       end if;
 
-      return P_Flow_Spec (Identifier    => Identifier,
-                          Container     => Container,
-                          Is_Refinement => Is_Refinement,
-                          Category      => Category);
+      return P_Flow_Spec
+          (Identifier    => Identifier,
+           Container     => Container,
+           Is_Refinement => Is_Refinement,
+           Category      => Category);
    end P_Flow_Spec;
 
    -----------------
@@ -700,8 +699,7 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
      (Identifier    : Node_Id;
       Container     : Node_Id;
       Is_Refinement : Boolean;
-      Category      : Flow_Category)
-     return Node_Id
+      Category      : Flow_Category) return Node_Id
    is
       Flow_Spec   : Node_Id;
       In_Modes    : Node_Id;
@@ -724,15 +722,21 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
       begin
          if Is_Refinement then
             case Category is
-               when FC_Source => return PC_Flow_Source_Spec_Refinement;
-               when FC_Sink   => return PC_Flow_Sink_Spec_Refinement;
-               when FC_Path   => return PC_Flow_Path_Spec_Refinement;
+               when FC_Source =>
+                  return PC_Flow_Source_Spec_Refinement;
+               when FC_Sink =>
+                  return PC_Flow_Sink_Spec_Refinement;
+               when FC_Path =>
+                  return PC_Flow_Path_Spec_Refinement;
             end case;
          else
             case Category is
-               when FC_Source => return PC_Flow_Source_Spec;
-               when FC_Sink   => return PC_Flow_Sink_Spec;
-               when FC_Path   => return PC_Flow_Path_Spec;
+               when FC_Source =>
+                  return PC_Flow_Source_Spec;
+               when FC_Sink =>
+                  return PC_Flow_Sink_Spec;
+               when FC_Path =>
+                  return PC_Flow_Path_Spec;
             end case;
          end if;
       end Flow_Parsing_Code;
@@ -784,20 +788,22 @@ package body Ocarina.FE_AADL.Parser.Components.Flows is
          end case;
       end if;
 
-      Flow_Spec := Add_New_Flow_Spec
-        (Loc           => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Comp_Type     => Container,
-         Name          => Identifier,
-         Category      => Category,
-         Is_Refinement => Is_Refinement,
-         Sink_Flow     => Sink_Flow,
-         Source_Flow   => Source_Flow);
+      Flow_Spec :=
+        Add_New_Flow_Spec
+          (Loc           => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Comp_Type     => Container,
+           Name          => Identifier,
+           Category      => Category,
+           Is_Refinement => Is_Refinement,
+           Sink_Flow     => Sink_Flow,
+           Source_Flow   => Source_Flow);
 
-      OK := P_Property_Associations
-        (Flow_Spec,
-         not Is_Refinement,
-         PAT_Simple,
-         Code);
+      OK :=
+        P_Property_Associations
+          (Flow_Spec,
+           not Is_Refinement,
+           PAT_Simple,
+           Code);
 
       Save_Lexer (Loc);
       Scan_Token;

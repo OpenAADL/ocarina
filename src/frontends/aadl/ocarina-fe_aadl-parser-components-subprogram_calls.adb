@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -74,8 +74,9 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
       use Ocarina.FE_AADL.Parser.Identifiers;
       use Ocarina.Builder.AADL.Components.Subprogram_Calls;
 
-      pragma Assert (Container /= No_Node
-                     and then Kind (Container) = K_Subprogram_Call_Sequence);
+      pragma Assert
+        (Container /= No_Node
+         and then Kind (Container) = K_Subprogram_Call_Sequence);
 
       Subprog_Call : Node_Id;
       Identifier   : Node_Id;
@@ -93,7 +94,7 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
          Save_Lexer (Loc);
       end if;
 
-      Identifier   := Make_Current_Identifier (No_Node);
+      Identifier := Make_Current_Identifier (No_Node);
 
       Scan_Token;     --  parse ':'
       if Token /= T_Colon then
@@ -116,12 +117,18 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
          return No_Node;
       end if;
 
-      Subprog_Call := Add_New_Subprogram_Call (Loc => Loc,
-                                               Name => Identifier,
-                                               Call_Sequence => Container);
+      Subprog_Call :=
+        Add_New_Subprogram_Call
+          (Loc           => Loc,
+           Name          => Identifier,
+           Call_Sequence => Container);
 
-      OK := P_Property_Associations (Subprog_Call, True,
-                                     PAT_Simple, PC_Subprogram_Call);
+      OK :=
+        P_Property_Associations
+          (Subprog_Call,
+           True,
+           PAT_Simple,
+           PC_Subprogram_Call);
       if not OK then
          return No_Node;
       end if;
@@ -156,8 +163,7 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
    --     [ { { call_sequence_property_association }+ } ] [ in_modes ] ;
 
    function P_Subprogram_Call_Sequence
-     (Container : Types.Node_Id)
-     return Node_Id
+     (Container : Types.Node_Id) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -217,15 +223,18 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
          return No_Node;
       end if;
 
-      Call_Sequence := Add_New_Subprogram_Call_Sequence
-        (Loc => Start_Loc,
-         Comp_Impl => Container,
-         Name => Identifier,
-         In_Modes => No_Node);
+      Call_Sequence :=
+        Add_New_Subprogram_Call_Sequence
+          (Loc       => Start_Loc,
+           Comp_Impl => Container,
+           Name      => Identifier,
+           In_Modes  => No_Node);
 
-      Subprogram_Calls := P_Elements_List (P_Subprogram_Call'Access,
-                                           Call_Sequence,
-                                           T_Right_Curly_Bracket);
+      Subprogram_Calls :=
+        P_Elements_List
+          (P_Subprogram_Call'Access,
+           Call_Sequence,
+           T_Right_Curly_Bracket);
 
       --  XXX The container should not be 'no_node'. Yet, at this
       --  point, the sequence has not been created yet
@@ -236,9 +245,12 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
       end if;
 
       if AADL_Version = AADL_V2 then
-         OK := P_Property_Associations (Call_Sequence,
-                                        True, PAT_Simple,
-                                        PC_Subprogram_Call_Sequence);
+         OK :=
+           P_Property_Associations
+             (Call_Sequence,
+              True,
+              PAT_Simple,
+              PC_Subprogram_Call_Sequence);
          if not OK then
             return No_Node;
          end if;
@@ -292,10 +304,7 @@ package body Ocarina.FE_AADL.Parser.Components.Subprogram_Calls is
    --   | requires_subprogram_group_access_reference
    --                  . provides_subprogram_access_identifier
 
-   function P_Called_Subprogram
-     (Code : Parsing_Code)
-     return Node_Id
-   is
+   function P_Called_Subprogram (Code : Parsing_Code) return Node_Id is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Lexer;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -44,18 +44,15 @@ package body Ocarina.Instances.REAL_Checker.Queries.Bound_Predicates is
    function Is_Bound_Predicate
      (E      : Node_Id;
       D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       pragma Unreferenced (Option);
       use Namet;
 
-      Str_1  : constant Name_Id := Get_String_Name
-        ("actual_processor_binding");
-      Str_2  : constant Name_Id := Get_String_Name
-        ("actual_connection_binding");
-      Str_3  : constant Name_Id := Get_String_Name
-        ("actual_memory_binding");
+      Str_1 : constant Name_Id := Get_String_Name ("actual_processor_binding");
+      Str_2 : constant Name_Id :=
+        Get_String_Name ("actual_connection_binding");
+      Str_3 : constant Name_Id := Get_String_Name ("actual_memory_binding");
    begin
 
       --  Returns true if the current node is bound to the parameter
@@ -63,15 +60,17 @@ package body Ocarina.Instances.REAL_Checker.Queries.Bound_Predicates is
 
       --  Test for processor and virtual processor binding
 
-      if Is_Defined_Reference_Property (E, Str_1) and then
-        Get_Reference_Property (E, Str_1) = D then
+      if Is_Defined_Reference_Property (E, Str_1)
+        and then Get_Reference_Property (E, Str_1) = D
+      then
          return True;
       end if;
 
       --  Test for connection binding
 
-      if Is_Defined_Reference_Property (E, Str_2) and then
-        Get_Reference_Property (E, Str_2) = D then
+      if Is_Defined_Reference_Property (E, Str_2)
+        and then Get_Reference_Property (E, Str_2) = D
+      then
          return True;
       end if;
 

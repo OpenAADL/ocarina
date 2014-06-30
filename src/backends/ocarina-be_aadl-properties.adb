@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -299,8 +299,7 @@ package body Ocarina.BE_AADL.Properties is
    procedure Print_Property_Values (Node : Node_Id) is
       pragma Assert
         (Present (Node)
-         and then (Kind (Node) = K_Property_Value
-                   or else DNKE (Node)));
+         and then (Kind (Node) = K_Property_Value or else DNKE (Node)));
 
       List_Node : Node_Id;
    begin
@@ -342,7 +341,7 @@ package body Ocarina.BE_AADL.Properties is
       --    or Identifier_Identifier
       --  (see ocarina-nodes.idl for more details)
 
-      Unit_Ident  : constant Node_Id := Unique_Unit_Identifier (Node);
+      Unit_Ident : constant Node_Id := Unique_Unit_Identifier (Node);
       --  Only used when Const_Type is AADLInteger_Type or
       --  AADLReal_Type.
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,30 +43,27 @@ with Ocarina.Builder.AADL.Components.Modes;
 
 package body Ocarina.FE_AADL.Parser.Components.Modes is
 
-   function P_Mode (Mode          : Node_Id;
-                    Is_Refinement : Boolean;
-                    Is_Initial    : Boolean;
-                    Refinable     : Boolean)
-                   return Node_Id;
+   function P_Mode
+     (Mode          : Node_Id;
+      Is_Refinement : Boolean;
+      Is_Initial    : Boolean;
+      Refinable     : Boolean) return Node_Id;
    --  Parse Mode and Mode_Refinement
    --  NOTE: The parameter Refinable is only useful for determining output
    --        error message (for list of expected tokens)
 
    function P_Mode_Transition
      (Mode_Transition : Types.Node_Id;
-      Source_Modes : List_Id)
-     return Node_Id;
+      Source_Modes    : List_Id) return Node_Id;
    --  Current token is '-[' and will be ignored in this function
 
    function P_Unique_Port_Or_Transition_Trigger
-     (Container : Types.Node_Id)
-     return Node_Id;
+     (Container : Types.Node_Id) return Node_Id;
    --  Parse Unique_Port_Identifier when AADL_V1
    --  Parse Transition_Trigger when AADL_V2
 
    function P_Mode_Transition_Trigger
-     (Container : Types.Node_Id)
-     return Node_Id;
+     (Container : Types.Node_Id) return Node_Id;
 
    ----------------
    -- P_In_Modes --
@@ -79,8 +76,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --  in_modes ::=
    --  in modes ( ( mode_identifier { , mode_identifier }* | none ) )
 
-   function P_In_Modes (Code : Parsing_Code) return Node_Id
-   is
+   function P_In_Modes (Code : Parsing_Code) return Node_Id is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -88,8 +84,8 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
       use Lexer;
       use Ocarina.FE_AADL.Parser.Identifiers;
 
-      pragma Assert (Code = PC_In_Modes
-                     or else Code = PC_In_Modes_And_Transitions);
+      pragma Assert
+        (Code = PC_In_Modes or else Code = PC_In_Modes_And_Transitions);
 
       In_Modes  : Node_Id;
       Mode_List : List_Id;
@@ -97,9 +93,9 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
       Loc       : Location;
       Item      : Node_Id;
 
-      --  NOTE: no tokens skipping is necessary because when an error
-      --  occurs this function return No_Node and calling function
-      --  will skip tokens until ';' (in general) is reached
+   --  NOTE: no tokens skipping is necessary because when an error
+   --  occurs this function return No_Node and calling function
+   --  will skip tokens until ';' (in general) is reached
    begin
       Save_Lexer (Start_Loc);
       Scan_Token;   --  Consume 'modes' ('in' is already consumed)
@@ -201,11 +197,11 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --  mode_refinement ::= defining_mode_identifier : refined to mode
    --                         { { mode_property_assocation }+ } ;
 
-   function P_Mode (Mode          : Node_Id;
-                    Is_Refinement : Boolean;
-                    Is_Initial    : Boolean;
-                    Refinable     : Boolean)
-                   return Node_Id
+   function P_Mode
+     (Mode          : Node_Id;
+      Is_Refinement : Boolean;
+      Is_Initial    : Boolean;
+      Refinable     : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -214,9 +210,9 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
 
-      Code      : Parsing_Code;
-      OK        : Boolean;
-      Loc       : Location;
+      Code : Parsing_Code;
+      OK   : Boolean;
+      Loc  : Location;
    begin
       if Is_Refinement then
          Code := PC_Mode_Refinement;
@@ -240,8 +236,8 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
          return No_Node;
       end if;
 
-      OK := P_Property_Associations (Mode, not Is_Refinement,
-                                     PAT_Simple, Code);
+      OK :=
+        P_Property_Associations (Mode, not Is_Refinement, PAT_Simple, Code);
 
       if not OK then
          return No_Node;
@@ -296,8 +292,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
 
    function P_Mode_Or_Mode_Transition
      (Container : Node_Id;
-      Refinable : Boolean)
-     return Node_Id
+      Refinable : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -351,9 +346,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
          when T_Colon =>       --  parsing Mode or Mode_Refinement
             Save_Lexer (Loc);
             Scan_Token;
-            if Token = T_Refined
-              and then AADL_Version = AADL_V1
-            then
+            if Token = T_Refined and then AADL_Version = AADL_V1 then
                if not Refinable then
                   DPE (PC_Mode, EMC_Refinement_Is_Not_Allowed);
                   Skip_Tokens (T_Semicolon);
@@ -369,9 +362,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
 
                Is_Refinement := True;
 
-            elsif Token = T_Refined
-              and then AADL_Version = AADL_V2
-            then
+            elsif Token = T_Refined and then AADL_Version = AADL_V2 then
                DPE (PC_Mode, EMC_Refinement_Is_Not_Allowed);
                Skip_Tokens (T_Semicolon);
                return No_Node;
@@ -384,42 +375,47 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
             end if;
 
             Node :=
-              Add_New_Mode (Loc =>
-                              Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-                            Identifier => Identifier,
-                            Component => Container);
+              Add_New_Mode
+                (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+                 Identifier => Identifier,
+                 Component  => Container);
 
             return P_Mode (Node, Is_Refinement, Is_Initial, Refinable);
 
-         when T_Left_Step_Bracket | T_Comma  =>   --  parse Mode_Transition
+         when T_Left_Step_Bracket | T_Comma =>   --  parse Mode_Transition
 
             if Is_Requires then
-               DPE (PC_Requires_Modes_Subclause,
-                    EMC_Mode_Transition_Not_Allowed_In_Requires_Modes);
+               DPE
+                 (PC_Requires_Modes_Subclause,
+                  EMC_Mode_Transition_Not_Allowed_In_Requires_Modes);
                return No_Node;
             end if;
 
             Source_Modes :=
-            New_List (K_Identifiers_List,
-                      Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier));
+              New_List
+                (K_Identifiers_List,
+                 Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier));
             Append_Node_To_List (Identifier, Source_Modes);
 
             if Token = T_Comma then
                --  parse next source modes
-               Identifiers_List := P_Items_List (P_Identifier'Access,
-                                                 No_Node,
-                                                 T_Comma,
-                                                 T_Left_Step_Bracket,
-                                                 PC_Mode_Or_Mode_Transition,
-                                                 False);
+               Identifiers_List :=
+                 P_Items_List
+                   (P_Identifier'Access,
+                    No_Node,
+                    T_Comma,
+                    T_Left_Step_Bracket,
+                    PC_Mode_Or_Mode_Transition,
+                    False);
                if No (Identifiers_List) then
                   DPE (PC_Mode_Transition, T_Identifier);
                   Skip_Tokens (T_Semicolon);
                   return No_Node;
                end if;
 
-               Append_Node_To_List (First_Node (Identifiers_List),
-                                    Source_Modes);
+               Append_Node_To_List
+                 (First_Node (Identifiers_List),
+                  Source_Modes);
 
                if Token /= T_Left_Step_Bracket then
                   DPE (PC_Mode_Transition, T_Left_Step_Bracket);
@@ -428,9 +424,10 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
                end if;
             end if;
 
-            Node := Add_New_Mode_Transition
-              (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-               Component => Container);
+            Node :=
+              Add_New_Mode_Transition
+                (Loc       => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+                 Component => Container);
             return P_Mode_Transition (Node, Source_Modes);
 
          when others =>
@@ -463,18 +460,17 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
       pragma Unreferenced (Container);
 
       Mode_Tran : Node_Id;
-      Loc : Location;
+      Loc       : Location;
 
    begin
       Save_Lexer (Loc);
       Scan_Token;
 
-      if Token = T_Left_Parenthesis
-        and then AADL_Version = AADL_V1
-      then
+      if Token = T_Left_Parenthesis and then AADL_Version = AADL_V1 then
          Mode_Tran := New_Node (K_Pair_Of_Entity_References, Token_Location);
          Set_First_Reference
-           (Mode_Tran, P_Entity_Reference (PC_Mode_Or_Mode_Transition));
+           (Mode_Tran,
+            P_Entity_Reference (PC_Mode_Or_Mode_Transition));
          Scan_Token;
 
          if Token /= T_Direct_Connection then
@@ -483,7 +479,8 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
          end if;
 
          Set_Second_Reference
-           (Mode_Tran, P_Entity_Reference (PC_Mode_Or_Mode_Transition));
+           (Mode_Tran,
+            P_Entity_Reference (PC_Mode_Or_Mode_Transition));
          Scan_Token;
 
          if Token /= T_Right_Parenthesis then
@@ -519,8 +516,8 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
 
    function P_Mode_Transition
      (Mode_Transition : Node_Id;
-      Source_Modes : List_Id)
-     return Node_Id is
+      Source_Modes    : List_Id) return Node_Id
+   is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -531,17 +528,19 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
 
       pragma Assert (Mode_Transition /= No_Node);
 
-      List_Ident   : List_Id;
-      Destination  : Node_Id;
-      Loc          : Location;
-      OK           : Boolean;
+      List_Ident  : List_Id;
+      Destination : Node_Id;
+      Loc         : Location;
+      OK          : Boolean;
    begin
-      List_Ident := P_Items_List (P_Unique_Port_Or_Transition_Trigger'Access,
-                                  No_Node,
-                                  T_Comma,
-                                  T_Right_Step_Bracket,
-                                  PC_Mode_Or_Mode_Transition,
-                                  False);
+      List_Ident :=
+        P_Items_List
+          (P_Unique_Port_Or_Transition_Trigger'Access,
+           No_Node,
+           T_Comma,
+           T_Right_Step_Bracket,
+           PC_Mode_Or_Mode_Transition,
+           False);
       if No (List_Ident) then
          DPE (PC_Mode_Transition, T_Identifier);
          Skip_Tokens (T_Semicolon);
@@ -568,18 +567,19 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
       if Token = T_Left_Curly_Bracket then
          case AADL_Version is
             when AADL_V1 =>
-               DPE (PC_Property_Association,
-                    EMC_Not_Allowed_In_AADL_V2);
+               DPE (PC_Property_Association, EMC_Not_Allowed_In_AADL_V2);
                Restore_Lexer (Loc);
                return No_Node;
 
             when AADL_V2 =>
                Restore_Lexer (Loc);
                if AADL_Version = AADL_V2 then
-                  OK := P_Property_Associations (Mode_Transition,
-                                                 False,
-                                                 PAT_Simple,
-                                                 PC_Mode_Transition);
+                  OK :=
+                    P_Property_Associations
+                      (Mode_Transition,
+                       False,
+                       PAT_Simple,
+                       PC_Mode_Transition);
 
                   if not OK then
                      return No_Node;
@@ -620,8 +620,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --   | processor . event_source_identifier
 
    function P_Unique_Port_Or_Transition_Trigger
-     (Container : Types.Node_Id)
-     return Node_Id
+     (Container : Types.Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.Tokens;
@@ -648,8 +647,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    --   | processor . event_source_identifier
 
    function P_Mode_Transition_Trigger
-     (Container : Types.Node_Id)
-     return Node_Id
+     (Container : Types.Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.Tokens;
@@ -694,8 +692,12 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
          return No_Node;
       end if;
 
-      Node := Add_New_Mode_Transition_Trigger (Loc, Identifier,
-                                               Is_Self, Is_Processor);
+      Node :=
+        Add_New_Mode_Transition_Trigger
+          (Loc,
+           Identifier,
+           Is_Self,
+           Is_Processor);
       if No (Node) then
          DPE (PC_Mode_Transition_Trigger);
          Skip_Tokens (T_Semicolon);

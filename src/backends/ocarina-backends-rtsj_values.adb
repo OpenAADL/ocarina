@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;  use Namet;
+with Namet; use Namet;
 
 with GNAT.Table;
 
@@ -40,8 +40,7 @@ with Ocarina.AADL_Values;
 package body Ocarina.Backends.RTSJ_Values is
 
    package OV renames Ocarina.AADL_Values;
-   package VT is
-      new GNAT.Table (Value_Type, Value_Id, No_Value + 1, 10, 10);
+   package VT is new GNAT.Table (Value_Type, Value_Id, No_Value + 1, 10, 10);
 
    Hex : constant String := "0123456789ABCDEF";
    subtype ULL is Unsigned_Long_Long;
@@ -57,8 +56,7 @@ package body Ocarina.Backends.RTSJ_Values is
    ----------------------------
    -- Add_ULL_To_Name_Buffer --
    ----------------------------
-   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1)
-   is
+   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1) is
       Q : constant ULL := U / B;
       R : constant ULL := U mod B;
    begin
@@ -78,7 +76,7 @@ package body Ocarina.Backends.RTSJ_Values is
          return "<>";
       end if;
 
-      V := VT.Table (Value);
+      V        := VT.Table (Value);
       Name_Len := 0;
       case V.K is
          when K_Int =>
@@ -110,7 +108,7 @@ package body Ocarina.Backends.RTSJ_Values is
       V : Value_Id;
    begin
       VT.Increment_Last;
-      V := VT.Last;
+      V            := VT.Last;
       VT.Table (V) := Value;
       return V;
    end New_Value;
@@ -120,9 +118,8 @@ package body Ocarina.Backends.RTSJ_Values is
    -----------------------
    function New_Int_Value
      (Value : Unsigned_Long_Long;
-      Sign : Short_Short;
-      Base : Unsigned_Short_Short)
-      return Value_Id
+      Sign  : Short_Short;
+      Base  : Unsigned_Short_Short) return Value_Id
    is
    begin
       return New_Value (Value_Type'(K_Int, Value, Sign, Base));
@@ -152,7 +149,7 @@ package body Ocarina.Backends.RTSJ_Values is
             end if;
 
          when OV.LT_String =>
-            Result := New_String_Value (VT.Sval);
+            Result := New_String_Value (VT.SVal);
 
          when others =>
             raise Constraint_Error;
@@ -172,9 +169,7 @@ package body Ocarina.Backends.RTSJ_Values is
    ---------------
    -- Set_Value --
    ---------------
-   procedure Set_Value
-     (V : Value_Id;
-      X : Value_Type) is
+   procedure Set_Value (V : Value_Id; X : Value_Type) is
    begin
       VT.Table (V) := X;
    end Set_Value;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -46,9 +46,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Predicates is
    -- Get_Instances_Verifying_Predicate --
    ---------------------------------------
 
-   function Get_Instances_Verifying_Predicate
-     return Result_Set
-   is
+   function Get_Instances_Verifying_Predicate return Result_Set is
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       Result : Result_Set;
       EL     : Node_List;
@@ -57,10 +55,9 @@ package body Ocarina.Instances.REAL_Checker.Queries.Predicates is
 
       Find_All_Instances
         (Root_Instance,
-         (K_Component_Instance,
-          K_Call_Instance,
-          K_Call_Sequence_Instance),
-         EL.First, EL.Last);
+         (K_Component_Instance, K_Call_Instance, K_Call_Sequence_Instance),
+         EL.First,
+         EL.Last);
       while Present (EL.First) loop
          if Predicate (EL.First) then
             Append (Result, EL.First);
@@ -84,8 +81,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Predicates is
    ---------------------------------------
 
    function Get_Instances_Verifying_Predicate
-     (Set : Result_Set)
-     return Result_Set
+     (Set : Result_Set) return Result_Set
    is
       Result : Result_Set;
    begin

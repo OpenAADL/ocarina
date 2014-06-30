@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -67,8 +67,9 @@ package body Ocarina.FE_REAL is
 
    procedure Usage is
    begin
-      Write_Line ("   -real_lib Add a REAL file to be used as a theorem "&
-                  "library by REAL annexes");
+      Write_Line
+        ("   -real_lib Add a REAL file to be used as a theorem " &
+         "library by REAL annexes");
       Write_Line ("   -real_theorem <theorem> Evaluate only theorem");
       Write_Line
         ("   -real_continue_eval Continue evaluation in case of failures");

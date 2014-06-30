@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,8 +34,7 @@
 package Ocarina.Analyzer.AADL.Names is
 
    function Check_Names_In_Components_And_Feature_Groups
-     (Root : Node_Id)
-     return Boolean;
+     (Root : Node_Id) return Boolean;
    --  Check the rules relative to the names (scoped names...) in the
    --  components and the port groups (AADL_V1) and the feature groups
    --  (AADL_V2). Return True if the verification succeeds.

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;  use Namet;
+with Namet; use Namet;
 
 with Ocarina.AADL_Values;
 
@@ -41,10 +41,9 @@ package body Ocarina.Backends.Ada_Values is
 
    package OV renames Ocarina.AADL_Values;
 
-   Hex      : constant String := "0123456789ABCDEF";
+   Hex : constant String := "0123456789ABCDEF";
 
-   package VT is
-      new GNAT.Table (Value_Type, Value_Id, No_Value + 1, 10, 10);
+   package VT is new GNAT.Table (Value_Type, Value_Id, No_Value + 1, 10, 10);
 
    subtype ULL is Unsigned_Long_Long;
 
@@ -63,8 +62,7 @@ package body Ocarina.Backends.Ada_Values is
    -- "*" --
    ---------
 
-   function "*" (L, R : Value_Type) return Value_Type
-   is
+   function "*" (L, R : Value_Type) return Value_Type is
       V : Value_Type := L;
    begin
       case V.K is
@@ -88,9 +86,8 @@ package body Ocarina.Backends.Ada_Values is
    -- "+" --
    ---------
 
-   function "+" (L, R : Value_Type) return Value_Type
-   is
-      V  : Value_Type := R;
+   function "+" (L, R : Value_Type) return Value_Type is
+      V : Value_Type := R;
    begin
       case R.K is
          when K_Integer =>
@@ -121,8 +118,7 @@ package body Ocarina.Backends.Ada_Values is
    -- "-" --
    ---------
 
-   function "-" (R : Value_Type) return Value_Type
-   is
+   function "-" (R : Value_Type) return Value_Type is
       V : Value_Type := R;
    begin
       case R.K is
@@ -143,8 +139,7 @@ package body Ocarina.Backends.Ada_Values is
    -- "-" --
    ---------
 
-   function "-" (L, R : Value_Type) return Value_Type
-   is
+   function "-" (L, R : Value_Type) return Value_Type is
       V : Value_Type := R;
    begin
       case R.K is
@@ -165,9 +160,8 @@ package body Ocarina.Backends.Ada_Values is
    -- "/" --
    ---------
 
-   function "/" (L, R : Value_Type) return Value_Type
-   is
-      V  : Value_Type := L;
+   function "/" (L, R : Value_Type) return Value_Type is
+      V : Value_Type := L;
    begin
       case V.K is
          when K_Integer =>
@@ -219,8 +213,7 @@ package body Ocarina.Backends.Ada_Values is
    -- "and" --
    -----------
 
-   function "and" (L, R : Value_Type) return Value_Type
-   is
+   function "and" (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -251,8 +244,7 @@ package body Ocarina.Backends.Ada_Values is
    -- "mod" --
    -----------
 
-   function "mod" (L, R : Value_Type) return Value_Type
-   is
+   function "mod" (L, R : Value_Type) return Value_Type is
       V : Value_Type := L;
    begin
       case L.K is
@@ -273,8 +265,7 @@ package body Ocarina.Backends.Ada_Values is
    -- "not" --
    -----------
 
-   function "not" (R : Value_Type) return Value_Type
-   is
+   function "not" (R : Value_Type) return Value_Type is
       V : Value_Type := R;
    begin
       case V.K is
@@ -294,8 +285,7 @@ package body Ocarina.Backends.Ada_Values is
    -- "or" --
    ----------
 
-   function "or" (L, R : Value_Type) return Value_Type
-   is
+   function "or" (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -326,8 +316,7 @@ package body Ocarina.Backends.Ada_Values is
    -- "xor" --
    -----------
 
-   function "xor" (L, R : Value_Type) return Value_Type
-   is
+   function "xor" (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -358,8 +347,7 @@ package body Ocarina.Backends.Ada_Values is
    -- Add_ULL_To_Name_Buffer --
    ----------------------------
 
-   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1)
-   is
+   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1) is
       Q : constant ULL := U / B;
       R : constant ULL := U mod B;
    begin
@@ -373,14 +361,13 @@ package body Ocarina.Backends.Ada_Values is
    -- Image --
    -----------
 
-   function Image (Value : Value_Id) return String
-   is
+   function Image (Value : Value_Id) return String is
       V : Value_Type;
    begin
       if Value = No_Value then
          return "<>";
       end if;
-      V := VT.Table (Value);
+      V        := VT.Table (Value);
       Name_Len := 0;
       case V.K is
          when K_Boolean =>
@@ -422,8 +409,7 @@ package body Ocarina.Backends.Ada_Values is
 
                if Index > 0 then
                   Index := Index + 2;
-                  while Index <= Name_Len
-                    and then Name_Buffer (Index) = '0'
+                  while Index <= Name_Len and then Name_Buffer (Index) = '0'
                   loop
                      Name_Buffer (Index .. Name_Len - 1) :=
                        Name_Buffer (Index + 1 .. Name_Len);
@@ -434,7 +420,7 @@ package body Ocarina.Backends.Ada_Values is
 
                   if Index > Name_Len then
                      Name_Len := Name_Len - 2;
-                     Index := Name_Len;
+                     Index    := Name_Len;
 
                   else
                      Index := Name_Len;
@@ -538,9 +524,7 @@ package body Ocarina.Backends.Ada_Values is
    -- New_Boolean_Value --
    -----------------------
 
-   function New_Boolean_Value
-     (Value : Boolean)
-     return Value_Id is
+   function New_Boolean_Value (Value : Boolean) return Value_Id is
    begin
       return New_Value (Value_Type'(K_Boolean, Boolean'Pos (Value), 1, 10));
    end New_Boolean_Value;
@@ -549,9 +533,7 @@ package body Ocarina.Backends.Ada_Values is
    -- New_Floating_Point_Value --
    ------------------------------
 
-   function New_Floating_Point_Value
-     (Value : Long_Double)
-     return Value_Id is
+   function New_Floating_Point_Value (Value : Long_Double) return Value_Id is
    begin
       return New_Value (Value_Type'(K_Float, Value));
    end New_Floating_Point_Value;
@@ -563,8 +545,8 @@ package body Ocarina.Backends.Ada_Values is
    function New_Integer_Value
      (Value : Unsigned_Long_Long;
       Sign  : Short_Short;
-      Base  : Unsigned_Short_Short)
-     return Value_Id is
+      Base  : Unsigned_Short_Short) return Value_Id
+   is
    begin
       return New_Value (Value_Type'(K_Integer, Value, Sign, Base));
    end New_Integer_Value;
@@ -575,8 +557,8 @@ package body Ocarina.Backends.Ada_Values is
 
    function New_String_Value
      (Value : Name_Id;
-      Wide  : Boolean := False)
-     return Value_Id is
+      Wide  : Boolean := False) return Value_Id
+   is
    begin
       if Wide then
          return New_Value (Value_Type'(K_Wide_String, Value));
@@ -591,8 +573,7 @@ package body Ocarina.Backends.Ada_Values is
 
    function New_Character_Value
      (Value : Unsigned_Short;
-      Wide  : Boolean        := False)
-     return Value_Id
+      Wide  : Boolean := False) return Value_Id
    is
    begin
       if Wide then
@@ -606,12 +587,11 @@ package body Ocarina.Backends.Ada_Values is
    -- New_Value --
    ---------------
 
-   function New_Value (Value : Value_Type) return Value_Id
-   is
+   function New_Value (Value : Value_Type) return Value_Id is
       V : Value_Id;
    begin
       VT.Increment_Last;
-      V := VT.Last;
+      V            := VT.Last;
       VT.Table (V) := Value;
       return V;
    end New_Value;
@@ -629,8 +609,7 @@ package body Ocarina.Backends.Ada_Values is
    -- Shift_Left --
    ----------------
 
-   function Shift_Left (L, R : Value_Type) return Value_Type
-   is
+   function Shift_Left (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -655,8 +634,7 @@ package body Ocarina.Backends.Ada_Values is
    -- Shift_Right --
    -----------------
 
-   function Shift_Right (L, R : Value_Type) return Value_Type
-   is
+   function Shift_Right (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin

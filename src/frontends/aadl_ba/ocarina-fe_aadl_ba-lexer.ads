@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,8 +33,8 @@
 
 --  This package contains the lexical analyzer routines.
 
-with Types;         use Types;
-with Locations;     use Locations;
+with Types;     use Types;
+with Locations; use Locations;
 
 with Ocarina.Files;
 with Ocarina.ME_AADL_BA.Tokens; use Ocarina.ME_AADL_BA.Tokens;
@@ -45,8 +45,8 @@ package Ocarina.FE_AADL_BA.Lexer is
    -- Global variables updated by the token scanner --
    ---------------------------------------------------
 
-   Token                : BA_Token_Type;
-   Token_Location       : Location renames Ocarina.Files.Buffer_Location;
+   Token : BA_Token_Type;
+   Token_Location : Location renames Ocarina.Files.Buffer_Location;
    Token_Name           : Name_Id;   --  for T_Identifier (Lower case)
    Token_Display_Name   : Name_Id;   --  for T_Identifier (Carbon copy)
    String_Literal_Value : Name_Id;   --  for T_String
@@ -55,17 +55,19 @@ package Ocarina.FE_AADL_BA.Lexer is
    function Current_Token_Image return String;
    --  Return an image of the current token
 
-   function Load_File (File_Name : Name_Id) return Location
-     renames Ocarina.Files.Load_File;
+   function Load_File
+     (File_Name : Name_Id) return Location renames
+     Ocarina.Files.Load_File;
 
-   procedure Save_Lexer (State : out Location)
-     renames Ocarina.Files.Save_Location;
+   procedure Save_Lexer
+     (State : out Location) renames
+     Ocarina.Files.Save_Location;
 
-   procedure Restore_Lexer (State : Location)
-     renames Ocarina.Files.Restore_Location;
+   procedure Restore_Lexer
+     (State : Location) renames
+     Ocarina.Files.Restore_Location;
 
-   function End_Of_File return Boolean
-     renames Ocarina.Files.End_Of_File;
+   function End_Of_File return Boolean renames Ocarina.Files.End_Of_File;
 
    procedure Scan_Token;
    --  Scan token and update the global variables declared above.

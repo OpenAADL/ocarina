@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -87,8 +87,9 @@ package body Ocarina.Instances is
       Entity_Instance : Node_Id)
    is
       pragma Assert (Kind (Instance_Root) = K_Architecture_Instance);
-      pragma Assert (Kind (Entity_Instance) = K_Component_Instance
-                     or else Kind (Entity_Instance) = K_Subcomponent_Instance);
+      pragma Assert
+        (Kind (Entity_Instance) = K_Component_Instance
+         or else Kind (Entity_Instance) = K_Subcomponent_Instance);
 
       Namespace_Model       : Node_Id;
       Namespace_Instance    : Node_Id;
@@ -106,19 +107,18 @@ package body Ocarina.Instances is
          raise Program_Error;
       end if;
 
-      Namespace_Model := ATN.Namespace
-        (Corresponding_Declaration
-         (Component_Instance));
-      Namespace_Instance := Instantiate_Namespace
-        (Instance_Root, Namespace_Model);
+      Namespace_Model :=
+        ATN.Namespace (Corresponding_Declaration (Component_Instance));
+      Namespace_Instance :=
+        Instantiate_Namespace (Instance_Root, Namespace_Model);
 
       --  Append the subcomponents before the component itself since
       --  the AADL model may be converted into a language that
       --  requires entities to be declared in order to be used.
 
       if not Is_Empty (AIN.Subcomponents (Component_Instance)) then
-         Subcomponent_Instance := AIN.First_Node
-           (AIN.Subcomponents (Component_Instance));
+         Subcomponent_Instance :=
+           AIN.First_Node (AIN.Subcomponents (Component_Instance));
 
          while Present (Subcomponent_Instance) loop
             Append_To_Namespace_Instance
@@ -130,7 +130,8 @@ package body Ocarina.Instances is
 
       --  Append the component itself
 
-      if No (Get_First_Contained_Homonym_Instance
+      if No
+          (Get_First_Contained_Homonym_Instance
              (AIN.Declarations (Namespace_Instance),
               Component_Instance))
       then
@@ -172,8 +173,8 @@ package body Ocarina.Instances is
          if Root_System_Name /= No_Name then
             List_Node := Root_Systems.First;
             while Present (List_Node) loop
-               exit when
-                 ATE.Get_Name_Of_Entity (List_Node, False) = Root_System_Name;
+               exit when ATE.Get_Name_Of_Entity (List_Node, False) =
+                 Root_System_Name;
                List_Node := ATN.Next_Entity (List_Node);
             end loop;
 
@@ -204,8 +205,9 @@ package body Ocarina.Instances is
          end if;
 
          if Root_System_Name /= No_Name
-           and then ATE.Get_Name_Of_Entity (Root_System, False) /=
-           Root_System_Name
+           and then
+             ATE.Get_Name_Of_Entity (Root_System, False) /=
+             Root_System_Name
          then
             Error_Name (1) := Root_System_Name;
             Error_Name (2) := ATE.Get_Name_Of_Entity (List_Node);
@@ -236,7 +238,8 @@ package body Ocarina.Instances is
          --  Begin the instantiation
 
          Set_Root_System
-           (Instance_Root, Instantiate_Component (Instance_Root, Root_System));
+           (Instance_Root,
+            Instantiate_Component (Instance_Root, Root_System));
          Compute_Property_Instance_Values (Instance_Root);
       end if;
 
@@ -267,9 +270,7 @@ package body Ocarina.Instances is
          Set_Standard_Error;
          Write_Line ("Cannot instantiate AADL models");
 
-      elsif Debug_Mode
-        and then Get_Current_Action = Instantiate_Model
-      then
+      elsif Debug_Mode and then Get_Current_Action = Instantiate_Model then
          Print_AADL_Tree
            (Instance_Root,
             Ocarina.ME_AADL.AADL_Instances.Debug.W_Node_Id'Access);
@@ -284,22 +285,19 @@ package body Ocarina.Instances is
 
    function Get_First_Homonym
      (Declaration_List    : List_Id;
-      Name_Of_Declaration : Name_Id)
-     return Node_Id
+      Name_Of_Declaration : Name_Id) return Node_Id
    is
       List_Node : Node_Id;
    begin
-      if Name_Of_Declaration = No_Name
-        or else Declaration_List = No_List
-      then
+      if Name_Of_Declaration = No_Name or else Declaration_List = No_List then
          return No_Node;
       end if;
 
       List_Node := ATN.First_Node (Declaration_List);
 
       while Present (List_Node) loop
-         exit when ATE.Get_Name_Of_Entity
-           (List_Node, False) = Name_Of_Declaration;
+         exit when ATE.Get_Name_Of_Entity (List_Node, False) =
+           Name_Of_Declaration;
          List_Node := ATN.Next_Node (List_Node);
       end loop;
 
@@ -312,14 +310,11 @@ package body Ocarina.Instances is
 
    function Get_First_Homonym_Instance
      (Declaration_List    : List_Id;
-      Name_Of_Declaration : Name_Id)
-     return Node_Id
+      Name_Of_Declaration : Name_Id) return Node_Id
    is
       List_Node : Node_Id;
    begin
-      if Name_Of_Declaration = No_Name
-        or else Declaration_List = No_List
-      then
+      if Name_Of_Declaration = No_Name or else Declaration_List = No_List then
          return No_Node;
       end if;
 
@@ -339,14 +334,11 @@ package body Ocarina.Instances is
 
    function Get_First_Contained_Homonym
      (Declaration_List    : List_Id;
-      Name_Of_Declaration : Name_Id)
-     return Node_Id
+      Name_Of_Declaration : Name_Id) return Node_Id
    is
       List_Node : Node_Id;
    begin
-      if Name_Of_Declaration = No_Name
-        or else Declaration_List = No_List
-      then
+      if Name_Of_Declaration = No_Name or else Declaration_List = No_List then
          return No_Node;
       end if;
 
@@ -371,14 +363,11 @@ package body Ocarina.Instances is
 
    function Get_First_Contained_Homonym_Instance
      (Declaration_List    : List_Id;
-      Name_Of_Declaration : Name_Id)
-     return Node_Id
+      Name_Of_Declaration : Name_Id) return Node_Id
    is
       List_Node : Node_Id;
    begin
-      if Name_Of_Declaration = No_Name
-        or else Declaration_List = No_List
-      then
+      if Name_Of_Declaration = No_Name or else Declaration_List = No_List then
          return No_Node;
       end if;
 
@@ -403,14 +392,13 @@ package body Ocarina.Instances is
 
    function Get_First_Homonym
      (Declaration_List : List_Id;
-      Declaration      : Node_Id)
-     return Node_Id
+      Declaration      : Node_Id) return Node_Id
    is
       pragma Assert (Present (Declaration));
    begin
       return Get_First_Homonym
-        (Declaration_List,
-         Get_Name_Of_Entity (Declaration, False));
+          (Declaration_List,
+           Get_Name_Of_Entity (Declaration, False));
    end Get_First_Homonym;
 
    --------------------------------
@@ -419,14 +407,13 @@ package body Ocarina.Instances is
 
    function Get_First_Homonym_Instance
      (Declaration_List : List_Id;
-      Declaration      : Node_Id)
-     return Node_Id
+      Declaration      : Node_Id) return Node_Id
    is
       pragma Assert (Present (Declaration));
    begin
       return Get_First_Homonym_Instance
-        (Declaration_List,
-         ATE.Get_Name_Of_Entity (Declaration, False));
+          (Declaration_List,
+           ATE.Get_Name_Of_Entity (Declaration, False));
    end Get_First_Homonym_Instance;
 
    ---------------------------------
@@ -435,14 +422,13 @@ package body Ocarina.Instances is
 
    function Get_First_Contained_Homonym
      (Declaration_List : List_Id;
-      Declaration      : Node_Id)
-     return Node_Id
+      Declaration      : Node_Id) return Node_Id
    is
       pragma Assert (Present (Declaration));
    begin
       return Get_First_Contained_Homonym
-        (Declaration_List,
-         ATE.Get_Name_Of_Entity (Declaration, False));
+          (Declaration_List,
+           ATE.Get_Name_Of_Entity (Declaration, False));
    end Get_First_Contained_Homonym;
 
    ------------------------------------------
@@ -451,14 +437,13 @@ package body Ocarina.Instances is
 
    function Get_First_Contained_Homonym_Instance
      (Declaration_List : List_Id;
-      Declaration      : Node_Id)
-     return Node_Id
+      Declaration      : Node_Id) return Node_Id
    is
       pragma Assert (Present (Declaration));
    begin
       return Get_First_Contained_Homonym_Instance
-        (Declaration_List,
-         Get_Name_Of_Entity (Declaration, False));
+          (Declaration_List,
+           Get_Name_Of_Entity (Declaration, False));
    end Get_First_Contained_Homonym_Instance;
 
    ----------------------------------

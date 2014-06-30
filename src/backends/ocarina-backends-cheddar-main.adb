@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -110,8 +110,7 @@ package body Ocarina.Backends.Cheddar.Main is
    ---------------------
 
    procedure Visit_Component (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -141,21 +140,20 @@ package body Ocarina.Backends.Cheddar.Main is
    procedure Visit_Thread (E : Node_Id) is
       F : Node_Id;
    begin
-      Append_Node_To_List
-        (Map_Thread (E), XTN.Subitems (Tasks_Node));
+      Append_Node_To_List (Map_Thread (E), XTN.Subitems (Tasks_Node));
 
       if Present (Features (E)) then
          F := First_Node (Features (E));
          while Present (F) loop
-            if Kind (F) = K_Port_Spec_Instance
-              and then Is_Event (F)
-            then
+            if Kind (F) = K_Port_Spec_Instance and then Is_Event (F) then
                if Is_In (F) then
                   Append_Node_To_List
-                    (Map_Buffer (E, F), XTN.Subitems (Buffers_Node));
+                    (Map_Buffer (E, F),
+                     XTN.Subitems (Buffers_Node));
                end if;
                Append_Node_To_List
-                 (Map_Dependency (E, F), XTN.Subitems (Dependencies_Node));
+                 (Map_Dependency (E, F),
+                  XTN.Subitems (Dependencies_Node));
             end if;
             F := Next_Node (F);
          end loop;
@@ -170,8 +168,7 @@ package body Ocarina.Backends.Cheddar.Main is
 
    procedure Visit_Data (E : Node_Id) is
    begin
-      Append_Node_To_List
-        (Map_Data (E), XTN.Subitems (Resources_Node));
+      Append_Node_To_List (Map_Data (E), XTN.Subitems (Resources_Node));
       Visit_Subcomponents_Of (E);
    end Visit_Data;
 
@@ -181,8 +178,7 @@ package body Ocarina.Backends.Cheddar.Main is
 
    procedure Visit_Process (E : Node_Id) is
    begin
-      Append_Node_To_List
-        (Map_Process (E), XTN.Subitems (Address_Node));
+      Append_Node_To_List (Map_Process (E), XTN.Subitems (Address_Node));
       Visit_Subcomponents_Of (E);
    end Visit_Process;
 
@@ -192,8 +188,7 @@ package body Ocarina.Backends.Cheddar.Main is
 
    procedure Visit_Processor (E : Node_Id) is
    begin
-      Append_Node_To_List
-        (Map_Processor (E), XTN.Subitems (Processors_Node));
+      Append_Node_To_List (Map_Processor (E), XTN.Subitems (Processors_Node));
       Visit_Subcomponents_Of (E);
    end Visit_Processor;
 
@@ -231,7 +226,8 @@ package body Ocarina.Backends.Cheddar.Main is
          if Cheddar_Node = No_Node then
             Cheddar_Node := Make_XML_Node ("cheddar");
             Append_Node_To_List
-              (Cheddar_Node, XTN.Subitems (XTN.Root_Node (XTN.XML_File (U))));
+              (Cheddar_Node,
+               XTN.Subitems (XTN.Root_Node (XTN.XML_File (U))));
          end if;
 
          if Processors_Node = No_Node then
@@ -262,7 +258,8 @@ package body Ocarina.Backends.Cheddar.Main is
          if Dependencies_Node = No_Node then
             Dependencies_Node := Make_XML_Node ("dependencies");
             Append_Node_To_List
-              (Dependencies_Node, XTN.Subitems (Cheddar_Node));
+              (Dependencies_Node,
+               XTN.Subitems (Cheddar_Node));
          end if;
       end if;
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,22 +35,22 @@ with Ocarina.Backends.C_Tree.Nodes; use Ocarina.Backends.C_Tree.Nodes;
 
 package Ocarina.Backends.C_Tree.Nutils is
 
-   Int0_Val             : Value_Id;
-   Int1_Val             : Value_Id;
+   Int0_Val : Value_Id;
+   Int1_Val : Value_Id;
 
-   Var_Suffix           : constant String := "_j";
-   Initialized          : Boolean  := False;
+   Var_Suffix  : constant String := "_j";
+   Initialized : Boolean         := False;
 
-   Output_Unit_Withing  : Boolean := False;
+   Output_Unit_Withing : Boolean := False;
    --  Control flags
 
    type Browsing_Kind is (By_Source, By_Destination, Default);
 
    type Token_Type is
      (
-      --   Token name      Token type
-      --   Keywords
-      Tok_Null,            -- NULL   **** First Keyword
+   --   Token name      Token type
+   --   Keywords
+   Tok_Null,            -- NULL   **** First Keyword
       Tok_Break,           -- BREAK
       Tok_Case,            -- CASE
       Tok_Const,           -- CONST
@@ -75,7 +75,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       Tok_Switch,          -- SWITCH
       Tok_Typedef,         -- TYPEDEF
 
-      --  Graphic Characters
+   --  Graphic Characters
       Tok_Xor,             -- ^
       Tok_Sharp,           -- #
       Tok_Mod,             -- %
@@ -114,10 +114,9 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    Token_Image : array (Token_Type) of Name_Id;
 
-   subtype Keyword_Type is Token_Type
-     range Tok_Null .. Tok_Typedef;
+   subtype Keyword_Type is Token_Type range Tok_Null .. Tok_Typedef;
 
-   type Operator_Type  is
+   type Operator_Type is
      (Op_Not,             -- not
       Op_And,             -- and
       Op_In,              -- in
@@ -145,11 +144,11 @@ package Ocarina.Backends.C_Tree.Nutils is
       Op_None);           -- No operation
 
    Operator_Image : array
-     (Operator_Type'Pos (Op_And) ..  Operator_Type'Pos (Op_Vertical_Bar))
-     of Name_Id;
+   (Operator_Type'Pos (Op_And) ..
+        Operator_Type'Pos (Op_Vertical_Bar)) of Name_Id;
 
-   subtype Keyword_Operator is Operator_Type
-     range Operator_Type'First .. Op_Or_Else;
+   subtype Keyword_Operator is
+     Operator_Type range Operator_Type'First .. Op_Or_Else;
 
    type Parameter_Id is
      (P_From,
@@ -196,8 +195,7 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    MN : array (Member_Id) of Name_Id;
 
-   type Constant_Id is
-     (C_Null);
+   type Constant_Id is (C_Null);
 
    CONST : array (Constant_Id) of Name_Id;
 
@@ -228,11 +226,7 @@ package Ocarina.Backends.C_Tree.Nutils is
    VN : array (Variable_Id) of Name_Id;
 
    type Function_Id is
-     (F_Process_Request,
-      F_Register_Source,
-      F_Init_Lane,
-      F_Sizeof,
-      F_Create);
+     (F_Process_Request, F_Register_Source, F_Init_Lane, F_Sizeof, F_Create);
 
    FN : array (Function_Id) of Name_Id;
 
@@ -281,18 +275,15 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-      return Name_Id;
+      Name   : Name_Id) return Name_Id;
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id;
+      Name   : Name_Id) return Name_Id;
    --  This function returns a new name without the suffix. If the
    --  suffix does not exist, the returned name is equal to the given
    --  name.
@@ -303,22 +294,18 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    procedure Push_Entity (E : Node_Id);
    procedure Pop_Entity;
-   function  Current_Entity return Node_Id;
-   function  Current_File return Node_Id;
+   function Current_Entity return Node_Id;
+   function Current_File return Node_Id;
 
-   function Copy_Node
-     (N : Node_Id)
-     return Node_Id;
+   function Copy_Node (N : Node_Id) return Node_Id;
 
    function New_Node
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id;
+      From : Node_Id := No_Node) return Node_Id;
 
    function New_List
      (Kind : Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id;
+      From : Node_Id := No_Node) return List_Id;
 
    function Image (T : Token_Type) return String;
    function Image (O : Operator_Type) return String;
@@ -339,8 +326,7 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    function Make_C_Comment
      (N                 : Name_Id;
-      Has_Header_Spaces : Boolean := True)
-     return Node_Id;
+      Has_Header_Spaces : Boolean := True) return Node_Id;
    --  This function does only the fllowing thing: it creates a node
    --  whose name is the full text of the comment. It does not split
    --  the comment into many lines. This is done in the code
@@ -348,116 +334,94 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Assignment_Statement
      (Variable_Identifier : Node_Id;
-      Expression          : Node_Id)
-     return Node_Id;
+      Expression          : Node_Id) return Node_Id;
 
    function Make_Defining_Identifier
-     (Name         : Name_Id;
-      C_Conversion : Boolean := True;
+     (Name           : Name_Id;
+      C_Conversion   : Boolean := True;
       Ada_Conversion : Boolean := False;
-      Pointer      : Boolean := False)
-     return  Node_Id;
+      Pointer        : Boolean := False) return Node_Id;
 
    function Make_Expression
      (Left_Expr  : Node_Id;
       Operator   : Operator_Type := Op_None;
-      Right_Expr : Node_Id := No_Node)
-     return Node_Id;
+      Right_Expr : Node_Id       := No_Node) return Node_Id;
 
    function Make_For_Statement
      (Defining_Identifier : Node_Id;
       Pre_Cond            : Node_Id;
       Condition           : Node_Id;
       Post_Cond           : Node_Id;
-      Statements          : List_Id)
-     return Node_Id;
+      Statements          : List_Id) return Node_Id;
 
    function Make_Variable_Declaration
      (Defining_Identifier : Node_Id;
-      Used_Type           : Node_Id)
-     return                Node_Id;
+      Used_Type           : Node_Id) return Node_Id;
 
    function Make_Member_Declaration
      (Defining_Identifier : Node_Id;
-      Used_Type           : Node_Id)
-     return                Node_Id;
+      Used_Type           : Node_Id) return Node_Id;
 
-   function Make_Enum_Aggregate
-     (Members    : List_Id)
-     return Node_Id;
+   function Make_Enum_Aggregate (Members : List_Id) return Node_Id;
 
    function Make_Struct_Aggregate
      (Defining_Identifier : Node_Id := No_Node;
-      Members    : List_Id)
-     return Node_Id;
+      Members             : List_Id) return Node_Id;
 
    function Make_Union_Aggregate
      (Defining_Identifier : Node_Id := No_Node;
-      Members    : List_Id)
-     return Node_Id;
+      Members             : List_Id) return Node_Id;
 
    function Make_While_Statement
-     (Condition           : Node_Id;
-      Statements          : List_Id)
-     return Node_Id;
+     (Condition  : Node_Id;
+      Statements : List_Id) return Node_Id;
 
    function Make_Full_Type_Declaration
      (Defining_Identifier : Node_Id;
-      Type_Definition     : Node_Id)
-     return Node_Id;
+      Type_Definition     : Node_Id) return Node_Id;
    --  No_Node as Type_Definition made type declaration without actual
    --  definition (eg. "type X;").
 
    function Make_If_Statement
-     (Condition        : Node_Id;
-      Statements  : List_Id;
-      Else_Statements  : List_Id := No_List)
-     return Node_Id;
+     (Condition       : Node_Id;
+      Statements      : List_Id;
+      Else_Statements : List_Id := No_List) return Node_Id;
 
    function Make_List_Id
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
-      N3 : Node_Id := No_Node)
-     return List_Id;
+      N3 : Node_Id := No_Node) return List_Id;
 
    function Make_Parameter_Specification
      (Defining_Identifier : Node_Id;
-      Parameter_Type      : Node_Id := No_Node)
-      return                Node_Id;
+      Parameter_Type      : Node_Id := No_Node) return Node_Id;
 
    function Make_Return_Statement
-     (Expression : Node_Id := No_Node)
-     return Node_Id;
+     (Expression : Node_Id := No_Node) return Node_Id;
 
    function Make_Call_Profile
-     (Defining_Identifier   : Node_Id;
-      Parameters            : List_Id := No_List)
-     return Node_Id;
+     (Defining_Identifier : Node_Id;
+      Parameters          : List_Id := No_List) return Node_Id;
 
    function Make_Function_Implementation
      (Specification : Node_Id;
       Declarations  : List_Id;
-      Statements    : List_Id)
-     return          Node_Id;
+      Statements    : List_Id) return Node_Id;
 
    function Make_Function_Specification
-     (Defining_Identifier     : Node_Id;
-      Parameters              : List_Id := No_List;
-      Return_Type             : Node_Id := No_Node)
-     return Node_Id;
+     (Defining_Identifier : Node_Id;
+      Parameters          : List_Id := No_List;
+      Return_Type         : Node_Id := No_Node) return Node_Id;
 
    function Make_Type_Attribute
      (Designator : Node_Id;
-      Attribute  : Attribute_Id)
-     return Node_Id;
+      Attribute  : Attribute_Id) return Node_Id;
 
    function Make_Type_Conversion
      (Subtype_Mark : Node_Id;
-      Expression   : Node_Id)
-     return Node_Id;
+      Expression   : Node_Id) return Node_Id;
 
-   procedure Make_Comment_Header
-     (Header     : List_Id);
+   procedure Make_Comment_Header (Header : List_Id);
    --  This procedure generates a comment header for the generated
    --  packages.
 
@@ -481,10 +445,10 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    procedure Set_Request_Header (N : Node_Id := No_Node);
 
-   function To_C_Name (N : Name_Id;
-                       Ada_Style : Boolean := False;
-                       Keyword_Check : Boolean := True)
-                      return Name_Id;
+   function To_C_Name
+     (N             : Name_Id;
+      Ada_Style     : Boolean := False;
+      Keyword_Check : Boolean := True) return Name_Id;
    --  Convert N to a valid Ada identifier (no clashing with keywords,
    --  no consecutive '_', no heading '_'...).
    --  If Ada_Style is true, '.' is replaced by "__"
@@ -500,13 +464,13 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Literal (Value : Value_Id) return Node_Id;
 
-   function Make_Define_Statement (Defining_Identifier : Node_Id;
-                                   Value : Node_Id) return Node_Id;
+   function Make_Define_Statement
+     (Defining_Identifier : Node_Id;
+      Value               : Node_Id) return Node_Id;
 
    function Make_Pointer_Type (Used_Type : Node_Id) return Node_Id;
 
-   procedure Add_Include
-      (E : Node_Id; Preserve_Case : Boolean := False);
+   procedure Add_Include (E : Node_Id; Preserve_Case : Boolean := False);
 
    procedure Set_Types_Header (N : Node_Id := No_Node);
 
@@ -522,9 +486,7 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    procedure Set_Marshallers_Header (N : Node_Id := No_Node);
 
-   function Make_Variable_Address
-     (Expression : Node_Id)
-     return                Node_Id;
+   function Make_Variable_Address (Expression : Node_Id) return Node_Id;
 
    function Make_Member_Designator
      (Defining_Identifier : Node_Id;
@@ -532,21 +494,19 @@ package Ocarina.Backends.C_Tree.Nutils is
       Is_Pointer          : Boolean := False) return Node_Id;
 
    function Make_Switch_Alternative
-     (Labels : List_Id;
+     (Labels     : List_Id;
       Statements : List_Id) return Node_Id;
 
    function Make_Switch_Statement
-     (Expression          : Node_Id;
-      Alternatives        : List_Id)
-     return Node_Id;
+     (Expression   : Node_Id;
+      Alternatives : List_Id) return Node_Id;
 
    function Make_Macro_Call
-     (Defining_Identifier   : Node_Id;
-      Parameters : List_Id := No_List)
-     return Node_Id;
+     (Defining_Identifier : Node_Id;
+      Parameters          : List_Id := No_List) return Node_Id;
 
    procedure POK_Add_Return_Assertion
-     (Statements  : List_Id;
+     (Statements      : List_Id;
       Exception_Error : Node_Id := No_Node);
 
    procedure Handle_Call_Sequence
@@ -566,12 +526,9 @@ package Ocarina.Backends.C_Tree.Nutils is
      (Defining_Identifier : Node_Id;
       Array_Size          : Node_Id) return Node_Id;
 
-   function Make_Array_Values
-     (Values : List_Id := No_List) return Node_Id;
+   function Make_Array_Values (Values : List_Id := No_List) return Node_Id;
 
-   function Make_Extern_Entity_Declaration
-        (Entity : Node_Id)
-        return                Node_Id;
+   function Make_Extern_Entity_Declaration (Entity : Node_Id) return Node_Id;
 
    function Make_Constant_Type (Used_Type : Node_Id) return Node_Id;
 
@@ -580,21 +537,24 @@ package Ocarina.Backends.C_Tree.Nutils is
    function Get_C_Default_Value (D : Node_Id) return Node_Id;
 
    function POK_Make_Function_Call_With_Assert
-      (Function_Name : Node_Id; Parameters : List_Id) return Node_Id;
+     (Function_Name : Node_Id;
+      Parameters    : List_Id) return Node_Id;
 
-   function Make_Include_Clause (Header_Name : Node_Id;
-                                 Local : Boolean := False) return Node_Id;
+   function Make_Include_Clause
+     (Header_Name : Node_Id;
+      Local       : Boolean := False) return Node_Id;
 
    function Make_Ifdef_Clause
-      (Clause : Node_Id;
-      Negation : Boolean := False;
+     (Clause          : Node_Id;
+      Negation        : Boolean := False;
       Then_Statements : List_Id;
       Else_Statements : List_Id) return Node_Id;
 
    procedure Add_Define_Deployment (E : Node_Id);
 
-   function Make_Array_Value (Array_Name : Node_Id; Array_Item : Node_Id)
-      return Node_Id;
+   function Make_Array_Value
+     (Array_Name : Node_Id;
+      Array_Item : Node_Id) return Node_Id;
 
    function Get_Data_Size (Data : Node_Id) return Node_Id;
    --  Returns a node that represent an expression with the size
@@ -616,29 +576,27 @@ package Ocarina.Backends.C_Tree.Nutils is
    --  and look for virtual bus binding in this flow to see if we need
    --  larger data.
 
-   function Get_Inter_Partition_Port_Type
-      (Port : Node_Id) return Node_Id;
+   function Get_Inter_Partition_Port_Type (Port : Node_Id) return Node_Id;
    --  Get_Inter_Partition_Port_Type returns a Node_Id that contains
    --  all information to generate a C data type linked with
    --  virtual bus layers.
 
    function Make_Doxygen_C_Comment
-     (Desc                 : String;
-      Brief                : String := "";
-      Element_Name         : String := "";
-      Is_Struct            : Boolean := False;
-      Is_Union             : Boolean := False;
-      Is_Enum              : Boolean := False;
-      Is_Function          : Boolean := False;
-      Is_Variable          : Boolean := False;
-      Is_Define            : Boolean := False;
-      Is_Typedef           : Boolean := False;
-      Is_File              : Boolean := False;
-      Is_Namespace         : Boolean := False;
-      Is_Package           : Boolean := False;
-      Is_Interface         : Boolean := False;
-      Has_Header_Spaces    : Boolean := True)
-     return Node_Id;
+     (Desc              : String;
+      Brief             : String  := "";
+      Element_Name      : String  := "";
+      Is_Struct         : Boolean := False;
+      Is_Union          : Boolean := False;
+      Is_Enum           : Boolean := False;
+      Is_Function       : Boolean := False;
+      Is_Variable       : Boolean := False;
+      Is_Define         : Boolean := False;
+      Is_Typedef        : Boolean := False;
+      Is_File           : Boolean := False;
+      Is_Namespace      : Boolean := False;
+      Is_Package        : Boolean := False;
+      Is_Interface      : Boolean := False;
+      Has_Header_Spaces : Boolean := True) return Node_Id;
 
    --  The Make_Doxygen_C_Comment.
 

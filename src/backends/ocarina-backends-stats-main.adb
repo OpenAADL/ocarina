@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -59,10 +59,10 @@ package body Ocarina.Backends.Stats.Main is
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Stats.Mapping;
 
-   package AIN    renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package AINU   renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package XTN    renames Ocarina.Backends.XML_Tree.Nodes;
-   package XV     renames Ocarina.Backends.XML_Values;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+   package XV renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -74,19 +74,17 @@ package body Ocarina.Backends.Stats.Main is
    procedure Visit_Thread_Instance (E : Node_Id);
    procedure Visit_Data_Instance (E : Node_Id);
    procedure Visit_Subprogram_Instance (E : Node_Id);
-   procedure Look_For_Ports (AADL_Node : Node_Id;
-                             XML_Node : Node_Id);
-   procedure Look_For_Connections (E : Node_Id;
-                                   N : Node_Id);
+   procedure Look_For_Ports (AADL_Node : Node_Id; XML_Node : Node_Id);
+   procedure Look_For_Connections (E : Node_Id; N : Node_Id);
 
-   System_Nb_Processes  : Unsigned_Long_Long := 0;
-   System_Nb_Threads    : Unsigned_Long_Long := 0;
-   Process_Nb_Threads   : Unsigned_Long_Long := 0;
-   Current_Parent_Node  : Node_Id;
-   Process_Node         : Node_Id;
-   HI_Node              : Node_Id;
-   HI_Unit              : Node_Id;
-   My_Root              : Node_Id;
+   System_Nb_Processes : Unsigned_Long_Long := 0;
+   System_Nb_Threads   : Unsigned_Long_Long := 0;
+   Process_Nb_Threads  : Unsigned_Long_Long := 0;
+   Current_Parent_Node : Node_Id;
+   Process_Node        : Node_Id;
+   HI_Node             : Node_Id;
+   HI_Unit             : Node_Id;
+   My_Root             : Node_Id;
 
    -----------
    -- Visit --
@@ -114,16 +112,15 @@ package body Ocarina.Backends.Stats.Main is
       A : Node_Id;
    begin
       My_Root := Root_System (E);
-      A := Map_Distributed_Application (My_Root);
+      A       := Map_Distributed_Application (My_Root);
       Push_Entity (A);
       HI_Node := Map_HI_Node (My_Root);
       Push_Entity (HI_Node);
       HI_Unit := Map_HI_Unit (My_Root);
       Push_Entity (HI_Unit);
 
-      Current_Parent_Node := XTN.Root_Node
-                              (XTN.XML_File (HI_Unit));
-      Stats_Root_Node := Current_Parent_Node;
+      Current_Parent_Node := XTN.Root_Node (XTN.XML_File (HI_Unit));
+      Stats_Root_Node     := Current_Parent_Node;
       Visit (My_Root);
 
       Pop_Entity;
@@ -136,8 +133,7 @@ package body Ocarina.Backends.Stats.Main is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -173,17 +169,16 @@ package body Ocarina.Backends.Stats.Main is
    -- Look_For_Ports --
    --------------------
 
-   procedure Look_For_Ports (AADL_Node : Node_Id;
-                             XML_Node : Node_Id) is
-      F : Node_Id;
-      P : Node_Id;
-      Q : Node_Id;
-      Nb_Ports : Unsigned_Long_Long;
-      Nb_In_Ports : Unsigned_Long_Long;
+   procedure Look_For_Ports (AADL_Node : Node_Id; XML_Node : Node_Id) is
+      F            : Node_Id;
+      P            : Node_Id;
+      Q            : Node_Id;
+      Nb_Ports     : Unsigned_Long_Long;
+      Nb_In_Ports  : Unsigned_Long_Long;
       Nb_Out_Ports : Unsigned_Long_Long;
    begin
-      Nb_Ports := 0;
-      Nb_In_Ports := 0;
+      Nb_Ports     := 0;
+      Nb_In_Ports  := 0;
       Nb_Out_Ports := 0;
       if Has_Ports (AADL_Node) then
          F := First_Node (Features (AADL_Node));
@@ -238,18 +233,19 @@ package body Ocarina.Backends.Stats.Main is
          while Present (S) loop
             if Kind (S) = K_Connection_Instance then
                if Get_Category_Of_Connection (S) = CT_Access_Data then
-                  Append_Node_To_List (Map_Data_Access (S),
-                                       XTN.Subitems (N));
+                  Append_Node_To_List (Map_Data_Access (S), XTN.Subitems (N));
                elsif Get_Category_Of_Connection (S) = CT_Access_Subprogram then
-                  Append_Node_To_List (Map_Subprogram_Access (S),
-                                       XTN.Subitems (N));
+                  Append_Node_To_List
+                    (Map_Subprogram_Access (S),
+                     XTN.Subitems (N));
                elsif Get_Category_Of_Connection (S) = CT_Access_Bus then
-                  Append_Node_To_List (Map_Bus_Access (S),
-                                       XTN.Subitems (N));
-               elsif Get_Category_Of_Connection (S) = CT_Data or else
-                     Get_Category_Of_Connection (S) = CT_Event then
-                  Append_Node_To_List (Map_Port_Connection (S),
-                                       XTN.Subitems (N));
+                  Append_Node_To_List (Map_Bus_Access (S), XTN.Subitems (N));
+               elsif Get_Category_Of_Connection (S) = CT_Data
+                 or else Get_Category_Of_Connection (S) = CT_Event
+               then
+                  Append_Node_To_List
+                    (Map_Port_Connection (S),
+                     XTN.Subitems (N));
                end if;
             end if;
             S := Next_Node (S);
@@ -262,14 +258,14 @@ package body Ocarina.Backends.Stats.Main is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      S : Node_Id;
-      P : Node_Id;
-      Q : Node_Id;
-      N : Node_Id;
+      S                  : Node_Id;
+      P                  : Node_Id;
+      Q                  : Node_Id;
+      N                  : Node_Id;
       Old_Current_Parent : Node_Id;
    begin
       System_Nb_Processes := System_Nb_Processes + 1;
-      Process_Nb_Threads := 0;
+      Process_Nb_Threads  := 0;
 
       --  Create the main node and set its name as an item
       Process_Node := Map_Process (E);
@@ -278,27 +274,28 @@ package body Ocarina.Backends.Stats.Main is
       N := Get_Bound_Processor (E);
 
       if Present (N) then
-         P := Make_Defining_Identifier
-               (To_XML_Name
-                  (Display_Name
-                     (Identifier (Parent_Subcomponent (N)))));
+         P :=
+           Make_Defining_Identifier
+             (To_XML_Name
+                (Display_Name (Identifier (Parent_Subcomponent (N)))));
          Set_Str_To_Name_Buffer ("runtime_entity");
          Q := Make_Defining_Identifier (Name_Find);
 
-         Append_Node_To_List (Make_Assignement (Q, P),
-                              XTN.Items (Process_Node));
+         Append_Node_To_List
+           (Make_Assignement (Q, P),
+            XTN.Items (Process_Node));
       end if;
 
       Look_For_Ports (E, Process_Node);
 
-      Old_Current_Parent := Current_Parent_Node;
+      Old_Current_Parent  := Current_Parent_Node;
       Current_Parent_Node := Process_Node;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -346,33 +343,32 @@ package body Ocarina.Backends.Stats.Main is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S     : Node_Id;
+      S           : Node_Id;
       System_Node : Node_Id;
-      My_Current : Node_Id;
+      My_Current  : Node_Id;
    begin
       System_Node := Map_System (E, E = My_Root);
 
-      Append_Node_To_List (System_Node,
-                           XTN.Subitems (Current_Parent_Node));
+      Append_Node_To_List (System_Node, XTN.Subitems (Current_Parent_Node));
 
       Look_For_Ports (E, System_Node);
 
       Look_For_Connections (E, System_Node);
 
       Current_Parent_Node := System_Node;
-      My_Current := System_Node;
+      My_Current          := System_Node;
       System_Nb_Processes := 0;
-      System_Nb_Threads := 0;
+      System_Nb_Threads   := 0;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             Current_Parent_Node := My_Current;
-            S := Next_Node (S);
+            S                   := Next_Node (S);
          end loop;
       end if;
 
@@ -383,16 +379,16 @@ package body Ocarina.Backends.Stats.Main is
    ---------------------------
 
    procedure Visit_Thread_Instance (E : Node_Id) is
-      S : Node_Id;
-      Spg : Node_Id;
-      P : Node_Id;
-      Q : Node_Id;
-      R : Node_Id;
-      N : Node_Id;
+      S        : Node_Id;
+      Spg      : Node_Id;
+      P        : Node_Id;
+      Q        : Node_Id;
+      R        : Node_Id;
+      N        : Node_Id;
       Dispatch : constant Supported_Thread_Dispatch_Protocol :=
         Get_Thread_Dispatch_Protocol (E);
    begin
-      System_Nb_Threads := System_Nb_Threads + 1;
+      System_Nb_Threads  := System_Nb_Threads + 1;
       Process_Nb_Threads := Process_Nb_Threads + 1;
 
       --  Make a new XML node and add it to the current process
@@ -402,8 +398,8 @@ package body Ocarina.Backends.Stats.Main is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -412,13 +408,14 @@ package body Ocarina.Backends.Stats.Main is
 
       if not AINU.Is_Empty (Calls (E)) then
          R := Make_XML_Node ("calls");
-         S := AIN.First_Node (AIN.Subprogram_Calls
-               (First_Node (Calls (E))));
+         S := AIN.First_Node (AIN.Subprogram_Calls (First_Node (Calls (E))));
          while Present (S) loop
             Spg := AIN.Corresponding_Instance (S);
-            Q := Make_XML_Node ("",
-                                To_XML_Name (AIN.Name (AIN.Identifier (Spg))),
-                                K_Nameid);
+            Q   :=
+              Make_XML_Node
+                ("",
+                 To_XML_Name (AIN.Name (AIN.Identifier (Spg))),
+                 K_Nameid);
             Append_Node_To_List (Q, XTN.Subitems (R));
             S := Next_Node (S);
          end loop;
@@ -444,9 +441,10 @@ package body Ocarina.Backends.Stats.Main is
             Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
          when others =>
-            Display_Located_Error (Loc (E),
-                                    "Please provide a dispatch protocol",
-                                    Fatal => True);
+            Display_Located_Error
+              (Loc (E),
+               "Please provide a dispatch protocol",
+               Fatal => True);
       end case;
 
       --  Add the period of the task
@@ -477,14 +475,14 @@ package body Ocarina.Backends.Stats.Main is
       O : Node_Id;
    begin
       --  Create the main node and set its name as an item
-      N := Map_Bus (E);
-      O := Current_Parent_Node;
+      N                   := Map_Bus (E);
+      O                   := Current_Parent_Node;
       Current_Parent_Node := N;
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -506,14 +504,14 @@ package body Ocarina.Backends.Stats.Main is
       O : Node_Id;
    begin
       --  Create the main node and set its name as an item
-      N := Map_Processor (E);
-      O := Current_Parent_Node;
+      N                   := Map_Processor (E);
+      O                   := Current_Parent_Node;
       Current_Parent_Node := N;
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -539,8 +537,8 @@ package body Ocarina.Backends.Stats.Main is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);

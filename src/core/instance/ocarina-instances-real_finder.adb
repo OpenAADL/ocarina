@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -87,27 +87,26 @@ package body Ocarina.Instances.REAL_Finder is
    function Get_Property_Value_Function
      (Property : Value_Id;
       T        : Return_Type;
-      Var      : Node_Id)
-     return Value_Id
+      Var      : Node_Id) return Value_Id
    is
       use Locations;
 
       use OV;
       use type ATN.Node_Kind;
 
-      pragma Assert (AIN.Kind (Var) = AIN.K_Component_Instance or else
-                     AIN.Kind (Var) = AIN.K_Call_Instance);
+      pragma Assert
+        (AIN.Kind (Var) = AIN.K_Component_Instance
+         or else AIN.Kind (Var) = AIN.K_Call_Instance);
 
       VT2           : constant RV.Value_Type := RV.Get_Value_Type (Property);
-      Property_Name : constant Name_Id := To_Lower (VT2.SVal);
+      Property_Name : constant Name_Id       := To_Lower (VT2.SVal);
       VT            : OV.Value_Type;
-      Result        : Value_Id := Real_Values.No_Value;
+      Result        : Value_Id               := REAL_Values.No_Value;
       N             : Node_Id;
-      Is_List       : Boolean := False;
+      Is_List       : Boolean                := False;
       Resolved_Var  : Node_Id;
       Val           : Node_Id;
-      Result_List   : constant List_Id := RNU.New_List
-        (K_List_Id, No_Location);
+      Result_List : constant List_Id := RNU.New_List (K_List_Id, No_Location);
 
    begin
       if AIN.Kind (Var) = AIN.K_Call_Instance then
@@ -119,9 +118,10 @@ package body Ocarina.Instances.REAL_Finder is
       --  XXX Expanded_Multi_Value seems bugged. Fix it, and use
       --  Get_Value_Of_Property_Association instead
 
-      N := AIEP.Find_Property_Association_From_Name
-        (Property_List => AIN.Properties (Resolved_Var),
-         Property_Name => Property_Name);
+      N :=
+        AIEP.Find_Property_Association_From_Name
+          (Property_List => AIN.Properties (Resolved_Var),
+           Property_Name => Property_Name);
 
       if Present (N) then
          N := AIN.Property_Association_Value (N);
@@ -130,7 +130,7 @@ package body Ocarina.Instances.REAL_Finder is
          elsif ATN.Single_Value (N) /= No_Node then
             N := ATN.Single_Value (N);
          elsif ATN.Multi_Value (N) /= No_List then
-            N := ATN.First_Node (ATN.Multi_Value (N));
+            N       := ATN.First_Node (ATN.Multi_Value (N));
             Is_List := True;
          else
             N := No_Node;
@@ -140,12 +140,12 @@ package body Ocarina.Instances.REAL_Finder is
          --  In the specific case of lists, we always returns an empty list
 
          case T is
-            when RT_String_List
-              | RT_Float_List
-              | RT_Int_List
-              | RT_Bool_List
-              | RT_Range_List
-              | RT_Element_List =>
+            when RT_String_List |
+              RT_Float_List     |
+              RT_Int_List       |
+              RT_Bool_List      |
+              RT_Range_List     |
+              RT_Element_List   =>
                Result := RV.New_List_Value (Result_List);
                return Result;
 
@@ -166,12 +166,12 @@ package body Ocarina.Instances.REAL_Finder is
                begin
                   if Present (ATN.Unit_Identifier (N))
                     and then Present
-                    (ATN.Corresponding_Entity (ATN.Unit_Identifier (N)))
+                      (ATN.Corresponding_Entity (ATN.Unit_Identifier (N)))
                   then
                      Base_Value :=
                        Convert_To_Base
-                       (ATN.Number_Value (N),
-                        ATN.Corresponding_Entity (ATN.Unit_Identifier (N)));
+                         (ATN.Number_Value (N),
+                          ATN.Corresponding_Entity (ATN.Unit_Identifier (N)));
                      Result := AADL_Value (ATN.Value (Base_Value));
                   else
                      Result := AADL_Value (ATN.Value (ATN.Number_Value (N)));
@@ -191,62 +191,69 @@ package body Ocarina.Instances.REAL_Finder is
 
             when ATN.K_Number_Range_Term =>
                declare
-                  L, R   : Value_Id;
-                  LT, RT : RV.Value_Type;
+                  L, R       : Value_Id;
+                  LT, RT     : RV.Value_Type;
                   Base_Value : Node_Id;
                begin
                   if Present (ATN.Unit_Identifier (ATN.Lower_Bound (N)))
                     and then Present
-                    (ATN.Corresponding_Entity
-                       (ATN.Unit_Identifier (ATN.Lower_Bound (N))))
+                      (ATN.Corresponding_Entity
+                         (ATN.Unit_Identifier (ATN.Lower_Bound (N))))
                   then
                      Base_Value :=
                        Convert_To_Base
-                       (ATN.Number_Value (ATN.Lower_Bound (N)),
-                        ATN.Corresponding_Entity
-                          (ATN.Unit_Identifier (ATN.Lower_Bound (N))));
+                         (ATN.Number_Value (ATN.Lower_Bound (N)),
+                          ATN.Corresponding_Entity
+                            (ATN.Unit_Identifier (ATN.Lower_Bound (N))));
                      L := AADL_Value (ATN.Value (Base_Value));
                   else
-                     L := AADL_Value (ATN.Value (ATN.Number_Value
-                                                   (ATN.Lower_Bound (N))));
+                     L :=
+                       AADL_Value
+                         (ATN.Value (ATN.Number_Value (ATN.Lower_Bound (N))));
                   end if;
                   LT := Get_Value_Type (L);
 
                   if Present (ATN.Unit_Identifier (ATN.Upper_Bound (N)))
                     and then Present
-                    (ATN.Corresponding_Entity
-                       (ATN.Unit_Identifier (ATN.Upper_Bound (N))))
+                      (ATN.Corresponding_Entity
+                         (ATN.Unit_Identifier (ATN.Upper_Bound (N))))
                   then
                      Base_Value :=
                        Convert_To_Base
-                       (ATN.Number_Value (ATN.Upper_Bound (N)),
-                        ATN.Corresponding_Entity
-                          (ATN.Unit_Identifier (ATN.Upper_Bound (N))));
+                         (ATN.Number_Value (ATN.Upper_Bound (N)),
+                          ATN.Corresponding_Entity
+                            (ATN.Unit_Identifier (ATN.Upper_Bound (N))));
                      R := AADL_Value (ATN.Value (Base_Value));
                   else
-                     R := AADL_Value (ATN.Value (ATN.Number_Value
-                                                   (ATN.Upper_Bound (N))));
+                     R :=
+                       AADL_Value
+                         (ATN.Value (ATN.Number_Value (ATN.Upper_Bound (N))));
                   end if;
                   RT := Get_Value_Type (R);
 
                   if LT.T = LT_Integer then
-                     Result := New_Range_Value
-                       (Long_Long_Float (LT.IVal),
-                        Long_Long_Float (RT.IVal),
-                        LT.ISign, RT.ISign,
-                        RT.IBase, RT.IExp);
+                     Result :=
+                       New_Range_Value
+                         (Long_Long_Float (LT.IVal),
+                          Long_Long_Float (RT.IVal),
+                          LT.ISign,
+                          RT.ISign,
+                          RT.IBase,
+                          RT.IExp);
                   else
-                     Result := New_Range_Value
-                       (LT.RVal,
-                        RT.RVal,
-                        LT.RSign, RT.RSign,
-                        RT.RBase, RT.RExp);
+                     Result :=
+                       New_Range_Value
+                         (LT.RVal,
+                          RT.RVal,
+                          LT.RSign,
+                          RT.RSign,
+                          RT.RBase,
+                          RT.RExp);
                   end if;
                end;
 
             when ATN.K_Enumeration_Term =>
-               Result := RV.New_String_Value
-                 (ATN.Name (ATN.Identifier (N)));
+               Result := RV.New_String_Value (ATN.Name (ATN.Identifier (N)));
 
             when ATN.K_Reference_Term =>
                --  In the case of reference term, we change the logic:
@@ -254,19 +261,20 @@ package body Ocarina.Instances.REAL_Finder is
                --  then enqueue them in the Result.
 
                if not Is_List then
-                  Result := RV.New_Elem_Value
-                    (Get_Reference_Property
-                       (Resolved_Var, Property_Name));
+                  Result :=
+                    RV.New_Elem_Value
+                      (Get_Reference_Property (Resolved_Var, Property_Name));
                else
                   declare
-                     A_List : constant List_Id := Get_List_Property
-                       (Resolved_Var, Property_Name);
+                     A_List : constant List_Id :=
+                       Get_List_Property (Resolved_Var, Property_Name);
                      A_Node : Node_Id;
                   begin
                      A_Node := ATN.First_Node (A_List);
                      while Present (A_Node) loop
-                        Result := RV.New_Elem_Value
-                          (ATN.Entity (ATN.Reference_Term (A_Node)));
+                        Result :=
+                          RV.New_Elem_Value
+                            (ATN.Entity (ATN.Reference_Term (A_Node)));
                         Val := New_Node (K_Value_Node, No_Location);
                         Set_Item_Val (Val, Result);
                         RNU.Append_Node_To_List (Val, Result_List);
@@ -278,17 +286,15 @@ package body Ocarina.Instances.REAL_Finder is
                end if;
 
             when ATN.K_Component_Classifier_Term =>
-               Result := RV.New_Elem_Value
-                 (Get_Classifier_Property
-                    (Resolved_Var, Property_Name));
+               Result :=
+                 RV.New_Elem_Value
+                   (Get_Classifier_Property (Resolved_Var, Property_Name));
 
             when others =>
                return RV.No_Value;
          end case;
 
-         if Is_List
-           and then ATN.Kind (N) /= ATN.K_Reference_Term
-         then
+         if Is_List and then ATN.Kind (N) /= ATN.K_Reference_Term then
             Val := New_Node (K_Value_Node, No_Location);
             Set_Item_Val (Val, Result);
             RNU.Append_Node_To_List (Val, Result_List);

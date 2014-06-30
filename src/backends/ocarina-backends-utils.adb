@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -74,14 +74,12 @@ package body Ocarina.Backends.Utils is
 
    --  The entered directories stack
 
-   package Directories_Stack is new GNAT.Table
-     (Name_Id, Int, 1, 5, 10);
+   package Directories_Stack is new GNAT.Table (Name_Id, Int, 1, 5, 10);
 
    function Get_Handling_Internal_Name
      (E          : Node_Id;
       Comparison : Comparison_Kind;
-      Handling   : Handling_Kind)
-     return Name_Id;
+      Handling   : Handling_Kind) return Name_Id;
    --  Code factorisation between Set_Handling and Get_Handling. This
    --  function computes an internal name used to store the handling
    --  information.
@@ -96,8 +94,7 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Call_Seq_Subprogram_Name
      (Spg : Node_Id;
-      Seq : Node_Id)
-     return Name_Id;
+      Seq : Node_Id) return Name_Id;
    --  Maps an name for the subprogram corresponding to a hybrid
    --  subprogram call sequence.
 
@@ -112,7 +109,11 @@ package body Ocarina.Backends.Utils is
    Recording_Requested : Boolean := False;
 
    package Handling_Repository is new GNAT.Table
-     (Repository_Entry, Int, 1, 5, 10);
+     (Repository_Entry,
+      Int,
+      1,
+      5,
+      10);
    --  The internal handling repository
 
    procedure May_Be_Append_Handling_Entry
@@ -138,9 +139,9 @@ package body Ocarina.Backends.Utils is
         or else Is_Symbolic_Link (Dir_Full_String)
       then
          Display_Error
-           ("Cannot create "
-            & Dir_Full_String
-            & " because there is a file with the same name",
+           ("Cannot create " &
+            Dir_Full_String &
+            " because there is a file with the same name",
             Fatal => True);
          return;
       end if;
@@ -148,8 +149,7 @@ package body Ocarina.Backends.Utils is
       if Is_Directory (Dir_Full_String) then
          if Dir_Full_String /= "." then
             Display_Error
-              (Dir_Full_String
-                 & " already exists",
+              (Dir_Full_String & " already exists",
                Fatal   => False,
                Warning => True);
          end if;
@@ -173,8 +173,7 @@ package body Ocarina.Backends.Utils is
    begin
       Increment_Last;
       Table (Last) := Current_Dir;
-      Display_Debug_Message
-        ("Left    : " & Get_Name_String (Current_Dir));
+      Display_Debug_Message ("Left    : " & Get_Name_String (Current_Dir));
       Set_Directory (Get_Name_String (Dirname));
       Display_Debug_Message ("Entered : " & Get_Name_String (Dirname));
    end Enter_Directory;
@@ -234,10 +233,8 @@ package body Ocarina.Backends.Utils is
    is
       package HR renames Handling_Repository;
       The_Entry : constant Repository_Entry :=
-        Repository_Entry'(E          => E,
-                          Comparison => Comparison,
-                          Handling   => Handling,
-                          A          => A);
+        Repository_Entry'
+          (E => E, Comparison => Comparison, Handling => Handling, A => A);
    begin
       if Recording_Requested then
          HR.Increment_Last;
@@ -252,8 +249,8 @@ package body Ocarina.Backends.Utils is
    procedure Start_Recording_Handlings is
    begin
       if Recording_Requested then
-         raise Program_Error with
-           "Consecutive calls to Start_Recording_Handlings are forbidden";
+         raise Program_Error
+           with "Consecutive calls to Start_Recording_Handlings are forbidden";
       else
          Recording_Requested := True;
       end if;
@@ -308,8 +305,10 @@ package body Ocarina.Backends.Utils is
    -- Normalize_Name --
    --------------------
 
-   function Normalize_Name (Name : Name_Id; Ada_Style : Boolean := False)
-                           return Name_Id is
+   function Normalize_Name
+     (Name      : Name_Id;
+      Ada_Style : Boolean := False) return Name_Id
+   is
       Normalized_Name : Name_Id;
    begin
       --  FIXME: The algorithm does not ensure a bijection between
@@ -363,12 +362,13 @@ package body Ocarina.Backends.Utils is
       while Present (Current_Node) loop
          exit when No (Parent_Subcomponent (Current_Node));
 
-         Get_Name_String (Normalize_Name
-                            (Name
-                               (Identifier
-                                  (Parent_Subcomponent (Current_Node)))));
-         Set_Str_To_Name_Buffer (Get_Name_String (Name_Find)
-                                   & "_" & Get_Name_String (Current_Name));
+         Get_Name_String
+           (Normalize_Name
+              (Name (Identifier (Parent_Subcomponent (Current_Node)))));
+         Set_Str_To_Name_Buffer
+           (Get_Name_String (Name_Find) &
+            "_" &
+            Get_Name_String (Current_Name));
          Current_Name := Name_Find;
 
          Current_Node := Parent_Component (Parent_Subcomponent (Current_Node));
@@ -402,8 +402,8 @@ package body Ocarina.Backends.Utils is
 
          case AADL_Version is
             when AADL_V1 =>
-               if ATN.Category (Corresponding_Declaration (C))
-                 = Connection_Type'Pos (CT_Data_Delayed)
+               if ATN.Category (Corresponding_Declaration (C)) =
+                 Connection_Type'Pos (CT_Data_Delayed)
                then
                   return True;
                else
@@ -411,9 +411,9 @@ package body Ocarina.Backends.Utils is
 
                   S := Item (First_Node (Sources (E)));
 
-                  return S /= E                     and then
-                    Kind (S) = K_Port_Spec_Instance and then
-                    Is_Delayed (S);
+                  return S /= E
+                    and then Kind (S) = K_Port_Spec_Instance
+                    and then Is_Delayed (S);
                end if;
 
             when AADL_V2 =>
@@ -424,9 +424,9 @@ package body Ocarina.Backends.Utils is
 
                   S := Item (First_Node (Sources (E)));
 
-                  return S /= E                     and then
-                    Kind (S) = K_Port_Spec_Instance and then
-                    Is_Delayed (S);
+                  return S /= E
+                    and then Kind (S) = K_Port_Spec_Instance
+                    and then Is_Delayed (S);
                end if;
          end case;
       end if;
@@ -511,9 +511,9 @@ package body Ocarina.Backends.Utils is
          F := First_Node (Features (E));
 
          while Present (F) loop
-            if Kind (F) = K_Port_Spec_Instance and then
-              Is_In (F)                        and then
-              Is_Event (F)
+            if Kind (F) = K_Port_Spec_Instance
+              and then Is_In (F)
+              and then Is_Event (F)
             then
                return True;
             end if;
@@ -558,9 +558,9 @@ package body Ocarina.Backends.Utils is
          F := First_Node (Features (E));
 
          while Present (F) loop
-            if Kind (F) = K_Port_Spec_Instance and then
-              Is_Out (F)                       and then
-              Is_Event (F)
+            if Kind (F) = K_Port_Spec_Instance
+              and then Is_Out (F)
+              and then Is_Event (F)
             then
                return True;
             end if;
@@ -605,8 +605,7 @@ package body Ocarina.Backends.Utils is
          F := First_Node (Features (E));
 
          while Present (F) loop
-            if Kind (F) = K_Port_Spec_Instance and then
-               Is_Out (F) then
+            if Kind (F) = K_Port_Spec_Instance and then Is_Out (F) then
                return True;
             end if;
 
@@ -628,8 +627,7 @@ package body Ocarina.Backends.Utils is
          F := First_Node (Features (E));
 
          while Present (F) loop
-            if Kind (F) = K_Port_Spec_Instance and then
-               Is_In (F) then
+            if Kind (F) = K_Port_Spec_Instance and then Is_In (F) then
                return True;
             end if;
 
@@ -658,8 +656,7 @@ package body Ocarina.Backends.Utils is
    function Get_Source_Ports (P : Node_Id) return List_Id is
       function Rec_Get_Source_Ports
         (P : Node_Id;
-         B : Node_Id := No_Node)
-        return List_Id;
+         B : Node_Id := No_Node) return List_Id;
       --  Recursive internal routine
 
       --------------------------
@@ -668,8 +665,7 @@ package body Ocarina.Backends.Utils is
 
       function Rec_Get_Source_Ports
         (P : Node_Id;
-         B : Node_Id := No_Node)
-        return List_Id
+         B : Node_Id := No_Node) return List_Id
       is
          Result : constant List_Id := New_List (K_List_Id, No_Location);
          C      : Node_Id;
@@ -677,8 +673,7 @@ package body Ocarina.Backends.Utils is
          Bus    : Node_Id;
       begin
          if AAU.Is_Empty (Sources (P)) then
-            AAU.Append_Node_To_List
-                (Make_Node_Container (P, B), Result);
+            AAU.Append_Node_To_List (Make_Node_Container (P, B), Result);
          end if;
 
          S := First_Node (Sources (P));
@@ -691,7 +686,8 @@ package body Ocarina.Backends.Utils is
                --  We reached our end point, append it to the result list
 
                AAU.Append_Node_To_List
-                 (Make_Node_Container (Item (S), B), Result);
+                 (Make_Node_Container (Item (S), B),
+                  Result);
             elsif Kind (Item (S)) = K_Port_Spec_Instance
               and then Parent_Component (Item (S)) /= No_Node
               and then (Is_Process_Or_Device (Parent_Component (Item (S))))
@@ -720,15 +716,16 @@ package body Ocarina.Backends.Utils is
                if Present (B) and then Present (Bus) and then B /= Bus then
                   Display_Located_Error
                     (Loc (C),
-                     "This connection is involved in a data flow"
-                     & " mapped to several different buses",
+                     "This connection is involved in a data flow" &
+                     " mapped to several different buses",
                      Fatal => True);
                end if;
 
                --  Fetch recursively all the sources of S
 
                AAU.Append_Node_To_List
-                 (First_Node (Rec_Get_Source_Ports (Item (S), Bus)), Result);
+                 (First_Node (Rec_Get_Source_Ports (Item (S), Bus)),
+                  Result);
             else
                Display_Located_Error
                  (Loc (P),
@@ -755,14 +752,14 @@ package body Ocarina.Backends.Utils is
    ---------------------------
 
    function Get_Destination_Ports
-      (P             : Node_Id;
-      Custom_Parent  : Node_Id := No_Node) return List_Id is
+     (P             : Node_Id;
+      Custom_Parent : Node_Id := No_Node) return List_Id
+   is
 
       function Rec_Get_Destination_Ports
-        (P : Node_Id;
-         B : Node_Id := No_Node;
-         Custom_Parent  : Node_Id := No_Node)
-        return List_Id;
+        (P             : Node_Id;
+         B             : Node_Id := No_Node;
+         Custom_Parent : Node_Id := No_Node) return List_Id;
       --  Recursive internal routine
 
       -------------------------------
@@ -770,10 +767,9 @@ package body Ocarina.Backends.Utils is
       -------------------------------
 
       function Rec_Get_Destination_Ports
-        (P              : Node_Id;
-         B              : Node_Id := No_Node;
-         Custom_Parent  : Node_Id := No_Node)
-        return List_Id
+        (P             : Node_Id;
+         B             : Node_Id := No_Node;
+         Custom_Parent : Node_Id := No_Node) return List_Id
       is
          Result : constant List_Id := New_List (K_List_Id, No_Location);
          C      : Node_Id;
@@ -790,7 +786,8 @@ package body Ocarina.Backends.Utils is
                --  We reached our end point, append it to the result list
 
                AAU.Append_Node_To_List
-                 (Make_Node_Container (Item (D), B), Result);
+                 (Make_Node_Container (Item (D), B),
+                  Result);
 
             elsif Kind (Item (D)) = K_Port_Spec_Instance
               and then Parent_Component (Item (D)) /= No_Node
@@ -819,16 +816,16 @@ package body Ocarina.Backends.Utils is
                if Present (B) and then Present (Bus) and then B /= Bus then
                   Display_Located_Error
                     (Loc (C),
-                     "This connection is involved in a data flow"
-                     & " mapped to several different buses",
+                     "This connection is involved in a data flow" &
+                     " mapped to several different buses",
                      Fatal => True);
                end if;
 
                --  Fetch recursively all the destinations of D
 
                AAU.Append_Node_To_List
-                 (First_Node
-                  (Rec_Get_Destination_Ports (Item (D), Bus)), Result);
+                 (First_Node (Rec_Get_Destination_Ports (Item (D), Bus)),
+                  Result);
 
             elsif Kind (Item (D)) = K_Port_Spec_Instance
               and then Parent_Component (Item (D)) /= No_Node
@@ -837,17 +834,19 @@ package body Ocarina.Backends.Utils is
                --  We reached our end point, append it to the result list
 
                AAU.Append_Node_To_List
-                 (Make_Node_Container (Item (D), B), Result);
-            elsif Custom_Parent /= No_Node and then
-               Is_Device (Custom_Parent) and then
-               Get_Port_By_Name (P, Custom_Parent) /= No_Node then
+                 (Make_Node_Container (Item (D), B),
+                  Result);
+            elsif Custom_Parent /= No_Node
+              and then Is_Device (Custom_Parent)
+              and then Get_Port_By_Name (P, Custom_Parent) /= No_Node
+            then
 
                AAU.Append_Node_To_List
                  (First_Node
-                  (Rec_Get_Destination_Ports
-                     (Get_Port_By_Name (P, Custom_Parent),
-                     B,
-                     No_Node)),
+                    (Rec_Get_Destination_Ports
+                       (Get_Port_By_Name (P, Custom_Parent),
+                        B,
+                        No_Node)),
                   Result);
             else
                Display_Located_Error
@@ -902,19 +901,20 @@ package body Ocarina.Backends.Utils is
                declare
                   Dcl_Data_Component : constant Node_Id :=
                     Corresponding_Declaration (Data_Component);
-                  Dcl_F              : constant Node_Id :=
+                  Dcl_F : constant Node_Id :=
                     Corresponding_Declaration (Corresponding_Instance (F));
 
                   use Ocarina.ME_AADL.AADL_Tree.Nodes;
                begin
                   exit when
-                    (ATN.Kind (Dcl_F) = K_Component_Type and then
-                     Dcl_F = Dcl_Data_Component)
+                    (ATN.Kind (Dcl_F) = K_Component_Type
+                     and then Dcl_F = Dcl_Data_Component)
                     or else
-                    (ATN.Kind (Dcl_F) = K_Component_Implementation and then
-                     ATN.Corresponding_Entity
-                     (ATN.Component_Type_Identifier
-                      (Dcl_F)) = Dcl_Data_Component);
+                    (ATN.Kind (Dcl_F) = K_Component_Implementation
+                     and then
+                       ATN.Corresponding_Entity
+                         (ATN.Component_Type_Identifier (Dcl_F)) =
+                       Dcl_Data_Component);
                end;
             end if;
 
@@ -950,7 +950,8 @@ package body Ocarina.Backends.Utils is
             return Get_Container_Process (Parent_Component (E));
 
          when others =>
-            if Is_Thread (E) or else Is_Subprogram (E)
+            if Is_Thread (E)
+              or else Is_Subprogram (E)
               or else AAU.Is_Data (E)
             then
                return Get_Container_Process (Parent_Subcomponent (E));
@@ -959,9 +960,12 @@ package body Ocarina.Backends.Utils is
                return Parent_Subcomponent (E);
 
             else
-               raise Program_Error with "Wrong node kind in "
-                 & "Get_Container_Process: " & Kind (E)'Img
-                 & " " & Get_Category_Of_Component (E)'Img;
+               raise Program_Error
+                 with "Wrong node kind in " &
+                 "Get_Container_Process: " &
+                 Kind (E)'Img &
+                 " " &
+                 Get_Category_Of_Component (E)'Img;
 
             end if;
       end case;
@@ -984,8 +988,10 @@ package body Ocarina.Backends.Utils is
             if Is_Subprogram (E) then
                return Get_Container_Thread (Parent_Subcomponent (E));
             else
-               raise Program_Error with "Wrong node kind in "
-                 & "Get_Container_Thread: " & Kind (E)'Img;
+               raise Program_Error
+                 with "Wrong node kind in " &
+                 "Get_Container_Thread: " &
+                 Kind (E)'Img;
             end if;
       end case;
    end Get_Container_Thread;
@@ -997,14 +1003,13 @@ package body Ocarina.Backends.Utils is
    function Get_Handling_Internal_Name
      (E          : Node_Id;
       Comparison : Comparison_Kind;
-      Handling   : Handling_Kind)
-     return Name_Id
+      Handling   : Handling_Kind) return Name_Id
    is
    begin
       case Comparison is
          when By_Name =>
             Get_Name_String (Map_Ada_Defining_Identifier (E));
-            --  Get_Name_String (Compute_Full_Name_Of_Instance (E));
+         --  Get_Name_String (Compute_Full_Name_Of_Instance (E));
 
          when By_Node =>
             Set_Nat_To_Name_Buffer (Nat (E));
@@ -1025,8 +1030,8 @@ package body Ocarina.Backends.Utils is
       Handling   : Handling_Kind;
       A          : Node_Id)
    is
-      Internal_Name : constant Name_Id := Get_Handling_Internal_Name
-        (E, Comparison, Handling);
+      Internal_Name : constant Name_Id :=
+        Get_Handling_Internal_Name (E, Comparison, Handling);
 
    begin
       Set_Name_Table_Info (Internal_Name, Nat (A));
@@ -1040,11 +1045,10 @@ package body Ocarina.Backends.Utils is
    function Get_Handling
      (E          : Node_Id;
       Comparison : Comparison_Kind;
-      Handling   : Handling_Kind)
-     return Node_Id
+      Handling   : Handling_Kind) return Node_Id
    is
-      Internal_Name : constant Name_Id := Get_Handling_Internal_Name
-        (E, Comparison, Handling);
+      Internal_Name : constant Name_Id :=
+        Get_Handling_Internal_Name (E, Comparison, Handling);
    begin
       return Node_Id (Get_Name_Table_Info (Internal_Name));
    end Get_Handling;
@@ -1056,8 +1060,7 @@ package body Ocarina.Backends.Utils is
    function Bind_Two_Nodes (N_1 : Node_Id; N_2 : Node_Id) return Node_Id is
       function Get_Binding_Internal_Name
         (N_1 : Node_Id;
-         N_2 : Node_Id)
-        return Name_Id;
+         N_2 : Node_Id) return Name_Id;
       --  Return an internal name id useful for the binding
 
       -------------------------------
@@ -1066,8 +1069,7 @@ package body Ocarina.Backends.Utils is
 
       function Get_Binding_Internal_Name
         (N_1 : Node_Id;
-         N_2 : Node_Id)
-        return Name_Id
+         N_2 : Node_Id) return Name_Id
       is
       begin
          Set_Nat_To_Name_Buffer (Nat (N_1));
@@ -1088,8 +1090,7 @@ package body Ocarina.Backends.Utils is
 
       --  Otherwise, create a new binding node
 
-      N := Make_Identifier
-        (No_Location, No_Name, No_Name, No_Node);
+      N := Make_Identifier (No_Location, No_Name, No_Name, No_Node);
       Set_Name_Table_Info (I_Name, Int (N));
 
       return N;
@@ -1112,10 +1113,7 @@ package body Ocarina.Backends.Utils is
    -- Bind_Transport_API --
    ------------------------
 
-   procedure Bind_Transport_API
-     (P : Node_Id;
-      T : Supported_Transport_APIs)
-   is
+   procedure Bind_Transport_API (P : Node_Id; T : Supported_Transport_APIs) is
       I_Name : constant Name_Id := Bind_Transport_API_Internal_Name (P);
    begin
       Set_Name_Table_Byte (I_Name, Supported_Transport_APIs'Pos (T));
@@ -1126,8 +1124,7 @@ package body Ocarina.Backends.Utils is
    -------------------------
 
    function Fetch_Transport_API
-     (P : Node_Id)
-     return Supported_Transport_APIs
+     (P : Node_Id) return Supported_Transport_APIs
    is
       I_Name : constant Name_Id := Bind_Transport_API_Internal_Name (P);
    begin
@@ -1140,14 +1137,14 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Full_Feature_Name
      (E      : Node_Id;
-      Suffix : Character := ASCII.NUL)
-     return Name_Id
+      Suffix : Character := ASCII.NUL) return Name_Id
    is
    begin
-      Get_Name_String (Compute_Full_Name_Of_Instance
-                       (Instance         => E,
-                        Display_Name     => True,
-                        Keep_Root_System => False));
+      Get_Name_String
+        (Compute_Full_Name_Of_Instance
+           (Instance         => E,
+            Display_Name     => True,
+            Keep_Root_System => False));
       Get_Name_String (ADU.To_Ada_Name (Name_Find));
 
       if Suffix /= ASCII.NUL then
@@ -1166,8 +1163,7 @@ package body Ocarina.Backends.Utils is
 
    begin
       return ADU.Extract_Designator
-        (ADN.Type_Definition_Node
-         (Backend_Node (Identifier (E))));
+          (ADN.Type_Definition_Node (Backend_Node (Identifier (E))));
    end Map_Ada_Data_Type_Designator;
 
    ---------------------------------
@@ -1177,8 +1173,7 @@ package body Ocarina.Backends.Utils is
    function Map_Ada_Full_Parameter_Name
      (Spg    : Node_Id;
       P      : Node_Id;
-      Suffix : Character := ASCII.NUL)
-     return Name_Id
+      Suffix : Character := ASCII.NUL) return Name_Id
    is
    begin
       pragma Assert (Kind (P) = K_Parameter_Instance);
@@ -1211,8 +1206,7 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Enumerator_Name
      (E      : Node_Id;
-      Server : Boolean := False)
-     return Name_Id
+      Server : Boolean := False) return Name_Id
    is
       Ada_Name_1 : Name_Id;
       Ada_Name_2 : Name_Id;
@@ -1239,19 +1233,20 @@ package body Ocarina.Backends.Utils is
          --  or an abstract component (in the case of threads that
          --  belong to a device driver).
 
-         pragma Assert (Is_Process (Parent_Component (E))
-                          or else Is_Abstract (Parent_Component (E)));
+         pragma Assert
+           (Is_Process (Parent_Component (E))
+            or else Is_Abstract (Parent_Component (E)));
 
          if Is_Process (Parent_Component (E)) then
-            Ada_Name_1 := ADU.To_Ada_Name
-              (Display_Name
-                 (Identifier
-                    (Parent_Subcomponent
-                       (Parent_Component (E)))));
+            Ada_Name_1 :=
+              ADU.To_Ada_Name
+                (Display_Name
+                   (Identifier (Parent_Subcomponent (Parent_Component (E)))));
 
          elsif Is_Abstract (Parent_Component (E)) then
-            Ada_Name_1 := ADU.To_Ada_Name
-              (Display_Name (Identifier (Parent_Component (E))));
+            Ada_Name_1 :=
+              ADU.To_Ada_Name
+                (Display_Name (Identifier (Parent_Component (E))));
 
          end if;
 
@@ -1262,8 +1257,8 @@ package body Ocarina.Backends.Utils is
          Get_Name_String_And_Append (Ada_Name_2);
          Add_Str_To_Name_Buffer ("_K");
       else
-         raise Program_Error with
-           "Wrong node kind for Map_Ada_Enumerator_Name " & Kind (E)'Img;
+         raise Program_Error
+           with "Wrong node kind for Map_Ada_Enumerator_Name " & Kind (E)'Img;
       end if;
 
       if Server then
@@ -1279,12 +1274,11 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Defining_Identifier
      (A      : Node_Id;
-      Suffix : String := "")
-     return Name_Id
+      Suffix : String := "") return Name_Id
    is
-      I : Node_Id := A;
-      N : Node_Id := No_Node;
-      J : Node_Id;
+      I         : Node_Id := A;
+      N         : Node_Id := No_Node;
+      J         : Node_Id;
       Name_List : List_Id;
    begin
       if Kind (A) /= K_Identifier then
@@ -1321,8 +1315,8 @@ package body Ocarina.Backends.Utils is
             J := Next_Node (J);
 
             while Present (J) loop
-               Add_Str_To_Name_Buffer ("_"
-                                         & Get_Name_String (Display_Name (J)));
+               Add_Str_To_Name_Buffer
+                 ("_" & Get_Name_String (Display_Name (J)));
                J := Next_Node (J);
             end loop;
          end if;
@@ -1341,12 +1335,11 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Defining_Identifier
      (A      : Node_Id;
-      Suffix : String := "")
-     return Node_Id
+      Suffix : String := "") return Node_Id
    is
    begin
       return Make_Defining_Identifier
-        (Map_Ada_Defining_Identifier (A, Suffix));
+          (Map_Ada_Defining_Identifier (A, Suffix));
    end Map_Ada_Defining_Identifier;
 
    ----------------------------
@@ -1366,14 +1359,14 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Protected_Aggregate_Identifier
      (S : Node_Id;
-      A : Node_Id)
-     return Node_Id
+      A : Node_Id) return Node_Id
    is
       S_Name : Name_Id;
       A_Name : Name_Id;
    begin
-      pragma Assert (Kind (S) = K_Subcomponent_Access_Instance and then
-                     Kind (A) = K_Subcomponent_Instance);
+      pragma Assert
+        (Kind (S) = K_Subcomponent_Access_Instance
+         and then Kind (A) = K_Subcomponent_Instance);
 
       S_Name := To_Ada_Name (Display_Name (Identifier (S)));
       A_Name := To_Ada_Name (Display_Name (Identifier (A)));
@@ -1409,19 +1402,16 @@ package body Ocarina.Backends.Utils is
       Port_Name   : Name_Id;
       Thread_Name : Name_Id;
    begin
-      pragma Assert
-        (AAU.Is_Data (E) or else Kind (E) = K_Port_Spec_Instance);
+      pragma Assert (AAU.Is_Data (E) or else Kind (E) = K_Port_Spec_Instance);
 
       if AAU.Is_Data (E) then
          Get_Name_String (To_Ada_Name (Display_Name (Identifier (E))));
       else
-         Port_Name := To_Ada_Name (Display_Name (Identifier (E)));
-         Thread_Name := To_Ada_Name
-           (Display_Name
-            (Identifier
-             (Parent_Subcomponent
-              (Parent_Component
-               (E)))));
+         Port_Name   := To_Ada_Name (Display_Name (Identifier (E)));
+         Thread_Name :=
+           To_Ada_Name
+             (Display_Name
+                (Identifier (Parent_Subcomponent (Parent_Component (E)))));
          Get_Name_String (Thread_Name);
          Add_Char_To_Name_Buffer ('_');
          Get_Name_String_And_Append (Port_Name);
@@ -1437,9 +1427,10 @@ package body Ocarina.Backends.Utils is
    -----------------------------------
 
    function Map_Ada_Subprogram_Identifier (E : Node_Id) return Node_Id is
-      pragma Assert (Is_Thread (E)
-                       or else Is_Subprogram (E)
-                       or else Kind (E) = K_Port_Spec_Instance);
+      pragma Assert
+        (Is_Thread (E)
+         or else Is_Subprogram (E)
+         or else Kind (E) = K_Port_Spec_Instance);
 
       Spg_Name : Name_Id;
 
@@ -1449,7 +1440,8 @@ package body Ocarina.Backends.Utils is
       then
          Display_Located_Error
            (Loc (E),
-            "This is not an Ada subprogram", Fatal => True);
+            "This is not an Ada subprogram",
+            Fatal => True);
       end if;
 
       --  Get the subprogram name
@@ -1482,12 +1474,14 @@ package body Ocarina.Backends.Utils is
 
       if P_Name = No_Name then
          Display_Error
-           ("You must give the subprogram implementation name", Fatal => True);
+           ("You must give the subprogram implementation name",
+            Fatal => True);
       end if;
 
       D := Make_Designator (P_Name);
       ADN.Set_Corresponding_Node
-        (ADN.Defining_Identifier (D), New_Node (ADN.K_Package_Specification));
+        (ADN.Defining_Identifier (D),
+         New_Node (ADN.K_Package_Specification));
       Add_With_Package (D);
 
       --  Get the full implementation name
@@ -1538,10 +1532,11 @@ package body Ocarina.Backends.Utils is
 
                D := Corresponding_Instance (F);
 
-               Param := ADU.Make_Parameter_Specification
-                 (Map_Ada_Defining_Identifier (F),
-                  Map_Ada_Data_Type_Designator (D),
-                  Mode);
+               Param :=
+                 ADU.Make_Parameter_Specification
+                   (Map_Ada_Defining_Identifier (F),
+                    Map_Ada_Data_Type_Designator (D),
+                    Mode);
 
                ADU.Append_Node_To_List (Param, Profile);
             end if;
@@ -1581,24 +1576,25 @@ package body Ocarina.Backends.Utils is
                   D := Corresponding_Instance (F);
 
                   case Get_Data_Representation (D) is
-                     when Data_Integer
-                       | Data_Boolean
-                       | Data_Float
-                       | Data_Fixed
-                       | Data_String
-                       | Data_Wide_String
-                       | Data_Character
-                       | Data_Wide_Character
-                       | Data_Array =>
+                     when Data_Integer     |
+                       Data_Boolean        |
+                       Data_Float          |
+                       Data_Fixed          |
+                       Data_String         |
+                       Data_Wide_String    |
+                       Data_Character      |
+                       Data_Wide_Character |
+                       Data_Array          =>
                         --  If the data component is a simple data
                         --  component (not a structure), we simply add a
                         --  parameter with the computed mode and with a
                         --  type mapped from the data component.
 
-                        Param := ADU.Make_Parameter_Specification
-                          (Map_Ada_Defining_Identifier (F),
-                           Map_Ada_Data_Type_Designator (D),
-                           Mode);
+                        Param :=
+                          ADU.Make_Parameter_Specification
+                            (Map_Ada_Defining_Identifier (F),
+                             Map_Ada_Data_Type_Designator (D),
+                             Mode);
                         ADU.Append_Node_To_List (Param, Profile);
 
                      when Data_Struct | Data_With_Accessors =>
@@ -1615,12 +1611,14 @@ package body Ocarina.Backends.Utils is
                            --  subcomponent.
 
                            if AAU.Is_Data (Corresponding_Instance (Field)) then
-                              Param := ADU.Make_Parameter_Specification
-                                (Map_Ada_Protected_Aggregate_Identifier
-                                   (F, Field),
-                                 Map_Ada_Data_Type_Designator
-                                   (Corresponding_Instance (Field)),
-                                 Mode);
+                              Param :=
+                                ADU.Make_Parameter_Specification
+                                  (Map_Ada_Protected_Aggregate_Identifier
+                                     (F,
+                                      Field),
+                                   Map_Ada_Data_Type_Designator
+                                     (Corresponding_Instance (Field)),
+                                   Mode);
                               ADU.Append_Node_To_List (Param, Profile);
                            end if;
 
@@ -1644,20 +1642,20 @@ package body Ocarina.Backends.Utils is
       --  Status parameter.
 
       if Has_Out_Ports (S) then
-         Param := ADU.Make_Parameter_Specification
-           (Make_Defining_Identifier (PN (P_Status)),
-            Extract_Designator
-            (ADN.Type_Definition_Node
-             (Backend_Node
-              (Identifier (S)))),
-            Mode_Inout);
+         Param :=
+           ADU.Make_Parameter_Specification
+             (Make_Defining_Identifier (PN (P_Status)),
+              Extract_Designator
+                (ADN.Type_Definition_Node (Backend_Node (Identifier (S)))),
+              Mode_Inout);
          ADU.Append_Node_To_List (Param, Profile);
       end if;
 
-      N := ADU.Make_Subprogram_Specification
-         (Map_Ada_Defining_Identifier (S),
-          Profile,
-          No_Node);
+      N :=
+        ADU.Make_Subprogram_Specification
+          (Map_Ada_Defining_Identifier (S),
+           Profile,
+           No_Node);
 
       --  If the program is an Opaque_C, we add the pragma Import
       --  instruction in the private part of the current package
@@ -1666,13 +1664,14 @@ package body Ocarina.Backends.Utils is
          declare
             use ADN;
 
-            P : constant Node_Id := Make_Pragma_Statement
-               (Pragma_Import,
-                Make_List_Id
-                (Make_Defining_Identifier (PN (P_C)),
-                 Map_Ada_Defining_Identifier (S),
-                 Make_Literal
-                 (ADV.New_String_Value (Get_Source_Name  (S)))));
+            P : constant Node_Id :=
+              Make_Pragma_Statement
+                (Pragma_Import,
+                 Make_List_Id
+                   (Make_Defining_Identifier (PN (P_C)),
+                    Map_Ada_Defining_Identifier (S),
+                    Make_Literal
+                      (ADV.New_String_Value (Get_Source_Name (S)))));
          begin
             --  We must ensure that we are inside the scope of a
             --  package spec before inserting the pragma. In fact,
@@ -1707,16 +1706,18 @@ package body Ocarina.Backends.Utils is
             --  An empty AADL subprogram is mapped into an Ada
             --  subprogram that raises an exception to warn the user.
 
-            N := Make_Exception_Declaration
-              (Make_Defining_Identifier
-               (EN (E_NYI)));
+            N :=
+              Make_Exception_Declaration
+                (Make_Defining_Identifier (EN (E_NYI)));
             ADU.Append_Node_To_List (N, Declarations);
 
             N := Make_Raise_Statement (Make_Defining_Identifier (EN (E_NYI)));
             ADU.Append_Node_To_List (N, Statements);
 
             return Make_Subprogram_Implementation
-              (Spec, Declarations, Statements);
+                (Spec,
+                 Declarations,
+                 Statements);
 
          when Subprogram_Opaque_C =>
             --  An opaque C AADL subprogram is a subprogram which is
@@ -1727,8 +1728,7 @@ package body Ocarina.Backends.Utils is
 
             return No_Node;
 
-         when Subprogram_Opaque_Ada_95
-           | Subprogram_Default =>
+         when Subprogram_Opaque_Ada_95 | Subprogram_Default =>
             --  An opaque Ada AADL subprogram is a subprogram which is
             --  implemented by an Ada subprogram. We perform the
             --  mapping between the two subprograms using the Ada
@@ -1741,9 +1741,10 @@ package body Ocarina.Backends.Utils is
 
             --  Perform the renaming
 
-            N := Make_Designator
-              (Local_Name (Get_Source_Name (S)),
-               Unit_Name (Get_Source_Name (S)));
+            N :=
+              Make_Designator
+                (Local_Name (Get_Source_Name (S)),
+                 Unit_Name (Get_Source_Name (S)));
             ADN.Set_Renamed_Entity (Spec, N);
             return Spec;
 
@@ -1753,9 +1754,10 @@ package body Ocarina.Backends.Utils is
 
             --  Perform the renaming
 
-            N := Make_Designator
-              (Local_Name (Get_Transfo_Source_Name (S)),
-               Unit_Name (Get_Transfo_Source_Name (S)));
+            N :=
+              Make_Designator
+                (Local_Name (Get_Transfo_Source_Name (S)),
+                 Unit_Name (Get_Transfo_Source_Name (S)));
             ADN.Set_Renamed_Entity (Spec, N);
             return Spec;
 
@@ -1772,7 +1774,9 @@ package body Ocarina.Backends.Utils is
                Declarations,
                Statements);
             return ADU.Make_Subprogram_Implementation
-              (Spec, Declarations, Statements);
+                (Spec,
+                 Declarations,
+                 Statements);
 
          when Subprogram_Hybrid_Ada_95 =>
             --  Hybrid subprograms are subprograms that contain more
@@ -1780,10 +1784,13 @@ package body Ocarina.Backends.Utils is
 
             --  Declare the Status local variable
 
-            N := Make_Object_Declaration
-              (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
-               Object_Definition   => Make_Defining_Identifier
-                 (Map_Ada_Subprogram_Status_Name (S)));
+            N :=
+              Make_Object_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (PN (P_Status)),
+                 Object_Definition =>
+                   Make_Defining_Identifier
+                     (Map_Ada_Subprogram_Status_Name (S)));
             ADU.Append_Node_To_List (N, Declarations);
 
             --  Initialise the record fields that correspond to IN
@@ -1794,12 +1801,13 @@ package body Ocarina.Backends.Utils is
 
                while Present (F) loop
                   if Kind (F) = K_Parameter_Instance and then Is_In (F) then
-                     N := Make_Assignment_Statement
-                       (Make_Designator
-                        (To_Ada_Name (Display_Name (Identifier (F))),
-                         PN (P_Status)),
-                        Make_Designator
-                        (To_Ada_Name (Display_Name (Identifier (F)))));
+                     N :=
+                       Make_Assignment_Statement
+                         (Make_Designator
+                            (To_Ada_Name (Display_Name (Identifier (F))),
+                             PN (P_Status)),
+                          Make_Designator
+                            (To_Ada_Name (Display_Name (Identifier (F)))));
                      ADU.Append_Node_To_List (N, Statements);
                   end if;
 
@@ -1820,10 +1828,11 @@ package body Ocarina.Backends.Utils is
             Call_Seq := First_Node (Calls (S));
 
             while Present (Call_Seq) loop
-               N := Make_Attribute_Designator
-                 (Make_Defining_Identifier
-                  (Map_Ada_Call_Seq_Subprogram_Name (S, Call_Seq)),
-                  A_Access);
+               N :=
+                 Make_Attribute_Designator
+                   (Make_Defining_Identifier
+                      (Map_Ada_Call_Seq_Subprogram_Name (S, Call_Seq)),
+                    A_Access);
                ADU.Append_Node_To_List (N, Profile);
 
                Call_Seq := Next_Node (Call_Seq);
@@ -1836,9 +1845,10 @@ package body Ocarina.Backends.Utils is
             N := Make_Designator (Unit_Name (Get_Source_Name (S)));
             Add_With_Package (N);
 
-            N := Make_Designator
-              (Local_Name (Get_Source_Name (S)),
-               Unit_Name (Get_Source_Name (S)));
+            N :=
+              Make_Designator
+                (Local_Name (Get_Source_Name (S)),
+                 Unit_Name (Get_Source_Name (S)));
 
             N := Make_Subprogram_Call (ADN.Defining_Identifier (N), Profile);
             ADU.Append_Node_To_List (N, Statements);
@@ -1851,12 +1861,13 @@ package body Ocarina.Backends.Utils is
 
                while Present (F) loop
                   if Kind (F) = K_Parameter_Instance and then Is_Out (F) then
-                     N := Make_Assignment_Statement
-                       (Make_Designator
-                        (To_Ada_Name (Display_Name (Identifier (F)))),
-                        Make_Designator
-                        (To_Ada_Name (Display_Name (Identifier (F))),
-                         PN (P_Status)));
+                     N :=
+                       Make_Assignment_Statement
+                         (Make_Designator
+                            (To_Ada_Name (Display_Name (Identifier (F)))),
+                          Make_Designator
+                            (To_Ada_Name (Display_Name (Identifier (F))),
+                             PN (P_Status)));
                      ADU.Append_Node_To_List (N, Statements);
                   end if;
 
@@ -1865,28 +1876,32 @@ package body Ocarina.Backends.Utils is
             end if;
 
             return Make_Subprogram_Implementation
-              (Spec, Declarations, Statements);
+                (Spec,
+                 Declarations,
+                 Statements);
 
          when Subprogram_Lustre =>
             --  In PolyORB-HI-Ada, a Lustre subprogram is mapped onto an Ada
             --  subprogram that raises an exception to warn the user.
 
-            N := Make_Exception_Declaration
-              (Make_Defining_Identifier
-               (EN (E_NYI)));
+            N :=
+              Make_Exception_Declaration
+                (Make_Defining_Identifier (EN (E_NYI)));
             ADU.Append_Node_To_List (N, Declarations);
 
             N := Make_Raise_Statement (Make_Defining_Identifier (EN (E_NYI)));
             ADU.Append_Node_To_List (N, Statements);
 
             return Make_Subprogram_Implementation
-              (Spec, Declarations, Statements);
+                (Spec,
+                 Declarations,
+                 Statements);
 
          when others =>
             Display_Located_Error
               (Loc (S),
-               "This kind of subprogram is not supported: "
-               & Get_Subprogram_Kind (S)'Img,
+               "This kind of subprogram is not supported: " &
+               Get_Subprogram_Kind (S)'Img,
                Fatal => True);
             return No_Node;
       end case;
@@ -1898,24 +1913,23 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Call_Seq_Subprogram_Spec
      (Spg : Node_Id;
-      Seq : Node_Id)
-     return Node_Id
+      Seq : Node_Id) return Node_Id
    is
       Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
       N       : Node_Id;
    begin
-      N := Make_Parameter_Specification
-        (Make_Defining_Identifier (PN (P_Status)),
-         Make_Defining_Identifier
-         (Map_Ada_Subprogram_Status_Name (Spg)),
-         Mode_Inout);
+      N :=
+        Make_Parameter_Specification
+          (Make_Defining_Identifier (PN (P_Status)),
+           Make_Defining_Identifier (Map_Ada_Subprogram_Status_Name (Spg)),
+           Mode_Inout);
       ADU.Append_Node_To_List (N, Profile);
 
-      N := Make_Subprogram_Specification
-        (Make_Defining_Identifier
-         (Map_Ada_Call_Seq_Subprogram_Name
-          (Spg, Seq)),
-         Profile);
+      N :=
+        Make_Subprogram_Specification
+          (Make_Defining_Identifier
+             (Map_Ada_Call_Seq_Subprogram_Name (Spg, Seq)),
+           Profile);
       return N;
    end Map_Ada_Call_Seq_Subprogram_Spec;
 
@@ -1925,11 +1939,9 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Call_Seq_Subprogram_Body
      (Spg : Node_Id;
-      Seq : Node_Id)
-     return Node_Id
+      Seq : Node_Id) return Node_Id
    is
-      Spec         : constant Node_Id := Map_Ada_Call_Seq_Subprogram_Spec
-        (Spg, Seq);
+      Spec : constant Node_Id := Map_Ada_Call_Seq_Subprogram_Spec (Spg, Seq);
       Declarations : constant List_Id := New_List (ADN.K_Declaration_List);
       Statements   : constant List_Id := New_List (ADN.K_Statement_List);
    begin
@@ -1949,8 +1961,7 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Subprogram_Status_Name (S : Node_Id) return Name_Id is
    begin
-      pragma Assert (Is_Subprogram (S) or else
-                     Kind (S) = K_Call_Instance);
+      pragma Assert (Is_Subprogram (S) or else Kind (S) = K_Call_Instance);
 
       Get_Name_String (ADU.To_Ada_Name (Display_Name (Identifier (S))));
       Add_Str_To_Name_Buffer ("_Status");
@@ -1963,8 +1974,7 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Call_Seq_Subprogram_Name
      (Spg : Node_Id;
-      Seq : Node_Id)
-     return Name_Id
+      Seq : Node_Id) return Name_Id
    is
       Spg_Name : Name_Id;
       Seg_Name : Name_Id;
@@ -1985,8 +1995,7 @@ package body Ocarina.Backends.Utils is
    -- Map_Ada_Call_Seq_Access_Name --
    ----------------------------------
 
-   function Map_Ada_Call_Seq_Access_Name (S : Node_Id) return Name_Id
-   is
+   function Map_Ada_Call_Seq_Access_Name (S : Node_Id) return Name_Id is
       Spg_Name : Name_Id;
    begin
       pragma Assert (Is_Subprogram (S));
@@ -2006,18 +2015,19 @@ package body Ocarina.Backends.Utils is
       Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
       N       : Node_Id;
    begin
-      N := Make_Parameter_Specification
-        (Make_Defining_Identifier (PN (P_Status)),
-         Make_Defining_Identifier
-         (Map_Ada_Subprogram_Status_Name (S)),
-         Mode_Inout);
+      N :=
+        Make_Parameter_Specification
+          (Make_Defining_Identifier (PN (P_Status)),
+           Make_Defining_Identifier (Map_Ada_Subprogram_Status_Name (S)),
+           Mode_Inout);
       ADU.Append_Node_To_List (N, Profile);
 
       N := Make_Subprogram_Specification (No_Node, Profile);
 
-      N := Make_Full_Type_Declaration
-        (Make_Defining_Identifier (Map_Ada_Call_Seq_Access_Name (S)),
-         Make_Access_Type_Definition (N));
+      N :=
+        Make_Full_Type_Declaration
+          (Make_Defining_Identifier (Map_Ada_Call_Seq_Access_Name (S)),
+           Make_Access_Type_Definition (N));
       return N;
    end Map_Ada_Call_Seq_Access;
 
@@ -2036,9 +2046,10 @@ package body Ocarina.Backends.Utils is
          F := First_Node (Features (S));
 
          while Present (F) loop
-            N := Make_Component_Declaration
-              (Map_Ada_Defining_Identifier (F),
-               Map_Ada_Data_Type_Designator (Corresponding_Instance (F)));
+            N :=
+              Make_Component_Declaration
+                (Map_Ada_Defining_Identifier (F),
+                 Map_Ada_Data_Type_Designator (Corresponding_Instance (F)));
             ADU.Append_Node_To_List (N, Fields);
 
             F := Next_Node (F);
@@ -2050,10 +2061,10 @@ package body Ocarina.Backends.Utils is
             Fatal => True);
       end if;
 
-      N := Make_Full_Type_Declaration
-        (Make_Defining_Identifier
-         (Map_Ada_Subprogram_Status_Name (S)),
-         Make_Record_Definition (Fields));
+      N :=
+        Make_Full_Type_Declaration
+          (Make_Defining_Identifier (Map_Ada_Subprogram_Status_Name (S)),
+           Make_Record_Definition (Fields));
       return N;
    end Map_Ada_Subprogram_Status;
 
@@ -2080,14 +2091,16 @@ package body Ocarina.Backends.Utils is
       M             : Node_Id;
       F             : Node_Id;
       Parent        : Node_Id;
-      Hybrid        : constant Boolean := Is_Subprogram (Caller) and then
-        Get_Subprogram_Kind (Caller) = Subprogram_Hybrid_Ada_95;
+      Hybrid        : constant Boolean :=
+        Is_Subprogram (Caller)
+        and then Get_Subprogram_Kind (Caller) = Subprogram_Hybrid_Ada_95;
    begin
       --  The lists have to be created
 
       if Declarations = No_List or else Statements = No_List then
-         raise Program_Error with "Lists have to be created before any call "
-           & "to Handle_Call_Sequence";
+         raise Program_Error
+           with "Lists have to be created before any call " &
+           "to Handle_Call_Sequence";
       end if;
 
       --  The call sequence must contain at least one call to a
@@ -2113,17 +2126,15 @@ package body Ocarina.Backends.Utils is
             F := First_Node (Features (Spg));
 
             while Present (F) loop
-               if Kind (F) = K_Parameter_Instance
-                 and then Is_Out (F)
-               then
+               if Kind (F) = K_Parameter_Instance and then Is_Out (F) then
                   --  Raise an error if the parameter is not connected
                   --  to any source.
 
                   if AAU.Length (Destinations (F)) = 0 then
                      Display_Located_Error
                        (Loc (F),
-                        "This OUT parameter is not connected to"
-                        & " any destination",
+                        "This OUT parameter is not connected to" &
+                        " any destination",
                         Fatal => True);
                   elsif AAU.Length (Destinations (F)) > 1 then
                      Display_Located_Error
@@ -2151,18 +2162,20 @@ package body Ocarina.Backends.Utils is
                      --  Here we declare a variable based on the
                      --  thread feature name.
 
-                     N := Make_Object_Declaration
-                       (Defining_Identifier => Map_Ada_Defining_Identifier
-                          (Destination_F, "V"),
-                        Object_Definition   => Map_Ada_Data_Type_Designator
-                          (Corresponding_Instance (Destination_F)));
+                     N :=
+                       Make_Object_Declaration
+                         (Defining_Identifier =>
+                            Map_Ada_Defining_Identifier (Destination_F, "V"),
+                          Object_Definition =>
+                            Map_Ada_Data_Type_Designator
+                              (Corresponding_Instance (Destination_F)));
                      ADU.Append_Node_To_List (N, Declarations);
 
                      --  (1) If we declared a local variable, we use it
                      --      as parameter value.
 
-                     Param_Value := Map_Ada_Defining_Identifier
-                       (Destination_F, "V");
+                     Param_Value :=
+                       Map_Ada_Defining_Identifier (Destination_F, "V");
 
                   elsif Parent_Component (Destination_F) /= Caller then
                      --  Here, we map the variable name from the
@@ -2170,20 +2183,22 @@ package body Ocarina.Backends.Utils is
                      --  name. This avoids name clashing when a
                      --  subprogram calls twice the same subprogram.
 
-                     N := Make_Object_Declaration
-                       (Defining_Identifier => Make_Defining_Identifier
-                          (Map_Ada_Full_Parameter_Name
-                           (Spg_Call, F)),
-                        Object_Definition   => Map_Ada_Data_Type_Designator
-                          (Corresponding_Instance (F)));
+                     N :=
+                       Make_Object_Declaration
+                         (Defining_Identifier =>
+                            Make_Defining_Identifier
+                              (Map_Ada_Full_Parameter_Name (Spg_Call, F)),
+                          Object_Definition =>
+                            Map_Ada_Data_Type_Designator
+                              (Corresponding_Instance (F)));
                      ADU.Append_Node_To_List (N, Declarations);
 
                      --  (2) If we declared a local variable, we use it
                      --      as parameter value.
 
-                     Param_Value := Make_Designator
-                       (Map_Ada_Full_Parameter_Name
-                        (Spg_Call, F));
+                     Param_Value :=
+                       Make_Designator
+                         (Map_Ada_Full_Parameter_Name (Spg_Call, F));
 
                   elsif Hybrid then
                      --  (3) If the calleD parameter is connected to
@@ -2192,17 +2207,18 @@ package body Ocarina.Backends.Utils is
                      --      record field corresponding to the calleR
                      --      parameter.
 
-                     Param_Value := Make_Designator
-                       (To_Ada_Name (Display_Name (Identifier (F))),
-                        PN (P_Status));
+                     Param_Value :=
+                       Make_Designator
+                         (To_Ada_Name (Display_Name (Identifier (F))),
+                          PN (P_Status));
                   else
                      --  (4) If the calleD parameter is connected to
                      --      the calleR parameter and then then calleR
                      --      is NOT hybrid, then we use simply the
                      --      corresponding parameter of the calleR.
 
-                     Param_Value := Map_Ada_Defining_Identifier
-                       (Destination_F);
+                     Param_Value :=
+                       Map_Ada_Defining_Identifier (Destination_F);
                   end if;
 
                   --  For each OUT parameter we build a parameter
@@ -2210,23 +2226,22 @@ package body Ocarina.Backends.Utils is
                   --  implementation subprogram call <Param> =>
                   --  <Param_Value>.
 
-                  N := Make_Parameter_Association
-                    (Selector_Name    => Map_Ada_Defining_Identifier (F),
-                     Actual_Parameter => Param_Value);
+                  N :=
+                    Make_Parameter_Association
+                      (Selector_Name    => Map_Ada_Defining_Identifier (F),
+                       Actual_Parameter => Param_Value);
                   ADU.Append_Node_To_List (N, Call_Profile);
 
-               elsif Kind (F) = K_Parameter_Instance
-                 and then Is_In (F)
-               then
+               elsif Kind (F) = K_Parameter_Instance and then Is_In (F) then
                   --  Raise an error if the parameter is not connected
                   --  to any source.
 
                   if AAU.Length (Sources (F)) = 0 then
                      Display_Located_Error
                        (Loc (F),
-                        "This IN parameter is not connected to"
-                          & " any source"
-                          & Image (Loc (Caller)),
+                        "This IN parameter is not connected to" &
+                        " any source" &
+                        Image (Loc (Caller)),
                         Fatal => True);
                   elsif AAU.Length (Sources (F)) > 1 then
                      Display_Located_Error
@@ -2253,16 +2268,18 @@ package body Ocarina.Backends.Utils is
                      --  then we use the local variable corresponding
                      --  to the IN port.
 
-                     Param_Value := Map_Ada_Defining_Identifier
-                       (Source_F, "V");
+                     Param_Value :=
+                       Map_Ada_Defining_Identifier (Source_F, "V");
                   elsif Source_Parent /= Caller then
                      --  (2) If the the source call is different from
                      --      the englobing subprogram, we use the
                      --      formerly declared variable.
 
-                     Param_Value := Make_Designator
-                       (Map_Ada_Full_Parameter_Name
-                        (Parent_Subcomponent (Source_Parent), Source_F));
+                     Param_Value :=
+                       Make_Designator
+                         (Map_Ada_Full_Parameter_Name
+                            (Parent_Subcomponent (Source_Parent),
+                             Source_F));
 
                   elsif Hybrid then
                      --  (3) If the calleD parameter is connected to
@@ -2271,9 +2288,10 @@ package body Ocarina.Backends.Utils is
                      --      field corresponding to the calleR
                      --      parameter.
 
-                     Param_Value := Make_Selected_Component
-                       (Make_Defining_Identifier (PN (P_Status)),
-                        Map_Ada_Defining_Identifier (Source_F));
+                     Param_Value :=
+                       Make_Selected_Component
+                         (Make_Defining_Identifier (PN (P_Status)),
+                          Map_Ada_Defining_Identifier (Source_F));
                   else
                      --  (4) If the calleD parameter is connected to
                      --      the calleR parameter and then then calleR
@@ -2288,9 +2306,10 @@ package body Ocarina.Backends.Utils is
                   --  the implementaion subprogram call <Param> =>
                   --  <Param_Value>.
 
-                  N := Make_Parameter_Association
-                    (Selector_Name    => Map_Ada_Defining_Identifier (F),
-                     Actual_Parameter => Param_Value);
+                  N :=
+                    Make_Parameter_Association
+                      (Selector_Name    => Map_Ada_Defining_Identifier (F),
+                       Actual_Parameter => Param_Value);
                   ADU.Append_Node_To_List (N, Call_Profile);
                end if;
 
@@ -2305,8 +2324,8 @@ package body Ocarina.Backends.Utils is
             if Has_Out_Ports (Spg) then
                Display_Located_Error
                  (Loc (Spg),
-                  "Feature subprograms that have OUT ports are not"
-                  & " supported yet",
+                  "Feature subprograms that have OUT ports are not" &
+                  " supported yet",
                   Fatal => True);
             end if;
 
@@ -2316,8 +2335,8 @@ package body Ocarina.Backends.Utils is
             N := Message_Comment ("Invoking method");
             ADU.Append_Node_To_List (N, Statements);
 
-            N := Map_Ada_Defining_Identifier
-              (Item (Last_Node (Path (Spg_Call))));
+            N :=
+              Map_Ada_Defining_Identifier (Item (Last_Node (Path (Spg_Call))));
 
             --  Get the actual owner object
 
@@ -2328,10 +2347,7 @@ package body Ocarina.Backends.Utils is
             Set_Homogeneous_Parent_Unit_Name
               (N,
                Extract_Designator
-               (ADN.Object_Node
-                (Backend_Node
-                 (Identifier
-                  (Owner_Object)))));
+                 (ADN.Object_Node (Backend_Node (Identifier (Owner_Object)))));
 
             N := Make_Subprogram_Call (N, Call_Profile);
             ADU.Append_Node_To_List (N, Statements);
@@ -2342,18 +2358,22 @@ package body Ocarina.Backends.Utils is
             --  parameter.
 
             if Has_Out_Ports (Spg) then
-               N := Make_Object_Declaration
-                 (Defining_Identifier => Make_Defining_Identifier
-                    (Map_Ada_Subprogram_Status_Name (Spg_Call)),
-                  Object_Definition   => Extract_Designator
-                    (ADN.Type_Definition_Node
-                     (Backend_Node (Identifier (Spg)))));
+               N :=
+                 Make_Object_Declaration
+                   (Defining_Identifier =>
+                      Make_Defining_Identifier
+                        (Map_Ada_Subprogram_Status_Name (Spg_Call)),
+                    Object_Definition =>
+                      Extract_Designator
+                        (ADN.Type_Definition_Node
+                           (Backend_Node (Identifier (Spg)))));
                ADU.Append_Node_To_List (N, Declarations);
 
-               N := Make_Parameter_Association
-                 (Make_Defining_Identifier (PN (P_Status)),
-                  Make_Defining_Identifier
-                  (Map_Ada_Subprogram_Status_Name (Spg_Call)));
+               N :=
+                 Make_Parameter_Association
+                   (Make_Defining_Identifier (PN (P_Status)),
+                    Make_Defining_Identifier
+                      (Map_Ada_Subprogram_Status_Name (Spg_Call)));
                ADU.Append_Node_To_List (N, Call_Profile);
             end if;
 
@@ -2362,13 +2382,11 @@ package body Ocarina.Backends.Utils is
             N := Message_Comment ("Call implementation");
             ADU.Append_Node_To_List (N, Statements);
 
-            N := Make_Subprogram_Call
-              (Extract_Designator
-               (ADN.Subprogram_Node
-                (Backend_Node
-                 (Identifier
-                  (Spg)))),
-               Call_Profile);
+            N :=
+              Make_Subprogram_Call
+                (Extract_Designator
+                   (ADN.Subprogram_Node (Backend_Node (Identifier (Spg)))),
+                 Call_Profile);
             ADU.Append_Node_To_List (N, Statements);
 
             --  After the implementation is called and if the called
@@ -2385,11 +2403,11 @@ package body Ocarina.Backends.Utils is
                      --  then send the value to all its destinations.
 
                      declare
-                        D        : Node_Id;
-                        Profile  : List_Id;
-                        Aggr     : List_Id;
-                        St       : constant List_Id := ADU.New_List
-                          (ADN.K_Statement_List);
+                        D       : Node_Id;
+                        Profile : List_Id;
+                        Aggr    : List_Id;
+                        St      : constant List_Id :=
+                          ADU.New_List (ADN.K_Statement_List);
                      begin
                         D := First_Node (Destinations (F));
 
@@ -2402,17 +2420,20 @@ package body Ocarina.Backends.Utils is
 
                            Profile := ADU.New_List (ADN.K_List_Id);
                            ADU.Append_Node_To_List
-                             (ADU.Copy_Node (Caller_State), Profile);
+                             (ADU.Copy_Node (Caller_State),
+                              Profile);
 
                            Aggr := ADU.New_List (ADN.K_List_Id);
 
-                           N := Make_Component_Association
-                             (Make_Defining_Identifier (CN (C_Port)),
-                              Map_Ada_Defining_Identifier (Item (D)));
+                           N :=
+                             Make_Component_Association
+                               (Make_Defining_Identifier (CN (C_Port)),
+                                Map_Ada_Defining_Identifier (Item (D)));
                            ADU.Append_Node_To_List (N, Aggr);
 
                            if Ocarina.ME_AADL.AADL_Instances.Nodes.Is_Data
-                             (Item (D)) then
+                               (Item (D))
+                           then
 
                               N := Map_Ada_Defining_Identifier (F);
 
@@ -2420,54 +2441,56 @@ package body Ocarina.Backends.Utils is
                               --  name clashing, so enumerators have
                               --  to be qualified.
 
-                              M := Extract_Designator
-                                (ADN.Port_Enumeration_Node
-                                 (Backend_Node (Identifier (Spg))));
+                              M :=
+                                Extract_Designator
+                                  (ADN.Port_Enumeration_Node
+                                     (Backend_Node (Identifier (Spg))));
                               Parent := ADN.Parent_Unit_Name (M);
-                              N := Make_Selected_Component (Parent, N);
-                              N := Make_Qualified_Expression
-                                (M, Make_Record_Aggregate (Make_List_Id (N)));
+                              N      := Make_Selected_Component (Parent, N);
+                              N      :=
+                                Make_Qualified_Expression
+                                  (M,
+                                   Make_Record_Aggregate (Make_List_Id (N)));
 
-                              N := Make_Subprogram_Call
-                                (Extract_Designator
-                                 (ADN.Get_Value_Node
-                                  (Backend_Node
-                                   (Identifier
-                                    (Spg)))),
-                                 Make_List_Id
-                                 (Make_Defining_Identifier
-                                  (Map_Ada_Subprogram_Status_Name (Spg_Call)),
-                                  N));
+                              N :=
+                                Make_Subprogram_Call
+                                  (Extract_Designator
+                                     (ADN.Get_Value_Node
+                                        (Backend_Node (Identifier (Spg)))),
+                                   Make_List_Id
+                                     (Make_Defining_Identifier
+                                        (Map_Ada_Subprogram_Status_Name
+                                           (Spg_Call)),
+                                      N));
 
-                              N := Make_Component_Association
-                                (Make_Defining_Identifier
-                                 (Map_Ada_Component_Name (Item (D))),
-                                 Make_Selected_Component
-                                 (N,
-                                  Make_Defining_Identifier
-                                  (Map_Ada_Component_Name (F))));
+                              N :=
+                                Make_Component_Association
+                                  (Make_Defining_Identifier
+                                     (Map_Ada_Component_Name (Item (D))),
+                                   Make_Selected_Component
+                                     (N,
+                                      Make_Defining_Identifier
+                                        (Map_Ada_Component_Name (F))));
                               ADU.Append_Node_To_List (N, Aggr);
                            end if;
 
-                           N := Make_Qualified_Expression
-                             (Extract_Designator
-                              (ADN.Port_Interface_Node
-                               (Backend_Node
-                                (Identifier
-                                 (Caller)))),
-                              Make_Record_Aggregate (Aggr));
+                           N :=
+                             Make_Qualified_Expression
+                               (Extract_Designator
+                                  (ADN.Port_Interface_Node
+                                     (Backend_Node (Identifier (Caller)))),
+                                Make_Record_Aggregate (Aggr));
                            ADU.Append_Node_To_List (N, Profile);
 
                            --  Call, the Put_Value routine
                            --  corresponding to the destination.
 
-                           N := Make_Subprogram_Call
-                             (Extract_Designator
-                              (ADN.Put_Value_Node
-                               (Backend_Node
-                                (Identifier
-                                 (Caller)))),
-                              Profile);
+                           N :=
+                             Make_Subprogram_Call
+                               (Extract_Designator
+                                  (ADN.Put_Value_Node
+                                     (Backend_Node (Identifier (Caller)))),
+                                Profile);
 
                            ADU.Append_Node_To_List (N, St);
 
@@ -2478,8 +2501,9 @@ package body Ocarina.Backends.Utils is
 
                         Profile := ADU.New_List (ADN.K_List_Id);
 
-                        N := Make_Defining_Identifier
-                          (Map_Ada_Subprogram_Status_Name (Spg_Call));
+                        N :=
+                          Make_Defining_Identifier
+                            (Map_Ada_Subprogram_Status_Name (Spg_Call));
                         ADU.Append_Node_To_List (N, Profile);
 
                         N := Map_Ada_Defining_Identifier (F);
@@ -2488,29 +2512,34 @@ package body Ocarina.Backends.Utils is
                         --  clashing, so enumerators have to be fully
                         --  qualified.
 
-                        M := Extract_Designator
-                          (ADN.Port_Enumeration_Node
-                           (Backend_Node (Identifier (Spg))));
+                        M :=
+                          Extract_Designator
+                            (ADN.Port_Enumeration_Node
+                               (Backend_Node (Identifier (Spg))));
                         Parent := ADN.Parent_Unit_Name (M);
 
                         N := Make_Selected_Component (Parent, N);
-                        N := Make_Qualified_Expression
-                          (M, Make_Record_Aggregate (Make_List_Id (N)));
+                        N :=
+                          Make_Qualified_Expression
+                            (M,
+                             Make_Record_Aggregate (Make_List_Id (N)));
                         ADU.Append_Node_To_List (N, Profile);
 
-                        N := Make_Subprogram_Call
-                          (Extract_Designator
-                           (ADN.Get_Count_Node
-                            (Backend_Node
-                             (Identifier (Spg)))),
-                           Profile);
-                        N := Make_Expression
-                          (N,
-                           Op_Greater_Equal,
-                           Make_Literal (ADV.New_Integer_Value (1, 1, 10)));
-                        N := Make_If_Statement
-                          (Condition => N,
-                           Then_Statements => St);
+                        N :=
+                          Make_Subprogram_Call
+                            (Extract_Designator
+                               (ADN.Get_Count_Node
+                                  (Backend_Node (Identifier (Spg)))),
+                             Profile);
+                        N :=
+                          Make_Expression
+                            (N,
+                             Op_Greater_Equal,
+                             Make_Literal (ADV.New_Integer_Value (1, 1, 10)));
+                        N :=
+                          Make_If_Statement
+                            (Condition       => N,
+                             Then_Statements => St);
                         ADU.Append_Node_To_List (N, Statements);
                      end;
                   end if;
@@ -2540,48 +2569,48 @@ package body Ocarina.Backends.Utils is
          when Data_Integer =>
             --  For integers, default value is 0
 
-            Result := ADU.Make_Literal
-              (ADV.New_Integer_Value (0, 1, 10));
+            Result := ADU.Make_Literal (ADV.New_Integer_Value (0, 1, 10));
 
          when Data_Float | Data_Fixed =>
             --  For reals, the default value is 0.0
 
-            Result := ADU.Make_Literal
-              (ADV.New_Floating_Point_Value (0.0));
+            Result := ADU.Make_Literal (ADV.New_Floating_Point_Value (0.0));
 
          when Data_Boolean =>
             --  For booleans, the default value is FALSE
 
-            Result := ADU.Make_Literal
-              (ADV.New_Boolean_Value (False));
+            Result := ADU.Make_Literal (ADV.New_Boolean_Value (False));
 
          when Data_Character =>
             --  For characters, the default value is the space ' '
 
-            Result := ADU.Make_Literal
-              (ADV.New_Character_Value (Character'Pos (' ')));
+            Result :=
+              ADU.Make_Literal (ADV.New_Character_Value (Character'Pos (' ')));
 
          when Data_Wide_Character =>
             --  For wide characters, the default value is the wide
             --  space ' '.
 
-            Result := ADU.Make_Literal
-              (ADV.New_Character_Value (Wide_Character'Pos (' '), True));
+            Result :=
+              ADU.Make_Literal
+                (ADV.New_Character_Value (Wide_Character'Pos (' '), True));
 
          when Data_String =>
             --  For strings, the default value is the null bounded string
 
-            Result := Make_Selected_Component
-              (Map_Ada_Package_Identifier (D),
-               Make_Defining_Identifier (PN (P_Null_Bounded_String)));
+            Result :=
+              Make_Selected_Component
+                (Map_Ada_Package_Identifier (D),
+                 Make_Defining_Identifier (PN (P_Null_Bounded_String)));
 
          when Data_Wide_String =>
             --  For wide strings, the default value is the null
             --  bounded wide string.
 
-            Result := Make_Selected_Component
-              (Map_Ada_Package_Identifier (D),
-               Make_Defining_Identifier (PN (P_Null_Bounded_Wide_String)));
+            Result :=
+              Make_Selected_Component
+                (Map_Ada_Package_Identifier (D),
+                 Make_Defining_Identifier (PN (P_Null_Bounded_Wide_String)));
 
          when Data_Array =>
             --  The default value for an array type is an array
@@ -2591,32 +2620,33 @@ package body Ocarina.Backends.Utils is
             --  We use "<T>'Range =>" instead of using "others =>" to
             --  avoid implicit loops.
 
-            Result := Make_Record_Aggregate
-              (Make_List_Id
-               (Make_Element_Association
-                (Make_Attribute_Designator
-                 (Map_Ada_Defining_Identifier (D), A_Range),
-                 Get_Ada_Default_Value
-                 (ATN.Entity
-                  (ATN.First_Node
-                   (Get_Base_Type (D)))))));
+            Result :=
+              Make_Record_Aggregate
+                (Make_List_Id
+                   (Make_Element_Association
+                      (Make_Attribute_Designator
+                         (Map_Ada_Defining_Identifier (D),
+                          A_Range),
+                       Get_Ada_Default_Value
+                         (ATN.Entity (ATN.First_Node (Get_Base_Type (D)))))));
 
          when Data_Struct =>
             --  For data record, the default value is an aggregate
             --  list of default values of all the record aggregates.
 
             declare
-               Aggregates : constant List_Id
-                 := ADU.New_List (ADN.K_Component_List);
-               S          : Node_Id;
-               C          : Node_Id;
+               Aggregates : constant List_Id :=
+                 ADU.New_List (ADN.K_Component_List);
+               S : Node_Id;
+               C : Node_Id;
             begin
                if not AAU.Is_Empty (Subcomponents (D)) then
                   S := First_Node (Subcomponents (D));
                   while Present (S) loop
-                     C := ADU.Make_Component_Association
-                       (Map_Ada_Defining_Identifier (S),
-                        Get_Ada_Default_Value (Corresponding_Instance (S)));
+                     C :=
+                       ADU.Make_Component_Association
+                         (Map_Ada_Defining_Identifier (S),
+                          Get_Ada_Default_Value (Corresponding_Instance (S)));
                      ADU.Append_Node_To_List (C, Aggregates);
 
                      S := Next_Node (S);
@@ -2634,13 +2664,16 @@ package body Ocarina.Backends.Utils is
          when Data_With_Accessors =>
             --  This is definitely a code generation error
 
-            raise Program_Error with "Data types with accessors should"
-              & " not have default values";
+            raise Program_Error
+              with "Data types with accessors should" &
+              " not have default values";
 
          when others =>
             Display_Located_Error
-              (Loc (D), "Cannot generate default value for type",
-               Fatal => False, Warning => True);
+              (Loc (D),
+               "Cannot generate default value for type",
+               Fatal   => False,
+               Warning => True);
             Result := No_Node;
       end case;
 
@@ -2653,8 +2686,7 @@ package body Ocarina.Backends.Utils is
 
    function Map_Ada_Namespace_Defining_Identifier
      (N      : Node_Id;
-      Prefix : String  := "")
-     return Node_Id
+      Prefix : String := "") return Node_Id
    is
       Name_List : List_Id;
       I         : Node_Id;
@@ -2668,8 +2700,9 @@ package body Ocarina.Backends.Utils is
          if Prefix = "" then
             --  Display an error if the user did not give a prefix
 
-            raise Program_Error with "You must provide a prefix to map the"
-              & " unnamed namespace";
+            raise Program_Error
+              with "You must provide a prefix to map the" &
+              " unnamed namespace";
          end if;
 
          return ADU.Make_Defining_Identifier (Get_String_Name (Prefix));
@@ -2680,8 +2713,8 @@ package body Ocarina.Backends.Utils is
          Name_List := Split_Name (N);
 
          if Prefix /= "" then
-            Parent_Id := ADU.Make_Defining_Identifier
-              (Get_String_Name (Prefix));
+            Parent_Id :=
+              ADU.Make_Defining_Identifier (Get_String_Name (Prefix));
          end if;
 
          I := First_Node (Name_List);
@@ -2702,13 +2735,13 @@ package body Ocarina.Backends.Utils is
    -- To_Bits --
    -------------
 
-   How_Many_Bits : constant array (Size_Units) of Unsigned_Long_Long
-     := (Bit             => 1,
-         Properties.Byte => 8,
-         Kilo_Byte       => 8 * 1_000,
-         Mega_Byte       => 8 * 1_000_000,
-         Giga_Byte       => 8 * 1_000_000_000,
-         Tera_Byte       => 8 * 1_000_000_000_000);
+   How_Many_Bits : constant array (Size_Units) of Unsigned_Long_Long :=
+     (Bit             => 1,
+      Properties.Byte => 8,
+      Kilo_Byte       => 8 * 1_000,
+      Mega_Byte       => 8 * 1_000_000,
+      Giga_Byte       => 8 * 1_000_000_000,
+      Tera_Byte       => 8 * 1_000_000_000_000);
    --  To easily convert sizes into bits
 
    function To_Bits (S : Size_Type) return Unsigned_Long_Long is
@@ -2761,13 +2794,13 @@ package body Ocarina.Backends.Utils is
    -- To_Bytes --
    --------------
 
-   How_Many_Bytes : constant array (Size_Units) of Unsigned_Long_Long
-     := (Bit             => 0,
-         Properties.Byte => 1,
-         Kilo_Byte       => 1_000,
-         Mega_Byte       => 1_000_000,
-         Giga_Byte       => 1_000_000_000,
-         Tera_Byte       => 1_000_000_000_000);
+   How_Many_Bytes : constant array (Size_Units) of Unsigned_Long_Long :=
+     (Bit             => 0,
+      Properties.Byte => 1,
+      Kilo_Byte       => 1_000,
+      Mega_Byte       => 1_000_000,
+      Giga_Byte       => 1_000_000_000,
+      Tera_Byte       => 1_000_000_000_000);
    --  To easily convert sizes into bytes
 
    function To_Bytes (S : Size_Type) return Unsigned_Long_Long is
@@ -2816,9 +2849,9 @@ package body Ocarina.Backends.Utils is
          if not Is_Process (Parent_Component (P)) then
             Display_Located_Error
               (Loc (P),
-               "The parent of this port is not a process and it"
-               & " is involved in a system-level connection in "
-               & Image (Loc (C)),
+               "The parent of this port is not a process and it" &
+               " is involved in a system-level connection in " &
+               Image (Loc (C)),
                Fatal => True);
          end if;
       end Check_Port_Consistency;
@@ -2851,8 +2884,8 @@ package body Ocarina.Backends.Utils is
                      S := First_Node (Sources (F));
 
                      while Present (S) loop
-                        exit Outer_Loop when
-                          Item (S) = Parent_Subcomponent (B);
+                        exit Outer_Loop when Item (S) =
+                          Parent_Subcomponent (B);
 
                         S := Next_Node (S);
                      end loop;
@@ -2870,8 +2903,8 @@ package body Ocarina.Backends.Utils is
 
             Display_Located_Error
               (Loc (Parent_Subcomponent (CPU)),
-               "This process has no access to the bus declared at "
-               & Image (Loc (Parent_Subcomponent (Bus))),
+               "This process has no access to the bus declared at " &
+               Image (Loc (Parent_Subcomponent (Bus))),
                Fatal => True);
          end if;
 
@@ -2905,8 +2938,8 @@ package body Ocarina.Backends.Utils is
 
       --  Check that the connection connects two ports
 
-      if Kind (C_Src) /= K_Port_Spec_Instance or else
-        Kind (C_Src) /= K_Port_Spec_Instance
+      if Kind (C_Src) /= K_Port_Spec_Instance
+        or else Kind (C_Src) /= K_Port_Spec_Instance
       then
          --  FIXME: May be refined in the future when distributed
          --  shared variable will be supported.
@@ -3033,8 +3066,8 @@ package body Ocarina.Backends.Utils is
    -- Get_Connection_Pattern --
    ----------------------------
 
-   function Get_Connection_Pattern (E : Node_Id)
-      return Connection_Pattern_Kind
+   function Get_Connection_Pattern
+     (E : Node_Id) return Connection_Pattern_Kind
    is
       L               : List_Id;
       N               : Node_Id;
@@ -3047,8 +3080,8 @@ package body Ocarina.Backends.Utils is
       elsif Is_Device (Parent_Component (E)) then
          Current_Process := Parent_Component (E);
       elsif Is_Thread (Parent_Component (E)) then
-         Current_Process := Get_Container_Process
-            (Parent_Subcomponent (Parent_Component (E)));
+         Current_Process :=
+           Get_Container_Process (Parent_Subcomponent (Parent_Component (E)));
       end if;
 
       Return_Value := Intra_Process;
@@ -3066,8 +3099,7 @@ package body Ocarina.Backends.Utils is
       N := First_Node (L);
 
       while Present (N) loop
-         Remote_Process := Get_Container_Process
-               (Parent_Component (Item (N)));
+         Remote_Process := Get_Container_Process (Parent_Component (Item (N)));
 
          if Remote_Process /= Current_Process then
             Return_Value := Inter_Process;
@@ -3084,9 +3116,7 @@ package body Ocarina.Backends.Utils is
    -- Compare_Time --
    ------------------
 
-   function "<=" (T1 : Time_Type; T2 : Time_Type)
-      return Boolean
-   is
+   function "<=" (T1 : Time_Type; T2 : Time_Type) return Boolean is
       T1_Value : Unsigned_Long_Long;
       T2_Value : Unsigned_Long_Long;
    begin
@@ -3145,10 +3175,8 @@ package body Ocarina.Backends.Utils is
       Accessed_Component : Node_Id;
    begin
       if not AAU.Is_Empty (Sources (Data_Access)) then
-         Accessed_Component := Item
-            (First_Node (Sources (Data_Access)));
-         if Kind (Accessed_Component)
-            = K_Subcomponent_Access_Instance then
+         Accessed_Component := Item (First_Node (Sources (Data_Access)));
+         if Kind (Accessed_Component) = K_Subcomponent_Access_Instance then
             return Get_Accessed_Data (Accessed_Component);
          else
             return Accessed_Component;
@@ -3163,24 +3191,25 @@ package body Ocarina.Backends.Utils is
    ---------------------------
 
    function Get_Device_Of_Process
-     (Bus : Node_Id; Process : Node_Id)
-     return Node_Id
+     (Bus     : Node_Id;
+      Process : Node_Id) return Node_Id
    is
       The_Process : Node_Id := Process;
 
       The_System : Node_Id;
-      S : Node_Id;
-      Device : Node_Id;
+      S          : Node_Id;
+      Device     : Node_Id;
    begin
       if not Is_Process (The_Process) then
-         The_Process := Corresponding_Instance
-           (Get_Container_Process (Parent_Subcomponent (Process)));
+         The_Process :=
+           Corresponding_Instance
+             (Get_Container_Process (Parent_Subcomponent (Process)));
       end if;
 
-      The_System := Parent_Component
-        (Parent_Subcomponent
-           (Corresponding_Instance
-              (Parent_Subcomponent (The_Process))));
+      The_System :=
+        Parent_Component
+          (Parent_Subcomponent
+             (Corresponding_Instance (Parent_Subcomponent (The_Process))));
 
       if Present (Bus)
         and then not AAU.Is_Empty (Connections (The_System))
@@ -3196,21 +3225,22 @@ package body Ocarina.Backends.Utils is
                Device := Item (First_Node (Path (Destination (S))));
 
                if True
-                 --  We actually found a device
+                  --  We actually found a device
 
                  and then Present (Device)
                  and then AAU.Is_Device (Corresponding_Instance (Device))
 
-                 --  Process and device are on the same processor
+                  --  Process and device are on the same processor
 
-                 and then Get_Bound_Processor
-                 (Corresponding_Instance (Device))
-                 = Get_Bound_Processor (The_Process)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (Device)) =
+                   Get_Bound_Processor (The_Process)
 
-                 --  This device is connected to the bus
+                  --  This device is connected to the bus
 
-                 and then Parent_Subcomponent (Bus)
-                 = Item (First_Node (Path (Source (S))))
+                 and then
+                   Parent_Subcomponent (Bus) =
+                   Item (First_Node (Path (Source (S))))
                then
                   --  Note, for now, we assume there is only one
                   --  device at each end of the bus.
@@ -3229,17 +3259,14 @@ package body Ocarina.Backends.Utils is
    -- Is_Connected --
    ------------------
 
-   function Is_Connected
-     (Bus : Node_Id; Device : Node_Id)
-     return Boolean
-   is
+   function Is_Connected (Bus : Node_Id; Device : Node_Id) return Boolean is
       The_System : Node_Id;
-      S : Node_Id;
+      S          : Node_Id;
    begin
-      The_System := Parent_Component
-        (Parent_Subcomponent
-           (Corresponding_Instance
-              (Parent_Subcomponent (Bus))));
+      The_System :=
+        Parent_Component
+          (Parent_Subcomponent
+             (Corresponding_Instance (Parent_Subcomponent (Bus))));
 
       pragma Assert (Is_System (The_System));
 
@@ -3255,10 +3282,11 @@ package body Ocarina.Backends.Utils is
               and then Get_Category_Of_Connection (S) = CT_Access_Bus
             then
                if True
-                 --  This device is connected to the bus
+                  --  This device is connected to the bus
 
-                 and then Parent_Subcomponent (Bus)
-                                       = Item (First_Node (Path (Source (S))))
+                 and then
+                   Parent_Subcomponent (Bus) =
+                   Item (First_Node (Path (Source (S))))
 
                  and then Device = Item (First_Node (Path (Destination (S))))
                then
@@ -3292,8 +3320,10 @@ package body Ocarina.Backends.Utils is
    -- Get_Port_By_Name --
    ----------------------
 
-   function Get_Port_By_Name (Port : Node_Id; Component : Node_Id)
-      return Node_Id is
+   function Get_Port_By_Name
+     (Port      : Node_Id;
+      Component : Node_Id) return Node_Id
+   is
       F : Node_Id;
    begin
       if Component = No_Node then
@@ -3303,8 +3333,7 @@ package body Ocarina.Backends.Utils is
       F := First_Node (Features (Component));
 
       while Present (F) loop
-         if Name (Identifier (F)) =
-            Name (Identifier (Port)) then
+         if Name (Identifier (F)) = Name (Identifier (Port)) then
             return F;
          end if;
          F := Next_Node (F);
@@ -3318,9 +3347,9 @@ package body Ocarina.Backends.Utils is
    ----------------
 
    function Is_Virtual (Port : Node_Id) return Boolean is
-      Remote_Port : Node_Id;
+      Remote_Port      : Node_Id;
       Remote_Processor : Node_Id;
-      Local_Processor : Node_Id;
+      Local_Processor  : Node_Id;
    begin
       if Port = No_Node then
          return False;
@@ -3328,33 +3357,31 @@ package body Ocarina.Backends.Utils is
 
       if Is_In (Port) and then not Is_Out (Port) then
          if AAU.Is_Empty (Sources (Port)) then
-            Display_Error
-               ("IN ports must be connected !",
-               Fatal => True);
+            Display_Error ("IN ports must be connected !", Fatal => True);
          end if;
          Remote_Port := Item (First_Node (Sources (Port)));
       elsif Is_Out (Port) and then not Is_In (Port) then
          if AAU.Is_Empty (Destinations (Port)) then
-            Display_Error
-               ("IN ports must be connected !",
-               Fatal => True);
+            Display_Error ("IN ports must be connected !", Fatal => True);
          end if;
          Remote_Port := Item (First_Node (Destinations (Port)));
       else
          Display_Error
-            ("Virtual port cannot be IN and OUT at the same time",
+           ("Virtual port cannot be IN and OUT at the same time",
             Fatal => True);
       end if;
 
-      Local_Processor := Parent_Component
-         (Parent_Subcomponent
-            (Get_Bound_Processor (Parent_Component (Port))));
-      Remote_Processor := Parent_Component
-         (Parent_Subcomponent
-            (Get_Bound_Processor (Parent_Component (Remote_Port))));
+      Local_Processor :=
+        Parent_Component
+          (Parent_Subcomponent
+             (Get_Bound_Processor (Parent_Component (Port))));
+      Remote_Processor :=
+        Parent_Component
+          (Parent_Subcomponent
+             (Get_Bound_Processor (Parent_Component (Remote_Port))));
 
-      return Is_Device (Parent_Component (Port)) and then
-            (Local_Processor /= Remote_Processor);
+      return Is_Device (Parent_Component (Port))
+        and then (Local_Processor /= Remote_Processor);
    end Is_Virtual;
 
    -----------------------------------------------------
@@ -3362,14 +3389,14 @@ package body Ocarina.Backends.Utils is
    -----------------------------------------------------
 
    function Get_Instance_Type_Associated_With_Virtual_Bus
-      (Port                : Node_Id) return Node_Id
+     (Port : Node_Id) return Node_Id
    is
-      Virtual_Buses        : List_Id;
-      Virtual_Bus          : Node_Id;
-      Implementation       : Node_Id;
-      Property_Node        : Node_Id;
-      Tmp_Node             : Node_Id;
-      VB_Type              : Node_Id;
+      Virtual_Buses  : List_Id;
+      Virtual_Bus    : Node_Id;
+      Implementation : Node_Id;
+      Property_Node  : Node_Id;
+      Tmp_Node       : Node_Id;
+      VB_Type        : Node_Id;
    begin
       Virtual_Buses := Get_Associated_Virtual_Buses (Port);
 
@@ -3380,9 +3407,9 @@ package body Ocarina.Backends.Utils is
       Tmp_Node := ATN.First_Node (Virtual_Buses);
 
       while Present (Tmp_Node) loop
-         Virtual_Bus := ATN.Entity (Tmp_Node);
-         Property_Node := Look_For_Property_In_Declarative
-            (Virtual_Bus, "implemented_as");
+         Virtual_Bus   := ATN.Entity (Tmp_Node);
+         Property_Node :=
+           Look_For_Property_In_Declarative (Virtual_Bus, "implemented_as");
 
          --  Now, we are trying to catch the value of the "Implemented_As"
          --  property of the virtual bus. The virtual bus should have
@@ -3399,11 +3426,14 @@ package body Ocarina.Backends.Utils is
 
          --  Here, get the type we use to marshall data
 
-         VB_Type := Look_For_Subcomponent_In_Declarative
-            (Implementation, "marshalling_type");
+         VB_Type :=
+           Look_For_Subcomponent_In_Declarative
+             (Implementation,
+              "marshalling_type");
 
-         if VB_Type /= No_Node and then
-            ATN.Default_Instance (VB_Type) /= No_Node then
+         if VB_Type /= No_Node
+           and then ATN.Default_Instance (VB_Type) /= No_Node
+         then
             return ATN.Default_Instance (VB_Type);
          end if;
 
@@ -3417,14 +3447,15 @@ package body Ocarina.Backends.Utils is
    -- Get_Associated_Virtual_Buses --
    ----------------------------------
 
-   function Get_Associated_Virtual_Buses (Port : Node_Id) return List_Id
-   is
-      Port_Spec      : Node_Id;
-      Property_Node  : Node_Id;
+   function Get_Associated_Virtual_Buses (Port : Node_Id) return List_Id is
+      Port_Spec     : Node_Id;
+      Property_Node : Node_Id;
    begin
-      Port_Spec := Corresponding_Declaration (Port);
-      Property_Node := Look_For_Property_In_Declarative
-         (Port_Spec, "allowed_connection_binding_class");
+      Port_Spec     := Corresponding_Declaration (Port);
+      Property_Node :=
+        Look_For_Property_In_Declarative
+          (Port_Spec,
+           "allowed_connection_binding_class");
 
       --  We are looking for the Allowed_Connection_Binding_Class
       --  on the port. A list of virtual bus should be associated
@@ -3432,8 +3463,9 @@ package body Ocarina.Backends.Utils is
       --  the protocols we use to pack/unpack data before/after
       --  network send.
 
-      if Property_Node /= No_Node and then
-         ATN.Expanded_Multi_Value (Property_Node) /= No_List then
+      if Property_Node /= No_Node
+        and then ATN.Expanded_Multi_Value (Property_Node) /= No_List
+      then
          return ATN.Expanded_Multi_Value (Property_Node);
       else
          return No_List;
@@ -3445,34 +3477,41 @@ package body Ocarina.Backends.Utils is
    ---------------------------------------
 
    function Look_For_Property_In_Declarative
-      (Component : Node_Id; Property_Name : String)
-      return Node_Id
+     (Component     : Node_Id;
+      Property_Name : String) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-      Tmp : Node_Id;
-      Property_In_Type        : Node_Id := No_Node;
-      Property_In_Inherited   : Node_Id := No_Node;
+      Tmp                   : Node_Id;
+      Property_In_Type      : Node_Id := No_Node;
+      Property_In_Inherited : Node_Id := No_Node;
    begin
-      Tmp := Find_Property_Association_From_Name
-         (ATN.Properties (Component),
-         Property_Name,
-         No_Name);
+      Tmp :=
+        Find_Property_Association_From_Name
+          (ATN.Properties (Component),
+           Property_Name,
+           No_Name);
       if Tmp /= No_Node then
          return ATN.Property_Association_Value (Tmp);
       else
          if ATN.Kind (Component) = ATN.K_Component_Implementation then
-            Property_In_Type := Look_For_Property_In_Declarative
-               (ATN.Corresponding_Entity
-                  (ATN.Component_Type_Identifier (Component)), Property_Name);
+            Property_In_Type :=
+              Look_For_Property_In_Declarative
+                (ATN.Corresponding_Entity
+                   (ATN.Component_Type_Identifier (Component)),
+                 Property_Name);
          end if;
 
-         if (ATN.Kind (Component) = ATN.K_Component_Type or else
-            ATN.Kind (Component) = ATN.K_Component_Implementation) and then
-            ATN.Parent (Component) /= No_Node then
-            Property_In_Inherited := Look_For_Property_In_Declarative
-               (ATN.Entity (ATN.Parent (Component)), Property_Name);
+         if
+           (ATN.Kind (Component) = ATN.K_Component_Type
+            or else ATN.Kind (Component) = ATN.K_Component_Implementation)
+           and then ATN.Parent (Component) /= No_Node
+         then
+            Property_In_Inherited :=
+              Look_For_Property_In_Declarative
+                (ATN.Entity (ATN.Parent (Component)),
+                 Property_Name);
          end if;
       end if;
 
@@ -3491,8 +3530,8 @@ package body Ocarina.Backends.Utils is
    -------------------------------------------
 
    function Look_For_Subcomponent_In_Declarative
-      (Component : Node_Id; Subcomponent_Name : String)
-      return Node_Id
+     (Component         : Node_Id;
+      Subcomponent_Name : String) return Node_Id
    is
       Tmp_Node       : Node_Id;
       Subcomponent   : Node_Id;
@@ -3505,8 +3544,9 @@ package body Ocarina.Backends.Utils is
          while Present (Tmp_Node) loop
             Subcomponent := ATN.Entity (ATN.Entity_Ref (Tmp_Node));
 
-            if ATN.Display_Name
-               (ATN.Identifier (Tmp_Node)) = Subcomponent_N then
+            if ATN.Display_Name (ATN.Identifier (Tmp_Node)) =
+              Subcomponent_N
+            then
                return Subcomponent;
             end if;
             Tmp_Node := ATN.Next_Node (Tmp_Node);
@@ -3520,10 +3560,9 @@ package body Ocarina.Backends.Utils is
    -- Is_Pure_Device_Port  --
    --------------------------
 
-   function Is_Pure_Device_Port (Port : Node_Id) return Boolean
-   is
+   function Is_Pure_Device_Port (Port : Node_Id) return Boolean is
       Other_Ports : List_Id;
-      Tmp : Node_Id;
+      Tmp         : Node_Id;
    begin
       if Port = No_Node then
          return False;
@@ -3564,12 +3603,13 @@ package body Ocarina.Backends.Utils is
 
       type Browsing_Kind is (By_Source, By_Destination);
 
-      function Is_Using_Virtual_Bus_Rec (Port : Node_Id;
-                                         Method : Browsing_Kind)
-                                         return Boolean is
-         Source_Port       : Node_Id;
-         Destination_Port  : Node_Id;
-         Tmp               : Node_Id;
+      function Is_Using_Virtual_Bus_Rec
+        (Port   : Node_Id;
+         Method : Browsing_Kind) return Boolean
+      is
+         Source_Port      : Node_Id;
+         Destination_Port : Node_Id;
+         Tmp              : Node_Id;
       begin
 
          if Get_Associated_Virtual_Buses (Port) /= No_List then
@@ -3582,8 +3622,9 @@ package body Ocarina.Backends.Utils is
          --  We are now in the applicative domain, no need
          --  to browse further the component hierarchy.
 
-         if Method = By_Source and then
-            not AAU.Is_Empty (AIN.Sources (Port)) then
+         if Method = By_Source
+           and then not AAU.Is_Empty (AIN.Sources (Port))
+         then
             Tmp := AIN.First_Node (AIN.Sources (Port));
 
             while Present (Tmp) loop
@@ -3598,8 +3639,9 @@ package body Ocarina.Backends.Utils is
             end loop;
          end if;
 
-         if Method = By_Destination and then
-            not AAU.Is_Empty (AIN.Destinations (Port)) then
+         if Method = By_Destination
+           and then not AAU.Is_Empty (AIN.Destinations (Port))
+         then
             Tmp := AIN.First_Node (AIN.Destinations (Port));
 
             while Present (Tmp) loop
@@ -3619,8 +3661,8 @@ package body Ocarina.Backends.Utils is
       end Is_Using_Virtual_Bus_Rec;
    begin
       if not AIN.Is_Data (Port) then
-         raise Program_Error with
-           "Call to Is_Using_Virtual_Bus with non DATA port";
+         raise Program_Error
+           with "Call to Is_Using_Virtual_Bus with non DATA port";
       end if;
 
       if AIN.Is_In (Port) then
@@ -3635,11 +3677,13 @@ package body Ocarina.Backends.Utils is
    --  Get_Corresponding_Port_In_Component  --
    -------------------------------------------
 
-   function Get_Corresponding_Port_In_Component (Port : Node_Id) return Node_Id
+   function Get_Corresponding_Port_In_Component
+     (Port : Node_Id) return Node_Id
    is
       function Get_Corresponding_Port_In_Component_Rec
-         (Port : Node_Id; Parent_Searched : Node_Id; Method : Browsing_Kind)
-         return Node_Id
+        (Port            : Node_Id;
+         Parent_Searched : Node_Id;
+         Method          : Browsing_Kind) return Node_Id
       is
          L : List_Id;
          T : Node_Id;
@@ -3662,8 +3706,11 @@ package body Ocarina.Backends.Utils is
          T := First_Node (L);
 
          while Present (T) loop
-            R := Get_Corresponding_Port_In_Component_Rec
-               (Item (T), Parent_Searched, Method);
+            R :=
+              Get_Corresponding_Port_In_Component_Rec
+                (Item (T),
+                 Parent_Searched,
+                 Method);
 
             if R /= No_Node then
                return R;
@@ -3674,19 +3721,19 @@ package body Ocarina.Backends.Utils is
 
          return No_Node;
       end Get_Corresponding_Port_In_Component_Rec;
-      Parent : Node_Id;
-      Tmp : Node_Id;
-      R : Node_Id;
-      L : List_Id;
+      Parent    : Node_Id;
+      Tmp       : Node_Id;
+      R         : Node_Id;
+      L         : List_Id;
       My_Method : Browsing_Kind;
    begin
       Parent := Parent_Component (Port);
 
       if Is_In (Port) then
-         L := Destinations (Port);
+         L         := Destinations (Port);
          My_Method := By_Destination;
       else
-         L := Sources (Port);
+         L         := Sources (Port);
          My_Method := By_Source;
       end if;
 
@@ -3697,8 +3744,11 @@ package body Ocarina.Backends.Utils is
       Tmp := First_Node (L);
 
       while Present (Tmp) loop
-         R := Get_Corresponding_Port_In_Component_Rec
-            (Item (Tmp), Parent, My_Method);
+         R :=
+           Get_Corresponding_Port_In_Component_Rec
+             (Item (Tmp),
+              Parent,
+              My_Method);
          if R /= No_Node then
             return R;
          end if;
@@ -3712,13 +3762,14 @@ package body Ocarina.Backends.Utils is
    --  Process_Use_Default_Sockets  --
    -----------------------------------
 
-   function Process_Use_Defaults_Sockets (The_Process : Node_Id)
-      return Boolean is
-      C               : Node_Id;
-      F               : Node_Id;
-      B               : Node_Id;
-      C_End           : Node_Id;
-      End_List        : List_Id;
+   function Process_Use_Defaults_Sockets
+     (The_Process : Node_Id) return Boolean
+   is
+      C        : Node_Id;
+      F        : Node_Id;
+      B        : Node_Id;
+      C_End    : Node_Id;
+      End_List : List_Id;
    begin
       if not AAU.Is_Empty (Features (The_Process)) then
          F := First_Node (Features (The_Process));
@@ -3744,8 +3795,9 @@ package body Ocarina.Backends.Utils is
 
                      B := Get_Bound_Bus (C);
 
-                     if Get_Transport_API (B, The_Process)
-                       = Transport_BSD_Sockets then
+                     if Get_Transport_API (B, The_Process) =
+                       Transport_BSD_Sockets
+                     then
                         return True;
                      end if;
 
@@ -3767,8 +3819,7 @@ package body Ocarina.Backends.Utils is
    --  Get_Associated_Bus  --
    --------------------------
 
-   function Get_Associated_Bus (Port : Node_Id)
-      return Node_Id is
+   function Get_Associated_Bus (Port : Node_Id) return Node_Id is
       C               : Node_Id;
       F               : Node_Id;
       B               : Node_Id;

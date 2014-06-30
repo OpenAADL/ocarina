@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -44,8 +44,7 @@ package body Ocarina.Builder.AADL.Annexes is
       Annex_Name : Types.Node_Id;
       Namespace  : Types.Node_Id;
       Annex_Kind : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind;
-      In_Modes   : Types.Node_Id := Types.No_Node)
-     return Types.Node_Id;
+      In_Modes   : Types.Node_Id := Types.No_Node) return Types.Node_Id;
 
    -------------------
    -- Add_New_Annex --
@@ -56,8 +55,7 @@ package body Ocarina.Builder.AADL.Annexes is
       Annex_Name : Types.Node_Id;
       Namespace  : Types.Node_Id;
       Annex_Kind : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind;
-      In_Modes   : Types.Node_Id := Types.No_Node)
-     return Types.Node_Id
+      In_Modes   : Types.Node_Id := Types.No_Node) return Types.Node_Id
    is
       use Types;
       use Ocarina.Builder.AADL.Components;
@@ -65,21 +63,24 @@ package body Ocarina.Builder.AADL.Annexes is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      pragma Assert (Annex_Name /= No_Node
-                     and then Kind (Annex_Name) = K_Identifier);
+      pragma Assert
+        (Annex_Name /= No_Node and then Kind (Annex_Name) = K_Identifier);
       pragma Assert (Namespace /= No_Node);
       pragma Assert
         ((Annex_Kind = K_Annex_Subclause
-            and then (Kind (Namespace) = K_Component_Implementation
-                      or else Kind (Namespace) = K_Package_Specification
-                      or else Kind (Namespace) = K_Component_Type
-                      or else Kind (Namespace) = K_Feature_Group_Type))
-         or else (Annex_Kind = K_Annex_Library
-                  and then (Kind (Namespace) = K_Package_Specification
-                            or else Kind (Namespace) = K_AADL_Specification)));
+          and then
+          (Kind (Namespace) = K_Component_Implementation
+           or else Kind (Namespace) = K_Package_Specification
+           or else Kind (Namespace) = K_Component_Type
+           or else Kind (Namespace) = K_Feature_Group_Type))
+         or else
+         (Annex_Kind = K_Annex_Library
+          and then
+          (Kind (Namespace) = K_Package_Specification
+           or else Kind (Namespace) = K_AADL_Specification)));
 
-      Node : constant Node_Id := New_Node (Annex_Kind, Loc);
-      Success : Boolean := True;
+      Node    : constant Node_Id := New_Node (Annex_Kind, Loc);
+      Success : Boolean          := True;
    begin
       Set_Identifier (Node, Annex_Name);
       Set_Corresponding_Entity (Annex_Name, Node);
@@ -112,16 +113,17 @@ package body Ocarina.Builder.AADL.Annexes is
 
    function Set_Annex_Content
      (Annex : Types.Node_Id;
-      Text  : Types.Name_Id)
-     return Boolean
+      Text  : Types.Name_Id) return Boolean
    is
       use Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      pragma Assert (Annex /= No_Node
-                     and then (Kind (Annex) = K_Annex_Subclause
-                               or else Kind (Annex) = K_Annex_Library));
+      pragma Assert
+        (Annex /= No_Node
+         and then
+         (Kind (Annex) = K_Annex_Subclause
+          or else Kind (Annex) = K_Annex_Library));
 
       Content : constant Node_Id := New_Node (K_Annex_Content, Loc (Annex));
    begin
@@ -138,18 +140,18 @@ package body Ocarina.Builder.AADL.Annexes is
      (Loc        : Locations.Location;
       Annex_Name : Types.Node_Id;
       Namespace  : Types.Node_Id;
-      In_Modes   : Types.Node_Id)
-     return Types.Node_Id
+      In_Modes   : Types.Node_Id) return Types.Node_Id
    is
       use Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
    begin
-      return Add_New_Annex (Loc,
-                            Annex_Name,
-                            Namespace,
-                            K_Annex_Subclause,
-                            In_Modes);
+      return Add_New_Annex
+          (Loc,
+           Annex_Name,
+           Namespace,
+           K_Annex_Subclause,
+           In_Modes);
    end Add_New_Annex_Subclause;
 
    ---------------------------
@@ -160,16 +162,13 @@ package body Ocarina.Builder.AADL.Annexes is
      (Loc        : Locations.Location;
       Annex_Name : Types.Node_Id;
       Namespace  : Types.Node_Id;
-      Is_Private : Boolean             := False)
-     return Types.Node_Id
+      Is_Private : Boolean := False) return Types.Node_Id
    is
       use Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-      Node : constant Node_Id := Add_New_Annex (Loc,
-                                                Annex_Name,
-                                                Namespace,
-                                                K_Annex_Library);
+      Node : constant Node_Id :=
+        Add_New_Annex (Loc, Annex_Name, Namespace, K_Annex_Library);
    begin
       Set_Is_Private (Node, Is_Private);
       return Node;
@@ -183,8 +182,7 @@ package body Ocarina.Builder.AADL.Annexes is
      (Loc              : Locations.Location;
       Container        : Types.Node_Id;
       Annex_Identifier : Types.Node_Id;
-      List_Identifiers : Types.List_Id)
-     return Types.Node_Id
+      List_Identifiers : Types.List_Id) return Types.Node_Id
    is
       use Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;

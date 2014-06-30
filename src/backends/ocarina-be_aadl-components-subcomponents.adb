@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -67,7 +67,7 @@ package body Ocarina.BE_AADL.Components.Subcomponents is
       List_Node      : Node_Id;
 
    begin
-      Subcomp_Array := Array_Dimensions (Node);
+      Subcomp_Array  := Array_Dimensions (Node);
       Proto_Bindings := Prototype_Bindings (Node);
 
       Write_Indentation;

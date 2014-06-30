@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,12 +42,12 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
 
    type Token_Type is
      (
-      --   Token name      Token type
-      --   Keywords
-      Tok_Null,            -- NULL   **** First Keyword
+   --   Token name      Token type
+   --   Keywords
+   Tok_Null,            -- NULL   **** First Keyword
       Tok_Module,          -- MODULE
 
-      --  Graphic Characters
+   --  Graphic Characters
       Tok_Xor,             -- ^
       Tok_Sharp,           -- #
       Tok_Mod,             -- %
@@ -86,10 +86,9 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
 
    Token_Image : array (Token_Type) of Name_Id;
 
-   subtype Keyword_Type is Token_Type
-     range Tok_Null .. Tok_Module;
+   subtype Keyword_Type is Token_Type range Tok_Null .. Tok_Module;
 
-   type Operator_Type  is
+   type Operator_Type is
      (Op_Not,             -- not
       Op_And,             -- and
       Op_In,              -- in
@@ -117,11 +116,11 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
       Op_None);           -- No operation
 
    Operator_Image : array
-     (Operator_Type'Pos (Op_And) ..  Operator_Type'Pos (Op_Vertical_Bar))
-     of Name_Id;
+   (Operator_Type'Pos (Op_And) ..
+        Operator_Type'Pos (Op_Vertical_Bar)) of Name_Id;
 
-   subtype Keyword_Operator is Operator_Type
-     range Operator_Type'First .. Op_Or_Else;
+   subtype Keyword_Operator is
+     Operator_Type range Operator_Type'First .. Op_Or_Else;
 
    function Length (L : List_Id) return Natural;
 
@@ -131,8 +130,9 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
 
    procedure Initialize;
 
-   function New_List (Kind : ASN1_Nodes.Node_Kind; From : Node_Id := No_Node)
-     return List_Id;
+   function New_List
+     (Kind : ASN1_Nodes.Node_Kind;
+      From : Node_Id := No_Node) return List_Id;
 
    function Image (O : Operator_Type) return String;
 
@@ -147,18 +147,20 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    procedure Append_Node_To_List (E : Node_Id; L : List_Id);
 
    function Remove_Suffix_From_Name
-     (Suffix : String; Name   : Name_Id) return Name_Id;
+     (Suffix : String;
+      Name   : Name_Id) return Name_Id;
 
    function Add_Suffix_To_Name
-     (Suffix : String; Name   : Name_Id) return Name_Id;
+     (Suffix : String;
+      Name   : Name_Id) return Name_Id;
 
    function Add_Prefix_To_Name
-     (Prefix : String; Name   : Name_Id) return Name_Id;
+     (Prefix : String;
+      Name   : Name_Id) return Name_Id;
 
    function New_Node
      (Kind : ASN1_Nodes.Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id;
+      From : Node_Id := No_Node) return Node_Id;
 
    procedure New_Token (T : Token_Type; I : String := "");
 
@@ -173,8 +175,9 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    --  Build a node that describes a member of an enumeration but
    --  does not associate any value with it.
 
-   function Make_Enumerated_Value (Name : Name_Id; V : Unsigned_Long_Long)
-      return Node_Id;
+   function Make_Enumerated_Value
+     (Name : Name_Id;
+      V    : Unsigned_Long_Long) return Node_Id;
    --  Make a node that describes a member of an enumeration and associated
    --  an integer value to it. The first parameter is the name of the
    --  enumeration while the second is its corresponding value.
@@ -188,8 +191,9 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    --  of the enumeration. The returned node_id can be associated
    --  with a type definition.
 
-   function Make_Type_Definition (Name : Name_Id; Decl : Node_Id)
-     return Node_Id;
+   function Make_Type_Definition
+     (Name : Name_Id;
+      Decl : Node_Id) return Node_Id;
    --  Make a Type_Definition node. First parameter is the name
    --  of the type, the second one is the declaration of this type
    --  Enumerated/Choice/... node.
@@ -202,7 +206,8 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    --  Make a sequence that contains the members given in parameter.
 
    function Make_Sequence_Member
-      (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id;
+     (Member_Name : Name_Id;
+      Member_Type : Node_Id) return Node_Id;
    --  Make a sequence member identified by Member_Name which has the
    --  type Member_Type.
 
@@ -210,13 +215,14 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    --  Make a choice that contains the members given in parameter.
 
    function Make_Choice_Member
-      (Member_Name : Name_Id; Member_Type : Node_Id) return Node_Id;
+     (Member_Name : Name_Id;
+      Member_Type : Node_Id) return Node_Id;
    --  Make a choice member identified by Member_Name which has the
    --  type Member_Type.
 
-   function Make_Type_Designator (Type_Name       : Node_Id;
-                                 Type_Constraints : Node_Id := No_Node)
-   return Node_Id;
+   function Make_Type_Designator
+     (Type_Name        : Node_Id;
+      Type_Constraints : Node_Id := No_Node) return Node_Id;
    --  Make a node that points to a type. The type name is either a reference
    --  to a type node, either a defining_identifier node that contains
    --  the name of the pointed type. The second parameter is optional
@@ -225,9 +231,8 @@ package Ocarina.Backends.ASN1_Tree.Nutils is
    --  information.
 
    function Make_Type_Constraints
-      (Size_Up  : Value_Id := No_Value;
-      Size_Down : Value_Id := No_Value)
-   return Node_Id;
+     (Size_Up   : Value_Id := No_Value;
+      Size_Down : Value_Id := No_Value) return Node_Id;
    --  Make the Type_Constraints node. This node contains all potential
    --  constraints that a type designator can contain. So, all parameters
    --  are not mandatory and have a default value.

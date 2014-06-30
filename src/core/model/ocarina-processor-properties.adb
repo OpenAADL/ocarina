@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -48,8 +48,7 @@ package body Ocarina.Processor.Properties is
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
    function Evaluate_Property_Value
-     (Property_Value, Reference_Property : Node_Id)
-     return Node_Id;
+     (Property_Value, Reference_Property : Node_Id) return Node_Id;
    --  Compute the value by fetching the property terms and applying
    --  the operations described in the property value. Return the
    --  first evaluated value (the following ones are chainded using
@@ -59,14 +58,11 @@ package body Ocarina.Processor.Properties is
    --  indicate what initiated the problem.
 
    function Expand_Property_Value
-     (Property, Reference_Property : Node_Id)
-     return Node_Id;
+     (Property, Reference_Property : Node_Id) return Node_Id;
    --  expand the property terms of the property, and return all the
    --  property values
 
-   function Expand_Property_Type
-     (Property_Type : Node_Id)
-     return Node_Id;
+   function Expand_Property_Type (Property_Type : Node_Id) return Node_Id;
    --  computes the actual property type, by resolving references
 
    function Resolve_Type (Root, Property : Node_Id) return Boolean;
@@ -78,34 +74,23 @@ package body Ocarina.Processor.Properties is
    --  the property association.
 
    function Resolve_Properties
-     (Properties : List_Id;
-      Root, Container : Node_Id)
-     return Boolean;
+     (Properties      : List_Id;
+      Root, Container : Node_Id) return Boolean;
 
    function Resolve_Properties_Of_Component_Type
-     (Root, Component : Node_Id)
-     return Boolean;
+     (Root, Component : Node_Id) return Boolean;
 
    function Resolve_Properties_Of_Component_Implementation
-     (Root, Component : Node_Id)
-     return Boolean;
+     (Root, Component : Node_Id) return Boolean;
 
    function Resolve_Properties_Of_Port_Group_Type
-     (Root, Port_Group : Node_Id)
-     return Boolean;
+     (Root, Port_Group : Node_Id) return Boolean;
 
-   function Resolve_All_Properties
-     (Root : Node_Id)
-     return Boolean;
+   function Resolve_All_Properties (Root : Node_Id) return Boolean;
 
-   function Resolve_All_Property_Names
-     (Root : Node_Id)
-     return Boolean;
+   function Resolve_All_Property_Names (Root : Node_Id) return Boolean;
 
-   procedure Fetch
-     (U       :     Node_Id;
-      Fetched : out Node_Id;
-      Base    : out Boolean);
+   procedure Fetch (U : Node_Id; Fetched : out Node_Id; Base : out Boolean);
    --  Return the defining identifier corresponding to the
    --  multiplier U in the corresponding units type. Base is set to
    --  True if the fetched identifier is the base unit
@@ -139,8 +124,8 @@ package body Ocarina.Processor.Properties is
       pragma Assert (Kind (Root) = K_AADL_Specification);
 
       List_Node, Property_Node, Declaration_Node : Node_Id;
-      Success : Boolean := True;
-      Diffused_Property : Node_Id;
+      Success                                    : Boolean := True;
+      Diffused_Property                          : Node_Id;
 
    begin
       if Declarations (Root) /= No_List then
@@ -149,49 +134,51 @@ package body Ocarina.Processor.Properties is
          while List_Node /= No_Node loop
             if Kind (List_Node) = K_Package_Specification
               and then
-              Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node) /= No_List
+                Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node) /=
+                No_List
               and then Declarations (List_Node) /= No_List
             then
-               Property_Node := First_Node
-                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node));
+               Property_Node :=
+                 First_Node
+                   (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node));
 
                while Property_Node /= No_Node loop
-                  Declaration_Node :=
-                    First_Node (Declarations (List_Node));
+                  Declaration_Node := First_Node (Declarations (List_Node));
 
                   while Declaration_Node /= No_Node loop
-                     if Kind (Declaration_Node)
-                       /= K_Name_Visibility_declaration
-                       and then Is_Private (Property_Node)
-                       = Is_Private (Declaration_Node)
+                     if Kind (Declaration_Node) /=
+                       K_Name_Visibility_Declaration
+                       and then
+                         Is_Private (Property_Node) =
+                         Is_Private (Declaration_Node)
                        and then Property_Can_Apply_To_Entity
-                       (Property_Node, Declaration_Node)
+                         (Property_Node,
+                          Declaration_Node)
                      then
-                        Diffused_Property := Add_New_Property_Association
-                          (Loc => Loc (Property_Node),
-                           Name => Duplicate_Identifier
-                             (Identifier (Property_Node)),
-                           Property_Name => Property_Name
-                             (Property_Node),
-                           Container => Declaration_Node,
-                           In_Binding => In_Binding (Property_Node),
-                           In_Modes => In_Modes (Property_Node),
-                           Property_Value =>
-                             Property_Association_Value (Property_Node),
-                           Is_Constant => Is_Constant
-                             (Property_Node),
-                           Is_Access => Is_Access (Property_Node),
-                           Is_Additive => Is_Additive_Association
-                             (Property_Node),
-                           Applies_To => Applies_To_Prop
-                             (Property_Node),
-                           Check_For_Conflicts => True,
-                           Override => False);
+                        Diffused_Property :=
+                          Add_New_Property_Association
+                            (Loc  => Loc (Property_Node),
+                             Name =>
+                               Duplicate_Identifier
+                                 (Identifier (Property_Node)),
+                             Property_Name  => Property_Name (Property_Node),
+                             Container      => Declaration_Node,
+                             In_Binding     => In_Binding (Property_Node),
+                             In_Modes       => In_Modes (Property_Node),
+                             Property_Value =>
+                               Property_Association_Value (Property_Node),
+                             Is_Constant => Is_Constant (Property_Node),
+                             Is_Access   => Is_Access (Property_Node),
+                             Is_Additive =>
+                               Is_Additive_Association (Property_Node),
+                             Applies_To => Applies_To_Prop (Property_Node),
+                             Check_For_Conflicts => True,
+                             Override            => False);
                         --  We add a new property, by duplicating the
                         --  one of the package
 
-                        Success := Success
-                          and then Diffused_Property /= No_Node;
+                        Success :=
+                          Success and then Diffused_Property /= No_Node;
                      end if;
 
                      Declaration_Node := Next_Node (Declaration_Node);
@@ -216,10 +203,7 @@ package body Ocarina.Processor.Properties is
    -- Resolve_Type --
    ------------------
 
-   function Resolve_Type
-     (Root, Property : Node_Id)
-     return Boolean
-   is
+   function Resolve_Type (Root, Property : Node_Id) return Boolean is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Entities;
       use Ocarina.Analyzer.AADL.Queries;
@@ -231,7 +215,7 @@ package body Ocarina.Processor.Properties is
 
       Prop_Type : constant Node_Id := Property_Name_Type (Property);
       Expanded_Value, Prop_Value : Node_Id;
-      Success : Boolean := True;
+      Success                    : Boolean          := True;
 
    begin
       Set_Expanded_Type_Designator
@@ -246,7 +230,7 @@ package body Ocarina.Processor.Properties is
       end if;
 
       if Default_Value (Property) /= No_Node then
-         Prop_Value := Default_Value (Property);
+         Prop_Value     := Default_Value (Property);
          Expanded_Value := Expand_Property_Value (Property, Property);
 
          if Expanded_Value = No_Node then
@@ -271,10 +255,12 @@ package body Ocarina.Processor.Properties is
 
          else
             Set_Expanded_Single_Value (Prop_Value, No_Node);
-            Set_Expanded_Multi_Value (Prop_Value, New_List
-                                      (K_List_Id, Loc (Expanded_Value)));
-            Append_Node_To_List (Expanded_Value,
-                                 Expanded_Multi_Value (Prop_Value));
+            Set_Expanded_Multi_Value
+              (Prop_Value,
+               New_List (K_List_Id, Loc (Expanded_Value)));
+            Append_Node_To_List
+              (Expanded_Value,
+               Expanded_Multi_Value (Prop_Value));
          end if;
       end if;
 
@@ -285,10 +271,7 @@ package body Ocarina.Processor.Properties is
    -- Expand_Property_Type --
    --------------------------
 
-   function Expand_Property_Type
-     (Property_Type : Node_Id)
-     return Node_Id
-   is
+   function Expand_Property_Type (Property_Type : Node_Id) return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Entities;
 
@@ -303,54 +286,62 @@ package body Ocarina.Processor.Properties is
 
             Expanded_Type :=
               Expand_Property_Type (Property_Type_Designator (Expanded_Type));
-            --  Then we expand it also
+         --  Then we expand it also
 
          when K_Number_Range =>
             Expanded_Type := New_Node (K_Number_Range, Loc (Property_Type));
             Set_Lower_Bound
               (Expanded_Type,
-               Evaluate_Property_Value (Lower_Bound (Property_Type),
-                                        Property_Type));
+               Evaluate_Property_Value
+                 (Lower_Bound (Property_Type),
+                  Property_Type));
             Set_Upper_Bound
               (Expanded_Type,
-               Evaluate_Property_Value (Upper_Bound (Property_Type),
-                                        Property_Type));
+               Evaluate_Property_Value
+                 (Upper_Bound (Property_Type),
+                  Property_Type));
 
-            if (Upper_Bound (Expanded_Type) /= No_Node
-                and then Kind (Upper_Bound (Expanded_Type)) = K_Invalid_Node)
-              or else (Lower_Bound (Expanded_Type) /= No_Node
-                       and then Kind (Lower_Bound (Expanded_Type)) =
-                       K_Invalid_Node)
+            if
+              (Upper_Bound (Expanded_Type) /= No_Node
+               and then Kind (Upper_Bound (Expanded_Type)) = K_Invalid_Node)
+              or else
+              (Lower_Bound (Expanded_Type) /= No_Node
+               and then Kind (Lower_Bound (Expanded_Type)) = K_Invalid_Node)
             then
                Set_Kind (Expanded_Type, K_Invalid_Node);
             end if;
 
-         when K_Real_Type
-           | K_Integer_Type =>
+         when K_Real_Type | K_Integer_Type =>
             Expanded_Type :=
               New_Node (Kind (Property_Type), Loc (Property_Type));
-            Set_Unit_Designator (Expanded_Type,
-                                 Unit_Designator (Property_Type));
+            Set_Unit_Designator
+              (Expanded_Type,
+               Unit_Designator (Property_Type));
             if Type_Range (Property_Type) /= No_Node then
-               Set_Type_Range (Expanded_Type,
-                               New_Node (K_Number_Range,
-                                         Loc (Type_Range (Property_Type))));
-               Set_Lower_Bound (Type_Range (Expanded_Type),
-                                Evaluate_Property_Value
-                                (Lower_Bound (Type_Range (Property_Type)),
-                                 Property_Type));
-               Set_Upper_Bound (Type_Range (Expanded_Type),
-                                Evaluate_Property_Value
-                                (Upper_Bound (Type_Range (Property_Type)),
-                                 Property_Type));
+               Set_Type_Range
+                 (Expanded_Type,
+                  New_Node (K_Number_Range, Loc (Type_Range (Property_Type))));
+               Set_Lower_Bound
+                 (Type_Range (Expanded_Type),
+                  Evaluate_Property_Value
+                    (Lower_Bound (Type_Range (Property_Type)),
+                     Property_Type));
+               Set_Upper_Bound
+                 (Type_Range (Expanded_Type),
+                  Evaluate_Property_Value
+                    (Upper_Bound (Type_Range (Property_Type)),
+                     Property_Type));
 
-               if (Upper_Bound (Type_Range (Expanded_Type)) /= No_Node
-                   and then Kind (Upper_Bound (Type_Range (Expanded_Type))) =
-                   K_Invalid_Node)
-                 or else (Lower_Bound (Type_Range (Expanded_Type)) /= No_Node
-                          and then Kind (Lower_Bound
-                                         (Type_Range (Expanded_Type))) =
-                          K_Invalid_Node)
+               if
+                 (Upper_Bound (Type_Range (Expanded_Type)) /= No_Node
+                  and then
+                    Kind (Upper_Bound (Type_Range (Expanded_Type))) =
+                    K_Invalid_Node)
+                 or else
+                 (Lower_Bound (Type_Range (Expanded_Type)) /= No_Node
+                  and then
+                    Kind (Lower_Bound (Type_Range (Expanded_Type))) =
+                    K_Invalid_Node)
                then
                   Set_Kind (Expanded_Type, K_Invalid_Node);
                end if;
@@ -358,9 +349,9 @@ package body Ocarina.Processor.Properties is
 
          when K_Range_Type =>
             Expanded_Type := New_Node (K_Range_Type, Loc (Property_Type));
-            Set_Number_Type (Expanded_Type,
-                             Expand_Property_Type
-                             (Number_Type (Property_Type)));
+            Set_Number_Type
+              (Expanded_Type,
+               Expand_Property_Type (Number_Type (Property_Type)));
 
             if Number_Type (Expanded_Type) /= No_Node
               and then Kind (Number_Type (Expanded_Type)) = K_Invalid_Node
@@ -390,7 +381,7 @@ package body Ocarina.Processor.Properties is
 
       Prop_Value : constant Node_Id := Property_Association_Value (Property);
       Expanded_Value : Node_Id;
-      Success : Boolean := True;
+      Success        : Boolean          := True;
 
    begin
       Expanded_Value := Expand_Property_Value (Property, Property);
@@ -417,10 +408,12 @@ package body Ocarina.Processor.Properties is
 
       else
          Set_Expanded_Single_Value (Prop_Value, No_Node);
-         Set_Expanded_Multi_Value (Prop_Value, New_List
-                                   (K_List_Id, Loc (Expanded_Value)));
-         Append_Node_To_List (Expanded_Value,
-                              Expanded_Multi_Value (Prop_Value));
+         Set_Expanded_Multi_Value
+           (Prop_Value,
+            New_List (K_List_Id, Loc (Expanded_Value)));
+         Append_Node_To_List
+           (Expanded_Value,
+            Expanded_Multi_Value (Prop_Value));
       end if;
 
       return Success;
@@ -431,8 +424,7 @@ package body Ocarina.Processor.Properties is
    ---------------------------
 
    function Expand_Property_Value
-     (Property, Reference_Property : Node_Id)
-     return Node_Id
+     (Property, Reference_Property : Node_Id) return Node_Id
    is
       --  Take a property declaration and return its expanded value
 
@@ -450,8 +442,8 @@ package body Ocarina.Processor.Properties is
       pragma Assert (Reference_Property /= No_Node);
 
       Value, List_Node, Expanded_List_Node, Computed_Value : Node_Id;
-      Expanded_List : List_Id;
-      Undefined_Values : Boolean;
+      Expanded_List                                        : List_Id;
+      Undefined_Values                                     : Boolean;
    begin
       if Property = No_Node then
          return No_Node;
@@ -476,8 +468,8 @@ package body Ocarina.Processor.Properties is
          return Value;
 
       elsif Single_Value (Value) /= No_Node then
-         Computed_Value := Evaluate_Property_Value
-           (Single_Value (Value), Reference_Property);
+         Computed_Value :=
+           Evaluate_Property_Value (Single_Value (Value), Reference_Property);
 
          if Computed_Value /= No_Node then
             if Kind (Computed_Value) = K_List_Id then
@@ -496,9 +488,9 @@ package body Ocarina.Processor.Properties is
 
          return Computed_Value;
       else
-         List_Node := First_Node (Multi_Value (Value));
-         Expanded_List := New_List (K_List_Id,
-                                    Loc (Node_Id (Multi_Value (Value))));
+         List_Node     := First_Node (Multi_Value (Value));
+         Expanded_List :=
+           New_List (K_List_Id, Loc (Node_Id (Multi_Value (Value))));
          Undefined_Values := (List_Node /= No_Node);
          --  If the list is empty, then the value is defined. Else,
          --  the value may be undefined if all the elements of the
@@ -521,7 +513,8 @@ package body Ocarina.Processor.Properties is
                   end loop;
 
                   Append_List_To_List
-                    (List_Id (Computed_Value), Expanded_List);
+                    (List_Id (Computed_Value),
+                     Expanded_List);
                else
                   Expanded_List_Node := Computed_Value;
 
@@ -550,8 +543,7 @@ package body Ocarina.Processor.Properties is
    -----------------------------
 
    function Evaluate_Property_Value
-     (Property_Value, Reference_Property : Node_Id)
-     return Node_Id
+     (Property_Value, Reference_Property : Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Entities;
       use Ocarina.Analyzer.Messages;
@@ -575,38 +567,41 @@ package body Ocarina.Processor.Properties is
          or else Kind (Property_Value) = K_Component_Classifier_Term
          or else Kind (Property_Value) = K_Unique_Property_Const_Identifier
          or else Kind (Property_Value) = K_Record_Term
-         or else Ocarina.ME_AADL.Aadl_Tree.Entities.DNKE (Property_Value));
+         or else Ocarina.ME_AADL.AADL_Tree.Entities.DNKE (Property_Value));
 
       pragma Assert (Reference_Property /= No_Node);
 
       Evaluated_Value : Node_Id := No_Node;
-      Ref_Term : Node_Id := No_Node;
+      Ref_Term        : Node_Id := No_Node;
    begin
       if Property_Value = No_Node then
          Evaluated_Value := No_Node;
       else
          case Kind (Property_Value) is
             when K_Enumeration_Term =>
-               Evaluated_Value := New_Node (Kind (Property_Value),
-                                            Loc (Property_Value));
+               Evaluated_Value :=
+                 New_Node (Kind (Property_Value), Loc (Property_Value));
                Set_Identifier (Evaluated_Value, Identifier (Property_Value));
 
-               Set_Property_Set_Identifier (Evaluated_Value,
-                                            Property_Set_Identifier
-                                              (Property_Value));
+               Set_Property_Set_Identifier
+                 (Evaluated_Value,
+                  Property_Set_Identifier (Property_Value));
 
                Set_Entity (Evaluated_Value, Entity (Property_Value));
 
             when K_Unique_Property_Const_Identifier =>
-               Evaluated_Value := Expand_Property_Value
-                 (Get_Referenced_Entity (Property_Value), Reference_Property);
+               Evaluated_Value :=
+                 Expand_Property_Value
+                   (Get_Referenced_Entity (Property_Value),
+                    Reference_Property);
 
             when K_Literal =>
-               Evaluated_Value := New_Node (Kind (Property_Value),
-                                            Loc (Property_Value));
-               Set_Value (Evaluated_Value,
-                          New_Value (Value (Value (Property_Value))));
-               --  We clone the literal value
+               Evaluated_Value :=
+                 New_Node (Kind (Property_Value), Loc (Property_Value));
+               Set_Value
+                 (Evaluated_Value,
+                  New_Value (Value (Value (Property_Value))));
+            --  We clone the literal value
 
             when K_Number_Range_Term =>
                declare
@@ -614,26 +609,30 @@ package body Ocarina.Processor.Properties is
                   Evaluated_Upper_Bound,
                   Evaluated_Delta_Term : Node_Id;
                begin
-                  Evaluated_Value := New_Node (Kind (Property_Value),
-                                               Loc (Property_Value));
+                  Evaluated_Value :=
+                    New_Node (Kind (Property_Value), Loc (Property_Value));
                   Evaluated_Lower_Bound :=
                     Evaluate_Property_Value
-                    (Lower_Bound (Property_Value), Reference_Property);
+                      (Lower_Bound (Property_Value),
+                       Reference_Property);
                   Evaluated_Upper_Bound :=
                     Evaluate_Property_Value
-                    (Upper_Bound (Property_Value), Reference_Property);
+                      (Upper_Bound (Property_Value),
+                       Reference_Property);
                   Evaluated_Delta_Term :=
                     Evaluate_Property_Value
-                    (Delta_Term (Property_Value), Reference_Property);
+                      (Delta_Term (Property_Value),
+                       Reference_Property);
 
                   --  Check the consistency of the evaluated values
 
                   if Evaluated_Lower_Bound /= No_Node
-                    and then ((Kind (Evaluated_Lower_Bound) /= K_Literal
-                               and then Kind (Evaluated_Lower_Bound) /=
-                               K_Signed_AADLNumber)
-                              or else Next_Node (Evaluated_Lower_Bound) /=
-                              No_Node)
+                    and then
+                    ((Kind (Evaluated_Lower_Bound) /= K_Literal
+                      and then
+                        Kind (Evaluated_Lower_Bound) /=
+                        K_Signed_AADLNumber)
+                     or else Next_Node (Evaluated_Lower_Bound) /= No_Node)
                   then
                      Display_Inconsistency_In_Property_Values
                        (Property_Value,
@@ -643,11 +642,12 @@ package body Ocarina.Processor.Properties is
                   end if;
 
                   if Evaluated_Upper_Bound /= No_Node
-                    and then ((Kind (Evaluated_Upper_Bound) /= K_Literal
-                               and then Kind (Evaluated_Upper_Bound) /=
-                               K_Signed_AADLNumber)
-                              or else Next_Node (Evaluated_Upper_Bound) /=
-                              No_Node)
+                    and then
+                    ((Kind (Evaluated_Upper_Bound) /= K_Literal
+                      and then
+                        Kind (Evaluated_Upper_Bound) /=
+                        K_Signed_AADLNumber)
+                     or else Next_Node (Evaluated_Upper_Bound) /= No_Node)
                   then
                      Display_Inconsistency_In_Property_Values
                        (Property_Value,
@@ -657,11 +657,12 @@ package body Ocarina.Processor.Properties is
                   end if;
 
                   if Evaluated_Delta_Term /= No_Node
-                    and then ((Kind (Evaluated_Delta_Term) /= K_Literal
-                               and then Kind (Evaluated_Delta_Term) /=
-                               K_Signed_AADLNumber)
-                              or else Next_Node (Evaluated_Delta_Term) /=
-                              No_Node)
+                    and then
+                    ((Kind (Evaluated_Delta_Term) /= K_Literal
+                      and then
+                        Kind (Evaluated_Delta_Term) /=
+                        K_Signed_AADLNumber)
+                     or else Next_Node (Evaluated_Delta_Term) /= No_Node)
                   then
                      Display_Inconsistency_In_Property_Values
                        (Property_Value,
@@ -674,26 +675,28 @@ package body Ocarina.Processor.Properties is
 
                   if Evaluated_Lower_Bound /= No_Node
                     and then Evaluated_Upper_Bound /= No_Node
-                    and then (Evaluated_Delta_Term /= No_Node
-                              or else Delta_Term (Property_Value) = No_Node)
+                    and then
+                    (Evaluated_Delta_Term /= No_Node
+                     or else Delta_Term (Property_Value) = No_Node)
                   then
                      if Kind (Evaluated_Lower_Bound) /= K_Invalid_Node
                        and then Kind (Evaluated_Upper_Bound) /= K_Invalid_Node
-                       and then (Evaluated_Delta_Term = No_Node
-                                 or else Kind (Evaluated_Delta_Term) /=
-                                 K_Invalid_Node)
+                       and then
+                       (Evaluated_Delta_Term = No_Node
+                        or else Kind (Evaluated_Delta_Term) /= K_Invalid_Node)
                      then
                         --  If we could evaluate the lower and upper
                         --  bounds, and the delta term (unless there
                         --  was no original value), we store the
                         --  evaluated values
 
-                        Set_Lower_Bound (Evaluated_Value,
-                                         Evaluated_Lower_Bound);
-                        Set_Upper_Bound (Evaluated_Value,
-                                         Evaluated_Upper_Bound);
-                        Set_Delta_Term (Evaluated_Value,
-                                        Evaluated_Delta_Term);
+                        Set_Lower_Bound
+                          (Evaluated_Value,
+                           Evaluated_Lower_Bound);
+                        Set_Upper_Bound
+                          (Evaluated_Value,
+                           Evaluated_Upper_Bound);
+                        Set_Delta_Term (Evaluated_Value, Evaluated_Delta_Term);
                      else
                         --  If at least an evaluated value is invalid
 
@@ -707,53 +710,52 @@ package body Ocarina.Processor.Properties is
             when K_Reference_Term =>
                case Kind (Reference_Term (Property_Value)) is
                   when K_Entity_Reference =>
-                     Evaluated_Value := New_Node (Kind (Property_Value),
-                                                  Loc (Property_Value));
+                     Evaluated_Value :=
+                       New_Node (Kind (Property_Value), Loc (Property_Value));
 
-                     Ref_Term := New_Node (Kind (Reference_Term
-                                                   (Property_Value)),
-                                           Loc (Reference_Term
-                                                  (Property_Value)));
+                     Ref_Term :=
+                       New_Node
+                         (Kind (Reference_Term (Property_Value)),
+                          Loc (Reference_Term (Property_Value)));
                      Set_Identifier
                        (Ref_Term,
-                        Duplicate_Identifier (Identifier
-                                                (Reference_Term
-                                                   (Property_Value))));
-                     Set_Path (Ref_Term,
-                               Path (Reference_Term (Property_Value)));
-                     Set_Namespace_Path (Ref_Term,
-                                         Namespace_Path
-                                           (Reference_Term
-                                              (Property_Value)));
+                        Duplicate_Identifier
+                          (Identifier (Reference_Term (Property_Value))));
+                     Set_Path
+                       (Ref_Term,
+                        Path (Reference_Term (Property_Value)));
+                     Set_Namespace_Path
+                       (Ref_Term,
+                        Namespace_Path (Reference_Term (Property_Value)));
                      Set_Namespace_Identifier
-                       (Ref_Term, Duplicate_Identifier
+                       (Ref_Term,
+                        Duplicate_Identifier
                           (Namespace_Identifier
                              (Reference_Term (Property_Value))));
-                     Set_Referenced_Entity (Ref_Term,
-                                            Entity (Reference_Term
-                                                      (Property_Value)));
+                     Set_Referenced_Entity
+                       (Ref_Term,
+                        Entity (Reference_Term (Property_Value)));
 
                      Set_Reference_Term (Evaluated_Value, Ref_Term);
 
                   when K_Contained_Element_Path =>
-                     Evaluated_Value := New_Node (Kind (Property_Value),
-                                                  Loc (Property_Value));
+                     Evaluated_Value :=
+                       New_Node (Kind (Property_Value), Loc (Property_Value));
 
-                     Ref_Term := New_Node (Kind (Reference_Term
-                                                   (Property_Value)),
-                                           Loc (Reference_Term
-                                                  (Property_Value)));
-                     Set_List_Items (Ref_Term,
-                                     List_Items (Reference_Term
-                                                   (Property_Value)));
-                     Set_Referenced_Entity (Ref_Term,
-                                            Entity
-                                              (Reference_Term
-                                                 (Property_Value)));
+                     Ref_Term :=
+                       New_Node
+                         (Kind (Reference_Term (Property_Value)),
+                          Loc (Reference_Term (Property_Value)));
+                     Set_List_Items
+                       (Ref_Term,
+                        List_Items (Reference_Term (Property_Value)));
+                     Set_Referenced_Entity
+                       (Ref_Term,
+                        Entity (Reference_Term (Property_Value)));
 
-                     Set_Annex_Path (Ref_Term,
-                                     Annex_Path (Reference_Term
-                                                   (Property_Value)));
+                     Set_Annex_Path
+                       (Ref_Term,
+                        Annex_Path (Reference_Term (Property_Value)));
 
                      Set_Reference_Term (Evaluated_Value, Ref_Term);
 
@@ -762,16 +764,20 @@ package body Ocarina.Processor.Properties is
                end case;
 
             when K_Property_Term =>
-               Evaluated_Value := Expand_Property_Value
-                 (Get_Referenced_Entity (Property_Value), Reference_Property);
+               Evaluated_Value :=
+                 Expand_Property_Value
+                   (Get_Referenced_Entity (Property_Value),
+                    Reference_Property);
 
             when K_Minus_Numeric_Term =>
                declare
-                  Val : Value_Type;
+                  Val     : Value_Type;
                   Literal : Node_Id;
                begin
-                  Evaluated_Value := Evaluate_Property_Value
-                    (Numeric_Term (Property_Value), Reference_Property);
+                  Evaluated_Value :=
+                    Evaluate_Property_Value
+                      (Numeric_Term (Property_Value),
+                       Reference_Property);
 
                   if Evaluated_Value /= No_Node then
                      if Kind (Evaluated_Value) = K_Literal
@@ -783,38 +789,36 @@ package body Ocarina.Processor.Properties is
                        and then Next_Node (Evaluated_Value) = No_Node
                      then
                         Literal := Number_Value (Evaluated_Value);
-                        --  Since the number has been evaluated, the
-                        --  number_value can only be a literal
+                     --  Since the number has been evaluated, the
+                     --  number_value can only be a literal
 
                      else
                         Display_Inconsistency_In_Property_Values
                           (Property_Value,
                            Evaluated_Value,
                            Reference_Property);
-                        Literal := No_Node;
+                        Literal         := No_Node;
                         Evaluated_Value :=
                           New_Node (K_Invalid_Node, Loc (Property_Value));
                      end if;
 
                      if Literal /= No_Node then
-                        if Get_Value_Type (Value (Literal)).T =
-                          LT_Integer
-                        then
-                           Val := Get_Value_Type (Value (Literal));
-                           Val.ISign := not Get_Value_Type
-                             (Value (Literal)).ISign;
+                        if Get_Value_Type (Value (Literal)).T = LT_Integer then
+                           Val       := Get_Value_Type (Value (Literal));
+                           Val.ISign :=
+                             not Get_Value_Type (Value (Literal)).ISign;
                            Set_Value (Value (Literal), Val);
 
-                        elsif Get_Value_Type (Value (Literal)).T =
-                          LT_Real
-                        then
-                           Val := Get_Value_Type (Value (Literal));
+                        elsif Get_Value_Type (Value (Literal)).T = LT_Real then
+                           Val       := Get_Value_Type (Value (Literal));
                            Val.RSign := not Val.RSign;
                            Set_Value (Value (Literal), Val);
 
                         else
                            Display_Inconsistency_In_Property_Values
-                             (Property_Value, Literal, Reference_Property);
+                             (Property_Value,
+                              Literal,
+                              Reference_Property);
                            Evaluated_Value :=
                              New_Node (K_Invalid_Node, Loc (Property_Value));
                         end if;
@@ -840,13 +844,15 @@ package body Ocarina.Processor.Properties is
                declare
                   Evaluated_Number_Value : Node_Id;
                begin
-                  Evaluated_Value := New_Node (Kind (Property_Value),
-                                               Loc (Property_Value));
-                  Set_Unit_Identifier (Evaluated_Value,
-                                       Unit_Identifier (Property_Value));
+                  Evaluated_Value :=
+                    New_Node (Kind (Property_Value), Loc (Property_Value));
+                  Set_Unit_Identifier
+                    (Evaluated_Value,
+                     Unit_Identifier (Property_Value));
                   Evaluated_Number_Value :=
                     Evaluate_Property_Value
-                    (Number_Value (Property_Value), Reference_Property);
+                      (Number_Value (Property_Value),
+                       Reference_Property);
 
                   if Evaluated_Number_Value /= No_Node then
                      if Kind (Evaluated_Number_Value) /= K_Literal
@@ -858,8 +864,9 @@ package body Ocarina.Processor.Properties is
                            Reference_Property);
                         Set_Kind (Evaluated_Value, K_Invalid_Node);
                      else
-                        Set_Number_Value (Evaluated_Value,
-                                          Evaluated_Number_Value);
+                        Set_Number_Value
+                          (Evaluated_Value,
+                           Evaluated_Number_Value);
                      end if;
                   else
                      Evaluated_Value := No_Node;
@@ -870,16 +877,19 @@ package body Ocarina.Processor.Properties is
                declare
                   Val : Value_Type;
                begin
-                  Evaluated_Value := Evaluate_Property_Value
-                    (Boolean_Term (Property_Value), Reference_Property);
+                  Evaluated_Value :=
+                    Evaluate_Property_Value
+                      (Boolean_Term (Property_Value),
+                       Reference_Property);
 
                   if Evaluated_Value /= No_Node then
                      if Kind (Evaluated_Value) = K_Literal
-                       and then Get_Value_Type (Value (Evaluated_Value)).T =
-                       LT_Boolean
+                       and then
+                         Get_Value_Type (Value (Evaluated_Value)).T =
+                         LT_Boolean
                        and then Next_Node (Evaluated_Value) = No_Node
                      then
-                        Val := Get_Value_Type (Value (Evaluated_Value));
+                        Val      := Get_Value_Type (Value (Evaluated_Value));
                         Val.BVal := not Val.BVal;
                         Set_Value (Value (Evaluated_Value), Val);
                      else
@@ -896,19 +906,24 @@ package body Ocarina.Processor.Properties is
 
             when K_And_Boolean_Term =>
                declare
-                  Auxiliary_Value : Node_Id;
-                  Val : Value_Type;
+                  Auxiliary_Value  : Node_Id;
+                  Val              : Value_Type;
                   Val1_OK, Val2_OK : Boolean;
                begin
-                  Evaluated_Value := Evaluate_Property_Value
-                    (First_Term (Property_Value), Reference_Property);
-                  Auxiliary_Value := Evaluate_Property_Value
-                    (Second_Term (Property_Value), Reference_Property);
+                  Evaluated_Value :=
+                    Evaluate_Property_Value
+                      (First_Term (Property_Value),
+                       Reference_Property);
+                  Auxiliary_Value :=
+                    Evaluate_Property_Value
+                      (Second_Term (Property_Value),
+                       Reference_Property);
 
                   if Evaluated_Value /= No_Node then
                      if Kind (Evaluated_Value) = K_Literal
-                       and then Get_Value_Type (Value (Evaluated_Value)).T =
-                       LT_Boolean
+                       and then
+                         Get_Value_Type (Value (Evaluated_Value)).T =
+                         LT_Boolean
                        and then Next_Node (Evaluated_Value) = No_Node
                      then
                         Val1_OK := True;
@@ -921,14 +936,15 @@ package body Ocarina.Processor.Properties is
                         Val1_OK := False;
                      end if;
                   else
-                     Val1_OK := False;
+                     Val1_OK         := False;
                      Evaluated_Value := No_Node;
                   end if;
 
                   if Auxiliary_Value /= No_Node then
                      if Kind (Auxiliary_Value) = K_Literal
-                       and then Get_Value_Type (Value (Auxiliary_Value)).T =
-                       LT_Boolean
+                       and then
+                         Get_Value_Type (Value (Auxiliary_Value)).T =
+                         LT_Boolean
                        and then Next_Node (Auxiliary_Value) = No_Node
                      then
                         Val2_OK := True;
@@ -939,16 +955,17 @@ package body Ocarina.Processor.Properties is
                            Reference_Property);
                         Set_Kind (Auxiliary_Value, K_Invalid_Node);
                         Evaluated_Value := Auxiliary_Value;
-                        Val2_OK := False;
+                        Val2_OK         := False;
                      end if;
                   else
-                     Val2_OK := False;
+                     Val2_OK         := False;
                      Evaluated_Value := No_Node;
                   end if;
 
                   if Val1_OK and then Val2_OK then
-                     Val := Get_Value_Type (Value (Evaluated_Value));
-                     Val.BVal := Val.BVal
+                     Val      := Get_Value_Type (Value (Evaluated_Value));
+                     Val.BVal :=
+                       Val.BVal
                        and then Get_Value_Type (Value (Auxiliary_Value)).BVal;
                      Set_Value (Value (Evaluated_Value), Val);
                   end if;
@@ -956,19 +973,24 @@ package body Ocarina.Processor.Properties is
 
             when K_Or_Boolean_Term =>
                declare
-                  Auxiliary_Value : Node_Id;
-                  Val : Value_Type;
+                  Auxiliary_Value  : Node_Id;
+                  Val              : Value_Type;
                   Val1_OK, Val2_OK : Boolean;
                begin
-                  Evaluated_Value := Evaluate_Property_Value
-                    (First_Term (Property_Value), Reference_Property);
-                  Auxiliary_Value := Evaluate_Property_Value
-                    (Second_Term (Property_Value), Reference_Property);
+                  Evaluated_Value :=
+                    Evaluate_Property_Value
+                      (First_Term (Property_Value),
+                       Reference_Property);
+                  Auxiliary_Value :=
+                    Evaluate_Property_Value
+                      (Second_Term (Property_Value),
+                       Reference_Property);
 
                   if Evaluated_Value /= No_Node then
                      if Kind (Evaluated_Value) = K_Literal
-                       and then Get_Value_Type (Value (Evaluated_Value)).T =
-                       LT_Boolean
+                       and then
+                         Get_Value_Type (Value (Evaluated_Value)).T =
+                         LT_Boolean
                        and then Next_Node (Evaluated_Value) = No_Node
                      then
                         Val1_OK := True;
@@ -981,51 +1003,60 @@ package body Ocarina.Processor.Properties is
                         Val1_OK := False;
                      end if;
                   else
-                     Val1_OK := False;
+                     Val1_OK         := False;
                      Evaluated_Value := No_Node;
                   end if;
 
                   if Auxiliary_Value /= No_Node then
                      if Kind (Auxiliary_Value) = K_Literal
-                       and then Get_Value_Type (Value (Auxiliary_Value)).T =
-                       LT_Boolean
+                       and then
+                         Get_Value_Type (Value (Auxiliary_Value)).T =
+                         LT_Boolean
                        and then Next_Node (Auxiliary_Value) = No_Node
                      then
                         Val2_OK := True;
                      else
                         Display_Inconsistency_In_Property_Values
-                          (Property_Value, Auxiliary_Value, Property_Value);
+                          (Property_Value,
+                           Auxiliary_Value,
+                           Property_Value);
                         Set_Kind (Auxiliary_Value, K_Invalid_Node);
                         Evaluated_Value := Auxiliary_Value;
-                        Val2_OK := False;
+                        Val2_OK         := False;
                      end if;
                   else
-                     Val2_OK := False;
+                     Val2_OK         := False;
                      Evaluated_Value := No_Node;
                   end if;
 
                   if Val1_OK and then Val2_OK then
-                     Val := Get_Value_Type (Value (Evaluated_Value));
-                     Val.BVal := Val.BVal
+                     Val      := Get_Value_Type (Value (Evaluated_Value));
+                     Val.BVal :=
+                       Val.BVal
                        or else Get_Value_Type (Value (Auxiliary_Value)).BVal;
                      Set_Value (Value (Evaluated_Value), Val);
                   end if;
                end;
 
             when K_Parenthesis_Boolean_Term =>
-               Evaluated_Value := Evaluate_Property_Value
-                 (Boolean_Term (Property_Value), Reference_Property);
+               Evaluated_Value :=
+                 Evaluate_Property_Value
+                   (Boolean_Term (Property_Value),
+                    Reference_Property);
 
                if Evaluated_Value /= No_Node then
                   if Kind (Evaluated_Value) = K_Literal
-                    and then Get_Value_Type (Value (Evaluated_Value)).T =
-                    LT_Boolean
+                    and then
+                      Get_Value_Type (Value (Evaluated_Value)).T =
+                      LT_Boolean
                     and then Next_Node (Evaluated_Value) = No_Node
                   then
                      null;
                   else
                      Display_Inconsistency_In_Property_Values
-                       (Property_Value, Evaluated_Value, Reference_Property);
+                       (Property_Value,
+                        Evaluated_Value,
+                        Reference_Property);
                      Set_Kind (Evaluated_Value, K_Invalid_Node);
                   end if;
                else
@@ -1033,12 +1064,14 @@ package body Ocarina.Processor.Properties is
                end if;
 
             when K_Component_Classifier_Term =>
-               Evaluated_Value := New_Node (Kind (Property_Value),
-                                            Loc (Property_Value));
-               Set_Referenced_Entity (Evaluated_Value,
-                                      Get_Referenced_Entity (Property_Value));
-               Set_Component_Cat (Evaluated_Value,
-                                  Component_Cat (Property_Value));
+               Evaluated_Value :=
+                 New_Node (Kind (Property_Value), Loc (Property_Value));
+               Set_Referenced_Entity
+                 (Evaluated_Value,
+                  Get_Referenced_Entity (Property_Value));
+               Set_Component_Cat
+                 (Evaluated_Value,
+                  Component_Cat (Property_Value));
 
             when K_Record_Term =>
                null; --  XXX
@@ -1056,13 +1089,12 @@ package body Ocarina.Processor.Properties is
    ------------------------
 
    function Resolve_Properties
-     (Properties : List_Id;
-      Root, Container : Node_Id)
-     return Boolean
+     (Properties      : List_Id;
+      Root, Container : Node_Id) return Boolean
    is
       pragma Assert (Container /= No_Node);
 
-      Success : Boolean := True;
+      Success   : Boolean := True;
       List_Node : Node_Id;
 
    begin
@@ -1075,7 +1107,7 @@ package body Ocarina.Processor.Properties is
       while List_Node /= No_Node loop
          pragma Assert (Kind (List_Node) = K_Property_Association);
 
-         Success := Resolve_Value (Root, List_Node) and then Success;
+         Success   := Resolve_Value (Root, List_Node) and then Success;
          List_Node := Next_Node (List_Node);
       end loop;
 
@@ -1087,13 +1119,12 @@ package body Ocarina.Processor.Properties is
    ------------------------------------------
 
    function Resolve_Properties_Of_Component_Type
-     (Root, Component : Node_Id)
-     return Boolean
+     (Root, Component : Node_Id) return Boolean
    is
       pragma Assert (Present (Component));
       pragma Assert (Kind (Component) = K_Component_Type);
 
-      Success : Boolean := True;
+      Success   : Boolean := True;
       List_Node : Node_Id;
 
    begin
@@ -1104,11 +1135,12 @@ package body Ocarina.Processor.Properties is
          List_Node := First_Node (Features (Component));
 
          while List_Node /= No_Node loop
-            Success := Resolve_Properties
-              (Root => Root,
-               Properties =>
-                 Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               Container => List_Node)
+            Success :=
+              Resolve_Properties
+                (Root       => Root,
+                 Properties =>
+                   Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 Container => List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1120,11 +1152,12 @@ package body Ocarina.Processor.Properties is
          List_Node := First_Node (Flows (Component));
 
          while List_Node /= No_Node loop
-            Success := Resolve_Properties
-              (Root => Root,
-               Properties =>
-                 Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               Container => List_Node)
+            Success :=
+              Resolve_Properties
+                (Root       => Root,
+                 Properties =>
+                   Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 Container => List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1132,10 +1165,12 @@ package body Ocarina.Processor.Properties is
 
       --  Properties
 
-      Success := Resolve_Properties
-        (Root => Root,
-         Properties => Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Component),
-         Container => Component)
+      Success :=
+        Resolve_Properties
+          (Root       => Root,
+           Properties =>
+             Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Component),
+           Container => Component)
         and then Success;
 
       return Success;
@@ -1146,13 +1181,12 @@ package body Ocarina.Processor.Properties is
    ----------------------------------------------------
 
    function Resolve_Properties_Of_Component_Implementation
-     (Root, Component : Node_Id)
-     return Boolean
+     (Root, Component : Node_Id) return Boolean
    is
       pragma Assert (Present (Component));
       pragma Assert (Kind (Component) = K_Component_Implementation);
 
-      Success : Boolean := True;
+      Success                   : Boolean := True;
       List_Node, Call_List_Node : Node_Id;
 
    begin
@@ -1163,11 +1197,12 @@ package body Ocarina.Processor.Properties is
          List_Node := First_Node (Refines_Type (Component));
 
          while List_Node /= No_Node loop
-            Success := Resolve_Properties
-              (Root => Root,
-               Properties =>
-                 Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               Container => List_Node)
+            Success :=
+              Resolve_Properties
+                (Root       => Root,
+                 Properties =>
+                   Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 Container => List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1179,11 +1214,12 @@ package body Ocarina.Processor.Properties is
          List_Node := First_Node (Subcomponents (Component));
 
          while Present (List_Node) loop
-            Success := Resolve_Properties
-              (Root => Root,
-               Properties =>
-                 Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               Container => List_Node)
+            Success :=
+              Resolve_Properties
+                (Root       => Root,
+                 Properties =>
+                   Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 Container => List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1200,12 +1236,13 @@ package body Ocarina.Processor.Properties is
                Call_List_Node := First_Node (Subprogram_Calls (List_Node));
 
                while Call_List_Node /= No_Node loop
-                  Success := Resolve_Properties
-                    (Root => Root,
-                     Properties =>
-                       Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
-                       (Call_List_Node),
-                     Container => Call_List_Node)
+                  Success :=
+                    Resolve_Properties
+                      (Root       => Root,
+                       Properties =>
+                         Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
+                           (Call_List_Node),
+                       Container => Call_List_Node)
                     and then Success;
                   Call_List_Node := Next_Node (Call_List_Node);
                end loop;
@@ -1222,11 +1259,12 @@ package body Ocarina.Processor.Properties is
          List_Node := First_Node (Connections (Component));
 
          while List_Node /= No_Node loop
-            Success := Resolve_Properties
-              (Root => Root,
-               Properties =>
-                 Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               Container => List_Node)
+            Success :=
+              Resolve_Properties
+                (Root       => Root,
+                 Properties =>
+                   Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 Container => List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1238,11 +1276,12 @@ package body Ocarina.Processor.Properties is
          List_Node := First_Node (Flows (Component));
 
          while List_Node /= No_Node loop
-            Success := Resolve_Properties
-              (Root => Root,
-               Properties =>
-                 Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               Container => List_Node)
+            Success :=
+              Resolve_Properties
+                (Root       => Root,
+                 Properties =>
+                   Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 Container => List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1255,11 +1294,12 @@ package body Ocarina.Processor.Properties is
 
          while Present (List_Node) loop
             if Kind (List_Node) = K_Mode then
-               Success := Resolve_Properties
-                 (Root => Root,
-                  Properties =>
-                    Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-                  Container => List_Node)
+               Success :=
+                 Resolve_Properties
+                   (Root       => Root,
+                    Properties =>
+                      Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                    Container => List_Node)
                  and then Success;
             end if;
 
@@ -1269,10 +1309,12 @@ package body Ocarina.Processor.Properties is
 
       --  Properties
 
-      Success := Resolve_Properties
-        (Root => Root,
-         Properties => Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Component),
-         Container => Component)
+      Success :=
+        Resolve_Properties
+          (Root       => Root,
+           Properties =>
+             Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Component),
+           Container => Component)
         and then Success;
 
       return Success;
@@ -1283,13 +1325,12 @@ package body Ocarina.Processor.Properties is
    -------------------------------------------
 
    function Resolve_Properties_Of_Port_Group_Type
-     (Root, Port_Group : Node_Id)
-     return Boolean
+     (Root, Port_Group : Node_Id) return Boolean
    is
       pragma Assert (Present (Port_Group));
       pragma Assert (Kind (Port_Group) = K_Feature_Group_Type);
 
-      Success : Boolean := True;
+      Success   : Boolean := True;
       List_Node : Node_Id;
 
    begin
@@ -1299,11 +1340,12 @@ package body Ocarina.Processor.Properties is
          List_Node := First_Node (Features (Port_Group));
 
          while List_Node /= No_Node loop
-            Success := Resolve_Properties
-              (Root => Root,
-               Properties =>
-                 Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-               Container => List_Node)
+            Success :=
+              Resolve_Properties
+                (Root       => Root,
+                 Properties =>
+                   Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
+                 Container => List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
@@ -1311,10 +1353,12 @@ package body Ocarina.Processor.Properties is
 
       --  Properties
 
-      Success := Resolve_Properties
-        (Root => Root,
-         Properties => Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Port_Group),
-         Container => Port_Group)
+      Success :=
+        Resolve_Properties
+          (Root       => Root,
+           Properties =>
+             Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Port_Group),
+           Container => Port_Group)
         and then Success;
 
       return Success;
@@ -1324,12 +1368,11 @@ package body Ocarina.Processor.Properties is
    -- Resolve_All_Properties --
    ----------------------------
 
-   function Resolve_All_Properties (Root : Node_Id) return Boolean
-   is
+   function Resolve_All_Properties (Root : Node_Id) return Boolean is
       pragma Assert (Present (Root));
       pragma Assert (Kind (Root) = K_AADL_Specification);
 
-      Success : Boolean := True;
+      Success                      : Boolean := True;
       List_Node, Package_List_Node : Node_Id;
 
    begin
@@ -1341,30 +1384,32 @@ package body Ocarina.Processor.Properties is
                when K_Component_Implementation =>
                   Success :=
                     Resolve_Properties_Of_Component_Implementation
-                    (Root => Root,
-                     Component => List_Node)
+                      (Root      => Root,
+                       Component => List_Node)
                     and then Success;
 
                when K_Component_Type =>
                   Success :=
                     Resolve_Properties_Of_Component_Type
-                    (Root => Root,
-                     Component => List_Node)
+                      (Root      => Root,
+                       Component => List_Node)
                     and then Success;
 
                when K_Feature_Group_Type =>
                   Success :=
                     Resolve_Properties_Of_Port_Group_Type
-                    (Root => Root,
-                     Port_Group => List_Node)
+                      (Root       => Root,
+                       Port_Group => List_Node)
                     and then Success;
 
                when K_Package_Specification =>
-                  Success := Resolve_Properties
-                    (Root => Root,
-                     Properties =>
-                       Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (List_Node),
-                     Container => List_Node)
+                  Success :=
+                    Resolve_Properties
+                      (Root       => Root,
+                       Properties =>
+                         Ocarina.ME_AADL.AADL_Tree.Nodes.Properties
+                           (List_Node),
+                       Container => List_Node)
                     and then Success;
 
                   if Declarations (List_Node) /= No_List then
@@ -1373,25 +1418,25 @@ package body Ocarina.Processor.Properties is
 
                      while Package_List_Node /= No_Node loop
                         case Kind (Package_List_Node) is
-                           when  K_Component_Implementation =>
+                           when K_Component_Implementation =>
                               Success :=
                                 Resolve_Properties_Of_Component_Implementation
-                                (Root => Root,
-                                 Component => Package_List_Node)
+                                  (Root      => Root,
+                                   Component => Package_List_Node)
                                 and then Success;
 
                            when K_Component_Type =>
                               Success :=
                                 Resolve_Properties_Of_Component_Type
-                                (Root => Root,
-                                 Component => Package_List_Node)
+                                  (Root      => Root,
+                                   Component => Package_List_Node)
                                 and then Success;
 
                            when K_Feature_Group_Type =>
                               Success :=
                                 Resolve_Properties_Of_Port_Group_Type
-                                (Root => Root,
-                                 Port_Group => Package_List_Node)
+                                  (Root       => Root,
+                                   Port_Group => Package_List_Node)
                                 and then Success;
 
                            when others =>
@@ -1417,12 +1462,11 @@ package body Ocarina.Processor.Properties is
    -- Resolve_All_Property_Names --
    --------------------------------
 
-   function Resolve_All_Property_Names (Root : Node_Id) return Boolean
-   is
+   function Resolve_All_Property_Names (Root : Node_Id) return Boolean is
       pragma Assert (Present (Root));
       pragma Assert (Kind (Root) = K_AADL_Specification);
 
-      Success : Boolean := True;
+      Success                           : Boolean := True;
       List_Node, Property_Set_List_Node : Node_Id;
 
    begin
@@ -1438,11 +1482,11 @@ package body Ocarina.Processor.Properties is
 
                      while Property_Set_List_Node /= No_Node loop
                         case Kind (Property_Set_List_Node) is
-                           when  K_Property_Definition_Declaration =>
+                           when K_Property_Definition_Declaration =>
                               Success :=
                                 Resolve_Type
-                                (Root => Root,
-                                 Property => Property_Set_List_Node)
+                                  (Root     => Root,
+                                   Property => Property_Set_List_Node)
                                 and then Success;
 
                            when others =>
@@ -1489,23 +1533,20 @@ package body Ocarina.Processor.Properties is
          --  To avoid infinite loops and detect bad formed units
          --  types.
 
-         Units_Type := Corresponding_Entity
-           (Unit_Identifier
-              (Corresponding_Entity
-                 (Fetched)));
+         Units_Type :=
+           Corresponding_Entity
+             (Unit_Identifier (Corresponding_Entity (Fetched)));
 
          Max_Iterations := Length (Unit_Definitions (Units_Type));
       end if;
 
       Result := Value (Value (L));
-      Count := 0;
+      Count  := 0;
 
       while not Base loop
-         Result := Result * Value
-           (Value
-              (Numeric_Literal
-                 (Corresponding_Entity
-                    (Fetched))));
+         Result :=
+           Result *
+           Value (Value (Numeric_Literal (Corresponding_Entity (Fetched))));
 
          Fetch
            (Unit_Identifier (Corresponding_Entity (Fetched)),
@@ -1517,7 +1558,7 @@ package body Ocarina.Processor.Properties is
          if Count > Max_Iterations + 1 then
             DAE
               (Message0 => "Units Type ",
-               Node1    =>  Units_Type,
+               Node1    => Units_Type,
                Message1 => " is ill-defined: it contains cycles");
             exit;
          end if;
@@ -1532,11 +1573,7 @@ package body Ocarina.Processor.Properties is
    -- Fetch --
    -----------
 
-   procedure Fetch
-     (U       :     Node_Id;
-      Fetched : out Node_Id;
-      Base    : out Boolean)
-   is
+   procedure Fetch (U : Node_Id; Fetched : out Node_Id; Base : out Boolean) is
       use Utils;
       Units_Type      : Node_Id;
       Unit_Definition : Node_Id;
@@ -1546,10 +1583,8 @@ package body Ocarina.Processor.Properties is
 
          Units_Type := Corresponding_Entity (U);
       else
-         Units_Type := Corresponding_Entity
-           (Unit_Identifier
-              (Corresponding_Entity
-                 (U)));
+         Units_Type :=
+           Corresponding_Entity (Unit_Identifier (Corresponding_Entity (U)));
       end if;
 
       --  This phase is neccessary because the Unit_Identifier of a
@@ -1561,7 +1596,7 @@ package body Ocarina.Processor.Properties is
       if To_Lower (Name (Fetched)) = To_Lower (Name (U)) then
          Base := True;
       else
-         Base := False;
+         Base            := False;
          Unit_Definition := First_Node (Unit_Definitions (Units_Type));
 
          while Present (Unit_Definition) loop
@@ -1569,7 +1604,7 @@ package body Ocarina.Processor.Properties is
 
             exit when To_Lower (Name (Fetched)) = To_Lower (Name (U));
 
-            Fetched := No_Node;
+            Fetched         := No_Node;
             Unit_Definition := Next_Node (Unit_Definition);
          end loop;
       end if;

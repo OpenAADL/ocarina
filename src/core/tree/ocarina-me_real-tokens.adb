@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,9 +37,7 @@ with Utils;
 package body Ocarina.ME_REAL.Tokens is
    use Namet;
 
-   procedure New_Token
-     (Token : Token_Type;
-      Image : String);
+   procedure New_Token (Token : Token_Type; Image : String);
    --  Compute token image and store it in Token_Image table. When
    --  Token is a graphical character, embrace its image between
    --  single quotes ('<<' and '>>' are considered as graphical
@@ -213,9 +211,11 @@ package body Ocarina.ME_REAL.Tokens is
    function Quoted_Image (T : Token_Type) return String is
    begin
       case T is
-         when T_Identifier
-           | T_Integer_Literal | T_String_Literal |
-           T_Fixed_Point_Literal | T_Floating_Point_Literal =>
+         when T_Identifier          |
+           T_Integer_Literal        |
+           T_String_Literal         |
+           T_Fixed_Point_Literal    |
+           T_Floating_Point_Literal =>
             return Image (T);
 
          when others =>
@@ -266,8 +266,7 @@ package body Ocarina.ME_REAL.Tokens is
 
    function Is_Boolean_Operator (T : Token_Type) return Boolean is
    begin
-      return T in Boolean_Operator_Type or else
-        T = T_Not;
+      return T in Boolean_Operator_Type or else T = T_Not;
    end Is_Boolean_Operator;
 
    --------------------
@@ -283,10 +282,7 @@ package body Ocarina.ME_REAL.Tokens is
    -- New_Token --
    ---------------
 
-   procedure New_Token
-     (Token : Token_Type;
-      Image : String)
-   is
+   procedure New_Token (Token : Token_Type; Image : String) is
       use Utils;
 
       N : Name_Id;
@@ -294,12 +290,12 @@ package body Ocarina.ME_REAL.Tokens is
       Set_Str_To_Name_Buffer (Prefix & Image);
       Token_Image (Token) := Name_Find;
 
-      if Token in Keyword_Type or else
-        Token in Predefined_Sets or else
-        Token in Selection_Function_Type or else
-        Token in Verification_Function_Type or else
-        Token in Higher_Level_Function_Type or else
-        Token in T_Equal .. T_Affect
+      if Token in Keyword_Type
+        or else Token in Predefined_Sets
+        or else Token in Selection_Function_Type
+        or else Token in Verification_Function_Type
+        or else Token in Higher_Level_Function_Type
+        or else Token in T_Equal .. T_Affect
       then
          N := To_Lower (Name_Find);
          Set_Name_Table_Byte (N, Byte (Token_Type'Pos (Token)));

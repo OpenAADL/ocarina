@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -93,10 +93,8 @@ package Ocarina.Property_Sets is
    function Is_User_Defined (Identifier : Node_Id) return Boolean;
    procedure Set_As_User_Defined (Identifier : Node_Id);
 
-   function Standard_Property_Sets
-     return Standard_Property_Set_Array_Type;
+   function Standard_Property_Sets return Standard_Property_Set_Array_Type;
 
-   function Ocarina_Property_Sets
-     return Ocarina_Property_Set_Array_Type;
+   function Ocarina_Property_Sets return Ocarina_Property_Set_Array_Type;
 
 end Ocarina.Property_Sets;

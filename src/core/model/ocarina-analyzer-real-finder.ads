@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,7 +40,7 @@ package Ocarina.Analyzer.REAL.Finder is
 
    function Get_REAL_Annexes_List
      (AADL_Root : Node_Id)
-     return Ocarina.ME_REAL.REAL_Tree.Nutils.Node_List.Instance;
+      return Ocarina.ME_REAL.REAL_Tree.Nutils.Node_List.Instance;
    --  Returns the list of all REAL annexes
 
    function Compute_Expression_Type (E : Node_Id) return Value_Id;

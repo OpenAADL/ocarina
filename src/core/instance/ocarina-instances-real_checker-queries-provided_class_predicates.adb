@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2012 ESA & ISAE.                       --
+--                   Copyright (C) 2012-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,7 +36,7 @@ with Ocarina.Instances.Queries;
 with Namet;
 
 package body Ocarina.Instances.REAL_Checker.Queries.Provided_Class_Predicates
-is
+  is
    use Ocarina.Instances.Queries;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
 
@@ -47,14 +47,13 @@ is
    function Is_Provided_Class_Predicate
      (E      : Node_Id;
       D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       pragma Unreferenced (Option);
       use Namet;
 
-      Str_1  : constant Name_Id := Get_String_Name
-        ("provided_virtual_bus_class");
+      Str_1 : constant Name_Id :=
+        Get_String_Name ("provided_virtual_bus_class");
    begin
 
       --  Returns true if the current node provides a component of
@@ -64,8 +63,9 @@ is
 
       if Is_Defined_Classifier_Property (E, Str_1) then
          if AIN.Corresponding_Declaration
-           (Get_Classifier_Property (E, Str_1)) =
-           AIN.Corresponding_Declaration (D) then
+             (Get_Classifier_Property (E, Str_1)) =
+           AIN.Corresponding_Declaration (D)
+         then
             return True;
          end if;
       end if;

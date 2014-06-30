@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -60,8 +60,8 @@ package body Ocarina.Backends.Execution_Tests is
    use Ocarina.Backends.Utils;
    use String_String_Maps;
 
-   package Addr_To_Acc is
-      new System.Address_To_Access_Conversions (Unbounded_String);
+   package Addr_To_Acc is new System.Address_To_Access_Conversions
+     (Unbounded_String);
 
    procedure Exit_On_Error (Error : Boolean; Reason : String);
 
@@ -83,9 +83,9 @@ package body Ocarina.Backends.Execution_Tests is
    ----------
 
    procedure Init is
-      --  --  Example to find the size of the Pattern_Matcher Parse_Regexp :
-      --  Parse_Regexp : constant Pattern_Matcher :=
-      --    Compile ("(\[-? *[0-9]+\.[0-9]* *\])", Single_Line);
+   --  --  Example to find the size of the Pattern_Matcher Parse_Regexp :
+   --  Parse_Regexp : constant Pattern_Matcher :=
+   --    Compile ("(\[-? *[0-9]+\.[0-9]* *\])", Single_Line);
    begin
       --  Put_Line (Integer'Image (Parse_Regexp'Size));
       --  --  => 1184, the real Pattern_Matcher will be (1184 - 160) / 8 = 128
@@ -93,18 +93,19 @@ package body Ocarina.Backends.Execution_Tests is
       TSim_ERC32_Path   := GNAT.OS_Lib.Locate_Exec_On_Path ("tsim-erc32");
       TSim_LEON_Path    := GNAT.OS_Lib.Locate_Exec_On_Path ("tsim-leon");
       Qemu_Path         := GNAT.OS_Lib.Locate_Exec_On_Path ("qemu");
-      Qemu_Sparc_Path   := GNAT.OS_Lib.Locate_Exec_On_Path
-        ("qemu-system-sparc");
+      Qemu_Sparc_Path := GNAT.OS_Lib.Locate_Exec_On_Path ("qemu-system-sparc");
       Xcov_Path         := GNAT.OS_Lib.Locate_Exec_On_Path ("xcov");
-      Command_Name_Path := new String'(Dir_Name
-                                         (Ada.Directories.Full_Name
-                                            (Ada.Command_Line.Command_Name)));
+      Command_Name_Path :=
+        new String'
+          (Dir_Name
+             (Ada.Directories.Full_Name (Ada.Command_Line.Command_Name)));
       Compile (Parse_Regexp, "(\[-? *[0-9]+\.[0-9]* *\])", Single_Line);
       Compile (Strip_CR_Regexp, "(\r)", Single_Line);
       Compile (Header_End_Regexp, "(resuming at.*)", Multiple_Lines);
-      Compile (Tsim_Traces_Regexp,
-               "(tsim>|Program exited normally.)",
-               Single_Line);
+      Compile
+        (Tsim_Traces_Regexp,
+         "(tsim>|Program exited normally.)",
+         Single_Line);
       Compile (Empty_Line_Regexp, "(^\n)", Multiple_Lines);
    end Init;
 
@@ -128,11 +129,10 @@ package body Ocarina.Backends.Execution_Tests is
    -------------------
 
    function No_Regression
-     (Trace      : Unbounded_String;
-      Ref        : Unbounded_String;
-      App        : Name_Id;
-      Ref_Path   : String)
-     return Boolean
+     (Trace    : Unbounded_String;
+      Ref      : Unbounded_String;
+      App      : Name_Id;
+      Ref_Path : String) return Boolean
    is
       File           : File_Type;
       Trace_Filtered : String_Ptr;
@@ -140,8 +140,8 @@ package body Ocarina.Backends.Execution_Tests is
       Padding        : Integer;
    begin
       Write_Eol;
-      Write_Line ("--- Testing regression for : "
-                    & Get_Name_String (App) & " ---");
+      Write_Line
+        ("--- Testing regression for : " & Get_Name_String (App) & " ---");
       Write_Line ("Using following referencial : " & Ref_Path);
 
       Filter_Line (To_String (Trace), Trace_Filtered);
@@ -151,31 +151,29 @@ package body Ocarina.Backends.Execution_Tests is
          declare
             Referencial_Log_File : constant String :=
               Get_Current_Dir & "log." & Get_Name_String (App) & ".ref.txt";
-            Trace_Log_File       : constant String :=
+            Trace_Log_File : constant String :=
               Get_Current_Dir & "log." & Get_Name_String (App) & ".trace.txt";
          begin
-            Write_Line ("Writing log for referencial in : "
-                          & Referencial_Log_File);
-            Create (File,
-                    Out_File,
-                    Referencial_Log_File);
+            Write_Line
+              ("Writing log for referencial in : " & Referencial_Log_File);
+            Create (File, Out_File, Referencial_Log_File);
             Put (File, Ref_Filtered.all);
             Close (File);
 
             Write_Line ("Writing log for trace in : " & Trace_Log_File);
-            Create (File,
-                    Out_File,
-                    Trace_Log_File);
+            Create (File, Out_File, Trace_Log_File);
             Put (File, Trace_Filtered.all);
             Close (File);
          end;
       end if;
 
       if Trace_Filtered.all'Length < Ref_Filtered.all'Length then
-         Write_Line ("Warning : trace length ("
-                       & Trace_Filtered.all'Length'Img
-                       & " ) is lower than referencial length ("
-                       & Ref_Filtered.all'Length'Img & " )");
+         Write_Line
+           ("Warning : trace length (" &
+            Trace_Filtered.all'Length'Img &
+            " ) is lower than referencial length (" &
+            Ref_Filtered.all'Length'Img &
+            " )");
       end if;
 
       Padding := Trace_Filtered'First - Ref_Filtered'First;
@@ -183,10 +181,14 @@ package body Ocarina.Backends.Execution_Tests is
          exit when I + Padding > Trace_Filtered.all'Last;
 
          if Ref_Filtered.all (I) /= Trace_Filtered.all (I + Padding) then
-            Write_Line ("Failed at char position = " & I'Img
-                          & " (ref = '" & Ref_Filtered.all (I)
-                          & "' trace= '" & Trace_Filtered.all (I + Padding)
-                          & "')");
+            Write_Line
+              ("Failed at char position = " &
+               I'Img &
+               " (ref = '" &
+               Ref_Filtered.all (I) &
+               "' trace= '" &
+               Trace_Filtered.all (I + Padding) &
+               "')");
             return False;
          end if;
       end loop;
@@ -223,8 +225,11 @@ package body Ocarina.Backends.Execution_Tests is
    is
       File : File_Type;
    begin
-      Write_Line ("Writing referencial for "
-                    & Get_Name_String (App) & " to : " & File_Path);
+      Write_Line
+        ("Writing referencial for " &
+         Get_Name_String (App) &
+         " to : " &
+         File_Path);
       Create (File, Out_File, File_Path);
       Put_Line (File, To_String (Ref));
       Close (File);
@@ -237,13 +242,12 @@ package body Ocarina.Backends.Execution_Tests is
    function Execute_Regression_Test
      (Scenario_Dirname : String;
       Ref_Map          : Map;
-      Timeout          : Natural)
-     return Boolean
+      Timeout          : Natural) return Boolean
    is
       Result       : Expect_Match;
       Referencial  : Unbounded_String;
-      Return_Value : Boolean := True;
-      TimeoutVar   : Integer := Timeout;
+      Return_Value : Boolean      := True;
+      TimeoutVar   : Integer      := Timeout;
       First        : constant Int := Ref_Name_Tables.First;
       Last         : constant Int := Ref_Name_Tables.Last (Process_List);
       Processes    : Fd_Array (Integer (First) .. Integer (Last));
@@ -254,22 +258,23 @@ package body Ocarina.Backends.Execution_Tests is
       All_Traces := new Trace (Integer (First) .. Integer (Last));
 
       for J in First .. Last loop
-         M := Process_List.Table (J);
+         M        := Process_List.Table (J);
          Position := Find (Ref_Map, Get_Name_String (M.Node_Name));
 
          if Position = No_Element then
-            Exit_On_Error (True, "Error : no referencial defined for "
-                             & Get_Name_String (M.Node_Name));
+            Exit_On_Error
+              (True,
+               "Error : no referencial defined for " &
+               Get_Name_String (M.Node_Name));
          end if;
 
          declare
             --  Application path
             Appli_File : constant String :=
-              Get_Current_Dir
-              & Get_Name_String (M.Appli_Name)
-              & Dir_Separator
-              & Get_Binary_Location (Get_Current_Backend_Kind,
-                                     M.Node_Name);
+              Get_Current_Dir &
+              Get_Name_String (M.Appli_Name) &
+              Dir_Separator &
+              Get_Binary_Location (Get_Current_Backend_Kind, M.Node_Name);
 
             Ref_File : constant String :=
               Scenario_Dirname & Element (Position);
@@ -279,43 +284,48 @@ package body Ocarina.Backends.Execution_Tests is
                Create_Referencial := True;
             end if;
 
-            Exit_On_Error (not Ada.Directories.Exists (Appli_File),
-                           "Error : application " & Appli_File
-                             & " does not exist");
+            Exit_On_Error
+              (not Ada.Directories.Exists (Appli_File),
+               "Error : application " & Appli_File & " does not exist");
 
             Write_Line ("Launching : " & Appli_File);
-            Launch_Test (Processes (Integer (J)),
-                         Appli_File,
-                         M.Execution_Platform,
-                         TimeoutVar);
-            Add_Filter (Processes (Integer (J)),
-                        Filter_Procedure'Access,
-                        GNAT.Expect.Output,
-                        All_Traces (Integer (J))'Address);
+            Launch_Test
+              (Processes (Integer (J)),
+               Appli_File,
+               M.Execution_Platform,
+               TimeoutVar);
+            Add_Filter
+              (Processes (Integer (J)),
+               Filter_Procedure'Access,
+               GNAT.Expect.Output,
+               All_Traces (Integer (J))'Address);
          end;
       end loop;
 
       Write_Eol;
 
       if M.Execution_Platform = Platform_LEON_ORK
-        or else M.Execution_Platform = Platform_ERC32_ORK then
+        or else M.Execution_Platform = Platform_ERC32_ORK
+      then
          --  Let tsim deal with the timeout
          TimeoutVar := -1;
       end if;
 
       for J in First .. Last loop
-         M := Process_List.Table (J);
-         Ref_Path := new String'(Scenario_Dirname
-                                   & Element (Ref_Map,
-                                              Get_Name_String (M.Node_Name)));
+         M        := Process_List.Table (J);
+         Ref_Path :=
+           new String'
+             (Scenario_Dirname &
+              Element (Ref_Map, Get_Name_String (M.Node_Name)));
 
          begin
             Expect (Processes (Integer (J)), Result, Never_Match, TimeoutVar);
          exception
             when GNAT.Expect.Process_Died =>
-               Write_Line ("Warning: process "
-                             & Get_Name_String (M.Node_Name)
-                             & " has died during test phase");
+               Write_Line
+                 ("Warning: process " &
+                  Get_Name_String (M.Node_Name) &
+                  " has died during test phase");
          end;
 
          Close (Processes (Integer (J)));
@@ -323,25 +333,32 @@ package body Ocarina.Backends.Execution_Tests is
          if not Create_Referencial then
             Referencial := Load_Referencial (Ref_Path.all);
             if M.Execution_Platform = Platform_LEON_ORK
-              or else M.Execution_Platform = Platform_ERC32_ORK then
+              or else M.Execution_Platform = Platform_ERC32_ORK
+            then
                Append (All_Traces (Integer (J)), ASCII.LF);
             end if;
-            if No_Regression (All_Traces (Integer (J)),
-                              Referencial, M.Node_Name,
-                              Ref_Path.all) then
-               Write_Line ("--- Regression test result for "
-                             & Get_Name_String (M.Node_Name)
-                             & " : SUCCESS ---");
+            if No_Regression
+                (All_Traces (Integer (J)),
+                 Referencial,
+                 M.Node_Name,
+                 Ref_Path.all)
+            then
+               Write_Line
+                 ("--- Regression test result for " &
+                  Get_Name_String (M.Node_Name) &
+                  " : SUCCESS ---");
             else
                Return_Value := False;
-               Write_Line ("--- Regression test result for "
-                             & Get_Name_String (M.Node_Name)
-                             & " : !!! FAILED !!! ---");
+               Write_Line
+                 ("--- Regression test result for " &
+                  Get_Name_String (M.Node_Name) &
+                  " : !!! FAILED !!! ---");
             end if;
          else
-            Write_Referencial (Ref_Path.all,
-                               All_Traces (Integer (J)),
-                               M.Node_Name);
+            Write_Referencial
+              (Ref_Path.all,
+               All_Traces (Integer (J)),
+               M.Node_Name);
          end if;
 
          Free (Ref_Path);
@@ -358,9 +375,9 @@ package body Ocarina.Backends.Execution_Tests is
 
    procedure Launch_Test
      (Fd      : out GNAT.Expect.Process_Descriptor;
-      Command : String;
-      Arch    : Supported_Execution_Platform;
-      Timeout : Natural)
+      Command :     String;
+      Arch    :     Supported_Execution_Platform;
+      Timeout :     Natural)
    is
    begin
       case Arch is
@@ -368,9 +385,10 @@ package body Ocarina.Backends.Execution_Tests is
             declare
                TSim_LEON_Args : GNAT.OS_Lib.Argument_List (1 .. 1);
             begin
-               Exit_On_Error (TSim_LEON_Path = null,
-                              "Error : tsim-leon not found in PATH");
-               Header_Has_Ended := False;
+               Exit_On_Error
+                 (TSim_LEON_Path = null,
+                  "Error : tsim-leon not found in PATH");
+               Header_Has_Ended   := False;
                TSim_LEON_Args (1) := new String'(Command);
 
                Non_Blocking_Spawn
@@ -380,24 +398,25 @@ package body Ocarina.Backends.Execution_Tests is
                   Buffer_Size => 128000,
                   Err_To_Out  => True);
             end;
-            Send (Fd, Tsim_Cmd ("go 0x40000000 "
-                                  & Integer'Image (Timeout)
-                                  & " ms"));
+            Send
+              (Fd,
+               Tsim_Cmd ("go 0x40000000 " & Integer'Image (Timeout) & " ms"));
             GNAT.OS_Lib.Close (Get_Input_Fd (Fd));
 
          when Platform_LEON_GNAT =>
             declare
-               Args      : GNAT.OS_Lib.Argument_List (1 .. 5);
+               Args : GNAT.OS_Lib.Argument_List (1 .. 5);
             begin
-               Exit_On_Error (Qemu_Sparc_Path = null,
-                              "Error : qemu_system_sparc not found in PATH");
+               Exit_On_Error
+                 (Qemu_Sparc_Path = null,
+                  "Error : qemu_system_sparc not found in PATH");
 
                Write_Line ("Launching qemu_system_sparc");
-               Args (1)  := new String'("-nographic");
-               Args (2)  := new String'("-M");
-               Args (3)  := new String'("at697");
-               Args (4)  := new String'("-kernel");
-               Args (5)  := new String'(Command);
+               Args (1) := new String'("-nographic");
+               Args (2) := new String'("-M");
+               Args (3) := new String'("at697");
+               Args (4) := new String'("-kernel");
+               Args (5) := new String'(Command);
 
                GNAT.Expect.Non_Blocking_Spawn
                  (Descriptor  => Fd,
@@ -412,9 +431,10 @@ package body Ocarina.Backends.Execution_Tests is
             declare
                TSim_ERC32_Args : GNAT.OS_Lib.Argument_List (1 .. 1);
             begin
-               Exit_On_Error (TSim_ERC32_Path = null,
-                              "Error : tsim-erc32 not found in PATH");
-               Header_Has_Ended := False;
+               Exit_On_Error
+                 (TSim_ERC32_Path = null,
+                  "Error : tsim-erc32 not found in PATH");
+               Header_Has_Ended    := False;
                TSim_ERC32_Args (1) := new String'(Command);
 
                Non_Blocking_Spawn
@@ -424,9 +444,9 @@ package body Ocarina.Backends.Execution_Tests is
                   Buffer_Size => 128000,
                   Err_To_Out  => True);
             end;
-            Send (Fd, Tsim_Cmd ("go 0x02000000 "
-                                  & Integer'Image (Timeout)
-                                  & " ms"));
+            Send
+              (Fd,
+               Tsim_Cmd ("go 0x02000000 " & Integer'Image (Timeout) & " ms"));
             GNAT.OS_Lib.Close (Get_Input_Fd (Fd));
 
          when Platform_Native =>
@@ -446,31 +466,33 @@ package body Ocarina.Backends.Execution_Tests is
 
          when Platform_LEON_RTEMS =>
             declare
-               Args      : GNAT.OS_Lib.Argument_List (1 .. 11);
-               Dir       : constant String := Dir_Name (Normalize_Pathname
-                                                          (Command
-                                                             & Dir_Separator));
-               App_Name  : constant String := File_Name (Normalize_Pathname
-                                                                    (Command));
+               Args : GNAT.OS_Lib.Argument_List (1 .. 11);
+               Dir  : constant String :=
+                 Dir_Name (Normalize_Pathname (Command & Dir_Separator));
+               App_Name : constant String :=
+                 File_Name (Normalize_Pathname (Command));
                File      : File_Type;
                Boot_File : Unbounded_String :=
-                 To_Unbounded_String (Command_Name_Path.all
-                                        & "resources"
-                                        & Dir_Separator
-                                        & "rtems-boot.img");
+                 To_Unbounded_String
+                   (Command_Name_Path.all &
+                    "resources" &
+                    Dir_Separator &
+                    "rtems-boot.img");
             begin
-               Exit_On_Error (Qemu_Path = null,
-                              "Error : QEMU not found in PATH");
+               Exit_On_Error
+                 (Qemu_Path = null,
+                  "Error : QEMU not found in PATH");
 
                if not Ada.Directories.Exists (To_String (Boot_File)) then
-                  Boot_File := To_Unbounded_String (Command_Name_Path.all
-                                                      & "rtems-boot.img");
+                  Boot_File :=
+                    To_Unbounded_String
+                      (Command_Name_Path.all & "rtems-boot.img");
                end if;
 
-               Exit_On_Error (not Ada.Directories.Exists
-                                (To_String (Boot_File)),
-                              "Error : QEMU image boot file 'rtems-boot.img' "
-                                & "not found");
+               Exit_On_Error
+                 (not Ada.Directories.Exists (To_String (Boot_File)),
+                  "Error : QEMU image boot file 'rtems-boot.img' " &
+                  "not found");
 
                Create (File, Out_File, Dir & "rtems-grub.cfg");
                Put_Line (File, "set default=0");
@@ -481,8 +503,8 @@ package body Ocarina.Backends.Execution_Tests is
                Put_Line (File, "}");
                Close (File);
 
-               Write_Line ("Launching qemu with following dir as hda : "
-                             & Dir);
+               Write_Line
+                 ("Launching qemu with following dir as hda : " & Dir);
                Args (1)  := new String'("-boot");
                Args (2)  := new String'("a");
                Args (3)  := new String'("-fda");
@@ -492,7 +514,7 @@ package body Ocarina.Backends.Execution_Tests is
                Args (7)  := new String'("-nographic");
                Args (8)  := new String'("-no-kqemu");
                Args (9)  := new String'("-serial");
-               Args (10)  := new String'("stdio");
+               Args (10) := new String'("stdio");
                Args (11) := new String'("-no-reboot");
 
                GNAT.Expect.Non_Blocking_Spawn
@@ -505,8 +527,9 @@ package body Ocarina.Backends.Execution_Tests is
             end;
 
          when others =>
-            Exit_On_Error (True,
-                           "Platform " & Arch'Img  & " is not supported yet.");
+            Exit_On_Error
+              (True,
+               "Platform " & Arch'Img & " is not supported yet.");
       end case;
    end Launch_Test;
 
@@ -516,7 +539,7 @@ package body Ocarina.Backends.Execution_Tests is
 
    procedure Clean_String_From_Regexp
      (Str    : in out String_Ptr;
-      Regexp : Pattern_Matcher)
+      Regexp :        Pattern_Matcher)
    is
       Matches : Match_Array (1 .. 1);
       Old_Str : String_Ptr;
@@ -527,10 +550,10 @@ package body Ocarina.Backends.Execution_Tests is
          Old_Str := Str;
 
          --  create new parsed string from Output_Regexp
-         Str := new String'(Old_Str.all
-                              (Old_Str.all'First .. Matches (1).First - 1) &
-                              Old_Str.all
-                              (Matches (1).Last + 1 .. Old_Str.all'Last));
+         Str :=
+           new String'
+             (Old_Str.all (Old_Str.all'First .. Matches (1).First - 1) &
+              Old_Str.all (Matches (1).Last + 1 .. Old_Str.all'Last));
 
          --  Deallocate old string
          Free (Old_Str);
@@ -542,9 +565,7 @@ package body Ocarina.Backends.Execution_Tests is
    --  Clean_String_From_All_Regexp --
    -----------------------------------
 
-   procedure Clean_String_From_All_Regexp
-     (Str    : in out String_Ptr)
-   is
+   procedure Clean_String_From_All_Regexp (Str : in out String_Ptr) is
    begin
       Clean_String_From_Regexp (Str, Parse_Regexp);
       Clean_String_From_Regexp (Str, Strip_CR_Regexp);
@@ -557,10 +578,7 @@ package body Ocarina.Backends.Execution_Tests is
    -- Filter_Line --
    -----------------
 
-   procedure Filter_Line
-     (Line       : String;
-      Output_Str : in out String_Ptr)
-   is
+   procedure Filter_Line (Line : String; Output_Str : in out String_Ptr) is
    begin
       Output_Str := new String'(Line);
 
@@ -577,8 +595,8 @@ package body Ocarina.Backends.Execution_Tests is
       Str        : String;
       User_Data  : System.Address)
    is
-      Output_Buffer : constant Unbounded_String_Ptr
-        := Unbounded_String_Ptr (Addr_To_Acc.To_Pointer (User_Data));
+      Output_Buffer : constant Unbounded_String_Ptr :=
+        Unbounded_String_Ptr (Addr_To_Acc.To_Pointer (User_Data));
    begin
       pragma Unreferenced (Descriptor);
 
@@ -600,8 +618,8 @@ package body Ocarina.Backends.Execution_Tests is
       Str        : String;
       User_Data  : System.Address)
    is
-      Output_Buffer : constant Unbounded_String_Ptr
-        := Unbounded_String_Ptr (Addr_To_Acc.To_Pointer (User_Data));
+      Output_Buffer : constant Unbounded_String_Ptr :=
+        Unbounded_String_Ptr (Addr_To_Acc.To_Pointer (User_Data));
    begin
       pragma Unreferenced (Descriptor);
       Append (Output_Buffer.all, Str);
@@ -620,14 +638,13 @@ package body Ocarina.Backends.Execution_Tests is
    -- Execute_Coverage_Test --
    ---------------------------
 
-   function Execute_Coverage_Test (Timeout : Natural) return Boolean
-   is
+   function Execute_Coverage_Test (Timeout : Natural) return Boolean is
       use Ada.Real_Time;
       Result       : Expect_Match;
       Return_Value : Boolean;
-      TimeoutVar   : Natural := Timeout;
-      First        : constant Int := Ref_Name_Tables.First;
-      Last         : constant Int := Ref_Name_Tables.Last (Process_List);
+      TimeoutVar   : Natural            := Timeout;
+      First        : constant Int       := Ref_Name_Tables.First;
+      Last         : constant Int       := Ref_Name_Tables.Last (Process_List);
       Processes    : Fd_Array (Integer (First) .. Integer (Last));
       M            : Process_Type;
       Span         : constant Time_Span := Seconds (2);
@@ -658,38 +675,38 @@ package body Ocarina.Backends.Execution_Tests is
                   when Platform_LEON_GNAT =>
                      Args (2) := new String'("--target=leon-elf");
                   when others =>
-                     Exit_On_Error (True,
-                                    "Error : This platform is not yet"
-                                      & " supported for coverage test");
+                     Exit_On_Error
+                       (True,
+                        "Error : This platform is not yet" &
+                        " supported for coverage test");
                end case;
             end if;
 
-            Args (3) := new String'(Get_Current_Dir
-                                      & Get_Name_String (M.Appli_Name)
-                                      & Dir_Separator
-                                      & Get_Binary_Location
-                                      (Get_Current_Backend_Kind,
-                                       M.Node_Name));
+            Args (3) :=
+              new String'
+                (Get_Current_Dir &
+                 Get_Name_String (M.Appli_Name) &
+                 Dir_Separator &
+                 Get_Binary_Location (Get_Current_Backend_Kind, M.Node_Name));
 
-            Exit_On_Error (not Ada.Directories.Exists (Args (3).all),
-                           "Error : application " & Args (3).all
-                             & " does not exist");
+            Exit_On_Error
+              (not Ada.Directories.Exists (Args (3).all),
+               "Error : application " & Args (3).all & " does not exist");
             Write_Line ("Launching : " & Args (3).all);
             if Get_Current_Backend_Kind = PolyORB_Kernel_C then
                declare
-                  Args2 : GNAT.OS_Lib.Argument_List (1 .. 8);
+                  Args2   : GNAT.OS_Lib.Argument_List (1 .. 8);
                   Success : Boolean;
                begin
                   --  Prepare trace file with xcov
-                  GNAT.OS_Lib.Spawn
-                    (Xcov_Path.all,
-                     Args,
-                     Success);
+                  GNAT.OS_Lib.Spawn (Xcov_Path.all, Args, Success);
 
                   --  Get traces with Qemu
                   Args2 (1) := new String'("-fda");
-                  Args2 (2) := new String'(GNAT.OS_Lib.Getenv ("POK_PATH").all
-                                             & "/misc/grub-boot-only.img");
+                  Args2 (2) :=
+                    new String'
+                      (GNAT.OS_Lib.Getenv ("POK_PATH").all &
+                       "/misc/grub-boot-only.img");
                   Args2 (3) := new String'("-hda");
                   Args2 (4) := new String'("fat:.");
                   Args2 (5) := new String'("-boot");
@@ -712,10 +729,11 @@ package body Ocarina.Backends.Execution_Tests is
                   Buffer_Size => 128000,
                   Err_To_Out  => True);
             end if;
-            Add_Filter (Processes (Integer (J)),
-                        No_Filter_Procedure'Access,
-                        GNAT.Expect.Output,
-                        All_Traces (Integer (J))'Address);
+            Add_Filter
+              (Processes (Integer (J)),
+               No_Filter_Procedure'Access,
+               GNAT.Expect.Output,
+               All_Traces (Integer (J))'Address);
          end;
          Leave_Directory;
       end loop;
@@ -728,9 +746,10 @@ package body Ocarina.Backends.Execution_Tests is
             Expect (Processes (Integer (J)), Result, Never_Match, TimeoutVar);
          exception
             when GNAT.Expect.Process_Died =>
-               Write_Line ("Warning: process "
-                             & Get_Name_String (M.Node_Name)
-                             & " has died during coverage test phase");
+               Write_Line
+                 ("Warning: process " &
+                  Get_Name_String (M.Node_Name) &
+                  " has died during coverage test phase");
          end;
          Write_Line (To_String (80 * '#'));
          Write_Line (To_String (All_Traces (Integer (J))));
@@ -739,7 +758,8 @@ package body Ocarina.Backends.Execution_Tests is
          --  Send "Ctrl-a x" command to stop qemu
 
          if Get_Current_Backend_Kind = PolyORB_Kernel_C
-           or else M.Execution_Platform = Platform_LEON_GNAT then
+           or else M.Execution_Platform = Platform_LEON_GNAT
+         then
             Send (Processes (Integer (J)), ASCII.SOH & 'x');
          end if;
          Close (Processes (Integer (J)));
@@ -756,7 +776,7 @@ package body Ocarina.Backends.Execution_Tests is
       for J in First .. Last loop
          M := Process_List.Table (J);
          declare
-            File  : File_Type;
+            File    : File_Type;
             O_Files : Unbounded_String;
 
             procedure Add_To_O_Files
@@ -777,20 +797,22 @@ package body Ocarina.Backends.Execution_Tests is
                Append (O_Files, Item & ASCII.LF);
             end Add_To_O_Files;
 
-            procedure Find_O_Files is new
-              GNAT.Directory_Operations.Iteration.Find
+            procedure Find_O_Files is new GNAT.Directory_Operations.Iteration
+              .Find
               (Action => Add_To_O_Files);
-            --  Procedure used to find object files in the application
-            --  directory.
+         --  Procedure used to find object files in the application
+         --  directory.
 
          begin
             --  List object files
 
-            Find_O_Files (Get_Current_Dir & Get_Name_String (M.Appli_Name),
-                          ".*\.o");
+            Find_O_Files
+              (Get_Current_Dir & Get_Name_String (M.Appli_Name),
+               ".*\.o");
 
-            Find_O_Files (Get_Current_Dir & Get_Name_String (M.Appli_Name),
-                          ".*\.lo");
+            Find_O_Files
+              (Get_Current_Dir & Get_Name_String (M.Appli_Name),
+               ".*\.lo");
 
             --  Extract functions to analyze with xcov from previously found
             --  object files
@@ -798,7 +820,7 @@ package body Ocarina.Backends.Execution_Tests is
             declare
                Nb_O_Files : constant Integer :=
                  Ada.Strings.Unbounded.Count (O_Files, ASCII.LF & "");
-               Args2 : GNAT.OS_Lib.Argument_List (1 .. Nb_O_Files + 1);
+               Args2         : GNAT.OS_Lib.Argument_List (1 .. Nb_O_Files + 1);
                Lst, Next_Lst : Integer := 1;
             begin
                Args2 (1) := new String'("disp-routines");
@@ -810,9 +832,11 @@ package body Ocarina.Backends.Execution_Tests is
                   --  Search the end of the next object file (assuming they
                   --  are separated with spaces)
 
-                  Next_Lst := Lst + Index
-                    (Tail (O_Files, To_String (O_Files)'Length - Lst),
-                     ASCII.LF & "");
+                  Next_Lst :=
+                    Lst +
+                    Index
+                      (Tail (O_Files, To_String (O_Files)'Length - Lst),
+                       ASCII.LF & "");
 
                   --  Add the object file with its full path to the argument
                   --  list (without the space).
@@ -830,18 +854,18 @@ package body Ocarina.Backends.Execution_Tests is
                --  Finally, get functions to analyze with xcov
 
                GNAT.Expect.Non_Blocking_Spawn
-                 (Descriptor => Processes (Integer (J)),
-                  Command => Xcov_Path.all,
-                  Args => Args2,
+                 (Descriptor  => Processes (Integer (J)),
+                  Command     => Xcov_Path.all,
+                  Args        => Args2,
                   Buffer_Size => 128000,
                   Err_To_Out  => True);
-               Add_Filter (Processes (Integer (J)),
-                           No_Filter_Procedure'Access,
-                           GNAT.Expect.Output,
-                           All_Traces (Integer (J))'Address);
+               Add_Filter
+                 (Processes (Integer (J)),
+                  No_Filter_Procedure'Access,
+                  GNAT.Expect.Output,
+                  All_Traces (Integer (J))'Address);
                begin
-                  Expect (Processes (Integer (J)),
-                          Result, Never_Match);
+                  Expect (Processes (Integer (J)), Result, Never_Match);
                exception
                   when GNAT.Expect.Process_Died =>
                      null;
@@ -850,13 +874,16 @@ package body Ocarina.Backends.Execution_Tests is
 
                --  Write result in <Node_Name>.trace.list file
 
-               Create (File, Out_File, Get_Current_Dir
-                         & Get_Name_String (M.Node_Name)
-                         & ".trace.list");
+               Create
+                 (File,
+                  Out_File,
+                  Get_Current_Dir &
+                  Get_Name_String (M.Node_Name) &
+                  ".trace.list");
                Put (File, To_String (All_Traces (Integer (J))));
                Close (File);
-               Write_Line (Get_Name_String (M.Node_Name)
-                             & ".trace.list file created");
+               Write_Line
+                 (Get_Name_String (M.Node_Name) & ".trace.list file created");
             end;
          end;
       end loop;
@@ -870,28 +897,37 @@ package body Ocarina.Backends.Execution_Tests is
       for J in First .. Last loop
          M := Process_List.Table (J);
          declare
-            Args  : GNAT.OS_Lib.Argument_List (1 .. 5);
+            Args    : GNAT.OS_Lib.Argument_List (1 .. 5);
             Success : Boolean;
          begin
             Args (1) := new String'("coverage");
             Args (2) := new String'("--level=branch");
             Args (3) := new String'("--annotate=html+asm");
-            Args (4) := new String'("--routine-list="
-                                      & Get_Current_Dir
-                                      & Get_Name_String (M.Node_Name)
-                                      & ".trace.list");
-            Args (5) := new String'(Get_Current_Dir
-                                      & Get_Name_String (M.Appli_Name)
-                                      & Dir_Separator
-                                      & Get_Name_String (M.Node_Name)
-                                      & ".trace");
-            Write_Line ("xcov " & Args (1).all & " " & Args (2).all & " "
-                          & Args (3).all & " " & Args (4).all & " "
-                          & Args (5).all);
-            GNAT.OS_Lib.Spawn
-              (Xcov_Path.all,
-               Args,
-               Success);
+            Args (4) :=
+              new String'
+                ("--routine-list=" &
+                 Get_Current_Dir &
+                 Get_Name_String (M.Node_Name) &
+                 ".trace.list");
+            Args (5) :=
+              new String'
+                (Get_Current_Dir &
+                 Get_Name_String (M.Appli_Name) &
+                 Dir_Separator &
+                 Get_Name_String (M.Node_Name) &
+                 ".trace");
+            Write_Line
+              ("xcov " &
+               Args (1).all &
+               " " &
+               Args (2).all &
+               " " &
+               Args (3).all &
+               " " &
+               Args (4).all &
+               " " &
+               Args (5).all);
+            GNAT.OS_Lib.Spawn (Xcov_Path.all, Args, Success);
             if not Success then
                Return_Value := False;
             end if;

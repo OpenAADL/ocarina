@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 with Namet; use Namet;
 
-with GNAT.OS_Lib;      use GNAT.OS_Lib;
+with GNAT.OS_Lib; use GNAT.OS_Lib;
 
 package body Ocarina.Options is
 
@@ -63,12 +63,12 @@ package body Ocarina.Options is
       end if;
 
       Get_Name_String (Installation_Directory);
-      Add_Str_To_Name_Buffer ("share"   & Directory_Separator);
+      Add_Str_To_Name_Buffer ("share" & Directory_Separator);
       Add_Str_To_Name_Buffer ("ocarina" & Directory_Separator);
       if AADL_Version = AADL_V1 then
-         Add_Str_To_Name_Buffer ("AADLv1"  & Directory_Separator);
+         Add_Str_To_Name_Buffer ("AADLv1" & Directory_Separator);
       elsif AADL_Version = AADL_V2 then
-         Add_Str_To_Name_Buffer ("AADLv2"  & Directory_Separator);
+         Add_Str_To_Name_Buffer ("AADLv2" & Directory_Separator);
       end if;
 
       Result := Name_Find;
@@ -146,9 +146,7 @@ package body Ocarina.Options is
       Name_Len := 0;
 
       for I in Parameters'Range loop
-         if Parameters (I) = ','
-           or else I = Parameters'Last
-         then
+         if Parameters (I) = ',' or else I = Parameters'Last then
             if I = Parameters'Last then
                Add_Char_To_Name_Buffer (Parameters (I));
             end if;
@@ -178,11 +176,11 @@ package body Ocarina.Options is
    --------------------------
 
    function Perform_Annex_Action (Language : Name_Id) return Boolean is
-      Behavior_Language_Name : constant Name_Id := Get_String_Name
-                                                    ("behavior_specification");
-      Real_Language_Name     : constant Name_Id := Get_String_Name
-                                                    ("real_specification");
-      Perform                : Boolean          := True;
+      Behavior_Language_Name : constant Name_Id :=
+        Get_String_Name ("behavior_specification");
+      Real_Language_Name : constant Name_Id :=
+        Get_String_Name ("real_specification");
+      Perform : Boolean := True;
    begin
       if Current_Annex_Action (Disable_ALL) = 1 then
          Perform := False;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,20 +52,21 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.XML_Tree.Nutils;
 
-   package AIN    renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package AINU   renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package XTN    renames Ocarina.Backends.XML_Tree.Nodes;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
    procedure Visit_Component (E : Node_Id; Table : Node_Id);
-   function Get_Full_Component_Name (E : Node_Id; R : Boolean := False)
-      return Name_Id;
+   function Get_Full_Component_Name
+     (E : Node_Id;
+      R : Boolean := False) return Name_Id;
 
-   Current_Parent_Node  : Node_Id;
-   Functional_System    : Node_Id := No_Node;
-   My_Root              : Node_Id;
+   Current_Parent_Node : Node_Id;
+   Functional_System   : Node_Id := No_Node;
+   My_Root             : Node_Id;
 
    -----------
    -- Visit --
@@ -90,8 +91,8 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    ---------------------------------
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
-      N : constant Node_Id := New_Node (XTN.K_HI_Node);
-      D : constant Node_Id := New_Node (XTN.K_HI_Distributed_Application);
+      N     : constant Node_Id := New_Node (XTN.K_HI_Node);
+      D     : constant Node_Id := New_Node (XTN.K_HI_Distributed_Application);
       U     : Node_Id;
       T     : Node_Id;
       P     : Node_Id;
@@ -125,8 +126,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       Push_Entity (N);
 
       U := New_Node (XTN.K_HI_Unit, AIN.Identifier (My_Root));
-      Get_Name_String
-            (To_XML_Name (Display_Name (Identifier (My_Root))));
+      Get_Name_String (To_XML_Name (Display_Name (Identifier (My_Root))));
       Add_Str_To_Name_Buffer ("_functions_matrix");
       T := Make_Defining_Identifier (Name_Find);
       P := Make_XML_File (T);
@@ -144,8 +144,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
 
       Push_Entity (U);
 
-      Current_Parent_Node := XTN.Root_Node
-                              (XTN.XML_File (U));
+      Current_Parent_Node := XTN.Root_Node (XTN.XML_File (U));
 
       --  Make the <head> node of the HTML file.
       Tmp := Make_XML_Node ("head");
@@ -155,8 +154,8 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       --  Add a title in the <head> section node
       Title := Make_XML_Node ("title");
 
-      Set_Str_To_Name_Buffer ("Traceability of functions " &
-                              "implementation for System ");
+      Set_Str_To_Name_Buffer
+        ("Traceability of functions " & "implementation for System ");
       Get_Name_String_And_Append (Display_Name (Identifier (My_Root)));
 
       XTN.Set_Node_Value (Title, Make_Defining_Identifier (Name_Find));
@@ -174,7 +173,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
 
       --  Style of the <h1> node
       Set_Str_To_Name_Buffer
-         ("font-family: Arial;" &
+        ("font-family: Arial;" &
          "text-align: center; font-weight: bold; font-size: 1.2em");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("style");
@@ -182,8 +181,8 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (Tmp));
 
       --  Title of the document
-      Set_Str_To_Name_Buffer ("Traceability of functions implementation "&
-                              "for System ");
+      Set_Str_To_Name_Buffer
+        ("Traceability of functions implementation " & "for System ");
       Get_Name_String_And_Append (Display_Name (Identifier (My_Root)));
       H1 := Make_Defining_Identifier (Name_Find);
 
@@ -201,8 +200,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -217,8 +215,10 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    -- Get_Full_Component_Name --
    -----------------------------
 
-   function Get_Full_Component_Name (E : Node_Id; R : Boolean := False)
-      return Name_Id is
+   function Get_Full_Component_Name
+     (E : Node_Id;
+      R : Boolean := False) return Name_Id
+   is
       T : Name_Id;
       pragma Unreferenced (T);
    begin
@@ -226,16 +226,19 @@ package body Ocarina.Backends.Functions_Matrix.Main is
          Set_Str_To_Name_Buffer ("");
       end if;
 
-      if Parent_Subcomponent (E) /= No_Node and then
-         Parent_Component (Parent_Subcomponent (E)) /= No_Node and then
-         Parent_Subcomponent
-            (Parent_Component (Parent_Subcomponent (E))) /= No_Node then
-            T := Get_Full_Component_Name
-               (Parent_Component (Parent_Subcomponent (E)));
+      if Parent_Subcomponent (E) /= No_Node
+        and then Parent_Component (Parent_Subcomponent (E)) /= No_Node
+        and then
+          Parent_Subcomponent (Parent_Component (Parent_Subcomponent (E))) /=
+          No_Node
+      then
+         T :=
+           Get_Full_Component_Name
+             (Parent_Component (Parent_Subcomponent (E)));
       end if;
 
       Get_Name_String_And_Append
-         (Display_Name (Identifier (Parent_Subcomponent (E))));
+        (Display_Name (Identifier (Parent_Subcomponent (E))));
 
       if not R then
          Add_Str_To_Name_Buffer (".");
@@ -253,13 +256,13 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    ---------------------
 
    procedure Visit_Component (E : Node_Id; Table : Node_Id) is
-      N                 : Node_Id;
-      T                 : Node_Id;
-      TR                : Node_Id;
-      TD                : Node_Id;
-      P                 : Node_Id;
-      Q                 : Node_Id;
-      S                 : Node_Id;
+      N  : Node_Id;
+      T  : Node_Id;
+      TR : Node_Id;
+      TD : Node_Id;
+      P  : Node_Id;
+      Q  : Node_Id;
+      S  : Node_Id;
    begin
       TR := Make_XML_Node ("tr");
 
@@ -268,7 +271,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       TD := Make_XML_Node ("td");
 
       Set_Str_To_Name_Buffer
-         ("font-family: Arial; background-color: #0a97ac;" &
+        ("font-family: Arial; background-color: #0a97ac;" &
          "text-align: left; font-weight: bold; font-size: 0.8em");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("style");
@@ -278,8 +281,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       N := Make_Defining_Identifier (Get_Full_Component_Name (E, True));
       XTN.Set_Node_Value (TD, N);
 
-      Append_Node_To_List (TD,
-                  XTN.Subitems (TR));
+      Append_Node_To_List (TD, XTN.Subitems (TR));
 
       T := First_Node (Subcomponents (Functional_System));
 
@@ -288,33 +290,30 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       --  actually analyzed (S).
 
       while Present (T) loop
-         TD          := Make_XML_Node ("td");
+         TD := Make_XML_Node ("td");
 
-         if Get_Bound_Function
-            (E) /= No_Node and then
-            Get_Bound_Function
-            (E) = Corresponding_Instance (T) then
+         if Get_Bound_Function (E) /= No_Node
+           and then Get_Bound_Function (E) = Corresponding_Instance (T)
+         then
             Set_Str_To_Name_Buffer
-               ("font-family: Arial; font-weight: bold;" &
-                "background-color: #91ff94;" &
+              ("font-family: Arial; font-weight: bold;" &
+               "background-color: #91ff94;" &
                "text-align: center; font-size: 0.8em");
             P := Make_Defining_Identifier (Name_Find);
             Set_Str_To_Name_Buffer ("style");
             Q := Make_Defining_Identifier (Name_Find);
-            Append_Node_To_List
-               (Make_Assignement (Q, P), XTN.Items (TD));
+            Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (TD));
 
             Set_Str_To_Name_Buffer ("O");
          else
             Set_Str_To_Name_Buffer
-               ("font-family: Arial; font-weight: bold;" &
-                "background-color: #b83f3f;" &
+              ("font-family: Arial; font-weight: bold;" &
+               "background-color: #b83f3f;" &
                "text-align: center; font-size: 0.8em");
             P := Make_Defining_Identifier (Name_Find);
             Set_Str_To_Name_Buffer ("style");
             Q := Make_Defining_Identifier (Name_Find);
-            Append_Node_To_List
-               (Make_Assignement (Q, P), XTN.Items (TD));
+            Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (TD));
 
             Set_Str_To_Name_Buffer ("X");
          end if;
@@ -325,13 +324,11 @@ package body Ocarina.Backends.Functions_Matrix.Main is
             XTN.Set_Node_Value (TD, N);
          end if;
 
-         Append_Node_To_List (TD,
-                     XTN.Subitems (TR));
+         Append_Node_To_List (TD, XTN.Subitems (TR));
          T := Next_Node (T);
       end loop;
 
-      Append_Node_To_List
-         (TR, XTN.Subitems (Table));
+      Append_Node_To_List (TR, XTN.Subitems (Table));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
@@ -347,14 +344,14 @@ package body Ocarina.Backends.Functions_Matrix.Main is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S                 : Node_Id;
-      N                 : Node_Id;
-      TR                : Node_Id;
-      TD                : Node_Id;
-      Table             : Node_Id;
-      P                 : Node_Id;
-      Q                 : Node_Id;
-      Impl_System       : Node_Id := No_Node;
+      S           : Node_Id;
+      N           : Node_Id;
+      TR          : Node_Id;
+      TD          : Node_Id;
+      Table       : Node_Id;
+      P           : Node_Id;
+      Q           : Node_Id;
+      Impl_System : Node_Id := No_Node;
    begin
       --  Declare the table node that will contain the connectivity matrix.
       Table := Make_XML_Node ("table");
@@ -369,15 +366,17 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            if Get_Category_Of_Component (S) = CC_System and then
-               Display_Name (Identifier (S)) =
-               Get_String_Name ("Functional") then
+            if Get_Category_Of_Component (S) = CC_System
+              and then
+                Display_Name (Identifier (S)) =
+                Get_String_Name ("Functional")
+            then
                Functional_System := Corresponding_Instance (S);
             end if;
 
-            if Get_Category_Of_Component (S) = CC_System and then
-               Display_Name (Identifier (S)) =
-               Get_String_Name ("Impl") then
+            if Get_Category_Of_Component (S) = CC_System
+              and then Display_Name (Identifier (S)) = Get_String_Name ("Impl")
+            then
                Impl_System := Corresponding_Instance (S);
             end if;
 
@@ -386,13 +385,11 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       end if;
 
       if Impl_System = No_Node then
-         Display_Error
-            ("Implementation system not found", Fatal => True);
+         Display_Error ("Implementation system not found", Fatal => True);
       end if;
 
       if Functional_System = No_Node then
-         Display_Error
-            ("Functional system not found", Fatal => True);
+         Display_Error ("Functional system not found", Fatal => True);
       end if;
 
       if not AINU.Is_Empty (Subcomponents (Functional_System)) then
@@ -403,8 +400,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
          --  Add a <td> node that represent a colon in the line.
          TD := Make_XML_Node ("td");
 
-         Append_Node_To_List (TD,
-                     XTN.Subitems (TR));
+         Append_Node_To_List (TD, XTN.Subitems (TR));
 
          S := First_Node (Subcomponents (Functional_System));
 
@@ -414,7 +410,7 @@ package body Ocarina.Backends.Functions_Matrix.Main is
             TD := Make_XML_Node ("td");
 
             Set_Str_To_Name_Buffer
-               ("font-family: Arial; background-color: #0a97ac;" &
+              ("font-family: Arial; background-color: #0a97ac;" &
                "text-align: center; font-weight: bold; font-size: 0.8em");
             P := Make_Defining_Identifier (Name_Find);
             Set_Str_To_Name_Buffer ("style");
@@ -426,13 +422,11 @@ package body Ocarina.Backends.Functions_Matrix.Main is
             N := Make_Defining_Identifier (Name_Find);
             XTN.Set_Node_Value (TD, N);
 
-            Append_Node_To_List (TD,
-                        XTN.Subitems (TR));
+            Append_Node_To_List (TD, XTN.Subitems (TR));
             S := Next_Node (S);
          end loop;
 
-         Append_Node_To_List (TR,
-            XTN.Subitems (Table));
+         Append_Node_To_List (TR, XTN.Subitems (Table));
       end if;
 
       if not AINU.Is_Empty (Subcomponents (Impl_System)) then
@@ -444,7 +438,6 @@ package body Ocarina.Backends.Functions_Matrix.Main is
       end if;
 
       --  Add the table to the main HTML node (<body/>).
-      Append_Node_To_List (Table,
-                           XTN.Subitems (Current_Parent_Node));
+      Append_Node_To_List (Table, XTN.Subitems (Current_Parent_Node));
    end Visit_System_Instance;
 end Ocarina.Backends.Functions_Matrix.Main;

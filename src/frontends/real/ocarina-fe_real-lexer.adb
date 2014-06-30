@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,9 +31,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Charset;        use Charset;
-with Errors;         use Errors;
-with Namet;          use Namet;
+with Charset; use Charset;
+with Errors;  use Errors;
+with Namet;   use Namet;
 
 package body Ocarina.FE_REAL.Lexer is
 
@@ -152,10 +152,10 @@ package body Ocarina.FE_REAL.Lexer is
       Current_Token          := Token;
       Current_Token_Location := Token_Location;
       Scan_Token;
-      Next_Token_Value       := Token;
-      Token_Name             := Current_Token_Name;
-      Token                  := Current_Token;
-      Token_Location         := Current_Token_Location;
+      Next_Token_Value := Token;
+      Token_Name       := Current_Token_Name;
+      Token            := Current_Token;
+      Token_Location   := Current_Token_Location;
       return Next_Token_Value;
    end Next_Token;
 
@@ -191,7 +191,7 @@ package body Ocarina.FE_REAL.Lexer is
 
       Token_Location.Scan := Token_Location.Scan + 1;
       loop
-         C := Buffer (Token_Location.Scan);
+         C                   := Buffer (Token_Location.Scan);
          Token_Location.Scan := Token_Location.Scan + 1;
 
          if C = EOF then
@@ -209,7 +209,7 @@ package body Ocarina.FE_REAL.Lexer is
             Skip_Spaces;
             exit when Buffer (Token_Location.Scan) /= Delimiter;
 
-            C := Buffer (Token_Location.Scan + 1);
+            C                   := Buffer (Token_Location.Scan + 1);
             Token_Location.Scan := Token_Location.Scan + 2;
          end if;
 
@@ -227,8 +227,17 @@ package body Ocarina.FE_REAL.Lexer is
 
          if C = '\' then
             case Buffer (Token_Location.Scan) is
-               when 'n' | 't' | 'v' | 'b' | 'r' | '"' | -- "
-                    'f' | 'a' | '\' | ''' | '?' =>
+               when 'n' |
+                 't'    |
+                 'v'    |
+                 'b'    |
+                 'r'    |
+                 '"'    | -- "
+                 'f'    |
+                 'a'    |
+                 '\'    |
+                 '''    |
+                 '?'    =>
                   Add_Char_To_Name_Buffer (Buffer (Token_Location.Scan));
                   Token_Location.Scan := Token_Location.Scan + 1;
 
@@ -258,7 +267,7 @@ package body Ocarina.FE_REAL.Lexer is
 
                --  Read 1, 2, 3 or 4 hexadecimal digits
 
-               when 'u'  =>
+               when 'u' =>
                   Token_Location.Scan := Token_Location.Scan + 1;
                   Scan_Integer_Literal_Value (16, 4);
                   if Token = T_Error then
@@ -284,7 +293,7 @@ package body Ocarina.FE_REAL.Lexer is
       end loop;
 
       String_Literal_Value := Name_Find;
-      Token_Name := String_Literal_Value;
+      Token_Name           := String_Literal_Value;
    end Scan_Chars_Literal_Value;
 
    ---------------------
@@ -292,13 +301,13 @@ package body Ocarina.FE_REAL.Lexer is
    ---------------------
 
    procedure Scan_Identifier is
-      Escaped : Boolean  := False;
+      Escaped : Boolean := False;
    begin
 
       --  Read escaped identifier
 
       if Buffer (Token_Location.Scan) = '_' then
-         Escaped := True;
+         Escaped             := True;
          Token_Location.Scan := Token_Location.Scan + 1;
       end if;
 
@@ -306,9 +315,9 @@ package body Ocarina.FE_REAL.Lexer is
 
       Name_Len := 0;
       while Is_Identifier_Character (Buffer (Token_Location.Scan)) loop
-         Name_Len := Name_Len + 1;
+         Name_Len               := Name_Len + 1;
          Name_Buffer (Name_Len) := Buffer (Token_Location.Scan);
-         Token_Location.Scan := Token_Location.Scan + 1;
+         Token_Location.Scan    := Token_Location.Scan + 1;
       end loop;
 
       Token_Name := Name_Find;
@@ -321,10 +330,10 @@ package body Ocarina.FE_REAL.Lexer is
          if Token = T_Error then
             Token := T_Identifier;
          elsif Token = T_True then
-            Token := T_Boolean_Literal;
+            Token                 := T_Boolean_Literal;
             Boolean_Literal_Value := True;
          elsif Token = T_False then
-            Token := T_Boolean_Literal;
+            Token                 := T_Boolean_Literal;
             Boolean_Literal_Value := False;
          end if;
       end if;
@@ -343,7 +352,7 @@ package body Ocarina.FE_REAL.Lexer is
       Digit  : Integer;
    begin
       Integer_Literal_Value := 0;
-      Token := T_Integer_Literal;
+      Token                 := T_Integer_Literal;
 
       while Length < Size loop
          C := To_Lower (Buffer (Token_Location.Scan));
@@ -360,12 +369,12 @@ package body Ocarina.FE_REAL.Lexer is
          if Digit >= Base then
             Error_Loc (1) := Token_Location;
             DE ("digit >= base");
-            Token := T_Error;
+            Token                 := T_Error;
             Integer_Literal_Value := 0;
             return;
          end if;
 
-         Length := Length + 1;
+         Length              := Length + 1;
          Token_Location.Scan := Token_Location.Scan + 1;
 
          Integer_Literal_Value :=
@@ -375,7 +384,7 @@ package body Ocarina.FE_REAL.Lexer is
 
       if Length = 0 then
          Integer_Literal_Value := 0;
-         Token := T_Error;
+         Token                 := T_Error;
       end if;
    end Scan_Integer_Literal_Value;
 
@@ -390,7 +399,7 @@ package body Ocarina.FE_REAL.Lexer is
       Exponent_Part : Long_Long_Integer := -1;
       Exponent_Sign : Long_Long_Integer := 1;
    begin
-      Token := T_Error;
+      Token                := T_Error;
       Integer_Literal_Base := 10;
 
       --  Specific case to get the base
@@ -402,7 +411,7 @@ package body Ocarina.FE_REAL.Lexer is
 
          if C = 'x' then
             Integer_Literal_Base := 16;
-            Token_Location.Scan := Token_Location.Scan + 2;
+            Token_Location.Scan  := Token_Location.Scan + 2;
 
             C := To_Lower (Buffer (Token_Location.Scan));
             if C not in '0' .. '9' and then C not in 'a' .. 'f' then
@@ -415,7 +424,7 @@ package body Ocarina.FE_REAL.Lexer is
 
          elsif C in '0' .. '9' then
             Integer_Literal_Base := 8;
-            Token_Location.Scan := Token_Location.Scan + 1;
+            Token_Location.Scan  := Token_Location.Scan + 1;
 
          end if;
       end if;
@@ -462,10 +471,10 @@ package body Ocarina.FE_REAL.Lexer is
          --  Read the exponent sign.
 
          if Buffer (Token_Location.Scan) = '-' then
-            Exponent_Sign := -1;
+            Exponent_Sign       := -1;
             Token_Location.Scan := Token_Location.Scan + 1;
          elsif Buffer (Token_Location.Scan) = '+' then
-            Exponent_Sign := 1;
+            Exponent_Sign       := 1;
             Token_Location.Scan := Token_Location.Scan + 1;
          end if;
 
@@ -536,8 +545,8 @@ package body Ocarina.FE_REAL.Lexer is
             Add_Dnat_To_Name_Buffer (Dnat (Exponent_Part));
          end if;
 
-         Float_Literal_Value
-           := Long_Long_Float'Value (Name_Buffer (1 .. Name_Len));
+         Float_Literal_Value :=
+           Long_Long_Float'Value (Name_Buffer (1 .. Name_Len));
 
          if Token = T_Fixed_Point_Literal then
             Add_Char_To_Name_Buffer ('D');
@@ -593,9 +602,7 @@ package body Ocarina.FE_REAL.Lexer is
          Skip_Spaces;
          Token_Location.Last_Pos := Token_Location.Scan;
 
-         if Token_Location.Scan > Token_Location.EOF
-           or else Token = T_EOF
-         then
+         if Token_Location.Scan > Token_Location.EOF or else Token = T_EOF then
             Token := T_EOF;
             return;
          end if;
@@ -606,49 +613,49 @@ package body Ocarina.FE_REAL.Lexer is
 
             when ';' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Semi_Colon;
+               Token               := T_Semi_Colon;
 
             when '{' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Left_Brace;
+               Token               := T_Left_Brace;
 
             when '}' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Right_Brace;
+               Token               := T_Right_Brace;
 
             when ':' =>
                Token_Location.Scan := Token_Location.Scan + 1;
                if Buffer (Token_Location.Scan) = '=' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Affect;
+                  Token               := T_Affect;
                else
                   Token := T_Colon;
                end if;
 
             when ',' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Comma;
+               Token               := T_Comma;
 
             when '(' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Left_Paren;
+               Token               := T_Left_Paren;
 
             when ')' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Right_Paren;
+               Token               := T_Right_Paren;
 
             when '=' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Equal;
+               Token               := T_Equal;
 
             when '<' =>
                Token_Location.Scan := Token_Location.Scan + 1;
                if Buffer (Token_Location.Scan) = '=' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Less_Equal;
+                  Token               := T_Less_Equal;
                elsif Buffer (Token_Location.Scan) = '>' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Different;
+                  Token               := T_Different;
                else
                   Token := T_Less;
                end if;
@@ -657,14 +664,14 @@ package body Ocarina.FE_REAL.Lexer is
                Token_Location.Scan := Token_Location.Scan + 1;
                if Buffer (Token_Location.Scan) = '=' then
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Greater_Equal;
+                  Token               := T_Greater_Equal;
                else
                   Token := T_Greater;
                end if;
 
             when '+' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Plus;
+               Token               := T_Plus;
 
             when '-' =>
                Token_Location.Scan := Token_Location.Scan + 1;
@@ -676,17 +683,17 @@ package body Ocarina.FE_REAL.Lexer is
 
             when '/' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Slash;
+               Token               := T_Slash;
 
             when '*' =>
                Token_Location.Scan := Token_Location.Scan + 1;
                if Buffer (Token_Location.Scan) = '*' then
                   if Buffer (Token_Location.Scan + 1) = '}' then
                      Token_Location.Scan := Token_Location.Scan + 2;
-                     Token := T_EOF;
+                     Token               := T_EOF;
                   else
                      Token_Location.Scan := Token_Location.Scan + 1;
-                     Token := T_Power;
+                     Token               := T_Power;
                   end if;
                else
                   Token := T_Star;
@@ -694,11 +701,11 @@ package body Ocarina.FE_REAL.Lexer is
 
             when '[' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Left_Bracket;
+               Token               := T_Left_Bracket;
 
             when ']' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Right_Bracket;
+               Token               := T_Right_Bracket;
 
             when '0' .. '9' =>
                Scan_Numeric_Literal_Value;
@@ -714,11 +721,12 @@ package body Ocarina.FE_REAL.Lexer is
 
             when '|' =>
                Token_Location.Scan := Token_Location.Scan + 1;
-               Token := T_Sothat;
+               Token               := T_Sothat;
 
             when '_' =>
                if Is_Alphabetic_Character
-                 (Buffer (Token_Location.Scan + 1)) then
+                   (Buffer (Token_Location.Scan + 1))
+               then
                   Scan_Identifier;
                else
                   Error_Loc (1) := Token_Location;
@@ -727,7 +735,7 @@ package body Ocarina.FE_REAL.Lexer is
 
             when EOF =>
                Token_Location.Scan := Token_Location.Scan + 3;
-               Token := T_EOF;
+               Token               := T_EOF;
 
             when others =>
                if Is_Alphabetic_Character (Buffer (Token_Location.Scan)) then

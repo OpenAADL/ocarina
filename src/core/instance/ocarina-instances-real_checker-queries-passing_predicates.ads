@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,13 +42,12 @@ package Ocarina.Instances.REAL_Checker.Queries.Passing_Predicates is
    function Is_Passing_Through_Predicate
      (F      : Types.Node_Id;
       C      : Types.Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean;
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean;
    --  Check if the end-to-end flow is passing through the
    --  component instance C
 
-   package Passing_Query is
-      new Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates
+   package Passing_Query is new Ocarina.Instances.REAL_Checker.Queries
+     .Relational_Predicates
      (Is_Passing_Through_Predicate);
    --  Allows to search for all end-to-end flows which are passing
    --  throug a given component instance

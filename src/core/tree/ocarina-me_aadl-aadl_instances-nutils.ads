@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,11 +36,11 @@ with Types;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
-package Ocarina.Me_AADL.AADL_Instances.Nutils is
+package Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    use Locations;
    use Types;
-   use Ocarina.Me_AADL.AADL_Instances.Nodes;
+   use Ocarina.ME_AADL.AADL_Instances.Nodes;
 
    procedure Append_List_To_List (S : List_Id; D : in out List_Id);
    pragma Inline (Append_List_To_List);
@@ -88,8 +88,7 @@ package Ocarina.Me_AADL.AADL_Instances.Nutils is
 
    function Make_Node_Container
      (Item       : Node_Id;
-      Extra_Item : Node_Id := No_Node)
-     return Node_Id;
+      Extra_Item : Node_Id := No_Node) return Node_Id;
    --  Creates a container for the nodes Item and Extra_Item to be able
    --  to put one node in several lists
 
@@ -100,8 +99,7 @@ package Ocarina.Me_AADL.AADL_Instances.Nutils is
    function Compute_Full_Name_Of_Instance
      (Instance         : Node_Id;
       Display_Name     : Boolean := False;
-      Keep_Root_System : Boolean := True)
-     return Name_Id;
+      Keep_Root_System : Boolean := True) return Name_Id;
    --  Return the complete name (i.e. containing the names of the
    --  parent components) of a given component instance. If the
    --  Display_Name flag is set, return the display name (any upper
@@ -118,8 +116,7 @@ package Ocarina.Me_AADL.AADL_Instances.Nutils is
      (Loc          : Location;
       Name         : Name_Id;
       Display_Name : Name_Id;
-      Entity       : Node_Id)
-     return Node_Id;
+      Entity       : Node_Id) return Node_Id;
    --  Make an identifier
 
    function Copy_Node (Original : Node_Id) return Node_Id;
@@ -129,8 +126,7 @@ package Ocarina.Me_AADL.AADL_Instances.Nutils is
 
    function Find_Name_In_List
      (Name_Node : Name_Id;
-      List : List_Id)
-     return Node_Id;
+      List      : List_Id) return Node_Id;
    --  Find a node with a given name in a list. This function
    --  was introduced to search for a feature located in a
    --  feature group and does not provide advanced search features
@@ -139,18 +135,18 @@ package Ocarina.Me_AADL.AADL_Instances.Nutils is
    --  The routines below are used to check the category of a
    --  component or subcomponent instance.
 
-   function Is_Abstract   (C : Node_Id) return Boolean;
-   function Is_Data       (C : Node_Id) return Boolean;
-   function Is_Memory     (C : Node_Id) return Boolean;
+   function Is_Abstract (C : Node_Id) return Boolean;
+   function Is_Data (C : Node_Id) return Boolean;
+   function Is_Memory (C : Node_Id) return Boolean;
    function Is_Subprogram (C : Node_Id) return Boolean;
-   function Is_Process    (C : Node_Id) return Boolean;
-   function Is_Device     (C : Node_Id) return Boolean;
+   function Is_Process (C : Node_Id) return Boolean;
+   function Is_Device (C : Node_Id) return Boolean;
    function Is_Process_Or_Device (C : Node_Id) return Boolean;
-   function Is_Thread     (C : Node_Id) return Boolean;
-   function Is_System     (C : Node_Id) return Boolean;
-   function Is_Processor  (C : Node_Id) return Boolean;
-   function Is_Virtual_Processor  (C : Node_Id) return Boolean;
-   function Is_Bus        (C : Node_Id) return Boolean;
+   function Is_Thread (C : Node_Id) return Boolean;
+   function Is_System (C : Node_Id) return Boolean;
+   function Is_Processor (C : Node_Id) return Boolean;
+   function Is_Virtual_Processor (C : Node_Id) return Boolean;
+   function Is_Bus (C : Node_Id) return Boolean;
    function Is_Virtual_Bus (C : Node_Id) return Boolean;
    function Is_Subprogram_Access (C : Node_Id) return Boolean;
    function Is_Port (C : Node_Id) return Boolean;

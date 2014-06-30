@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -55,8 +55,8 @@ package Ocarina.Backends.PN.Nutils is
    procedure Delete_Node_From_List (E : Types.Node_Id; L : Types.List_Id);
 
    function Make_Identifier
-     (Pn_Entity : Types.Node_Id; Ident_Name : Types.Name_Id)
-     return Types.Node_Id;
+     (Pn_Entity  : Types.Node_Id;
+      Ident_Name : Types.Name_Id) return Types.Node_Id;
    --  Create a new identifier
 
 end Ocarina.Backends.PN.Nutils;

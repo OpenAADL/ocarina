@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -76,15 +76,14 @@ package body Ocarina.Instances.Finder is
    function Find_Instance
      (Instance_Root      : Node_Id;
       Reference_Instance : Node_Id;
-      Path               : List_Id)
-     return Node_Id
+      Path               : List_Id) return Node_Id
    is
       pragma Assert (Kind (Instance_Root) = K_Architecture_Instance);
       pragma Assert (Present (Reference_Instance));
 
-      List_Node        : Node_Id;
-      Actual_List_Node : Node_Id;
-      Pointed_Instance : Node_Id;
+      List_Node                  : Node_Id;
+      Actual_List_Node           : Node_Id;
+      Pointed_Instance           : Node_Id;
       Use_Contained_Element_Path : Boolean := False;
 
    begin
@@ -97,7 +96,7 @@ package body Ocarina.Instances.Finder is
 
       else
          Pointed_Instance := Reference_Instance;
-         List_Node := ATN.First_Node (Path);
+         List_Node        := ATN.First_Node (Path);
 
          while Present (List_Node) loop
             if not Use_Contained_Element_Path then
@@ -118,16 +117,17 @@ package body Ocarina.Instances.Finder is
 
             pragma Assert (ATN.Kind (Actual_List_Node) = K_Identifier);
 
-            Pointed_Instance := Find_Local_Instance
-              (Pointed_Instance, Actual_List_Node);
+            Pointed_Instance :=
+              Find_Local_Instance (Pointed_Instance, Actual_List_Node);
 
             if No (Pointed_Instance) then
                exit;
 
             elsif Kind (Pointed_Instance) = K_Call_Instance then
-               Pointed_Instance := Duplicate_Subprogram_Call_Instance
-                 (Instance_Root,
-                  Pointed_Instance);
+               Pointed_Instance :=
+                 Duplicate_Subprogram_Call_Instance
+                   (Instance_Root,
+                    Pointed_Instance);
                Pointed_Instance := Corresponding_Instance (Pointed_Instance);
 
             elsif Kind (Pointed_Instance) = K_Subcomponent_Instance then
@@ -166,10 +166,11 @@ package body Ocarina.Instances.Finder is
       N : Node_Id;
    begin
       if Ocarina.ME_AADL.AADL_Tree.Nutils.Is_Empty (AIN.Flows (R))
-        and then Present (First_Node) and then Present (Last_Node)
+        and then Present (First_Node)
+        and then Present (Last_Node)
       then
          First_Node := No_Node;
-         Last_Node := No_Node;
+         Last_Node  := No_Node;
          return;
       end if;
 
@@ -178,7 +179,7 @@ package body Ocarina.Instances.Finder is
          if ATN.Kind (N) = K_End_To_End_Flow_Spec then
             if No (First_Node) then
                First_Node := N;
-               Last_Node := N;
+               Last_Node  := N;
                ATN.Set_Next_Entity (N, No_Node);
             else
                ATN.Set_Next_Entity (N, No_Node);
@@ -203,11 +204,12 @@ package body Ocarina.Instances.Finder is
    is
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
 
-      pragma Assert (Kind (Instance_Root) = K_Architecture_Instance or else
-                     Kind (Instance_Root) = K_Component_Instance or else
-                     Kind (Instance_Root) = K_Subcomponent_Instance or else
-                     Kind (Instance_Root) = K_Call_Sequence_Instance or else
-                     Kind (Instance_Root) = K_Call_Instance);
+      pragma Assert
+        (Kind (Instance_Root) = K_Architecture_Instance
+         or else Kind (Instance_Root) = K_Component_Instance
+         or else Kind (Instance_Root) = K_Subcomponent_Instance
+         or else Kind (Instance_Root) = K_Call_Sequence_Instance
+         or else Kind (Instance_Root) = K_Call_Instance);
 
       R         : Node_Id;
       List_Node : List_Id;
@@ -216,57 +218,41 @@ package body Ocarina.Instances.Finder is
       case AIN.Kind (Instance_Root) is
          when AIN.K_Architecture_Instance =>
             R := AIN.Root_System (Instance_Root);
-            Select_Single_Node
-              (R,
-               Kinds,
-               First_Node,
-               Last_Node);
+            Select_Single_Node (R, Kinds, First_Node, Last_Node);
 
             --  We first get the declarations of the unnamed namespace
 
-            if Present (AIN.Unnamed_Namespace (Instance_Root)) and then
-              not Is_Empty (AIN.Declarations
-                            (AIN.Unnamed_Namespace
-                             (Instance_Root))) then
-               List_Node := AIN.Declarations
-                 (AIN.Unnamed_Namespace (Instance_Root));
-               Select_Nodes
-                 (List_Node,
-                  Kinds,
-                  First_Node,
-                  Last_Node);
+            if Present (AIN.Unnamed_Namespace (Instance_Root))
+              and then not Is_Empty
+                (AIN.Declarations (AIN.Unnamed_Namespace (Instance_Root)))
+            then
+               List_Node :=
+                 AIN.Declarations (AIN.Unnamed_Namespace (Instance_Root));
+               Select_Nodes (List_Node, Kinds, First_Node, Last_Node);
             end if;
 
          when AIN.K_Subcomponent_Instance =>
             R := AIN.Corresponding_Instance (Instance_Root);
-            Select_Single_Node
-              (R,
-               Kinds,
-               First_Node,
-               Last_Node);
+            Select_Single_Node (R, Kinds, First_Node, Last_Node);
 
          when AIN.K_Component_Instance =>
             R := Instance_Root;
-            Select_Single_Node
-              (Instance_Root,
-               Kinds,
-               First_Node,
-               Last_Node);
+            Select_Single_Node (Instance_Root, Kinds, First_Node, Last_Node);
 
          when AIN.K_Call_Sequence_Instance =>
             --  Special case :
             --  we parse recursively subprogram calls
 
             R := Instance_Root;
-            Select_Nodes (AIN.Subprogram_Calls (R),
-                          Kinds,
-                          First_Node,
-                          Last_Node);
-            if not Is_Empty (AIN.Subprogram_calls (R)) then
-               N := AIN.First_Node (AIN.Subprogram_calls (R));
+            Select_Nodes
+              (AIN.Subprogram_Calls (R),
+               Kinds,
+               First_Node,
+               Last_Node);
+            if not Is_Empty (AIN.Subprogram_Calls (R)) then
+               N := AIN.First_Node (AIN.Subprogram_Calls (R));
                while Present (N) loop
-                  Find_All_Instances
-                    (N, Kinds, First_Node, Last_Node);
+                  Find_All_Instances (N, Kinds, First_Node, Last_Node);
                   N := AIN.Next_Node (N);
                end loop;
             end if;
@@ -274,33 +260,23 @@ package body Ocarina.Instances.Finder is
 
          when AIN.K_Call_Instance =>
             R := AIN.Corresponding_Instance (Instance_Root);
-            Select_Single_Node (R,
-                                Kinds,
-                                First_Node,
-                                Last_Node);
+            Select_Single_Node (R, Kinds, First_Node, Last_Node);
 
          when others =>
-            DE (Locations.Image (AIN.Loc (Instance_Root))  &
-                " : unexpected instance kind");
+            DE (Locations.Image (AIN.Loc (Instance_Root)) &
+               " : unexpected instance kind");
             return;
       end case;
 
-      Select_Nodes (AIN.Calls (R),
-                    Kinds,
-                    First_Node,
-                    Last_Node);
-      Select_Nodes (AIN.Connections (R),
-                    Kinds,
-                    First_Node,
-                    Last_Node);
+      Select_Nodes (AIN.Calls (R), Kinds, First_Node, Last_Node);
+      Select_Nodes (AIN.Connections (R), Kinds, First_Node, Last_Node);
 
       --  Recursively search in call sequences and subcomponents instances
 
       if not Is_Empty (AIN.Subcomponents (R)) then
          N := AIN.First_Node (AIN.Subcomponents (R));
          while Present (N) loop
-            Find_All_Instances
-              (N, Kinds, First_Node, Last_Node);
+            Find_All_Instances (N, Kinds, First_Node, Last_Node);
             N := AIN.Next_Node (N);
          end loop;
       end if;
@@ -308,8 +284,7 @@ package body Ocarina.Instances.Finder is
       if not Is_Empty (AIN.Calls (R)) then
          N := AIN.First_Node (AIN.Calls (R));
          while Present (N) loop
-            Find_All_Instances
-              (N, Kinds, First_Node, Last_Node);
+            Find_All_Instances (N, Kinds, First_Node, Last_Node);
             N := AIN.Next_Node (N);
          end loop;
       end if;
@@ -322,8 +297,7 @@ package body Ocarina.Instances.Finder is
    function Find_Instance_In_Instance
      (Instance_Root      : Node_Id;
       Reference_Instance : Node_Id;
-      Path               : List_Id)
-     return Node_Id
+      Path               : List_Id) return Node_Id
    is
       pragma Assert (Kind (Instance_Root) = K_Architecture_Instance);
       pragma Assert (Present (Reference_Instance));
@@ -340,7 +314,7 @@ package body Ocarina.Instances.Finder is
          Pointed_Instance := Reference_Instance;
       else
          Pointed_Instance := Reference_Instance;
-         List_Node := AIN.First_Node (Path);
+         List_Node        := AIN.First_Node (Path);
 
          while Present (List_Node) loop
             if ATN.Kind (List_Node) = K_Node_Container then
@@ -353,16 +327,16 @@ package body Ocarina.Instances.Finder is
 
             pragma Assert (ATN.Kind (Actual_List_Node) = K_Identifier);
 
-            Pointed_Instance := Find_Local_Instance
-              (Pointed_Instance,
-               Actual_List_Node);
+            Pointed_Instance :=
+              Find_Local_Instance (Pointed_Instance, Actual_List_Node);
 
             if No (Pointed_Instance) then
                exit;
             elsif Kind (Pointed_Instance) = K_Call_Instance then
-               Pointed_Instance := Duplicate_Subprogram_Call_Instance
-                 (Instance_Root,
-                  Pointed_Instance);
+               Pointed_Instance :=
+                 Duplicate_Subprogram_Call_Instance
+                   (Instance_Root,
+                    Pointed_Instance);
                Pointed_Instance := Corresponding_Instance (Pointed_Instance);
             elsif Kind (Pointed_Instance) = K_Subcomponent_Instance then
                Pointed_Instance := Corresponding_Instance (Pointed_Instance);
@@ -381,12 +355,11 @@ package body Ocarina.Instances.Finder is
 
    function Find_Local_Instance
      (Reference_Instance  : Node_Id;
-      Instance_Identifier : Node_Id)
-     return Node_Id
+      Instance_Identifier : Node_Id) return Node_Id
    is
-      pragma Assert (AIN.Kind (Reference_Instance) = K_Component_Instance
-                       or else
-                       AIN.Kind (Reference_Instance) = K_Connection_Instance);
+      pragma Assert
+        (AIN.Kind (Reference_Instance) = K_Component_Instance
+         or else AIN.Kind (Reference_Instance) = K_Connection_Instance);
       pragma Assert (ATN.Kind (Instance_Identifier) = K_Identifier);
 
       List_Node          : Node_Id;
@@ -417,8 +390,7 @@ package body Ocarina.Instances.Finder is
       end if;
 
       if AIN.Subcomponents (Component_Instance) /= No_List then
-         List_Node := AIN.First_Node
-           (AIN.Subcomponents (Component_Instance));
+         List_Node := AIN.First_Node (AIN.Subcomponents (Component_Instance));
 
          while Present (List_Node) loop
             if Get_Name_Of_Entity (List_Node, False) = Instance_Name then
@@ -442,8 +414,7 @@ package body Ocarina.Instances.Finder is
       end if;
 
       if AIN.Connections (Component_Instance) /= No_List then
-         List_Node := AIN.First_Node
-           (AIN.Connections (Component_Instance));
+         List_Node := AIN.First_Node (AIN.Connections (Component_Instance));
 
          while Present (List_Node) loop
             if Get_Name_Of_Entity (List_Node, False) = Instance_Name then
@@ -462,12 +433,12 @@ package body Ocarina.Instances.Finder is
                return List_Node;
 
             elsif AIN.Subprogram_Calls (List_Node) /= No_List then
-               Sequence_List_Node := AIN.First_Node
-                 (AIN.Subprogram_Calls (List_Node));
+               Sequence_List_Node :=
+                 AIN.First_Node (AIN.Subprogram_Calls (List_Node));
 
                while Present (Sequence_List_Node) loop
-                  if Get_Name_Of_Entity (Sequence_List_Node, False)
-                    = Instance_Name
+                  if Get_Name_Of_Entity (Sequence_List_Node, False) =
+                    Instance_Name
                   then
                      return Sequence_List_Node;
                   end if;
@@ -510,21 +481,20 @@ package body Ocarina.Instances.Finder is
       Local_List_Node : Node_Id;
    begin
       if not Is_Empty (Decl_List) then
-         Local_List_Node :=
-           AIN.First_Node (Decl_List);
+         Local_List_Node := AIN.First_Node (Decl_List);
 
          while Present (Local_List_Node) loop
             Success := False;
 
             for K in Kinds'Range loop
-               Success := Success
-                 or else (AIN.Kind (Local_List_Node) = Kinds (K));
+               Success :=
+                 Success or else (AIN.Kind (Local_List_Node) = Kinds (K));
             end loop;
 
             if Success then
                if No (First_Node) then
                   First_Node := Local_List_Node;
-                  Last_Node := Local_List_Node;
+                  Last_Node  := Local_List_Node;
                else
                   AIN.Set_Next_Entity (Last_Node, Local_List_Node);
                   AIN.Set_Next_Entity (Local_List_Node, No_Node);
@@ -549,20 +519,19 @@ package body Ocarina.Instances.Finder is
    is
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
 
-      Success         : Boolean;
+      Success : Boolean;
    begin
       if Present (Node) then
          Success := False;
 
          for K in Kinds'Range loop
-            Success := Success
-              or else (AIN.Kind (Node) = Kinds (K));
+            Success := Success or else (AIN.Kind (Node) = Kinds (K));
          end loop;
 
          if Success then
             if No (First_Node) then
                First_Node := Node;
-               Last_Node := Node;
+               Last_Node  := Node;
             else
                AIN.Set_Next_Entity (Last_Node, Node);
                AIN.Set_Next_Entity (Node, No_Node);

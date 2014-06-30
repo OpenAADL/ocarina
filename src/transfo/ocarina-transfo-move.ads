@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,7 +47,8 @@ package Ocarina.Transfo.Move is
    --  to  <new_process_name>
 
    function Clean_Obsolete_Features
-     (System_Inst : Node_Id; Process_Name : Name_Id) return Boolean;
+     (System_Inst  : Node_Id;
+      Process_Name : Name_Id) return Boolean;
    --  Remove features which are not connected to any
    --  component. return true if any modification is done to the model
 

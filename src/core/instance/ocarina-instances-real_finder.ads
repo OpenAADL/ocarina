@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,11 +42,10 @@ package Ocarina.Instances.REAL_Finder is
    --  Return the value of the property for a single element Node
    --  Return No_Value if property not found
 
-   function  Get_Property_Value_Function
+   function Get_Property_Value_Function
      (Property : Value_Id;
       T        : Return_Type;
-      Var      : Node_Id)
-     return Value_Id;
+      Var      : Node_Id) return Value_Id;
    --  Return the value of the property for a single element Var
    --  T contains the expected property type
    --  If T is a list type, then if the property is not defined

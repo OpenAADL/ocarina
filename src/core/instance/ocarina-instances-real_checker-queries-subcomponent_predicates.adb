@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,21 +43,19 @@ package body Ocarina.Instances.REAL_Checker.Queries.Subcomponent_Predicates is
    function Is_Subcomponent_Predicate
      (E      : Node_Id;
       D      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       P : Node_Id;
    begin
 
-      if  Kind (E) = K_Component_Instance then
+      if Kind (E) = K_Component_Instance then
          P := Parent_Subcomponent (E);
          if Option = PSO_Direct then
 
             --  Returns true if the current node is a subcomponent of
             --  the parameter component...
 
-            return (P /= No_Node and then
-                    Parent_Component (P) = D);
+            return (P /= No_Node and then Parent_Component (P) = D);
          else
 
             --  Recursively search for parents components

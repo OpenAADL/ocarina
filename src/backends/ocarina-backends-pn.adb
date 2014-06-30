@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -88,12 +88,13 @@ package body Ocarina.Backends.PN is
          PN_Generated := Process_Architecture_Instance (Instance_Root, 1);
 
          --  Set TINA printers
-         Set_Printers (OPFT.Print_Place'Access,
-                       OPFT.Print_Trans'Access,
-                       OPFT.Print_Formalism_Information'Access);
+         Set_Printers
+           (OPFT.Print_Place'Access,
+            OPFT.Print_Trans'Access,
+            OPFT.Print_Formalism_Information'Access);
 
          Set_Output (Create_File ("model.nd", Binary));
-         Print_PN_Generated (PN_Generated);
+         Print_Pn_Generated (PN_Generated);
          Set_Standard_Error;
       end if;
    end Generate_TINA;
@@ -116,11 +117,12 @@ package body Ocarina.Backends.PN is
 
       if Instance_Root /= No_Node then
          PN_Generated := Process_Architecture_Instance (Instance_Root, 0);
-         Set_Printers (OPFC.Print_Place'Access,
-                       OPFC.Print_Trans'Access,
-                       OPFC.Print_Formalism_Information'Access);
+         Set_Printers
+           (OPFC.Print_Place'Access,
+            OPFC.Print_Trans'Access,
+            OPFC.Print_Formalism_Information'Access);
          Set_Output (Create_File ("model.cami", Binary));
-         Print_PN_Generated (PN_Generated);
+         Print_Pn_Generated (PN_Generated);
          Set_Standard_Error;
       end if;
    end Generate_CAMI;

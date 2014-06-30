@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -75,8 +75,8 @@ package body Ocarina.Backends.Functions_Matrix is
 
       if No (XML_Root) then
          Display_Error
-            ("Functional traceability matrix " &
-             "generation failed", Fatal => True);
+           ("Functional traceability matrix " & "generation failed",
+            Fatal => True);
       end if;
 
       --  At this point, we have a valid tree, we can begin the XML
@@ -128,7 +128,7 @@ package body Ocarina.Backends.Functions_Matrix is
       end loop;
 
       Register_Backend
-         ("Function_Matrix",
+        ("Function_Matrix",
          Generate'Access,
          Functions_Matrix_Analysis);
    end Init;

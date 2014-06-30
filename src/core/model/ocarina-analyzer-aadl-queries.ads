@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,8 +38,7 @@ package Ocarina.Analyzer.AADL.Queries is
 
    function Is_An_Extension
      (Component : Node_Id;
-      Ancestor  : Node_Id)
-     return Boolean;
+      Ancestor  : Node_Id) return Boolean;
    --  Returns True if Component is an extension of Ancestor, whether
    --  by the keyword 'extends' or because Ancestor is a corresponding
    --  component type.
@@ -57,8 +56,7 @@ package Ocarina.Analyzer.AADL.Queries is
 
    function Property_Can_Apply_To_Entity
      (Property : Node_Id;
-      Entity   : Node_Id)
-     return Boolean;
+      Entity   : Node_Id) return Boolean;
    --  Return True if the property association Property can be applied
    --  to Entity. Otherwise, return False. Beware that this function
    --  performs exact verification; a property cannot apply to a
@@ -67,8 +65,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the property named 'Name' is defined for the
    --  AADL entity 'Entity'. If 'In_Mode' is a valid name, consider
    --  only the property defined for the given mode.
@@ -76,8 +73,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the aadlstring property named 'Name' is defined
    --  for the AADL entity 'Entity'. If 'In_Mode' is a valid name,
    --  consider only the property defined for the given mode.
@@ -85,8 +81,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_Integer_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the aadlinteger property named 'Name' is defined
    --  for the AADL entity 'Entity'. If 'In_Mode' is a valid name,
    --  consider only the property defined for the given mode.
@@ -94,8 +89,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_Boolean_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the aadlboolean property named 'Name' is defined
    --  for the AADL entity 'Entity'. If 'In_Mode' is a valid name,
    --  consider only the property defined for the given mode.
@@ -103,8 +97,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_Float_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the aadlreal property named 'Name' is defined
    --  for the AADL entity 'Entity'. If 'In_Mode' is a valid name,
    --  consider only the property defined for the given mode.
@@ -112,8 +105,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_Reference_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the component reference property named 'Name' is
    --  defined for the AADL entity 'Entity'. If 'In_Mode' is a valid
    --  name, consider only the property defined for the given mode.
@@ -121,8 +113,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_Classifier_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the component classifier property named 'Name' is
    --  defined for the AADL entity 'Entity'. If 'In_Mode' is a valid
    --  name, consider only the property defined for the given mode.
@@ -130,8 +121,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_Range_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the component range property named 'Name' is
    --  defined for the AADL entity 'Entity'. If 'In_Mode' is a valid
    --  name, consider only the property defined for the given mode.
@@ -139,8 +129,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_List_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the 'list of XXX' property named 'Name' is
    --  defined for the AADL entity 'Entity'. If 'In_Mode' is a valid
    --  name, consider only the property defined for the given mode.
@@ -148,8 +137,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Is_Defined_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return True if the enumeration property named 'Name' is defined
    --  for the AADL entity 'Entity'. If 'In_Mode' is a valid name,
    --  consider only the property defined for the given mode.
@@ -157,8 +145,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Property_Association
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Return the property association node corresponding to Name. If
    --  the propoerty designed by name is not present for Entity,
    --  return No_Node. If 'In_Mode' is a valid name, consider only
@@ -167,8 +154,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Value_Of_Property_Association
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Return the value of the property association named 'Name' if it
    --  is defined defined for 'Entity'.  Otherwise, return No_Node. If
    --  'In_Mode' is a valid name, consider only the property defined
@@ -177,8 +163,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return String;
+      In_Mode : Name_Id := No_Name) return String;
    --  Return the value of the aadlstring property association named
    --  'Name' if it is defined defined for 'Entity'.  Otherwise,
    --  return "". If 'In_Mode' is a valid name, consider only the
@@ -187,8 +172,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id;
+      In_Mode : Name_Id := No_Name) return Name_Id;
    --  Return the value of the aadlstring property association named
    --  'Name' if it is defined defined for 'Entity'.  Otherwise,
    --  return No_Name. If 'In_Mode' is a valid name, consider only
@@ -197,8 +181,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Integer_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Unsigned_Long_Long;
+      In_Mode : Name_Id := No_Name) return Unsigned_Long_Long;
    --  Return the value of the aadlinteger property association named
    --  'Name' if it is defined defined for 'Entity'.  Otherwise,
    --  return 0. If 'In_Mode' is a valid name, consider only the
@@ -207,8 +190,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Float_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Long_Long_Float;
+      In_Mode : Name_Id := No_Name) return Long_Long_Float;
    --  Return the value of the aadlreal property association named
    --  'Name' if it is defined defined for 'Entity'.  Otherwise,
    --  return 0.0. If 'In_Mode' is a valid name, consider only the
@@ -217,8 +199,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Boolean_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean;
+      In_Mode : Name_Id := No_Name) return Boolean;
    --  Return the value of the aadlboolean property association named
    --  'Name' if it is defined defined for 'Entity'.  Otherwise,
    --  return False. If 'In_Mode' is a valid name, consider only the
@@ -227,8 +208,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Reference_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Return the value of the component reference property
    --  association named 'Name' if it is defined for 'Entity'.
    --  Otherwise, return No_Node. If 'In_Mode' is a valid name,
@@ -237,8 +217,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Classifier_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Return the value of the component classifier property
    --  association named 'Name' if it is defined for 'Entity'.
    --  Otherwise, return No_Node. If 'In_Mode' is a valid name,
@@ -247,8 +226,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_List_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return List_Id;
+      In_Mode : Name_Id := No_Name) return List_Id;
    --  Return the value of the 'list of XXX' property association
    --  named 'Name' if it is defined for 'Entity'. The returned list
    --  is a Node_Container list. Otherwise, return No_List. If
@@ -258,8 +236,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Range_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Return the values of the range property association named
    --  'Name' if it is defined for 'Entity'.  Otherwise, return
    --  No_List. If 'In_Mode' is a valid name, consider only the
@@ -268,8 +245,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return String;
+      In_Mode : Name_Id := No_Name) return String;
    --  Return the value of the enumeration property association named
    --  'Name' if it is defined defined for 'Entity'. Otherwise, return
    --  "". If 'In_Mode' is a valid name, consider only the property
@@ -278,8 +254,7 @@ package Ocarina.Analyzer.AADL.Queries is
    function Get_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id;
+      In_Mode : Name_Id := No_Name) return Name_Id;
    --  Return the value of the enumeration property association named
    --  'Name' if it is defined defined for 'Entity'. Otherwise, return
    --  No_Name. If 'In_Mode' is a valid name, consider only the

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,7 +34,8 @@
 with GNAT.Directory_Operations;
 
 with Namet;
-with Types; use type Types.Name_Id, Types.Int, Types.Text_Ptr;
+with Types;
+use type Types.Name_Id, Types.Int, Types.Text_Ptr;
 
 package body Locations is
 
@@ -43,12 +44,12 @@ package body Locations is
    -----------
 
    function Image (Loc : Location) return String is
-      Column : constant Types.Nat
-        := Types.Nat (Loc.Last_Pos - Loc.First_Pos + 1);
+      Column : constant Types.Nat :=
+        Types.Nat (Loc.Last_Pos - Loc.First_Pos + 1);
       Backup : Types.Name_Id;
       --  Backup name buffer
       Result : Types.Name_Id;
-      --  Store returned value before restoring name buffer
+   --  Store returned value before restoring name buffer
    begin
       if Loc.Base_Name = Types.No_Name then
          return Types.No_Str;
@@ -87,17 +88,17 @@ package body Locations is
 
    procedure Initialize
      (Loc    : in out Location;
-      Name   : Types.Name_Id;
-      Size   : Types.Int;
-      Buffer : Types.Text_Buffer_Ptr)
+      Name   :        Types.Name_Id;
+      Size   :        Types.Int;
+      Buffer :        Types.Text_Buffer_Ptr)
    is
    begin
       Loc.Base_Name :=
-        Namet.Get_String_Name (GNAT.Directory_Operations.Base_Name
-                                 (Namet.Get_Name_String (Name)));
-      Loc.Dir_Name  :=
-        Namet.Get_String_Name (GNAT.Directory_Operations.Dir_Name
-                                 (Namet.Get_Name_String (Name)));
+        Namet.Get_String_Name
+          (GNAT.Directory_Operations.Base_Name (Namet.Get_Name_String (Name)));
+      Loc.Dir_Name :=
+        Namet.Get_String_Name
+          (GNAT.Directory_Operations.Dir_Name (Namet.Get_Name_String (Name)));
       Loc.Line      := 1;
       Loc.First_Pos := 1;
       Loc.Last_Pos  := 1;
@@ -112,17 +113,17 @@ package body Locations is
 
    procedure Update_Name_And_Line
      (Loc  : in out Location;
-      Name : Types.Name_Id;
-      Line : Types.Int)
+      Name :        Types.Name_Id;
+      Line :        Types.Int)
    is
    begin
       Loc.Line      := Line;
       Loc.Base_Name :=
-        Namet.Get_String_Name (GNAT.Directory_Operations.Base_Name
-                                 (Namet.Get_Name_String (Name)));
-      Loc.Dir_Name  :=
-        Namet.Get_String_Name (GNAT.Directory_Operations.Dir_Name
-                                 (Namet.Get_Name_String (Name)));
+        Namet.Get_String_Name
+          (GNAT.Directory_Operations.Base_Name (Namet.Get_Name_String (Name)));
+      Loc.Dir_Name :=
+        Namet.Get_String_Name
+          (GNAT.Directory_Operations.Dir_Name (Namet.Get_Name_String (Name)));
    end Update_Name_And_Line;
 
 end Locations;

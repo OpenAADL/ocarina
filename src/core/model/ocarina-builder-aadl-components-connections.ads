@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,8 +37,7 @@ package Ocarina.Builder.AADL.Components.Connections is
 
    function Add_Property_Association
      (Connection           : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean;
+      Property_Association : Node_Id) return Boolean;
    --  Add a property association to the connection
    --  declaration. Connection must reference a connection
    --  declaration. Property_Association references the property
@@ -48,13 +47,12 @@ package Ocarina.Builder.AADL.Components.Connections is
      (Loc           : Location;
       Name          : Node_Id;
       Comp_Impl     : Node_Id;
-      Category      : Ocarina.Me_AADL.Connection_Type;
+      Category      : Ocarina.ME_AADL.Connection_Type;
       Is_Refinement : Boolean := False;
       Is_Bidirect   : Boolean := False;
       Source        : Node_Id := No_Node;
       Destination   : Node_Id := No_Node;
-      In_Modes      : Node_Id := No_Node)
-     return Node_Id;
+      In_Modes      : Node_Id := No_Node) return Node_Id;
    --  Create and add a new connection into a component
    --  implementation. Loc is the location of the connection in the
    --  parsed text. Name references an identifier which contains the
@@ -70,13 +68,12 @@ package Ocarina.Builder.AADL.Components.Connections is
    function New_Connection
      (Loc           : Location;
       Name          : Node_Id;
-      Category      : Ocarina.Me_AADL.Connection_Type;
+      Category      : Ocarina.ME_AADL.Connection_Type;
       Is_Refinement : Boolean := False;
       Is_Bidirect   : Boolean := False;
       Source        : Node_Id := No_Node;
       Destination   : Node_Id := No_Node;
-      In_Modes      : Node_Id := No_Node)
-     return Node_Id;
+      In_Modes      : Node_Id := No_Node) return Node_Id;
    --  Create a new connection into a component implementation.
    --  Loc is the location of the connection in the parsed text.
    --  Name references an identifier which contains the name
