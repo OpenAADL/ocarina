@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 

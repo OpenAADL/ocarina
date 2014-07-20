@@ -35,14 +35,14 @@
 --  of Behavior specification.
 
 with Locations;
-with Types;
+with Ocarina.Types;
 
 with Ocarina.ME_AADL_BA.Tokens;
 with Ocarina.FE_AADL_BA.Parser_Errors;
 
 package Ocarina.FE_AADL_BA.Parser is
 
-   use Types;
+   use Ocarina.Types;
    use Ocarina.FE_AADL_BA.Parser_Errors;
 
    function Process

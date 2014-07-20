@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Ocarina.Backends.Messages;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -52,7 +52,7 @@ package body Ocarina.Backends.BoundT is
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Backends.Messages;
    use Ada.Text_IO;
    use Ocarina.ME_AADL;

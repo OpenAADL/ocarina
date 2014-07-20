@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Locations;                       use Locations;
-with Types;                           use Types;
+with Ocarina.Types;                           use Ocarina.Types;
 with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package Ocarina.ME_AADL.AADL_Tree.Nutils is
@@ -111,8 +111,9 @@ package Ocarina.ME_AADL.AADL_Tree.Nutils is
    --  will be lost.
 
    function Build_Package_Identifier
-     (Pack_Name : Types.Node_Id;
-      Loc       : Locations.Location := No_Location) return Types.Node_Id;
+     (Pack_Name : Ocarina.Types.Node_Id;
+      Loc       : Locations.Location := No_Location)
+     return Ocarina.Types.Node_Id;
    --  Return a package identifier node from a package name node
 
 end Ocarina.ME_AADL.AADL_Tree.Nutils;

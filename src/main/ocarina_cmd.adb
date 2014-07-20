@@ -36,9 +36,9 @@
 
 with Errors;    use Errors;
 with Locations; use Locations;
-with Namet;     use Namet;
-with Output;    use Output;
-with Types;     use Types;
+with Ocarina.Namet;     use Ocarina.Namet;
+with Ocarina.Output;    use Ocarina.Output;
+with Ocarina.Types;     use Ocarina.Types;
 with Utils;     use Utils;
 
 with Ada.Command_Line; use Ada.Command_Line;

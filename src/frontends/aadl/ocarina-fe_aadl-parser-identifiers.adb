@@ -33,7 +33,7 @@
 
 with Ocarina.ME_AADL.Tokens;
 with Ocarina.FE_AADL.Lexer;
-with Namet;
+with Ocarina.Namet;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Locations;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -149,7 +149,7 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
    -- P_Identifier --
    ------------------
 
-   function P_Identifier (Container : Types.Node_Id) return Node_Id is
+   function P_Identifier (Container : Ocarina.Types.Node_Id) return Node_Id is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -265,7 +265,9 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
    -- P_Entity_Reference --
    ------------------------
 
-   function P_Entity_Reference (Container : Types.Node_Id) return Node_Id is
+   function P_Entity_Reference
+     (Container : Ocarina.Types.Node_Id) return Node_Id
+   is
       pragma Unreferenced (Container);
    begin
       return P_Entity_Reference (PC_Items_List);
@@ -282,7 +284,7 @@ package body Ocarina.FE_AADL.Parser.Identifiers is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Entities;
-      use Namet;
+      use Ocarina.Namet;
       use Locations;
       use Ocarina.FE_AADL.Lexer;
 

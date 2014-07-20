@@ -31,12 +31,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Charset;
 
 package body Ocarina.ME_AADL_BA.Tokens is
 
-   use Namet;
+   use Ocarina.Namet;
    use Charset;
 
    Prefix : constant String := "%ba%";

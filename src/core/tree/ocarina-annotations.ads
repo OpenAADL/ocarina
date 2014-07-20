@@ -40,7 +40,7 @@
 --  to provide a annotation mechanisme without interfering with the
 --  AST definition.
 
-with Types; use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.Annotations is
 

@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Charset; use Charset;
-with Namet;   use Namet;
+with Ocarina.Namet;   use Ocarina.Namet;
 
 package body Utils is
 

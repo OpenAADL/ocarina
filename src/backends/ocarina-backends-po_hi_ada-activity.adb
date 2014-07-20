@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Locations;
 
 with Ocarina.ME_AADL;
@@ -51,7 +51,7 @@ with Ocarina.Backends.PO_HI_Ada.Runtime;
 
 package body Ocarina.Backends.PO_HI_Ada.Activity is
 
-   use Namet;
+   use Ocarina.Namet;
    use Locations;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;

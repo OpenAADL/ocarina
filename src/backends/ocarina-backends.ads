@@ -38,7 +38,7 @@
 --  have to be done through the procedure Generate exported by this
 --  package. After selecting the wanted code generator.
 
-with Types; use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.Backends is
 

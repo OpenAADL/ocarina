@@ -32,11 +32,11 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
-with Types;
+with Ocarina.Types;
 
 package Ocarina.REAL_Values is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
-   use Types;
+   use Ocarina.Types;
 
    type Literal_Type is
      (LT_Integer,

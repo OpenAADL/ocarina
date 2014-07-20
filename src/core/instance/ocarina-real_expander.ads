@@ -31,10 +31,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 
 package Ocarina.REAL_Expander is
-   use Types;
+   use Ocarina.Types;
 
    procedure Expand (Theorem : Node_Id; Success : out Boolean);
    --  Proceeds to a REAL theorem expansion

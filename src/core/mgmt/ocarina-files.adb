@@ -34,7 +34,7 @@
 with GNAT.OS_Lib;
 
 with Errors;
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.Options; use Ocarina.Options;
 
@@ -44,7 +44,7 @@ package body Ocarina.Files is
    use GNAT.OS_Lib;
 
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
 
    ----------------------------
    -- Add_File_To_Parse_List --

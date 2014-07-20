@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Errors;
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.Analyzer.Messages;
 
@@ -44,7 +44,7 @@ with Ocarina.ME_AADL.AADL_Tree.Entities;
 package body Ocarina.Analyzer.AADL.Naming_Rules is
 
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Analyzer.Messages;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;

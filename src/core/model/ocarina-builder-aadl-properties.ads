@@ -31,12 +31,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 with Locations;
 
 package Ocarina.Builder.AADL.Properties is
 
-   use Types;
+   use Ocarina.Types;
    use Locations;
 
    function Add_New_Property_Set

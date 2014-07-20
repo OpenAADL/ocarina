@@ -50,7 +50,7 @@ with Ocarina.Backends;
 
 with Ocarina.ME_AADL.AADL_Instances.Debug;
 use Ocarina.ME_AADL.AADL_Instances.Debug;
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Transfo.Optim is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;

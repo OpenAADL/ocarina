@@ -41,7 +41,7 @@ with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Carts is
 

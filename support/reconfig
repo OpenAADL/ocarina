@@ -9,4 +9,4 @@ echo "Running autoconf"
 autoconf
 
 echo "Running automake"
-automake --add-missing --copy
+automake --add-missing --copy --foreign

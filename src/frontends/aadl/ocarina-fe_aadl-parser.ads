@@ -36,7 +36,7 @@
 --  (e.g. identifier parsing).
 
 with Locations;
-with Types; use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 with Ocarina.ME_AADL.Tokens;
 with Ocarina.FE_AADL.Parser_Errors; use Ocarina.FE_AADL.Parser_Errors;

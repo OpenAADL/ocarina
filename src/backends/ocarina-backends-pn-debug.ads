@@ -32,16 +32,16 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Backends.PN.Nodes; use Ocarina.Backends.PN.Nodes;
-with Output;                    use Output;
+with Ocarina.Output;                    use Ocarina.Output;
 
 package Ocarina.Backends.PN.Debug is
 
    N_Indents : Integer := -1;
 
-   procedure W_Eol (N : Natural := 1) renames Output.Write_Eol;
-   procedure W_Int (N : Int) renames Output.Write_Int;
-   procedure W_Line (N : String) renames Output.Write_Line;
-   procedure W_Str (N : String) renames Output.Write_Str;
+   procedure W_Eol (N : Natural := 1) renames Ocarina.Output.Write_Eol;
+   procedure W_Int (N : Int) renames Ocarina.Output.Write_Int;
+   procedure W_Line (N : String) renames Ocarina.Output.Write_Line;
+   procedure W_Str (N : String) renames Ocarina.Output.Write_Str;
    procedure W_Indents;
 
    procedure W_Boolean (N : Boolean);

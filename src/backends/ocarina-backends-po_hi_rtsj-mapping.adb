@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Utils; use Utils;
 
 with Ocarina.Backends.Messages;
@@ -47,7 +47,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nutils;
 
 package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.RTSJ_Values;
    use Ocarina.Backends.RTSJ_Tree.Nodes;

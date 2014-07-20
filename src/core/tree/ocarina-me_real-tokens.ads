@@ -33,13 +33,13 @@
 
 --  Description of REAL tokens
 
-with Types;
+with Ocarina.Types;
 with Locations;
 with Ocarina.Files;
 
 package Ocarina.ME_REAL.Tokens is
    use Locations;
-   use Types;
+   use Ocarina.Types;
    use Ocarina.Files;
 
    type Token_Type is

@@ -1537,7 +1537,7 @@ package body Parser is
 
       Output.Write_Line ("pragma Warnings (Off);");
       Output.Write_Line ("with Locations; use Locations;");
-      Output.Write_Line ("with Types;     use Types;");
+      Output.Write_Line ("with Ocarina.Types;     use Ocarina.Types;");
       Output.Write_Line ("pragma Warnings (On);");
       Output.Write_Eol;
       Output.Write_Str ("package ");

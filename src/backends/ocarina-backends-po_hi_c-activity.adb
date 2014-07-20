@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -48,7 +48,7 @@ with Ocarina.Backends.Messages;
 
 package body Ocarina.Backends.PO_HI_C.Activity is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.Backends.Utils;

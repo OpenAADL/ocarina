@@ -33,8 +33,8 @@
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
-with Namet;           use Namet;
-with Output;          use Output;
+with Ocarina.Namet;           use Ocarina.Namet;
+with Ocarina.Output;          use Ocarina.Output;
 with Ocarina.Options; use Ocarina.Options;
 
 package body Ocarina.ME_AADL.Printers is

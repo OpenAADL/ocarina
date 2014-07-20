@@ -35,7 +35,7 @@ with GNAT.Table;
 
 with Charset;   use Charset;
 with Locations; use Locations;
-with Namet;     use Namet;
+with Ocarina.Namet;     use Ocarina.Namet;
 with Utils;     use Utils;
 
 with Ocarina.Annotations; use Ocarina.Annotations;

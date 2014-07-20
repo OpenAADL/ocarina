@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with GNAT.Directory_Operations;
 
@@ -45,7 +45,7 @@ with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.Execution_Utils is
 
-   use Namet;
+   use Ocarina.Namet;
    use GNAT.Directory_Operations;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Entities;

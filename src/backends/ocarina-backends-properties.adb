@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Locations;
-with Namet;
+with Ocarina.Namet;
 with Utils; use Utils;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -52,7 +52,7 @@ with Ocarina.Backends.Messages;
 package body Ocarina.Backends.Properties is
 
    use Locations;
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Nutils;

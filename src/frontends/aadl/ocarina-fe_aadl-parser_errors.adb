@@ -35,16 +35,16 @@ with Ada.Characters.Handling;
 
 with Locations;
 with Charset;
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 with Ocarina.FE_AADL.Lexer;
 
 package body Ocarina.FE_AADL.Parser_Errors is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.FE_AADL.Lexer;
    use Locations;
-   use Namet;
+   use Ocarina.Namet;
    use Charset;
 
    procedure Display_Parsing_Code (Code : Parsing_Code);

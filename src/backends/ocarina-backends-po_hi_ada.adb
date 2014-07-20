@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with GNAT.OS_Lib;
-with Output;
+with Ocarina.Output;
 with Utils;
 
 with Ocarina.Instances;
@@ -58,12 +58,12 @@ with Ocarina.Backends.Execution_Tests;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.PO_HI_Ada is
 
    use GNAT.OS_Lib;
-   use Output;
+   use Ocarina.Output;
    use Ocarina.Instances;
    use Ocarina.Backends.Ada_Tree.Generator;
    use Ocarina.Backends.Expander;

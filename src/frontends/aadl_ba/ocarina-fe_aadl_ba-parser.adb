@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with GNAT.OS_Lib;
 
@@ -45,7 +45,7 @@ with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
 package body Ocarina.FE_AADL_BA.Parser is
 
-   use Output;
+   use Ocarina.Output;
    use Locations;
    use GNAT.OS_Lib;
 

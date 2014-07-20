@@ -31,11 +31,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Utils;
 
 package body Ocarina.ME_REAL.Tokens is
-   use Namet;
+   use Ocarina.Namet;
 
    procedure New_Token (Token : Token_Type; Image : String);
    --  Compute token image and store it in Token_Image table. When

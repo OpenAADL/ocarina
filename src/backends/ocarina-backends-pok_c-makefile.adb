@@ -32,9 +32,9 @@
 ------------------------------------------------------------------------------
 
 with Locations; use Locations;
-with Namet;
+with Ocarina.Namet;
 with GNAT.OS_Lib;
-with Output;
+with Ocarina.Output;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -48,8 +48,8 @@ with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Instances.Queries;
 
 package body Ocarina.Backends.POK_C.Makefile is
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
    use GNAT.OS_Lib;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;

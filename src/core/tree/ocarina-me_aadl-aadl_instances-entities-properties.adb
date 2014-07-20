@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Charset;
 with Utils;
 
@@ -41,7 +41,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 package body Ocarina.ME_AADL.AADL_Instances.Entities.Properties is
 
-   use Namet;
+   use Ocarina.Namet;
    use Charset;
    use Utils;
 

@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 with Locations;
 
 with Ocarina.ME_AADL;
@@ -40,7 +40,7 @@ package Ocarina.Builder.AADL.Components is
 
    --  for component types and implementations
 
-   use Types;
+   use Ocarina.Types;
    use Locations;
 
    function Add_Annex (Component : Node_Id; Annex : Node_Id) return Boolean;

@@ -31,16 +31,18 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
-with GNAT.Table;
+with Charset;
 with Locations;
+with Ocarina.Namet;
 
 with Ada.Characters.Handling;
 with Ada.Numerics.Generic_Elementary_Functions;
 with Ada.Long_Long_Float_Text_IO;
-with Charset;
+with GNAT.Table;
+
 with Ocarina.AADL_Values;
 with Ocarina.ME_REAL.REAL_Tree.Nutils;
+with Ocarina.ME_AADL.AADL_Instances.Nutils;
 
 package body Ocarina.REAL_Values is
 
@@ -107,7 +109,7 @@ package body Ocarina.REAL_Values is
      (Value  : Value_Type;
       Quoted : Boolean := True) return String
    is
-      use Namet;
+      use Ocarina.Namet;
    begin
       Name_Len := 0;
 
@@ -194,8 +196,17 @@ package body Ocarina.REAL_Values is
               (Image (Value.RVal_Right, Value.RVBase, Value.RVExp));
 
          when LT_Element =>
-            --  FIXME
-            raise Program_Error;
+            declare
+               N : Name_Id;
+               use Ocarina.ME_AADL.AADL_Instances.Nutils;
+               pragma Warnings (Off, N);
+               --  XXX We use Compute_Full_Name_Of_Instance, which has a
+               --  side effect on Name_Buffer
+            begin
+               N := Compute_Full_Name_Of_Instance (Value.ELVal, True, True);
+            exception
+               when others => null;
+            end;
 
       end case;
 

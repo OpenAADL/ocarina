@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Errors;
 
 with Ocarina.Analyzer.Messages;
@@ -51,7 +51,7 @@ with Ocarina.REAL_Expander.Flow_Analysis;
 
 package body Ocarina.Analyzer.REAL is
 
-   use Namet;
+   use Ocarina.Namet;
    use Errors;
    use Ocarina.Analyzer.REAL.Finder;
    use Ocarina.Analyzer.Messages;

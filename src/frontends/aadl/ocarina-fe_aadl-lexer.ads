@@ -35,7 +35,7 @@
 --  by the parser for scanning AADL source files.  This package is
 --  conformant to the AADL v1.0 issued on 2004-09
 
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 with Locations; use Locations;
 
 with Ocarina.Files;

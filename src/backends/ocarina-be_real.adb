@@ -31,9 +31,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
-with Output;
-with Namet;
+with Ocarina.Types;
+with Ocarina.Output;
+with Ocarina.Namet;
 with Ocarina.Backends;
 with Ocarina.REAL_Values;
 with Ocarina.ME_REAL.Tokens;
@@ -42,8 +42,8 @@ with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.ME_REAL.REAL_Tree.Utils;
 
 package body Ocarina.BE_REAL is
-   use Types;
-   use Output;
+   use Ocarina.Types;
+   use Ocarina.Output;
    use Ocarina.ME_REAL.Tokens;
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
@@ -315,7 +315,7 @@ package body Ocarina.BE_REAL is
 
    procedure Print_Requirement (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Required_Theorem);
-      use Namet;
+      use Ocarina.Namet;
    begin
       Write_Name (Theorem_Name (Node));
    end Print_Requirement;
@@ -376,7 +376,7 @@ package body Ocarina.BE_REAL is
 
    procedure Print_Variable_Decl_Compute (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Variable_Decl_Compute);
-      use Namet;
+      use Ocarina.Namet;
    begin
       Print_Variable_Decl (Node);
       Print_Token (T_Compute);
@@ -570,7 +570,7 @@ package body Ocarina.BE_REAL is
 
    procedure Print_Element (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Element);
-      use Namet;
+      use Ocarina.Namet;
    begin
       Write_Name (Name (Identifier (Node)));
    end Print_Element;
@@ -581,7 +581,7 @@ package body Ocarina.BE_REAL is
 
    procedure Print_Variable (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Var_Reference);
-      use Namet;
+      use Ocarina.Namet;
    begin
       Write_Name (Name (Node));
    end Print_Variable;
@@ -595,7 +595,7 @@ package body Ocarina.BE_REAL is
         (Kind (Node) = K_Identifier
          or else Kind (Node) = K_Var_Reference
          or else Kind (Node) = K_Set_Reference);
-      use Namet;
+      use Ocarina.Namet;
    begin
       Write_Name (Name (Node));
    end Print_Identifier;
@@ -605,7 +605,7 @@ package body Ocarina.BE_REAL is
    -----------------
 
    procedure Print_Token (Token : Token_Type) is
-      use Namet;
+      use Ocarina.Namet;
    begin
       Write_Str (Image (Token));
    end Print_Token;

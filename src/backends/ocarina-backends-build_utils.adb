@@ -38,8 +38,8 @@ with GNAT.Table;
 with GNAT.OS_Lib;
 with GNAT.Directory_Operations;
 
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 with Utils; use Utils;
 
 with Ocarina.ME_AADL;
@@ -56,8 +56,8 @@ package body Ocarina.Backends.Build_Utils is
 
    use GNAT.OS_Lib;
    use GNAT.Directory_Operations;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;

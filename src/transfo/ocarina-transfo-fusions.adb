@@ -42,7 +42,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.Transfo.Fusions.Scheduler;
 with Errors;
-with Namet;
+with Ocarina.Namet;
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 with GNAT.Dynamic_Tables;
 with Ocarina.Builder.AADL.Components;
@@ -75,7 +75,7 @@ package body Ocarina.Transfo.Fusions is
    use Ocarina.Backends.Messages;
 
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
    use Locations;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;

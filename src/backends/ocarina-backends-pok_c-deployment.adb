@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Utils; use Utils;
 with Locations;
 
@@ -57,7 +57,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
 
 package body Ocarina.Backends.POK_C.Deployment is
 
-   use Namet;
+   use Ocarina.Namet;
    use Locations;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Messages;

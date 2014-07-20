@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Locations; use Locations;
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 
 package Ocarina.Parser is
 

@@ -33,7 +33,7 @@
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.Instances.Queries;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.Instances.REAL_Checker.Queries.Provided_Class_Predicates
   is
@@ -50,7 +50,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Provided_Class_Predicates
       Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       pragma Unreferenced (Option);
-      use Namet;
+      use Ocarina.Namet;
 
       Str_1 : constant Name_Id :=
         Get_String_Name ("provided_virtual_bus_class");

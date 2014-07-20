@@ -31,10 +31,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 
 generic
-   with function Predicate (E : Types.Node_Id) return Boolean;
+   with function Predicate (E : Ocarina.Types.Node_Id) return Boolean;
 
 package Ocarina.Instances.REAL_Checker.Queries.Predicates is
 

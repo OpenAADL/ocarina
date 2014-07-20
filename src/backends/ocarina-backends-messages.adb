@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with GNAT.OS_Lib;     use GNAT.OS_Lib;
-with Output;          use Output;
+with Ocarina.Output;          use Ocarina.Output;
 with Ocarina.Options; use Ocarina.Options;
 
 package body Ocarina.Backends.Messages is

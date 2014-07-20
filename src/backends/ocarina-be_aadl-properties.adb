@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -43,7 +43,7 @@ with Ocarina.BE_AADL.Properties.Values;
 
 package body Ocarina.BE_AADL.Properties is
 
-   use Output;
+   use Ocarina.Output;
 
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;

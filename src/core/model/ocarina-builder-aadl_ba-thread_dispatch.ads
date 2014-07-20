@@ -31,14 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 with Locations;
 
 with Ocarina.ME_AADL_BA;
 
 package Ocarina.Builder.Aadl_Ba.Thread_Dispatch is
 
-   use Types;
+   use Ocarina.Types;
    use Locations;
    use Ocarina.ME_AADL_BA;
 

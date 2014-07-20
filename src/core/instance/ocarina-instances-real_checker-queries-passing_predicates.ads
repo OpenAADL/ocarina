@@ -35,13 +35,13 @@
 --  are passing through a user-provided AADL component instance
 
 with Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates;
-with Types;
+with Ocarina.Types;
 
 package Ocarina.Instances.REAL_Checker.Queries.Passing_Predicates is
 
    function Is_Passing_Through_Predicate
-     (F      : Types.Node_Id;
-      C      : Types.Node_Id;
+     (F      : Ocarina.Types.Node_Id;
+      C      : Ocarina.Types.Node_Id;
       Option : Predicates_Search_Options := PSO_Direct) return Boolean;
    --  Check if the end-to-end flow is passing through the
    --  component instance C

@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;  use Namet;
-with Output; use Output;
+with Ocarina.Namet;  use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
 
 with Ocarina.Backends.Ada_Tree.Nodes;
 with Ocarina.Backends.Ada_Tree.Nutils;

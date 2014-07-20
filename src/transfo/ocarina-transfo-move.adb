@@ -43,7 +43,7 @@ with Ocarina.Builder.AADL.Components.Subcomponents;
 with Ocarina.Builder.AADL.Components.Connections;
 with Ocarina.Builder.AADL.Components.Features;
 with Ocarina.Transfo;
-with Namet;
+with Ocarina.Namet;
 with Locations;
 
 package body Ocarina.Transfo.Move is
@@ -52,7 +52,7 @@ package body Ocarina.Transfo.Move is
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Debug;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
-   use Namet;
+   use Ocarina.Namet;
    use Locations;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;

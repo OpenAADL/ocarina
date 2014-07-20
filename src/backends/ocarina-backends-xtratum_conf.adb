@@ -48,7 +48,7 @@ with Ocarina.Backends.Xtratum_Conf.Channels;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Xtratum_Conf is
 

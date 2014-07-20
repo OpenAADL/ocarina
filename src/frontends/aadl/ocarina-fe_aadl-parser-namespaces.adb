@@ -35,7 +35,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.FE_AADL.Lexer;
 with Ocarina.ME_AADL.Tokens;
 with Ocarina.FE_AADL.Parser.Annexes;

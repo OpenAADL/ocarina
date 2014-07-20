@@ -35,7 +35,7 @@ with GNAT.OS_Lib;
 with Ada.Directories;
 with GNAT.Table;
 
-with Namet;
+with Ocarina.Namet;
 with Locations;
 
 with Ocarina.ME_AADL;
@@ -63,7 +63,7 @@ package body Ocarina.Backends.Utils is
    use GNAT.OS_Lib;
    use Ada.Directories;
 
-   use Namet;
+   use Ocarina.Namet;
    use Locations;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;

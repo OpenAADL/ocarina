@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.ME_REAL.REAL_Tree.Utils;
@@ -42,7 +42,7 @@ with Ocarina.REAL_Values;
 
 package body Ocarina.Builder.REAL is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.ME_REAL.REAL_Tree.Utils;
    use Ocarina.ME_REAL.REAL_Tree.Nodes;

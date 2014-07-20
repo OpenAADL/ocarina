@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Errors;
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.AADL_Values;
 
@@ -51,7 +51,7 @@ with Ocarina.Processor.Properties;
 package body Ocarina.Analyzer.AADL.Semantics is
 
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
 
    use Ocarina.AADL_Values;
    use Ocarina.Analyzer.Messages;

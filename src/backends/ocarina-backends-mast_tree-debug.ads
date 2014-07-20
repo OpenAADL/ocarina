@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output; use Output;
+with Ocarina.Output; use Ocarina.Output;
 
 with Ocarina.Backends.MAST_Tree.Nodes; use Ocarina.Backends.MAST_Tree.Nodes;
 
@@ -39,10 +39,10 @@ package Ocarina.Backends.MAST_Tree.Debug is
 
    N_Indents : Natural := 0;
 
-   procedure W_Eol (N : Natural := 1) renames Output.Write_Eol;
-   procedure W_Int (N : Int) renames Output.Write_Int;
-   procedure W_Line (N : String) renames Output.Write_Line;
-   procedure W_Str (N : String) renames Output.Write_Str;
+   procedure W_Eol (N : Natural := 1) renames Ocarina.Output.Write_Eol;
+   procedure W_Int (N : Int) renames Ocarina.Output.Write_Int;
+   procedure W_Line (N : String) renames Ocarina.Output.Write_Line;
+   procedure W_Str (N : String) renames Ocarina.Output.Write_Str;
    procedure W_Indents;
 
    procedure W_Byte (N : Byte);

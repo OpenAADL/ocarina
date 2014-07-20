@@ -33,14 +33,17 @@
 
 --  This package gathers all functions related to arrays parsing.
 
-with Types;
+with Ocarina.Types;
 
 package Ocarina.FE_AADL.Parser.Components.Arrays is
 
-   function P_Array_Dimensions (Container : Types.Node_Id) return Node_Id;
+   function P_Array_Dimensions
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
 
-   function P_Array_Dimension_Size (Container : Types.Node_Id) return Node_Id;
+   function P_Array_Dimension_Size
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
 
-   function P_Array_Selection (Container : Types.Node_Id) return Node_Id;
+   function P_Array_Selection
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
 
 end Ocarina.FE_AADL.Parser.Components.Arrays;

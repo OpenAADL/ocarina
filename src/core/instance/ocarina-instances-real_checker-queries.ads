@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 with GNAT.Dynamic_Tables;
 
 package Ocarina.Instances.REAL_Checker.Queries is
@@ -75,7 +75,7 @@ package Ocarina.Instances.REAL_Checker.Queries is
    --  Search in the Node table for instances a given type
 
    function Get_Instances_Of_Component_Type
-     (E : Types.Node_Id) return Result_Set;
+     (E : Ocarina.Types.Node_Id) return Result_Set;
    --  Search in the Node table for instances a given type
 
    function Get_Instances_With_Property
@@ -123,17 +123,18 @@ package Ocarina.Instances.REAL_Checker.Queries is
    function Cardinal (Set : Result_Set) return Natural;
    --  Return set's cardinality
 
-   function Get (Set : Result_Set; Index : Natural) return Types.Node_Id;
+   function Get (Set : Result_Set; Index : Natural)
+                return Ocarina.Types.Node_Id;
 
    procedure Add
      (Set      : in out Result_Set;
-      E        :        Types.Node_Id;
+      E        :        Ocarina.Types.Node_Id;
       Distinct :        Boolean := False);
    --  Add the element E in the result set.
    --  If distint is set to true and if E is already
    --  present in the set, E won't be added
 
-   function Is_In (E : Types.Node_Id; Set : Result_Set) return Boolean;
+   function Is_In (E : Ocarina.Types.Node_Id; Set : Result_Set) return Boolean;
    --  Found whether E is present in the Set
 
    --  Testing procedures
@@ -147,8 +148,8 @@ package Ocarina.Instances.REAL_Checker.Queries is
    --  Misc functions
 
    function Get_Property_Value
-     (E    : Types.Node_Id;
-      Name : String) return Types.Node_Id;
+     (E    : Ocarina.Types.Node_Id;
+      Name : String) return Ocarina.Types.Node_Id;
    --  for a given set element, returns then Name property value
    --  if the property is absent, returns No_Node.
 

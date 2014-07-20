@@ -33,16 +33,18 @@
 
 --  This package gathers all functions related to prototypes parsing.
 
-with Types;
+with Ocarina.Types;
 
 package Ocarina.FE_AADL.Parser.Components.Prototypes is
 
    function P_Prototype_Or_Prototype_Refinement
-     (Container : Types.Node_Id;
+     (Container : Ocarina.Types.Node_Id;
       Refinable : Boolean) return Node_Id;
 
-   function P_Prototype_Bindings (Container : Types.Node_Id) return Boolean;
+   function P_Prototype_Bindings
+     (Container : Ocarina.Types.Node_Id) return Boolean;
 
-   function P_Prototype_Binding (Container : Types.Node_Id) return Node_Id;
+   function P_Prototype_Binding
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
 
 end Ocarina.FE_AADL.Parser.Components.Prototypes;

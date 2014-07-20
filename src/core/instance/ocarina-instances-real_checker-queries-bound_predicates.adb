@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Instances.Queries;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.Instances.REAL_Checker.Queries.Bound_Predicates is
    use Ocarina.Instances.Queries;
@@ -47,7 +47,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Bound_Predicates is
       Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       pragma Unreferenced (Option);
-      use Namet;
+      use Ocarina.Namet;
 
       Str_1 : constant Name_Id := Get_String_Name ("actual_processor_binding");
       Str_2 : constant Name_Id :=

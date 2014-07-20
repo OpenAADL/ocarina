@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -41,7 +41,7 @@ with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
 package body Ocarina.Instances.Queries is
 
-   use Namet;
+   use Ocarina.Namet;
 
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;

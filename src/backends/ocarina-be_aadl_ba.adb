@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.Backends;
 
@@ -42,7 +42,7 @@ with Ocarina.BE_AADL_BA.Specifications;
 
 package body Ocarina.BE_AADL_BA is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.Backends;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
    use Ocarina.ME_AADL_BA.BA_Tree.Debug;

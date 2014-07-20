@@ -22,6 +22,7 @@ CLEAN_STAMPS = $(CLEAN_PROJECTS:.gpr=.gpr-clean)
 # Object directories (*.o, *.ali)
 
 OBJECT_DIRS = $(top_builddir)/src/core/objects	\
+	$(top_builddir)/src/config/objects	\
 	$(top_builddir)/src/frontends/objects	\
 	$(top_builddir)/src/backends/objects	\
 	$(top_builddir)/src/transfo/objects	\

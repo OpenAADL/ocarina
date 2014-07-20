@@ -34,8 +34,8 @@
 with GNAT.OS_Lib;       use GNAT.OS_Lib;
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet;  use Namet;
-with Output; use Output;
+with Ocarina.Namet;  use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
 with Utils;  use Utils;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;

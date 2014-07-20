@@ -35,7 +35,7 @@ with GNAT.Table;
 
 with Charset;
 with Locations;
-with Namet;
+with Ocarina.Namet;
 with Utils;
 
 with Ocarina.Annotations;
@@ -44,7 +44,7 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Debug is
 
    use Charset;
    use Locations;
-   use Namet;
+   use Ocarina.Namet;
    use Utils;
    use Ocarina.Annotations;
 

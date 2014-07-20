@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -44,7 +44,7 @@ with Ocarina.BE_AADL.Identifiers;
 
 package body Ocarina.BE_AADL.Components.Subcomponents is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.BE_AADL.Properties;

@@ -48,7 +48,7 @@ with Ocarina.Backends.Utils;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.ARINC653_Conf is
 

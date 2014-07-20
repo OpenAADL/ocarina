@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with GNAT.Table;
 
 with Ada.Characters.Handling;
@@ -72,7 +72,7 @@ package body Ocarina.AADL_Values is
      (Value  : Value_Type;
       Quoted : Boolean := True) return String
    is
-      use Namet;
+      use Ocarina.Namet;
 
    begin
       Name_Len := 0;

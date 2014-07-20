@@ -44,7 +44,7 @@ with Ocarina.Builder.REAL;
 with Ocarina.Parser;
 with Ocarina.Files;
 with Ocarina.Analyzer.REAL;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.FE_REAL.Parser is
 
@@ -1928,7 +1928,7 @@ package body Ocarina.FE_REAL.Parser is
    procedure Init is
       use GNAT.Command_Line;
       use Ocarina.Parser;
-      use Namet;
+      use Ocarina.Namet;
 
       C : Character;
    begin

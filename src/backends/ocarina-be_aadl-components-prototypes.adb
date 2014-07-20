@@ -31,14 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.BE_AADL.Identifiers;
 
 package body Ocarina.BE_AADL.Components.Prototypes is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.BE_AADL.Components;
    use Ocarina.BE_AADL.Identifiers;

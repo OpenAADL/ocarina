@@ -33,7 +33,7 @@
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.PN.Components;
@@ -45,7 +45,7 @@ with Ocarina.Backends.PN.Format.Cami;
 
 with Ocarina.Backends.PN.Printer;
 
-with Output;
+with Ocarina.Output;
 with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.PN is
@@ -53,24 +53,24 @@ package body Ocarina.Backends.PN is
    package OPFT renames Ocarina.Backends.PN.Format.Tina;
    package OPFC renames Ocarina.Backends.PN.Format.Cami;
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Instances;
    use Ocarina.Backends.Expander;
    use Ocarina.Backends.PN.Components;
    use Ocarina.Backends.PN.Printer;
    use OPFT;
    use OPFC;
-   use Output;
+   use Ocarina.Output;
    use Ocarina.Backends.Utils;
 
-   procedure Generate_TINA (AADL_Root : Types.Node_Id);
-   procedure Generate_CAMI (AADL_Root : Types.Node_Id);
+   procedure Generate_TINA (AADL_Root : Ocarina.Types.Node_Id);
+   procedure Generate_CAMI (AADL_Root : Ocarina.Types.Node_Id);
 
    -------------------
    -- Generate_TINA --
    -------------------
 
-   procedure Generate_TINA (AADL_Root : Types.Node_Id) is
+   procedure Generate_TINA (AADL_Root : Ocarina.Types.Node_Id) is
       PN_Generated, Instance_Root : Node_Id;
 
    begin
@@ -103,7 +103,7 @@ package body Ocarina.Backends.PN is
    -- Generate_CAMI --
    -------------------
 
-   procedure Generate_CAMI (AADL_Root : Types.Node_Id) is
+   procedure Generate_CAMI (AADL_Root : Ocarina.Types.Node_Id) is
       PN_Generated, Instance_Root : Node_Id;
 
    begin
@@ -131,7 +131,7 @@ package body Ocarina.Backends.PN is
    -- Generate --
    --------------
 
-   procedure Generate (AADL_Root : Types.Node_Id) is
+   procedure Generate (AADL_Root : Ocarina.Types.Node_Id) is
    begin
       Generate_TINA (AADL_Root);
       Reset_Handlings;

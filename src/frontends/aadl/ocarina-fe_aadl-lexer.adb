@@ -35,15 +35,15 @@ with Ada.Characters.Handling;
 
 with Charset;
 with Errors;
-with Namet;
-with Output; use Output;
+with Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
 
 with Ocarina.AADL_Values;
 
 package body Ocarina.FE_AADL.Lexer is
 
    use ASCII;
-   use Namet;
+   use Ocarina.Namet;
    use Errors;
    use Ocarina.Files;
 

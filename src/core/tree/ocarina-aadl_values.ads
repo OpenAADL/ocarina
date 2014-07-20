@@ -35,7 +35,7 @@
 --  inside the Ocarina tree.
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
-with Types;                           use Types;
+with Ocarina.Types;                           use Ocarina.Types;
 
 package Ocarina.AADL_Values is
 

@@ -37,7 +37,7 @@
 
 with GNAT.Table;
 
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 with Locations; use Locations;
 
 package Ocarina.Files is

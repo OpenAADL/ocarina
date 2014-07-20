@@ -33,13 +33,13 @@
 
 --  Defines types for REAL
 
-with Types;
+with Ocarina.Types;
 with Ocarina.ME_REAL.Tokens;
 with Ocarina.ME_REAL.REAL_Tree.Debug;
 
 package Ocarina.ME_REAL.REAL_Tree.Utils is
 
-   use Types;
+   use Ocarina.Types;
    use Ocarina.ME_REAL.Tokens;
 
    --  Operators values

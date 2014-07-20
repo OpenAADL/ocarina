@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output; use Output;
-with Types;  use Types;
+with Ocarina.Output; use Ocarina.Output;
+with Ocarina.Types;  use Ocarina.Types;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 use Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -41,10 +41,10 @@ package Ocarina.ME_AADL.AADL_Instances.Debug is
 
    N_Indents : Integer := -1;
 
-   procedure W_Eol (N : Natural := 1) renames Output.Write_Eol;
-   procedure W_Int (N : Int) renames Output.Write_Int;
-   procedure W_Line (N : String) renames Output.Write_Line;
-   procedure W_Str (N : String) renames Output.Write_Str;
+   procedure W_Eol (N : Natural := 1) renames Ocarina.Output.Write_Eol;
+   procedure W_Int (N : Int) renames Ocarina.Output.Write_Int;
+   procedure W_Line (N : String) renames Ocarina.Output.Write_Line;
+   procedure W_Str (N : String) renames Ocarina.Output.Write_Str;
    procedure W_Indents;
 
    procedure W_Boolean (N : Boolean);

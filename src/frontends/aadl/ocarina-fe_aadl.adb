@@ -31,14 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.FE_AADL.Parser;
 with Ocarina.ME_AADL.Tokens;
 
 package body Ocarina.FE_AADL is
 
-   use Output;
+   use Ocarina.Output;
 
    ----------
    -- Init --

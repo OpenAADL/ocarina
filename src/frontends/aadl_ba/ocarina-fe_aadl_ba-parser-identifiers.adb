@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Locations;
-with Namet;
+with Ocarina.Namet;
 with Ocarina.AADL_Values;
 with Ocarina.ME_AADL_BA.Tokens;
 with Ocarina.FE_AADL_BA.Lexer;
@@ -212,7 +212,7 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
      (Container : Types.Node_Id) return Node_Id
    is
       use Locations;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.ME_AADL_BA.Tokens;
       use Ocarina.FE_AADL_BA.Lexer;
       use Ocarina.ME_AADL_BA.BA_Tree.Nodes;

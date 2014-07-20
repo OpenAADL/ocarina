@@ -34,11 +34,11 @@
 --  This package provides functions to create or read property names,
 --  types, constants and associations.
 
-with Types;                           use Types;
 with Ocarina.AADL_Values;             use Ocarina.AADL_Values;
 with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
+   use Ocarina.Types;
 
    type Property_Type is
      (PT_Boolean,

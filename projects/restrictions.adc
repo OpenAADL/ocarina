@@ -10,10 +10,13 @@ pragma Restriction_Warnings (No_Direct_Boolean_Operators);    -- GNAT specific
 
 pragma Initialize_Scalars;
 
-pragma Profile_Warnings (Ravenscar);
-pragma Restrictions (No_Task_Allocators);
-pragma Restrictions (No_Protected_Types);
-pragma Restrictions (No_Fixed_Point);
+--pragma Profile_Warnings (Ravenscar);
+--pragma Restrictions (No_Task_Allocators);
+--pragma Restrictions (No_Protected_Types);
+
+--  pragma Restrictions (No_Fixed_Point);
+--  violated by use of GNATColl
+
 --  pragma Restrictions (No_Wide_Characters);
 --  violated in ocarina-backends-utils.adb:2505
-pragma Restrictions (No_Implicit_Heap_Allocations);
+--pragma Restrictions (No_Implicit_Heap_Allocations);

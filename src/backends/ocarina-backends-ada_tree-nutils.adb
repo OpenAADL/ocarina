@@ -36,9 +36,9 @@ with GNAT.Case_Util;
 
 with Charset;   use Charset;
 with Locations; use Locations;
-with Namet;     use Namet;
-with Output;    use Output;
-with Types;     use Types;
+with Ocarina.Namet;     use Ocarina.Namet;
+with Ocarina.Output;    use Ocarina.Output;
+with Ocarina.Types;     use Ocarina.Types;
 with Utils;     use Utils;
 
 with Ocarina.Backends.Ada_Values; use Ocarina.Backends.Ada_Values;

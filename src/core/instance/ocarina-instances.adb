@@ -33,8 +33,8 @@
 
 with Errors;
 with Locations;
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -55,8 +55,8 @@ package body Ocarina.Instances is
 
    use Errors;
    use Locations;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;

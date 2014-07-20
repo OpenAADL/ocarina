@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with GNAT.OS_Lib;
-with Output;
+with Ocarina.Output;
 
 with GNAT.Directory_Operations;
 
@@ -62,15 +62,15 @@ with Ocarina.Backends.Properties;
 with Ocarina.Backends.ASN1;
 with GNAT.Command_Line;
 
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.Backends.PO_HI_C is
 
    use GNAT.Command_Line;
    use GNAT.OS_Lib;
 
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    use GNAT.Directory_Operations;
 

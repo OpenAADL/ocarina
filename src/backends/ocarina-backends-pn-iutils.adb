@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.AADL_Values;
-with Namet;
+with Ocarina.Namet;
 with Ocarina.Instances.Queries;
 
 with Ocarina.Backends.PN.Nodes;
@@ -553,7 +553,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
-      use Namet;
+      use Ocarina.Namet;
 
    begin
 
@@ -579,7 +579,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
 
    begin
@@ -780,7 +780,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.AADL_Values;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
 
@@ -809,7 +809,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.AADL_Values;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
 
    begin
@@ -855,7 +855,7 @@ package body Ocarina.Backends.PN.Iutils is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.AADL_Values;
-      use Namet;
+      use Ocarina.Namet;
 
       I : constant Node_Id := New_Node (K_CPN_Specific_Informations);
    begin
@@ -990,7 +990,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.AADL_Values;
       use Ocarina.ME_AADL.AADL_Instances.Entities;
       use Ocarina.ME_AADL;
@@ -1126,7 +1126,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.AADL_Values;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
       use OPND;
@@ -1216,7 +1216,7 @@ package body Ocarina.Backends.PN.Iutils is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.AADL_Values;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
 

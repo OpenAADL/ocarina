@@ -35,13 +35,13 @@ with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.REAL_Values;
 with Ocarina.Backends.REAL;
 with Ocarina.Analyzer.REAL;
-with Output;
-with Namet;
+with Ocarina.Output;
+with Ocarina.Namet;
 
 package body Ocarina.Transfo.Optim.Eval is
    use Ocarina.REAL_Values;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    package BR renames Ocarina.Backends.REAL;
 

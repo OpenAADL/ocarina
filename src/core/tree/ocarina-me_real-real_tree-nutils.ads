@@ -33,14 +33,14 @@
 
 --  Offers list manipulation functions
 
-with Types;
+with Ocarina.Types;
 with Locations;
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
 with Ocarina.Instances.REAL_Checker.Queries;
 with GNAT.Dynamic_Tables;
 
 package Ocarina.ME_REAL.REAL_Tree.Nutils is
-   use Types;
+   use Ocarina.Types;
    use Locations;
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
 

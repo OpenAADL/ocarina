@@ -37,7 +37,7 @@ with GNAT.Case_Util;
 with Utils; use Utils;
 
 with Charset; use Charset;
-with Namet;   use Namet;
+with Ocarina.Namet;   use Ocarina.Namet;
 
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Tree.Nutils;

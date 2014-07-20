@@ -32,13 +32,13 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates;
-with Types;
+with Ocarina.Types;
 
 package Ocarina.Instances.REAL_Checker.Queries.Provided_Class_Predicates is
 
    function Is_Provided_Class_Predicate
-     (E      : Types.Node_Id;
-      D      : Types.Node_Id;
+     (E      : Ocarina.Types.Node_Id;
+      D      : Ocarina.Types.Node_Id;
       Option : Predicates_Search_Options := PSO_Direct) return Boolean;
    --  Check if a component of same class than the instance E is provided
    --  to the instance D

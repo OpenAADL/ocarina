@@ -34,8 +34,8 @@
 with Ada.Command_Line;          use Ada.Command_Line;
 with GNAT.OS_Lib;               use GNAT.OS_Lib;
 with GNAT.Directory_Operations; use GNAT.Directory_Operations;
-with Output;                    use Output;
-with Namet;                     use Namet;
+with Ocarina.Output;                    use Ocarina.Output;
+with Ocarina.Namet;                     use Ocarina.Namet;
 
 package body Errors is
 

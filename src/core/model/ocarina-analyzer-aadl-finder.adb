@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.Analyzer.AADL.Naming_Rules;
 with Ocarina.Analyzer.Messages;
@@ -45,7 +45,7 @@ with Ocarina.Property_Sets;
 
 package body Ocarina.Analyzer.AADL.Finder is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Analyzer.AADL.Naming_Rules;
    use Ocarina.Analyzer.Messages;
    use Ocarina.ME_AADL;

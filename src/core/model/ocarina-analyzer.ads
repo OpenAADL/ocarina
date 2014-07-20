@@ -31,11 +31,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 
 package Ocarina.Analyzer is
 
-   use Types;
+   use Ocarina.Types;
 
    type Analyzer_Subprogram is access function
      (AADL_Root : Node_Id) return Boolean;

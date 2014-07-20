@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;             use Namet;
+with Ocarina.Namet;             use Ocarina.Namet;
 with GNAT.Command_Line; use GNAT.Command_Line;
 
 with Ocarina.Instances;

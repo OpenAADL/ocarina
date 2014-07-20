@@ -33,7 +33,7 @@
 
 with GNAT.Table;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Annotations is
 

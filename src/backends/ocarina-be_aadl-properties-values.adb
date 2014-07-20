@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 with Charset;
 
 with Ocarina.ME_AADL;
@@ -47,7 +47,7 @@ with Ocarina.BE_AADL.Components.Arrays;
 
 package body Ocarina.BE_AADL.Properties.Values is
 
-   use Output;
+   use Ocarina.Output;
    use Charset;
 
    use Ocarina.ME_AADL;

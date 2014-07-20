@@ -33,7 +33,7 @@
 
 --  Lexer for the REAL frontend
 
-with Types;
+with Ocarina.Types;
 with Locations;
 with Ocarina.Files;
 with Ocarina.ME_REAL.Tokens;
@@ -43,7 +43,7 @@ package Ocarina.FE_REAL.Lexer is
    pragma Elaborate_Body (Lexer);
 
    use Ocarina.ME_REAL.Tokens;
-   use Types;
+   use Ocarina.Types;
    use Locations;
 
    procedure Scan_Token;

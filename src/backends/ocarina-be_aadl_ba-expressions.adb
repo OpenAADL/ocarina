@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.AADL_Values;
 
@@ -44,7 +44,7 @@ with Ocarina.BE_AADL_BA.Actions;
 
 package body Ocarina.BE_AADL_BA.Expressions is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.AADL_Values;
    use Ocarina.ME_AADL_BA;
    use Ocarina.ME_AADL_BA.BA_Tree.Nutils;

@@ -33,7 +33,7 @@
 
 --  This package contains the lexical analyzer routines.
 
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 with Locations; use Locations;
 
 with Ocarina.Files;

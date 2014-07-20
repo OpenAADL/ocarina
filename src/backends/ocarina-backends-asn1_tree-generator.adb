@@ -33,8 +33,8 @@
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 with Outfiles;    use Outfiles;
-with Namet;       use Namet;
-with Output;      use Output;
+with Ocarina.Namet;       use Ocarina.Namet;
+with Ocarina.Output;      use Ocarina.Output;
 
 with Ocarina.Backends.ASN1_Values;
 with Ocarina.Backends.ASN1_Tree.Nodes;

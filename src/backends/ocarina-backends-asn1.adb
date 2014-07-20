@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,13 +40,13 @@ with Ocarina.Backends.ASN1.Deployment;
 with Ocarina.Backends.Utils;
 with GNAT.Command_Line;
 
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.Backends.ASN1 is
 
    use GNAT.Command_Line;
 
-   use Namet;
+   use Ocarina.Namet;
 
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.ASN1_Tree.Generator;

@@ -32,8 +32,8 @@
 ------------------------------------------------------------------------------
 
 with Charset;
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 
 with GNAT.Table;
 
@@ -43,8 +43,8 @@ with Ocarina.Analyzer.REAL;
 package body Ocarina.Analyzer is
 
    use Charset;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    type Analyzer_Record is record
       Language : Name_Id;

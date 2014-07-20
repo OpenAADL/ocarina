@@ -38,7 +38,7 @@ with Ocarina.ME_AADL.AADL_Tree.Debug;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Utils;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.Transfo is
    use Ocarina.ME_AADL;
@@ -46,7 +46,7 @@ package body Ocarina.Transfo is
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.ME_AADL.AADL_Tree.Debug;
    use Utils;
-   use Namet;
+   use Ocarina.Namet;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;

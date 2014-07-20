@@ -37,7 +37,7 @@
 with Locations; use Locations;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL.Tokens;
 with Ocarina.FE_AADL.Lexer;
@@ -60,14 +60,14 @@ package body Ocarina.FE_AADL.Parser.Components is
      (Expected_Id : Node_Id) return Boolean;
 
    function P_Component_Implementation
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Start_Loc           : Location;
       Category            : Component_Category;
       Private_Declaration : Boolean) return Node_Id;
    --  Parse Component_Implementation, Component_Implementation_Extension
 
    function P_Component_Type
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Start_Loc           : Location;
       Category            : Component_Category;
       Private_Declaration : Boolean) return Node_Id;
@@ -76,7 +76,7 @@ package body Ocarina.FE_AADL.Parser.Components is
    function P_Unique_Component_Impl_Name return Node_Id;
 
    function Is_A_Component_Implementation_Name
-     (Identifier : Types.Node_Id) return Boolean;
+     (Identifier : Ocarina.Types.Node_Id) return Boolean;
    --  Check if the identifier name contains a T_Dot
 
    ----------------------------------------------
@@ -89,7 +89,7 @@ package body Ocarina.FE_AADL.Parser.Components is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       Loc2, Start_Loc : Location;
@@ -148,7 +148,7 @@ package body Ocarina.FE_AADL.Parser.Components is
    -----------------
 
    function P_Component
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Private_Declaration : Boolean := False) return Node_Id
    is
       use Ocarina.ME_AADL.Tokens;
@@ -274,7 +274,8 @@ package body Ocarina.FE_AADL.Parser.Components is
    -- P_Component_Category --
    --------------------------
 
-   function P_Component_Category (Container : Types.Node_Id) return Node_Id is
+   function P_Component_Category (Container : Ocarina.Types.Node_Id)
+                                 return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;
@@ -381,12 +382,12 @@ package body Ocarina.FE_AADL.Parser.Components is
    --  end   defining_component_implementation_name ;
 
    function P_Component_Implementation
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Start_Loc           : Location;
       Category            : Component_Category;
       Private_Declaration : Boolean) return Node_Id
    is
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.Builder.AADL.Components;
@@ -798,7 +799,7 @@ package body Ocarina.FE_AADL.Parser.Components is
    --  end defining_component_type_identifier ;
 
    function P_Component_Type
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Start_Loc           : Location;
       Category            : Component_Category;
       Private_Declaration : Boolean) return Node_Id
@@ -1109,9 +1110,9 @@ package body Ocarina.FE_AADL.Parser.Components is
    ----------------------------------------
 
    function Is_A_Component_Implementation_Name
-     (Identifier : Types.Node_Id) return Boolean
+     (Identifier : Ocarina.Types.Node_Id) return Boolean
    is
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.Tokens;
 
@@ -1185,7 +1186,7 @@ package body Ocarina.FE_AADL.Parser.Components is
    --  end defining_identifier ;
 
    function P_Feature_Group_Type
-     (Namespace           : Types.Node_Id;
+     (Namespace           : Ocarina.Types.Node_Id;
       Start_Loc           : Location;
       Private_Declaration : Boolean := False) return Node_Id
    is

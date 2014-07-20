@@ -33,7 +33,7 @@
 
 with Charset; use Charset;
 with Errors;  use Errors;
-with Namet;   use Namet;
+with Ocarina.Namet;   use Ocarina.Namet;
 
 package body Ocarina.ME_REAL.REAL_Tree.Utils is
 

@@ -40,7 +40,7 @@ with Ocarina.Backends.Connection_Matrix.Main;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Connection_Matrix is
 

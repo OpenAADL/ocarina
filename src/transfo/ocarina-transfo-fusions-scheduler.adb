@@ -35,7 +35,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Errors;
-with Namet;
+with Ocarina.Namet;
 with GNAT.Dynamic_Tables;
 with Ada.Text_IO;
 with Ocarina.Transfo.Fusions;
@@ -45,7 +45,7 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package OTF renames Ocarina.Transfo.Fusions;

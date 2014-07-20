@@ -31,11 +31,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.ME_AADL_BA.BA_Tree.Nutils is
 
-   use Namet;
+   use Ocarina.Namet;
 
    -------------------
    -- First_Homonym --

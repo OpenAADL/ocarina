@@ -35,13 +35,13 @@ with Ada.Characters.Handling;
 
 with Locations;
 with Charset;
-with Output;
+with Ocarina.Output;
 with GNAT.OS_Lib;
 with Ocarina.FE_AADL_BA.Lexer;
 
 package body Ocarina.FE_AADL_BA.Parser_Errors is
 
-   use Output;
+   use Ocarina.Output;
    use GNAT.OS_Lib;
    use Ocarina.FE_AADL_BA.Lexer;
    use Locations;

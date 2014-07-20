@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;    use Namet;
-with Output;   use Output;
+with Ocarina.Namet;    use Ocarina.Namet;
+with Ocarina.Output;   use Ocarina.Output;
 with Utils;    use Utils;
 with Outfiles; use Outfiles;
 

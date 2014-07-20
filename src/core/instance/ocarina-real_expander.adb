@@ -37,7 +37,7 @@ with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.Builder.REAL;
 with Ocarina.Analyzer.REAL.Finder;
 with Ocarina.REAL_Values;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.REAL_Expander is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
@@ -45,7 +45,7 @@ package body Ocarina.REAL_Expander is
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.Builder.REAL;
    use Ocarina.Analyzer.REAL.Finder;
-   use Namet;
+   use Ocarina.Namet;
 
    ------------
    -- Expand --

@@ -33,7 +33,7 @@
 
 with Charset;                      use Charset;
 with Locations;                    use Locations;
-with Namet;                        use Namet;
+with Ocarina.Namet;                        use Ocarina.Namet;
 with Utils;                        use Utils;
 with Ocarina.Backends.MAST_Values; use Ocarina.Backends.MAST_Values;
 

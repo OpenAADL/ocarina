@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -44,7 +44,7 @@ with Ocarina.BE_AADL.Properties;
 
 package body Ocarina.BE_AADL.Namespaces is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;

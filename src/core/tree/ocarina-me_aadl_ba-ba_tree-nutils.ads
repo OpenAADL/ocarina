@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Locations;                        use Locations;
-with Types;                            use Types;
+with Ocarina.Types;                            use Ocarina.Types;
 with Ocarina.ME_AADL_BA.BA_Tree.Nodes; use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 package Ocarina.ME_AADL_BA.BA_Tree.Nutils is

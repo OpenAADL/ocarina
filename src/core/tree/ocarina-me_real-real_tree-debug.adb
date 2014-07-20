@@ -35,7 +35,7 @@
 
 with Ocarina.ME_REAL.REAL_Tree.Utils;
 with Locations; use Locations;
-with Namet;     use Namet;
+with Ocarina.Namet;     use Ocarina.Namet;
 
 package body Ocarina.ME_REAL.REAL_Tree.Debug is
    use Ocarina.ME_REAL.REAL_Tree.Utils;

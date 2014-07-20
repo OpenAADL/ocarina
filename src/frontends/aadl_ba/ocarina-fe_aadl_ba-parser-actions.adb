@@ -74,9 +74,10 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    function P_Range (Container : Node_Id; Start_Loc : Location) return Node_Id;
 
    function P_Subprogram_Parameter_List
-     (Container : Types.Node_Id) return List_Id;
+     (Container : Ocarina.Types.Node_Id) return List_Id;
 
-   function P_Parameter_Label (Container : Types.Node_Id) return Node_Id;
+   function P_Parameter_Label (Container : Ocarina.Types.Node_Id)
+                              return Node_Id;
 
    ------------------------
    -- P_Behavior_Actions --
@@ -830,7 +831,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    --  subprogram_parameter_list ::= parameter_label { , parameter_label } *
 
    function P_Subprogram_Parameter_List
-     (Container : Types.Node_Id) return List_Id
+     (Container : Ocarina.Types.Node_Id) return List_Id
    is
    begin
       return P_Items_List (P_Parameter_Label'Access, Container, T_Comma);
@@ -842,7 +843,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    --  parameter_label ::= in_parameter_value_expression | out_parameter_target
 
-   function P_Parameter_Label (Container : Types.Node_Id) return Node_Id is
+   function P_Parameter_Label (Container : Ocarina.Types.Node_Id)
+                              return Node_Id is
       Start_Loc   : Location;
       Parameter   : Node_Id;
       Param_Label : Node_Id;
@@ -872,7 +874,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    --  id ::= identifier { [ integer_value_holder ] }*
 
-   function P_Id (Container : Types.Node_Id) return Node_Id is
+   function P_Id (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc    : Location;
       Loc          : Location;
       Id_Node      : Node_Id;

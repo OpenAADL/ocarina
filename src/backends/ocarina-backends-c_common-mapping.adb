@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Utils; use Utils;
 
 with Ocarina.Backends.Messages;
@@ -56,7 +56,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 package body Ocarina.Backends.C_Common.Mapping is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.C_Values;

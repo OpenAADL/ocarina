@@ -32,14 +32,14 @@
 ------------------------------------------------------------------------------
 
 with Locations;
-with Types;
+with Ocarina.Types;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 package Ocarina.ME_AADL.AADL_Instances.Nutils is
 
    use Locations;
-   use Types;
+   use Ocarina.Types;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
 
    procedure Append_List_To_List (S : List_Id; D : in out List_Id);

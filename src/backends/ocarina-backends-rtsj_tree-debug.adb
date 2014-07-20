@@ -33,7 +33,7 @@
 
 with Charset;                      use Charset;
 with Locations;                    use Locations;
-with Namet;                        use Namet;
+with Ocarina.Namet;                        use Ocarina.Namet;
 with Utils;                        use Utils;
 with Ocarina.Backends.RTSJ_Values; use Ocarina.Backends.RTSJ_Values;
 with Ocarina.Backends.RTSJ_Tree.Nutils;

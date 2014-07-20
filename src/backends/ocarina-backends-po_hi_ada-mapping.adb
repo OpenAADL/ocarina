@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Utils; use Utils;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;

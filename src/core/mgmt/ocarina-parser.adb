@@ -33,8 +33,8 @@
 
 with Charset; use Charset;
 with Errors;  use Errors;
-with Namet;   use Namet;
-with Output;  use Output;
+with Ocarina.Namet;   use Ocarina.Namet;
+with Ocarina.Output;  use Ocarina.Output;
 
 with Ocarina.Options;       use Ocarina.Options;
 with Ocarina.Property_Sets; use Ocarina.Property_Sets;

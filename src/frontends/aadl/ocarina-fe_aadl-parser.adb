@@ -32,8 +32,8 @@
 ------------------------------------------------------------------------------
 
 with Locations; use Locations;
-with Namet;     use Namet;
-with Output;    use Output;
+with Ocarina.Namet;     use Ocarina.Namet;
+with Ocarina.Output;    use Ocarina.Output;
 
 with Ocarina.FE_AADL.Lexer;             use Ocarina.FE_AADL.Lexer;
 with Ocarina.FE_AADL.Parser.Namespaces; use Ocarina.FE_AADL.Parser.Namespaces;

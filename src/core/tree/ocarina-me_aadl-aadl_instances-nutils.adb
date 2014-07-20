@@ -31,14 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Utils;
 
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
-   use Namet;
+   use Ocarina.Namet;
    use Utils;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 

@@ -33,7 +33,7 @@
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Namet;
+with Ocarina.Namet;
 with Ocarina.Backends.PN.Nodes;
 with Ocarina.Backends.PN.Nutils;
 
@@ -239,7 +239,7 @@ package body Ocarina.Backends.PN.Components is
    is
       use OPN;
       use Ocarina.Backends.PN.Nutils;
-      use Namet;
+      use Ocarina.Namet;
       use Ocarina.Backends.Properties;
       use Ocarina.AADL_Values;
       use Ocarina.Backends.PN.Iutils;
@@ -1713,7 +1713,7 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Utils;
       use OAV;
       use Ocarina.Backends.Properties;
-      use Namet;
+      use Ocarina.Namet;
       use AIN;
       use OPND;
 
@@ -2518,7 +2518,7 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Iutils;
       use Ocarina.AADL_Values;
       use Ocarina.Backends.Properties;
-      use Namet;
+      use Ocarina.Namet;
       use AIN;
 
       PN_Spg_Par    : Node_Id;
@@ -2624,7 +2624,7 @@ package body Ocarina.Backends.PN.Components is
       F             : Types.Value_Id)
    is
 
-      use Namet;
+      use Ocarina.Namet;
       use AIN;
       use Ocarina.AADL_Values;
       use Ocarina.Backends.PN.Nodes;
@@ -2730,7 +2730,7 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Iutils;
       use Ocarina.AADL_Values;
       use Ocarina.Backends.Properties;
-      use Namet;
+      use Ocarina.Namet;
       use AIN;
       use Ocarina.Backends.Utils;
       use Ocarina.Instances.Queries;
@@ -2867,7 +2867,7 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Iutils;
       use Ocarina.AADL_Values;
       use Ocarina.Backends.Properties;
-      use Namet;
+      use Ocarina.Namet;
       use AIN;
       use Ocarina.Backends.Utils;
       use Ocarina.Instances.Queries;
@@ -3178,7 +3178,7 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Iutils;
       use Ocarina.AADL_Values;
-      use Namet;
+      use Ocarina.Namet;
 
       type Thread_Pattern is array (Integer range <>) of Name_Id;
 

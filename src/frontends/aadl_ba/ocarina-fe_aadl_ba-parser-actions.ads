@@ -40,7 +40,7 @@ package Ocarina.FE_AADL_BA.Parser.Actions is
    --  parse an data component reference node which is constituted by one or
    --  two identifiers
 
-   function P_Id (Container : Types.Node_Id) return Node_Id;
+   function P_Id (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  parse an Id node
 
 end Ocarina.FE_AADL_BA.Parser.Actions;

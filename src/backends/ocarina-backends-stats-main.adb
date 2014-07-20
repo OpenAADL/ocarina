@@ -45,7 +45,7 @@ with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Stats.Mapping;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Stats.Main is
 

@@ -33,13 +33,13 @@
 
 with Locations;
 with Charset;
-with Output;
+with Ocarina.Output;
 with Ada.Characters.Handling;
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
 package body Ocarina.FE_REAL.Parser_Errors is
 
-   use Output;
+   use Ocarina.Output;
    use Locations;
    use Charset;
 

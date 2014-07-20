@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types; use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.Instances is
 

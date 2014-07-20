@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types; use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 with Ocarina.ME_AADL.Tokens; use Ocarina.ME_AADL.Tokens;
 

@@ -55,8 +55,8 @@ with Ocarina.Backends.XML_Tree.Generator;
 with GNAT.Command_Line; use GNAT.Command_Line;
 with GNAT.OS_Lib;       use GNAT.OS_Lib;
 
-with Namet;  use Namet;
-with Output; use Output;
+with Ocarina.Namet;  use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
 
 package body Ocarina.Backends.POK_C is
    use Ocarina.Instances;

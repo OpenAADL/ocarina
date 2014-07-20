@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -42,7 +42,7 @@ with Ocarina.ME_AADL.AADL_Tree.Entities;
 
 package body Ocarina.BE_AADL.Components.Connections is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.BE_AADL.Components.Modes;

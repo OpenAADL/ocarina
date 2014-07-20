@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;                     use Namet;
+with Ocarina.Namet;                     use Ocarina.Namet;
 with Ocarina.Instances.Queries; use Ocarina.Instances.Queries;
 with Ocarina.AADL_Values;
 

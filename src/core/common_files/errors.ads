@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with Locations; use Locations;
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 with Ada.Exceptions;
 
 package Errors is

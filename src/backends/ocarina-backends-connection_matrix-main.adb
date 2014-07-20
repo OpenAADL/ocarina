@@ -44,7 +44,7 @@ with Ocarina.Backends.Properties;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Connection_Matrix.Main is
 

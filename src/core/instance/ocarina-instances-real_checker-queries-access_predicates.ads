@@ -32,13 +32,13 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates;
-with Types;
+with Ocarina.Types;
 
 package Ocarina.Instances.REAL_Checker.Queries.Access_Predicates is
 
    function Is_Accessed_Predicate
-     (E      : Types.Node_Id;
-      D      : Types.Node_Id;
+     (E      : Ocarina.Types.Node_Id;
+      D      : Ocarina.Types.Node_Id;
       Option : Predicates_Search_Options := PSO_Direct) return Boolean;
    --  Check if the instance E is accessed by the instance D
 

@@ -31,14 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.FE_REAL.Parser;
 with Ocarina.ME_REAL.Tokens;
 
 package body Ocarina.FE_REAL is
 
-   use Output;
+   use Ocarina.Output;
 
    ----------
    -- Init --
