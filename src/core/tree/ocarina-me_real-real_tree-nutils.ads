@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,14 +33,14 @@
 
 --  Offers list manipulation functions
 
-with Types;
+with Ocarina.Types;
 with Locations;
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
 with Ocarina.Instances.REAL_Checker.Queries;
 with GNAT.Dynamic_Tables;
 
 package Ocarina.ME_REAL.REAL_Tree.Nutils is
-   use Types;
+   use Ocarina.Types;
    use Locations;
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
 
@@ -55,13 +55,13 @@ package Ocarina.ME_REAL.REAL_Tree.Nutils is
       Table_Initial        => 100,  -- # of elements
       Table_Increment      => 50); -- % increase
 
-   REAL_Root   : Node_Id;
+   REAL_Root : Node_Id;
    --  Current theorem root node
 
    AADL_Model_Root : Node_Id;
    --  Current AADL model root node
 
-   Owner_Node  : Node_Id;
+   Owner_Node : Node_Id;
    --  Node that is owner of the current theorem
 
    Environment : List_Id;

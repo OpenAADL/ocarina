@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -53,10 +53,10 @@ with Ocarina.Backends.POK_Cheddar;
 with Ocarina.Backends.XML_Tree.Generator;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
-with GNAT.OS_Lib; use GNAT.OS_Lib;
+with GNAT.OS_Lib;       use GNAT.OS_Lib;
 
-with Namet; use Namet;
-with Output; use Output;
+with Ocarina.Namet;  use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
 
 package body Ocarina.Backends.POK_C is
    use Ocarina.Instances;
@@ -92,10 +92,10 @@ package body Ocarina.Backends.POK_C is
    procedure Display_Communication_Error is
    begin
       Display_Error
-         ("This kind of communication is not handled " &
-          "at this time, we support event data and data ports " &
-          "for inter-partition communication and event data, data " &
-          "and event ports for intra-partition communication",
+        ("This kind of communication is not handled " &
+         "at this time, we support event data and data ports " &
+         "for inter-partition communication and event data, data " &
+         "and event ports for intra-partition communication",
          Fatal => True);
    end Display_Communication_Error;
 
@@ -105,7 +105,7 @@ package body Ocarina.Backends.POK_C is
 
    procedure Generate (AADL_Root : Node_Id) is
       Instance_Root : Node_Id;
-      Success : Boolean := True;
+      Success       : Boolean := True;
    begin
       Instance_Root := Instantiate_Model (AADL_Root);
 
@@ -158,9 +158,11 @@ package body Ocarina.Backends.POK_C is
          Execution_Tests.Init;
 
          if Do_Regression_Test then
-            Success := Execute_Regression_Test (Scenario_Dir.all,
-                                                Ref_Map,
-                                                Integer (Timeout));
+            Success :=
+              Execute_Regression_Test
+                (Scenario_Dir.all,
+                 Ref_Map,
+                 Integer (Timeout));
 
             if not Create_Referencial then
                Write_Eol;
@@ -173,8 +175,8 @@ package body Ocarina.Backends.POK_C is
          end if;
 
          if Do_Coverage_Test then
-            Success := Success and then
-              Execute_Coverage_Test (Integer (Timeout));
+            Success :=
+              Success and then Execute_Coverage_Test (Integer (Timeout));
          end if;
 
          --  Free memory

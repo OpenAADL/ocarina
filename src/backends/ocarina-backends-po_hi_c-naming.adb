@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Utils; use Utils;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -48,7 +48,7 @@ with Ocarina.Backends.C_Tree.Nutils;
 
 package body Ocarina.Backends.PO_HI_C.Naming is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -107,8 +107,8 @@ package body Ocarina.Backends.PO_HI_C.Naming is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -127,20 +127,20 @@ package body Ocarina.Backends.PO_HI_C.Naming is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         P                 : constant Node_Id := Map_HI_Node (E);
-         U                 : Node_Id;
-         Root_Sys          : constant Node_Id
-           := Parent_Component (Parent_Subcomponent (E));
-         Platform_Name     : constant Name_Id
-           := Get_Execution_Platform (Get_Bound_Processor (E));
+         P        : constant Node_Id := Map_HI_Node (E);
+         U        : Node_Id;
+         Root_Sys : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
+         Platform_Name : constant Name_Id :=
+           Get_Execution_Platform (Get_Bound_Processor (E));
       begin
          pragma Assert (AAU.Is_System (Root_Sys));
 
          if Platform_Name = No_Name then
             Display_Located_Error
               (Loc (Parent_Subcomponent (E)),
-               "This process subcomponent is bound to a processor without"
-               & " execution platform specification",
+               "This process subcomponent is bound to a processor without" &
+               " execution platform specification",
                Fatal => True);
          end if;
 
@@ -260,13 +260,13 @@ package body Ocarina.Backends.PO_HI_C.Naming is
       begin
          pragma Assert (AAU.Is_Process (E));
 
-         Location := Get_Location (Get_Bound_Processor (E));
+         Location    := Get_Location (Get_Bound_Processor (E));
          Port_Number := Get_Port_Number (E);
 
          --  If the node does not have a port number, we don't assign
          --  information to it.
 
-         if  Port_Number = CV.No_Value then
+         if Port_Number = CV.No_Value then
             L := RE (RE_Noaddr);
             P := RE (RE_Noport);
          else
@@ -276,18 +276,14 @@ package body Ocarina.Backends.PO_HI_C.Naming is
             if Location = No_Name then
                Display_Located_Error
                  (Loc (Parent_Subcomponent (E)),
-                  "A process that has a port number must be bound"
-                  & " to a processor that has a location",
+                  "A process that has a port number must be bound" &
+                  " to a processor that has a location",
                   Fatal => True);
             end if;
 
-            L := Make_Literal
-              (CV.New_Pointed_Char_Value
-               (Location));
+            L := Make_Literal (CV.New_Pointed_Char_Value (Location));
 
-            P := Make_Literal
-              (CV.To_C_Value
-               (Port_Number));
+            P := Make_Literal (CV.To_C_Value (Port_Number));
          end if;
 
          Append_Node_To_List (P, CTN.Values (Inetport_Enumerator_List));
@@ -326,8 +322,8 @@ package body Ocarina.Backends.PO_HI_C.Naming is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -346,37 +342,38 @@ package body Ocarina.Backends.PO_HI_C.Naming is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U        : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P        : constant Node_Id := CTN.Entity (U);
-         N        : Node_Id;
-         S                 : Node_Id;
-         F                 : Node_Id;
-         B                 : Node_Id;
-         C                 : Node_Id;
-         C_End             : Node_Id;
-         End_List          : List_Id;
-         Parent            : Node_Id;
-         Accessing_Device  : Node_Id;
-         Driver_Name       : Name_Id;
-         Root_Sys          : constant Node_Id
-           := Parent_Component (Parent_Subcomponent (E));
-         Transport_API     : Supported_Transport_APIs := Transport_None;
-         My_Node           : Node_Id;
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P                : constant Node_Id := CTN.Entity (U);
+         N                : Node_Id;
+         S                : Node_Id;
+         F                : Node_Id;
+         B                : Node_Id;
+         C                : Node_Id;
+         C_End            : Node_Id;
+         End_List         : List_Id;
+         Parent           : Node_Id;
+         Accessing_Device : Node_Id;
+         Driver_Name      : Name_Id;
+         Root_Sys         : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
+         Transport_API : Supported_Transport_APIs := Transport_None;
+         My_Node       : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
 
-         Inetport_Enumerator_List     := Make_Array_Values;
-         Inetaddr_Enumerator_List     := Make_Array_Values;
+         Inetport_Enumerator_List := Make_Array_Values;
+         Inetaddr_Enumerator_List := Make_Array_Values;
 
          Set_Naming_Source;
 
          Set_Added (E, E);
 
-         My_Node := CTU.Make_Defining_Identifier
-            (Map_C_Enumerator_Name
-               (Parent_Subcomponent (E)));
+         My_Node :=
+           CTU.Make_Defining_Identifier
+             (Map_C_Enumerator_Name (Parent_Subcomponent (E)));
 
          if not AAU.Is_Empty (Features (E)) then
             F := First_Node (Features (E));
@@ -413,27 +410,27 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                               --  There hasbeen definitly a bug while
                               --  expanding connections.
 
-                              raise Program_Error with
-                                "Wrong expansion of connections";
+                              raise Program_Error
+                                with "Wrong expansion of connections";
                            end if;
 
                            --  Get the bus of the connection
                            if Get_Execution_Platform
-                              (Get_Bound_Processor (E)) =
-                                Platform_LEON3_XM3
-                              and then
-                              Get_Execution_Platform
+                               (Get_Bound_Processor (E)) =
+                             Platform_LEON3_XM3
+                             and then
+                               Get_Execution_Platform
                                  (Get_Bound_Processor (Parent)) =
-                                 Platform_LEON3_XM3
-                              and then
-                                 Parent_Component
+                               Platform_LEON3_XM3
+                             and then
+                               Parent_Component
                                  (Parent_Subcomponent
-                                  (Get_Bound_Processor (E))) =
-                                 Parent_Component
-                                  (Parent_Subcomponent
-                                   (Get_Bound_Processor (Parent)))
+                                    (Get_Bound_Processor (E))) =
+                               Parent_Component
+                                 (Parent_Subcomponent
+                                    (Get_Bound_Processor (Parent)))
                            then
-                              B := No_Node;
+                              B             := No_Node;
                               Transport_API := Transport_None;
                            else
                               B := Get_Bound_Bus (C);
@@ -444,15 +441,15 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                            --  same transport layer for thir
                            --  connections.
 
-                           if Transport_API /= Transport_None and then
-                             Transport_API /= Get_Transport_API (B, E)
+                           if Transport_API /= Transport_None
+                             and then Transport_API /= Get_Transport_API (B, E)
                            then
                               Display_Located_Error
                                 (Loc (Parent_Subcomponent (E)),
-                                 "The features of this process are involved"
-                                 & " in connetions that do not use the same"
-                                 & " transport layer. This is not supported"
-                                 & " for now.",
+                                 "The features of this process are involved" &
+                                 " in connetions that do not use the same" &
+                                 " transport layer. This is not supported" &
+                                 " for now.",
                                  Fatal => True);
                            else
                               Transport_API := Get_Transport_API (B, E);
@@ -461,12 +458,13 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                               --  transport layer has been specified,
                               --  we raise an error.
 
-                              if B /= No_Node and then
-                                 Transport_API = Transport_None then
+                              if B /= No_Node
+                                and then Transport_API = Transport_None
+                              then
                                  Display_Located_Error
                                    (Loc (B),
-                                    "No transport layer has been specified"
-                                    & " for this bus",
+                                    "No transport layer has been specified" &
+                                    " for this bus",
                                     Fatal => True);
                               end if;
                            end if;
@@ -476,52 +474,55 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                                  Set_Deployment_Header;
 
                                  Add_Define_Deployment
-                                    (RE (RE_Need_Driver_Sockets));
+                                   (RE (RE_Need_Driver_Sockets));
 
                               when Transport_User =>
                                  if AAU.Is_Bus (B) then
                                     Accessing_Device :=
-                                       Get_Device_Of_Process (B, E);
+                                      Get_Device_Of_Process (B, E);
                                  elsif AAU.Is_Virtual_Bus (B) then
-                                    Accessing_Device := Get_Device_Of_Process
-                                       (Parent_Component
-                                          (Parent_Subcomponent (B)), E);
+                                    Accessing_Device :=
+                                      Get_Device_Of_Process
+                                        (Parent_Component
+                                           (Parent_Subcomponent (B)),
+                                         E);
                                  else
                                     Display_Located_Error
-                                       (Loc (B),
-                                        "Unknown bus kind !",
-                                        Fatal => True);
+                                      (Loc (B),
+                                       "Unknown bus kind !",
+                                       Fatal => True);
                                  end if;
 
                                  if Accessing_Device = No_Node then
                                     Display_Located_Error
-                                       (Loc (B),
-                                        "No device is accessing this bus !",
-                                        Fatal => True);
+                                      (Loc (B),
+                                       "No device is accessing this bus !",
+                                       Fatal => True);
                                  end if;
 
-                                 Driver_Name := Get_Driver_Name
-                                    (Corresponding_Instance
-                                       (Accessing_Device));
+                                 Driver_Name :=
+                                   Get_Driver_Name
+                                     (Corresponding_Instance
+                                        (Accessing_Device));
 
                                  if Driver_Name = No_Name then
                                     Display_Located_Error
-                                       (Loc (B),
-                                        "Driver must have a name" &
-                                        "(see Deployment::Driver_Name) !",
-                                        Fatal => True);
+                                      (Loc (B),
+                                       "Driver must have a name" &
+                                       "(see Deployment::Driver_Name) !",
+                                       Fatal => True);
                                  end if;
 
                                  Set_Str_To_Name_Buffer
-                                    ("__PO_HI_NEED_DRIVER_");
+                                   ("__PO_HI_NEED_DRIVER_");
                                  Get_Name_String_And_Append (Driver_Name);
 
                                  Driver_Name := Name_Find;
                                  Driver_Name := To_Upper (Driver_Name);
 
                                  Add_Define_Deployment
-                                    (Make_Defining_Identifier
-                                       (Driver_Name,
+                                   (Make_Defining_Identifier
+                                      (Driver_Name,
                                        C_Conversion => False));
 
                               when others =>
@@ -553,8 +554,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
 
                Set_Deployment_Header;
 
-               Add_Define_Deployment
-                  (RE (RE_Need_Driver_Sockets));
+               Add_Define_Deployment (RE (RE_Need_Driver_Sockets));
 
                Set_Naming_Source;
 
@@ -568,8 +568,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                   if AAU.Is_Process (Corresponding_Instance (S))
                     and then Is_Added (Corresponding_Instance (S), E)
                   then
-                     Socket_Naming_Information
-                       (Corresponding_Instance (S));
+                     Socket_Naming_Information (Corresponding_Instance (S));
                   end if;
 
                   S := Next_Node (S);
@@ -584,31 +583,33 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                if AAU.Is_Bus (B) then
                   Accessing_Device := Get_Device_Of_Process (B, E);
                elsif AAU.Is_Virtual_Bus (B) then
-                  Accessing_Device := Get_Device_Of_Process
-                     (Parent_Component (Parent_Subcomponent (B)), E);
+                  Accessing_Device :=
+                    Get_Device_Of_Process
+                      (Parent_Component (Parent_Subcomponent (B)),
+                       E);
                else
                   Display_Located_Error
-                     (Loc (B),
-                      "Unknown bus kind !",
-                      Fatal => True);
+                    (Loc (B),
+                     "Unknown bus kind !",
+                     Fatal => True);
                end if;
 
                if Accessing_Device = No_Node then
                   Display_Located_Error
-                     (Loc (B),
-                      "No device is accessing this bus !",
-                      Fatal => True);
+                    (Loc (B),
+                     "No device is accessing this bus !",
+                     Fatal => True);
                end if;
 
-               Driver_Name := Get_Driver_Name
-                  (Corresponding_Instance (Accessing_Device));
+               Driver_Name :=
+                 Get_Driver_Name (Corresponding_Instance (Accessing_Device));
 
                if Driver_Name = No_Name then
                   Display_Located_Error
-                     (Loc (B),
-                      "Driver must have a name" &
-                      "(see Deployment::Driver_Name) !",
-                      Fatal => True);
+                    (Loc (B),
+                     "Driver must have a name" &
+                     "(see Deployment::Driver_Name) !",
+                     Fatal => True);
                end if;
 
                Set_Deployment_Header;
@@ -619,8 +620,8 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                Driver_Name := To_Upper (Driver_Name);
 
                Add_Define_Deployment
-                  (Make_Defining_Identifier
-                     (Driver_Name,
+                 (Make_Defining_Identifier
+                    (Driver_Name,
                      C_Conversion => False));
 
                Set_Naming_Source;
@@ -633,15 +634,14 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                null;
          end case;
 
-         N := Make_Expression
-           (Left_Expr =>
-              Make_Variable_Declaration
-              (Defining_Identifier =>
-                  RE (RE_Mynode),
-               Used_Type =>
-                 RE (RE_Node_T)),
-            Operator => Op_Equal,
-            Right_Expr => My_Node);
+         N :=
+           Make_Expression
+             (Left_Expr =>
+                Make_Variable_Declaration
+                  (Defining_Identifier => RE (RE_Mynode),
+                   Used_Type           => RE (RE_Node_T)),
+              Operator   => Op_Equal,
+              Right_Expr => My_Node);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          Pop_Entity; -- U

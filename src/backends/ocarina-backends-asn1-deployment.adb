@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Utils; use Utils;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -118,79 +118,74 @@ package body Ocarina.Backends.ASN1.Deployment is
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
    begin
-      ASN1_Root := Make_ASN1_File
-         (Make_Defining_Identifier
-            (Get_String_Name ("asn1_deployment")));
+      ASN1_Root :=
+        Make_ASN1_File
+          (Make_Defining_Identifier (Get_String_Name ("asn1_deployment")));
       ASN1N.Set_Name
-         (ASN1N.Module_Node (ASN1_Root),
+        (ASN1N.Module_Node (ASN1_Root),
          Get_String_Name ("POHIC-DEPLOYMENT"));
       Module_Node := ASN1N.Module_Node (ASN1_Root);
 
-      Thread_Enumeration   := New_List (ASN1N.K_Enumerated_Value_List);
-      Port_Enumeration     := New_List (ASN1N.K_Enumerated_Value_List);
-      Msg_Choices          := New_List (ASN1N.K_Enumerated_Value_List);
+      Thread_Enumeration := New_List (ASN1N.K_Enumerated_Value_List);
+      Port_Enumeration   := New_List (ASN1N.K_Enumerated_Value_List);
+      Msg_Choices        := New_List (ASN1N.K_Enumerated_Value_List);
 
       Visit (Root_System (E));
 
       if Length (Thread_Enumeration) > 0 then
          Append_Node_To_List
-         (Make_Type_Definition
-            (Get_String_Name ("Thread-id"),
-            Make_Enumerated (Thread_Enumeration)),
-         ASN1N.Definitions (Module_Node));
+           (Make_Type_Definition
+              (Get_String_Name ("Thread-id"),
+               Make_Enumerated (Thread_Enumeration)),
+            ASN1N.Definitions (Module_Node));
       end if;
 
       if Length (Thread_Enumeration) > 0 then
          Append_Node_To_List
-         (Make_Type_Definition
-            (Get_String_Name ("Port-id"),
-            Make_Enumerated (Port_Enumeration)),
-         ASN1N.Definitions (Module_Node));
+           (Make_Type_Definition
+              (Get_String_Name ("Port-id"),
+               Make_Enumerated (Port_Enumeration)),
+            ASN1N.Definitions (Module_Node));
       end if;
 
       declare
          Pkt_Contents : constant List_Id := ASN1U.New_List (ASN1N.K_List_Id);
       begin
          Append_Node_To_List
-            (Make_Sequence_Member
-               (Get_String_Name ("sender-thread"),
-               Make_Defining_Identifier
-                (Get_String_Name ("Thread-id"))),
-             Pkt_Contents);
+           (Make_Sequence_Member
+              (Get_String_Name ("sender-thread"),
+               Make_Defining_Identifier (Get_String_Name ("Thread-id"))),
+            Pkt_Contents);
 
          Append_Node_To_List
-            (Make_Sequence_Member
-               (Get_String_Name ("sender-port"),
-                Make_Defining_Identifier
-                  (Get_String_Name ("Port-id"))),
-             Pkt_Contents);
+           (Make_Sequence_Member
+              (Get_String_Name ("sender-port"),
+               Make_Defining_Identifier (Get_String_Name ("Port-id"))),
+            Pkt_Contents);
 
          Append_Node_To_List
-            (Make_Sequence_Member
-               (Get_String_Name ("receiver-thread"),
-                Make_Defining_Identifier
-                  (Get_String_Name ("Thread-id"))),
-             Pkt_Contents);
+           (Make_Sequence_Member
+              (Get_String_Name ("receiver-thread"),
+               Make_Defining_Identifier (Get_String_Name ("Thread-id"))),
+            Pkt_Contents);
 
          Append_Node_To_List
-            (Make_Sequence_Member
-               (Get_String_Name ("receiver-port"),
-                Make_Defining_Identifier
-                  (Get_String_Name ("Port-id"))),
-             Pkt_Contents);
+           (Make_Sequence_Member
+              (Get_String_Name ("receiver-port"),
+               Make_Defining_Identifier (Get_String_Name ("Port-id"))),
+            Pkt_Contents);
 
          Append_Node_To_List
-            (Make_Sequence_Member
-               (Get_String_Name ("msg"),
+           (Make_Sequence_Member
+              (Get_String_Name ("msg"),
                Make_Choice (Msg_Choices)),
-             Pkt_Contents);
+            Pkt_Contents);
 
          Packet_Type :=
-            Make_Type_Definition
-               (Get_String_Name ("Pkt"),
-               Make_Sequence (Pkt_Contents));
-         Append_Node_To_List
-            (Packet_Type, ASN1N.Definitions (Module_Node));
+           Make_Type_Definition
+             (Get_String_Name ("Pkt"),
+              Make_Sequence (Pkt_Contents));
+         Append_Node_To_List (Packet_Type, ASN1N.Definitions (Module_Node));
       end;
 
    end Visit_Architecture_Instance;
@@ -200,8 +195,7 @@ package body Ocarina.Backends.ASN1.Deployment is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -229,7 +223,7 @@ package body Ocarina.Backends.ASN1.Deployment is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      S               : Node_Id;
+      S : Node_Id;
    begin
       if not AAU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
@@ -269,31 +263,29 @@ package body Ocarina.Backends.ASN1.Deployment is
    ---------------------------
 
    procedure Visit_Thread_Instance (E : Node_Id) is
-      S              : Node_Id;
-      F              : Node_Id;
-      Call_Seq       : Node_Id;
-      Spg_Call       : Node_Id;
-      Thread_Name    : Name_Id;
-      Port_Name      : Name_Id;
-      Parent_Name    : Name_Id;
+      S           : Node_Id;
+      F           : Node_Id;
+      Call_Seq    : Node_Id;
+      Spg_Call    : Node_Id;
+      Thread_Name : Name_Id;
+      Port_Name   : Name_Id;
+      Parent_Name : Name_Id;
       --  Name of the containing process.
-      Msg_Choice     : Node_Id;
-      Msg_Name       : Name_Id;
+      Msg_Choice      : Node_Id;
+      Msg_Name        : Name_Id;
       Msg_Constraints : Node_Id;
    begin
 
       Set_Str_To_Name_Buffer ("thread-");
-      Parent_Name := Display_Name
-         (Identifier
-          (Parent_Subcomponent
-           (Parent_Component
-            (Parent_Subcomponent (E)))));
+      Parent_Name :=
+        Display_Name
+          (Identifier
+             (Parent_Subcomponent
+                (Parent_Component (Parent_Subcomponent (E)))));
       Get_Name_String_And_Append (Parent_Name);
       Add_Str_To_Name_Buffer ("-");
       Get_Name_String_And_Append
-         (Display_Name
-           (Identifier
-            (Parent_Subcomponent (E))));
+        (Display_Name (Identifier (Parent_Subcomponent (E))));
       Thread_Name := Name_Find;
 
       Thread_Name := To_Lower (Thread_Name);
@@ -303,8 +295,7 @@ package body Ocarina.Backends.ASN1.Deployment is
       --  character _.
 
       Append_Node_To_List
-         (Make_Enumerated_Value
-            (Thread_Name, Thread_Id),
+        (Make_Enumerated_Value (Thread_Name, Thread_Id),
          Thread_Enumeration);
 
       Thread_Id := Thread_Id + 1;
@@ -351,13 +342,11 @@ package body Ocarina.Backends.ASN1.Deployment is
          F := First_Node (Features (E));
 
          while Present (F) loop
-            if Kind (F) = K_Port_Spec_Instance and then
-               Is_Data (F) then
+            if Kind (F) = K_Port_Spec_Instance and then Is_Data (F) then
                Set_Str_To_Name_Buffer ("port-");
                Get_Name_String_And_Append (Thread_Name);
                Add_Str_To_Name_Buffer ("-");
-               Get_Name_String_And_Append
-                  (Display_Name (Identifier (F)));
+               Get_Name_String_And_Append (Display_Name (Identifier (F)));
                Port_Name := Name_Find;
                Port_Name := To_Lower (Port_Name);
 
@@ -366,9 +355,8 @@ package body Ocarina.Backends.ASN1.Deployment is
                --  character _.
 
                Append_Node_To_List
-               (Make_Enumerated_Value
-                (Port_Name, Port_Id),
-                Port_Enumeration);
+                 (Make_Enumerated_Value (Port_Name, Port_Id),
+                  Port_Enumeration);
 
                Port_Id := Port_Id + 1;
                --  Here, we build the port identifier (we increment it)
@@ -376,21 +364,23 @@ package body Ocarina.Backends.ASN1.Deployment is
                --  it to the Port_Enumeration list that contains all
                --  port identifiers.
 
-               Msg_Name := Port_Name;
-               Msg_Constraints := Make_Type_Constraints
-                  (Size_Down => ASN1V.New_Int_Value
-                     (0, 1, 10),
-                  Size_Up => ASN1V.New_Int_Value
-                     (To_Bytes
-                        (Get_Data_Size
-                           (Corresponding_Instance (F))), 1, 10));
-               Msg_Choice := Make_Choice_Member
-                  (Msg_Name,
-                   Make_Type_Designator
-                     (Type_Name =>
-                        Make_Defining_Identifier
+               Msg_Name        := Port_Name;
+               Msg_Constraints :=
+                 Make_Type_Constraints
+                   (Size_Down => ASN1V.New_Int_Value (0, 1, 10),
+                    Size_Up   =>
+                      ASN1V.New_Int_Value
+                        (To_Bytes (Get_Data_Size (Corresponding_Instance (F))),
+                         1,
+                         10));
+               Msg_Choice :=
+                 Make_Choice_Member
+                   (Msg_Name,
+                    Make_Type_Designator
+                      (Type_Name =>
+                         Make_Defining_Identifier
                            (Get_String_Name ("OCTET STRING")),
-                     Type_Constraints => Msg_Constraints));
+                       Type_Constraints => Msg_Constraints));
 
                Append_Node_To_List (Msg_Choice, Msg_Choices);
 
@@ -410,9 +400,9 @@ package body Ocarina.Backends.ASN1.Deployment is
       null;
    end Visit_Subprogram_Instance;
 
-      ---------------------------
-      -- Visit_Device_Instance --
-      ---------------------------
+   ---------------------------
+   -- Visit_Device_Instance --
+   ---------------------------
 
    procedure Visit_Device_Instance (E : Node_Id) is
       pragma Unreferenced (E);

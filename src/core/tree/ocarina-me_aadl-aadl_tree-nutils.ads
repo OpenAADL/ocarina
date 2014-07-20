@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,9 +31,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Locations;                        use Locations;
-with Types;                            use Types;
-with Ocarina.ME_AADL.AADL_Tree.Nodes;  use Ocarina.ME_AADL.AADL_Tree.Nodes;
+with Locations;                       use Locations;
+with Ocarina.Types;                           use Ocarina.Types;
+with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package Ocarina.ME_AADL.AADL_Tree.Nutils is
 
@@ -93,8 +93,7 @@ package Ocarina.ME_AADL.AADL_Tree.Nutils is
      (Loc          : Location;
       Name         : Name_Id;
       Display_Name : Name_Id;
-      Entity       : Node_Id)
-     return Node_Id;
+      Entity       : Node_Id) return Node_Id;
    --  Make an identifier
 
    function Split_Name (N : Node_Id) return List_Id;
@@ -112,9 +111,9 @@ package Ocarina.ME_AADL.AADL_Tree.Nutils is
    --  will be lost.
 
    function Build_Package_Identifier
-     (Pack_Name : Types.Node_Id;
+     (Pack_Name : Ocarina.Types.Node_Id;
       Loc       : Locations.Location := No_Location)
-     return Types.Node_Id;
+     return Ocarina.Types.Node_Id;
    --  Return a package identifier node from a package name node
 
 end Ocarina.ME_AADL.AADL_Tree.Nutils;

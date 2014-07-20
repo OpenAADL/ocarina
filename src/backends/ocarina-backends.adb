@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,8 +35,8 @@ with GNAT.OS_Lib; use GNAT.OS_Lib;
 with GNAT.Table;
 
 with Charset; use Charset;
-with Namet;   use Namet;
-with Output;  use Output;
+with Ocarina.Namet;   use Ocarina.Namet;
+with Ocarina.Output;  use Ocarina.Output;
 with Errors;  use Errors;
 
 with Ocarina.Backends.Build_Utils;
@@ -94,8 +94,12 @@ package body Ocarina.Backends is
       Kind    : Backend_Kind;
    end record;
 
-   package Backend_Table is
-      new GNAT.Table (Backend_Record, Natural, 1, 10, 10);
+   package Backend_Table is new GNAT.Table
+     (Backend_Record,
+      Natural,
+      1,
+      10,
+      10);
 
    procedure Write_Backends (Indent : Natural);
    --  Displays the list of registered generators each one on a new
@@ -107,7 +111,7 @@ package body Ocarina.Backends is
 
    procedure Generate_Code
      (Root         : Node_Id;
-      Backend_Name : Name_Id  := No_Name)
+      Backend_Name : Name_Id := No_Name)
    is
       Current_Backend : Natural := 0;
 
@@ -119,7 +123,7 @@ package body Ocarina.Backends is
       if Backend_Name /= No_Name then
          for B in Backend_Table.First .. Backend_Table.Last loop
             if Backend_Table.Table (B).Name = Backend_Name then
-               Current_Backend := B;
+               Current_Backend      := B;
                Current_Backend_Kind := Backend_Table.Table (B).Kind;
                exit;
             end if;
@@ -131,7 +135,7 @@ package body Ocarina.Backends is
       else
          for B in Backend_Table.First .. Backend_Table.Last loop
             if Backend_Table.Table (B).Name = Current_Backend_Name then
-               Current_Backend := B;
+               Current_Backend      := B;
                Current_Backend_Kind := Backend_Table.Table (B).Kind;
                exit;
             end if;
@@ -141,7 +145,7 @@ package body Ocarina.Backends is
       if Current_Backend = 0 then
          Ocarina.Backends.Messages.Display_Error
            ("Cannot find backend " & Get_Name_String (Current_Backend_Name),
-           Fatal => True);
+            Fatal => True);
       end if;
 
       --  Call the current generator entry point
@@ -233,8 +237,9 @@ package body Ocarina.Backends is
       N := Get_String_Name (To_Lower (Name));
       for B in Backend_Table.First .. Backend_Table.Last loop
          if Backend_Table.Table (B).Name = N then
-            Display_Error ("Cannot register twice backend " & Name,
-                           Fatal => True);
+            Display_Error
+              ("Cannot register twice backend " & Name,
+               Fatal => True);
          end if;
       end loop;
 
@@ -325,9 +330,9 @@ package body Ocarina.Backends is
       Ocarina.Backends.Write_Backends (7);
       Write_Line ("   -perf  Enable profiling with gprof (PolyORB-HI-C only)");
       Write_Line
-         ("   -asn1  Generate ASN1 deployment file (PolyORB-HI-C only)");
+        ("   -asn1  Generate ASN1 deployment file (PolyORB-HI-C only)");
       Write_Line
-         ("   -arinc653  Generate code for ARINC653 API (POK backend only)");
+        ("   -arinc653  Generate code for ARINC653 API (POK backend only)");
       Write_Line ("   -b  Generate and build code from the AADL model");
       Write_Line ("   -z  Clean code generated from the AADL model");
    end Usage;

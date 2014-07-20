@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,11 +33,11 @@
 
 --  Parser for REAL
 
-with Types;
+with Ocarina.Types;
 with Locations;
 
 package Ocarina.FE_REAL.Parser is
-   use Types;
+   use Ocarina.Types;
    use Locations;
 
    function Process

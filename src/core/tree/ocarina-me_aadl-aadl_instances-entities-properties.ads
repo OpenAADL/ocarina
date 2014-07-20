@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,8 +34,8 @@
 --  This package provides functions to create or read property names,
 --  types, constants and associations.
 
-with Types;                           use Types;
-with Ocarina.AADL_Values;             use Ocarina.AADL_Values;
+with Ocarina.Types;               use Ocarina.Types;
+with Ocarina.AADL_Values; use Ocarina.AADL_Values;
 
 package Ocarina.ME_AADL.AADL_Instances.Entities.Properties is
 
@@ -44,19 +44,16 @@ package Ocarina.ME_AADL.AADL_Instances.Entities.Properties is
    -----------------------------
 
    function Get_Value_Of_Property_Association
-     (Property : Node_Id)
-     return Value_Type;
+     (Property : Node_Id) return Value_Type;
 
    function Find_Property_Association_From_Name
      (Property_List : List_Id;
       Property_Name : Name_Id;
-      In_Mode       : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode       : Name_Id := No_Name) return Node_Id;
 
    function Find_Property_Association_From_Name
      (Property_List : List_Id;
       Property_Name : String;
-      In_Mode       : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode       : Name_Id := No_Name) return Node_Id;
 
 end Ocarina.ME_AADL.AADL_Instances.Entities.Properties;

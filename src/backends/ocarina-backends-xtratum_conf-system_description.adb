@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,10 +52,10 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Xtratum_Conf.Mapping;
 
-   package AINU   renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package AIN    renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package XTN    renames Ocarina.Backends.XML_Tree.Nodes;
-   package XV     renames Ocarina.Backends.XML_Values;
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+   package XV renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -99,8 +99,7 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -133,8 +132,8 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -147,10 +146,10 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S     : Node_Id;
-      P     : Node_Id;
-      U     : Node_Id;
-      N     : Node_Id;
+      S         : Node_Id;
+      P         : Node_Id;
+      U         : Node_Id;
+      N         : Node_Id;
       Processes : List_Id;
    begin
       P := Map_HI_Node (E);
@@ -162,8 +161,8 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -199,7 +198,7 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    -- Visit_Processor_Instance --
    ------------------------------
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S        : Node_Id;
+      S         : Node_Id;
       N         : Node_Id;
       Processes : List_Id;
    begin
@@ -228,21 +227,19 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S                          : Node_Id;
-      Partition_Identifier_Node  : Node_Id;
+      S                         : Node_Id;
+      Partition_Identifier_Node : Node_Id;
    begin
       Partition_Identifier_Node :=
-         Make_Literal (XV.New_Numeric_Value
-               (Partition_Identifier, 1, 10));
+        Make_Literal (XV.New_Numeric_Value (Partition_Identifier, 1, 10));
 
-      AIN.Set_Backend_Node
-         (Identifier (E), Partition_Identifier_Node);
+      AIN.Set_Backend_Node (Identifier (E), Partition_Identifier_Node);
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);

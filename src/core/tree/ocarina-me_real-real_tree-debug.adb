@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,8 +34,8 @@
 --  Debug function for REAL tree
 
 with Ocarina.ME_REAL.REAL_Tree.Utils;
-with Locations;                use Locations;
-with Namet;                    use Namet;
+with Locations; use Locations;
+with Ocarina.Namet;     use Ocarina.Namet;
 
 package body Ocarina.ME_REAL.REAL_Tree.Debug is
    use Ocarina.ME_REAL.REAL_Tree.Utils;
@@ -86,7 +86,8 @@ package body Ocarina.ME_REAL.REAL_Tree.Debug is
      (A : String;
       T : String;
       V : String;
-      N : Int := 0) is
+      N : Int := 0)
+   is
    begin
       W_Node_Attribute (0, A, T, V, N);
    end W_Node_Attribute;
@@ -100,23 +101,18 @@ package body Ocarina.ME_REAL.REAL_Tree.Debug is
    is
       C : Node_Id;
    begin
-      if A = "Next_Node"
-        or else A = "Homonym"
-        or else A = "Name"
-      then
+      if A = "Next_Node" or else A = "Homonym" or else A = "Name" then
          return;
       end if;
       W_Indentation (I + 1);
-      Write_Str  (A);
+      Write_Str (A);
       Write_Char (' ');
-      Write_Str  (T);
+      Write_Str (T);
       Write_Char (' ');
       C := Node_Id (N);
       if T = "Name_Id" then
          Write_Line (Quoted (V));
-      elsif T = "Node_Id"
-        and then Present (C)
-      then
+      elsif T = "Node_Id" and then Present (C) then
          case Kind (C) is
             when others =>
                Write_Line (V);
@@ -124,9 +120,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Debug is
       else
          Write_Line (V);
       end if;
-      if A = "Node"
-        or else A = "Scope"
-      then
+      if A = "Node" or else A = "Scope" then
          return;
       end if;
       if T = "Node_Id" then
@@ -148,11 +142,11 @@ package body Ocarina.ME_REAL.REAL_Tree.Debug is
    procedure W_Node_Header (I : Natural; N : Node_Id) is
    begin
       W_Indentation (I);
-      Write_Int   (Int (N));
-      Write_Char  (' ');
-      Write_Str   (Image (Kind (N)));
-      Write_Char  (' ');
-      Write_Line  (Image (Loc (N)));
+      Write_Int (Int (N));
+      Write_Char (' ');
+      Write_Str (Image (Kind (N)));
+      Write_Char (' ');
+      Write_Line (Image (Loc (N)));
    end W_Node_Header;
 
    procedure W_List_Id (L : List_Id) is

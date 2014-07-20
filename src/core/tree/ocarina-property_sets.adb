@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,15 +32,14 @@
 ------------------------------------------------------------------------------
 
 with Charset; use Charset;
-with Namet;   use Namet;
+with Ocarina.Namet;   use Ocarina.Namet;
 
-with Ocarina.Me_AADL.AADL_Tree.Nodes; use Ocarina.Me_AADL.AADL_Tree.Nodes;
+with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package body Ocarina.Property_Sets is
 
    AADLv1_Std_Property_Sets : aliased Standard_Property_Set_Array_Type :=
-     (S_AADL_Project,
-      S_AADL_Properties);
+     (S_AADL_Project, S_AADL_Properties);
 
    AADLv2_Std_Property_Sets : aliased Standard_Property_Set_Array_Type :=
      (S_AADL_Project,
@@ -52,36 +51,36 @@ package body Ocarina.Property_Sets is
       S_Timing_Properties,
       S_Programming_Properties);
 
-   Standard_Property_Sets_Table : constant array (AADL_Version_Type) of
-     Standard_Property_Set_Array_Access
-     := (AADL_V1 => AADLv1_Std_Property_Sets'Access,
-         AADL_V2 => AADLv2_Std_Property_Sets'Access);
+   Standard_Property_Sets_Table : constant array
+   (AADL_Version_Type) of Standard_Property_Set_Array_Access :=
+     (AADL_V1 => AADLv1_Std_Property_Sets'Access,
+      AADL_V2 => AADLv2_Std_Property_Sets'Access);
 
-   AADLv1_Ocarina_Property_Sets : aliased Ocarina_Property_Set_Array_Type
-     := (O_Data_Model,
-         O_Deployment,
-         O_Cheddar_Properties,
-         O_Ocarina_Config,
-         O_Base_Types,
-         O_ASSERT_Types,
-         O_ASSERT_Properties);
+   AADLv1_Ocarina_Property_Sets : aliased Ocarina_Property_Set_Array_Type :=
+     (O_Data_Model,
+      O_Deployment,
+      O_Cheddar_Properties,
+      O_Ocarina_Config,
+      O_Base_Types,
+      O_ASSERT_Types,
+      O_ASSERT_Properties);
 
-   AADLv2_Ocarina_Property_Sets : aliased Ocarina_Property_Set_Array_Type
-     := (O_Data_Model,
-         O_Deployment,
-         O_Cheddar_Properties,
-         O_Ocarina_Config,
-         O_Transformations,
-         O_POK_Properties,
-         O_Base_Types,
-         O_Taste_Properties,
-         O_ARINC653_Properties,
-         O_ASSERT_Properties);
+   AADLv2_Ocarina_Property_Sets : aliased Ocarina_Property_Set_Array_Type :=
+     (O_Data_Model,
+      O_Deployment,
+      O_Cheddar_Properties,
+      O_Ocarina_Config,
+      O_Transformations,
+      O_POK_Properties,
+      O_Base_Types,
+      O_Taste_Properties,
+      O_ARINC653_Properties,
+      O_ASSERT_Properties);
 
-   Ocarina_Property_Sets_Table : constant array (AADL_Version_Type) of
-     Ocarina_Property_Set_Array_Access
-     := (AADL_V1 => AADLv1_Ocarina_Property_Sets'Access,
-         AADL_V2 => AADLv2_Ocarina_Property_Sets'Access);
+   Ocarina_Property_Sets_Table : constant array
+   (AADL_Version_Type) of Ocarina_Property_Set_Array_Access :=
+     (AADL_V1 => AADLv1_Ocarina_Property_Sets'Access,
+      AADL_V2 => AADLv2_Ocarina_Property_Sets'Access);
 
    User_Defined_Mask : constant Byte := 2**1;
 

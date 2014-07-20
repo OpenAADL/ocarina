@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,38 +43,38 @@ package Ocarina.Transfo.Fusions is
    --  To be called between each execution of fusion_threads
 
    procedure Fusion_Threads
-     (Root       : Node_Id;
-      Owner_Process, Thread_1, Thread_2 : Name_Id;
-      New_Thread : out Node_Id;
-      Success    : out Boolean);
+     (Root                              :     Node_Id;
+      Owner_Process, Thread_1, Thread_2 :     Name_Id;
+      New_Thread                        : out Node_Id;
+      Success                           : out Boolean);
    --  Perfom the fusion of the two threads passed as arguments
 
-   Transfo_Original_Name : Name_Id;
-   Raw_Original_Name    : Name_Id;
-   Transfo_Scheduler_Name : Name_Id;
-   Raw_Scheduler_Name   : Name_Id;
-   Dispatch_Protocol    : Name_Id;
-   Deadline             : Name_Id;
-   WCET                 : Name_Id;
-   Deployment_Priority  : Name_Id;
-   Cheddar_Priority     : Name_Id;
-   Transfo_Priority     : Name_Id;
-   Transfo_Occurred     : Name_Id;
-   Scheduler_Call       : Name_Id;
-   Iterator_Call        : Name_Id;
-   Compute_Entrypoint   : Name_Id;
-   CS_Period            : Name_Id;
-   Period               : Name_Id;
-   Priority_Shifter     : Name_Id;
-   Raw_Priority_Shifter : Name_Id;
-   Cheddar_Pkg          : Name_Id;
-   Transfo_Pkg          : Name_Id;
-   Raw_Priority         : Name_Id;
-   Raw_Fixed_Priority   : Name_Id;
-   Raw_Occurred         : Name_Id;
+   Transfo_Original_Name   : Name_Id;
+   Raw_Original_Name       : Name_Id;
+   Transfo_Scheduler_Name  : Name_Id;
+   Raw_Scheduler_Name      : Name_Id;
+   Dispatch_Protocol       : Name_Id;
+   Deadline                : Name_Id;
+   WCET                    : Name_Id;
+   Deployment_Priority     : Name_Id;
+   Cheddar_Priority        : Name_Id;
+   Transfo_Priority        : Name_Id;
+   Transfo_Occurred        : Name_Id;
+   Scheduler_Call          : Name_Id;
+   Iterator_Call           : Name_Id;
+   Compute_Entrypoint      : Name_Id;
+   CS_Period               : Name_Id;
+   Period                  : Name_Id;
+   Priority_Shifter        : Name_Id;
+   Raw_Priority_Shifter    : Name_Id;
+   Cheddar_Pkg             : Name_Id;
+   Transfo_Pkg             : Name_Id;
+   Raw_Priority            : Name_Id;
+   Raw_Fixed_Priority      : Name_Id;
+   Raw_Occurred            : Name_Id;
    Raw_Data_Representation : Name_Id;
-   Data_Representation  : Name_Id;
-   Data_Model_Pkg       : Name_Id;
+   Data_Representation     : Name_Id;
+   Data_Model_Pkg          : Name_Id;
    --  name of corresponding AADL properties
 
    function Is_Defined_Property

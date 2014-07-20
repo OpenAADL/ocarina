@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -81,12 +81,12 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
    Current_Process_Instance : Node_Id;
    Task_Offset              : Unsigned_Long_Long := 0;
 
-   Node_Identifier       : Unsigned_Long_Long;
-   Thread_Identifier     : Unsigned_Long_Long;
-   Nb_Local_Threads      : Unsigned_Long_Long;
-   Nb_Ports_Total        : Unsigned_Long_Long;
-   Nb_Ports_In_Process   : Unsigned_Long_Long;
-   Max_Payload           : Unsigned_Long_Long;
+   Node_Identifier     : Unsigned_Long_Long;
+   Thread_Identifier   : Unsigned_Long_Long;
+   Nb_Local_Threads    : Unsigned_Long_Long;
+   Nb_Ports_Total      : Unsigned_Long_Long;
+   Nb_Ports_In_Process : Unsigned_Long_Long;
+   Max_Payload         : Unsigned_Long_Long;
 
    package body Source_File is
 
@@ -111,10 +111,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
       -------------------------
       -- Added_Internal_Name --
       -------------------------
-      function Added_Internal_Name
-        (P : Node_Id; E : Node_Id)
-        return Name_Id
-      is
+      function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id is
       begin
          Set_Str_To_Name_Buffer ("%add%enumerator%");
          Add_Nat_To_Name_Buffer (Nat (P));
@@ -147,7 +144,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
       ------------------
       function Need_Deliver (E : Node_Id) return Boolean is
          Result : Boolean := Has_In_Ports (E);
-         S : Node_Id;
+         S      : Node_Id;
       begin
          pragma Assert (AINU.Is_Process (E));
 
@@ -156,8 +153,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
 
             while Present (S) and then not Result loop
                if AINU.Is_Thread (Corresponding_Instance (S)) then
-                  Result := Result
-                    or else Has_In_Ports (Corresponding_Instance (S));
+                  Result :=
+                    Result or else Has_In_Ports (Corresponding_Instance (S));
                end if;
 
                S := AIN.Next_Node (S);
@@ -172,7 +169,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
       ---------------
       function Need_Send (E : Node_Id) return Boolean is
          Result : Boolean := Has_Out_Ports (E);
-         S : Node_Id;
+         S      : Node_Id;
       begin
          pragma Assert (AINU.Is_Process (E));
 
@@ -181,8 +178,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
 
             while Present (S) and then not Result loop
                if AINU.Is_Thread (Corresponding_Instance (S)) then
-                  Result := Result
-                    or else Has_Out_Ports (Corresponding_Instance (S));
+                  Result :=
+                    Result or else Has_Out_Ports (Corresponding_Instance (S));
                end if;
 
                S := AIN.Next_Node (S);
@@ -195,10 +192,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
       ----------------------------------
       -- Max_Payload_Size_Declaration --
       ----------------------------------
-      function Max_Payload_Size_Declaration
-        (E : Node_Id)
-        return Node_Id
-      is
+      function Max_Payload_Size_Declaration (E : Node_Id) return Node_Id is
          pragma Unreferenced (E);
 
          N : Node_Id;
@@ -217,11 +211,12 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
          --  64 bits is the size of the optional timestamp
          Max_Payload := Max_Payload + 16 + 64;
 
-         N := Make_Assignment_Statement
-           (Make_Pointed_Notation
-              (Make_Defining_Identifier (ON (O_Context)),
-               RE (RE_Max_Payload_Size)),
-            Make_Literal (New_Int_Value (Max_Payload, 0, 10)));
+         N :=
+           Make_Assignment_Statement
+             (Make_Pointed_Notation
+                (Make_Defining_Identifier (ON (O_Context)),
+                 RE (RE_Max_Payload_Size)),
+              Make_Literal (New_Int_Value (Max_Payload, 0, 10)));
 
          return N;
       end Max_Payload_Size_Declaration;
@@ -255,8 +250,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
       -- Visit_Component_Instance --
       ------------------------------
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -280,22 +275,23 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
       -- Visit_Process_Instance --
       ----------------------------
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := RTN.Distributed_Application_Unit
-           (RTN.Naming_Node (Backend_Node (Identifier (E))));
-         P : constant Node_Id := RTN.Entity (U);
-         Root_Sys : constant Node_Id
-           := Parent_Component (Parent_Subcomponent (E));
-         N : Node_Id;
-         C : Node_Id;
-         Q : Node_Id;
-         F : Node_Id;
-         Src : Node_Id;
-         Dst : Node_Id;
-         Parent : Node_Id;
-         Spec : Node_Id;
-         Impl : Node_Id;
-         Init_Declarations  : constant List_Id := New_List
-           (RTN.K_Declaration_List);
+         U : constant Node_Id :=
+           RTN.Distributed_Application_Unit
+             (RTN.Naming_Node (Backend_Node (Identifier (E))));
+         P        : constant Node_Id := RTN.Entity (U);
+         Root_Sys : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
+         N                 : Node_Id;
+         C                 : Node_Id;
+         Q                 : Node_Id;
+         F                 : Node_Id;
+         Src               : Node_Id;
+         Dst               : Node_Id;
+         Parent            : Node_Id;
+         Spec              : Node_Id;
+         Impl              : Node_Id;
+         Init_Declarations : constant List_Id :=
+           New_List (RTN.K_Declaration_List);
       begin
          pragma Assert (AINU.Is_System (Root_Sys));
 
@@ -327,8 +323,10 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
             Max_Payload := 0;
          end if;
 
-         N := Message_Comment ("For each node in the distributed"
-                                 & " application, add a constant");
+         N :=
+           Message_Comment
+             ("For each node in the distributed" &
+              " application, add a constant");
          RTU.Append_Node_To_List (N, Node_Enumerator_List);
 
          Q := AIN.First_Node (Subcomponents (Root_Sys));
@@ -337,19 +335,21 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
             if AINU.Is_Process (Corresponding_Instance (Q)) then
                if Is_Added (Corresponding_Instance (Q), E) then
 
-                  N := Make_Variable_Declaration
-                    (Visibility =>
-                       Make_List_Id (RE (RE_Public),
-                                     RE (RE_Static),
-                                     RE (RE_Final)),
-                     Used_Type => New_Node (K_Int),
-                     Defining_Identifier => Make_Defining_Identifier
-                       (Map_RTSJ_Enumerator_Name
-                          (Q)),
-                     Value => Make_Literal
-                       (New_Int_Value (Node_Identifier, 0, 10)));
-                  RTU.Append_Node_To_List
-                    (N, Node_Enumerator_List);
+                  N :=
+                    Make_Variable_Declaration
+                      (Visibility =>
+                         Make_List_Id
+                           (RE (RE_Public),
+                            RE (RE_Static),
+                            RE (RE_Final)),
+                       Used_Type           => New_Node (K_Int),
+                       Defining_Identifier =>
+                         Make_Defining_Identifier
+                           (Map_RTSJ_Enumerator_Name (Q)),
+                       Value =>
+                         Make_Literal
+                           (New_Int_Value (Node_Identifier, 0, 10)));
+                  RTU.Append_Node_To_List (N, Node_Enumerator_List);
                   Node_Identifier := Node_Identifier + 1;
 
                end if;
@@ -361,13 +361,16 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
          N := Make_Enumerator (Node_Enumerator_List);
          RTU.Append_Node_To_List (N, Class_Attributes);
 
-         N := Message_Comment ("For each task in the distributed"
-                                 & " application, add a constant");
+         N :=
+           Message_Comment
+             ("For each task in the distributed" &
+              " application, add a constant");
          RTU.Append_Node_To_List (N, Thread_Enumerator_List);
 
-         N := Message_Comment
-           ("For each thread port in the distributed application nodes, add "
-            & "a number between 0 and 65536");
+         N :=
+           Message_Comment
+             ("For each thread port in the distributed application nodes, "
+                & "add a number between 0 and 65536");
          RTU.Append_Node_To_List (N, Port_Enumerator_List);
 
          --  Visit all the subcomponents of the process
@@ -405,9 +408,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
 
                      Parent := Parent_Component (Item (Src));
 
-                     if AINU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
+                     if AINU.Is_Process (Parent) and then Parent /= E then
                         Set_Added (Parent, E);
 
                         --  Traverse all the subcomponents of Parent
@@ -434,9 +435,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
                   while Present (Dst) loop
                      Parent := Parent_Component (Item (Dst));
 
-                     if AINU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
+                     if AINU.Is_Process (Parent) and then Parent /= E then
                         Set_Added (Parent, E);
 
                         if not AINU.Is_Empty (Subcomponents (Parent)) then
@@ -459,70 +458,74 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
          end if;
 
          --  entitiesTable declaration
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Pointed_Notation
-              (Left_Member =>
-                 Make_Defining_Identifier (ON (O_Context)),
-               Right_Member => RE (RE_Entities_Table)),
-            Expression => Make_New_Statement
-            (Defining_Identifier => New_Node (K_Int),
-             Parameters => Make_List_Id
-             (Make_Literal
-              (New_Int_Value
-               (Thread_Identifier, 0, 10))),
-             Is_Array => True));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Pointed_Notation
+                  (Left_Member  => Make_Defining_Identifier (ON (O_Context)),
+                   Right_Member => RE (RE_Entities_Table)),
+              Expression =>
+                Make_New_Statement
+                  (Defining_Identifier => New_Node (K_Int),
+                   Parameters          =>
+                     Make_List_Id
+                       (Make_Literal
+                          (New_Int_Value (Thread_Identifier, 0, 10))),
+                   Is_Array => True));
 
-         N := Make_Full_Array_Declaration
-           (Array_Declaration => N,
-            Array_Assignments => Entities_Table_List);
+         N :=
+           Make_Full_Array_Declaration
+             (Array_Declaration => N,
+              Array_Assignments => Entities_Table_List);
          RTU.Append_Node_To_List (N, Init_Statements);
 
          --  portsTable declaration
          if Nb_Ports_Total /= 0 then
-            N := Make_Assignment_Statement
-              (Defining_Identifier =>
-                 Make_Pointed_Notation
-               (Left_Member =>
-                  Make_Defining_Identifier (ON (O_Context)),
-                Right_Member => RE (RE_Ports_Table)),
-               Expression => Make_New_Statement
-               (Defining_Identifier => New_Node (K_Int),
-                Parameters => Make_List_Id
-                (Make_Literal
-                 (New_Int_Value
-                  (Nb_Ports_In_Process, 0, 10))),
-                Is_Array => True));
+            N :=
+              Make_Assignment_Statement
+                (Defining_Identifier =>
+                   Make_Pointed_Notation
+                     (Left_Member => Make_Defining_Identifier (ON (O_Context)),
+                      Right_Member => RE (RE_Ports_Table)),
+                 Expression =>
+                   Make_New_Statement
+                     (Defining_Identifier => New_Node (K_Int),
+                      Parameters          =>
+                        Make_List_Id
+                          (Make_Literal
+                             (New_Int_Value (Nb_Ports_In_Process, 0, 10))),
+                      Is_Array => True));
          end if;
 
-         N := Make_Full_Array_Declaration
-           (Array_Declaration => N,
-            Array_Assignments => Ports_Table_List);
+         N :=
+           Make_Full_Array_Declaration
+             (Array_Declaration => N,
+              Array_Assignments => Ports_Table_List);
          RTU.Append_Node_To_List (N, Init_Statements);
 
          if Node_Identifier > 1 then
-            N := Make_Assignment_Statement
-              (Defining_Identifier =>
-                 Make_Pointed_Notation
-               (Make_Defining_Identifier (ON (O_Context)),
-                RE (RE_Transport)),
-               Expression =>
-                 Make_New_Statement
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (ON (O_Transport_High_Level_Impl))));
+            N :=
+              Make_Assignment_Statement
+                (Defining_Identifier =>
+                   Make_Pointed_Notation
+                     (Make_Defining_Identifier (ON (O_Context)),
+                      RE (RE_Transport)),
+                 Expression =>
+                   Make_New_Statement
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (ON (O_Transport_High_Level_Impl))));
             RTU.Append_Node_To_List (N, Init_Statements);
          end if;
 
          --  entitiesOffset initialization
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Pointed_Notation
-              (Left_Member =>
-                 Make_Defining_Identifier (ON (O_Context)),
-               Right_Member => RE (RE_Entities_Offset)),
-            Expression => Make_Literal
-              (New_Int_Value (Task_Offset, 0, 10)));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Pointed_Notation
+                  (Left_Member  => Make_Defining_Identifier (ON (O_Context)),
+                   Right_Member => RE (RE_Entities_Offset)),
+              Expression => Make_Literal (New_Int_Value (Task_Offset, 0, 10)));
          RTU.Append_Node_To_List (N, Init_Statements);
          Task_Offset := Task_Offset + Nb_Local_Threads;
 
@@ -530,41 +533,42 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
 
          --  Variable : myNode
          --  Identifier of the current process
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              (Make_Pointed_Notation
-                 (Left_Member => Make_Defining_Identifier
-                    (ON (O_Context)),
-                  Right_Member => RE (RE_My_Node))),
-            Expression => Make_Pointed_Notation
-              (Left_Member => Make_Defining_Identifier
-                 (ON (O_Deployment)),
-               Right_Member => Make_Defining_Identifier
-                 (Map_RTSJ_Enumerator_Name (Parent_Subcomponent (E)))));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                (Make_Pointed_Notation
+                   (Left_Member  => Make_Defining_Identifier (ON (O_Context)),
+                    Right_Member => RE (RE_My_Node))),
+              Expression =>
+                Make_Pointed_Notation
+                  (Left_Member => Make_Defining_Identifier (ON (O_Deployment)),
+                   Right_Member =>
+                     Make_Defining_Identifier
+                       (Map_RTSJ_Enumerator_Name (Parent_Subcomponent (E)))));
          RTU.Append_Node_To_List (N, Init_Declarations);
 
          --  Variable : nbNodes
          --  Total number of processes
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Pointed_Notation
-              (Left_Member => Make_Defining_Identifier
-                 (ON (O_Context)),
-               Right_Member => RE (RE_Nb_Nodes)),
-            Expression => Make_Literal
-              (New_Int_Value (Node_Identifier, 0, 10)));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Pointed_Notation
+                  (Left_Member  => Make_Defining_Identifier (ON (O_Context)),
+                   Right_Member => RE (RE_Nb_Nodes)),
+              Expression =>
+                Make_Literal (New_Int_Value (Node_Identifier, 0, 10)));
          RTU.Append_Node_To_List (N, Init_Declarations);
 
          --  Variable : nbLocalEntities
          --  Total number of threads for the current process
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Pointed_Notation
-              (Left_Member => Make_Defining_Identifier
-                 (ON (O_Context)),
-               Right_Member => RE (RE_Nb_Local_Entities)),
-            Expression => Make_Literal
-              (New_Int_Value (Nb_Local_Threads, 0, 10)));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Pointed_Notation
+                  (Left_Member  => Make_Defining_Identifier (ON (O_Context)),
+                   Right_Member => RE (RE_Nb_Local_Entities)),
+              Expression =>
+                Make_Literal (New_Int_Value (Nb_Local_Threads, 0, 10)));
          RTU.Append_Node_To_List (N, Init_Declarations);
 
          --  Naming initialization
@@ -573,11 +577,11 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
 
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance then
-                  N := Make_Pointed_Notation
-                    (Make_Defining_Identifier (ON (O_Naming)),
-                     Make_Call_Function
-                       (Make_Defining_Identifier
-                          (MN (M_Initialization))));
+                  N :=
+                    Make_Pointed_Notation
+                      (Make_Defining_Identifier (ON (O_Naming)),
+                       Make_Call_Function
+                         (Make_Defining_Identifier (MN (M_Initialization))));
                   RTU.Append_Node_To_List (N, Init_Statements);
                   exit;
                end if;
@@ -587,39 +591,40 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
 
          --  TransportHighLevel and maxPauloadSize constant initializations
          if Need_Deliver (E) or else Need_Send (E) then
-            N := Make_Assignment_Statement
-              (Make_Pointed_Notation
-                 (Make_Defining_Identifier (ON (O_Context)),
-                  Make_Defining_Identifier (VN (V_Transport))),
-               Make_New_Statement
-                 (Make_Defining_Identifier
-                    (ON (O_Transport_High_Level))));
+            N :=
+              Make_Assignment_Statement
+                (Make_Pointed_Notation
+                   (Make_Defining_Identifier (ON (O_Context)),
+                    Make_Defining_Identifier (VN (V_Transport))),
+                 Make_New_Statement
+                   (Make_Defining_Identifier (ON (O_Transport_High_Level))));
             RTU.Append_Node_To_List (N, Init_Statements);
 
             N := Max_Payload_Size_Declaration (E);
             RTU.Append_Node_To_List (N, Init_Declarations);
          end if;
 
-         Spec := Make_Function_Specification
-           (Visibility => Make_List_Id (RE (RE_Public),
-                                        RE (RE_Static)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (MN (M_Initialization)),
-            Return_Type => New_Node (K_Void));
+         Spec :=
+           Make_Function_Specification
+             (Visibility => Make_List_Id (RE (RE_Public), RE (RE_Static)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (MN (M_Initialization)),
+              Return_Type => New_Node (K_Void));
 
-         Impl := Make_Function_Implementation
-         (Specification => Spec,
-         Declarations => Init_Declarations,
-         Statements => Init_Statements);
+         Impl :=
+           Make_Function_Implementation
+             (Specification => Spec,
+              Declarations  => Init_Declarations,
+              Statements    => Init_Statements);
 
-         Main_Class := Make_Class_Statement
-           (Visibility => Make_List_Id (RE (RE_Public)),
-            Defining_Identifier =>
-              Make_Defining_Identifier (ON (O_Deployment)),
-            Attributes => Class_Attributes,
-            Methods => Make_List_Id (Impl));
-         RTU.Append_Node_To_List
-           (Main_Class, RTN.Statements (Current_File));
+         Main_Class :=
+           Make_Class_Statement
+             (Visibility          => Make_List_Id (RE (RE_Public)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (ON (O_Deployment)),
+              Attributes => Class_Attributes,
+              Methods    => Make_List_Id (Impl));
+         RTU.Append_Node_To_List (Main_Class, RTN.Statements (Current_File));
 
          Pop_Entity;  --  U
          Pop_Entity;  --  P
@@ -633,39 +638,38 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
          N : Node_Id;
          F : Node_Id;
       begin
-         N := Make_Variable_Declaration
-           (Visibility => Make_List_Id (RE (RE_Public),
-                                        RE (RE_Static),
-                                        RE (RE_Final)),
-            Defining_Identifier => Make_Defining_Identifier
-            (Map_RTSJ_Enumerator_Name (S)),
-            Used_Type => New_Node (K_Int),
-            Value => Make_Literal
-            (New_Int_Value
-             (Thread_Identifier, 0, 10)));
+         N :=
+           Make_Variable_Declaration
+             (Visibility =>
+                Make_List_Id (RE (RE_Public), RE (RE_Static), RE (RE_Final)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (Map_RTSJ_Enumerator_Name (S)),
+              Used_Type => New_Node (K_Int),
+              Value     =>
+                Make_Literal (New_Int_Value (Thread_Identifier, 0, 10)));
          RTU.Append_Node_To_List (N, Thread_Enumerator_List);
 
          Thread_Identifier := Thread_Identifier + 1;
-         Nb_Local_Threads := Nb_Local_Threads + 1;
+         Nb_Local_Threads  := Nb_Local_Threads + 1;
 
-         if Parent_Component (Parent_Subcomponent (E))
-           = Current_Process_Instance then
+         if Parent_Component (Parent_Subcomponent (E)) =
+           Current_Process_Instance
+         then
             --  entitiesTable assignment
-            N := Make_Assignment_Statement
-              (Defining_Identifier =>
-                 Make_Pointed_Notation
-               (Make_Defining_Identifier (ON (O_Context)),
-                Make_Array_Value
+            N :=
+              Make_Assignment_Statement
                 (Defining_Identifier =>
-                   RE (RE_Entities_Table),
-                 Array_Item =>
+                   Make_Pointed_Notation
+                     (Make_Defining_Identifier (ON (O_Context)),
+                      Make_Array_Value
+                        (Defining_Identifier => RE (RE_Entities_Table),
+                         Array_Item          =>
+                           Make_Defining_Identifier
+                             (Map_RTSJ_Enumerator_Name (S)))),
+                 Expression =>
                    Make_Defining_Identifier
-                 (Map_RTSJ_Enumerator_Name (S)))),
-               Expression =>
-                 Make_Defining_Identifier
-               (Map_RTSJ_Enumerator_Name
-                (Parent_Subcomponent
-                 (Parent_Component (S)))));
+                     (Map_RTSJ_Enumerator_Name
+                        (Parent_Subcomponent (Parent_Component (S)))));
             RTU.Append_Node_To_List (N, Entities_Table_List);
          end if;
 
@@ -675,35 +679,43 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
             while Present (F) loop
                if Kind (F) = K_Port_Spec_Instance then
 
-                  if Parent_Component (Parent_Subcomponent (E))
-                    = Current_Process_Instance then
+                  if Parent_Component (Parent_Subcomponent (E)) =
+                    Current_Process_Instance
+                  then
                      --  portsTable enumeration
-                     N := Make_Assignment_Statement
-                       (Defining_Identifier =>
-                          Make_Pointed_Notation
-                          (Make_Defining_Identifier (ON (O_Context)),
-                           Make_Array_Value
-                             (Defining_Identifier => RE (RE_Ports_Table),
-                              Array_Item => Make_Defining_Identifier
-                                (Map_RTSJ_Enumerator_Name (F)))),
-                        Expression => Make_Defining_Identifier
-                          (Map_RTSJ_Enumerator_Name (S)));
+                     N :=
+                       Make_Assignment_Statement
+                         (Defining_Identifier =>
+                            Make_Pointed_Notation
+                              (Make_Defining_Identifier (ON (O_Context)),
+                               Make_Array_Value
+                                 (Defining_Identifier => RE (RE_Ports_Table),
+                                  Array_Item          =>
+                                    Make_Defining_Identifier
+                                      (Map_RTSJ_Enumerator_Name (F)))),
+                          Expression =>
+                            Make_Defining_Identifier
+                              (Map_RTSJ_Enumerator_Name (S)));
                      RTU.Append_Node_To_List (N, Ports_Table_List);
 
                      Nb_Ports_In_Process := Nb_Ports_In_Process + 1;
                   end if;
 
                   --  ports enumeration
-                  N := Make_Variable_Declaration
-                    (Visibility => Make_List_Id (RE (RE_Public),
-                                                 RE (RE_Static),
-                                                 RE (RE_Final)),
-                     Defining_Identifier =>
-                       Make_Defining_Identifier
-                       (Map_RTSJ_Enumerator_Name (F)),
-                     Used_Type => New_Node (K_Int),
-                     Value => Make_Literal
-                       (New_Int_Value (Nb_Ports_Total, 0, 100)));
+                  N :=
+                    Make_Variable_Declaration
+                      (Visibility =>
+                         Make_List_Id
+                           (RE (RE_Public),
+                            RE (RE_Static),
+                            RE (RE_Final)),
+                       Defining_Identifier =>
+                         Make_Defining_Identifier
+                           (Map_RTSJ_Enumerator_Name (F)),
+                       Used_Type => New_Node (K_Int),
+                       Value     =>
+                         Make_Literal
+                           (New_Int_Value (Nb_Ports_Total, 0, 100)));
                   RTU.Append_Node_To_List (N, Port_Enumerator_List);
 
                   Nb_Ports_Total := Nb_Ports_Total + 1;
@@ -731,8 +743,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Deployment is
             if Get_Source_Language (E) = Language_RTSJ then
                Display_Located_Error
                  (AIN.Loc (E),
-                  "This data type cannot be used in thread or process "
-                    & "features",
+                  "This data type cannot be used in thread or process " &
+                  "features",
                   Fatal => True);
             end if;
 

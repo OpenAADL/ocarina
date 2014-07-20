@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -48,7 +48,7 @@ with Ocarina.Backends.Xtratum_Conf.Channels;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Xtratum_Conf is
 
@@ -84,7 +84,8 @@ package body Ocarina.Backends.Xtratum_Conf is
 
       if No (XML_Root) then
          Display_Error
-            ("Xtratum configuration generation failed", Fatal => True);
+           ("Xtratum configuration generation failed",
+            Fatal => True);
       end if;
 
       --  At this point, we have a valid tree, we can begin the XML
@@ -136,7 +137,9 @@ package body Ocarina.Backends.Xtratum_Conf is
       end loop;
 
       Register_Backend
-         ("Xtratum_Configuration", Generate'Access, Xtratum_Configuration);
+        ("Xtratum_Configuration",
+         Generate'Access,
+         Xtratum_Configuration);
    end Init;
 
    -----------
@@ -156,8 +159,7 @@ package body Ocarina.Backends.Xtratum_Conf is
    begin
       XML_Root := XTU.New_Node (XTN.K_HI_Distributed_Application);
       Get_Name_String
-         (Normalize_Name
-            (AIN.Name (AIN.Identifier (Root_System (E)))));
+        (Normalize_Name (AIN.Name (AIN.Identifier (Root_System (E)))));
       XTN.Set_Name (XML_Root, Name_Find);
       XTN.Set_Units (XML_Root, XTU.New_List (XTN.K_List_Id));
       XTN.Set_HI_Nodes (XML_Root, XTU.New_List (XTN.K_List_Id));
@@ -178,8 +180,7 @@ package body Ocarina.Backends.Xtratum_Conf is
    -- Get_XML_Root --
    ------------------
 
-   function Get_XML_Root return Node_Id
-   is
+   function Get_XML_Root return Node_Id is
    begin
       return XML_Root;
    end Get_XML_Root;

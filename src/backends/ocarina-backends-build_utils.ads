@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -68,22 +68,22 @@ package Ocarina.Backends.Build_Utils is
 
       generic
          with procedure Generate_Runtime_Specific
-           (Appli_Name         : Name_Id;
-            Node_Name          : Name_Id;
+           (Appli_Name              : Name_Id;
+            Node_Name               : Name_Id;
             Execution_Platform : Supported_Execution_Platform := Platform_None;
             Execution_Platform_Name : Name_Id;
-            Transport_API      : Supported_Transport_APIs;
-            Ada_Sources        : Name_Tables.Instance;
-            Asn_Sources        : Name_Tables.Instance;
-            C_Sources          : Name_Tables.Instance;
-            C_Libraries        : Name_Tables.Instance;
-            User_Source_Dirs   : Name_Tables.Instance;
-            Use_Transport      : Boolean;
-            Use_Simulink       : Boolean;
-            Simulink_Directory : Name_Id;
-            Simulink_Node      : Name_Id;
-            Use_Scade          : Boolean;
-            Scade_Directory    : Name_Id);
+            Transport_API           : Supported_Transport_APIs;
+            Ada_Sources             : Name_Tables.Instance;
+            Asn_Sources             : Name_Tables.Instance;
+            C_Sources               : Name_Tables.Instance;
+            C_Libraries             : Name_Tables.Instance;
+            User_Source_Dirs        : Name_Tables.Instance;
+            Use_Transport           : Boolean;
+            Use_Simulink            : Boolean;
+            Simulink_Directory      : Name_Id;
+            Simulink_Node           : Name_Id;
+            Use_Scade               : Boolean;
+            Scade_Directory         : Name_Id);
          --  Generate the part of the Makefile that is specific to
          --  the corresponding runtime.
 

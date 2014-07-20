@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,21 +35,20 @@
 --  to a user-provided AADL instance
 
 with Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates;
-with Types;
+with Ocarina.Types;
 
 package Ocarina.Instances.REAL_Checker.Queries.Bound_Predicates is
 
    function Is_Bound_Predicate
-     (E      : Types.Node_Id;
-      D      : Types.Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean;
+     (E      : Ocarina.Types.Node_Id;
+      D      : Ocarina.Types.Node_Id;
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean;
    --  Check if the instance E is bound to the instance D
    --  with the relation actual_processor_binding OR the
    --  actual_conenction_binding.
 
-   package Bound_Query is
-      new Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates
+   package Bound_Query is new Ocarina.Instances.REAL_Checker.Queries
+     .Relational_Predicates
      (Is_Bound_Predicate);
    --  Allows to search for all instances bound to a given
    --  instance in a Result_Set or in the global node table.

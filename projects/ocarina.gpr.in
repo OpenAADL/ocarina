@@ -43,8 +43,8 @@ project Ocarina is
    type Build_Type is ("release", "debug");
    Build : Build_Type := External ("BUILD", "debug");
 
-   type Lib_Kinds is ("dynamic", "static");
-   Lib_Type : Lib_Kinds := External ("LIBRARY", "static");
+   type Lib_Kinds is ("relocatable", "static");
+   Lib_Type : Lib_Kinds := External ("LIBRARY_TYPE", "static");
 
    package Compiler is
       for  Local_Configuration_Pragmas use Top_Src_Dir
@@ -59,6 +59,7 @@ project Ocarina is
               "-gnatoa",
               "-fstack-check",
               "-gnaty",
+              "-gnatwl",
 	      "-gnatyu", -- not in -gnaty: check multiple blank lines
 	      "-gnatys", -- not in -gnatx: check useless parentheses
 	      @GCOV@"-fprofile-arcs",
@@ -80,7 +81,7 @@ project Ocarina is
    package Binder is
       case Build is
         when "debug" =>
-           for Default_Switches ("Ada") use ("-E", "-t", "-static");
+           for Default_Switches ("Ada") use ("-E", "-t");
         when "release" =>
            for Default_Switches ("Ada") use ("-t", "-static");
       end case;

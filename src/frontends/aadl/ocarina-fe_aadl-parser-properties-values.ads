@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,16 +43,14 @@ package Ocarina.FE_AADL.Parser.Properties.Values is
 
    function P_Property_Constant
      (Identifier   : Node_Id;
-      Property_Set : Node_Id)
-     return Node_Id;
+      Property_Set : Node_Id) return Node_Id;
    --  Current token must be 'constant'
 
    function P_Property_Expression (Container : Node_Id) return Node_Id;
 
    function P_Property_Type_Declaration
      (Identifier   : Node_Id;
-      Property_Set : Node_Id)
-     return Node_Id;
+      Property_Set : Node_Id) return Node_Id;
    --  Current token must be 'type'
 
    function P_Single_Valued_Property return Node_Id;
@@ -62,8 +60,7 @@ package Ocarina.FE_AADL.Parser.Properties.Values is
 
    function P_Signed_AADLNumber
      (Number_Cat : Number_Category;
-      Code       : Parsing_Code)
-     return Node_Id;
+      Code       : Parsing_Code) return Node_Id;
    --  If Number_Cat = NC_Real then parse Signed_AADLReal else if
    --  Number_Cat = NC_Integer then parse Signed_AADLInteger else
    --  parse Signed_AADLReal or Signed_AADLInteger.

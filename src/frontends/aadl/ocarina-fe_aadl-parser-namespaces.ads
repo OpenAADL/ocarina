@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,30 +39,23 @@ with Locations;
 package Ocarina.FE_AADL.Parser.Namespaces is
 
    function P_AADL_Declaration
-     (AADL_Specification : Types.Node_Id)
-     return Node_Id;
+     (AADL_Specification : Types.Node_Id) return Node_Id;
 
    function P_AADL_Specification
-     (AADL_Specification : Types.Node_Id)
-     return Node_Id;
+     (AADL_Specification : Types.Node_Id) return Node_Id;
    --  Parse an AADL specification. Append it to AADL_Specification if
    --  it is not No_Node
 
-   function P_Package_Specification
-     (Namespace : Types.Node_Id)
-     return Node_Id;
+   function P_Package_Specification (Namespace : Types.Node_Id) return Node_Id;
 
-   function P_Package_Name
-     (Container : Types.Node_Id)
-     return Node_Id;
+   function P_Package_Name (Container : Types.Node_Id) return Node_Id;
    --  Parse a package name and returns a new identifier containing
    --  this name.
 
    function P_Import_Declaration
      (Namespace            : Types.Node_Id;
       Start_Loc            : Locations.Location;
-      Private_Declarations : Boolean             := False)
-     return Types.Node_Id;
+      Private_Declarations : Boolean := False) return Types.Node_Id;
    --  Parse an import declaration and returns a node containing a
    --  list of package_name or identifier
 

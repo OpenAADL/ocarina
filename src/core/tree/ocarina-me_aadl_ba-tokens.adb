@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,12 +31,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Charset;
 
 package body Ocarina.ME_AADL_BA.Tokens is
 
-   use Namet;
+   use Ocarina.Namet;
    use Charset;
 
    Prefix : constant String := "%ba%";
@@ -194,8 +194,10 @@ package body Ocarina.ME_AADL_BA.Tokens is
    function Quoted_Image (T : BA_Token_Type) return String is
    begin
       case T is
-         when T_Identifier
-           | T_Integer_Literal | T_Real_Literal | T_String_Literal =>
+         when T_Identifier   |
+           T_Integer_Literal |
+           T_Real_Literal    |
+           T_String_Literal  =>
             return Image (T);
 
          when others =>

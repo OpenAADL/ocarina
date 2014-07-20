@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Utils; use Utils;
 
 with Ocarina.Backends.Messages;
@@ -47,7 +47,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nutils;
 
 package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.RTSJ_Values;
    use Ocarina.Backends.RTSJ_Tree.Nodes;
@@ -73,10 +73,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
 
       --  Update the global variable to be able to fetch the root of
       --  the distributed application and generate the source files.
-      RTN.Set_Name (N, To_RTSJ_Name
-                      (AIN.Name
-                         (AIN.Identifier
-                            (E))));
+      RTN.Set_Name (N, To_RTSJ_Name (AIN.Name (AIN.Identifier (E))));
 
       RTN.Set_Units (N, New_List (RTN.K_List_Id));
       RTN.Set_HI_Nodes (N, New_List (RTN.K_List_Id));
@@ -92,17 +89,16 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    begin
       pragma Assert
         (AINU.Is_Process_Or_Device (E)
-           or else AINU.IS_System (E)
-           or else AINU.Is_Processor (E));
+         or else AINU.Is_System (E)
+         or else AINU.Is_Processor (E));
 
       --  The name of the node is not the name of the process
       --  component instance, but the name of the process subcomponent
       --  corresponding to this instance.
       RTN.Set_Name
-        (N, To_RTSJ_Name
-           (AIN.Name
-              (AIN.Identifier
-                 (AIN.Parent_Subcomponent (E)))));
+        (N,
+         To_RTSJ_Name
+           (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E)))));
       Set_Units (N, New_List (K_List_Id));
 
       --  Append the partition N to the node list of the PolyORB-HI
@@ -118,14 +114,15 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    -- Map_HI_Unit --
    -----------------
    function Map_HI_Unit (E : Node_Id) return Node_Id is
-      U        : Node_Id;
-      S        : List_Id;
-      N        : Node_Id;
-      P        : Node_Id;
+      U : Node_Id;
+      S : List_Id;
+      N : Node_Id;
+      P : Node_Id;
    begin
-      pragma Assert (AINU.Is_System (E)
-                       or else AINU.Is_Process_Or_Device (E)
-                       or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_System (E)
+         or else AINU.Is_Process_Or_Device (E)
+         or else AINU.Is_Processor (E));
 
       U := New_Node (RTN.K_HI_Unit, AIN.Identifier (E));
       S := RTU.New_List (K_Source_Files);
@@ -201,14 +198,13 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    -- Map_RTSJ_Defining_Identifier --
    ----------------------------------
    function Map_RTSJ_Defining_Identifier
-     (E : Node_Id;
+     (E      : Node_Id;
       Is_Obj : Boolean := False) return Node_Id
    is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (Display_Name (Identifier (E)), Is_Obj));
+        (To_RTSJ_Conventional_Name (Display_Name (Identifier (E)), Is_Obj));
       Name := Name_Find;
 
       return Make_Defining_Identifier (Name);
@@ -221,20 +217,16 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
       RTSJ_Name_1 : Name_Id;
       RTSJ_Name_2 : Name_Id;
       RTSJ_Name_3 : Name_Id;
-      P : Node_Id;
-      S : Node_Id;
+      P           : Node_Id;
+      S           : Node_Id;
    begin
       if Kind (E) = K_Port_Spec_Instance then
          P := Parent_Subcomponent (Parent_Component (E));
          S := Parent_Subcomponent (Parent_Component (P));
 
-         RTSJ_Name_1 := RTU.To_RTSJ_Name
-           (AIN.Display_Name (Identifier (S)));
-         RTSJ_Name_2 := RTU.To_RTSJ_Name
-           (AIN.Display_Name (Identifier (P)));
-         RTSJ_Name_3 := RTU.To_RTSJ_Name
-           (AIN.Display_Name
-              (Identifier (E)));
+         RTSJ_Name_1 := RTU.To_RTSJ_Name (AIN.Display_Name (Identifier (S)));
+         RTSJ_Name_2 := RTU.To_RTSJ_Name (AIN.Display_Name (Identifier (P)));
+         RTSJ_Name_3 := RTU.To_RTSJ_Name (AIN.Display_Name (Identifier (E)));
 
          Get_Name_String (RTSJ_Name_1);
          Add_Char_To_Name_Buffer ('_');
@@ -243,9 +235,10 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
          Get_Name_String_And_Append (RTSJ_Name_3);
          Add_Str_To_Name_Buffer ("_K");
 
-      elsif AINU.Is_Subprogram (E) or else
-        (Present (Corresponding_Instance (E)) and then
-           AINU.Is_Process (Corresponding_Instance (E)))
+      elsif AINU.Is_Subprogram (E)
+        or else
+        (Present (Corresponding_Instance (E))
+         and then AINU.Is_Process (Corresponding_Instance (E)))
       then
          --  For the subprograms and processes, the enumerator name
          --  is mapped from the entity name.
@@ -261,15 +254,12 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
          --  Verify if that the thread is a subcomponent of a process
          pragma Assert (AINU.Is_Process (Parent_Component (E)));
 
-         RTSJ_Name_1 := RTU.To_RTSJ_Name
-           (AIN.Display_Name
-              (Identifier
-                 (Parent_Subcomponent
-                    (Parent_Component (E)))));
+         RTSJ_Name_1 :=
+           RTU.To_RTSJ_Name
+             (AIN.Display_Name
+                (Identifier (Parent_Subcomponent (Parent_Component (E)))));
 
-         RTSJ_Name_2 := RTU.To_RTSJ_Name
-           (AIN.Display_Name
-              (Identifier (E)));
+         RTSJ_Name_2 := RTU.To_RTSJ_Name (AIN.Display_Name (Identifier (E)));
 
          Get_Name_String (RTSJ_Name_1);
          Add_Char_To_Name_Buffer ('_');
@@ -277,8 +267,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
          Add_Str_To_Name_Buffer ("_K");
 
       else
-         raise Program_Error with
-           "Wrong node kind for Map_Java_Enumerator_Name";
+         raise Program_Error
+           with "Wrong node kind for Map_Java_Enumerator_Name";
       end if;
 
       RTSJ_Name_1 := Name_Find;
@@ -290,13 +280,10 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    ------------------------------------
    -- Map_RTSJ_Subprogram_Identifier --
    ------------------------------------
-   function Map_RTSJ_Subprogram_Identifier
-     (E : Node_Id) return Node_Id
-   is
+   function Map_RTSJ_Subprogram_Identifier (E : Node_Id) return Node_Id is
       Spg_Name : Name_Id;
    begin
-      pragma Assert (AINU.Is_Thread (E) or else
-                       AINU.Is_Subprogram (E));
+      pragma Assert (AINU.Is_Thread (E) or else AINU.Is_Subprogram (E));
 
       --  if AINU.Is_Subprogram (E)
       --  and then Get_Source_Language (E) /= Language_RTSJ then
@@ -318,17 +305,17 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    -- Map_RTSJ_Subprogram_Spec --
    ------------------------------
    function Map_RTSJ_Subprogram_Spec (E : Node_Id) return Node_Id is
-      N : Node_Id;
-      Params : constant List_Id := New_List
-        (K_Parameter_List);
+      N      : Node_Id;
+      Params : constant List_Id := New_List (K_Parameter_List);
    begin
       pragma Assert (AINU.Is_Subprogram (E));
 
-      N := RTU.Make_Function_Specification
-        (Visibility => No_List,
-         Defining_Identifier => Map_RTSJ_Subprogram_Identifier (E),
-         Parameters => Params,
-         Return_Type => New_Node (K_Void));
+      N :=
+        RTU.Make_Function_Specification
+          (Visibility          => No_List,
+           Defining_Identifier => Map_RTSJ_Subprogram_Identifier (E),
+           Parameters          => Params,
+           Return_Type         => New_Node (K_Void));
 
       return N;
    end Map_RTSJ_Subprogram_Spec;
@@ -336,15 +323,13 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    ------------------------------
    -- Map_RTSJ_Subprogram_Body --
    ------------------------------
-   function Map_RTSJ_Subprogram_Body
-     (E : Node_Id) return Node_Id
-   is
+   function Map_RTSJ_Subprogram_Body (E : Node_Id) return Node_Id is
       Spec         : constant Node_Id := Map_RTSJ_Subprogram_Spec (E);
       Declarations : constant List_Id := New_List (K_Declaration_List);
       Statements   : constant List_Id := New_List (K_Statement_List);
       Params       : constant List_Id := New_List (K_Parameter_List);
-      N : Node_Id;
-      P : Node_Id;
+      N            : Node_Id;
+      P            : Node_Id;
    begin
       case Get_Subprogram_Kind (E) is
          when Subprogram_Empty =>
@@ -354,27 +339,31 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
             RTU.Append_Node_To_List (N, Statements);
 
             return RTU.Make_Function_Implementation
-              (Spec, Declarations, Statements);
+                (Spec,
+                 Declarations,
+                 Statements);
 
          when Subprogram_Opaque_RTSJ =>
             if not RTU.Is_Empty (Parameters (Spec)) then
                P := RTN.First_Node (RTN.Parameters (Spec));
                while Present (P) loop
                   RTU.Append_Node_To_List
-                    (RTU.Copy_Node (Defining_Identifier (P)), Params);
+                    (RTU.Copy_Node (Defining_Identifier (P)),
+                     Params);
                   P := RTN.Next_Node (P);
                end loop;
             end if;
 
             --  Then, call the function provided by the user in our subprogram
             return RTU.Make_Call_Function
-              (Make_Defining_Identifier (Get_Source_Name (E)), Params);
+                (Make_Defining_Identifier (Get_Source_Name (E)),
+                 Params);
 
          when others =>
             Display_Located_Error
               (AIN.Loc (E),
-               "This kind of subprogram is not supported"
-                 & Get_Subprogram_Kind (E)'Img,
+               "This kind of subprogram is not supported" &
+               Get_Subprogram_Kind (E)'Img,
                Fatal => True);
             return No_Node;
       end case;
@@ -384,18 +373,19 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    -- Map_Handler_Identifier --
    ----------------------------
    function Map_Handler_Identifier
-     (E : Node_Id;
-      TaskHandler : Boolean := False;
-      EventHandler : Boolean := False)
-     return Node_Id
+     (E            : Node_Id;
+      TaskHandler  : Boolean := False;
+      EventHandler : Boolean := False) return Node_Id
    is
       Name : Name_Id;
    begin
-      if Present (Corresponding_Instance (E)) and then
-        AINU.Is_Thread (Corresponding_Instance (E))
+      if Present (Corresponding_Instance (E))
+        and then AINU.Is_Thread (Corresponding_Instance (E))
       then
-         Get_Name_String (To_RTSJ_Conventional_Name
-                            (AIN.Display_Name (Identifier (E)), False));
+         Get_Name_String
+           (To_RTSJ_Conventional_Name
+              (AIN.Display_Name (Identifier (E)),
+               False));
          if TaskHandler then
             Add_Str_To_Name_Buffer ("TaskHandler");
          elsif EventHandler then
@@ -411,18 +401,20 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    -- Map_Handler_Class_Identifier --
    ----------------------------------
    function Map_Handler_Class_Identifier
-     (E  : Node_Id;
-      TaskHandler : Boolean := False;
-      EventHandler : Boolean := False)
-     return Node_Id
+     (E            : Node_Id;
+      TaskHandler  : Boolean := False;
+      EventHandler : Boolean := False) return Node_Id
    is
       Name : Name_Id;
    begin
-      if Present (Corresponding_Instance (E)) and then
-        AINU.Is_Thread (Corresponding_Instance (E)) then
+      if Present (Corresponding_Instance (E))
+        and then AINU.Is_Thread (Corresponding_Instance (E))
+      then
 
-         Get_Name_String (To_RTSJ_Conventional_Name
-                            (AIN.Display_Name (Identifier (E)), True));
+         Get_Name_String
+           (To_RTSJ_Conventional_Name
+              (AIN.Display_Name (Identifier (E)),
+               True));
          if TaskHandler then
             Add_Str_To_Name_Buffer ("TaskHandler");
          elsif EventHandler then
@@ -437,18 +429,17 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    -----------------------------
    -- Map_Priority_Identifier --
    -----------------------------
-   function Map_Priority_Identifier
-     (E : Node_Id)
-     return Node_Id
-   is
+   function Map_Priority_Identifier (E : Node_Id) return Node_Id is
       Name : Name_Id;
    begin
-      if Present (Corresponding_Instance (E)) and then
-        AINU.Is_Thread (Corresponding_Instance (E)) then
+      if Present (Corresponding_Instance (E))
+        and then AINU.Is_Thread (Corresponding_Instance (E))
+      then
 
-         Get_Name_String (To_RTSJ_Conventional_Name
-                            (AIN.Display_Name
-                               (Identifier (E)), False));
+         Get_Name_String
+           (To_RTSJ_Conventional_Name
+              (AIN.Display_Name (Identifier (E)),
+               False));
          Add_Str_To_Name_Buffer ("Priority");
          Name := Name_Find;
       end if;
@@ -459,15 +450,11 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    -----------------------------
    -- Map_Task_Job_Identifier --
    -----------------------------
-   function Map_Task_Job_Identifier
-     (E : Node_Id)
-     return Node_Id
-   is
+   function Map_Task_Job_Identifier (E : Node_Id) return Node_Id is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("Job");
       Name := Name_Find;
 
@@ -477,15 +464,11 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    --------------------------------------
    -- Map_Task_Ports_Router_Identifier --
    --------------------------------------
-   function Map_Task_Ports_Router_Identifier
-     (E : Node_Id)
-     return Node_Id
-   is
+   function Map_Task_Ports_Router_Identifier (E : Node_Id) return Node_Id is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("Router");
       Name := Name_Find;
 
@@ -499,8 +482,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("Port");
       Name := Name_Find;
 
@@ -510,15 +492,11 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    ---------------------------------
    -- Map_Task_Entries_Identifier --
    ---------------------------------
-   function Map_Task_Entries_Identifier
-     (E : Node_Id)
-     return Node_Id
-   is
+   function Map_Task_Entries_Identifier (E : Node_Id) return Node_Id is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("Entries");
       Name := Name_Find;
 
@@ -532,8 +510,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("Deliver");
       Name := Name_Find;
 
@@ -547,8 +524,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("Send");
       Name := Name_Find;
 
@@ -562,8 +538,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("DefaultEntry");
       Name := Name_Find;
 
@@ -577,8 +552,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("DefaultValue");
       Name := Name_Find;
 
@@ -592,8 +566,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("DestinationsTab");
       Name := Name_Find;
 
@@ -607,8 +580,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
       Name : Name_Id;
    begin
       Get_Name_String
-        (To_RTSJ_Conventional_Name
-           (AIN.Display_Name (Identifier (E)), False));
+        (To_RTSJ_Conventional_Name (AIN.Display_Name (Identifier (E)), False));
       Add_Str_To_Name_Buffer ("Param");
       Name := Name_Find;
 
@@ -758,9 +730,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Mapping is
    ---------------------------------------
    -- Bind_AADL_To_Transport_High_Level --
    ---------------------------------------
-   procedure Bind_AADL_To_Transport_High_Level
-     (G : Node_ID; A : Node_Id)
-   is
+   procedure Bind_AADL_To_Transport_High_Level (G : Node_Id; A : Node_Id) is
       N : Node_Id;
    begin
       N := AIN.Backend_Node (G);

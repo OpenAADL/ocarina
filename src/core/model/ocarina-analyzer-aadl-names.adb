@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -45,29 +45,26 @@ package body Ocarina.Analyzer.AADL.Names is
    use Ocarina.Analyzer.Messages;
    use Ocarina.Analyzer.AADL.Naming_Rules;
 
-   use Ocarina.Me_AADL.AADL_Tree.Nodes;
-   use Ocarina.Me_AADL.AADL_Tree.Nutils;
-   use Ocarina.Me_AADL.AADL_Tree.Entities;
+   use Ocarina.ME_AADL.AADL_Tree.Nodes;
+   use Ocarina.ME_AADL.AADL_Tree.Nutils;
+   use Ocarina.ME_AADL.AADL_Tree.Entities;
 
    function Check_Names_In_Package (Node : Node_Id) return Boolean;
    function Check_Names_In_Property_Set (Node : Node_Id) return Boolean;
 
    function Check_Declaration_Names_In_Component_Type
-     (Node : Node_Id)
-     return Boolean;
+     (Node : Node_Id) return Boolean;
    --  Check the declarations inside a component type, including all
    --  its parents (in case of an extension).
 
    function Check_Declaration_Names_In_Component_Implementation
-     (Node : Node_Id)
-     return Boolean;
+     (Node : Node_Id) return Boolean;
    --  Check the declarations inside a component implementation,
    --  including all its parents (in case of an extension) and
    --  corresponding type.
 
    function Check_Declaration_Names_In_Feature_Group_Type
-     (Node : Node_Id)
-     return Boolean;
+     (Node : Node_Id) return Boolean;
    --  Check the declarations inside a port group type (AADL_V1) or
    --  inside a feature group type (AADL_V2), including all
    --  its parents (in case of an extension).
@@ -76,21 +73,17 @@ package body Ocarina.Analyzer.AADL.Names is
    --  Same as above but with a component type
 
    function Check_Names_In_Component_Implementation
-     (Node : Node_Id)
-     return Boolean;
+     (Node : Node_Id) return Boolean;
    --  Same as above but with a component type
 
-   function Check_Names_In_Feature_Group
-     (Node : Node_Id)
-     return Boolean;
+   function Check_Names_In_Feature_Group (Node : Node_Id) return Boolean;
    --  Same as above but with a component type
 
    function Check_Property_Association_Names (Node : Node_Id) return Boolean;
 
    function Check_Import_Declaration
      (Name_Visibility_Node : Node_Id;
-      Package_Node         : Node_Id)
-     return Boolean;
+      Package_Node         : Node_Id) return Boolean;
    --  Check if package or property in with sublcause exists in global scope
 
    ------------------------------
@@ -99,17 +92,16 @@ package body Ocarina.Analyzer.AADL.Names is
 
    function Check_Import_Declaration
      (Name_Visibility_Node : Node_Id;
-      Package_Node         : Node_Id)
-     return Boolean
+      Package_Node         : Node_Id) return Boolean
    is
       pragma Assert
         (Kind (Name_Visibility_Node) = K_Name_Visibility_Declaration);
 
-      Identifier        : Node_Id;
-      In_Node           : Node_Id;
-      List_Node         : Node_Id;
-      Import_Node       : Node_Id;
-      Success           : Boolean  := True;
+      Identifier  : Node_Id;
+      In_Node     : Node_Id;
+      List_Node   : Node_Id;
+      Import_Node : Node_Id;
+      Success     : Boolean := True;
    begin
       Pop_Scope;
 
@@ -141,8 +133,8 @@ package body Ocarina.Analyzer.AADL.Names is
 
                      Display_Analyzer_Error
                        (Import_Node,
-                        "is not a package or a property set visible"
-                          & " or existing");
+                        "is not a package or a property set visible" &
+                        " or existing");
                   end if;
                   Import_Node := Next_Node (Import_Node);
                end loop;
@@ -158,27 +150,31 @@ package body Ocarina.Analyzer.AADL.Names is
                   elsif Present (Package_Name (List_Node)) then
 
                      --  Alias references a package
-                     Alias := Build_Package_Identifier
-                       (Package_Name (List_Node));
+                     Alias :=
+                       Build_Package_Identifier (Package_Name (List_Node));
                   end if;
                   pragma Assert (Present (Alias));
 
-                  if Name (Alias) = Name (Build_Package_Identifier
-                                            (Package_Name (Package_Node)))
+                  if Name (Alias) =
+                    Name
+                      (Build_Package_Identifier (Package_Name (Package_Node)))
                     and then Is_All (List_Node)
                   then
                      Display_Analyzer_Error
-                       (Alias, "alias definition refers to self package",
+                       (Alias,
+                        "alias definition refers to self package",
                         Loc => Loc (Name_Visibility_Node));
                      Success := False;
 
                   elsif Present
-                    (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
-                       (List_Node)) and then
-                    Name
-                    (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
-                       (List_Node)) = Name (Build_Package_Identifier
-                                              (Package_Name (Package_Node)))
+                      (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier (List_Node))
+                    and then
+                      Name
+                        (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                           (List_Node)) =
+                      Name
+                        (Build_Package_Identifier
+                           (Package_Name (Package_Node)))
                   then
                      Success := False;
                      Display_Analyzer_Error
@@ -192,21 +188,25 @@ package body Ocarina.Analyzer.AADL.Names is
                      if No (In_Node)
                        and then Present (Corresponding_Entity (Alias))
                      then
-                        In_Node := Find_Component_Classifier
-                          (Root                 => 1,
-                           Package_Identifier   => Namespace_Identifier
-                             (Corresponding_Entity (Alias)),
-                           Component_Identifier =>
-                             Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
-                             (Corresponding_Entity (Alias)));
+                        In_Node :=
+                          Find_Component_Classifier
+                            (Root               => 1,
+                             Package_Identifier =>
+                               Namespace_Identifier
+                                 (Corresponding_Entity (Alias)),
+                             Component_Identifier =>
+                               Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                                 (Corresponding_Entity (Alias)));
                      end if;
 
-                     if Present (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
-                                   (List_Node))
+                     if Present
+                         (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                            (List_Node))
                      then
-                        Success := Enter_Name_In_Scope
-                          (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
-                             (List_Node));
+                        Success :=
+                          Enter_Name_In_Scope
+                            (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier
+                               (List_Node));
                      end if;
 
                      if No (In_Node) then
@@ -236,8 +236,7 @@ package body Ocarina.Analyzer.AADL.Names is
    ---------------------------------------------------------
 
    function Check_Declaration_Names_In_Component_Implementation
-     (Node : Node_Id)
-     return Boolean
+     (Node : Node_Id) return Boolean
    is
       pragma Assert (Kind (Node) = K_Component_Implementation);
 
@@ -249,14 +248,16 @@ package body Ocarina.Analyzer.AADL.Names is
         and then (Get_Referenced_Entity (Parent (Node))) /= No_Node
       then
          --  First check the declarations of the parent component
-         Success := Check_Declaration_Names_In_Component_Implementation
-           (Get_Referenced_Entity (Parent (Node)));
+         Success :=
+           Check_Declaration_Names_In_Component_Implementation
+             (Get_Referenced_Entity (Parent (Node)));
       else
          --  But before all, we include the features of the component
          --  type into the scope
 
-         Success := Check_Declaration_Names_In_Component_Type
-           (Corresponding_Entity (Component_Type_Identifier (Node)));
+         Success :=
+           Check_Declaration_Names_In_Component_Type
+             (Corresponding_Entity (Component_Type_Identifier (Node)));
       end if;
 
       Push_Scope (Entity_Scope (Node));
@@ -267,7 +268,8 @@ package body Ocarina.Analyzer.AADL.Names is
          List_Node := First_Node (Refines_Type (Node));
 
          while Present (List_Node) loop
-            Success := Enter_Name_In_Scope (Identifier (List_Node))
+            Success :=
+              Enter_Name_In_Scope (Identifier (List_Node))
               and then Check_Property_Association_Names (List_Node)
               and then Success;
 
@@ -281,7 +283,8 @@ package body Ocarina.Analyzer.AADL.Names is
          List_Node := First_Node (Subcomponents (Node));
 
          while Present (List_Node) loop
-            Success := Enter_Name_In_Scope (Identifier (List_Node))
+            Success :=
+              Enter_Name_In_Scope (Identifier (List_Node))
               and then Check_Property_Association_Names (List_Node)
               and then Success;
 
@@ -297,8 +300,8 @@ package body Ocarina.Analyzer.AADL.Names is
 
          while Present (List_Node) loop
             if Identifier (List_Node) /= No_Node then
-               Success := Enter_Name_In_Scope (Identifier (List_Node))
-                 and then Success;
+               Success :=
+                 Enter_Name_In_Scope (Identifier (List_Node)) and then Success;
             end if;
 
             if not Is_Empty (Subprogram_Calls (List_Node)) then
@@ -315,7 +318,8 @@ package body Ocarina.Analyzer.AADL.Names is
                   --  subprogram call. It is the one the call
                   --  sequence.
 
-                  Success := Enter_Name_In_Scope (Identifier (Call_List_Node))
+                  Success :=
+                    Enter_Name_In_Scope (Identifier (Call_List_Node))
                     and then Check_Property_Association_Names (Call_List_Node)
                     and then Success;
                   Call_List_Node := Next_Node (Call_List_Node);
@@ -334,12 +338,13 @@ package body Ocarina.Analyzer.AADL.Names is
 
          while Present (List_Node) loop
             if Identifier (List_Node) /= No_Node then
-               Success := Enter_Name_In_Scope (Identifier (List_Node))
+               Success :=
+                 Enter_Name_In_Scope (Identifier (List_Node))
                  and then Check_Property_Association_Names (List_Node)
                  and then Success;
             else
-               Success := Check_Property_Association_Names (List_Node)
-                 and then Success;
+               Success :=
+                 Check_Property_Association_Names (List_Node) and then Success;
             end if;
 
             List_Node := Next_Node (List_Node);
@@ -352,7 +357,8 @@ package body Ocarina.Analyzer.AADL.Names is
          List_Node := First_Node (Flows (Node));
 
          while Present (List_Node) loop
-            Success := Enter_Name_In_Scope (Identifier (List_Node))
+            Success :=
+              Enter_Name_In_Scope (Identifier (List_Node))
               and then Check_Property_Association_Names (List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
@@ -366,7 +372,8 @@ package body Ocarina.Analyzer.AADL.Names is
 
          while Present (List_Node) loop
             if Kind (List_Node) = K_Mode then
-               Success := Enter_Name_In_Scope (Identifier (List_Node))
+               Success :=
+                 Enter_Name_In_Scope (Identifier (List_Node))
                  and then Check_Property_Association_Names (List_Node)
                  and then Success;
             end if;
@@ -384,8 +391,7 @@ package body Ocarina.Analyzer.AADL.Names is
    -----------------------------------------------
 
    function Check_Declaration_Names_In_Component_Type
-     (Node : Node_Id)
-     return Boolean
+     (Node : Node_Id) return Boolean
    is
       pragma Assert (Kind (Node) = K_Component_Type);
 
@@ -397,8 +403,9 @@ package body Ocarina.Analyzer.AADL.Names is
       if Parent (Node) /= No_Node
         and then (Get_Referenced_Entity (Parent (Node))) /= No_Node
       then
-         Success := Check_Declaration_Names_In_Component_Type
-           (Get_Referenced_Entity (Parent (Node)));
+         Success :=
+           Check_Declaration_Names_In_Component_Type
+             (Get_Referenced_Entity (Parent (Node)));
       end if;
 
       Push_Scope (Entity_Scope (Node));
@@ -409,9 +416,10 @@ package body Ocarina.Analyzer.AADL.Names is
          List_Node := First_Node (Prototypes (Node));
 
          while Present (List_Node) loop
-            Success := Enter_Name_In_Scope (Identifier (List_Node))
-              --  and then Check_Property_Association_Names (List_Node)
-              and then Success;
+            Success :=
+              Enter_Name_In_Scope (Identifier (List_Node))
+            --  and then Check_Property_Association_Names (List_Node)
+             and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
       end if;
@@ -422,7 +430,8 @@ package body Ocarina.Analyzer.AADL.Names is
          List_Node := First_Node (Features (Node));
 
          while Present (List_Node) loop
-            Success := Enter_Name_In_Scope (Identifier (List_Node))
+            Success :=
+              Enter_Name_In_Scope (Identifier (List_Node))
               and then Check_Property_Association_Names (List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
@@ -435,7 +444,8 @@ package body Ocarina.Analyzer.AADL.Names is
          List_Node := First_Node (Flows (Node));
 
          while Present (List_Node) loop
-            Success := Enter_Name_In_Scope (Identifier (List_Node))
+            Success :=
+              Enter_Name_In_Scope (Identifier (List_Node))
               and then Check_Property_Association_Names (List_Node)
               and then Success;
             List_Node := Next_Node (List_Node);
@@ -451,8 +461,7 @@ package body Ocarina.Analyzer.AADL.Names is
    ---------------------------------------------------
 
    function Check_Declaration_Names_In_Feature_Group_Type
-     (Node : Node_Id)
-     return Boolean
+     (Node : Node_Id) return Boolean
    is
       pragma Assert (Kind (Node) = K_Feature_Group_Type);
 
@@ -466,7 +475,7 @@ package body Ocarina.Analyzer.AADL.Names is
       then
          Success :=
            Check_Declaration_Names_In_Feature_Group_Type
-           (Get_Referenced_Entity (Parent (Node)));
+             (Get_Referenced_Entity (Parent (Node)));
       end if;
 
       Push_Scope (Entity_Scope (Node));
@@ -476,7 +485,8 @@ package body Ocarina.Analyzer.AADL.Names is
 
          while Present (List_Node) loop
             if not Is_Implicit_Inverse (List_Node) then
-               Success := Enter_Name_In_Scope (Identifier (List_Node))
+               Success :=
+                 Enter_Name_In_Scope (Identifier (List_Node))
                  and then Check_Property_Association_Names (List_Node)
                  and then Success;
             end if;
@@ -494,8 +504,7 @@ package body Ocarina.Analyzer.AADL.Names is
    --------------------------------------------------
 
    function Check_Names_In_Components_And_Feature_Groups
-     (Root : Node_Id)
-     return Boolean
+     (Root : Node_Id) return Boolean
    is
       pragma Assert (Kind (Root) = K_AADL_Specification);
 
@@ -506,23 +515,22 @@ package body Ocarina.Analyzer.AADL.Names is
       Push_Scope (Entity_Scope (Root));
 
       if not Is_Empty (Declarations (Root)) then
-         List_Node :=  First_Node (Declarations (Root));
+         List_Node := First_Node (Declarations (Root));
 
          while Present (List_Node) loop
             case Kind (List_Node) is
                when K_Component_Type =>
-                  Success := Check_Names_In_Component_Type (List_Node)
-                    and then Success;
+                  Success :=
+                    Check_Names_In_Component_Type (List_Node) and then Success;
 
                when K_Component_Implementation =>
-                  Success := Check_Names_In_Component_Implementation
-                    (List_Node)
+                  Success :=
+                    Check_Names_In_Component_Implementation (List_Node)
                     and then Success;
 
                when K_Feature_Group_Type =>
-                  Success := Check_Names_In_Feature_Group
-                    (List_Node)
-                    and then Success;
+                  Success :=
+                    Check_Names_In_Feature_Group (List_Node) and then Success;
 
                when K_Package_Specification =>
                   Push_Scope (Entity_Scope (List_Node));
@@ -534,20 +542,21 @@ package body Ocarina.Analyzer.AADL.Names is
                      while Present (Package_List_Node) loop
                         case Kind (Package_List_Node) is
                            when K_Component_Type =>
-                              Success := Check_Names_In_Component_Type
-                                (Package_List_Node)
+                              Success :=
+                                Check_Names_In_Component_Type
+                                  (Package_List_Node)
                                 and then Success;
 
                            when K_Component_Implementation =>
                               Success :=
                                 Check_Names_In_Component_Implementation
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Success;
 
                            when K_Feature_Group_Type =>
                               Success :=
                                 Check_Names_In_Feature_Group
-                                (Package_List_Node)
+                                  (Package_List_Node)
                                 and then Success;
 
                            when others =>
@@ -577,16 +586,14 @@ package body Ocarina.Analyzer.AADL.Names is
    ---------------------------------------------
 
    function Check_Names_In_Component_Implementation
-     (Node : Node_Id)
-     return Boolean
+     (Node : Node_Id) return Boolean
    is
       pragma Assert (Kind (Node) = K_Component_Implementation);
 
       Success : Boolean := True;
    begin
       Success := Check_Declaration_Names_In_Component_Implementation (Node);
-      Success := Check_Property_Association_Names (Node)
-        and then Success;
+      Success := Check_Property_Association_Names (Node) and then Success;
 
       return Success;
    end Check_Names_In_Component_Implementation;
@@ -601,8 +608,7 @@ package body Ocarina.Analyzer.AADL.Names is
       Success : Boolean := True;
    begin
       Success := Check_Declaration_Names_In_Component_Type (Node);
-      Success := Check_Property_Association_Names (Node)
-        and then Success;
+      Success := Check_Property_Association_Names (Node) and then Success;
 
       return Success;
    end Check_Names_In_Component_Type;
@@ -626,8 +632,8 @@ package body Ocarina.Analyzer.AADL.Names is
          List_Node := First_Node (Declarations (Node));
 
          while Present (List_Node) loop
-            Node_Entered_In_Scope := Enter_Name_In_Scope
-              (Identifier (List_Node));
+            Node_Entered_In_Scope :=
+              Enter_Name_In_Scope (Identifier (List_Node));
 
             if Node_Entered_In_Scope = No_Node then
                Success := False;
@@ -661,12 +667,11 @@ package body Ocarina.Analyzer.AADL.Names is
 
          while Present (List_Node) loop
             if Kind (List_Node) = K_Package_Specification then
-               Success := Check_Names_In_Package (List_Node)
-                 and then Success;
+               Success := Check_Names_In_Package (List_Node) and then Success;
 
             elsif Kind (List_Node) = K_Property_Set then
-               Success := Check_Names_In_Property_Set (List_Node)
-                 and then Success;
+               Success :=
+                 Check_Names_In_Property_Set (List_Node) and then Success;
             end if;
 
             List_Node := Next_Node (List_Node);
@@ -731,19 +736,15 @@ package body Ocarina.Analyzer.AADL.Names is
    -- Check_Names_In_Feature_Group --
    ----------------------------------
 
-   function Check_Names_In_Feature_Group
-     (Node : Node_Id)
-     return Boolean is
+   function Check_Names_In_Feature_Group (Node : Node_Id) return Boolean is
 
       pragma Assert (Kind (Node) = K_Feature_Group_Type);
 
       Success : Boolean := True;
    begin
-      Success :=
-        Check_Declaration_Names_In_Feature_Group_Type (Node);
+      Success := Check_Declaration_Names_In_Feature_Group_Type (Node);
 
-      Success := Check_Property_Association_Names (Node)
-        and then Success;
+      Success := Check_Property_Association_Names (Node) and then Success;
 
       return Success;
    end Check_Names_In_Feature_Group;
@@ -782,23 +783,24 @@ package body Ocarina.Analyzer.AADL.Names is
    --------------------------------------
 
    function Check_Property_Association_Names (Node : Node_Id) return Boolean is
-      pragma Assert (Kind (Node) = K_Component_Implementation       or else
-                     Kind (Node) = K_Component_Type                 or else
-                     Kind (Node) = K_Port_Spec                      or else
-                     Kind (Node) = K_Feature_Group_Spec             or else
-                     Kind (Node) = K_Feature_Group_Type             or else
-                     Kind (Node) = K_Subprogram_Spec                or else
-                     Kind (Node) = K_Parameter                      or else
-                     Kind (Node) = K_Subcomponent                   or else
-                     Kind (Node) = K_Subcomponent_Access            or else
-                     Kind (Node) = K_Flow_Spec                      or else
-                     Kind (Node) = K_Mode                           or else
-                     Kind (Node) = K_Flow_Implementation            or else
-                     Kind (Node) = K_End_To_End_Flow_Spec           or else
-                     Kind (Node) = K_Flow_Implementation_Refinement or else
-                     Kind (Node) = K_End_To_End_Flow_Refinement     or else
-                     Kind (Node) = K_Subprogram_Call                or else
-                     Kind (Node) = K_Connection);
+      pragma Assert
+        (Kind (Node) = K_Component_Implementation
+         or else Kind (Node) = K_Component_Type
+         or else Kind (Node) = K_Port_Spec
+         or else Kind (Node) = K_Feature_Group_Spec
+         or else Kind (Node) = K_Feature_Group_Type
+         or else Kind (Node) = K_Subprogram_Spec
+         or else Kind (Node) = K_Parameter
+         or else Kind (Node) = K_Subcomponent
+         or else Kind (Node) = K_Subcomponent_Access
+         or else Kind (Node) = K_Flow_Spec
+         or else Kind (Node) = K_Mode
+         or else Kind (Node) = K_Flow_Implementation
+         or else Kind (Node) = K_End_To_End_Flow_Spec
+         or else Kind (Node) = K_Flow_Implementation_Refinement
+         or else Kind (Node) = K_End_To_End_Flow_Refinement
+         or else Kind (Node) = K_Subprogram_Call
+         or else Kind (Node) = K_Connection);
 
       Success   : Boolean := True;
       List_Node : Node_Id;
@@ -808,8 +810,8 @@ package body Ocarina.Analyzer.AADL.Names is
          List_Node := First_Node (Properties (Node));
 
          while Present (List_Node) loop
-            Success := Enter_Name_In_Scope (Identifier (List_Node))
-              and then Success;
+            Success :=
+              Enter_Name_In_Scope (Identifier (List_Node)) and then Success;
             List_Node := Next_Node (List_Node);
          end loop;
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,9 +31,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
-with Ocarina.ME_AADL.AADL_Tree.Nodes;  use Ocarina.ME_AADL.AADL_Tree.Nodes;
+with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 
 with Ocarina.BE_AADL.Components.Modes;
@@ -42,7 +42,7 @@ with Ocarina.BE_AADL.Identifiers;
 
 package body Ocarina.BE_AADL.Components.Subprogram_Calls is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.BE_AADL.Properties;
    use Ocarina.BE_AADL.Components.Modes;
@@ -69,8 +69,8 @@ package body Ocarina.BE_AADL.Components.Subprogram_Calls is
    ------------------------------------
 
    procedure Print_Subprogram_Call_Sequence (Node : Node_Id) is
-      Ident     : constant Node_Id := Identifier (Node);
-      Calls     : constant List_Id :=
+      Ident : constant Node_Id := Identifier (Node);
+      Calls : constant List_Id :=
         Ocarina.ME_AADL.AADL_Tree.Nodes.Subprogram_Calls (Node);
       List_Node : Node_Id;
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;    use Namet;
-with Output;   use Output;
+with Ocarina.Namet;    use Ocarina.Namet;
+with Ocarina.Output;   use Ocarina.Output;
 with Utils;    use Utils;
 with Outfiles; use Outfiles;
 
@@ -115,10 +115,7 @@ package body Ocarina.Backends.C_Tree.Generator is
       --  The File name corresponding is the lowerd name of N
 
       Get_Name_String
-        (Conventional_Base_Name
-         (Name
-          (Defining_Identifier
-           (N))));
+        (Conventional_Base_Name (Name (Defining_Identifier (N))));
 
       --  Adding file suffix
 
@@ -320,7 +317,7 @@ package body Ocarina.Backends.C_Tree.Generator is
             L := 1;
          else
             L := 0;
-            while L + 1 <= Name_Len and then  Name_Buffer (L + 1) /= ' ' loop
+            while L + 1 <= Name_Len and then Name_Buffer (L + 1) /= ' ' loop
                L := L + 1;
             end loop;
          end if;
@@ -350,7 +347,7 @@ package body Ocarina.Backends.C_Tree.Generator is
          end if;
       end Get_Next_Word;
 
-      First_Line : Boolean := True;
+      First_Line   : Boolean := True;
       Used_Columns : Natural;
    begin
       Get_Name_String (Name (Defining_Identifier (N)));
@@ -447,7 +444,7 @@ package body Ocarina.Backends.C_Tree.Generator is
             L := 1;
          else
             L := 0;
-            while L + 1 <= Name_Len and then  Name_Buffer (L + 1) /= ' ' loop
+            while L + 1 <= Name_Len and then Name_Buffer (L + 1) /= ' ' loop
                L := L + 1;
             end loop;
          end if;
@@ -553,15 +550,13 @@ package body Ocarina.Backends.C_Tree.Generator is
       if Summary (N) /= No_Node then
          Write_Eol;
          Write_Str (" * \brief ");
-         Write_Name
-          (Name (Summary (N)));
+         Write_Name (Name (Summary (N)));
          Write_Eol;
          Write_Str (" *");
       end if;
 
       Write_Eol;
-      Get_Name_String
-         (Name (Description (N)));
+      Get_Name_String (Name (Description (N)));
       while Are_There_More_Words loop
          Used_Columns := N_Space;
 
@@ -680,9 +675,9 @@ package body Ocarina.Backends.C_Tree.Generator is
    -------------------------
 
    procedure Generate_Expression (N : Node_Id) is
-      L_Expr  : constant Node_Id     := Left_Expression (N);
-      Op      : constant Operator_Id := Operator (N);
-      R_Expr  : constant Node_Id     := Right_Expression (N);
+      L_Expr : constant Node_Id     := Left_Expression (N);
+      Op     : constant Operator_Id := Operator (N);
+      R_Expr : constant Node_Id     := Right_Expression (N);
    begin
       --  Each expression having a right part and a left part is
       --  systematically put between two parentheses.
@@ -982,7 +977,7 @@ package body Ocarina.Backends.C_Tree.Generator is
       Write_Eol;
       Increment_Indentation;
 
-      if not Is_Empty (D)  then
+      if not Is_Empty (D) then
          M := First_Node (D);
          while Present (M) loop
             Write_Indentation;
@@ -1252,7 +1247,7 @@ package body Ocarina.Backends.C_Tree.Generator is
    ----------------------
 
    procedure Generate_HI_Node (N : Node_Id) is
-      U                   : Node_Id := First_Node (Units (N));
+      U                   : Node_Id          := First_Node (Units (N));
       Partition_Directory : constant Name_Id := To_Lower (Name (N));
    begin
       --  Create the node directory
@@ -1329,7 +1324,7 @@ package body Ocarina.Backends.C_Tree.Generator is
 
    procedure Generate_Source_File (N : Node_Id) is
       Fd : File_Descriptor;
-      D : Node_Id := First_Node (Declarations (N));
+      D  : Node_Id := First_Node (Declarations (N));
    begin
       if No (N) then
          return;
@@ -1391,7 +1386,7 @@ package body Ocarina.Backends.C_Tree.Generator is
 
    procedure Generate_Header_File (N : Node_Id) is
       Fd : File_Descriptor;
-      D : Node_Id := First_Node (Declarations (N));
+      D  : Node_Id := First_Node (Declarations (N));
       NA : Name_Id;
    begin
       if No (D) then

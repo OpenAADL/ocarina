@@ -1,3 +1,1 @@
-SUBDIRS = core frontends backends main transfo
-
-
+SUBDIRS = core frontends backends main transfo python config

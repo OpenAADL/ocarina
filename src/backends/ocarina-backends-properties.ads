@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,19 +38,13 @@
 package Ocarina.Backends.Properties is
 
    type Name_Array is array (Nat range <>) of Name_Id;
-   type ULL_Array  is array (Nat range <>) of Unsigned_Long_Long;
-   type LL_Array   is array (Nat range <>) of Long_Long;
+   type ULL_Array is array (Nat range <>) of Unsigned_Long_Long;
+   type LL_Array is array (Nat range <>) of Long_Long;
    type LD_Array is array (Nat range <>) of Long_Double;
 
    --  Common types to several components and entities
 
-   type Size_Units is
-     (Bit,
-      Byte,
-      Kilo_Byte,
-      Mega_Byte,
-      Giga_Byte,
-      Tera_Byte);
+   type Size_Units is (Bit, Byte, Kilo_Byte, Mega_Byte, Giga_Byte, Tera_Byte);
 
    type Size_Type is record
       S : Unsigned_Long_Long;
@@ -101,33 +95,23 @@ package Ocarina.Backends.Properties is
       Unknown_Scheduler);
 
    type Supported_POK_Scheduler is
-     (RMS,
-      EDF,
-      LLF,
-      RR,
-      Static,
-      Invalid_Scheduler);
+     (RMS, EDF, LLF, RR, Static, Invalid_Scheduler);
 
    type Supported_POK_Architectures is
-     (POK_Arch_x86,
-      POK_Arch_Sparc,
-      POK_Arch_Ppc,
-      Invalid_Architecture);
+     (POK_Arch_x86, POK_Arch_Sparc, POK_Arch_Ppc, Invalid_Architecture);
 
    type Supported_POK_BSP is
      (POK_BSP_x86_qemu,
+      POK_BSP_x86_qemu_vmm,
       POK_BSP_Leon,
       POK_BSP_prep,
       Invalid_BSP);
 
-   type ARINC653_Queuing_Discipline is
-      (Fifo, Priority_Based, Invalid);
+   type ARINC653_Queuing_Discipline is (Fifo, Priority_Based, Invalid);
 
-   type ARINC653_Access_Type is
-      (Read, Write, Read_Write, Invalid);
+   type ARINC653_Access_Type is (Read, Write, Read_Write, Invalid);
 
-   type ARINC653_Memory_Kind is
-      (Code, Data, Invalid);
+   type ARINC653_Memory_Kind is (Code, Data, Invalid);
 
    type Supported_POK_Error is
      (POK_Error_Deadline_Missed,
@@ -146,7 +130,7 @@ package Ocarina.Backends.Properties is
       POK_Error_Invalid);
 
    type POK_Handled_Errors is array (Nat range <>) of Supported_POK_Error;
-   POK_Empty_Handled_Errors  : constant POK_Handled_Errors;
+   POK_Empty_Handled_Errors : constant POK_Handled_Errors;
 
    type Supported_ARINC653_Error is
      (ARINC653_Error_Deadline_Miss,
@@ -167,7 +151,7 @@ package Ocarina.Backends.Properties is
       ARINC653_Error_Invalid);
 
    type ARINC653_Errors is array (Nat range <>) of Supported_ARINC653_Error;
-   ARINC653_Empty_Errors  : constant ARINC653_Errors;
+   ARINC653_Empty_Errors : constant ARINC653_Errors;
 
    type Supported_POK_Action is
      (POK_Action_Ignore,
@@ -183,7 +167,7 @@ package Ocarina.Backends.Properties is
       POK_Action_Invalid);
 
    type POK_Handled_Actions is array (Nat range <>) of Supported_POK_Action;
-   POK_Empty_Handled_Actions  : constant POK_Handled_Actions;
+   POK_Empty_Handled_Actions : constant POK_Handled_Actions;
 
    type Supported_ARINC653_Action is
      (ARINC653_Action_Ignore,
@@ -199,7 +183,7 @@ package Ocarina.Backends.Properties is
       ARINC653_Action_Invalid);
 
    type ARINC653_Actions is array (Nat range <>) of Supported_ARINC653_Action;
-   ARINC653_Empty_Actions  : constant ARINC653_Actions;
+   ARINC653_Empty_Actions : constant ARINC653_Actions;
 
    function Get_Source_Language (E : Node_Id) return Supported_Source_Language;
    --  Return the language of the entity instance (subprogram, thread,
@@ -264,14 +248,10 @@ package Ocarina.Backends.Properties is
       Concurrency_Priority_Ceiling);
 
    type Supported_IEEE754_Precision is
-     (Precision_Simple,
-      Precision_Double,
-      Precision_None);
+     (Precision_Simple, Precision_Double, Precision_None);
 
    type Supported_Number_Representation is
-     (Representation_Signed,
-      Representation_Unsigned,
-      Representation_None);
+     (Representation_Signed, Representation_Unsigned, Representation_None);
 
    function Get_Base_Type (D : Node_Id) return List_Id;
    --  Return the component instance that defines the base data type
@@ -288,8 +268,7 @@ package Ocarina.Backends.Properties is
    --  Return the enumerators of enumeration type D
 
    function Get_IEEE754_Precision
-     (D : Node_Id)
-     return Supported_IEEE754_Precision;
+     (D : Node_Id) return Supported_IEEE754_Precision;
    --  Return the precision of a floating point data type
 
    function Get_Initial_Value (D : Node_Id) return Name_Array;
@@ -329,21 +308,18 @@ package Ocarina.Backends.Properties is
    --  Return the size of the data. Returns Null_Size if not defined.
 
    function Get_Provided_Data_Access
-     (D : Node_Id)
-     return Supported_Data_Access;
+     (D : Node_Id) return Supported_Data_Access;
    --  Return the provided data access of a data component instance
    --  D. Access_None is returned when the provided data access
    --  property is not defined for D.
 
    function Get_Priority_Celing_Of_Data_Access
-     (D : Node_Id)
-     return Unsigned_Long_Long;
+     (D : Node_Id) return Unsigned_Long_Long;
    --  Return the prioriry associated to the data component. Otherwise,
    --  return 0.
 
    function Get_Required_Data_Access
-     (D : Node_Id)
-     return Supported_Data_Access;
+     (D : Node_Id) return Supported_Data_Access;
    --  Return the required data access of a data component instance
    --  D. Access_None is returned when the required data access
    --  property is not defined for D.
@@ -353,8 +329,7 @@ package Ocarina.Backends.Properties is
    --  lengths for an array.
 
    function Get_Concurrency_Protocol
-     (D : Node_Id)
-     return Supported_Concurrency_Control_Protocol;
+     (D : Node_Id) return Supported_Concurrency_Control_Protocol;
    --  Return the concurrency protocol of a data type with
    --  accessors. Return Concurrency_NoneSpecified if the property is
    --  not defined.
@@ -374,13 +349,7 @@ package Ocarina.Backends.Properties is
       Thread_None);
 
    type Time_Units is
-     (Picosecond,
-      Nanosecond,
-      Microsecond,
-      Millisecond,
-      Second,
-      Minute,
-      Hour);
+     (Picosecond, Nanosecond, Microsecond, Millisecond, Second, Minute, Hour);
 
    type Time_Type is record
       T : Unsigned_Long_Long;
@@ -402,15 +371,13 @@ package Ocarina.Backends.Properties is
    --  Return the thread dispatch offset for periodic task.
 
    function Get_Thread_Dispatch_Protocol
-     (T : Node_Id)
-     return Supported_Thread_Dispatch_Protocol;
+     (T : Node_Id) return Supported_Thread_Dispatch_Protocol;
    --  Return the dispatching protocol of a given thread component. If
    --  no protocol has been specified by the user, then return
    --  Thread_None.
 
    function Get_Thread_POSIX_Scheduling_Policy
-     (T : Node_Id)
-     return Supported_POSIX_Scheduling_Policy;
+     (T : Node_Id) return Supported_POSIX_Scheduling_Policy;
    --  Return the POSIX scheduling policy of a given thread
    --  component. If no policy has been specified, then return none.
 
@@ -443,15 +410,13 @@ package Ocarina.Backends.Properties is
    --  the user did not give a storage size value, then returns 0 bits.
 
    function Get_Thread_Implementation_Kind
-     (T : Node_Id)
-     return Supported_Thread_Implementation;
+     (T : Node_Id) return Supported_Thread_Implementation;
    --  Return the kind of the thread implementation. Return
    --  Thread_Unknown if no valid kind can be deduced.
 
    function Get_Thread_Compute_Entrypoint
      (T       : Node_Id;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id;
+      In_Mode : Name_Id := No_Name) return Name_Id;
    --  Return the compute entry point of the given thread. Return
    --  No_Name in case the property is not defined for the thread.  If
    --  In_Mode is a valid mode name for the thread, return the
@@ -459,8 +424,7 @@ package Ocarina.Backends.Properties is
 
    function Get_Thread_Compute_Entrypoint
      (T       : Node_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Same as above, but returns the whole property association
 
    function Get_Implementation (E : Node_Id) return Node_Id;
@@ -495,7 +459,7 @@ package Ocarina.Backends.Properties is
    --  Return True IFF the entity instance E results from a thread
    --  fusion.
 
-   function Is_Priority_Shifter  (E : Node_Id) return Boolean;
+   function Is_Priority_Shifter (E : Node_Id) return Boolean;
    --  Return True IFF the entity instance E is a priority shifter data.
 
    function Get_Thread_Scheduler (E : Node_Id) return Name_Id;
@@ -567,8 +531,7 @@ package Ocarina.Backends.Properties is
    --  if the component is not set.
 
    function Get_Scheduling_Protocol
-     (P : Node_Id)
-     return Supported_Scheduling_Protocol;
+     (P : Node_Id) return Supported_Scheduling_Protocol;
    --  Get the Scheduling_Protocol of process. Return
    --  Unknown_Scheduler if undefined.
 
@@ -607,8 +570,7 @@ package Ocarina.Backends.Properties is
       Platform_None); --  Unspecified
 
    function Get_Execution_Platform
-     (P : Node_Id)
-     return Supported_Execution_Platform;
+     (P : Node_Id) return Supported_Execution_Platform;
    function Get_Execution_Platform (P : Node_Id) return Name_Id;
    --  Return the execution platform of the given processor P
 
@@ -625,9 +587,8 @@ package Ocarina.Backends.Properties is
    --------------------------------
 
    function Get_Bound_Bus
-     (C : Node_Id;
-      Check : Boolean := True)
-     return Node_Id;
+     (C     : Node_Id;
+      Check : Boolean := True) return Node_Id;
    --  Return the bus component to which the connection C is
    --  bound. Return an error if no bus is bound and Check is true,
    --  and No_Node if C is not bound to any bus and Check is false.
@@ -643,8 +604,8 @@ package Ocarina.Backends.Properties is
       Transport_None); --  Leads to an error
 
    function Get_Transport_API
-     (B : Node_Id; E : Node_Id := No_Node)
-     return Supported_Transport_APIs;
+     (B : Node_Id;
+      E : Node_Id := No_Node) return Supported_Transport_APIs;
    --  Return the transport layer supported by the bus B
 
    ----------------------
@@ -686,22 +647,21 @@ package Ocarina.Backends.Properties is
    --  property is not defined.
 
    function Get_Port_Compute_Entrypoint
-     (P : Node_Id; In_Mode : Name_Id := No_Name) return Name_Id;
+     (P       : Node_Id;
+      In_Mode : Name_Id := No_Name) return Name_Id;
    --  Return the compute entry point of the given port. Return
    --  No_Name in case the property is not defined for the port.
 
    function Get_Port_Compute_Entrypoint
-     (P : Node_Id; In_Mode : Name_Id := No_Name) return Node_Id;
+     (P       : Node_Id;
+      In_Mode : Name_Id := No_Name) return Node_Id;
    --  Same as above, but returns the whole property association
 
    ---------------------------------
    -- System component properties --
    ---------------------------------
 
-   type Protocol_Type is
-     (Protocol_IIOP,
-      Protocol_DIOP,
-      Protocol_None);
+   type Protocol_Type is (Protocol_IIOP, Protocol_DIOP, Protocol_None);
 
    function Get_Protocol (S : Node_Id) return Protocol_Type;
    --  Return the protocol of a distributed application.
@@ -717,8 +677,8 @@ package Ocarina.Backends.Properties is
    --  Used to indicate a null value. This value does not depend on
    --  whether we use AADL values or other language values.
 
-   function Get_ARINC653_Queuing_Discipline (Port : Node_Id)
-      return ARINC653_Queuing_Discipline;
+   function Get_ARINC653_Queuing_Discipline
+     (Port : Node_Id) return ARINC653_Queuing_Discipline;
    --  Returns the corresponding Queuing_Discipline for the ARINC653
    --  property set.
 
@@ -735,8 +695,8 @@ package Ocarina.Backends.Properties is
    function Get_ARINC653_HM_Actions (E : Node_Id) return ARINC653_Actions;
    --  Returns the list of actions used to recover error with ARINC653.
 
-   function Get_POK_Architecture (P : Node_Id)
-            return Supported_POK_Architectures;
+   function Get_POK_Architecture
+     (P : Node_Id) return Supported_POK_Architectures;
    --  Returns the value of POK_Architecture value bounded to a
    --  processor.
 
@@ -757,11 +717,11 @@ package Ocarina.Backends.Properties is
 
    function Get_Security_Level (E : Node_Id) return Unsigned_Long_Long;
 
-   function Get_Security_Level_Through_Virtual_Bus (E : Node_Id)
-                  return Unsigned_Long_Long;
+   function Get_Security_Level_Through_Virtual_Bus
+     (E : Node_Id) return Unsigned_Long_Long;
 
    type Time_Array is array (Nat range <>) of Time_Type;
-   Empty_Time_Array  : constant Time_Array;
+   Empty_Time_Array : constant Time_Array;
 
    function Get_Execution_Time (E : Node_Id) return Time_Array;
    --  Returns the Execution Time values associated with the
@@ -809,20 +769,19 @@ package Ocarina.Backends.Properties is
 
    function Get_Scade_Signal
      (E       : Node_Id;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id;
+      In_Mode : Name_Id := No_Name) return Name_Id;
    --  Returns the name_id that correspond to the scade::signal
    --  property on a parameter.
 
    function Get_Code_Size (E : Node_Id) return Size_Type;
    --  Returns the value of the Source_Code_Size property.
 
-   function Get_ARINC653_Access_Type (Memory : Node_Id)
-      return ARINC653_Access_Type;
+   function Get_ARINC653_Access_Type
+     (Memory : Node_Id) return ARINC653_Access_Type;
    --  Returns the access_type property value of a memory component.
 
-   function Get_ARINC653_Memory_Kind (Memory : Node_Id)
-      return ARINC653_Memory_Kind;
+   function Get_ARINC653_Memory_Kind
+     (Memory : Node_Id) return ARINC653_Memory_Kind;
    --  Returns the memory_kind property value of a memory component.
 
    -----------------------
@@ -843,23 +802,23 @@ package Ocarina.Backends.Properties is
 private
 
    Empty_Name_Array : constant Name_Array (1 .. 0) := (others => No_Name);
-   Empty_ULL_Array  : constant ULL_Array  (1 .. 0) := (others => 0);
-   Empty_LL_Array   : constant LL_Array   (1 .. 0) := (others => 0);
-   Empty_LD_Array   : constant LD_Array   (1 .. 0) := (others => 0.0);
-   Empty_Time_Array : constant Time_Array   (1 .. 0) := (others =>
-                                                         (0, Picosecond));
+   Empty_ULL_Array  : constant ULL_Array (1 .. 0)  := (others => 0);
+   Empty_LL_Array   : constant LL_Array (1 .. 0)   := (others => 0);
+   Empty_LD_Array   : constant LD_Array (1 .. 0)   := (others => 0.0);
+   Empty_Time_Array : constant Time_Array (1 .. 0) :=
+     (others => (0, Picosecond));
 
-   POK_Empty_Handled_Actions  : constant POK_Handled_Actions (1 .. 0)
-                                    := (others => POK_Action_Invalid);
+   POK_Empty_Handled_Actions : constant POK_Handled_Actions (1 .. 0) :=
+     (others => POK_Action_Invalid);
 
-   POK_Empty_Handled_Errors  : constant POK_Handled_Errors (1 .. 0)
-                                    := (others => POK_Error_Invalid);
+   POK_Empty_Handled_Errors : constant POK_Handled_Errors (1 .. 0) :=
+     (others => POK_Error_Invalid);
 
-   ARINC653_Empty_Actions : constant ARINC653_Actions (1 .. 0)
-                                    := (others => ARINC653_Action_Invalid);
+   ARINC653_Empty_Actions : constant ARINC653_Actions (1 .. 0) :=
+     (others => ARINC653_Action_Invalid);
 
-   ARINC653_Empty_Errors : constant ARINC653_Errors (1 .. 0)
-                                    := (others => ARINC653_Error_Invalid);
+   ARINC653_Empty_Errors : constant ARINC653_Errors (1 .. 0) :=
+     (others => ARINC653_Error_Invalid);
 
    Null_Size : constant Size_Type := (0, Bit);
 

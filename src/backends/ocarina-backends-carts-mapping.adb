@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -57,7 +57,7 @@ package body Ocarina.Backends.Carts.Mapping is
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package XV  renames Ocarina.Backends.XML_Values;
+   package XV renames Ocarina.Backends.XML_Values;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
    procedure Map_Scheduler (E : Node_Id; N : Node_Id) is
@@ -104,10 +104,7 @@ package body Ocarina.Backends.Carts.Mapping is
 
       XML_Root := D;
 
-      XTN.Set_Name (D, To_XML_Name
-                   (AIN.Name
-                    (AIN.Identifier
-                     (E))));
+      XTN.Set_Name (D, To_XML_Name (AIN.Name (AIN.Identifier (E))));
       XTN.Set_Units (D, New_List (XTN.K_List_Id));
       XTN.Set_HI_Nodes (D, New_List (XTN.K_List_Id));
 
@@ -121,17 +118,17 @@ package body Ocarina.Backends.Carts.Mapping is
    function Map_HI_Node (E : Node_Id) return Node_Id is
       N : constant Node_Id := New_Node (XTN.K_HI_Node);
    begin
-      pragma Assert (AINU.Is_Process (E)
-                     or else AINU.Is_System (E)
-                     or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_Process (E)
+         or else AINU.Is_System (E)
+         or else AINU.Is_Processor (E));
 
       if AINU.Is_System (E) then
          Set_Str_To_Name_Buffer ("general");
       else
          Get_Name_String
-            (To_XML_Name (AIN.Name
-               (AIN.Identifier
-                  (AIN.Parent_Subcomponent (E)))));
+           (To_XML_Name
+              (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E)))));
          Add_Str_To_Name_Buffer ("_carts");
       end if;
 
@@ -151,31 +148,25 @@ package body Ocarina.Backends.Carts.Mapping is
    -- Map_HI_Unit --
    -----------------
 
-   function Map_HI_Unit (E : Node_Id)
-      return Node_Id is
-      U        : Node_Id;
-      N        : Node_Id;
-      P        : Node_Id;
-      Root     : Node_Id;
+   function Map_HI_Unit (E : Node_Id) return Node_Id is
+      U    : Node_Id;
+      N    : Node_Id;
+      P    : Node_Id;
+      Root : Node_Id;
    begin
-      pragma Assert (AINU.Is_System (E)
-                     or else AINU.Is_Process (E)
-                     or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_System (E)
+         or else AINU.Is_Process (E)
+         or else AINU.Is_Processor (E));
 
       U := New_Node (XTN.K_HI_Unit, AIN.Identifier (E));
 
       --  Packages that are common to all nodes
       if AINU.Is_System (E) then
-         Get_Name_String
-               (To_XML_Name
-                  (Display_Name
-                     (Identifier (E))));
+         Get_Name_String (To_XML_Name (Display_Name (Identifier (E))));
       else
          Get_Name_String
-               (To_XML_Name
-                  (Display_Name
-                     (Identifier
-                        (Parent_Subcomponent (E)))));
+           (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       end if;
       Add_Str_To_Name_Buffer ("_carts");
       N := Make_Defining_Identifier (Name_Find);
@@ -204,11 +195,9 @@ package body Ocarina.Backends.Carts.Mapping is
    begin
       N := Make_XML_Node ("system");
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (E)))));
+      P :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Set_Str_To_Name_Buffer ("name");
       Q := Make_Defining_Identifier (Name_Find);
 
@@ -222,22 +211,19 @@ package body Ocarina.Backends.Carts.Mapping is
    ---------------------------
 
    function Map_Virtual_Processor (E : Node_Id) return Node_Id is
-      N              : Node_Id;
-      P              : Node_Id;
-      Q              : Node_Id;
+      N : Node_Id;
+      P : Node_Id;
+      Q : Node_Id;
    begin
       N := Make_XML_Node ("component");
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (E)))));
+      P :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Set_Str_To_Name_Buffer ("name");
       Q := Make_Defining_Identifier (Name_Find);
 
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
 
       --  Always make subtype=tasks for partition.
 
@@ -246,8 +232,7 @@ package body Ocarina.Backends.Carts.Mapping is
       Set_Str_To_Name_Buffer ("subtype");
       Q := Make_Defining_Identifier (Name_Find);
 
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
 
       --  Map partition scheduler.
 
@@ -259,16 +244,18 @@ package body Ocarina.Backends.Carts.Mapping is
       Q := Make_Defining_Identifier (Name_Find);
 
       if Is_Defined_Property (E, "pok::criticality") then
-         P := Make_Literal
-            (XV.New_Numeric_Value
-               (Get_Integer_Property (E, "pok::criticality"), 1, 10));
+         P :=
+           Make_Literal
+             (XV.New_Numeric_Value
+                (Get_Integer_Property (E, "pok::criticality"),
+                 1,
+                 10));
       else
          Set_Str_To_Name_Buffer ("?");
          P := Make_Defining_Identifier (Name_Find);
       end if;
 
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
 
       return N;
    end Map_Virtual_Processor;
@@ -284,36 +271,36 @@ package body Ocarina.Backends.Carts.Mapping is
    begin
       N := Make_XML_Node ("task");
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (Thread)))));
+      P :=
+        Make_Defining_Identifier
+          (To_XML_Name
+             (Display_Name (Identifier (Parent_Subcomponent (Thread)))));
       Set_Str_To_Name_Buffer ("name");
       Q := Make_Defining_Identifier (Name_Find);
 
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
 
       Set_Str_To_Name_Buffer ("p");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Numeric_Value
-            (To_Milliseconds (Get_Thread_Period (Thread)),
-         1, 10));
+      Q :=
+        Make_Literal
+          (XV.New_Numeric_Value
+             (To_Milliseconds (Get_Thread_Period (Thread)),
+              1,
+              10));
 
-      Append_Node_To_List (Make_Assignement (P, Q),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       Set_Str_To_Name_Buffer ("d");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Numeric_Value
-            (To_Milliseconds (Get_Thread_Deadline (Thread)),
-         1, 10));
+      Q :=
+        Make_Literal
+          (XV.New_Numeric_Value
+             (To_Milliseconds (Get_Thread_Deadline (Thread)),
+              1,
+              10));
 
-      Append_Node_To_List (Make_Assignement (P, Q),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       --  Make the non_interrupt_fraction value of the XML node.
 
@@ -321,8 +308,7 @@ package body Ocarina.Backends.Carts.Mapping is
       P := Make_Defining_Identifier (Name_Find);
       Q := Make_Literal (XV.New_Numeric_Value (0, 1, 10));
 
-      Append_Node_To_List (Make_Assignement (P, Q),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       --  Make the jitter value of the XML node.
 
@@ -330,8 +316,7 @@ package body Ocarina.Backends.Carts.Mapping is
       P := Make_Defining_Identifier (Name_Find);
       Q := Make_Literal (XV.New_Numeric_Value (0, 1, 10));
 
-      Append_Node_To_List (Make_Assignement (P, Q),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       declare
          TA : constant Time_Array := Get_Execution_Time (Thread);
@@ -339,13 +324,11 @@ package body Ocarina.Backends.Carts.Mapping is
          if TA /= Empty_Time_Array then
             Set_Str_To_Name_Buffer ("e");
             P := Make_Defining_Identifier (Name_Find);
-            Q := Make_Literal
-               (XV.New_Numeric_Value
-                  (To_Milliseconds (TA (1)),
-               1, 10));
+            Q :=
+              Make_Literal
+                (XV.New_Numeric_Value (To_Milliseconds (TA (1)), 1, 10));
 
-            Append_Node_To_List (Make_Assignement (P, Q),
-                                 XTN.Items (N));
+            Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
          end if;
       end;
       return N;

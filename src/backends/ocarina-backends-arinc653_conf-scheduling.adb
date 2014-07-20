@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -58,7 +58,7 @@ package body Ocarina.Backends.ARINC653_Conf.Scheduling is
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
-   package XV  renames Ocarina.Backends.XML_Values;
+   package XV renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -68,7 +68,7 @@ package body Ocarina.Backends.ARINC653_Conf.Scheduling is
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
 
    Scheduling_Node : Node_Id;
-   Window_Number : Unsigned_Long_Long := 0;
+   Window_Number   : Unsigned_Long_Long := 0;
 
    -----------
    -- Visit --
@@ -102,8 +102,7 @@ package body Ocarina.Backends.ARINC653_Conf.Scheduling is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -139,13 +138,13 @@ package body Ocarina.Backends.ARINC653_Conf.Scheduling is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S     : Node_Id;
+      S : Node_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -171,31 +170,31 @@ package body Ocarina.Backends.ARINC653_Conf.Scheduling is
       Push_Entity (U);
       Push_Entity (R);
 
-      Current_XML_Node := XTN.Root_Node
-                              (XTN.XML_File (U));
+      Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
       Scheduling_Node := Make_XML_Node ("Module_Schedule");
 
       Set_Str_To_Name_Buffer ("MajorFrameSeconds");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Floating_Point_Value (To_Seconds (Get_POK_Major_Frame (E))));
+      Q :=
+        Make_Literal
+          (XV.New_Floating_Point_Value (To_Seconds (Get_POK_Major_Frame (E))));
 
       Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Scheduling_Node));
+        (Make_Assignement (P, Q),
+         XTN.Items (Scheduling_Node));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
          end loop;
       end if;
-      Append_Node_To_List (Scheduling_Node,
-                           XTN.Subitems (Current_XML_Node));
+      Append_Node_To_List (Scheduling_Node, XTN.Subitems (Current_XML_Node));
       Pop_Entity;
       Pop_Entity;
    end Visit_Processor_Instance;
@@ -205,14 +204,14 @@ package body Ocarina.Backends.ARINC653_Conf.Scheduling is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S           : Node_Id;
-      Processes   : List_Id;
+      S         : Node_Id;
+      Processes : List_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -221,7 +220,7 @@ package body Ocarina.Backends.ARINC653_Conf.Scheduling is
 
       if Present (Backend_Node (Identifier (E))) then
          Processes := XTN.Processes (Backend_Node (Identifier (E)));
-         S := XTN.First_Node (Processes);
+         S         := XTN.First_Node (Processes);
          while Present (S) loop
             Visit (XTN.Content (S));
             S := XTN.Next_Node (S);

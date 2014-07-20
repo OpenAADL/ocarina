@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,8 +39,7 @@ package Ocarina.Instances.Components.Modes is
    function Instantiate_Mode
      (Instance_Root      : Node_Id;
       Component_Instance : Node_Id;
-      Mode               : Node_Id)
-     return Node_Id;
+      Mode               : Node_Id) return Node_Id;
    --  Create a new mode instance corresponding to the mode
    --  declaration 'Mode' of the corresponding component of
    --  'Component_Instance'.
@@ -48,8 +47,7 @@ package Ocarina.Instances.Components.Modes is
    function Instantiate_Mode_Transition
      (Instance_Root      : Node_Id;
       Component_Instance : Node_Id;
-      Mode_Transition    : Node_Id)
-     return Node_Id;
+      Mode_Transition    : Node_Id) return Node_Id;
    --  Same as above but for mode transitions
 
    procedure Instantiate_In_Modes

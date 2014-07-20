@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -40,12 +40,12 @@ package Ocarina.Transfo.Optim is
 
    procedure Greedy_Heuristic
      (Instance_Root : in out Node_Id;
-      Success       : out Boolean);
+      Success       :    out Boolean);
    --  Launch the greedy algorithm for optimize the system
 
    procedure Exhaustive_Space_Exploration
      (Instance_Root : in out Node_Id;
-      Success       : out Boolean);
+      Success       :    out Boolean);
    --  Launch the brute-force algorithm for system optimization
 
 end Ocarina.Transfo.Optim;

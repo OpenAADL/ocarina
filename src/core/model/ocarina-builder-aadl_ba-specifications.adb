@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,11 +31,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ocarina.Me_AADL_BA.BA_Tree.Nodes;
-with Ocarina.Me_AADL_BA.BA_Tree.Nutils;
-
-use Ocarina.Me_AADL_BA.BA_Tree.Nutils;
-use Ocarina.Me_AADL_BA.BA_Tree.Nodes;
+with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
+with Ocarina.ME_AADL_BA.BA_Tree.Nutils; use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 package body Ocarina.Builder.Aadl_Ba.Specifications is
 
@@ -48,19 +46,19 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
       Container   : Node_Id;
       Variables   : List_Id;
       States      : List_Id;
-      Transitions : List_Id)
-     return Node_Id
+      Transitions : List_Id) return Node_Id
    is
       --  pragma Unreferenced (Container);
       --  fixme check Container
 
       Behavior_Annex : constant Node_Id := New_Node (K_Behavior_Annex, Loc);
    begin
-      Add_New_Behavior_Annex (Behavior_Annex,
-                              Container,
-                              Variables,
-                              States,
-                              Transitions);
+      Add_New_Behavior_Annex
+        (Behavior_Annex,
+         Container,
+         Variables,
+         States,
+         Transitions);
 
       if No (Behavior_Annex) then
          return No_Node;
@@ -101,21 +99,21 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
    -------------------------------
 
    function Add_New_Behavior_Variable
-     (Loc          : Location;
-      Container    : Node_Id;
-      Ident_List   : List_Id;
-      Class_Ref    : Node_Id)
-     return Node_Id
+     (Loc        : Location;
+      Container  : Node_Id;
+      Ident_List : List_Id;
+      Class_Ref  : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Container) = K_Behavior_Annex);
 
       Behavior_Variable : constant Node_Id :=
         New_Node (K_Behavior_Variable, Loc);
    begin
-      Add_New_Behavior_Variable (Behavior_Variable,
-                                 Container,
-                                 Ident_List,
-                                 Class_Ref);
+      Add_New_Behavior_Variable
+        (Behavior_Variable,
+         Container,
+         Ident_List,
+         Class_Ref);
 
       if No (Behavior_Variable) then
          return No_Node;
@@ -154,20 +152,20 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
    ----------------------------
 
    function Add_New_Behavior_State
-     (Loc         : Location;
-      Container   : Node_Id;
-      Ident_List  : List_Id;
-      State_Kind  : Behavior_State_Kind)
-     return Node_Id
+     (Loc        : Location;
+      Container  : Node_Id;
+      Ident_List : List_Id;
+      State_Kind : Behavior_State_Kind) return Node_Id
    is
       pragma Assert (Kind (Container) = K_Behavior_Annex);
 
       Behavior_State : constant Node_Id := New_Node (K_Behavior_State, Loc);
    begin
-      Add_New_Behavior_State (Behavior_State,
-                              Container,
-                              Ident_List,
-                              State_Kind);
+      Add_New_Behavior_State
+        (Behavior_State,
+         Container,
+         Ident_List,
+         State_Kind);
 
       if No (Behavior_State) then
          return No_Node;
@@ -207,8 +205,7 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
    function Add_New_Behavior_Transition
      (Loc             : Location;
       Container       : Node_Id;
-      Transition_Node : Node_Id)
-     return Node_Id
+      Transition_Node : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Container) = K_Behavior_Annex);
 
@@ -239,22 +236,22 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
       Sources             : List_Id;
       Behavior_Condition  : Node_Id;
       Destination         : Node_Id;
-      Behavior_Act_List   : List_Id)
-     return Node_Id
+      Behavior_Act_List   : List_Id) return Node_Id
    is
       --  pragma Assert (Kind (Container) = K_Behavior_Transition);
 
       Execute_Transition : constant Node_Id :=
         New_Node (K_Execution_Behavior_Transition, Loc);
    begin
-      Add_New_Execute_Transition (Execute_Transition,
-                                  Container,
-                                  Transition_Idt,
-                                  Transition_Priority,
-                                  Sources,
-                                  Behavior_Condition,
-                                  Destination,
-                                  Behavior_Act_List);
+      Add_New_Execute_Transition
+        (Execute_Transition,
+         Container,
+         Transition_Idt,
+         Transition_Priority,
+         Sources,
+         Behavior_Condition,
+         Destination,
+         Behavior_Act_List);
 
       if No (Execute_Transition) then
          return No_Node;
@@ -277,8 +274,8 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
       Destination         : Node_Id := No_Node;
       Behavior_Act_List   : List_Id := No_List)
    is
-      pragma Assert (Kind (Execute_Transition) =
-                       K_Execution_Behavior_Transition);
+      pragma Assert
+        (Kind (Execute_Transition) = K_Execution_Behavior_Transition);
    begin
       if Container /= No_Node then
          Set_BE_Container (Execute_Transition, Container);
@@ -289,8 +286,9 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
       end if;
 
       if Transition_Priority /= No_Node then
-         Set_Behavior_Transition_Priority (Execute_Transition,
-                                           Transition_Priority);
+         Set_Behavior_Transition_Priority
+           (Execute_Transition,
+            Transition_Priority);
       end if;
 
       if not Is_Empty (Sources) then
@@ -315,18 +313,18 @@ package body Ocarina.Builder.Aadl_Ba.Specifications is
    --------------------------------
 
    function Add_New_Behavior_Condition
-     (Loc              : Location;
-      Container        : Node_Id;
-      Condition_Node   : Node_Id)
-     return Node_Id
+     (Loc            : Location;
+      Container      : Node_Id;
+      Condition_Node : Node_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Behavior_Transition);
-      pragma Assert (Kind (Condition_Node) = K_Dispatch_Condition
-             or else Kind (Condition_Node) = K_Value_Expression);
+      pragma Assert
+        (No (Container) or else Kind (Container) = K_Behavior_Transition);
+      pragma Assert
+        (Kind (Condition_Node) = K_Dispatch_Condition
+         or else Kind (Condition_Node) = K_Value_Expression);
 
-      Behavior_Condition : constant Node_Id := New_Node (K_Behavior_Condition,
-                                                         Loc);
+      Behavior_Condition : constant Node_Id :=
+        New_Node (K_Behavior_Condition, Loc);
    begin
       if Present (Container) then
          Set_BE_Container (Behavior_Condition, Container);

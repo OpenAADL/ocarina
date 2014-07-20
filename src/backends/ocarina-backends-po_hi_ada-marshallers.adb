@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -48,7 +48,7 @@ with Ocarina.Backends.PO_HI_Ada.Mapping;
 
 package body Ocarina.Backends.PO_HI_Ada.Marshallers is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.Backends.Utils;
@@ -73,24 +73,24 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
 
    function Get_Marshalled_Type (E : Node_Id) return Node_Id is
       Category : constant Component_Category := Get_Category_Of_Component (E);
-      T         : Node_Id;
+      T        : Node_Id;
    begin
       case Category is
          when CC_Thread =>
-            T := Extract_Designator
-              (ADN.Port_Interface_Node
-               (Backend_Node
-                (Identifier (E))));
+            T :=
+              Extract_Designator
+                (ADN.Port_Interface_Node (Backend_Node (Identifier (E))));
 
          when CC_Data =>
-            T := Extract_Designator
-              (ADN.Type_Definition_Node
-               (Backend_Node
-                (Identifier (E))));
+            T :=
+              Extract_Designator
+                (ADN.Type_Definition_Node (Backend_Node (Identifier (E))));
 
          when others =>
-            raise Program_Error with "Cannot generate Marshall procedure"
-              & " for a " & Component_Category'Image (Category);
+            raise Program_Error
+              with "Cannot generate Marshall procedure" &
+              " for a " &
+              Component_Category'Image (Category);
       end case;
 
       return T;
@@ -124,28 +124,31 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       -------------------
 
       function Marshall_Spec (E : Node_Id) return Node_Id is
-         N         : Node_Id;
-         Profile   : constant List_Id := New_List (ADN.K_Parameter_Profile);
+         N       : Node_Id;
+         Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
       begin
          --  The 'Data' parameter
 
-         N := Make_Parameter_Specification
-           (Make_Defining_Identifier (PN (P_Data)),
-            Get_Marshalled_Type (E),
-            Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Make_Defining_Identifier (PN (P_Data)),
+              Get_Marshalled_Type (E),
+              Mode_In);
          Append_Node_To_List (N, Profile);
 
          --  The 'Message' parameter
 
-         N := Make_Parameter_Specification
-           (Make_Defining_Identifier (PN (P_Message)),
-            RE (RE_Message_Type),
-            Mode_Inout);
+         N :=
+           Make_Parameter_Specification
+             (Make_Defining_Identifier (PN (P_Message)),
+              RE (RE_Message_Type),
+              Mode_Inout);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Subprogram_Specification
-           (Make_Defining_Identifier (SN (S_Marshall)),
-            Profile);
+         N :=
+           Make_Subprogram_Specification
+             (Make_Defining_Identifier (SN (S_Marshall)),
+              Profile);
 
          return N;
       end Marshall_Spec;
@@ -155,45 +158,47 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       ---------------------
 
       function Unmarshall_Spec (E : Node_Id) return Node_Id is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
-         N         : Node_Id;
-         Profile   : constant List_Id := New_List (ADN.K_Parameter_Profile);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
+         N       : Node_Id;
+         Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
       begin
          --  If we deal with a thread, there is an extra parameter
          --  correspodning to the <T>_Ports enumerator useful for the
          --  marshalling.
 
          if Category = CC_Thread then
-            N := Make_Parameter_Specification
-              (Make_Defining_Identifier (PN (P_Port)),
-               Extract_Designator
-               (ADN.Port_Enumeration_Node
-                (Backend_Node
-                 (Identifier (E)))),
-               Mode_In);
+            N :=
+              Make_Parameter_Specification
+                (Make_Defining_Identifier (PN (P_Port)),
+                 Extract_Designator
+                   (ADN.Port_Enumeration_Node (Backend_Node (Identifier (E)))),
+                 Mode_In);
             Append_Node_To_List (N, Profile);
          end if;
 
          --  The 'Data' parameter
 
-         N := Make_Parameter_Specification
-           (Make_Defining_Identifier (PN (P_Data)),
-            Get_Marshalled_Type (E),
-            Mode_Out);
+         N :=
+           Make_Parameter_Specification
+             (Make_Defining_Identifier (PN (P_Data)),
+              Get_Marshalled_Type (E),
+              Mode_Out);
          Append_Node_To_List (N, Profile);
 
          --  The 'Message' parameter
 
-         N := Make_Parameter_Specification
-           (Make_Defining_Identifier (PN (P_Message)),
-            RE (RE_Message_Type),
-            Mode_Inout);
+         N :=
+           Make_Parameter_Specification
+             (Make_Defining_Identifier (PN (P_Message)),
+              RE (RE_Message_Type),
+              Mode_Inout);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Subprogram_Specification
-           (Make_Defining_Identifier (SN (S_Unmarshall)),
-            Profile);
+         N :=
+           Make_Subprogram_Specification
+             (Make_Defining_Identifier (SN (S_Unmarshall)),
+              Profile);
 
          return N;
       end Unmarshall_Spec;
@@ -230,8 +235,8 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -269,9 +274,10 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
 
             if Get_Data_Representation (E) /= Data_With_Accessors then
 
-               N := Message_Comment
-                 ("Marshallers for DATA type "
-                  & Get_Name_String (Name (Identifier (E))));
+               N :=
+                 Message_Comment
+                   ("Marshallers for DATA type " &
+                    Get_Name_String (Name (Identifier (E))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
                --  Marshall procedure
@@ -289,7 +295,10 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                --  Mark the data type as being handled.
 
                Set_Handling
-                 (E, By_Name, H_Ada_Marshallers_Spec, Identifier (E));
+                 (E,
+                  By_Name,
+                  H_Ada_Marshallers_Spec,
+                  Identifier (E));
             end if;
          else
             --  Do the tree bindings only
@@ -297,16 +306,14 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
             Bind_AADL_To_Marshall
               (Identifier (E),
                ADN.Marshall_Node
-               (Backend_Node
-                (Get_Handling
-                 (E, By_Name, H_Ada_Marshallers_Spec))));
+                 (Backend_Node
+                    (Get_Handling (E, By_Name, H_Ada_Marshallers_Spec))));
 
             Bind_AADL_To_Unmarshall
               (Identifier (E),
                ADN.Unmarshall_Node
-               (Backend_Node
-                (Get_Handling
-                 (E, By_Name, H_Ada_Marshallers_Spec))));
+                 (Backend_Node
+                    (Get_Handling (E, By_Name, H_Ada_Marshallers_Spec))));
          end if;
       end Visit_Data_Instance;
 
@@ -315,8 +322,9 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := ADN.Entity (U);
          S : Node_Id;
       begin
@@ -415,19 +423,22 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
          if Has_Ports (E) then
             --  Generate marshallers for the Port_Type enumeration
 
-            if No (Get_Handling
+            if No
+                (Get_Handling
                    (Corresponding_Declaration (E),
                     By_Node,
                     H_Ada_Marshallers_Spec))
             then
-               Set_Handling (Corresponding_Declaration (E),
-                             By_Node,
-                             H_Ada_Marshallers_Spec,
-                             E);
+               Set_Handling
+                 (Corresponding_Declaration (E),
+                  By_Node,
+                  H_Ada_Marshallers_Spec,
+                  E);
 
-               N := Message_Comment
-                 ("Marshallers for interface type of thread "
-                  & Get_Name_String (Name (Identifier (E))));
+               N :=
+                 Message_Comment
+                   ("Marshallers for interface type of thread " &
+                    Get_Name_String (Name (Identifier (E))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
                --  Marshall procedure
@@ -443,17 +454,19 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
             else
                declare
-                  Found : constant Node_Id := Get_Handling
-                    (Corresponding_Declaration (E),
-                     By_Node,
-                     H_Ada_Marshallers_Spec);
-                  BE    : constant Node_Id := Backend_Node
-                    (Identifier (Found));
+                  Found : constant Node_Id :=
+                    Get_Handling
+                      (Corresponding_Declaration (E),
+                       By_Node,
+                       H_Ada_Marshallers_Spec);
+                  BE : constant Node_Id := Backend_Node (Identifier (Found));
                begin
-                  Bind_AADL_To_Marshall (Identifier (E),
-                                         ADN.Marshall_Node (BE));
-                  Bind_AADL_To_Unmarshall (Identifier (E),
-                                         ADN.Unmarshall_Node (BE));
+                  Bind_AADL_To_Marshall
+                    (Identifier (E),
+                     ADN.Marshall_Node (BE));
+                  Bind_AADL_To_Unmarshall
+                    (Identifier (E),
+                     ADN.Unmarshall_Node (BE));
                end;
             end if;
 
@@ -507,31 +520,33 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       -----------------------------
 
       function Marshall_Implementation (E : Node_Id) return Node_Id is
-         Spec : constant Node_Id := ADN.Marshall_Node
-           (Backend_Node (Identifier (E)));
-         N    : Node_Id;
+         Spec : constant Node_Id :=
+           ADN.Marshall_Node (Backend_Node (Identifier (E)));
+         N : Node_Id;
       begin
          --  The marshallers for data component are simple renaming of
          --  intantiated ones. Fo thread components, the body is more
          --  complex.
 
          if not AAU.Is_Thread (E) then
-            N := Make_Selected_Component
-              (Make_Defining_Identifier (Map_Marshallers_Name (E)),
-               Make_Defining_Identifier (SN (S_Marshall)));
+            N :=
+              Make_Selected_Component
+                (Make_Defining_Identifier (Map_Marshallers_Name (E)),
+                 Make_Defining_Identifier (SN (S_Marshall)));
 
-            N :=  Make_Subprogram_Specification
-              (Defining_Identifier => ADN.Defining_Identifier (Spec),
-               Parameter_Profile   => ADN.Parameter_Profile (Spec),
-               Return_Type         => ADN.Return_Type (Spec),
-               Renamed_Subprogram  => N);
+            N :=
+              Make_Subprogram_Specification
+                (Defining_Identifier => ADN.Defining_Identifier (Spec),
+                 Parameter_Profile   => ADN.Parameter_Profile (Spec),
+                 Return_Type         => ADN.Return_Type (Spec),
+                 Renamed_Subprogram  => N);
          else
             declare
                Alternatives : constant List_Id := New_List (ADN.K_List_Id);
                Statements   : List_Id;
                Declarations : List_Id;
                F            : Node_Id;
-               Has_Data     : Boolean := False;
+               Has_Data     : Boolean          := False;
             begin
                --  Check if the thread conrains at least one OUT DATA
                --  port, other wise, there is nothing to marshall
@@ -567,32 +582,35 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                         Statements := New_List (ADN.K_Statement_List);
 
                         if AAN.Is_Data (F) then
-                           N := Make_Subprogram_Call
-                             (Extract_Designator
-                              (ADN.Marshall_Node
-                               (Backend_Node
-                                (Identifier
-                                 (Corresponding_Instance (F))))),
-                              Make_List_Id
-                              (Make_Selected_Component
-                               (Make_Designator (PN (P_Data)),
-                                Make_Defining_Identifier
-                                (Map_Ada_Component_Name (F))),
-                               Make_Defining_Identifier (PN (P_Message))));
+                           N :=
+                             Make_Subprogram_Call
+                               (Extract_Designator
+                                  (ADN.Marshall_Node
+                                     (Backend_Node
+                                        (Identifier
+                                           (Corresponding_Instance (F))))),
+                                Make_List_Id
+                                  (Make_Selected_Component
+                                     (Make_Designator (PN (P_Data)),
+                                      Make_Defining_Identifier
+                                        (Map_Ada_Component_Name (F))),
+                                   Make_Defining_Identifier (PN (P_Message))));
                            Append_Node_To_List (N, Statements);
                         else
-                           Append_Node_To_List (Make_Null_Statement,
-                                                Statements);
+                           Append_Node_To_List
+                             (Make_Null_Statement,
+                              Statements);
                         end if;
 
-                        N := Make_Elsif_Statement
-                          (Make_Expression
-                             (Make_Selected_Component
-                                (Make_Designator (PN (P_Data)),
-                                 Make_Designator (PN (P_Port))),
-                              Op_Equal,
-                              Extract_Enumerator (F, False)),
-                           Statements);
+                        N :=
+                          Make_Elsif_Statement
+                            (Make_Expression
+                               (Make_Selected_Component
+                                  (Make_Designator (PN (P_Data)),
+                                   Make_Designator (PN (P_Port))),
+                                Op_Equal,
+                                Extract_Enumerator (F, False)),
+                             Statements);
                         Append_Node_To_List (N, Alternatives);
                      end if;
 
@@ -600,28 +618,34 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                   end loop;
 
                   declare
-                     Declarations : constant List_Id
-                       := New_List (ADN.K_Declaration_List);
-                     Elsif_Statements : constant List_Id
-                       := New_List (ADN.K_List_Id);
+                     Declarations : constant List_Id :=
+                       New_List (ADN.K_Declaration_List);
+                     Elsif_Statements : constant List_Id :=
+                       New_List (ADN.K_List_Id);
                   begin
-                     N := Make_Used_Package
-                       (RU (RU_PolyORB_HI_Generated_Activity));
+                     N :=
+                       Make_Used_Package
+                         (RU (RU_PolyORB_HI_Generated_Activity));
                      Append_Node_To_List (N, Declarations);
 
-                     ADN.Set_First_Node (Elsif_Statements,
-                                         ADN.Next_Node
-                                           (ADN.First_Node (Alternatives)));
+                     ADN.Set_First_Node
+                       (Elsif_Statements,
+                        ADN.Next_Node (ADN.First_Node (Alternatives)));
 
-                     N := Make_If_Statement
-                       (Condition => ADN.Condition
-                          (ADN.First_Node (Alternatives)),
-                        Then_Statements => ADN.Then_Statements
-                          (ADN.First_Node (Alternatives)),
-                        Elsif_Statements => Elsif_Statements);
+                     N :=
+                       Make_If_Statement
+                         (Condition =>
+                            ADN.Condition (ADN.First_Node (Alternatives)),
+                          Then_Statements =>
+                            ADN.Then_Statements
+                              (ADN.First_Node (Alternatives)),
+                          Elsif_Statements => Elsif_Statements);
 
-                     N := Make_Subprogram_Implementation
-                       (Spec, Declarations, Make_List_Id (N));
+                     N :=
+                       Make_Subprogram_Implementation
+                         (Spec,
+                          Declarations,
+                          Make_List_Id (N));
                   end;
 
                else
@@ -629,18 +653,24 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
 
                   --  Add a pragma unreferenced for parameters
 
-                  N := Make_Pragma_Statement
-                    (Pragma_Unreferenced,
-                     Make_List_Id (Make_Defining_Identifier (PN (P_Message))));
+                  N :=
+                    Make_Pragma_Statement
+                      (Pragma_Unreferenced,
+                       Make_List_Id
+                         (Make_Defining_Identifier (PN (P_Message))));
                   Append_Node_To_List (N, Declarations);
 
-                  N := Make_Pragma_Statement
-                    (Pragma_Unreferenced,
-                     Make_List_Id (Make_Defining_Identifier (PN (P_Data))));
+                  N :=
+                    Make_Pragma_Statement
+                      (Pragma_Unreferenced,
+                       Make_List_Id (Make_Defining_Identifier (PN (P_Data))));
                   Append_Node_To_List (N, Declarations);
 
-                  N := Make_Subprogram_Implementation
-                    (Spec, Declarations, No_List);
+                  N :=
+                    Make_Subprogram_Implementation
+                      (Spec,
+                       Declarations,
+                       No_List);
                end if;
             end;
          end if;
@@ -653,33 +683,35 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       -------------------------------
 
       function Unmarshall_Implementation (E : Node_Id) return Node_Id is
-         Spec : constant Node_Id := ADN.Unmarshall_Node
-           (Backend_Node (Identifier (E)));
-         N    : Node_Id;
+         Spec : constant Node_Id :=
+           ADN.Unmarshall_Node (Backend_Node (Identifier (E)));
+         N : Node_Id;
       begin
          --  The marshallers for data component are simple renaming of
          --  intantiated ones. Fo thread components, the body is more
          --  complex.
 
          if not AAU.Is_Thread (E) then
-            N := Make_Selected_Component
-              (Make_Defining_Identifier (Map_Marshallers_Name (E)),
-               Make_Defining_Identifier (SN (S_Unmarshall)));
+            N :=
+              Make_Selected_Component
+                (Make_Defining_Identifier (Map_Marshallers_Name (E)),
+                 Make_Defining_Identifier (SN (S_Unmarshall)));
 
-            N :=  Make_Subprogram_Specification
-              (Defining_Identifier => ADN.Defining_Identifier (Spec),
-               Parameter_Profile   => ADN.Parameter_Profile (Spec),
-               Return_Type         => ADN.Return_Type (Spec),
-               Renamed_Subprogram  => N);
+            N :=
+              Make_Subprogram_Specification
+                (Defining_Identifier => ADN.Defining_Identifier (Spec),
+                 Parameter_Profile   => ADN.Parameter_Profile (Spec),
+                 Return_Type         => ADN.Return_Type (Spec),
+                 Renamed_Subprogram  => N);
          else
             declare
                Alternatives : constant List_Id := New_List (ADN.K_List_Id);
-               Declarations : constant List_Id := New_List
-                 (ADN.K_Declaration_List);
-               Statements   : List_Id;
-               Aggregates   : List_Id;
-               Ref_Message  : Boolean := False;
-               F            : Node_Id;
+               Declarations : constant List_Id :=
+                 New_List (ADN.K_Declaration_List);
+               Statements  : List_Id;
+               Aggregates  : List_Id;
+               Ref_Message : Boolean := False;
+               F           : Node_Id;
             begin
                --  If the thread has not IN port, there is nothing to
                --  unmarshall
@@ -691,16 +723,15 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                   F := First_Node (Features (E));
 
                   while Present (F) loop
-                     if Kind (F) = K_Port_Spec_Instance
-                       and then Is_In (F)
-                     then
+                     if Kind (F) = K_Port_Spec_Instance and then Is_In (F) then
                         --  The record aggregate
 
                         Aggregates := New_List (ADN.K_Statement_List);
 
-                        N := Make_Component_Association
-                          (Make_Defining_Identifier (PN (P_Port)),
-                           Extract_Enumerator (F, False));
+                        N :=
+                          Make_Component_Association
+                            (Make_Defining_Identifier (PN (P_Port)),
+                             Extract_Enumerator (F, False));
                         Append_Node_To_List (N, Aggregates);
 
                         --  The statements (if any)
@@ -710,33 +741,37 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                         if AAN.Is_Data (F) then
                            --  Declare the temporary variable
 
-                           N := Make_Object_Declaration
-                             (Defining_Identifier => Make_Defining_Identifier
-                                (Map_Ada_Component_Name (F)),
-                              Object_Definition   =>
-                                Map_Ada_Data_Type_Designator
-                                (Corresponding_Instance (F)));
+                           N :=
+                             Make_Object_Declaration
+                               (Defining_Identifier =>
+                                  Make_Defining_Identifier
+                                    (Map_Ada_Component_Name (F)),
+                                Object_Definition =>
+                                  Map_Ada_Data_Type_Designator
+                                    (Corresponding_Instance (F)));
                            Append_Node_To_List (N, Declarations);
 
-                           N := Make_Subprogram_Call
-                             (Extract_Designator
-                              (ADN.Unmarshall_Node
-                               (Backend_Node
-                                (Identifier
-                                 (Corresponding_Instance (F))))),
-                              Make_List_Id
-                              (Make_Defining_Identifier
-                               (Map_Ada_Component_Name (F)),
-                               Make_Defining_Identifier (PN (P_Message))));
+                           N :=
+                             Make_Subprogram_Call
+                               (Extract_Designator
+                                  (ADN.Unmarshall_Node
+                                     (Backend_Node
+                                        (Identifier
+                                           (Corresponding_Instance (F))))),
+                                Make_List_Id
+                                  (Make_Defining_Identifier
+                                     (Map_Ada_Component_Name (F)),
+                                   Make_Defining_Identifier (PN (P_Message))));
                            Append_Node_To_List (N, Statements);
 
                            --  Append the extra aggregate
 
-                           N := Make_Component_Association
-                             (Make_Defining_Identifier
-                              (Map_Ada_Component_Name (F)),
-                              Make_Defining_Identifier
-                              (Map_Ada_Component_Name (F)));
+                           N :=
+                             Make_Component_Association
+                               (Make_Defining_Identifier
+                                  (Map_Ada_Component_Name (F)),
+                                Make_Defining_Identifier
+                                  (Map_Ada_Component_Name (F)));
                            Append_Node_To_List (N, Aggregates);
 
                            --  Mark the message formal parameter as
@@ -747,22 +782,23 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
 
                         --  Assign the port value
 
-                        N := Make_Assignment_Statement
-                          (Make_Defining_Identifier (PN (P_Data)),
-                           Make_Qualified_Expression
-                           (Extract_Designator
-                            (ADN.Port_Interface_Node
-                             (Backend_Node
-                              (Identifier (E)))),
-                            Make_Record_Aggregate (Aggregates)));
+                        N :=
+                          Make_Assignment_Statement
+                            (Make_Defining_Identifier (PN (P_Data)),
+                             Make_Qualified_Expression
+                               (Extract_Designator
+                                  (ADN.Port_Interface_Node
+                                     (Backend_Node (Identifier (E)))),
+                                Make_Record_Aggregate (Aggregates)));
                         Append_Node_To_List (N, Statements);
 
-                        N := Make_Elsif_Statement
-                          (Make_Expression
-                             (Make_Defining_Identifier (PN (P_Port)),
-                              Op_Equal,
-                              Extract_Enumerator (F, False)),
-                           Statements);
+                        N :=
+                          Make_Elsif_Statement
+                            (Make_Expression
+                               (Make_Defining_Identifier (PN (P_Port)),
+                                Op_Equal,
+                                Extract_Enumerator (F, False)),
+                             Statements);
                         Append_Node_To_List (N, Alternatives);
                      end if;
 
@@ -772,58 +808,72 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                   if not Ref_Message then
                      --  Add a pragma unreferenced for 'Message'
 
-                     N := Make_Pragma_Statement
-                       (Pragma_Unreferenced,
-                        Make_List_Id
-                        (Make_Defining_Identifier (PN (P_Message))));
+                     N :=
+                       Make_Pragma_Statement
+                         (Pragma_Unreferenced,
+                          Make_List_Id
+                            (Make_Defining_Identifier (PN (P_Message))));
                      Append_Node_To_List (N, Declarations);
                   end if;
 
                   declare
                      --  Declarations : constant List_Id
                      --    := New_List (ADN.K_Declaration_List);
-                     Elsif_Statements : constant List_Id
-                       := New_List (ADN.K_List_Id);
+                     Elsif_Statements : constant List_Id :=
+                       New_List (ADN.K_List_Id);
                   begin
-                     N := Make_Used_Package
-                       (RU (RU_PolyORB_HI_Generated_Activity));
+                     N :=
+                       Make_Used_Package
+                         (RU (RU_PolyORB_HI_Generated_Activity));
                      Append_Node_To_List (N, Declarations);
 
-                     ADN.Set_First_Node (Elsif_Statements,
-                                         ADN.Next_Node
-                                           (ADN.First_Node (Alternatives)));
+                     ADN.Set_First_Node
+                       (Elsif_Statements,
+                        ADN.Next_Node (ADN.First_Node (Alternatives)));
 
-                     N := Make_If_Statement
-                       (Condition => ADN.Condition
-                          (ADN.First_Node (Alternatives)),
-                        Then_Statements => ADN.Then_Statements
-                          (ADN.First_Node (Alternatives)),
-                        Elsif_Statements => Elsif_Statements);
+                     N :=
+                       Make_If_Statement
+                         (Condition =>
+                            ADN.Condition (ADN.First_Node (Alternatives)),
+                          Then_Statements =>
+                            ADN.Then_Statements
+                              (ADN.First_Node (Alternatives)),
+                          Elsif_Statements => Elsif_Statements);
 
-                     N := Make_Subprogram_Implementation
-                       (Spec, Declarations, Make_List_Id (N));
+                     N :=
+                       Make_Subprogram_Implementation
+                         (Spec,
+                          Declarations,
+                          Make_List_Id (N));
                   end;
 
                else
                   --  Add a pragma unreferenced for parameters
 
-                  N := Make_Pragma_Statement
-                    (Pragma_Unreferenced,
-                     Make_List_Id (Make_Defining_Identifier (PN (P_Port))));
+                  N :=
+                    Make_Pragma_Statement
+                      (Pragma_Unreferenced,
+                       Make_List_Id (Make_Defining_Identifier (PN (P_Port))));
                   Append_Node_To_List (N, Declarations);
 
-                  N := Make_Pragma_Statement
-                    (Pragma_Unreferenced,
-                     Make_List_Id (Make_Defining_Identifier (PN (P_Message))));
+                  N :=
+                    Make_Pragma_Statement
+                      (Pragma_Unreferenced,
+                       Make_List_Id
+                         (Make_Defining_Identifier (PN (P_Message))));
                   Append_Node_To_List (N, Declarations);
 
-                  N := Make_Pragma_Statement
-                    (Pragma_Unreferenced,
-                     Make_List_Id (Make_Defining_Identifier (PN (P_Data))));
+                  N :=
+                    Make_Pragma_Statement
+                      (Pragma_Unreferenced,
+                       Make_List_Id (Make_Defining_Identifier (PN (P_Data))));
                   Append_Node_To_List (N, Declarations);
 
-                  N := Make_Subprogram_Implementation
-                    (Spec, Declarations, No_List);
+                  N :=
+                    Make_Subprogram_Implementation
+                      (Spec,
+                       Declarations,
+                       No_List);
                end if;
             end;
          end if;
@@ -838,11 +888,12 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       function Marshallers_Instantiation (E : Node_Id) return Node_Id is
          N : Node_Id;
       begin
-         N := Make_Package_Instantiation
-           (Defining_Identifier => Make_Defining_Identifier
-              (Map_Marshallers_Name (E)),
-            Generic_Package     => RU (RU_PolyORB_HI_Marshallers_G),
-            Parameter_List      => Make_List_Id (Get_Marshalled_Type (E)));
+         N :=
+           Make_Package_Instantiation
+             (Defining_Identifier =>
+                Make_Defining_Identifier (Map_Marshallers_Name (E)),
+              Generic_Package => RU (RU_PolyORB_HI_Marshallers_G),
+              Parameter_List  => Make_List_Id (Get_Marshalled_Type (E)));
 
          return N;
       end Marshallers_Instantiation;
@@ -879,8 +930,8 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -918,9 +969,10 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
 
             if Get_Data_Representation (E) /= Data_With_Accessors then
 
-               N := Message_Comment
-                 ("Marshallers for DATA type "
-                  & Get_Name_String (Name (Identifier (E))));
+               N :=
+                 Message_Comment
+                   ("Marshallers for DATA type " &
+                    Get_Name_String (Name (Identifier (E))));
                Append_Node_To_List (N, ADN.Statements (Current_Package));
 
                --  Package instantiation
@@ -941,7 +993,10 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                --  Mark the data type as being handled.
 
                Set_Handling
-                 (E, By_Name, H_Ada_Marshallers_Body, Identifier (E));
+                 (E,
+                  By_Name,
+                  H_Ada_Marshallers_Body,
+                  Identifier (E));
             end if;
          end if;
       end Visit_Data_Instance;
@@ -951,8 +1006,9 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := ADN.Entity (U);
          S : Node_Id;
       begin
@@ -1050,21 +1106,24 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
          F : Node_Id;
       begin
          if Has_Ports (E) then
-            if No (Get_Handling
+            if No
+                (Get_Handling
                    (Corresponding_Declaration (E),
                     By_Node,
                     H_Ada_Marshallers_Body))
             then
-               Set_Handling (Corresponding_Declaration (E),
-                             By_Node,
-                             H_Ada_Marshallers_Body,
-                             E);
+               Set_Handling
+                 (Corresponding_Declaration (E),
+                  By_Node,
+                  H_Ada_Marshallers_Body,
+                  E);
 
                --  Generate marshallers for the Port_Type enumeration
 
-               N := Message_Comment
-                 ("Marshallers for interface type of thread "
-                  & Get_Name_String (Name (Identifier (E))));
+               N :=
+                 Message_Comment
+                   ("Marshallers for interface type of thread " &
+                    Get_Name_String (Name (Identifier (E))));
                Append_Node_To_List (N, ADN.Statements (Current_Package));
 
                --  Marshall procedure

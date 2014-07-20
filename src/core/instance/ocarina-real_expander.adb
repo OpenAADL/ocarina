@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,7 +37,7 @@ with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.Builder.REAL;
 with Ocarina.Analyzer.REAL.Finder;
 with Ocarina.REAL_Values;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.REAL_Expander is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
@@ -45,15 +45,13 @@ package body Ocarina.REAL_Expander is
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.Builder.REAL;
    use Ocarina.Analyzer.REAL.Finder;
-   use Namet;
+   use Ocarina.Namet;
 
    ------------
    -- Expand --
    ------------
 
-   procedure Expand (Theorem : Node_Id;
-                     Success : out Boolean)
-   is
+   procedure Expand (Theorem : Node_Id; Success : out Boolean) is
       pragma Assert (Kind (Theorem) = K_Theorem);
    begin
       Build_Used_Sets_List (Theorem, Success);
@@ -63,8 +61,7 @@ package body Ocarina.REAL_Expander is
    -- Build_Used_Sets_List --
    --------------------------
 
-   procedure Build_Used_Sets_List (R : Node_Id; Success : out Boolean)
-   is
+   procedure Build_Used_Sets_List (R : Node_Id; Success : out Boolean) is
       pragma Assert (Kind (R) = K_Theorem);
 
       Decl       : Node_Id := First_Node (Declarations (R));
@@ -80,7 +77,7 @@ package body Ocarina.REAL_Expander is
 
       --  We first add the global range set to the used set list
 
-      Interval := Range_Set (Range_Declaration (R));
+      Interval   := Range_Set (Range_Declaration (R));
       Expr_Value := Compute_Expression_Type (Interval);
       if Kind (Interval) /= K_Set_Reference then
          Set := Make_Anonymous_Set (Expr_Value);
@@ -97,8 +94,9 @@ package body Ocarina.REAL_Expander is
 
       --  We create a variable corresponding to the range variable
 
-      Range_Var := Make_Variable
-        (Name (Identifier (Range_Variable (Range_Declaration (R)))));
+      Range_Var :=
+        Make_Variable
+          (Name (Identifier (Range_Variable (Range_Declaration (R)))));
       Set_Var_Type (Range_Var, RT_Element);
       Set_Referenced_Var (Variable_Ref (Range_Declaration (R)), Range_Var);
       Append_Node_To_List (Range_Var, Used_Var (R));
@@ -130,8 +128,8 @@ package body Ocarina.REAL_Expander is
 
             --  Compute expression set actual type
 
-            Expr_Value := Compute_Expression_Type
-              (Local_Set_Expression (Decl));
+            Expr_Value :=
+              Compute_Expression_Type (Local_Set_Expression (Decl));
             if Expr_Value = Value_Id (0) then
                Success := False;
                return;
@@ -162,14 +160,14 @@ package body Ocarina.REAL_Expander is
             --  if the variable scope is local to the theorem
             if Is_Global (Decl) = Value_Id (0) then
 
-               Set_Name := Name (Var_Ref (Decl));
+               Set_Name  := Name (Var_Ref (Decl));
                Local_Var := Make_Variable (Set_Name);
                Set_Referenced_Var (Var_Ref (Decl), Local_Var);
                Append_Node_To_List (Local_Var, Used_Var (R));
 
-               --  if the variable scope is global
+            --  if the variable scope is global
             else
-               Set_Name := Name (Var_Ref (Decl));
+               Set_Name  := Name (Var_Ref (Decl));
                Local_Var := Make_Variable (Set_Name);
                Set_Referenced_Var (Var_Ref (Decl), Local_Var);
                Append_Variable_To_Global_Variables (Local_Var);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,9 +34,9 @@
 with GNAT.OS_Lib;
 
 with Errors;
-with Namet;
+with Ocarina.Namet;
 
-with Ocarina.Options;       use Ocarina.Options;
+with Ocarina.Options; use Ocarina.Options;
 
 package body Ocarina.Files is
 
@@ -44,24 +44,25 @@ package body Ocarina.Files is
    use GNAT.OS_Lib;
 
    use Errors;
-   use Namet;
+   use Ocarina.Namet;
 
    ----------------------------
    -- Add_File_To_Parse_List --
    ----------------------------
 
    procedure Add_File_To_Parse_List
-     (File_Name : Name_Id; Add_Suffix : Boolean := True)
+     (File_Name  : Name_Id;
+      Add_Suffix : Boolean := True)
    is
 
       File_Name_With_Extension : Name_Id;
-      Do_Add : Boolean := True;
+      Do_Add                   : Boolean := True;
 
    begin
       Get_Name_String (File_Name);
       if Add_Suffix then
          if Name_Len < 5
-          or else Name_Buffer (Name_Len - 4 .. Name_Len) /= ".aadl"
+           or else Name_Buffer (Name_Len - 4 .. Name_Len) /= ".aadl"
          then
             Add_Str_To_Name_Buffer (".aadl");
          end if;
@@ -98,11 +99,11 @@ package body Ocarina.Files is
       if Buffer (Buffer_Location.Scan) = CR
         and then Buffer (Buffer_Location.Scan + 1) = LF
       then
-         Buffer_Location.Scan  := Buffer_Location.Scan + 2;
+         Buffer_Location.Scan := Buffer_Location.Scan + 2;
 
-         --  Microsoft OS's
+      --  Microsoft OS's
       else
-         Buffer_Location.Scan  := Buffer_Location.Scan + 1;
+         Buffer_Location.Scan := Buffer_Location.Scan + 1;
 
          --  Other OS's
       end if;
@@ -139,8 +140,8 @@ package body Ocarina.Files is
 
       Buffer_Location.Scan := 1;
       loop
-         Result := Read
-           (File_Desc, Buffer (Buffer_Location.Scan)'Address, Length);
+         Result :=
+           Read (File_Desc, Buffer (Buffer_Location.Scan)'Address, Length);
 
          exit when Result = Length;
 
@@ -150,7 +151,7 @@ package body Ocarina.Files is
          end if;
 
          Buffer_Location.Scan := Buffer_Location.Scan + Text_Ptr (Result);
-         Length  := Length - Result;
+         Length               := Length - Result;
       end loop;
 
       Close (File_Desc);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,8 +43,8 @@ package Ocarina.Analyzer.REAL is
    --  Build the list of theorems to be run
 
    procedure Analyze_Theorem
-     (Theorem   : Node_Id;
-      AADL_Root : Node_Id;
+     (Theorem   :     Node_Id;
+      AADL_Root :     Node_Id;
       Success   : out Boolean);
    --  Root procedure of analysis
 

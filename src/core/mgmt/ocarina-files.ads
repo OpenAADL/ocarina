@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,8 +37,8 @@
 
 with GNAT.Table;
 
-with Types;         use Types;
-with Locations;     use Locations;
+with Ocarina.Types;     use Ocarina.Types;
+with Locations; use Locations;
 
 package Ocarina.Files is
 
@@ -50,7 +50,8 @@ package Ocarina.Files is
    --  scan it.
 
    procedure Add_File_To_Parse_List
-     (File_Name : Name_Id; Add_Suffix : Boolean := True);
+     (File_Name  : Name_Id;
+      Add_Suffix : Boolean := True);
 
    function Search_File (File_Name : Name_Id) return Name_Id;
 

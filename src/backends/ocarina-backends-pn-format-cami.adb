@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,12 +31,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 with Ocarina.Backends.PN.Debug;
 
 with Ocarina.Backends.PN.Nodes;
 with Ocarina.Backends.PN.Nutils;
-with Namet;
+with Ocarina.Namet;
 with Ocarina.AADL_Values;
 with Ocarina.Backends.Utils;
 
@@ -50,13 +50,11 @@ package body Ocarina.Backends.PN.Format.Cami is
    --  Print_Place  --
    -------------------
 
-   procedure Print_Place (Pn_Generated : Node_Id;
-                          Pn_P : Node_Id)
-   is
-      use Output;
+   procedure Print_Place (Pn_Generated : Node_Id; Pn_P : Node_Id) is
+      use Ocarina.Output;
       use Ocarina.Backends.PN.Debug;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
 
    begin
@@ -68,29 +66,30 @@ package body Ocarina.Backends.PN.Format.Cami is
          declare
             S : constant String := Get_Name_String (Name (Identifier (Pn_P)));
          begin
-            Write_Line ("CT(4:name,"
-                        & Image (Pn_P)
-                        & ","
-                        & OAV.Image (New_Integer_Value (S'Length), False)
-                        & ":"
-                        & S
-                        & ")");
+            Write_Line
+              ("CT(4:name," &
+               Image (Pn_P) &
+               "," &
+               OAV.Image (New_Integer_Value (S'Length), False) &
+               ":" &
+               S &
+               ")");
          end;
          --  print domain
          if Domain (Pn_P) /= No_Node then
             --  colored
             declare
-               S : constant String := Get_Name_String (Name
-                                                       (Identifier (Domain
-                                                                    (Pn_P))));
+               S : constant String :=
+                 Get_Name_String (Name (Identifier (Domain (Pn_P))));
             begin
-               Write_Line ("CT(6:domain,"
-                           & Image (Pn_P)
-                           & ","
-                           & OAV.Image (New_Integer_Value (S'Length), False)
-                           & ":"
-                           & S
-                           & ")");
+               Write_Line
+                 ("CT(6:domain," &
+                  Image (Pn_P) &
+                  "," &
+                  OAV.Image (New_Integer_Value (S'Length), False) &
+                  ":" &
+                  S &
+                  ")");
             end;
          end if;
          --  print marking
@@ -102,15 +101,11 @@ package body Ocarina.Backends.PN.Format.Cami is
             begin
                Node_Iter := OPN.First_Node (Tokens (Marking (Pn_P)));
                if Node_Iter /= No_Node then
-                  Write_Str ("CT(7:marking,"
-                             & Image (Pn_P)
-                             & ",");
+                  Write_Str ("CT(7:marking," & Image (Pn_P) & ",");
                   Set_Str_To_Name_Buffer ("<");
                   while Present (Node_Iter) loop
-                     Add_Str_To_Name_Buffer (Get_Name_String
-                                             (Name
-                                              (Identifier
-                                               (Node_Iter))));
+                     Add_Str_To_Name_Buffer
+                       (Get_Name_String (Name (Identifier (Node_Iter))));
                      if OPN.Next_Node (Node_Iter) = No_Node then
                         Add_Str_To_Name_Buffer (">");
                      else
@@ -122,12 +117,12 @@ package body Ocarina.Backends.PN.Format.Cami is
 
                   --  here, marking is accessible through name_find
                   declare
-                     S : constant String
-                       := Get_Name_String (Name_Find);
+                     S : constant String := Get_Name_String (Name_Find);
                   begin
-                     Write_Str (OAV.Image (New_Integer_Value (S'Length), False)
-                                & ":"
-                                & S);
+                     Write_Str
+                       (OAV.Image (New_Integer_Value (S'Length), False) &
+                        ":" &
+                        S);
                   end;
 
                   Write_Line (")");
@@ -137,22 +132,20 @@ package body Ocarina.Backends.PN.Format.Cami is
          else
             --  uncolored
             declare
-               Tokens_Count : constant Value_Type
-                 := Get_Value_Type (Nb_T (Pn_P));
+               Tokens_Count : constant Value_Type :=
+                 Get_Value_Type (Nb_T (Pn_P));
             begin
-               if Tokens_Count.Ival /= 0 then
+               if Tokens_Count.IVal /= 0 then
                   --  uncolored place
-                  Write_Str ("CT(7:marking,"
-                             & Image (Pn_P)
-                             & ",");
+                  Write_Str ("CT(7:marking," & Image (Pn_P) & ",");
                   Set_Str_To_Name_Buffer (OAV.Image (Tokens_Count));
                   declare
-                     S : constant String
-                       := Get_Name_String (Name_Find);
+                     S : constant String := Get_Name_String (Name_Find);
                   begin
-                     Write_Str (OAV.Image (New_Integer_Value (S'Length), False)
-                                & ":"
-                                & S);
+                     Write_Str
+                       (OAV.Image (New_Integer_Value (S'Length), False) &
+                        ":" &
+                        S);
                   end;
 
                   Write_Line (")");
@@ -168,22 +161,20 @@ package body Ocarina.Backends.PN.Format.Cami is
    --  Print_Trans  --
    -------------------
 
-   procedure Print_Trans (Pn_Generated : Node_Id;
-                          Pn_T : Node_Id)
-   is
-      use Output;
+   procedure Print_Trans (Pn_Generated : Node_Id; Pn_T : Node_Id) is
+      use Ocarina.Output;
       use Ocarina.Backends.PN.Debug;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
       use OPU;
       use Ocarina.Backends.Utils;
 
    begin
-      if Pn_Generated /= No_Node and then Pn_T /= No_Node
-        and then Get_Handling (Pn_T,
-                               By_Node,
-                               H_PN_To_Delete) = No_Node then
+      if Pn_Generated /= No_Node
+        and then Pn_T /= No_Node
+        and then Get_Handling (Pn_T, By_Node, H_PN_To_Delete) = No_Node
+      then
          --  print node
          Write_Line ("CN(10:transition," & Image (Pn_T) & ")");
 
@@ -191,13 +182,14 @@ package body Ocarina.Backends.PN.Format.Cami is
          declare
             S : constant String := Get_Name_String (Name (Identifier (Pn_T)));
          begin
-            Write_Line ("CT(4:name,"
-                        & Image (Pn_T)
-                        & ","
-                        & OAV.Image (New_Integer_Value (S'Length), False)
-                        & ":"
-                        & S
-                        & ")");
+            Write_Line
+              ("CT(4:name," &
+               Image (Pn_T) &
+               "," &
+               OAV.Image (New_Integer_Value (S'Length), False) &
+               ":" &
+               S &
+               ")");
          end;
 
          --  print guard
@@ -212,29 +204,28 @@ package body Ocarina.Backends.PN.Format.Cami is
             if not Is_Empty (Pn_Arcs_In (Pn_T)) then
                Iter := OPN.First_Node (Pn_Arcs_In (Pn_T));
                while Present (Iter) loop
-                  Write_Line ("CA(3:arc,"
-                              & Image (Iter)
-                              & ","
-                              & Image (Pn_From (Iter))
-                              & ","
-                              & Image (Pn_To (Iter))
-                              & ")");
+                  Write_Line
+                    ("CA(3:arc," &
+                     Image (Iter) &
+                     "," &
+                     Image (Pn_From (Iter)) &
+                     "," &
+                     Image (Pn_To (Iter)) &
+                     ")");
                   --  valuation
                   if not Is_Empty (Valuations (Iter)) then
-                     Write_Str ("CT(9:valuation,"
-                                & Image (Iter)
-                                & ",");
+                     Write_Str ("CT(9:valuation," & Image (Iter) & ",");
                      --  build string to compute length
                      declare
-                        Val_Iter : Node_Id
-                          := OPN.First_Node (Valuations (Iter));
+                        Val_Iter : Node_Id :=
+                          OPN.First_Node (Valuations (Iter));
                      begin
                         if Is_Colored (Val_Iter) then
                            Set_Str_To_Name_Buffer ("<");
                            while Present (Val_Iter) loop
                               Add_Str_To_Name_Buffer
                                 (Get_Name_String
-                                 (Name (Identifier (Val_Iter))));
+                                   (Name (Identifier (Val_Iter))));
                               if OPN.Next_Node (Val_Iter) /= No_Node then
                                  Add_Str_To_Name_Buffer (",");
                               end if;
@@ -244,20 +235,17 @@ package body Ocarina.Backends.PN.Format.Cami is
                            Add_Str_To_Name_Buffer (">");
                         else
                            Set_Str_To_Name_Buffer
-                             (Get_Name_String
-                              (Name (Identifier (Val_Iter))));
+                             (Get_Name_String (Name (Identifier (Val_Iter))));
                         end if;
                      end;
                      --  here, marking is accessible through name_find
                      declare
-                        S : constant String
-                          := Get_Name_String (Name_Find);
+                        S : constant String := Get_Name_String (Name_Find);
                      begin
-                        Write_Str (OAV.Image
-                                   (New_Integer_Value
-                                    (S'Length), False)
-                                   & ":"
-                                   & S);
+                        Write_Str
+                          (OAV.Image (New_Integer_Value (S'Length), False) &
+                           ":" &
+                           S);
                      end;
 
                      Write_Line (")");
@@ -271,30 +259,29 @@ package body Ocarina.Backends.PN.Format.Cami is
             if not Is_Empty (Pn_Arcs_Out (Pn_T)) then
                Iter := OPN.First_Node (Pn_Arcs_Out (Pn_T));
                while Present (Iter) loop
-                  Write_Line ("CA(3:arc,"
-                              & Image (Iter)
-                              & ","
-                              & Image (Pn_From (Iter))
-                              & ","
-                              & Image (Pn_To (Iter))
-                              & ")");
+                  Write_Line
+                    ("CA(3:arc," &
+                     Image (Iter) &
+                     "," &
+                     Image (Pn_From (Iter)) &
+                     "," &
+                     Image (Pn_To (Iter)) &
+                     ")");
                   --  valuation
                   if not Is_Empty (Valuations (Iter)) then
-                     Write_Str ("CT(9:valuation,"
-                                & Image (Iter)
-                                & ",");
+                     Write_Str ("CT(9:valuation," & Image (Iter) & ",");
                      --  build string to compute length
                      declare
-                        Val_Iter : Node_Id
-                          := OPN.First_Node (Valuations (Iter));
+                        Val_Iter : Node_Id :=
+                          OPN.First_Node (Valuations (Iter));
                      begin
                         if Is_Colored (Val_Iter) then
 
                            Set_Str_To_Name_Buffer ("<");
                            while Present (Val_Iter) loop
                               Add_Str_To_Name_Buffer
-                             (Get_Name_String
-                              (Name (Identifier (Val_Iter))));
+                                (Get_Name_String
+                                   (Name (Identifier (Val_Iter))));
                               if OPN.Next_Node (Val_Iter) /= No_Node then
                                  Add_Str_To_Name_Buffer (",");
                               end if;
@@ -304,20 +291,17 @@ package body Ocarina.Backends.PN.Format.Cami is
                            Add_Str_To_Name_Buffer (">");
                         else
                            Set_Str_To_Name_Buffer
-                             (Get_Name_String
-                              (Name (Identifier (Val_Iter))));
+                             (Get_Name_String (Name (Identifier (Val_Iter))));
                         end if;
                      end;
                      --  here, marking is accessible through name_find
                      declare
-                        S : constant String
-                          := Get_Name_String (Name_Find);
+                        S : constant String := Get_Name_String (Name_Find);
                      begin
-                        Write_Str (OAV.Image
-                                   (New_Integer_Value
-                                    (S'Length), False)
-                                   & ":"
-                                   & S);
+                        Write_Str
+                          (OAV.Image (New_Integer_Value (S'Length), False) &
+                           ":" &
+                           S);
                      end;
 
                      Write_Line (")");
@@ -330,11 +314,11 @@ package body Ocarina.Backends.PN.Format.Cami is
          end;
       end if;
 
-         --  arcs in
+      --  arcs in
 
-         --  arcs out
+      --  arcs out
 
-         --    print arcs valuations
+      --    print arcs valuations
 
    end Print_Trans;
 
@@ -342,12 +326,10 @@ package body Ocarina.Backends.PN.Format.Cami is
    --  Print_Formalism_Information  --
    -----------------------------------
 
-   procedure Print_Formalism_Information
-     (Pn_Generated : Node_Id)
-   is
-      use Output;
+   procedure Print_Formalism_Information (Pn_Generated : Node_Id) is
+      use Ocarina.Output;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
       use OPU;
 
@@ -358,80 +340,83 @@ package body Ocarina.Backends.PN.Format.Cami is
          Write_Line ("CN(3:net,1)");
 
          --      print classes
-         if Classes (Pn_Formalism_Specific_Informations (Pn_Generated))
-           /= No_Node then
-            Write_Line ("CM(11:declaration,1,"
-                        & OAV.Image (New_Integer_Value (Line_Count), False)
-                        & ",1,5:Class)");
+         if Classes (Pn_Formalism_Specific_Informations (Pn_Generated)) /=
+           No_Node
+         then
+            Write_Line
+              ("CM(11:declaration,1," &
+               OAV.Image (New_Integer_Value (Line_Count), False) &
+               ",1,5:Class)");
             Line_Count := Line_Count + 1;
 
             --  first is th_ids
             declare
                --  hack since OAV.Image blast name_buffer....
-               Begin_Range : constant String
-                 := Get_Name_String (Name
-                                     (Identifier
-                                      (OPN.First_Node
-                                       (Class_List
-                                        (Classes
-                                         (Pn_Formalism_Specific_Informations
-                                          (Pn_Generated)))))));
-               Max_Range : constant String
-                 := OAV.Image (Get_Value_Type
-                               (Threads_Count
-                                (Pn_Formalism_Specific_Informations
-                                 (Pn_Generated))));
+               Begin_Range : constant String :=
+                 Get_Name_String
+                   (Name
+                      (Identifier
+                         (OPN.First_Node
+                            (Class_List
+                               (Classes
+                                  (Pn_Formalism_Specific_Informations
+                                     (Pn_Generated)))))));
+               Max_Range : constant String :=
+                 OAV.Image
+                   (Get_Value_Type
+                      (Threads_Count
+                         (Pn_Formalism_Specific_Informations (Pn_Generated))));
             begin
-               Set_Str_To_Name_Buffer (Begin_Range
-                                       & " is 0.."
-                                       & Max_Range
-                                       & ";");
+               Set_Str_To_Name_Buffer
+                 (Begin_Range & " is 0.." & Max_Range & ";");
                declare
                   S : constant String := Get_Name_String (Name_Find);
                begin
 
-                  Write_Line ("CM(11:declaration,1,"
-                              & OAV.Image (New_Integer_Value
-                                           (Line_Count), False)
-                              & ",1,"
-                              & OAV.Image (New_Integer_Value (S'Length), False)
-                              & ":"
-                              & S
-                              & ")");
+                  Write_Line
+                    ("CM(11:declaration,1," &
+                     OAV.Image (New_Integer_Value (Line_Count), False) &
+                     ",1," &
+                     OAV.Image (New_Integer_Value (S'Length), False) &
+                     ":" &
+                     S &
+                     ")");
                   Line_Count := Line_Count + 1;
                end;
             end;
 
             --  print others according to IDL
             declare
-               Class_Iter : Node_Id
-                 := OPN.Next_Node
-                 (OPN.First_Node (Class_List
-                                  (Classes
-                                   (Pn_Formalism_Specific_Informations
-                                    (Pn_Generated)))));
+               Class_Iter : Node_Id :=
+                 OPN.Next_Node
+                   (OPN.First_Node
+                      (Class_List
+                         (Classes
+                            (Pn_Formalism_Specific_Informations
+                               (Pn_Generated)))));
             begin
                while Present (Class_Iter) loop
                   case OPN.Kind (Class_Iter) is
                      when K_CPN_Formalism_Class_Item_Enum =>
                         if not Is_Empty (Enum (Class_Iter)) then
-                           Write_Str ("CM(11:declaration,1,"
-                                      & OAV.Image (New_Integer_Value
-                                                   (Line_Count), False)
-                                      & ",1,");
-                           Set_Str_To_Name_Buffer (Get_Name_String
-                                                   (Name (Identifier
-                                                          (Class_Iter)))
-                                                   & " is [");
+                           Write_Str
+                             ("CM(11:declaration,1," &
+                              OAV.Image
+                                (New_Integer_Value (Line_Count),
+                                 False) &
+                              ",1,");
+                           Set_Str_To_Name_Buffer
+                             (Get_Name_String
+                                (Name (Identifier (Class_Iter))) &
+                              " is [");
                            declare
-                              Enum_Iter : Node_Id
-                                := OPN.First_Node (Enum (Class_Iter));
+                              Enum_Iter : Node_Id :=
+                                OPN.First_Node (Enum (Class_Iter));
                            begin
                               while Present (Enum_Iter) loop
                                  Add_Str_To_Name_Buffer
-                                   (Get_Name_String (Name
-                                                     (Identifier
-                                                      (Enum_Iter))));
+                                   (Get_Name_String
+                                      (Name (Identifier (Enum_Iter))));
                                  if OPN.Next_Node (Enum_Iter) /= No_Node then
                                     Add_Str_To_Name_Buffer ("|");
                                  end if;
@@ -440,16 +425,17 @@ package body Ocarina.Backends.PN.Format.Cami is
                               end loop;
                               Add_Str_To_Name_Buffer ("];");
                               declare
-                                 S : constant String
-                                   := Get_Name_String (Name_Find);
+                                 S : constant String :=
+                                   Get_Name_String (Name_Find);
                               begin
 
-                                 Write_Line (OAV.Image
-                                             (New_Integer_Value
-                                              (S'Length), False)
-                                             & ":"
-                                             & S
-                                             & ")");
+                                 Write_Line
+                                   (OAV.Image
+                                      (New_Integer_Value (S'Length),
+                                       False) &
+                                    ":" &
+                                    S &
+                                    ")");
                                  Line_Count := Line_Count + 1;
                               end;
                            end;
@@ -457,37 +443,37 @@ package body Ocarina.Backends.PN.Format.Cami is
                      when K_CPN_Formalism_Class_Item_Range =>
                         declare
                            --  hack since OAV.Image blast name_buffer....
-                           Begin_Range : constant String
-                             := Get_Name_String (Name
-                                                 (Identifier
-                                                  (Class_Iter)));
-                           Max_Range : constant String
-                             := OAV.Image (Get_Value_Type
-                                           (High (Class_Iter)));
-                           Min_Range : constant String
-                             := OAV.Image (Get_Value_Type
-                                           (Low (Class_Iter)));
+                           Begin_Range : constant String :=
+                             Get_Name_String (Name (Identifier (Class_Iter)));
+                           Max_Range : constant String :=
+                             OAV.Image (Get_Value_Type (High (Class_Iter)));
+                           Min_Range : constant String :=
+                             OAV.Image (Get_Value_Type (Low (Class_Iter)));
                         begin
-                           Set_Str_To_Name_Buffer (Begin_Range
-                                                   & " is "
-                                                   & Min_Range
-                                                   & ".."
-                                                   & Max_Range
-                                                   & ";");
+                           Set_Str_To_Name_Buffer
+                             (Begin_Range &
+                              " is " &
+                              Min_Range &
+                              ".." &
+                              Max_Range &
+                              ";");
                            declare
-                              S : constant String
-                                := Get_Name_String (Name_Find);
+                              S : constant String :=
+                                Get_Name_String (Name_Find);
                            begin
 
-                              Write_Line ("CM(11:declaration, 1,"
-                                          & OAV.Image (New_Integer_Value
-                                                       (Line_Count), False)
-                                          & ",1,"
-                                          & OAV.Image (New_Integer_Value
-                                                       (S'Length), False)
-                                          & ":"
-                                          & S
-                                          & ")");
+                              Write_Line
+                                ("CM(11:declaration, 1," &
+                                 OAV.Image
+                                   (New_Integer_Value (Line_Count),
+                                    False) &
+                                 ",1," &
+                                 OAV.Image
+                                   (New_Integer_Value (S'Length),
+                                    False) &
+                                 ":" &
+                                 S &
+                                 ")");
                               Line_Count := Line_Count + 1;
                            end;
                         end;
@@ -501,38 +487,39 @@ package body Ocarina.Backends.PN.Format.Cami is
             end;
          end if;
          --      print domains
-         if not Is_Empty (Domains
-                          (Pn_Formalism_Specific_Informations
-                           (Pn_Generated))) then
-            Write_Line ("CM(11:declaration,1,"
-                        & OAV.Image (New_Integer_Value (Line_Count), False)
-                        & ",1,6:Domain)");
+         if not Is_Empty
+             (Domains (Pn_Formalism_Specific_Informations (Pn_Generated)))
+         then
+            Write_Line
+              ("CM(11:declaration,1," &
+               OAV.Image (New_Integer_Value (Line_Count), False) &
+               ",1,6:Domain)");
             Line_Count := Line_Count + 1;
 
             declare
-               Domain_Iter : Node_Id
-                 := OPN.First_Node (Domains
-                                    (Pn_Formalism_Specific_Informations
-                                     (Pn_Generated)));
+               Domain_Iter : Node_Id :=
+                 OPN.First_Node
+                   (Domains
+                      (Pn_Formalism_Specific_Informations (Pn_Generated)));
             begin
                while Present (Domain_Iter) loop
-                  Write_Str ("CM(11:declaration,1,"
-                             & OAV.Image (New_Integer_Value
-                                          (Line_Count), False)
-                             & ",1,");
+                  Write_Str
+                    ("CM(11:declaration,1," &
+                     OAV.Image (New_Integer_Value (Line_Count), False) &
+                     ",1,");
 
-                  Set_Str_To_Name_Buffer (Get_Name_String
-                                          (Name (Identifier (Domain_Iter)))
-                                          & " is <");
+                  Set_Str_To_Name_Buffer
+                    (Get_Name_String (Name (Identifier (Domain_Iter))) &
+                     " is <");
                   if not Is_Empty (Domain_List (Domain_Iter)) then
                      declare
-                        Domain_Item : Node_Id
-                          := OPN.First_Node (Domain_List (Domain_Iter));
+                        Domain_Item : Node_Id :=
+                          OPN.First_Node (Domain_List (Domain_Iter));
                      begin
                         while Present (Domain_Item) loop
-                           Add_Str_To_Name_Buffer (Get_Name_String
-                                                   (Name (Identifier
-                                                          (Domain_Item))));
+                           Add_Str_To_Name_Buffer
+                             (Get_Name_String
+                                (Name (Identifier (Domain_Item))));
                            if OPN.Next_Node (Domain_Item) /= No_Node then
                               Add_Str_To_Name_Buffer (",");
                            end if;
@@ -543,16 +530,14 @@ package body Ocarina.Backends.PN.Format.Cami is
                   end if;
                   Add_Str_To_Name_Buffer (">;");
                   declare
-                     S : constant String
-                       := Get_Name_String (Name_Find);
+                     S : constant String := Get_Name_String (Name_Find);
                   begin
 
-                     Write_Line (OAV.Image
-                                 (New_Integer_Value
-                                  (S'Length), False)
-                                 & ":"
-                                 & S
-                                 & ")");
+                     Write_Line
+                       (OAV.Image (New_Integer_Value (S'Length), False) &
+                        ":" &
+                        S &
+                        ")");
                      Line_Count := Line_Count + 1;
                   end;
 
@@ -562,58 +547,55 @@ package body Ocarina.Backends.PN.Format.Cami is
             end;
          end if;
          --      print variables
-         if not Is_Empty (Variables (Pn_Formalism_Specific_Informations
-                                     (Pn_Generated))) then
-            Write_Line ("CM(11:declaration,1,"
-                        & OAV.Image (New_Integer_Value (Line_Count), False)
-                        & ",1,3:Var)");
+         if not Is_Empty
+             (Variables (Pn_Formalism_Specific_Informations (Pn_Generated)))
+         then
+            Write_Line
+              ("CM(11:declaration,1," &
+               OAV.Image (New_Integer_Value (Line_Count), False) &
+               ",1,3:Var)");
             Line_Count := Line_Count + 1;
 
             declare
-               Var_Iter : Node_Id
-                 := OPN.First_Node (Variables
-                                    (Pn_Formalism_Specific_Informations
-                                     (Pn_Generated)));
+               Var_Iter : Node_Id :=
+                 OPN.First_Node
+                   (Variables
+                      (Pn_Formalism_Specific_Informations (Pn_Generated)));
             begin
                while Present (Var_Iter) loop
                   if not Is_Empty (Variable_List (Var_Iter)) then
-                     Write_Str ("CM(11:declaration,1,"
-                                 & OAV.Image (New_Integer_Value
-                                              (Line_Count), False)
-                                 & ",1,");
+                     Write_Str
+                       ("CM(11:declaration,1," &
+                        OAV.Image (New_Integer_Value (Line_Count), False) &
+                        ",1,");
                      Set_Str_To_Name_Buffer (" "); --  to clear name_buffer
                      declare
-                        Var_Item : Node_Id
-                          := OPN.First_Node (Variable_List (Var_Iter));
+                        Var_Item : Node_Id :=
+                          OPN.First_Node (Variable_List (Var_Iter));
                      begin
                         while Present (Var_Item) loop
-                           Add_Str_To_Name_Buffer (Get_Name_String
-                                                   (Name
-                                                    (Identifier (Var_Item))));
+                           Add_Str_To_Name_Buffer
+                             (Get_Name_String (Name (Identifier (Var_Item))));
                            if OPN.Next_Node (Var_Item) /= No_Node then
                               Add_Str_To_Name_Buffer (", ");
                            end if;
                            --  next
                            Var_Item := OPN.Next_Node (Var_Item);
                         end loop;
-                        Add_Str_To_Name_Buffer (" in "
-                                                & Get_Name_String
-                                                (Name
-                                                 (Identifier
-                                                  (Class_Type
-                                                   (Var_Iter))))
-                                                & ";");
+                        Add_Str_To_Name_Buffer
+                          (" in " &
+                           Get_Name_String
+                             (Name (Identifier (Class_Type (Var_Iter)))) &
+                           ";");
                         declare
-                           S : constant String
-                             := Get_Name_String (Name_Find);
+                           S : constant String := Get_Name_String (Name_Find);
                         begin
 
-                           Write_Line (OAV.Image
-                                       (New_Integer_Value
-                                        (S'Length), False)
-                                       & ":"
-                                       & S
-                                       & ")");
+                           Write_Line
+                             (OAV.Image (New_Integer_Value (S'Length), False) &
+                              ":" &
+                              S &
+                              ")");
                            Line_Count := Line_Count + 1;
                         end;
                      end;

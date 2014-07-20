@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -78,9 +78,7 @@ package body Ocarina.Instances.Components is
    package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Entities;
 
-   procedure Add_Component_Instance
-     (Component : Node_Id;
-      Instance  : Node_Id);
+   procedure Add_Component_Instance (Component : Node_Id; Instance : Node_Id);
    --  Reference a component instance that has been instantiateed from
    --  Component.
 
@@ -92,8 +90,9 @@ package body Ocarina.Instances.Components is
      (Component : Node_Id;
       Instance  : Node_Id)
    is
-      pragma Assert (Kind (Component) = K_Component_Implementation
-                     or else Kind (Component) = K_Component_Type);
+      pragma Assert
+        (Kind (Component) = K_Component_Implementation
+         or else Kind (Component) = K_Component_Type);
       pragma Assert (Kind (Instance) = K_Component_Instance);
    begin
       if Is_Empty (ATN.Instances (Component)) then
@@ -108,14 +107,14 @@ package body Ocarina.Instances.Components is
    ---------------------------
 
    function Instantiate_Component
-     (Instance_Root       : Node_Id;
-      Component           : Node_Id;
-      Existing_Instance   : Node_Id := No_Node)
-     return Node_Id
+     (Instance_Root     : Node_Id;
+      Component         : Node_Id;
+      Existing_Instance : Node_Id := No_Node) return Node_Id
    is
       pragma Assert (AIN.Kind (Instance_Root) = K_Architecture_Instance);
-      pragma Assert (ATN.Kind (Component) = K_Component_Implementation
-                     or else ATN.Kind (Component) = K_Component_Type);
+      pragma Assert
+        (ATN.Kind (Component) = K_Component_Implementation
+         or else ATN.Kind (Component) = K_Component_Type);
 
       New_Instance       : Node_Id := Existing_Instance;
       List_Node          : Node_Id;
@@ -126,8 +125,8 @@ package body Ocarina.Instances.Components is
    begin
       --  Getting the component namespace
 
-      Namespace_Instance := Instantiate_Namespace
-        (Instance_Root, ATN.Namespace (Component));
+      Namespace_Instance :=
+        Instantiate_Namespace (Instance_Root, ATN.Namespace (Component));
 
       --  Annotate the component with itself
 
@@ -140,8 +139,9 @@ package body Ocarina.Instances.Components is
          AIN.Set_Identifier
            (New_Instance,
             AINU.Duplicate_Identifier (ATN.Identifier (Component)));
-         AIN.Set_Corresponding_Entity (AIN.Identifier (New_Instance),
-                                       New_Instance);
+         AIN.Set_Corresponding_Entity
+           (AIN.Identifier (New_Instance),
+            New_Instance);
          AIN.Set_Namespace (New_Instance, Namespace_Instance);
       end if;
 
@@ -200,8 +200,8 @@ package body Ocarina.Instances.Components is
          --  we have to instantiate the corresponding component type.
 
          declare
-            Component_Type : constant Node_Id := ATN.Corresponding_Entity
-              (Component_Type_Identifier (Component));
+            Component_Type : constant Node_Id :=
+              ATN.Corresponding_Entity (Component_Type_Identifier (Component));
 
          begin
             --  Annotate the component type node with the
@@ -211,8 +211,11 @@ package body Ocarina.Instances.Components is
 
             --  Instantiate the component type
 
-            New_Instance := Instantiate_Component
-              (Instance_Root, Component_Type, New_Instance);
+            New_Instance :=
+              Instantiate_Component
+                (Instance_Root,
+                 Component_Type,
+                 New_Instance);
          end;
       end if;
 
@@ -231,14 +234,15 @@ package body Ocarina.Instances.Components is
             List_Node := ATN.First_Node (ATN.Subcomponents (Component));
 
             while Present (List_Node) loop
-               if No (Get_First_Homonym_Instance
+               if No
+                   (Get_First_Homonym_Instance
                       (AIN.Subcomponents (New_Instance),
                        List_Node))
                then
                   --  We do not re-instantiate subcomponent refinements
 
-                  Instance_Node := Instantiate_Subcomponent
-                    (Instance_Root, List_Node);
+                  Instance_Node :=
+                    Instantiate_Subcomponent (Instance_Root, List_Node);
 
                   if Present (Instance_Node) then
                      --  Annotate the corresponding component of the
@@ -261,11 +265,12 @@ package body Ocarina.Instances.Components is
                      --  We apply the properties to the component
                      --  corresponding to the subcomponent.
 
-                     Success := Apply_Properties
-                       (Instance_Root,
-                        Corresponding_Instance (Instance_Node),
-                        ATN.Properties (List_Node),
-                        Override_Mode => True)
+                     Success :=
+                       Apply_Properties
+                         (Instance_Root,
+                          Corresponding_Instance (Instance_Node),
+                          ATN.Properties (List_Node),
+                          Override_Mode => True)
                        and then Success;
 
                   else
@@ -282,23 +287,25 @@ package body Ocarina.Instances.Components is
 
          if not ATNU.Is_Empty (ATN.Calls (Component)) then
             if AIN.Calls (New_Instance) = No_List then
-               AIN.Set_Calls (New_Instance,
-                              New_List (K_List_Id, No_Location));
+               AIN.Set_Calls (New_Instance, New_List (K_List_Id, No_Location));
             end if;
 
             List_Node := ATN.First_Node (ATN.Calls (Component));
 
             while Present (List_Node) loop
-               if Get_First_Homonym_Instance (AIN.Calls (New_Instance),
-                                              List_Node) = No_Node
+               if Get_First_Homonym_Instance
+                   (AIN.Calls (New_Instance),
+                    List_Node) =
+                 No_Node
                then
-                  Instance_Node := Instantiate_Call_Sequence (Instance_Root,
-                                                         List_Node);
+                  Instance_Node :=
+                    Instantiate_Call_Sequence (Instance_Root, List_Node);
 
                   if Present (Instance_Node) then
                      Set_Parent_Component (Instance_Node, New_Instance);
-                     Append_Node_To_List (Instance_Node,
-                                          AIN.Calls (New_Instance));
+                     Append_Node_To_List
+                       (Instance_Node,
+                        AIN.Calls (New_Instance));
                   else
                      Display_Instantiation_Error (List_Node);
                      Success := False;
@@ -313,26 +320,30 @@ package body Ocarina.Instances.Components is
 
          if Refines_Type (Component) /= No_List then
             if AIN.Features (New_Instance) = No_List then
-               AIN.Set_Features (New_Instance,
-                                 New_List (K_List_Id, No_Location));
+               AIN.Set_Features
+                 (New_Instance,
+                  New_List (K_List_Id, No_Location));
             end if;
 
             List_Node := ATN.First_Node (ATN.Refines_Type (Component));
 
             while Present (List_Node) loop
-               if No (Get_First_Homonym
-                      (AIN.Features (New_Instance),
-                       List_Node))
+               if No
+                   (Get_First_Homonym (AIN.Features (New_Instance), List_Node))
                then
-                  Instance_Node := Instantiate_Feature
-                    (Instance_Root, List_Node, New_Instance);
+                  Instance_Node :=
+                    Instantiate_Feature
+                      (Instance_Root,
+                       List_Node,
+                       New_Instance);
 
                   if Present (Instance_Node) then
-                     Success := Apply_Properties
-                       (Instance_Root,
-                        Instance_Node,
-                        ATN.Properties (List_Node),
-                        Override_Mode => True)
+                     Success :=
+                       Apply_Properties
+                         (Instance_Root,
+                          Instance_Node,
+                          ATN.Properties (List_Node),
+                          Override_Mode => True)
                        and then Success;
 
                      Append_Node_To_List
@@ -352,26 +363,32 @@ package body Ocarina.Instances.Components is
 
          if ATN.Features (Component) /= No_List then
             if AIN.Features (New_Instance) = No_List then
-               AIN.Set_Features (New_Instance,
-                                 New_List (K_List_Id, No_Location));
+               AIN.Set_Features
+                 (New_Instance,
+                  New_List (K_List_Id, No_Location));
             end if;
 
             List_Node := ATN.First_Node (ATN.Features (Component));
 
             while Present (List_Node) loop
-               if No (Get_First_Homonym_Instance
+               if No
+                   (Get_First_Homonym_Instance
                       (AIN.Features (New_Instance),
                        List_Node))
                then
-                  Instance_Node := Instantiate_Feature
-                    (Instance_Root, List_Node, New_Instance);
+                  Instance_Node :=
+                    Instantiate_Feature
+                      (Instance_Root,
+                       List_Node,
+                       New_Instance);
 
                   if Present (Instance_Node) then
-                     Success := Apply_Properties
-                       (Instance_Root,
-                        Instance_Node,
-                        ATN.Properties (List_Node),
-                        Override_Mode => True)
+                     Success :=
+                       Apply_Properties
+                         (Instance_Root,
+                          Instance_Node,
+                          ATN.Properties (List_Node),
+                          Override_Mode => True)
                        and then Success;
 
                      Append_Node_To_List
@@ -391,12 +408,14 @@ package body Ocarina.Instances.Components is
 
                   --  We just override the properties
 
-                  Success := Apply_Properties
-                    (Instance_Root,
-                     Get_First_Homonym_Instance
-                     (AIN.Features (New_Instance), List_Node),
-                     ATN.Properties (List_Node),
-                     Override_Mode => False)
+                  Success :=
+                    Apply_Properties
+                      (Instance_Root,
+                       Get_First_Homonym_Instance
+                         (AIN.Features (New_Instance),
+                          List_Node),
+                       ATN.Properties (List_Node),
+                       Override_Mode => False)
                     and then Success;
 
                end if;
@@ -411,8 +430,8 @@ package body Ocarina.Instances.Components is
 
       if Present (Parent (Component)) then
          declare
-            The_Parent : constant Node_Id := ATE.Get_Referenced_Entity
-              (Parent (Component));
+            The_Parent : constant Node_Id :=
+              ATE.Get_Referenced_Entity (Parent (Component));
 
          begin
             --  Annotate the parent component with the current
@@ -422,8 +441,8 @@ package body Ocarina.Instances.Components is
 
             --  Instantiate the parent component
 
-            New_Instance := Instantiate_Component
-              (Instance_Root, The_Parent, New_Instance);
+            New_Instance :=
+              Instantiate_Component (Instance_Root, The_Parent, New_Instance);
          end;
       end if;
 
@@ -440,23 +459,29 @@ package body Ocarina.Instances.Components is
 
          if not ATNU.Is_Empty (ATN.Connections (Component)) then
             if AIN.Connections (New_Instance) = No_List then
-               AIN.Set_Connections (New_Instance,
-                                    New_List (K_List_Id, No_Location));
+               AIN.Set_Connections
+                 (New_Instance,
+                  New_List (K_List_Id, No_Location));
             end if;
 
             List_Node := ATN.First_Node (ATN.Connections (Component));
 
             while Present (List_Node) loop
-               if No (Get_First_Homonym_Instance
+               if No
+                   (Get_First_Homonym_Instance
                       (AIN.Connections (New_Instance),
                        List_Node))
                then
-                  Instance_Node := Instantiate_Connection
-                    (Instance_Root, New_Instance, List_Node);
+                  Instance_Node :=
+                    Instantiate_Connection
+                      (Instance_Root,
+                       New_Instance,
+                       List_Node);
 
                   if Present (Instance_Node) then
-                     Append_Node_To_List (Instance_Node,
-                                          AIN.Connections (New_Instance));
+                     Append_Node_To_List
+                       (Instance_Node,
+                        AIN.Connections (New_Instance));
                   else
                      Display_Instantiation_Error (List_Node);
                      Success := False;
@@ -471,13 +496,13 @@ package body Ocarina.Instances.Components is
 
          if not ATNU.Is_Empty (ATN.Modes (Component)) then
             if AIN.Modes (New_Instance) = No_List then
-               AIN.Set_Modes (New_Instance,
-                              New_List (K_List_Id, No_Location));
+               AIN.Set_Modes (New_Instance, New_List (K_List_Id, No_Location));
             end if;
 
-            if AIN.Mode_Transitions (New_Instance) = No_List then
-               Set_Mode_Transitions (New_Instance,
-                                     New_List (K_List_Id, No_Location));
+            if AIN.Mode_transitions (New_Instance) = No_List then
+               Set_Mode_transitions
+                 (New_Instance,
+                  New_List (K_List_Id, No_Location));
             end if;
 
             --  We must instantiate all modes before any mode
@@ -488,19 +513,18 @@ package body Ocarina.Instances.Components is
 
             while Present (List_Node) loop
                if ATN.Kind (List_Node) = K_Mode then
-                  Instance_Node := Instantiate_Mode
-                    (Instance_Root,
-                     New_Instance,
-                     List_Node);
+                  Instance_Node :=
+                    Instantiate_Mode (Instance_Root, New_Instance, List_Node);
 
                   --  Apply the properties to the instantiated mode
 
                   if Present (Instance_Node) then
-                     Success := Apply_Properties
-                       (Instance_Root,
-                        Instance_Node,
-                        ATN.Properties (List_Node),
-                        Override_Mode => True)
+                     Success :=
+                       Apply_Properties
+                         (Instance_Root,
+                          Instance_Node,
+                          ATN.Properties (List_Node),
+                          Override_Mode => True)
                        and then Success;
                   end if;
 
@@ -523,15 +547,16 @@ package body Ocarina.Instances.Components is
 
             while Present (List_Node) loop
                if Kind (List_Node) = K_Mode_Transition then
-                  Instance_Node := Instantiate_Mode_Transition
-                    (Instance_Root,
-                     New_Instance,
-                     List_Node);
+                  Instance_Node :=
+                    Instantiate_Mode_Transition
+                      (Instance_Root,
+                       New_Instance,
+                       List_Node);
 
                   if Present (Instance_Node) then
                      Append_Node_To_List
                        (Instance_Node,
-                        AIN.Mode_Transitions (New_Instance));
+                        AIN.Mode_transitions (New_Instance));
                   else
                      Display_Instantiation_Error (Component);
                      Success := False;
@@ -548,20 +573,19 @@ package body Ocarina.Instances.Components is
          --  when instantiateing the properties because it is a little
          --  bit more complicated.
 
-         Instantiate_In_Modes
-           (New_Instance, AIN.Subcomponents (New_Instance));
-         Instantiate_In_Modes (New_Instance,  AIN.Calls (New_Instance));
-         Instantiate_In_Modes
-           (New_Instance, AIN.Connections (New_Instance));
+         Instantiate_In_Modes (New_Instance, AIN.Subcomponents (New_Instance));
+         Instantiate_In_Modes (New_Instance, AIN.Calls (New_Instance));
+         Instantiate_In_Modes (New_Instance, AIN.Connections (New_Instance));
       end if;
 
       --  Property associations of the component instance
 
-      Success := Apply_Properties
-        (Instance_Root,
-         New_Instance,
-         ATN.Properties (Component),
-         Override_Mode => True)
+      Success :=
+        Apply_Properties
+          (Instance_Root,
+           New_Instance,
+           ATN.Properties (Component),
+           Override_Mode => True)
         and then Success;
 
       if not Success then

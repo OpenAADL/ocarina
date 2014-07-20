@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -65,8 +65,9 @@ package Ocarina.Backends.Utils is
    -- Misc --
    ----------
 
-   function Normalize_Name (Name : Name_Id; Ada_Style : Boolean := False)
-                           return Name_Id;
+   function Normalize_Name
+     (Name      : Name_Id;
+      Ada_Style : Boolean := False) return Name_Id;
    --  Rewrite Name so that it only contains characters that are legal
    --  in most languages: a-z, 0-9, _.
    --  If Ada_Style is set to True, '.' is replaced by "__"
@@ -138,8 +139,8 @@ package Ocarina.Backends.Utils is
    --  destination.
 
    function Get_Destination_Ports
-      (P             : Node_Id;
-      Custom_Parent  : Node_Id := No_Node) return List_Id;
+     (P             : Node_Id;
+      Custom_Parent : Node_Id := No_Node) return List_Id;
    --  Return a node container list of all the THREAD IN ports that
    --  are endpoint sources of the OUT port P. If the connection path
    --  between P and one of its destinations involves a connection
@@ -164,13 +165,11 @@ package Ocarina.Backends.Utils is
    --  subprogram call E.
 
    function Get_Device_Of_Process
-     (Bus : Node_Id; Process : Node_Id)
-     return Node_Id;
+     (Bus     : Node_Id;
+      Process : Node_Id) return Node_Id;
    --  Return the device the allows access to Process through Bus
 
-   function Is_Connected
-     (Bus : Node_Id; Device : Node_Id)
-     return Boolean;
+   function Is_Connected (Bus : Node_Id; Device : Node_Id) return Boolean;
    --  Return true iff Device is used to interact with Bus
 
    type Comparison_Kind is (By_Name, By_Node);
@@ -219,13 +218,10 @@ package Ocarina.Backends.Utils is
       H_RTSJ_Subprogram_Spec,
       H_RTSJ_Subprogram_Body,
       H_RTSJ_Type,
-      H_RTSJ_Deployment
-     );
+      H_RTSJ_Deployment);
    --  These are tags to precise the meaning of "handle"
 
-   type Connection_Pattern_Kind is
-      (Inter_Process,
-       Intra_Process);
+   type Connection_Pattern_Kind is (Inter_Process, Intra_Process);
 
    procedure Set_Handling
      (E          : Node_Id;
@@ -238,8 +234,7 @@ package Ocarina.Backends.Utils is
    function Get_Handling
      (E          : Node_Id;
       Comparison : Comparison_Kind;
-      Handling   : Handling_Kind)
-     return Node_Id;
+      Handling   : Handling_Kind) return Node_Id;
    --  If the AADL node E has been already 'Handling'-handled by
    --  'Comparison', then return the Ada node which is the handling
    --  result. Otherwise, return No_Node.
@@ -265,14 +260,10 @@ package Ocarina.Backends.Utils is
    --  new binding node. The further calls will return the node
    --  created at the first call.
 
-   procedure Bind_Transport_API
-     (P : Node_Id;
-      T : Supported_Transport_APIs);
+   procedure Bind_Transport_API (P : Node_Id; T : Supported_Transport_APIs);
    --  Create a link between the process instance P and the transport layer T
 
-   function Fetch_Transport_API
-     (P : Node_Id)
-     return Supported_Transport_APIs;
+   function Fetch_Transport_API (P : Node_Id) return Supported_Transport_APIs;
    --  Fetch a transport layer bound using 'Bind_Transport_API'
 
    function Map_Ada_Subprogram_Spec (S : Node_Id) return Node_Id;
@@ -285,15 +276,13 @@ package Ocarina.Backends.Utils is
 
    function Map_Ada_Call_Seq_Subprogram_Spec
      (Spg : Node_Id;
-      Seq : Node_Id)
-     return Node_Id;
+      Seq : Node_Id) return Node_Id;
    --  Create the spec of the subprogram generated for a call sequence
    --  of a hybrid subprogram.
 
    function Map_Ada_Call_Seq_Subprogram_Body
      (Spg : Node_Id;
-      Seq : Node_Id)
-     return Node_Id;
+      Seq : Node_Id) return Node_Id;
    --  Create the body of the subprogram generated for a call sequence
    --  of a hybrid subprogram.
 
@@ -333,8 +322,7 @@ package Ocarina.Backends.Utils is
    function Map_Ada_Full_Parameter_Name
      (Spg    : Node_Id;
       P      : Node_Id;
-      Suffix : Character := ASCII.NUL)
-     return Name_Id;
+      Suffix : Character := ASCII.NUL) return Name_Id;
    --  Maps a name by concatening the subprogram instance full Spg
    --  name to the parameter instance P name (separated by '_') and
    --  verifying that the resulting name is an Ada-valid identifier
@@ -342,8 +330,7 @@ package Ocarina.Backends.Utils is
 
    function Map_Ada_Full_Feature_Name
      (E      : Node_Id;
-      Suffix : Character := ASCII.NUL)
-     return Name_Id;
+      Suffix : Character := ASCII.NUL) return Name_Id;
    --  Maps a name by concatening the full name of the feature
    --  instance E and to Suffix (separated by '_') and verifying that
    --  the resulting name is an Ada-valid identifier name. Any root
@@ -351,20 +338,17 @@ package Ocarina.Backends.Utils is
 
    function Map_Ada_Enumerator_Name
      (E      : Node_Id;
-      Server : Boolean := False)
-     return Name_Id;
+      Server : Boolean := False) return Name_Id;
    --  Maps an Ada-valid enumerator name from the component or
    --  subcomponent instance E. If Server is True, appends the _Server
    --  suffix to the enumerator identifier.
 
    function Map_Ada_Defining_Identifier
      (A      : Node_Id;
-      Suffix : String := "")
-     return Node_Id;
+      Suffix : String := "") return Node_Id;
    function Map_Ada_Defining_Identifier
      (A      : Node_Id;
-      Suffix : String := "")
-     return Name_Id;
+      Suffix : String := "") return Name_Id;
    --  Maps an Ada-valid defining identifier form the name of the
    --  given AADL entity. If suffix is not nul, concat it to the
    --  obtained name and separate them by a '_'.
@@ -375,8 +359,7 @@ package Ocarina.Backends.Utils is
 
    function Map_Ada_Protected_Aggregate_Identifier
      (S : Node_Id;
-      A : Node_Id)
-     return Node_Id;
+      A : Node_Id) return Node_Id;
    --  Maps an identifier corresponding to the subcomponent A of the
    --  required data S.
 
@@ -397,8 +380,7 @@ package Ocarina.Backends.Utils is
 
    function Map_Ada_Namespace_Defining_Identifier
      (N      : Node_Id;
-      Prefix : String  := "")
-     return Node_Id;
+      Prefix : String := "") return Node_Id;
    --  Creates an Ada defining identifier corresponding to the
    --  namespace instance E. The parent unit names of the Identifier
    --  are correctly placed depending on the namespace hierarchy. If
@@ -428,12 +410,11 @@ package Ocarina.Backends.Utils is
    function Get_First_Processor (P : Node_Id) return Node_Id;
    --  Return the first processor of an AADL model
 
-   function Get_Connection_Pattern (E : Node_Id)
-         return Connection_Pattern_Kind;
+   function Get_Connection_Pattern
+     (E : Node_Id) return Connection_Pattern_Kind;
    --  Return the connection pattern for a port
 
-   function "<=" (T1 : Time_Type; T2 : Time_Type)
-         return Boolean;
+   function "<=" (T1 : Time_Type; T2 : Time_Type) return Boolean;
    --  Compare two times. Returns true if the first value is less than
    --  the second value.
 
@@ -446,8 +427,9 @@ package Ocarina.Backends.Utils is
    function Is_Protected_Data (Data_Component : Node_Id) return Boolean;
    --  Indicate if a data should be protected by mutexes/semaphores.
 
-   function Get_Port_By_Name (Port : Node_Id; Component : Node_Id)
-      return Node_Id;
+   function Get_Port_By_Name
+     (Port      : Node_Id;
+      Component : Node_Id) return Node_Id;
    --  Returns a port in Component parameter that has the same
    --  name of the Port parameter.
 
@@ -461,14 +443,16 @@ package Ocarina.Backends.Utils is
    --  and takes a port that is stored in the INSTANCE model.
 
    function Look_For_Property_In_Declarative
-      (Component : Node_Id; Property_Name : String) return Node_Id;
+     (Component     : Node_Id;
+      Property_Name : String) return Node_Id;
    --  Look_For_Property_In_Declarative is just a function that
    --  browses a component and its inherited/refined components
    --  and look for a particular property. It is just a function
    --  that is used to bypass bugs on properties in the instance model.
 
    function Look_For_Subcomponent_In_Declarative
-      (Component : Node_Id; Subcomponent_Name : String) return Node_Id;
+     (Component         : Node_Id;
+      Subcomponent_Name : String) return Node_Id;
    --  Look_For_Subcomponent_In_Declarative search a subcomponent
    --  named like Subcomponent_Name in Component. It returns a Node_Id
    --  with the subcomponent if it exists or return No_Node if it fails.
@@ -482,7 +466,7 @@ package Ocarina.Backends.Utils is
    --  Port is a node in the instance model.
 
    function Get_Instance_Type_Associated_With_Virtual_Bus
-      (Port : Node_Id) return Node_Id;
+     (Port : Node_Id) return Node_Id;
    --  Returns the instance component of the data associated with
    --  a virtual bus.
 
@@ -490,13 +474,13 @@ package Ocarina.Backends.Utils is
    --  Indicate is an inter-partition port should use
    --  virtual bus mechanisms, browsing the components hierarchy.
 
-   function Get_Corresponding_Port_In_Component (Port : Node_Id)
-      return Node_Id;
+   function Get_Corresponding_Port_In_Component
+     (Port : Node_Id) return Node_Id;
    --  Return the port connected the port given in parameter
    --  inside the component.
 
-   function Process_Use_Defaults_Sockets (The_Process : Node_Id)
-      return Boolean;
+   function Process_Use_Defaults_Sockets
+     (The_Process : Node_Id) return Boolean;
 
    function Get_Associated_Bus (Port : Node_Id) return Node_Id;
 

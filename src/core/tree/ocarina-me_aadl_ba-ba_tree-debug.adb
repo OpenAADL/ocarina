@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,7 +35,7 @@ with GNAT.Table;
 
 with Charset;
 with Locations;
-with Namet;
+with Ocarina.Namet;
 with Utils;
 
 with Ocarina.Annotations;
@@ -44,7 +44,7 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Debug is
 
    use Charset;
    use Locations;
-   use Namet;
+   use Ocarina.Namet;
    use Utils;
    use Ocarina.Annotations;
 
@@ -187,9 +187,9 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Debug is
       end if;
       N_Indents := N_Indents + 1;
       W_Indents;
-      Write_Str  (A);
+      Write_Str (A);
       Write_Char (' ');
-      Write_Str  (K);
+      Write_Str (K);
       Write_Char (' ');
       if K = "Name_Id" then
          Write_Line (Quoted (V));
@@ -241,9 +241,9 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Debug is
    procedure W_Node_Header (N : Node_Id) is
    begin
       W_Indents;
-      Write_Int  (Int (N));
+      Write_Int (Int (N));
       Write_Char (' ');
-      Write_Str  (Image (Kind (N)));
+      Write_Str (Image (Kind (N)));
       Write_Char (' ');
       Write_Line (Image (Loc (N)));
    end W_Node_Header;
@@ -333,9 +333,9 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Debug is
             W_Indents;
             Write_Line ("Node :" & Node_Id'Image (Annotation_Node (A)));
 
-            if Present (Annotation_Node (A)) and then
-              Recursive and then not
-              Is_Dumped (Annotation_Node (A))
+            if Present (Annotation_Node (A))
+              and then Recursive
+              and then not Is_Dumped (Annotation_Node (A))
             then
                N_Indents := N_Indents + 1;
                Internal_Dump_Annotations (Annotation_Node (A));

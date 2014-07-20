@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,15 +31,15 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Charset;
 with Utils;
 
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
+package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
 
-   use Namet;
+   use Ocarina.Namet;
    use Charset;
    use Utils;
 
@@ -79,54 +79,53 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    ------------------------------------------------
 
    function Value_Of_Property_Association_Is_Undefined
-     (Property : Node_Id)
-     return Boolean
+     (Property : Node_Id) return Boolean
    is
       pragma Assert (Kind (Property) = K_Property_Association);
       pragma Assert
         (Single_Value (Property_Association_Value (Property)) /= No_Node
          or else
-         Multi_Value (Property_Association_Value (Property)) /= No_List);
+           Multi_Value (Property_Association_Value (Property)) /=
+           No_List);
    begin
       --  the value of a property association is undefined if there is
       --  no expanded value, and the raw values either are empty, or
       --  if the expanded values are set to an empty list
 
-      return Expanded_Single_Value
-        (Property_Association_Value (Property)) = No_Node
-        and then (Expanded_Multi_Value
-                  (Property_Association_Value (Property)) = No_List);
+      return Expanded_Single_Value (Property_Association_Value (Property)) =
+        No_Node
+        and then
+        (Expanded_Multi_Value (Property_Association_Value (Property)) =
+         No_List);
    end Value_Of_Property_Association_Is_Undefined;
 
    --------------------------------
    -- Type_Of_Property_Is_A_List --
    --------------------------------
 
-   function Type_Of_Property_Is_A_List
-     (Property : Node_Id)
-     return Boolean
-   is
+   function Type_Of_Property_Is_A_List (Property : Node_Id) return Boolean is
       pragma Assert
-        (Kind (Property) = K_Property_Association      or else
-         Kind (Property) = K_Property_Definition_Declaration or else
-         Kind (Property) = K_Property_Type_Declaration);
+        (Kind (Property) = K_Property_Association
+         or else Kind (Property) = K_Property_Definition_Declaration
+         or else Kind (Property) = K_Property_Type_Declaration);
    begin
       case Kind (Property) is
          when K_Property_Association =>
-            if Expanded_Single_Value
-              (Property_Association_Value (Property)) = No_Node
+            if Expanded_Single_Value (Property_Association_Value (Property)) =
+              No_Node
               and then
-              Expanded_Multi_Value
-              (Property_Association_Value (Property)) = No_List
+                Expanded_Multi_Value (Property_Association_Value (Property)) =
+                No_List
             then
-               return Multi_Value
-                 (Property_Association_Value (Property)) /= No_List;
+               return Multi_Value (Property_Association_Value (Property)) /=
+                 No_List;
 
-               --  If the property value has not been expanded yet, we
-               --  use the raw property value.
+            --  If the property value has not been expanded yet, we
+            --  use the raw property value.
             else
                return Expanded_Multi_Value
-                 (Property_Association_Value (Property)) /= No_List;
+                   (Property_Association_Value (Property)) /=
+                 No_List;
             end if;
 
          when K_Property_Definition_Declaration =>
@@ -146,33 +145,34 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
 
    function Get_Type_Of_Property
      (Property             : Node_Id;
-      Use_Evaluated_Values : Boolean := True)
-     return Property_Type
+      Use_Evaluated_Values : Boolean := True) return Property_Type
    is
       pragma Assert
-        (Kind (Property) = K_Property_Association      or else
-         Kind (Property) = K_Property_Definition_Declaration or else
-         Kind (Property) = K_Property_Type_Declaration);
+        (Kind (Property) = K_Property_Association
+         or else Kind (Property) = K_Property_Definition_Declaration
+         or else Kind (Property) = K_Property_Type_Declaration);
 
    begin
       case Kind (Property) is
          when K_Property_Association =>
             return Get_Type_Of_Property_Value
-              (Property_Association_Value (Property), Use_Evaluated_Values);
+                (Property_Association_Value (Property),
+                 Use_Evaluated_Values);
 
          when K_Property_Definition_Declaration =>
             declare
                Associated_Type : Node_Id;
             begin
                if Use_Evaluated_Values
-                 and then Expanded_Type_Designator
-                 (Property_Name_Type (Property)) /= No_Node
+                 and then
+                   Expanded_Type_Designator (Property_Name_Type (Property)) /=
+                   No_Node
                then
-                  Associated_Type := Expanded_Type_Designator
-                    (Property_Name_Type (Property));
+                  Associated_Type :=
+                    Expanded_Type_Designator (Property_Name_Type (Property));
                else
-                  Associated_Type := Property_Type_Designator
-                    (Property_Name_Type (Property));
+                  Associated_Type :=
+                    Property_Type_Designator (Property_Name_Type (Property));
                end if;
 
                case Kind (Associated_Type) is
@@ -255,24 +255,23 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
 
    function Get_Type_Of_Property_Value
      (Property_Value       : Node_Id;
-      Use_Evaluated_Values : Boolean := True)
-     return Property_Type
+      Use_Evaluated_Values : Boolean := True) return Property_Type
    is
       pragma Assert
-        (No (Property_Value)                                or else
-         Kind (Property_Value) = K_Property_Value           or else
-         Kind (Property_Value) = K_Literal                  or else
-         Kind (Property_Value) = K_Minus_Numeric_Term       or else
-         Kind (Property_Value) = K_Signed_AADLNumber        or else
-         Kind (Property_Value) = K_Number_Range_Term        or else
-         Kind (Property_Value) = K_Not_Boolean_Term         or else
-         Kind (Property_Value) = K_And_Boolean_Term         or else
-         Kind (Property_Value) = K_Or_Boolean_Term          or else
-         Kind (Property_Value) = K_Parenthesis_Boolean_Term or else
-         Kind (Property_Value) = K_Reference_Term           or else
-         Kind (Property_Value) = K_Property_Term            or else
-         Kind (Property_Value) = K_Enumeration_Term         or else
-         Kind (Property_Value) = K_Component_Classifier_Term);
+        (No (Property_Value)
+         or else Kind (Property_Value) = K_Property_Value
+         or else Kind (Property_Value) = K_Literal
+         or else Kind (Property_Value) = K_Minus_Numeric_Term
+         or else Kind (Property_Value) = K_Signed_AADLNumber
+         or else Kind (Property_Value) = K_Number_Range_Term
+         or else Kind (Property_Value) = K_Not_Boolean_Term
+         or else Kind (Property_Value) = K_And_Boolean_Term
+         or else Kind (Property_Value) = K_Or_Boolean_Term
+         or else Kind (Property_Value) = K_Parenthesis_Boolean_Term
+         or else Kind (Property_Value) = K_Reference_Term
+         or else Kind (Property_Value) = K_Property_Term
+         or else Kind (Property_Value) = K_Enumeration_Term
+         or else Kind (Property_Value) = K_Component_Classifier_Term);
 
       Value_Type : Property_Type;
       Value_Node : Node_Id;
@@ -288,9 +287,9 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
                Value_Node :=
                  First_Node (Expanded_Multi_Value (Property_Value));
 
-               --  If we are dealing with a list of value, only
-               --  consider the first value, assuming the other ones
-               --  are of the same type.
+            --  If we are dealing with a list of value, only
+            --  consider the first value, assuming the other ones
+            --  are of the same type.
             else
                Value_Node := No_Node;
             end if;
@@ -326,20 +325,24 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
                Value_Type := Get_Type_Of_Literal (Value_Node);
 
             when K_Minus_Numeric_Term =>
-               Value_Type := Get_Type_Of_Property_Value
-                 (Numeric_Term (Value_Node), Use_Evaluated_Values);
+               Value_Type :=
+                 Get_Type_Of_Property_Value
+                   (Numeric_Term (Value_Node),
+                    Use_Evaluated_Values);
 
             when K_Signed_AADLNumber =>
-               Value_Type := Get_Type_Of_Property_Value
-                 (Number_Value (Value_Node), Use_Evaluated_Values);
+               Value_Type :=
+                 Get_Type_Of_Property_Value
+                   (Number_Value (Value_Node),
+                    Use_Evaluated_Values);
 
             when K_Number_Range_Term =>
                Value_Type := PT_Range;
 
-            when K_Not_Boolean_Term
-              | K_And_Boolean_Term
-              | K_Or_Boolean_Term
-              | K_Parenthesis_Boolean_Term =>
+            when K_Not_Boolean_Term      |
+              K_And_Boolean_Term         |
+              K_Or_Boolean_Term          |
+              K_Parenthesis_Boolean_Term =>
                Value_Type := PT_Boolean_Expression;
 
             when K_Reference_Term =>
@@ -369,16 +372,14 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    -----------------------------------
 
    function Get_Integer_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Unsigned_Long_Long
+     (Property_Value : Node_Id) return Unsigned_Long_Long
    is
    begin
       case Kind (Property_Value) is
          when K_Literal =>
             return Get_Value_Type (Value (Property_Value)).IVal;
          when K_Signed_AADLNumber =>
-            return Get_Value_Type
-              (Value (Number_Value (Property_Value))).IVal;
+            return Get_Value_Type (Value (Number_Value (Property_Value))).IVal;
          when others =>
             raise Program_Error;
       end case;
@@ -389,8 +390,7 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    ---------------------------------
 
    function Get_Float_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Long_Long_Float
+     (Property_Value : Node_Id) return Long_Long_Float
    is
       pragma Assert (Kind (Number_Value (Property_Value)) = K_Literal);
    begin
@@ -402,8 +402,7 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    ----------------------------------
 
    function Get_String_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Name_Id
+     (Property_Value : Node_Id) return Name_Id
    is
       pragma Assert (Kind (Property_Value) = K_Literal);
    begin
@@ -415,8 +414,7 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    ----------------------------------
 
    function Get_String_Of_Property_Value
-     (Property_Value : Node_Id)
-     return String
+     (Property_Value : Node_Id) return String
    is
       pragma Assert (Kind (Property_Value) = K_Literal);
    begin
@@ -428,14 +426,15 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    ---------------------------------------
 
    function Get_Enumeration_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Name_Id
+     (Property_Value : Node_Id) return Name_Id
    is
       pragma Assert
         (Kind (Property_Value) = K_Enumeration_Term
-        or else (Kind (Property_Value) = K_Literal
-                and then Get_Value_Type (Value
-                                      (Property_Value)).T = LT_Enumeration));
+         or else
+         (Kind (Property_Value) = K_Literal
+          and then
+            Get_Value_Type (Value (Property_Value)).T =
+            LT_Enumeration));
    begin
       case Kind (Property_Value) is
          when K_Literal =>
@@ -454,20 +453,20 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    ---------------------------------------
 
    function Get_Enumeration_Of_Property_Value
-     (Property_Value : Node_Id)
-     return String
+     (Property_Value : Node_Id) return String
    is
       pragma Assert
         (Kind (Property_Value) = K_Enumeration_Term
-         or else  (Kind (Property_Value) = K_Literal
-                   and then Get_Value_Type
-                   (Value
-                    (Property_Value)).T = LT_Enumeration));
+         or else
+         (Kind (Property_Value) = K_Literal
+          and then
+            Get_Value_Type (Value (Property_Value)).T =
+            LT_Enumeration));
    begin
       case Kind (Property_Value) is
          when K_Literal =>
-            return Get_Name_String (Get_Enumeration_Of_Property_Value
-                                    (Property_Value));
+            return Get_Name_String
+                (Get_Enumeration_Of_Property_Value (Property_Value));
          when K_Enumeration_Term =>
             return Get_Name_String (Name (Identifier (Property_Value)));
 
@@ -482,8 +481,7 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    -----------------------------------
 
    function Get_Boolean_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Boolean
+     (Property_Value : Node_Id) return Boolean
    is
       pragma Assert (Kind (Property_Value) = K_Literal);
    begin
@@ -495,8 +493,7 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    -------------------------------------
 
    function Get_Reference_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Node_Id
+     (Property_Value : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Property_Value) = K_Reference_Term);
    begin
@@ -508,8 +505,7 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    --------------------------------------
 
    function Get_Classifier_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Node_Id
+     (Property_Value : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Property_Value) = K_Component_Classifier_Term);
    begin
@@ -521,29 +517,28 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    ---------------------------------------
 
    function Get_Value_Of_Property_Association
-     (Property : Node_Id)
-     return Value_Type
+     (Property : Node_Id) return Value_Type
    is
       pragma Assert (Kind (Property) = K_Property_Association);
       pragma Assert
-        (Kind (Single_Value (Property_Association_Value (Property)))
-         = K_Literal
+        (Kind (Single_Value (Property_Association_Value (Property))) =
+         K_Literal
          or else
-         Kind (Number_Value (Single_Value (Property_Association_Value
-                                           (Property)))) = K_Literal);
+           Kind
+             (Number_Value
+                (Single_Value (Property_Association_Value (Property)))) =
+           K_Literal);
    begin
-      if Kind (Single_Value
-               (Property_Association_Value (Property))) = K_Literal
+      if Kind (Single_Value (Property_Association_Value (Property))) =
+        K_Literal
       then
          return Get_Value_Type
-           (Value (Single_Value (Property_Association_Value (Property))));
+             (Value (Single_Value (Property_Association_Value (Property))));
       else
          return Get_Value_Type
-           (Value
-            (Number_Value
-             (Single_Value
-              (Property_Association_Value
-               (Property)))));
+             (Value
+                (Number_Value
+                   (Single_Value (Property_Association_Value (Property)))));
       end if;
    end Get_Value_Of_Property_Association;
 
@@ -554,8 +549,7 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    function Find_Property_Association_From_Name
      (Property_List : List_Id;
       Property_Name : Name_Id;
-      In_Mode       : Name_Id := No_Name)
-     return Node_Id
+      In_Mode       : Name_Id := No_Name) return Node_Id
    is
       List_Node     : Node_Id;
       M             : Node_Id;
@@ -581,9 +575,9 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
                --      and its value corresponds to the name of one
                --      element of the list.
 
-               if No (In_Modes (List_Node))              or else
-                 Is_Empty (Modes (In_Modes (List_Node))) or else
-                 In_Mode = No_Name
+               if No (In_Modes (List_Node))
+                 or else Is_Empty (Modes (In_Modes (List_Node)))
+                 or else In_Mode = No_Name
                then
                   return List_Node;
                else
@@ -629,8 +623,7 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
    function Find_Property_Association_From_Name
      (Property_List : List_Id;
       Property_Name : String;
-      In_Mode       : Name_Id := No_Name)
-     return Node_Id
+      In_Mode       : Name_Id := No_Name) return Node_Id
    is
       Name : Name_Id;
    begin
@@ -638,7 +631,9 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
       Name := Name_Find;
 
       return Find_Property_Association_From_Name
-        (Property_List, Name, In_Mode);
+          (Property_List,
+           Name,
+           In_Mode);
    end Find_Property_Association_From_Name;
 
    ------------------------------
@@ -655,43 +650,42 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
         (Kind (Property) = K_Property_Association
          or else Kind (Property) = K_Constant_Property_Declaration
          or else Kind (Property) = K_Property_Definition_Declaration);
-      pragma Assert (Kind_Node = K_Enumeration_Term
-         or else Kind_Node = K_Unit_Term);
+      pragma Assert
+        (Kind_Node = K_Enumeration_Term or else Kind_Node = K_Unit_Term);
 
       Node : Node_Id := No_Node;
    begin
 
       if Kind_Node = K_Enumeration_Term then
-         Node :=  New_Node (Kind_Node, Loc (Value));
+         Node := New_Node (Kind_Node, Loc (Value));
 
          Set_Identifier (Node, Identifier (Value));
-         Set_Property_Set_Identifier
-           (Node, Property_Set_Identifier (Value));
+         Set_Property_Set_Identifier (Node, Property_Set_Identifier (Value));
          Set_Entity (Node, Entity (Value));
 
          case Kind (Property) is
             when K_Property_Association =>
-               if Single_Value (Property_Association_Value
-                                  (Property)) /= No_Node
+               if Single_Value (Property_Association_Value (Property)) /=
+                 No_Node
                then
-                  Set_Single_Value (Property_Association_Value (Property),
-                                    Node);
-               elsif Multi_Value (Property_Association_Value
-                                    (Property)) /= No_List
+                  Set_Single_Value
+                    (Property_Association_Value (Property),
+                     Node);
+               elsif Multi_Value (Property_Association_Value (Property)) /=
+                 No_List
                then
-                  Replace_Node_To_List (Multi_Value
-                                          (Property_Association_Value
-                                             (Property)),
-                                        Value,
-                                        Node);
+                  Replace_Node_To_List
+                    (Multi_Value (Property_Association_Value (Property)),
+                     Value,
+                     Node);
                end if;
 
             when K_Property_Definition_Declaration =>
                if Multi_Value (Default_Value (Property)) /= No_List then
-                  Replace_Node_To_List (Multi_Value (Default_Value
-                                                       (Property)),
-                                        Value,
-                                        Node);
+                  Replace_Node_To_List
+                    (Multi_Value (Default_Value (Property)),
+                     Value,
+                     Node);
                else
                   Set_Single_Value (Default_Value (Property), Node);
                end if;
@@ -700,10 +694,10 @@ package body Ocarina.Me_AADL.AADL_Tree.Entities.Properties is
                if Single_Value (Constant_Value (Property)) /= No_Node then
                   Set_Single_Value (Constant_Value (Property), Node);
                else
-                  Replace_Node_To_List (Multi_Value (Constant_Value
-                                                       (Property)),
-                                        Value,
-                                        Node);
+                  Replace_Node_To_List
+                    (Multi_Value (Constant_Value (Property)),
+                     Value,
+                     Node);
                end if;
 
             when others =>

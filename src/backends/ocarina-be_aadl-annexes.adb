@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.BE_AADL.Identifiers;
@@ -42,8 +42,8 @@ with Ocarina.Backends;
 
 package body Ocarina.BE_AADL.Annexes is
 
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.BE_AADL.Identifiers;
    use Ocarina.BE_AADL.Components.Modes;
@@ -80,8 +80,9 @@ package body Ocarina.BE_AADL.Annexes is
          when AADL_V2 =>
             if Present (Corresponding_Annex (Node)) then
                Print_Token (T_Begin_Annex);
-               Generate_Code (Corresponding_Annex (Node),
-                              Name (Identifier (Node)));
+               Generate_Code
+                 (Corresponding_Annex (Node),
+                  Name (Identifier (Node)));
                Write_Indentation;
                Print_Token (T_End_Annex);
 
@@ -122,8 +123,8 @@ package body Ocarina.BE_AADL.Annexes is
 
    procedure Print_Annex_Path (Node : Node_Id) is
 
-      pragma Assert (Ocarina.ME_AADL.AADL_Tree.Nodes.Kind
-                     (Node) = K_Annex_Path);
+      pragma Assert
+        (Ocarina.ME_AADL.AADL_Tree.Nodes.Kind (Node) = K_Annex_Path);
 
       List_Node : Node_Id;
    begin
@@ -143,8 +144,9 @@ package body Ocarina.BE_AADL.Annexes is
       Print_Identifier (Node);
 
       while Present (List_Node) loop
-         if List_Node /= First_Node
-           (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (Node)) then
+         if List_Node /=
+           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (Node))
+         then
             Write_Space;
             Print_Token (T_Multiply);
             Print_Token (T_Multiply);

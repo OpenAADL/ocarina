@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,8 +37,7 @@ package Ocarina.Instances.Components.Features is
      (Instance_Root   : Node_Id;
       Feature         : Node_Id;
       Parent_Instance : Node_Id;
-      Inverse         : Boolean := False)
-     return Node_Id;
+      Inverse         : Boolean := False) return Node_Id;
    --  Instantiates a feature of a component type an returns the
    --  corresponding instance. Parent_Instance is the AADL instance
    --  of the component containing the feature.

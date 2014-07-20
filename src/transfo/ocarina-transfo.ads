@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,20 +31,22 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
-use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.Transfo is
 
    procedure Init;
 
    function Build_Unique_Name
-     (List : List_Id; Prefix : Name_Id; Shift : Natural := 0) return Name_Id;
+     (List   : List_Id;
+      Prefix : Name_Id;
+      Shift  : Natural := 0) return Name_Id;
    --  Return <prefix>_<id> so that the name is unique
    --  in the identifier list, adding shift to the result
 
    function Build_Unique_Component_Name
-     (Pkg : Node_Id; Prefix : Name_Id) return Name_Id;
+     (Pkg    : Node_Id;
+      Prefix : Name_Id) return Name_Id;
    --  Create a new component type unique name
    --  following the pattern <prefix>_<Id>, with <prefix> is
    --  typically the component category (thread, data,
@@ -52,7 +54,8 @@ package Ocarina.Transfo is
    --  components in the system sharing the same prefix
 
    function Build_Unique_Subcomponent_Name
-     (Container : Node_Id; Prefix : Name_Id) return Name_Id;
+     (Container : Node_Id;
+      Prefix    : Name_Id) return Name_Id;
    --  Create a new subcomponent in container unique name
    --  following the pattern <prefix>_<Id>, with <prefix>
    --  typically depends on the component category (thread,
@@ -66,25 +69,24 @@ package Ocarina.Transfo is
    --  The two parameters must be components declaration or
    --  implementation.
 
-   function Search_Process_By_Name
-     (Process_Name : String) return Node_Id;
+   function Search_Process_By_Name (Process_Name : String) return Node_Id;
    --  Find a process from its name
    --  return No_Node if no such process was found
 
    function Search_Thread_By_Name
-     (Process : Node_Id; Thread_Name : String)
-     return Node_Id;
+     (Process     : Node_Id;
+      Thread_Name : String) return Node_Id;
    --  Find a thread from its parent process and its name
    --  return No_Node if no such thread was found
 
    function Build_Name_From_Path (Path : List_Id) return Name_Id;
    --  Compute the name corresponding to a path
 
-   Thread_Prefix       : Name_Id;
-   Process_Prefix      : Name_Id;
-   Subprogram_Prefix   : Name_Id;
-   Data_Prefix         : Name_Id;
-   Connection_Prefix   : Name_Id;
-   Feature_Prefix      : Name_Id;
-   Wrapper_Prefix      : Name_Id;
+   Thread_Prefix     : Name_Id;
+   Process_Prefix    : Name_Id;
+   Subprogram_Prefix : Name_Id;
+   Data_Prefix       : Name_Id;
+   Connection_Prefix : Name_Id;
+   Feature_Prefix    : Name_Id;
+   Wrapper_Prefix    : Name_Id;
 end Ocarina.Transfo;

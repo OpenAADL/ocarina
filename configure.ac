@@ -147,10 +147,10 @@ AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
 
 
 define(SHARED_LIBRARY_OPTIONS, [dnl
-  GNAT_LIB_FLAGS="-XLIBRARY=dynamic"
+  GNAT_LIB_FLAGS="-XLIBRARY_TYPE=relocatable"
   shared=true])
 define(NO_SHARED_LIBRARY_OPTIONS, [dnl
-  GNAT_LIB_FLAGS="-XLIBRARY=static"
+  GNAT_LIB_FLAGS="-XLIBRARY_TYPE=static"
   shared=false])
 
 AC_ARG_ENABLE(shared,
@@ -325,6 +325,19 @@ AS_HELP_STRING([--with-aadl-version=x], [choose AADL version (v1)]),
 AC_MSG_RESULT(${newval})
 AC_SUBST(AADL_VERSION)
 
+#############################
+# Python
+#############################
+
+AC_ARG_ENABLE(python,
+[  --enable-python         Build Python bindings [default=no]],
+[if [[ "$enableval" = "yes" ]]; then
+        PYTHON_PRJ=ocarina-python.gpr
+fi],
+[])
+
+AC_SUBST(PYTHON_PRJ)
+
 ##########################################
 # Some version control stuff
 ##########################################
@@ -406,15 +419,18 @@ AC_OUTPUT([
 	resources/Makefile
 	resources/behavioural_properties/Makefile
 	resources/runtime/Makefile
-	resources/runtime/cheddar/Makefile
 	resources/runtime/aadl_xml/Makefile
+	resources/runtime/cheddar/Makefile
+	resources/runtime/python/Makefile
 	projects/ocarina.gpr
 	src/main/Makefile
-	src/main/ocarina-configuration.adb
+	src/config/ocarina-configuration.adb
 	src/frontends/Makefile
+	src/config/Makefile
 	src/core/Makefile
 	src/transfo/Makefile
 	src/backends/Makefile
+	src/python/Makefile
 	src/Makefile
 	support/Makefile
 	support/strip_wrapper.sh

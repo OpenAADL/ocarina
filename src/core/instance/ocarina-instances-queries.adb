@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -41,17 +41,17 @@ with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
 package body Ocarina.Instances.Queries is
 
-   use Namet;
+   use Ocarina.Namet;
 
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
-   package ATN  renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package AIN  renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AIEP renames Ocarina.ME_AADL.AADL_Instances.Entities.Properties;
-   package ATE  renames Ocarina.ME_AADL.AADL_Tree.Entities;
+   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
 
    -------------------------------------
    -- Compute_Absolute_Name_Of_Entity --
@@ -59,8 +59,7 @@ package body Ocarina.Instances.Queries is
 
    function Compute_Absolute_Name_Of_Entity
      (Entity    : Node_Id;
-      Separator : Name_Id := No_Name)
-     return Name_Id
+      Separator : Name_Id := No_Name) return Name_Id
    is
       pragma Assert (Present (Entity));
 
@@ -80,20 +79,24 @@ package body Ocarina.Instances.Queries is
 
                Entity_Name := No_Name;
             else
-               Entity_Name := Compute_Absolute_Name_Of_Entity
-                 (Parent_Subcomponent (Entity), Actual_Separator);
+               Entity_Name :=
+                 Compute_Absolute_Name_Of_Entity
+                   (Parent_Subcomponent (Entity),
+                    Actual_Separator);
             end if;
 
-         when K_Subcomponent_Instance
-           | K_Feature_Instance
-           | K_Port_Spec_Instance
-           | K_Subprogram_Spec_Instance
-           | K_Parameter_Instance
-           | K_Subcomponent_Access_Instance
-           | K_Connection_Instance
-           | K_Call_Sequence_Instance =>
-            Parent_Name := Compute_Absolute_Name_Of_Entity
-              (Parent_Component (Entity), Actual_Separator);
+         when K_Subcomponent_Instance     |
+           K_Feature_Instance             |
+           K_Port_Spec_Instance           |
+           K_Subprogram_Spec_Instance     |
+           K_Parameter_Instance           |
+           K_Subcomponent_Access_Instance |
+           K_Connection_Instance          |
+           K_Call_Sequence_Instance       =>
+            Parent_Name :=
+              Compute_Absolute_Name_Of_Entity
+                (Parent_Component (Entity),
+                 Actual_Separator);
 
             if Parent_Name /= No_Name then
                Get_Name_String (Parent_Name);
@@ -119,26 +122,25 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
    begin
-      return Present (AIEP.Find_Property_Association_From_Name
-                        (Property_List => AIN.Properties (Entity),
-                         Property_Name => Name,
-                         In_Mode       => In_Mode));
+      return Present
+          (AIEP.Find_Property_Association_From_Name
+             (Property_List => AIN.Properties (Entity),
+              Property_Name => Name,
+              In_Mode       => In_Mode));
    end Is_Defined_Property;
 
    function Is_Defined_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
       Name2 : Name_Id;
    begin
       Set_Str_To_Name_Buffer (Name);
-      Name2 := Name_find;
+      Name2 := Name_Find;
 
       return Is_Defined_Property (Entity, Name2, In_Mode);
    end Is_Defined_Property;
@@ -180,14 +182,13 @@ package body Ocarina.Instances.Queries is
    function Get_Property_Association
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id
+      In_Mode : Name_Id := No_Name) return Node_Id
    is
    begin
       return AIEP.Find_Property_Association_From_Name
-        (Property_List => AIN.Properties (Entity),
-         Property_Name => Name,
-         In_Mode       => In_Mode);
+          (Property_List => AIN.Properties (Entity),
+           Property_Name => Name,
+           In_Mode       => In_Mode);
    end Get_Property_Association;
 
    --------------------------
@@ -197,18 +198,15 @@ package body Ocarina.Instances.Queries is
    function Get_Boolean_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
       Property_Value : Node_Id;
    begin
-      Property_Value := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
       if Property_Value /= No_Node then
-         if Get_Type_Of_Property_Value
-           (Property_Value, True) = PT_Boolean
-         then
+         if Get_Type_Of_Property_Value (Property_Value, True) = PT_Boolean then
             return Get_Boolean_Of_Property_Value (Property_Value);
          else
             return False;
@@ -225,17 +223,16 @@ package body Ocarina.Instances.Queries is
    function Get_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return String
+      In_Mode : Name_Id := No_Name) return String
    is
       Property_Value : Node_Id;
    begin
-      Property_Value := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
       if Property_Value /= No_Node then
-         if Get_Type_Of_Property_Value
-           (Property_Value, True) = PT_Enumeration
+         if Get_Type_Of_Property_Value (Property_Value, True) =
+           PT_Enumeration
          then
             return Get_Enumeration_Of_Property_Value (Property_Value);
          else
@@ -253,16 +250,15 @@ package body Ocarina.Instances.Queries is
    function Get_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id
+      In_Mode : Name_Id := No_Name) return Name_Id
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
       if Property_Value /= No_Node then
-         if Get_Type_Of_Property_Value
-           (Property_Value, True) = PT_Enumeration
+         if Get_Type_Of_Property_Value (Property_Value, True) =
+           PT_Enumeration
          then
             return Get_Enumeration_Of_Property_Value (Property_Value);
          else
@@ -280,17 +276,17 @@ package body Ocarina.Instances.Queries is
    function Get_Float_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Long_Long_Float
+      In_Mode : Name_Id := No_Name) return Long_Long_Float
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
       if Property_Value /= No_Node then
          if Get_Type_Of_Property_Value (Property_Value, True) = PT_Float
-           or else Get_Type_Of_Property_Value
-           (Property_Value, True) = PT_Unsigned_Float
+           or else
+             Get_Type_Of_Property_Value (Property_Value, True) =
+             PT_Unsigned_Float
          then
             return Get_Float_Of_Property_Value (Property_Value);
          else
@@ -308,17 +304,17 @@ package body Ocarina.Instances.Queries is
    function Get_Integer_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Unsigned_Long_Long
+      In_Mode : Name_Id := No_Name) return Unsigned_Long_Long
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
       if Property_Value /= No_Node then
          if Get_Type_Of_Property_Value (Property_Value, True) = PT_Integer
-           or else Get_Type_Of_Property_Value
-           (Property_Value, True) = PT_Unsigned_Integer
+           or else
+             Get_Type_Of_Property_Value (Property_Value, True) =
+             PT_Unsigned_Integer
          then
             return Get_Integer_Of_Property_Value (Property_Value);
          else
@@ -336,8 +332,7 @@ package body Ocarina.Instances.Queries is
    function Get_Integer_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Unsigned_Long_Long
+      In_Mode : Name_Id := No_Name) return Unsigned_Long_Long
    is
       Property_Name : Name_Id;
    begin
@@ -352,17 +347,16 @@ package body Ocarina.Instances.Queries is
    function Get_Reference_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id
+      In_Mode : Name_Id := No_Name) return Node_Id
    is
       Property_Value : Node_Id;
    begin
-      Property_Value := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
       if Property_Value /= No_Node then
-         if Get_Type_Of_Property_Value
-           (Property_Value, True) = PT_Reference
+         if Get_Type_Of_Property_Value (Property_Value, True) =
+           PT_Reference
          then
             return Get_Reference_Of_Property_Value (Property_Value);
          else
@@ -380,16 +374,15 @@ package body Ocarina.Instances.Queries is
    function Get_Classifier_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id
+      In_Mode : Name_Id := No_Name) return Node_Id
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
       if Property_Value /= No_Node then
-         if Get_Type_Of_Property_Value
-           (Property_Value, True) = PT_Classifier
+         if Get_Type_Of_Property_Value (Property_Value, True) =
+           PT_Classifier
          then
             return Get_Classifier_Of_Property_Value (Property_Value);
          else
@@ -403,8 +396,7 @@ package body Ocarina.Instances.Queries is
    function Get_Classifier_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id
+      In_Mode : Name_Id := No_Name) return Node_Id
    is
       N : Name_Id;
    begin
@@ -419,16 +411,13 @@ package body Ocarina.Instances.Queries is
    function Get_Range_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id
+      In_Mode : Name_Id := No_Name) return Node_Id
    is
-      Property : constant Node_Id := Get_Property_Association
-        (Entity, Name, In_Mode);
+      Property : constant Node_Id :=
+        Get_Property_Association (Entity, Name, In_Mode);
 
    begin
-      if No (Property)
-        or else Get_Type_Of_Property (Property) /= PT_Range
-      then
+      if No (Property) or else Get_Type_Of_Property (Property) /= PT_Range then
          return No_Node;
       end if;
 
@@ -442,27 +431,26 @@ package body Ocarina.Instances.Queries is
    function Get_List_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return List_Id
+      In_Mode : Name_Id := No_Name) return List_Id
    is
-      Property : constant Node_Id := Get_Property_Association
-        (Entity, Name, In_Mode);
+      Property : constant Node_Id :=
+        Get_Property_Association (Entity, Name, In_Mode);
    begin
       if No (Property)
         or else not Type_Of_Property_Is_A_List
-        (ATE.Get_Referenced_Entity (AIN.Property_Name (Property)))
+          (ATE.Get_Referenced_Entity (AIN.Property_Name (Property)))
       then
          return No_List;
       end if;
 
-      if Present (Expanded_Multi_Value
-                    (AIN.Property_Association_Value (Property)))
-        and then No (ATN.First_Node
-                       (Expanded_Multi_Value
-                          (AIN.Property_Association_Value (Property))))
+      if Present
+          (Expanded_Multi_Value (AIN.Property_Association_Value (Property)))
+        and then No
+          (ATN.First_Node
+             (Expanded_Multi_Value
+                (AIN.Property_Association_Value (Property))))
       then
-         return Multi_Value
-              (AIN.Property_Association_Value (Property));
+         return Multi_Value (AIN.Property_Association_Value (Property));
       end if;
 
       return Expanded_Multi_Value (AIN.Property_Association_Value (Property));
@@ -471,8 +459,7 @@ package body Ocarina.Instances.Queries is
    function Get_List_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return List_Id
+      In_Mode : Name_Id := No_Name) return List_Id
    is
    begin
       return Get_List_Property (Entity, Get_String_Name (Name), In_Mode);
@@ -485,11 +472,10 @@ package body Ocarina.Instances.Queries is
    function Get_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return String
+      In_Mode : Name_Id := No_Name) return String
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
       if Property_Value /= No_Node then
@@ -506,11 +492,10 @@ package body Ocarina.Instances.Queries is
    function Get_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id
+      In_Mode : Name_Id := No_Name) return Name_Id
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
       if Property_Value /= No_Node then
@@ -527,10 +512,9 @@ package body Ocarina.Instances.Queries is
    function Get_String_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Name_Id
+      In_Mode : Name_Id := No_Name) return Name_Id
    is
-      Name2          : Name_Id;
+      Name2 : Name_Id;
    begin
       Set_Str_To_Name_Buffer (Name);
       Name2 := Name_Find;
@@ -545,17 +529,16 @@ package body Ocarina.Instances.Queries is
    function Get_Value_Of_Property_Association
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Node_Id
+      In_Mode : Name_Id := No_Name) return Node_Id
    is
-      Property : constant Node_Id := Get_Property_Association
-        (Entity, Name, In_Mode);
+      Property : constant Node_Id :=
+        Get_Property_Association (Entity, Name, In_Mode);
       Value : Node_Id := No_Node;
 
    begin
       if Present (Property) then
-         Value := Compute_Property_Value
-           (AIN.Property_Association_Value (Property));
+         Value :=
+           Compute_Property_Value (AIN.Property_Association_Value (Property));
       end if;
       return Value;
    end Get_Value_Of_Property_Association;
@@ -567,15 +550,16 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_Boolean_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
-      return Present (Property_Value) and then
-        Get_Type_Of_Property_Value (Property_Value, True) = PT_Boolean;
+      return Present (Property_Value)
+        and then
+          Get_Type_Of_Property_Value (Property_Value, True) =
+          PT_Boolean;
    end Is_Defined_Boolean_Property;
 
    -------------------------------------
@@ -585,15 +569,16 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
-      return Present (Property_Value) and then
-        Get_Type_Of_Property_Value (Property_Value, True) = PT_Enumeration;
+      return Present (Property_Value)
+        and then
+          Get_Type_Of_Property_Value (Property_Value, True) =
+          PT_Enumeration;
    end Is_Defined_Enumeration_Property;
 
    -------------------------------
@@ -603,17 +588,18 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_Float_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
-      return Present (Property_Value) and then
+      return Present (Property_Value)
+        and then
         (Get_Type_Of_Property_Value (Property_Value, True) = PT_Float
-         or else Get_Type_Of_Property_Value (Property_Value, True) =
-         PT_Unsigned_Float);
+         or else
+           Get_Type_Of_Property_Value (Property_Value, True) =
+           PT_Unsigned_Float);
    end Is_Defined_Float_Property;
 
    ---------------------------------
@@ -623,17 +609,18 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_Integer_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
-      return Present (Property_Value) and then
+      return Present (Property_Value)
+        and then
         (Get_Type_Of_Property_Value (Property_Value, True) = PT_Integer
-         or else  Get_Type_Of_Property_Value (Property_Value, True) =
-         PT_Unsigned_Integer);
+         or else
+           Get_Type_Of_Property_Value (Property_Value, True) =
+           PT_Unsigned_Integer);
    end Is_Defined_Integer_Property;
 
    -----------------------------------
@@ -643,15 +630,16 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_Reference_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
-      return Present (Property_Value) and then
-        Get_Type_Of_Property_Value (Property_Value, True) = PT_Reference;
+      return Present (Property_Value)
+        and then
+          Get_Type_Of_Property_Value (Property_Value, True) =
+          PT_Reference;
    end Is_Defined_Reference_Property;
 
    ------------------------------------
@@ -661,15 +649,16 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_Classifier_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
 
    begin
-      return Present (Property_Value) and then
-        Get_Type_Of_Property_Value (Property_Value, True) = PT_Classifier;
+      return Present (Property_Value)
+        and then
+          Get_Type_Of_Property_Value (Property_Value, True) =
+          PT_Classifier;
    end Is_Defined_Classifier_Property;
 
    -------------------------------
@@ -679,16 +668,18 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_Range_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property : constant Node_Id := Get_Property_Association
-        (Entity, Name, In_Mode);
+      Property : constant Node_Id :=
+        Get_Property_Association (Entity, Name, In_Mode);
 
    begin
-      return Present (Property) and then
-        Get_Type_Of_Property_Value
-        (AIN.Property_Association_Value (Property), True) = PT_Range;
+      return Present (Property)
+        and then
+          Get_Type_Of_Property_Value
+            (AIN.Property_Association_Value (Property),
+             True) =
+          PT_Range;
    end Is_Defined_Range_Property;
 
    ------------------------------
@@ -698,22 +689,20 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_List_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property : constant Node_Id := Get_Property_Association
-        (Entity, Name, In_Mode);
+      Property : constant Node_Id :=
+        Get_Property_Association (Entity, Name, In_Mode);
    begin
       return Present (Property)
         and then Type_Of_Property_Is_A_List
-        (ATE.Get_Referenced_Entity (AIN.Property_Name (Property)));
+          (ATE.Get_Referenced_Entity (AIN.Property_Name (Property)));
    end Is_Defined_List_Property;
 
    function Is_Defined_List_Property
      (Entity  : Node_Id;
       Name    : String;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
    begin
       return Is_Defined_Property (Entity, Get_String_Name (Name), In_Mode);
@@ -726,14 +715,13 @@ package body Ocarina.Instances.Queries is
    function Is_Defined_String_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
-      In_Mode : Name_Id := No_Name)
-     return Boolean
+      In_Mode : Name_Id := No_Name) return Boolean
    is
-      Property_Value : constant Node_Id := Get_Value_Of_Property_Association
-        (Entity, Name, In_Mode);
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
    begin
-      return Present (Property_Value) and then
-        Get_Type_Of_Property_Value (Property_Value, True) = PT_String;
+      return Present (Property_Value)
+        and then Get_Type_Of_Property_Value (Property_Value, True) = PT_String;
    end Is_Defined_String_Property;
 
 end Ocarina.Instances.Queries;

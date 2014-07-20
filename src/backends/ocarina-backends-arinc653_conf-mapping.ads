@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -43,9 +43,9 @@ package Ocarina.Backends.ARINC653_Conf.Mapping is
    function Map_Data_Access (E : Node_Id) return Node_Id;
    function Map_Bus_Access (E : Node_Id) return Node_Id;
    function Map_System (E : Node_Id) return Node_Id;
-   function Map_Process (E : Node_Id;
-                         Partition_Identifier : Unsigned_Long_Long)
-                         return Node_Id;
+   function Map_Process
+     (E                    : Node_Id;
+      Partition_Identifier : Unsigned_Long_Long) return Node_Id;
    function Map_Data_Size (T : Size_Type) return Unsigned_Long_Long;
    function Map_Virtual_Processor (E : Node_Id) return Node_Id;
    function Map_Processor (E : Node_Id) return Node_Id;
@@ -53,13 +53,13 @@ package Ocarina.Backends.ARINC653_Conf.Mapping is
    function Map_Port_Connection (E : Node_Id) return Node_Id;
    function Map_Process_Memory (Process : Node_Id) return Node_Id;
    procedure Map_Process_Scheduling
-      (Process : Node_Id;
+     (Process       :        Node_Id;
       Window_Number : in out Unsigned_Long_Long;
-      N : out Node_Id);
+      N             :    out Node_Id);
 
    function Map_Connection
-      (Connection : Node_Id; Channel_Identifier : Unsigned_Long_Long)
-      return Node_Id;
+     (Connection         : Node_Id;
+      Channel_Identifier : Unsigned_Long_Long) return Node_Id;
 
    function Map_Process_HM_Table (Process : Node_Id) return Node_Id;
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,20 +33,20 @@
 
 package Ocarina.Instances.REAL_Checker is
 
-   type Checker_Options is
-      record
-         Perform_Checking          : Boolean;
-         OS_Related_Checking       : Boolean;
-         Hardware_Related_Checking : Boolean;
-         Ignore_Annexes            : Boolean;
-         Single_Checking           : Boolean;
-      end record;
+   type Checker_Options is record
+      Perform_Checking          : Boolean;
+      OS_Related_Checking       : Boolean;
+      Hardware_Related_Checking : Boolean;
+      Ignore_Annexes            : Boolean;
+      Single_Checking           : Boolean;
+   end record;
 
    Default_Checker_Options : constant Checker_Options :=
-     Checker_Options'(Perform_Checking => False,
-                      OS_Related_Checking => False,
-                      Hardware_Related_Checking => False,
-                      Ignore_Annexes => False,
-                      Single_Checking => False);
+     Checker_Options'
+       (Perform_Checking          => False,
+        OS_Related_Checking       => False,
+        Hardware_Related_Checking => False,
+        Ignore_Annexes            => False,
+        Single_Checking           => False);
 
 end Ocarina.Instances.REAL_Checker;

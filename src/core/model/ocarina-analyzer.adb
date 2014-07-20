@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,8 +32,8 @@
 ------------------------------------------------------------------------------
 
 with Charset;
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 
 with GNAT.Table;
 
@@ -43,8 +43,8 @@ with Ocarina.Analyzer.REAL;
 package body Ocarina.Analyzer is
 
    use Charset;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    type Analyzer_Record is record
       Language : Name_Id;
@@ -66,8 +66,8 @@ package body Ocarina.Analyzer is
       end loop;
 
       Set_Standard_Error;
-      Write_Line ("Analyzers : Cannot find language "
-                    & Get_Name_String (Language));
+      Write_Line
+        ("Analyzers : Cannot find language " & Get_Name_String (Language));
       Set_Standard_Output;
       return False;
    end Analyze;

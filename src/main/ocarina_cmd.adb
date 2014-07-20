@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,9 +36,9 @@
 
 with Errors;    use Errors;
 with Locations; use Locations;
-with Namet;     use Namet;
-with Output;    use Output;
-with Types;     use Types;
+with Ocarina.Namet;     use Ocarina.Namet;
+with Ocarina.Output;    use Ocarina.Output;
+with Ocarina.Types;     use Ocarina.Types;
 with Utils;     use Utils;
 
 with Ada.Command_Line; use Ada.Command_Line;
@@ -58,8 +58,7 @@ with Ocarina.Analyzer;                 use Ocarina.Analyzer;
 with Ocarina.Backends;                 use Ocarina.Backends;
 with Ocarina.Backends.PO_HI_C;
 with Ocarina.Backends.PO_HI_Ada;
-with Ocarina.Backends.Execution_Tests;
-use Ocarina.Backends.Execution_Tests;
+with Ocarina.Backends.Execution_Tests; use Ocarina.Backends.Execution_Tests;
 with Ocarina.Configuration;            use Ocarina.Configuration;
 with Ocarina.Files;                    use Ocarina.Files;
 with Ocarina.Instances;                use Ocarina.Instances;
@@ -81,8 +80,8 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 procedure Ocarina_Cmd is
 
    procedure Process_Command_Line
-     (Root_System_Name  : out Name_Id;
-      Success           : out Boolean);
+     (Root_System_Name : out Name_Id;
+      Success          : out Boolean);
    --  Process the command line to extract the options for the
    --  different modules of Ocarina.
 
@@ -105,9 +104,9 @@ procedure Ocarina_Cmd is
    --  according to the extracted information.
 
    After_Scenario_Action : Action_Kind := Generate_Code;
-   Standard_Input        : Boolean := True;
-   AADL_Root             : Node_Id := No_Node;
-   Success               : Boolean := True;
+   Standard_Input        : Boolean     := True;
+   AADL_Root             : Node_Id     := No_Node;
+   Success               : Boolean     := True;
    File_Name             : Name_Id;
    Buffer                : Location;
    Language              : Name_Id;
@@ -123,10 +122,10 @@ procedure Ocarina_Cmd is
       Success       : out Boolean)
    is
       Path         : GNAT.OS_Lib.String_Access := Getenv ("PATH");
-      Command_Path : GNAT.OS_Lib.String_Access := Locate_Exec_On_Path
-        (Command_Name);
-      Pid          : Process_Id;
-      Out_Pid      : Process_Id := Invalid_Pid;
+      Command_Path : GNAT.OS_Lib.String_Access :=
+        Locate_Exec_On_Path (Command_Name);
+      Pid     : Process_Id;
+      Out_Pid : Process_Id := Invalid_Pid;
    begin
       --  First off, we put the 'bin' directory of the Ocarina
       --  installation at the top of the PATH envvironment variable.
@@ -144,7 +143,7 @@ procedure Ocarina_Cmd is
 
       pragma Debug (Write_Line ("Executing command:"));
       pragma Debug (Write_Line (" Name: " & Command_Name));
-      pragma Debug (Write_Str  (" Args: "));
+      pragma Debug (Write_Str (" Args: "));
       for J in Argument_List'Range loop
          pragma Debug (Write_Str ("'" & Argument_List (J).all & "' "));
          null;
@@ -155,9 +154,10 @@ procedure Ocarina_Cmd is
 
       Exit_On_Error (Command_Path = null, Command_Name & ": not found!");
 
-      Pid := Non_Blocking_Spawn
-        (Program_Name => Command_Path.all,
-         Args         => Argument_List);
+      Pid :=
+        Non_Blocking_Spawn
+          (Program_Name => Command_Path.all,
+           Args         => Argument_List);
 
       --  Wait until the command achieves its execution
 
@@ -168,8 +168,8 @@ procedure Ocarina_Cmd is
 
       if Out_Pid = Pid then
          if not Success then
-            pragma Debug (Write_Line (Command_Path.all
-                                      & " terminated unexpectedly"));
+            pragma Debug
+              (Write_Line (Command_Path.all & " terminated unexpectedly"));
             null;
          end if;
       end if;
@@ -231,19 +231,19 @@ procedure Ocarina_Cmd is
       -- Show_Help --
       ---------------
 
-      Help_Messages : constant array (Command) of String_Access
-        := (Help           => +"print this message",
-            Analyze        => +"analyse model",
-            Instantiate    => +"instantiate model",
-            Generate       => +"generate code",
-            Load           => +"load and parse file given as argument",
-            Fusion         => +"fusion threads",
-            Move           => +"move a thread",
-            Optimize       => +"optimize model, using greedy algorithm",
-            Brute_Optimize => +"optimize model, using brute force",
-            Status         => +"print configuration",
-            Version        => +"print Ocarina version information",
-            Quit           => +"quit this shell");
+      Help_Messages : constant array (Command) of String_Access :=
+        (Help           => +"print this message",
+         Analyze        => +"analyse model",
+         Instantiate    => +"instantiate model",
+         Generate       => +"generate code",
+         Load           => +"load and parse file given as argument",
+         Fusion         => +"fusion threads",
+         Move           => +"move a thread",
+         Optimize       => +"optimize model, using greedy algorithm",
+         Brute_Optimize => +"optimize model, using brute force",
+         Status         => +"print configuration",
+         Version        => +"print Ocarina version information",
+         Quit           => +"quit this shell");
 
       procedure Show_Help is
       begin
@@ -259,8 +259,8 @@ procedure Ocarina_Cmd is
       procedure Print_Status is
       begin
          Write_Line ("AADL version: " & Ocarina.AADL_Version'Img);
-         Write_Line ("Library Path: "
-                       & Get_Name_String (Default_Library_Path));
+         Write_Line
+           ("Library Path: " & Get_Name_String (Default_Library_Path));
       end Print_Status;
 
       --------------
@@ -301,7 +301,7 @@ procedure Ocarina_Cmd is
                return Argc;
 
             when E : others =>
-               Write_Line ("raised "& Exception_Information (E));
+               Write_Line ("raised " & Exception_Information (E));
                Write_Line (Exception_Message (E));
                raise;
          end;
@@ -393,8 +393,9 @@ procedure Ocarina_Cmd is
 
                begin
                   Cmmd := Command'Value (Argv.all);
-               exception when Constraint_Error =>
-                  raise Syntax_Error;
+               exception
+                  when Constraint_Error =>
+                     raise Syntax_Error;
                end;
 
                case Cmmd is
@@ -411,8 +412,8 @@ procedure Ocarina_Cmd is
 
                   when Instantiate =>
                      if Argc = 2 then
-                        Root_System_Name := To_Lower
-                          (Get_String_Name (Argument (2).all));
+                        Root_System_Name :=
+                          To_Lower (Get_String_Name (Argument (2).all));
                      end if;
                      AADL_Root := Instantiate_Model (AADL_Root);
                      if Present (AADL_Root) then
@@ -424,8 +425,7 @@ procedure Ocarina_Cmd is
                         raise Syntax_Error;
                      end if;
                      Set_Current_Backend_Name (Argument (2).all);
-                     Write_Line ("Generating code for "
-                                 & Argument (2).all);
+                     Write_Line ("Generating code for " & Argument (2).all);
                      Generate_Code (AADL_Root);
 
                   when Load =>
@@ -436,15 +436,13 @@ procedure Ocarina_Cmd is
 
                      File_Name := Search_File (Name_Find);
                      if File_Name = No_Name then
-                        Write_Line ("cannot find file "
-                                      & Argument (2).all);
+                        Write_Line ("cannot find file " & Argument (2).all);
                         goto Main;
                      end if;
 
                      Buffer := Load_File (File_Name);
                      if File_Name = No_Name then
-                        Write_Line ("cannot read file "
-                                      & Argument (2).all);
+                        Write_Line ("cannot read file " & Argument (2).all);
                         goto Main;
                      end if;
                      AADL_Root := Parse (Language, AADL_Root, Buffer);
@@ -453,16 +451,18 @@ procedure Ocarina_Cmd is
                         "cannot parse AADL specifications");
 
                      Write_Line
-                       ("File " & Argument (2).all
-                        & " loaded and parsed sucessfully");
+                       ("File " &
+                        Argument (2).all &
+                        " loaded and parsed sucessfully");
 
                   when Brute_Optimize =>
                      declare
                         Instance_Root : Node_Id;
                      begin
                         Instance_Root := Instantiate_Model (AADL_Root);
-                        Exit_On_Error (No (Instance_Root),
-                                       "Cannot instantiate AADL models");
+                        Exit_On_Error
+                          (No (Instance_Root),
+                           "Cannot instantiate AADL models");
 
                         Ocarina.Transfo.Optim.Init (Instance_Root);
 
@@ -480,8 +480,9 @@ procedure Ocarina_Cmd is
                         Instance_Root : Node_Id;
                      begin
                         Instance_Root := Instantiate_Model (AADL_Root);
-                        Exit_On_Error (No (Instance_Root),
-                                       "Cannot instantiate AADL models");
+                        Exit_On_Error
+                          (No (Instance_Root),
+                           "Cannot instantiate AADL models");
 
                         Ocarina.Transfo.Optim.Init (Instance_Root);
 
@@ -506,24 +507,27 @@ procedure Ocarina_Cmd is
                         Success       : Boolean;
                      begin
                         AADL_Instance := Instantiate_Model (AADL_Root);
-                        Exit_On_Error (No (AADL_Instance),
-                                       "Cannot instantiate AADL models");
+                        Exit_On_Error
+                          (No (AADL_Instance),
+                           "Cannot instantiate AADL models");
 
                         Owner_Process := Get_String_Name (Argument (2).all);
-                        Thread_To_Fusion_1 := Get_String_Name
-                          (Argument (3).all);
-                        Thread_To_Fusion_2 := Get_String_Name
-                          (Argument (4).all);
+                        Thread_To_Fusion_1 :=
+                          Get_String_Name (Argument (3).all);
+                        Thread_To_Fusion_2 :=
+                          Get_String_Name (Argument (4).all);
 
-                        Fusion_Threads (AADL_Root,
-                                        Owner_Process,
-                                        Thread_To_Fusion_1,
-                                        Thread_To_Fusion_2,
-                                        New_Thread,
-                                        Success);
+                        Fusion_Threads
+                          (AADL_Root,
+                           Owner_Process,
+                           Thread_To_Fusion_1,
+                           Thread_To_Fusion_2,
+                           New_Thread,
+                           Success);
 
-                        Exit_On_Error (not Success,
-                                       "Cannot fusion the AADL threads");
+                        Exit_On_Error
+                          (not Success,
+                           "Cannot fusion the AADL threads");
 
                         Set_Current_Backend_Name ("aadl");
                         Generate_Code (AADL_Root);
@@ -539,16 +543,15 @@ procedure Ocarina_Cmd is
                         AADL_Instance : Node_Id;
                      begin
                         AADL_Instance := Instantiate_Model (AADL_Root);
-                        Exit_On_Error (No (AADL_Instance),
-                                       "Cannot instantiate AADL models");
+                        Exit_On_Error
+                          (No (AADL_Instance),
+                           "Cannot instantiate AADL models");
 
                         Thread_To_Move := Get_String_Name (Argument (2).all);
-                        Src_Process := Get_String_Name (Argument (3).all);
-                        Dst_Process := Get_String_Name (Argument (4).all);
+                        Src_Process    := Get_String_Name (Argument (3).all);
+                        Dst_Process    := Get_String_Name (Argument (4).all);
 
-                        Move_Thread (Thread_To_Move,
-                                     Src_Process,
-                                     Dst_Process);
+                        Move_Thread (Thread_To_Move, Src_Process, Dst_Process);
 
                         Set_Current_Backend_Name ("aadl");
                         Generate_Code (AADL_Root);
@@ -568,7 +571,7 @@ procedure Ocarina_Cmd is
                   Write_Line ("syntax error");
 
                when E : others =>
-                  Write_Line ("raised "& Exception_Information (E));
+                  Write_Line ("raised " & Exception_Information (E));
                   Write_Line (Exception_Message (E));
             end;
          end if;
@@ -635,16 +638,16 @@ procedure Ocarina_Cmd is
    --  "rma.aadl" and "software_ada.aadl".
 
    procedure Parse_Scenario_Files is
-      AADL_Root               : Node_Id := No_Node;
-      Instance_Root           : Node_Id := No_Node;
-      Root_System             : Node_Id := No_Node;
-      Source_Files            : List_Id;
-      Ref_Files               : List_Id;
-      Needed_PS               : List_Id;
-      Use_CL                  : Boolean := False;
-      Used_Generator_Options  : List_Id;
-      Dirname                 : Name_Id;
-      Success                 : Boolean := False;
+      AADL_Root              : Node_Id := No_Node;
+      Instance_Root          : Node_Id := No_Node;
+      Root_System            : Node_Id := No_Node;
+      Source_Files           : List_Id;
+      Ref_Files              : List_Id;
+      Needed_PS              : List_Id;
+      Use_CL                 : Boolean := False;
+      Used_Generator_Options : List_Id;
+      Dirname                : Name_Id;
+      Success                : Boolean := False;
 
       The_Backend : Name_Id := No_Name;
       --  The current code generator
@@ -661,59 +664,61 @@ procedure Ocarina_Cmd is
       --  The property set containing the Ocarina configuration
       --  properties.
 
-      AADL_Files    : constant Name_Id
-        := Get_String_Name (Ocarina_Config & "::aadl_files");
-      Use_Components_Library : constant Name_Id
-        := Get_String_Name (Ocarina_Config & "::use_components_library");
-      Referencial_Files    : constant Name_Id
-        := Get_String_Name (Ocarina_Config & "::referencial_files");
-      The_Generator : constant Name_Id
-        := Get_String_Name (Ocarina_Config & "::generator");
-      Generator_Options : constant Name_Id
-        := Get_String_Name (Ocarina_Config & "::generator_options");
-      Predefined_PS : constant Name_Id
-        := Get_String_Name
-        (Ocarina_Config & "::needed_property_sets");
-      RS_Name       : constant Name_Id
-        := Get_String_Name (Ocarina_Config & "::root_system_name");
-      AADL_Version  : constant Name_Id
-        := Get_String_Name (Ocarina_Config & "::aadl_version");
-      Timeout_Property     : constant Name_Id
-        := Get_String_Name (Ocarina_Config & "::timeout_property");
+      AADL_Files : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::aadl_files");
+      Use_Components_Library : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::use_components_library");
+      Referencial_Files : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::referencial_files");
+      The_Generator : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::generator");
+      Generator_Options : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::generator_options");
+      Predefined_PS : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::needed_property_sets");
+      RS_Name : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::root_system_name");
+      AADL_Version : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::aadl_version");
+      Timeout_Property : constant Name_Id :=
+        Get_String_Name (Ocarina_Config & "::timeout_property");
 
       -------------------------------
       -- Extract_Referencial_Files --
       -------------------------------
 
       procedure Extract_Referencial_Files
-        (Ref_Files : List_Id;
-                  Ref_Map   : in out String_String_Maps.Map)
+        (Ref_Files :        List_Id;
+         Ref_Map   : in out String_String_Maps.Map)
       is
-                  N : Node_Id;
+         N : Node_Id;
       begin
          if not Is_Empty (Ref_Files) then
             N := First_Node (Ref_Files);
             while Present (N) loop
                declare
-                  App_Name : constant String
-                    := Image (Value (N), Quoted => False);
+                  App_Name : constant String :=
+                    Image (Value (N), Quoted => False);
                begin
                   N := Next_Node (N);
                   if Present (N) then
                      declare
-                        File : constant String
-                          := Image (Value (N), Quoted => False);
+                        File : constant String :=
+                          Image (Value (N), Quoted => False);
                      begin
                         Write_Line ("Inserting : " & App_Name & " / " & File);
-                        String_String_Maps.Insert (Container => Ref_Map,
-                                                   Key => App_Name,
-                                                   New_Item => File,
-                                                   Position => Position,
-                                                   Inserted => Success);
+                        String_String_Maps.Insert
+                          (Container => Ref_Map,
+                           Key       => App_Name,
+                           New_Item  => File,
+                           Position  => Position,
+                           Inserted  => Success);
                      end;
                   else
-                     Exit_On_Error (True, "Missing parameters in "
-                                      & "Referencial_Files property");
+                     Exit_On_Error
+                       (True,
+                        "Missing parameters in " &
+                        "Referencial_Files property");
                   end if;
                   N := Next_Node (N);
                end;
@@ -739,19 +744,19 @@ procedure Ocarina_Cmd is
 
       begin
          if not Is_Empty (Needed_PS) then
-            N := First_Node (Needed_Ps);
+            N := First_Node (Needed_PS);
 
             while Present (N) loop
                declare
                   P         : Name_Id;
-                  File_Name : constant String
-                    := Image (Value (N), Quoted => False);
+                  File_Name : constant String :=
+                    Image (Value (N), Quoted => False);
                begin
                   Set_Str_To_Name_Buffer (File_Name);
                   Set_Str_To_Name_Buffer
                     (Image
                        (Ocarina_Property_Set_Type'Value
-                        ("O_" & Name_Buffer (1 .. Name_Len))));
+                          ("O_" & Name_Buffer (1 .. Name_Len))));
                   P := Name_Find;
 
                   Get_Name_String (Default_Library_Path);
@@ -778,8 +783,8 @@ procedure Ocarina_Cmd is
          N := First_Node (Source_Files);
          while Present (N) loop
             declare
-               File_Name : constant String
-                 := Image (Value (N), Quoted => False);
+               File_Name : constant String :=
+                 Image (Value (N), Quoted => False);
             begin
                Get_Name_String (Current_Scenario_Dirname);
                Add_Str_To_Name_Buffer (File_Name);
@@ -802,14 +807,15 @@ procedure Ocarina_Cmd is
       F := Sources.First;
 
       loop
-         Dirname := Get_String_Name
-           (Dir_Name (Normalize_Pathname
-                        (Get_Name_String (Sources.Table (F)))));
+         Dirname :=
+           Get_String_Name
+             (Dir_Name
+                (Normalize_Pathname (Get_Name_String (Sources.Table (F)))));
 
          if Current_Scenario_Dirname = No_Name then
             Current_Scenario_Dirname := Dirname;
-            Scenario_Dir := new String'(Get_Name_String
-                                          (Current_Scenario_Dirname));
+            Scenario_Dir             :=
+              new String'(Get_Name_String (Current_Scenario_Dirname));
          end if;
 
          --  All scenario files have to be located in the same directory
@@ -826,9 +832,7 @@ procedure Ocarina_Cmd is
            ((File_Name = No_Name),
             "Cannot read file " & Get_Name_String (Sources.Table (F)));
          AADL_Root := Parse (Language, AADL_Root, Buffer);
-         Exit_On_Error
-           (No (AADL_Root),
-            "Cannot parse AADL specifications");
+         Exit_On_Error (No (AADL_Root), "Cannot parse AADL specifications");
 
          exit when F = Sources.Last; -- XXX Sources.Last may be modified
          F := F + 1;
@@ -847,8 +851,8 @@ procedure Ocarina_Cmd is
       --  Every thing is fine, extract the information from the
       --  scenario model.
 
-      Root_System := Ocarina.ME_AADL.AADL_Instances.Nodes.Root_System
-        (Instance_Root);
+      Root_System :=
+        Ocarina.ME_AADL.AADL_Instances.Nodes.Root_System (Instance_Root);
 
       --  Extract the generator
 
@@ -862,9 +866,9 @@ procedure Ocarina_Cmd is
 
       Exit_On_Error
         (not Is_Defined_List_Property (Root_System, AADL_Files),
-         "AADL source files have to be specified by"
-           & " means of the standard property"
-           & " ""Source_Text""");
+         "AADL source files have to be specified by" &
+         " means of the standard property" &
+         " ""Source_Text""");
 
       Source_Files := Get_List_Property (Root_System, AADL_Files);
 
@@ -891,8 +895,7 @@ procedure Ocarina_Cmd is
          Needed_PS := No_List;
       end if;
 
-      if Is_Defined_Boolean_Property
-         (Root_System, Use_Components_Library) then
+      if Is_Defined_Boolean_Property (Root_System, Use_Components_Library) then
          Use_CL := True;
       else
          Use_CL := False;
@@ -901,8 +904,8 @@ procedure Ocarina_Cmd is
       --  Extract the generator options.
 
       if Is_Defined_List_Property (Root_System, Generator_Options) then
-         Used_Generator_Options
-            := Get_List_Property (Root_System, Generator_Options);
+         Used_Generator_Options :=
+           Get_List_Property (Root_System, Generator_Options);
       else
          Used_Generator_Options := No_List;
       end if;
@@ -914,9 +917,8 @@ procedure Ocarina_Cmd is
 
          while Present (N) loop
             declare
-               P         : Name_Id;
-               Option : constant String
-                 := Image (Value (N), Quoted => False);
+               P      : Name_Id;
+               Option : constant String := Image (Value (N), Quoted => False);
             begin
 
                Set_Str_To_Name_Buffer (Option);
@@ -939,8 +941,8 @@ procedure Ocarina_Cmd is
       --  Extract the AADL version
 
       if Is_Defined_Enumeration_Property (Root_System, AADL_Version) then
-         AADL_Version_Name := Get_Enumeration_Property
-           (Root_System, AADL_Version);
+         AADL_Version_Name :=
+           Get_Enumeration_Property (Root_System, AADL_Version);
 
          if Get_Name_String (AADL_Version_Name) = "aadlv1" then
             Temp_AADL_Version := Ocarina.AADL_V1;
@@ -977,9 +979,8 @@ procedure Ocarina_Cmd is
       --  Reset Ocarina to have a clean set up for the next step
 
       declare
-         The_Backend_Name     : constant String :=
-           Get_Name_String (The_Backend);
-         Result               : Argument_List_Access :=
+         The_Backend_Name : constant String := Get_Name_String (The_Backend);
+         Result           : Argument_List_Access :=
            new Argument_List
            (Integer (Sources.First) .. Integer (Sources.Last));
          Root_System_Name_Ptr : String_Access;
@@ -1001,7 +1002,7 @@ procedure Ocarina_Cmd is
          --         Ocarina.Files.Sources.Init;
 
          Ocarina.Initialize;
-         Language := Get_String_Name ("aadl");
+         Language             := Get_String_Name ("aadl");
          Ocarina.AADL_Version := Temp_AADL_Version;
          Set_Current_Backend_Name (The_Backend_Name);
 
@@ -1035,18 +1036,21 @@ procedure Ocarina_Cmd is
    --------------------------
 
    procedure Process_Command_Line
-     (Root_System_Name  : out Name_Id;
-      Success           : out Boolean) is
+     (Root_System_Name : out Name_Id;
+      Success          : out Boolean)
+   is
    begin
       Root_System_Name := No_Name;
       Success          := True;
 
       Initialize_Option_Scan;
       loop
-         case Getopt ("* aadlv1 aadlv2 help o: c d g: "
-                        & "r: real_lib: real_theorem: boundt_process: "
-                        & "disable-annexes=: "
-                        & "i p q v V s x t?") is
+         case Getopt
+           ("* aadlv1 aadlv2 help o: c d g: " &
+            "r: real_lib: real_theorem: boundt_process: " &
+            "disable-annexes=: " &
+            "i p q v V s x t?")
+         is
 
             when 'a' =>
                if Full_Switch = "aadlv2" then
@@ -1127,9 +1131,9 @@ procedure Ocarina_Cmd is
             when 's' =>
                Set_Current_Action (Show_Libraries);
 
-               --  Note: we continue parsing the command line
-               --  parameters to know whether the user specified also
-               --  an AADL version flag.
+            --  Note: we continue parsing the command line
+            --  parameters to know whether the user specified also
+            --  an AADL version flag.
 
             when 'x' =>
                Use_Scenario_File := True;
@@ -1138,7 +1142,7 @@ procedure Ocarina_Cmd is
             when 't' =>
                Set_Current_Action (Shell);
                declare
-                  N : constant String := Get_Argument;
+                  N    : constant String := Get_Argument;
                   File : Ada.Text_IO.File_Type;
                begin
                   if N'Length > 0 then
@@ -1171,15 +1175,16 @@ procedure Ocarina_Cmd is
 
                   elsif S (S'First) = '@' then
                      declare
-                        Files : constant
-                          Ada.Command_Line.Response_File.Argument_List :=
+                        Files : constant Ada.Command_Line.Response_File
+                          .Argument_List :=
                           Ada.Command_Line.Response_File.Arguments_From
-                          (S (S'First + 1 .. S'Last));
+                            (S (S'First + 1 .. S'Last));
                      begin
                         for J in Files'Range loop
                            Set_Str_To_Name_Buffer (Files (J).all);
                            Ocarina.Files.Add_File_To_Parse_List
-                             (Name_Find, Add_Suffix => False);
+                             (Name_Find,
+                              Add_Suffix => False);
                         end loop;
                         --  Free (Files);
                      end;
@@ -1187,7 +1192,8 @@ procedure Ocarina_Cmd is
                   else
                      Set_Str_To_Name_Buffer (S);
                      Ocarina.Files.Add_File_To_Parse_List
-                      (Name_Find, Add_Suffix => False);
+                       (Name_Find,
+                        Add_Suffix => False);
                   end if;
                end;
          end case;
@@ -1204,31 +1210,31 @@ procedure Ocarina_Cmd is
       then
          Set_Current_Action (Show_Usage);
 
-      elsif Sources.Last /= 0
-        and then Get_Current_Action = None
-      then
+      elsif Sources.Last /= 0 and then Get_Current_Action = None then
          Set_Current_Action (Analyze_Model);
       end if;
 
    exception
       when Invalid_Options =>
-         Write_Line (Base_Name (Command_Name)
-                       & ": invalid combination of options");
+         Write_Line
+           (Base_Name (Command_Name) & ": invalid combination of options");
          Write_Eol;
          OS_Exit (1);
 
       when GNAT.Command_Line.Invalid_Switch =>
-         Write_Line (Base_Name (Command_Name)
-                     & ": invalid switch "
-                     & Full_Switch
-                     & Parameter);
+         Write_Line
+           (Base_Name (Command_Name) &
+            ": invalid switch " &
+            Full_Switch &
+            Parameter);
          Write_Eol;
          OS_Exit (1);
 
       when GNAT.Command_Line.Invalid_Parameter =>
-         Write_Line (Base_Name (Command_Name)
-                     & ": invalid parameter for switch -"
-                     & Full_Switch);
+         Write_Line
+           (Base_Name (Command_Name) &
+            ": invalid parameter for switch -" &
+            Full_Switch);
          Write_Eol;
          OS_Exit (1);
    end Process_Command_Line;
@@ -1242,13 +1248,13 @@ procedure Ocarina_Cmd is
    begin
       Set_Standard_Error;
       Write_Line ("Usage: ");
-      Write_Line ("      "
-                    & Base_Name (Command_Name, Exec_Suffix.all)
-                    & " [options] files");
+      Write_Line
+        ("      " &
+         Base_Name (Command_Name, Exec_Suffix.all) &
+         " [options] files");
       Write_Line ("      OR");
-      Write_Line ("      "
-                    & Base_Name (Command_Name, Exec_Suffix.all)
-                    & " -help");
+      Write_Line
+        ("      " & Base_Name (Command_Name, Exec_Suffix.all) & " -help");
       Write_Line ("  files are a non null sequence of AADL files");
 
       Write_Eol;
@@ -1280,8 +1286,8 @@ procedure Ocarina_Cmd is
       Ocarina.FE_REAL.Usage;
       Ocarina.Backends.Usage;
 
-      Write_Line ("   -disable-annexes={annexes}"
-                    & "  Desactive one or all annexes");
+      Write_Line
+        ("   -disable-annexes={annexes}" & "  Desactive one or all annexes");
       Write_Line ("       Annexes :");
       Write_Line ("        all");
       Write_Line ("        behavior");
@@ -1298,16 +1304,16 @@ procedure Ocarina_Cmd is
    procedure Version is
    begin
       Write_Line
-        ("Ocarina " & Ocarina_Version
-           & " (" & Ocarina_Revision & ")");
+        ("Ocarina " & Ocarina_Version & " (" & Ocarina_Revision & ")");
 
       if Ocarina_Last_Configure_Date /= "" then
          Write_Line ("Build date: " & Ocarina_Last_Configure_Date);
       end if;
 
       Write_Line
-        ("Copyright (c) 2003-2009 Telecom ParisTech, 2010-"
-           & Ocarina_Last_Configure_Year & " ESA & ISAE");
+        ("Copyright (c) 2003-2009 Telecom ParisTech, 2010-" &
+         Ocarina_Last_Configure_Year &
+         " ESA & ISAE");
    end Version;
 
    package RT renames Ocarina.ME_REAL.Tokens;
@@ -1315,15 +1321,13 @@ begin
    --  Init
 
    Ocarina.Initialize;
-   Language := Get_String_Name ("aadl");
+   Language             := Get_String_Name ("aadl");
    Default_AADL_Version := Get_Default_AADL_Version;
    AADL_Version         := Default_AADL_Version;
 
    --  Process the command line
 
-   Process_Command_Line
-     (Root_System_Name,
-      Success);
+   Process_Command_Line (Root_System_Name, Success);
    Exit_On_Error (not Success, "Cannot process command line");
 
    --  Initialization Modules
@@ -1381,9 +1385,7 @@ begin
               ((File_Name = No_Name),
                "Cannot read file " & Get_Name_String (Sources.Table (F)));
             AADL_Root := Parse (Language, AADL_Root, Buffer);
-            Exit_On_Error
-              (No (AADL_Root),
-               "Cannot parse AADL specifications");
+            Exit_On_Error (No (AADL_Root), "Cannot parse AADL specifications");
             exit when F = Sources.Last;
             F := F + 1;
          end loop;
@@ -1415,7 +1417,8 @@ begin
 
       when Generate_Code =>
          if Get_Current_Backend_Name = Get_String_Name ("real_theorem")
-           or else Get_Current_Backend_Name = Get_String_Name ("real_pp") then
+           or else Get_Current_Backend_Name = Get_String_Name ("real_pp")
+         then
 
             AADL_Root := Instantiate_Model (AADL_Root);
             Exit_On_Error (No (AADL_Root), "Cannot instantiate AADL models");
@@ -1433,21 +1436,20 @@ begin
 
       when Analyze_With_Cheddar =>
          declare
-            Args             : Argument_List_Access
-              := new Argument_List
-              (1 ..
-               Integer (Sources.Last) - Integer (Sources.First) + 2);
+            Args : Argument_List_Access :=
+              new Argument_List
+              (1 .. Integer (Sources.Last) - Integer (Sources.First) + 2);
             --  '-aadlv?' + all source files
 
-            Index            : Integer := 1;
+            Index            : Integer         := 1;
             Cheddar_Analyzer : constant String := "cheddar_analyzer";
          begin
             Args (Index) := new String'("-aadlv?");
-            case Aadl_Version is
+            case AADL_Version is
                when AADL_V1 =>
-                  Args (Index)(Args (Index)'Last) := '1';
+                  Args (Index) (Args (Index)'Last) := '1';
                when AADL_V2 =>
-                  Args (Index)(Args (Index)'Last) := '2';
+                  Args (Index) (Args (Index)'Last) := '2';
             end case;
             Index := Index + 1;
 
@@ -1458,7 +1460,7 @@ begin
                   "Cannot find file " & Get_Name_String (Sources.Table (F)));
 
                Args (Index) := new String'(Get_Name_String (File_Name));
-               Index := Index + 1;
+               Index        := Index + 1;
             end loop;
 
             --  Invoke cheddar_analyzer
@@ -1470,8 +1472,9 @@ begin
 
             Free (Args);
 
-            Exit_On_Error (not Success,
-                           Cheddar_Analyzer & " died unexpectedly");
+            Exit_On_Error
+              (not Success,
+               Cheddar_Analyzer & " died unexpectedly");
          end;
 
       when others =>

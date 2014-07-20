@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2013 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with GNAT.Directory_Operations;
 
@@ -45,7 +45,7 @@ with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.Execution_Utils is
 
-   use Namet;
+   use Ocarina.Namet;
    use GNAT.Directory_Operations;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -57,10 +57,10 @@ package body Ocarina.Backends.Execution_Utils is
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
-   procedure Visit_Component_Instance    (E : Node_Id);
-   procedure Visit_System_Instance       (E : Node_Id);
-   procedure Visit_Process_Instance      (E : Node_Id);
-   procedure Visit_Processor_Instance    (E : Node_Id);
+   procedure Visit_Component_Instance (E : Node_Id);
+   procedure Visit_System_Instance (E : Node_Id);
+   procedure Visit_Process_Instance (E : Node_Id);
+   procedure Visit_Processor_Instance (E : Node_Id);
 
    -----------
    -- Reset --
@@ -134,9 +134,9 @@ package body Ocarina.Backends.Execution_Utils is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      S  : constant Node_Id := Parent_Subcomponent (E);
-      A  : constant Node_Id := Parent_Component (Parent_Subcomponent (E));
-      M  : constant Process_Type := new Process_Rec;
+      S : constant Node_Id      := Parent_Subcomponent (E);
+      A : constant Node_Id      := Parent_Component (Parent_Subcomponent (E));
+      M : constant Process_Type := new Process_Rec;
    begin
       if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
          M.Appli_Name := Normalize_Name (Name (Identifier (A)));
@@ -144,8 +144,8 @@ package body Ocarina.Backends.Execution_Utils is
 
          --  Get the execution platform of the processor this node is
          --  bound to.
-         M.Execution_Platform := Get_Execution_Platform
-           (Get_Bound_Processor (E));
+         M.Execution_Platform :=
+           Get_Execution_Platform (Get_Bound_Processor (E));
 
          Ref_Name_Tables.Append (Process_List, M);
       end if;
@@ -156,15 +156,15 @@ package body Ocarina.Backends.Execution_Utils is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S  : constant Node_Id := Parent_Subcomponent (E);
-      M  : constant Process_Type := new Process_Rec;
+      S : constant Node_Id      := Parent_Subcomponent (E);
+      M : constant Process_Type := new Process_Rec;
    begin
       if Get_Current_Backend_Kind = PolyORB_Kernel_C then
          Set_Str_To_Name_Buffer ("generated-code/");
          Get_Name_String_And_Append (Name (Identifier (S)));
          M.Appli_Name := Name_Find;
          Set_Str_To_Name_Buffer ("pok.elf");
-         M.Node_Name  := Name_Find;
+         M.Node_Name := Name_Find;
 
          Ref_Name_Tables.Append (Process_List, M);
       end if;
@@ -196,8 +196,7 @@ package body Ocarina.Backends.Execution_Utils is
 
    function Get_Binary_Location
      (Backend   : Backend_Kind;
-      Node_Name : Name_Id)
-     return String
+      Node_Name : Name_Id) return String
    is
    begin
       Set_Str_To_Name_Buffer ("");
@@ -205,7 +204,7 @@ package body Ocarina.Backends.Execution_Utils is
       case Backend is
          when PolyORB_HI_Ada | PolyORB_HI_C =>
             Get_Name_String_And_Append (Node_Name);
-            Add_Str_To_Name_buffer (Dir_Separator & "");
+            Add_Str_To_Name_Buffer (Dir_Separator & "");
             Get_Name_String_And_Append (Node_Name);
          when PolyORB_Kernel_C =>
             Get_Name_String_And_Append (Node_Name);

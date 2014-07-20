@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -55,28 +55,27 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    ------------------------
 
    function Get_Name_Of_Entity
-     (Entity : Types.Node_Id;
-      Get_Display_Name : Boolean := True)
-     return Types.Name_Id
+     (Entity           : Ocarina.Types.Node_Id;
+      Get_Display_Name : Boolean := True) return Ocarina.Types.Name_Id
    is
-      use Types;
+      use Ocarina.Types;
       use AIN;
 
       pragma Assert
         (Kind (Entity) = K_Subcomponent_Instance
-           or else Kind (Entity) = K_Call_Instance
-           or else Kind (Entity) = K_Call_Sequence_Instance
-           or else Kind (Entity) = K_Port_Spec_Instance
-           or else Kind (Entity) = K_Feature_Group_Spec_Instance
-           or else Kind (Entity) = K_Parameter_Instance
-           or else Kind (Entity) = K_Subcomponent_Access_Instance
-           or else Kind (Entity) = K_Subprogram_Spec_Instance
-           or else Kind (Entity) = K_Connection_Instance
-           or else Kind (Entity) = K_Component_Instance
-           or else Kind (Entity) = K_Mode_Instance
-           or else Kind (Entity) = K_Namespace_Instance
-           or else Kind (Entity) = K_Property_Association_Instance
-           or else DNKE (Entity));
+         or else Kind (Entity) = K_Call_Instance
+         or else Kind (Entity) = K_Call_Sequence_Instance
+         or else Kind (Entity) = K_Port_Spec_Instance
+         or else Kind (Entity) = K_Feature_Group_Spec_Instance
+         or else Kind (Entity) = K_Parameter_Instance
+         or else Kind (Entity) = K_Subcomponent_Access_Instance
+         or else Kind (Entity) = K_Subprogram_Spec_Instance
+         or else Kind (Entity) = K_Connection_Instance
+         or else Kind (Entity) = K_Component_Instance
+         or else Kind (Entity) = K_Mode_Instance
+         or else Kind (Entity) = K_Namespace_Instance
+         or else Kind (Entity) = K_Property_Association_Instance
+         or else DNKE (Entity));
    begin
       if Identifier (Entity) /= No_Node then
          if Get_Display_Name then
@@ -94,12 +93,11 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    ------------------------
 
    function Get_Name_Of_Entity
-     (Entity : Types.Node_Id;
-      Get_Display_Name : Boolean := True)
-     return String
+     (Entity           : Ocarina.Types.Node_Id;
+      Get_Display_Name : Boolean := True) return String
    is
-      use Types;
-      use Namet;
+      use Ocarina.Types;
+      use Ocarina.Namet;
 
       Name : constant Name_Id := Get_Name_Of_Entity (Entity, Get_Display_Name);
    begin
@@ -115,14 +113,14 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    ---------------------------
 
    function Get_Referenced_Entity
-     (Entity_Ref : Types.Node_Id)
-     return Types.Node_Id
+     (Entity_Ref : Ocarina.Types.Node_Id) return Ocarina.Types.Node_Id
    is
-      use Types;
+      use Ocarina.Types;
       use AIN;
 
-      pragma Assert (Kind (Entity_Ref) = K_Entity_Reference_Instance
-             or else DNKE (Entity_Ref));
+      pragma Assert
+        (Kind (Entity_Ref) = K_Entity_Reference_Instance
+         or else DNKE (Entity_Ref));
    begin
       return AIN.Item (AIN.Last_Node (AIN.Path (Entity_Ref)));
    end Get_Referenced_Entity;
@@ -132,24 +130,26 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    ------------------------------------------
 
    procedure Add_Path_Element_To_Entity_Reference
-     (Entity_Ref, Item : Types.Node_Id)
+     (Entity_Ref, Item : Ocarina.Types.Node_Id)
    is
-      use Types;
+      use Ocarina.Types;
       use AIN;
-      use Ocarina.Me_AADL.AADL_Instances.Nutils;
+      use Ocarina.ME_AADL.AADL_Instances.Nutils;
 
       pragma Assert
         (Entity_Ref /= No_Node
-         and then (Kind (Entity_Ref) = K_Entity_Reference_Instance
-                   or else DNKE (Entity_Ref)));
+         and then
+         (Kind (Entity_Ref) = K_Entity_Reference_Instance
+          or else DNKE (Entity_Ref)));
       pragma Assert (Item /= No_Node);
    begin
       if Path (Entity_Ref) = No_List then
          Set_Path (Entity_Ref, New_List (K_List_Id, Loc (Item)));
       end if;
 
-      Append_Node_To_List (New_Node (K_Node_Container, Loc (Item)),
-                           Path (Entity_Ref));
+      Append_Node_To_List
+        (New_Node (K_Node_Container, Loc (Item)),
+         Path (Entity_Ref));
       Set_Item (Last_Node (Path (Entity_Ref)), Item);
    end Add_Path_Element_To_Entity_Reference;
 
@@ -158,11 +158,10 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    ------------------------------------------------
 
    function Entity_Reference_Path_Has_Several_Elements
-     (Entity_Ref : Types.Node_Id)
-     return Boolean
+     (Entity_Ref : Ocarina.Types.Node_Id) return Boolean
    is
-      use Types;
-      use Ocarina.Me_AADL.AADL_Instances.Nodes;
+      use Ocarina.Types;
+      use Ocarina.ME_AADL.AADL_Instances.Nodes;
 
       pragma Assert
         (Entity_Ref /= No_Node
@@ -178,11 +177,10 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    --------------------------
 
    function Duplicate_Identifier
-     (Identifier : Types.Node_Id)
-     return Types.Node_Id
+     (Identifier : Ocarina.Types.Node_Id) return Ocarina.Types.Node_Id
    is
-      use Types;
-      use Ocarina.Me_AADL.AADL_Instances.Nutils;
+      use Ocarina.Types;
+      use Ocarina.ME_AADL.AADL_Instances.Nutils;
       use AIN;
 
       Duplicate : Node_Id;
@@ -193,8 +191,9 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
          Duplicate := New_Node (K_Identifier, ATN.Loc (Identifier));
          Set_Name (Duplicate, ATN.Name (Identifier));
          Set_Display_Name (Duplicate, ATN.Display_Name (Identifier));
-         Set_Corresponding_Entity (Duplicate,
-                                   ATN.Corresponding_Entity (Identifier));
+         Set_Corresponding_Entity
+           (Duplicate,
+            ATN.Corresponding_Entity (Identifier));
          return Duplicate;
       end if;
    end Duplicate_Identifier;
@@ -208,10 +207,9 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    -------------------------------
 
    function Get_Category_Of_Component
-     (Component : Types.Node_Id)
-     return Component_Category
+     (Component : Ocarina.Types.Node_Id) return Component_Category
    is
-      use Types;
+      use Ocarina.Types;
       use AIN;
       use ATN;
 
@@ -221,24 +219,19 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    begin
       if AIN.Kind (Component) = K_Subcomponent_Instance then
          if Present
-           (Corresponding_Declaration
-              (Corresponding_Instance
-                 (Component)))
+             (Corresponding_Declaration (Corresponding_Instance (Component)))
          then
             return Component_Category'Val
-              (ATN.Category
-                 (Corresponding_Declaration
-                    (Corresponding_Instance
-                       (Component))));
+                (ATN.Category
+                   (Corresponding_Declaration
+                      (Corresponding_Instance (Component))));
          else
             return CC_Unknown;
          end if;
       else
          if Present (Corresponding_Declaration (Component)) then
             return Component_Category'Val
-              (ATN.Category
-               (Corresponding_Declaration
-                (Component)));
+                (ATN.Category (Corresponding_Declaration (Component)));
          else
             return CC_Unknown;
          end if;
@@ -254,20 +247,20 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    --------------------------------
 
    function Get_Category_Of_Connection
-     (Connection : Types.Node_Id)
-     return Connection_Type
+     (Connection : Ocarina.Types.Node_Id) return Connection_Type
    is
       use AIN;
-      use Types;
+      use Ocarina.Types;
 
       pragma Assert
         (Connection /= No_Node
-           and then (Kind (Connection) = K_Connection_Instance
-                     or else DNKE (Connection)));
+         and then
+         (Kind (Connection) = K_Connection_Instance
+          or else DNKE (Connection)));
    begin
       if Kind (Connection) = K_Connection_Instance then
          return ATE.Get_Category_Of_Connection
-           (Corresponding_Declaration (Connection));
+             (Corresponding_Declaration (Connection));
       else
          return CT_Error;
       end if;
@@ -282,10 +275,9 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    ----------------------------------
 
    function Get_Category_Of_Subcomponent
-     (Subcomponent : Types.Node_Id)
-     return Component_Category
+     (Subcomponent : Ocarina.Types.Node_Id) return Component_Category
    is
-      use Types;
+      use Ocarina.Types;
       use AIN;
       use ATN;
 
@@ -295,7 +287,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    begin
       if Corresponding_Declaration (Subcomponent) /= No_Node then
          return Component_Category'Val
-           (ATN.Category (Corresponding_Declaration (Subcomponent)));
+             (ATN.Category (Corresponding_Declaration (Subcomponent)));
       else
          return CC_Unknown;
       end if;
@@ -308,12 +300,10 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities is
    -- Display_Node_Kind_Error --
    -----------------------------
 
-   function Display_Node_Kind_Error
-     (Node : Types.Node_Id)
-     return Boolean
-   is
-      use Types;
-      use Output;
+   function Display_Node_Kind_Error (Node : Ocarina.Types.Node_Id)
+                                    return Boolean is
+      use Ocarina.Types;
+      use Ocarina.Output;
       use AIN;
       use Ocarina.ME_AADL.AADL_Instances.Debug;
    begin

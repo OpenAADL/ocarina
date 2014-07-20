@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,25 +42,26 @@ package body Ocarina.Builder.AADL.Components.Connections is
 
    function Add_Property_Association
      (Connection           : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean
+      Property_Association : Node_Id) return Boolean
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      pragma Assert (Connection /= No_Node
-                     and then Kind (Connection) = K_Connection);
+      pragma Assert
+        (Connection /= No_Node and then Kind (Connection) = K_Connection);
       pragma Assert (Property_Association /= No_Node);
    begin
       if Is_Empty
-        (Ocarina.Me_AADL.AADL_Tree.Nodes.Properties (Connection)) then
-         Set_Properties (Connection,
-                         New_List (K_List_Id, Loc (Property_Association)));
+          (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Connection))
+      then
+         Set_Properties
+           (Connection,
+            New_List (K_List_Id, Loc (Property_Association)));
       end if;
 
-      Append_Node_To_List (Property_Association,
-                           Ocarina.Me_AADL.AADL_Tree.Nodes.Properties
-                             (Connection));
+      Append_Node_To_List
+        (Property_Association,
+         Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Connection));
       return True;
    end Add_Property_Association;
 
@@ -72,13 +73,12 @@ package body Ocarina.Builder.AADL.Components.Connections is
      (Loc           : Location;
       Name          : Node_Id;
       Comp_Impl     : Node_Id;
-      Category      : Ocarina.Me_AADL.Connection_Type;
+      Category      : Ocarina.ME_AADL.Connection_Type;
       Is_Refinement : Boolean := False;
       Is_Bidirect   : Boolean := False;
       Source        : Node_Id := No_Node;
       Destination   : Node_Id := No_Node;
-      In_Modes      : Node_Id := No_Node)
-     return Node_Id
+      In_Modes      : Node_Id := No_Node) return Node_Id
    is
       use Ocarina.ME_AADL;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -86,8 +86,8 @@ package body Ocarina.Builder.AADL.Components.Connections is
 
       pragma Assert (Kind (Comp_Impl) = K_Component_Implementation);
 
-      Node : constant Node_Id := New_Node (K_Connection, Loc);
-      Success : Boolean := True;
+      Node    : constant Node_Id := New_Node (K_Connection, Loc);
+      Success : Boolean          := True;
    begin
       Set_Identifier (Node, Name);
 
@@ -105,8 +105,7 @@ package body Ocarina.Builder.AADL.Components.Connections is
       Set_Property_Scope (Node, New_Node (K_Scope_Definition, Loc));
       Set_Corresponding_Entity (Property_Scope (Node), Node);
 
-      Success := Add_Connection (Component  => Comp_Impl,
-                                 Connection => Node);
+      Success := Add_Connection (Component => Comp_Impl, Connection => Node);
 
       if Success then
          return Node;
@@ -123,13 +122,12 @@ package body Ocarina.Builder.AADL.Components.Connections is
    function New_Connection
      (Loc           : Location;
       Name          : Node_Id;
-      Category      : Ocarina.Me_AADL.Connection_Type;
+      Category      : Ocarina.ME_AADL.Connection_Type;
       Is_Refinement : Boolean := False;
       Is_Bidirect   : Boolean := False;
       Source        : Node_Id := No_Node;
       Destination   : Node_Id := No_Node;
-      In_Modes      : Node_Id := No_Node)
-     return Node_Id
+      In_Modes      : Node_Id := No_Node) return Node_Id
    is
       use Ocarina.ME_AADL;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;

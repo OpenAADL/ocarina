@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;     use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.ME_AADL_BA.Tokens is
 
@@ -41,7 +41,7 @@ package Ocarina.ME_AADL_BA.Tokens is
      (T_Error,
       T_Identifier,
 
-      --  Special_Characters
+   --  Special_Characters
 
       T_Quotation_Mark,        --  "    (for T_String_Literal)
       T_Number_Sign,           --  #
@@ -74,7 +74,7 @@ package Ocarina.ME_AADL_BA.Tokens is
       T_Interrogative,         --  ?
       T_Exclamation,           --  !
 
-      --  Relational operator
+   --  Relational operator
 
       T_Less_Than_Sign,        --  <
       T_Equals_Sign,           --  =
@@ -83,27 +83,27 @@ package Ocarina.ME_AADL_BA.Tokens is
       T_Less_Or_Equal,         --  <=
       T_Non_Equal,             --  !=
 
-      --  Unary and binary adding operator
+   --  Unary and binary adding operator
 
       T_Plus,                  --  +
       T_Minus,                 --  -
 
       T_Concat,                --  &
 
-      --  Multiplying operator
+   --  Multiplying operator
 
       T_Multiply,              --  *
       T_Divide,                --  /
       T_Mod,                   --  mod
       T_Rem,                   --  rem
 
-      --  Highest precedence operator
+   --  Highest precedence operator
 
       T_Exponent,              --  **
       T_Abs,                   --  abs
       T_Not,                   --  not
 
-      --  Logical operator
+   --  Logical operator
 
       T_And,                   --  and
       T_Or,                    --  or
@@ -111,7 +111,7 @@ package Ocarina.ME_AADL_BA.Tokens is
       T_Cand,                  --  cand
       T_Cor,                   --  cord
 
-      --  Structure
+   --  Structure
 
       T_If,                    --  if
       T_Elsif,                 --  elsif
@@ -120,12 +120,12 @@ package Ocarina.ME_AADL_BA.Tokens is
       T_For,                   --  for
       T_While,                 --  while
 
-      --  Boolean
+   --  Boolean
 
       T_True,                  --  true
       T_False,                 --  false
 
-      --  Reserved Words
+   --  Reserved Words
 
       T_Abort,                 --  abort
       T_Any,                   --  any
@@ -158,67 +158,60 @@ package Ocarina.ME_AADL_BA.Tokens is
 
       T_None,                  --  none, not in BA draft
 
-      --  Numeric Literals
+   --  Numeric Literals
 
       T_Real_Literal,          --  real number
       T_Integer_Literal,       --  integer number
 
-      --  Others
+   --  Others
 
       T_String_Literal,        --  string
       T_Comment,               --  comment      (ignored)
       T_Raw_Text,              --  raw text (used for annex parsing
-                                 --  / printing)
+   --  / printing)
 
       T_EOF                    --  end of file
-     );
+      );
 
    type BA_Token_List_Type is array (Positive range <>) of BA_Token_Type;
 
    --  Sybtype definitions
 
-   subtype BA_Logical_Operator_Type is BA_Token_Type
-     range T_And .. T_Cor;
+   subtype BA_Logical_Operator_Type is BA_Token_Type range T_And .. T_Cor;
 
-   subtype BA_Relational_Operator is BA_Token_Type
-     range T_Less_Than_Sign .. T_Non_Equal;
+   subtype BA_Relational_Operator is
+     BA_Token_Type range T_Less_Than_Sign .. T_Non_Equal;
 
-   subtype BA_Unary_Adding_Operator is BA_Token_Type
-     range T_Plus .. T_Minus;
+   subtype BA_Unary_Adding_Operator is BA_Token_Type range T_Plus .. T_Minus;
 
-   subtype BA_Binary_Adding_Operator is BA_Token_Type
-     range T_Plus .. T_Concat;
+   subtype BA_Binary_Adding_Operator is BA_Token_Type range T_Plus .. T_Concat;
 
-   subtype BA_Multiplying_Operator is BA_Token_Type
-     range T_Multiply .. T_Rem;
+   subtype BA_Multiplying_Operator is BA_Token_Type range T_Multiply .. T_Rem;
 
-   subtype BA_Highest_Precedence_Operator is BA_Token_Type
-     range T_Exponent .. T_Not;
+   subtype BA_Highest_Precedence_Operator is
+     BA_Token_Type range T_Exponent .. T_Not;
 
-   subtype BA_Boolean_Type is BA_Token_Type
-     range T_True .. T_False;
+   subtype BA_Boolean_Type is BA_Token_Type range T_True .. T_False;
 
-   subtype BA_Opening_Delimiter is BA_Token_Type
-     range T_Left_Parenthesis .. T_Left_Step_Bracket;
+   subtype BA_Opening_Delimiter is
+     BA_Token_Type range T_Left_Parenthesis .. T_Left_Step_Bracket;
 
-   subtype BA_Closing_Delimiter is BA_Token_Type
-     range T_Right_Parenthesis .. T_Right_Step_Bracket;
+   subtype BA_Closing_Delimiter is
+     BA_Token_Type range T_Right_Parenthesis .. T_Right_Step_Bracket;
 
-   subtype BA_Delimiter_Type is BA_Token_Type
-     range T_Comma ..  T_Exclamation;
+   subtype BA_Delimiter_Type is BA_Token_Type range T_Comma .. T_Exclamation;
 
-   subtype BA_Numeric_Type is BA_Token_Type
-     range T_Real_Literal .. T_Integer_Literal;
+   subtype BA_Numeric_Type is
+     BA_Token_Type range T_Real_Literal .. T_Integer_Literal;
 
-   subtype BA_Reserved_Word_Type is BA_Token_Type
-     range  T_Mod .. T_None;
+   subtype BA_Reserved_Word_Type is BA_Token_Type range T_Mod .. T_None;
 
    BA_First_Reserved_Word_Pos : constant :=
      BA_Reserved_Word_Type'Pos (BA_Reserved_Word_Type'First);
-   BA_Last_Reserved_Word_Pos  : constant :=
+   BA_Last_Reserved_Word_Pos : constant :=
      BA_Reserved_Word_Type'Pos (BA_Reserved_Word_Type'Last);
 
-   BA_Token_Image    : array (BA_Token_Type) of Name_Id;
+   BA_Token_Image : array (BA_Token_Type) of Name_Id;
 
    Max_Number_Of_Digits : constant Integer := 20;
    --  Number of digits of the biggest allowed integer, 2**64 have 20
@@ -227,13 +220,13 @@ package Ocarina.ME_AADL_BA.Tokens is
    Integer_Literal_Value : Unsigned_Long_Long;
    --  for Tokens : T_Integer_Literal
 
-   Float_Literal_Value   : Long_Long_Float;
+   Float_Literal_Value : Long_Long_Float;
    --  for Tokens : T_Real_Literal
 
-   Numeric_Literal_Base  : Unsigned_Short_Short;
+   Numeric_Literal_Base : Unsigned_Short_Short;
    --  for Tokens : T_Integer_Literal, T_Real_Literal
 
-   Numeric_Literal_Exp   : Integer;
+   Numeric_Literal_Exp : Integer;
    --  for Tokens : T_Integer_Literal, T_Real_Literal
 
    function Image (T : BA_Token_Type) return String;

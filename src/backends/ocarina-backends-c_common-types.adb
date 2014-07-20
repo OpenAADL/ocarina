@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -86,7 +86,8 @@ package body Ocarina.Backends.C_Common.Types is
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True);
+        (E            : Node_Id;
+         Real_Process : Boolean := True);
       procedure Visit_Processor_Instance (E : Node_Id);
       procedure Visit_Virtual_Processor_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
@@ -107,8 +108,9 @@ package body Ocarina.Backends.C_Common.Types is
          Spg        : Node_Id;
          Parameters : constant List_Id := New_List (CTN.K_Parameter_List);
       begin
-         pragma Assert (Kind (E) = K_Subprogram_Spec_Instance
-                          or else Kind (E) = K_Subcomponent_Access_Instance);
+         pragma Assert
+           (Kind (E) = K_Subprogram_Spec_Instance
+            or else Kind (E) = K_Subcomponent_Access_Instance);
 
          Spg := Corresponding_Instance (E);
 
@@ -116,19 +118,17 @@ package body Ocarina.Backends.C_Common.Types is
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Value)),
-             Parameter_Type =>
-               Make_Pointer_Type
-               (Map_C_Defining_Identifier
-                (Parent_Component (E)))),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Value)),
+               Parameter_Type      =>
+                 Make_Pointer_Type
+                   (Map_C_Defining_Identifier (Parent_Component (E)))),
             Parameters);
 
-         N := Make_Function_Specification
-           (Defining_Identifier => Map_C_Feature_Subprogram (E),
-            Parameters          => Parameters,
-            Return_Type         => New_Node (CTN.K_Void)
-           );
+         N :=
+           Make_Function_Specification
+             (Defining_Identifier => Map_C_Feature_Subprogram (E),
+              Parameters          => Parameters,
+              Return_Type         => New_Node (CTN.K_Void));
          return N;
       end Feature_Spg_Spec;
 
@@ -168,8 +168,8 @@ package body Ocarina.Backends.C_Common.Types is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -280,14 +280,15 @@ package body Ocarina.Backends.C_Common.Types is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         U               : Node_Id;
-         P               : Node_Id;
-         Implementation  : Node_Id;
-         S               : Node_Id;
+         U              : Node_Id;
+         P              : Node_Id;
+         Implementation : Node_Id;
+         S              : Node_Id;
       begin
          if Get_Current_Backend_Kind = PolyORB_Kernel_C then
-            U := CTN.Distributed_Application_Unit
-               (CTN.Naming_Node (Backend_Node (Identifier (E))));
+            U :=
+              CTN.Distributed_Application_Unit
+                (CTN.Naming_Node (Backend_Node (Identifier (E))));
 
             P := CTN.Entity (U);
 
@@ -305,11 +306,11 @@ package body Ocarina.Backends.C_Common.Types is
                   if Get_Current_Backend_Kind = PolyORB_Kernel_C then
                      if Get_Category_Of_Component (S) = CC_Process then
                         Visit_Process_Instance
-                           (Corresponding_Instance (S), False);
+                          (Corresponding_Instance (S),
+                           False);
                      end if;
                   else
-                     Visit
-                        (Corresponding_Instance (S));
+                     Visit (Corresponding_Instance (S));
                   end if;
 
                   S := Next_Node (S);
@@ -360,8 +361,8 @@ package body Ocarina.Backends.C_Common.Types is
       --------------------------------------
 
       procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-         Processes   : List_Id;
-         S           : Node_Id;
+         Processes : List_Id;
+         S         : Node_Id;
       begin
          if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
             return;
@@ -369,7 +370,7 @@ package body Ocarina.Backends.C_Common.Types is
 
          if Present (Backend_Node (Identifier (E))) then
             Processes := CTN.Processes (Backend_Node (Identifier (E)));
-            S := AIN.First_Node (Processes);
+            S         := AIN.First_Node (Processes);
             while Present (S) loop
                Visit (AIN.Item (S));
                S := AIN.Next_Node (S);
@@ -389,176 +390,178 @@ package body Ocarina.Backends.C_Common.Types is
          R                     : Node_Id;
          Data_Size             : Size_Type;
          Data_Array_Size       : constant ULL_Array := Get_Dimension (E);
-         Number_Representation : constant Supported_Number_Representation
-                     := Get_Number_Representation (E);
-         Is_Signed : constant Boolean
-           := (Number_Representation = Representation_Signed);
+         Number_Representation : constant Supported_Number_Representation :=
+           Get_Number_Representation (E);
+         Is_Signed : constant Boolean :=
+           (Number_Representation = Representation_Signed);
 
-         Type_Uint8            : Node_Id;
-         Type_Int8             : Node_Id;
-         Type_Uint16           : Node_Id;
-         Type_Int16            : Node_Id;
-         Type_Uint32           : Node_Id;
-         Type_Int32            : Node_Id;
-         Type_Uint64           : Node_Id;
-         Type_Int64            : Node_Id;
-         Type_Source_Name      : Name_Id;
+         Type_Uint8       : Node_Id;
+         Type_Int8        : Node_Id;
+         Type_Uint16      : Node_Id;
+         Type_Int16       : Node_Id;
+         Type_Uint32      : Node_Id;
+         Type_Int32       : Node_Id;
+         Type_Uint64      : Node_Id;
+         Type_Int64       : Node_Id;
+         Type_Source_Name : Name_Id;
 
-         Actual_Data_Size      : Unsigned_Long_Long;
-         Struct_Members             : constant List_Id := New_List
-                                    (CTN.K_Enumeration_Literals);
-         Protected_Struct_Members   : constant List_Id := New_List
-                                    (CTN.K_Enumeration_Literals);
+         Actual_Data_Size : Unsigned_Long_Long;
+         Struct_Members   : constant List_Id :=
+           New_List (CTN.K_Enumeration_Literals);
+         Protected_Struct_Members : constant List_Id :=
+           New_List (CTN.K_Enumeration_Literals);
       begin
          if No (Get_Handling (E, By_Name, H_C_Type_Spec)) then
             if Get_Current_Backend_Kind = PolyORB_HI_C then
                Add_Include (PHR.RH (RH_PO_HI_Types));
-               Type_Uint8 := PHR.RE (RE_Uint8_T);
-               Type_Int8 := PHR.RE (RE_Int8_T);
+               Type_Uint8  := PHR.RE (RE_Uint8_T);
+               Type_Int8   := PHR.RE (RE_Int8_T);
                Type_Uint16 := PHR.RE (RE_Uint16_T);
-               Type_Int16 := PHR.RE (RE_Int16_T);
+               Type_Int16  := PHR.RE (RE_Int16_T);
                Type_Uint32 := PHR.RE (RE_Uint32_T);
-               Type_Int32 := PHR.RE (RE_Int32_T);
+               Type_Int32  := PHR.RE (RE_Int32_T);
                Type_Uint64 := PHR.RE (RE_Uint64_T);
-               Type_Int64 := PHR.RE (RE_Int64_T);
+               Type_Int64  := PHR.RE (RE_Int64_T);
             elsif Get_Current_Backend_Kind = PolyORB_Kernel_C then
                Add_Include (PKR.RH (RH_Types));
-               Type_Uint8 := PKR.RE (RE_Uint8_T);
-               Type_Int8 := PKR.RE (RE_Int8_T);
+               Type_Uint8  := PKR.RE (RE_Uint8_T);
+               Type_Int8   := PKR.RE (RE_Int8_T);
                Type_Uint16 := PKR.RE (RE_Uint16_T);
-               Type_Int16 := PKR.RE (RE_Int16_T);
+               Type_Int16  := PKR.RE (RE_Int16_T);
                Type_Uint32 := PKR.RE (RE_Uint32_T);
-               Type_Int32 := PKR.RE (RE_Int32_T);
+               Type_Int32  := PKR.RE (RE_Int32_T);
                Type_Uint64 := PKR.RE (RE_Uint64_T);
-               Type_Int64 := PKR.RE (RE_Int64_T);
+               Type_Int64  := PKR.RE (RE_Int64_T);
             end if;
 
             Data_Representation := Get_Data_Representation (E);
-            Data_Size := Get_Data_Size (E);
-            Actual_Data_Size := To_Bytes (Data_Size);
+            Data_Size           := Get_Data_Size (E);
+            Actual_Data_Size    := To_Bytes (Data_Size);
 
             case Data_Representation is
                when Data_Boolean =>
-                  N := Make_Full_Type_Declaration
-                    (Defining_Identifier => Map_C_Defining_Identifier (E),
-                     Type_Definition => PHR.RE (RE_Bool_T));
-                  Append_Node_To_List
-                    (N, CTN.Declarations (Current_File));
+                  N :=
+                    Make_Full_Type_Declaration
+                      (Defining_Identifier => Map_C_Defining_Identifier (E),
+                       Type_Definition     => PHR.RE (RE_Bool_T));
+                  Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                when Data_Float =>
                   if Data_Size.S = 0 then
                      --  If no size info is given, we default to float
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition     => Make_Defining_Identifier
-                          (TN (T_Float)));
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     =>
+                            Make_Defining_Identifier (TN (T_Float)));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 4 then
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => PHR.RE (RE_Float32_T));
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => PHR.RE (RE_Float32_T));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 8 then
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => PHR.RE (RE_Float64_T));
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => PHR.RE (RE_Float64_T));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   else
                      Display_Located_Error
-                       (Loc (E), "Unsupported data size: "
-                          & Actual_Data_Size'Img, Fatal => True);
+                       (Loc (E),
+                        "Unsupported data size: " & Actual_Data_Size'Img,
+                        Fatal => True);
                   end if;
 
                when Data_Integer =>
                   if Data_Size.S = 0 then
                      --  If no size info is given, we default to int
 
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition     => Make_Defining_Identifier
-                        (TN (T_Int)));
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     =>
+                            Make_Defining_Identifier (TN (T_Int)));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 1 and then Is_Signed then
                      R := Type_Int8;
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => R);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => R);
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 1 and then not Is_Signed then
                      R := Type_Uint8;
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => R);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => R);
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 2 and then Is_Signed then
                      R := Type_Int16;
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => R);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => R);
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 2 and then not Is_Signed then
                      R := Type_Uint16;
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => R);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => R);
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 4 and then Is_Signed then
                      R := Type_Int32;
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => R);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => R);
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 4 and then not Is_Signed then
                      R := Type_Uint32;
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => R);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => R);
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 8 and then Is_Signed then
                      R := Type_Int64;
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => R);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => R);
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   elsif Actual_Data_Size = 8 and then not Is_Signed then
                      R := Type_Uint64;
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition => R);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     => R);
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   else
                      Display_Located_Error
-                       (Loc (E), "Unsupported data size"
-                          & Actual_Data_Size'Img, Fatal => True);
+                       (Loc (E),
+                        "Unsupported data size" & Actual_Data_Size'Img,
+                        Fatal => True);
                   end if;
 
                when Data_Struct | Data_With_Accessors =>
                   declare
-                     C          : Node_Id := No_Node;
+                     C : Node_Id := No_Node;
                   begin
                      if No (Subcomponents (E)) then
                         C := No_Node;
@@ -576,11 +579,13 @@ package body Ocarina.Backends.C_Common.Types is
 
                            --  Make the record or private type component
 
-                           N := Make_Member_Declaration
-                             (Defining_Identifier =>
-                                Map_C_Defining_Identifier (C),
-                              Used_Type  => Map_C_Data_Type_Designator
-                                (Corresponding_Instance (C)));
+                           N :=
+                             Make_Member_Declaration
+                               (Defining_Identifier =>
+                                  Map_C_Defining_Identifier (C),
+                                Used_Type =>
+                                  Map_C_Data_Type_Designator
+                                    (Corresponding_Instance (C)));
                            Append_Node_To_List (N, Struct_Members);
                         end if;
 
@@ -590,43 +595,48 @@ package body Ocarina.Backends.C_Common.Types is
                      if Data_Representation = Data_Struct then
                         --  Record type
 
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                              Map_C_Defining_Identifier (E),
-                           Type_Definition     => Make_Struct_Aggregate
-                             (Members => Struct_Members));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_C_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Struct_Aggregate
+                                 (Members => Struct_Members));
                         Append_Node_To_List
-                          (N, CTN.Declarations (Current_File));
+                          (N,
+                           CTN.Declarations (Current_File));
 
                      else
                         --  Protected type
                         Append_Node_To_List
                           (Make_Member_Declaration
-                           (Used_Type => RE (RE_Protected_T),
-                            Defining_Identifier =>
-                              Make_Defining_Identifier
-                              (MN (M_Protected_Id))),
+                             (Used_Type           => RE (RE_Protected_T),
+                              Defining_Identifier =>
+                                Make_Defining_Identifier
+                                  (MN (M_Protected_Id))),
                            Protected_Struct_Members);
 
                         if not Is_Empty (Struct_Members) then
                            S := CTN.First_Node (Struct_Members);
                            while Present (S) loop
                               Append_Node_To_List
-                                (S, Protected_Struct_Members);
+                                (S,
+                                 Protected_Struct_Members);
                               S := CTN.Next_Node (S);
                            end loop;
                         end if;
 
-                        N := Make_Full_Type_Declaration
-                          (Defining_Identifier =>
-                              Map_C_Defining_Identifier (E),
-                           Type_Definition =>
-                             Make_Struct_Aggregate
-                             (Members =>
-                                Protected_Struct_Members));
+                        N :=
+                          Make_Full_Type_Declaration
+                            (Defining_Identifier =>
+                               Map_C_Defining_Identifier (E),
+                             Type_Definition =>
+                               Make_Struct_Aggregate
+                                 (Members => Protected_Struct_Members));
 
                         Append_Node_To_List
-                          (N, CTN.Declarations (Current_File));
+                          (N,
+                           CTN.Declarations (Current_File));
 
                         S := First_Node (Features (E));
 
@@ -641,10 +651,10 @@ package body Ocarina.Backends.C_Common.Types is
                            --  type.
 
                            M := Feature_Spg_Spec (S);
-                           Bind_AADL_To_Feature_Subprogram
-                              (Identifier (S), M);
+                           Bind_AADL_To_Feature_Subprogram (Identifier (S), M);
                            Append_Node_To_List
-                             (M, CTN.Declarations (Current_File));
+                             (M,
+                              CTN.Declarations (Current_File));
 
                            S := Next_Node (S);
                         end loop;
@@ -653,9 +663,9 @@ package body Ocarina.Backends.C_Common.Types is
 
                when Data_Enum =>
                   declare
-                     Enumerators : constant Name_Array := Get_Enumerators (E);
-                     Enum_Members : constant List_Id := New_List
-                       (CTN.K_Enumeration_Literals);
+                     Enumerators  : constant Name_Array := Get_Enumerators (E);
+                     Enum_Members : constant List_Id    :=
+                       New_List (CTN.K_Enumeration_Literals);
                   begin
                      for J in Enumerators'Range loop
                         Append_Node_To_List
@@ -664,77 +674,88 @@ package body Ocarina.Backends.C_Common.Types is
                            Enum_Members);
                      end loop;
 
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier =>
-                          Map_C_Defining_Identifier (E),
-                        Type_Definition =>
-                          Make_Enum_Aggregate (Enum_Members));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     =>
+                            Make_Enum_Aggregate (Enum_Members));
                      Append_Node_To_List (N, CTN.Declarations (Current_File));
                   end;
 
                when Data_Array =>
                   Visit_Data_Instance
-                     (ATN.Entity (ATN.First_Node (Get_Base_Type (E))));
+                    (ATN.Entity (ATN.First_Node (Get_Base_Type (E))));
 
-                  N := Make_Full_Type_Declaration
-                    (Defining_Identifier => Make_Array_Declaration
-                        (Defining_Identifier =>
-                           Map_C_Defining_Identifier (E),
-                         Array_Size =>
-                           Make_Literal
-                              (CV.New_Int_Value (Data_Array_Size (1), 0, 10))),
-                     Type_Definition     =>
-                        Map_C_Defining_Identifier
+                  N :=
+                    Make_Full_Type_Declaration
+                      (Defining_Identifier =>
+                         Make_Array_Declaration
+                           (Defining_Identifier =>
+                              Map_C_Defining_Identifier (E),
+                            Array_Size =>
+                              Make_Literal
+                                (CV.New_Int_Value
+                                   (Data_Array_Size (1),
+                                    0,
+                                    10))),
+                       Type_Definition =>
+                         Map_C_Defining_Identifier
                            (ATN.Entity (ATN.First_Node (Get_Base_Type (E)))));
-                  Append_Node_To_List
-                    (N, CTN.Declarations (Current_File));
+                  Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                when Data_String =>
-                  N := Make_Full_Type_Declaration
-                    (Defining_Identifier => Make_Array_Declaration
-                       (Defining_Identifier =>
-                          Map_C_Defining_Identifier (E),
-                        Array_Size =>
-                          Make_Literal
-                          (CV.New_Int_Value (Data_Array_Size (1), 0, 10))),
-                     Type_Definition     => Make_Defining_Identifier
-                       (TN (T_Char)));
-                  Append_Node_To_List
-                    (N, CTN.Declarations (Current_File));
+                  N :=
+                    Make_Full_Type_Declaration
+                      (Defining_Identifier =>
+                         Make_Array_Declaration
+                           (Defining_Identifier =>
+                              Map_C_Defining_Identifier (E),
+                            Array_Size =>
+                              Make_Literal
+                                (CV.New_Int_Value
+                                   (Data_Array_Size (1),
+                                    0,
+                                    10))),
+                       Type_Definition =>
+                         Make_Defining_Identifier (TN (T_Char)));
+                  Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                when Data_Character =>
-                  N := Make_Full_Type_Declaration
-                    (Defining_Identifier => Map_C_Defining_Identifier (E),
-                     Type_Definition     => Make_Defining_Identifier
-                       (TN (T_Char)));
-                  Append_Node_To_List
-                    (N, CTN.Declarations (Current_File));
+                  N :=
+                    Make_Full_Type_Declaration
+                      (Defining_Identifier => Map_C_Defining_Identifier (E),
+                       Type_Definition     =>
+                         Make_Defining_Identifier (TN (T_Char)));
+                  Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-               when Data_Wide_Character
-                 | Data_Fixed
-                 | Data_Wide_String
-                 | Data_Union =>
+               when Data_Wide_Character |
+                 Data_Fixed             |
+                 Data_Wide_String       |
+                 Data_Union             =>
                   Display_Located_Error
-                    (Loc (E), "unsupported data type ("
-                     & Supported_Data_Representation'Image
-                     (Data_Representation) & ")",
+                    (Loc (E),
+                     "unsupported data type (" &
+                     Supported_Data_Representation'Image
+                       (Data_Representation) &
+                     ")",
                      Fatal => True);
 
                when Data_None =>
                   Type_Source_Name := Get_Type_Source_Name (E);
 
                   if Type_Source_Name /= No_Name then
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier => Map_C_Defining_Identifier (E),
-                        Type_Definition     =>
-                           CTU.Make_Defining_Identifier
-                              (Type_Source_Name, False));
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     =>
+                            CTU.Make_Defining_Identifier
+                              (Type_Source_Name,
+                               False));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                      declare
-                        Source_Files : constant Name_Array
-                          := Get_Source_Text (E);
+                        Source_Files : constant Name_Array :=
+                          Get_Source_Text (E);
                         To_Include : Name_Id;
                      begin
                         if Source_Files'Length > 1 then
@@ -745,39 +766,40 @@ package body Ocarina.Backends.C_Common.Types is
                         elsif Source_Files'Length = 1 then
                            To_Include := Source_Files (Source_Files'First);
                            Get_Name_String (To_Include);
-                           if Name_Buffer (Name_Len - 3 .. Name_Len)
-                              = ".asn" then
-                              Name_Len := Name_Len - 4;
+                           if Name_Buffer (Name_Len - 3 .. Name_Len) =
+                             ".asn"
+                           then
+                              Name_Len   := Name_Len - 4;
                               To_Include := Name_Find;
                            end if;
 
                            Add_Include
                              (Make_Include_Clause
-                                (Make_Defining_Identifier
-                                   (To_Include, False)),
+                                (Make_Defining_Identifier (To_Include, False)),
                               Preserve_Case => True);
                         end if;
                      end;
 
                      if Get_Source_Language (E) = Language_Simulink then
                         Add_Include
-                           (Make_Include_Clause
-                              (Make_Defining_Identifier
-                                 (Get_String_Name ("rtwtypes"), False),
+                          (Make_Include_Clause
+                             (Make_Defining_Identifier
+                                (Get_String_Name ("rtwtypes"),
+                                 False),
                               False),
                            True);
                      end if;
                   elsif Get_Concurrency_Protocol (E) =
-                     Concurrency_Protected_Access
-                     or else
-                     Get_Concurrency_Protocol (E) =
-                        Concurrency_Immediate_Priority_Ceiling
-                     or else
-                     Get_Concurrency_Protocol (E) =
-                        Concurrency_Priority_Inheritance
-                     or else
-                     Get_Concurrency_Protocol (E) =
-                        Concurrency_Priority_Ceiling
+                    Concurrency_Protected_Access
+                    or else
+                      Get_Concurrency_Protocol (E) =
+                      Concurrency_Immediate_Priority_Ceiling
+                    or else
+                      Get_Concurrency_Protocol (E) =
+                      Concurrency_Priority_Inheritance
+                    or else
+                      Get_Concurrency_Protocol (E) =
+                      Concurrency_Priority_Ceiling
                   then
 
                      --  Protected type that does not have struct members.
@@ -794,35 +816,32 @@ package body Ocarina.Backends.C_Common.Types is
 
                      Append_Node_To_List
                        (Make_Member_Declaration
-                        (Used_Type => RE (RE_Protected_T),
-                         Defining_Identifier =>
-                           Make_Defining_Identifier
-                           (MN (M_Protected_Id))),
+                          (Used_Type           => RE (RE_Protected_T),
+                           Defining_Identifier =>
+                             Make_Defining_Identifier (MN (M_Protected_Id))),
                         Protected_Struct_Members);
 
                      if not Is_Empty (Struct_Members) then
                         S := CTN.First_Node (Struct_Members);
                         while Present (S) loop
-                           Append_Node_To_List
-                             (S, Protected_Struct_Members);
+                           Append_Node_To_List (S, Protected_Struct_Members);
                            S := CTN.Next_Node (S);
                         end loop;
                      end if;
 
-                     N := Make_Full_Type_Declaration
-                       (Defining_Identifier =>
-                           Map_C_Defining_Identifier (E),
-                        Type_Definition =>
-                          Make_Struct_Aggregate
-                          (Members =>
-                             Protected_Struct_Members));
+                     N :=
+                       Make_Full_Type_Declaration
+                         (Defining_Identifier => Map_C_Defining_Identifier (E),
+                          Type_Definition     =>
+                            Make_Struct_Aggregate
+                              (Members => Protected_Struct_Members));
 
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   else
                      Display_Located_Error
-                        (Loc (E), "unspecified data representation",
+                       (Loc (E),
+                        "unspecified data representation",
                         Fatal => True);
                   end if;
             end case;
@@ -864,27 +883,30 @@ package body Ocarina.Backends.C_Common.Types is
       ----------------------------
 
       procedure Visit_Process_Instance
-         (E    : Node_Id; Real_Process : Boolean := True) is
-         S                 : Node_Id;
-         C                 : Node_Id;
-         F                 : Node_Id;
-         I                 : Node_Id;
-         J                 : Node_Id;
-         D                 : Node_Id;
-         U                 : Node_Id;
-         P                 : Node_Id;
-         Feature           : Node_Id;
-         Parent            : Node_Id;
-         Src               : Node_Id;
-         Dst               : Node_Id;
-         Declaration       : Node_Id;
-         The_System        : constant Node_Id := Parent_Component
-               (Parent_Subcomponent (E));
+        (E            : Node_Id;
+         Real_Process : Boolean := True)
+      is
+         S           : Node_Id;
+         C           : Node_Id;
+         F           : Node_Id;
+         I           : Node_Id;
+         J           : Node_Id;
+         D           : Node_Id;
+         U           : Node_Id;
+         P           : Node_Id;
+         Feature     : Node_Id;
+         Parent      : Node_Id;
+         Src         : Node_Id;
+         Dst         : Node_Id;
+         Declaration : Node_Id;
+         The_System  : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
          Remote_Process : Node_Id;
       begin
          if Real_Process then
-            U := CTN.Distributed_Application_Unit
-              (CTN.Naming_Node (Backend_Node (Identifier (E))));
+            U :=
+              CTN.Distributed_Application_Unit
+                (CTN.Naming_Node (Backend_Node (Identifier (E))));
             P := CTN.Entity (U);
 
             Push_Entity (P);
@@ -913,21 +935,24 @@ package body Ocarina.Backends.C_Common.Types is
                   Add_Include (PKR.RH (RH_Deployment));
 
                   if POK_Flavor = ARINC653 then
-                     Declaration := Make_Extern_Entity_Declaration
-                        (Make_Variable_Declaration
-                           (Make_Defining_Identifier
-                              (Map_Associated_Locking_Entity_Name (S)),
-                            PKR.RE (RE_Semaphore_Id_Type)));
+                     Declaration :=
+                       Make_Extern_Entity_Declaration
+                         (Make_Variable_Declaration
+                            (Make_Defining_Identifier
+                               (Map_Associated_Locking_Entity_Name (S)),
+                             PKR.RE (RE_Semaphore_Id_Type)));
                   else
-                     Declaration := Make_Extern_Entity_Declaration
-                        (Make_Variable_Declaration
-                           (Make_Defining_Identifier
-                              (Map_Associated_Locking_Entity_Name (S)),
-                            PKR.RE (RE_Pok_Sem_Id_T)));
+                     Declaration :=
+                       Make_Extern_Entity_Declaration
+                         (Make_Variable_Declaration
+                            (Make_Defining_Identifier
+                               (Map_Associated_Locking_Entity_Name (S)),
+                             PKR.RE (RE_Pok_Sem_Id_T)));
                   end if;
 
                   Append_Node_To_List
-                     (Declaration, CTN.Declarations (Current_File));
+                    (Declaration,
+                     CTN.Declarations (Current_File));
                end if;
 
                S := Next_Node (S);
@@ -951,14 +976,15 @@ package body Ocarina.Backends.C_Common.Types is
          --  Visit all devices attached to the parent system that
          --  share the same processor as process E.
 
-         if Get_Current_Backend_Kind = PolyORB_HI_C and then
-            not AINU.Is_Empty (Subcomponents (The_System)) then
+         if Get_Current_Backend_Kind = PolyORB_HI_C
+           and then not AINU.Is_Empty (Subcomponents (The_System))
+         then
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
                if AINU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (C)) =
+                   Get_Bound_Processor (E)
                then
                   --  Build the enumerator corresponding to the device
                   --  Note: we reuse the process name XXX
@@ -972,11 +998,9 @@ package body Ocarina.Backends.C_Common.Types is
                --  (see ocarina-backends-po_hi_c-request.adb) are used.
 
                elsif AINU.Is_Process (Corresponding_Instance (C)) then
-                  S := First_Node (Subcomponents
-                     (Corresponding_Instance (C)));
+                  S := First_Node (Subcomponents (Corresponding_Instance (C)));
                   while Present (S) loop
-                     Visit_Component_Instance
-                       (Corresponding_Instance (S));
+                     Visit_Component_Instance (Corresponding_Instance (S));
                      S := Next_Node (S);
                   end loop;
                end if;
@@ -991,13 +1015,15 @@ package body Ocarina.Backends.C_Common.Types is
             C := First_Node (Features (E));
 
             while Present (C) loop
-               if Kind (C) = K_Port_Spec_Instance and then
-                 not AINU.Is_Empty (Destinations (C)) then
+               if Kind (C) = K_Port_Spec_Instance
+                 and then not AINU.Is_Empty (Destinations (C))
+               then
                   D := First_Node (Destinations (C));
                   I := Item (D);
 
-                  if Get_Category_Of_Component
-                     (Parent_Component (I)) = CC_Process then
+                  if Get_Category_Of_Component (Parent_Component (I)) =
+                    CC_Process
+                  then
                      Remote_Process := Parent_Component (I);
 
                      if not AINU.Is_Empty (Subcomponents (Remote_Process)) then
@@ -1011,9 +1037,10 @@ package body Ocarina.Backends.C_Common.Types is
                      end if;
                   end if;
 
-                  if Present (I) and then
-                    Kind (I) = K_Port_Spec_Instance and then
-                    not AINU.Is_Empty (Destinations (I)) then
+                  if Present (I)
+                    and then Kind (I) = K_Port_Spec_Instance
+                    and then not AINU.Is_Empty (Destinations (I))
+                  then
                      F := First_Node (Destinations (I));
                      while Present (F) loop
                         J := Item (F);
@@ -1033,13 +1060,15 @@ package body Ocarina.Backends.C_Common.Types is
             C := First_Node (Features (E));
 
             while Present (C) loop
-               if Kind (C) = K_Port_Spec_Instance and then
-                 not AINU.Is_Empty (Sources (C)) then
+               if Kind (C) = K_Port_Spec_Instance
+                 and then not AINU.Is_Empty (Sources (C))
+               then
                   D := First_Node (Sources (C));
                   I := Item (D);
 
-                  if Get_Category_Of_Component
-                     (Parent_Component (I)) = CC_Process then
+                  if Get_Category_Of_Component (Parent_Component (I)) =
+                    CC_Process
+                  then
                      Remote_Process := Parent_Component (I);
 
                      if not AINU.Is_Empty (Subcomponents (Remote_Process)) then
@@ -1053,9 +1082,10 @@ package body Ocarina.Backends.C_Common.Types is
                      end if;
                   end if;
 
-                  if Present (I) and then
-                    Kind (I) = K_Port_Spec_Instance and then
-                    not AINU.Is_Empty (Sources (I)) then
+                  if Present (I)
+                    and then Kind (I) = K_Port_Spec_Instance
+                    and then not AINU.Is_Empty (Sources (I))
+                  then
                      F := First_Node (Sources (I));
                      while Present (F) loop
                         J := Item (F);
@@ -1087,14 +1117,13 @@ package body Ocarina.Backends.C_Common.Types is
 
                      Parent := Parent_Component (Item (Src));
 
-                     if AINU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
-                        if Get_Provided_Virtual_Bus_Class
-                           (Extra_Item (Src)) /= No_Node then
+                     if AINU.Is_Process (Parent) and then Parent /= E then
+                        if Get_Provided_Virtual_Bus_Class (Extra_Item (Src)) /=
+                          No_Node
+                        then
                            Visit
-                              (Get_Provided_Virtual_Bus_Class
-                                 (Extra_Item (Src)));
+                             (Get_Provided_Virtual_Bus_Class
+                                (Extra_Item (Src)));
                         end if;
                      end if;
 
@@ -1110,14 +1139,13 @@ package body Ocarina.Backends.C_Common.Types is
                   while Present (Dst) loop
                      Parent := Parent_Component (Item (Dst));
 
-                     if AINU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
-                        if Get_Provided_Virtual_Bus_Class
-                           (Extra_Item (Dst)) /= No_Node then
+                     if AINU.Is_Process (Parent) and then Parent /= E then
+                        if Get_Provided_Virtual_Bus_Class (Extra_Item (Dst)) /=
+                          No_Node
+                        then
                            Visit
-                              (Get_Provided_Virtual_Bus_Class
-                                 (Extra_Item (Dst)));
+                             (Get_Provided_Virtual_Bus_Class
+                                (Extra_Item (Dst)));
                         end if;
                      end if;
 
@@ -1217,13 +1245,14 @@ package body Ocarina.Backends.C_Common.Types is
                --  (processor or virtual processor).
 
                if Get_Current_Backend_Kind = PolyORB_Kernel_C
-                  and then AINU.Is_Process_Or_Device
-                     (Corresponding_Instance (S))
+                 and then AINU.Is_Process_Or_Device
+                   (Corresponding_Instance (S))
                then
                   null;
                else
-                  if Get_Category_Of_Component
-                     (Corresponding_Instance (S)) /= CC_Device then
+                  if Get_Category_Of_Component (Corresponding_Instance (S)) /=
+                    CC_Device
+                  then
                      Visit (Corresponding_Instance (S));
                   end if;
                end if;
@@ -1249,9 +1278,7 @@ package body Ocarina.Backends.C_Common.Types is
             F := First_Node (Features (E));
 
             while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance
-                 and then AIN.Is_Data (F)
-               then
+               if Kind (F) = K_Port_Spec_Instance and then AIN.Is_Data (F) then
                   Visit (Corresponding_Instance (F));
                end if;
 
@@ -1318,8 +1345,9 @@ package body Ocarina.Backends.C_Common.Types is
          Statements   : constant List_Id := New_List (CTN.K_Statement_List);
          Spg          : Node_Id;
       begin
-         pragma Assert (Kind (E) = K_Subprogram_Spec_Instance
-                          or else Kind (E) = K_Subcomponent_Access_Instance);
+         pragma Assert
+           (Kind (E) = K_Subprogram_Spec_Instance
+            or else Kind (E) = K_Subcomponent_Access_Instance);
 
          Spg := Corresponding_Instance (E);
 
@@ -1330,15 +1358,16 @@ package body Ocarina.Backends.C_Common.Types is
          Call_Profile := New_List (CTN.K_Parameter_Profile);
          Append_Node_To_List
            (Make_Member_Designator
-            (Make_Defining_Identifier (MN (M_Protected_Id)),
-             Make_Defining_Identifier (PN (P_Value)),
-             Is_Pointer => True),
+              (Make_Defining_Identifier (MN (M_Protected_Id)),
+               Make_Defining_Identifier (PN (P_Value)),
+               Is_Pointer => True),
             Call_Profile);
 
          Append_Node_To_List
            (Make_Call_Profile
-            (Defining_Identifier => RE (RE_Protected_Lock),
-             Parameters => Call_Profile), Statements);
+              (Defining_Identifier => RE (RE_Protected_Lock),
+               Parameters          => Call_Profile),
+            Statements);
 
          Call_Profile := New_List (CTN.K_Parameter_Profile);
 
@@ -1378,14 +1407,14 @@ package body Ocarina.Backends.C_Common.Types is
                      while Present (Param) loop
                         --  Create a parameter association
                         if AINU.Is_Data (Corresponding_Instance (Param)) then
-                           N := Make_Variable_Address
-                           (Make_Member_Designator
-                              (Defining_Identifier =>
-                                 Map_C_Defining_Identifier (Param),
-                               Aggregate_Name =>
-                                 Make_Defining_Identifier (PN (P_Value)),
-                               Is_Pointer =>
-                                 True));
+                           N :=
+                             Make_Variable_Address
+                               (Make_Member_Designator
+                                  (Defining_Identifier =>
+                                     Map_C_Defining_Identifier (Param),
+                                   Aggregate_Name =>
+                                     Make_Defining_Identifier (PN (P_Value)),
+                                   Is_Pointer => True));
                            Append_Node_To_List (N, Call_Profile);
                         end if;
 
@@ -1405,14 +1434,12 @@ package body Ocarina.Backends.C_Common.Types is
             Add_Include (PKR.RH (RH_Subprograms));
          end if;
 
-         N := Make_Call_Profile
-           (CTN.Defining_Identifier
-            (CTN.Subprogram_Node
-             (Backend_Node
-              (Identifier
-               (Corresponding_Instance
-                (E))))),
-            Call_Profile);
+         N :=
+           Make_Call_Profile
+             (CTN.Defining_Identifier
+                (CTN.Subprogram_Node
+                   (Backend_Node (Identifier (Corresponding_Instance (E))))),
+              Call_Profile);
          Append_Node_To_List (N, Statements);
 
          --  Make the call to __po_hi_protected_unlock
@@ -1420,24 +1447,24 @@ package body Ocarina.Backends.C_Common.Types is
          Call_Profile := New_List (CTN.K_Parameter_Profile);
          Append_Node_To_List
            (Make_Member_Designator
-            (Make_Defining_Identifier (MN (M_Protected_Id)),
-             Make_Defining_Identifier (PN (P_Value)),
-             Is_Pointer => True),
+              (Make_Defining_Identifier (MN (M_Protected_Id)),
+               Make_Defining_Identifier (PN (P_Value)),
+               Is_Pointer => True),
             Call_Profile);
 
          Append_Node_To_List
            (Make_Call_Profile
-            (Defining_Identifier => RE (RE_Protected_Unlock),
-             Parameters => Call_Profile), Statements);
+              (Defining_Identifier => RE (RE_Protected_Unlock),
+               Parameters          => Call_Profile),
+            Statements);
 
          --  Build the subprogram implementation
 
-         N := Make_Function_Implementation
-           (CTN.Feature_Subprogram_Node
-            (Backend_Node
-             (Identifier (E))),
-            No_List,
-            Statements);
+         N :=
+           Make_Function_Implementation
+             (CTN.Feature_Subprogram_Node (Backend_Node (Identifier (E))),
+              No_List,
+              Statements);
 
          return N;
       end Feature_Spg_Body;
@@ -1478,8 +1505,8 @@ package body Ocarina.Backends.C_Common.Types is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -1544,8 +1571,8 @@ package body Ocarina.Backends.C_Common.Types is
       --------------------------------------
 
       procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-         Processes   : List_Id;
-         S           : Node_Id;
+         Processes : List_Id;
+         S         : Node_Id;
       begin
          if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
             return;
@@ -1553,7 +1580,7 @@ package body Ocarina.Backends.C_Common.Types is
 
          if Present (Backend_Node (Identifier (E))) then
             Processes := CTN.Processes (Backend_Node (Identifier (E)));
-            S := AIN.First_Node (Processes);
+            S         := AIN.First_Node (Processes);
             while Present (S) loop
                Visit (AIN.Item (S));
                S := AIN.Next_Node (S);
@@ -1585,8 +1612,8 @@ package body Ocarina.Backends.C_Common.Types is
          if Data_Representation = Data_With_Accessors then
             if No (Get_Handling (E, By_Name, H_C_Type_Body)) then
                declare
-                  C          : Node_Id := First_Node (Subcomponents (E));
-                  S          : Node_Id;
+                  C : Node_Id := First_Node (Subcomponents (E));
+                  S : Node_Id;
                begin
                   --  Visit the subcomponents
 
@@ -1607,8 +1634,7 @@ package body Ocarina.Backends.C_Common.Types is
                      --  the visible part of the protected type.
 
                      N := Feature_Spg_Body (S);
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                      S := Next_Node (S);
                   end loop;
@@ -1630,11 +1656,12 @@ package body Ocarina.Backends.C_Common.Types is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P : constant Node_Id := CTN.Entity (U);
-         S : Node_Id;
-         Declaration          : Node_Id;
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P           : constant Node_Id := CTN.Entity (U);
+         S           : Node_Id;
+         Declaration : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -1647,28 +1674,30 @@ package body Ocarina.Backends.C_Common.Types is
          if not AINU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));
             while Present (S) loop
-               if Get_Current_Backend_Kind = PolyORB_Kernel_C and then
-                  AINU.Is_Data (Corresponding_Instance (S)) and then
-                  Is_Protected_Data (Corresponding_Instance (S)) then
+               if Get_Current_Backend_Kind = PolyORB_Kernel_C
+                 and then AINU.Is_Data (Corresponding_Instance (S))
+                 and then Is_Protected_Data (Corresponding_Instance (S))
+               then
 
                   Add_Include (PKR.RH (RH_Deployment));
 
                   if POK_Flavor = ARINC653 then
-                     Declaration := Make_Variable_Declaration
-                           (Make_Defining_Identifier
-                              (Map_Associated_Locking_Entity_Name
-                                 (S)),
-                           PKR.RE (RE_Semaphore_Id_Type));
+                     Declaration :=
+                       Make_Variable_Declaration
+                         (Make_Defining_Identifier
+                            (Map_Associated_Locking_Entity_Name (S)),
+                          PKR.RE (RE_Semaphore_Id_Type));
                   else
-                     Declaration := Make_Variable_Declaration
-                           (Make_Defining_Identifier
-                              (Map_Associated_Locking_Entity_Name
-                                 (S)),
-                           PKR.RE (RE_Pok_Sem_Id_T));
+                     Declaration :=
+                       Make_Variable_Declaration
+                         (Make_Defining_Identifier
+                            (Map_Associated_Locking_Entity_Name (S)),
+                          PKR.RE (RE_Pok_Sem_Id_T));
                   end if;
 
                   Append_Node_To_List
-                     (Declaration, CTN.Declarations (Current_File));
+                    (Declaration,
+                     CTN.Declarations (Current_File));
                else
                   Visit (Corresponding_Instance (S));
                end if;
@@ -1733,8 +1762,10 @@ package body Ocarina.Backends.C_Common.Types is
                --  Visit the component instance corresponding to the
                --  subcomponent S.
                if Get_Current_Backend_Kind = PolyORB_Kernel_C
-                  and then Get_Category_Of_Component
-                     (Corresponding_Instance (S)) = CC_Process then
+                 and then
+                   Get_Category_Of_Component (Corresponding_Instance (S)) =
+                   CC_Process
+               then
                   null;
                else
                   Visit (Corresponding_Instance (S));

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,10 +31,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 with Ocarina.Backends.PN.Nodes;
 with Ocarina.Backends.PN.Nutils;
-with Namet;
+with Ocarina.Namet;
 with Ocarina.AADL_Values;
 
 package body Ocarina.Backends.PN.Format.Tina is
@@ -48,18 +48,19 @@ package body Ocarina.Backends.PN.Format.Tina is
    -------------------
 
    procedure Print_Place (Pn_Generated : Node_Id; Pn_P : Node_Id) is
-      use Output;
+      use Ocarina.Output;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
 
    begin
       if Present (Pn_Generated) then
-         Write_Line ("pl "
-                     & Get_Name_String (Name (Identifier (Pn_P)))
-                     & " ("
-                     & Image (Tokens_Number (Pn_P))
-                     &")");
+         Write_Line
+           ("pl " &
+            Get_Name_String (Name (Identifier (Pn_P))) &
+            " (" &
+            Image (Tokens_Number (Pn_P)) &
+            ")");
       end if;
    end Print_Place;
 
@@ -68,24 +69,23 @@ package body Ocarina.Backends.PN.Format.Tina is
    -------------------
 
    procedure Print_Trans (Pn_Generated : Node_Id; Pn_T : Node_Id) is
-      use Output;
+      use Ocarina.Output;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
       use OPU;
 
    begin
       if Pn_Generated /= No_Node then
-         Write_Str ("tr "
-                    & Get_Name_String (Name (Identifier (Pn_T))));
+         Write_Str ("tr " & Get_Name_String (Name (Identifier (Pn_T))));
          declare
-            BM : constant Value_Type := Get_Value_Type
-              (OPN.Braces_Mode (OPN.Guard (Pn_T)));
-            Braces : String := "[,]";
-            Max_Guard : constant Value_Type := Get_Value_Type
-              (Higher_Value (Guard (Pn_T)));
+            BM : constant Value_Type :=
+              Get_Value_Type (OPN.Braces_Mode (OPN.Guard (Pn_T)));
+            Braces    : String              := "[,]";
+            Max_Guard : constant Value_Type :=
+              Get_Value_Type (Higher_Value (Guard (Pn_T)));
          begin
-            case BM.Ival is
+            case BM.IVal is
                --   0..3: [,] ; ],[ ; [,[ ; ],]
                when 0 =>
                   Braces := "[,]";
@@ -98,24 +98,26 @@ package body Ocarina.Backends.PN.Format.Tina is
                when others =>
                   null;
             end case;
-            if Max_Guard.Ival = -1 then
+            if Max_Guard.IVal = -1 then
                --  infinity
                Braces := "[,[";
-               Write_Str (" "
-                          & Braces (1 .. 1)
-                          & Image (Lower_Value (Guard (Pn_T)))
-                          & Braces (2 .. 2)
-                          & "w"
-                          & Braces (3 .. 3)
-                          & " ");
+               Write_Str
+                 (" " &
+                  Braces (1 .. 1) &
+                  Image (Lower_Value (Guard (Pn_T))) &
+                  Braces (2 .. 2) &
+                  "w" &
+                  Braces (3 .. 3) &
+                  " ");
             else
-               Write_Str (" "
-                          & Braces (1 .. 1)
-                          & Image (Lower_Value (Guard (Pn_T)))
-                          & Braces (2 .. 2)
-                          & Image (Higher_Value (Guard (Pn_T)))
-                          & Braces (3 .. 3)
-                          & " ");
+               Write_Str
+                 (" " &
+                  Braces (1 .. 1) &
+                  Image (Lower_Value (Guard (Pn_T))) &
+                  Braces (2 .. 2) &
+                  Image (Higher_Value (Guard (Pn_T))) &
+                  Braces (3 .. 3) &
+                  " ");
             end if;
          end;
 
@@ -127,9 +129,9 @@ package body Ocarina.Backends.PN.Format.Tina is
             if not Is_Empty (Pn_Arcs_In (Pn_T)) then
                Iter := OPN.First_Node (Pn_Arcs_In (Pn_T));
                while Present (Iter) loop
-                  Write_Str (Get_Name_String
-                             (Name (Identifier (Pn_From (Iter))))
-                             & " ");
+                  Write_Str
+                    (Get_Name_String (Name (Identifier (Pn_From (Iter)))) &
+                     " ");
                   Iter := OPN.Next_Node (Iter);
                end loop;
             end if;
@@ -138,8 +140,8 @@ package body Ocarina.Backends.PN.Format.Tina is
                Write_Str ("-> ");
                Iter := OPN.First_Node (Pn_Arcs_Out (Pn_T));
                while Present (Iter) loop
-                  Write_Str (Get_Name_String (Name (Identifier (Pn_To (Iter))))
-                             & " ");
+                  Write_Str
+                    (Get_Name_String (Name (Identifier (Pn_To (Iter)))) & " ");
                   Iter := OPN.Next_Node (Iter);
                end loop;
             end if;
@@ -152,12 +154,10 @@ package body Ocarina.Backends.PN.Format.Tina is
    --  Print_Formalism_Information  --
    -----------------------------------
 
-   procedure Print_Formalism_Information
-     (Pn_Generated : Node_Id)
-   is
-      use Output;
+   procedure Print_Formalism_Information (Pn_Generated : Node_Id) is
+      use Ocarina.Output;
       use OPN;
-      use Namet;
+      use Ocarina.Namet;
       use OAV;
       use OPU;
 
@@ -169,13 +169,14 @@ package body Ocarina.Backends.PN.Format.Tina is
          declare
             Node_Iter : Node_Id;
          begin
-            if not Is_Empty (Priorities
-              (Pn_Formalism_Specific_Informations
-               (Pn_Generated))) then
-               Node_Iter := OPN.First_Node
-                 (Priorities
-                  (Pn_Formalism_Specific_Informations
-                   (Pn_Generated)));
+            if not Is_Empty
+                (Priorities
+                   (Pn_Formalism_Specific_Informations (Pn_Generated)))
+            then
+               Node_Iter :=
+                 OPN.First_Node
+                   (Priorities
+                      (Pn_Formalism_Specific_Informations (Pn_Generated)));
                while Present (Node_Iter) loop
                   declare
                      Prio_Iter : Node_Id;
@@ -183,22 +184,23 @@ package body Ocarina.Backends.PN.Format.Tina is
                      Prio_Iter := OPN.First_Node (Bounded_Trans (Node_Iter));
                      while Present (Prio_Iter) loop
                         declare
-                           Iter2 : Node_Id;
+                           Iter2        : Node_Id;
                            Current_Prio : Value_Type;
-                           Iter_Prio : Value_Type;
+                           Iter_Prio    : Value_Type;
                         begin
-                           Current_Prio := Get_Value_Type (Priority
-                                                           (Prio_Iter));
+                           Current_Prio :=
+                             Get_Value_Type (Priority (Prio_Iter));
                            Iter2 := OPN.Next_Node (Prio_Iter);
                            while Present (Iter2) loop
                               Iter_Prio := Get_Value_Type (Priority (Iter2));
-                              if Current_Prio.Ival > Iter_Prio.Ival then
-                                 Write_Line ("pr "
-                                             & Get_Name_String
-                                             (Name (Identifier (Prio_Iter)))
-                                             & " > "
-                                             & Get_Name_String
-                                             (Name (Identifier (Iter2))));
+                              if Current_Prio.IVal > Iter_Prio.IVal then
+                                 Write_Line
+                                   ("pr " &
+                                    Get_Name_String
+                                      (Name (Identifier (Prio_Iter))) &
+                                    " > " &
+                                    Get_Name_String
+                                      (Name (Identifier (Iter2))));
                               end if;
                               --  next
                               Iter2 := OPN.Next_Node (Iter2);

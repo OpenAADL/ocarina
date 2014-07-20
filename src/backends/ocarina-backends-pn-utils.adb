@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,9 +37,7 @@ package body Ocarina.Backends.PN.Utils is
    -- Ppcm --
    ----------
 
-   function Ppcm (A, B : Unsigned_Long_Long)
-                 return Unsigned_Long_Long
-   is
+   function Ppcm (A, B : Unsigned_Long_Long) return Unsigned_Long_Long is
       V1 : Unsigned_Long_Long := A;
       V2 : Unsigned_Long_Long := B;
    begin

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -67,8 +67,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
    Marshaller_Request_Spec   : Node_Id;
    Unmarshaller_Request_Spec : Node_Id;
 
-   Marshaller_Asn1_Request_Spec     : Node_Id;
-   Unmarshaller_Asn1_Request_Spec   : Node_Id;
+   Marshaller_Asn1_Request_Spec   : Node_Id;
+   Unmarshaller_Asn1_Request_Spec : Node_Id;
 
    -----------------
    -- Header_File --
@@ -98,34 +98,30 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       begin
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Request)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Request_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Request)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Request_T))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Message)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Msg_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Message)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Msg_T))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Offset)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Uint32_T))),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Offset)),
+               Parameter_Type      => Make_Pointer_Type (RE (RE_Uint32_T))),
             Parameters);
 
-         N := Make_Function_Specification
-           (Defining_Identifier => Map_C_Marshaller_Subprogram
-              (E, Is_Request => True),
-            Parameters          => Parameters,
-            Return_Type         => New_Node (CTN.K_Void)
-           );
+         N :=
+           Make_Function_Specification
+             (Defining_Identifier =>
+                Map_C_Marshaller_Subprogram (E, Is_Request => True),
+              Parameters  => Parameters,
+              Return_Type => New_Node (CTN.K_Void));
          return N;
       end Marshall_Request_Spec;
 
@@ -139,34 +135,33 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       begin
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Request)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Request_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Request)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Request_T))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Message)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Msg_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Message)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Msg_T))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Offset)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Uint32_T))),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Offset)),
+               Parameter_Type      => Make_Pointer_Type (RE (RE_Uint32_T))),
             Parameters);
 
-         N := Make_Function_Specification
-           (Defining_Identifier => Map_C_Marshaller_Subprogram
-              (E, Is_Request => True, Is_Unmarshall => True),
-            Parameters          => Parameters,
-            Return_Type         => New_Node (CTN.K_Void)
-           );
+         N :=
+           Make_Function_Specification
+             (Defining_Identifier =>
+                Map_C_Marshaller_Subprogram
+                  (E,
+                   Is_Request    => True,
+                   Is_Unmarshall => True),
+              Parameters  => Parameters,
+              Return_Type => New_Node (CTN.K_Void));
          return N;
       end Unmarshall_Request_Spec;
 
@@ -181,33 +176,28 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Value)),
-             Parameter_Type =>
-               Map_C_Defining_Identifier (E)),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Value)),
+               Parameter_Type      => Map_C_Defining_Identifier (E)),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Message)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Msg_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Message)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Msg_T))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Offset)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Uint32_T))),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Offset)),
+               Parameter_Type      => Make_Pointer_Type (RE (RE_Uint32_T))),
             Parameters);
 
-         N := Make_Function_Specification
-           (Defining_Identifier => Map_C_Marshaller_Subprogram (E),
-            Parameters          => Parameters,
-            Return_Type         => New_Node (CTN.K_Void)
-           );
+         N :=
+           Make_Function_Specification
+             (Defining_Identifier => Map_C_Marshaller_Subprogram (E),
+              Parameters          => Parameters,
+              Return_Type         => New_Node (CTN.K_Void));
          return N;
       end Marshall_Type_Spec;
 
@@ -222,35 +212,30 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Value)),
-             Parameter_Type =>
-               Make_Pointer_Type
-               (Map_C_Defining_Identifier (E))),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Value)),
+               Parameter_Type      =>
+                 Make_Pointer_Type (Map_C_Defining_Identifier (E))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Message)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Msg_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Message)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Msg_T))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Offset)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Uint32_T))),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Offset)),
+               Parameter_Type      => Make_Pointer_Type (RE (RE_Uint32_T))),
             Parameters);
 
-         N := Make_Function_Specification
-           (Defining_Identifier => Map_C_Marshaller_Subprogram
-              (E, Is_Unmarshall => True),
-            Parameters          => Parameters,
-            Return_Type         => New_Node (CTN.K_Void)
-           );
+         N :=
+           Make_Function_Specification
+             (Defining_Identifier =>
+                Map_C_Marshaller_Subprogram (E, Is_Unmarshall => True),
+              Parameters  => Parameters,
+              Return_Type => New_Node (CTN.K_Void));
          return N;
       end Unmarshall_Type_Spec;
 
@@ -286,8 +271,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -359,11 +344,12 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P : constant Node_Id := CTN.Entity (U);
-         S : Node_Id;
-         Parameters    : List_Id;
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P          : constant Node_Id := CTN.Entity (U);
+         S          : Node_Id;
+         Parameters : List_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -392,105 +378,103 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
          Parameters := New_List (CTN.K_Parameter_List);
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Request)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Request_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Request)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Request_T))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Message)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Msg_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Message)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Msg_T))),
             Parameters);
 
-         Marshaller_Request_Spec := Make_Function_Specification
-           (Defining_Identifier => RE (RE_Marshall_Request),
-            Parameters          => Parameters,
-            Return_Type         => New_Node (CTN.K_Void));
-         Append_Node_To_List (Marshaller_Request_Spec,
-                              CTN.Declarations (Current_File));
+         Marshaller_Request_Spec :=
+           Make_Function_Specification
+             (Defining_Identifier => RE (RE_Marshall_Request),
+              Parameters          => Parameters,
+              Return_Type         => New_Node (CTN.K_Void));
+         Append_Node_To_List
+           (Marshaller_Request_Spec,
+            CTN.Declarations (Current_File));
 
          --  Make the main unmarshall_request function
 
          Parameters := New_List (CTN.K_Parameter_List);
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Request)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Request_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Request)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Request_T))),
             Parameters);
 
          Append_Node_To_List
            (Make_Parameter_Specification
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Message)),
-             Parameter_Type =>
-               Make_Pointer_Type (RE (RE_Msg_T))),
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (PN (P_Message)),
+               Parameter_Type => Make_Pointer_Type (RE (RE_Msg_T))),
             Parameters);
 
-         Unmarshaller_Request_Spec := Make_Function_Specification
-           (Defining_Identifier => RE (RE_Unmarshall_Request),
-            Parameters          => Parameters,
-            Return_Type         => New_Node (CTN.K_Void));
-         Append_Node_To_List (Unmarshaller_Request_Spec,
-                              CTN.Declarations (Current_File));
+         Unmarshaller_Request_Spec :=
+           Make_Function_Specification
+             (Defining_Identifier => RE (RE_Unmarshall_Request),
+              Parameters          => Parameters,
+              Return_Type         => New_Node (CTN.K_Void));
+         Append_Node_To_List
+           (Unmarshaller_Request_Spec,
+            CTN.Declarations (Current_File));
 
          if Use_ASN1_Deployment then
-         --  Make the main marshall_asn1_request function
+            --  Make the main marshall_asn1_request function
 
             Parameters := New_List (CTN.K_Parameter_List);
             Append_Node_To_List
-            (Make_Parameter_Specification
-             (Defining_Identifier =>
-              Make_Defining_Identifier (PN (P_Request)),
-              Parameter_Type =>
-              Make_Pointer_Type (RE (RE_Request_T))),
-             Parameters);
+              (Make_Parameter_Specification
+                 (Defining_Identifier =>
+                    Make_Defining_Identifier (PN (P_Request)),
+                  Parameter_Type => Make_Pointer_Type (RE (RE_Request_T))),
+               Parameters);
 
             Append_Node_To_List
-            (Make_Parameter_Specification
-             (Defining_Identifier =>
-              Make_Defining_Identifier (PN (P_Pkt)),
-              Parameter_Type =>
-              Make_Pointer_Type (RE (RE_Asn1_Pkt_T))),
-             Parameters);
+              (Make_Parameter_Specification
+                 (Defining_Identifier => Make_Defining_Identifier (PN (P_Pkt)),
+                  Parameter_Type => Make_Pointer_Type (RE (RE_Asn1_Pkt_T))),
+               Parameters);
 
-            Marshaller_Asn1_Request_Spec := Make_Function_Specification
-            (Defining_Identifier => RE (RE_Marshall_Asn1_Request),
-             Parameters          => Parameters,
-             Return_Type         => New_Node (CTN.K_Void));
-            Append_Node_To_List (Marshaller_Asn1_Request_Spec,
-                                 CTN.Declarations (Current_File));
+            Marshaller_Asn1_Request_Spec :=
+              Make_Function_Specification
+                (Defining_Identifier => RE (RE_Marshall_Asn1_Request),
+                 Parameters          => Parameters,
+                 Return_Type         => New_Node (CTN.K_Void));
+            Append_Node_To_List
+              (Marshaller_Asn1_Request_Spec,
+               CTN.Declarations (Current_File));
 
             --  Make the main unmarshall_request function
 
             Parameters := New_List (CTN.K_Parameter_List);
             Append_Node_To_List
-            (Make_Parameter_Specification
-             (Defining_Identifier =>
-              Make_Defining_Identifier (PN (P_Request)),
-              Parameter_Type =>
-              Make_Pointer_Type (RE (RE_Request_T))),
-             Parameters);
+              (Make_Parameter_Specification
+                 (Defining_Identifier =>
+                    Make_Defining_Identifier (PN (P_Request)),
+                  Parameter_Type => Make_Pointer_Type (RE (RE_Request_T))),
+               Parameters);
 
             Append_Node_To_List
-            (Make_Parameter_Specification
-             (Defining_Identifier =>
-              Make_Defining_Identifier (PN (P_Pkt)),
-             Parameter_Type =>
-             Make_Pointer_Type (RE (RE_Asn1_Pkt_T))),
-             Parameters);
+              (Make_Parameter_Specification
+                 (Defining_Identifier => Make_Defining_Identifier (PN (P_Pkt)),
+                  Parameter_Type => Make_Pointer_Type (RE (RE_Asn1_Pkt_T))),
+               Parameters);
 
-            Unmarshaller_Asn1_Request_Spec := Make_Function_Specification
-            (Defining_Identifier => RE (RE_Unmarshall_Asn1_Request),
-             Parameters          => Parameters,
-             Return_Type         => New_Node (CTN.K_Void));
-            Append_Node_To_List (Unmarshaller_Asn1_Request_Spec,
-                  CTN.Declarations (Current_File));
+            Unmarshaller_Asn1_Request_Spec :=
+              Make_Function_Specification
+                (Defining_Identifier => RE (RE_Unmarshall_Asn1_Request),
+                 Parameters          => Parameters,
+                 Return_Type         => New_Node (CTN.K_Void));
+            Append_Node_To_List
+              (Unmarshaller_Asn1_Request_Spec,
+               CTN.Declarations (Current_File));
          end if;
 
          --  Unmark all the marked types
@@ -570,8 +554,9 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
             F := First_Node (Features (E));
 
             while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance and then
-                 Ocarina.ME_AADL.AADL_Instances.Nodes.Is_Data (F) then
+               if Kind (F) = K_Port_Spec_Instance
+                 and then Ocarina.ME_AADL.AADL_Instances.Nodes.Is_Data (F)
+               then
                   Visit (Corresponding_Instance (F));
                end if;
 
@@ -646,10 +631,10 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       function Get_Marshall_Function_Name (E : Node_Id) return Node_Id;
       function Get_Unmarshall_Function_Name (E : Node_Id) return Node_Id;
 
-      Asn1_Marshall_Alternatives       : List_Id;
-      Asn1_Unmarshall_Alternatives     : List_Id;
-      Marshall_Alternatives            : List_Id;
-      Unmarshall_Alternatives          : List_Id;
+      Asn1_Marshall_Alternatives   : List_Id;
+      Asn1_Unmarshall_Alternatives : List_Id;
+      Marshall_Alternatives        : List_Id;
+      Unmarshall_Alternatives      : List_Id;
 
       -----------------------------
       -- Make_Marshall_Type_Body --
@@ -662,19 +647,18 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
          Declarations        : List_Id;
          Statements          : List_Id;
          Parameters          : List_Id;
-         Marshall_Spec       : constant Node_Id := CTN.Marshaller_Node
-           (Backend_Node (Identifier (E)));
+         Marshall_Spec       : constant Node_Id :=
+           CTN.Marshaller_Node (Backend_Node (Identifier (E)));
       begin
          --  Create the marshall function for this type
 
          Declarations := New_List (CTN.K_Declaration_List);
-         Statements := New_List (CTN.K_Statement_List);
+         Statements   := New_List (CTN.K_Statement_List);
 
          Data_Representation := Get_Data_Representation (E);
 
          case Data_Representation is
-            when Data_With_Accessors |
-              Data_Struct =>
+            when Data_With_Accessors | Data_Struct =>
                --  For structures, the marshaller calls the
                --  marshallers of each enclosed member.
 
@@ -687,8 +671,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                      Parameters := New_List (CTN.K_Parameter_List);
                      Append_Node_To_List
                        (Make_Member_Designator
-                          (Aggregate_Name => Make_Defining_Identifier
-                             (PN (P_Value)),
+                          (Aggregate_Name =>
+                             Make_Defining_Identifier (PN (P_Value)),
                            Defining_Identifier =>
                              Map_C_Defining_Identifier (C),
                            Is_Pointer => False),
@@ -699,17 +683,17 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                      Append_Node_To_List
                        (Make_Defining_Identifier (PN (P_Offset)),
                         Parameters);
-                     N := Make_Call_Profile
-                       (Get_Marshall_Function_Name
-                          (Corresponding_Instance (C)),
-                        Parameters);
+                     N :=
+                       Make_Call_Profile
+                         (Get_Marshall_Function_Name
+                            (Corresponding_Instance (C)),
+                          Parameters);
                      Append_Node_To_List (N, Statements);
                   end if;
                   C := Next_Node (C);
                end loop;
 
-            when Data_Array |
-              Data_String =>
+            when Data_Array | Data_String =>
                Parameters := New_List (CTN.K_Parameter_List);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Value)),
@@ -717,14 +701,11 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Message)),
                   Parameters);
-               Append_Node_To_List
-                 (CTU.Get_Data_Size (E),
-                 Parameters);
+               Append_Node_To_List (CTU.Get_Data_Size (E), Parameters);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
-               N := Make_Call_Profile
-                 (RE (RE_Marshall_Array), Parameters);
+               N := Make_Call_Profile (RE (RE_Marshall_Array), Parameters);
                Append_Node_To_List (N, Statements);
 
             when Data_Enum =>
@@ -742,8 +723,7 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
-               N := Make_Call_Profile
-                 (RE (RE_Marshall_Int32), Parameters);
+               N := Make_Call_Profile (RE (RE_Marshall_Int32), Parameters);
                Append_Node_To_List (N, Statements);
 
             when Data_None =>
@@ -755,14 +735,11 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Message)),
                   Parameters);
-               Append_Node_To_List
-                 (CTU.Get_Data_Size (E),
-                  Parameters);
+               Append_Node_To_List (CTU.Get_Data_Size (E), Parameters);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
-               N := Make_Call_Profile
-                 (RE (RE_Marshall_Array), Parameters);
+               N := Make_Call_Profile (RE (RE_Marshall_Array), Parameters);
                Append_Node_To_List (N, Statements);
 
             when others =>
@@ -776,13 +753,18 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
-               N := Make_Call_Profile
-                 (Get_Marshall_Function_Name (E), Parameters);
+               N :=
+                 Make_Call_Profile
+                   (Get_Marshall_Function_Name (E),
+                    Parameters);
                Append_Node_To_List (N, Statements);
          end case;
 
-         N := Make_Function_Implementation
-           (Marshall_Spec, Declarations, Statements);
+         N :=
+           Make_Function_Implementation
+             (Marshall_Spec,
+              Declarations,
+              Statements);
          return N;
       end Make_Marshall_Type_Body;
 
@@ -791,25 +773,24 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       -------------------------------
 
       function Make_Unmarshall_Type_Body (E : Node_Id) return Node_Id is
-         Data_Representation       : Supported_Data_Representation;
-         N               : Node_Id;
-         C               : Node_Id;
-         Declarations    : List_Id;
-         Statements      : List_Id;
-         Parameters      : List_Id;
-         Unmarshall_Spec : constant Node_Id := CTN.Unmarshaller_Node
-           (Backend_Node (Identifier (E)));
+         Data_Representation : Supported_Data_Representation;
+         N                   : Node_Id;
+         C                   : Node_Id;
+         Declarations        : List_Id;
+         Statements          : List_Id;
+         Parameters          : List_Id;
+         Unmarshall_Spec     : constant Node_Id :=
+           CTN.Unmarshaller_Node (Backend_Node (Identifier (E)));
       begin
          --  Create the unmarshall function for this type
 
          Declarations := New_List (CTN.K_Declaration_List);
-         Statements := New_List (CTN.K_Statement_List);
+         Statements   := New_List (CTN.K_Statement_List);
 
          Data_Representation := Get_Data_Representation (E);
 
          case Data_Representation is
-            when Data_With_Accessors |
-              Data_Struct =>
+            when Data_With_Accessors | Data_Struct =>
 
                C := First_Node (Subcomponents (E));
 
@@ -821,8 +802,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                      Append_Node_To_List
                        (Make_Variable_Address
                           (Make_Member_Designator
-                             (Aggregate_Name => Make_Defining_Identifier
-                                (PN (P_Value)),
+                             (Aggregate_Name =>
+                                Make_Defining_Identifier (PN (P_Value)),
                               Defining_Identifier =>
                                 Map_C_Defining_Identifier (C),
                               Is_Pointer => True)),
@@ -833,17 +814,17 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                      Append_Node_To_List
                        (Make_Defining_Identifier (PN (P_Offset)),
                         Parameters);
-                     N := Make_Call_Profile
-                       (Get_Unmarshall_Function_Name
-                          (Corresponding_Instance (C)),
-                        Parameters);
+                     N :=
+                       Make_Call_Profile
+                         (Get_Unmarshall_Function_Name
+                            (Corresponding_Instance (C)),
+                          Parameters);
                      Append_Node_To_List (N, Statements);
                   end if;
                   C := Next_Node (C);
                end loop;
 
-            when Data_Array |
-              Data_String =>
+            when Data_Array | Data_String =>
                Parameters := New_List (CTN.K_Parameter_List);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Value)),
@@ -851,14 +832,11 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Message)),
                   Parameters);
-               Append_Node_To_List
-                 (CTU.Get_Data_Size (E),
-                 Parameters);
+               Append_Node_To_List (CTU.Get_Data_Size (E), Parameters);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
-               N := Make_Call_Profile
-                 (RE (RE_Unmarshall_Array), Parameters);
+               N := Make_Call_Profile (RE (RE_Unmarshall_Array), Parameters);
                Append_Node_To_List (N, Statements);
 
             when Data_Enum =>
@@ -878,26 +856,22 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
-               N := Make_Call_Profile
-                 (RE (RE_Unmarshall_Int32), Parameters);
+               N := Make_Call_Profile (RE (RE_Unmarshall_Int32), Parameters);
                Append_Node_To_List (N, Statements);
 
             when Data_None =>
                Parameters := New_List (CTN.K_Parameter_List);
                Append_Node_To_List
-                  (Make_Defining_Identifier (PN (P_Value)),
+                 (Make_Defining_Identifier (PN (P_Value)),
                   Parameters);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Message)),
                   Parameters);
-               Append_Node_To_List
-                 (CTU.Get_Data_Size (E),
-                 Parameters);
+               Append_Node_To_List (CTU.Get_Data_Size (E), Parameters);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
-               N := Make_Call_Profile
-                 (RE (RE_Unmarshall_Array), Parameters);
+               N := Make_Call_Profile (RE (RE_Unmarshall_Array), Parameters);
                Append_Node_To_List (N, Statements);
 
             when others =>
@@ -911,13 +885,18 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
-               N := Make_Call_Profile
-                 (Get_Unmarshall_Function_Name (E), Parameters);
+               N :=
+                 Make_Call_Profile
+                   (Get_Unmarshall_Function_Name (E),
+                    Parameters);
                Append_Node_To_List (N, Statements);
          end case;
 
-         N := Make_Function_Implementation
-           (Unmarshall_Spec, Declarations, Statements);
+         N :=
+           Make_Function_Implementation
+             (Unmarshall_Spec,
+              Declarations,
+              Statements);
          return N;
       end Make_Unmarshall_Type_Body;
 
@@ -926,15 +905,15 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       --------------------------------
 
       function Get_Marshall_Function_Name (E : Node_Id) return Node_Id is
-         Data_Representation : constant Supported_Data_Representation
-           := Get_Data_Representation (E);
-         Data_Size           : constant Size_Type := Get_Data_Size (E);
-         Actual_Data_Size    : constant Unsigned_Long_Long
-           := To_Bytes (Data_Size);
-         Number_Representation : constant Supported_Number_Representation
-           := Get_Number_Representation (E);
-         Is_Signed : constant Boolean
-           := (Number_Representation = Representation_Signed);
+         Data_Representation : constant Supported_Data_Representation :=
+           Get_Data_Representation (E);
+         Data_Size        : constant Size_Type          := Get_Data_Size (E);
+         Actual_Data_Size : constant Unsigned_Long_Long :=
+           To_Bytes (Data_Size);
+         Number_Representation : constant Supported_Number_Representation :=
+           Get_Number_Representation (E);
+         Is_Signed : constant Boolean :=
+           (Number_Representation = Representation_Signed);
 
       begin
          case Data_Representation is
@@ -1002,15 +981,15 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       ----------------------------------
 
       function Get_Unmarshall_Function_Name (E : Node_Id) return Node_Id is
-         Data_Representation : constant Supported_Data_Representation
-           := Get_Data_Representation (E);
-         Data_Size           : constant Size_Type := Get_Data_Size (E);
-         Actual_Data_Size    : constant Unsigned_Long_Long
-           := To_Bytes (Data_Size);
-         Number_Representation : constant Supported_Number_Representation
-           := Get_Number_Representation (E);
-         Is_Signed : constant Boolean
-           := (Number_Representation = Representation_Signed);
+         Data_Representation : constant Supported_Data_Representation :=
+           Get_Data_Representation (E);
+         Data_Size        : constant Size_Type          := Get_Data_Size (E);
+         Actual_Data_Size : constant Unsigned_Long_Long :=
+           To_Bytes (Data_Size);
+         Number_Representation : constant Supported_Number_Representation :=
+           Get_Number_Representation (E);
+         Is_Signed : constant Boolean :=
+           (Number_Representation = Representation_Signed);
 
       begin
          case Data_Representation is
@@ -1069,8 +1048,7 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                end if;
 
             when others =>
-               return (Map_C_Marshaller_Subprogram
-                       (E, Is_Unmarshall => True));
+               return (Map_C_Marshaller_Subprogram (E, Is_Unmarshall => True));
          end case;
       end Get_Unmarshall_Function_Name;
 
@@ -1106,8 +1084,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -1142,16 +1120,18 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
          Add_Include (RH (RH_Types));
          Add_Include (RH (RH_PO_HI_Types));
 
-         if No (Get_Handling (E, By_Name, H_C_Marshall_Body)) and then
-           Present (CTN.Marshaller_Node (Backend_Node (Identifier (E))))
+         if No (Get_Handling (E, By_Name, H_C_Marshall_Body))
+           and then Present
+             (CTN.Marshaller_Node (Backend_Node (Identifier (E))))
          then
             N := Make_Marshall_Type_Body (E);
             Set_Handling (E, By_Name, H_C_Marshall_Body, N);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
-         if No (Get_Handling (E, By_Name, H_C_Unmarshall_Body)) and then
-           Present (CTN.Unmarshaller_Node (Backend_Node (Identifier (E))))
+         if No (Get_Handling (E, By_Name, H_C_Unmarshall_Body))
+           and then Present
+             (CTN.Unmarshaller_Node (Backend_Node (Identifier (E))))
          then
             N := Make_Unmarshall_Type_Body (E);
             Set_Handling (E, By_Name, H_C_Unmarshall_Body, N);
@@ -1177,19 +1157,20 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P : constant Node_Id := CTN.Entity (U);
-         S : Node_Id;
-         N : Node_Id;
-         C : Node_Id;
-         I : Node_Id;
-         D : Node_Id;
-         F : Node_Id;
-         J : Node_Id;
-         Declarations  : List_Id;
-         Statements    : List_Id;
-         Parameters    : List_Id;
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P            : constant Node_Id := CTN.Entity (U);
+         S            : Node_Id;
+         N            : Node_Id;
+         C            : Node_Id;
+         I            : Node_Id;
+         D            : Node_Id;
+         F            : Node_Id;
+         J            : Node_Id;
+         Declarations : List_Id;
+         Statements   : List_Id;
+         Parameters   : List_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -1197,10 +1178,10 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
 
          Start_Recording_Handlings;
 
-         Asn1_Marshall_Alternatives    := New_List (CTN.K_Alternatives_List);
-         Asn1_Unmarshall_Alternatives  := New_List (CTN.K_Alternatives_List);
-         Marshall_Alternatives         := New_List (CTN.K_Alternatives_List);
-         Unmarshall_Alternatives       := New_List (CTN.K_Alternatives_List);
+         Asn1_Marshall_Alternatives   := New_List (CTN.K_Alternatives_List);
+         Asn1_Unmarshall_Alternatives := New_List (CTN.K_Alternatives_List);
+         Marshall_Alternatives        := New_List (CTN.K_Alternatives_List);
+         Unmarshall_Alternatives      := New_List (CTN.K_Alternatives_List);
 
          if not AAU.Is_Empty (Features (E)) then
             C := First_Node (Features (E));
@@ -1250,193 +1231,184 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
 
          --  Make the global __po_hi_marshall_request function
 
-         Declarations  := New_List (CTN.K_Declaration_List);
-         Statements    := New_List (CTN.K_Statement_List);
+         Declarations := New_List (CTN.K_Declaration_List);
+         Statements   := New_List (CTN.K_Statement_List);
 
          Append_Node_To_List
            (Make_Variable_Declaration
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Offset)),
-             Used_Type =>
-               RE (RE_Uint32_T)),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Offset)),
+               Used_Type           => RE (RE_Uint32_T)),
             Declarations);
 
          Append_Node_To_List
            (Make_Expression
-            (Left_Expr => Make_Defining_Identifier (PN (P_Offset)),
-             Operator => Op_Equal,
-             Right_Expr => Make_Literal
-             (CV.New_Int_Value (0, 1, 10))),
+              (Left_Expr  => Make_Defining_Identifier (PN (P_Offset)),
+               Operator   => Op_Equal,
+               Right_Expr => Make_Literal (CV.New_Int_Value (0, 1, 10))),
             Statements);
 
          Parameters := New_List (CTN.K_Parameter_List);
          Append_Node_To_List
            (Make_Member_Designator
-            (Defining_Identifier =>
-               Make_Defining_Identifier (MN (M_Port)),
-             Aggregate_Name =>
-               Make_Defining_Identifier (PN (P_Request)),
-             Is_Pointer => True),
+              (Defining_Identifier => Make_Defining_Identifier (MN (M_Port)),
+               Aggregate_Name => Make_Defining_Identifier (PN (P_Request)),
+               Is_Pointer          => True),
             Parameters);
 
          Append_Node_To_List
            (Make_Defining_Identifier (PN (P_Message)),
             Parameters);
 
-         N := Make_Call_Profile
-           (RE (RE_Marshall_Port),
-            Parameters);
+         N := Make_Call_Profile (RE (RE_Marshall_Port), Parameters);
 
          Append_Node_To_List (N, Statements);
 
          if not Is_Empty (Marshall_Alternatives) then
-            N := Make_Switch_Alternative
-              (No_List, No_List);
+            N := Make_Switch_Alternative (No_List, No_List);
             Append_Node_To_List (N, Marshall_Alternatives);
 
-            N := Make_Switch_Statement
-              (Expression =>
-                 Make_Member_Designator
-               (Defining_Identifier =>
-                  Make_Defining_Identifier (MN (M_Port)),
-                Aggregate_Name => Make_Defining_Identifier (VN (V_Request)),
-                Is_Pointer => True),
-               Alternatives => Marshall_Alternatives);
+            N :=
+              Make_Switch_Statement
+                (Expression =>
+                   Make_Member_Designator
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier (MN (M_Port)),
+                      Aggregate_Name =>
+                        Make_Defining_Identifier (VN (V_Request)),
+                      Is_Pointer => True),
+                 Alternatives => Marshall_Alternatives);
 
          else
-            N := Message_Comment
-              ("No alternative was declared");
+            N := Message_Comment ("No alternative was declared");
          end if;
 
          Append_Node_To_List (N, Statements);
 
-         N := Make_Function_Implementation
-           (Marshaller_Request_Spec,
-            Declarations,
-            Statements);
+         N :=
+           Make_Function_Implementation
+             (Marshaller_Request_Spec,
+              Declarations,
+              Statements);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          --  Make the global __po_hi_unmarshall_request function
 
-         Declarations  := New_List (CTN.K_Declaration_List);
-         Statements    := New_List (CTN.K_Statement_List);
+         Declarations := New_List (CTN.K_Declaration_List);
+         Statements   := New_List (CTN.K_Statement_List);
 
          Append_Node_To_List
            (Make_Variable_Declaration
-            (Defining_Identifier =>
-               Make_Defining_Identifier (PN (P_Offset)),
-             Used_Type =>
-               RE (RE_Uint32_T)),
+              (Defining_Identifier => Make_Defining_Identifier (PN (P_Offset)),
+               Used_Type           => RE (RE_Uint32_T)),
             Declarations);
 
          Append_Node_To_List
            (Make_Expression
-            (Left_Expr => Make_Defining_Identifier (PN (P_Offset)),
-             Operator => Op_Equal,
-             Right_Expr => Make_Literal
-             (CV.New_Int_Value (0, 1, 10))),
+              (Left_Expr  => Make_Defining_Identifier (PN (P_Offset)),
+               Operator   => Op_Equal,
+               Right_Expr => Make_Literal (CV.New_Int_Value (0, 1, 10))),
             Statements);
 
          Parameters := New_List (CTN.K_Parameter_List);
          Append_Node_To_List
            (Make_Variable_Address
-            (Make_Member_Designator
-             (Defining_Identifier =>
-                Make_Defining_Identifier (MN (M_Port)),
-              Aggregate_Name =>
-                Make_Defining_Identifier (PN (P_Request)),
-              Is_Pointer => True)),
+              (Make_Member_Designator
+                 (Defining_Identifier =>
+                    Make_Defining_Identifier (MN (M_Port)),
+                  Aggregate_Name => Make_Defining_Identifier (PN (P_Request)),
+                  Is_Pointer     => True)),
             Parameters);
 
          Append_Node_To_List
            (Make_Defining_Identifier (PN (P_Message)),
             Parameters);
 
-         N := Make_Call_Profile
-           (RE (RE_Unmarshall_Port),
-            Parameters);
+         N := Make_Call_Profile (RE (RE_Unmarshall_Port), Parameters);
 
          Append_Node_To_List (N, Statements);
 
          if not Is_Empty (Unmarshall_Alternatives) then
-            N := Make_Switch_Alternative
-              (No_List, No_List);
+            N := Make_Switch_Alternative (No_List, No_List);
             Append_Node_To_List (N, Unmarshall_Alternatives);
 
-            N := Make_Switch_Statement
-              (Expression => Make_Member_Designator
-               (Defining_Identifier => Make_Defining_Identifier
-                (MN (M_Port)),
-                Aggregate_Name => Make_Defining_Identifier
-                (VN (V_Request)),
-                Is_Pointer => True),
-               Alternatives => Unmarshall_Alternatives);
+            N :=
+              Make_Switch_Statement
+                (Expression =>
+                   Make_Member_Designator
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier (MN (M_Port)),
+                      Aggregate_Name =>
+                        Make_Defining_Identifier (VN (V_Request)),
+                      Is_Pointer => True),
+                 Alternatives => Unmarshall_Alternatives);
          else
-            N := Message_Comment
-              ("No alternative was declared");
+            N := Message_Comment ("No alternative was declared");
          end if;
 
          Append_Node_To_List (N, Statements);
 
-         N := Make_Function_Implementation
-           (Unmarshaller_Request_Spec,
-            Declarations,
-            Statements);
+         N :=
+           Make_Function_Implementation
+             (Unmarshaller_Request_Spec,
+              Declarations,
+              Statements);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          --  Unmark all the marked types
 
          if Use_ASN1_Deployment then
             if not Is_Empty (Asn1_Marshall_Alternatives) then
-               N := Make_Switch_Alternative
-                 (No_List, No_List);
+               N := Make_Switch_Alternative (No_List, No_List);
                Append_Node_To_List (N, Asn1_Marshall_Alternatives);
 
-               N := Make_Switch_Statement
-                 (Expression =>
-                    Make_Member_Designator
-                  (Defining_Identifier =>
-                     Make_Defining_Identifier (MN (M_Port)),
-                   Aggregate_Name => Make_Defining_Identifier (VN (V_Request)),
-                   Is_Pointer => True),
-                  Alternatives => Asn1_Marshall_Alternatives);
+               N :=
+                 Make_Switch_Statement
+                   (Expression =>
+                      Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Defining_Identifier (MN (M_Port)),
+                         Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Request)),
+                         Is_Pointer => True),
+                    Alternatives => Asn1_Marshall_Alternatives);
             else
-               N := Message_Comment
-                 ("No alternative was declared");
+               N := Message_Comment ("No alternative was declared");
             end if;
 
-            N := Make_Function_Implementation
-            (Marshaller_Asn1_Request_Spec,
-             No_List,
-             Make_List_Id (N));
+            N :=
+              Make_Function_Implementation
+                (Marshaller_Asn1_Request_Spec,
+                 No_List,
+                 Make_List_Id (N));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             if not Is_Empty (Asn1_Unmarshall_Alternatives) then
-               N := Make_Switch_Alternative
-                 (No_List, No_List);
+               N := Make_Switch_Alternative (No_List, No_List);
                Append_Node_To_List (N, Asn1_Unmarshall_Alternatives);
 
-               N := Make_Switch_Statement
-                 (Expression =>
-                    Make_Member_Designator
-                  (Defining_Identifier =>
-                     Make_Member_Designator
+               N :=
+                 Make_Switch_Statement
+                   (Expression =>
+                      Make_Member_Designator
                         (Defining_Identifier =>
-                           Make_Defining_Identifier (MN (M_Kind)),
-                        Aggregate_Name =>
-                           Make_Defining_Identifier (MN (M_Msg))),
-                   Aggregate_Name => Make_Defining_Identifier (VN (V_Pkt)),
-                   Is_Pointer => True),
-                  Alternatives => Asn1_Unmarshall_Alternatives);
+                           Make_Member_Designator
+                             (Defining_Identifier =>
+                                Make_Defining_Identifier (MN (M_Kind)),
+                              Aggregate_Name =>
+                                Make_Defining_Identifier (MN (M_Msg))),
+                         Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Pkt)),
+                         Is_Pointer => True),
+                    Alternatives => Asn1_Unmarshall_Alternatives);
             else
-               N := Message_Comment
-                 ("No alternative was declared");
+               N := Message_Comment ("No alternative was declared");
             end if;
 
-            N := Make_Function_Implementation
-            (Unmarshaller_Asn1_Request_Spec,
-             Make_List_Id (N),
-             No_List);
+            N :=
+              Make_Function_Implementation
+                (Unmarshaller_Asn1_Request_Spec,
+                 Make_List_Id (N),
+                 No_List);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          end if;
@@ -1452,7 +1424,7 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       -------------------------------
 
       procedure Visit_Subprogram_Instance (E : Node_Id) is
-         F                       : Node_Id;
+         F : Node_Id;
       begin
          --  Declare all necessary data types
 
@@ -1565,17 +1537,15 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                  and then Ocarina.ME_AADL.AADL_Instances.Nodes.Is_Data (F)
                  and then No (Get_Handling (F, By_Node, H_C_Marshall_Body))
                then
-                  Unmarshall_Spec := CTN.Unmarshaller_Node
-                    (Backend_Node (Identifier (F)));
-                  Marshall_Spec := CTN.Marshaller_Node
-                    (Backend_Node (Identifier (F)));
+                  Unmarshall_Spec :=
+                    CTN.Unmarshaller_Node (Backend_Node (Identifier (F)));
+                  Marshall_Spec :=
+                    CTN.Marshaller_Node (Backend_Node (Identifier (F)));
 
                   D := Corresponding_Instance (F);
 
-                  Marshall_Declarations   := New_List
-                    (CTN.K_Declaration_List);
-                  Unmarshall_Declarations := New_List
-                    (CTN.K_Declaration_List);
+                  Marshall_Declarations   := New_List (CTN.K_Declaration_List);
+                  Unmarshall_Declarations := New_List (CTN.K_Declaration_List);
                   Unmarshall_Statements   := New_List (CTN.K_Statement_List);
                   Marshall_Statements     := New_List (CTN.K_Statement_List);
 
@@ -1585,17 +1555,16 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                     (Make_Member_Designator
                        (Defining_Identifier =>
                           Make_Member_Designator
-                          (Defining_Identifier =>
-                             Make_Defining_Identifier
-                             (Map_C_Enumerator_Name (F)),
-                           Aggregate_Name =>
-                             Make_Member_Designator
-                             (Defining_Identifier =>
-                                Make_Defining_Identifier
-                                (Map_C_Enumerator_Name (F)),
-                              Aggregate_Name =>
-                                       Make_Defining_Identifier
-                                (MN (M_Vars)))),
+                            (Defining_Identifier =>
+                               Make_Defining_Identifier
+                                 (Map_C_Enumerator_Name (F)),
+                             Aggregate_Name =>
+                               Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    Make_Defining_Identifier
+                                      (Map_C_Enumerator_Name (F)),
+                                  Aggregate_Name =>
+                                    Make_Defining_Identifier (MN (M_Vars)))),
                         Aggregate_Name =>
                           Make_Defining_Identifier (PN (P_Request)),
                         Is_Pointer => True),
@@ -1609,12 +1578,12 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                     (Make_Defining_Identifier (PN (P_Offset)),
                      Parameters);
 
-                  N := Make_Call_Profile
-                    (Map_C_Marshaller_Subprogram (D),
-                     Parameters);
+                  N :=
+                    Make_Call_Profile
+                      (Map_C_Marshaller_Subprogram (D),
+                       Parameters);
 
-                  Append_Node_To_List
-                    (N, Marshall_Statements);
+                  Append_Node_To_List (N, Marshall_Statements);
 
                   Parameters := New_List (CTN.K_Parameter_List);
                   Append_Node_To_List
@@ -1622,17 +1591,17 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                        (Make_Member_Designator
                           (Defining_Identifier =>
                              Make_Member_Designator
-                             (Defining_Identifier =>
-                                Make_Defining_Identifier
-                                (Map_C_Enumerator_Name (F)),
-                              Aggregate_Name =>
-                                Make_Member_Designator
-                                (Defining_Identifier =>
-                                   Make_Defining_Identifier
-                                   (Map_C_Enumerator_Name (F)),
-                                      Aggregate_Name =>
-                                   Make_Defining_Identifier
-                                   (MN (M_Vars)))),
+                               (Defining_Identifier =>
+                                  Make_Defining_Identifier
+                                    (Map_C_Enumerator_Name (F)),
+                                Aggregate_Name =>
+                                  Make_Member_Designator
+                                    (Defining_Identifier =>
+                                       Make_Defining_Identifier
+                                         (Map_C_Enumerator_Name (F)),
+                                     Aggregate_Name =>
+                                       Make_Defining_Identifier
+                                         (MN (M_Vars)))),
                            Aggregate_Name =>
                              Make_Defining_Identifier (PN (P_Request)),
                            Is_Pointer => True)),
@@ -1644,27 +1613,27 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                     (Make_Defining_Identifier (PN (P_Offset)),
                      Parameters);
 
-                  N := Make_Call_Profile
-                    (Map_C_Marshaller_Subprogram
-                       (D, Is_Unmarshall => True),
-                     Parameters);
+                  N :=
+                    Make_Call_Profile
+                      (Map_C_Marshaller_Subprogram (D, Is_Unmarshall => True),
+                       Parameters);
 
-                  Append_Node_To_List
-                    (N, Unmarshall_Statements);
+                  Append_Node_To_List (N, Unmarshall_Statements);
 
-                  N := Make_Function_Implementation
-                    (Marshall_Spec,
-                     Marshall_Declarations,
-                     Marshall_Statements);
+                  N :=
+                    Make_Function_Implementation
+                      (Marshall_Spec,
+                       Marshall_Declarations,
+                       Marshall_Statements);
                   Set_Handling (E, By_Name, H_C_Marshall_Body, N);
-                  Set_Handling
-                     (F, By_Node, H_C_Marshall_Body, N);
+                  Set_Handling (F, By_Node, H_C_Marshall_Body, N);
                   Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-                  N := Make_Function_Implementation
-                    (Unmarshall_Spec,
-                     Unmarshall_Declarations,
-                     Unmarshall_Statements);
+                  N :=
+                    Make_Function_Implementation
+                      (Unmarshall_Spec,
+                       Unmarshall_Declarations,
+                       Unmarshall_Statements);
                   Set_Handling (F, By_Name, H_C_Unmarshall_Body, N);
 
                   Append_Node_To_List (N, CTN.Declarations (Current_File));
@@ -1675,8 +1644,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                   --  First, handle the generic marshallers.
 
                   Switch_Statements := New_List (CTN.K_Statement_List);
-                  Switch_Labels := New_List (CTN.K_Label_List);
-                  Parameters := New_List (CTN.K_Parameter_List);
+                  Switch_Labels     := New_List (CTN.K_Label_List);
+                  Parameters        := New_List (CTN.K_Parameter_List);
 
                   Append_Node_To_List
                     (Make_Defining_Identifier (PN (P_Request)),
@@ -1691,148 +1660,142 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                        (Make_Defining_Identifier (PN (P_Offset))),
                      Parameters);
 
-                  N := Make_Call_Profile
-                    (Map_C_Marshaller_Subprogram
-                       (F, Is_Request => True),
-                     Parameters);
+                  N :=
+                    Make_Call_Profile
+                      (Map_C_Marshaller_Subprogram (F, Is_Request => True),
+                       Parameters);
+
+                  Append_Node_To_List (N, Switch_Statements);
 
                   Append_Node_To_List
-                    (N, Switch_Statements);
-
-                  Append_Node_To_List
-                    (Make_Defining_Identifier
-                       (Map_C_Enumerator_Name (F)),
+                    (Make_Defining_Identifier (Map_C_Enumerator_Name (F)),
                      Switch_Labels);
 
-                  N := Make_Switch_Alternative
-                    (Switch_Labels, Switch_Statements);
+                  N :=
+                    Make_Switch_Alternative (Switch_Labels, Switch_Statements);
                   Append_Node_To_List (N, Marshall_Alternatives);
 
                   --  Then, handle the ASN1 marshallers
                   Switch_Statements := New_List (CTN.K_Statement_List);
-                  Switch_Labels := New_List (CTN.K_Label_List);
-                  Parameters := New_List (CTN.K_Parameter_List);
+                  Switch_Labels     := New_List (CTN.K_Label_List);
+                  Parameters        := New_List (CTN.K_Parameter_List);
 
                   Append_Node_To_List
                     (Make_Expression
-                     (Left_Expr =>
-                        Make_Member_Designator
-                        (Defining_Identifier =>
-                           Make_Member_Designator
-                           (Defining_Identifier =>
-                              (Make_Defining_Identifier
-                                 (MN (M_Kind))),
-                           Aggregate_Name =>
-                              Make_Defining_Identifier (MN (M_Msg))),
-                        Aggregate_Name =>
-                           Make_Defining_Identifier (VN (V_Pkt)),
-                        Is_Pointer => True),
-                      Operator => Op_Equal,
-                      Right_Expr =>
-                        Make_Defining_Identifier
-                        (Map_Port_Name_Present_For_Asn1 (F),
-                         C_Conversion => False)),
+                       (Left_Expr =>
+                          Make_Member_Designator
+                            (Defining_Identifier =>
+                               Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    (Make_Defining_Identifier (MN (M_Kind))),
+                                  Aggregate_Name =>
+                                    Make_Defining_Identifier (MN (M_Msg))),
+                             Aggregate_Name =>
+                               Make_Defining_Identifier (VN (V_Pkt)),
+                             Is_Pointer => True),
+                        Operator   => Op_Equal,
+                        Right_Expr =>
+                          Make_Defining_Identifier
+                            (Map_Port_Name_Present_For_Asn1 (F),
+                             C_Conversion => False)),
                      Switch_Statements);
 
                   Append_Node_To_List
-                      (Make_Member_Designator
-                        (Defining_Identifier =>
-                           Make_Member_Designator
-                           (Defining_Identifier =>
-                              Make_Member_Designator
+                    (Make_Member_Designator
+                       (Defining_Identifier =>
+                          Make_Member_Designator
+                            (Defining_Identifier =>
+                               Make_Member_Designator
                                  (Defining_Identifier =>
                                     Make_Member_Designator
-                                    (Defining_Identifier =>
-                                       Make_Defining_Identifier
-                                          (Get_String_Name ("arr")),
-                                    Aggregate_Name =>
-                                       (Make_Defining_Identifier
-                                          (Map_Port_Name_For_Asn1 (F)))),
-                                 Aggregate_Name =>
+                                      (Defining_Identifier =>
+                                         Make_Defining_Identifier
+                                           (Get_String_Name ("arr")),
+                                       Aggregate_Name =>
+                                         (Make_Defining_Identifier
+                                            (Map_Port_Name_For_Asn1 (F)))),
+                                  Aggregate_Name =>
                                     (Make_Defining_Identifier
                                        (Get_String_Name ("u")))),
-                           Aggregate_Name =>
-                              Make_Defining_Identifier (MN (M_Msg))),
+                             Aggregate_Name =>
+                               Make_Defining_Identifier (MN (M_Msg))),
                         Aggregate_Name =>
-                           Make_Defining_Identifier (VN (V_Pkt)),
+                          Make_Defining_Identifier (VN (V_Pkt)),
                         Is_Pointer => True),
                      Parameters);
 
                   Append_Node_To_List
-                     (Make_Variable_Address
-                      (Make_Member_Designator
-                        (Defining_Identifier =>
-                           Make_Member_Designator
-                           (Defining_Identifier =>
-                              Make_Member_Designator
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_C_Enumerator_Name (F))),
-                                 Aggregate_Name =>
-                                    (Make_Defining_Identifier
-                                       (Map_C_Enumerator_Name (F)))),
+                    (Make_Variable_Address
+                       (Make_Member_Designator
+                          (Defining_Identifier =>
+                             Make_Member_Designator
+                               (Defining_Identifier =>
+                                  Make_Member_Designator
+                                    (Defining_Identifier =>
+                                       (Make_Defining_Identifier
+                                          (Map_C_Enumerator_Name (F))),
+                                     Aggregate_Name =>
+                                       (Make_Defining_Identifier
+                                          (Map_C_Enumerator_Name (F)))),
+                                Aggregate_Name =>
+                                  Make_Defining_Identifier (MN (M_Vars))),
                            Aggregate_Name =>
-                              Make_Defining_Identifier (MN (M_Vars))),
-                        Aggregate_Name =>
-                           Make_Defining_Identifier (VN (V_Request)),
-                        Is_Pointer => True)),
+                             Make_Defining_Identifier (VN (V_Request)),
+                           Is_Pointer => True)),
                      Parameters);
                   Append_Node_To_List
                     (Get_Data_Size (Corresponding_Instance (F)),
                      Parameters);
 
-                  N := Make_Call_Profile
-                    (RE (RE_Copy_Array),
-                     Parameters);
+                  N := Make_Call_Profile (RE (RE_Copy_Array), Parameters);
 
-                  Append_Node_To_List
-                    (N, Switch_Statements);
+                  Append_Node_To_List (N, Switch_Statements);
 
                   Append_Node_To_List
                     (Make_Expression
-                     (Left_Expr =>
-                      Make_Member_Designator
-                        (Defining_Identifier =>
-                           Make_Member_Designator
-                           (Defining_Identifier =>
-                              Make_Member_Designator
+                       (Left_Expr =>
+                          Make_Member_Designator
+                            (Defining_Identifier =>
+                               Make_Member_Designator
                                  (Defining_Identifier =>
                                     Make_Member_Designator
-                                    (Defining_Identifier =>
-                                       Make_Defining_Identifier
-                                          (Get_String_Name ("nCount"),
-                                          C_Conversion => False),
-                                    Aggregate_Name =>
-                                       (Make_Defining_Identifier
-                                          (Map_Port_Name_For_Asn1 (F)))),
-                                 Aggregate_Name =>
-                                    (Make_Defining_Identifier
-                                       (Get_String_Name ("u")))),
-                           Aggregate_Name =>
-                              Make_Defining_Identifier (MN (M_Msg))),
-                        Aggregate_Name =>
-                           Make_Defining_Identifier (VN (V_Pkt)),
-                        Is_Pointer => True),
-                      Operator => Op_Equal,
-                      Right_Expr => Get_Data_Size
-                        (Corresponding_Instance (F))),
+                                      (Defining_Identifier =>
+                                         Make_Member_Designator
+                                           (Defining_Identifier =>
+                                              Make_Defining_Identifier
+                                                (Get_String_Name ("nCount"),
+                                                 C_Conversion => False),
+                                            Aggregate_Name =>
+                                              (Make_Defining_Identifier
+                                                 (Map_Port_Name_For_Asn1
+                                                    (F)))),
+                                       Aggregate_Name =>
+                                         (Make_Defining_Identifier
+                                            (Get_String_Name ("u")))),
+                                  Aggregate_Name =>
+                                    Make_Defining_Identifier (MN (M_Msg))),
+                             Aggregate_Name =>
+                               Make_Defining_Identifier (VN (V_Pkt)),
+                             Is_Pointer => True),
+                        Operator   => Op_Equal,
+                        Right_Expr =>
+                          Get_Data_Size (Corresponding_Instance (F))),
                      Switch_Statements);
 
                   Append_Node_To_List
-                    (Make_Defining_Identifier
-                       (Map_C_Enumerator_Name (F)),
+                    (Make_Defining_Identifier (Map_C_Enumerator_Name (F)),
                      Switch_Labels);
 
-                  N := Make_Switch_Alternative
-                    (Switch_Labels, Switch_Statements);
+                  N :=
+                    Make_Switch_Alternative (Switch_Labels, Switch_Statements);
                   Append_Node_To_List (N, Asn1_Marshall_Alternatives);
 
                   --  Make the alternative for the global unmarshall_request
                   --  function.
 
                   Switch_Statements := New_List (CTN.K_Statement_List);
-                  Switch_Labels := New_List (CTN.K_Label_List);
-                  Parameters := New_List (CTN.K_Parameter_List);
+                  Switch_Labels     := New_List (CTN.K_Label_List);
+                  Parameters        := New_List (CTN.K_Parameter_List);
 
                   Append_Node_To_List
                     (Make_Defining_Identifier (PN (P_Request)),
@@ -1847,84 +1810,85 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                        (Make_Defining_Identifier (PN (P_Offset))),
                      Parameters);
 
-                  N := Make_Call_Profile
-                    (Map_C_Marshaller_Subprogram
-                       (F, Is_Request => True, Is_Unmarshall => True),
-                     Parameters);
+                  N :=
+                    Make_Call_Profile
+                      (Map_C_Marshaller_Subprogram
+                         (F,
+                          Is_Request    => True,
+                          Is_Unmarshall => True),
+                       Parameters);
+
+                  Append_Node_To_List (N, Switch_Statements);
 
                   Append_Node_To_List
-                    (N, Switch_Statements);
-
-                  Append_Node_To_List
-                    (Make_Defining_Identifier
-                       (Map_C_Enumerator_Name (F)),
+                    (Make_Defining_Identifier (Map_C_Enumerator_Name (F)),
                      Switch_Labels);
 
-                  N := Make_Switch_Alternative
-                    (Switch_Labels, Switch_Statements);
+                  N :=
+                    Make_Switch_Alternative (Switch_Labels, Switch_Statements);
                   Append_Node_To_List (N, Unmarshall_Alternatives);
 
                   --  Then, handle the ASN1 unmarshallers
                   Switch_Statements := New_List (CTN.K_Statement_List);
-                  Switch_Labels := New_List (CTN.K_Label_List);
-                  Parameters := New_List (CTN.K_Parameter_List);
+                  Switch_Labels     := New_List (CTN.K_Label_List);
+                  Parameters        := New_List (CTN.K_Parameter_List);
 
                   Append_Node_To_List
                     (Make_Expression
-                     (Left_Expr =>
-                        Make_Member_Designator
-                        (Defining_Identifier =>
-                           Make_Defining_Identifier (PN (P_Port)),
-                        Aggregate_Name =>
-                           Make_Defining_Identifier (VN (V_Request)),
-                        Is_Pointer => True),
-                      Operator => Op_Equal,
-                      Right_Expr =>
-                        Make_Defining_Identifier
-                        (Map_C_Enumerator_Name (F))),
+                       (Left_Expr =>
+                          Make_Member_Designator
+                            (Defining_Identifier =>
+                               Make_Defining_Identifier (PN (P_Port)),
+                             Aggregate_Name =>
+                               Make_Defining_Identifier (VN (V_Request)),
+                             Is_Pointer => True),
+                        Operator   => Op_Equal,
+                        Right_Expr =>
+                          Make_Defining_Identifier
+                            (Map_C_Enumerator_Name (F))),
                      Switch_Statements);
 
                   Append_Node_To_List
-                     (Make_Variable_Address
-                      (Make_Member_Designator
-                        (Defining_Identifier =>
-                           Make_Member_Designator
-                           (Defining_Identifier =>
-                              Make_Member_Designator
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_C_Enumerator_Name (F))),
-                                 Aggregate_Name =>
-                                    (Make_Defining_Identifier
-                                       (Map_C_Enumerator_Name (F)))),
+                    (Make_Variable_Address
+                       (Make_Member_Designator
+                          (Defining_Identifier =>
+                             Make_Member_Designator
+                               (Defining_Identifier =>
+                                  Make_Member_Designator
+                                    (Defining_Identifier =>
+                                       (Make_Defining_Identifier
+                                          (Map_C_Enumerator_Name (F))),
+                                     Aggregate_Name =>
+                                       (Make_Defining_Identifier
+                                          (Map_C_Enumerator_Name (F)))),
+                                Aggregate_Name =>
+                                  Make_Defining_Identifier (MN (M_Vars))),
                            Aggregate_Name =>
-                              Make_Defining_Identifier (MN (M_Vars))),
-                        Aggregate_Name =>
-                           Make_Defining_Identifier (VN (V_Request)),
-                        Is_Pointer => True)),
+                             Make_Defining_Identifier (VN (V_Request)),
+                           Is_Pointer => True)),
                      Parameters);
 
                   Append_Node_To_List
-                      (Make_Member_Designator
-                        (Defining_Identifier =>
-                           Make_Member_Designator
-                           (Defining_Identifier =>
-                              Make_Member_Designator
+                    (Make_Member_Designator
+                       (Defining_Identifier =>
+                          Make_Member_Designator
+                            (Defining_Identifier =>
+                               Make_Member_Designator
                                  (Defining_Identifier =>
                                     Make_Member_Designator
-                                    (Defining_Identifier =>
-                                       Make_Defining_Identifier
-                                          (Get_String_Name ("arr")),
-                                    Aggregate_Name =>
-                                       (Make_Defining_Identifier
-                                          (Map_Port_Name_For_Asn1 (F)))),
-                                 Aggregate_Name =>
+                                      (Defining_Identifier =>
+                                         Make_Defining_Identifier
+                                           (Get_String_Name ("arr")),
+                                       Aggregate_Name =>
+                                         (Make_Defining_Identifier
+                                            (Map_Port_Name_For_Asn1 (F)))),
+                                  Aggregate_Name =>
                                     (Make_Defining_Identifier
                                        (Get_String_Name ("u")))),
-                           Aggregate_Name =>
-                              Make_Defining_Identifier (MN (M_Msg))),
+                             Aggregate_Name =>
+                               Make_Defining_Identifier (MN (M_Msg))),
                         Aggregate_Name =>
-                           Make_Defining_Identifier (VN (V_Pkt)),
+                          Make_Defining_Identifier (VN (V_Pkt)),
                         Is_Pointer => True),
                      Parameters);
 
@@ -1932,21 +1896,18 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                     (Get_Data_Size (Corresponding_Instance (F)),
                      Parameters);
 
-                  N := Make_Call_Profile
-                    (RE (RE_Copy_Array),
-                     Parameters);
+                  N := Make_Call_Profile (RE (RE_Copy_Array), Parameters);
+
+                  Append_Node_To_List (N, Switch_Statements);
 
                   Append_Node_To_List
-                    (N, Switch_Statements);
-
-                  Append_Node_To_List
-                     (Make_Defining_Identifier
-                        (Map_Port_Name_Present_For_Asn1 (F),
-                         C_Conversion => False),
+                    (Make_Defining_Identifier
+                       (Map_Port_Name_Present_For_Asn1 (F),
+                        C_Conversion => False),
                      Switch_Labels);
 
-                  N := Make_Switch_Alternative
-                    (Switch_Labels, Switch_Statements);
+                  N :=
+                    Make_Switch_Alternative (Switch_Labels, Switch_Statements);
                   Append_Node_To_List (N, Asn1_Unmarshall_Alternatives);
 
                end if;

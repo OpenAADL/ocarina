@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -43,21 +43,21 @@ package body Ocarina.Builder.AADL.Namespaces is
    ----------------------------------
 
    function Initialize_Unnamed_Namespace
-     (Loc : Locations.Location)
-     return Types.Node_Id
+     (Loc : Locations.Location) return Ocarina.Types.Node_Id
    is
-      use Types;
+      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       Specification : constant Node_Id := New_Node (K_AADL_Specification, Loc);
-      Entity_Scop : constant Node_Id := New_Node (K_Scope_Definition, Loc);
+      Entity_Scop   : constant Node_Id := New_Node (K_Scope_Definition, Loc);
    begin
       Set_Entity_Scope (Specification, Entity_Scop);
       Set_Corresponding_Entity (Entity_Scop, Specification);
 
-      Set_Declarations (Specification,
-                        New_List (K_AADL_Declarations_List, Loc));
+      Set_Declarations
+        (Specification,
+         New_List (K_AADL_Declarations_List, Loc));
 
       return Specification;
    end Initialize_Unnamed_Namespace;
@@ -67,28 +67,29 @@ package body Ocarina.Builder.AADL.Namespaces is
    ------------------------------
 
    function Add_Property_Association
-     (Pack : Types.Node_Id;
-      Property_Association : Types.Node_Id)
-     return Boolean
+     (Pack                 : Ocarina.Types.Node_Id;
+      Property_Association : Ocarina.Types.Node_Id) return Boolean
    is
-      use Types;
+      use Ocarina.Types;
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      pragma Assert (Pack /= No_Node
-                     and then Kind (Pack) = K_Package_Specification);
-      pragma Assert (Property_Association /= No_Node
-                     and then Kind (Property_Association) =
-                     K_Property_Association);
+      pragma Assert
+        (Pack /= No_Node and then Kind (Pack) = K_Package_Specification);
+      pragma Assert
+        (Property_Association /= No_Node
+         and then Kind (Property_Association) = K_Property_Association);
    begin
       if Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Pack)) then
          Set_Properties
-           (Pack, New_List (K_List_Id, Loc (Property_Association)));
+           (Pack,
+            New_List (K_List_Id, Loc (Property_Association)));
       end if;
 
-      Append_Node_To_List (Property_Association,
-                           Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Pack));
+      Append_Node_To_List
+        (Property_Association,
+         Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Pack));
 
       return True;
    end Add_Property_Association;
@@ -98,31 +99,32 @@ package body Ocarina.Builder.AADL.Namespaces is
    ---------------------
 
    function Add_Declaration
-     (Namespace : Types.Node_Id;
-      Element   : Types.Node_Id)
-     return Boolean
+     (Namespace : Ocarina.Types.Node_Id;
+      Element   : Ocarina.Types.Node_Id) return Boolean
    is
-      use Types;
+      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       pragma Assert
         (Namespace /= No_Node
-         and then (Kind (Namespace) = K_Package_Specification
-                   or else Kind (Namespace) = K_AADL_Specification));
+         and then
+         (Kind (Namespace) = K_Package_Specification
+          or else Kind (Namespace) = K_AADL_Specification));
       pragma Assert (Element /= No_Node);
    begin
       case Kind (Namespace) is
          when K_Package_Specification =>
             case Kind (Element) is
-               when K_Feature_Group_Type
-                 | K_Annex_Library
-                 | K_Component_Type
-                 | K_Component_Implementation
-                 | K_Name_Visibility_Declaration =>
+               when K_Feature_Group_Type       |
+                 K_Annex_Library               |
+                 K_Component_Type              |
+                 K_Component_Implementation    |
+                 K_Name_Visibility_Declaration =>
                   if Is_Empty (Declarations (Namespace)) then
                      Set_Declarations
-                       (Namespace, New_List (K_List_Id, Loc (Element)));
+                       (Namespace,
+                        New_List (K_List_Id, Loc (Element)));
                   end if;
 
                   Append_Node_To_List (Element, Declarations (Namespace));
@@ -141,14 +143,15 @@ package body Ocarina.Builder.AADL.Namespaces is
 
          when K_AADL_Specification =>
             case Kind (Element) is
-               when K_Feature_Group_Type
-                 | K_Component_Type
-                 | K_Component_Implementation
-                 | K_Property_Set
-                 | K_Package_Specification =>
+               when K_Feature_Group_Type    |
+                 K_Component_Type           |
+                 K_Component_Implementation |
+                 K_Property_Set             |
+                 K_Package_Specification    =>
                   if Is_Empty (Declarations (Namespace)) then
-                     Set_Declarations (Namespace,
-                                       New_List (K_List_Id, Loc (Element)));
+                     Set_Declarations
+                       (Namespace,
+                        New_List (K_List_Id, Loc (Element)));
                   end if;
 
                   Append_Node_To_List (Element, Declarations (Namespace));
@@ -168,27 +171,27 @@ package body Ocarina.Builder.AADL.Namespaces is
    ---------------------
 
    function Add_New_Package
-     (Loc : Locations.Location;
-      Pack_Name : Types.Node_Id;
-      Namespace : Types.Node_Id)
-     return Types.Node_Id
+     (Loc       : Locations.Location;
+      Pack_Name : Ocarina.Types.Node_Id;
+      Namespace : Ocarina.Types.Node_Id) return Ocarina.Types.Node_Id
    is
-      use Types;
-      use Namet;
+      use Ocarina.Types;
+      use Ocarina.Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-      pragma Assert (Pack_Name /= No_Node
-                     and then Kind (Pack_Name) = K_Package_Name);
-      pragma Assert (Namespace /= No_Node
-                    and then Kind (Namespace) = K_AADL_Specification);
+      pragma Assert
+        (Pack_Name /= No_Node and then Kind (Pack_Name) = K_Package_Name);
+      pragma Assert
+        (Namespace /= No_Node
+         and then Kind (Namespace) = K_AADL_Specification);
 
       Node : constant Node_Id := New_Node (K_Package_Specification, Loc);
-      Success : Boolean := True;
-      Entity_Scop : constant Node_Id := New_Node (K_Scope_Definition, Loc);
+      Success       : Boolean          := True;
+      Entity_Scop   : constant Node_Id := New_Node (K_Scope_Definition, Loc);
       Property_Scop : constant Node_Id := New_Node (K_Scope_Definition, Loc);
-      Identifier : constant Node_Id := New_Node (K_Identifier, Loc);
-      List_Node : Node_Id;
+      Identifier    : constant Node_Id := New_Node (K_Identifier, Loc);
+      List_Node     : Node_Id;
    begin
       --  Build Identifier which is the concatenation of identifiers
       --  of package_name (Pck_Id1::Pck_Id2 ...)
@@ -238,8 +241,7 @@ package body Ocarina.Builder.AADL.Namespaces is
       Set_Has_Private_Part (Node, False);
       Set_Has_Public_Part (Node, False);
 
-      Success := Add_Declaration (Namespace => Namespace,
-                                  Element => Node);
+      Success := Add_Declaration (Namespace => Namespace, Element => Node);
 
       if Success then
          return Node;
@@ -253,21 +255,21 @@ package body Ocarina.Builder.AADL.Namespaces is
    -----------------------------------------
 
    function Add_New_Name_Visibility_Declaration
-     (Loc         : Locations.Location;
-      Namespace   : Types.Node_Id;
-      List_Items  : Types.List_Id;
-      Is_Private  : Boolean := False)
-     return Types.Node_Id
+     (Loc        : Locations.Location;
+      Namespace  : Ocarina.Types.Node_Id;
+      List_Items : Ocarina.Types.List_Id;
+      Is_Private : Boolean := False) return Ocarina.Types.Node_Id
    is
-      use Types;
+      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-      pragma Assert (Kind (Namespace) = K_Package_Specification
-                       or else Kind (Namespace) = K_AADL_Specification);
+      pragma Assert
+        (Kind (Namespace) = K_Package_Specification
+         or else Kind (Namespace) = K_AADL_Specification);
 
       Node : constant Node_Id := New_Node (K_Name_Visibility_Declaration, Loc);
-      Success : Boolean := False;
+      Success : Boolean          := False;
    begin
       Set_Parent (Node, Namespace);
       Set_List_Items (Node, List_Items);
@@ -287,19 +289,19 @@ package body Ocarina.Builder.AADL.Namespaces is
    --------------------------------
 
    function Add_New_Import_Declaration
-     (Loc         : Locations.Location;
-      Namespace   : Types.Node_Id;
-      List_Items  : Types.List_Id;
-      Is_Private  : Boolean := False)
-     return Types.Node_Id
+     (Loc        : Locations.Location;
+      Namespace  : Ocarina.Types.Node_Id;
+      List_Items : Ocarina.Types.List_Id;
+      Is_Private : Boolean := False) return Ocarina.Types.Node_Id
    is
-      use Types;
+      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-      pragma Assert (Kind (Namespace) = K_Package_Specification
-                       or else Kind (Namespace) = K_AADL_Specification
-                       or else Kind (Namespace) = K_Property_Set);
+      pragma Assert
+        (Kind (Namespace) = K_Package_Specification
+         or else Kind (Namespace) = K_AADL_Specification
+         or else Kind (Namespace) = K_Property_Set);
 
       Node : constant Node_Id := New_Node (K_Import_Declaration, Loc);
    begin
@@ -317,22 +319,22 @@ package body Ocarina.Builder.AADL.Namespaces is
 
    function Add_New_Alias_Declaration
      (Loc            : Locations.Location;
-      Namespace      : Types.Node_Id;
-      Identifier     : Types.Node_Id;
-      Package_Name   : Types.Node_Id;
-      Classifier_Ref : Types.Node_Id;
+      Namespace      : Ocarina.Types.Node_Id;
+      Identifier     : Ocarina.Types.Node_Id;
+      Package_Name   : Ocarina.Types.Node_Id;
+      Classifier_Ref : Ocarina.Types.Node_Id;
       Entity_Cat     : Ocarina.ME_AADL.Entity_Category;
       Component_Cat  : Ocarina.ME_AADL.Component_Category;
       Is_All         : Boolean := False;
-      Is_Private     : Boolean := False)
-     return Types.Node_Id
+      Is_Private     : Boolean := False) return Ocarina.Types.Node_Id
    is
-      use Types;
+      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-      pragma Assert (Kind (Namespace) = K_Package_Specification
-                       or else Kind (Namespace) = K_AADL_Specification);
+      pragma Assert
+        (Kind (Namespace) = K_Package_Specification
+         or else Kind (Namespace) = K_AADL_Specification);
 
       Node : constant Node_Id := New_Node (K_Alias_Declaration, Loc);
    begin
@@ -345,10 +347,12 @@ package body Ocarina.Builder.AADL.Namespaces is
 
       Set_Package_Name (Node, Package_Name);
       Set_Reference (Node, Classifier_Ref);
-      Set_Entity_Category (Node,
-                           Ocarina.ME_AADL.Entity_Category'Pos (Entity_Cat));
-      Set_Category (Node,
-                    Ocarina.ME_AADL.Component_Category'Pos (Component_Cat));
+      Set_Entity_Category
+        (Node,
+         Ocarina.ME_AADL.Entity_Category'Pos (Entity_Cat));
+      Set_Category
+        (Node,
+         Ocarina.ME_AADL.Component_Category'Pos (Component_Cat));
       Set_Is_All (Node, Is_All);
       Set_Is_Private (Node, Is_Private);
 
@@ -360,11 +364,10 @@ package body Ocarina.Builder.AADL.Namespaces is
    --------------------------
 
    function Add_New_Package_Name
-     (Loc            : Locations.Location;
-      Identifiers    : Types.List_Id)
-     return Types.Node_Id
+     (Loc         : Locations.Location;
+      Identifiers : Ocarina.Types.List_Id) return Ocarina.Types.Node_Id
    is
-      use Types;
+      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 

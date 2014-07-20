@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.PN.Components;
@@ -45,7 +45,7 @@ with Ocarina.Backends.PN.Format.Cami;
 
 with Ocarina.Backends.PN.Printer;
 
-with Output;
+with Ocarina.Output;
 with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.PN is
@@ -53,24 +53,24 @@ package body Ocarina.Backends.PN is
    package OPFT renames Ocarina.Backends.PN.Format.Tina;
    package OPFC renames Ocarina.Backends.PN.Format.Cami;
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Instances;
    use Ocarina.Backends.Expander;
    use Ocarina.Backends.PN.Components;
    use Ocarina.Backends.PN.Printer;
    use OPFT;
    use OPFC;
-   use Output;
+   use Ocarina.Output;
    use Ocarina.Backends.Utils;
 
-   procedure Generate_TINA (AADL_Root : Types.Node_Id);
-   procedure Generate_CAMI (AADL_Root : Types.Node_Id);
+   procedure Generate_TINA (AADL_Root : Ocarina.Types.Node_Id);
+   procedure Generate_CAMI (AADL_Root : Ocarina.Types.Node_Id);
 
    -------------------
    -- Generate_TINA --
    -------------------
 
-   procedure Generate_TINA (AADL_Root : Types.Node_Id) is
+   procedure Generate_TINA (AADL_Root : Ocarina.Types.Node_Id) is
       PN_Generated, Instance_Root : Node_Id;
 
    begin
@@ -88,12 +88,13 @@ package body Ocarina.Backends.PN is
          PN_Generated := Process_Architecture_Instance (Instance_Root, 1);
 
          --  Set TINA printers
-         Set_Printers (OPFT.Print_Place'Access,
-                       OPFT.Print_Trans'Access,
-                       OPFT.Print_Formalism_Information'Access);
+         Set_Printers
+           (OPFT.Print_Place'Access,
+            OPFT.Print_Trans'Access,
+            OPFT.Print_Formalism_Information'Access);
 
          Set_Output (Create_File ("model.nd", Binary));
-         Print_PN_Generated (PN_Generated);
+         Print_Pn_Generated (PN_Generated);
          Set_Standard_Error;
       end if;
    end Generate_TINA;
@@ -102,7 +103,7 @@ package body Ocarina.Backends.PN is
    -- Generate_CAMI --
    -------------------
 
-   procedure Generate_CAMI (AADL_Root : Types.Node_Id) is
+   procedure Generate_CAMI (AADL_Root : Ocarina.Types.Node_Id) is
       PN_Generated, Instance_Root : Node_Id;
 
    begin
@@ -116,11 +117,12 @@ package body Ocarina.Backends.PN is
 
       if Instance_Root /= No_Node then
          PN_Generated := Process_Architecture_Instance (Instance_Root, 0);
-         Set_Printers (OPFC.Print_Place'Access,
-                       OPFC.Print_Trans'Access,
-                       OPFC.Print_Formalism_Information'Access);
+         Set_Printers
+           (OPFC.Print_Place'Access,
+            OPFC.Print_Trans'Access,
+            OPFC.Print_Formalism_Information'Access);
          Set_Output (Create_File ("model.cami", Binary));
-         Print_PN_Generated (PN_Generated);
+         Print_Pn_Generated (PN_Generated);
          Set_Standard_Error;
       end if;
    end Generate_CAMI;
@@ -129,7 +131,7 @@ package body Ocarina.Backends.PN is
    -- Generate --
    --------------
 
-   procedure Generate (AADL_Root : Types.Node_Id) is
+   procedure Generate (AADL_Root : Ocarina.Types.Node_Id) is
    begin
       Generate_TINA (AADL_Root);
       Reset_Handlings;

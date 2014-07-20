@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,8 +35,7 @@ package Ocarina.Instances.Components.Subcomponents is
 
    function Instantiate_Subcomponent
      (Instance_Root : Node_Id;
-      Subcomponent  : Node_Id)
-     return Node_Id;
+      Subcomponent  : Node_Id) return Node_Id;
    --  Return a new subcomponent instance corresponding to the
    --  corresponding subcomponent.
 

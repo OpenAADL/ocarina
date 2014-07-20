@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -95,11 +95,9 @@ package body Ocarina.Backends.PN.Nutils is
       else
          Node_Iter := First_Node (L);
          while Present (Node_Iter) loop
-            if Next_Node (Node_Iter)
-              = E then
+            if Next_Node (Node_Iter) = E then
                if Next_Node (E) /= No_Node then
-                  Set_Next_Node (Node_Iter,
-                                 Next_Node (E));
+                  Set_Next_Node (Node_Iter, Next_Node (E));
                else
                   Set_Next_Node (Node_Iter, No_Node);
                   Set_Last_Node (L, Node_Iter);
@@ -142,7 +140,7 @@ package body Ocarina.Backends.PN.Nutils is
       N : Node_Id;
    begin
       Entries.Increment_Last;
-      N := Entries.Last;
+      N                 := Entries.Last;
       Entries.Table (N) := Default_Node;
       Set_Kind (N, Kind);
 
@@ -154,9 +152,8 @@ package body Ocarina.Backends.PN.Nutils is
    ---------------------
 
    function Make_Identifier
-     (Pn_Entity : Types.Node_Id;
-      Ident_Name : Types.Name_Id)
-     return Types.Node_Id
+     (Pn_Entity  : Types.Node_Id;
+      Ident_Name : Types.Name_Id) return Types.Node_Id
    is
       use OPN;
 

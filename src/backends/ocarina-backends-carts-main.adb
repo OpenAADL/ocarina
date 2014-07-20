@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -60,28 +60,30 @@ package body Ocarina.Backends.Carts.Main is
    procedure Look_For_Threads (E : Node_Id);
    procedure Visit_Virtual_Processor (E : Node_Id);
 
-   Root_System_Node                 : Node_Id := No_Node;
-   Current_Processor_Node           : Node_Id;
-   Current_System_Node              : Node_Id;
-   Current_Virtual_Processor_Node   : Node_Id;
-   Current_AADL_Virtual_Processor   : Node_Id;
+   Root_System_Node               : Node_Id := No_Node;
+   Current_Processor_Node         : Node_Id;
+   Current_System_Node            : Node_Id;
+   Current_Virtual_Processor_Node : Node_Id;
+   Current_AADL_Virtual_Processor : Node_Id;
 
    ----------------------
    -- Look_For_Threads --
    ----------------------
 
    procedure Look_For_Threads (E : Node_Id) is
-      S                    : Node_Id;
-      Bound_Processor      : Node_Id;
+      S               : Node_Id;
+      Bound_Processor : Node_Id;
    begin
       if AINU.Is_Thread (E) then
-         Bound_Processor := Get_Bound_Processor
-            (Parent_Component (Parent_Subcomponent (E)));
+         Bound_Processor :=
+           Get_Bound_Processor (Parent_Component (Parent_Subcomponent (E)));
 
          if Bound_Processor /= No_Node
-            and then Bound_Processor = Current_AADL_Virtual_Processor then
+           and then Bound_Processor = Current_AADL_Virtual_Processor
+         then
             Append_Node_To_List
-               (Map_Thread (E), XTN.Subitems (Current_Virtual_Processor_Node));
+              (Map_Thread (E),
+               XTN.Subitems (Current_Virtual_Processor_Node));
          end if;
       else
          if not AINU.Is_Empty (Subcomponents (E)) then
@@ -120,8 +122,7 @@ package body Ocarina.Backends.Carts.Main is
    ---------------------
 
    procedure Visit_Component (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -160,7 +161,7 @@ package body Ocarina.Backends.Carts.Main is
       Current_AADL_Virtual_Processor := E;
       Current_Virtual_Processor_Node := Map_Virtual_Processor (E);
       XTU.Append_Node_To_List
-         (Current_Virtual_Processor_Node,
+        (Current_Virtual_Processor_Node,
          XTN.Subitems (Current_Processor_Node));
 
       Look_For_Threads (Root_System_Node);
@@ -171,11 +172,12 @@ package body Ocarina.Backends.Carts.Main is
    ---------------------
 
    procedure Visit_Processor (E : Node_Id) is
-      S        : Node_Id;
+      S : Node_Id;
    begin
       Current_Processor_Node := Map_Processor (E);
       Append_Node_To_List
-         (Current_Processor_Node, XTN.Subitems (Current_System_Node));
+        (Current_Processor_Node,
+         XTN.Subitems (Current_System_Node));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
@@ -194,9 +196,9 @@ package body Ocarina.Backends.Carts.Main is
    ------------------
 
    procedure Visit_System (E : Node_Id) is
-      S                    : Node_Id;
-      P                    : Node_Id;
-      U                    : Node_Id;
+      S : Node_Id;
+      P : Node_Id;
+      U : Node_Id;
    begin
       P := Map_HI_Node (E);
       Push_Entity (P);

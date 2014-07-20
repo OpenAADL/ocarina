@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,18 +31,18 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Ocarina.Backends.Messages;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
-with Ocarina.Instances;         use Ocarina.Instances;
+with Ocarina.Instances;           use Ocarina.Instances;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.Properties; use Ocarina.Backends.Properties;
-with Ocarina.Options; use Ocarina.Options;
+with Ocarina.Options;             use Ocarina.Options;
 with GNAT.Command_Line;
-with Utils; use Utils;
+with Utils;                       use Utils;
 
 with Ada.Text_IO;
 with GNAT.IO_Aux;
@@ -52,7 +52,7 @@ package body Ocarina.Backends.BoundT is
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.Backends.Messages;
    use Ada.Text_IO;
    use Ocarina.ME_AADL;
@@ -111,19 +111,19 @@ package body Ocarina.Backends.BoundT is
    procedure Visit_Component_Instance (E : Node_Id) is
       use Ocarina.ME_AADL.AADL_Instances.Entities;
 
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
             Visit_System_Instance (E);
 
          when CC_Process =>
-            if Boundt_Process = No_Name or else
-              To_Lower
-              (AIN.Name
-               (AIN.Identifier
-                (AIN.Parent_Subcomponent (E)))) = Boundt_Process then
+            if Boundt_Process = No_Name
+              or else
+                To_Lower
+                  (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E)))) =
+                Boundt_Process
+            then
 
                Visit_Process_Instance (E);
             end if;
@@ -141,18 +141,20 @@ package body Ocarina.Backends.BoundT is
 
    procedure Visit_Thread_Instance (E : Node_Id) is
       Raw_Name : constant String :=
-        String'(Get_Name_String (P_Model_Name) & "_" &
-                Get_Name_String (Current_Thread_Instance));
+        String'
+          (Get_Name_String (P_Model_Name) &
+           "_" &
+           Get_Name_String (Current_Thread_Instance));
       Base_Name : constant String :=
-        String'("polyorb_hi_generated__activity__" &
-                Get_Name_String (Current_Thread_Instance));
-      Procedure_Name  : constant String :=
-        String'(Base_Name & "_job");
+        String'
+          ("polyorb_hi_generated__activity__" &
+           Get_Name_String (Current_Thread_Instance));
+      Procedure_Name  : constant String := String'(Base_Name & "_job");
       Assertion_Basis : constant String :=
         String'(Base_Name & "_interrogators");
-      Assertion_Send  : constant String :=
+      Assertion_Send : constant String :=
         String'(Assertion_Basis & "__send_outputXn");
-      Assertion_Get   : constant String :=
+      Assertion_Get : constant String :=
         String'(Assertion_Basis & "__get_valueXn");
 
       T_Dispatch_Protocol : Supported_Thread_Dispatch_Protocol;
@@ -184,14 +186,12 @@ package body Ocarina.Backends.BoundT is
 
       --  PolyORB-HI generates unbounded subprograms
 
-      Put_Line (Assertions_FD, "subprogram """ &
-                Assertion_Send & """");
+      Put_Line (Assertions_FD, "subprogram """ & Assertion_Send & """");
       Put_Line (Assertions_FD, "    time 0 cycles;");
       Put_Line (Assertions_FD, "end;");
       Put_Line (Assertions_FD, "");
 
-      Put_Line (Assertions_FD, "subprogram """ &
-                Assertion_Get & """");
+      Put_Line (Assertions_FD, "subprogram """ & Assertion_Get & """");
       Put_Line (Assertions_FD, "    time 0 cycles;");
       Put_Line (Assertions_FD, "end;");
       Put_Line (Assertions_FD, "");
@@ -204,10 +204,12 @@ package body Ocarina.Backends.BoundT is
 
          Modes_Nb := Int (Length (Modes (E)));
 
-         Put_Line (Assertions_FD, "subprogram """ &
-                   Procedure_Name & """");
-         Put_Line (Assertions_FD, "    all loops repeats " &
-                   Int'Image (Modes_Nb) & " times; end loops;");
+         Put_Line (Assertions_FD, "subprogram """ & Procedure_Name & """");
+         Put_Line
+           (Assertions_FD,
+            "    all loops repeats " &
+            Int'Image (Modes_Nb) &
+            " times; end loops;");
          Put_Line (Assertions_FD, "end;");
          Put_Line (Assertions_FD, "");
       end if;
@@ -221,13 +223,12 @@ package body Ocarina.Backends.BoundT is
    procedure Visit_Process_Instance (E : Node_Id) is
       T : Node_Id;
    begin
-      P_Model_Name := ATN.Name
-        (ATN.Identifier
-         (Corresponding_Declaration
-          (Parent_Subcomponent (E))));
+      P_Model_Name :=
+        ATN.Name
+          (ATN.Identifier
+             (Corresponding_Declaration (Parent_Subcomponent (E))));
 
-      Put_Line (FD, "program " &
-                Get_Name_String (P_Model_Name));
+      Put_Line (FD, "program " & Get_Name_String (P_Model_Name));
 
       --  Then we parse all threads which are subcomponent
       --  of the process
@@ -237,23 +238,24 @@ package body Ocarina.Backends.BoundT is
 
          case AADL_Version is
             when AADL_V1 =>
-               Current_Thread_Instance := ATN.Name
-                 (ATN.Identifier
-                  (Corresponding_Declaration (T)));
+               Current_Thread_Instance :=
+                 ATN.Name (ATN.Identifier (Corresponding_Declaration (T)));
 
             when AADL_V2 =>
-               Current_Thread_Instance := Get_String_Name
-                 (Get_Name_String (To_Lower
-                                   (AIN.Name
-                                    (AIN.Identifier
-                                     (AIN.Namespace
-                                      (AIN.Corresponding_Instance (T))))))
-                  & "_" &
-                  Get_Name_String (ATN.Name
-                                   (ATN.Identifier
-                                    (Corresponding_Declaration (T)))));
+               Current_Thread_Instance :=
+                 Get_String_Name
+                   (Get_Name_String
+                      (To_Lower
+                         (AIN.Name
+                            (AIN.Identifier
+                               (AIN.Namespace
+                                  (AIN.Corresponding_Instance (T)))))) &
+                    "_" &
+                    Get_Name_String
+                      (ATN.Name
+                         (ATN.Identifier (Corresponding_Declaration (T)))));
          end case;
-               Visit (Corresponding_Instance (T));
+         Visit (Corresponding_Instance (T));
 
          T := Next_Node (T);
       end loop;
@@ -271,7 +273,7 @@ package body Ocarina.Backends.BoundT is
       --  Visit all the subcomponents of the system
 
       if not Ocarina.ME_AADL.AADL_Instances.Nutils.Is_Empty
-        (Subcomponents (E))
+          (Subcomponents (E))
       then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
@@ -333,23 +335,23 @@ package body Ocarina.Backends.BoundT is
       if Boundt_Process = No_Name then
          Create (File => FD, Name => "scenario.tpo");
       else
-         Create (File => FD,
-                 Name => "scenario_" &
-                 Get_Name_String (Boundt_Process) & ".tpo");
+         Create
+           (File => FD,
+            Name => "scenario_" & Get_Name_String (Boundt_Process) & ".tpo");
       end if;
 
       --  Open the assertion template file
       if not GNAT.IO_Aux.File_Exists ("assertions.txt") then
          Display_Error
            ("No assertion file found, create a new one",
-            Fatal => False,
+            Fatal   => False,
             Warning => True);
-         Create (File => Assertions_FD,
-                 Name => "assertions.txt");
+         Create (File => Assertions_FD, Name => "assertions.txt");
       else
-         Open (File => Assertions_FD,
-               Mode => Append_File,
-               Name => "assertions.txt");
+         Open
+           (File => Assertions_FD,
+            Mode => Append_File,
+            Name => "assertions.txt");
       end if;
 
       Put_Line (Assertions_FD, "");
@@ -373,7 +375,7 @@ package body Ocarina.Backends.BoundT is
 
    procedure Reset is
    begin
-      P_Model_Name := No_Name;
+      P_Model_Name            := No_Name;
       Current_Thread_Instance := No_Name;
    end Reset;
 

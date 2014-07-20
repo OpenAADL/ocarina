@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,17 +42,18 @@ with Ocarina.Builder.AADL.Components.Features;
 
 package body Ocarina.FE_AADL.Parser.Components.Features is
 
-   function P_In_Out_Item (Container     : Types.Node_Id;
-                           Identifier    : Node_Id;
-                           Is_Refinement : Boolean;
-                           Code          : Parsing_Code)
-                          return Node_Id;
+   function P_In_Out_Item
+     (Container     : Types.Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean;
+      Code          : Parsing_Code) return Node_Id;
    --  Parse item begins with 'in' or 'out'
    --  Examples: Port_Spec, Parameter, ... and refinements
 
-   function P_Feature_Group_Spec (Container     : Types.Node_Id;
-                                  Identifier    : Node_Id;
-                                  Is_Refinement : Boolean) return Node_Id;
+   function P_Feature_Group_Spec
+     (Container     : Types.Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean) return Node_Id;
    --  Current token must be reserved word 'feature' or 'port'
    --  If Is_Refinement = TRUE,
    --  And If Rules is AADL_V1 parse a Port_Group_Spec
@@ -63,8 +64,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       Identifier    : Node_Id;
       Is_Refinement : Boolean;
       Is_In         : Boolean;
-      Is_Out        : Boolean)
-     return Node_Id;
+      Is_Out        : Boolean) return Node_Id;
    --  Current token must be reserved word 'data' or 'event'
    --  If Is_Refinement = TRUE, parse a Port_Refinement
 
@@ -73,34 +73,33 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       Identifier    : Node_Id;
       Is_Refinement : Boolean;
       Is_In         : Boolean;
-      Is_Out        : Boolean)
-     return Node_Id;
+      Is_Out        : Boolean) return Node_Id;
    --  Parse Parameter and Parameter_Refinement
 
-   function P_Subprogram_Spec (Container     : Types.Node_Id;
-                               Identifier    : Node_Id;
-                               Is_Refinement : Boolean)
-                              return Node_Id;
+   function P_Subprogram_Spec
+     (Container     : Types.Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean) return Node_Id;
    --  Current token must be reserved word 'subprogram' or 'server'
    --  If Is_Refinement = TRUE, parse Data_Subprogram_Refinement or
    --                                 Server_Subprogram_Refinement
    --  else, parse Data_Subprogram_Spec or Server_Subprogram
 
-   function P_Subcomponent_Access (Container     : Types.Node_Id;
-                                   Identifier    : Node_Id;
-                                   Is_Refinement : Boolean)
-                                  return Node_Id;
+   function P_Subcomponent_Access
+     (Container     : Types.Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean) return Node_Id;
    --  Parse Subcomponent_Access and Subcomponent_Access_Refinement
 
    -------------------
    -- P_In_Out_Item --
    -------------------
 
-   function P_In_Out_Item (Container     : Types.Node_Id;
-                           Identifier    : Node_Id;
-                           Is_Refinement : Boolean;
-                           Code          : Parsing_Code)
-                          return Node_Id
+   function P_In_Out_Item
+     (Container     : Types.Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean;
+      Code          : Parsing_Code) return Node_Id
    is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -132,8 +131,12 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
                Skip_Tokens (T_Semicolon);
                return No_Node;
             else
-               return P_Port_Spec (Container, Identifier,
-                                   Is_Refinement, Is_In, Is_Out);
+               return P_Port_Spec
+                   (Container,
+                    Identifier,
+                    Is_Refinement,
+                    Is_In,
+                    Is_Out);
             end if;
 
          when T_Parameter =>
@@ -142,8 +145,12 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
                Skip_Tokens (T_Semicolon);
                return No_Node;
             else
-               return P_Parameter (Container, Identifier,
-                                   Is_Refinement, Is_In, Is_Out);
+               return P_Parameter
+                   (Container,
+                    Identifier,
+                    Is_Refinement,
+                    Is_In,
+                    Is_Out);
             end if;
 
          when others =>
@@ -167,12 +174,12 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --        ( in | out | in out ) parameter data_classifier_reference
    --     [ { { parameter_property_association }+ } ] ;
 
-   function P_Parameter (Container     : Node_Id;
-                         Identifier    : Node_Id;
-                         Is_Refinement : Boolean;
-                         Is_In         : Boolean;
-                         Is_Out        : Boolean)
-                        return Node_Id
+   function P_Parameter
+     (Container     : Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean;
+      Is_In         : Boolean;
+      Is_Out        : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -182,11 +189,11 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       use Parser.Identifiers;
       use Ocarina.Builder.AADL.Components.Features;
 
-      Param      : Node_Id := No_Node;
-      Class_Ref  : Node_Id := No_Node;
-      Code       : Parsing_Code;
-      Loc        : Location;
-      OK         : Boolean;
+      Param     : Node_Id := No_Node;
+      Class_Ref : Node_Id := No_Node;
+      Code      : Parsing_Code;
+      Loc       : Location;
+      OK        : Boolean;
 
    begin
       if Is_Refinement then
@@ -212,13 +219,14 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          Class_Ref := No_Node;
       end if;
 
-      Param := Add_New_Parameter
-        (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Container => Container,
-         Name => Identifier,
-         Is_In => Is_In,
-         Is_Out => Is_Out,
-         Is_Refinement => Is_Refinement);
+      Param :=
+        Add_New_Parameter
+          (Loc           => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Container     => Container,
+           Name          => Identifier,
+           Is_In         => Is_In,
+           Is_Out        => Is_Out,
+           Is_Refinement => Is_Refinement);
 
       OK := P_Property_Associations (Param, True, PAT_Simple, Code);
 
@@ -260,8 +268,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       Identifier    : Node_Id;
       Is_Refinement : Boolean;
       Is_In         : Boolean;
-      Is_Out        : Boolean)
-     return Node_Id
+      Is_Out        : Boolean) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Lexer;
@@ -272,15 +279,15 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       use Ocarina.Builder.AADL.Components.Features;
       use Parser.Components.Arrays;
 
-      Class_Ref : Node_Id := No_Node;
-      Port_Spec : Node_Id := No_Node;
-      Is_Data   : Boolean := False;
-      Is_Event  : Boolean := False;
-      Is_Feature : Boolean := False;
-      Code      : Parsing_Code;
-      OK        : Boolean;
-      Loc       : Location;
-      Array_Dimensions   : Node_Id;
+      Class_Ref        : Node_Id := No_Node;
+      Port_Spec        : Node_Id := No_Node;
+      Is_Data          : Boolean := False;
+      Is_Event         : Boolean := False;
+      Is_Feature       : Boolean := False;
+      Code             : Parsing_Code;
+      OK               : Boolean;
+      Loc              : Location;
+      Array_Dimensions : Node_Id;
 
    begin
       if Is_Refinement then
@@ -335,17 +342,18 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          end if;
       end if;
 
-      Port_Spec := Add_New_Port_Spec
-        (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Container => Container,
-         Name => Identifier,
-         Is_In => Is_In,
-         Is_Out => Is_Out,
-         Is_Event => Is_Event,
-         Is_Data => Is_Data,
-         Is_Feature => Is_Feature,
-         Is_Refinement => Is_Refinement,
-         Associated_Entity => Class_Ref);
+      Port_Spec :=
+        Add_New_Port_Spec
+          (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Container         => Container,
+           Name              => Identifier,
+           Is_In             => Is_In,
+           Is_Out            => Is_Out,
+           Is_Event          => Is_Event,
+           Is_Data           => Is_Data,
+           Is_Feature        => Is_Feature,
+           Is_Refinement     => Is_Refinement,
+           Associated_Entity => Class_Ref);
 
       Save_Lexer (Loc);
       Scan_Token;
@@ -361,7 +369,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
                Set_Array_Dimensions (Port_Spec, Array_Dimensions);
 
             when AADL_V1 =>
-               DPE (CODE, EMC_Not_Allowed_In_AADL_V1);
+               DPE (Code, EMC_Not_Allowed_In_AADL_V1);
                Skip_Tokens (T_Semicolon);
                return No_Node;
          end case;
@@ -418,10 +426,10 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --  subprogram_feature_classifier_reference ::=
    --     [ package_name :: ] data_type_identifier . subprogram_identifier
 
-   function P_Subprogram_Spec (Container     : Types.Node_Id;
-                               Identifier    : Node_Id;
-                               Is_Refinement : Boolean)
-                              return Node_Id
+   function P_Subprogram_Spec
+     (Container     : Types.Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -489,17 +497,19 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       end if;
 
       if Is_Server then
-         Subprog_Spec := Add_New_Server_Subprogram
-           (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-            Name => Identifier,
-            Container => Container,
-            Is_Refinement => Is_Refinement);
+         Subprog_Spec :=
+           Add_New_Server_Subprogram
+             (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+              Name          => Identifier,
+              Container     => Container,
+              Is_Refinement => Is_Refinement);
       else
-         Subprog_Spec := Add_New_Data_Subprogram_Spec
-           (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-            Name => Identifier,
-            Container => Container,
-            Is_Refinement => Is_Refinement);
+         Subprog_Spec :=
+           Add_New_Data_Subprogram_Spec
+             (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+              Name          => Identifier,
+              Container     => Container,
+              Is_Refinement => Is_Refinement);
       end if;
 
       Set_Entity_Ref (Subprog_Spec, Subprog_Ref);
@@ -509,8 +519,12 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
 
       if Token /= T_Semicolon then
          Restore_Lexer (Loc);
-         OK := P_Property_Associations (Subprog_Spec, True,
-                                        PAT_Simple_Or_Contained, Code);
+         OK :=
+           P_Property_Associations
+             (Subprog_Spec,
+              True,
+              PAT_Simple_Or_Contained,
+              Code);
 
          if not OK then
             Subprog_Spec := No_Node;
@@ -552,10 +566,10 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --            | prototype_identifier ]
    --      [ { { access_property_association }+ } ] ;
 
-   function P_Subcomponent_Access (Container     : Types.Node_Id;
-                                   Identifier    : Node_Id;
-                                   Is_Refinement : Boolean)
-                                  return Node_Id
+   function P_Subcomponent_Access
+     (Container     : Types.Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -565,13 +579,13 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       use Parser.Identifiers;
       use Ocarina.Builder.AADL.Components.Features;
 
-      Subcomp_Access : Node_Id := No_Node;
-      Subcomp_Access_Class : Node_Id := No_Node;
-      Is_Provided : Boolean := False;
+      Subcomp_Access        : Node_Id := No_Node;
+      Subcomp_Access_Class  : Node_Id := No_Node;
+      Is_Provided           : Boolean := False;
       Subcomponent_Category : Component_Category;
-      Code : Parsing_Code;
-      OK : Boolean;
-      Loc : Location;
+      Code                  : Parsing_Code;
+      OK                    : Boolean;
+      Loc                   : Location;
 
    begin
       if Token = T_Provides then
@@ -599,8 +613,9 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          if AADL_Version = AADL_V1 then
             DPE (PC_Subcomponent_Access_Classifier, (T_Data, T_Bus));
          else
-            DPE (PC_Subcomponent_Access_Classifier, (T_Data, T_Bus,
-                                                     T_Subprogram));
+            DPE
+              (PC_Subcomponent_Access_Classifier,
+               (T_Data, T_Bus, T_Subprogram));
          end if;
          return No_Node;
       end if;
@@ -615,8 +630,8 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       Scan_Token;
       if Token = T_Identifier then
          Restore_Lexer (Loc);
-         Subcomp_Access_Class := P_Entity_Reference
-           (PC_Subcomponent_Access_Classifier);
+         Subcomp_Access_Class :=
+           P_Entity_Reference (PC_Subcomponent_Access_Classifier);
 
          if Subcomp_Access_Class = No_Node then
             --  Error when parsing Subcomponent_Access_Classifier, quit
@@ -633,13 +648,14 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          Code := PC_Subcomponent_Access;
       end if;
 
-      Subcomp_Access := Add_New_Subcomponent_Access
-        (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Name => Identifier,
-         Container => Container,
-         Is_Refinement => Is_Refinement,
-         Category => Subcomponent_Category,
-         Is_Provided => Is_Provided);
+      Subcomp_Access :=
+        Add_New_Subcomponent_Access
+          (Loc           => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Name          => Identifier,
+           Container     => Container,
+           Is_Refinement => Is_Refinement,
+           Category      => Subcomponent_Category,
+           Is_Provided   => Is_Provided);
 
       OK := P_Property_Associations (Subcomp_Access, True, PAT_Access, Code);
 
@@ -692,8 +708,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
 
    function P_Feature
      (Container : Types.Node_Id;
-      Refinable : Boolean)
-     return Node_Id
+      Refinable : Boolean) return Node_Id
    is
       use Parser.Identifiers;
       use Ocarina.ME_AADL.Tokens;
@@ -703,11 +718,17 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       Is_Refinement : Boolean;
       Code          : Parsing_Code;
       OK            : Boolean;
-      Node : Node_Id;
+      Node          : Node_Id;
    begin
-      P_Identifier_Refined_To (Refinable_To_RT (Refinable), False,
-                               PC_Feature, PC_Feature_Refinement, T_Semicolon,
-                               Identifier, Is_Refinement, OK);
+      P_Identifier_Refined_To
+        (Refinable_To_RT (Refinable),
+         False,
+         PC_Feature,
+         PC_Feature_Refinement,
+         T_Semicolon,
+         Identifier,
+         Is_Refinement,
+         OK);
       if not OK then
          return No_Node;
       end if;
@@ -724,15 +745,14 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
             Node := P_In_Out_Item (Container, Identifier, Is_Refinement, Code);
 
          when T_Port | T_Feature =>
-            Node := P_Feature_Group_Spec
-              (Container, Identifier, Is_Refinement);
+            Node :=
+              P_Feature_Group_Spec (Container, Identifier, Is_Refinement);
 
          when T_Server | T_Subprogram =>
             case AADL_Version is
                when AADL_V1 =>
-                  Node := P_Subprogram_Spec (Container,
-                                             Identifier,
-                                             Is_Refinement);
+                  Node :=
+                    P_Subprogram_Spec (Container, Identifier, Is_Refinement);
 
                when AADL_V2 =>
                   DPE (Code, EMC_Not_Allowed_In_AADL_V2);
@@ -741,8 +761,8 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
             end case;
 
          when T_Provides | T_Requires =>
-            Node := P_Subcomponent_Access
-              (Container, Identifier, Is_Refinement);
+            Node :=
+              P_Subcomponent_Access (Container, Identifier, Is_Refinement);
 
          when others =>
             DPE (Code);
@@ -777,20 +797,27 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       use Ocarina.ME_AADL.Tokens;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-      pragma Assert (Container /= No_Node
-                     and then (Kind (Container) = K_Component_Implementation
-                               or else Kind (Container) = K_Component_Type
-                               or else Kind (Container) =
-                               K_Feature_Group_Type));
+      pragma Assert
+        (Container /= No_Node
+         and then
+         (Kind (Container) = K_Component_Implementation
+          or else Kind (Container) = K_Component_Type
+          or else Kind (Container) = K_Feature_Group_Type));
 
       Identifier    : Node_Id;
       Is_Refinement : Boolean;
       OK            : Boolean;
 
    begin
-      P_Identifier_Refined_To (RT_Refinement, False,
-                               PC_Feature, PC_Feature_Refinement, T_Semicolon,
-                               Identifier, Is_Refinement, OK);
+      P_Identifier_Refined_To
+        (RT_Refinement,
+         False,
+         PC_Feature,
+         PC_Feature_Refinement,
+         T_Semicolon,
+         Identifier,
+         Is_Refinement,
+         OK);
       if not OK then
          return No_Node;
       end if;
@@ -799,7 +826,10 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       case Token is
          when T_In | T_Out =>
             return P_In_Out_Item
-              (Container, Identifier, True, PC_Feature_Refinement);
+                (Container,
+                 Identifier,
+                 True,
+                 PC_Feature_Refinement);
 
          when T_Port =>
             return P_Feature_Group_Spec (Container, Identifier, True);
@@ -810,7 +840,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
                   return P_Subprogram_Spec (Container, Identifier, True);
 
                when others =>
-                  DPE (PC_Feature_Refinement,  EMC_Not_Allowed_In_AADL_V2);
+                  DPE (PC_Feature_Refinement, EMC_Not_Allowed_In_AADL_V2);
                   Skip_Tokens ((T_End, T_Semicolon));
                   return No_Node;
             end case;
@@ -867,10 +897,10 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
    --  unique_feature_group_type_reference ::=
    --     [ package_name :: ] feature_group_type_identifier
 
-   function P_Feature_Group_Spec (Container     : Types.Node_Id;
-                                  Identifier    : Node_Id;
-                                  Is_Refinement : Boolean)
-                                 return Node_Id
+   function P_Feature_Group_Spec
+     (Container     : Types.Node_Id;
+      Identifier    : Node_Id;
+      Is_Refinement : Boolean) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Lexer;
@@ -880,18 +910,19 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       use Parser.Identifiers;
       use Ocarina.Builder.AADL.Components.Features;
 
-      pragma Assert (Container /= No_Node
-                       and then (Kind (Container) = K_Component_Implementation
-                                 or else Kind (Container) = K_Component_Type
-                                 or else Kind (Container) =
-                                 K_Feature_Group_Type));
+      pragma Assert
+        (Container /= No_Node
+         and then
+         (Kind (Container) = K_Component_Implementation
+          or else Kind (Container) = K_Component_Type
+          or else Kind (Container) = K_Feature_Group_Type));
 
-      Inverse_Of      : Node_Id := No_Node;
-      Group_Type_Ref  : Node_Id := No_Node;
+      Inverse_Of         : Node_Id := No_Node;
+      Group_Type_Ref     : Node_Id := No_Node;
       Feature_Group_Spec : Node_Id := No_Node;
-      Code            : Parsing_Code;
-      OK              : Boolean;
-      Loc             : Location;
+      Code               : Parsing_Code;
+      OK                 : Boolean;
+      Loc                : Location;
 
    begin
       if Is_Refinement then
@@ -913,8 +944,8 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       Scan_Token;
       if Token = T_Identifier then
          Restore_Lexer (Loc);
-         Group_Type_Ref := P_Entity_Reference
-           (PC_Unique_Feature_Group_Type_Reference);
+         Group_Type_Ref :=
+           P_Entity_Reference (PC_Unique_Feature_Group_Type_Reference);
 
          if No (Group_Type_Ref) then
             Skip_Tokens (T_Semicolon);
@@ -941,7 +972,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
                end if;
 
             when others =>
-               DPE (Code,  EMC_Not_Allowed_In_AADL_V1);
+               DPE (Code, EMC_Not_Allowed_In_AADL_V1);
                Skip_Tokens ((T_End, T_Semicolon));
                return No_Node;
          end case;
@@ -952,14 +983,15 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
          --  OK, no port group type is given
       end if;
 
-      Feature_Group_Spec := Add_New_Feature_Group_Spec
-        (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Name => Identifier,
-         Container => Container,
-         Is_Refinement => Is_Refinement);
+      Feature_Group_Spec :=
+        Add_New_Feature_Group_Spec
+          (Loc           => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Name          => Identifier,
+           Container     => Container,
+           Is_Refinement => Is_Refinement);
 
-      OK := P_Property_Associations
-        (Feature_Group_Spec, True, PAT_Simple, Code);
+      OK :=
+        P_Property_Associations (Feature_Group_Spec, True, PAT_Simple, Code);
 
       if not OK then
          return No_Node;
@@ -985,8 +1017,7 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
 
    function P_Feature_Group_Or_Port_Group_Or_Port_Spec
      (Container : Types.Node_Id;
-      Refinable : Boolean)
-     return Node_Id
+      Refinable : Boolean) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.Tokens;
@@ -998,10 +1029,15 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       OK            : Boolean;
 
    begin
-      P_Identifier_Refined_To (Refinable_To_RT (Refinable), False,
-                               PC_Feature_Group_Or_Port_Group_Or_Port_Spec,
-                               PC_Feature,
-                               T_Semicolon, Identifier, Is_Refinement, OK);
+      P_Identifier_Refined_To
+        (Refinable_To_RT (Refinable),
+         False,
+         PC_Feature_Group_Or_Port_Group_Or_Port_Spec,
+         PC_Feature,
+         T_Semicolon,
+         Identifier,
+         Is_Refinement,
+         OK);
       if not OK then
          return No_Node;
       end if;
@@ -1010,38 +1046,44 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
       case Token is
          when T_In | T_Out =>  --  parse port_spec or port_refinement
             if Is_Refinement then
-               return P_In_Out_Item (Container => Container,
-                                  Identifier => Identifier,
-                                  Is_Refinement => True,
-                                  Code => PC_Port_Refinement);
+               return P_In_Out_Item
+                   (Container     => Container,
+                    Identifier    => Identifier,
+                    Is_Refinement => True,
+                    Code          => PC_Port_Refinement);
             else
-               return P_In_Out_Item (Container => Container,
-                                     Identifier => Identifier,
-                                     Is_Refinement => False,
-                                     Code => PC_Port_Spec);
+               return P_In_Out_Item
+                   (Container     => Container,
+                    Identifier    => Identifier,
+                    Is_Refinement => False,
+                    Code          => PC_Port_Spec);
             end if;
 
-            --  parse port_group_spec or port_group_refinement or
-            --        feature_group_spec or feature_group_refinement
+         --  parse port_group_spec or port_group_refinement or
+         --        feature_group_spec or feature_group_refinement
          when T_Port | T_Feature =>
-            return P_Feature_Group_Spec (Container => Container,
-                                         Identifier => Identifier,
-                                         Is_Refinement => Is_Refinement);
+            return P_Feature_Group_Spec
+                (Container     => Container,
+                 Identifier    => Identifier,
+                 Is_Refinement => Is_Refinement);
 
          when others =>
 
             if Is_Refinement then
                case AADL_Version is
                   when AADL_V1 =>
-                     DPE (PC_Port_Refinement_Or_Port_Group_Refinement,
-                          (T_In, T_Out, T_Port));
+                     DPE
+                       (PC_Port_Refinement_Or_Port_Group_Refinement,
+                        (T_In, T_Out, T_Port));
                   when AADL_V2 =>
-                     DPE (PC_Feature_Refinement_Or_Feature_Group_Refinement,
-                          (T_In, T_Out, T_Port, T_Feature));
+                     DPE
+                       (PC_Feature_Refinement_Or_Feature_Group_Refinement,
+                        (T_In, T_Out, T_Port, T_Feature));
                end case;
             else
-               DPE (PC_Feature_Group_Or_Port_Group_Or_Port_Spec,
-                    (T_In, T_Out, T_Port, T_Feature));
+               DPE
+                 (PC_Feature_Group_Or_Port_Group_Or_Port_Spec,
+                  (T_In, T_Out, T_Port, T_Feature));
             end if;
             Skip_Tokens (T_Semicolon);
             return No_Node;

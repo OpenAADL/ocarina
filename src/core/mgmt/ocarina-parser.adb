@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,10 +31,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Charset;   use Charset;
-with Errors;    use Errors;
-with Namet;     use Namet;
-with Output;    use Output;
+with Charset; use Charset;
+with Errors;  use Errors;
+with Ocarina.Namet;   use Ocarina.Namet;
+with Ocarina.Output;  use Ocarina.Output;
 
 with Ocarina.Options;       use Ocarina.Options;
 with Ocarina.Property_Sets; use Ocarina.Property_Sets;
@@ -58,8 +58,7 @@ package body Ocarina.Parser is
      (Language  : Name_Id;
       AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location)
-     return Node_Id
+      To        : Location := No_Location) return Node_Id
    is
    begin
       for P in Parsers.First .. Parsers.Last loop
@@ -68,7 +67,7 @@ package body Ocarina.Parser is
          end if;
       end loop;
 
-      Error_Loc (1) := From;
+      Error_Loc (1)  := From;
       Error_Name (1) := Language;
       Display_Warning ("no support provided for annex language %");
 
@@ -88,10 +87,7 @@ package body Ocarina.Parser is
    -- Register_Parser --
    ---------------------
 
-   procedure Register_Parser
-     (Language : String;
-      Parser   : Parser_Subprogram)
-   is
+   procedure Register_Parser (Language : String; Parser : Parser_Subprogram) is
       N : Name_Id;
    begin
       N := Get_String_Name (To_Lower (Language));

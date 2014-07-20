@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -77,11 +77,11 @@ package body Ocarina.Backends.PO_HI_C.Request is
       --  only one distributed application node and it is visited only
       --  once in this package.
 
-      Request_Struct        : List_Id;
-      Request_Union_List    : List_Id;
-      Ports_Names_Array     : Node_Id;
-      Operation_Identifier  : Unsigned_Long_Long;
-      Request_Declared      : Boolean;
+      Request_Struct       : List_Id;
+      Request_Union_List   : List_Id;
+      Ports_Names_Array    : Node_Id;
+      Operation_Identifier : Unsigned_Long_Long;
+      Request_Declared     : Boolean;
 
       -----------
       -- Visit --
@@ -115,8 +115,8 @@ package body Ocarina.Backends.PO_HI_C.Request is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -138,18 +138,19 @@ package body Ocarina.Backends.PO_HI_C.Request is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         S             : Node_Id;
-         U             : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P             : constant Node_Id := CTN.Entity (U);
-         N             : Node_Id;
-         C             : Node_Id;
-         D             : Node_Id;
-         F             : Node_Id;
-         J             : Node_Id;
-         I             : Node_Id;
-         The_System  : constant Node_Id := Parent_Component
-           (Parent_Subcomponent (E));
+         S : Node_Id;
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P          : constant Node_Id := CTN.Entity (U);
+         N          : Node_Id;
+         C          : Node_Id;
+         D          : Node_Id;
+         F          : Node_Id;
+         J          : Node_Id;
+         I          : Node_Id;
+         The_System : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
          Device_Implementation : Node_Id;
       begin
          Push_Entity (P);
@@ -158,30 +159,31 @@ package body Ocarina.Backends.PO_HI_C.Request is
 
          --  Create the global lists
 
-         Request_Struct         := New_List (CTN.K_Enumeration_Literals);
+         Request_Struct := New_List (CTN.K_Enumeration_Literals);
 
-         Operation_Identifier   := 0;
-         Request_Declared       := False;
+         Operation_Identifier := 0;
+         Request_Declared     := False;
 
          if not AINU.Is_Empty (Subcomponents (The_System)) then
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
                if AINU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (C)) =
+                   Get_Bound_Processor (E)
                then
                   Device_Implementation :=
-                     Get_Implementation (Corresponding_Instance (C));
+                    Get_Implementation (Corresponding_Instance (C));
 
                   if Device_Implementation /= No_Node then
                      if not AINU.Is_Empty
-                        (AIN.Subcomponents (Device_Implementation)) then
-                        N := First_Node (Subcomponents
-                           (Device_Implementation));
+                         (AIN.Subcomponents (Device_Implementation))
+                     then
+                        N :=
+                          First_Node (Subcomponents (Device_Implementation));
                         while Present (N) loop
                            Visit_Component_Instance
-                              (Corresponding_Instance (N));
+                             (Corresponding_Instance (N));
                            N := Next_Node (N);
                         end loop;
                      end if;
@@ -243,48 +245,51 @@ package body Ocarina.Backends.PO_HI_C.Request is
             --  Create the enumeration type for all the operations of
             --  the distributed application.
 
-            N := Message_Comment ("Enumeration type for all the operations"
-                                  & " in the distributed application.");
+            N :=
+              Message_Comment
+                ("Enumeration type for all the operations" &
+                 " in the distributed application.");
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Member_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (MN (M_Port)),
-               Used_Type => RE (RE_Port_T));
+            N :=
+              Make_Member_Declaration
+                (Defining_Identifier => Make_Defining_Identifier (MN (M_Port)),
+                 Used_Type           => RE (RE_Port_T));
             Append_Node_To_List (N, Request_Struct);
 
-            N := Make_Member_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (MN (M_Vars)),
-               Used_Type => Make_Union_Aggregate
-                 (Members => Request_Union_List));
+            N :=
+              Make_Member_Declaration
+                (Defining_Identifier => Make_Defining_Identifier (MN (M_Vars)),
+                 Used_Type           =>
+                   Make_Union_Aggregate (Members => Request_Union_List));
             Append_Node_To_List (N, Request_Struct);
 
-            N := Make_Full_Type_Declaration
-              (Defining_Identifier => RE (RE_Request_T),
-               Type_Definition     => Make_Struct_Aggregate
-                 (Members => Request_Struct));
+            N :=
+              Make_Full_Type_Declaration
+                (Defining_Identifier => RE (RE_Request_T),
+                 Type_Definition     =>
+                   Make_Struct_Aggregate (Members => Request_Struct));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            Bind_AADL_To_Request_Type
-              (Identifier (E), N);
+            Bind_AADL_To_Request_Type (Identifier (E), N);
 
-            N := Make_Define_Statement
-              (Defining_Identifier => RE (RE_Nb_Operations),
-               Value => Make_Literal
-                 (CV.New_Int_Value (Operation_Identifier, 1, 10)));
+            N :=
+              Make_Define_Statement
+                (Defining_Identifier => RE (RE_Nb_Operations),
+                 Value               =>
+                   Make_Literal
+                     (CV.New_Int_Value (Operation_Identifier, 1, 10)));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            Bind_AADL_To_Request
-              (Identifier (E), Ports_Names_Array);
+            Bind_AADL_To_Request (Identifier (E), Ports_Names_Array);
          else
-            N := Make_Full_Type_Declaration
-              (Defining_Identifier => RE (RE_Request_T),
-               Type_Definition     => Make_Defining_Identifier (TN (T_Int)));
+            N :=
+              Make_Full_Type_Declaration
+                (Defining_Identifier => RE (RE_Request_T),
+                 Type_Definition     => Make_Defining_Identifier (TN (T_Int)));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            Bind_AADL_To_Request_Type
-              (Identifier (E), N);
+            Bind_AADL_To_Request_Type (Identifier (E), N);
          end if;
 
          Pop_Entity; -- U
@@ -302,9 +307,9 @@ package body Ocarina.Backends.PO_HI_C.Request is
 
          Start_Recording_Handlings;
 
-         Request_Union_List     := New_List (CTN.K_Enumeration_Literals);
+         Request_Union_List := New_List (CTN.K_Enumeration_Literals);
 
-         Ports_Names_Array  := Make_Array_Values;
+         Ports_Names_Array := Make_Array_Values;
          --  Visit all the subcomponents of the system
 
          if not AINU.Is_Empty (Subcomponents (E)) then
@@ -334,7 +339,7 @@ package body Ocarina.Backends.PO_HI_C.Request is
          Struct_Members : List_Id;
       begin
          if Has_Ports (E) then
-            F := First_Node (Features (E));
+            F                := First_Node (Features (E));
             Request_Declared := True;
             Add_Include (RH (RH_Types));
             while Present (F) loop
@@ -345,45 +350,48 @@ package body Ocarina.Backends.PO_HI_C.Request is
                   Request_Declared := True;
 
                   if Is_Data (F) then
-                     V := Map_C_Data_Type_Designator
-                        (Corresponding_Instance (F));
+                     V :=
+                       Map_C_Data_Type_Designator (Corresponding_Instance (F));
                   else
                      V := RE (RE_Bool_T);
                   end if;
 
                   if V /= No_Node then
                      Struct_Members := New_List (CTN.K_Enumeration_Literals);
-                     Append_Node_To_List (Make_Member_Declaration
-                                          (Defining_Identifier =>
-                                             Make_Defining_Identifier
-                                             (Map_C_Enumerator_Name
-                                              (F)),
-                                           Used_Type =>
-                                             Make_Struct_Aggregate
-                                             (Members => Struct_Members))
-                                          , Request_Union_List);
+                     Append_Node_To_List
+                       (Make_Member_Declaration
+                          (Defining_Identifier =>
+                             Make_Defining_Identifier
+                               (Map_C_Enumerator_Name (F)),
+                           Used_Type =>
+                             Make_Struct_Aggregate
+                               (Members => Struct_Members)),
+                        Request_Union_List);
 
-                     N := Make_Member_Declaration
-                       (Defining_Identifier =>
-                          Make_Defining_Identifier
-                          (Map_C_Enumerator_Name (F)),
-                        Used_Type => V);
+                     N :=
+                       Make_Member_Declaration
+                         (Defining_Identifier =>
+                            Make_Defining_Identifier
+                              (Map_C_Enumerator_Name (F)),
+                          Used_Type => V);
                      Append_Node_To_List (N, Struct_Members);
 
                      if No (Backend_Node (Identifier (F)))
-                       or else (Present (Backend_Node (Identifier (F)))
-                                  and then
-                                  No (CTN.Request_Type_Node
-                                        (Backend_Node (Identifier (F)))))
+                       or else
+                       (Present (Backend_Node (Identifier (F)))
+                        and then No
+                          (CTN.Request_Type_Node
+                             (Backend_Node (Identifier (F)))))
                      then
-                        N := Make_Literal
-                          (CV.New_Pointed_Char_Value
-                             (Map_C_Enumerator_Name (F)));
+                        N :=
+                          Make_Literal
+                            (CV.New_Pointed_Char_Value
+                               (Map_C_Enumerator_Name (F)));
                         Append_Node_To_List
-                          (N, CTN.Values (Ports_Names_Array));
+                          (N,
+                           CTN.Values (Ports_Names_Array));
 
-                        Bind_AADL_To_Request_Type
-                          (Identifier (F), N);
+                        Bind_AADL_To_Request_Type (Identifier (F), N);
                      end if;
                   end if;
                end if;
@@ -438,8 +446,8 @@ package body Ocarina.Backends.PO_HI_C.Request is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -461,16 +469,17 @@ package body Ocarina.Backends.PO_HI_C.Request is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U             : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P             : constant Node_Id := CTN.Entity (U);
-         S             : Node_Id;
-         C             : Node_Id;
-         D             : Node_Id;
-         F             : Node_Id;
-         J             : Node_Id;
-         I             : Node_Id;
-         N             : Node_Id;
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P : constant Node_Id := CTN.Entity (U);
+         S : Node_Id;
+         C : Node_Id;
+         D : Node_Id;
+         F : Node_Id;
+         J : Node_Id;
+         I : Node_Id;
+         N : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -482,14 +491,16 @@ package body Ocarina.Backends.PO_HI_C.Request is
             C := First_Node (Features (E));
 
             while Present (C) loop
-               if Kind (C) = K_Port_Spec_Instance and then
-                 not AINU.Is_Empty (Destinations (C)) then
+               if Kind (C) = K_Port_Spec_Instance
+                 and then not AINU.Is_Empty (Destinations (C))
+               then
                   D := First_Node (Destinations (C));
                   I := Item (D);
 
-                  if Present (I) and then
-                    Kind (I) = K_Port_Spec_Instance and then
-                    not AINU.Is_Empty (Destinations (I)) then
+                  if Present (I)
+                    and then Kind (I) = K_Port_Spec_Instance
+                    and then not AINU.Is_Empty (Destinations (I))
+                  then
                      F := First_Node (Destinations (I));
                      while Present (F) loop
                         J := Item (F);
@@ -520,26 +531,25 @@ package body Ocarina.Backends.PO_HI_C.Request is
             end loop;
          end if;
 
-         if Present (Backend_Node (Identifier (E))) and then
-           Present (CTN.Request_Node (Backend_Node (Identifier (E)))) then
+         if Present (Backend_Node (Identifier (E)))
+           and then Present (CTN.Request_Node (Backend_Node (Identifier (E))))
+         then
 
-            N := Make_Expression
-              (Left_Expr =>
-                 Make_Variable_Declaration
-                 (Defining_Identifier =>
-                    Make_Array_Declaration
-                    (Defining_Identifier =>
-                       RE (RE_Ports_Names),
-                     Array_Size =>
-                       RE (RE_Nb_Ports)),
-                  Used_Type =>
-                    Make_Constant_Type
-                    (Make_Pointer_Type
-                     (Make_Defining_Identifier
-                      (TN (T_Char))))),
-               Operator => Op_Equal,
-               Right_Expr =>
-                 CTN.Request_Node (Backend_Node (Identifier (E))));
+            N :=
+              Make_Expression
+                (Left_Expr =>
+                   Make_Variable_Declaration
+                     (Defining_Identifier =>
+                        Make_Array_Declaration
+                          (Defining_Identifier => RE (RE_Ports_Names),
+                           Array_Size          => RE (RE_Nb_Ports)),
+                      Used_Type =>
+                        Make_Constant_Type
+                          (Make_Pointer_Type
+                             (Make_Defining_Identifier (TN (T_Char))))),
+                 Operator   => Op_Equal,
+                 Right_Expr =>
+                   CTN.Request_Node (Backend_Node (Identifier (E))));
 
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;

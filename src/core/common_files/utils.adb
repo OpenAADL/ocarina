@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Charset;   use Charset;
-with Namet;     use Namet;
+with Charset; use Charset;
+with Ocarina.Namet;   use Ocarina.Namet;
 
 package body Utils is
 
@@ -44,8 +44,7 @@ package body Utils is
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Set_Str_To_Name_Buffer (Prefix);
@@ -59,8 +58,7 @@ package body Utils is
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Get_Name_String (Name);
@@ -74,8 +72,7 @@ package body Utils is
 
    function Remove_Prefix_From_Name
      (Prefix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
       Length   : Natural;
       Temp_Str : String (1 .. Prefix'Length);
@@ -86,8 +83,7 @@ package body Utils is
       if Name_Len > Length then
          Temp_Str := Name_Buffer (1 .. Length);
          if Prefix = Temp_Str then
-            Set_Str_To_Name_Buffer
-              (Name_Buffer (1 + Length .. Name_Len));
+            Set_Str_To_Name_Buffer (Name_Buffer (1 + Length .. Name_Len));
             return Name_Find;
          end if;
       end if;
@@ -100,8 +96,7 @@ package body Utils is
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
       Length   : Natural;
       Temp_Str : String (1 .. Suffix'Length);
@@ -182,9 +177,8 @@ package body Utils is
    -- Remove_Char --
    -----------------
 
-   function Remove_Char (Name : Name_Id; O : Character)
-      return Name_Id is
-      New_Name : Name_Id := No_Name;
+   function Remove_Char (Name : Name_Id; O : Character) return Name_Id is
+      New_Name     : Name_Id         := No_Name;
       Initial_Name : constant String := Get_Name_String (Name);
    begin
       Name_Len := 0;
@@ -204,9 +198,12 @@ package body Utils is
    -- Replace_Char --
    ------------------
 
-   function Replace_Char (Name : Name_Id; O : Character; N : Character)
-      return Name_Id is
-      New_Name : Name_Id := No_Name;
+   function Replace_Char
+     (Name : Name_Id;
+      O    : Character;
+      N    : Character) return Name_Id
+   is
+      New_Name     : Name_Id         := No_Name;
       Initial_Name : constant String := Get_Name_String (Name);
    begin
       Name_Len := 0;
@@ -267,10 +264,10 @@ package body Utils is
       end if;
 
       declare
-         S1   : constant String := Get_Name_String (N1);
-         S2   : constant String := Get_Name_String (N2);
+         S1 : constant String := Get_Name_String (N1);
+         S2 : constant String := Get_Name_String (N2);
       begin
-         if S1'Length >  S2'Length then
+         if S1'Length > S2'Length then
             return False;
          end if;
          for I in 1 .. S1'Last loop

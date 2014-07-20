@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
@@ -61,7 +61,7 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package XV  renames Ocarina.Backends.XML_Values;
+   package XV renames Ocarina.Backends.XML_Values;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
    procedure Map_Scheduler (E : Node_Id; N : Node_Id) is
@@ -103,10 +103,7 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
 
       XML_Root := D;
 
-      XTN.Set_Name (D, To_XML_Name
-                   (AIN.Name
-                    (AIN.Identifier
-                     (E))));
+      XTN.Set_Name (D, To_XML_Name (AIN.Name (AIN.Identifier (E))));
       XTN.Set_Units (D, New_List (XTN.K_List_Id));
       XTN.Set_HI_Nodes (D, New_List (XTN.K_List_Id));
 
@@ -120,17 +117,17 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    function Map_HI_Node (E : Node_Id) return Node_Id is
       N : constant Node_Id := New_Node (XTN.K_HI_Node);
    begin
-      pragma Assert (AINU.Is_Process (E)
-                     or else AINU.Is_System (E)
-                     or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_Process (E)
+         or else AINU.Is_System (E)
+         or else AINU.Is_Processor (E));
 
       if AINU.Is_System (E) then
          Set_Str_To_Name_Buffer ("general");
       else
          Get_Name_String
-            (To_XML_Name (AIN.Name
-               (AIN.Identifier
-                  (AIN.Parent_Subcomponent (E)))));
+           (To_XML_Name
+              (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E)))));
          Add_Str_To_Name_Buffer ("_arinc653");
       end if;
 
@@ -150,26 +147,24 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    -- Map_HI_Unit --
    -----------------
 
-   function Map_HI_Unit (E : Node_Id)
-      return Node_Id is
-      U        : Node_Id;
-      N        : Node_Id;
-      P        : Node_Id;
-      Q        : Node_Id;
-      R        : Node_Id;
-      Root     : Node_Id;
+   function Map_HI_Unit (E : Node_Id) return Node_Id is
+      U    : Node_Id;
+      N    : Node_Id;
+      P    : Node_Id;
+      Q    : Node_Id;
+      R    : Node_Id;
+      Root : Node_Id;
    begin
-      pragma Assert (AINU.Is_System (E)
-                     or else AINU.Is_Process (E)
-                     or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_System (E)
+         or else AINU.Is_Process (E)
+         or else AINU.Is_Processor (E));
 
       U := New_Node (XTN.K_HI_Unit, AIN.Identifier (E));
 
       --  Packages that are common to all nodes
       Get_Name_String
-            (To_XML_Name
-               (Display_Name
-                  (Identifier (Parent_Subcomponent (E)))));
+        (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Add_Str_To_Name_Buffer ("_arinc653-conf");
       N := Make_Defining_Identifier (Name_Find);
       P := Make_XML_File (N);
@@ -197,8 +192,7 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
       Set_Str_To_Name_Buffer ("ModuleName");
       R := Make_Defining_Identifier (Name_Find);
 
-      Get_Name_String
-            (To_XML_Name (Display_Name (Identifier (E))));
+      Get_Name_String (To_XML_Name (Display_Name (Identifier (E))));
       Q := Make_Defining_Identifier (Name_Find);
 
       Append_Node_To_List (Make_Assignement (R, Q), XTN.Items (Root));
@@ -216,9 +210,9 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    -------------------------
 
    function Map_Port_Connection (E : Node_Id) return Node_Id is
-      N : Node_Id;
-      R : Node_Id;
-      Q : Node_Id;
+      N   : Node_Id;
+      R   : Node_Id;
+      Q   : Node_Id;
       Src : Node_Id;
       Dst : Node_Id;
    begin
@@ -243,21 +237,17 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
       Src := Item (AIN.First_Node (Path (Source (E))));
       Dst := Item (AIN.First_Node (Path (Destination (E))));
 
-      R := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Src))));
+      R :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Src))));
       Set_Str_To_Name_Buffer ("src");
       Q := Make_Defining_Identifier (Name_Find);
 
       Append_Node_To_List (Make_Assignement (Q, R), XTN.Items (N));
 
-      R := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Dst))));
+      R :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Dst))));
       Set_Str_To_Name_Buffer ("dst");
       Q := Make_Defining_Identifier (Name_Find);
 
@@ -270,9 +260,9 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    --------------------
 
    function Map_Bus_Access (E : Node_Id) return Node_Id is
-      N : Node_Id;
-      R : Node_Id;
-      Q : Node_Id;
+      N   : Node_Id;
+      R   : Node_Id;
+      Q   : Node_Id;
       Src : Node_Id;
       Dst : Node_Id;
    begin
@@ -289,21 +279,17 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
       Src := Item (AIN.First_Node (Path (Source (E))));
       Dst := Item (AIN.First_Node (Path (Destination (E))));
 
-      R := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Src))));
+      R :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Src))));
       Set_Str_To_Name_Buffer ("src");
       Q := Make_Defining_Identifier (Name_Find);
 
       Append_Node_To_List (Make_Assignement (Q, R), XTN.Items (N));
 
-      R := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Dst))));
+      R :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Dst))));
       Set_Str_To_Name_Buffer ("dst");
       Q := Make_Defining_Identifier (Name_Find);
 
@@ -317,9 +303,9 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    ---------------------
 
    function Map_Data_Access (E : Node_Id) return Node_Id is
-      N : Node_Id;
-      R : Node_Id;
-      Q : Node_Id;
+      N   : Node_Id;
+      R   : Node_Id;
+      Q   : Node_Id;
       Src : Node_Id;
       Dst : Node_Id;
    begin
@@ -336,21 +322,17 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
       Src := Item (AIN.First_Node (Path (Source (E))));
       Dst := Item (AIN.First_Node (Path (Destination (E))));
 
-      R := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Src))));
+      R :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Src))));
       Set_Str_To_Name_Buffer ("src");
       Q := Make_Defining_Identifier (Name_Find);
 
       Append_Node_To_List (Make_Assignement (Q, R), XTN.Items (N));
 
-      R := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Dst))));
+      R :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Dst))));
       Set_Str_To_Name_Buffer ("dst");
       Q := Make_Defining_Identifier (Name_Find);
 
@@ -363,8 +345,7 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    -- Map_System --
    ----------------
 
-   function Map_System (E : Node_Id)
-         return Node_Id is
+   function Map_System (E : Node_Id) return Node_Id is
       N : Node_Id;
       Q : Node_Id;
       P : Node_Id;
@@ -373,10 +354,7 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
 
       --  Set the name of the system
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (AIN.Name
-                  (Identifier (E))));
+      P := Make_Defining_Identifier (To_XML_Name (AIN.Name (Identifier (E))));
 
       Set_Str_To_Name_Buffer ("ModuleName");
       Q := Make_Defining_Identifier (Name_Find);
@@ -390,9 +368,9 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    -- Map_Process --
    -----------------
 
-   function Map_Process (E : Node_Id;
-                        Partition_Identifier : Unsigned_Long_Long)
-      return Node_Id
+   function Map_Process
+     (E                    : Node_Id;
+      Partition_Identifier : Unsigned_Long_Long) return Node_Id
    is
       N : Node_Id;
       P : Node_Id;
@@ -400,22 +378,18 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    begin
       N := Make_XML_Node ("Partition");
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (E)))));
+      P :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Set_Str_To_Name_Buffer ("PartitionName");
       Q := Make_Defining_Identifier (Name_Find);
 
       Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
 
-      P := Make_Literal (XV.New_Numeric_Value
-               (Partition_Identifier, 1, 10));
+      P := Make_Literal (XV.New_Numeric_Value (Partition_Identifier, 1, 10));
       Set_Str_To_Name_Buffer ("PartitionIdentifier");
       Q := Make_Defining_Identifier (Name_Find);
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
 
       AIN.Set_Backend_Node (Identifier (E), Copy_Node (P));
 
@@ -423,15 +397,13 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("EntryPoint");
       Q := Make_Defining_Identifier (Name_Find);
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
 
       Set_Str_To_Name_Buffer ("true");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("SystemPartition");
       Q := Make_Defining_Identifier (Name_Find);
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
       return N;
    end Map_Process;
 
@@ -446,11 +418,9 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    begin
       N := Make_XML_Node ("processor");
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (E)))));
+      P :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Set_Str_To_Name_Buffer ("name");
       Q := Make_Defining_Identifier (Name_Find);
 
@@ -470,11 +440,9 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    begin
       N := Make_XML_Node ("bus");
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (E)))));
+      P :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Set_Str_To_Name_Buffer ("name");
       Q := Make_Defining_Identifier (Name_Find);
 
@@ -488,22 +456,19 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    ---------------------------
 
    function Map_Virtual_Processor (E : Node_Id) return Node_Id is
-      N              : Node_Id;
-      P              : Node_Id;
-      Q              : Node_Id;
+      N : Node_Id;
+      P : Node_Id;
+      Q : Node_Id;
    begin
       N := Make_XML_Node ("virtual_processor");
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (E)))));
+      P :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Set_Str_To_Name_Buffer ("name");
       Q := Make_Defining_Identifier (Name_Find);
 
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
 
       Map_Scheduler (E, N);
 
@@ -521,16 +486,13 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    begin
       N := Make_XML_Node ("data");
 
-      P := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (E)))));
+      P :=
+        Make_Defining_Identifier
+          (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Set_Str_To_Name_Buffer ("name");
       Q := Make_Defining_Identifier (Name_Find);
 
-      Append_Node_To_List (Make_Assignement (Q, P),
-                           XTN.Items (N));
+      Append_Node_To_List (Make_Assignement (Q, P), XTN.Items (N));
       return N;
    end Map_Data;
 
@@ -539,24 +501,25 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    --------------------
 
    function Map_Connection
-     (Connection : Node_Id; Channel_Identifier : Unsigned_Long_Long)
-      return Node_Id is
-      Channel_Node                  : Node_Id;
-      Source_Node                   : Node_Id;
-      Destination_Node              : Node_Id;
-      P                             : Node_Id;
-      N                             : Node_Id;
-      Q                             : Node_Id;
-      Source_Port_Name              : Name_Id;
-      Destination_Port_Name         : Name_Id;
-      Source_Component_Name         : Name_Id;
-      Destination_Component_Name    : Name_Id;
-      Partition_Source              : Node_Id;
-      Partition_Destination         : Node_Id;
+     (Connection         : Node_Id;
+      Channel_Identifier : Unsigned_Long_Long) return Node_Id
+   is
+      Channel_Node               : Node_Id;
+      Source_Node                : Node_Id;
+      Destination_Node           : Node_Id;
+      P                          : Node_Id;
+      N                          : Node_Id;
+      Q                          : Node_Id;
+      Source_Port_Name           : Name_Id;
+      Destination_Port_Name      : Name_Id;
+      Source_Component_Name      : Name_Id;
+      Destination_Component_Name : Name_Id;
+      Partition_Source           : Node_Id;
+      Partition_Destination      : Node_Id;
    begin
-      Channel_Node      := Make_XML_Node ("Channel");
-      Source_Node       := Make_XML_Node ("Source");
-      Destination_Node  := Make_XML_Node ("Destination");
+      Channel_Node     := Make_XML_Node ("Channel");
+      Source_Node      := Make_XML_Node ("Source");
+      Destination_Node := Make_XML_Node ("Destination");
 
       Set_Str_To_Name_Buffer ("ChannelIdentifier");
       P := Make_Defining_Identifier (Name_Find);
@@ -566,43 +529,35 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
       N := Make_XML_Node ("Standard_Partition");
 
       Partition_Source :=
-            AIN.Corresponding_Instance
-               (AIN.Item
-                 (AIN.First_Node
-                    (AIN.Path (AIN.Source (Connection)))));
+        AIN.Corresponding_Instance
+          (AIN.Item (AIN.First_Node (AIN.Path (AIN.Source (Connection)))));
 
       Partition_Destination :=
-            AIN.Corresponding_Instance
-               (AIN.Item
-                 (AIN.First_Node
-                    (AIN.Path (AIN.Destination (Connection)))));
+        AIN.Corresponding_Instance
+          (AIN.Item
+             (AIN.First_Node (AIN.Path (AIN.Destination (Connection)))));
 
       Source_Component_Name :=
-         AIN.Name
-            (AIN.Identifier
-               (AIN.Item
-                  (AIN.First_Node
-                     (AIN.Path (AIN.Source (Connection))))));
+        AIN.Name
+          (AIN.Identifier
+             (AIN.Item (AIN.First_Node (AIN.Path (AIN.Source (Connection))))));
 
       Source_Port_Name :=
-         AIN.Name
-            (AIN.Identifier
-               (AIN.Item
-                  (AIN.Next_Node
-                     (AIN.First_Node
-                        (AIN.Path (AIN.Source (Connection)))))));
+        AIN.Name
+          (AIN.Identifier
+             (AIN.Item
+                (AIN.Next_Node
+                   (AIN.First_Node (AIN.Path (AIN.Source (Connection)))))));
 
       Set_Str_To_Name_Buffer ("PortName");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Defining_Identifier
-         (To_XML_Name (Source_Port_Name));
+      Q := Make_Defining_Identifier (To_XML_Name (Source_Port_Name));
 
       Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       Set_Str_To_Name_Buffer ("PartitionName");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Defining_Identifier
-         (To_XML_Name (Source_Component_Name));
+      Q := Make_Defining_Identifier (To_XML_Name (Source_Component_Name));
 
       Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
@@ -610,40 +565,38 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
          Set_Str_To_Name_Buffer ("PartitionIdentifier");
          Q := Make_Defining_Identifier (Name_Find);
          Append_Node_To_List
-            (Make_Assignement
-             (Q, Copy_Node (Backend_Node (Identifier (Partition_Source)))),
-             XTN.Items (N));
+           (Make_Assignement
+              (Q,
+               Copy_Node (Backend_Node (Identifier (Partition_Source)))),
+            XTN.Items (N));
       end if;
 
       Append_Node_To_List (N, XTN.Subitems (Source_Node));
 
       Destination_Component_Name :=
-         AIN.Name
-            (AIN.Identifier
-               (AIN.Item
-                  (AIN.First_Node
-                     (AIN.Path (AIN.Destination (Connection))))));
+        AIN.Name
+          (AIN.Identifier
+             (AIN.Item
+                (AIN.First_Node (AIN.Path (AIN.Destination (Connection))))));
 
       Destination_Port_Name :=
-         AIN.Name
-            (AIN.Identifier
-               (AIN.Item
-                  (AIN.Next_Node
-                     (AIN.First_Node
-                        (AIN.Path (AIN.Destination (Connection)))))));
+        AIN.Name
+          (AIN.Identifier
+             (AIN.Item
+                (AIN.Next_Node
+                   (AIN.First_Node
+                      (AIN.Path (AIN.Destination (Connection)))))));
 
       N := Make_XML_Node ("Standard_Partition");
       Set_Str_To_Name_Buffer ("PortName");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Defining_Identifier
-         (To_XML_Name (Destination_Port_Name));
+      Q := Make_Defining_Identifier (To_XML_Name (Destination_Port_Name));
 
       Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       Set_Str_To_Name_Buffer ("PartitionName");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Defining_Identifier
-         (To_XML_Name (Destination_Component_Name));
+      Q := Make_Defining_Identifier (To_XML_Name (Destination_Component_Name));
 
       Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
@@ -651,10 +604,10 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
          Set_Str_To_Name_Buffer ("PartitionIdentifier");
          Q := Make_Defining_Identifier (Name_Find);
          Append_Node_To_List
-            (Make_Assignement
-             (Q, Copy_Node
-               (Backend_Node (Identifier (Partition_Destination)))),
-             XTN.Items (N));
+           (Make_Assignement
+              (Q,
+               Copy_Node (Backend_Node (Identifier (Partition_Destination)))),
+            XTN.Items (N));
       end if;
 
       Append_Node_To_List (N, XTN.Subitems (Destination_Node));
@@ -670,30 +623,30 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    ------------------------
 
    function Map_Process_Memory (Process : Node_Id) return Node_Id is
-      N : Node_Id;
-      M : Node_Id;
-      P : Node_Id;
-      Q : Node_Id;
+      N      : Node_Id;
+      M      : Node_Id;
+      P      : Node_Id;
+      Q      : Node_Id;
       Memory : Node_Id;
    begin
       N := Make_XML_Node ("Partition_Memory");
 
       Set_Str_To_Name_Buffer ("PartitionName");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (Process)))));
+      Q :=
+        Make_Defining_Identifier
+          (To_XML_Name
+             (Display_Name (Identifier (Parent_Subcomponent (Process)))));
       Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       if Present (Backend_Node (Identifier (Process))) then
          Set_Str_To_Name_Buffer ("PartitionIdentifier");
          Q := Make_Defining_Identifier (Name_Find);
          Append_Node_To_List
-            (Make_Assignement
-             (Q, Copy_Node (Backend_Node (Identifier (Process)))),
-             XTN.Items (N));
+           (Make_Assignement
+              (Q,
+               Copy_Node (Backend_Node (Identifier (Process)))),
+            XTN.Items (N));
       end if;
 
       if Get_Data_Size (Process) /= Null_Size then
@@ -701,8 +654,12 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
 
          Set_Str_To_Name_Buffer ("SizeBytes");
          P := Make_Defining_Identifier (Name_Find);
-         Q := Make_Literal (XV.New_Numeric_Value
-            (To_Bytes (Get_Data_Size (Process)), 1, 10));
+         Q :=
+           Make_Literal
+             (XV.New_Numeric_Value
+                (To_Bytes (Get_Data_Size (Process)),
+                 1,
+                 10));
          Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (M));
 
          Set_Str_To_Name_Buffer ("Type");
@@ -725,8 +682,12 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
 
          Set_Str_To_Name_Buffer ("SizeBytes");
          P := Make_Defining_Identifier (Name_Find);
-         Q := Make_Literal (XV.New_Numeric_Value
-            (To_Bytes (Get_Code_Size (Process)), 1, 10));
+         Q :=
+           Make_Literal
+             (XV.New_Numeric_Value
+                (To_Bytes (Get_Code_Size (Process)),
+                 1,
+                 10));
          Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (M));
 
          Set_Str_To_Name_Buffer ("Type");
@@ -748,22 +709,23 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
          Memory := Get_Bound_Memory (Process);
          declare
             Byte_Count : Unsigned_Long_Long := 1;
-            Word_Size : Unsigned_Long_Long := 1;
+            Word_Size  : Unsigned_Long_Long := 1;
          begin
             if Get_Byte_Count (Get_Bound_Memory (Process)) /= 0 then
                Byte_Count := Get_Byte_Count (Get_Bound_Memory (Process));
             end if;
 
             if Get_Word_Size (Get_Bound_Memory (Process)) /= Null_Size then
-               Word_Size := To_Bytes
-                  (Get_Word_Size (Get_Bound_Memory (Process)));
+               Word_Size :=
+                 To_Bytes (Get_Word_Size (Get_Bound_Memory (Process)));
             end if;
             M := Make_XML_Node ("Memory_Requirements");
 
             Set_Str_To_Name_Buffer ("SizeBytes");
             P := Make_Defining_Identifier (Name_Find);
-            Q := Make_Literal (XV.New_Numeric_Value
-               (Byte_Count * Word_Size, 1, 10));
+            Q :=
+              Make_Literal
+                (XV.New_Numeric_Value (Byte_Count * Word_Size, 1, 10));
             Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (M));
 
             if Get_ARINC653_Memory_Kind (Memory) = Data then
@@ -812,30 +774,27 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
    ----------------------------
 
    procedure Map_Process_Scheduling
-      (Process : Node_Id;
+     (Process       :        Node_Id;
       Window_Number : in out Unsigned_Long_Long;
-      N : out Node_Id)
+      N             :    out Node_Id)
    is
-      P                             : Node_Id;
-      Q                             : Node_Id;
-      Window_Node                   : Node_Id;
-      Associated_Virtual_Processor  : constant Node_Id
-         := Get_Bound_Processor (Process);
-      Associated_Processor          : constant Node_Id
-         := Parent_Component
-            (Parent_Subcomponent (Associated_Virtual_Processor));
-      Slots                         : constant Time_Array
-         := Get_POK_Slots (Associated_Processor);
-      Slots_Allocation              : List_Id;
-      S                             : Node_Id;
-      Referenced_Entity             : Node_Id;
-      Start_Time                    : Long_Double := 0.0;
-      Duration_Time                 : Long_Double := 0.0;
+      P                            : Node_Id;
+      Q                            : Node_Id;
+      Window_Node                  : Node_Id;
+      Associated_Virtual_Processor : constant Node_Id :=
+        Get_Bound_Processor (Process);
+      Associated_Processor : constant Node_Id :=
+        Parent_Component (Parent_Subcomponent (Associated_Virtual_Processor));
+      Slots : constant Time_Array := Get_POK_Slots (Associated_Processor);
+      Slots_Allocation  : List_Id;
+      S                 : Node_Id;
+      Referenced_Entity : Node_Id;
+      Start_Time        : Long_Double         := 0.0;
+      Duration_Time     : Long_Double         := 0.0;
    begin
       N := Make_XML_Node ("Partition_Schedule");
 
-      Slots_Allocation := Get_POK_Slots_Allocation
-            (Associated_Processor);
+      Slots_Allocation := Get_POK_Slots_Allocation (Associated_Processor);
 
       if Slots_Allocation = No_List then
          Display_Error
@@ -845,29 +804,28 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
 
       Set_Str_To_Name_Buffer ("PartitionName");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Defining_Identifier
-            (To_XML_Name
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (Process)))));
+      Q :=
+        Make_Defining_Identifier
+          (To_XML_Name
+             (Display_Name (Identifier (Parent_Subcomponent (Process)))));
       Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       if Present (Backend_Node (Identifier (Process))) then
          Set_Str_To_Name_Buffer ("PartitionIdentifier");
          Q := Make_Defining_Identifier (Name_Find);
          Append_Node_To_List
-            (Make_Assignement
-             (Q, Copy_Node (Backend_Node (Identifier (Process)))),
-             XTN.Items (N));
+           (Make_Assignement
+              (Q,
+               Copy_Node (Backend_Node (Identifier (Process)))),
+            XTN.Items (N));
       end if;
 
       Set_Str_To_Name_Buffer ("PeriodSeconds");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Floating_Point_Value
-            (To_Seconds
-               (Get_POK_Major_Frame
-                  (Associated_Processor))));
+      Q :=
+        Make_Literal
+          (XV.New_Floating_Point_Value
+             (To_Seconds (Get_POK_Major_Frame (Associated_Processor))));
       Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
       Start_Time := 0.0;
@@ -881,26 +839,26 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
 
             Set_Str_To_Name_Buffer ("WindowStartSeconds");
             P := Make_Defining_Identifier (Name_Find);
-            Q := Make_Literal
-               (XV.New_Floating_Point_Value (Start_Time));
+            Q := Make_Literal (XV.New_Floating_Point_Value (Start_Time));
             Append_Node_To_List
-               (Make_Assignement (P, Q), XTN.Items (Window_Node));
+              (Make_Assignement (P, Q),
+               XTN.Items (Window_Node));
 
             Set_Str_To_Name_Buffer ("WindowIdentifier");
             P := Make_Defining_Identifier (Name_Find);
-            Q := Make_Literal
-               (XV.New_Numeric_Value
-                  (Window_Number, 1, 10));
+            Q := Make_Literal (XV.New_Numeric_Value (Window_Number, 1, 10));
             Append_Node_To_List
-               (Make_Assignement (P, Q), XTN.Items (Window_Node));
+              (Make_Assignement (P, Q),
+               XTN.Items (Window_Node));
 
             Set_Str_To_Name_Buffer ("WindowDurationSeconds");
             P := Make_Defining_Identifier (Name_Find);
-            Q := Make_Literal
-               (XV.New_Floating_Point_Value
-                  (To_Seconds (Slots (I))));
+            Q :=
+              Make_Literal
+                (XV.New_Floating_Point_Value (To_Seconds (Slots (I))));
             Append_Node_To_List
-               (Make_Assignement (P, Q), XTN.Items (Window_Node));
+              (Make_Assignement (P, Q),
+               XTN.Items (Window_Node));
 
             Append_Node_To_List (Window_Node, XTN.Subitems (N));
             Window_Number := Window_Number + 1;
@@ -908,13 +866,12 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
          end if;
 
          Start_Time := Start_Time + To_Seconds (Slots (I));
-         S := ATN.Next_Node (S);
+         S          := ATN.Next_Node (S);
       end loop;
 
       Set_Str_To_Name_Buffer ("PeriodDurationSeconds");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Floating_Point_Value (Duration_Time));
+      Q := Make_Literal (XV.New_Floating_Point_Value (Duration_Time));
       Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
 
    end Map_Process_Scheduling;
@@ -956,8 +913,8 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
       Set_Str_To_Name_Buffer ("Name");
       R := Make_Defining_Identifier (Name_Find);
 
-      Q := Make_Defining_Identifier
-               (To_XML_Name (Display_Name (Identifier (F))));
+      Q :=
+        Make_Defining_Identifier (To_XML_Name (Display_Name (Identifier (F))));
 
       Append_Node_To_List (Make_Assignement (R, Q), XTN.Items (N));
 
@@ -966,9 +923,10 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
          R := Make_Defining_Identifier (Name_Find);
 
          if Get_POK_Refresh_Time (F) /= Null_Time then
-            Q := Make_Literal
-               (XV.New_Floating_Point_Value
-                  (To_Seconds (Get_POK_Refresh_Time (F))));
+            Q :=
+              Make_Literal
+                (XV.New_Floating_Point_Value
+                   (To_Seconds (Get_POK_Refresh_Time (F))));
          else
             Q := Map_Time (Null_Time);
          end if;
@@ -978,9 +936,12 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
          P := Make_Defining_Identifier (Name_Find);
 
          if Get_Queue_Size (F) /= -1 then
-            Q := Make_Literal
-               (XV.New_Numeric_Value
-                  (Unsigned_Long_Long (Get_Queue_Size (F)), 1, 10));
+            Q :=
+              Make_Literal
+                (XV.New_Numeric_Value
+                   (Unsigned_Long_Long (Get_Queue_Size (F)),
+                    1,
+                    10));
          else
             Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
          end if;
@@ -993,11 +954,12 @@ package body Ocarina.Backends.ARINC653_Conf.Mapping is
          P := Make_Defining_Identifier (Name_Find);
 
          if Get_Data_Size (Corresponding_Instance (F)) /= Null_Size then
-            Q := Make_Literal
-               (XV.New_Numeric_Value
-                  (To_Bytes
-                     (Get_Data_Size
-                        (Corresponding_Instance (F))), 1, 10));
+            Q :=
+              Make_Literal
+                (XV.New_Numeric_Value
+                   (To_Bytes (Get_Data_Size (Corresponding_Instance (F))),
+                    1,
+                    10));
          else
             Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
          end if;

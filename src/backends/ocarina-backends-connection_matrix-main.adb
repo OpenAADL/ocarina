@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -44,7 +44,7 @@ with Ocarina.Backends.Properties;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Connection_Matrix.Main is
 
@@ -56,17 +56,17 @@ package body Ocarina.Backends.Connection_Matrix.Main is
 
    use Ocarina.Instances.Queries;
 
-   package ATN    renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package AIN    renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package AINU   renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   package XTN    renames Ocarina.Backends.XML_Tree.Nodes;
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
 
-   Current_Parent_Node  : Node_Id;
-   My_Root              : Node_Id;
+   Current_Parent_Node : Node_Id;
+   My_Root             : Node_Id;
 
    -----------
    -- Visit --
@@ -91,8 +91,8 @@ package body Ocarina.Backends.Connection_Matrix.Main is
    ---------------------------------
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
-      N : constant Node_Id := New_Node (XTN.K_HI_Node);
-      D : constant Node_Id := New_Node (XTN.K_HI_Distributed_Application);
+      N     : constant Node_Id := New_Node (XTN.K_HI_Node);
+      D     : constant Node_Id := New_Node (XTN.K_HI_Distributed_Application);
       U     : Node_Id;
       T     : Node_Id;
       P     : Node_Id;
@@ -126,8 +126,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
       Push_Entity (N);
 
       U := New_Node (XTN.K_HI_Unit, AIN.Identifier (My_Root));
-      Get_Name_String
-            (To_XML_Name (Display_Name (Identifier (My_Root))));
+      Get_Name_String (To_XML_Name (Display_Name (Identifier (My_Root))));
       Add_Str_To_Name_Buffer ("_connection_matrix");
       T := Make_Defining_Identifier (Name_Find);
       P := Make_XML_File (T);
@@ -145,8 +144,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
 
       Push_Entity (U);
 
-      Current_Parent_Node := XTN.Root_Node
-                              (XTN.XML_File (U));
+      Current_Parent_Node := XTN.Root_Node (XTN.XML_File (U));
 
       --  Make the <head> node of the HTML file.
       Tmp := Make_XML_Node ("head");
@@ -174,7 +172,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
 
       --  Style of the <h1> node
       Set_Str_To_Name_Buffer
-         ("font-family: Arial;" &
+        ("font-family: Arial;" &
          "text-align: center; font-weight: bold; font-size: 1.2em");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("style");
@@ -200,8 +198,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -217,28 +214,28 @@ package body Ocarina.Backends.Connection_Matrix.Main is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S                 : Node_Id;
-      N                 : Node_Id;
-      Conn              : Node_Id;
-      T                 : Node_Id;
-      TR                : Node_Id;
-      TD                : Node_Id;
-      UL                : Node_Id;
-      LI                : Node_Id;
-      H2                : Node_Id;
-      Table             : Node_Id;
-      P                 : Node_Id;
-      Q                 : Node_Id;
-      Connected         : Boolean;
-      Source_Component  : Node_Id;
-      Dest_Component    : Node_Id;
-      Bandwidth         : Unsigned_Long_Long;
-      Bandwidth_Unit    : Name_Id;
-      Latency           : Unsigned_Long_Long;
-      Latency_Unit      : Name_Id;
-      Associated_Bus    : Node_Id;
-      Has_Bus           : Boolean := False;
-      Bus_Instance      : Node_Id;
+      S                : Node_Id;
+      N                : Node_Id;
+      Conn             : Node_Id;
+      T                : Node_Id;
+      TR               : Node_Id;
+      TD               : Node_Id;
+      UL               : Node_Id;
+      LI               : Node_Id;
+      H2               : Node_Id;
+      Table            : Node_Id;
+      P                : Node_Id;
+      Q                : Node_Id;
+      Connected        : Boolean;
+      Source_Component : Node_Id;
+      Dest_Component   : Node_Id;
+      Bandwidth        : Unsigned_Long_Long;
+      Bandwidth_Unit   : Name_Id;
+      Latency          : Unsigned_Long_Long;
+      Latency_Unit     : Name_Id;
+      Associated_Bus   : Node_Id;
+      Has_Bus          : Boolean := False;
+      Bus_Instance     : Node_Id;
    begin
       --  Declare the table node that will contain the connectivity matrix.
       Table := Make_XML_Node ("table");
@@ -258,8 +255,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
          --  Add a <td> node that represent a colon in the line.
          TD := Make_XML_Node ("td");
 
-         Append_Node_To_List (TD,
-                     XTN.Subitems (TR));
+         Append_Node_To_List (TD, XTN.Subitems (TR));
 
          S := First_Node (Subcomponents (E));
 
@@ -273,7 +269,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                TD := Make_XML_Node ("td");
 
                Set_Str_To_Name_Buffer
-                  ("font-family: Arial; background-color: #0a97ac;" &
+                 ("font-family: Arial; background-color: #0a97ac;" &
                   "text-align: center; font-weight: bold; font-size: 0.8em");
                P := Make_Defining_Identifier (Name_Find);
                Set_Str_To_Name_Buffer ("style");
@@ -285,14 +281,12 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                N := Make_Defining_Identifier (Name_Find);
                XTN.Set_Node_Value (TD, N);
 
-               Append_Node_To_List (TD,
-                           XTN.Subitems (TR));
+               Append_Node_To_List (TD, XTN.Subitems (TR));
             end if;
             S := Next_Node (S);
          end loop;
 
-         Append_Node_To_List (TR,
-            XTN.Subitems (Table));
+         Append_Node_To_List (TR, XTN.Subitems (Table));
       end if;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
@@ -310,7 +304,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                TD := Make_XML_Node ("td");
 
                Set_Str_To_Name_Buffer
-                  ("font-family: Arial; background-color: #0a97ac;" &
+                 ("font-family: Arial; background-color: #0a97ac;" &
                   "text-align: center; font-weight: bold; font-size: 0.8em");
                P := Make_Defining_Identifier (Name_Find);
                Set_Str_To_Name_Buffer ("style");
@@ -322,8 +316,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                N := Make_Defining_Identifier (Name_Find);
                XTN.Set_Node_Value (TD, N);
 
-               Append_Node_To_List (TD,
-                           XTN.Subitems (TR));
+               Append_Node_To_List (TD, XTN.Subitems (TR));
 
                T := First_Node (Subcomponents (E));
 
@@ -334,7 +327,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                while Present (T) loop
 
                   if Get_Category_Of_Component (T) /= CC_Bus then
-                     TD          := Make_XML_Node ("td");
+                     TD := Make_XML_Node ("td");
 
                      --  Default initialization.
                      Connected      := False;
@@ -346,34 +339,42 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                         while Present (Conn) loop
                            if Kind (Conn) = K_Connection_Instance then
                               if Get_Category_Of_Connection (Conn) =
-                              CT_Port_Connection then
-                                 Source_Component := Item
-                                    (AIN.First_Node
-                                       (Path
-                                          (Source (Conn))));
+                                CT_Port_Connection
+                              then
+                                 Source_Component :=
+                                   Item
+                                     (AIN.First_Node (Path (Source (Conn))));
 
-                                 Dest_Component := Item
-                                    (AIN.First_Node
-                                       (Path
-                                          (Destination (Conn))));
-                                 if Dest_Component = T and then
-                                    Source_Component = S then
+                                 Dest_Component :=
+                                   Item
+                                     (AIN.First_Node
+                                        (Path (Destination (Conn))));
+                                 if Dest_Component = T
+                                   and then Source_Component = S
+                                 then
 
                                     Associated_Bus :=
-                                       Get_Bound_Bus (Conn, False);
+                                      Get_Bound_Bus (Conn, False);
 
                                     if Is_Defined_Property
-                                       (Conn,
-                                 "bus_properties::required_bandwidth") then
-                                       Bandwidth := Get_Integer_Property (Conn,
-                                       "bus_properties::required_bandwidth");
+                                        (Conn,
+                                         "bus_properties::required_bandwidth")
+                                    then
+                                       Bandwidth :=
+                                         Get_Integer_Property
+                                           (Conn,
+                                            "bus_properties:"
+                                              & ":required_bandwidth");
 
-                                       Bandwidth_Unit := ATN.Name
-                                          (ATN.Unit_Identifier
-                                             (Get_Value_Of_Property_Association
-                                                (Conn,
-                                    Get_String_Name
-                                    ("bus_properties::required_bandwidth"))));
+                                       Bandwidth_Unit :=
+                                         ATN.Name
+                                           (ATN.Unit_Identifier
+                                            (Get_Value_Of_Property_Association
+                                               (Conn,
+                                                Get_String_Name
+                                                  ("bus_properties:"
+                                                     & ":required_bandwidth"
+                                                  ))));
                                        Connected := True;
                                     end if;
                                  end if;
@@ -394,7 +395,8 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                         P := Make_Defining_Identifier (Name_Find);
                         Set_Str_To_Name_Buffer ("style");
                         Q := Make_Defining_Identifier (Name_Find);
-                        Append_Node_To_List (Make_Assignement (Q, P),
+                        Append_Node_To_List
+                          (Make_Assignement (Q, P),
                            XTN.Items (TD));
 
                      --  If Connected is true, the component being analyzed
@@ -407,8 +409,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                         if Bandwidth /= 0 then
                            Set_Str_To_Name_Buffer ("<strong>");
                            Add_Str_To_Name_Buffer
-                              (Unsigned_Long_Long'Image
-                                 (Bandwidth));
+                             (Unsigned_Long_Long'Image (Bandwidth));
                            Get_Name_String_And_Append (Bandwidth_Unit);
                            Add_Str_To_Name_Buffer ("</strong>");
 
@@ -417,24 +418,25 @@ package body Ocarina.Backends.Connection_Matrix.Main is
 
                            if Associated_Bus /= No_Node then
                               Add_Str_To_Name_Buffer ("<br/><em>(");
-                              Get_Name_String_And_Append (Display_Name
-                              (Identifier (Associated_Bus)));
+                              Get_Name_String_And_Append
+                                (Display_Name (Identifier (Associated_Bus)));
                               Add_Str_To_Name_Buffer (")</em>");
                            else
                               Add_Str_To_Name_Buffer
-                                 ("<br/>(<em>unknwon bus</em>)");
+                                ("<br/>(<em>unknwon bus</em>)");
                            end if;
                            N := Make_Defining_Identifier (Name_Find);
 
                            Set_Str_To_Name_Buffer
-                              ("font-family: Arial; " &
-                               "background-color: #91ff94;" &
+                             ("font-family: Arial; " &
+                              "background-color: #91ff94;" &
                               "text-align: center; font-size: 0.8em");
                            P := Make_Defining_Identifier (Name_Find);
                            Set_Str_To_Name_Buffer ("style");
                            Q := Make_Defining_Identifier (Name_Find);
                            Append_Node_To_List
-                              (Make_Assignement (Q, P), XTN.Items (TD));
+                             (Make_Assignement (Q, P),
+                              XTN.Items (TD));
                         else
 
                            --  We put N/A in the cell as a text when
@@ -444,39 +446,37 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                            N := Make_Defining_Identifier (Name_Find);
                         end if;
                      else
-                           --  Components are not connected, we put
-                           --  the cell to red.
-                           Set_Str_To_Name_Buffer
-                              ("font-family: Arial; " &
-                               "background-color: #b83f3f;" &
-                              "text-align: center; font-size: 0.8em");
-                           P := Make_Defining_Identifier (Name_Find);
-                           Set_Str_To_Name_Buffer ("style");
-                           Q := Make_Defining_Identifier (Name_Find);
-                           Append_Node_To_List
-                              (Make_Assignement (Q, P), XTN.Items (TD));
+                        --  Components are not connected, we put
+                        --  the cell to red.
+                        Set_Str_To_Name_Buffer
+                          ("font-family: Arial; " &
+                           "background-color: #b83f3f;" &
+                           "text-align: center; font-size: 0.8em");
+                        P := Make_Defining_Identifier (Name_Find);
+                        Set_Str_To_Name_Buffer ("style");
+                        Q := Make_Defining_Identifier (Name_Find);
+                        Append_Node_To_List
+                          (Make_Assignement (Q, P),
+                           XTN.Items (TD));
                      end if;
 
                      if N /= No_Node then
                         XTN.Set_Node_Value (TD, N);
                      end if;
 
-                     Append_Node_To_List (TD,
-                                 XTN.Subitems (TR));
+                     Append_Node_To_List (TD, XTN.Subitems (TR));
                   end if;
                   T := Next_Node (T);
                end loop;
 
-               Append_Node_To_List (TR,
-                           XTN.Subitems (Table));
+               Append_Node_To_List (TR, XTN.Subitems (Table));
             end if;
             S := Next_Node (S);
          end loop;
       end if;
 
       --  Add the table to the main HTML node (<body/>).
-      Append_Node_To_List (Table,
-                           XTN.Subitems (Current_Parent_Node));
+      Append_Node_To_List (Table, XTN.Subitems (Current_Parent_Node));
 
       --  Now, we are enumerating all buses that are used
       --  in the model.
@@ -487,8 +487,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
          H2 := Make_XML_Node ("h2");
 
          Set_Str_To_Name_Buffer
-            ("font-family: Arial;" &
-            "font-weight: bold; font-size: 1.2em");
+           ("font-family: Arial;" & "font-weight: bold; font-size: 1.2em");
          P := Make_Defining_Identifier (Name_Find);
          Set_Str_To_Name_Buffer ("style");
          Q := Make_Defining_Identifier (Name_Find);
@@ -498,8 +497,7 @@ package body Ocarina.Backends.Connection_Matrix.Main is
          N := Make_Defining_Identifier (Name_Find);
          XTN.Set_Node_Value (H2, N);
 
-         Append_Node_To_List (H2,
-                              XTN.Subitems (Current_Parent_Node));
+         Append_Node_To_List (H2, XTN.Subitems (Current_Parent_Node));
 
          --  Add a <ul> node that represent a line.
          UL := Make_XML_Node ("ul");
@@ -511,11 +509,10 @@ package body Ocarina.Backends.Connection_Matrix.Main is
          while Present (S) loop
             if Get_Category_Of_Component (S) = CC_Bus then
                Bus_Instance := Corresponding_Instance (S);
-               LI := Make_XML_Node ("li");
+               LI           := Make_XML_Node ("li");
 
                Set_Str_To_Name_Buffer
-                  ("font-family: Arial;" &
-                  "font-size: 0.8em");
+                 ("font-family: Arial;" & "font-size: 0.8em");
                P := Make_Defining_Identifier (Name_Find);
                Set_Str_To_Name_Buffer ("style");
                Q := Make_Defining_Identifier (Name_Find);
@@ -526,31 +523,40 @@ package body Ocarina.Backends.Connection_Matrix.Main is
 
                --  Try to find the bus properties: bandwidth and latency.
                if Is_Defined_Property
-                  (Bus_Instance, "bus_properties::bandwidth") then
+                   (Bus_Instance,
+                    "bus_properties::bandwidth")
+               then
 
-                  Bandwidth := Get_Integer_Property
-                     (Bus_Instance, "bus_properties::bandwidth");
+                  Bandwidth :=
+                    Get_Integer_Property
+                      (Bus_Instance,
+                       "bus_properties::bandwidth");
 
-                  Bandwidth_Unit := ATN.Name
-                     (ATN.Unit_Identifier
-                        (Get_Value_Of_Property_Association
-                           (Bus_Instance,
-                            Get_String_Name
-                              ("bus_properties::bandwidth"))));
+                  Bandwidth_Unit :=
+                    ATN.Name
+                      (ATN.Unit_Identifier
+                         (Get_Value_Of_Property_Association
+                            (Bus_Instance,
+                             Get_String_Name ("bus_properties::bandwidth"))));
                end if;
 
                if Is_Defined_Property
-                  (Bus_Instance, "bus_properties::max_latency") then
+                   (Bus_Instance,
+                    "bus_properties::max_latency")
+               then
 
-                  Latency := Get_Integer_Property
-                     (Bus_Instance, "bus_properties::max_latency");
+                  Latency :=
+                    Get_Integer_Property
+                      (Bus_Instance,
+                       "bus_properties::max_latency");
 
-                  Latency_Unit := ATN.Name
-                     (ATN.Unit_Identifier
-                        (Get_Value_Of_Property_Association
-                           (Bus_Instance,
-                            Get_String_Name
-                              ("bus_properties::max_latency"))));
+                  Latency_Unit :=
+                    ATN.Name
+                      (ATN.Unit_Identifier
+                         (Get_Value_Of_Property_Association
+                            (Bus_Instance,
+                             Get_String_Name
+                               ("bus_properties::max_latency"))));
                end if;
 
                --  First, display the name of the bus in bold
@@ -558,27 +564,24 @@ package body Ocarina.Backends.Connection_Matrix.Main is
 
                Set_Str_To_Name_Buffer ("<strong>");
                Get_Name_String_And_Append
-                  (Display_Name
-                     (Identifier (Bus_Instance)));
+                 (Display_Name (Identifier (Bus_Instance)));
                Add_Str_To_Name_Buffer ("</strong> (<em>");
 
                --  Then, put its properties between parenthesis.
                if Bandwidth = 0 and then Latency = 0 then
-                  Add_Str_To_Name_Buffer
-                     ("bus properties are not declared");
+                  Add_Str_To_Name_Buffer ("bus properties are not declared");
                end if;
 
                if Bandwidth > 0 then
                   Add_Str_To_Name_Buffer ("bandwidth: ");
                   Add_Str_To_Name_Buffer
-                     (Unsigned_Long_Long'Image (Bandwidth));
+                    (Unsigned_Long_Long'Image (Bandwidth));
                   Get_Name_String_And_Append (Bandwidth_Unit);
                end if;
 
                if Latency > 0 then
                   Add_Str_To_Name_Buffer (" latency: ");
-                  Add_Str_To_Name_Buffer
-                     (Unsigned_Long_Long'Image (Latency));
+                  Add_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Latency));
                   Get_Name_String_And_Append (Latency_Unit);
                end if;
 
@@ -587,14 +590,12 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                N := Make_Defining_Identifier (Name_Find);
                XTN.Set_Node_Value (LI, N);
 
-               Append_Node_To_List (LI,
-                           XTN.Subitems (UL));
+               Append_Node_To_List (LI, XTN.Subitems (UL));
             end if;
             S := Next_Node (S);
          end loop;
 
-         Append_Node_To_List (UL,
-                              XTN.Subitems (Current_Parent_Node));
+         Append_Node_To_List (UL, XTN.Subitems (Current_Parent_Node));
       end if;
 
    end Visit_System_Instance;

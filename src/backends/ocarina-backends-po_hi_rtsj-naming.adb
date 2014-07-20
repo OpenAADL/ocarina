@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -48,7 +48,7 @@ with Ocarina.Backends.RTSJ_Values;
 
 package body Ocarina.Backends.PO_HI_RTSJ.Naming is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -75,10 +75,11 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_Process_Instance (E : Node_Id);
       procedure Visit_Bus_Instance (Bus : Node_Id; E : Node_Id);
-      function  Added_Internal_Name
-        (P : Node_Id; B : Node_Id; E : Node_Id) return Name_Id;
-      function  Is_Added
-        (P : Node_Id; B : Node_Id; E : Node_Id) return Boolean;
+      function Added_Internal_Name
+        (P : Node_Id;
+         B : Node_Id;
+         E : Node_Id) return Name_Id;
+      function Is_Added (P : Node_Id; B : Node_Id; E : Node_Id) return Boolean;
       procedure Set_Added (P : Node_Id; B : Node_Id; E : Node_Id);
       procedure Socket_Naming_Information (E : Node_Id);
 
@@ -92,14 +93,16 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
       -- Added_Internal_Name --
       -------------------------
       function Added_Internal_Name
-        (P : Node_Id; B : Node_Id; E : Node_Id) return Name_Id
+        (P : Node_Id;
+         B : Node_Id;
+         E : Node_Id) return Name_Id
       is
       begin
          Set_Str_To_Name_Buffer ("%naming%info%");
          Add_Nat_To_Name_Buffer (Nat (P));
          Add_Char_To_Name_Buffer ('%');
          Add_Nat_To_Name_Buffer (Nat (B));
-         Add_Char_To_Name_Buffer  ('%');
+         Add_Char_To_Name_Buffer ('%');
          Add_Nat_To_Name_Buffer (Nat (E));
 
          return Name_Find;
@@ -108,7 +111,10 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
       --------------
       -- Is_Added --
       --------------
-      function Is_Added (P : Node_Id; B : Node_Id; E : Node_Id) return Boolean
+      function Is_Added
+        (P : Node_Id;
+         B : Node_Id;
+         E : Node_Id) return Boolean
       is
          I_Name : constant Name_Id := Added_Internal_Name (P, B, E);
       begin
@@ -128,61 +134,65 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
       -- Socket_Naming_Information --
       -------------------------------
       procedure Socket_Naming_Information (E : Node_Id) is
-         Location : Name_Id;
+         Location    : Name_Id;
          Port_Number : Value_Id;
-         L : Node_Id;
-         P : Node_Id;
-         N : Node_Id;
+         L           : Node_Id;
+         P           : Node_Id;
+         N           : Node_Id;
       begin
-         pragma Assert (AINU.IS_Process (E));
+         pragma Assert (AINU.Is_Process (E));
 
-         Location := Get_Location (Get_Bound_Processor (E));
+         Location    := Get_Location (Get_Bound_Processor (E));
          Port_Number := Get_Port_Number (E);
 
          if Location = No_Name then
-            L := Make_Pointed_Notation
-              (Make_Defining_Identifier (ON (O_Utils)),
-               RE (RE_No_Inet_Address));
+            L :=
+              Make_Pointed_Notation
+                (Make_Defining_Identifier (ON (O_Utils)),
+                 RE (RE_No_Inet_Address));
          else
             L := Make_Literal (New_String_Value (Location));
          end if;
 
          if Port_Number = RV.No_Value then
-            P := Make_Pointed_Notation
-              (Make_Defining_Identifier (ON (O_Utils)),
-               RE (RE_No_Port));
+            P :=
+              Make_Pointed_Notation
+                (Make_Defining_Identifier (ON (O_Utils)),
+                 RE (RE_No_Port));
          else
             P := Make_Literal (To_RTSJ_Value (Port_Number));
          end if;
 
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Pointed_Notation
-              (Make_Defining_Identifier (ON (O_Context)),
-               Make_Array_Value
-                 (Defining_Identifier => RE (RE_Nodes_Inet_Address),
-                  Array_Item =>
-                    Make_Pointed_Notation
-                    (Make_Defining_Identifier (ON (O_Deployment)),
-                     Make_Defining_Identifier
-                       (Map_RTSJ_Enumerator_Name
-                          (Parent_Subcomponent (E)))))),
-            Expression => L);
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Pointed_Notation
+                  (Make_Defining_Identifier (ON (O_Context)),
+                   Make_Array_Value
+                     (Defining_Identifier => RE (RE_Nodes_Inet_Address),
+                      Array_Item          =>
+                        Make_Pointed_Notation
+                          (Make_Defining_Identifier (ON (O_Deployment)),
+                           Make_Defining_Identifier
+                             (Map_RTSJ_Enumerator_Name
+                                (Parent_Subcomponent (E)))))),
+              Expression => L);
          RTU.Append_Node_To_List (N, Inetaddress_Enumerator_List);
 
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Pointed_Notation
-              (Make_Defining_Identifier (ON (O_Context)),
-               Make_Array_Value
-                 (Defining_Identifier => RE (RE_Nodes_Inet_Port),
-                  Array_Item =>
-                    Make_Pointed_Notation
-                    (Make_Defining_Identifier (ON (O_Deployment)),
-                     Make_Defining_Identifier
-                       (Map_RTSJ_Enumerator_Name
-                          (Parent_Subcomponent (E)))))),
-            Expression => P);
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Pointed_Notation
+                  (Make_Defining_Identifier (ON (O_Context)),
+                   Make_Array_Value
+                     (Defining_Identifier => RE (RE_Nodes_Inet_Port),
+                      Array_Item          =>
+                        Make_Pointed_Notation
+                          (Make_Defining_Identifier (ON (O_Deployment)),
+                           Make_Defining_Identifier
+                             (Map_RTSJ_Enumerator_Name
+                                (Parent_Subcomponent (E)))))),
+              Expression => P);
          RTU.Append_Node_To_List (N, Inetport_Enumerator_List);
 
          Nb_Nodes := Nb_Nodes + 1;
@@ -217,8 +227,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
       -- Visit_Component_Instance --
       ------------------------------
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -261,43 +271,41 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
             end loop;
          end if;
 
-            Pop_Entity;
+         Pop_Entity;
       end Visit_System_Instance;
 
       ----------------------------
       -- Visit_Process_Instance --
       ----------------------------
       procedure Visit_Process_Instance (E : Node_Id) is
-         P : constant Node_Id := Map_HI_Node (E);
-         U : Node_Id;
-         S : Node_Id;
-         F : Node_Id;
-         N : Node_Id;
-         C : Node_Id;
-         B : Node_Id;
-         C_End : Node_Id;
-         Spec : Node_Id;
-         Impl : Node_Id;
-         Parent : Node_Id;
+         P          : constant Node_Id := Map_HI_Node (E);
+         U          : Node_Id;
+         S          : Node_Id;
+         F          : Node_Id;
+         N          : Node_Id;
+         C          : Node_Id;
+         B          : Node_Id;
+         C_End      : Node_Id;
+         Spec       : Node_Id;
+         Impl       : Node_Id;
+         Parent     : Node_Id;
          Main_Class : Node_Id;
-         Root_Sys : constant Node_Id
-           := Parent_Component (Parent_Subcomponent (E));
-         Platform : constant Supported_Execution_Platform
-           := Get_Execution_Platform (Get_Bound_Processor (E));
-         End_List : List_Id;
-         Method_Statements : constant List_Id := New_List
-           (K_Statement_List);
-         Class_Methods : constant List_Id := New_List
-           (K_Method_List);
-         Transport : Supported_Transport_APIs;
+         Root_Sys   : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
+         Platform : constant Supported_Execution_Platform :=
+           Get_Execution_Platform (Get_Bound_Processor (E));
+         End_List          : List_Id;
+         Method_Statements : constant List_Id := New_List (K_Statement_List);
+         Class_Methods     : constant List_Id := New_List (K_Method_List);
+         Transport         : Supported_Transport_APIs;
       begin
          pragma Assert (AINU.Is_System (Root_Sys));
 
          if Platform = Platform_None then
             Display_Located_Error
               (AIN.Loc (Parent_Subcomponent (E)),
-               "This process subcomponent is bound to a processor without"
-               & " execution platform specification",
+               "This process subcomponent is bound to a processor without" &
+               " execution platform specification",
                Fatal => True);
          end if;
 
@@ -310,14 +318,15 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
          --  Global variables initialization
          Inetport_Enumerator_List    := New_List (K_Enumeration_Literals);
          Inetaddress_Enumerator_List := New_List (K_Enumeration_Literals);
-         Nb_Nodes := 0;
+         Nb_Nodes                    := 0;
 
          --  We go through all bus
          Transport := Transport_None;
 
          S := AIN.First_Node (Subcomponents (Root_Sys));
 
-         Main_Loop : while Present (S) loop
+         Main_Loop :
+         while Present (S) loop
             if AINU.Is_Bus (Corresponding_Instance (S)) then
                if not AINU.Is_Empty (Features (E)) then
                   F := AIN.First_Node (Features (E));
@@ -348,7 +357,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
                                    and then B = Corresponding_Instance (S)
                                  then
                                     Visit_Bus_Instance
-                                      (Corresponding_Instance (S), E);
+                                      (Corresponding_Instance (S),
+                                       E);
                                     if Transport /= Transport_User
                                       and then Transport /= Transport_None
                                     then
@@ -376,57 +386,65 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
          end loop Main_Loop;
 
          --  nodesInetAddress declaration
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Pointed_Notation
-              (Make_Defining_Identifier (ON (O_Context)),
-               RE (RE_Nodes_Inet_Address)),
-            Expression =>
-              Make_New_Statement
-              (Defining_Identifier => New_Node (K_String),
-               Parameters => Make_List_Id
-                 (Make_Literal (New_Int_Value (Nb_Nodes, 0, 100))),
-               Is_Array => True));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Pointed_Notation
+                  (Make_Defining_Identifier (ON (O_Context)),
+                   RE (RE_Nodes_Inet_Address)),
+              Expression =>
+                Make_New_Statement
+                  (Defining_Identifier => New_Node (K_String),
+                   Parameters          =>
+                     Make_List_Id
+                       (Make_Literal (New_Int_Value (Nb_Nodes, 0, 100))),
+                   Is_Array => True));
 
-         N := Make_Full_Array_Declaration
-           (Array_Declaration => N,
-            Array_Assignments => Inetaddress_Enumerator_List);
+         N :=
+           Make_Full_Array_Declaration
+             (Array_Declaration => N,
+              Array_Assignments => Inetaddress_Enumerator_List);
          RTU.Append_Node_To_List (N, Method_Statements);
 
          --  nodesInetPort declaration
-         N := Make_Assignment_Statement
-           (Defining_Identifier =>
-              Make_Pointed_Notation
-              (Make_Defining_Identifier (ON (O_Context)),
-               RE (RE_Nodes_Inet_Port)),
-            Expression =>
-              Make_New_Statement
-              (Defining_Identifier => New_Node (K_Int),
-               Parameters => Make_List_Id
-                 (Make_Literal (New_Int_Value (Nb_Nodes, 0, 10))),
-               Is_Array => True));
+         N :=
+           Make_Assignment_Statement
+             (Defining_Identifier =>
+                Make_Pointed_Notation
+                  (Make_Defining_Identifier (ON (O_Context)),
+                   RE (RE_Nodes_Inet_Port)),
+              Expression =>
+                Make_New_Statement
+                  (Defining_Identifier => New_Node (K_Int),
+                   Parameters          =>
+                     Make_List_Id
+                       (Make_Literal (New_Int_Value (Nb_Nodes, 0, 10))),
+                   Is_Array => True));
 
-         N := Make_Full_Array_Declaration
-           (Array_Declaration => N,
-            Array_Assignments => Inetport_Enumerator_List);
+         N :=
+           Make_Full_Array_Declaration
+             (Array_Declaration => N,
+              Array_Assignments => Inetport_Enumerator_List);
          RTU.Append_Node_To_List (N, Method_Statements);
 
-         Spec := Make_Function_Specification
-           (Visibility => Make_List_Id (RE (RE_Public),
-                                        RE (RE_Static)),
-            Defining_Identifier => Make_Defining_Identifier
-              (MN (M_Initialization)),
-            Return_Type => New_Node (K_Void));
+         Spec :=
+           Make_Function_Specification
+             (Visibility => Make_List_Id (RE (RE_Public), RE (RE_Static)),
+              Defining_Identifier =>
+                Make_Defining_Identifier (MN (M_Initialization)),
+              Return_Type => New_Node (K_Void));
 
-         Impl := Make_Function_Implementation
-           (Specification => Spec,
-             Statements => Method_Statements);
+         Impl :=
+           Make_Function_Implementation
+             (Specification => Spec,
+              Statements    => Method_Statements);
          RTU.Append_Node_To_List (Impl, Class_Methods);
 
-         Main_Class := Make_Class_Statement
-           (Visibility => Make_List_Id (RE (RE_Public)),
-            Defining_Identifier => Make_Defining_Identifier (ON (O_Naming)),
-            Methods => Class_Methods);
+         Main_Class :=
+           Make_Class_Statement
+             (Visibility          => Make_List_Id (RE (RE_Public)),
+              Defining_Identifier => Make_Defining_Identifier (ON (O_Naming)),
+              Methods             => Class_Methods);
          RTU.Append_Node_To_List (Main_Class, RTN.Statements (Current_File));
 
          Pop_Entity;
@@ -437,15 +455,15 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
       -- Visit_Bus_Instance --
       ------------------------
       procedure Visit_Bus_Instance (Bus : Node_Id; E : Node_Id) is
-         S : Node_Id;
-         F : Node_Id;
-         B : Node_Id;
-         C : Node_Id;
-         C_End : Node_Id;
-         Parent : Node_Id;
+         S        : Node_Id;
+         F        : Node_Id;
+         B        : Node_Id;
+         C        : Node_Id;
+         C_End    : Node_Id;
+         Parent   : Node_Id;
          End_List : List_Id;
-         Root_Sys : constant Node_Id
-           := Parent_Component (Parent_Subcomponent (E));
+         Root_Sys : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
          Transport_API : Supported_Transport_APIs := Transport_None;
       begin
          --  We perform a first loop to designate the nodes to be
@@ -497,14 +515,15 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
                            --  verify that all the features use
                            --  the same transport layer for their
                            --  connections
-                           if Transport_API /= Transport_None and then
-                             Transport_API /= Get_Transport_APi (B, E) then
+                           if Transport_API /= Transport_None
+                             and then Transport_API /= Get_Transport_API (B, E)
+                           then
                               Display_Located_Error
                                 (AIN.Loc (Parent_Subcomponent (E)),
-                                 "The features of this process are involved"
-                                   & " in connections that do not use the same"
-                                   & "transport layer. This is not supported"
-                                   & " yet.",
+                                 "The features of this process are involved" &
+                                 " in connections that do not use the same" &
+                                 "transport layer. This is not supported" &
+                                 " yet.",
                                  Fatal => True);
                            else
                               Transport_API := Get_Transport_API (B, E);
@@ -515,8 +534,8 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
                               if Transport_API = Transport_None then
                                  Display_Located_Error
                                    (AIN.Loc (B),
-                                    "No transport layer has been specified"
-                                      & " for this bus.",
+                                    "No transport layer has been specified" &
+                                    " for this bus.",
                                     Fatal => True);
                               end if;
                            end if;
@@ -548,8 +567,7 @@ package body Ocarina.Backends.PO_HI_RTSJ.Naming is
                   if AINU.Is_Process (Corresponding_Instance (S))
                     and then Is_Added (Corresponding_Instance (S), Bus, E)
                   then
-                     Socket_Naming_Information
-                       (Corresponding_Instance (S));
+                     Socket_Naming_Information (Corresponding_Instance (S));
                   end if;
 
                   S := AIN.Next_Node (S);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,59 +35,48 @@ with Ocarina.Backends.Ada_Tree.Nodes; use Ocarina.Backends.Ada_Tree.Nodes;
 
 package Ocarina.Backends.Ada_Values is
 
-   type Value_Type (K : Node_Kind := K_Boolean) is
-      record
-         case K is
-            when K_Integer
-              | K_Boolean =>
-               IVal : Unsigned_Long_Long;
-               Sign : Short_Short;
-               Base : Unsigned_Short_Short;
+   type Value_Type (K : Node_Kind := K_Boolean) is record
+      case K is
+         when K_Integer | K_Boolean =>
+            IVal : Unsigned_Long_Long;
+            Sign : Short_Short;
+            Base : Unsigned_Short_Short;
 
-            when K_Float =>
-               FVal : Long_Double;
+         when K_Float =>
+            FVal : Long_Double;
 
-            when K_String | K_Wide_String =>
-               SVal : Name_Id;
+         when K_String | K_Wide_String =>
+            SVal : Name_Id;
 
-            when K_Character | K_Wide_Character =>
-               CVal : Unsigned_Short;
+         when K_Character | K_Wide_Character =>
+            CVal : Unsigned_Short;
 
-            when others =>
-               null;
-         end case;
-      end record;
+         when others =>
+            null;
+      end case;
+   end record;
 
    Bad_Value : constant Value_Type;
-   No_Value  : constant Value_Id;
+   No_Value : constant Value_Id;
 
-   function New_Boolean_Value
-     (Value : Boolean)
-     return Value_Id;
+   function New_Boolean_Value (Value : Boolean) return Value_Id;
 
-   function New_Floating_Point_Value
-     (Value : Long_Double)
-     return Value_Id;
+   function New_Floating_Point_Value (Value : Long_Double) return Value_Id;
 
    function New_Integer_Value
      (Value : Unsigned_Long_Long;
       Sign  : Short_Short;
-      Base  : Unsigned_Short_Short)
-     return Value_Id;
+      Base  : Unsigned_Short_Short) return Value_Id;
 
    function New_String_Value
      (Value : Name_Id;
-      Wide  : Boolean := False)
-     return Value_Id;
+      Wide  : Boolean := False) return Value_Id;
 
    function New_Character_Value
      (Value : Unsigned_Short;
-      Wide  : Boolean        := False)
-     return Value_Id;
+      Wide  : Boolean := False) return Value_Id;
 
-   function New_Value
-     (Value : Value_Type)
-     return Value_Id;
+   function New_Value (Value : Value_Type) return Value_Id;
 
    function Value (V : Value_Id) return Value_Type;
    procedure Set_Value (V : Value_Id; X : Value_Type);
@@ -98,19 +87,19 @@ package Ocarina.Backends.Ada_Values is
    --  Converts an AADL value to and Ada one
 
    function "not" (R : Value_Type) return Value_Type;
-   function "-"   (R : Value_Type) return Value_Type;
-   function "-"   (L, R : Value_Type) return Value_Type;
-   function "+"   (L, R : Value_Type) return Value_Type;
+   function "-" (R : Value_Type) return Value_Type;
+   function "-" (L, R : Value_Type) return Value_Type;
+   function "+" (L, R : Value_Type) return Value_Type;
    function "mod" (L, R : Value_Type) return Value_Type;
-   function "/"   (L, R : Value_Type) return Value_Type;
-   function "*"   (L, R : Value_Type) return Value_Type;
+   function "/" (L, R : Value_Type) return Value_Type;
+   function "*" (L, R : Value_Type) return Value_Type;
    function "and" (L, R : Value_Type) return Value_Type;
-   function "or"  (L, R : Value_Type) return Value_Type;
+   function "or" (L, R : Value_Type) return Value_Type;
    function "xor" (L, R : Value_Type) return Value_Type;
-   function Shift_Left  (L, R : Value_Type) return Value_Type;
+   function Shift_Left (L, R : Value_Type) return Value_Type;
    function Shift_Right (L, R : Value_Type) return Value_Type;
 
-   function "<"   (L, R : Value_Type) return Boolean;
+   function "<" (L, R : Value_Type) return Boolean;
    --  Assume L and R have the same type.
 
    procedure Reset;
@@ -119,6 +108,6 @@ package Ocarina.Backends.Ada_Values is
 private
 
    Bad_Value : constant Value_Type := Value_Type'((K => K_Node_Id));
-   No_Value  : constant Value_Id := 0;
+   No_Value  : constant Value_Id   := 0;
 
 end Ocarina.Backends.Ada_Values;

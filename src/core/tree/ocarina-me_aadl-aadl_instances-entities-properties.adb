@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Charset;
 with Utils;
 
@@ -39,9 +39,9 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
-package body Ocarina.Me_AADL.AADL_Instances.Entities.Properties is
+package body Ocarina.ME_AADL.AADL_Instances.Entities.Properties is
 
-   use Namet;
+   use Ocarina.Namet;
    use Charset;
    use Utils;
 
@@ -57,29 +57,30 @@ package body Ocarina.Me_AADL.AADL_Instances.Entities.Properties is
    ---------------------------------------
 
    function Get_Value_Of_Property_Association
-     (Property : Node_Id)
-     return Value_Type
+     (Property : Node_Id) return Value_Type
    is
       pragma Assert (Kind (Property) = K_Property_Association_Instance);
       pragma Assert
-        (ATN.Kind (Single_Value
-                     (AIN.Property_Association_Value (Property))) = K_Literal
+        (ATN.Kind (Single_Value (AIN.Property_Association_Value (Property))) =
+         K_Literal
          or else
-         ATN.Kind (Number_Value (Single_Value (AIN.Property_Association_Value
-                                           (Property)))) = K_Literal);
+           ATN.Kind
+             (Number_Value
+                (Single_Value (AIN.Property_Association_Value (Property)))) =
+           K_Literal);
    begin
-      if ATN.Kind (Single_Value
-               (AIN.Property_Association_Value (Property))) = K_Literal
+      if ATN.Kind (Single_Value (AIN.Property_Association_Value (Property))) =
+        K_Literal
       then
          return Get_Value_Type
-           (Value (Single_Value (AIN.Property_Association_Value (Property))));
+             (Value
+                (Single_Value (AIN.Property_Association_Value (Property))));
       else
          return Get_Value_Type
-           (Value
-            (Number_Value
-             (Single_Value
-              (AIN.Property_Association_Value
-               (Property)))));
+             (Value
+                (Number_Value
+                   (Single_Value
+                      (AIN.Property_Association_Value (Property)))));
       end if;
    end Get_Value_Of_Property_Association;
 
@@ -90,8 +91,7 @@ package body Ocarina.Me_AADL.AADL_Instances.Entities.Properties is
    function Find_Property_Association_From_Name
      (Property_List : List_Id;
       Property_Name : Name_Id;
-      In_Mode       : Name_Id := No_Name)
-     return Node_Id
+      In_Mode       : Name_Id := No_Name) return Node_Id
    is
       List_Node     : Node_Id;
       M             : Node_Id;
@@ -137,8 +137,8 @@ package body Ocarina.Me_AADL.AADL_Instances.Entities.Properties is
                         --   Mode_Name := ATN.Name (ATN.Identifier (M));
 
                         when K_Node_Container =>
-                           Mode_Name := AIN.Name (AIN.Identifier
-                                                    (AIN.Item (M)));
+                           Mode_Name :=
+                             AIN.Name (AIN.Identifier (AIN.Item (M)));
 
                         when others =>
                            raise Program_Error;
@@ -167,8 +167,7 @@ package body Ocarina.Me_AADL.AADL_Instances.Entities.Properties is
    function Find_Property_Association_From_Name
      (Property_List : List_Id;
       Property_Name : String;
-      In_Mode       : Name_Id := No_Name)
-     return Node_Id
+      In_Mode       : Name_Id := No_Name) return Node_Id
    is
       Name : Name_Id;
    begin
@@ -176,7 +175,9 @@ package body Ocarina.Me_AADL.AADL_Instances.Entities.Properties is
       Name := Name_Find;
 
       return Find_Property_Association_From_Name
-        (Property_List, Name, In_Mode);
+          (Property_List,
+           Name,
+           In_Mode);
    end Find_Property_Association_From_Name;
 
    --------------------------------
@@ -201,8 +202,8 @@ package body Ocarina.Me_AADL.AADL_Instances.Entities.Properties is
    --            return Multi_Value
    --              (Property_Association_Value (Property)) /= No_List;
 
-               --  If the property value has not been expanded yet, we
-               --  use the raw property value.
+   --  If the property value has not been expanded yet, we
+   --  use the raw property value.
    --        else
    --                        return Expanded_Multi_Value
    --              (Property_Association_Value (Property)) /= No_List;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;  use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.AADL_Values;
 
 with GNAT.Table;
@@ -40,10 +40,9 @@ package body Ocarina.Backends.XML_Values is
 
    package OV renames Ocarina.AADL_Values;
 
-   Hex      : constant String := "0123456789ABCDEF";
+   Hex : constant String := "0123456789ABCDEF";
 
-   package VT is
-      new GNAT.Table (Value_Type, Value_Id, No_Value + 1, 10, 10);
+   package VT is new GNAT.Table (Value_Type, Value_Id, No_Value + 1, 10, 10);
 
    subtype ULL is Unsigned_Long_Long;
 
@@ -53,8 +52,7 @@ package body Ocarina.Backends.XML_Values is
    -- "*" --
    ---------
 
-   function "*" (L, R : Value_Type) return Value_Type
-   is
+   function "*" (L, R : Value_Type) return Value_Type is
       V : Value_Type := L;
    begin
       case V.K is
@@ -75,9 +73,8 @@ package body Ocarina.Backends.XML_Values is
    -- "+" --
    ---------
 
-   function "+" (L, R : Value_Type) return Value_Type
-   is
-      V  : Value_Type := R;
+   function "+" (L, R : Value_Type) return Value_Type is
+      V : Value_Type := R;
    begin
       case R.K is
          when K_Numeric =>
@@ -105,8 +102,7 @@ package body Ocarina.Backends.XML_Values is
    -- "-" --
    ---------
 
-   function "-" (R : Value_Type) return Value_Type
-   is
+   function "-" (R : Value_Type) return Value_Type is
       V : Value_Type := R;
    begin
       case R.K is
@@ -124,8 +120,7 @@ package body Ocarina.Backends.XML_Values is
    -- "-" --
    ---------
 
-   function "-" (L, R : Value_Type) return Value_Type
-   is
+   function "-" (L, R : Value_Type) return Value_Type is
       V : Value_Type := R;
    begin
       case R.K is
@@ -143,9 +138,8 @@ package body Ocarina.Backends.XML_Values is
    -- "/" --
    ---------
 
-   function "/" (L, R : Value_Type) return Value_Type
-   is
-      V  : Value_Type := L;
+   function "/" (L, R : Value_Type) return Value_Type is
+      V : Value_Type := L;
    begin
       case V.K is
          when K_Numeric =>
@@ -191,8 +185,7 @@ package body Ocarina.Backends.XML_Values is
    -- "and" --
    -----------
 
-   function "and" (L, R : Value_Type) return Value_Type
-   is
+   function "and" (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -220,8 +213,7 @@ package body Ocarina.Backends.XML_Values is
    -- "mod" --
    -----------
 
-   function "mod" (L, R : Value_Type) return Value_Type
-   is
+   function "mod" (L, R : Value_Type) return Value_Type is
       V : Value_Type := L;
    begin
       case L.K is
@@ -242,8 +234,7 @@ package body Ocarina.Backends.XML_Values is
    -- "not" --
    -----------
 
-   function "not" (R : Value_Type) return Value_Type
-   is
+   function "not" (R : Value_Type) return Value_Type is
       V : Value_Type := R;
    begin
       case V.K is
@@ -260,8 +251,7 @@ package body Ocarina.Backends.XML_Values is
    -- "or" --
    ----------
 
-   function "or" (L, R : Value_Type) return Value_Type
-   is
+   function "or" (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -289,8 +279,7 @@ package body Ocarina.Backends.XML_Values is
    -- "xor" --
    -----------
 
-   function "xor" (L, R : Value_Type) return Value_Type
-   is
+   function "xor" (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -318,8 +307,7 @@ package body Ocarina.Backends.XML_Values is
    -- Add_ULL_To_Name_Buffer --
    ----------------------------
 
-   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1)
-   is
+   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1) is
       Q : constant ULL := U / B;
       R : constant ULL := U mod B;
    begin
@@ -333,14 +321,13 @@ package body Ocarina.Backends.XML_Values is
    -- Image --
    -----------
 
-   function Image (Value : Value_Id) return String
-   is
+   function Image (Value : Value_Id) return String is
       V : Value_Type;
    begin
       if Value = No_Value then
          return "<>";
       end if;
-      V := VT.Table (Value);
+      V        := VT.Table (Value);
       Name_Len := 0;
       case V.K is
 
@@ -430,8 +417,8 @@ package body Ocarina.Backends.XML_Values is
    function New_Numeric_Value
      (Value : Unsigned_Long_Long;
       Sign  : Short_Short;
-      Base  : Unsigned_Short_Short)
-     return Value_Id is
+      Base  : Unsigned_Short_Short) return Value_Id
+   is
    begin
       return New_Value (Value_Type'(K_Numeric, Value, Sign, Base));
    end New_Numeric_Value;
@@ -440,12 +427,11 @@ package body Ocarina.Backends.XML_Values is
    -- New_Value --
    ---------------
 
-   function New_Value (Value : Value_Type) return Value_Id
-   is
+   function New_Value (Value : Value_Type) return Value_Id is
       V : Value_Id;
    begin
       VT.Increment_Last;
-      V := VT.Last;
+      V            := VT.Last;
       VT.Table (V) := Value;
       return V;
    end New_Value;
@@ -454,9 +440,7 @@ package body Ocarina.Backends.XML_Values is
    -- New_Floating_Point_Value --
    ------------------------------
 
-   function New_Floating_Point_Value
-     (Value : Long_Double)
-     return Value_Id is
+   function New_Floating_Point_Value (Value : Long_Double) return Value_Id is
    begin
       return New_Value (Value_Type'(K_Float, Value));
    end New_Floating_Point_Value;
@@ -474,8 +458,7 @@ package body Ocarina.Backends.XML_Values is
    -- Shift_Left --
    ----------------
 
-   function Shift_Left (L, R : Value_Type) return Value_Type
-   is
+   function Shift_Left (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -500,8 +483,7 @@ package body Ocarina.Backends.XML_Values is
    -- Shift_Right --
    -----------------
 
-   function Shift_Right (L, R : Value_Type) return Value_Type
-   is
+   function Shift_Right (L, R : Value_Type) return Value_Type is
       LV : Value_Type := L;
       RV : Value_Type := R;
    begin
@@ -522,9 +504,7 @@ package body Ocarina.Backends.XML_Values is
       end case;
    end Shift_Right;
 
-   function New_String_Value
-     (Value : Name_Id)
-     return Value_Id is
+   function New_String_Value (Value : Name_Id) return Value_Id is
    begin
       return New_Value (Value_Type'(K_String, Value));
    end New_String_Value;

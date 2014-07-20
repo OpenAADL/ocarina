@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,23 +37,23 @@ with Locations;
 with Types;
 
 package Lexer is
-pragma Elaborate_Body (Lexer);
+   pragma Elaborate_Body (Lexer);
 
    type Token_Type is
      (T_Error,
       T_Identifier,
 
-      --  About basic keywords
+   --  About basic keywords
 
       T_Interface,               --  First keyword
       T_Module,
       T_Typedef,
 
-      --  About attributes
+   --  About attributes
 
       T_Attribute,
 
-      --  Basic types
+   --  Basic types
 
       T_Short,
       T_Long,
@@ -61,7 +61,7 @@ pragma Elaborate_Body (Lexer);
       T_Boolean,
       T_Octet,                   --  Last keyword
 
-      --  Graphic characters
+   --  Graphic characters
 
       T_Colon,
       T_Comma,
@@ -82,8 +82,7 @@ pragma Elaborate_Body (Lexer);
 
    type Token_List_Type is array (Positive range <>) of Token_Type;
 
-   subtype Keyword_Type is Token_Type
-     range T_Interface .. T_Octet;
+   subtype Keyword_Type is Token_Type range T_Interface .. T_Octet;
 
    Token          : Token_Type;
    Token_Name     : Types.Name_Id;
@@ -160,9 +159,7 @@ private
    --  Scan token but do not report any error and do not fail on minor
    --  errors like detecting a string which appears to be a wide string.
 
-   procedure New_Token
-     (Token : Token_Type;
-      Image : String);
+   procedure New_Token (Token : Token_Type; Image : String);
    --  Evaluate token image and store it in Token_Image table. When
    --  Token is a graphical character, embrace its image between
    --  single quotes ('<<' and '>>' are considered as graphical

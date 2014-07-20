@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,14 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 with Locations;
 
 with Ocarina.ME_AADL_BA;
 
-package Ocarina.Builder.AADL_BA.Expressions is
+package Ocarina.Builder.Aadl_Ba.Expressions is
 
-   use Types;
+   use Ocarina.Types;
    use Locations;
    use Ocarina.ME_AADL_BA;
 
@@ -46,36 +46,31 @@ package Ocarina.Builder.AADL_BA.Expressions is
      (Loc          : Location;
       Container    : Node_Id;
       Ident        : Node_Id;
-      Target_Node  : Node_Id  := No_Node;
-      Is_A_Count   : Boolean  := False;
-      Is_A_Fresh   : Boolean  := False;
-      Is_A_Interro : Boolean  := False)
-     return Node_Id;
+      Target_Node  : Node_Id := No_Node;
+      Is_A_Count   : Boolean := False;
+      Is_A_Fresh   : Boolean := False;
+      Is_A_Interro : Boolean := False) return Node_Id;
 
    function Add_New_Value_Expression
      (Loc           : Location;
       Container     : Node_Id;
-      Relation_List : List_Id)
-     return Node_Id;
+      Relation_List : List_Id) return Node_Id;
 
    function Add_New_Relation
      (Loc           : Location;
       Container     : Node_Id;
       Bool_Value    : Boolean;
-      Spl_Expr_List : List_Id   := No_List)
-     return Node_Id;
+      Spl_Expr_List : List_Id := No_List) return Node_Id;
 
    function Add_New_Simple_Expression
      (Loc              : Location;
       Container        : Node_Id;
-      Simple_Expr_List : List_Id)
-     return Node_Id;
+      Simple_Expr_List : List_Id) return Node_Id;
 
    function Add_New_Term
      (Loc         : Location;
       Container   : Node_Id;
-      Factor_List : List_Id)
-     return Node_Id;
+      Factor_List : List_Id) return Node_Id;
 
    function Add_New_Factor
      (Loc         : Location;
@@ -83,40 +78,34 @@ package Ocarina.Builder.AADL_BA.Expressions is
       Is_Abs_Bool : Boolean;
       Is_Not_Bool : Boolean;
       Low_Primary : Node_Id;
-      Upp_Primary : Node_Id)
-     return Node_Id;
+      Upp_Primary : Node_Id) return Node_Id;
 
    function Add_New_Property_Constant
      (Loc             : Location;
       Container       : Node_Id;
       Property_Set_Id : Node_Id;
-      Property_Cst_Id : Node_Id)
-     return Node_Id;
+      Property_Cst_Id : Node_Id) return Node_Id;
 
    function Add_New_Integer_Range
      (Loc         : Location;
       Container   : Node_Id;
       Lower_Bound : Node_Id;
-      Upper_Bound : Node_Id)
-     return Node_Id;
+      Upper_Bound : Node_Id) return Node_Id;
 
    function Add_New_Integer_Value
      (Loc         : Location;
       Container   : Node_Id;
-      Entity_Node : Node_Id)
-     return Node_Id;
+      Entity_Node : Node_Id) return Node_Id;
 
    function Add_New_Behavior_Time
      (Loc         : Location;
       Container   : Node_Id;
       Integer_Val : Node_Id;
-      Unit_Ident  : Node_Id)
-     return Node_Id;
+      Unit_Ident  : Node_Id) return Node_Id;
 
    function Add_New_Operator
      (Loc         : Location;
       Container   : Node_Id;
-      Operat_Kind : Operator_Kind)
-     return Node_Id;
+      Operat_Kind : Operator_Kind) return Node_Id;
 
-end Ocarina.Builder.AADL_BA.Expressions;
+end Ocarina.Builder.Aadl_Ba.Expressions;

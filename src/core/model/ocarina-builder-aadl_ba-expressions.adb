@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,7 +34,7 @@
 with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
-package body Ocarina.Builder.AADL_BA.Expressions is
+package body Ocarina.Builder.Aadl_Ba.Expressions is
 
    use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
@@ -47,20 +47,22 @@ package body Ocarina.Builder.AADL_BA.Expressions is
      (Loc          : Location;
       Container    : Node_Id;
       Ident        : Node_Id;
-      Target_Node  : Node_Id  := No_Node;
-      Is_A_Count   : Boolean  := False;
-      Is_A_Fresh   : Boolean  := False;
-      Is_A_Interro : Boolean  := False)
-     return Node_Id
+      Target_Node  : Node_Id := No_Node;
+      Is_A_Count   : Boolean := False;
+      Is_A_Fresh   : Boolean := False;
+      Is_A_Interro : Boolean := False) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Factor
-                       or else Kind (Container) = K_Integer_Value);
-      pragma Assert (Kind (Ident) = K_Id
-                       or else Kind (Ident) = K_Data_Component_Reference);
-      pragma Assert (No (Target_Node)
-                      or else Kind (Target_Node) = K_Id
-                      or else Kind (Target_Node) = K_Data_Component_Reference);
+      pragma Assert
+        (No (Container)
+         or else Kind (Container) = K_Factor
+         or else Kind (Container) = K_Integer_Value);
+      pragma Assert
+        (Kind (Ident) = K_Id
+         or else Kind (Ident) = K_Data_Component_Reference);
+      pragma Assert
+        (No (Target_Node)
+         or else Kind (Target_Node) = K_Id
+         or else Kind (Target_Node) = K_Data_Component_Reference);
 
       Value_Holder : constant Node_Id := New_Node (K_Value_Holder, Loc);
    begin
@@ -90,12 +92,12 @@ package body Ocarina.Builder.AADL_BA.Expressions is
    function Add_New_Value_Expression
      (Loc           : Location;
       Container     : Node_Id;
-      Relation_List : List_Id)
-     return Node_Id
+      Relation_List : List_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Factor
-                       or else Kind (Container) = K_Assignment_Action);
+      pragma Assert
+        (No (Container)
+         or else Kind (Container) = K_Factor
+         or else Kind (Container) = K_Assignment_Action);
       pragma Assert (not Is_Empty (Relation_List));
 
       Value_Expr : constant Node_Id := New_Node (K_Value_Expression, Loc);
@@ -126,11 +128,10 @@ package body Ocarina.Builder.AADL_BA.Expressions is
      (Loc           : Location;
       Container     : Node_Id;
       Bool_Value    : Boolean;
-      Spl_Expr_List : List_Id   := No_List)
-     return Node_Id
+      Spl_Expr_List : List_Id := No_List) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Value_Expression);
+      pragma Assert
+        (No (Container) or else Kind (Container) = K_Value_Expression);
 
       Relation_Node : constant Node_Id := New_Node (K_Relation, Loc);
       List_Node     : Node_Id;
@@ -144,7 +145,7 @@ package body Ocarina.Builder.AADL_BA.Expressions is
       Set_Simple_Exprs (Relation_Node, Spl_Expr_List);
       if not Is_Empty (Simple_Exprs (Relation_Node))
         and then Present (Container)
-      --  fixme : todo check when container is No_Node
+         --  fixme : todo check when container is No_Node
       then
          List_Node := First_Node (Simple_Exprs (Relation_Node));
          while Present (List_Node) loop
@@ -165,11 +166,9 @@ package body Ocarina.Builder.AADL_BA.Expressions is
    function Add_New_Simple_Expression
      (Loc              : Location;
       Container        : Node_Id;
-      Simple_Expr_List : List_Id)
-     return Node_Id
+      Simple_Expr_List : List_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                     or else Kind (Container) = K_Relation);
+      pragma Assert (No (Container) or else Kind (Container) = K_Relation);
       pragma Assert (not Is_Empty (Simple_Expr_List));
 
       Simple_Expr : constant Node_Id := New_Node (K_Simple_Expression, Loc);
@@ -200,15 +199,14 @@ package body Ocarina.Builder.AADL_BA.Expressions is
    function Add_New_Term
      (Loc         : Location;
       Container   : Node_Id;
-      Factor_List : List_Id)
-     return Node_Id
+      Factor_List : List_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                     or else Kind (Container) = K_Simple_Expression);
+      pragma Assert
+        (No (Container) or else Kind (Container) = K_Simple_Expression);
       pragma Assert (not Is_Empty (Factor_List));
 
       Term_Node : constant Node_Id := New_Node (K_Term, Loc);
-      List_Node   : Node_Id;
+      List_Node : Node_Id;
    begin
       if Present (Container) then
          Set_BE_Container (Term_Node, Container);
@@ -238,25 +236,25 @@ package body Ocarina.Builder.AADL_BA.Expressions is
       Is_Abs_Bool : Boolean;
       Is_Not_Bool : Boolean;
       Low_Primary : Node_Id;
-      Upp_Primary : Node_Id)
-     return Node_Id
+      Upp_Primary : Node_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                     or else Kind (Container) = K_Term);
+      pragma Assert (No (Container) or else Kind (Container) = K_Term);
 
-      pragma Assert (Kind (Low_Primary) = K_Identifier
-                     or else Kind (Low_Primary) = K_Value_Holder
-                     or else Kind (Low_Primary) = K_Literal
-                     or else Kind (Low_Primary) = K_Boolean_Literal
-                     or else Kind (Low_Primary) = K_Property_Constant
-                     or else Kind (Low_Primary) = K_Value_Expression);
+      pragma Assert
+        (Kind (Low_Primary) = K_Identifier
+         or else Kind (Low_Primary) = K_Value_Holder
+         or else Kind (Low_Primary) = K_Literal
+         or else Kind (Low_Primary) = K_Boolean_Literal
+         or else Kind (Low_Primary) = K_Property_Constant
+         or else Kind (Low_Primary) = K_Value_Expression);
 
-      pragma Assert (No (Upp_Primary)
-                     or else Kind (Upp_Primary) = K_Identifier
-                     or else Kind (Upp_Primary) = K_Literal
-                     or else Kind (Upp_Primary) = K_Boolean_Literal
-                     or else Kind (Upp_Primary) = K_Property_Constant
-                     or else Kind (Upp_Primary) = K_Value_Expression);
+      pragma Assert
+        (No (Upp_Primary)
+         or else Kind (Upp_Primary) = K_Identifier
+         or else Kind (Upp_Primary) = K_Literal
+         or else Kind (Upp_Primary) = K_Boolean_Literal
+         or else Kind (Upp_Primary) = K_Property_Constant
+         or else Kind (Upp_Primary) = K_Value_Expression);
 
       Factor_Node : constant Node_Id := New_Node (K_Factor, Loc);
    begin
@@ -287,16 +285,15 @@ package body Ocarina.Builder.AADL_BA.Expressions is
      (Loc             : Location;
       Container       : Node_Id;
       Property_Set_Id : Node_Id;
-      Property_Cst_Id : Node_Id)
-     return Node_Id
+      Property_Cst_Id : Node_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Factor
-                       or else Kind (Container) = K_Integer_Value);
+      pragma Assert
+        (No (Container)
+         or else Kind (Container) = K_Factor
+         or else Kind (Container) = K_Integer_Value);
       pragma Assert (Kind (Property_Cst_Id) = K_Identifier);
 
-      Property_Cst : constant Node_Id := New_Node (K_Property_Constant,
-                                                   Loc);
+      Property_Cst : constant Node_Id := New_Node (K_Property_Constant, Loc);
    begin
       if Present (Container) then
          Set_BE_Container (Property_Cst, Container);
@@ -322,11 +319,9 @@ package body Ocarina.Builder.AADL_BA.Expressions is
      (Loc         : Location;
       Container   : Node_Id;
       Lower_Bound : Node_Id;
-      Upper_Bound : Node_Id)
-     return Node_Id
+      Upper_Bound : Node_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Range);
+      pragma Assert (No (Container) or else Kind (Container) = K_Range);
       Integer_Range : constant Node_Id := New_Node (K_Integer_Range, Loc);
    begin
       if Present (Container) then
@@ -347,13 +342,13 @@ package body Ocarina.Builder.AADL_BA.Expressions is
    function Add_New_Integer_Value
      (Loc         : Location;
       Container   : Node_Id;
-      Entity_Node : Node_Id)
-     return Node_Id
+      Entity_Node : Node_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Integer_Range);
-      pragma Assert (Kind (Entity_Node) = K_Property_Constant
-                       or else Kind (Entity_Node) = K_Literal);
+      pragma Assert
+        (No (Container) or else Kind (Container) = K_Integer_Range);
+      pragma Assert
+        (Kind (Entity_Node) = K_Property_Constant
+         or else Kind (Entity_Node) = K_Literal);
       --  fixme : todo add other entities
 
       Integer_Val : constant Node_Id := New_Node (K_Integer_Value, Loc);
@@ -374,19 +369,16 @@ package body Ocarina.Builder.AADL_BA.Expressions is
    ---------------------------
 
    function Add_New_Behavior_Time
-     (Loc           : Location;
-      Container     : Node_Id;
-      Integer_Val   : Node_Id;
-      Unit_Ident    : Node_Id)
-     return Node_Id
+     (Loc         : Location;
+      Container   : Node_Id;
+      Integer_Val : Node_Id;
+      Unit_Ident  : Node_Id) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Timed_Action);
+      pragma Assert (No (Container) or else Kind (Container) = K_Timed_Action);
       pragma Assert (Kind (Integer_Val) = K_Integer_Value);
       pragma Assert (Kind (Unit_Ident) = K_Identifier);
 
-      Behavior_Time : constant Node_Id := New_Node (K_Behavior_Time,
-                                                    Loc);
+      Behavior_Time : constant Node_Id := New_Node (K_Behavior_Time, Loc);
    begin
       if Present (Container) then
          Set_BE_Container (Behavior_Time, Container);
@@ -408,14 +400,14 @@ package body Ocarina.Builder.AADL_BA.Expressions is
    function Add_New_Operator
      (Loc         : Location;
       Container   : Node_Id;
-      Operat_Kind : Operator_Kind)
-     return Node_Id
+      Operat_Kind : Operator_Kind) return Node_Id
    is
-      pragma Assert (No (Container)
-                       or else Kind (Container) = K_Term
-                       or else Kind (Container) = K_Relation
-                       or else Kind (Container) = K_Value_Expression
-                       or else Kind (Container) = K_Simple_Expression);
+      pragma Assert
+        (No (Container)
+         or else Kind (Container) = K_Term
+         or else Kind (Container) = K_Relation
+         or else Kind (Container) = K_Value_Expression
+         or else Kind (Container) = K_Simple_Expression);
 
       Operator_Node : constant Node_Id := New_Node (K_Operator, Loc);
    begin
@@ -423,11 +415,10 @@ package body Ocarina.Builder.AADL_BA.Expressions is
          Set_BE_Container (Operator_Node, Container);
       end if;
 
-      Set_Operator_Category (Operator_Node,
-                             Operator_Kind'Pos (Operat_Kind));
+      Set_Operator_Category (Operator_Node, Operator_Kind'Pos (Operat_Kind));
 
       return Operator_Node;
 
    end Add_New_Operator;
 
-end Ocarina.Builder.AADL_Ba.Expressions;
+end Ocarina.Builder.Aadl_Ba.Expressions;

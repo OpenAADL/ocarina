@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -56,12 +56,12 @@ package body Ocarina.Instances.Namespaces is
 
    function Instantiate_Namespace
      (Instance_Root : Node_Id;
-      Namespace     : Node_Id)
-     return Node_Id
+      Namespace     : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Instance_Root) = K_Architecture_Instance);
-      pragma Assert (Kind (Namespace) = K_Package_Specification
-                     or else Kind (Namespace) = K_AADL_Specification);
+      pragma Assert
+        (Kind (Namespace) = K_Package_Specification
+         or else Kind (Namespace) = K_AADL_Specification);
 
       Namespace_Instance : Node_Id := No_Node;
    begin
@@ -70,36 +70,42 @@ package body Ocarina.Instances.Namespaces is
       --  value.
 
       if Kind (Namespace) = K_Package_Specification then
-         Namespace_Instance := Get_First_Homonym_Instance
-           (AIN.Namespaces (Instance_Root), Namespace);
+         Namespace_Instance :=
+           Get_First_Homonym_Instance
+             (AIN.Namespaces (Instance_Root),
+              Namespace);
 
          if No (Namespace_Instance) then
-            Namespace_Instance := New_Node (K_Namespace_Instance,
-                                            No_Location);
-            AIN.Set_Declarations (Namespace_Instance,
-                              New_List (K_List_Id, No_Location));
-            AIN.Set_Identifier (Namespace_Instance,
-                            Duplicate_Identifier (ATN.Identifier (Namespace)));
+            Namespace_Instance := New_Node (K_Namespace_Instance, No_Location);
+            AIN.Set_Declarations
+              (Namespace_Instance,
+               New_List (K_List_Id, No_Location));
+            AIN.Set_Identifier
+              (Namespace_Instance,
+               Duplicate_Identifier (ATN.Identifier (Namespace)));
             AIN.Set_Corresponding_Declaration (Namespace_Instance, Namespace);
 
-            Append_Node_To_List (Namespace_Instance,
-                                 AIN.Namespaces (Instance_Root));
+            Append_Node_To_List
+              (Namespace_Instance,
+               AIN.Namespaces (Instance_Root));
          end if;
 
       else
          Namespace_Instance := Unnamed_Namespace (Instance_Root);
 
          if No (Namespace_Instance) then
-            Namespace_Instance := New_Node (K_Namespace_Instance,
-                                            No_Location);
+            Namespace_Instance := New_Node (K_Namespace_Instance, No_Location);
             Set_Unnamed_Namespace (Instance_Root, Namespace_Instance);
-            AIN.Set_Declarations (Namespace_Instance,
-                              New_List (K_List_Id, No_Location));
-            AIN.Set_Identifier (Namespace_Instance,
-                            Make_Identifier (ATN.Loc (Namespace),
-                                             No_Name,
-                                             No_Name,
-                                             Namespace));
+            AIN.Set_Declarations
+              (Namespace_Instance,
+               New_List (K_List_Id, No_Location));
+            AIN.Set_Identifier
+              (Namespace_Instance,
+               Make_Identifier
+                 (ATN.Loc (Namespace),
+                  No_Name,
+                  No_Name,
+                  Namespace));
             AIN.Set_Corresponding_Declaration (Namespace_Instance, Namespace);
          end if;
       end if;

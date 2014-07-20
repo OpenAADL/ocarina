@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -52,7 +52,7 @@ package body Ocarina.Instances.Messages is
    procedure Display_No_Entity_Ref (Node : Node_Id) is
    begin
       pragma Assert (Present (Node));
-      Error_Loc (1) := Loc (Node);
+      Error_Loc (1)  := Loc (Node);
       Error_Name (1) := Get_Name_Of_Entity (Node);
       DE ("%is not associated with any entity");
    end Display_No_Entity_Ref;
@@ -64,7 +64,7 @@ package body Ocarina.Instances.Messages is
    procedure Display_Entity_Is_A_Component_Type (Node : Node_Id) is
    begin
       pragma Assert (Present (Node));
-      Error_Loc (1) := ATN.Loc (Node);
+      Error_Loc (1)  := ATN.Loc (Node);
       Error_Name (1) := Get_Name_Of_Entity (Node);
       DW ("%references a component type");
    end Display_Entity_Is_A_Component_Type;
@@ -74,11 +74,12 @@ package body Ocarina.Instances.Messages is
    ---------------------------------
 
    procedure Display_Instantiation_Error
-     (Node : Node_Id; Fatal : Boolean := True)
+     (Node  : Node_Id;
+      Fatal : Boolean := True)
    is
       pragma Assert (Present (Node));
    begin
-      Error_Loc (1) := Loc (Node);
+      Error_Loc (1)  := Loc (Node);
       Error_Name (1) := Get_Name_Of_Entity (Node);
       if Fatal then
          DE ("%cannot be properly instantiated");
@@ -89,13 +90,14 @@ package body Ocarina.Instances.Messages is
    end Display_Instantiation_Error;
 
    procedure Display_Type_Instantiation_Error
-     (Node : Node_Id; Fatal : Boolean := True)
+     (Node  : Node_Id;
+      Fatal : Boolean := True)
    is
       pragma Assert (Present (Node));
-      Error_Msg : constant String
-        := "% (feature) cannot be properly instantiated: requires full type";
+      Error_Msg : constant String :=
+        "% (feature) cannot be properly instantiated: requires full type";
    begin
-      Error_Loc (1) := Loc (Node);
+      Error_Loc (1)  := Loc (Node);
       Error_Name (1) := Get_Name_Of_Entity (Node);
       if Fatal then
          DE (Error_Msg);

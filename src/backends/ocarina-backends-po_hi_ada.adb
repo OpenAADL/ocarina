@@ -32,7 +32,7 @@
 ------------------------------------------------------------------------------
 
 with GNAT.OS_Lib;
-with Output;
+with Ocarina.Output;
 with Utils;
 
 with Ocarina.Instances;
@@ -58,12 +58,12 @@ with Ocarina.Backends.Execution_Tests;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.PO_HI_Ada is
 
    use GNAT.OS_Lib;
-   use Output;
+   use Ocarina.Output;
    use Ocarina.Instances;
    use Ocarina.Backends.Ada_Tree.Generator;
    use Ocarina.Backends.Expander;
@@ -87,22 +87,22 @@ package body Ocarina.Backends.PO_HI_Ada is
    --  compilation unit to be generated.
 
    procedure PolyORB_HI_Ada_Makefile
-     (Appli_Name         : Name_Id;
-      Node_Name          : Name_Id;
-      Execution_Platform : Supported_Execution_Platform := Platform_None;
+     (Appli_Name              : Name_Id;
+      Node_Name               : Name_Id;
+      Execution_Platform      : Supported_Execution_Platform := Platform_None;
       Execution_Platform_Name : Name_Id;
-      Transport_API      : Supported_Transport_APIs;
-      Ada_Sources        : Name_Tables.Instance;
-      Asn_Sources        : Name_Tables.Instance;
-      C_Sources          : Name_Tables.Instance;
-      C_Libraries        : Name_Tables.Instance;
-      User_Source_Dirs   : Name_Tables.Instance;
-      Use_Transport      : Boolean;
-      Use_Simulink       : Boolean;
-      Simulink_Directory : Name_Id;
-      Simulink_Node      : Name_Id;
-      Use_Scade          : Boolean;
-      Scade_Directory    : Name_Id);
+      Transport_API           : Supported_Transport_APIs;
+      Ada_Sources             : Name_Tables.Instance;
+      Asn_Sources             : Name_Tables.Instance;
+      C_Sources               : Name_Tables.Instance;
+      C_Libraries             : Name_Tables.Instance;
+      User_Source_Dirs        : Name_Tables.Instance;
+      Use_Transport           : Boolean;
+      Use_Simulink            : Boolean;
+      Simulink_Directory      : Name_Id;
+      Simulink_Node           : Name_Id;
+      Use_Scade               : Boolean;
+      Scade_Directory         : Name_Id);
 
    --  Generate the part of the Makefile that is specific to the
    --  corresponding code generator.
@@ -135,35 +135,36 @@ package body Ocarina.Backends.PO_HI_Ada is
    -----------------------------
 
    procedure PolyORB_HI_Ada_Makefile
-     (Appli_Name         : Name_Id;
-      Node_Name          : Name_Id;
-      Execution_Platform : Supported_Execution_Platform := Platform_None;
+     (Appli_Name              : Name_Id;
+      Node_Name               : Name_Id;
+      Execution_Platform      : Supported_Execution_Platform := Platform_None;
       Execution_Platform_Name : Name_Id;
-      Transport_API      : Supported_Transport_APIs;
-      Ada_Sources        : Name_Tables.Instance;
-      Asn_Sources        : Name_Tables.Instance;
-      C_Sources          : Name_Tables.Instance;
-      C_Libraries        : Name_Tables.Instance;
-      User_Source_Dirs   : Name_Tables.Instance;
-      Use_Transport      : Boolean;
-      Use_Simulink       : Boolean;
-      Simulink_Directory : Name_Id;
-      Simulink_Node      : Name_Id;
-      Use_Scade          : Boolean;
-      Scade_Directory    : Name_Id)
+      Transport_API           : Supported_Transport_APIs;
+      Ada_Sources             : Name_Tables.Instance;
+      Asn_Sources             : Name_Tables.Instance;
+      C_Sources               : Name_Tables.Instance;
+      C_Libraries             : Name_Tables.Instance;
+      User_Source_Dirs        : Name_Tables.Instance;
+      Use_Transport           : Boolean;
+      Use_Simulink            : Boolean;
+      Simulink_Directory      : Name_Id;
+      Simulink_Node           : Name_Id;
+      Use_Scade               : Boolean;
+      Scade_Directory         : Name_Id)
    is
-      pragma Unreferenced (Appli_Name,
-                           Transport_API,
-                           Execution_Platform_Name,
-                           Ada_Sources,
-                           C_Libraries,
-                           User_Source_Dirs,
-                           Use_Transport,
-                           Use_Scade,
-                           Scade_Directory,
-                           Use_Simulink,
-                           Simulink_Directory,
-                           Simulink_Node);
+      pragma Unreferenced
+        (Appli_Name,
+         Transport_API,
+         Execution_Platform_Name,
+         Ada_Sources,
+         C_Libraries,
+         User_Source_Dirs,
+         Use_Transport,
+         Use_Scade,
+         Scade_Directory,
+         Use_Simulink,
+         Simulink_Directory,
+         Simulink_Node);
 
       Target_Prefix : String_Access := Getenv ("TARGET_PREFIX");
       Target        : String_Access;
@@ -176,11 +177,11 @@ package body Ocarina.Backends.PO_HI_Ada is
       --  name.
 
       case Execution_Platform is
-         when Platform_Native
-           | Platform_LINUX32
-           | Platform_LINUX64
-           | Platform_WIN32
-           | Platform_None =>
+         when Platform_Native |
+           Platform_LINUX32   |
+           Platform_LINUX64   |
+           Platform_WIN32     |
+           Platform_None      =>
             Change_If_Empty (String_Ptr (Target_Prefix), "");
             Target := new String'("NATIVE");
 
@@ -200,14 +201,13 @@ package body Ocarina.Backends.PO_HI_Ada is
             Change_If_Empty (String_Ptr (Target_Prefix), "m");
             Target := new String'("MARTEOS");
 
-         when Platform_LEON_RTEMS |
-           Platform_LEON_RTEMS_POSIX =>
+         when Platform_LEON_RTEMS | Platform_LEON_RTEMS_POSIX =>
             --   Nothing to do: a special makefile is used for RTEMS
             null;
 
          when others =>
-            raise Program_Error with "Unsupported platform: "
-              & Execution_Platform'Img;
+            raise Program_Error
+              with "Unsupported platform: " & Execution_Platform'Img;
       end case;
 
       if Execution_Platform /= Platform_LEON_RTEMS
@@ -235,8 +235,7 @@ package body Ocarina.Backends.PO_HI_Ada is
          end if;
 
          if Length (Asn_Sources) > 0 then
-            for J in
-              Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
+            for J in Name_Tables.First .. Name_Tables.Last (Asn_Sources) loop
                Write_Str ("");
                Write_Name (Asn_Sources.Table (J));
                exit when J = Name_Tables.Last (Asn_Sources);
@@ -265,14 +264,17 @@ package body Ocarina.Backends.PO_HI_Ada is
          Write_Eol;
 
          Write_Char (ASCII.HT);
-         Write_Line ("ADA_PROJECT_PATH="
-                     & Standard.Utils.Quoted
-                     (Get_Runtime_Path ("polyorb-hi-ada")
-                      & Path_Separator & "$$ADA_PROJECT_PATH")
-                     & " \");
+         Write_Line
+           ("ADA_PROJECT_PATH=" &
+            Standard.Utils.Quoted
+              (Get_Runtime_Path ("polyorb-hi-ada") &
+               Path_Separator &
+               "$$ADA_PROJECT_PATH") &
+            " \");
          Write_Char (ASCII.HT);
-         Write_Str ("  $(GNATMAKE) -x -P$(PROJECT_FILE) -XTARGET=$(TARGET)"
-                    & " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL) ${USER_CFLAGS}");
+         Write_Str
+           ("  $(GNATMAKE) -x -P$(PROJECT_FILE) -XTARGET=$(TARGET)" &
+            " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL) ${USER_CFLAGS}");
 
          --  If there are C source or C libraries, there will be more
          --  options.
@@ -293,9 +295,10 @@ package body Ocarina.Backends.PO_HI_Ada is
             Write_Eol;
 
             Write_Char (ASCII.HT);
-            Write_Str ("  $(GNATMAKE) -f -P$(PROJECT_FILE) -XTARGET=$(TARGET)"
-                         & " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL)"
-                         & " -cargs -gnatec=local.adc");
+            Write_Str
+              ("  $(GNATMAKE) -f -P$(PROJECT_FILE) -XTARGET=$(TARGET)" &
+               " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL)" &
+               " -cargs -gnatec=local.adc");
 
             --  If there are C source or C libraries, there will be more
             --  options.
@@ -309,12 +312,15 @@ package body Ocarina.Backends.PO_HI_Ada is
          Write_Name (Node_Name);
          Write_Eol;
          Write_Eol;
-         Write_Line ("include " & Get_Runtime_Path ("polyorb-hi-ada")
-                     & "/make/Makefile.rtems_ada");
+         Write_Line
+           ("include " &
+            Get_Runtime_Path ("polyorb-hi-ada") &
+            "/make/Makefile.rtems_ada");
          Write_Eol;
          Write_Line
-           ("rtems_init.o: " & Get_Runtime_Path ("polyorb-hi-ada")
-            & "/make/rtems_init.c $(FILESYSTEM_SRCS) $(NETWORK_HFILE) ");
+           ("rtems_init.o: " &
+            Get_Runtime_Path ("polyorb-hi-ada") &
+            "/make/rtems_init.c $(FILESYSTEM_SRCS) $(NETWORK_HFILE) ");
          Write_Char (ASCII.HT);
          Write_Str ("$(CC) $(CFLAGS) -I. $(CPU_CFLAGS) -c $<");
       end if;
@@ -344,8 +350,11 @@ package body Ocarina.Backends.PO_HI_Ada is
       pragma Unreferenced (Appli_Name, Is_Server);
 
    begin
-      Write_Line ("with """ & Get_Runtime_Path ("polyorb-hi-ada")
-                       & Directory_Separator & "polyorb_hi"";");
+      Write_Line
+        ("with """ &
+         Get_Runtime_Path ("polyorb-hi-ada") &
+         Directory_Separator &
+         "polyorb_hi"";");
 
       Write_Eol;
 
@@ -373,8 +382,7 @@ package body Ocarina.Backends.PO_HI_Ada is
       if Length (User_Source_Dirs) > 0 then
          Write_Line (",");
 
-         for J in
-           Name_Tables.First .. Name_Tables.Last (User_Source_Dirs) loop
+         for J in Name_Tables.First .. Name_Tables.Last (User_Source_Dirs) loop
             Write_Indentation;
             Write_Char ('"');
             Write_Name (User_Source_Dirs.Table (J));
@@ -411,27 +419,25 @@ package body Ocarina.Backends.PO_HI_Ada is
       Write_Eol;
 
       case Execution_Platform is
-         when Platform_LEON_ORK
-           | Platform_LEON_GNAT
-           | Platform_ERC32_ORK =>
+         when Platform_LEON_ORK | Platform_LEON_GNAT | Platform_ERC32_ORK =>
             Write_Indentation;
             Write_Line
-              ("for Body (""PolyORB_HI.Output_Low_Level"")"
-                 & " use ""polyorb_hi-output_low_level_leon.adb"";");
+              ("for Body (""PolyORB_HI.Output_Low_Level"")" &
+               " use ""polyorb_hi-output_low_level_leon.adb"";");
 
          when others =>
             Write_Indentation;
             Write_Line
-              ("for Body (""PolyORB_HI.Output_Low_Level"")"
-                 & " use ""polyorb_hi-output_low_level_native.adb"";");
+              ("for Body (""PolyORB_HI.Output_Low_Level"")" &
+               " use ""polyorb_hi-output_low_level_native.adb"";");
       end case;
 
       case Transport_API is
          when Transport_BSD_Sockets =>
             Write_Indentation;
             Write_Line
-              ("for Body (""PolyORB_HI.Transport_Low_Level"")"
-                 & " use ""polyorb_hi-transport_low_level_sockets.adb"";");
+              ("for Body (""PolyORB_HI.Transport_Low_Level"")" &
+               " use ""polyorb_hi-transport_low_level_sockets.adb"";");
 
          when Transport_SpaceWire =>
             raise Program_Error;
@@ -511,11 +517,13 @@ package body Ocarina.Backends.PO_HI_Ada is
       Instance_Root : Node_Id;
       Success       : Boolean := True;
 
-      procedure Generate_PolyORB_HI_Ada_Makefile is new
-        Build_Utils.Makefiles.Generate (PolyORB_HI_Ada_Makefile);
+      procedure Generate_PolyORB_HI_Ada_Makefile is new Build_Utils.Makefiles
+        .Generate
+        (PolyORB_HI_Ada_Makefile);
 
-      procedure Generate_PolyORB_HI_Ada_Ada_Project_File is new
-        Build_Utils.Ada_Project_Files.Generate
+      procedure Generate_PolyORB_HI_Ada_Ada_Project_File is new Build_Utils
+        .Ada_Project_Files
+        .Generate
         (PolyORB_HI_Ada_Ada_Project_File);
 
    begin
@@ -588,9 +596,11 @@ package body Ocarina.Backends.PO_HI_Ada is
          Execution_Tests.Init;
 
          if Do_Regression_Test then
-            Success := Execute_Regression_Test (Scenario_Dir.all,
-                                                Ref_Map,
-                                                Integer (Timeout))
+            Success :=
+              Execute_Regression_Test
+                (Scenario_Dir.all,
+                 Ref_Map,
+                 Integer (Timeout))
               and then Success;
 
             if not Create_Referencial then
@@ -604,8 +614,8 @@ package body Ocarina.Backends.PO_HI_Ada is
          end if;
 
          if Do_Coverage_Test then
-            Success := Execute_Coverage_Test (Integer (Timeout))
-              and then Success;
+            Success :=
+              Execute_Coverage_Test (Integer (Timeout)) and then Success;
 
          end if;
 

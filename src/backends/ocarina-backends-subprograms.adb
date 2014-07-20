@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -51,7 +51,7 @@ with Ocarina.Backends.Properties;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Subprograms is
    use Ocarina.Instances;
@@ -142,18 +142,17 @@ package body Ocarina.Backends.Subprograms is
                   D := Corresponding_Instance (F);
 
                   if Mode = Mode_In then
-                     Param := CTU.Make_Parameter_Specification
-                       (Defining_Identifier =>
-                          Map_C_Defining_Identifier (F),
-                        Parameter_Type =>
-                           Map_C_Defining_Identifier  (D));
+                     Param :=
+                       CTU.Make_Parameter_Specification
+                         (Defining_Identifier => Map_C_Defining_Identifier (F),
+                          Parameter_Type => Map_C_Defining_Identifier (D));
                   else
-                     Param := CTU.Make_Parameter_Specification
-                        (Defining_Identifier =>
-                           Map_C_Defining_Identifier (F),
-                        Parameter_Type =>
-                          CTU.Make_Pointer_Type
-                          (Map_C_Defining_Identifier (D)));
+                     Param :=
+                       CTU.Make_Parameter_Specification
+                         (Defining_Identifier => Map_C_Defining_Identifier (F),
+                          Parameter_Type      =>
+                            CTU.Make_Pointer_Type
+                              (Map_C_Defining_Identifier (D)));
                   end if;
                   CTU.Append_Node_To_List (Param, Profile);
                end if;
@@ -173,8 +172,8 @@ package body Ocarina.Backends.Subprograms is
 
                while Present (F) loop
                   if Kind (F) = K_Subcomponent_Access_Instance then
-                     case Get_Required_Data_Access
-                        (Corresponding_Instance (F)) is
+                     case Get_Required_Data_Access (Corresponding_Instance (F))
+                     is
                         when Access_Read_Only =>
                            Mode := Mode_In;
                         when Access_Write_Only =>
@@ -194,34 +193,36 @@ package body Ocarina.Backends.Subprograms is
                      D := Corresponding_Instance (F);
 
                      case Get_Data_Representation (D) is
-                        when Data_Integer
-                          | Data_Boolean
-                          | Data_Float
-                          | Data_Fixed
-                          | Data_Struct
-                          | Data_String
-                          | Data_Wide_String
-                          | Data_Character
-                          | Data_Wide_Character
-                          | Data_Array =>
+                        when Data_Integer     |
+                          Data_Boolean        |
+                          Data_Float          |
+                          Data_Fixed          |
+                          Data_Struct         |
+                          Data_String         |
+                          Data_Wide_String    |
+                          Data_Character      |
+                          Data_Wide_Character |
+                          Data_Array          =>
                            --  If the data component is a simple data
                            --  component (not a structure), we simply add a
                            --  parameter with the computed mode and with a
                            --  type mapped from the data component.
 
                            if Mode = Mode_In then
-                              Param := CTU.Make_Parameter_Specification
-                                (Defining_Identifier =>
-                                   Map_C_Defining_Identifier (F),
-                                 Parameter_Type =>
-                                   Map_C_Data_Type_Designator (D));
+                              Param :=
+                                CTU.Make_Parameter_Specification
+                                  (Defining_Identifier =>
+                                     Map_C_Defining_Identifier (F),
+                                   Parameter_Type =>
+                                     Map_C_Data_Type_Designator (D));
                            else
-                              Param := CTU.Make_Parameter_Specification
-                                (Defining_Identifier =>
-                                   Map_C_Defining_Identifier (F),
-                                 Parameter_Type =>
-                                   CTU.Make_Pointer_Type
-                                   (Map_C_Data_Type_Designator (D)));
+                              Param :=
+                                CTU.Make_Parameter_Specification
+                                  (Defining_Identifier =>
+                                     Map_C_Defining_Identifier (F),
+                                   Parameter_Type =>
+                                     CTU.Make_Pointer_Type
+                                       (Map_C_Data_Type_Designator (D)));
                            end if;
 
                            CTU.Append_Node_To_List (Param, Profile);
@@ -236,20 +237,23 @@ package body Ocarina.Backends.Subprograms is
 
                            while Present (Field) loop
                               if Mode = Mode_In then
-                                 Param := CTU.Make_Parameter_Specification
-                                   (Defining_Identifier =>
-                                      Map_C_Defining_Identifier (Field),
-                                    Parameter_Type =>
-                                      Map_C_Data_Type_Designator
-                                      (Corresponding_Instance (Field)));
+                                 Param :=
+                                   CTU.Make_Parameter_Specification
+                                     (Defining_Identifier =>
+                                        Map_C_Defining_Identifier (Field),
+                                      Parameter_Type =>
+                                        Map_C_Data_Type_Designator
+                                          (Corresponding_Instance (Field)));
                               else
-                                 Param := CTU.Make_Parameter_Specification
-                                   (Defining_Identifier =>
-                                      Map_C_Defining_Identifier (Field),
-                                    Parameter_Type =>
-                                      Make_Pointer_Type
-                                      (Map_C_Data_Type_Designator
-                                         (Corresponding_Instance (Field))));
+                                 Param :=
+                                   CTU.Make_Parameter_Specification
+                                     (Defining_Identifier =>
+                                        Map_C_Defining_Identifier (Field),
+                                      Parameter_Type =>
+                                        Make_Pointer_Type
+                                          (Map_C_Data_Type_Designator
+                                             (Corresponding_Instance
+                                                (Field))));
                               end if;
                               CTU.Append_Node_To_List (Param, Profile);
 
@@ -269,11 +273,12 @@ package body Ocarina.Backends.Subprograms is
             end if;
          end if;
 
-         N := CTU.Make_Function_Specification
-           (Defining_Identifier =>
-               Make_Defining_Identifier (Get_Source_Name (S)),
-            Parameters => Profile,
-            Return_Type         => New_Node (CTN.K_Void));
+         N :=
+           CTU.Make_Function_Specification
+             (Defining_Identifier =>
+                Make_Defining_Identifier (Get_Source_Name (S)),
+              Parameters  => Profile,
+              Return_Type => New_Node (CTN.K_Void));
 
          return N;
       end Map_Subprogram_Spec;
@@ -310,8 +315,8 @@ package body Ocarina.Backends.Subprograms is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -339,8 +344,8 @@ package body Ocarina.Backends.Subprograms is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         Implementation  : Node_Id;
-         S               : Node_Id;
+         Implementation : Node_Id;
+         S              : Node_Id;
       begin
          Implementation := Get_Classifier_Property (E, "implemented_as");
 
@@ -361,9 +366,8 @@ package body Ocarina.Backends.Subprograms is
       -- Visit_Process_Instance --
       ----------------------------
 
-      procedure Visit_Process_Instance
-         (E : Node_Id) is
-         S                    : Node_Id;
+      procedure Visit_Process_Instance (E : Node_Id) is
+         S : Node_Id;
       begin
          --  Visit all the subcomponents of the process
 
@@ -385,10 +389,10 @@ package body Ocarina.Backends.Subprograms is
       -------------------------------
 
       procedure Visit_Subprogram_Instance (E : Node_Id) is
-         Spec        : Node_Id;
-         Impl        : Node_Id;
-         Call_Seq    : Node_Id;
-         Spg_Call    : Node_Id;
+         Spec     : Node_Id;
+         Impl     : Node_Id;
+         Call_Seq : Node_Id;
+         Spg_Call : Node_Id;
       begin
          if Get_Source_Name (E) = No_Name then
             return;
@@ -556,14 +560,14 @@ package body Ocarina.Backends.Subprograms is
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
       D : constant Node_Id := CTU.New_Node (CTN.K_HI_Distributed_Application);
-      N                 : Name_Id;
-      File_Identifier   : Node_Id;
-      Unit              : Node_Id;
-      Clause            : Name_Id;
-      Unit_Identifier   : Node_Id;
-      Ifdef_Clause      : Node_Id;
-      Header_Name       : Name_Id;
-      Header_Node       : Node_Id;
+      N               : Name_Id;
+      File_Identifier : Node_Id;
+      Unit            : Node_Id;
+      Clause          : Name_Id;
+      Unit_Identifier : Node_Id;
+      Ifdef_Clause    : Node_Id;
+      Header_Name     : Name_Id;
+      Header_Node     : Node_Id;
    begin
       CTN.Set_Units (D, CTU.New_List (CTN.K_List_Id));
       CTN.Set_HI_Nodes (D, CTU.New_List (CTN.K_List_Id));
@@ -597,46 +601,48 @@ package body Ocarina.Backends.Subprograms is
       Set_Str_To_Name_Buffer ("gtypes");
       Header_Name := Name_Find;
 
-      Header_Node := Make_Include_Clause
-         (Make_Defining_Identifier (Header_Name), False);
+      Header_Node :=
+        Make_Include_Clause (Make_Defining_Identifier (Header_Name), False);
 
       Set_Str_To_Name_Buffer ("__POK_C__");
       Clause := Name_Find;
 
-      Ifdef_Clause := Make_Ifdef_Clause
-         (Make_Defining_Identifier (Clause, C_Conversion => False),
-         False,
-         Make_List_Id (Header_Node),
-         No_List);
+      Ifdef_Clause :=
+        Make_Ifdef_Clause
+          (Make_Defining_Identifier (Clause, C_Conversion => False),
+           False,
+           Make_List_Id (Header_Node),
+           No_List);
+
+      Append_Node_To_List (Ifdef_Clause, CTN.Declarations (Source_File));
 
       Append_Node_To_List
-         (Ifdef_Clause, CTN.Declarations (Source_File));
-
-      Append_Node_To_List
-         (Copy_Node (Ifdef_Clause), CTN.Declarations (Header_File));
+        (Copy_Node (Ifdef_Clause),
+         CTN.Declarations (Header_File));
 
       --  Generate #ifdef __PO_HI_C__ #include <gtypes.h>.
 
       Set_Str_To_Name_Buffer ("types");
       Header_Name := Name_Find;
 
-      Header_Node := Make_Include_Clause
-         (Make_Defining_Identifier (Header_Name), False);
+      Header_Node :=
+        Make_Include_Clause (Make_Defining_Identifier (Header_Name), False);
 
       Set_Str_To_Name_Buffer ("__PO_HI_C__");
       Clause := Name_Find;
 
-      Ifdef_Clause := Make_Ifdef_Clause
-         (Make_Defining_Identifier (Clause, C_Conversion => False),
-         False,
-         Make_List_Id (Header_Node),
-         No_List);
+      Ifdef_Clause :=
+        Make_Ifdef_Clause
+          (Make_Defining_Identifier (Clause, C_Conversion => False),
+           False,
+           Make_List_Id (Header_Node),
+           No_List);
+
+      Append_Node_To_List (Ifdef_Clause, CTN.Declarations (Source_File));
 
       Append_Node_To_List
-         (Ifdef_Clause, CTN.Declarations (Source_File));
-
-      Append_Node_To_List
-         (Copy_Node (Ifdef_Clause), CTN.Declarations (Header_File));
+        (Copy_Node (Ifdef_Clause),
+         CTN.Declarations (Header_File));
 
       --  Generate #ifdef is now finished.
 

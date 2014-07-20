@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -52,7 +52,7 @@ with Ocarina.Backends.Ada_Values;
 
 package body Ocarina.Backends.PO_HI_Ada.Naming is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -81,9 +81,10 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
       procedure Visit_Process_Instance (E : Node_Id);
 
       function Added_Internal_Name
-        (P : Node_Id; B : Node_Id; E : Node_Id) return Name_Id;
-      function Is_Added
-        (P : Node_Id; B : Node_Id; E : Node_Id) return Boolean;
+        (P : Node_Id;
+         B : Node_Id;
+         E : Node_Id) return Name_Id;
+      function Is_Added (P : Node_Id; B : Node_Id; E : Node_Id) return Boolean;
       procedure Set_Added (P : Node_Id; B : Node_Id; E : Node_Id);
       --  Used to ensure that the naming information are added only
       --  for the nodes connected to a particular node.
@@ -98,7 +99,10 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
       -------------------------
 
       function Added_Internal_Name
-        (P : Node_Id; B : Node_Id; E : Node_Id) return Name_Id is
+        (P : Node_Id;
+         B : Node_Id;
+         E : Node_Id) return Name_Id
+      is
       begin
          Set_Str_To_Name_Buffer ("%naming%info%");
          Add_Nat_To_Name_Buffer (Nat (P));
@@ -115,7 +119,10 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
       --------------
 
       function Is_Added
-        (P : Node_Id; B : Node_Id; E : Node_Id) return Boolean is
+        (P : Node_Id;
+         B : Node_Id;
+         E : Node_Id) return Boolean
+      is
          I_Name : constant Name_Id := Added_Internal_Name (P, B, E);
       begin
          return Get_Name_Table_Byte (I_Name) = 1;
@@ -136,45 +143,49 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
       ------------------------
 
       function Naming_Information (E : Node_Id) return Node_Id is
-         Location    : Name_Id;
-         Port_Number : Value_Id;
-         N           : Node_Id;
-         L           : Node_Id;
-         P           : Node_Id;
-         V           : Node_Id;
+         Location           : Name_Id;
+         Port_Number        : Value_Id;
+         N                  : Node_Id;
+         L                  : Node_Id;
+         P                  : Node_Id;
+         V                  : Node_Id;
          Configuration_Data : Name_Id := No_Name;
 
       begin
          if AAU.Is_Process (E) then
-            Location := Get_Location (Get_Bound_Processor (E));
+            Location    := Get_Location (Get_Bound_Processor (E));
             Port_Number := Get_Port_Number (E);
 
          elsif AAU.Is_Device (E) then
-            Location := Get_Location (E);
-            Port_Number := Get_Port_Number (E);
+            Location           := Get_Location (E);
+            Port_Number        := Get_Port_Number (E);
             Configuration_Data := Get_Type_Source_Name (E);
          end if;
 
          if Location = No_Name then
             if Is_Defined_Property (E, "deployment::configuration")
-              and then Get_String_Property
-                  (E, "deployment::configuration") /= No_Name
+              and then
+                Get_String_Property (E, "deployment::configuration") /=
+                No_Name
             then
                Get_Name_String
-                 (Get_String_Property
-                    (E, "deployment::configuration"));
-               L := Make_Subprogram_Call
-                 (RE (RE_To_HI_String),
-                  Make_List_Id (Make_Literal (New_String_Value (Name_Find))));
+                 (Get_String_Property (E, "deployment::configuration"));
+               L :=
+                 Make_Subprogram_Call
+                   (RE (RE_To_HI_String),
+                    Make_List_Id
+                      (Make_Literal (New_String_Value (Name_Find))));
             else
-               L := Make_Subprogram_Call
-                 (RE (RE_To_HI_String),
-                  Make_List_Id (Make_Literal (New_String_Value (No_Name))));
+               L :=
+                 Make_Subprogram_Call
+                   (RE (RE_To_HI_String),
+                    Make_List_Id (Make_Literal (New_String_Value (No_Name))));
             end if;
          else
-            L := Make_Subprogram_Call
-              (RE (RE_To_HI_String),
-               Make_List_Id (Make_Literal (New_String_Value (Location))));
+            L :=
+              Make_Subprogram_Call
+                (RE (RE_To_HI_String),
+                 Make_List_Id (Make_Literal (New_String_Value (Location))));
          end if;
 
          if Port_Number = ADV.No_Value then
@@ -186,9 +197,10 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
          if Configuration_Data = No_Name then
             V := RE (RE_Null_Address);
          else
-            V := Make_Attribute_Designator
-              (Map_Ada_Subprogram_Identifier (Configuration_Data),
-               A_Address);
+            V :=
+              Make_Attribute_Designator
+                (Map_Ada_Subprogram_Identifier (Configuration_Data),
+                 A_Address);
          end if;
 
          --  Build the record aggregate
@@ -230,8 +242,8 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -261,9 +273,9 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
          End_List          : List_Id;
          Parent            : Node_Id;
          Naming_Table_List : constant List_Id := New_List (ADN.K_List_Id);
-         Root_Sys          : constant Node_Id
-           := Parent_Component (Parent_Subcomponent (E));
-         Transport_API     : Supported_Transport_APIs := Transport_None;
+         Root_Sys          : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
+         Transport_API : Supported_Transport_APIs := Transport_None;
       begin
          --  We perform a first loop to designate the nodes to be
          --  included in the naming table. For a particular node, the
@@ -324,15 +336,15 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                            --  same transport layer for their
                            --  connections.
 
-                           if Transport_API /= Transport_None and then
-                             Transport_API /= Get_Transport_API (B, E)
+                           if Transport_API /= Transport_None
+                             and then Transport_API /= Get_Transport_API (B, E)
                            then
                               Display_Located_Error
                                 (Loc (Parent_Subcomponent (E)),
-                                 "The features of this process are involved"
-                                 & " in connections that do not use the same"
-                                 & " transport layer. This is not supported"
-                                 & " yet.",
+                                 "The features of this process are involved" &
+                                 " in connections that do not use the same" &
+                                 " transport layer. This is not supported" &
+                                 " yet.",
                                  Fatal => True);
                            else
                               Transport_API := Get_Transport_API (B, E);
@@ -344,8 +356,8 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                               if Transport_API = Transport_None then
                                  Display_Located_Error
                                    (Loc (B),
-                                    "No transport layer has been specified"
-                                    & " for this bus",
+                                    "No transport layer has been specified" &
+                                    " for this bus",
                                     Fatal => True);
                               end if;
                            end if;
@@ -368,8 +380,7 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
          --  Generate the naming table
 
          case Transport_API is
-            when Transport_BSD_Sockets
-              | Transport_User =>
+            when Transport_BSD_Sockets | Transport_User =>
                --  Build the node information for all the nodes
                --  involved with the current one and append it to the
                --  naming list.
@@ -381,62 +392,63 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                     and then AAU.Is_Process (Corresponding_Instance (S))
                     and then Is_Added (Corresponding_Instance (S), Bus, E)
                   then
-                     N := Naming_Information
-                       (Corresponding_Instance (S));
+                     N := Naming_Information (Corresponding_Instance (S));
                      Append_Node_To_List (N, Naming_Table_List);
 
                   elsif Transport_API = Transport_User
                     and then AAU.Is_Device (Corresponding_Instance (S))
                     and then Is_Connected (Bus, S)
                   then
-                     N := Naming_Information
-                       (Corresponding_Instance (S));
+                     N := Naming_Information (Corresponding_Instance (S));
                      Append_Node_To_List (N, Naming_Table_List);
                   end if;
 
                   S := Next_Node (S);
                end loop;
 
-               N := Make_Element_Association
-                 (No_Node,
-                  Make_Record_Aggregate
-                  (Make_List_Id
-                   (Make_Subprogram_Call
-                    (RE (RE_To_HI_String),
-                     Make_List_Id (Make_Literal (New_String_Value (No_Name)))),
-                    Make_Literal (New_Integer_Value (0, 1, 10)),
-                    RE (RE_Null_Address))));
+               N :=
+                 Make_Element_Association
+                   (No_Node,
+                    Make_Record_Aggregate
+                      (Make_List_Id
+                         (Make_Subprogram_Call
+                            (RE (RE_To_HI_String),
+                             Make_List_Id
+                               (Make_Literal (New_String_Value (No_Name)))),
+                          Make_Literal (New_Integer_Value (0, 1, 10)),
+                          RE (RE_Null_Address))));
                Append_Node_To_List (N, Naming_Table_List);
 
                --  Declare the Naming Table
 
-               N := Message_Comment
-                 ("Naming Table for bus "
-                    & Get_Name_String
-                    (Name (Identifier (Parent_Subcomponent (Bus)))));
+               N :=
+                 Message_Comment
+                   ("Naming Table for bus " &
+                    Get_Name_String
+                      (Name (Identifier (Parent_Subcomponent (Bus)))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
                if Transport_API = Transport_User then
                   --  We are building a name table specific to a bus
 
-                  N := Make_Object_Declaration
-                    (Defining_Identifier => Map_Bus_Name (Bus),
-                     Constant_Present    => True,
-                     Object_Definition   => RE (RE_Naming_Table_Type),
-                     Expression          => Make_Array_Aggregate
-                       (Naming_Table_List));
+                  N :=
+                    Make_Object_Declaration
+                      (Defining_Identifier => Map_Bus_Name (Bus),
+                       Constant_Present    => True,
+                       Object_Definition   => RE (RE_Naming_Table_Type),
+                       Expression => Make_Array_Aggregate (Naming_Table_List));
                   Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
                else
                   --  We generate the default name table
 
-                  N := Make_Object_Declaration
-                    (Defining_Identifier => Make_Defining_Identifier
-                       (PN (P_Naming_Table)),
-                     Constant_Present    => True,
-                     Object_Definition   => RE (RE_Naming_Table_Type),
-                     Expression          => Make_Array_Aggregate
-                       (Naming_Table_List));
+                  N :=
+                    Make_Object_Declaration
+                      (Defining_Identifier =>
+                         Make_Defining_Identifier (PN (P_Naming_Table)),
+                       Constant_Present  => True,
+                       Object_Definition => RE (RE_Naming_Table_Type),
+                       Expression => Make_Array_Aggregate (Naming_Table_List));
                   Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
                end if;
 
@@ -460,19 +472,19 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U                 : constant Node_Id :=
+         U : constant Node_Id :=
            ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
-         P                 : constant Node_Id := ADN.Entity (U);
-         S                 : Node_Id;
-         Parent            : Node_Id;
-         Root_Sys          : constant Node_Id
-           := Parent_Component (Parent_Subcomponent (E));
-         F                 : Node_Id;
-         B                 : Node_Id;
-         C                 : Node_Id;
-         C_End : Node_Id;
-         End_List : List_Id;
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         P        : constant Node_Id := ADN.Entity (U);
+         S        : Node_Id;
+         Parent   : Node_Id;
+         Root_Sys : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
+         F         : Node_Id;
+         B         : Node_Id;
+         C         : Node_Id;
+         C_End     : Node_Id;
+         End_List  : List_Id;
          Transport : Supported_Transport_APIs;
 
       begin
@@ -487,7 +499,8 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
 
          S := First_Node (Subcomponents (Root_Sys));
 
-         Main_Loop : while Present (S) loop
+         Main_Loop :
+         while Present (S) loop
             if AAU.Is_Bus (Corresponding_Instance (S)) then
                if not AAU.Is_Empty (Features (E)) then
                   F := First_Node (Features (E));
@@ -519,7 +532,8 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                                    and then B = Corresponding_Instance (S)
                                  then
                                     Visit_Bus_Instance
-                                      (Corresponding_Instance (S), E);
+                                      (Corresponding_Instance (S),
+                                       E);
                                     if Transport /= Transport_User
                                       and then Transport /= Transport_None
                                     then

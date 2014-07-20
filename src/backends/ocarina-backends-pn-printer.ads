@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -44,38 +44,38 @@
 
 package Ocarina.Backends.PN.Printer is
 
-   type P_Print_Place is access procedure (Pn_Generated : Node_Id;
-                                           Pn_P : Node_Id);
+   type P_Print_Place is access procedure
+     (Pn_Generated : Node_Id;
+      Pn_P         : Node_Id);
 
-   type P_Print_Trans is access procedure (Pn_Generated : Node_Id;
-                                           Pn_T : Node_Id);
+   type P_Print_Trans is access procedure
+     (Pn_Generated : Node_Id;
+      Pn_T         : Node_Id);
 
-   type P_Print_Formalism_Information
-   is access procedure (Pn_Generated : Node_Id);
+   type P_Print_Formalism_Information is access procedure
+     (Pn_Generated : Node_Id);
 
-   procedure Set_Printers (P_Place : P_Print_Place;
-                           P_Trans : P_Print_Trans;
-                           P_Form_Inf : P_Print_Formalism_Information);
+   procedure Set_Printers
+     (P_Place    : P_Print_Place;
+      P_Trans    : P_Print_Trans;
+      P_Form_Inf : P_Print_Formalism_Information);
 
    procedure Print_Pn_Generated (Pn_Generated : Node_Id);
 
    procedure Print_Pn_Box (Pn_Generated : Node_Id);
 
-   procedure Print_Thread (Pn_Thread : Node_Id;
-                           Pn_Generated : Node_Id);
+   procedure Print_Thread (Pn_Thread : Node_Id; Pn_Generated : Node_Id);
 
-   procedure Print_Call_Seq (Pn_Call : Node_Id;
-                             Pn_Generated : Node_Id);
+   procedure Print_Call_Seq (Pn_Call : Node_Id; Pn_Generated : Node_Id);
 
-   procedure Print_Component (Pn_Sub : Node_Id;
-                              Pn_Generated : Node_Id);
+   procedure Print_Component (Pn_Sub : Node_Id; Pn_Generated : Node_Id);
 
    --  XXX TODO : print_devices / print_processor / print_memory
 
 private
 
-   Proc_Print_Place : P_Print_Place;
-   Proc_Print_Trans : P_Print_Trans;
+   Proc_Print_Place                 : P_Print_Place;
+   Proc_Print_Trans                 : P_Print_Trans;
    Proc_Print_Formalism_Information : P_Print_Formalism_Information;
 
 end Ocarina.Backends.PN.Printer;

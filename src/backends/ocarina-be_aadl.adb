@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,11 +31,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with GNAT.OS_Lib; use GNAT.OS_Lib;
+with GNAT.OS_Lib;       use GNAT.OS_Lib;
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet;  use Namet;
-with Output; use Output;
+with Ocarina.Namet;  use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
 with Utils;  use Utils;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -93,7 +93,7 @@ package body Ocarina.BE_AADL is
    procedure Init is
    begin
       Register_Backend ("aadl", Generate_AADL_Model'Access, AADL);
-      Register_backend ("aadl_min", Generate_Min_AADL_Model'Access, AADL_Min);
+      Register_Backend ("aadl_min", Generate_Min_AADL_Model'Access, AADL_Min);
       Register_Backend ("aadl_annex", Generate_AADL_Annex'Access, AADL_Annex);
 
       Initialize_Option_Scan;
@@ -150,12 +150,13 @@ package body Ocarina.BE_AADL is
 
       --  Some internal procedures
 
-      procedure Internal_Print_AADL_Specification is new
-        Print_Constrained_AADL_Specification (Is_Printable);
-      procedure Internal_Print_Package is new
-        Print_Constrained_Package (Is_Printable);
-      procedure Internal_Print_Property_Set is new
-        Print_Constrained_Property_Set (Is_Printable);
+      procedure Internal_Print_AADL_Specification is
+         new Print_Constrained_AADL_Specification
+        (Is_Printable);
+      procedure Internal_Print_Package is new Print_Constrained_Package
+        (Is_Printable);
+      procedure Internal_Print_Property_Set is
+         new Print_Constrained_Property_Set (Is_Printable);
 
    begin
       case Kind (Node) is
@@ -196,8 +197,8 @@ package body Ocarina.BE_AADL is
    procedure Generate_AADL_Model (Node : Node_Id) is
       pragma Assert (Present (Node));
 
-      procedure Internal_Print_Subtree is new
-        Print_Constrained_Subtree (Always_Printable);
+      procedure Internal_Print_Subtree is new Print_Constrained_Subtree
+        (Always_Printable);
 
    begin
       if Output_Filename /= No_Name then
@@ -216,8 +217,8 @@ package body Ocarina.BE_AADL is
    procedure Generate_AADL_Annex (Node : Node_Id) is
       pragma Assert (Present (Node));
 
-      procedure Internal_Print_Subtree is new
-        Print_Constrained_Subtree (Always_Printable);
+      procedure Internal_Print_Subtree is new Print_Constrained_Subtree
+        (Always_Printable);
 
    begin
       Internal_Print_Subtree (Node, No_Node);
@@ -276,8 +277,7 @@ package body Ocarina.BE_AADL is
 
    function Always_Printable
      (Node      : Node_Id;
-      Criterion : Node_Id)
-     return Boolean
+      Criterion : Node_Id) return Boolean
    is
       pragma Unreferenced (Criterion);
    begin
@@ -285,61 +285,62 @@ package body Ocarina.BE_AADL is
          return True;
       end if;
 
-      if (Kind (Node) = K_Named_AADL_Entity
-            or else Kind (Node) = K_AADL_Declaration
-            or else Kind (Node) = K_Entity_Reference
-            or else Kind (Node) = K_Package_Specification
-            or else Kind (Node) = K_Import_Declaration
-            or else Kind (Node) = K_Alias_Declaration
-            or else Kind (Node) = K_Component_Type
-            or else Kind (Node) = K_Component_Implementation
-            or else Kind (Node) = K_Contained_Entity
-            or else Kind (Node) = K_Subclause
-            or else Kind (Node) = K_Prototype
-            or else Kind (Node) = K_Binding_Prototype
-            or else Kind (Node) = K_Feature
-            or else Kind (Node) = K_Refinable_Feature
-            or else Kind (Node) = K_Port_Spec
-            or else Kind (Node) = K_Feature_Group_Spec
-            or else Kind (Node) = K_Subprogram_Spec
-            or else Kind (Node) = K_Parameter
-            or else Kind (Node) = K_Subcomponent_Access
-            or else Kind (Node) = K_Flow_Spec
-            or else Kind (Node) = K_Mode
-            or else Kind (Node) = K_Mode_Transition_Trigger
-            or else Kind (Node) = K_Flow_Implementation
-            or else Kind (Node) = K_End_To_End_Flow_Spec
-            or else Kind (Node) = K_Flow_Implementation_Refinement
-            or else Kind (Node) = K_End_To_End_Flow_Refinement
-            or else Kind (Node) = K_Subprogram_Call
-            or else Kind (Node) = K_Subprogram_Call_Sequence
-            or else Kind (Node) = K_Subcomponent
-            or else Kind (Node) = K_Feature_Group_Type
-            or else Kind (Node) = K_Connection
-            or else Kind (Node) = K_Property_Set
-            or else Kind (Node) = K_Contained_Element_Path
-            or else Kind (Node) = K_Property_Type_Declaration
-            or else Kind (Node) = K_Constant_Property_Declaration
-            or else Kind (Node) = K_Property_Definition_Declaration
-            or else Kind (Node) = K_Property_Association
-            or else Kind (Node) = K_Named_Element
-            or else Kind (Node) = K_Property_Term
-            or else Kind (Node) = K_Enumeration_Term
-            or else Kind (Node) = K_Unit_Term
-            or else Kind (Node) = K_Component_Classifier_Term
-            or else Kind (Node) = K_Record_Term_Element
-            or else Kind (Node) = K_Computed_Term
-            or else Kind (Node) = K_Unit_Definition
-            or else Kind (Node) = K_Classifier_Category_Ref
-            or else Kind (Node) = K_Referable_Element_Category
-            or else Kind (Node) = K_Reference_Category
-            or else Kind (Node) = K_Record_Type_Element
-            or else Kind (Node) = K_Unique_Property_Type_Identifier
-            or else Kind (Node) = K_Unique_Property_Const_Identifier
-            or else Kind (Node) = K_Annex_Subclause
-            or else Kind (Node) = K_Annex_Library
-            or else Kind (Node) = K_Annex_Path
-            or else Kind (Node) = K_Array_Selection)
+      if
+        (Kind (Node) = K_Named_AADL_Entity
+         or else Kind (Node) = K_AADL_Declaration
+         or else Kind (Node) = K_Entity_Reference
+         or else Kind (Node) = K_Package_Specification
+         or else Kind (Node) = K_Import_Declaration
+         or else Kind (Node) = K_Alias_Declaration
+         or else Kind (Node) = K_Component_Type
+         or else Kind (Node) = K_Component_Implementation
+         or else Kind (Node) = K_Contained_Entity
+         or else Kind (Node) = K_Subclause
+         or else Kind (Node) = K_Prototype
+         or else Kind (Node) = K_Binding_Prototype
+         or else Kind (Node) = K_Feature
+         or else Kind (Node) = K_Refinable_Feature
+         or else Kind (Node) = K_Port_Spec
+         or else Kind (Node) = K_Feature_Group_Spec
+         or else Kind (Node) = K_Subprogram_Spec
+         or else Kind (Node) = K_Parameter
+         or else Kind (Node) = K_Subcomponent_Access
+         or else Kind (Node) = K_Flow_Spec
+         or else Kind (Node) = K_Mode
+         or else Kind (Node) = K_Mode_Transition_Trigger
+         or else Kind (Node) = K_Flow_Implementation
+         or else Kind (Node) = K_End_To_End_Flow_Spec
+         or else Kind (Node) = K_Flow_Implementation_Refinement
+         or else Kind (Node) = K_End_To_End_Flow_Refinement
+         or else Kind (Node) = K_Subprogram_Call
+         or else Kind (Node) = K_Subprogram_Call_Sequence
+         or else Kind (Node) = K_Subcomponent
+         or else Kind (Node) = K_Feature_Group_Type
+         or else Kind (Node) = K_Connection
+         or else Kind (Node) = K_Property_Set
+         or else Kind (Node) = K_Contained_Element_Path
+         or else Kind (Node) = K_Property_Type_Declaration
+         or else Kind (Node) = K_Constant_Property_Declaration
+         or else Kind (Node) = K_Property_Definition_Declaration
+         or else Kind (Node) = K_Property_Association
+         or else Kind (Node) = K_Named_Element
+         or else Kind (Node) = K_Property_Term
+         or else Kind (Node) = K_Enumeration_Term
+         or else Kind (Node) = K_Unit_Term
+         or else Kind (Node) = K_Component_Classifier_Term
+         or else Kind (Node) = K_Record_Term_Element
+         or else Kind (Node) = K_Computed_Term
+         or else Kind (Node) = K_Unit_Definition
+         or else Kind (Node) = K_Classifier_Category_Ref
+         or else Kind (Node) = K_Referable_Element_Category
+         or else Kind (Node) = K_Reference_Category
+         or else Kind (Node) = K_Record_Type_Element
+         or else Kind (Node) = K_Unique_Property_Type_Identifier
+         or else Kind (Node) = K_Unique_Property_Const_Identifier
+         or else Kind (Node) = K_Annex_Subclause
+         or else Kind (Node) = K_Annex_Library
+         or else Kind (Node) = K_Annex_Path
+         or else Kind (Node) = K_Array_Selection)
       then
          return Name (Identifier (Node)) = Entity_Name;
       else
@@ -356,8 +357,8 @@ package body Ocarina.BE_AADL is
    -----------------------------
 
    procedure Generate_Min_AADL_Model (Node : Node_Id) is
-      procedure Internal_Print_Minimal_Tree is new
-        Print_Constrained_Subtree (Needed_By);
+      procedure Internal_Print_Minimal_Tree is new Print_Constrained_Subtree
+        (Needed_By);
       --  This procedure prints for the AADL source corresponding to
       --  components or properties that are needed by its given
       --  criterion.

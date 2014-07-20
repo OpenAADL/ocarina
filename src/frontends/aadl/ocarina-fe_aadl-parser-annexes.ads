@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,9 +39,8 @@
 package Ocarina.FE_AADL.Parser.Annexes is
 
    function P_Annex_Library
-     (Namespace : Types.Node_Id;
-      Private_Declaration : Boolean := False)
-     return Node_Id;
+     (Namespace           : Types.Node_Id;
+      Private_Declaration : Boolean := False) return Node_Id;
 
    function P_Annex_Subclause (Namespace : Types.Node_Id) return Node_Id;
 

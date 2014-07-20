@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -45,9 +45,7 @@ with Ocarina.Builder.AADL.Components.Connections;
 
 package body Ocarina.FE_AADL.Parser.Components.Connections is
 
-   function P_Connection_Reference
-     (Code : Parsing_Code)
-     return Types.Node_Id;
+   function P_Connection_Reference (Code : Parsing_Code) return Types.Node_Id;
 
    ------------------
    -- P_Connection --
@@ -176,8 +174,7 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
 
    function P_Connection
      (Container : Types.Node_Id;
-      Refinable : Boolean)
-     return Types.Node_Id
+      Refinable : Boolean) return Types.Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -188,24 +185,30 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
       use Ocarina.FE_AADL.Parser.Properties;
       use Ocarina.Builder.AADL.Components.Connections;
 
-      Connection      : Node_Id;
-      Identifier      : Node_Id;
-      Is_Refinement   : Boolean;
-      Is_Bidirect     : Boolean          := False;
-      Category        : Connection_Type;
-      Source          : Node_Id          := No_Node;
-      Destination     : Node_Id          := No_Node;
-      In_Modes        : Node_Id;
-      OK              : Boolean;
-      Code            : Parsing_Code;
-      Loc             : Location;
-      Start_Loc       : Location         := No_Location;
-      Properties_Loc  : Location;
+      Connection     : Node_Id;
+      Identifier     : Node_Id;
+      Is_Refinement  : Boolean;
+      Is_Bidirect    : Boolean  := False;
+      Category       : Connection_Type;
+      Source         : Node_Id  := No_Node;
+      Destination    : Node_Id  := No_Node;
+      In_Modes       : Node_Id;
+      OK             : Boolean;
+      Code           : Parsing_Code;
+      Loc            : Location;
+      Start_Loc      : Location := No_Location;
+      Properties_Loc : Location;
 
    begin
-      P_Identifier_Refined_To (Refinable_To_RT (Refinable), True,
-                               PC_Connection, PC_Connection_Refinement,
-                               T_Semicolon, Identifier, Is_Refinement, OK);
+      P_Identifier_Refined_To
+        (Refinable_To_RT (Refinable),
+         True,
+         PC_Connection,
+         PC_Connection_Refinement,
+         T_Semicolon,
+         Identifier,
+         Is_Refinement,
+         OK);
       if not OK then
          return No_Node;
       end if;
@@ -438,8 +441,14 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
                   when AADL_V1 =>
                      DPE (Code, (T_Data, T_Event, T_Bus, T_Port, T_Parameter));
                   when AADL_V2 =>
-                     DPE (Code, (T_Data, T_Bus, T_Port,
-                                 T_Parameter, T_Subprogram, T_Virtual));
+                     DPE
+                       (Code,
+                        (T_Data,
+                         T_Bus,
+                         T_Port,
+                         T_Parameter,
+                         T_Subprogram,
+                         T_Virtual));
                end case;
                Skip_Tokens (T_Semicolon);
                return No_Node;
@@ -477,8 +486,7 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
                   if AADL_Version = AADL_V1 then
                      DPE (Code, (T_Direct_Connection, T_Delayed_Connection));
                   else
-                     DPE (Code, (T_Direct_Connection,
-                                 T_Bidirect_Connection));
+                     DPE (Code, (T_Direct_Connection, T_Bidirect_Connection));
                   end if;
                   Skip_Tokens (T_Semicolon);
                   return No_Node;
@@ -499,15 +507,17 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
       --  We save the location of the properties, as we have to parse
       --  it later (after the connection node has been created)
 
-      Connection := Add_New_Connection (Loc           => Start_Loc,
-                                        Name          => Identifier,
-                                        Comp_Impl     => Container,
-                                        Category      => Category,
-                                        Destination   => Destination,
-                                        Source        => Source,
-                                        Is_Refinement => Is_Refinement,
-                                        Is_Bidirect   => Is_Bidirect,
-                                        In_Modes      => No_Node);
+      Connection :=
+        Add_New_Connection
+          (Loc           => Start_Loc,
+           Name          => Identifier,
+           Comp_Impl     => Container,
+           Category      => Category,
+           Destination   => Destination,
+           Source        => Source,
+           Is_Refinement => Is_Refinement,
+           Is_Bidirect   => Is_Bidirect,
+           In_Modes      => No_Node);
 
       OK := P_Property_Associations (Connection, True, PAT_Simple, Code);
 
@@ -531,22 +541,22 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
 
       if Token = T_In then
          case Category is
-            when CT_Data
-              | CT_Data_Delayed
-              | CT_Port_Connection
-              | CT_Event_Data
-              | CT_Event
-              | CT_Feature
-              | CT_Feature_Group =>
+            when CT_Data         |
+              CT_Data_Delayed    |
+              CT_Port_Connection |
+              CT_Event_Data      |
+              CT_Event           |
+              CT_Feature         |
+              CT_Feature_Group   =>
                In_Modes := P_In_Modes (PC_In_Modes_And_Transitions);
 
-            when CT_Parameter
-              | CT_Access_Bus
-              | CT_Access_Data
-              | CT_Access_Subprogram
-              | CT_Access_Subprogram_Group
-              | CT_Access_Virtual_Bus
-              | CT_Access =>
+            when CT_Parameter            |
+              CT_Access_Bus              |
+              CT_Access_Data             |
+              CT_Access_Subprogram       |
+              CT_Access_Subprogram_Group |
+              CT_Access_Virtual_Bus      |
+              CT_Access                  =>
                In_Modes := P_In_Modes (PC_In_Modes);
 
             when CT_Error =>
@@ -627,8 +637,7 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
    --     element_feature_group_identifier
 
    function P_Connection_Reference
-     (Code : Parsing_Code)
-     return Types.Node_Id
+     (Code : Parsing_Code) return Types.Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -636,8 +645,8 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
       use Ocarina.ME_AADL.Tokens;
       use Ocarina.FE_AADL.Parser.Identifiers;
 
-      Loc     : Location;
-      Node    : Node_Id;
+      Loc  : Location;
+      Node : Node_Id;
    begin
       Save_Lexer (Loc);
       Scan_Token;

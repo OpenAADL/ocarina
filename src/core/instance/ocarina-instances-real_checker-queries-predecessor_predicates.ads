@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2012 ESA & ISAE.                       --
+--                   Copyright (C) 2012-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,20 +32,19 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates;
-with Types;
+with Ocarina.Types;
 
 package Ocarina.Instances.REAL_Checker.Queries.Predecessor_Predicates is
 
    function Is_Predecessor_Of_Predicate
-     (E      : Types.Node_Id;
-      C      : Types.Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean;
+     (E      : Ocarina.Types.Node_Id;
+      C      : Ocarina.Types.Node_Id;
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean;
    --  Check if the component instance E is a predecessor of the
    --  component instance C in any end-to-end flow
 
-   package Predecessor_Query is
-      new Ocarina.Instances.REAL_Checker.Queries.Relational_Predicates
+   package Predecessor_Query is new Ocarina.Instances.REAL_Checker.Queries
+     .Relational_Predicates
      (Is_Predecessor_Of_Predicate);
 
 end Ocarina.Instances.REAL_Checker.Queries.Predecessor_Predicates;

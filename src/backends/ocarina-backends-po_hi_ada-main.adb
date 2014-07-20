@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -108,8 +108,8 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -131,20 +131,19 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         Entrypoint : constant Node_Id
-           := Get_Thread_Initialize_Entrypoint (E);
-         N : Node_Id;
+         Entrypoint : constant Node_Id := Get_Thread_Initialize_Entrypoint (E);
+         N          : Node_Id;
 
          function Get_Bus (Device : Node_Id) return Node_Id;
 
          function Get_Bus (Device : Node_Id) return Node_Id is
             The_System : Node_Id;
-            S : Node_Id;
+            S          : Node_Id;
          begin
-            The_System := Parent_Component
-              (Parent_Subcomponent
-                 (Corresponding_Instance
-                    (Parent_Subcomponent (Device))));
+            The_System :=
+              Parent_Component
+                (Parent_Subcomponent
+                   (Corresponding_Instance (Parent_Subcomponent (Device))));
 
             pragma Assert (AINU.Is_System (The_System));
 
@@ -158,10 +157,11 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
                     and then Get_Category_Of_Connection (S) = CT_Access_Bus
                   then
                      if True
-                       --  This device is connected to the bus
+                        --  This device is connected to the bus
 
-                       and then Parent_Subcomponent (Device)
-                       = Item (First_Node (Path (Destination (S))))
+                       and then
+                         Parent_Subcomponent (Device) =
+                         Item (First_Node (Path (Destination (S))))
                      then
                         --  Note, for now, we assume there is only one
                         --  device at each end of the bus.
@@ -178,16 +178,19 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
 
       begin
          if Entrypoint /= No_Node then
-            N := Message_Comment ("Initialize device "
-                                    & Get_Name_String
-                                    (Name (Identifier (E))));
+            N :=
+              Message_Comment
+                ("Initialize device " &
+                 Get_Name_String (Name (Identifier (E))));
             Append_Node_To_List (N, ADN.Statements (Current_Package));
-            Add_With_Package (E => RU (RU_PolyORB_HI_Generated_Naming),
-                              Used => True);
+            Add_With_Package
+              (E    => RU (RU_PolyORB_HI_Generated_Naming),
+               Used => True);
 
-            N := Make_Subprogram_Call
-              (Map_Ada_Subprogram_Identifier (Entrypoint),
-               Make_List_Id (Map_Bus_Name (Get_Bus (E))));
+            N :=
+              Make_Subprogram_Call
+                (Map_Ada_Subprogram_Identifier (Entrypoint),
+                 Make_List_Id (Map_Bus_Name (Get_Bus (E))));
             Append_Node_To_List (N, ADN.Statements (Current_Package));
          end if;
       end Visit_Device_Instance;
@@ -197,15 +200,16 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U               : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
-         P               : constant Node_Id := ADN.Entity (U);
-         N               : Node_Id;
-         S               : Node_Id;
-         Transport_API   : constant Supported_Transport_APIs :=
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         P             : constant Node_Id                  := ADN.Entity (U);
+         N             : Node_Id;
+         S             : Node_Id;
+         Transport_API : constant Supported_Transport_APIs :=
            Fetch_Transport_API (E);
-         The_System : constant Node_Id := Parent_Component
-           (Parent_Subcomponent (E));
+         The_System : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
          C : Node_Id;
       begin
          Push_Entity (P);
@@ -214,13 +218,13 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
 
          --  Check that the process has indeed an execution platform
 
-         if Get_Execution_Platform (Get_Bound_Processor (E))
-           = Platform_None
+         if Get_Execution_Platform (Get_Bound_Processor (E)) =
+           Platform_None
          then
             Display_Located_Error
               (Loc (Parent_Subcomponent (E)),
-               "This process subcomponent is bound to a processor without"
-               & " execution platform specification",
+               "This process subcomponent is bound to a processor without" &
+               " execution platform specification",
                Fatal => True);
          end if;
 
@@ -244,20 +248,20 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
          if Has_Hybrid_Threads then
             --  Unblock the hybrid task driver
 
-            N := Make_Subprogram_Call
-              (RE (RE_Set_True),
-               Make_List_Id (RE (RE_Driver_Suspender)));
+            N :=
+              Make_Subprogram_Call
+                (RE (RE_Set_True),
+                 Make_List_Id (RE (RE_Driver_Suspender)));
             Append_Node_To_List (N, ADN.Statements (Current_Package));
          end if;
 
          --  Declarative part
 
-         N := Make_Pragma_Statement
-           (Pragma_Priority,
-            Make_List_Id
-            (Make_Attribute_Designator
-             (RE (RE_Priority),
-              A_Last)));
+         N :=
+           Make_Pragma_Statement
+             (Pragma_Priority,
+              Make_List_Id
+                (Make_Attribute_Designator (RE (RE_Priority), A_Last)));
          Append_Node_To_List (N, ADN.Declarations (Current_Package));
 
          --  Statements
@@ -267,8 +271,8 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
          if Transport_API /= Transport_None
            and then Transport_API /= Transport_User
          then
-            N := Message_Comment
-              ("Initialize default communication subsystem");
+            N :=
+              Message_Comment ("Initialize default communication subsystem");
             Append_Node_To_List (N, ADN.Statements (Current_Package));
 
             N := Make_Subprogram_Call (RE (RE_Initialize), No_List);
@@ -282,12 +286,11 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
                if AAU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (C)) =
+                   Get_Bound_Processor (E)
                then
-                  Visit_Device_Instance
-                    (Corresponding_Instance (C));
+                  Visit_Device_Instance (Corresponding_Instance (C));
                end if;
                C := Next_Node (C);
             end loop;
@@ -301,9 +304,11 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
 
          --  Suspend forever the main task
 
-         N := Message_Comment ("Suspend forever instead of putting an"
-                               & " endless loop. This saves the CPU"
-                               & " resources.");
+         N :=
+           Message_Comment
+             ("Suspend forever instead of putting an" &
+              " endless loop. This saves the CPU" &
+              " resources.");
          Append_Node_To_List (N, ADN.Statements (Current_Package));
 
          N := Make_Subprogram_Call (RE (RE_Suspend_Forever));
@@ -347,15 +352,14 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
            Get_Thread_Dispatch_Protocol (E);
       begin
          case P is
-            when Thread_Periodic
-              | Thread_Sporadic
-              | Thread_Hybrid
-              | Thread_Aperiodic
-              | Thread_Background
-              | Thread_ISR =>
+            when Thread_Periodic |
+              Thread_Sporadic    |
+              Thread_Hybrid      |
+              Thread_Aperiodic   |
+              Thread_Background  |
+              Thread_ISR         =>
                Add_With_Package
-                 (E            =>
-                    RU (RU_PolyORB_HI_Generated_Activity, False),
+                 (E            => RU (RU_PolyORB_HI_Generated_Activity, False),
                   Used         => False,
                   Warnings_Off => True,
                   Elaborated   => True);
@@ -370,18 +374,22 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
                   N : Node_Id;
                begin
                   if Initialize_Entrypoint /= No_Name then
-                     N := Message_Comment
-                       ("Initialize thread "
-                          & Get_Name_String
-                          (Name (Identifier
-                                   (Corresponding_Instance
-                                      (Parent_Subcomponent (E))))));
+                     N :=
+                       Message_Comment
+                         ("Initialize thread " &
+                          Get_Name_String
+                            (Name
+                               (Identifier
+                                  (Corresponding_Instance
+                                     (Parent_Subcomponent (E))))));
 
                      Append_Node_To_List (N, ADN.Statements (Current_Package));
 
-                     N := Make_Subprogram_Call
-                       (Map_Ada_Subprogram_Identifier (Initialize_Entrypoint),
-                        No_List);
+                     N :=
+                       Make_Subprogram_Call
+                         (Map_Ada_Subprogram_Identifier
+                            (Initialize_Entrypoint),
+                          No_List);
                      Append_Node_To_List (N, ADN.Statements (Current_Package));
                   end if;
                end;

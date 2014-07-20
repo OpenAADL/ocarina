@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,8 +36,7 @@ package Ocarina.Instances.Components is
    function Instantiate_Component
      (Instance_Root     : Node_Id;
       Component         : Node_Id;
-      Existing_Instance : Node_Id := No_Node)
-     return Node_Id;
+      Existing_Instance : Node_Id := No_Node) return Node_Id;
    --  Instantiate Component and return its instantiation. Existing_Instance is
    --  used for recursive instantiation; it must be set to No_Node.
 

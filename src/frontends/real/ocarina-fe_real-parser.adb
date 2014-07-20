@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -44,7 +44,7 @@ with Ocarina.Builder.REAL;
 with Ocarina.Parser;
 with Ocarina.Files;
 with Ocarina.Analyzer.REAL;
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.FE_REAL.Parser is
 
@@ -52,7 +52,7 @@ package body Ocarina.FE_REAL.Parser is
    use Ocarina.ME_REAL.REAL_Tree.Utils;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.ME_REAL.Tokens;
-   use Ocarina.Analyzer.Real;
+   use Ocarina.Analyzer.REAL;
    use Ocarina.Builder.REAL;
    use Ocarina.FE_REAL.Lexer;
    use Ocarina.FE_REAL.Parser_Errors;
@@ -97,22 +97,22 @@ package body Ocarina.FE_REAL.Parser is
    package Expressions is new GNAT.Table (Node_Id, Natural, 1, 100, 10);
    package REAL_Libs is new GNAT.Table (Name_Id, Nat, 1, 10, 10);
 
-   Preferences : constant array (OV_Equal .. OV_Power) of Natural
-     := (OV_Power            => 1,
-         OV_Not              => 2,
-         OV_Star             => 3,
-         OV_Slash            => 4,
-         OV_Modulo           => 5,
-         OV_Minus            => 6,
-         OV_Plus             => 7,
-         OV_Greater          => 8,
-         OV_Less             => 9,
-         OV_Greater_Equal    => 10,
-         OV_Less_equal       => 11,
-         OV_Different        => 12,
-         OV_Equal            => 13,
-         OV_Or               => 14,
-         OV_And              => 15);
+   Preferences : constant array (OV_Equal .. OV_Power) of Natural :=
+     (OV_Power         => 1,
+      OV_Not           => 2,
+      OV_Star          => 3,
+      OV_Slash         => 4,
+      OV_Modulo        => 5,
+      OV_Minus         => 6,
+      OV_Plus          => 7,
+      OV_Greater       => 8,
+      OV_Less          => 9,
+      OV_Greater_Equal => 10,
+      OV_Less_Equal    => 11,
+      OV_Different     => 12,
+      OV_Equal         => 13,
+      OV_Or            => 14,
+      OV_And           => 15);
 
    ----------------------
    -- P_Set_Expression --
@@ -178,8 +178,7 @@ package body Ocarina.FE_REAL.Parser is
       -- Is_Expression_Completed --
       -----------------------------
 
-      function Is_Expression_Completed return Boolean
-      is
+      function Is_Expression_Completed return Boolean is
          T : constant Token_Type := Next_Token;
       begin
          return T /= T_Identifier
@@ -195,8 +194,8 @@ package body Ocarina.FE_REAL.Parser is
       function Is_Expression_Value (E : Node_Id) return Boolean is
       begin
          return Kind (E) = K_Set
-           or else (Kind (E) = K_Set_Expression
-                    and then Present (Right_Expr (E)));
+           or else
+           (Kind (E) = K_Set_Expression and then Present (Right_Expr (E)));
       end Is_Expression_Value;
 
       ------------------------
@@ -237,7 +236,8 @@ package body Ocarina.FE_REAL.Parser is
                Expression := New_Node (K_Set_Reference, Token_Location);
                Set_Name (Expression, To_Lower (Token_Name));
                Set_Predefined_Type
-                 (Expression, Translate_Predefined_Sets (Token));
+                 (Expression,
+                  Translate_Predefined_Sets (Token));
                Set_Referenced_Set (Expression, No_Node);
 
             when T_Left_Paren =>
@@ -298,12 +298,11 @@ package body Ocarina.FE_REAL.Parser is
          Left_Operator  : constant Operator_Id := Operator (L);
          Right_Operator : constant Operator_Id := Operator (R);
       begin
-         return Preferences (Left_Operator) <
-           Preferences (Right_Operator);
+         return Preferences (Left_Operator) < Preferences (Right_Operator);
       end Precede;
 
-      Expr     : Node_Id;
-      First    : Natural;
+      Expr  : Node_Id;
+      First : Natural;
    begin
 
       --  Read enough expressions to push as first expression a binary
@@ -329,7 +328,7 @@ package body Ocarina.FE_REAL.Parser is
 
       Increment_Last;
       Table (Last) := Expr;
-      First := Last;
+      First        := Last;
 
       Expr := P_Expression_Part;
       if No (Expr) then
@@ -393,7 +392,7 @@ package body Ocarina.FE_REAL.Parser is
            and then Precede (Table (Last - 2), Expr)
          loop
             Set_Right_Expr (Table (Last - 2), Table (Last - 1));
-            Set_Left_Expr  (Table (Last), Table (Last - 2));
+            Set_Left_Expr (Table (Last), Table (Last - 2));
             Table (Last - 2) := Table (Last);
             Set_Last (Last - 2);
          end loop;
@@ -413,7 +412,7 @@ package body Ocarina.FE_REAL.Parser is
       while First < Last loop
          if No (Left_Expr (Table (Last - 1))) then
             Set_Right_Expr (Table (Last - 1), Table (Last));
-            Set_Left_Expr  (Table (Last - 1), Table (Last - 2));
+            Set_Left_Expr (Table (Last - 1), Table (Last - 2));
             Table (Last - 2) := Table (Last - 1);
             Set_Last (Last - 2);
 
@@ -530,8 +529,7 @@ package body Ocarina.FE_REAL.Parser is
       -- Is_Expression_Completed --
       -----------------------------
 
-      function Is_Expression_Completed return Boolean
-      is
+      function Is_Expression_Completed return Boolean is
          T : constant Token_Type := Next_Token;
       begin
          return T not in Literal_Type
@@ -551,8 +549,9 @@ package body Ocarina.FE_REAL.Parser is
          return Kind (E) = K_Literal
            or else Kind (E) = K_Identifier
            or else Kind (E) = K_Var_Reference
-           or else (Operator (E) not in OV_Equal .. OV_Power
-                    and then Operator (E) /= OV_Equal)
+           or else
+           (Operator (E) not in OV_Equal .. OV_Power
+            and then Operator (E) /= OV_Equal)
            or else Present (Right_Expr (E));
       end Is_Expression_Value;
 
@@ -572,10 +571,10 @@ package body Ocarina.FE_REAL.Parser is
       -----------------------
 
       function P_Expression_Part return Node_Id is
-         Expression       : Node_Id;
-         Right_Expr       : Node_Id;
-         Previous_Token   : Token_Type;
-         Op               : Operator_Id;
+         Expression     : Node_Id;
+         Right_Expr     : Node_Id;
+         Previous_Token : Token_Type;
+         Op             : Operator_Id;
       begin
          case Next_Token is
 
@@ -628,17 +627,19 @@ package body Ocarina.FE_REAL.Parser is
 
                --  Token is a real unary operator
 
-               if Token = T_Not or else
+               if Token = T_Not
+                 or else
                  (Token = T_Minus
                   and then Previous_Token /= T_Affect
                   and then Previous_Token /= T_Right_Paren
-                  and then (Is_Operator (Previous_Token)
-                            or else Previous_Token = T_Left_Paren))
+                  and then
+                  (Is_Operator (Previous_Token)
+                   or else Previous_Token = T_Left_Paren))
                then
                   case Next_Token is
-                     when T_Get_Property_Value .. T_Sum
-                       | T_Left_Paren
-                       | T_Identifier =>
+                     when T_Get_Property_Value .. T_Sum |
+                       T_Left_Paren                     |
+                       T_Identifier                     =>
 
                         Right_Expr := P_Expression;
                         if No (Right_Expr) then
@@ -647,13 +648,12 @@ package body Ocarina.FE_REAL.Parser is
                         Set_Right_Expr (Expression, Right_Expr);
 
                      when others =>
-                        DPE (PC_Check_Expression,
-                             EMC_Expected_Valid_Operator);
+                        DPE (PC_Check_Expression, EMC_Expected_Valid_Operator);
                         return No_Node;
                   end case;
 
-                  --  Cannot have two following operators except in the
-                  --  special case above.
+               --  Cannot have two following operators except in the
+               --  special case above.
 
                elsif Is_Operator (Previous_Token) then
                   DPE (PC_Check_Expression, EMC_Unexpected_Operator);
@@ -687,7 +687,7 @@ package body Ocarina.FE_REAL.Parser is
       -------------
 
       function Precede (L, R : Node_Id) return Boolean is
-         Left_Operator  : constant Operator_Id := Operator (L);
+         Left_Operator : constant Operator_Id := Operator (L);
 --         Right_Operator : constant Operator_Id := Operator (R);
       begin
          if Kind (R) = K_Check_Subprogram_Call then
@@ -697,8 +697,8 @@ package body Ocarina.FE_REAL.Parser is
          return Preferences (Left_Operator) < Preferences (Operator (R));
       end Precede;
 
-      Expr     : Node_Id;
-      First    : Natural;
+      Expr  : Node_Id;
+      First : Natural;
    begin
 
       --  Read enough expressions to push as first expression a binary
@@ -724,7 +724,7 @@ package body Ocarina.FE_REAL.Parser is
 
       Increment_Last;
       Table (Last) := Expr;
-      First := Last;
+      First        := Last;
 
       Expr := P_Expression_Part;
       if No (Expr) then
@@ -789,7 +789,7 @@ package body Ocarina.FE_REAL.Parser is
            and then Precede (Table (Last - 2), Expr)
          loop
             Set_Right_Expr (Table (Last - 2), Table (Last - 1));
-            Set_Left_Expr  (Table (Last), Table (Last - 2));
+            Set_Left_Expr (Table (Last), Table (Last - 2));
             Table (Last - 2) := Table (Last);
             Set_Last (Last - 2);
          end loop;
@@ -809,7 +809,7 @@ package body Ocarina.FE_REAL.Parser is
       while First < Last loop
          if No (Left_Expr (Table (Last - 1))) then
             Set_Right_Expr (Table (Last - 1), Table (Last));
-            Set_Left_Expr  (Table (Last - 1), Table (Last - 2));
+            Set_Left_Expr (Table (Last - 1), Table (Last - 2));
             Table (Last - 2) := Table (Last - 1);
             Set_Last (Last - 2);
 
@@ -846,7 +846,7 @@ package body Ocarina.FE_REAL.Parser is
          end case;
       end Translate_Operator;
 
-      N : Node_Id;
+      N  : Node_Id;
       E1 : Node_Id;
       E2 : Node_Id;
       E3 : Node_Id;
@@ -923,8 +923,9 @@ package body Ocarina.FE_REAL.Parser is
    begin
       N := New_Node (K_Check_Subprogram_Call, Token_Location);
 
-      if Next_Token not in Verification_Function_Type and then
-        Next_Token not in Selection_Function_Type then
+      if Next_Token not in Verification_Function_Type
+        and then Next_Token not in Selection_Function_Type
+      then
          Scan_Token;
          DPE (PC_Check_Subprogram_Call, EMC_Expected_Predefined_Function_Name);
          return No_Node;
@@ -980,8 +981,7 @@ package body Ocarina.FE_REAL.Parser is
                Scan_Token;
                Param := New_Node (K_Set_Reference, Token_Location);
                Set_Name (Param, To_Lower (Token_Name));
-               Set_Predefined_Type
-                 (Param, Translate_Predefined_Sets (Token));
+               Set_Predefined_Type (Param, Translate_Predefined_Sets (Token));
                Set_Referenced_Set (Param, No_Node);
                Append_Node_To_List (Param, L);
 
@@ -1011,8 +1011,9 @@ package body Ocarina.FE_REAL.Parser is
                Append_Node_To_List (Param, L);
 
             when others =>
-               DPE (PC_Check_Subprogram_Call,
-                    EMC_Expected_Valid_Function_Parameter);
+               DPE
+                 (PC_Check_Subprogram_Call,
+                  EMC_Expected_Valid_Function_Parameter);
                return No_Node;
          end case;
 
@@ -1046,16 +1047,16 @@ package body Ocarina.FE_REAL.Parser is
    -- Make_Literal --
    ------------------
 
-   function Make_Literal (T : Token_Type) return Node_Id
-   is
+   function Make_Literal (T : Token_Type) return Node_Id is
       use Ocarina.REAL_Values;
 
       Const : constant Node_Id := New_Node (K_Literal, Token_Location);
    begin
       case T is
          when T_String_Literal | T_Wide_String_Literal =>
-            Set_Value (Const, New_String_Value
-                       (To_Lower (String_Literal_Value)));
+            Set_Value
+              (Const,
+               New_String_Value (To_Lower (String_Literal_Value)));
 
          when T_True =>
             Set_Value (Const, New_Boolean_Value (True));
@@ -1064,13 +1065,14 @@ package body Ocarina.FE_REAL.Parser is
             Set_Value (Const, New_Boolean_Value (False));
 
          when T_Integer_Literal =>
-            Set_Value (Const, New_Integer_Value
-                       (Value => Unsigned_Long_Long (Integer_Literal_Value),
-                        Base => Unsigned_Short_Short (Integer_Literal_Base)));
+            Set_Value
+              (Const,
+               New_Integer_Value
+                 (Value => Unsigned_Long_Long (Integer_Literal_Value),
+                  Base  => Unsigned_Short_Short (Integer_Literal_Base)));
 
          when T_Floating_Point_Literal =>
-            Set_Value (Const, New_Real_Value
-                       (Float_Literal_Value));
+            Set_Value (Const, New_Real_Value (Float_Literal_Value));
 
          when others =>
             DPE (PC_Make_Literal, EMC_Expected_Literal_Value);
@@ -1136,12 +1138,12 @@ package body Ocarina.FE_REAL.Parser is
    ------------------------------
 
    function P_Single_Var_Declaration return Node_Id is
-      Var_Decl  : Node_Id;
-      Var_Id    : Node_Id;
-      Var, P    : Node_Id;
-      Trm_Id    : Node_Id;
-      Params    : List_Id := No_List;
-      Global    : Boolean;
+      Var_Decl : Node_Id;
+      Var_Id   : Node_Id;
+      Var, P   : Node_Id;
+      Trm_Id   : Node_Id;
+      Params   : List_Id := No_List;
+      Global   : Boolean;
    begin
       --  Parse the variable range keyword (var or global)
 
@@ -1204,14 +1206,14 @@ package body Ocarina.FE_REAL.Parser is
                   Scan_Token;
                   P := New_Node (K_Set_Reference, Token_Location);
                   Set_Name (P, To_Lower (Token_Name));
-                  Set_Predefined_Type
-                    (P, Translate_Predefined_Sets (Token));
+                  Set_Predefined_Type (P, Translate_Predefined_Sets (Token));
                   Set_Referenced_Set (P, No_Node);
                   Append_Node_To_List (P, Params);
 
                when others =>
-                  DPE (PC_Single_Variable_Declaration,
-                       EMC_Subtheorem_Parameter);
+                  DPE
+                    (PC_Single_Variable_Declaration,
+                     EMC_Subtheorem_Parameter);
                   return No_Node;
             end case;
 
@@ -1227,8 +1229,9 @@ package body Ocarina.FE_REAL.Parser is
                   case Next_Token is
 
                      when T_EOF =>
-                        DPE (PC_Single_Variable_Declaration,
-                             EMC_Unexpected_Error);
+                        DPE
+                          (PC_Single_Variable_Declaration,
+                           EMC_Unexpected_Error);
                         return No_Node;
 
                      when T_Integer_Literal .. T_Wide_String_Literal =>
@@ -1243,8 +1246,9 @@ package body Ocarina.FE_REAL.Parser is
                         Append_Node_To_List (P, Params);
 
                      when others =>
-                        DPE (PC_Single_Variable_Declaration,
-                             EMC_Unexpected_Token);
+                        DPE
+                          (PC_Single_Variable_Declaration,
+                           EMC_Unexpected_Token);
                         return No_Node;
                   end case;
 
@@ -1270,7 +1274,7 @@ package body Ocarina.FE_REAL.Parser is
          end if;
 
          Set_Parameters (Var_Decl, Params);
-         Set_True_Params (Var_Decl, No_List);
+         Set_True_params (Var_Decl, No_List);
          Set_Domain (Var_Decl, No_Node);
          Set_Var_Ref (Var_Decl, Var);
          Set_Theorem_Name (Var_Decl, Name (Trm_Id));
@@ -1324,12 +1328,12 @@ package body Ocarina.FE_REAL.Parser is
    ------------------------------
 
    function P_Single_Set_Declaration return Node_Id is
-      Set_Decl  : Node_Id;
-      Set_Id    : Node_Id;
-      Set_Expr  : Node_Id;
-      Set_Def   : Node_Id;
-      State     : Location;
-      State_2   : Location;
+      Set_Decl     : Node_Id;
+      Set_Id       : Node_Id;
+      Set_Expr     : Node_Id;
+      Set_Def      : Node_Id;
+      State        : Location;
+      State_2      : Location;
       Is_Dependant : Boolean := False;
    begin
 
@@ -1379,8 +1383,7 @@ package body Ocarina.FE_REAL.Parser is
 
       --  Parse the local variable
 
-      Set_Local_Variable (Set_Decl,
-                          Make_Var_Reference (Name (P_Identifier)));
+      Set_Local_Variable (Set_Decl, Make_Var_Reference (Name (P_Identifier)));
       if Token = T_Error then
          DPE (PC_Single_Set_Declaration, EMC_Unexpected_Error);
          return No_Node;
@@ -1428,7 +1431,7 @@ package body Ocarina.FE_REAL.Parser is
       --  We pass the semi-colon
 
       Scan_Token (T_Semi_Colon);
-      if Token =  T_Error then
+      if Token = T_Error then
          DPE (PC_Single_Set_Declaration, T_Semi_Colon);
          return No_Node;
       end if;
@@ -1497,20 +1500,18 @@ package body Ocarina.FE_REAL.Parser is
    -- P_Declarations --
    --------------------
 
-   procedure P_Declarations
-     (R : Node_Id; Success : out boolean)
-   is
+   procedure P_Declarations (R : Node_Id; Success : out Boolean) is
       pragma Assert (Kind (R) = K_Theorem);
 
-      Declarations_List : constant List_Id := New_List
-        (K_List_id, Token_Location);
-      Declaration       : Node_Id := No_Node;
-      Stop              : Boolean := False;
+      Declarations_List : constant List_Id :=
+        New_List (K_List_Id, Token_Location);
+      Declaration : Node_Id := No_Node;
+      Stop        : Boolean := False;
    begin
       Success := True;
       while not Stop and then Success loop
 
-         case Next_token is
+         case Next_Token is
 
             when T_Identifier =>  --  Set declaration
                Declaration := P_Single_Set_Declaration;
@@ -1585,9 +1586,10 @@ package body Ocarina.FE_REAL.Parser is
    begin
       Scan_Token;
 
-      if Token /= T_Identifier and then
-        Token not in Selection_Function_Type and then
-        Token not in Verification_Function_Type then
+      if Token /= T_Identifier
+        and then Token not in Selection_Function_Type
+        and then Token not in Verification_Function_Type
+      then
          DPE (PC_Identifier_Declaration, EMC_Used_Keyword);
          return No_Node;
       end if;
@@ -1610,7 +1612,7 @@ package body Ocarina.FE_REAL.Parser is
 
       --  Scan 'foreach'
 
-      Scan_Token  (T_Foreach);
+      Scan_Token (T_Foreach);
       if Token = T_Error then
          DPE (PC_Set_Declarations, T_Foreach);
          return No_Node;
@@ -1651,8 +1653,9 @@ package body Ocarina.FE_REAL.Parser is
 
       Set_Range_Variable (Range_Decl, Elem);
       Set_Range_Set (Range_Decl, Set_Expr);
-      Set_Variable_Ref (Range_Decl,
-                        New_Node (K_Var_Reference, Token_Location));
+      Set_Variable_Ref
+        (Range_Decl,
+         New_Node (K_Var_Reference, Token_Location));
 
       return Range_Decl;
    end P_Set_Range_Declaration;
@@ -1661,8 +1664,7 @@ package body Ocarina.FE_REAL.Parser is
    -- P_Higher_Level_Function --
    -----------------------------
 
-   function P_Higher_Level_Function return Value_Id
-   is
+   function P_Higher_Level_Function return Value_Id is
       use Ocarina.REAL_Values;
 
       State : Location;
@@ -1762,7 +1764,7 @@ package body Ocarina.FE_REAL.Parser is
          --  as "check expressions"
 
          Returns := New_Node (K_Return_Expression, Token_Location);
-         V := P_Higher_Level_Function;
+         V       := P_Higher_Level_Function;
          Set_Range_Function (Returns, V);
 
          Test := Create_Check_Expression;
@@ -1859,16 +1861,15 @@ package body Ocarina.FE_REAL.Parser is
    function Process
      (AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location)
-     return Node_Id
+      To        : Location := No_Location) return Node_Id
    is
       pragma Unreferenced (AADL_Root);
 
-      Buffer      : Location;
-      Root        : constant Node_Id := New_Node (K_Root_Node, From);
-      N           : Node_Id;
-      Success     : Boolean := True;
-      State       : Location;
+      Buffer  : Location;
+      Root    : constant Node_Id := New_Node (K_Root_Node, From);
+      N       : Node_Id;
+      Success : Boolean          := True;
+      State   : Location;
    begin
       Buffer := From;
 
@@ -1924,11 +1925,10 @@ package body Ocarina.FE_REAL.Parser is
    -- Init --
    ----------
 
-   procedure Init
-   is
+   procedure Init is
       use GNAT.Command_Line;
       use Ocarina.Parser;
-      use Namet;
+      use Ocarina.Namet;
 
       C : Character;
    begin
@@ -1975,8 +1975,8 @@ package body Ocarina.FE_REAL.Parser is
             Buffer := Load_File (REAL_Libs.Table (J));
             if Buffer = No_Location then
                Display_And_Exit
-                 ("could not load file "
-                    & Get_Name_String (REAL_Libs.Table (J)));
+                 ("could not load file " &
+                  Get_Name_String (REAL_Libs.Table (J)));
             end if;
 
             REAL_External_Lib := Process (No_Node, Buffer);

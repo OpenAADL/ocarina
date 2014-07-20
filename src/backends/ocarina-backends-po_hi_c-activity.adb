@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -48,7 +48,7 @@ with Ocarina.Backends.Messages;
 
 package body Ocarina.Backends.PO_HI_C.Activity is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.Backends.Utils;
@@ -65,7 +65,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
    package CV renames Ocarina.Backends.C_Values;
 
-   Current_Device            : Node_Id := No_Node;
+   Current_Device : Node_Id := No_Node;
 
    ------------
    -- Header --
@@ -82,7 +82,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       function Task_Job_Spec (E : Node_Id) return Node_Id;
       function Task_Deliver_Spec (E : Node_Id) return Node_Id;
 
-      Have_Main_Deliver          : Boolean := False;
+      Have_Main_Deliver : Boolean := False;
 
       -------------------
       -- Task_Job_Spec --
@@ -92,11 +92,12 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          N : Node_Id;
          S : constant Node_Id := Parent_Subcomponent (E);
       begin
-         N := Make_Function_Specification
-           (Defining_Identifier => Map_Task_Job_Identifier (S, Current_Device),
-            Parameters          => No_List,
-            Return_Type         => CTU.Make_Pointer_Type
-              (New_Node (CTN.K_Void)));
+         N :=
+           Make_Function_Specification
+             (Defining_Identifier =>
+                Map_Task_Job_Identifier (S, Current_Device),
+              Parameters  => No_List,
+              Return_Type => CTU.Make_Pointer_Type (New_Node (CTN.K_Void)));
          return N;
       end Task_Job_Spec;
 
@@ -109,18 +110,17 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          S          : constant Node_Id := Parent_Subcomponent (E);
          Parameters : constant List_Id := New_List (CTN.K_Parameter_List);
       begin
-         N := Make_Parameter_Specification
-           (Defining_Identifier =>
-              Make_Defining_Identifier (PN (P_Request)),
-            Parameter_Type =>
-              Make_Pointer_Type
-              (RE (RE_Request_T)));
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Request)),
+              Parameter_Type      => Make_Pointer_Type (RE (RE_Request_T)));
          Append_Node_To_List (N, Parameters);
 
-         N := Make_Function_Specification
-           (Defining_Identifier => Map_Task_Deliver_Identifier (S),
-            Parameters          => Parameters,
-            Return_Type         => New_Node (CTN.K_Void));
+         N :=
+           Make_Function_Specification
+             (Defining_Identifier => Map_Task_Deliver_Identifier (S),
+              Parameters          => Parameters,
+              Return_Type         => New_Node (CTN.K_Void));
 
          Have_Main_Deliver := True;
 
@@ -159,8 +159,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -182,20 +182,21 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U          : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
          P          : constant Node_Id := CTN.Entity (U);
          Parameters : constant List_Id := New_List (CTN.K_Parameter_List);
          S          : Node_Id;
          N          : Node_Id;
-         The_System : constant Node_Id := Parent_Component
-           (Parent_Subcomponent (E));
+         The_System : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
       begin
          Push_Entity (P);
          Push_Entity (U);
          Set_Activity_Header (U);
 
-         Have_Main_Deliver          := False;
+         Have_Main_Deliver := False;
 
          if not AAU.Is_Empty (Subcomponents (E)) then
             S := First_Node (Subcomponents (E));
@@ -208,23 +209,22 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          end if;
 
          if Have_Main_Deliver then
-            N := Make_Parameter_Specification
-              (Defining_Identifier =>
-                 Make_Defining_Identifier (PN (P_Request)),
-               Parameter_Type =>
-                 Make_Pointer_Type
-                 (RE (RE_Request_T)));
+            N :=
+              Make_Parameter_Specification
+                (Defining_Identifier =>
+                   Make_Defining_Identifier (PN (P_Request)),
+                 Parameter_Type => Make_Pointer_Type (RE (RE_Request_T)));
             Append_Node_To_List (N, Parameters);
 
-            N := Make_Function_Specification
-              (Defining_Identifier => RE (RE_Main_Deliver),
-               Parameters          => Parameters,
-               Return_Type         => New_Node (CTN.K_Void));
+            N :=
+              Make_Function_Specification
+                (Defining_Identifier => RE (RE_Main_Deliver),
+                 Parameters          => Parameters,
+                 Return_Type         => New_Node (CTN.K_Void));
 
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            Bind_AADL_To_Job
-              (Identifier (Parent_Subcomponent (E)), N);
+            Bind_AADL_To_Job (Identifier (Parent_Subcomponent (E)), N);
          end if;
 
          --  Visit all devices attached to the parent system that
@@ -234,12 +234,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             S := First_Node (Subcomponents (The_System));
             while Present (S) loop
                if AAU.Is_Device (Corresponding_Instance (S))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (S))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (S)) =
+                   Get_Bound_Processor (E)
                then
-                  Visit_Device_Instance
-                    (Corresponding_Instance (S));
+                  Visit_Device_Instance (Corresponding_Instance (S));
                end if;
                S := Next_Node (S);
             end loop;
@@ -254,8 +253,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         Implementation  : constant Node_Id := Get_Implementation (E);
-         S : Node_Id;
+         Implementation : constant Node_Id := Get_Implementation (E);
+         S              : Node_Id;
       begin
          Current_Device := E;
          if Implementation /= No_Node then
@@ -341,7 +340,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       --  Create the parameterless subprogram body that does the
       --  thread's job.
 
-      Main_Deliver_Alternatives     : List_Id;
+      Main_Deliver_Alternatives : List_Id;
 
       Current_Device : Node_Id := No_Node;
 
@@ -350,17 +349,15 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       -------------------
 
       function Task_Job_Body (E : Node_Id) return Node_Id is
-         S               : constant Node_Id := Parent_Subcomponent (E);
-         Spec            : constant Node_Id := CTN.Job_Node
-           (Backend_Node (Identifier (S)));
-         Declarations    : constant List_Id := New_List
-           (CTN.K_Declaration_List);
-         Statements      : constant List_Id := New_List (CTN.K_Statement_List);
-         WStatements     : constant List_Id := New_List
-           (CTN.K_Statement_List);
-         P               : constant Supported_Thread_Dispatch_Protocol :=
+         S    : constant Node_Id := Parent_Subcomponent (E);
+         Spec : constant Node_Id :=
+           CTN.Job_Node (Backend_Node (Identifier (S)));
+         Declarations : constant List_Id := New_List (CTN.K_Declaration_List);
+         Statements   : constant List_Id := New_List (CTN.K_Statement_List);
+         WStatements  : constant List_Id := New_List (CTN.K_Statement_List);
+         P            : constant Supported_Thread_Dispatch_Protocol :=
            Get_Thread_Dispatch_Protocol (E);
-         Impl_Kind       : constant Supported_Thread_Implementation :=
+         Impl_Kind : constant Supported_Thread_Implementation :=
            Get_Thread_Implementation_Kind (E);
          Call_Parameters : List_Id;
          N               : Node_Id;
@@ -382,13 +379,12 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          ------------------------------
 
          procedure Make_Activate_Entrypoint is
-            Entrypoint : constant Node_Id
-                  := Get_Thread_Activate_Entrypoint (E);
+            Entrypoint : constant Node_Id :=
+              Get_Thread_Activate_Entrypoint (E);
          begin
             if Entrypoint /= No_Node then
                Append_Node_To_List
-                  (Make_Call_Profile
-                     (Map_C_Subprogram_Identifier (Entrypoint)),
+                 (Make_Call_Profile (Map_C_Subprogram_Identifier (Entrypoint)),
                   Statements);
             end if;
          end Make_Activate_Entrypoint;
@@ -403,25 +399,26 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Condition : Node_Id;
             N         : Node_Id;
          begin
-            N := Make_Variable_Declaration
-              (Defining_Identifier => Make_Defining_Identifier
-                 (Map_C_Variable_Name (F, Port_Request => True)),
-               Used_Type   => RE (RE_Request_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Defining_Identifier
+                     (Map_C_Variable_Name (F, Port_Request => True)),
+                 Used_Type => RE (RE_Request_T));
             Append_Node_To_List (N, Declarations);
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
             Append_Node_To_List
-              (Make_Defining_Identifier
-               (Map_C_Enumerator_Name (S)),
+              (Make_Defining_Identifier (Map_C_Enumerator_Name (S)),
                Call_Parameters);
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Enumerator_Name (F, Local_Port => True)),
+                 (Map_C_Enumerator_Name (F, Local_Port => True)),
                Call_Parameters);
 
             if not Get_Wait_For_All_Events (E) then
-               Condition := Make_Call_Profile
-                  (RE (RE_Gqueue_Get_Count), Call_Parameters);
+               Condition :=
+                 Make_Call_Profile (RE (RE_Gqueue_Get_Count), Call_Parameters);
             else
                Condition := Make_Literal (CV.New_Int_Value (1, 0, 10));
             end if;
@@ -431,23 +428,21 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Call_Parameters := New_List (CTN.K_Parameter_List);
 
             Append_Node_To_List
-              (Make_Defining_Identifier
-               (Map_C_Enumerator_Name (S)),
+              (Make_Defining_Identifier (Map_C_Enumerator_Name (S)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Enumerator_Name (F, Local_Port => True)),
+                 (Map_C_Enumerator_Name (F, Local_Port => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Variable_Address
-               (Make_Defining_Identifier
-                (Map_C_Variable_Name (F, Port_Request => True))),
-                Call_Parameters);
+                 (Make_Defining_Identifier
+                    (Map_C_Variable_Name (F, Port_Request => True))),
+               Call_Parameters);
 
-            N := Make_Call_Profile
-              (RE (RE_Gqueue_Get_Value), Call_Parameters);
+            N := Make_Call_Profile (RE (RE_Gqueue_Get_Value), Call_Parameters);
 
             Append_Node_To_List (N, Then_Statements);
 
@@ -456,23 +451,20 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Call_Parameters := New_List (CTN.K_Parameter_List);
 
             Append_Node_To_List
-              (Make_Defining_Identifier
-               (Map_C_Enumerator_Name (S)),
+              (Make_Defining_Identifier (Map_C_Enumerator_Name (S)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Enumerator_Name (F, Local_Port => True)),
+                 (Map_C_Enumerator_Name (F, Local_Port => True)),
                Call_Parameters);
 
-            N := Make_Call_Profile
-              (RE (RE_Gqueue_Next_Value), Call_Parameters);
+            N :=
+              Make_Call_Profile (RE (RE_Gqueue_Next_Value), Call_Parameters);
 
             Append_Node_To_List (N, Then_Statements);
 
-            return
-              Make_If_Statement
-              (Condition, Then_Statements);
+            return Make_If_Statement (Condition, Then_Statements);
          end Make_Get_Valid_Value;
 
          ---------------------
@@ -481,10 +473,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
          procedure Make_Wait_Event is
          begin
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Defining_Identifier (VN (V_Port)),
-               Used_Type   => RE (RE_Local_Port_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier => Make_Defining_Identifier (VN (V_Port)),
+                 Used_Type           => RE (RE_Local_Port_T));
             Append_Node_To_List (N, Declarations);
 
             --  Make the call to __po_hi_gqueue_wait_for_incoming_event
@@ -493,26 +485,29 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
             Append_Node_To_List (N, Call_Parameters);
 
-            N := Make_Variable_Address
-              (Make_Defining_Identifier (VN (V_Port)));
+            N :=
+              Make_Variable_Address (Make_Defining_Identifier (VN (V_Port)));
             Append_Node_To_List (N, Call_Parameters);
 
-            N := CTU.Make_Call_Profile (RE (RE_Gqueue_Wait_For_Incoming_Event),
-                                        Call_Parameters);
+            N :=
+              CTU.Make_Call_Profile
+                (RE (RE_Gqueue_Wait_For_Incoming_Event),
+                 Call_Parameters);
             Append_Node_To_List (N, WStatements);
 
             --  Make the call to __po_hi_compute_next_period
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
-            N := Make_Defining_Identifier
-               (Map_C_Enumerator_Name
-                  (S,
-                  Custom_Parent => Current_Device));
+            N               :=
+              Make_Defining_Identifier
+                (Map_C_Enumerator_Name (S, Custom_Parent => Current_Device));
 
             Append_Node_To_List (N, Call_Parameters);
 
-            N := CTU.Make_Call_Profile (RE (RE_Compute_Next_Period),
-                                        Call_Parameters);
+            N :=
+              CTU.Make_Call_Profile
+                (RE (RE_Compute_Next_Period),
+                 Call_Parameters);
             Append_Node_To_List (N, WStatements);
          end Make_Wait_Event;
 
@@ -526,17 +521,20 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
             if Current_Device /= No_Node then
-               N := Make_Defining_Identifier
-                  (Map_C_Enumerator_Name
-                     (S,
-                     Custom_Parent => Current_Device));
+               N :=
+                 Make_Defining_Identifier
+                   (Map_C_Enumerator_Name
+                      (S,
+                       Custom_Parent => Current_Device));
             else
                N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
             end if;
             Append_Node_To_List (N, Call_Parameters);
 
-            N := CTU.Make_Call_Profile (RE (RE_Wait_For_Next_Period),
-                                        Call_Parameters);
+            N :=
+              CTU.Make_Call_Profile
+                (RE (RE_Wait_For_Next_Period),
+                 Call_Parameters);
             Append_Node_To_List (N, WStatements);
          end Make_Task_Blocking;
 
@@ -545,12 +543,12 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          ------------------------
 
          procedure Make_Set_Out_Ports is
-            N : Node_Id;
-            L : Node_Id;
-            R : Node_Id;
-            F : Node_Id;
-            T : Node_Id;
-            Z : Node_Id;
+            N          : Node_Id;
+            L          : Node_Id;
+            R          : Node_Id;
+            F          : Node_Id;
+            T          : Node_Id;
+            Z          : Node_Id;
             Parameters : List_Id;
          begin
             N := Message_Comment ("Set the OUT port values");
@@ -559,8 +557,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             F := First_Node (Features (E));
 
             while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance and then Is_Out (F)
-                  and then not AAU.Is_Empty (AAN.Sources (F)) then
+               if Kind (F) = K_Port_Spec_Instance
+                 and then Is_Out (F)
+                 and then not AAU.Is_Empty (AAN.Sources (F))
+               then
                   --  We do not set the ports that are connected to
                   --  subprogram out ports, this should be done during
                   --  the subprogram call sequence handling.
@@ -578,100 +578,113 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      end loop;
 
                      if Set then
-                        N := Make_Variable_Declaration
-                          (Make_Defining_Identifier
-                           (Map_C_Variable_Name
-                            (F, Port_Request => True)),
-                           RE (RE_Request_T));
+                        N :=
+                          Make_Variable_Declaration
+                            (Make_Defining_Identifier
+                               (Map_C_Variable_Name (F, Port_Request => True)),
+                             RE (RE_Request_T));
                         Append_Node_To_List (N, Declarations);
 
-                        L := Make_Member_Designator
-                           (Defining_Identifier =>
-                              Make_Member_Designator
+                        L :=
+                          Make_Member_Designator
+                            (Defining_Identifier =>
+                               Make_Member_Designator
                                  (Defining_Identifier =>
                                     Make_Member_Designator
-                                       (Defining_Identifier =>
-                                          Make_Defining_Identifier
-                                             (Map_C_Enumerator_Name
-                                                (F)),
+                                      (Defining_Identifier =>
+                                         Make_Defining_Identifier
+                                           (Map_C_Enumerator_Name (F)),
                                        Aggregate_Name =>
-                                          Make_Defining_Identifier
-                                             (Map_C_Enumerator_Name
-                                                (F))),
-                                 Aggregate_Name =>
-                                    Make_Defining_Identifier
-                                       (MN (M_Vars))),
-                           Aggregate_Name =>
-                              Make_Defining_Identifier
+                                         Make_Defining_Identifier
+                                           (Map_C_Enumerator_Name (F))),
+                                  Aggregate_Name =>
+                                    Make_Defining_Identifier (MN (M_Vars))),
+                             Aggregate_Name =>
+                               Make_Defining_Identifier
                                  (Map_C_Variable_Name
-                                    (F, Port_Request => True)));
-                        R :=  Make_Defining_Identifier
-                                 (Map_C_Variable_Name
-                                    (F, Request_Variable => True));
+                                    (F,
+                                     Port_Request => True)));
+                        R :=
+                          Make_Defining_Identifier
+                            (Map_C_Variable_Name
+                               (F,
+                                Request_Variable => True));
 
                         Z := AAN.Corresponding_Instance (F);
                         T := No_Node;
 
-                        if Present (Backend_Node (Identifier (Z))) and then
-                           Present (CTN.Type_Definition_Node
-                                    (Backend_Node (Identifier (Z)))) then
-                           T := CTN.Type_Name
-                                 (CTN.Type_Definition_Node
-                                    (Backend_Node (Identifier (Z))));
+                        if Present (Backend_Node (Identifier (Z)))
+                          and then Present
+                            (CTN.Type_Definition_Node
+                               (Backend_Node (Identifier (Z))))
+                        then
+                           T :=
+                             CTN.Type_Name
+                               (CTN.Type_Definition_Node
+                                  (Backend_Node (Identifier (Z))));
                         end if;
 
-                        if T /= No_Node and then
-                           CTN.Kind (T) = CTN.K_Array_Declaration then
+                        if T /= No_Node
+                          and then CTN.Kind (T) = CTN.K_Array_Declaration
+                        then
                            Parameters := New_List (CTN.K_Parameter_List);
                            Append_Node_To_List (L, Parameters);
                            Append_Node_To_List (R, Parameters);
-                           Append_Node_To_List
-                              (Get_Data_Size (Z), Parameters);
-                           N := CTU.Make_Call_Profile
-                                 (RE (RE_Copy_Array), Parameters);
+                           Append_Node_To_List (Get_Data_Size (Z), Parameters);
+                           N :=
+                             CTU.Make_Call_Profile
+                               (RE (RE_Copy_Array),
+                                Parameters);
                         else
-                           N := Make_Expression
-                              (Left_Expr => L,
-                              Operator => Op_Equal,
-                              Right_Expr => R);
+                           N :=
+                             Make_Expression
+                               (Left_Expr  => L,
+                                Operator   => Op_Equal,
+                                Right_Expr => R);
                         end if;
 
-                        Append_Node_To_List
-                          (N, WStatements);
+                        Append_Node_To_List (N, WStatements);
 
-                        N := Make_Expression
-                          (Left_Expr =>
-                             Make_Member_Designator
-                             (Defining_Identifier =>
-                                Make_Defining_Identifier
-                                (MN (M_Port)),
-                              Aggregate_Name =>
-                                Make_Defining_Identifier
-                                (Map_C_Variable_Name
-                                 (F, Port_Request => True))),
-                           Operator => Op_Equal,
-                           Right_Expr =>
-                             Make_Defining_Identifier
-                             (Map_C_Enumerator_Name (F)));
-                        Append_Node_To_List
-                          (N, WStatements);
+                        N :=
+                          Make_Expression
+                            (Left_Expr =>
+                               Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    Make_Defining_Identifier (MN (M_Port)),
+                                  Aggregate_Name =>
+                                    Make_Defining_Identifier
+                                      (Map_C_Variable_Name
+                                         (F,
+                                          Port_Request => True))),
+                             Operator   => Op_Equal,
+                             Right_Expr =>
+                               Make_Defining_Identifier
+                                 (Map_C_Enumerator_Name (F)));
+                        Append_Node_To_List (N, WStatements);
 
                         Call_Parameters := New_List (CTN.K_Parameter_List);
-                        N := Make_Defining_Identifier
-                          (Map_C_Enumerator_Name (S, Current_Device));
+                        N               :=
+                          Make_Defining_Identifier
+                            (Map_C_Enumerator_Name (S, Current_Device));
                         Append_Node_To_List (N, Call_Parameters);
 
-                        N := Make_Defining_Identifier
-                          (Map_C_Enumerator_Name (F, Local_Port => True));
+                        N :=
+                          Make_Defining_Identifier
+                            (Map_C_Enumerator_Name (F, Local_Port => True));
                         Append_Node_To_List (N, Call_Parameters);
 
-                        N := Make_Variable_Address
-                          (Make_Defining_Identifier
-                           (Map_C_Variable_Name (F, Port_Request => True)));
+                        N :=
+                          Make_Variable_Address
+                            (Make_Defining_Identifier
+                               (Map_C_Variable_Name
+                                  (F,
+                                   Port_Request => True)));
                         Append_Node_To_List (N, Call_Parameters);
 
-                        N := CTU.Make_Call_Profile (RE (RE_Gqueue_Store_Out),
-                                                    Call_Parameters);
+                        N :=
+                          CTU.Make_Call_Profile
+                            (RE (RE_Gqueue_Store_Out),
+                             Call_Parameters);
 
                         Append_Node_To_List (N, WStatements);
                      end if;
@@ -687,9 +700,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          -------------------------
 
          procedure Make_Send_Out_Ports is
-            N                       : Node_Id;
-            F                       : Node_Id;
-            Error_Already_Defined   : Boolean := False;
+            N                     : Node_Id;
+            F                     : Node_Id;
+            Error_Already_Defined : Boolean := False;
          begin
             N := Message_Comment ("Send the OUT ports");
             Append_Node_To_List (N, WStatements);
@@ -702,16 +715,18 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
                   --  Then, call the send_output in the main loop.
                   Call_Parameters := New_List (CTN.K_Parameter_List);
-                  N := Make_Defining_Identifier
-                    (Map_C_Enumerator_Name (S, Current_Device));
+                  N               :=
+                    Make_Defining_Identifier
+                      (Map_C_Enumerator_Name (S, Current_Device));
                   Append_Node_To_List (N, Call_Parameters);
 
-                  N := Make_Defining_Identifier
-                    (Map_C_Enumerator_Name (F));
+                  N := Make_Defining_Identifier (Map_C_Enumerator_Name (F));
                   Append_Node_To_List (N, Call_Parameters);
 
-                  N := CTU.Make_Call_Profile (RE (RE_Send_Output),
-                                              Call_Parameters);
+                  N :=
+                    CTU.Make_Call_Profile
+                      (RE (RE_Send_Output),
+                       Call_Parameters);
 
                   if Get_Miss_Rate (F) /= 0 then
                      --  XXX is this required ? from PolyORB-HI/C,
@@ -722,24 +737,29 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                        (Make_If_Statement
                           (Condition =>
                              Make_Call_Profile
-                             (RE (RE_Compute_Miss),
-                              Make_List_Id
-                                (Make_Literal
-                                   (CV.New_Int_Value
-                                      (Get_Miss_Rate (F), 0, 10)))),
-                           Statements => Make_List_Id (N)), WStatements);
+                               (RE (RE_Compute_Miss),
+                                Make_List_Id
+                                  (Make_Literal
+                                     (CV.New_Int_Value
+                                        (Get_Miss_Rate (F),
+                                         0,
+                                         10)))),
+                           Statements => Make_List_Id (N)),
+                        WStatements);
                   else
-                     N := Make_Assignment_Statement
-                       (Variable_Identifier =>
-                          Make_Defining_Identifier (VN (V_Error)),
-                        Expression         => N);
+                     N :=
+                       Make_Assignment_Statement
+                         (Variable_Identifier =>
+                            Make_Defining_Identifier (VN (V_Error)),
+                          Expression => N);
                      Append_Node_To_List (N, WStatements);
 
                      if not Error_Already_Defined then
-                        N := Make_Variable_Declaration
-                          (Defining_Identifier => Make_Defining_Identifier
-                             (VN (V_Error)),
-                           Used_Type           => RE (RE_Int32_T));
+                        N :=
+                          Make_Variable_Declaration
+                            (Defining_Identifier =>
+                               Make_Defining_Identifier (VN (V_Error)),
+                             Used_Type => RE (RE_Int32_T));
                         Append_Node_To_List (N, Declarations);
                         Error_Already_Defined := True;
                      end if;
@@ -752,26 +772,30 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                           New_List (CTN.K_Statement_List);
                      begin
                         if Rec_Entrypoint /= No_Name then
-                           N := Make_Extern_Entity_Declaration
-                             (Make_Function_Specification
-                                (Make_Defining_Identifier (Rec_Entrypoint),
-                                 Parameters   => Parameter_List, --  XXX
-                                 Return_Type  => New_Node (CTN.K_Void)));
+                           N :=
+                             Make_Extern_Entity_Declaration
+                               (Make_Function_Specification
+                                  (Make_Defining_Identifier (Rec_Entrypoint),
+                                   Parameters  => Parameter_List, --  XXX
+                                   Return_Type => New_Node (CTN.K_Void)));
                            Append_Node_To_List
-                             (N, CTN.Declarations (Current_File));
+                             (N,
+                              CTN.Declarations (Current_File));
 
-                           N := CTU.Make_Call_Profile
-                             (Make_Defining_Identifier (Rec_Entrypoint),
-                              No_List);
+                           N :=
+                             CTU.Make_Call_Profile
+                               (Make_Defining_Identifier (Rec_Entrypoint),
+                                No_List);
                            Append_Node_To_List (N, Then_Statements);
 
-                           N := Make_If_Statement
-                             (Condition =>
-                                Make_Expression
-                                (Make_Defining_Identifier (VN (V_Error)),
-                                 Op_Not_Equal,
-                                 RE (RE_SUCCESS)),
-                              Statements => Then_Statements);
+                           N :=
+                             Make_If_Statement
+                               (Condition =>
+                                  Make_Expression
+                                    (Make_Defining_Identifier (VN (V_Error)),
+                                     Op_Not_Equal,
+                                     RE (RE_SUCCESS)),
+                                Statements => Then_Statements);
                            Append_Node_To_List (N, WStatements);
                         end if;
                      end;
@@ -797,23 +821,22 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             D := Get_Dispatch_Offset (E);
 
             if D /= Null_Time then
-               N := Make_Variable_Declaration
-               (Make_Defining_Identifier (VN (V_Offset)),
-                  RE (RE_Time_T));
+               N :=
+                 Make_Variable_Declaration
+                   (Make_Defining_Identifier (VN (V_Offset)),
+                    RE (RE_Time_T));
                Append_Node_To_List (N, Statements);
 
                N := Map_Time (D, VN (V_Offset));
-               Append_Node_To_List
-                  (N, Statements);
+               Append_Node_To_List (N, Statements);
 
                Append_Node_To_List
                  (CTU.Make_Call_Profile
                     (RE (RE_Task_Wait_Offset),
                      Make_List_Id
-                        (Make_Variable_Address
-                           (Make_Defining_Identifier
-                              (VN (V_Offset))))),
-                     WStatements);
+                       (Make_Variable_Address
+                          (Make_Defining_Identifier (VN (V_Offset))))),
+                  WStatements);
 
             end if;
          end Make_Wait_Offset;
@@ -825,8 +848,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Fetch_In_Ports is
             F : Node_Id;
          begin
-            N := Message_Comment
-              ("Get the IN ports values");
+            N := Message_Comment ("Get the IN ports values");
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             F := First_Node (Features (E));
@@ -844,17 +866,17 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   Call_Parameters := New_List (CTN.K_Parameter_List);
 
                   Append_Node_To_List
-                    (Make_Defining_Identifier
-                     (Map_C_Enumerator_Name (S)),
+                    (Make_Defining_Identifier (Map_C_Enumerator_Name (S)),
                      Call_Parameters);
 
                   Append_Node_To_List
-                    (Make_Defining_Identifier
-                     (Map_C_Enumerator_Name (F)),
+                    (Make_Defining_Identifier (Map_C_Enumerator_Name (F)),
                      Call_Parameters);
 
-                  N := Make_Call_Profile
-                    (RE (RE_Gqueue_Next_Value), Call_Parameters);
+                  N :=
+                    Make_Call_Profile
+                      (RE (RE_Gqueue_Next_Value),
+                       Call_Parameters);
 
                end if;
 
@@ -874,7 +896,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                --  unique call sequence, handle it.
 
                CTU.Handle_Call_Sequence
-                 (S, Call_Seq, Declarations, WStatements, Current_Device);
+                 (S,
+                  Call_Seq,
+                  Declarations,
+                  WStatements,
+                  Current_Device);
             else
                N := Message_Comment ("not implemented yet");
                Append_Node_To_List (N, WStatements);
@@ -903,7 +929,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                if Kind (F) = K_Port_Spec_Instance and then Is_In (F) then
 
                   Switch_Statements := New_List (CTN.K_Statement_List);
-                  Switch_Labels := New_List (CTN.K_Label_List);
+                  Switch_Labels     := New_List (CTN.K_Label_List);
 
                   --  Declare local data variable if the port is a
                   --  data port.
@@ -917,101 +943,106 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      Call_Parameters := New_List (CTN.K_Parameter_List);
 
                      Append_Node_To_List
-                       (Make_Defining_Identifier
-                        (Map_C_Enumerator_Name (S)),
+                       (Make_Defining_Identifier (Map_C_Enumerator_Name (S)),
                         Call_Parameters);
 
                      Append_Node_To_List
                        (Make_Defining_Identifier
-                        (Map_C_Enumerator_Name (F, Local_Port => True)),
+                          (Map_C_Enumerator_Name (F, Local_Port => True)),
                         Call_Parameters);
 
-                     N := Make_Call_Profile
-                       (RE (RE_Gqueue_Next_Value), Call_Parameters);
+                     N :=
+                       Make_Call_Profile
+                         (RE (RE_Gqueue_Next_Value),
+                          Call_Parameters);
 
                      Append_Node_To_List (N, Switch_Statements);
                   end if;
 
                   Call_Parameters := New_List (CTN.K_Parameter_List);
-                  N := Make_Defining_Identifier
-                    (Map_C_Enumerator_Name (S));
+                  N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
                   Append_Node_To_List (N, Call_Parameters);
 
                   declare
                      Parameter_List : constant List_Id :=
                        New_List (CTN.K_List_Id);
                   begin
-                     N := Make_Parameter_Specification
-                       (Make_Defining_Identifier (PN (P_Self)),
-                        Parameter_Type => RE (RE_Task_Id));
+                     N :=
+                       Make_Parameter_Specification
+                         (Make_Defining_Identifier (PN (P_Self)),
+                          Parameter_Type => RE (RE_Task_Id));
                      Append_Node_To_List (N, Parameter_List);
 
                      if AAN.Is_Data (F) then
-                        N := Make_Member_Designator
-                          (Defining_Identifier =>
-                             Make_Member_Designator
-                             (Defining_Identifier =>
-                                Make_Member_Designator
-                                (Defining_Identifier =>
-                                   Make_Defining_Identifier
-                                   (Map_C_Enumerator_Name (F)),
-                                 Aggregate_Name =>
-                                   Make_Defining_Identifier
-                                   (Map_C_Enumerator_Name (F))),
-                              Aggregate_Name =>
-                                Make_Defining_Identifier (MN (M_Vars))),
-                           Aggregate_Name =>
-                             Make_Defining_Identifier
-                             (Map_C_Variable_Name
-                                (F, Port_Request => True)));
+                        N :=
+                          Make_Member_Designator
+                            (Defining_Identifier =>
+                               Make_Member_Designator
+                                 (Defining_Identifier =>
+                                    Make_Member_Designator
+                                      (Defining_Identifier =>
+                                         Make_Defining_Identifier
+                                           (Map_C_Enumerator_Name (F)),
+                                       Aggregate_Name =>
+                                         Make_Defining_Identifier
+                                           (Map_C_Enumerator_Name (F))),
+                                  Aggregate_Name =>
+                                    Make_Defining_Identifier (MN (M_Vars))),
+                             Aggregate_Name =>
+                               Make_Defining_Identifier
+                                 (Map_C_Variable_Name
+                                    (F,
+                                     Port_Request => True)));
 
-                        Append_Node_To_List
-                          (N, Call_Parameters);
+                        Append_Node_To_List (N, Call_Parameters);
 
-                        N := Map_C_Data_Type_Designator
-                          (Corresponding_Instance (F));
-                        N := Make_Parameter_Specification
-                          (Map_C_Defining_Identifier (F), N);
+                        N :=
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (F));
+                        N :=
+                          Make_Parameter_Specification
+                            (Map_C_Defining_Identifier (F),
+                             N);
                         Append_Node_To_List (N, Parameter_List);
                      end if;
 
-                     N := Make_Extern_Entity_Declaration
-                       (Make_Function_Specification
-                          (Map_C_Subprogram_Identifier (F),
-                           Parameters          => Parameter_List,
-                           Return_Type         => New_Node (CTN.K_Void)));
-                     Append_Node_To_List
-                       (N, CTN.Declarations (Current_File));
+                     N :=
+                       Make_Extern_Entity_Declaration
+                         (Make_Function_Specification
+                            (Map_C_Subprogram_Identifier (F),
+                             Parameters  => Parameter_List,
+                             Return_Type => New_Node (CTN.K_Void)));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
                   end;
 
-                  N := Make_Call_Profile
-                    (Map_C_Subprogram_Identifier (F), Call_Parameters);
+                  N :=
+                    Make_Call_Profile
+                      (Map_C_Subprogram_Identifier (F),
+                       Call_Parameters);
                   Append_Node_To_List (N, Switch_Statements);
 
                   Append_Node_To_List
                     (Make_Defining_Identifier
-                     (Map_C_Enumerator_Name (F, Local_Port => True)),
+                       (Map_C_Enumerator_Name (F, Local_Port => True)),
                      Switch_Labels);
 
-                  N := Make_Switch_Alternative
-                    (Switch_Labels, Switch_Statements);
+                  N :=
+                    Make_Switch_Alternative (Switch_Labels, Switch_Statements);
                   Append_Node_To_List (N, Switch_Alternatives);
                end if;
 
                F := Next_Node (F);
             end loop;
 
-            N := Make_Switch_Alternative
-              (No_List, No_List);
+            N := Make_Switch_Alternative (No_List, No_List);
             Append_Node_To_List (N, Switch_Alternatives);
 
             --  Make the case statement
 
-            N := Make_Switch_Statement
-              (Expression =>
-                 Make_Defining_Identifier (MN (M_Port)),
-               Alternatives =>
-                 Switch_Alternatives);
+            N :=
+              Make_Switch_Statement
+                (Expression   => Make_Defining_Identifier (MN (M_Port)),
+                 Alternatives => Switch_Alternatives);
             Append_Node_To_List (N, WStatements);
          end Make_Ports_Compute_Entrypoint;
 
@@ -1020,20 +1051,20 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          ------------------------------------
 
          procedure Make_Thread_Compute_Entrypoint is
-            N : Node_Id;
+            N              : Node_Id;
             Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
          begin
             N := Message_Comment ("Make_Thread_Compute_Entrypoint");
             Append_Node_To_List (N, WStatements);
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
-            N := Make_Defining_Identifier
-              (Map_C_Enumerator_Name (S));
+            N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
             Append_Node_To_List (N, Call_Parameters);
 
-            N := Make_Parameter_Specification
-              (Make_Defining_Identifier (PN (P_Self)),
-               Parameter_Type => RE (RE_Task_Id));
+            N :=
+              Make_Parameter_Specification
+                (Make_Defining_Identifier (PN (P_Self)),
+                 Parameter_Type => RE (RE_Task_Id));
             Append_Node_To_List (N, Parameter_List);
 
             if P = Thread_Sporadic then
@@ -1041,31 +1072,33 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                  (Make_Defining_Identifier (VN (V_Port)),
                   Call_Parameters);
 
-               N := Make_Parameter_Specification
-                 (Make_Defining_Identifier (VN (V_Port)),
-                  Parameter_Type => RE (RE_Port_T));
+               N :=
+                 Make_Parameter_Specification
+                   (Make_Defining_Identifier (VN (V_Port)),
+                    Parameter_Type => RE (RE_Port_T));
                Append_Node_To_List (N, Parameter_List);
             end if;
 
             if not Has_Modes (E) then
-               N := Make_Extern_Entity_Declaration
-                 (Make_Function_Specification
-                    (Map_C_Subprogram_Identifier (E),
-                     Parameters          => Parameter_List,
-                     Return_Type         => New_Node (CTN.K_Void)));
+               N :=
+                 Make_Extern_Entity_Declaration
+                   (Make_Function_Specification
+                      (Map_C_Subprogram_Identifier (E),
+                       Parameters  => Parameter_List,
+                       Return_Type => New_Node (CTN.K_Void)));
 
-               Append_Node_To_List
-                 (N, CTN.Declarations (Current_File));
+               Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-               N := Make_Call_Profile
-                 (Map_C_Subprogram_Identifier (E),
-                  Call_Parameters);
+               N :=
+                 Make_Call_Profile
+                   (Map_C_Subprogram_Identifier (E),
+                    Call_Parameters);
                Append_Node_To_List (N, WStatements);
             else
                Display_Located_Error
                  (Loc (E),
-                  "Threads with mode controlled compute entrypoints not"
-                  & " supported yet",
+                  "Threads with mode controlled compute entrypoints not" &
+                  " supported yet",
                   Fatal => True);
             end if;
          end Make_Thread_Compute_Entrypoint;
@@ -1073,21 +1106,24 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       begin
          case P is
             when Thread_Periodic =>
-               N := Message_Comment
-                 ("Periodic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Periodic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             when Thread_Sporadic =>
-               N := Message_Comment
-                 ("Sporadic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Sporadic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             when Thread_Background =>
-               N := Message_Comment
-                 ("Background task : "
-                    & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Background task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             when others =>
@@ -1106,76 +1142,75 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Enumerator_Name (S, Current_Device)),
+                 (Map_C_Enumerator_Name (S, Current_Device)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Define_Name (S, Nb_Ports => True)),
+                 (Map_C_Define_Name (S, Nb_Ports => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Queue => True)),
+                 (Map_C_Variable_Name (S, Port_Queue => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Fifo_Size => True)),
+                 (Map_C_Variable_Name (S, Port_Fifo_Size => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_First => True)),
+                 (Map_C_Variable_Name (S, Port_First => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Offsets => True)),
+                 (Map_C_Variable_Name (S, Port_Offsets => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Woffsets => True)),
+                 (Map_C_Variable_Name (S, Port_Woffsets => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_N_Dest => True)),
+                 (Map_C_Variable_Name (S, Port_N_Dest => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Destinations => True)),
+                 (Map_C_Variable_Name (S, Port_Destinations => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Used_Size => True)),
+                 (Map_C_Variable_Name (S, Port_Used_Size => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_History => True)),
+                 (Map_C_Variable_Name (S, Port_History => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Recent => True)),
+                 (Map_C_Variable_Name (S, Port_Recent => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Empties => True)),
+                 (Map_C_Variable_Name (S, Port_Empties => True)),
                Call_Parameters);
 
             Append_Node_To_List
               (Make_Defining_Identifier
-               (Map_C_Variable_Name (S, Port_Total_Fifo => True)),
+                 (Map_C_Variable_Name (S, Port_Total_Fifo => True)),
                Call_Parameters);
 
-            N := Make_Call_Profile (RE (RE_Gqueue_Init),
-                                    Call_Parameters);
+            N := Make_Call_Profile (RE (RE_Gqueue_Init), Call_Parameters);
             Append_Node_To_List (N, Statements);
          end if;
 
@@ -1275,53 +1310,55 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          declare
             Init_Entrypoint : constant Name_Id :=
               Get_Thread_Activate_Entrypoint (E);
-            Parameter_List : constant List_Id :=
-              New_List (CTN.K_List_Id);
+            Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
          begin
             if Init_Entrypoint /= No_Name then
-               N := Make_Extern_Entity_Declaration
-                 (Make_Function_Specification
-                    (Make_Defining_Identifier (Init_Entrypoint),
-                     Parameters          => Parameter_List, --  XXX
-                     Return_Type         => New_Node (CTN.K_Void)));
-               Append_Node_To_List
-                 (N, CTN.Declarations (Current_File));
-               N := CTU.Make_Call_Profile
-                 (Make_Defining_Identifier (Init_Entrypoint),
-                  No_List);
+               N :=
+                 Make_Extern_Entity_Declaration
+                   (Make_Function_Specification
+                      (Make_Defining_Identifier (Init_Entrypoint),
+                       Parameters  => Parameter_List, --  XXX
+                       Return_Type => New_Node (CTN.K_Void)));
+               Append_Node_To_List (N, CTN.Declarations (Current_File));
+               N :=
+                 CTU.Make_Call_Profile
+                   (Make_Defining_Identifier (Init_Entrypoint),
+                    No_List);
                Append_Node_To_List (N, Statements);
             end if;
          end;
 
-         N := Make_Doxygen_C_Comment
-            ("Waiting for other tasks initialization",
-               Has_Header_Spaces => False);
+         N :=
+           Make_Doxygen_C_Comment
+             ("Waiting for other tasks initialization",
+              Has_Header_Spaces => False);
          Append_Node_To_List (N, Statements);
 
          --  Call __po_hi_wait_initialization
 
-         N := CTU.Make_Call_Profile (RE (RE_Wait_Initialization),
-                                     No_List);
+         N := CTU.Make_Call_Profile (RE (RE_Wait_Initialization), No_List);
          Append_Node_To_List (N, Statements);
 
          --  Compute the next period after initialization, because
          --  the period has passed after init.
 
          if P = Thread_Periodic or else P = Thread_Sporadic then
-            N := CTU.Make_Call_Profile (RE (RE_Compute_Next_Period),
-                                        Make_List_Id
-                                          (Make_Defining_Identifier
-                                             (Map_C_Enumerator_Name
-                                                (S, Current_Device))));
+            N :=
+              CTU.Make_Call_Profile
+                (RE (RE_Compute_Next_Period),
+                 Make_List_Id
+                   (Make_Defining_Identifier
+                      (Map_C_Enumerator_Name (S, Current_Device))));
             Append_Node_To_List (N, Statements);
          end if;
 
          if P /= Thread_Background then
             --  Make the while (1){} and add all statements
 
-            N := Make_While_Statement
-              (Make_Literal (CV.New_Int_Value (1, 0, 10)),
-               WStatements);
+            N :=
+              Make_While_Statement
+                (Make_Literal (CV.New_Int_Value (1, 0, 10)),
+                 WStatements);
             Append_Node_To_List (N, Statements);
          else
             --  Simply append statements
@@ -1365,8 +1402,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -1388,16 +1425,16 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U            : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
          P            : constant Node_Id := CTN.Entity (U);
          S            : Node_Id;
          N            : Node_Id;
-         Declarations : constant List_Id := New_List
-           (CTN.K_Declaration_List);
+         Declarations : constant List_Id := New_List (CTN.K_Declaration_List);
          Statements   : constant List_Id := New_List (CTN.K_Statement_List);
-         The_System : constant Node_Id := Parent_Component
-           (Parent_Subcomponent (E));
+         The_System   : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -1413,10 +1450,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             while Present (S) loop
                if AAU.Is_Data (Corresponding_Instance (S)) then
 
-                  N := Make_Variable_Declaration
-                    (Map_C_Defining_Identifier (S),
-                     Map_C_Data_Type_Designator
-                       (Corresponding_Instance (S)));
+                  N :=
+                    Make_Variable_Declaration
+                      (Map_C_Defining_Identifier (S),
+                       Map_C_Data_Type_Designator
+                         (Corresponding_Instance (S)));
 
                   Append_Node_To_List
                     (Make_Extern_Entity_Declaration (N),
@@ -1447,78 +1485,82 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             S := First_Node (Subcomponents (The_System));
             while Present (S) loop
                if AAU.Is_Device (Corresponding_Instance (S))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (S))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (S)) =
+                   Get_Bound_Processor (E)
                then
-                  Visit_Device_Instance
-                    (Corresponding_Instance (S));
+                  Visit_Device_Instance (Corresponding_Instance (S));
                end if;
                S := Next_Node (S);
             end loop;
          end if;
 
-         if Present (Backend_Node (Identifier (Parent_Subcomponent
-                        (E)))) and then
-            Present (CTN.Job_Node (Backend_Node (Identifier
-               (Parent_Subcomponent (E))))) then
+         if Present (Backend_Node (Identifier (Parent_Subcomponent (E))))
+           and then Present
+             (CTN.Job_Node
+                (Backend_Node (Identifier (Parent_Subcomponent (E)))))
+         then
 
             Append_Node_To_List
               (Make_Variable_Declaration
-               (Defining_Identifier =>
-                  Make_Defining_Identifier (VN (V_Entity)),
-                Used_Type =>
-                  RE (RE_Entity_T)), Declarations);
+                 (Defining_Identifier =>
+                    Make_Defining_Identifier (VN (V_Entity)),
+                  Used_Type => RE (RE_Entity_T)),
+               Declarations);
 
             --  Add the call to entity = __po_hi_global...[port]
 
-            N := Make_Expression
-              (Left_Expr => Make_Defining_Identifier (VN (V_Entity)),
-               Operator => Op_Equal,
-               Right_Expr =>
-                Make_Call_Profile
-                 (RE (RE_Get_Entity_From_Global_Port),
-                  Make_List_Id
-                   (Make_Member_Designator
-                    (Defining_Identifier =>
-                     Make_Defining_Identifier (MN (M_Port)),
-                     Is_Pointer => True,
-                     Aggregate_Name =>
-                     Make_Defining_Identifier (VN (V_Request))))));
+            N :=
+              Make_Expression
+                (Left_Expr  => Make_Defining_Identifier (VN (V_Entity)),
+                 Operator   => Op_Equal,
+                 Right_Expr =>
+                   Make_Call_Profile
+                     (RE (RE_Get_Entity_From_Global_Port),
+                      Make_List_Id
+                        (Make_Member_Designator
+                           (Defining_Identifier =>
+                              Make_Defining_Identifier (MN (M_Port)),
+                            Is_Pointer     => True,
+                            Aggregate_Name =>
+                              Make_Defining_Identifier (VN (V_Request))))));
             Append_Node_To_List (N, Statements);
 
             --  Add the switch which redirect to local deliver functions
 
-            N := Make_Switch_Alternative
-              (No_List, No_List);
+            N := Make_Switch_Alternative (No_List, No_List);
 
             Append_Node_To_List (N, Main_Deliver_Alternatives);
 
-            N := Make_Switch_Statement
-              (Expression =>
-                 Make_Defining_Identifier (VN (V_Entity)),
-               Alternatives => Main_Deliver_Alternatives);
+            N :=
+              Make_Switch_Statement
+                (Expression   => Make_Defining_Identifier (VN (V_Entity)),
+                 Alternatives => Main_Deliver_Alternatives);
 
             Append_Node_To_List (N, Statements);
 
-            N := Make_Doxygen_C_Comment
-               (Is_Function => True,
-               Element_Name => "void __po_hi_main_deliver "&
-               "(__po_hi_request_t* request)",
-            Brief => "Used to deliver request to the appropriate ports",
-            Desc =>
-               "This function takes a request as argument (\arg request) " &
-               "and calls the appropriate function for its delivery. To " &
-               "specify which function should be called, it extracts " &
-               " the receiver entity using the destination port.",
-               Has_Header_Spaces => False);
+            N :=
+              Make_Doxygen_C_Comment
+                (Is_Function  => True,
+                 Element_Name =>
+                   "void __po_hi_main_deliver " &
+                   "(__po_hi_request_t* request)",
+                 Brief => "Used to deliver request to the appropriate ports",
+                 Desc  =>
+                   "This function takes a request as argument (\arg request)" &
+                   " and calls the appropriate function for its delivery."
+                   & "To specify which function should be called, it "
+                   & "extracts the receiver entity using the destination "
+                   & "port.",
+                 Has_Header_Spaces => False);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Function_Implementation
-              (CTN.Job_Node
-               (Backend_Node (Identifier (Parent_Subcomponent (E)))),
-               Declarations,
-               Statements);
+            N :=
+              Make_Function_Implementation
+                (CTN.Job_Node
+                   (Backend_Node (Identifier (Parent_Subcomponent (E)))),
+                 Declarations,
+                 Statements);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
@@ -1531,8 +1573,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         Implementation  : constant Node_Id := Get_Implementation (E);
-         S : Node_Id;
+         Implementation : constant Node_Id := Get_Implementation (E);
+         S              : Node_Id;
       begin
          Current_Device := E;
 
@@ -1580,7 +1622,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
       ---------------------------
 
       procedure Visit_Thread_Instance (E : Node_Id) is
-         S                    : constant Node_Id := Parent_Subcomponent (E);
+         S                    : constant Node_Id   := Parent_Subcomponent (E);
          N                    : Node_Id;
          F                    : Node_Id;
          D                    : Node_Id;
@@ -1598,7 +1640,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Queue_Size           : Long_Long;
          Fifo_Size            : Unsigned_Long_Long := 0;
          Nb_Dest              : Unsigned_Long_Long := 0;
-         Has_Local_Deliver    : Boolean := False;
+         Has_Local_Deliver    : Boolean            := False;
       begin
 
          if Has_Ports (E) then
@@ -1617,13 +1659,13 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
                   if Is_Out (F) then
                      Destinations := Get_Destination_Ports (F, Current_Device);
-                     Local_Dest_Values   := Make_Array_Values;
+                     Local_Dest_Values := Make_Array_Values;
 
                      if AAU.Is_Empty (Destinations) then
                         Display_Located_Error
                           (Loc (F),
-                           "This OUT port is not connected to any"
-                           & " destination",
+                           "This OUT port is not connected to any" &
+                           " destination",
                            Fatal => True);
                      end if;
 
@@ -1634,8 +1676,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      while Present (D) loop
                         Append_Node_To_List
                           (Make_Defining_Identifier
-                           (Map_C_Enumerator_Name
-                            (Item (D), Port_Type => True)),
+                             (Map_C_Enumerator_Name
+                                (Item (D),
+                                 Port_Type => True)),
                            CTN.Values (Local_Dest_Values));
 
                         Nb_Dest := Nb_Dest + 1;
@@ -1646,50 +1689,46 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      --  Make the array which indicate all destinations
                      --  for an out port
 
-                     N := Make_Expression
-                       (Left_Expr =>
-                          Make_Variable_Declaration
-                          (Defining_Identifier =>
-                             Make_Array_Declaration
-                             (Defining_Identifier =>
-                                Make_Defining_Identifier
-                                (Map_C_Variable_Name
-                                 (F, Port_Local_Dest => True)),
-                              Array_Size =>
-                                Make_Literal
-                                (CV.New_Int_Value
-                                 (Nb_Dest, 0, 10))),
-                           Used_Type =>
-                             RE (RE_Port_T)),
-                        Operator => Op_Equal,
-                        Right_Expr => Local_Dest_Values);
+                     N :=
+                       Make_Expression
+                         (Left_Expr =>
+                            Make_Variable_Declaration
+                              (Defining_Identifier =>
+                                 Make_Array_Declaration
+                                   (Defining_Identifier =>
+                                      Make_Defining_Identifier
+                                        (Map_C_Variable_Name
+                                           (F,
+                                            Port_Local_Dest => True)),
+                                    Array_Size =>
+                                      Make_Literal
+                                        (CV.New_Int_Value (Nb_Dest, 0, 10))),
+                               Used_Type => RE (RE_Port_T)),
+                          Operator   => Op_Equal,
+                          Right_Expr => Local_Dest_Values);
                      Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                      --  Add the last array name in the destination array
 
                      Append_Node_To_List
                        (Make_Defining_Identifier
-                        (Map_C_Variable_Name
-                         (F, Port_Local_Dest => True)),
+                          (Map_C_Variable_Name (F, Port_Local_Dest => True)),
                         CTN.Values (Destinations_Values));
 
                      --  Add the number of destinations in the nb_dest array
 
                      N := RE (RE_Gqueue_Fifo_Out);
                      Append_Node_To_List
-                       (Make_Literal
-                        (CV.New_Int_Value
-                         (Nb_Dest, 0, 10)),
+                       (Make_Literal (CV.New_Int_Value (Nb_Dest, 0, 10)),
                         CTN.Values (N_Dest_Values));
 
-                     Append_Node_To_List
-                       (N, CTN.Values (Fifo_Size_Values));
+                     Append_Node_To_List (N, CTN.Values (Fifo_Size_Values));
                   else
                      if AAN.Is_Data (F) and then not Is_Event (F) then
 
                         Has_Local_Deliver := True;
-                        N := RE (RE_Gqueue_Fifo_Indata);
-                        Queue_Size := 0;
+                        N                 := RE (RE_Gqueue_Fifo_Indata);
+                        Queue_Size        := 0;
                      else
 
                         Has_Local_Deliver := True;
@@ -1699,8 +1738,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         if Queue_Size = -1 then
                            Queue_Size := Default_Queue_Size;
 
-                           N := Make_Literal
-                             (CV.New_Int_Value (Default_Queue_Size, 0, 10));
+                           N :=
+                             Make_Literal
+                               (CV.New_Int_Value (Default_Queue_Size, 0, 10));
                         elsif Queue_Size = 0 then
                            --  0 length queues are not supported
 
@@ -1709,25 +1749,26 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                               "Zero length port queues are not supported",
                               Fatal => True);
                         else
-                           N := Make_Literal
-                             (CV.New_Int_Value
-                              (Unsigned_Long_Long (Queue_Size), 0, 10));
+                           N :=
+                             Make_Literal
+                               (CV.New_Int_Value
+                                  (Unsigned_Long_Long (Queue_Size),
+                                   0,
+                                   10));
                         end if;
                      end if;
 
-                     Append_Node_To_List
-                       (N, CTN.Values (Fifo_Size_Values));
+                     Append_Node_To_List (N, CTN.Values (Fifo_Size_Values));
 
                      Append_Node_To_List
-                       (Make_Literal
-                        (CV.New_Int_Value
-                         (0, 0, 10)),
+                       (Make_Literal (CV.New_Int_Value (0, 0, 10)),
                         CTN.Values (N_Dest_Values));
 
-                     N := Make_Defining_Identifier (CONST (C_Null),
-                                                    C_Conversion => False);
-                     Append_Node_To_List
-                       (N, CTN.Values (Destinations_Values));
+                     N :=
+                       Make_Defining_Identifier
+                         (CONST (C_Null),
+                          C_Conversion => False);
+                     Append_Node_To_List (N, CTN.Values (Destinations_Values));
 
                      --  Make the switch alternative for the deliver function
 
@@ -1737,32 +1778,31 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
                      Append_Node_To_List
                        (Make_Defining_Identifier
-                        (Map_C_Enumerator_Name (F, Port_Type => True)),
+                          (Map_C_Enumerator_Name (F, Port_Type => True)),
                         Switch_Labels);
 
                      Append_Node_To_List
-                       (Make_Defining_Identifier
-                        (Map_C_Enumerator_Name (S)),
+                       (Make_Defining_Identifier (Map_C_Enumerator_Name (S)),
                         Parameters);
 
                      Append_Node_To_List
                        (Make_Defining_Identifier
-                        (Map_C_Enumerator_Name (F, Local_Port => True)),
+                          (Map_C_Enumerator_Name (F, Local_Port => True)),
                         Parameters);
 
                      Append_Node_To_List
                        (Make_Defining_Identifier (PN (P_Request)),
                         Parameters);
 
-                     N := Make_Call_Profile
-                       (RE (RE_Gqueue_Store_In),
-                        Parameters);
+                     N :=
+                       Make_Call_Profile (RE (RE_Gqueue_Store_In), Parameters);
 
-                     Append_Node_To_List
-                       (N, Switch_Statements);
+                     Append_Node_To_List (N, Switch_Statements);
 
-                     N := Make_Switch_Alternative
-                       (Switch_Labels, Switch_Statements);
+                     N :=
+                       Make_Switch_Alternative
+                         (Switch_Labels,
+                          Switch_Statements);
                      Append_Node_To_List (N, Deliver_Alternatives);
 
                      Fifo_Size := Fifo_Size + Unsigned_Long_Long (Queue_Size);
@@ -1775,224 +1815,236 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             --  Declare all the needed tables by each thread in order
             --  to handle the ports.
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_Woffsets => True)),
-                  Array_Size =>
-                    Make_Defining_Identifier
-                    (Map_C_Define_Name (S, Nb_Ports => True))),
-               Used_Type =>
-                 RE (RE_Uint8_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Array_Declaration
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_Woffsets => True)),
+                      Array_Size =>
+                        Make_Defining_Identifier
+                          (Map_C_Define_Name (S, Nb_Ports => True))),
+                 Used_Type => RE (RE_Uint8_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_Offsets => True)),
-                  Array_Size =>
-                    Make_Defining_Identifier
-                    (Map_C_Define_Name (S, Nb_Ports => True))),
-               Used_Type =>
-                 RE (RE_Uint8_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Array_Declaration
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_Offsets => True)),
+                      Array_Size =>
+                        Make_Defining_Identifier
+                          (Map_C_Define_Name (S, Nb_Ports => True))),
+                 Used_Type => RE (RE_Uint8_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_Used_Size => True)),
-                  Array_Size =>
-                    Make_Defining_Identifier
-                    (Map_C_Define_Name (S, Nb_Ports => True))),
-               Used_Type =>
-                 RE (RE_Uint8_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Array_Declaration
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_Used_Size => True)),
+                      Array_Size =>
+                        Make_Defining_Identifier
+                          (Map_C_Define_Name (S, Nb_Ports => True))),
+                 Used_Type => RE (RE_Uint8_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_Empties => True)),
-                  Array_Size =>
-                    Make_Defining_Identifier
-                    (Map_C_Define_Name (S, Nb_Ports => True))),
-               Used_Type =>
-                 RE (RE_Uint8_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Array_Declaration
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_Empties => True)),
+                      Array_Size =>
+                        Make_Defining_Identifier
+                          (Map_C_Define_Name (S, Nb_Ports => True))),
+                 Used_Type => RE (RE_Uint8_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_First => True)),
-                  Array_Size =>
-                    Make_Defining_Identifier
-                    (Map_C_Define_Name (S, Nb_Ports => True))),
-               Used_Type =>
-                 RE (RE_Uint8_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Array_Declaration
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_First => True)),
+                      Array_Size =>
+                        Make_Defining_Identifier
+                          (Map_C_Define_Name (S, Nb_Ports => True))),
+                 Used_Type => RE (RE_Uint8_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_Recent => True)),
-                  Array_Size =>
-                       Make_Defining_Identifier
-                       (Map_C_Define_Name (S, Nb_Ports => True))),
-               Used_Type =>
-                 RE (RE_Request_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Array_Declaration
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_Recent => True)),
+                      Array_Size =>
+                        Make_Defining_Identifier
+                          (Map_C_Define_Name (S, Nb_Ports => True))),
+                 Used_Type => RE (RE_Request_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_Queue => True)),
-                  Array_Size =>
-                    Make_Expression
-                    (Left_Expr => Make_Literal
-                       (CV.New_Int_Value (Fifo_Size, 0, 10)),
-                       Operator => Op_Asterisk,
-                     Right_Expr =>
-                       Make_Call_Profile
-                       (Make_Defining_Identifier
-                        (FN (F_Sizeof)),
-                        Make_List_Id
-                        (RE (RE_Request_T))))),
-               Used_Type =>
-                 RE (RE_Port_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Array_Declaration
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_Queue => True)),
+                      Array_Size =>
+                        Make_Expression
+                          (Left_Expr =>
+                             Make_Literal
+                               (CV.New_Int_Value (Fifo_Size, 0, 10)),
+                           Operator   => Op_Asterisk,
+                           Right_Expr =>
+                             Make_Call_Profile
+                               (Make_Defining_Identifier (FN (F_Sizeof)),
+                                Make_List_Id (RE (RE_Request_T))))),
+                 Used_Type => RE (RE_Port_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Expression
-                 (Left_Expr =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_Total_Fifo => True)),
-                  Operator => Op_Equal,
-                  Right_Expr =>
-                    Make_Literal (CV.New_Int_Value (Fifo_Size, 0, 10))),
-               Used_Type =>
-                 RE (RE_Uint16_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Expression
+                     (Left_Expr =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_Total_Fifo => True)),
+                      Operator   => Op_Equal,
+                      Right_Expr =>
+                        Make_Literal (CV.New_Int_Value (Fifo_Size, 0, 10))),
+                 Used_Type => RE (RE_Uint16_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Variable_Declaration
-              (Defining_Identifier =>
-                 Make_Array_Declaration
-                 (Defining_Identifier =>
-                    Make_Defining_Identifier
-                    (Map_C_Variable_Name (S, Port_History => True)),
-                  Array_Size =>
-                    Make_Literal (CV.New_Int_Value (Fifo_Size, 0, 10))),
-               Used_Type =>
-                 RE (RE_Local_Port_T));
+            N :=
+              Make_Variable_Declaration
+                (Defining_Identifier =>
+                   Make_Array_Declaration
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier
+                          (Map_C_Variable_Name (S, Port_History => True)),
+                      Array_Size =>
+                        Make_Literal (CV.New_Int_Value (Fifo_Size, 0, 10))),
+                 Used_Type => RE (RE_Local_Port_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Expression
-              (Left_Expr =>
-                 Make_Variable_Declaration
-                 (Defining_Identifier =>
-                    Make_Array_Declaration
-                    (Defining_Identifier =>
-                       Make_Defining_Identifier
-                       (Map_C_Variable_Name (S, Port_N_Dest => True)),
-                     Array_Size =>
-                       Make_Defining_Identifier
-                       (Map_C_Define_Name (S, Nb_Ports => True))),
-                  Used_Type =>
-                    RE (RE_Uint8_T)),
-               Operator => Op_Equal,
-               Right_Expr => N_Dest_Values);
+            N :=
+              Make_Expression
+                (Left_Expr =>
+                   Make_Variable_Declaration
+                     (Defining_Identifier =>
+                        Make_Array_Declaration
+                          (Defining_Identifier =>
+                             Make_Defining_Identifier
+                               (Map_C_Variable_Name (S, Port_N_Dest => True)),
+                           Array_Size =>
+                             Make_Defining_Identifier
+                               (Map_C_Define_Name (S, Nb_Ports => True))),
+                      Used_Type => RE (RE_Uint8_T)),
+                 Operator   => Op_Equal,
+                 Right_Expr => N_Dest_Values);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Expression
-              (Left_Expr =>
-                 Make_Variable_Declaration
-                 (Defining_Identifier =>
-                    Make_Array_Declaration
-                    (Defining_Identifier =>
-                       Make_Defining_Identifier
-                       (Map_C_Variable_Name (S, Port_Fifo_Size => True)),
-                     Array_Size =>
-                       Make_Defining_Identifier
-                       (Map_C_Define_Name (S, Nb_Ports => True))),
-                  Used_Type =>
-                    RE (RE_Int8_T)),
-               Operator => Op_Equal,
-               Right_Expr => Fifo_Size_Values);
+            N :=
+              Make_Expression
+                (Left_Expr =>
+                   Make_Variable_Declaration
+                     (Defining_Identifier =>
+                        Make_Array_Declaration
+                          (Defining_Identifier =>
+                             Make_Defining_Identifier
+                               (Map_C_Variable_Name
+                                  (S,
+                                   Port_Fifo_Size => True)),
+                           Array_Size =>
+                             Make_Defining_Identifier
+                               (Map_C_Define_Name (S, Nb_Ports => True))),
+                      Used_Type => RE (RE_Int8_T)),
+                 Operator   => Op_Equal,
+                 Right_Expr => Fifo_Size_Values);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            N := Make_Expression
-              (Left_Expr =>
-                 Make_Variable_Declaration
-                 (Defining_Identifier =>
-                    Make_Array_Declaration
-                    (Defining_Identifier =>
-                       Make_Defining_Identifier
-                       (Map_C_Variable_Name (S, Port_Destinations => True)),
-                     Array_Size =>
-                       Make_Defining_Identifier
-                       (Map_C_Define_Name (S, Nb_Ports => True))),
-                  Used_Type => Make_Pointer_Type
-                    (RE (RE_Port_T))),
-               Operator => Op_Equal,
-               Right_Expr => Destinations_Values);
+            N :=
+              Make_Expression
+                (Left_Expr =>
+                   Make_Variable_Declaration
+                     (Defining_Identifier =>
+                        Make_Array_Declaration
+                          (Defining_Identifier =>
+                             Make_Defining_Identifier
+                               (Map_C_Variable_Name
+                                  (S,
+                                   Port_Destinations => True)),
+                           Array_Size =>
+                             Make_Defining_Identifier
+                               (Map_C_Define_Name (S, Nb_Ports => True))),
+                      Used_Type => Make_Pointer_Type (RE (RE_Port_T))),
+                 Operator   => Op_Equal,
+                 Right_Expr => Destinations_Values);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-            Append_Node_To_List (Make_Switch_Alternative (No_List, No_List),
-                                 Deliver_Alternatives);
+            Append_Node_To_List
+              (Make_Switch_Alternative (No_List, No_List),
+               Deliver_Alternatives);
 
             if Has_Local_Deliver then
-               N := Make_Switch_Statement
-                 (Expression =>
-                    Make_Member_Designator
-                    (Defining_Identifier =>
-                       Make_Defining_Identifier (MN (M_Port)),
-                     Aggregate_Name =>
-                       Make_Defining_Identifier (VN (V_Request)),
-                     Is_Pointer => True),
-                  Alternatives => Deliver_Alternatives);
+               N :=
+                 Make_Switch_Statement
+                   (Expression =>
+                      Make_Member_Designator
+                        (Defining_Identifier =>
+                           Make_Defining_Identifier (MN (M_Port)),
+                         Aggregate_Name =>
+                           Make_Defining_Identifier (VN (V_Request)),
+                         Is_Pointer => True),
+                    Alternatives => Deliver_Alternatives);
 
                Append_Node_To_List (N, Deliver_Statements);
 
                --  Make the deliver function specific to a thread
-               N := Make_Doxygen_C_Comment
-                  (Is_Function => True,
-                  Element_Name => "void " &
-                     Get_Name_String
-                        (CTN.Name (CTN.Defining_Identifier
-                           (CTN.Global_Port_Node
-                              (Backend_Node (Identifier (S)))))) &
-                     " (__po_hi_request_t* request)",
-                  Brief => "Function that delivers requests to the task " &
-                     Get_Name_String (Name (Identifier (S))),
-                  Desc =>
-                     "When the generated application received a request, it " &
-                     "calls a main delivery function that redirects to local" &
-                     " functions for each task. This function (" &
-                     Get_Name_String
-                        (CTN.Name (CTN.Defining_Identifier
-                           (CTN.Global_Port_Node
-                              (Backend_Node (Identifier (S)))))) &
-                     ") stores the incoming request for the task" &
-                     Get_Name_String (Name (Identifier (S))),
-                     Has_Header_Spaces => False);
+               N :=
+                 Make_Doxygen_C_Comment
+                   (Is_Function  => True,
+                    Element_Name =>
+                      "void " &
+                      Get_Name_String
+                        (CTN.Name
+                           (CTN.Defining_Identifier
+                              (CTN.Global_Port_Node
+                                 (Backend_Node (Identifier (S)))))) &
+                      " (__po_hi_request_t* request)",
+                    Brief =>
+                      "Function that delivers requests to the task " &
+                      Get_Name_String (Name (Identifier (S))),
+                    Desc =>
+                      "When the generated application received a request,"
+                      & " it calls a main delivery function that redirects"
+                      & " to localfunctions for each task. This function (" &
+                      Get_Name_String
+                        (CTN.Name
+                           (CTN.Defining_Identifier
+                              (CTN.Global_Port_Node
+                                 (Backend_Node (Identifier (S)))))) &
+                      ") stores the incoming request for the task" &
+                      Get_Name_String (Name (Identifier (S))),
+                    Has_Header_Spaces => False);
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-               N := Make_Function_Implementation
-                 (CTN.Global_Port_Node (Backend_Node (Identifier (S))),
-                  Deliver_Declarations, Deliver_Statements);
+               N :=
+                 Make_Function_Implementation
+                   (CTN.Global_Port_Node (Backend_Node (Identifier (S))),
+                    Deliver_Declarations,
+                    Deliver_Statements);
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                --  Add a switch alternative to the main deliver
@@ -2004,48 +2056,48 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
                Append_Node_To_List
                  (Make_Defining_Identifier
-                  (Map_C_Enumerator_Name
-                   (S, Entity => True)),
+                    (Map_C_Enumerator_Name (S, Entity => True)),
                   Switch_Labels);
 
                Append_Node_To_List
-                  (Make_Defining_Identifier
-                   (VN (V_Request)),
+                 (Make_Defining_Identifier (VN (V_Request)),
                   Parameters);
 
-               N := Make_Call_Profile
-                 (Defining_Identifier => Map_Task_Deliver_Identifier (S),
-                  Parameters => Parameters);
+               N :=
+                 Make_Call_Profile
+                   (Defining_Identifier => Map_Task_Deliver_Identifier (S),
+                    Parameters          => Parameters);
 
                Append_Node_To_List (N, Switch_Statements);
 
-               N := Make_Switch_Alternative
-                 (Switch_Labels, Switch_Statements);
+               N := Make_Switch_Alternative (Switch_Labels, Switch_Statements);
 
                Append_Node_To_List (N, Main_Deliver_Alternatives);
             end if;
          end if;
 
-         N := Make_Doxygen_C_Comment
-            (Is_Function => True,
-            Element_Name => "void* " &
-               Get_Name_String
+         N :=
+           Make_Doxygen_C_Comment
+             (Is_Function  => True,
+              Element_Name =>
+                "void* " &
+                Get_Name_String
                   (CTN.Name (Map_Task_Job_Identifier (S, Current_Device))) &
-               " (void)",
-            Brief => "Function executed by the task " &
-               Get_Name_String (Name (Identifier (S))),
-            Desc =>
-               "This function is executed as soon as the task " &
-               " is created. It performs the following operations: " &
-               " Receive incoming data, " &
-               " Execute tasks subprograms, " &
-               " Send output data.",
-               Has_Header_Spaces => False);
+                " (void)",
+              Brief =>
+                "Function executed by the task " &
+                Get_Name_String (Name (Identifier (S))),
+              Desc =>
+                "This function is executed as soon as the task " &
+                " is created. It performs the following operations: " &
+                " Receive incoming data, " &
+                " Execute tasks subprograms, " &
+                " Send output data.",
+              Has_Header_Spaces => False);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          N := Task_Job_Body (E);
-         Append_Node_To_List
-           (N, CTN.Declarations (Current_File));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
 
       end Visit_Thread_Instance;
 

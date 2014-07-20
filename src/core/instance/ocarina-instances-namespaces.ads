@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,7 +35,6 @@ package Ocarina.Instances.Namespaces is
 
    function Instantiate_Namespace
      (Instance_Root : Node_Id;
-      Namespace     : Node_Id)
-     return Node_Id;
+      Namespace     : Node_Id) return Node_Id;
 
 end Ocarina.Instances.Namespaces;

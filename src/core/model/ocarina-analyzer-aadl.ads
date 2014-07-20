@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -53,8 +53,7 @@ private
 
    function Have_Common_Statements
      (Node_1 : Node_Id;
-      Node_2 : Node_Id)
-     return Boolean;
+      Node_2 : Node_Id) return Boolean;
    --  Return True iff the two statements Node_1 and Node_2 have
    --  common elements. Considered statements are 'in modes' and 'in
    --  bindings'.

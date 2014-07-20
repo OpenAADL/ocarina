@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,16 +38,14 @@ package Ocarina.FE_AADL.Parser.Components.Flows is
 
    function P_Flow_Implementation_Or_End_To_End_Flow_Spec
      (Container : Node_Id;
-      Refinable : Boolean)
-     return Node_Id;
+      Refinable : Boolean) return Node_Id;
    --  Parse Flow_Implementation, Flow_Implementation_Refinement,
    --        End_To_End_Flow_Spec and End_To_End_Flow_Refinement.
    --  If Refinable = FALSE, refinements are not allowed
 
    function P_Flow_Spec
      (Container : Node_Id;
-      Refinable : Boolean)
-     return Node_Id;
+      Refinable : Boolean) return Node_Id;
    --  Parse Flow_Spec and Flow_Spec_Refinement
    --  If Refinable = FALSE, Flow_Spec_Refinement is not allowed
 

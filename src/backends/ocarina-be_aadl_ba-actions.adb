@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL_BA;
 with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
@@ -42,7 +42,7 @@ with Ocarina.BE_AADL_BA.Expressions;
 
 package body Ocarina.BE_AADL_BA.Actions is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.ME_AADL_BA;
    use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
@@ -51,20 +51,19 @@ package body Ocarina.BE_AADL_BA.Actions is
 
    package BAN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
-   procedure Print_Behavior_Action           (Node         : Node_Id);
-   procedure Print_Conditional_Statement     (Node         : Node_Id;
-                                              Is_While     : Boolean);
-   procedure Print_If_Cond_Struct            (Node         : Node_Id);
-   procedure Print_For_Cond_Struct           (Node         : Node_Id);
-   procedure Print_While_Cond_Struct         (Node         : Node_Id);
-   procedure Print_Range                     (Node         : Node_Id);
-   procedure Print_Assignment_Action         (Node         : Node_Id);
-   procedure Print_Communication_Action      (Node         : Node_Id);
-   procedure Print_Communication_Kind        (Comm_Kind    : Byte);
-   procedure Print_Timed_Action              (Node         : Node_Id);
-   procedure Print_Distribution_Kind         (Distrib_Kind : Byte);
-   procedure Print_Subprogram_Parameter_List (List         : List_Id);
-   procedure Print_Parameter_Label           (Node         : Node_Id);
+   procedure Print_Behavior_Action (Node : Node_Id);
+   procedure Print_Conditional_Statement (Node : Node_Id; Is_While : Boolean);
+   procedure Print_If_Cond_Struct (Node : Node_Id);
+   procedure Print_For_Cond_Struct (Node : Node_Id);
+   procedure Print_While_Cond_Struct (Node : Node_Id);
+   procedure Print_Range (Node : Node_Id);
+   procedure Print_Assignment_Action (Node : Node_Id);
+   procedure Print_Communication_Action (Node : Node_Id);
+   procedure Print_Communication_Kind (Comm_Kind : Byte);
+   procedure Print_Timed_Action (Node : Node_Id);
+   procedure Print_Distribution_Kind (Distrib_Kind : Byte);
+   procedure Print_Subprogram_Parameter_List (List : List_Id);
+   procedure Print_Parameter_Label (Node : Node_Id);
 
    ----------------------------
    -- Print_Behavior_Actions --
@@ -99,25 +98,32 @@ package body Ocarina.BE_AADL_BA.Actions is
 
    procedure Print_Behavior_Action (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Behavior_Action);
-      pragma Assert (Kind (Action (Node)) = K_If_Cond_Struct
-                       or else Kind (Action (Node)) = K_For_Cond_Struct
-                       or else Kind (Action (Node)) = K_While_Cond_Struct
-                       or else Kind (Action (Node)) = K_Assignment_Action
-                       or else Kind (Action (Node)) = K_Communication_Action
-                       or else Kind (Action (Node)) = K_Timed_Action);
+      pragma Assert
+        (Kind (Action (Node)) = K_If_Cond_Struct
+         or else Kind (Action (Node)) = K_For_Cond_Struct
+         or else Kind (Action (Node)) = K_While_Cond_Struct
+         or else Kind (Action (Node)) = K_Assignment_Action
+         or else Kind (Action (Node)) = K_Communication_Action
+         or else Kind (Action (Node)) = K_Timed_Action);
 
       Action_Node : constant Node_Id := Action (Node);
    begin
       case Kind (Action_Node) is
-         when K_If_Cond_Struct       => Print_If_Cond_Struct    (Action_Node);
-         when K_For_Cond_Struct      => Print_For_Cond_Struct   (Action_Node);
-         when K_While_Cond_Struct    => Print_While_Cond_Struct (Action_Node);
-         when K_Assignment_Action    => Print_Assignment_Action (Action_Node);
-         when K_Communication_Action => Print_Communication_Action
-                                                                (Action_Node);
-         when K_Timed_Action         => Print_Timed_Action      (Action_Node);
+         when K_If_Cond_Struct =>
+            Print_If_Cond_Struct (Action_Node);
+         when K_For_Cond_Struct =>
+            Print_For_Cond_Struct (Action_Node);
+         when K_While_Cond_Struct =>
+            Print_While_Cond_Struct (Action_Node);
+         when K_Assignment_Action =>
+            Print_Assignment_Action (Action_Node);
+         when K_Communication_Action =>
+            Print_Communication_Action (Action_Node);
+         when K_Timed_Action =>
+            Print_Timed_Action (Action_Node);
 
-         when others                 => Write_Line (Bug_Str);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Behavior_Action;
 
@@ -218,10 +224,10 @@ package body Ocarina.BE_AADL_BA.Actions is
 
    procedure Print_Range (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Range);
-      pragma Assert (Kind (Entity (Node)) = K_Id
-                       or else Kind (Entity (Node)) = K_Integer_Range
-                       or else Kind (Entity (Node)) =
-                                           K_Data_Component_Reference);
+      pragma Assert
+        (Kind (Entity (Node)) = K_Id
+         or else Kind (Entity (Node)) = K_Integer_Range
+         or else Kind (Entity (Node)) = K_Data_Component_Reference);
 
       Entity_Node : constant Node_Id := Entity (Node);
    begin
@@ -296,16 +302,20 @@ package body Ocarina.BE_AADL_BA.Actions is
    procedure Print_Communication_Kind (Comm_Kind : Byte) is
    begin
       case Communication_Kind'Val (Comm_Kind) is
-         when CK_Exclamation      => Print_Token (T_Exclamation);
-         when CK_Interrogative    => Print_Token (T_Interrogative);
-         when CK_Greater_Greater  => Print_Token (T_Greater_Greater_Than);
+         when CK_Exclamation =>
+            Print_Token (T_Exclamation);
+         when CK_Interrogative =>
+            Print_Token (T_Interrogative);
+         when CK_Greater_Greater =>
+            Print_Token (T_Greater_Greater_Than);
          when CK_Exclamation_Less_Than =>
             Print_Token (T_Exclamation);
             Print_Token (T_Less_Than_Sign);
          when CK_Exclamation_Greater_Than =>
             Print_Token (T_Exclamation);
             Print_Token (T_Greater_Than_Sign);
-         when others              => Write_Line  (Bug_Str);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Communication_Kind;
 
@@ -352,11 +362,16 @@ package body Ocarina.BE_AADL_BA.Actions is
    procedure Print_Distribution_Kind (Distrib_Kind : Byte) is
    begin
       case Distribution_Kind'Val (Distrib_Kind) is
-         when DK_Fixed   => Print_Token (T_Fixed);
-         when DK_Normal  => Print_Token (T_Normal);
-         when DK_Poisson => Print_Token (T_Poisson);
-         when DK_Random  => Print_Token (T_Random);
-         when others     => Write_Line  (Bug_Str);
+         when DK_Fixed =>
+            Print_Token (T_Fixed);
+         when DK_Normal =>
+            Print_Token (T_Normal);
+         when DK_Poisson =>
+            Print_Token (T_Poisson);
+         when DK_Random =>
+            Print_Token (T_Random);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Distribution_Kind;
 
@@ -392,9 +407,12 @@ package body Ocarina.BE_AADL_BA.Actions is
       Param_Node : constant Node_Id := Parameter (Node);
    begin
       case Kind (Param_Node) is
-         when K_Value_Expression => Print_Value_Expression (Param_Node);
-         when K_Id               => Print_Id (Param_Node);
-         when others             => Write_Line  (Bug_Str);
+         when K_Value_Expression =>
+            Print_Value_Expression (Param_Node);
+         when K_Id =>
+            Print_Id (Param_Node);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Parameter_Label;
 

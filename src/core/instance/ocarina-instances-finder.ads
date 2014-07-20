@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,27 +35,25 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 package Ocarina.Instances.Finder is
 
-   type Node_Kind_Array is array (Positive range <>)
-     of Ocarina.ME_AADL.AADL_Instances.Nodes.Node_Kind;
+   type Node_Kind_Array is
+     array
+       (Positive range <>) of Ocarina.ME_AADL.AADL_Instances.Nodes.Node_Kind;
 
    function Find_Instance
      (Instance_Root      : Node_Id;
       Reference_Instance : Node_Id;
-      Path               : List_Id)
-     return Node_Id;
+      Path               : List_Id) return Node_Id;
    --  Return the instance pointed by Path, from Reference_Instance
 
    function Find_Instance_In_Instance
      (Instance_Root      : Node_Id;
       Reference_Instance : Node_Id;
-      Path               : List_Id)
-     return Node_Id;
+      Path               : List_Id) return Node_Id;
    --  Return the instance pointed by Path, from Reference_Instance
 
    function Find_Local_Instance
      (Reference_Instance  : Node_Id;
-      Instance_Identifier : Node_Id)
-     return Node_Id;
+      Instance_Identifier : Node_Id) return Node_Id;
    --  Return the instance having the same name as
    --  Instance_Identifier, or No_Node if no instance of that name can
    --  be found. Reference_Instance is (1) a component instance in

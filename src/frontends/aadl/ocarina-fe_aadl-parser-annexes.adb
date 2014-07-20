@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,8 +47,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
    function P_Annex
      (Namespace           : Types.Node_Id;
       Code                : Parsing_Code;
-      Private_Declaration : Boolean)
-     return Node_Id;
+      Private_Declaration : Boolean) return Node_Id;
    --  Parse Annex_Library or Annex_Subclause, current token must be 'annex'
 
    -------------
@@ -58,8 +57,8 @@ package body Ocarina.FE_AADL.Parser.Annexes is
    function P_Annex
      (Namespace           : Types.Node_Id;
       Code                : Parsing_Code;
-      Private_Declaration : Boolean)
-     return Node_Id is
+      Private_Declaration : Boolean) return Node_Id
+   is
 
       use Lexer;
       use Locations;
@@ -90,9 +89,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
 
       Scan_Token;
 
-      if AADL_Version = AADL_V2
-        and then Token = T_None
-      then
+      if AADL_Version = AADL_V2 and then Token = T_None then
          Annex_Content := No_Name;
       elsif Token = T_Begin_Annex then
          Save_Lexer (Loc_Start_Annex);
@@ -148,12 +145,19 @@ package body Ocarina.FE_AADL.Parser.Annexes is
       end if;
 
       if Code = PC_Annex_Library then
-         Annex := Add_New_Annex_Library
-           (Annex_Location, Identifier, Namespace,
-            Is_Private => Private_Declaration);
+         Annex :=
+           Add_New_Annex_Library
+             (Annex_Location,
+              Identifier,
+              Namespace,
+              Is_Private => Private_Declaration);
       else
-         Annex := Add_New_Annex_Subclause
-           (Annex_Location, Identifier, Namespace, In_Modes);
+         Annex :=
+           Add_New_Annex_Subclause
+             (Annex_Location,
+              Identifier,
+              Namespace,
+              In_Modes);
       end if;
 
       if Annex /= No_Node
@@ -176,8 +180,8 @@ package body Ocarina.FE_AADL.Parser.Annexes is
 
    function P_Annex_Library
      (Namespace           : Types.Node_Id;
-      Private_Declaration : Boolean := False)
-     return Node_Id is
+      Private_Declaration : Boolean := False) return Node_Id
+   is
    begin
       return P_Annex (Namespace, PC_Annex_Library, Private_Declaration);
    end P_Annex_Library;
@@ -216,9 +220,9 @@ package body Ocarina.FE_AADL.Parser.Annexes is
 
       Start_Loc        : Location;
       Loc              : Location;
-      Annex_Identifier : Node_Id   := No_Node;
-      Elt_Identifier   : Node_Id   := No_Node;
-      List_Identifiers : List_Id   := No_List;
+      Annex_Identifier : Node_Id := No_Node;
+      Elt_Identifier   : Node_Id := No_Node;
+      List_Identifiers : List_Id := No_List;
       Annex_Node       : Node_Id;
    begin
       Save_Lexer (Start_Loc);
@@ -275,9 +279,12 @@ package body Ocarina.FE_AADL.Parser.Annexes is
          Skip_Tokens (T_Semicolon);
          return No_Node;
       else
-         Annex_Node := Add_New_Annex_Path (Start_Loc, Container,
-                                           Annex_Identifier,
-                                           List_Identifiers);
+         Annex_Node :=
+           Add_New_Annex_Path
+             (Start_Loc,
+              Container,
+              Annex_Identifier,
+              List_Identifiers);
       end if;
 
       if No (Annex_Node) then

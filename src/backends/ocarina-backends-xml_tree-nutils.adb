@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,12 +35,11 @@ with GNAT.Table;
 
 with Charset;   use Charset;
 with Locations; use Locations;
-with Namet;     use Namet;
+with Ocarina.Namet;     use Ocarina.Namet;
 with Utils;     use Utils;
 
 with Ocarina.Backends.Utils;
-with Ocarina.ME_AADL.AADL_Tree.Nodes;
-use Ocarina.ME_AADL.AADL_Tree.Nodes;
+with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 use Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.XML_Tree.Nutils is
@@ -52,13 +51,17 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    --  Used to mark XML keywords and avoid collision with other languages
 
    type Entity_Stack_Entry is record
-      Current_File    : Node_Id;
-      Current_Entity  : Node_Id;
+      Current_File   : Node_Id;
+      Current_Entity : Node_Id;
    end record;
 
    No_Depth : constant Int := -1;
-   package Entity_Stack is
-      new GNAT.Table (Entity_Stack_Entry, Int, No_Depth + 1, 10, 10);
+   package Entity_Stack is new GNAT.Table
+     (Entity_Stack_Entry,
+      Int,
+      No_Depth + 1,
+      10,
+      10);
 
    use Entity_Stack;
 
@@ -68,8 +71,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Set_Str_To_Name_Buffer (Prefix);
@@ -83,8 +85,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Get_Name_String (Name);
@@ -98,8 +99,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
       Length   : Natural;
       Temp_Str : String (1 .. Suffix'Length);
@@ -287,10 +287,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    -- Make_C_Comment --
    --------------------
 
-   function Make_XML_Comment
-     (N                 : Name_Id)
-     return Node_Id
-   is
+   function Make_XML_Comment (N : Name_Id) return Node_Id is
       C : Node_Id;
    begin
       C := New_Node (K_XML_Comment);
@@ -303,9 +300,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    -- Make_Defining_Identifier --
    ------------------------------
 
-   function Make_Defining_Identifier (Name         : Name_Id)
-     return Node_Id
-   is
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id is
       N : Node_Id;
 
    begin
@@ -321,8 +316,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    function Make_List_Id
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
-      N3 : Node_Id := No_Node)
-     return List_Id
+      N3 : Node_Id := No_Node) return List_Id
    is
       L : List_Id;
    begin
@@ -358,19 +352,19 @@ package body Ocarina.Backends.XML_Tree.Nutils is
 
    function New_List
      (Kind : XTN.Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id is
+      From : Node_Id := No_Node) return List_Id
+   is
       N : Node_Id;
 
    begin
       XTN.Entries.Increment_Last;
-      N := XTN.Entries.Last;
+      N                     := XTN.Entries.Last;
       XTN.Entries.Table (N) := XTN.Default_Node;
       Set_Kind (N, Kind);
       if Present (From) then
-         XTN.Set_Loc  (N, XTN.Loc (From));
+         XTN.Set_Loc (N, XTN.Loc (From));
       else
-         XTN.Set_Loc  (N, No_Location);
+         XTN.Set_Loc (N, No_Location);
       end if;
       return List_Id (N);
    end New_List;
@@ -381,13 +375,12 @@ package body Ocarina.Backends.XML_Tree.Nutils is
 
    function New_Node
      (Kind : XTN.Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id
+      From : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
       XTN.Entries.Increment_Last;
-      N := XTN.Entries.Last;
+      N                     := XTN.Entries.Last;
       XTN.Entries.Table (N) := XTN.Default_Node;
       XTN.Set_Kind (N, Kind);
 
@@ -404,10 +397,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    -- New_Token --
    ---------------
 
-   procedure New_Token
-     (T : Token_Type;
-      I : String := "")
-   is
+   procedure New_Token (T : Token_Type; I : String := "") is
       Name : Name_Id;
    begin
       if T in Keyword_Type then
@@ -418,7 +408,8 @@ package body Ocarina.Backends.XML_Tree.Nutils is
          Set_Str_To_Name_Buffer (Image (T));
          Name := Name_Find;
          Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-         Set_Name_Table_Byte (Name, Types.Byte (Token_Type'Pos (T) + 1));
+         Set_Name_Table_Byte
+           (Name, Ocarina.Types.Byte (Token_Type'Pos (T) + 1));
 
          Set_Str_To_Name_Buffer (Image (T));
       else
@@ -484,12 +475,10 @@ package body Ocarina.Backends.XML_Tree.Nutils is
       First     : Natural := 1;
       Name      : Name_Id;
       Test_Name : Name_Id;
-      V         : Types.Byte;
+      V         : Ocarina.Types.Byte;
    begin
       Get_Name_String (Normalize_Name (N));
-      while First <= Name_Len
-        and then Name_Buffer (First) = '_'
-      loop
+      while First <= Name_Len and then Name_Buffer (First) = '_' loop
          First := First + 1;
       end loop;
 
@@ -511,7 +500,7 @@ package body Ocarina.Backends.XML_Tree.Nutils is
       --  "AADL_" string before the identifier.
 
       Test_Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-      V := Get_Name_Table_Byte (Test_Name);
+      V         := Get_Name_Table_Byte (Test_Name);
       if V > 0 then
          Set_Str_To_Name_Buffer ("AADL_");
          Get_Name_String_And_Append (Name);
@@ -567,14 +556,14 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    -------------------
 
    function Make_XML_File
-     (Identifier : Node_Id; DTD : Node_Id := No_Node)
-     return Node_Id
+     (Identifier : Node_Id;
+      DTD        : Node_Id := No_Node) return Node_Id
    is
-      File : Node_Id;
+      File         : Node_Id;
       The_XML_Node : Node_Id;
 
    begin
-      File := New_Node (K_XML_File);
+      File         := New_Node (K_XML_File);
       The_XML_Node := New_Node (XTN.K_XML_Node);
 
       Set_Defining_Identifier (File, Identifier);
@@ -605,10 +594,11 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    -- Make_XML_Node --
    -------------------
 
-   function Make_XML_Node (Name_String : String := "";
-                           Name_Nameid : Name_Id := No_Name;
-                           Kind : XML_New_Node_Kind := K_String)
-                           return Node_Id is
+   function Make_XML_Node
+     (Name_String : String            := "";
+      Name_Nameid : Name_Id           := No_Name;
+      Kind        : XML_New_Node_Kind := K_String) return Node_Id
+   is
       N : Node_Id;
       L : List_Id;
       K : List_Id;
@@ -619,8 +609,9 @@ package body Ocarina.Backends.XML_Tree.Nutils is
          Set_Str_To_Name_Buffer (Name_String);
          XTN.Set_Defining_Identifier (N, Make_Defining_Identifier (Name_Find));
       else
-         XTN.Set_Defining_Identifier (N,
-                                      Make_Defining_Identifier (Name_Nameid));
+         XTN.Set_Defining_Identifier
+           (N,
+            Make_Defining_Identifier (Name_Nameid));
       end if;
 
       L := New_List (XTN.K_List_Id);
@@ -636,8 +627,10 @@ package body Ocarina.Backends.XML_Tree.Nutils is
    -- Make_Assignement --
    ----------------------
 
-   function Make_Assignement (Left : Node_Id; Right : Node_Id)
-                              return Node_Id is
+   function Make_Assignement
+     (Left  : Node_Id;
+      Right : Node_Id) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (XTN.K_Assignement);

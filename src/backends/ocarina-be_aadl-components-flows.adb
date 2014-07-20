@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -43,7 +43,7 @@ with Ocarina.BE_AADL.Identifiers;
 
 package body Ocarina.BE_AADL.Components.Flows is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.BE_AADL.Components.Modes;
@@ -59,9 +59,12 @@ package body Ocarina.BE_AADL.Components.Flows is
    procedure Print_Flow_Category (Category : Byte) is
    begin
       case Flow_Category'Val (Category) is
-         when FC_Source => Print_Token (T_Source);
-         when FC_Sink   => Print_Token (T_Sink);
-         when FC_Path   => Print_Token (T_Path);
+         when FC_Source =>
+            Print_Token (T_Source);
+         when FC_Sink =>
+            Print_Token (T_Sink);
+         when FC_Path =>
+            Print_Token (T_Path);
       end case;
    end Print_Flow_Category;
 
@@ -72,7 +75,7 @@ package body Ocarina.BE_AADL.Components.Flows is
    procedure Print_Flow_Implementation (Node : Node_Id) is
       use Ocarina.BE_AADL.Properties;
 
-      Flow_Modes    : constant Node_Id := In_Modes (Node);
+      Flow_Modes    : constant Node_Id   := In_Modes (Node);
       Flow_Kind     : constant Node_Kind := Kind (Node);
       Is_End_To_End : Boolean;
       Is_Refinement : Boolean;
@@ -81,18 +84,20 @@ package body Ocarina.BE_AADL.Components.Flows is
 
    begin
       if Flow_Kind = K_Flow_Implementation_Refinement
-        or else Flow_Kind = K_End_To_End_Flow_Refinement then
+        or else Flow_Kind = K_End_To_End_Flow_Refinement
+      then
          Is_Refinement := True;
       else
          Is_Refinement := False;
       end if;
 
       if Flow_Kind = K_End_To_End_Flow_Spec
-        or else Flow_Kind = K_End_To_End_Flow_Refinement then
+        or else Flow_Kind = K_End_To_End_Flow_Refinement
+      then
          Is_End_To_End := True;
       else
          Is_End_To_End := False;
-         Cat := Category (Node);
+         Cat           := Category (Node);
       end if;
 
       Write_Indentation;
@@ -118,8 +123,8 @@ package body Ocarina.BE_AADL.Components.Flows is
       if not Is_Refinement then
          Write_Space;
 
-         if Flow_Kind = K_End_To_End_Flow_Spec or else
-           Flow_Category'Val (Cat) = FC_Path
+         if Flow_Kind = K_End_To_End_Flow_Spec
+           or else Flow_Category'Val (Cat) = FC_Path
          then
             Print_Entity_Reference (Source_Flow (Node));
          elsif Flow_Category'Val (Cat) = FC_Sink then
@@ -178,8 +183,8 @@ package body Ocarina.BE_AADL.Components.Flows is
    procedure Print_Flow_Spec (Node : Node_Id) is
       use Ocarina.BE_AADL.Properties;
 
-      Cat : constant Byte := Category (Node);
-      Flow_Modes    : constant Node_Id := In_Modes (Node);
+      Cat        : constant Byte    := Category (Node);
+      Flow_Modes : constant Node_Id := In_Modes (Node);
 
    begin
       Write_Indentation;
@@ -196,9 +201,9 @@ package body Ocarina.BE_AADL.Components.Flows is
          case Flow_Category'Val (Cat) is
             when FC_Source =>
                Print_Entity_Reference (Source_Flow (Node));
-            when FC_Sink   =>
+            when FC_Sink =>
                Print_Entity_Reference (Sink_Flow (Node));
-            when FC_Path   =>
+            when FC_Path =>
                Print_Entity_Reference (Source_Flow (Node));
                Write_Space;
                Print_Token (T_Direct_Connection);

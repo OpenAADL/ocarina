@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -49,8 +49,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Passing_Predicates is
    function Is_Passing_Through_Predicate
      (F      : Node_Id;
       C      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       use ATN;
 
@@ -59,9 +58,10 @@ package body Ocarina.Instances.REAL_Checker.Queries.Passing_Predicates is
       P : Node_Id;
       E : Node_Id;
    begin
-      if ATN.Kind (F) = K_End_To_End_Flow_Spec and then
-        AIN.Kind (C) = K_Component_Instance and then
-        not Is_Empty (ATN.Connections (F)) then
+      if ATN.Kind (F) = K_End_To_End_Flow_Spec
+        and then AIN.Kind (C) = K_Component_Instance
+        and then not Is_Empty (ATN.Connections (F))
+      then
          P := AIN.First_Node (ATN.Connections (F));
 
          --  Returns true if the current (end to end flow) node is
@@ -74,8 +74,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Passing_Predicates is
 
             case AIN.Kind (E) is
 
-               when K_Port_Spec_Instance
-                 | K_Parameter_Instance =>
+               when K_Port_Spec_Instance | K_Parameter_Instance =>
                   if AIN.Parent_Component (E) = C then
                      return True;
                   end if;
@@ -84,8 +83,8 @@ package body Ocarina.Instances.REAL_Checker.Queries.Passing_Predicates is
                   if Corresponding_Instance (E) = C then
                      return True;
                   end if;
-                  --  XXX FIXME
-                  --  is this case still possible ?
+               --  XXX FIXME
+               --  is this case still possible ?
 
                when K_Component_Instance =>
                   --  Buses

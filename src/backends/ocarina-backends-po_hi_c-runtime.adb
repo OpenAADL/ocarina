@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,7 +37,7 @@ with GNAT.Case_Util;
 with Utils; use Utils;
 
 with Charset; use Charset;
-with Namet;   use Namet;
+with Ocarina.Namet;   use Ocarina.Namet;
 
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Tree.Nutils;
@@ -60,7 +60,7 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
       Into : String_Access;
    end record;
 
-   Rules : array (1 .. 64) of Casing_Rule;
+   Rules      : array (1 .. 64) of Casing_Rule;
    Rules_Last : Natural := 0;
 
    procedure Apply_Casing_Rules (S : in out String);
@@ -74,8 +74,8 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
    ------------------------
 
    procedure Apply_Casing_Rules (S : in out String) is
-      New_Word : Boolean := True;
-      Length   : Natural := S'Length;
+      New_Word : Boolean         := True;
+      Length   : Natural         := S'Length;
       S1       : constant String := To_Lower (S);
    begin
       GNAT.Case_Util.To_Mixed (S);
@@ -110,8 +110,8 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
    ----------------
 
    procedure Initialize is
-      Name       : Name_Id;
-      N          : Node_Id;
+      Name : Name_Id;
+      N    : Node_Id;
    begin
       --  Initialize the runtime only once
 
@@ -131,17 +131,15 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
 
          Apply_Casing_Rules (Name_Buffer (1 .. Name_Len));
 
-         while Name_Buffer (Name_Len) = '_'
-         loop
+         while Name_Buffer (Name_Len) = '_' loop
             Name_Len := Name_Len - 1;
          end loop;
 
          Name := Name_Find;
 
-         Name := Utils.To_Lower (Name);
+         Name    := Utils.To_Lower (Name);
          RED (E) := New_Node (K_Defining_Identifier);
-         Set_Name
-           (RED (E), Name);
+         Set_Name (RED (E), Name);
       end loop;
 
       for E in RH_Id loop
@@ -149,15 +147,14 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
          Set_Str_To_Name_Buffer (Name_Buffer (4 .. Name_Len));
          Apply_Casing_Rules (Name_Buffer (1 .. Name_Len));
 
-         while Name_Buffer (Name_Len) = '_'
-         loop
+         while Name_Buffer (Name_Len) = '_' loop
             Name_Len := Name_Len - 1;
          end loop;
 
          Name := Name_Find;
 
          Name := Utils.To_Lower (Name);
-         N := New_Node (K_Defining_Identifier);
+         N    := New_Node (K_Defining_Identifier);
          Set_Name (N, Name);
 
          RHD (E) := Make_Include_Clause (N, False);
@@ -176,10 +173,9 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
 
          Name := Name_Find;
 
-         Name := To_Upper (Name);
+         Name    := To_Upper (Name);
          RED (E) := New_Node (K_Defining_Identifier);
-         Set_Name
-           (RED (E), Name);
+         Set_Name (RED (E), Name);
       end loop;
 
       for E in RT_Id loop
@@ -195,10 +191,9 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
 
          Name := Name_Find;
 
-         Name := To_Lower (Name);
+         Name    := To_Lower (Name);
          RED (E) := New_Node (K_Defining_Identifier);
-         Set_Name
-           (RED (E), Name);
+         Set_Name (RED (E), Name);
       end loop;
 
       for E in RV_Id loop
@@ -214,10 +209,9 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
 
          Name := Name_Find;
 
-         Name := To_Lower (Name);
+         Name    := To_Lower (Name);
          RED (E) := New_Node (K_Defining_Identifier);
-         Set_Name
-           (RED (E), Name);
+         Set_Name (RED (E), Name);
       end loop;
    end Initialize;
 
@@ -227,8 +221,8 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
 
    procedure Reset is
    begin
-      RED := (RE_Id'Range => No_Node);
-      RHD := (RH_Id'Range => No_Node);
+      RED        := (RE_Id'Range => No_Node);
+      RHD        := (RH_Id'Range => No_Node);
       Rules_Last := 0;
 
       Initialized := False;
@@ -261,7 +255,7 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
 
    procedure Register_Casing_Rule (S : String) is
    begin
-      Rules_Last := Rules_Last + 1;
+      Rules_Last              := Rules_Last + 1;
       Rules (Rules_Last).Size := S'Length;
       Rules (Rules_Last).Into := new String'(S);
       Rules (Rules_Last).From := new String'(S);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 with Utils; use Utils;
 
 with Ocarina.ME_AADL;
@@ -68,7 +68,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
-   package XV  renames Ocarina.Backends.XML_Values;
+   package XV renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -112,8 +112,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -169,13 +168,11 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       Hw_Desc_Node := Make_XML_Node ("HwDescription");
 
-      Append_Node_To_List (Hw_Desc_Node,
-                           XTN.Subitems (Current_XML_Node));
+      Append_Node_To_List (Hw_Desc_Node, XTN.Subitems (Current_XML_Node));
 
       Processor_Node := Make_XML_Node ("ProcessorTable");
 
-      Append_Node_To_List (Processor_Node,
-                           XTN.Subitems (Hw_Desc_Node));
+      Append_Node_To_List (Processor_Node, XTN.Subitems (Hw_Desc_Node));
 
       Current_XML_Node := Processor_Node;
 
@@ -185,8 +182,8 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -199,16 +196,15 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       Memory_Node := Make_XML_Node ("MemoryLayout");
 
-      Append_Node_To_List (Memory_Node,
-                           XTN.Subitems (Hw_Desc_Node));
+      Append_Node_To_List (Memory_Node, XTN.Subitems (Hw_Desc_Node));
 
       Current_XML_Node := Memory_Node;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
             if AINU.Is_Memory (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -230,29 +226,24 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          P := Make_Defining_Identifier (Name_Find);
          Set_Str_To_Name_Buffer ("0");
          Q := Make_Defining_Identifier (Name_Find);
-         Append_Node_To_List
-            (Make_Assignement (P, Q), XTN.Items (Uart_Node));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Uart_Node));
 
          Set_Str_To_Name_Buffer ("baudRate");
          P := Make_Defining_Identifier (Name_Find);
          Set_Str_To_Name_Buffer ("115200");
          Q := Make_Defining_Identifier (Name_Find);
-         Append_Node_To_List
-            (Make_Assignement (P, Q), XTN.Items (Uart_Node));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Uart_Node));
 
          Set_Str_To_Name_Buffer ("name");
          P := Make_Defining_Identifier (Name_Find);
          Set_Str_To_Name_Buffer ("Uart");
          Q := Make_Defining_Identifier (Name_Find);
-         Append_Node_To_List
-            (Make_Assignement (P, Q), XTN.Items (Uart_Node));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Uart_Node));
 
-         Append_Node_To_List (Uart_Node,
-                              XTN.Subitems (Device_Node));
+         Append_Node_To_List (Uart_Node, XTN.Subitems (Device_Node));
       end;
 
-      Append_Node_To_List (Device_Node,
-                           XTN.Subitems (Hw_Desc_Node));
+      Append_Node_To_List (Device_Node, XTN.Subitems (Hw_Desc_Node));
 
       Pop_Entity;
       Pop_Entity;
@@ -263,20 +254,18 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S                 : Node_Id;
-      P                 : Node_Id;
-      Q                 : Node_Id;
-      Processor_Node    : Node_Id;
-      Plan_Table_Node   : Node_Id;
-      Plan_Node         : Node_Id;
-      Start_Time        : Unsigned_Long_Long := 0;
-      Slot_Node         : Node_Id;
-      Partition         : Node_Id;
-      Slot_Identifier   : Unsigned_Long_Long := 0;
-      Slots             : constant Time_Array
-                           := Get_POK_Slots (E);
-      Slots_Allocation  : constant List_Id
-                           := Get_POK_Slots_Allocation (E);
+      S                : Node_Id;
+      P                : Node_Id;
+      Q                : Node_Id;
+      Processor_Node   : Node_Id;
+      Plan_Table_Node  : Node_Id;
+      Plan_Node        : Node_Id;
+      Start_Time       : Unsigned_Long_Long  := 0;
+      Slot_Node        : Node_Id;
+      Partition        : Node_Id;
+      Slot_Identifier  : Unsigned_Long_Long  := 0;
+      Slots            : constant Time_Array := Get_POK_Slots (E);
+      Slots_Allocation : constant List_Id    := Get_POK_Slots_Allocation (E);
    begin
       if Slots_Allocation = No_List then
          Display_Error
@@ -289,11 +278,11 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       Set_Str_To_Name_Buffer ("id");
       P := Make_Defining_Identifier (Name_Find);
-      Q := Make_Literal
-         (XV.New_Numeric_Value (Processor_Identifier, 0, 10));
+      Q := Make_Literal (XV.New_Numeric_Value (Processor_Identifier, 0, 10));
 
       Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Processor_Node));
+        (Make_Assignement (P, Q),
+         XTN.Items (Processor_Node));
 
       Set_Str_To_Name_Buffer ("frequency");
       P := Make_Defining_Identifier (Name_Find);
@@ -302,7 +291,8 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       Q := Make_Defining_Identifier (Name_Find);
 
       Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Processor_Node));
+        (Make_Assignement (P, Q),
+         XTN.Items (Processor_Node));
 
       --  Within the <processor/> node, add a <CyclicPlanTable/>
       --  node.
@@ -318,20 +308,17 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       P := Make_Defining_Identifier (Name_Find);
       Q := Make_Literal (XV.New_Numeric_Value (0, 0, 10));
 
-      Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Plan_Node));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Plan_Node));
 
       Set_Str_To_Name_Buffer ("majorFrame");
       P := Make_Defining_Identifier (Name_Find);
 
       Set_Str_To_Name_Buffer
-         (Unsigned_Long_Long'Image
-            (To_Milliseconds (Get_POK_Major_Frame (E))));
+        (Unsigned_Long_Long'Image (To_Milliseconds (Get_POK_Major_Frame (E))));
       Add_Str_To_Name_Buffer ("ms");
       Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
-      Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Plan_Node));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Plan_Node));
 
       --  For each time slot for a partition, we declare
       --  it in the scheduling plan.
@@ -350,8 +337,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          P := Make_Defining_Identifier (Name_Find);
          Q := Make_Literal (XV.New_Numeric_Value (Slot_Identifier, 0, 10));
 
-         Append_Node_To_List
-            (Make_Assignement (P, Q), XTN.Items (Slot_Node));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
 
          --  Associate a fixed identifier to the slot.
 
@@ -359,29 +345,24 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          P := Make_Defining_Identifier (Name_Find);
          Q := Copy_Node (Backend_Node (Identifier (Partition)));
 
-         Append_Node_To_List
-            (Make_Assignement (P, Q), XTN.Items (Slot_Node));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
 
          --  Define the duration attribute of the <slot/> element.
          Set_Str_To_Name_Buffer ("duration");
          P := Make_Defining_Identifier (Name_Find);
          Set_Str_To_Name_Buffer
-            (Unsigned_Long_Long'Image
-               (To_Milliseconds (Slots (I))));
+           (Unsigned_Long_Long'Image (To_Milliseconds (Slots (I))));
          Add_Str_To_Name_Buffer ("ms");
          Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
-         Append_Node_To_List
-            (Make_Assignement (P, Q), XTN.Items (Slot_Node));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
 
          --  Define the start attribute of the <slot/> element.
          Set_Str_To_Name_Buffer ("start");
          P := Make_Defining_Identifier (Name_Find);
-         Set_Str_To_Name_Buffer
-            (Unsigned_Long_Long'Image (Start_Time));
+         Set_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Start_Time));
          Add_Str_To_Name_Buffer ("ms");
          Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
-         Append_Node_To_List
-            (Make_Assignement (P, Q), XTN.Items (Slot_Node));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
 
          Append_Node_To_List (Slot_Node, XTN.Subitems (Plan_Node));
 
@@ -395,8 +376,8 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -413,13 +394,13 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S           : Node_Id;
+      S : Node_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -432,48 +413,44 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    ---------------------------
 
    procedure Visit_Memory_Instance (E : Node_Id) is
-      P                    : Node_Id;
-      Q                    : Node_Id;
-      Memory_Node          : Node_Id;
-      Base_Address_Value   : Unsigned_Long_Long;
-      Byte_Count_Value     : Unsigned_Long_Long;
+      P                  : Node_Id;
+      Q                  : Node_Id;
+      Memory_Node        : Node_Id;
+      Base_Address_Value : Unsigned_Long_Long;
+      Byte_Count_Value   : Unsigned_Long_Long;
    begin
       Memory_Node := Make_XML_Node ("Region");
 
       --  Add the start attribute of the region node.
       Base_Address_Value := Get_Integer_Property (E, "base_address");
-      Byte_Count_Value := Get_Integer_Property (E, "byte_count");
+      Byte_Count_Value   := Get_Integer_Property (E, "byte_count");
 
       if Base_Address_Value = 0 or else Byte_Count_Value = 0 then
          Display_Located_Error
-            (Loc (E),
-             "Memory does not specify the byte_count " &
-             "or base_address properties (not fatal)",
-             Fatal => False);
+           (Loc (E),
+            "Memory does not specify the byte_count " &
+            "or base_address properties (not fatal)",
+            Fatal => False);
          return;
       end if;
 
       Set_Str_To_Name_Buffer ("start");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("0x");
-      Add_Str_To_Name_Buffer
-         (Unsigned_Long_Long'Image (Base_Address_Value));
+      Add_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Base_Address_Value));
 
       Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
-      Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Memory_Node));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Memory_Node));
 
       --  Add the size attribute of the region node.
       Set_Str_To_Name_Buffer ("size");
       P := Make_Defining_Identifier (Name_Find);
-      Set_Str_To_Name_Buffer
-         (Unsigned_Long_Long'Image (Byte_Count_Value));
+      Set_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Byte_Count_Value));
       Add_Str_To_Name_Buffer ("B");
       Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
-      Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Memory_Node));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Memory_Node));
 
       --  Add the type attribute of the region node.
       Set_Str_To_Name_Buffer ("type");
@@ -481,8 +458,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       Set_Str_To_Name_Buffer ("stram");
       Q := Make_Defining_Identifier (Name_Find);
 
-      Append_Node_To_List
-         (Make_Assignement (P, Q), XTN.Items (Memory_Node));
+      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Memory_Node));
 
       Append_Node_To_List (Memory_Node, XTN.Subitems (Current_XML_Node));
    end Visit_Memory_Instance;

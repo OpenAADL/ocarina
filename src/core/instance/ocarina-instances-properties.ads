@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,11 +34,10 @@
 package Ocarina.Instances.Properties is
 
    function Apply_Properties
-     (Instance_Root   : Node_Id;
-      Instance        : Node_Id;
-      Property_List   : List_Id;
-      Override_Mode   : Boolean)
-     return Boolean;
+     (Instance_Root : Node_Id;
+      Instance      : Node_Id;
+      Property_List : List_Id;
+      Override_Mode : Boolean) return Boolean;
    --  Add properties to the entity instance designated by the
    --  'applies to' statements of the property associations, or to
    --  Instance if there is no 'applies to' statement. If
@@ -50,16 +49,14 @@ package Ocarina.Instances.Properties is
      (Instance_Root        : Node_Id;
       Entity_Instance      : Node_Id;
       Property_Association : Node_Id;
-      Override_Mode        : Boolean)
-     return Boolean;
+      Override_Mode        : Boolean) return Boolean;
    --  Same as above but for one single property association
 
    function Replace_Property_Instance
      (Instance_Root        : Node_Id;
       Entity_Instance      : Node_Id;
       Property_Association : Node_Id;
-      Override_Mode        : Boolean)
-     return Boolean;
+      Override_Mode        : Boolean) return Boolean;
    --  Same as above but for one single property association
 
 end Ocarina.Instances.Properties;

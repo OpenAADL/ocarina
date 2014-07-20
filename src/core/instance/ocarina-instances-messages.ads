@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,9 +38,11 @@ package Ocarina.Instances.Messages is
    procedure Display_Entity_Is_A_Component_Type (Node : Node_Id);
 
    procedure Display_Instantiation_Error
-     (Node : Node_Id; Fatal : Boolean := True);
+     (Node  : Node_Id;
+      Fatal : Boolean := True);
 
    procedure Display_Type_Instantiation_Error
-     (Node : Node_Id; Fatal : Boolean := True);
+     (Node  : Node_Id;
+      Fatal : Boolean := True);
 
 end Ocarina.Instances.Messages;

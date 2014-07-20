@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -90,25 +90,29 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
          Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
          N       : Node_Id;
       begin
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
-            Subtype_Mark        => Make_Defining_Identifier
-              (Map_Port_Status_Name (E)),
-            Parameter_Mode      => Mode_Inout);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
+              Subtype_Mark        =>
+                Make_Defining_Identifier (Map_Port_Status_Name (E)),
+              Parameter_Mode => Mode_Inout);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Spg_Interface)),
-            Subtype_Mark        => Make_Defining_Identifier
-              (Map_Port_Interface_Name (E)),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier =>
+                Make_Defining_Identifier (PN (P_Spg_Interface)),
+              Subtype_Mark =>
+                Make_Defining_Identifier (Map_Port_Interface_Name (E)),
+              Parameter_Mode => Mode_In);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Make_Defining_Identifier (SN (S_Put_Value)),
-            Parameter_Profile   => Profile,
-            Return_Type         => No_Node);
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier =>
+                Make_Defining_Identifier (SN (S_Put_Value)),
+              Parameter_Profile => Profile,
+              Return_Type       => No_Node);
          return N;
       end Put_Value_Spec;
 
@@ -120,26 +124,29 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
          Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
          N       : Node_Id;
       begin
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
-            Subtype_Mark        => Make_Defining_Identifier
-              (Map_Port_Status_Name (E)),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
+              Subtype_Mark        =>
+                Make_Defining_Identifier (Map_Port_Status_Name (E)),
+              Parameter_Mode => Mode_In);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Port)),
-            Subtype_Mark        => Make_Defining_Identifier
-              (Map_Port_Enumeration_Name (E)),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Port)),
+              Subtype_Mark        =>
+                Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
+              Parameter_Mode => Mode_In);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Make_Defining_Identifier (SN (S_Get_Value)),
-            Parameter_Profile   => Profile,
-            Return_Type         => Make_Defining_Identifier
-              (Map_Port_Interface_Name (E)));
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier =>
+                Make_Defining_Identifier (SN (S_Get_Value)),
+              Parameter_Profile => Profile,
+              Return_Type       =>
+                Make_Defining_Identifier (Map_Port_Interface_Name (E)));
          return N;
       end Get_Value_Spec;
 
@@ -151,26 +158,28 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
          Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
          N       : Node_Id;
       begin
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
-            Subtype_Mark        => Make_Defining_Identifier
-              (Map_Port_Status_Name (E)),
-            Parameter_Mode      => Mode_Inout);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
+              Subtype_Mark        =>
+                Make_Defining_Identifier (Map_Port_Status_Name (E)),
+              Parameter_Mode => Mode_Inout);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Port)),
-            Subtype_Mark        => Make_Defining_Identifier
-              (Map_Port_Enumeration_Name (E)),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Port)),
+              Subtype_Mark        =>
+                Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
+              Parameter_Mode => Mode_In);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Make_Defining_Identifier
-              (SN (S_Next_Value)),
-            Parameter_Profile   => Profile,
-            Return_Type         => No_Node);
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier =>
+                Make_Defining_Identifier (SN (S_Next_Value)),
+              Parameter_Profile => Profile,
+              Return_Type       => No_Node);
          return N;
       end Next_Value_Spec;
 
@@ -182,26 +191,28 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
          Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
          N       : Node_Id;
       begin
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
-            Subtype_Mark        => Make_Defining_Identifier
-              (Map_Port_Status_Name (E)),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Status)),
+              Subtype_Mark        =>
+                Make_Defining_Identifier (Map_Port_Status_Name (E)),
+              Parameter_Mode => Mode_In);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Parameter_Specification
-           (Defining_Identifier => Make_Defining_Identifier
-              (PN (P_Port)),
-            Subtype_Mark        => Make_Defining_Identifier
-              (Map_Port_Enumeration_Name (E)),
-            Parameter_Mode      => Mode_In);
+         N :=
+           Make_Parameter_Specification
+             (Defining_Identifier => Make_Defining_Identifier (PN (P_Port)),
+              Subtype_Mark        =>
+                Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
+              Parameter_Mode => Mode_In);
          Append_Node_To_List (N, Profile);
 
-         N := Make_Subprogram_Specification
-           (Defining_Identifier => Make_Defining_Identifier
-              (SN (S_Get_Count)),
-            Parameter_Profile   => Profile,
-            Return_Type         => RE (RE_Integer));
+         N :=
+           Make_Subprogram_Specification
+             (Defining_Identifier =>
+                Make_Defining_Identifier (SN (S_Get_Count)),
+              Parameter_Profile => Profile,
+              Return_Type       => RE (RE_Integer));
          return N;
       end Get_Count_Spec;
 
@@ -237,8 +248,8 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -266,9 +277,9 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       -------------------------
 
       procedure Visit_Data_Instance (E : Node_Id) is
-         Data_Representation : constant Supported_Data_Representation
-           := Get_Data_Representation (E);
-         S                   : Node_Id;
+         Data_Representation : constant Supported_Data_Representation :=
+           Get_Data_Representation (E);
+         S : Node_Id;
       begin
          if Data_Representation = Data_With_Accessors then
             --  Visit all the accessor subprograms of the data type
@@ -287,8 +298,8 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         Implementation  : constant Node_Id := Get_Implementation (E);
-         S : Node_Id;
+         Implementation : constant Node_Id := Get_Implementation (E);
+         S              : Node_Id;
       begin
          if Implementation /= No_Node then
             if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
@@ -308,12 +319,13 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
-         P : constant Node_Id := ADN.Entity (U);
-         S : Node_Id;
-         The_System : constant Node_Id := Parent_Component
-           (Parent_subcomponent (E));
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         P          : constant Node_Id := ADN.Entity (U);
+         S          : Node_Id;
+         The_System : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
 
       begin
          Push_Entity (P);
@@ -344,12 +356,11 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
             S := First_Node (Subcomponents (The_System));
             while Present (S) loop
                if AAU.Is_Device (Corresponding_Instance (S))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (S))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (S)) =
+                   Get_Bound_Processor (E)
                then
-                  Visit_Device_Instance
-                    (Corresponding_Instance (S));
+                  Visit_Device_Instance (Corresponding_Instance (S));
                end if;
                S := Next_Node (S);
             end loop;
@@ -368,9 +379,9 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       -------------------------------
 
       procedure Visit_Subprogram_Instance (E : Node_Id) is
-         N           : Node_Id;
-         Call_Seq    : Node_Id;
-         Spg_Call    : Node_Id;
+         N        : Node_Id;
+         Call_Seq : Node_Id;
+         Spg_Call : Node_Id;
       begin
          --  Generate the spec of the subprogram
 
@@ -451,8 +462,8 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
          else
             declare
-               H : constant Node_Id := Get_Handling
-                 (E, By_Name, H_Ada_Subprogram_Spec);
+               H : constant Node_Id :=
+                 Get_Handling (E, By_Name, H_Ada_Subprogram_Spec);
             begin
                Bind_AADL_To_Subprogram
                  (Identifier (E),
@@ -462,7 +473,7 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
                   Bind_AADL_To_Port_Enumeration
                     (Identifier (E),
                      ADN.Port_Enumeration_Node
-                     (Backend_Node (Identifier (H))));
+                       (Backend_Node (Identifier (H))));
                   Bind_AADL_To_Port_Interface
                     (Identifier (E),
                      ADN.Port_Interface_Node (Backend_Node (Identifier (H))));
@@ -589,8 +600,8 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       --------------------
 
       function Put_Value_Body (E : Node_Id) return Node_Id is
-         Spec         : constant Node_Id := ADN.Put_Value_Node
-           (Backend_Node (Identifier (E)));
+         Spec : constant Node_Id :=
+           ADN.Put_Value_Node (Backend_Node (Identifier (E)));
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Alternatives : constant List_Id := New_List (ADN.K_List_Id);
          F            : Node_Id;
@@ -606,33 +617,37 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
                   --  Set the boolean flag corresponding to the
                   --  component to 'True'.
 
-                  N := Make_Assignment_Statement
-                    (Make_Selected_Component
-                     (Make_Defining_Identifier (PN (P_Status)),
-                      Map_Ada_Defining_Identifier (F)),
-                     RE (RE_True));
+                  N :=
+                    Make_Assignment_Statement
+                      (Make_Selected_Component
+                         (Make_Defining_Identifier (PN (P_Status)),
+                          Map_Ada_Defining_Identifier (F)),
+                       RE (RE_True));
                   Append_Node_To_List (N, St);
 
                   if AAN.Is_Data (F) then
                      --  Update the component correspodning to the out
                      --  port in the status structure
 
-                     N := Make_Assignment_Statement
-                       (Make_Selected_Component
-                        (Make_Defining_Identifier (PN (P_Status)),
-                         Make_Defining_Identifier
-                         (Map_Ada_Component_Name (F))),
-                        Make_Selected_Component
-                        (Make_Defining_Identifier (PN (P_Spg_Interface)),
-                         Make_Defining_Identifier
-                         (Map_Ada_Component_Name (F))));
+                     N :=
+                       Make_Assignment_Statement
+                         (Make_Selected_Component
+                            (Make_Defining_Identifier (PN (P_Status)),
+                             Make_Defining_Identifier
+                               (Map_Ada_Component_Name (F))),
+                          Make_Selected_Component
+                            (Make_Defining_Identifier (PN (P_Spg_Interface)),
+                             Make_Defining_Identifier
+                               (Map_Ada_Component_Name (F))));
                      Append_Node_To_List (N, St);
                   end if;
 
                   --  Create the case alternative
 
-                  N := Make_Case_Statement_Alternative
-                    (Make_List_Id (Map_Ada_Defining_Identifier (F)), St);
+                  N :=
+                    Make_Case_Statement_Alternative
+                      (Make_List_Id (Map_Ada_Defining_Identifier (F)),
+                       St);
                   Append_Node_To_List (N, Alternatives);
                end;
             end if;
@@ -640,11 +655,12 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
             F := Next_Node (F);
          end loop;
 
-         N := Make_Case_Statement
-           (Make_Selected_Component
-            (Make_Defining_Identifier (PN (P_Spg_Interface)),
-             Make_Defining_Identifier (CN (C_Port))),
-            Alternatives);
+         N :=
+           Make_Case_Statement
+             (Make_Selected_Component
+                (Make_Defining_Identifier (PN (P_Spg_Interface)),
+                 Make_Defining_Identifier (CN (C_Port))),
+              Alternatives);
          Append_Node_To_List (N, Statements);
 
          N := Make_Subprogram_Implementation (Spec, No_List, Statements);
@@ -656,8 +672,8 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       --------------------
 
       function Get_Value_Body (E : Node_Id) return Node_Id is
-         Spec : constant Node_Id := ADN.Get_Value_Node
-           (Backend_Node (Identifier (E)));
+         Spec : constant Node_Id :=
+           ADN.Get_Value_Node (Backend_Node (Identifier (E)));
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Alternatives : constant List_Id := New_List (ADN.K_List_Id);
          F            : Node_Id;
@@ -670,21 +686,24 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
                declare
                   Aggr : constant List_Id := New_List (ADN.K_List_Id);
                begin
-                  N := Make_Component_Association
-                    (Make_Defining_Identifier (CN (C_Port)),
-                     Map_Ada_Defining_Identifier (F));
+                  N :=
+                    Make_Component_Association
+                      (Make_Defining_Identifier (CN (C_Port)),
+                       Map_Ada_Defining_Identifier (F));
                   Append_Node_To_List (N, Aggr);
 
                   if AAN.Is_Data (F) then
                      --  Update the component correspodning to the out
                      --  port in the status structure.
 
-                     N := Make_Component_Association
-                       (Make_Defining_Identifier (Map_Ada_Component_Name (F)),
-                        Make_Selected_Component
-                        (Make_Defining_Identifier (PN (P_Status)),
-                         Make_Defining_Identifier
-                         (Map_Ada_Component_Name (F))));
+                     N :=
+                       Make_Component_Association
+                         (Make_Defining_Identifier
+                            (Map_Ada_Component_Name (F)),
+                          Make_Selected_Component
+                            (Make_Defining_Identifier (PN (P_Status)),
+                             Make_Defining_Identifier
+                               (Map_Ada_Component_Name (F))));
                      Append_Node_To_List (N, Aggr);
                   end if;
 
@@ -692,9 +711,10 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
 
                   --  Create the case alternative
 
-                  N := Make_Case_Statement_Alternative
-                    (Make_List_Id (Map_Ada_Defining_Identifier (F)),
-                     Make_List_Id (N));
+                  N :=
+                    Make_Case_Statement_Alternative
+                      (Make_List_Id (Map_Ada_Defining_Identifier (F)),
+                       Make_List_Id (N));
                   Append_Node_To_List (N, Alternatives);
                end;
             end if;
@@ -702,9 +722,10 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
             F := Next_Node (F);
          end loop;
 
-         N := Make_Case_Statement
-           (Make_Defining_Identifier (PN (P_Port)),
-            Alternatives);
+         N :=
+           Make_Case_Statement
+             (Make_Defining_Identifier (PN (P_Port)),
+              Alternatives);
          Append_Node_To_List (N, Statements);
 
          N := Make_Subprogram_Implementation (Spec, No_List, Statements);
@@ -716,27 +737,28 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       ---------------------
 
       function Next_Value_Body (E : Node_Id) return Node_Id is
-         Spec : constant Node_Id := ADN.Next_Value_Node
-           (Backend_Node (Identifier (E)));
+         Spec : constant Node_Id :=
+           ADN.Next_Value_Node (Backend_Node (Identifier (E)));
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Declarations : constant List_Id := New_List (ADN.K_Declaration_List);
          N            : Node_Id;
       begin
          --  FIXME: Not implemented yet for now
 
-         N := Make_Pragma_Statement
-           (Pragma_Unreferenced,
-            Make_List_Id
-            (Make_Defining_Identifier (PN (P_Status)),
-             Make_Defining_Identifier (PN (P_Port))));
+         N :=
+           Make_Pragma_Statement
+             (Pragma_Unreferenced,
+              Make_List_Id
+                (Make_Defining_Identifier (PN (P_Status)),
+                 Make_Defining_Identifier (PN (P_Port))));
          Append_Node_To_List (N, Declarations);
 
          N := Message_Comment ("Not implemented yet!");
          Append_Node_To_List (N, Statements);
 
-         N := Make_Raise_Statement
-           (Make_Defining_Identifier
-            (EN (E_Program_Error)));
+         N :=
+           Make_Raise_Statement
+             (Make_Defining_Identifier (EN (E_Program_Error)));
          Append_Node_To_List (N, Statements);
 
          N := Make_Subprogram_Implementation (Spec, Declarations, Statements);
@@ -748,8 +770,8 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       --------------------
 
       function Get_Count_Body (E : Node_Id) return Node_Id is
-         Spec : constant Node_Id := ADN.Get_Count_Node
-           (Backend_Node (Identifier (E)));
+         Spec : constant Node_Id :=
+           ADN.Get_Count_Node (Backend_Node (Identifier (E)));
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Alternatives : constant List_Id := New_List (ADN.K_List_Id);
          F            : Node_Id;
@@ -768,24 +790,28 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
                   --  If the boolean flag corresponding to the
                   --  component is 'True' then return 1, else return 0
 
-                  N := Make_If_Statement
-                    (Condition      => Make_Selected_Component
-                       (Make_Defining_Identifier (PN (P_Status)),
-                        Map_Ada_Defining_Identifier (F)),
-                     Then_Statements => Make_List_Id
-                       (Make_Return_Statement
-                        (Make_Literal
-                         (New_Integer_Value (1, 1, 10)))),
-                     Else_Statements => Make_List_Id
-                       (Make_Return_Statement
-                        (Make_Literal
-                         (New_Integer_Value (0, 1, 10)))));
+                  N :=
+                    Make_If_Statement
+                      (Condition =>
+                         Make_Selected_Component
+                           (Make_Defining_Identifier (PN (P_Status)),
+                            Map_Ada_Defining_Identifier (F)),
+                       Then_Statements =>
+                         Make_List_Id
+                           (Make_Return_Statement
+                              (Make_Literal (New_Integer_Value (1, 1, 10)))),
+                       Else_Statements =>
+                         Make_List_Id
+                           (Make_Return_Statement
+                              (Make_Literal (New_Integer_Value (0, 1, 10)))));
                   Append_Node_To_List (N, St);
 
                   --  Create the case alternative
 
-                  N := Make_Case_Statement_Alternative
-                    (Make_List_Id (Map_Ada_Defining_Identifier (F)), St);
+                  N :=
+                    Make_Case_Statement_Alternative
+                      (Make_List_Id (Map_Ada_Defining_Identifier (F)),
+                       St);
                   Append_Node_To_List (N, Alternatives);
                end;
             end if;
@@ -793,9 +819,10 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
             F := Next_Node (F);
          end loop;
 
-         N := Make_Case_Statement
-           (Make_Defining_Identifier (PN (P_Port)),
-            Alternatives);
+         N :=
+           Make_Case_Statement
+             (Make_Defining_Identifier (PN (P_Port)),
+              Alternatives);
          Append_Node_To_List (N, Statements);
 
          N := Make_Subprogram_Implementation (Spec, No_List, Statements);
@@ -834,8 +861,8 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -863,9 +890,9 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       -------------------------
 
       procedure Visit_Data_Instance (E : Node_Id) is
-         Data_Representation : constant Supported_Data_Representation
-           := Get_Data_Representation (E);
-         S                   : Node_Id;
+         Data_Representation : constant Supported_Data_Representation :=
+           Get_Data_Representation (E);
+         S : Node_Id;
       begin
          if Data_Representation = Data_With_Accessors then
             --  Visit all the accessor subprograms of the data type
@@ -886,8 +913,8 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         Implementation  : constant Node_Id := Get_Implementation (E);
-         S : Node_Id;
+         Implementation : constant Node_Id := Get_Implementation (E);
+         S              : Node_Id;
       begin
          if Implementation /= No_Node then
             if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
@@ -907,12 +934,13 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         U : constant Node_Id := ADN.Distributed_Application_Unit
-           (ADN.Deployment_Node (Backend_Node (Identifier (E))));
-         P : constant Node_Id := ADN.Entity (U);
-         S : Node_Id;
-         The_System : constant Node_Id := Parent_Component
-           (Parent_subcomponent (E));
+         U : constant Node_Id :=
+           ADN.Distributed_Application_Unit
+             (ADN.Deployment_Node (Backend_Node (Identifier (E))));
+         P          : constant Node_Id := ADN.Entity (U);
+         S          : Node_Id;
+         The_System : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
 
       begin
          Push_Entity (P);
@@ -943,12 +971,11 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
             S := First_Node (Subcomponents (The_System));
             while Present (S) loop
                if AAU.Is_Device (Corresponding_Instance (S))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (S))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (S)) =
+                   Get_Bound_Processor (E)
                then
-                  Visit_Device_Instance
-                    (Corresponding_Instance (S));
+                  Visit_Device_Instance (Corresponding_Instance (S));
                end if;
                S := Next_Node (S);
             end loop;
@@ -1081,9 +1108,10 @@ package body Ocarina.Backends.PO_HI_Ada.Subprograms is
          end if;
 
          if Has_Modes (E) and then Is_Fusioned (E) then
-            N := Make_Withed_Package
-              (Make_Defining_Identifier (Map_Scheduler_Instance_Name (E)),
-               Used => True);
+            N :=
+              Make_Withed_Package
+                (Make_Defining_Identifier (Map_Scheduler_Instance_Name (E)),
+                 Used => True);
             Append_Node_To_List (N, ADN.Withed_Packages (Current_Package));
          end if;
 

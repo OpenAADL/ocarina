@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.ME_REAL.REAL_Tree.Utils;
@@ -42,7 +42,7 @@ with Ocarina.REAL_Values;
 
 package body Ocarina.Builder.REAL is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.ME_REAL.REAL_Tree.Utils;
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
@@ -52,8 +52,7 @@ package body Ocarina.Builder.REAL is
    -- Make_Element --
    ------------------
 
-   function Make_Element (Name : Name_Id; T : Value_Id) return Node_Id
-   is
+   function Make_Element (Name : Name_Id; T : Value_Id) return Node_Id is
       N, Id : Node_Id;
    begin
       Id := New_Node (K_Identifier, Token_Location);
@@ -71,8 +70,7 @@ package body Ocarina.Builder.REAL is
    -- Make_Variable --
    -------------------
 
-   function Make_Variable (Name : Name_Id) return Node_Id
-   is
+   function Make_Variable (Name : Name_Id) return Node_Id is
       use Ocarina.REAL_Values;
 
       N, Id : Node_Id;
@@ -92,8 +90,7 @@ package body Ocarina.Builder.REAL is
    -- Make_Set --
    --------------
 
-   function Make_Set (Name : Name_Id; T : Value_Id) return Node_Id
-   is
+   function Make_Set (Name : Name_Id; T : Value_Id) return Node_Id is
       N, Id : Node_Id;
    begin
       Id := New_Node (K_Identifier, Token_Location);
@@ -113,8 +110,7 @@ package body Ocarina.Builder.REAL is
    -- Make_Set_Reference --
    ------------------------
 
-   function Make_Set_Reference return Node_Id
-   is
+   function Make_Set_Reference return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Set_Reference, Token_Location);
@@ -127,8 +123,7 @@ package body Ocarina.Builder.REAL is
    -- Make_Var_Reference --
    ------------------------
 
-   function Make_Var_Reference (Name : Name_Id) return Node_Id
-   is
+   function Make_Var_Reference (Name : Name_Id) return Node_Id is
       N : Node_Id;
    begin
       N := New_Node (K_Var_Reference, Token_Location);
@@ -142,8 +137,7 @@ package body Ocarina.Builder.REAL is
    -- Make_Anonymous_Set --
    ------------------------
 
-   function Make_Anonymous_Set (Set_Type : Value_Id) return Node_Id
-   is
+   function Make_Anonymous_Set (Set_Type : Value_Id) return Node_Id is
       N : Node_Id;
    begin
       Set_Str_To_Name_Buffer (Image (T_Anonymous_Set));

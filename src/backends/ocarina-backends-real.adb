@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,8 +32,8 @@
 ------------------------------------------------------------------------------
 
 with Ada.Numerics.Generic_Elementary_Functions;
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 with Locations; use Locations;
 
 with Ocarina.Analyzer.REAL;
@@ -60,8 +60,8 @@ with Unchecked_Deallocation;
 
 package body Ocarina.Backends.REAL is
 
-   package Numerics is
-      new Ada.Numerics.Generic_Elementary_Functions (Long_Long_Float);
+   package Numerics is new Ada.Numerics.Generic_Elementary_Functions
+     (Long_Long_Float);
    use Numerics;
 
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
@@ -70,8 +70,8 @@ package body Ocarina.Backends.REAL is
    use Ocarina.REAL_Values;
    use Ocarina.Instances.REAL_Finder;
    use Ocarina.Backends.Messages;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    package RN renames Ocarina.ME_REAL.REAL_Tree.Nodes;
    package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;
@@ -87,9 +87,9 @@ package body Ocarina.Backends.REAL is
    --  Buffer for runtime instance
 
    type Runtime_Instance is record
-      Set_Array : Set_Table_Access;
+      Set_Array              : Set_Table_Access;
       Current_Range_Variable : Node_Id;
-      REAL_Root_Node : Node_Id;
+      REAL_Root_Node         : Node_Id;
    end record;
    type Runtime_Instance_Access is access Runtime_Instance;
 
@@ -105,7 +105,9 @@ package body Ocarina.Backends.REAL is
    --  2/ evaluate the check expression
 
    procedure Compute_Value
-     (R : Node_Id; Success : out Boolean; Res : out Float);
+     (R       :     Node_Id;
+      Success : out Boolean;
+      Res     : out Float);
    --  We returns the value computed for the range set if
    --  it contains only one element, otherwise we compute the
    --  expected range function value.
@@ -132,13 +134,18 @@ package body Ocarina.Backends.REAL is
    function Compute_Set_Expression (E : Node_Id) return Result_Set;
 
    procedure Compute_Check_Expression
-     (E : Node_Id; Ret : out Return_Type; Result : out Value_id);
+     (E      :     Node_Id;
+      Ret    : out Return_Type;
+      Result : out Value_Id);
 
    procedure Compute_Check_Subprogram_Call
-     (E : Node_Id; T : out Return_Type; Result : out Value_Id);
+     (E      :     Node_Id;
+      T      : out Return_Type;
+      Result : out Value_Id);
 
    function Apply_To_All_Elements
-     (R : Node_Id; Force_Result_To_False : Boolean := False) return Boolean;
+     (R                     : Node_Id;
+      Force_Result_To_False : Boolean := False) return Boolean;
    --  Test the theorem on all elements of the range set;
    --  return false if at least one of them fail
 
@@ -146,11 +153,13 @@ package body Ocarina.Backends.REAL is
    --  Compute the value (ie elements) of a set
 
    procedure Manage_Variable_Declaration
-     (E : Node_Id; Success : in out Boolean);
+     (E       :        Node_Id;
+      Success : in out Boolean);
    --  Compute the value of a variable with an expression
 
    procedure Manage_Variable_Theorem_Call
-     (E : Node_Id; Success : in out Boolean);
+     (E       :        Node_Id;
+      Success : in out Boolean);
    --  Compute the value of a variable with an extern theorem call
 
    function Build_Predefined_Set (T : Value_Id) return Result_Set;
@@ -165,7 +174,9 @@ package body Ocarina.Backends.REAL is
    --  the range variable element
 
    procedure Compute_Range_Function_Value
-     (R : Node_Id; Success : out Boolean; Res : out Float);
+     (R       :     Node_Id;
+      Success : out Boolean;
+      Res     : out Float);
    --  Compute the value of a range (i.e. multi-element based) function;
    --  return an error if there is no element.
 
@@ -189,22 +200,23 @@ package body Ocarina.Backends.REAL is
             case Kind (N) is
 
                when K_Literal =>
-                  V :=  Value (N);
+                  V  := Value (N);
                   RT := Returned_Type (N);
 
                when K_Var_Reference =>
-                  V := Var_Value (Referenced_Var (N));
+                  V  := Var_Value (Referenced_Var (N));
                   RT := Var_Type (Referenced_Var (N));
 
                when others =>
                   Display_Located_Error
-                    (Loc (N), "Could not analyze parameter " &
-                     Get_Name_String (M), Fatal => True);
+                    (Loc (N),
+                     "Could not analyze parameter " & Get_Name_String (M),
+                     Fatal => True);
             end case;
             Set_Var_Type (P, RT);
             Set_Var_Value (P, V);
             Cpt := Cpt + 1;
-            N := Next_Node (N);
+            N   := Next_Node (N);
          end loop;
       end if;
    end Load_Environment;
@@ -270,8 +282,9 @@ package body Ocarina.Backends.REAL is
    -------------------
 
    procedure Clean_Runtime is
-      procedure Free is
-         new Unchecked_Deallocation (Set_Table, Set_Table_Access);
+      procedure Free is new Unchecked_Deallocation
+        (Set_Table,
+         Set_Table_Access);
    begin
       Free (Set_Array);
    end Clean_Runtime;
@@ -293,27 +306,28 @@ package body Ocarina.Backends.REAL is
    end Apply_To_All_Elements;
 
    function Apply_To_All_Elements
-     (R : Node_Id; Force_Result_To_False : Boolean := False) return Boolean
+     (R                     : Node_Id;
+      Force_Result_To_False : Boolean := False) return Boolean
    is
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
       pragma Assert (Kind (R) = K_Theorem);
 
-      Range_Set : constant Result_Set := Set_Array
-        (Integer
-           (Index
-              (Annotation
-                 (Referenced_Set
-                    (Set_Reference
-                       (Range_Variable
-                          (Range_Declaration (R))))))));
-      Success   : Boolean := True;
+      Range_Set : constant Result_Set :=
+        Set_Array
+          (Integer
+             (Index
+                (Annotation
+                   (Referenced_Set
+                      (Set_Reference
+                         (Range_Variable (Range_Declaration (R))))))));
+      Success : Boolean := True;
    begin
       --  For each element of the global ("range") set, we build the
       --  dependant sets and then we check the verification expression
 
       Write_Line ("-------------------------------------");
-      Write_Line ("Evaluating theorem "
-                    & Get_Name_String (Name (Identifier (R))));
+      Write_Line
+        ("Evaluating theorem " & Get_Name_String (Name (Identifier (R))));
       Write_Line ("");
 
       if Cardinal (Range_Set) = 0 then
@@ -323,9 +337,10 @@ package body Ocarina.Backends.REAL is
       for J in 1 .. Cardinal (Range_Set) loop
          Current_Range_Variable := Get (Range_Set, J);
          begin
-            Write_Line (" * Iterate for variable: "
-                          & Get_Name_String (Compute_Full_Name_Of_Instance
-                                               (Current_Range_Variable)));
+            Write_Line
+              (" * Iterate for variable: " &
+               Get_Name_String
+                 (Compute_Full_Name_Of_Instance (Current_Range_Variable)));
          exception
             when others =>
                null;
@@ -346,8 +361,11 @@ package body Ocarina.Backends.REAL is
          Success := False;
       end if;
 
-      Write_Line ("theorem " & Get_Name_String (Name (Identifier (R)))
-                    & " is: "& Boolean'Image (Success));
+      Write_Line
+        ("theorem " &
+         Get_Name_String (Name (Identifier (R))) &
+         " is: " &
+         Boolean'Image (Success));
       Write_Line ("");
       return Success;
    end Apply_To_All_Elements;
@@ -357,18 +375,20 @@ package body Ocarina.Backends.REAL is
    -------------------
 
    procedure Compute_Value
-     (R : Node_Id; Success : out Boolean; Res : out Float)
+     (R       :     Node_Id;
+      Success : out Boolean;
+      Res     : out Float)
    is
       pragma Assert (Kind (R) = K_Theorem);
 
-      Range_Set : constant Result_Set := Set_Array
-        (Integer
-         (Index
-          (Annotation
-           (Referenced_Set
-            (Set_Reference
-             (Range_Variable
-              (Range_Declaration (R))))))));
+      Range_Set : constant Result_Set :=
+        Set_Array
+          (Integer
+             (Index
+                (Annotation
+                   (Referenced_Set
+                      (Set_Reference
+                         (Range_Variable (Range_Declaration (R))))))));
    begin
       Success := True;
 
@@ -384,7 +404,7 @@ package body Ocarina.Backends.REAL is
          Display_Located_Error
            (Loc (R),
             "Empty range set, returned value is 0.0",
-            Fatal => False,
+            Fatal   => False,
             Warning => True);
          Res := 0.0;
 
@@ -406,8 +426,9 @@ package body Ocarina.Backends.REAL is
 
       else
          Display_Located_Error
-           (Loc (R), "returns value cannot be valuated "
-            & "for multi-element range sets",
+           (Loc (R),
+            "returns value cannot be valuated " &
+            "for multi-element range sets",
             Fatal => True);
       end if;
    end Compute_Value;
@@ -417,21 +438,23 @@ package body Ocarina.Backends.REAL is
    ----------------------------------
 
    procedure Compute_Range_Function_Value
-     (R : Node_Id; Success : out Boolean; Res : out Float)
+     (R       :     Node_Id;
+      Success : out Boolean;
+      Res     : out Float)
    is
       pragma Assert (Kind (R) = K_Theorem);
 
-      Range_Set : constant Result_Set := Set_Array
-        (Integer
-         (Index
-          (Annotation
-           (Referenced_Set
-            (Set_Reference
-             (Range_Variable
-              (Range_Declaration (R))))))));
-      Tmp    : Float;
-      Buf    : Float;
-      Found  : Boolean := False;
+      Range_Set : constant Result_Set :=
+        Set_Array
+          (Integer
+             (Index
+                (Annotation
+                   (Referenced_Set
+                      (Set_Reference
+                         (Range_Variable (Range_Declaration (R))))))));
+      Tmp   : Float;
+      Buf   : Float;
+      Found : Boolean := False;
    begin
       Success := True;
 
@@ -453,7 +476,9 @@ package body Ocarina.Backends.REAL is
 
          when others =>
             Display_Located_Error
-              (Loc (R), "expected range-level function", Fatal => True);
+              (Loc (R),
+               "expected range-level function",
+               Fatal => True);
       end case;
 
       for I in 1 .. Cardinal (Range_Set) loop
@@ -502,7 +527,9 @@ package body Ocarina.Backends.REAL is
 
             when others =>
                Display_Located_Error
-                 (Loc (R), "expected range-level function", Fatal => True);
+                 (Loc (R),
+                  "expected range-level function",
+                  Fatal => True);
          end case;
 
          Found := True;
@@ -510,7 +537,7 @@ package body Ocarina.Backends.REAL is
 
       if Range_Function (Return_Expression (R)) /= FC_MAll_Equals then
          Success := Found;
-         Res := Buf;
+         Res     := Buf;
       end if;
    end Compute_Range_Function_Value;
 
@@ -521,9 +548,9 @@ package body Ocarina.Backends.REAL is
    function Check_Requirements (R : Node_Id) return Boolean is
       pragma Assert (Kind (R) = K_Theorem);
 
-      Stored_Root : constant Node_Id := R;
-      N           : Node_Id;
-      Success     : Boolean := True;
+      Stored_Root   : constant Node_Id := R;
+      N             : Node_Id;
+      Success       : Boolean          := True;
       Local_Success : Boolean;
    begin
       N := First_Node (Required_Theorems (R));
@@ -532,16 +559,18 @@ package body Ocarina.Backends.REAL is
          Local_Success := True;
          RNU.REAL_Root := Related_Theorem (N);
 
-         Write_Line ("Processing requirement : " &
-                     Get_Name_String (Name (Identifier (RNU.REAL_Root))));
+         Write_Line
+           ("Processing requirement : " &
+            Get_Name_String (Name (Identifier (RNU.REAL_Root))));
 
          --  Requirements can also have requirements
 
          if not Check_Requirements (RNU.REAL_Root) then
             Display_Located_Error
-              (Loc (RNU.REAL_Root), "requirements of "
-                 &  Get_Name_String (Name (Identifier (RNU.REAL_Root)))
-                 &" are not fulfilled",
+              (Loc (RNU.REAL_Root),
+               "requirements of " &
+               Get_Name_String (Name (Identifier (RNU.REAL_Root))) &
+               " are not fulfilled",
                Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
             Local_Success := False;
          end if;
@@ -553,7 +582,8 @@ package body Ocarina.Backends.REAL is
 
          --  Note: if the requirements are not fulfilled, we flag the
          --  theorem as wrong in all cases.
-         Success := Apply_To_All_Elements (RNU.REAL_Root, not Local_Success)
+         Success :=
+           Apply_To_All_Elements (RNU.REAL_Root, not Local_Success)
            and then Success;
 
          Clean_Runtime;
@@ -575,7 +605,7 @@ package body Ocarina.Backends.REAL is
    procedure Build_All_Objects (R : Node_Id; Success : in out Boolean) is
       pragma Assert (Kind (R) = K_Theorem);
 
-      N : Node_Id := First_Node (Used_Set (R));
+      N   : Node_Id := First_Node (Used_Set (R));
       Res : Result_Set;
 
    begin
@@ -630,7 +660,8 @@ package body Ocarina.Backends.REAL is
    ----------------------------------
 
    procedure Manage_Variable_Theorem_Call
-     (E : Node_Id; Success : in out Boolean)
+     (E       :        Node_Id;
+      Success : in out Boolean)
    is
       pragma Assert (Kind (E) = K_Variable_Decl_Compute);
 
@@ -647,10 +678,8 @@ package body Ocarina.Backends.REAL is
          case Kind (E) is
 
             when K_Set_Reference =>
-               RNU.Domain := Set_Array (Integer
-                                        (Index
-                                         (Annotation
-                                          (Referenced_Set (E)))));
+               RNU.Domain :=
+                 Set_Array (Integer (Index (Annotation (Referenced_Set (E)))));
 
             when K_Var_Reference =>
                declare
@@ -666,17 +695,17 @@ package body Ocarina.Backends.REAL is
          end case;
       end Export_Domain;
 
-      Result       : Value_Id;
-      R            : Float;
-      S            : Runtime_Instance_Access;
-      Ref          : constant Node_Id := Referenced_Var (Var_Ref (E));
-      Local_Domain : constant Boolean := RNU.Is_Domain;
-      Local_Domain_value : constant Result_Set := RNU.Domain;
+      Result               : Value_Id;
+      R                    : Float;
+      S                    : Runtime_Instance_Access;
+      Ref                  : constant Node_Id := Referenced_Var (Var_Ref (E));
+      Local_Domain         : constant Boolean    := RNU.Is_Domain;
+      Local_Domain_value   : constant Result_Set := RNU.Domain;
       Requirements_Checked : Boolean;
    begin
-      Write_Line ("   Evaluating "
-                    & Get_Name_String
-                    (Name (Identifier (Referenced_Var (Var_Ref (E))))));
+      Write_Line
+        ("   Evaluating " &
+         Get_Name_String (Name (Identifier (Referenced_Var (Var_Ref (E))))));
 
       --  1/ Save the current runtime state
 
@@ -687,16 +716,18 @@ package body Ocarina.Backends.REAL is
       if RN.Domain (E) /= No_Node then
          RNU.Is_Domain := True;
          Export_Domain (RN.Domain (E), Success);
-         RNU.Environment := True_Params (E);
+         RNU.Environment := True_params (E);
          if not Success then
             Display_Located_Error
-              (Loc (RNU.REAL_Root), "could not find " &
-               Get_Name_String (Theorem_Name (E)) & " domain ",
+              (Loc (RNU.REAL_Root),
+               "could not find " &
+               Get_Name_String (Theorem_Name (E)) &
+               " domain ",
                Fatal => True);
          end if;
       else
          RNU.Is_Domain := Local_Domain;
-         RNU.Domain := Local_Domain_Value;
+         RNU.Domain    := Local_Domain_value;
       end if;
 
       --  3/ Initialize the runtime space with new values
@@ -710,7 +741,8 @@ package body Ocarina.Backends.REAL is
 
       if not Requirements_Checked then
          Display_Located_Error
-           (Loc (RNU.REAL_Root), "requirements are not fulfilled",
+           (Loc (RNU.REAL_Root),
+            "requirements are not fulfilled",
             Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
       end if;
 
@@ -721,25 +753,29 @@ package body Ocarina.Backends.REAL is
       Compute_Value (RNU.REAL_Root, Success, R);
       if not Success then
          Display_Located_Error
-           (Loc (RNU.REAL_Root), "Could not compute " &
-            Get_Name_String (Theorem_Name (E))
-            & " value", Fatal => True);
+           (Loc (RNU.REAL_Root),
+            "Could not compute " &
+            Get_Name_String (Theorem_Name (E)) &
+            " value",
+            Fatal => True);
       end if;
 
-      Write_Line ("   value for "
-                    & Get_Name_String
-                    (Name (Identifier (Referenced_Var (Var_Ref (E)))))
-                    & " after evaluating " & Get_Name_String (Theorem_Name (E))
-                    & " is" & Float'Image (R));
+      Write_Line
+        ("   value for " &
+         Get_Name_String (Name (Identifier (Referenced_Var (Var_Ref (E))))) &
+         " after evaluating " &
+         Get_Name_String (Theorem_Name (E)) &
+         " is" &
+         Float'Image (R));
 
       --  5/ Restore current runtime state
 
       Clean_Runtime;
       Load_Instance (S);
       RNU.Environment := No_List;
-      RNU.Is_Domain := Local_Domain;
-      RNU.Domain := Local_Domain_Value;
-      Result := New_Real_Value (Long_Long_Float (R));
+      RNU.Is_Domain   := Local_Domain;
+      RNU.Domain      := Local_Domain_value;
+      Result          := New_Real_Value (Long_Long_Float (R));
       Set_Var_Type (Ref, RT_Float);
       Set_Var_Value (Ref, Result);
    end Manage_Variable_Theorem_Call;
@@ -749,28 +785,31 @@ package body Ocarina.Backends.REAL is
    ---------------------------------
 
    procedure Manage_Variable_Declaration
-     (E : Node_Id; Success : in out Boolean)
+     (E       :        Node_Id;
+      Success : in out Boolean)
    is
       pragma Assert (Kind (E) = K_Variable_Decl_Expression);
 
-      Result : Value_Id := No_Value;
-      Ret    : Return_Type := RT_Unknown;
+      Result : Value_Id         := No_Value;
+      Ret    : Return_Type      := RT_Unknown;
       D      : constant Node_Id := Check_Expression (Return_Expr (E));
    begin
       Compute_Check_Expression (D, Ret, Result);
 
       if Ret = RT_Error then
          Display_Located_Error
-           (Loc (D), "Could not resolve expression value", Fatal => True);
+           (Loc (D),
+            "Could not resolve expression value",
+            Fatal => True);
          Success := False;
          return;
       end if;
 
       Write_Line
-        ("     -> value for "
-           & Get_Name_String
-           (Name (Identifier (Referenced_Var (Var_Ref (E)))))
-           & " is " & Image (Result));
+        ("     -> value for " &
+         Get_Name_String (Name (Identifier (Referenced_Var (Var_Ref (E))))) &
+         " is " &
+         Image (Result));
 
       Set_Var_Value (Referenced_Var (Var_Ref (E)), Result);
    end Manage_Variable_Declaration;
@@ -805,16 +844,17 @@ package body Ocarina.Backends.REAL is
 
       --  Append the local variable into the local stack
 
-      RNU.Append_Node_To_List (Referenced_Var (Local_Variable (E)),
-                               Local_Var (RNU.REAL_Root));
+      RNU.Append_Node_To_List
+        (Referenced_Var (Local_Variable (E)),
+         Local_Var (RNU.REAL_Root));
 
       --  Iterate on the local set
 
       for J in 1 .. Cardinal (R) loop
          declare
-            V        : constant Value_Id := New_Elem_Value (Get (R, J));
-            Ret      : Return_Type := RT_Error;
-            Result   : Value_Id := No_Value;
+            V      : constant Value_Id := New_Elem_Value (Get (R, J));
+            Ret    : Return_Type       := RT_Error;
+            Result : Value_Id          := No_Value;
          begin
             --  Set the local variable value to the current element of
             --  the local set
@@ -825,7 +865,8 @@ package body Ocarina.Backends.REAL is
             Compute_Check_Expression (Selection_Expression (E), Ret, Result);
             if Ret /= RT_Boolean then
                Display_Located_Error
-                 (Loc (E), "selection expression must return a boolean",
+                 (Loc (E),
+                  "selection expression must return a boolean",
                   Fatal => True);
                Set_Returned_Type (Selection_Expression (E), Ret);
                return;
@@ -839,17 +880,20 @@ package body Ocarina.Backends.REAL is
 
       --  Append the local variable into the local stack
 
-      RNU.Remove_Node_From_List (Referenced_Var (Local_Variable (E)),
-                                 Local_Var (RNU.REAL_Root));
+      RNU.Remove_Node_From_List
+        (Referenced_Var (Local_Variable (E)),
+         Local_Var (RNU.REAL_Root));
 
       --  Bind it in the set table,
 
       Set_Array (Integer (Index (Annotation (G)))) := R2;
 
       Write_Line
-        ("Content of set "
-           & Get_Name_String (Name (Identifier (Parametrized_Expr (E))))
-           & " (" & Image (Loc (E)) & ") is ");
+        ("Content of set " &
+         Get_Name_String (Name (Identifier (Parametrized_Expr (E)))) &
+         " (" &
+         Image (Loc (E)) &
+         ") is ");
       Increment_Indentation;
       Display_Set (R2);
       Decrement_Indentation;
@@ -865,8 +909,8 @@ package body Ocarina.Backends.REAL is
       use Ocarina.ME_AADL.AADL_Instances.Nutils;
 
       D      : constant Node_Id := Check_Expression (E);
-      Result : Value_Id := No_Value;
-      Ret    : Return_Type := RT_Unknown;
+      Result : Value_Id         := No_Value;
+      Ret    : Return_Type      := RT_Unknown;
    begin
       if No (D) then
          return True;
@@ -880,10 +924,13 @@ package body Ocarina.Backends.REAL is
       elsif Ret = RT_Boolean then
          if Get_Value_Type (Result).BVal = False then
             Display_Located_Error
-              (Loc (D), "Property is false for instance " &
-               Image (Current_Range_Variable) & " (" &
-               Get_Name_String (Compute_Full_Name_Of_Instance
-                                (Current_Range_Variable)) & ")",
+              (Loc (D),
+               "Property is false for instance " &
+               Image (Current_Range_Variable) &
+               " (" &
+               Get_Name_String
+                 (Compute_Full_Name_Of_Instance (Current_Range_Variable)) &
+               ")",
                Fatal => False);
             return False;
          end if;
@@ -891,7 +938,9 @@ package body Ocarina.Backends.REAL is
 
       else
          Display_Located_Error
-           (Loc (D), "Check expression must return a boolean", Fatal => True);
+           (Loc (D),
+            "Check expression must return a boolean",
+            Fatal => True);
          return False;
       end if;
    end Manage_Check_Expression;
@@ -903,15 +952,14 @@ package body Ocarina.Backends.REAL is
    function Manage_Return_Expression (E : Node_Id) return Float is
       pragma Assert (Kind (E) = K_Theorem);
 
-      D  : constant Node_Id := Check_Expression (Return_Expression (E));
-      Result : Value_Id := No_Value;
-      Ret    : Return_Type := RT_Unknown;
+      D      : constant Node_Id := Check_Expression (Return_Expression (E));
+      Result : Value_Id         := No_Value;
+      Ret    : Return_Type      := RT_Unknown;
    begin
       Compute_Check_Expression (D, Ret, Result);
 
       case Ret is
-         when RT_Float
-           | RT_Integer =>
+         when RT_Float | RT_Integer =>
             if Get_Value_Type (Result).T = LT_Integer then
                if Get_Value_Type (Result).ISign then
                   return -(Float (Get_Value_Type (Result).IVal));
@@ -927,13 +975,13 @@ package body Ocarina.Backends.REAL is
             end if;
 
          when RT_Error =>
-            Display_Located_Error
-              (Loc (D), "theorem invalid", Fatal => True);
+            Display_Located_Error (Loc (D), "theorem invalid", Fatal => True);
             return 0.0;
 
          when others =>
             Display_Located_Error
-              (Loc (D), "return expression must return a numeric value",
+              (Loc (D),
+               "return expression must return a numeric value",
                Fatal => True);
             return 0.0;
       end case;
@@ -944,16 +992,19 @@ package body Ocarina.Backends.REAL is
    ------------------------------
 
    procedure Compute_Check_Expression
-     (E : Node_Id; Ret : out Return_Type; Result : out Value_Id)
+     (E      :     Node_Id;
+      Ret    : out Return_Type;
+      Result : out Value_Id)
    is
-      pragma Assert (Kind (E) = K_Check_Expression
-                       or else Kind (E) = K_Ternary_Expression
-                       or else Kind (E) = K_Literal
-                       or else Kind (E) = K_Var_Reference
-                       or else Kind (E) = K_Check_Subprogram_Call);
+      pragma Assert
+        (Kind (E) = K_Check_Expression
+         or else Kind (E) = K_Ternary_Expression
+         or else Kind (E) = K_Literal
+         or else Kind (E) = K_Var_Reference
+         or else Kind (E) = K_Check_Subprogram_Call);
 
       T1, T2 : Return_Type := RT_Unknown;
-      R1, R2 : Value_Id := No_Value;
+      R1, R2 : Value_Id    := No_Value;
       V, V2  : Value_Type;
 
    begin
@@ -963,7 +1014,7 @@ package body Ocarina.Backends.REAL is
             raise Program_Error;
 
          when K_Var_Reference =>
-            Ret := Var_Type (Referenced_Var (E));
+            Ret    := Var_Type (Referenced_Var (E));
             Result := Var_Value (Referenced_Var (E));
 
          when K_Check_Subprogram_Call =>
@@ -976,29 +1027,31 @@ package body Ocarina.Backends.REAL is
             V := Get_Value_Type (Value (E));
             case V.T is
                when LT_Integer =>
-                  Ret := RT_Integer;
+                  Ret    := RT_Integer;
                   Result := New_Integer_Value (V.IVal);
 
                when LT_Real =>
-                  Ret := RT_Float;
+                  Ret    := RT_Float;
                   Result := New_Real_Value (V.RVal);
 
                when LT_String =>
-                  Ret := RT_String;
+                  Ret    := RT_String;
                   Result := New_String_Value (V.SVal);
 
-               when  LT_Boolean =>
-                  Ret := RT_Boolean;
+               when LT_Boolean =>
+                  Ret    := RT_Boolean;
                   Result := New_Boolean_Value (V.BVal);
 
                when LT_Enumeration =>
                   Display_Located_Error
-                    (Loc (E), "could not compute expression value",
+                    (Loc (E),
+                     "could not compute expression value",
                      Fatal => True);
 
                when others =>
                   Display_Located_Error
-                    (Loc (E), "could not compute expression value",
+                    (Loc (E),
+                     "could not compute expression value",
                      Fatal => True);
             end case;
 
@@ -1013,8 +1066,8 @@ package body Ocarina.Backends.REAL is
                      --  Choose between expressions evaluation according
                      --  to the condition evaluation result
                      declare
-                        R     : Value_Id;
-                        T2    : Return_Type;
+                        R  : Value_Id;
+                        T2 : Return_Type;
 
                      begin
                         Compute_Check_Expression (Cond, T2, R);
@@ -1032,7 +1085,8 @@ package body Ocarina.Backends.REAL is
 
                   when others =>
                      Display_Located_Error
-                       (Loc (E), "unknown operator found",
+                       (Loc (E),
+                        "unknown operator found",
                         Fatal => True);
                end case;
             end;
@@ -1041,7 +1095,7 @@ package body Ocarina.Backends.REAL is
             if Present (Left_Expr (E)) and then Present (Right_Expr (E)) then
                Compute_Check_Expression (Left_Expr (E), T1, R1);
                if T1 = RT_Unknown then
-                  Ret := RT_Boolean;
+                  Ret    := RT_Boolean;
                   Result := New_Boolean_Value (False);
                   return;
                elsif T1 = RT_Error then
@@ -1054,7 +1108,7 @@ package body Ocarina.Backends.REAL is
                      --  Cautious : Lazy evaluation !
 
                      Ret := RT_Boolean;
-                     V := Get_Value_Type (R1);
+                     V   := Get_Value_Type (R1);
                      if V.BVal then
                         Compute_Check_Expression (Right_Expr (E), T2, R2);
                         if T2 = RT_Error then
@@ -1062,7 +1116,7 @@ package body Ocarina.Backends.REAL is
                            return;
                         end if;
 
-                        V2 := Get_Value_Type (R2);
+                        V2     := Get_Value_Type (R2);
                         Result := New_Boolean_Value (V.BVal and then V2.BVal);
                      else
                         Result := New_Boolean_Value (V.BVal);
@@ -1071,7 +1125,7 @@ package body Ocarina.Backends.REAL is
                   when OV_Or =>
                      --  Cautious : Lazy evaluation !
                      Ret := RT_Boolean;
-                     V := Get_Value_Type (R1);
+                     V   := Get_Value_Type (R1);
                      if V.BVal = False then
                         Compute_Check_Expression (Right_Expr (E), T2, R2);
                         if T2 = RT_Error then
@@ -1079,7 +1133,7 @@ package body Ocarina.Backends.REAL is
                            return;
                         end if;
 
-                        V2 := Get_Value_Type (R2);
+                        V2     := Get_Value_Type (R2);
                         Result := New_Boolean_Value (V.BVal or else V2.BVal);
                      else
                         Result := New_Boolean_Value (V.BVal);
@@ -1091,9 +1145,9 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     Ret := RT_Boolean;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
+                     Ret    := RT_Boolean;
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
                      Result := New_Boolean_Value (V = V2);
 
                   when OV_Different =>
@@ -1102,9 +1156,9 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     Ret := RT_Boolean;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
+                     Ret    := RT_Boolean;
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
                      Result := New_Boolean_Value (V /= V2);
 
                   when OV_Greater =>
@@ -1113,11 +1167,12 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     Ret := RT_Boolean;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
-                     Result := New_Boolean_Value ((not (V < V2))
-                                                  and then not (V = V2));
+                     Ret    := RT_Boolean;
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
+                     Result :=
+                       New_Boolean_Value
+                         ((not (V < V2)) and then not (V = V2));
 
                   when OV_Less =>
                      Compute_Check_Expression (Right_Expr (E), T2, R2);
@@ -1125,9 +1180,9 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     Ret := RT_Boolean;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
+                     Ret    := RT_Boolean;
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
                      Result := New_Boolean_Value (V < V2);
 
                   when OV_Less_Equal =>
@@ -1136,24 +1191,24 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     Ret := RT_Boolean;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
+                     Ret    := RT_Boolean;
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
                      Result := New_Boolean_Value (V < V2 or else V = V2);
 
                   when OV_Greater_Equal =>
                      Compute_Check_Expression (Right_Expr (E), T2, R2);
                      if T2 = RT_Unknown then
-                        Ret := RT_Boolean;
+                        Ret    := RT_Boolean;
                         Result := New_Boolean_Value (True);
                         return;
                      elsif T2 = RT_Error then
                         Ret := RT_Error;
                         return;
                      end if;
-                     Ret := RT_Boolean;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
+                     Ret    := RT_Boolean;
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
                      Result := New_Boolean_Value (not (V < V2));
 
                   when OV_Plus =>
@@ -1162,9 +1217,9 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
-                     V := V + V2;
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
+                     V      := V + V2;
                      Result := New_Value (V);
                      case V.T is
                         when LT_Integer =>
@@ -1178,7 +1233,8 @@ package body Ocarina.Backends.REAL is
 
                         when others =>
                            Display_Located_Error
-                             (Loc (E), "expected numeric value",
+                             (Loc (E),
+                              "expected numeric value",
                               Fatal => True);
                      end case;
 
@@ -1191,9 +1247,9 @@ package body Ocarina.Backends.REAL is
                      declare
                         V3 : Value_Type;
                      begin
-                        V := Get_Value_Type (R1);
-                        V2 := Get_Value_Type (R2);
-                        V3 := V - V2;
+                        V      := Get_Value_Type (R1);
+                        V2     := Get_Value_Type (R2);
+                        V3     := V - V2;
                         Result := New_Value (V3);
                         case V.T is
                            when LT_Integer =>
@@ -1204,7 +1260,8 @@ package body Ocarina.Backends.REAL is
 
                            when others =>
                               Display_Located_Error
-                                (Loc (E), "expected numeric value",
+                                (Loc (E),
+                                 "expected numeric value",
                                  Fatal => True);
                         end case;
                      end;
@@ -1218,9 +1275,9 @@ package body Ocarina.Backends.REAL is
                            Ret := RT_Error;
                            return;
                         end if;
-                        V := Get_Value_Type (R1);
-                        V2 := Get_Value_Type (R2);
-                        V3 := V * V2;
+                        V      := Get_Value_Type (R1);
+                        V2     := Get_Value_Type (R2);
+                        V3     := V * V2;
                         Result := New_Value (V3);
                         case V3.T is
                            when LT_Integer =>
@@ -1231,7 +1288,8 @@ package body Ocarina.Backends.REAL is
 
                            when others =>
                               Display_Located_Error
-                                (Loc (E), "expected numeric value",
+                                (Loc (E),
+                                 "expected numeric value",
                                  Fatal => True);
                         end case;
                      end;
@@ -1242,15 +1300,16 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
-                     V := V mod V2;
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
+                     V      := V mod V2;
                      Result := New_Value (V);
                      if V.T = LT_Integer then
                         Ret := RT_Integer;
                      else
                         Display_Located_Error
-                          (Loc (E), "expected integer value",
+                          (Loc (E),
+                           "expected integer value",
                            Fatal => True);
                      end if;
 
@@ -1263,9 +1322,9 @@ package body Ocarina.Backends.REAL is
                            Ret := RT_Error;
                            return;
                         end if;
-                        V := Get_Value_Type (R1);
-                        V2 := Get_Value_Type (R2);
-                        V3 := V / V2;
+                        V      := Get_Value_Type (R1);
+                        V2     := Get_Value_Type (R2);
+                        V3     := V / V2;
                         Result := New_Value (V3);
                         case V.T is
                            when LT_Integer =>
@@ -1276,7 +1335,8 @@ package body Ocarina.Backends.REAL is
 
                            when others =>
                               Display_Located_Error
-                                (Loc (E), "expected numeric value",
+                                (Loc (E),
+                                 "expected numeric value",
                                  Fatal => True);
                         end case;
                      end;
@@ -1287,9 +1347,9 @@ package body Ocarina.Backends.REAL is
                         Ret := RT_Error;
                         return;
                      end if;
-                     V := Get_Value_Type (R1);
-                     V2 := Get_Value_Type (R2);
-                     V := Power (V, V2);
+                     V      := Get_Value_Type (R1);
+                     V2     := Get_Value_Type (R2);
+                     V      := Power (V, V2);
                      Result := New_Value (V);
 
                      case V.T is
@@ -1301,13 +1361,15 @@ package body Ocarina.Backends.REAL is
 
                         when others =>
                            Display_Located_Error
-                             (Loc (E), "expected numeric value",
+                             (Loc (E),
+                              "expected numeric value",
                               Fatal => True);
                      end case;
 
                   when others =>
                      Display_Located_Error
-                       (Loc (E), "unknown operator found",
+                       (Loc (E),
+                        "unknown operator found",
                         Fatal => True);
                end case;
 
@@ -1320,38 +1382,43 @@ package body Ocarina.Backends.REAL is
 
                case Operator (E) is
                   when OV_Not =>
-                     Ret := RT_Boolean;
-                     Result := New_Boolean_Value
-                       (not Get_Value_Type (R1).BVal);
+                     Ret    := RT_Boolean;
+                     Result :=
+                       New_Boolean_Value (not Get_Value_Type (R1).BVal);
 
                   when OV_Minus =>
                      V := Get_Value_Type (R1);
                      case V.T is
                         when LT_Integer =>
                            V.ISign := not V.ISign;
-                           Result := New_Value (V);
-                           Ret := RT_Integer;
+                           Result  := New_Value (V);
+                           Ret     := RT_Integer;
 
                         when LT_Real =>
                            V.RSign := not V.RSign;
-                           Result := New_Value (V);
-                           Ret := RT_Float;
+                           Result  := New_Value (V);
+                           Ret     := RT_Float;
 
                         when others =>
                            Display_Located_Error
-                             (Loc (E), "expected numeric value",
+                             (Loc (E),
+                              "expected numeric value",
                               Fatal => True);
                      end case;
 
                   when others =>
                      Display_Located_Error
-                       (Loc (E), "unknown operator found", Fatal => True);
+                       (Loc (E),
+                        "unknown operator found",
+                        Fatal => True);
                end case;
             end if;
 
          when others =>
             Display_Located_Error
-              (Loc (E), "unexpected node kind", Fatal => True);
+              (Loc (E),
+               "unexpected node kind",
+               Fatal => True);
       end case;
    end Compute_Check_Expression;
 
@@ -1360,22 +1427,17 @@ package body Ocarina.Backends.REAL is
    ----------------------------
 
    function Compute_Set_Expression (E : Node_Id) return Result_Set is
-      pragma Assert (Kind (E) = K_Set_Expression
-                       or else Kind (E) = K_Set_Reference);
+      pragma Assert
+        (Kind (E) = K_Set_Expression or else Kind (E) = K_Set_Reference);
 
       R1 : Result_Set;
       R2 : Result_Set;
    begin
       if Kind (E) = K_Set_Reference then
-         return Set_Array (Integer
-                           (Index
-                            (Annotation
-                             (Referenced_Set
-                              (E)))));
+         return Set_Array (Integer (Index (Annotation (Referenced_Set (E)))));
 
       else
-         if Present (Left_Expr (E))
-           and then Present (Right_Expr (E)) then
+         if Present (Left_Expr (E)) and then Present (Right_Expr (E)) then
             R1 := Compute_Set_Expression (Left_Expr (E));
             R2 := Compute_Set_Expression (Right_Expr (E));
 
@@ -1391,12 +1453,16 @@ package body Ocarina.Backends.REAL is
 
                when others =>
                   Display_Located_Error
-                    (Loc (E), "not a set operator", Fatal => True);
+                    (Loc (E),
+                     "not a set operator",
+                     Fatal => True);
                   return R1;
             end case;
          else
             Display_Located_Error
-              (Loc (E), "missing an operand", Fatal => True);
+              (Loc (E),
+               "missing an operand",
+               Fatal => True);
             return R1;
          end if;
       end if;
@@ -1407,30 +1473,36 @@ package body Ocarina.Backends.REAL is
    -----------------------------------
 
    procedure Compute_Check_Subprogram_Call
-     (E : Node_Id; T : out Return_Type; Result : out Value_Id)
+     (E      :     Node_Id;
+      T      : out Return_Type;
+      Result : out Value_Id)
    is
       pragma Assert (Kind (E) = K_Check_Subprogram_Call);
 
       procedure Extract_Parameters_Sets
-        (E : Node_Id; R1, R2 : out Result_Set; Success : out Boolean);
+        (E       :     Node_Id;
+         R1, R2  : out Result_Set;
+         Success : out Boolean);
 
       -----------------------------
       -- Extract_Parameters_Sets --
       -----------------------------
 
       procedure Extract_Parameters_Sets
-        (E : Node_Id; R1, R2 : out Result_Set; Success : out Boolean)
+        (E       :     Node_Id;
+         R1, R2  : out Result_Set;
+         Success : out Boolean)
       is
          N         : Node_Id;
-         Range_Set : constant Node_Id := Referenced_Set
-           (Set_Reference
-            (Range_Variable
-             (Range_Declaration (RNU.REAL_Root))));
-         T1, T2    : Result_Set;
+         Range_Set : constant Node_Id :=
+           Referenced_Set
+             (Set_Reference
+                (Range_Variable (Range_Declaration (RNU.REAL_Root))));
+         T1, T2 : Result_Set;
       begin
          Success := True;
-         T1 := Empty_Set;
-         T2 := Empty_Set;
+         T1      := Empty_Set;
+         T2      := Empty_Set;
 
          if not Is_Empty (True_Parameters (E)) then
             N := First_Node (True_Parameters (E));
@@ -1441,8 +1513,7 @@ package body Ocarina.Backends.REAL is
 
          if Kind (N) = K_Var_Reference then
             declare
-               N2 : constant Node_Id :=
-                 First_Node (Referenced_Sets (E));
+               N2 : constant Node_Id    := First_Node (Referenced_Sets (E));
                VT : constant Value_Type :=
                  Get_Value_Type (Var_Value (Referenced_Var (N)));
             begin
@@ -1450,15 +1521,15 @@ package body Ocarina.Backends.REAL is
                if Referenced_Set (N2) = Range_Set then
                   Add (T2, Current_Range_Variable);
                else
-                  T2 := Set_Array (Integer
-                                   (Index
-                                    (Annotation
-                                     (Referenced_Set (N2)))));
+                  T2 :=
+                    Set_Array
+                      (Integer (Index (Annotation (Referenced_Set (N2)))));
                end if;
             end;
          else
             Display_Located_Error
-              (Loc (E), "Expected a variable reference as first parameter",
+              (Loc (E),
+               "Expected a variable reference as first parameter",
                Fatal => True);
          end if;
 
@@ -1473,39 +1544,34 @@ package body Ocarina.Backends.REAL is
 
       package OBCQ renames Ocarina.Instances.REAL_Checker.Queries;
 
-      package Is_Bound renames
-        OBCQ.Bound_Predicates.Bound_Query;
+      package Is_Bound renames OBCQ.Bound_Predicates.Bound_Query;
       package Is_Subcomponent renames
         OBCQ.Subcomponent_Predicates.Subcomponent_Query;
-      package Is_Connected renames
-        OBCQ.Connected_Predicates.Connected_Query;
-      package Is_Called renames
-        OBCQ.Call_Predicates.Call_Query;
-      package Is_Accessed renames
-        OBCQ.Access_Predicates.Access_Query;
-      package Is_Passing renames
-        OBCQ.Passing_Predicates.Passing_Query;
+      package Is_Connected renames OBCQ.Connected_Predicates.Connected_Query;
+      package Is_Called renames OBCQ.Call_Predicates.Call_Query;
+      package Is_Accessed renames OBCQ.Access_Predicates.Access_Query;
+      package Is_Passing renames OBCQ.Passing_Predicates.Passing_Query;
       package Is_Provided_Class renames
         OBCQ.Provided_Class_Predicates.Provided_Class_Query;
       package Is_Predecessor renames
         OBCQ.Predecessor_Predicates.Predecessor_Query;
 
-      N         : Node_Id;
-      R1, R2    : Result_Set;
-      RS        : Result_Set;
-      Success   : Boolean;
+      N       : Node_Id;
+      R1, R2  : Result_Set;
+      RS      : Result_Set;
+      Success : Boolean;
 
    begin
       case Code (E) is
          when FC_Is_Called_By =>
             Extract_Parameters_Sets (E, R1, R2, Success);
             if not Success then
-               T := RT_Error;
+               T      := RT_Error;
                Result := New_Boolean_Value (False);
                return;
             end if;
             RS := Is_Called.Apply (R1, R2);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1519,7 +1585,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Called.Apply (R1, R2, Reversed => True);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1533,7 +1599,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Predecessor.Apply (R1, R2);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1547,7 +1613,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Passing.Apply (R1, R2);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1561,7 +1627,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Accessed.Apply (R1, R2);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1574,8 +1640,8 @@ package body Ocarina.Backends.REAL is
                T := RT_Error;
                return;
             end if;
-            Rs := Is_Accessed.Apply (R1, R2, Reversed => True);
-            T := RT_Boolean;
+            RS := Is_Accessed.Apply (R1, R2, Reversed => True);
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1589,7 +1655,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Connected.Apply (R1, R2);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1603,7 +1669,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Connected.Apply (R1, R2, Reversed => True);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1617,7 +1683,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Bound.Apply (R1, R2);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1631,7 +1697,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Subcomponent.Apply (R1, R2);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1645,7 +1711,7 @@ package body Ocarina.Backends.REAL is
                return;
             end if;
             RS := Is_Provided_Class.Apply (R1, R2);
-            T := RT_Boolean;
+            T  := RT_Boolean;
             if Cardinal (RS) = 0 then
                Result := New_Boolean_Value (False);
             else
@@ -1654,26 +1720,27 @@ package body Ocarina.Backends.REAL is
 
          when FC_Expr =>
             declare
-               Var : constant Node_Id := First_Node (True_Parameters (E));
+               Var : constant Node_Id    := First_Node (True_Parameters (E));
                Set : constant Result_Set :=
-                 Set_Array (Integer
-                            (Index
-                             (Annotation
-                              (Referenced_Set
-                               (First_Node
-                                (Referenced_Sets (E)))))));
+                 Set_Array
+                   (Integer
+                      (Index
+                         (Annotation
+                            (Referenced_Set
+                               (First_Node (Referenced_Sets (E)))))));
                L  : constant List_Id := New_List (K_List_Id, Loc (E));
                F  : Node_Id;
-               T1 : Return_Type := RT_Unknown;
-               R  : Value_Id := No_Value;
+               T1 : Return_Type      := RT_Unknown;
+               R  : Value_Id         := No_Value;
             begin
                for I in 1 .. Cardinal (Set) loop
 
                   --  Set the current value of the variable to the
                   --  value of the element
 
-                  Set_Var_Value (Referenced_Var (Var),
-                                 New_Elem_Value (Get (Set, I)));
+                  Set_Var_Value
+                    (Referenced_Var (Var),
+                     New_Elem_Value (Get (Set, I)));
 
                   --  Compute the iterative expression value for
                   --  the current variable value
@@ -1698,10 +1765,11 @@ package body Ocarina.Backends.REAL is
                --  we delete it.
 
                RNU.Remove_Node_From_List
-                 (Referenced_Var (Var), Used_Var (RNU.REAL_Root));
+                 (Referenced_Var (Var),
+                  Used_Var (RNU.REAL_Root));
 
                Result := New_List_Value (L);
-               T := Returned_Type (E);
+               T      := Returned_Type (E);
             end;
 
          when FC_Get_System_Property_Value =>
@@ -1709,7 +1777,7 @@ package body Ocarina.Backends.REAL is
             --  * a string literal (with property name)
 
             declare
-               RS          : constant Result_Set :=
+               RS : constant Result_Set :=
                  Get_Instances_Of_Component_Type (C_System);
                Root_System : Node_Id;
             begin
@@ -1718,24 +1786,26 @@ package body Ocarina.Backends.REAL is
                Root_System := Get (RS, 1);
                if Cardinal (RS) > 1 then
                   while AIN.Parent_Subcomponent (Root_System) /= No_Node loop
-                     Root_System := AIN.Parent_Component
-                       (AIN.Parent_Subcomponent (Root_System));
+                     Root_System :=
+                       AIN.Parent_Component
+                         (AIN.Parent_Subcomponent (Root_System));
                   end loop;
                end if;
 
                --  2/ Search the property
 
-               Result := Get_Property_Value_Function
-                 (Value (First_Node (True_Parameters (E))),
-                  Returned_Type (E),
-                  Root_System);
+               Result :=
+                 Get_Property_Value_Function
+                   (Value (First_Node (True_Parameters (E))),
+                    Returned_Type (E),
+                    Root_System);
                if Result = No_Value then
                   T := RT_Error;
                   Display_Located_Error
                     (Loc (First_Node (True_Parameters (E))),
-                     "property " & Image
-                     (Value (First_Node (True_Parameters (E))))
-                     & " is not defined on the root system.",
+                     "property " &
+                     Image (Value (First_Node (True_Parameters (E)))) &
+                     " is not defined on the root system.",
                      Fatal => True);
                else
                   T := Returned_Type (E);
@@ -1758,34 +1828,38 @@ package body Ocarina.Backends.REAL is
                N := Referenced_Set (N);
             end if;
 
-            if N = Referenced_Set (Set_Reference
-                                   (Range_Variable
-                                    (Range_Declaration (RNU.REAL_Root))))
+            if N =
+              Referenced_Set
+                (Set_Reference
+                   (Range_Variable (Range_Declaration (RNU.REAL_Root))))
             then
-               Result := Get_Property_Value_Function
-                    (Value (First_Node (True_Parameters (E))),
-                     Returned_Type (E),
-                     Current_Range_Variable);
+               Result :=
+                 Get_Property_Value_Function
+                   (Value (First_Node (True_Parameters (E))),
+                    Returned_Type (E),
+                    Current_Range_Variable);
 
                if Result = No_Value then
                   T := RT_Error;
                   Display_Located_Error
                     (Loc (First_Node (True_Parameters (E))),
-                     "property " & Image
-                     (Value (First_Node (True_Parameters (E))))
-                       & " is not defined on element "
-                       & Image (Current_Range_Variable) & " (" &
-                       Get_Name_String
-                       (Ocarina.ME_AADL.AADL_Instances.Nutils.
-                          Compute_Full_Name_Of_Instance
-                                          (Current_Range_Variable)) & ") "
-                       & Image (AIN.Loc (Current_Range_Variable))
-                       & Get_Name_String (Name (Identifier (N))),
-                     Fatal => False,
+                     "property " &
+                     Image (Value (First_Node (True_Parameters (E)))) &
+                     " is not defined on element " &
+                     Image (Current_Range_Variable) &
+                     " (" &
+                     Get_Name_String
+                       (Ocarina.ME_AADL.AADL_Instances.Nutils
+                          .Compute_Full_Name_Of_Instance
+                          (Current_Range_Variable)) &
+                     ") " &
+                     Image (AIN.Loc (Current_Range_Variable)) &
+                     Get_Name_String (Name (Identifier (N))),
+                     Fatal   => False,
                      Warning => True);
 
                   Result := No_Value;
-                  T := RT_Unknown;
+                  T      := RT_Unknown;
                else
                   T := Returned_Type (E);
                end if;
@@ -1793,23 +1867,25 @@ package body Ocarina.Backends.REAL is
                if Present (First_Node (Referenced_Sets (E))) then
                   --  The first parameter is a set
                   declare
-                     L  : constant List_Id := New_List (K_List_Id, Loc (E));
+                     L  : constant List_Id    := New_List (K_List_Id, Loc (E));
                      F  : Node_Id;
                      V  : Value_Id;
                      VT : Value_Type;
                      R1 : constant Result_Set :=
-                       Set_Array (Integer
-                                  (Index
-                                   (Annotation
-                                    (Referenced_Set
-                                     (First_Node
-                                      (Referenced_Sets (E)))))));
+                       Set_Array
+                         (Integer
+                            (Index
+                               (Annotation
+                                  (Referenced_Set
+                                     (First_Node (Referenced_Sets (E)))))));
                   begin
                      if Cardinal (R1) > 0 then
                         for J in 1 .. Cardinal (R1) loop
-                           V := Get_Property_Value_Function
-                             (Value (First_Node (True_Parameters (E))),
-                              Returned_Type (E), Get (R1, J));
+                           V :=
+                             Get_Property_Value_Function
+                               (Value (First_Node (True_Parameters (E))),
+                                Returned_Type (E),
+                                Get (R1, J));
                            if V /= No_Value then
                               VT := Get_Value_Type (V);
                               if VT.T /= LT_List then
@@ -1833,22 +1909,21 @@ package body Ocarina.Backends.REAL is
                            end if;
                         end loop;
                         Result := New_List_Value (L);
-                        T := Returned_Type (E);
+                        T      := Returned_Type (E);
                      else
                         Display_Located_Error
                           (Loc (E),
-                           "cardinal of set "
-                             & Get_Name_String
+                           "cardinal of set " &
+                           Get_Name_String
                              (Name
                                 (Identifier
                                    (Referenced_Set
-                                      (First_Node
-                                         (Referenced_Sets (E))))))
-                             & " is null",
-                           Fatal => False,
+                                      (First_Node (Referenced_Sets (E)))))) &
+                           " is null",
+                           Fatal   => False,
                            Warning => True);
                         Result := No_Value;
-                        T := RT_Unknown;
+                        T      := RT_Unknown;
                      end if;
                   end;
                else
@@ -1856,20 +1931,23 @@ package body Ocarina.Backends.REAL is
                   --  (hence it refers to an element)
 
                   declare
-                     P  : constant Node_Id :=
-                       First_Node (True_Parameters (E));
-                     VT : constant Value_Type := Get_Value_Type
-                       (Var_Value (Referenced_Var (P)));
+                     P  : constant Node_Id := First_Node (True_Parameters (E));
+                     VT : constant Value_Type :=
+                       Get_Value_Type (Var_Value (Referenced_Var (P)));
                   begin
-                     Result := Get_Property_Value_Function
-                       (Value (Next_Node (P)), Returned_Type (E), VT.ELVal);
+                     Result :=
+                       Get_Property_Value_Function
+                         (Value (Next_Node (P)),
+                          Returned_Type (E),
+                          VT.ELVal);
                      if Result = No_Value then
                         T := RT_Error;
                         Display_Located_Error
-                          (Loc (Next_Node (P)), "property "
-                           & Image (Value (Next_Node (P)))
-                           & " is not defined on this single element. "
-                           & "Try using 'Property_Exists' before.",
+                          (Loc (Next_Node (P)),
+                           "property " &
+                           Image (Value (Next_Node (P))) &
+                           " is not defined on this single element. " &
+                           "Try using 'Property_Exists' before.",
                            Fatal => True);
                      else
                         T := Returned_Type (E);
@@ -1884,14 +1962,16 @@ package body Ocarina.Backends.REAL is
             if Present (N) then
                N := Referenced_Set (N);
             end if;
-            if N = Referenced_Set (Set_Reference
-                                   (Range_Variable
-                                    (Range_Declaration (RNU.REAL_Root))))
+            if N =
+              Referenced_Set
+                (Set_Reference
+                   (Range_Variable (Range_Declaration (RNU.REAL_Root))))
             then
-               Result := Get_Property_Value_Function
-                    (Value (First_Node (True_Parameters (E))),
-                     Returned_Type (E),
-                     Current_Range_Variable);
+               Result :=
+                 Get_Property_Value_Function
+                   (Value (First_Node (True_Parameters (E))),
+                    Returned_Type (E),
+                    Current_Range_Variable);
                if Result /= No_Value then
                   Result := New_Boolean_Value (True);
                else
@@ -1903,20 +1983,22 @@ package body Ocarina.Backends.REAL is
                   --  The first parameter is a set
 
                   declare
-                     Found : Boolean := False;
+                     Found : Boolean             := False;
                      V     : Value_Id;
-                     R1    : constant Result_Set := Set_Array
-                       (Integer
-                        (Index
-                         (Annotation
-                          (Referenced_Set
-                           (First_Node
-                            (Referenced_Sets (E)))))));
+                     R1    : constant Result_Set :=
+                       Set_Array
+                         (Integer
+                            (Index
+                               (Annotation
+                                  (Referenced_Set
+                                     (First_Node (Referenced_Sets (E)))))));
                   begin
                      for I in 1 .. Cardinal (R1) loop
-                        V := Get_Property_Value_Function
-                          (Value (First_Node (True_Parameters (E))),
-                           Returned_Type (E), Get (R1, I));
+                        V :=
+                          Get_Property_Value_Function
+                            (Value (First_Node (True_Parameters (E))),
+                             Returned_Type (E),
+                             Get (R1, I));
                         if V = No_Value then
                            Found := False;
                            exit;
@@ -1926,22 +2008,22 @@ package body Ocarina.Backends.REAL is
                      end loop;
 
                      Result := New_Boolean_Value (Found);
-                     T := RT_Boolean;
+                     T      := RT_Boolean;
                   end;
                else
                   --  The first parameter is a variable
                   --  (hence it refers to an element)
 
                   declare
-                     P  : constant Node_Id :=
-                       First_Node (True_Parameters (E));
-                     VT : constant Value_Type := Get_Value_Type
-                       (Var_Value (Referenced_Var (P)));
+                     P  : constant Node_Id := First_Node (True_Parameters (E));
+                     VT : constant Value_Type :=
+                       Get_Value_Type (Var_Value (Referenced_Var (P)));
                   begin
-                     Result := Get_Property_Value_Function
-                       (Value (Next_Node (P)),
-                        Returned_Type (E),
-                        VT.ELVal);
+                     Result :=
+                       Get_Property_Value_Function
+                         (Value (Next_Node (P)),
+                          Returned_Type (E),
+                          VT.ELVal);
                      if Result = No_Value then
                         Result := New_Boolean_Value (False);
                      else
@@ -1956,27 +2038,25 @@ package body Ocarina.Backends.REAL is
 
             declare
                R : constant Result_Set :=
-                 Set_Array (Integer
-                            (Index
-                             (Annotation
-                              (Referenced_Set
-                               (First_Node
-                                (Referenced_Sets (E)))))));
+                 Set_Array
+                   (Integer
+                      (Index
+                         (Annotation
+                            (Referenced_Set
+                               (First_Node (Referenced_Sets (E)))))));
             begin
-               Result := New_Integer_Value
-                 (Unsigned_Long_Long (Cardinal (R)));
-               T := RT_Integer;
+               Result := New_Integer_Value (Unsigned_Long_Long (Cardinal (R)));
+               T      := RT_Integer;
             end;
 
          when FC_First =>
             declare
-               VT        : Value_Type;
-               N         : Node_Id;
-               R         : Value_Id;
-               T2        : Return_Type;
+               VT : Value_Type;
+               N  : Node_Id;
+               R  : Value_Id;
+               T2 : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 /= RT_Error then
                   VT := Get_Value_Type (R);
                else
@@ -1986,22 +2066,22 @@ package body Ocarina.Backends.REAL is
 
                if T2 = RT_Range_List then
                   declare
-                     L : constant List_Id := New_List
-                       (K_List_Id, Loc (E));
-                     F : Node_Id;
+                     L   : constant List_Id := New_List (K_List_Id, Loc (E));
+                     F   : Node_Id;
                      VT2 : Value_Type;
-                     V : Value_Id;
+                     V   : Value_Id;
                   begin
                      T := RT_Float_List;
                      N := First_Node (VT.LVal);
                      while Present (N) loop
-                        F := New_Node (K_Value_Node, Loc (E));
+                        F   := New_Node (K_Value_Node, Loc (E));
                         VT2 := Get_Value_Type (Item_Val (N));
-                        V := New_Real_Value
-                          (VT2.RVal_Left,
-                           VT2.RSign_Left,
-                           VT2.RVBase,
-                           VT2.RVExp);
+                        V   :=
+                          New_Real_Value
+                            (VT2.RVal_Left,
+                             VT2.RSign_Left,
+                             VT2.RVBase,
+                             VT2.RVExp);
                         Set_Item_Val (F, V);
                         RNU.Append_Node_To_List (F, L);
                         N := Next_Node (N);
@@ -2009,27 +2089,31 @@ package body Ocarina.Backends.REAL is
                      Result := New_List_Value (L);
                   end;
                else
-                  T := RT_Float;
-                  Result := New_Real_Value
-                    (VT.RVal_Left, VT.RSign_Left, VT.RVBase, VT.RVExp);
+                  T      := RT_Float;
+                  Result :=
+                    New_Real_Value
+                      (VT.RVal_Left,
+                       VT.RSign_Left,
+                       VT.RVBase,
+                       VT.RVExp);
                end if;
             end;
 
          when FC_Last =>
             declare
-               VT        : Value_Type;
-               N         : Node_Id;
-               R         : Value_Id;
-               T2        : Return_Type;
+               VT : Value_Type;
+               N  : Node_Id;
+               R  : Value_Id;
+               T2 : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default float value of 0.0 for "
-                       & "operator Last",
-                     Fatal => False, Warning => True);
-                  T := RT_Float;
+                    (Loc (E),
+                     "use default float value of 0.0 for " & "operator Last",
+                     Fatal   => False,
+                     Warning => True);
+                  T      := RT_Float;
                   Result := New_Real_Value (0.0);
                   return;
 
@@ -2043,22 +2127,22 @@ package body Ocarina.Backends.REAL is
 
                if T2 = RT_Range_List then
                   declare
-                     L : constant List_Id := New_List
-                       (K_List_Id, Loc (E));
-                     F : Node_Id;
+                     L   : constant List_Id := New_List (K_List_Id, Loc (E));
+                     F   : Node_Id;
                      VT2 : Value_Type;
-                     V : Value_Id;
+                     V   : Value_Id;
                   begin
                      T := RT_Float_List;
                      N := First_Node (VT.LVal);
                      while Present (N) loop
-                        F := New_Node (K_Value_Node, Loc (E));
+                        F   := New_Node (K_Value_Node, Loc (E));
                         VT2 := Get_Value_Type (Item_Val (N));
-                        V := New_Real_Value
-                          (VT2.RVal_Right,
-                           VT2.RSign_Right,
-                           VT2.RVBase,
-                           VT2.RVExp);
+                        V   :=
+                          New_Real_Value
+                            (VT2.RVal_Right,
+                             VT2.RSign_Right,
+                             VT2.RVBase,
+                             VT2.RVExp);
                         Set_Item_Val (F, V);
                         RNU.Append_Node_To_List (F, L);
                         N := Next_Node (N);
@@ -2066,32 +2150,36 @@ package body Ocarina.Backends.REAL is
                      Result := New_List_Value (L);
                   end;
                else
-                  T := RT_Float;
-                  Result := New_Real_Value
-                    (VT.RVal_Right, VT.RSign_Right, VT.RVBase, VT.RVExp);
+                  T      := RT_Float;
+                  Result :=
+                    New_Real_Value
+                      (VT.RVal_Right,
+                       VT.RSign_Right,
+                       VT.RVBase,
+                       VT.RVExp);
                end if;
             end;
 
          when FC_Max =>  --  takes a list as parameter
             declare
-               V           : Value_TYpe;
+               V           : Value_Type;
                VT          : Value_Type;
                N           : Node_Id;
                R           : Value_Id;
                T2          : Return_Type;
                Current_Max : Value_Type;
-               Min_Value   : constant Value_Id  := New_Real_Value
-                 (Long_Long_Float'Last, True);
+               Min_Value   : constant Value_Id :=
+                 New_Real_Value (Long_Long_Float'Last, True);
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
 
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default float value of 0.0 for operator"
-                       & " Max",
-                     Fatal => False, Warning => True);
-                  T := RT_Float;
+                    (Loc (E),
+                     "use default float value of 0.0 for operator" & " Max",
+                     Fatal   => False,
+                     Warning => True);
+                  T      := RT_Float;
                   Result := New_Real_Value (0.0);
                   return;
 
@@ -2101,7 +2189,7 @@ package body Ocarina.Backends.REAL is
                end if;
 
                VT := Get_Value_Type (R);
-               N := First_Node (VT.LVal);
+               N  := First_Node (VT.LVal);
 
                case T2 is
                   when RT_Float_List =>
@@ -2111,8 +2199,8 @@ package body Ocarina.Backends.REAL is
                   when others =>
                      Display_Located_Error
                        (Loc (E),
-                        "'Max' subprogram cannot be "
-                        & "run on non-numeric properties",
+                        "'Max' subprogram cannot be " &
+                        "run on non-numeric properties",
                         Fatal => True);
                end case;
 
@@ -2120,39 +2208,38 @@ package body Ocarina.Backends.REAL is
                while Present (N) loop
                   V := Get_Value_Type (Item_Val (N));
 
-                  if not (V < Current_Max) and then
-                    not (V = Current_Max) then
+                  if not (V < Current_Max) and then not (V = Current_Max) then
                      Current_Max := V;
                   end if;
 
                   N := Next_Node (N);
                end loop;
 
-               result := New_Value (Current_Max);
+               Result := New_Value (Current_Max);
             end;
 
          when FC_All_Equals =>  --  takes a list as parameter
             declare
-               V         : Value_Id;
-               VT        : Value_Type;
-               Cpt       : Integer := 0;
-               Real_Cpt  : Float := 0.0;
-               Found     : Boolean := False;
-               Equals    : Boolean := True;
-               N         : Node_Id;
-               Is_Int    : Boolean;
-               R         : Value_Id;
-               T2        : Return_Type;
+               V        : Value_Id;
+               VT       : Value_Type;
+               Cpt      : Integer := 0;
+               Real_Cpt : Float   := 0.0;
+               Found    : Boolean := False;
+               Equals   : Boolean := True;
+               N        : Node_Id;
+               Is_Int   : Boolean;
+               R        : Value_Id;
+               T2       : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default boolean value of true for "
-                       & "operator '='",
-                     Fatal => False, Warning => True);
-                  result := New_Boolean_Value (True);
-                  T := RT_Boolean;
+                    (Loc (E),
+                     "use default boolean value of true for " & "operator '='",
+                     Fatal   => False,
+                     Warning => True);
+                  Result := New_Boolean_Value (True);
+                  T      := RT_Boolean;
                   return;
 
                elsif T2 = RT_Error then
@@ -2161,8 +2248,8 @@ package body Ocarina.Backends.REAL is
                end if;
 
                Result := New_Real_Value (0.0);
-               VT := Get_Value_Type (R);
-               N := First_Node (VT.LVal);
+               VT     := Get_Value_Type (R);
+               N      := First_Node (VT.LVal);
 
                case T2 is
                   when RT_Float_List =>
@@ -2174,8 +2261,8 @@ package body Ocarina.Backends.REAL is
                   when others =>
                      Display_Located_Error
                        (Loc (First_Node (Parameters (E))),
-                        "'Max' subprogram cannot be "
-                        & "run on non-numeric properties",
+                        "'Max' subprogram cannot be " &
+                        "run on non-numeric properties",
                         Fatal => True);
                end case;
 
@@ -2183,7 +2270,7 @@ package body Ocarina.Backends.REAL is
                   V := Item_Val (N);
                   if Is_Int then
                      if not Found then
-                        Cpt := Integer (Get_Value_Type (V).IVal);
+                        Cpt   := Integer (Get_Value_Type (V).IVal);
                         Found := True;
                      else
                         if Integer (Get_Value_Type (V).IVal) /= Cpt then
@@ -2193,7 +2280,7 @@ package body Ocarina.Backends.REAL is
                   else
                      if not Found then
                         Real_Cpt := Float (Get_Value_Type (V).RVal);
-                        Found := True;
+                        Found    := True;
                      else
                         if Float (Get_Value_Type (V).RVal) /= Real_Cpt then
                            Equals := False;
@@ -2203,51 +2290,50 @@ package body Ocarina.Backends.REAL is
                   N := Next_Node (N);
                end loop;
 
-               result := New_Boolean_Value (Equals);
-               T := RT_Boolean;
+               Result := New_Boolean_Value (Equals);
+               T      := RT_Boolean;
             end;
 
          when FC_Size =>  --  takes a list as parameter
             declare
-               VT        : Value_Type;
-               Cpt       : Unsigned_Long_Long := 0;
-               N         : Node_Id;
-               R         : Value_Id;
-               T2        : Return_Type;
+               VT  : Value_Type;
+               Cpt : Unsigned_Long_Long := 0;
+               N   : Node_Id;
+               R   : Value_Id;
+               T2  : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Error then
                   T := RT_Error;
                   return;
                end if;
 
                VT := Get_Value_Type (R);
-               N := First_Node (VT.LVal);
+               N  := First_Node (VT.LVal);
 
                case T2 is
-                  when RT_Int_List
-                    | RT_Float_List
-                    | RT_String_List
-                    | RT_Bool_List
-                    | RT_Range_List
-                    | RT_Element_List =>
+                  when RT_Int_List  |
+                    RT_Float_List   |
+                    RT_String_List  |
+                    RT_Bool_List    |
+                    RT_Range_List   |
+                    RT_Element_List =>
                      T := RT_Integer;
 
                   when others =>
                      Display_Located_Error
                        (Loc (First_Node (Parameters (E))),
-                        "'Size' subprogram cannot be "
-                        & "run on non-list values",
+                        "'Size' subprogram cannot be " &
+                        "run on non-list values",
                         Fatal => True);
                end case;
 
                while Present (N) loop
                   Cpt := Cpt + 1;
-                  N := Next_Node (N);
+                  N   := Next_Node (N);
                end loop;
 
-               result := New_Integer_Value (Cpt);
+               Result := New_Integer_Value (Cpt);
             end;
 
          when FC_Min =>  --  takes a list as parameter
@@ -2258,11 +2344,10 @@ package body Ocarina.Backends.REAL is
                R           : Value_Id;
                T2          : Return_Type;
                Current_Min : Value_Type;
-               Max_Value   : constant Value_Id  := New_Real_Value
-                 (Long_Long_Float'Last, False);
+               Max_Value   : constant Value_Id :=
+                 New_Real_Value (Long_Long_Float'Last, False);
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Error then
                   T := RT_Error;
                   return;
@@ -2271,16 +2356,16 @@ package body Ocarina.Backends.REAL is
                if T2 = RT_Unknown then
                   Display_Located_Error
                     (Loc (E),
-                     "unknown value, use default value of 0.0 for operator"
-                       & " Min",
-                     Fatal => False,
+                     "unknown value, use default value of 0.0 for operator" &
+                     " Min",
+                     Fatal   => False,
                      Warning => True);
 
                   Result := New_Real_Value (0.0, False);
 
                else
                   VT := Get_Value_Type (R);
-                  N := First_Node (VT.LVal);
+                  N  := First_Node (VT.LVal);
 
                   case T2 is
                      when RT_Float_List =>
@@ -2290,8 +2375,8 @@ package body Ocarina.Backends.REAL is
                      when others =>
                         Display_Located_Error
                           (Loc (E),
-                           "'Min' subprogram cannot be "
-                             & "run on non-numeric properties",
+                           "'Min' subprogram cannot be " &
+                           "run on non-numeric properties",
                            Fatal => True);
                   end case;
 
@@ -2306,26 +2391,25 @@ package body Ocarina.Backends.REAL is
                      N := Next_Node (N);
                   end loop;
 
-                  result := New_Value (Current_Min);
+                  Result := New_Value (Current_Min);
                end if;
             end;
 
          when FC_Head =>  --  takes a list as parameter
             declare
-               VT          : Value_Type;
-               N           : Node_Id;
-               R           : Value_Id;
-               T2          : Return_Type;
+               VT : Value_Type;
+               N  : Node_Id;
+               R  : Value_Id;
+               T2 : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Error then
                   T := RT_Error;
                   return;
                end if;
 
                VT := Get_Value_Type (R);
-               N := First_Node (VT.LVal);
+               N  := First_Node (VT.LVal);
 
                case T2 is
                   when RT_Int_List =>
@@ -2343,49 +2427,47 @@ package body Ocarina.Backends.REAL is
                   when others =>
                      Display_Located_Error
                        (Loc (E),
-                        "'head' subprogram cannot be "
-                        & "run on a non-list parameter",
+                        "'head' subprogram cannot be " &
+                        "run on a non-list parameter",
                         Fatal => True);
                end case;
 
-               result := New_Value (Get_Value_Type (Item_Val (N)));
+               Result := New_Value (Get_Value_Type (Item_Val (N)));
             end;
 
          when FC_Queue =>  --  takes a list as parameter
             declare
-               V           : Value_Id;
-               VT          : Value_Type;
-               N           : Node_Id;
-               L           : constant List_Id := New_List
-                 (K_List_Id, Loc (E));
-               F           : Node_Id;
-               R           : Value_Id;
-               T2          : Return_Type;
+               V  : Value_Id;
+               VT : Value_Type;
+               N  : Node_Id;
+               L  : constant List_Id := New_List (K_List_Id, Loc (E));
+               F  : Node_Id;
+               R  : Value_Id;
+               T2 : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Error then
                   T := RT_Error;
                   return;
                end if;
 
                VT := Get_Value_Type (R);
-               N := First_Node (VT.LVal);
+               N  := First_Node (VT.LVal);
 
                case T2 is
-                  when RT_Int_List
-                    | RT_Float_List
-                    | RT_String_List
-                    | RT_Bool_List
-                    | RT_Range_List
-                    | RT_Element_List =>
+                  when RT_Int_List  |
+                    RT_Float_List   |
+                    RT_String_List  |
+                    RT_Bool_List    |
+                    RT_Range_List   |
+                    RT_Element_List =>
                      T := T2;
 
                   when others =>
                      Display_Located_Error
                        (Loc (E),
-                        "'queue' subprogram cannot be "
-                        & "run on a non-list parameter",
+                        "'queue' subprogram cannot be " &
+                        "run on a non-list parameter",
                         Fatal => True);
                end case;
 
@@ -2406,12 +2488,11 @@ package body Ocarina.Backends.REAL is
 
          when FC_Int =>  --  takes a float or an integer as parameter
             declare
-               VT        : Value_Type;
-               R         : Value_Id;
-               T2        : Return_Type;
+               VT : Value_Type;
+               R  : Value_Id;
+               T2 : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Error then
                   T := RT_Error;
                   return;
@@ -2435,13 +2516,13 @@ package body Ocarina.Backends.REAL is
                F, P        : Node_Id;
             begin
                if not Is_Empty (Referenced_Sets (E)) then
-                  R := Set_Array
-                    (Integer
-                     (Index
-                      (Annotation
-                       (Referenced_Set
-                        (First_Node
-                         (Referenced_Sets (E)))))));
+                  R :=
+                    Set_Array
+                      (Integer
+                         (Index
+                            (Annotation
+                               (Referenced_Set
+                                  (First_Node (Referenced_Sets (E)))))));
                   for I in 1 .. Cardinal (R) loop
                      V := New_Elem_Value (Get (R, I));
                      F := New_Node (K_Value_Node, Loc (E));
@@ -2449,7 +2530,7 @@ package body Ocarina.Backends.REAL is
                      RNU.Append_Node_To_List (F, Result_List);
                   end loop;
                   Result := New_List_Value (Result_List);
-                  T := RT_Element_List;
+                  T      := RT_Element_List;
                elsif not Is_Empty (Parameters (E)) then
                   P := First_Node (Parameters (E));
                   while Present (P) loop
@@ -2460,18 +2541,17 @@ package body Ocarina.Backends.REAL is
                      P := Next_Node (P);
                   end loop;
                   Result := New_List_Value (Result_List);
-                  T := Returned_Type (E);
+                  T      := Returned_Type (E);
                end if;
             end;
 
          when FC_Float =>  --  takes a float or an integer as parameter
             declare
-               VT        : Value_Type;
-               R         : Value_Id;
-               T2        : Return_Type;
+               VT : Value_Type;
+               R  : Value_Id;
+               T2 : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Error then
                   T := RT_Error;
                   return;
@@ -2488,25 +2568,27 @@ package body Ocarina.Backends.REAL is
 
          when FC_Product =>  --  takes a list as parameter
             declare
-               V         : Value_Id;
-               VT        : Value_Type;
-               Cpt       : Long_Long := 1;
-               Real_Cpt  : Long_Long_Float := 1.0;
-               N         : Node_Id;
-               Is_Int    : Boolean;
-               R         : Value_Id;
-               T2        : Return_Type;
+               V        : Value_Id;
+               VT       : Value_Type;
+               Cpt      : Long_Long       := 1;
+               Real_Cpt : Long_Long_Float := 1.0;
+               N        : Node_Id;
+               Is_Int   : Boolean;
+               R        : Value_Id;
+               T2       : Return_Type;
             begin
                Compute_Check_Subprogram_Call
-                 (First_Node (Parameters (E)), T2, R);
+                 (First_Node (Parameters (E)),
+                  T2,
+                  R);
                if T2 = RT_Error then
                   T := RT_Error;
                   return;
                end if;
 
                Result := New_Real_Value (0.0);
-               VT := Get_Value_Type (R);
-               N := First_Node (VT.LVal);
+               VT     := Get_Value_Type (R);
+               N      := First_Node (VT.LVal);
 
                case T2 is
 
@@ -2519,8 +2601,8 @@ package body Ocarina.Backends.REAL is
                   when others =>
                      Display_Located_Error
                        (Loc (First_Node (Parameters (E))),
-                        "'Product' subprogram cannot be "
-                        & "run on non-numeric properties",
+                        "'Product' subprogram cannot be " &
+                        "run on non-numeric properties",
                         Fatal => True);
                end case;
 
@@ -2536,36 +2618,34 @@ package body Ocarina.Backends.REAL is
                end loop;
 
                if Is_Int then
-                  result := New_Integer_Value
-                    (Unsigned_Long_Long (Cpt));
-                  T := RT_Integer;
+                  Result := New_Integer_Value (Unsigned_Long_Long (Cpt));
+                  T      := RT_Integer;
                else
-                  result := New_Real_Value
-                    (Real_Cpt);
-                  T := RT_Float;
+                  Result := New_Real_Value (Real_Cpt);
+                  T      := RT_Float;
                end if;
             end;
 
          when FC_Sum =>  --  takes a list as parameter
             declare
-               V         : Value_Id;
-               VT        : Value_Type;
-               Cpt       : Long_Long := 0;
-               Real_Cpt  : Long_Long_Float := 0.0;
-               N         : Node_Id;
-               Is_Int    : Boolean;
-               R         : Value_Id;
-               T2        : Return_Type;
+               V        : Value_Id;
+               VT       : Value_Type;
+               Cpt      : Long_Long       := 0;
+               Real_Cpt : Long_Long_Float := 0.0;
+               N        : Node_Id;
+               Is_Int   : Boolean;
+               R        : Value_Id;
+               T2       : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
 
                if T2 = RT_Unknown then
                   Display_Located_Error
-                    (Loc (E), "use default float value of 0.0 for operator"
-                       & " Sum",
-                     Fatal => False, Warning => True);
-                  T := RT_Float;
+                    (Loc (E),
+                     "use default float value of 0.0 for operator" & " Sum",
+                     Fatal   => False,
+                     Warning => True);
+                  T      := RT_Float;
                   Result := New_Real_Value (0.0);
                   return;
 
@@ -2575,8 +2655,8 @@ package body Ocarina.Backends.REAL is
                end if;
 
                Result := New_Real_Value (0.0);
-               VT := Get_Value_Type (R);
-               N := First_Node (VT.LVal);
+               VT     := Get_Value_Type (R);
+               N      := First_Node (VT.LVal);
                case T2 is
                   when RT_Float_List =>
                      Is_Int := False;
@@ -2587,8 +2667,8 @@ package body Ocarina.Backends.REAL is
                   when others =>
                      Display_Located_Error
                        (Loc (First_Node (Parameters (E))),
-                        "'Sum' subprogram cannot be "
-                        & "run on non-numeric properties",
+                        "'Sum' subprogram cannot be " &
+                        "run on non-numeric properties",
                         Fatal => True);
                end case;
 
@@ -2596,13 +2676,13 @@ package body Ocarina.Backends.REAL is
                   V := Item_Val (N);
                   if Is_Int then
                      Cpt := Cpt + Long_Long (Get_Value_Type (V).IVal);
-                     --  XXX Dubious
+                  --  XXX Dubious
                   else
                      if Get_Value_Type (V).T = LT_Real then
                         Real_Cpt := Real_Cpt + Get_Value_Type (V).RVal;
                      elsif Get_Value_Type (V).T = LT_Integer then
-                        Real_Cpt := Real_Cpt
-                          + Long_Long_Float (Get_Value_Type (V).IVal);
+                        Real_Cpt :=
+                          Real_Cpt + Long_Long_Float (Get_Value_Type (V).IVal);
                      else
                         Display_Located_Error
                           (Loc (First_Node (Parameters (E))),
@@ -2616,11 +2696,11 @@ package body Ocarina.Backends.REAL is
                end loop;
 
                if Is_Int then
-                  result := New_Integer_Value (Unsigned_Long_Long (Cpt));
-                  T := RT_Integer;
+                  Result := New_Integer_Value (Unsigned_Long_Long (Cpt));
+                  T      := RT_Integer;
                else
-                  result := New_Real_Value (Real_Cpt);
-                  T := RT_Float;
+                  Result := New_Real_Value (Real_Cpt);
+                  T      := RT_Float;
                end if;
             end;
 
@@ -2630,23 +2710,22 @@ package body Ocarina.Backends.REAL is
             --  returns 1 in the other cases
 
             declare
-               Cpt       : Integer;
-               R         : Value_Id;
-               T2        : Return_Type;
+               Cpt : Integer;
+               R   : Value_Id;
+               T2  : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Integer then
                   Cpt := Integer (Get_Value_Type (R).IVal);
                   if Cpt /= 0 then
                      Cpt := 1;
                   end if;
-                  result := New_Integer_Value
-                    (Unsigned_Long_Long (Cpt));
-                  T := RT_Integer;
+                  Result := New_Integer_Value (Unsigned_Long_Long (Cpt));
+                  T      := RT_Integer;
                else
                   Display_Located_Error
-                    (Loc (First_Node (Parameters (E))), "unexpected type",
+                    (Loc (First_Node (Parameters (E))),
+                     "unexpected type",
                      Fatal => True);
                end if;
             end;
@@ -2683,35 +2762,37 @@ package body Ocarina.Backends.REAL is
                   end if;
                end Gcd;
 
-               Is_Lcm    : constant Boolean := ((Code (E)) = FC_LCM);
-               V         : Value_Id := No_Value;
-               VT        : Value_Type;
-               Cpt       : Integer;
-               Last_Cpt  : Integer := 0;
-               N         : Node_Id := First_Node (Parameters (E));
-               R         : Value_Id;
-               T2        : Return_Type;
+               Is_Lcm   : constant Boolean := ((Code (E)) = FC_LCM);
+               V        : Value_Id         := No_Value;
+               VT       : Value_Type;
+               Cpt      : Integer;
+               Last_Cpt : Integer          := 0;
+               N        : Node_Id          := First_Node (Parameters (E));
+               R        : Value_Id;
+               T2       : Return_Type;
             begin
                Compute_Check_Expression (N, T2, R);
                case T2 is
                   when RT_Int_List =>
                      Result := New_Integer_Value (0);
-                     VT := Get_Value_Type (R);
-                     N := First_Node (VT.LVal);
+                     VT     := Get_Value_Type (R);
+                     N      := First_Node (VT.LVal);
 
                      while Present (N) loop
-                        V := Item_Val (N);
+                        V  := Item_Val (N);
                         VT := Get_Value_Type (V);
                         if VT.T /= LT_Integer then
                            Display_Located_Error
-                             (Loc (N), "unexpected type",
+                             (Loc (N),
+                              "unexpected type",
                               Fatal => True);
                         end if;
                         Cpt := Integer (VT.IVal);
                         if Cpt <= 0 then
                            Display_Located_Error
-                             (Loc (N), "LCM and GCD must be called with "
-                              & "strictly positive parameters",
+                             (Loc (N),
+                              "LCM and GCD must be called with " &
+                              "strictly positive parameters",
                               Fatal => True);
                         end if;
 
@@ -2736,8 +2817,9 @@ package body Ocarina.Backends.REAL is
                      Last_Cpt := Integer (Get_Value_Type (R).IVal);
                      if Last_Cpt <= 0 then
                         Display_Located_Error
-                          (Loc (N), "LCM and GCD must be called with "
-                           & "strictly positive parameters",
+                          (Loc (N),
+                           "LCM and GCD must be called with " &
+                           "strictly positive parameters",
                            Fatal => True);
                      end if;
                      N := Next_Node (N);
@@ -2748,9 +2830,10 @@ package body Ocarina.Backends.REAL is
                            Cpt := Integer (Get_Value_Type (R).IVal);
                            if Cpt <= 0 then
                               Display_Located_Error
-                                (Loc (N), "LCM and GCD must be called with "
-                                 & "strictly positive parameters",
-                              Fatal => True);
+                                (Loc (N),
+                                 "LCM and GCD must be called with " &
+                                 "strictly positive parameters",
+                                 Fatal => True);
                            end if;
                            if Is_Lcm then
                               Last_Cpt := Lcm (Last_Cpt, Cpt);
@@ -2759,7 +2842,8 @@ package body Ocarina.Backends.REAL is
                            end if;
                         else
                            Display_Located_Error
-                             (Loc (N), "unexpected type",
+                             (Loc (N),
+                              "unexpected type",
                               Fatal => True);
                         end if;
 
@@ -2772,13 +2856,13 @@ package body Ocarina.Backends.REAL is
 
                   when others =>
                      Display_Located_Error
-                       (Loc (N), "unexpected type",
+                       (Loc (N),
+                        "unexpected type",
                         Fatal => True);
                end case;
 
-               Result := New_Integer_Value
-                 (Unsigned_Long_Long (Last_Cpt));
-               T := RT_Integer;
+               Result := New_Integer_Value (Unsigned_Long_Long (Last_Cpt));
+               T      := RT_Integer;
             end;
 
          when FC_Is_In =>
@@ -2793,9 +2877,8 @@ package body Ocarina.Backends.REAL is
                J, K        : Node_Id;
                L_List      : Value_Id;
                R_List      : Value_Id;
-               P           : constant Node_Id := First_Node
-                 (True_Parameters (E));
-               Local_Is_In : Boolean := True;
+               P : constant Node_Id := First_Node (True_Parameters (E));
+               Local_Is_In : Boolean          := True;
                T1          : Return_Type;
                T2          : Return_Type;
             begin
@@ -2812,22 +2895,26 @@ package body Ocarina.Backends.REAL is
                   end if;
                   if T1 /= T2 then
                      Display_Located_Error
-                       (Loc (P), "Is_In must be called on lists "
-                        & "of same type" & T1'Img & " " & T2'Img,
+                       (Loc (P),
+                        "Is_In must be called on lists " &
+                        "of same type" &
+                        T1'Img &
+                        " " &
+                        T2'Img,
                         Fatal => True);
                   end if;
 
-                  VT := Get_Value_Type (L_List);
+                  VT  := Get_Value_Type (L_List);
                   VT2 := Get_Value_Type (R_List);
-                  I := First_Node (VT.LVal);
+                  I   := First_Node (VT.LVal);
                   while Present (I) and then Local_Is_In loop
-                     V := Item_Val (I);
-                     J := First_Node (VT2.LVal);
+                     V           := Item_Val (I);
+                     J           := First_Node (VT2.LVal);
                      Local_Is_In := False;
                      while Present (J) and then not Local_Is_In loop
-                        V2 := Item_Val (J);
-                        Local_Is_In := (Get_Value_Type (V) =
-                                        Get_Value_Type (V2));
+                        V2          := Item_Val (J);
+                        Local_Is_In :=
+                          (Get_Value_Type (V) = Get_Value_Type (V2));
                         J := Next_Node (J);
                      end loop;
                      I := Next_Node (I);
@@ -2838,26 +2925,29 @@ package body Ocarina.Backends.REAL is
                   begin
                      if not Present (P) or else Kind (P) = K_Var_Reference then
                         if not Present (P) then
-                           R1 := Set_Array
-                             (Integer
-                              (Index
-                               (Annotation
-                                (Referenced_Set
-                                 (First_Node
-                                  (Referenced_Sets (E)))))));
-                           R2 := Set_Array
-                             (Integer
-                              (Index
-                               (Annotation
-                                (Referenced_Set
-                                 (Next_Node
-                                  (First_Node
-                                   (Referenced_Sets (E))))))));
+                           R1 :=
+                             Set_Array
+                               (Integer
+                                  (Index
+                                     (Annotation
+                                        (Referenced_Set
+                                           (First_Node
+                                              (Referenced_Sets (E)))))));
+                           R2 :=
+                             Set_Array
+                               (Integer
+                                  (Index
+                                     (Annotation
+                                        (Referenced_Set
+                                           (Next_Node
+                                              (First_Node
+                                                 (Referenced_Sets (E))))))));
                         else
                            Extract_Parameters_Sets (E, R1, R2, Success);
                            if not Success then
                               Display_Located_Error
-                                (Loc (P), "Failed to extract parameters",
+                                (Loc (P),
+                                 "Failed to extract parameters",
                                  Fatal => True);
                            end if;
                         end if;
@@ -2871,13 +2961,13 @@ package body Ocarina.Backends.REAL is
                            exit when not Local_Is_In;
                         end loop;
                      else
-                        R1 := Set_Array
-                          (Integer
-                           (Index
-                            (Annotation
-                             (Referenced_Set
-                              (First_Node
-                               (Referenced_Sets (E)))))));
+                        R1 :=
+                          Set_Array
+                            (Integer
+                               (Index
+                                  (Annotation
+                                     (Referenced_Set
+                                        (First_Node (Referenced_Sets (E)))))));
                         Compute_Check_Expression (P, T1, L_List);
                         if T1 = RT_Error then
                            T := RT_Error;
@@ -2901,7 +2991,7 @@ package body Ocarina.Backends.REAL is
                         else
                            for J in 1 .. Cardinal (R1) loop
                               Local_Is_In := False;
-                              I := First_Node (VT.LVal);
+                              I           := First_Node (VT.LVal);
                               while Present (I) and then Local_Is_In loop
                                  K := Get_Value_Type (Item_Val (I)).ELVal;
                                  if Get (R1, J) = K then
@@ -2916,19 +3006,27 @@ package body Ocarina.Backends.REAL is
                   end;
                end if;
 
-               T := RT_Boolean;
+               T      := RT_Boolean;
                Result := New_Boolean_Value (Local_Is_In);
             end;
 
-         when FC_Cos | FC_Sin | FC_Tan | FC_Cosh | FC_Sinh | FC_Tanh
-           | FC_Ln | FC_Exp | FC_Sqrt | FC_Ceil | FC_Floor =>
+         when FC_Cos |
+           FC_Sin    |
+           FC_Tan    |
+           FC_Cosh   |
+           FC_Sinh   |
+           FC_Tanh   |
+           FC_Ln     |
+           FC_Exp    |
+           FC_Sqrt   |
+           FC_Ceil   |
+           FC_Floor  =>
             declare
-               VT        : Value_Type;
-               R         : Value_Id;
-               T2        : Return_Type;
+               VT : Value_Type;
+               R  : Value_Id;
+               T2 : Return_Type;
             begin
-               Compute_Check_Expression
-                 (First_Node (Parameters (E)), T2, R);
+               Compute_Check_Expression (First_Node (Parameters (E)), T2, R);
                if T2 = RT_Error then
                   T := RT_Error;
                   return;
@@ -2955,11 +3053,11 @@ package body Ocarina.Backends.REAL is
                   when FC_Sqrt =>
                      Result := New_Real_Value (Sqrt (VT.RVal));
                   when FC_Floor =>
-                     Result := New_Real_Value
-                       (Long_Long_Float'Floor (VT.RVal));
+                     Result :=
+                       New_Real_Value (Long_Long_Float'Floor (VT.RVal));
                   when FC_Ceil =>
-                     Result := New_Real_Value
-                       (Long_Long_Float'Ceiling (VT.RVal));
+                     Result :=
+                       New_Real_Value (Long_Long_Float'Ceiling (VT.RVal));
                   when others =>
                      raise Program_Error;
                end case;
@@ -2968,7 +3066,8 @@ package body Ocarina.Backends.REAL is
 
          when others =>
             Display_Located_Error
-              (Loc (E), "Unknown or not implemented verification function",
+              (Loc (E),
+               "Unknown or not implemented verification function",
                Fatal => True);
       end case;
    end Compute_Check_Subprogram_Call;
@@ -3051,9 +3150,7 @@ package body Ocarina.Backends.REAL is
             end if;
 
          when others =>
-            Display_Error
-              ("no such predefined set found",
-               Fatal => True);
+            Display_Error ("no such predefined set found", Fatal => True);
             return RNU.Domain;
       end case;
    end Build_Predefined_Set;
@@ -3066,9 +3163,9 @@ package body Ocarina.Backends.REAL is
       S : constant Runtime_Instance_Access := new Runtime_Instance;
 
    begin
-      S.Set_Array := new Set_Table'(Set_Array.all);
+      S.Set_Array                  := new Set_Table'(Set_Array.all);
       S.all.Current_Range_Variable := Current_Range_Variable;
-      S.all.REAL_Root_Node := RNU.REAL_Root;
+      S.all.REAL_Root_Node         := RNU.REAL_Root;
       return S;
    end Save_Instance;
 
@@ -3078,9 +3175,9 @@ package body Ocarina.Backends.REAL is
 
    procedure Load_Instance (Instance : Runtime_Instance_Access) is
    begin
-      Set_Array := Instance.Set_Array;
+      Set_Array              := Instance.Set_Array;
       Current_Range_Variable := Instance.all.Current_Range_Variable;
-      RNU.REAL_Root := Instance.all.REAL_Root_Node;
+      RNU.REAL_Root          := Instance.all.REAL_Root_Node;
    end Load_Instance;
 
    --------------
@@ -3090,8 +3187,8 @@ package body Ocarina.Backends.REAL is
    procedure Generate (AADL_Root : Node_Id) is
       use RNU.Node_List;
 
-      It            : Natural := First;
-      Node          : Node_Id;
+      It   : Natural := First;
+      Node : Node_Id;
    begin
       Root_System := AADL_Root;
 
@@ -3102,26 +3199,26 @@ package body Ocarina.Backends.REAL is
 
          --  Set local context
 
-         RNU.REAL_Root := Node;
+         RNU.REAL_Root  := Node;
          RNU.Owner_Node := RN.Related_Entity (Node);
 
          --  Runtime step
 
-         Write_Line (Get_Name_String
-                       (RN.Name (RN.Identifier (RNU.REAL_Root)))
-                       & " execution");
+         Write_Line
+           (Get_Name_String (RN.Name (RN.Identifier (RNU.REAL_Root))) &
+            " execution");
 
          if not Check_Requirements (RNU.REAL_Root) then
             Display_Located_Error
               (Loc (RNU.REAL_Root),
-               "requirements are not fulfilled for theorem "
-                 & Get_Name_String (RN.Name (RN.Identifier (RNU.REAL_Root))),
+               "requirements are not fulfilled for theorem " &
+               Get_Name_String (RN.Name (RN.Identifier (RNU.REAL_Root))),
                Fatal => not Ocarina.Analyzer.REAL.Continue_Evaluation);
             Write_Line ("");
             Write_Line
-              ("theorem "
-                 & Get_Name_String (RN.Name (RN.Identifier (RNU.REAL_Root)))
-                 & " is: FALSE");
+              ("theorem " &
+               Get_Name_String (RN.Name (RN.Identifier (RNU.REAL_Root))) &
+               " is: FALSE");
 
          else
             Initialize_Sets_Table (RNU.REAL_Root);
@@ -3159,8 +3256,8 @@ package body Ocarina.Backends.REAL is
    --------------------------
 
    procedure Compute_Theorem_Call
-     (E         : Node_Id;
-      Local_Set : Result_Set;
+     (E         :     Node_Id;
+      Local_Set :     Result_Set;
       Result    : out Value_Id;
       Success   : out Boolean)
    is
@@ -3171,7 +3268,7 @@ package body Ocarina.Backends.REAL is
       --  1/ Export the user-specified parameters to the environment
 
       RNU.Is_Domain := True;
-      RNU.Domain := Local_Set;
+      RNU.Domain    := Local_Set;
 
       --  2/ Initialize the runtime space with new values
       --  Library theorems are already analyzed
@@ -3186,9 +3283,11 @@ package body Ocarina.Backends.REAL is
       Compute_Value (RNU.REAL_Root, Success, R);
       if not Success then
          Display_Located_Error
-           (Loc (RNU.REAL_Root), "Could not compute " &
-            Get_Name_String (Name (Identifier (E)))
-            & " value", Fatal => True);
+           (Loc (RNU.REAL_Root),
+            "Could not compute " &
+            Get_Name_String (Name (Identifier (E))) &
+            " value",
+            Fatal => True);
       end if;
 
       --  FIXME
@@ -3201,8 +3300,8 @@ package body Ocarina.Backends.REAL is
 
       Clean_Runtime;
       RNU.Environment := No_List;
-      RNU.Is_Domain := False;
-      RNU.Domain := Empty_Set;
+      RNU.Is_Domain   := False;
+      RNU.Domain      := Empty_Set;
 
       Result := New_Real_Value (Long_Long_Float (R));
    end Compute_Theorem_Call;

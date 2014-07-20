@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,18 +47,15 @@ package body Ocarina.Builder.AADL.Properties is
 
    function Add_Property_Type_Declaration
      (Property_Set              : Node_Id;
-      Property_Type_Declaration : Node_Id)
-     return Boolean;
+      Property_Type_Declaration : Node_Id) return Boolean;
 
    function Add_Property_Definition_Declaration
      (Property_Set                    : Node_Id;
-      Property_Definition_Declaration : Node_Id)
-     return Boolean;
+      Property_Definition_Declaration : Node_Id) return Boolean;
 
    function Add_Property_Constant_Declaration
      (Property_Set                  : Node_Id;
-      Property_Constant_Declaration : Node_Id)
-     return Boolean;
+      Property_Constant_Declaration : Node_Id) return Boolean;
 
    -----------------------------------------
    -- Add_Property_Definition_Declaration --
@@ -66,24 +63,25 @@ package body Ocarina.Builder.AADL.Properties is
 
    function Add_Property_Definition_Declaration
      (Property_Set                    : Node_Id;
-      Property_Definition_Declaration : Node_Id)
-     return Boolean
+      Property_Definition_Declaration : Node_Id) return Boolean
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       pragma Assert (Kind (Property_Set) = K_Property_Set);
-      pragma Assert (Kind (Property_Definition_Declaration) =
-                              K_Property_Definition_Declaration);
+      pragma Assert
+        (Kind (Property_Definition_Declaration) =
+         K_Property_Definition_Declaration);
    begin
       if Is_Empty (Declarations (Property_Set)) then
-         Set_Declarations (Property_Set,
-                           New_List (K_List_Id,
-                                     Loc (Property_Definition_Declaration)));
+         Set_Declarations
+           (Property_Set,
+            New_List (K_List_Id, Loc (Property_Definition_Declaration)));
       end if;
 
-      Append_Node_To_List (Property_Definition_Declaration,
-                           Declarations (Property_Set));
+      Append_Node_To_List
+        (Property_Definition_Declaration,
+         Declarations (Property_Set));
       return True;
    end Add_Property_Definition_Declaration;
 
@@ -93,24 +91,24 @@ package body Ocarina.Builder.AADL.Properties is
 
    function Add_Property_Type_Declaration
      (Property_Set              : Node_Id;
-      Property_Type_Declaration : Node_Id)
-     return Boolean
+      Property_Type_Declaration : Node_Id) return Boolean
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       pragma Assert (Kind (Property_Set) = K_Property_Set);
       pragma Assert
-        (Kind (Property_Type_Declaration) =  K_Property_Type_Declaration);
+        (Kind (Property_Type_Declaration) = K_Property_Type_Declaration);
    begin
       if Is_Empty (Declarations (Property_Set)) then
-         Set_Declarations (Property_Set,
-                           New_List (K_List_Id,
-                                     Loc (Property_Type_Declaration)));
+         Set_Declarations
+           (Property_Set,
+            New_List (K_List_Id, Loc (Property_Type_Declaration)));
       end if;
 
-      Append_Node_To_List (Property_Type_Declaration,
-                           Declarations (Property_Set));
+      Append_Node_To_List
+        (Property_Type_Declaration,
+         Declarations (Property_Set));
       return True;
    end Add_Property_Type_Declaration;
 
@@ -120,25 +118,25 @@ package body Ocarina.Builder.AADL.Properties is
 
    function Add_Property_Constant_Declaration
      (Property_Set                  : Node_Id;
-      Property_Constant_Declaration : Node_Id)
-     return Boolean
+      Property_Constant_Declaration : Node_Id) return Boolean
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       pragma Assert (Kind (Property_Set) = K_Property_Set);
       pragma Assert
-        (Kind (Property_Constant_Declaration)
-         = K_Constant_Property_Declaration);
+        (Kind (Property_Constant_Declaration) =
+         K_Constant_Property_Declaration);
    begin
       if Is_Empty (Declarations (Property_Set)) then
-         Set_Declarations (Property_Set,
-                           New_List (K_List_Id,
-                                     Loc (Property_Constant_Declaration)));
+         Set_Declarations
+           (Property_Set,
+            New_List (K_List_Id, Loc (Property_Constant_Declaration)));
       end if;
 
-      Append_Node_To_List (Property_Constant_Declaration,
-                           Declarations (Property_Set));
+      Append_Node_To_List
+        (Property_Constant_Declaration,
+         Declarations (Property_Set));
       return True;
    end Add_Property_Constant_Declaration;
 
@@ -149,8 +147,7 @@ package body Ocarina.Builder.AADL.Properties is
    function Add_New_Property_Set
      (Loc       : Location;
       Name      : Node_Id;
-      Namespace : Node_Id)
-     return Node_Id
+      Namespace : Node_Id) return Node_Id
    is
       use Ocarina.Builder.AADL.Namespaces;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -159,7 +156,7 @@ package body Ocarina.Builder.AADL.Properties is
       pragma Assert (Kind (Name) = K_Identifier);
       pragma Assert (Kind (Namespace) = K_AADL_Specification);
 
-      Node : Node_Id;
+      Node    : Node_Id;
       Success : Boolean := True;
    begin
       Node := New_Node (K_Property_Set, Loc);
@@ -189,8 +186,7 @@ package body Ocarina.Builder.AADL.Properties is
       Constant_Type   : Node_Id;
       Unit_Identifier : Node_Id;
       Single_Value    : Node_Id;
-      Multiple_Values : List_Id)
-     return Node_Id
+      Multiple_Values : List_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -211,11 +207,10 @@ package body Ocarina.Builder.AADL.Properties is
          or else Kind (Constant_Type) = K_Boolean_Type
          or else Kind (Constant_Type) = K_Unique_Property_Type_Identifier);
 
-      Node : constant Node_Id
-        := New_Node (K_Constant_Property_Declaration, Loc);
-      Value_Node : constant Node_Id
-        := New_Node (K_Property_Value, Loc);
-      Success : Boolean := True;
+      Node : constant Node_Id :=
+        New_Node (K_Constant_Property_Declaration, Loc);
+      Value_Node : constant Node_Id := New_Node (K_Property_Value, Loc);
+      Success    : Boolean          := True;
    begin
       Set_Single_Value (Value_Node, Single_Value);
       Set_Multi_Value (Value_Node, Multiple_Values);
@@ -246,8 +241,7 @@ package body Ocarina.Builder.AADL.Properties is
      (Loc             : Location;
       Name            : Node_Id;
       Property_Set    : Node_Id;
-      Type_Designator : Node_Id)
-     return Node_Id
+      Type_Designator : Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -255,7 +249,7 @@ package body Ocarina.Builder.AADL.Properties is
       pragma Assert (Kind (Name) = K_Identifier);
       pragma Assert (Kind (Property_Set) = K_Property_Set);
 
-      Node : Node_Id;
+      Node    : Node_Id;
       Success : Boolean := True;
    begin
       Node := New_Node (K_Property_Type_Declaration, Loc);
@@ -287,8 +281,7 @@ package body Ocarina.Builder.AADL.Properties is
       Property_Name_Type      : Node_Id;
       Property_Type_Is_A_List : Boolean;
       Applies_To_All          : Boolean;
-      Applies_To              : List_Id)
-     return Node_Id
+      Applies_To              : List_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -297,7 +290,7 @@ package body Ocarina.Builder.AADL.Properties is
       pragma Assert (Kind (Property_Set) = K_Property_Set);
       pragma Assert (Safe_XOR (Applies_To_All, (not Is_Empty (Applies_To))));
 
-      Node : Node_Id;
+      Node    : Node_Id;
       Success : Boolean := True;
    begin
       Node := New_Node (K_Property_Definition_Declaration, Loc);
@@ -306,16 +299,19 @@ package body Ocarina.Builder.AADL.Properties is
       Set_Is_Inherit (Node, Is_Inherit);
       Set_Is_Access (Node, Is_Access);
       Set_Applies_To (Node, New_Node (K_Applies_To, Loc));
-      Set_Is_All (Ocarina.ME_AADL.AADL_Tree.Nodes.Applies_To (Node),
-                  Applies_To_All);
-      Set_Owner_Categories (Ocarina.ME_AADL.AADL_Tree.Nodes.Applies_To (Node),
-                            Applies_To);
+      Set_Is_All
+        (Ocarina.ME_AADL.AADL_Tree.Nodes.Applies_To (Node),
+         Applies_To_All);
+      Set_Owner_Categories
+        (Ocarina.ME_AADL.AADL_Tree.Nodes.Applies_To (Node),
+         Applies_To);
       Set_Property_Name_Type (Node, New_Node (K_Property_Type, Loc));
       Set_Property_Type_Designator
         (Ocarina.ME_AADL.AADL_Tree.Nodes.Property_Name_Type (Node),
          Property_Name_Type);
-      Set_Is_List (Ocarina.ME_AADL.AADL_Tree.Nodes.Property_Name_Type (Node),
-                   Property_Type_Is_A_List);
+      Set_Is_List
+        (Ocarina.ME_AADL.AADL_Tree.Nodes.Property_Name_Type (Node),
+         Property_Type_Is_A_List);
 
       if Multiple_Default_Value = No_List
         and then Single_Default_Value = No_Node
@@ -354,8 +350,7 @@ package body Ocarina.Builder.AADL.Properties is
       Is_Additive         : Boolean;
       Applies_To          : List_Id;
       Check_For_Conflicts : Boolean := False;
-      Override            : Boolean := False)
-     return Node_Id
+      Override            : Boolean := False) return Node_Id
    is
       use Ocarina.Builder.AADL.Components;
       use Ocarina.Builder.AADL.Components.Features;
@@ -371,8 +366,9 @@ package body Ocarina.Builder.AADL.Properties is
 
       pragma Assert (Kind (Name) = K_Identifier);
 
-      pragma Assert (Kind (Property_Name) = K_Entity_Reference
-                     and then Identifier (Property_Name) /= No_Node);
+      pragma Assert
+        (Kind (Property_Name) = K_Entity_Reference
+         and then Identifier (Property_Name) /= No_Node);
 
       pragma Assert
         (Kind (Container) = K_Component_Type
@@ -394,17 +390,19 @@ package body Ocarina.Builder.AADL.Properties is
          or else Kind (Container) = K_Subcomponent_Access
          or else Kind (Container) = K_Package_Specification);
 
-      Node, Existing_Node : Node_Id := No_Node;
-      Value_Of_Association : constant Node_Id
-        := New_Node (K_Property_Value, Loc);
-      Success : Boolean := True;
+      Node, Existing_Node  : Node_Id          := No_Node;
+      Value_Of_Association : constant Node_Id :=
+        New_Node (K_Property_Value, Loc);
+      Success       : Boolean := True;
       Property_List : List_Id;
    begin
       if Check_For_Conflicts then
          Property_List :=
            Ocarina.ME_AADL.AADL_Tree.Nodes.Properties (Container);
-         Existing_Node := Find_Property_Association_From_Name
-           (Property_List, Ocarina.ME_AADL.AADL_Tree.Nodes.Name (Name));
+         Existing_Node :=
+           Find_Property_Association_From_Name
+             (Property_List,
+              Ocarina.ME_AADL.AADL_Tree.Nodes.Name (Name));
       end if;
 
       if Existing_Node = No_Node or else Override then
@@ -425,8 +423,9 @@ package body Ocarina.Builder.AADL.Properties is
          if Property_Value /= No_Node then
             if Kind (Property_Value) = K_Property_List_Value then
                Set_Single_Value (Value_Of_Association, No_Node);
-               Set_Multi_Value (Value_Of_Association,
-                                List_Id (Property_Value));
+               Set_Multi_Value
+                 (Value_Of_Association,
+                  List_Id (Property_Value));
             else
                Set_Single_Value (Value_Of_Association, Property_Value);
                Set_Multi_Value (Value_Of_Association, No_List);
@@ -437,48 +436,62 @@ package body Ocarina.Builder.AADL.Properties is
          end if;
 
          case Kind (Container) is
-            when K_Component_Type
-              | K_Component_Implementation
-              | K_Feature_Group_Type =>
+            when K_Component_Type        |
+              K_Component_Implementation |
+              K_Feature_Group_Type       =>
                Success :=
-              Ocarina.Builder.AADL.Components.Add_Property_Association
-              (Container, Node);
-         when K_Subcomponent =>
-            Success := Ocarina.Builder.AADL.Components.Subcomponents.
-              Add_Property_Association
-              (Container, Node);
-         when K_Mode =>
-            Success := Ocarina.Builder.AADL.Components.Modes.
-              Add_Property_Association
-              (Container, Node);
-         when K_Flow_Spec
-           | K_Flow_Implementation
-           | K_Flow_Implementation_Refinement
-           | K_End_To_End_Flow_Spec
-           | K_End_To_End_Flow_Refinement =>
-            Success := Ocarina.Builder.AADL.Components.Flows.
-              Add_Property_Association
-              (Container, Node);
-         when K_Connection =>
-            Success := Ocarina.Builder.AADL.Components.Connections.
-              Add_Property_Association
-              (Container, Node);
-         when K_Subprogram_Call =>
-            Success := Ocarina.Builder.AADL.Components.Subprogram_Calls.
-              Add_Property_Association
-              (Container, Node);
-         when K_Package_Specification =>
-            Success := Ocarina.Builder.AADL.Namespaces.Add_Property_Association
-              (Container, Node);
-         when K_Subprogram_Spec
-           | K_Port_Spec
-           | K_Feature_Group_Spec
-           | K_Parameter
-           | K_Subcomponent_Access =>
-            Success := Ocarina.Builder.AADL.Components.Features.
-              Add_Property_Association (Container, Node);
-         when others =>
-            raise Program_Error;
+                 Ocarina.Builder.AADL.Components.Add_Property_Association
+                   (Container,
+                    Node);
+            when K_Subcomponent =>
+               Success :=
+                 Ocarina.Builder.AADL.Components.Subcomponents
+                   .Add_Property_Association
+                   (Container,
+                    Node);
+            when K_Mode =>
+               Success :=
+                 Ocarina.Builder.AADL.Components.Modes.Add_Property_Association
+                   (Container,
+                    Node);
+            when K_Flow_Spec                   |
+              K_Flow_Implementation            |
+              K_Flow_Implementation_Refinement |
+              K_End_To_End_Flow_Spec           |
+              K_End_To_End_Flow_Refinement     =>
+               Success :=
+                 Ocarina.Builder.AADL.Components.Flows.Add_Property_Association
+                   (Container,
+                    Node);
+            when K_Connection =>
+               Success :=
+                 Ocarina.Builder.AADL.Components.Connections
+                   .Add_Property_Association
+                   (Container,
+                    Node);
+            when K_Subprogram_Call =>
+               Success :=
+                 Ocarina.Builder.AADL.Components.Subprogram_Calls
+                   .Add_Property_Association
+                   (Container,
+                    Node);
+            when K_Package_Specification =>
+               Success :=
+                 Ocarina.Builder.AADL.Namespaces.Add_Property_Association
+                   (Container,
+                    Node);
+            when K_Subprogram_Spec  |
+              K_Port_Spec           |
+              K_Feature_Group_Spec  |
+              K_Parameter           |
+              K_Subcomponent_Access =>
+               Success :=
+                 Ocarina.Builder.AADL.Components.Features
+                   .Add_Property_Association
+                   (Container,
+                    Node);
+            when others =>
+               raise Program_Error;
          end case;
       else
          Success := False;
@@ -503,8 +516,7 @@ package body Ocarina.Builder.AADL.Properties is
      (Loc             : Location;
       Container       : Node_Id;
       Applies_To_Elts : List_Id;
-      Annex_Path      : Node_Id)
-     return Node_Id
+      Annex_Path      : Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;

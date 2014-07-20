@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;
+with Ocarina.Types;
 with Locations;
 
 with Ocarina.ME_AADL;
@@ -39,9 +39,8 @@ with Ocarina.ME_AADL;
 package Ocarina.Builder.AADL.Namespaces is
 
    function Add_Declaration
-     (Namespace : Types.Node_Id;
-      Element : Types.Node_Id)
-     return Boolean;
+     (Namespace : Ocarina.Types.Node_Id;
+      Element   : Ocarina.Types.Node_Id) return Boolean;
    --  Insert any component, property_set, package or port_group into
    --  the AADL specification. Namespace must reference the node
    --  created with Initialize_Unnamed_Namespace or a package
@@ -49,8 +48,7 @@ package Ocarina.Builder.AADL.Namespaces is
    --  inserted, else False
 
    function Initialize_Unnamed_Namespace
-     (Loc : Locations.Location)
-     return Types.Node_Id;
+     (Loc : Locations.Location) return Ocarina.Types.Node_Id;
    --  Create the AADL specification node, which corresponds to the
    --  top level of the AADL description. This function must be
    --  invoked first, as all the other elements of the description
@@ -59,10 +57,9 @@ package Ocarina.Builder.AADL.Namespaces is
    --  newly created node if everything went right, else False.
 
    function Add_New_Package
-     (Loc : Locations.Location;
-      Pack_Name : Types.Node_Id;
-      Namespace : Types.Node_Id)
-     return Types.Node_Id;
+     (Loc       : Locations.Location;
+      Pack_Name : Ocarina.Types.Node_Id;
+      Namespace : Ocarina.Types.Node_Id) return Ocarina.Types.Node_Id;
    --  Checks if a package of that name already exists. If so, return
    --  this one, else create a new one and return it. Loc is the
    --  location of the package specification in the parsed
@@ -71,14 +68,12 @@ package Ocarina.Builder.AADL.Namespaces is
    --  top level AADL specification node.
 
    function Add_New_Package_Name
-     (Loc            : Locations.Location;
-      Identifiers    : Types.List_Id)
-     return Types.Node_Id;
+     (Loc         : Locations.Location;
+      Identifiers : Ocarina.Types.List_Id) return Ocarina.Types.Node_Id;
 
    function Add_Property_Association
-     (Pack : Types.Node_Id;
-      Property_Association : Types.Node_Id)
-     return Boolean;
+     (Pack                 : Ocarina.Types.Node_Id;
+      Property_Association : Ocarina.Types.Node_Id) return Boolean;
    --  Add a property association to the list of the package
    --  properties, without checking for homonyms or whatever. This
    --  function should be only used by other functions of the core
@@ -86,34 +81,31 @@ package Ocarina.Builder.AADL.Namespaces is
    --  True if the property was added, else False.
 
    function Add_New_Name_Visibility_Declaration
-     (Loc         : Locations.Location;
-      Namespace   : Types.Node_Id;
-      List_Items  : Types.List_Id;
-      Is_Private  : Boolean := False)
-     return Types.Node_Id;
+     (Loc        : Locations.Location;
+      Namespace  : Ocarina.Types.Node_Id;
+      List_Items : Ocarina.Types.List_Id;
+      Is_Private : Boolean := False) return Ocarina.Types.Node_Id;
    --  Create the name visibility declaration node to the list of
    --  the package declarations, without checking.
 
    function Add_New_Import_Declaration
-     (Loc         : Locations.Location;
-      Namespace   : Types.Node_Id;
-      List_Items  : Types.List_Id;
-      Is_Private  : Boolean := False)
-     return Types.Node_Id;
+     (Loc        : Locations.Location;
+      Namespace  : Ocarina.Types.Node_Id;
+      List_Items : Ocarina.Types.List_Id;
+      Is_Private : Boolean := False) return Ocarina.Types.Node_Id;
    --  Create the import node to the list of the name visibility declarations,
    --  without checking.
 
    function Add_New_Alias_Declaration
      (Loc            : Locations.Location;
-      Namespace      : Types.Node_Id;
-      Identifier     : Types.Node_Id;
-      Package_Name   : Types.Node_Id;
-      Classifier_Ref : Types.Node_Id;
+      Namespace      : Ocarina.Types.Node_Id;
+      Identifier     : Ocarina.Types.Node_Id;
+      Package_Name   : Ocarina.Types.Node_Id;
+      Classifier_Ref : Ocarina.Types.Node_Id;
       Entity_Cat     : Ocarina.ME_AADL.Entity_Category;
       Component_Cat  : Ocarina.ME_AADL.Component_Category;
       Is_All         : Boolean := False;
-      Is_Private     : Boolean := False)
-     return Types.Node_Id;
+      Is_Private     : Boolean := False) return Ocarina.Types.Node_Id;
    --  Create the alias node to the list of the name visibility declarations,
    --  without checking.
 

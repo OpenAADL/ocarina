@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -49,19 +49,20 @@ package body Ocarina.Builder.AADL.Components.Prototypes is
       Container      : Node_Id;
       Classifier_Ref : Node_Id;
       Category       : Ocarina.ME_AADL.Component_Category;
-      Is_Refinement  : Boolean := False)
-     return Node_Id
+      Is_Refinement  : Boolean := False) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
-      pragma Assert (Container /= No_Node
-               and then (Kind (Container) = K_Component_Implementation
-                           or else Kind (Container) = K_Component_Type
-                           or else Kind (Container) = K_Feature_Group_Type));
+      pragma Assert
+        (Container /= No_Node
+         and then
+         (Kind (Container) = K_Component_Implementation
+          or else Kind (Container) = K_Component_Type
+          or else Kind (Container) = K_Feature_Group_Type));
 
-      Node : constant Node_Id := New_Node (K_Prototype, Loc);
-      Success : Boolean := True;
+      Node    : constant Node_Id := New_Node (K_Prototype, Loc);
+      Success : Boolean          := True;
    begin
       Set_Identifier (Node, Name);
       Set_Corresponding_Entity (Name, Node);
@@ -73,8 +74,7 @@ package body Ocarina.Builder.AADL.Components.Prototypes is
       Set_Property_Scope (Node, New_Node (K_Scope_Definition, Loc));
       Set_Corresponding_Entity (Property_Scope (Node), Node);
 
-      Success := Add_Prototype (Component => Container,
-                                Prototype => Node);
+      Success := Add_Prototype (Component => Container, Prototype => Node);
 
       if Success then
          return Node;
@@ -93,8 +93,7 @@ package body Ocarina.Builder.AADL.Components.Prototypes is
       Name           : Node_Id;
       Container      : Node_Id;
       Classifier_Ref : Node_Id;
-      Category       : Ocarina.ME_AADL.Component_Category)
-     return Node_Id
+      Category       : Ocarina.ME_AADL.Component_Category) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;

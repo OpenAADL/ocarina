@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,51 +37,43 @@
 
 package Ocarina.Analyzer.AADL.Legality_Rules is
 
-   function Check_Legality_Rules
-     (Root    : Node_Id)
-     return Boolean;
+   function Check_Legality_Rules (Root : Node_Id) return Boolean;
    --  Verify that the given AADL architecture respects all the
    --  legality rules specified by the AADL standard.
 
    function A_Component_Feature
      (Component : Node_Id;
-      Feature   : Node_Id)
-     return Boolean;
+      Feature   : Node_Id) return Boolean;
    --  Return True if Feature can be a feature of Component, else
    --  return False.
 
    function A_Component_Subcomponent
      (Component    : Node_Id;
-      Subcomponent : Node_Id)
-     return Boolean;
+      Subcomponent : Node_Id) return Boolean;
    --  Return True if Subcomponent can be a subcomponent of Component,
    --  else return False.
 
    function A_Component_Connection
      (Component  : Node_Id;
-      Connection : Node_Id)
-     return Boolean;
+      Connection : Node_Id) return Boolean;
    --  Return True if Connection can be a connection of Component,
    --  else return False.
 
    function A_Component_Flow
      (Component : Node_Id;
-      Flow      : Node_Id)
-     return Boolean;
+      Flow      : Node_Id) return Boolean;
    --  Return True if Flow can be a flow of Component, else return
    --  False
 
    function A_Component_Flow_Specification
      (Component : Node_Id;
-      Flow_Spec : Node_Id)
-     return Boolean;
+      Flow_Spec : Node_Id) return Boolean;
    --  Return True if Flow_Spec can be a flow specification of
    --  Component, else return False
 
    function A_Component_Subprogram_Call_Sequence
      (Component           : Node_Id;
-      Subprogram_Call_Seq : Node_Id)
-     return Boolean;
+      Subprogram_Call_Seq : Node_Id) return Boolean;
    --  Return True if Subprogram_Call can be a subprogram_call of
    --  Component, else return False
 

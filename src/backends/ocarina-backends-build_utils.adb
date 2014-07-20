@@ -38,16 +38,16 @@ with GNAT.Table;
 with GNAT.OS_Lib;
 with GNAT.Directory_Operations;
 
-with Namet;
-with Output;
+with Ocarina.Namet;
+with Ocarina.Output;
 with Utils; use Utils;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
-with Ocarina.Options;                  use Ocarina.Options;
+with Ocarina.Options;  use Ocarina.Options;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
-with Ocarina.Backends;                 use Ocarina.Backends;
+with Ocarina.Backends; use Ocarina.Backends;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.Ada_Tree.Nutils;
@@ -56,8 +56,8 @@ package body Ocarina.Backends.Build_Utils is
 
    use GNAT.OS_Lib;
    use GNAT.Directory_Operations;
-   use Namet;
-   use Output;
+   use Ocarina.Namet;
+   use Ocarina.Output;
 
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -165,10 +165,10 @@ package body Ocarina.Backends.Build_Utils is
          Get_Name_String (Directory);
       end if;
       declare
-         Normalized_Dir : constant String
-           := Normalize_Pathname (Name_Buffer (1 .. Name_Len));
-         Resolved_Filename : constant String
-           := Normalize_Pathname (Get_Name_String (Filename), Normalized_Dir);
+         Normalized_Dir : constant String :=
+           Normalize_Pathname (Name_Buffer (1 .. Name_Len));
+         Resolved_Filename : constant String :=
+           Normalize_Pathname (Get_Name_String (Filename), Normalized_Dir);
       begin
          Dirname  := Get_String_Name (Dir_Name (Resolved_Filename));
          Basename := Get_String_Name (Base_Name (Resolved_Filename));
@@ -217,11 +217,11 @@ package body Ocarina.Backends.Build_Utils is
 
       function Get (P : Node_Id) return Build_Util is
          I_Name : constant Name_Id := Get_Internal_Name (P);
-         Index  : constant Nat := Get_Name_Table_Info (I_Name);
+         Index  : constant Nat     := Get_Name_Table_Info (I_Name);
       begin
          if Index = 0 then
-            raise Program_Error with "Try to get a build utils which has"
-              & " not been set";
+            raise Program_Error
+              with "Try to get a build utils which has" & " not been set";
          end if;
 
          return Internal_Table.Table (Index);
@@ -287,60 +287,61 @@ package body Ocarina.Backends.Build_Utils is
    package body Makefiles is
 
       procedure Visit_Architecture_Instance (E : Node_Id);
-      procedure Visit_Component_Instance    (E : Node_Id);
-      procedure Visit_System_Instance       (E : Node_Id);
-      procedure Visit_Process_Instance      (E : Node_Id);
-      procedure Visit_Thread_Instance       (E : Node_Id);
+      procedure Visit_Component_Instance (E : Node_Id);
+      procedure Visit_System_Instance (E : Node_Id);
+      procedure Visit_Process_Instance (E : Node_Id);
+      procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Subprogram_Instance
-         (E : Node_Id; Force_Parent : Node_Id := No_Node);
-      procedure Visit_Port_Instance         (E : Node_Id);
-      procedure Visit_Bus_Instance          (E : Node_Id);
-      procedure Visit_Virtual_Bus_Instance  (E : Node_Id);
-      procedure Visit_Data_Instance         (E : Node_Id);
-      procedure Visit_Abstract_Instance     (E : Node_Id);
+        (E            : Node_Id;
+         Force_Parent : Node_Id := No_Node);
+      procedure Visit_Port_Instance (E : Node_Id);
+      procedure Visit_Bus_Instance (E : Node_Id);
+      procedure Visit_Virtual_Bus_Instance (E : Node_Id);
+      procedure Visit_Data_Instance (E : Node_Id);
+      procedure Visit_Abstract_Instance (E : Node_Id);
 
       procedure Build_Architecture_Instance (E : Node_Id);
-      procedure Build_Component_Instance    (E : Node_Id);
-      procedure Build_System_Instance       (E : Node_Id);
-      procedure Build_Process_Instance      (E : Node_Id);
+      procedure Build_Component_Instance (E : Node_Id);
+      procedure Build_System_Instance (E : Node_Id);
+      procedure Build_Process_Instance (E : Node_Id);
 
       procedure Clean_Architecture_Instance (E : Node_Id);
-      procedure Clean_Component_Instance    (E : Node_Id);
-      procedure Clean_System_Instance       (E : Node_Id);
+      procedure Clean_Component_Instance (E : Node_Id);
+      procedure Clean_System_Instance (E : Node_Id);
 
       Current_Process : Node_Id := No_Node;
 
       type Makefile_Rec is record
-         Appli_Name         : Name_Id;
+         Appli_Name : Name_Id;
          --  The distributed application name
 
-         Node_Name          : Name_Id;
+         Node_Name : Name_Id;
          --  The node name (in lower case)
 
          Execution_Platform : Supported_Execution_Platform := Platform_None;
-         Execution_Platform_Name : Name_Id := No_Name;
+         Execution_Platform_Name : Name_Id                      := No_Name;
          --  The execution platform of the processor the current node
          --  is bound to.
 
-         Transport_API      : Supported_Transport_APIs;
+         Transport_API : Supported_Transport_APIs;
          --  The transport API used by the current node to
          --  communicate with other nodes.
 
-         C_Objs             : Name_Tables.Instance;
+         C_Objs : Name_Tables.Instance;
 
-         Ada_Sources        : Name_Tables.Instance;
+         Ada_Sources : Name_Tables.Instance;
 
-         Asn_Sources        : Name_Tables.Instance;
+         Asn_Sources : Name_Tables.Instance;
 
-         C_Sources          : Name_Tables.Instance;
+         C_Sources : Name_Tables.Instance;
          --  The C source files that may implement some subprograms of
          --  the current node (absolute or relative path).
 
-         CPP_Sources          : Name_Tables.Instance;
+         CPP_Sources : Name_Tables.Instance;
          --  The C source files that may implement some subprograms of
          --  the current node (absolute or relative path).
 
-         C_Libraries        : Name_Tables.Instance;
+         C_Libraries : Name_Tables.Instance;
          --  The C libraries that may contain the binary code of some
          --  subprograms of the current node (absolute or relative
          --  path).
@@ -359,19 +360,19 @@ package body Ocarina.Backends.Build_Utils is
          --  The Simulink_Directory corresponds to the directory
          --  that contains the simulink application code.
 
-         Simulink_Node      : Name_Id;
+         Simulink_Node : Name_Id;
          --  The Simulink_Node is the name of the node we try to
          --  integrate in our AADL model.
 
-         Use_Simulink       : Boolean;
+         Use_Simulink : Boolean;
          --  Use_Simulink states if we integrate simulink application
          --  code or not.
 
-         Scade_Directory    : Name_Id;
+         Scade_Directory : Name_Id;
          --  The Scade_Directory is the name of the directory that contains
          --  Scade source code.
 
-         Use_Scade          : Boolean;
+         Use_Scade : Boolean;
          --  The Use_Scade variable tells the build-system if we try
          --  to integrate SCADE application code in our generated
          --  system.
@@ -387,10 +388,10 @@ package body Ocarina.Backends.Build_Utils is
       --  Deallocates the internals of T
 
       procedure Ada_C_Command_Line_Flags
-        (Ada_Sources        : Name_Tables.Instance;
-         C_Sources          : Name_Tables.Instance;
-         CPP_Sources        : Name_Tables.Instance;
-         C_Libraries        : Name_Tables.Instance);
+        (Ada_Sources : Name_Tables.Instance;
+         C_Sources   : Name_Tables.Instance;
+         CPP_Sources : Name_Tables.Instance;
+         C_Libraries : Name_Tables.Instance);
 
       procedure Compile_Ada_Files (Ada_Sources : Name_Tables.Instance);
       procedure Compile_C_Files (C_Sources : Name_Tables.Instance);
@@ -435,7 +436,8 @@ package body Ocarina.Backends.Build_Utils is
 
       procedure Free (M : in out Makefile_Type) is
          procedure Deallocate is new Ada.Unchecked_Deallocation
-           (Makefile_Rec, Makefile_Type);
+           (Makefile_Rec,
+            Makefile_Type);
       begin
          Name_Tables.Free (M.all.Ada_Sources);
          Name_Tables.Free (M.all.Asn_Sources);
@@ -448,7 +450,9 @@ package body Ocarina.Backends.Build_Utils is
       end Free;
 
       package Makefiles is new Generic_List
-        (Makefile_Type, "Makefile_List", Free);
+        (Makefile_Type,
+         "Makefile_List",
+         Free);
       --  The list of all the makefile structures
 
       -----------
@@ -565,9 +569,7 @@ package body Ocarina.Backends.Build_Utils is
             Get_Name_String_And_Append (M.Node_Name);
 
             if Get_Name_Table_Byte (Name_Find) = 0 then
-               Name_Tables.Append
-                 (M.User_Source_Dirs,
-                  Source_Dirname);
+               Name_Tables.Append (M.User_Source_Dirs, Source_Dirname);
                Set_Name_Table_Byte (Name_Find, 1);
             end if;
 
@@ -603,12 +605,12 @@ package body Ocarina.Backends.Build_Utils is
                      --  Library names MUST begin with "lib"
 
                      if Name_Buffer (Name_Len - 1 .. Name_Len) = ".a"
-                       and then (Name_Len <= 5
-                                   or else Name_Buffer (1 .. 3) /= "lib")
+                       and then
+                       (Name_Len <= 5 or else Name_Buffer (1 .. 3) /= "lib")
                      then
                         Display_Error
-                          ("Invalid library name"
-                             & Name_Buffer (1 .. Name_Len),
+                          ("Invalid library name" &
+                           Name_Buffer (1 .. Name_Len),
                            Fatal => True);
                      end if;
 
@@ -700,9 +702,7 @@ package body Ocarina.Backends.Build_Utils is
             Get_Name_String_And_Append (M.Node_Name);
 
             if Get_Name_Table_Byte (Name_Find) = 0 then
-               Name_Tables.Append
-                 (M.User_Source_Dirs,
-                  Source_Dirname);
+               Name_Tables.Append (M.User_Source_Dirs, Source_Dirname);
                Set_Name_Table_Byte (Name_Find, 1);
             end if;
 
@@ -803,8 +803,8 @@ package body Ocarina.Backends.Build_Utils is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -886,17 +886,15 @@ package body Ocarina.Backends.Build_Utils is
       -------------------------
 
       procedure Visit_Data_Instance (E : Node_Id) is
-         Source   : Name_Id;
-         Sources  : constant Name_Array := Get_Source_Text (E);
-         M        : constant Makefile_Type :=
-           Makefiles.Get (Current_Process);
+         Source  : Name_Id;
+         Sources : constant Name_Array    := Get_Source_Text (E);
+         M       : constant Makefile_Type := Makefiles.Get (Current_Process);
       begin
-         if Get_Source_Language (E) = Language_ASN1 and then
-            Sources'Length /= 0 then
+         if Get_Source_Language (E) = Language_ASN1
+           and then Sources'Length /= 0
+         then
             Source := Sources (1);
-            Name_Tables.Append
-              (M.Asn_Sources,
-               Source);
+            Name_Tables.Append (M.Asn_Sources, Source);
          end if;
       end Visit_Data_Instance;
 
@@ -929,18 +927,18 @@ package body Ocarina.Backends.Build_Utils is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         C  : Node_Id;
-         S  : constant Node_Id := Parent_Subcomponent (E);
-         A  : constant Node_Id := Parent_Component (Parent_Subcomponent (E));
-         M  : constant Makefile_Type := new Makefile_Rec;
-         SC : Node_Id;
+         C              : Node_Id;
+         S              : constant Node_Id       := Parent_Subcomponent (E);
+         A : constant Node_Id := Parent_Component (Parent_Subcomponent (E));
+         M              : constant Makefile_Type := new Makefile_Rec;
+         SC             : Node_Id;
          Current_Device : Node_Id;
          Feature        : Node_Id;
          Parent         : Node_Id;
          Src            : Node_Id;
          Dst            : Node_Id;
-         The_System           : constant Node_Id := Parent_Component
-                                 (Parent_Subcomponent (E));
+         The_System     : constant Node_Id       :=
+           Parent_Component (Parent_Subcomponent (E));
       begin
          --  Associates the Makefile structure to the process
          --  instance. Keep in mind that it is important to use
@@ -952,8 +950,8 @@ package body Ocarina.Backends.Build_Utils is
 
          Makefiles.Set (E, M);
 
-         M.Appli_Name := Normalize_Name (Name (Identifier (A)));
-         M.Node_Name  := Normalize_Name (Name (Identifier (S)));
+         M.Appli_Name    := Normalize_Name (Name (Identifier (A)));
+         M.Node_Name     := Normalize_Name (Name (Identifier (S)));
          M.Use_Transport := False;
          M.Use_Simulink  := False;
          M.Use_Scade     := False;
@@ -961,10 +959,10 @@ package body Ocarina.Backends.Build_Utils is
          --  Get the execution platform of the processor this node is
          --  bound to.
 
-         M.Execution_Platform := Get_Execution_Platform
-           (Get_Bound_Processor (E));
-         M.Execution_Platform_Name := Get_Execution_Platform
-           (Get_Bound_Processor (E));
+         M.Execution_Platform :=
+           Get_Execution_Platform (Get_Bound_Processor (E));
+         M.Execution_Platform_Name :=
+           Get_Execution_Platform (Get_Bound_Processor (E));
 
          --  Get the transport API used by this node. It is
          --  important to ensure that the Namings package visitors
@@ -1009,14 +1007,13 @@ package body Ocarina.Backends.Build_Utils is
 
                      Parent := Parent_Component (Item (Src));
 
-                     if AAU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
-                        if Get_Provided_Virtual_Bus_Class
-                           (Extra_Item (Src)) /= No_Node then
+                     if AAU.Is_Process (Parent) and then Parent /= E then
+                        if Get_Provided_Virtual_Bus_Class (Extra_Item (Src)) /=
+                          No_Node
+                        then
                            Visit
-                              (Get_Provided_Virtual_Bus_Class
-                                 (Extra_Item (Src)));
+                             (Get_Provided_Virtual_Bus_Class
+                                (Extra_Item (Src)));
                         end if;
                      end if;
 
@@ -1032,14 +1029,13 @@ package body Ocarina.Backends.Build_Utils is
                   while Present (Dst) loop
                      Parent := Parent_Component (Item (Dst));
 
-                     if AAU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
-                        if Get_Provided_Virtual_Bus_Class
-                           (Extra_Item (Dst)) /= No_Node then
+                     if AAU.Is_Process (Parent) and then Parent /= E then
+                        if Get_Provided_Virtual_Bus_Class (Extra_Item (Dst)) /=
+                          No_Node
+                        then
                            Visit
-                              (Get_Provided_Virtual_Bus_Class
-                                 (Extra_Item (Dst)));
+                             (Get_Provided_Virtual_Bus_Class
+                                (Extra_Item (Dst)));
                         end if;
                      end if;
 
@@ -1059,13 +1055,13 @@ package body Ocarina.Backends.Build_Utils is
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
                if AAU.Is_Device (Corresponding_Instance (C)) then
-                     Current_Device := Corresponding_Instance (C);
+                  Current_Device := Corresponding_Instance (C);
                   declare
-                     Source_Files : constant Name_Array
-                                 := Get_Source_Text (Current_Device);
+                     Source_Files : constant Name_Array :=
+                       Get_Source_Text (Current_Device);
                   begin
                      Handle_C_Source
-                        (Parent_Subcomponent (Current_Device),
+                       (Parent_Subcomponent (Current_Device),
                         No_Name,
                         Source_Files,
                         M);
@@ -1105,17 +1101,15 @@ package body Ocarina.Backends.Build_Utils is
       procedure Visit_Thread_Instance (E : Node_Id) is
          Parent_Process : constant Node_Id :=
            Corresponding_Instance (Get_Container_Process (E));
-         M              : constant Makefile_Type :=
-           Makefiles.Get (Parent_Process);
-         Compute_Entrypoint : Name_Id;
-         Initialize_Entrypoint : constant Name_Id :=
+         M : constant Makefile_Type := Makefiles.Get (Parent_Process);
+         Compute_Entrypoint    : Name_Id;
+         Initialize_Entrypoint : constant Name_Id       :=
            Get_Thread_Initialize_Entrypoint (E);
-         Language       : constant Supported_Source_Language :=
-           Resolve_Language (E);
-         Source_Files   : constant Name_Array := Get_Source_Text (E);
-         Call_Seq       : Node_Id;
-         Spg_Call       : Node_Id;
-         F              : Node_Id;
+         Language : constant Supported_Source_Language := Resolve_Language (E);
+         Source_Files : constant Name_Array := Get_Source_Text (E);
+         Call_Seq     : Node_Id;
+         Spg_Call     : Node_Id;
+         F            : Node_Id;
       begin
          --  If the thread implementation is in C, we need to update
          --  the makefile structure.
@@ -1173,17 +1167,19 @@ package body Ocarina.Backends.Build_Utils is
       -------------------------------
 
       procedure Visit_Subprogram_Instance
-         (E : Node_Id; Force_Parent : Node_Id := No_Node) is
+        (E            : Node_Id;
+         Force_Parent : Node_Id := No_Node)
+      is
          Parent_Process  : Node_Id;
          M               : Makefile_Type;
          Subprogram_Kind : constant Supported_Subprogram_Kind :=
            Get_Subprogram_Kind (E);
-         Source_Name     : constant Name_Id := Get_Source_Name (E);
-         Source_Files    : constant Name_Array := Get_Source_Text (E);
-         Call_Seq        : Node_Id;
-         Spg_Call        : Node_Id;
-         Simulink_Dir    : Name_Id;
-         Scade_Dir       : Name_Id;
+         Source_Name  : constant Name_Id    := Get_Source_Name (E);
+         Source_Files : constant Name_Array := Get_Source_Text (E);
+         Call_Seq     : Node_Id;
+         Spg_Call     : Node_Id;
+         Simulink_Dir : Name_Id;
+         Scade_Dir    : Name_Id;
       begin
          --  Only C subprogram influence the structure of the
          --  generated makefile.
@@ -1191,8 +1187,7 @@ package body Ocarina.Backends.Build_Utils is
             Parent_Process := Force_Parent;
          else
             Parent_Process :=
-               Corresponding_Instance
-                  (Get_Container_Process (E));
+              Corresponding_Instance (Get_Container_Process (E));
          end if;
 
          M := Makefiles.Get (Parent_Process);
@@ -1224,8 +1219,8 @@ package body Ocarina.Backends.Build_Utils is
                Handle_Ada_Source (E, Source_Name, Source_Files, M);
 
             when Subprogram_Scade =>
-               Scade_Dir := Source_Files (1);
-               M.Use_Scade := True;
+               Scade_Dir         := Source_Files (1);
+               M.Use_Scade       := True;
                M.Scade_Directory := Scade_Dir;
 
             when Subprogram_Simulink =>
@@ -1275,17 +1270,15 @@ package body Ocarina.Backends.Build_Utils is
       -------------------------
 
       procedure Visit_Port_Instance (E : Node_Id) is
-         Parent_Process : constant Node_Id := Corresponding_Instance
-           (Get_Container_Process
-            (Parent_Component (E)));
-         M              : constant Makefile_Type := Makefiles.Get
-           (Parent_Process);
-         Language       : constant Supported_Source_Language :=
-           Resolve_Language (E);
-         Compute_Entrypoint : constant Name_Id :=
+         Parent_Process : constant Node_Id :=
+           Corresponding_Instance
+             (Get_Container_Process (Parent_Component (E)));
+         M : constant Makefile_Type := Makefiles.Get (Parent_Process);
+         Language : constant Supported_Source_Language := Resolve_Language (E);
+         Compute_Entrypoint : constant Name_Id                   :=
            Get_Port_Compute_Entrypoint (E);
-         Source_Files   : constant Name_Array := Get_Source_Text (E);
-         Data : Node_Id;
+         Source_Files : constant Name_Array := Get_Source_Text (E);
+         Data         : Node_Id;
       begin
          --  If the port implementation is in C, we need to update
          --  the makefile structure.
@@ -1309,7 +1302,7 @@ package body Ocarina.Backends.Build_Utils is
                   end if;
 
                   if Get_Source_Name (Data) /= No_Name then
-                     M.Simulink_Node      := Get_Source_Name (Data);
+                     M.Simulink_Node := Get_Source_Name (Data);
                   end if;
                end;
             elsif Get_Source_Language (Data) = Language_ASN1 then
@@ -1317,22 +1310,19 @@ package body Ocarina.Backends.Build_Utils is
                   Source_Text : constant Name_Array := Get_Source_Text (Data);
                begin
                   if Get_Name_Table_Byte (Name_Find) = 0 then
-                     Name_Tables.Append
-                        (M.Asn_Sources,
-                        Source_Text (1));
+                     Name_Tables.Append (M.Asn_Sources, Source_Text (1));
                      Set_Name_Table_Byte (Source_Text (1), 1);
                   end if;
 
                   if Get_Source_Name (Data) /= No_Name then
-                     M.Simulink_Node      := Get_Source_Name (Data);
+                     M.Simulink_Node := Get_Source_Name (Data);
                   end if;
                end;
             else
                declare
-                  Source_Name : constant Name_Id
-                    := Get_Type_Source_Name (Data);
-                  Source_Files : constant Name_Array
-                    := Get_Source_Text (Data);
+                  Source_Name : constant Name_Id :=
+                    Get_Type_Source_Name (Data);
+                  Source_Files : constant Name_Array := Get_Source_Text (Data);
                begin
                   Handle_C_Source (E, Source_Name, Source_Files, M);
                end;
@@ -1348,10 +1338,10 @@ package body Ocarina.Backends.Build_Utils is
       procedure Generate (E : Node_Id) is
 
          procedure Generate_Architecture_Instance (E : Node_Id);
-         procedure Generate_Component_Instance    (E : Node_Id);
-         procedure Generate_System_Instance       (E : Node_Id);
-         procedure Generate_Process_Instance      (E : Node_Id);
-         procedure Generate_Processor_Instance    (E : Node_Id);
+         procedure Generate_Component_Instance (E : Node_Id);
+         procedure Generate_System_Instance (E : Node_Id);
+         procedure Generate_Process_Instance (E : Node_Id);
+         procedure Generate_Processor_Instance (E : Node_Id);
 
          ------------------------------------
          -- Generate_Architecture_Instance --
@@ -1367,8 +1357,8 @@ package body Ocarina.Backends.Build_Utils is
          ---------------------------------
 
          procedure Generate_Component_Instance (E : Node_Id) is
-            Category : constant Component_Category
-              := Get_Category_Of_Component (E);
+            Category : constant Component_Category :=
+              Get_Category_Of_Component (E);
          begin
             case Category is
                when CC_System =>
@@ -1390,10 +1380,10 @@ package body Ocarina.Backends.Build_Utils is
          ------------------------------
 
          procedure Generate_System_Instance (E : Node_Id) is
-            Dir_Name : constant Name_Id
-              := Normalize_Name (Name (Identifier (E)));
+            Dir_Name : constant Name_Id :=
+              Normalize_Name (Name (Identifier (E)));
 
-            S : Node_Id;
+            S  : Node_Id;
             Fd : File_Descriptor;
 
          begin
@@ -1432,9 +1422,7 @@ package body Ocarina.Backends.Build_Utils is
 
                   while Present (S) loop
                      if AAU.Is_Process (Corresponding_Instance (S)) then
-                        Write_Name
-                          (Normalize_Name
-                             (Name (Identifier (S))));
+                        Write_Name (Normalize_Name (Name (Identifier (S))));
                         Write_Str (" ");
                         --  Corresponding_Instance (S)))));
 
@@ -1446,13 +1434,14 @@ package body Ocarina.Backends.Build_Utils is
 
                Write_Line ("all:");
                Write_Line
-                 (ASCII.HT
-                    & "set -e; for d in $(SUBDIRS); do $(MAKE) -C $$d ; done");
+                 (ASCII.HT &
+                  "set -e; for d in $(SUBDIRS); do $(MAKE) -C $$d ; done");
 
                Write_Line ("clean:");
                Write_Line
-                 (ASCII.HT & " set -e; for d in $(SUBDIRS); do $(MAKE) "
-                    & "clean -C $$d ; done");
+                 (ASCII.HT &
+                  " set -e; for d in $(SUBDIRS); do $(MAKE) " &
+                  "clean -C $$d ; done");
 
                --  Close the file
 
@@ -1522,16 +1511,15 @@ package body Ocarina.Backends.Build_Utils is
             end if;
             Write_Eol;
 
-            Write_Line ("#  Transport API                : "
-                          & M.Transport_API'Img);
+            Write_Line
+              ("#  Transport API                : " & M.Transport_API'Img);
 
             Write_Eol;
 
             if Get_Current_Backend_Kind = PolyORB_HI_C then
                Write_Str ("USER_OBJS = ");
                if Length (M.C_Objs) > 0 then
-                  for J in
-                     Name_Tables.First .. Name_Tables.Last (M.C_Objs)
+                  for J in Name_Tables.First .. Name_Tables.Last (M.C_Objs)
                   loop
                      Write_Name (M.C_Objs.Table (J));
                      exit when J = Name_Tables.Last (M.C_Objs);
@@ -1543,7 +1531,10 @@ package body Ocarina.Backends.Build_Utils is
                end if;
 
                Ada_C_Command_Line_Flags
-                 (M.Ada_Sources, M.C_Sources, M.CPP_Sources, M.C_Libraries);
+                 (M.Ada_Sources,
+                  M.C_Sources,
+                  M.CPP_Sources,
+                  M.C_Libraries);
 
                if Length (M.Ada_Sources) > 0 then
                   Write_Line ("USER_LD=gnatlink `cat ali_file`");
@@ -1551,7 +1542,10 @@ package body Ocarina.Backends.Build_Utils is
             else
                Write_Str ("C_OBJECTS=");
                Ada_C_Command_Line_Flags
-                 (M.Ada_Sources, M.C_Sources, M.CPP_Sources, M.C_Libraries);
+                 (M.Ada_Sources,
+                  M.C_Sources,
+                  M.CPP_Sources,
+                  M.C_Libraries);
             end if;
             Write_Eol;
 
@@ -1586,9 +1580,10 @@ package body Ocarina.Backends.Build_Utils is
             Write_Eol;
 
             Write_Line ("prove:");
-            Write_Line (ASCII.HT
-                          & "gnatprove -P$(PROJECT_FILE) --warnings=continue "
-                          & "--report=fail");
+            Write_Line
+              (ASCII.HT &
+               "gnatprove -P$(PROJECT_FILE) --warnings=continue " &
+               "--report=fail");
 
             --  Close the file
 
@@ -1606,10 +1601,10 @@ package body Ocarina.Backends.Build_Utils is
          ---------------------------------
 
          procedure Generate_Processor_Instance (E : Node_Id) is
-            Fd          : File_Descriptor;
-            S           : Node_Id;
-            The_System  : Node_Id;
-            PID         : Unsigned_Long_Long := 0;
+            Fd         : File_Descriptor;
+            S          : Node_Id;
+            The_System : Node_Id;
+            PID        : Unsigned_Long_Long := 0;
          begin
 
          --  The following part is very specific to PolyORB-HI-C and especially
@@ -1629,20 +1624,19 @@ package body Ocarina.Backends.Build_Utils is
             --  Enter the directories
 
             Enter_Directory
-               (To_Lower
-                  (Normalize_Name
-                  (Display_Name
-                     (Identifier (The_System)))));
+              (To_Lower
+                 (Normalize_Name (Display_Name (Identifier (The_System)))));
 
             --  Create the file
 
-            Fd := Create_File
-               ("Makefile." &
-               Get_Name_String
-               (To_Lower (Normalize_Name
-                  (Display_Name
-                     (Identifier (The_System))))),
-               Text);
+            Fd :=
+              Create_File
+                ("Makefile." &
+                 Get_Name_String
+                   (To_Lower
+                      (Normalize_Name
+                         (Display_Name (Identifier (The_System))))),
+                 Text);
 
             if Fd = Invalid_FD then
                raise Program_Error;
@@ -1671,9 +1665,8 @@ package body Ocarina.Backends.Build_Utils is
 
             Write_Str ("MAINAPP=");
             Write_Name
-               (To_Lower (Normalize_Name
-                  (Display_Name
-                     (Identifier (The_System)))));
+              (To_Lower
+                 (Normalize_Name (Display_Name (Identifier (The_System)))));
             Write_Eol;
 
             Write_Str ("PARTITIONS_NAME=");
@@ -1685,9 +1678,8 @@ package body Ocarina.Backends.Build_Utils is
                while Present (S) loop
                   if AAU.Is_Process (Corresponding_Instance (S)) then
                      Write_Name
-                        (To_Lower
-                           (Normalize_Name
-                              (Display_Name (Identifier (S)))));
+                       (To_Lower
+                          (Normalize_Name (Display_Name (Identifier (S)))));
                      Write_Space;
                   end if;
                   S := Next_Node (S);
@@ -1705,13 +1697,12 @@ package body Ocarina.Backends.Build_Utils is
                while Present (S) loop
                   if AAU.Is_Process (Corresponding_Instance (S)) then
                      Write_Name
-                        (To_Lower
-                           (Normalize_Name (Display_Name (Identifier (S)))));
+                       (To_Lower
+                          (Normalize_Name (Display_Name (Identifier (S)))));
                      Write_Str ("/");
                      Write_Name
-                        (To_Lower
-                           (Normalize_Name
-                              (Display_Name (Identifier (S)))));
+                       (To_Lower
+                          (Normalize_Name (Display_Name (Identifier (S)))));
                      Write_Str (".xef");
                      Write_Space;
                   end if;
@@ -1735,14 +1726,12 @@ package body Ocarina.Backends.Build_Utils is
                      Write_Str (Unsigned_Long_Long'Image (PID));
                      Write_Str (":");
                      Write_Name
-                        (To_Lower
-                           (Normalize_Name
-                              (Display_Name (Identifier (S)))));
+                       (To_Lower
+                          (Normalize_Name (Display_Name (Identifier (S)))));
                      Write_Str ("/");
                      Write_Name
-                        (To_Lower
-                           (Normalize_Name
-                              (Display_Name (Identifier (S)))));
+                       (To_Lower
+                          (Normalize_Name (Display_Name (Identifier (S)))));
                      Write_Str (".xef");
                      Write_Space;
                      PID := PID + 1;
@@ -1767,7 +1756,7 @@ package body Ocarina.Backends.Build_Utils is
             Leave_Directory;
          end Generate_Processor_Instance;
 
-         --  Main part of Generate begins here
+      --  Main part of Generate begins here
 
       begin
          case Kind (E) is
@@ -1787,10 +1776,11 @@ package body Ocarina.Backends.Build_Utils is
       ------------------------------
 
       procedure Ada_C_Command_Line_Flags
-        (Ada_Sources        : Name_Tables.Instance;
-         C_Sources          : Name_Tables.Instance;
-         CPP_Sources        : Name_Tables.Instance;
-         C_Libraries        : Name_Tables.Instance) is
+        (Ada_Sources : Name_Tables.Instance;
+         C_Sources   : Name_Tables.Instance;
+         CPP_Sources : Name_Tables.Instance;
+         C_Libraries : Name_Tables.Instance)
+      is
       begin
          if Length (Ada_Sources) > 0
            or else Length (C_Sources) > 0
@@ -1863,9 +1853,9 @@ package body Ocarina.Backends.Build_Utils is
 
                declare
                   Is_Object : constant Boolean := Name_Buffer (Name_Len) = 'o';
-                  Dirname   : constant String := Dir_Name
-                    (Name_Buffer (1 .. Name_Len));
-                  Basename  : constant String :=
+                  Dirname   : constant String  :=
+                    Dir_Name (Name_Buffer (1 .. Name_Len));
+                  Basename : constant String :=
                     Base_Name (Name_Buffer (1 .. Name_Len));
                begin
                   if Is_Object then
@@ -1902,7 +1892,7 @@ package body Ocarina.Backends.Build_Utils is
 
             for J in Name_Tables.First .. Name_Tables.Last (C_Sources) loop
                declare
-                  O_File : Name_Id;
+                  O_File      : Name_Id;
                   Include_Dir : Name_Id;
                begin
                   Get_Name_String (C_Sources.Table (J));
@@ -1913,14 +1903,13 @@ package body Ocarina.Backends.Build_Utils is
 
                   Get_Name_String (C_Sources.Table (J));
                   while (Name_Buffer (Name_Len) /= Directory_Separator)
-                    and then
-                     Name_Len > 0 loop
+                    and then Name_Len > 0
+                  loop
                      Name_Len := Name_Len - 1;
                   end loop;
 
                   if Name_Len > 0 then
-                     Set_Str_To_Name_Buffer
-                        (Name_Buffer (1 .. Name_Len));
+                     Set_Str_To_Name_Buffer (Name_Buffer (1 .. Name_Len));
                      Include_Dir := Name_Find;
                   else
                      Include_Dir := No_Name;
@@ -1957,7 +1946,7 @@ package body Ocarina.Backends.Build_Utils is
 
             for J in Name_Tables.First .. Name_Tables.Last (CPP_Sources) loop
                declare
-                  O_File : Name_Id;
+                  O_File      : Name_Id;
                   Include_Dir : Name_Id;
                begin
                   Get_Name_String (CPP_Sources.Table (J));
@@ -1968,14 +1957,13 @@ package body Ocarina.Backends.Build_Utils is
 
                   Get_Name_String (CPP_Sources.Table (J));
                   while (Name_Buffer (Name_Len) /= Directory_Separator)
-                    and then
-                     Name_Len > 0 loop
+                    and then Name_Len > 0
+                  loop
                      Name_Len := Name_Len - 1;
                   end loop;
 
                   if Name_Len > 0 then
-                     Set_Str_To_Name_Buffer
-                        (Name_Buffer (1 .. Name_Len));
+                     Set_Str_To_Name_Buffer (Name_Buffer (1 .. Name_Len));
                      Include_Dir := Name_Find;
                   else
                      Include_Dir := No_Name;
@@ -2011,7 +1999,7 @@ package body Ocarina.Backends.Build_Utils is
          if Length (Ada_Sources) > 0 then
             for J in Name_Tables.First .. Name_Tables.Last (Ada_Sources) loop
                declare
-                  O_File : Name_Id;
+                  O_File   : Name_Id;
                   Ali_File : Name_Id;
                begin
                   Get_Name_String (Ada_Sources.Table (J));
@@ -2077,8 +2065,8 @@ package body Ocarina.Backends.Build_Utils is
       ------------------------------
 
       procedure Build_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -2118,7 +2106,7 @@ package body Ocarina.Backends.Build_Utils is
       procedure Build_Process_Instance (E : Node_Id) is
          M       : constant Makefile_Type := Makefiles.Get (E);
          Pid     : Process_Id;
-         Out_Pid : Process_Id := Invalid_Pid;
+         Out_Pid : Process_Id             := Invalid_Pid;
          Success : Boolean;
          Args    : Argument_List (1 .. 1);
       begin
@@ -2132,17 +2120,18 @@ package body Ocarina.Backends.Build_Utils is
 
          declare
             Build_Kind    : String_Access := Getenv ("BUILD");
-            GNU_Make_Path : String_Access := Locate_Exec_On_Path
-              (GNU_Make_Cmd);
+            GNU_Make_Path : String_Access :=
+              Locate_Exec_On_Path (GNU_Make_Cmd);
          begin
             Change_If_Empty (String_Ptr (Build_Kind), "Debug");
             Args (1) := new String'("BUILD=" & Build_Kind.all);
 
             --  Invoke the 'make' command
 
-            Pid := Non_Blocking_Spawn
-              (Program_Name => GNU_Make_Path.all,
-               Args         => Args);
+            Pid :=
+              Non_Blocking_Spawn
+                (Program_Name => GNU_Make_Path.all,
+                 Args         => Args);
 
             --  Wait until the command achieves its execution
 
@@ -2153,12 +2142,14 @@ package body Ocarina.Backends.Build_Utils is
 
             if Out_Pid = Pid then
                if not Success then
-                  Display_Error (GNU_Make_Path.all & " died unexpectedly",
-                                 Fatal => True);
+                  Display_Error
+                    (GNU_Make_Path.all & " died unexpectedly",
+                     Fatal => True);
                else
-                  pragma Debug (Display_Debug_Message
-                                (GNU_Make_Cmd & " terminated normally",
-                                 Force => True));
+                  pragma Debug
+                    (Display_Debug_Message
+                       (GNU_Make_Cmd & " terminated normally",
+                        Force => True));
                   null;
                end if;
             end if;
@@ -2209,8 +2200,8 @@ package body Ocarina.Backends.Build_Utils is
       ------------------------------
 
       procedure Clean_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -2240,17 +2231,19 @@ package body Ocarina.Backends.Build_Utils is
                   --  nodes.
 
                   declare
-                     M : constant Makefile_Type := Makefiles.Get
-                       (Corresponding_Instance (S));
+                     M : constant Makefile_Type :=
+                       Makefiles.Get (Corresponding_Instance (S));
                   begin
                      GNAT.Directory_Operations.Remove_Dir
-                       (Get_Name_String (M.Appli_Name), True);
+                       (Get_Name_String (M.Appli_Name),
+                        True);
                   exception
                      when GNAT.Directory_Operations.Directory_Error =>
                         pragma Debug
                           (Display_Debug_Message
-                           (Get_Name_String (M.Appli_Name) & " already clean",
-                            Force => True));
+                             (Get_Name_String (M.Appli_Name) &
+                              " already clean",
+                              Force => True));
                         null;
                   end;
 
@@ -2271,29 +2264,30 @@ package body Ocarina.Backends.Build_Utils is
    package body Ada_Project_Files is
 
       procedure Visit_Architecture_Instance (E : Node_Id);
-      procedure Visit_Component_Instance    (E : Node_Id);
-      procedure Visit_System_Instance       (E : Node_Id);
-      procedure Visit_Process_Instance      (E : Node_Id);
-      procedure Visit_Thread_Instance       (E : Node_Id);
+      procedure Visit_Component_Instance (E : Node_Id);
+      procedure Visit_System_Instance (E : Node_Id);
+      procedure Visit_Process_Instance (E : Node_Id);
+      procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Subprogram_Instance
-         (E : Node_Id; Force_Parent : Node_Id := No_Node);
-      procedure Visit_Port_Instance         (E : Node_Id);
+        (E            : Node_Id;
+         Force_Parent : Node_Id := No_Node);
+      procedure Visit_Port_Instance (E : Node_Id);
 
       type Ada_Project_File_Rec is record
-         Appli_Name         : Name_Id;
+         Appli_Name : Name_Id;
          --  The distributed application name
 
-         Node_Name          : Name_Id;
+         Node_Name : Name_Id;
          --  The node name (in lower case)
 
-         Is_Server          : Boolean;
+         Is_Server : Boolean;
          --  True of the process has IN ports
 
          Execution_Platform : Supported_Execution_Platform;
          --  The execution platform of the processor the current node
          --  is bound to.
 
-         Transport_API      : Supported_Transport_APIs;
+         Transport_API : Supported_Transport_APIs;
          --  The transport API used by the current node to
          --  communicate with other nodes.
 
@@ -2339,7 +2333,8 @@ package body Ocarina.Backends.Build_Utils is
 
       procedure Free (P : in out Ada_Project_File_Type) is
          procedure Deallocate is new Ada.Unchecked_Deallocation
-           (Ada_Project_File_Rec, Ada_Project_File_Type);
+           (Ada_Project_File_Rec,
+            Ada_Project_File_Type);
       begin
          --  Deallocate internal tables
 
@@ -2353,7 +2348,9 @@ package body Ocarina.Backends.Build_Utils is
       end Free;
 
       package Ada_Project_Files is new Generic_List
-        (Ada_Project_File_Type, "Ada_Project_File_List", Free);
+        (Ada_Project_File_Type,
+         "Ada_Project_File_List",
+         Free);
       --  The list of all the makefile structures
 
       -----------
@@ -2383,8 +2380,8 @@ package body Ocarina.Backends.Build_Utils is
          Binding_Key     : constant String := "%user_src_dir%";
       begin
          if Implem_Name /= No_Name then
-            Conv_Base_Name := ADU.Conventional_Base_Name
-              (ADU.Unit_Name (Implem_Name));
+            Conv_Base_Name :=
+              ADU.Conventional_Base_Name (ADU.Unit_Name (Implem_Name));
          end if;
 
          --  Ensure the user gives at most 2 sources files (a spec and
@@ -2415,9 +2412,7 @@ package body Ocarina.Backends.Build_Utils is
             Get_Name_String_And_Append (P.Node_Name);
 
             if Get_Name_Table_Byte (Name_Find) = 0 then
-               Name_Tables.Append
-                 (P.User_Source_Dirs,
-                  Source_Dirname);
+               Name_Tables.Append (P.User_Source_Dirs, Source_Dirname);
                Set_Name_Table_Byte (Name_Find, 1);
             end if;
 
@@ -2437,9 +2432,7 @@ package body Ocarina.Backends.Build_Utils is
                Get_Name_String_And_Append (P.Node_Name);
 
                if Get_Name_Table_Byte (Name_Find) = 0 then
-                  Name_Tables.Append
-                    (P.User_Source_Dirs,
-                     Source_Dirname);
+                  Name_Tables.Append (P.User_Source_Dirs, Source_Dirname);
                   Set_Name_Table_Byte (Name_Find, 1);
                end if;
 
@@ -2465,25 +2458,23 @@ package body Ocarina.Backends.Build_Utils is
                      --  Add a custom Spec clause
 
                      Name_Tables.Append
-                       (P.Spec_Names, ADU.Unit_Name (Implem_Name));
-                     Name_Tables.Append
-                       (P.Custom_Spec_Names, Custom_Name);
+                       (P.Spec_Names,
+                        ADU.Unit_Name (Implem_Name));
+                     Name_Tables.Append (P.Custom_Spec_Names, Custom_Name);
                   end if;
                elsif Suffix = ".adb" then
                   if Custom_Name /= Conv_Base_Name then
                      --  Add a custom Body clause
 
                      Name_Tables.Append
-                       (P.Body_Names, ADU.Unit_Name (Implem_Name));
-                     Name_Tables.Append
-                       (P.Custom_Body_Names, Custom_Name);
+                       (P.Body_Names,
+                        ADU.Unit_Name (Implem_Name));
+                     Name_Tables.Append (P.Custom_Body_Names, Custom_Name);
                   end if;
                else
                   Display_Located_Error
                     (Loc (E),
-                     "Unknown suffix for Ada file name: """
-                     & Suffix
-                     & """",
+                     "Unknown suffix for Ada file name: """ & Suffix & """",
                      Fatal => True);
                end if;
             end loop;
@@ -2525,8 +2516,8 @@ package body Ocarina.Backends.Build_Utils is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -2551,7 +2542,7 @@ package body Ocarina.Backends.Build_Utils is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         S  : constant Node_Id := Parent_Subcomponent (E);
+         S  : constant Node_Id               := Parent_Subcomponent (E);
          A  : constant Node_Id := Parent_Component (Parent_Subcomponent (E));
          P  : constant Ada_Project_File_Type := new Ada_Project_File_Rec;
          SC : Node_Id;
@@ -2572,8 +2563,8 @@ package body Ocarina.Backends.Build_Utils is
          --  Get the execution platform of the processor this node is
          --  bound to.
 
-         P.Execution_Platform := Get_Execution_Platform
-           (Get_Bound_Processor (E));
+         P.Execution_Platform :=
+           Get_Execution_Platform (Get_Bound_Processor (E));
 
          --  Get the transport API used by this node. It is
          --  important to ensure that the Namings package visitors
@@ -2634,18 +2625,17 @@ package body Ocarina.Backends.Build_Utils is
       ---------------------------
 
       procedure Visit_Thread_Instance (E : Node_Id) is
-         Parent_Process     : constant Node_Id :=
+         Parent_Process : constant Node_Id :=
            Corresponding_Instance (Get_Container_Process (E));
-         P                  : constant Ada_Project_File_Type :=
+         P : constant Ada_Project_File_Type :=
            Ada_Project_Files.Get (Parent_Process);
-         Language           : constant Supported_Source_Language :=
-           Resolve_Language (E);
-         Compute_Entrypoint : constant Name_Id :=
+         Language : constant Supported_Source_Language := Resolve_Language (E);
+         Compute_Entrypoint : constant Name_Id                   :=
            Get_Thread_Compute_Entrypoint (E);
-         Source_Files       : constant Name_Array := Get_Source_Text (E);
-         Call_Seq           : Node_Id;
-         Spg_Call           : Node_Id;
-         F                  : Node_Id;
+         Source_Files : constant Name_Array := Get_Source_Text (E);
+         Call_Seq     : Node_Id;
+         Spg_Call     : Node_Id;
+         F            : Node_Id;
       begin
          --  Only Ada files affect the structure of Ada project files
 
@@ -2697,19 +2687,21 @@ package body Ocarina.Backends.Build_Utils is
       -------------------------------
 
       procedure Visit_Subprogram_Instance
-         (E : Node_Id; Force_Parent : Node_Id := No_Node) is
+        (E            : Node_Id;
+         Force_Parent : Node_Id := No_Node)
+      is
          Parent_Process  : Node_Id;
          P               : Ada_Project_File_Type;
          Subprogram_Kind : constant Supported_Subprogram_Kind :=
            Get_Subprogram_Kind (E);
-         Source_Name     : constant Name_Id := Get_Source_Name (E);
-         Source_Files    : constant Name_Array := Get_Source_Text (E);
-         Call_Seq        : Node_Id;
-         Spg_Call        : Node_Id;
+         Source_Name  : constant Name_Id    := Get_Source_Name (E);
+         Source_Files : constant Name_Array := Get_Source_Text (E);
+         Call_Seq     : Node_Id;
+         Spg_Call     : Node_Id;
       begin
          if Force_Parent = No_Node then
             Parent_Process :=
-               Corresponding_Instance (Get_Container_Process (E));
+              Corresponding_Instance (Get_Container_Process (E));
          else
             Parent_Process := Force_Parent;
          end if;
@@ -2755,16 +2747,15 @@ package body Ocarina.Backends.Build_Utils is
       -------------------------
 
       procedure Visit_Port_Instance (E : Node_Id) is
-         Parent_Process     : constant Node_Id := Corresponding_Instance
-           (Get_Container_Process
-            (Parent_Component (E)));
-         P                  : constant Ada_Project_File_Type :=
+         Parent_Process : constant Node_Id :=
+           Corresponding_Instance
+             (Get_Container_Process (Parent_Component (E)));
+         P : constant Ada_Project_File_Type :=
            Ada_Project_Files.Get (Parent_Process);
-         Language           : constant Supported_Source_Language :=
-           Resolve_Language (E);
-         Compute_Entrypoint : constant Name_Id :=
+         Language : constant Supported_Source_Language := Resolve_Language (E);
+         Compute_Entrypoint : constant Name_Id                   :=
            Get_Port_Compute_Entrypoint (E);
-         Source_Files       : constant Name_Array := Get_Source_Text (E);
+         Source_Files : constant Name_Array := Get_Source_Text (E);
       begin
          --  Only Ada files affect the structure of Ada project files
 
@@ -2780,9 +2771,9 @@ package body Ocarina.Backends.Build_Utils is
       procedure Generate (E : Node_Id) is
 
          procedure Generate_Architecture_Instance (E : Node_Id);
-         procedure Generate_Component_Instance    (E : Node_Id);
-         procedure Generate_System_Instance       (E : Node_Id);
-         procedure Generate_Process_Instance      (E : Node_Id);
+         procedure Generate_Component_Instance (E : Node_Id);
+         procedure Generate_System_Instance (E : Node_Id);
+         procedure Generate_Process_Instance (E : Node_Id);
 
          ------------------------------------
          -- Generate_Architecture_Instance --
@@ -2798,8 +2789,8 @@ package body Ocarina.Backends.Build_Utils is
          ---------------------------------
 
          procedure Generate_Component_Instance (E : Node_Id) is
-            Category : constant Component_Category
-              := Get_Category_Of_Component (E);
+            Category : constant Component_Category :=
+              Get_Category_Of_Component (E);
          begin
             case Category is
                when CC_System =>
@@ -2880,10 +2871,9 @@ package body Ocarina.Backends.Build_Utils is
             Write_Name (P.Node_Name);
             Write_Eol;
 
-            Write_Line ("--  Execution platform : "
-                          & P.Execution_Platform'Img);
-            Write_Line ("--  Transport API      : "
-                          & P.Transport_API'Img);
+            Write_Line
+              ("--  Execution platform : " & P.Execution_Platform'Img);
+            Write_Line ("--  Transport API      : " & P.Transport_API'Img);
 
             Write_Eol;
 
@@ -2910,7 +2900,7 @@ package body Ocarina.Backends.Build_Utils is
             Leave_Directory;
          end Generate_Process_Instance;
 
-         --  Main processing part of Generate begins here
+      --  Main processing part of Generate begins here
 
       begin
          case Kind (E) is

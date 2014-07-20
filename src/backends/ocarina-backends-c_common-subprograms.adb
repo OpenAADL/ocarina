@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -71,7 +71,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
       procedure Visit_Bus_Instance (E : Node_Id);
       procedure Visit_Virtual_Bus_Instance (E : Node_Id);
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True);
+        (E            : Node_Id;
+         Real_Process : Boolean := True);
       procedure Visit_Processor_Instance (E : Node_Id);
       procedure Visit_Virtual_Processor_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
@@ -117,8 +118,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_Abstract =>
@@ -229,15 +230,16 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         U               : Node_Id;
-         P               : Node_Id;
-         Implementation  : Node_Id;
-         S               : Node_Id;
+         U              : Node_Id;
+         P              : Node_Id;
+         Implementation : Node_Id;
+         S              : Node_Id;
       begin
          Current_Device := E;
          if Get_Current_Backend_Kind = PolyORB_Kernel_C then
-            U := CTN.Distributed_Application_Unit
-              (CTN.Naming_Node (Backend_Node (Identifier (E))));
+            U :=
+              CTN.Distributed_Application_Unit
+                (CTN.Naming_Node (Backend_Node (Identifier (E))));
 
             P := CTN.Entity (U);
 
@@ -253,7 +255,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
                while Present (S) loop
                   if Get_Category_Of_Component (S) = CC_Process then
                      Visit_Process_Instance
-                        (Corresponding_Instance (S), False);
+                       (Corresponding_Instance (S),
+                        False);
                   end if;
 
                   if Get_Current_Backend_Kind = PolyORB_HI_C then
@@ -278,9 +281,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
       -------------------------
 
       procedure Visit_Data_Instance (E : Node_Id) is
-         Data_Type : constant Supported_Data_Representation
-                              := Get_Data_Representation (E);
-         S         : Node_Id;
+         Data_Type : constant Supported_Data_Representation :=
+           Get_Data_Representation (E);
+         S : Node_Id;
       begin
          if Data_Type = Data_With_Accessors then
             --  Visit all the accessor subprograms of the data type
@@ -331,8 +334,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
       --------------------------------------
 
       procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-         Processes   : List_Id;
-         S           : Node_Id;
+         Processes : List_Id;
+         S         : Node_Id;
       begin
          if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
             return;
@@ -340,7 +343,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          if Present (Backend_Node (Identifier (E))) then
             Processes := CTN.Processes (Backend_Node (Identifier (E)));
-            S := AIN.First_Node (Processes);
+            S         := AIN.First_Node (Processes);
             while Present (S) loop
                Visit (AIN.Item (S));
                S := AIN.Next_Node (S);
@@ -353,21 +356,24 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ----------------------------
 
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True) is
-         U                    : Node_Id;
-         P                    : Node_Id;
-         S                    : Node_Id;
-         C                    : Node_Id;
-         Feature              : Node_Id;
-         Src                  : Node_Id;
-         Parent               : Node_Id;
-         Dst                  : Node_Id;
-         The_System : constant Node_Id := Parent_Component
-           (Parent_Subcomponent (E));
+        (E            : Node_Id;
+         Real_Process : Boolean := True)
+      is
+         U          : Node_Id;
+         P          : Node_Id;
+         S          : Node_Id;
+         C          : Node_Id;
+         Feature    : Node_Id;
+         Src        : Node_Id;
+         Parent     : Node_Id;
+         Dst        : Node_Id;
+         The_System : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
       begin
          if Real_Process then
-            U := CTN.Distributed_Application_Unit
-               (CTN.Naming_Node (Backend_Node (Identifier (E))));
+            U :=
+              CTN.Distributed_Application_Unit
+                (CTN.Naming_Node (Backend_Node (Identifier (E))));
             P := CTN.Entity (U);
 
             Push_Entity (P);
@@ -405,14 +411,13 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
                      Parent := Parent_Component (Item (Src));
 
-                     if AINU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
-                        if Get_Provided_Virtual_Bus_Class
-                           (Extra_Item (Src)) /= No_Node then
+                     if AINU.Is_Process (Parent) and then Parent /= E then
+                        if Get_Provided_Virtual_Bus_Class (Extra_Item (Src)) /=
+                          No_Node
+                        then
                            Visit
-                              (Get_Provided_Virtual_Bus_Class
-                                 (Extra_Item (Src)));
+                             (Get_Provided_Virtual_Bus_Class
+                                (Extra_Item (Src)));
                         end if;
                      end if;
 
@@ -428,14 +433,13 @@ package body Ocarina.Backends.C_Common.Subprograms is
                   while Present (Dst) loop
                      Parent := Parent_Component (Item (Dst));
 
-                     if AINU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
-                        if Get_Provided_Virtual_Bus_Class
-                           (Extra_Item (Dst)) /= No_Node then
+                     if AINU.Is_Process (Parent) and then Parent /= E then
+                        if Get_Provided_Virtual_Bus_Class (Extra_Item (Dst)) /=
+                          No_Node
+                        then
                            Visit
-                              (Get_Provided_Virtual_Bus_Class
-                                 (Extra_Item (Dst)));
+                             (Get_Provided_Virtual_Bus_Class
+                                (Extra_Item (Dst)));
                         end if;
                      end if;
 
@@ -450,14 +454,15 @@ package body Ocarina.Backends.C_Common.Subprograms is
          --  Visit all devices attached to the parent system that
          --  share the same processor as process E.
 
-         if Get_Current_Backend_Kind = PolyORB_HI_C and then
-            not AINU.Is_Empty (Subcomponents (The_System)) then
+         if Get_Current_Backend_Kind = PolyORB_HI_C
+           and then not AINU.Is_Empty (Subcomponents (The_System))
+         then
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
                if AINU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (C)) =
+                   Get_Bound_Processor (E)
                then
                   --  Build the enumerator corresponding to the device
                   --  Note: we reuse the process name XXX
@@ -482,9 +487,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
       -------------------------------
 
       procedure Visit_Subprogram_Instance (E : Node_Id) is
-         N           : Node_Id;
-         Call_Seq    : Node_Id;
-         Spg_Call    : Node_Id;
+         N        : Node_Id;
+         Call_Seq : Node_Id;
+         Spg_Call : Node_Id;
       begin
          --  Generate the spec of the subprogram
 
@@ -544,13 +549,14 @@ package body Ocarina.Backends.C_Common.Subprograms is
                --  Visit the component instance corresponding to the
                --  subcomponent S.
                if Get_Current_Backend_Kind = PolyORB_Kernel_C
-                 and then Get_Category_Of_Component
-                 (Corresponding_Instance (S)) = CC_Process
+                 and then
+                   Get_Category_Of_Component (Corresponding_Instance (S)) =
+                   CC_Process
                then
                   null;
                else
-                  if Get_Category_Of_Component
-                    (Corresponding_Instance (S)) /= CC_Device
+                  if Get_Category_Of_Component (Corresponding_Instance (S)) /=
+                    CC_Device
                   then
                      Visit (Corresponding_Instance (S));
                   end if;
@@ -630,7 +636,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
       procedure Visit_Bus_Instance (E : Node_Id);
       procedure Visit_Virtual_Bus_Instance (E : Node_Id);
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True);
+        (E            : Node_Id;
+         Real_Process : Boolean := True);
       procedure Visit_Processor_Instance (E : Node_Id);
       procedure Visit_Virtual_Processor_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
@@ -672,8 +679,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_Abstract =>
@@ -815,8 +822,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
       --------------------------------------
 
       procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-         Processes   : List_Id;
-         S           : Node_Id;
+         Processes : List_Id;
+         S         : Node_Id;
       begin
          if Get_Current_Backend_Kind /= PolyORB_Kernel_C then
             return;
@@ -824,7 +831,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          if Present (Backend_Node (Identifier (E))) then
             Processes := CTN.Processes (Backend_Node (Identifier (E)));
-            S := AIN.First_Node (Processes);
+            S         := AIN.First_Node (Processes);
             while Present (S) loop
                Visit (AIN.Item (S));
                S := AIN.Next_Node (S);
@@ -837,9 +844,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
       -------------------------
 
       procedure Visit_Data_Instance (E : Node_Id) is
-         Data_Type : constant Supported_Data_Representation
-                              := Get_Data_Representation (E);
-         S         : Node_Id;
+         Data_Type : constant Supported_Data_Representation :=
+           Get_Data_Representation (E);
+         S : Node_Id;
       begin
          if Data_Type = Data_With_Accessors then
             --  Visit all the accessor subprograms of the data type
@@ -859,23 +866,25 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ----------------------------
 
       procedure Visit_Process_Instance
-         (E             : Node_Id;
-         Real_Process   : Boolean := True) is
+        (E            : Node_Id;
+         Real_Process : Boolean := True)
+      is
          U          : Node_Id;
          P          : Node_Id;
          S          : Node_Id;
          C          : Node_Id;
          N          : Node_Id;
-         Feature              : Node_Id;
-         Src                  : Node_Id;
-         Parent               : Node_Id;
-         Dst                  : Node_Id;
-         The_System : constant Node_Id := Parent_Component
-           (Parent_Subcomponent (E));
+         Feature    : Node_Id;
+         Src        : Node_Id;
+         Parent     : Node_Id;
+         Dst        : Node_Id;
+         The_System : constant Node_Id :=
+           Parent_Component (Parent_Subcomponent (E));
       begin
          if Real_Process then
-            U := CTN.Distributed_Application_Unit
-               (CTN.Naming_Node (Backend_Node (Identifier (E))));
+            U :=
+              CTN.Distributed_Application_Unit
+                (CTN.Naming_Node (Backend_Node (Identifier (E))));
             P := CTN.Entity (U);
             Push_Entity (P);
             Push_Entity (U);
@@ -893,32 +902,34 @@ package body Ocarina.Backends.C_Common.Subprograms is
             S := First_Node (Subcomponents (E));
             while Present (S) loop
                if AINU.Is_Data (Corresponding_Instance (S)) then
-                  if Get_Current_Backend_Kind = PolyORB_HI_C and then
-                     Get_Data_Representation (Corresponding_Instance (S)) =
-                     Data_With_Accessors then
+                  if Get_Current_Backend_Kind = PolyORB_HI_C
+                    and then
+                      Get_Data_Representation (Corresponding_Instance (S)) =
+                      Data_With_Accessors
+                  then
 
                      --  For POHIC, generate globvars that have only accessors
 
-                     N := Make_Variable_Declaration
-                        (Map_C_Defining_Identifier (S),
-                        Map_C_Data_Type_Designator
-                        (Corresponding_Instance (S)));
+                     N :=
+                       Make_Variable_Declaration
+                         (Map_C_Defining_Identifier (S),
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (S)));
 
                      N := Make_Extern_Entity_Declaration (N);
-                     Append_Node_To_List
-                        (N, CTN.Declarations (Current_File));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   else
                      --  For POK, generate all variables that are
                      --  declared in the process.
-                     N := Make_Variable_Declaration
-                        (Map_C_Defining_Identifier (S),
-                        Map_C_Data_Type_Designator
-                        (Corresponding_Instance (S)));
+                     N :=
+                       Make_Variable_Declaration
+                         (Map_C_Defining_Identifier (S),
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (S)));
 
                      N := Make_Extern_Entity_Declaration (N);
-                     Append_Node_To_List
-                        (N, CTN.Declarations (Current_File));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
                   end if;
                end if;
 
@@ -933,33 +944,36 @@ package body Ocarina.Backends.C_Common.Subprograms is
             while Present (S) loop
                Visit (Corresponding_Instance (S));
 
-               if Get_Current_Backend_Kind = PolyORB_HI_C and then
-                  AINU.Is_Data (Corresponding_Instance (S)) and then
-                  Get_Data_Representation (Corresponding_Instance (S)) =
-                  Data_With_Accessors then
+               if Get_Current_Backend_Kind = PolyORB_HI_C
+                 and then AINU.Is_Data (Corresponding_Instance (S))
+                 and then
+                   Get_Data_Representation (Corresponding_Instance (S)) =
+                   Data_With_Accessors
+               then
 
-                  N := Make_Variable_Declaration
-                    (Map_C_Defining_Identifier (S),
-                     Map_C_Data_Type_Designator
-                     (Corresponding_Instance (S)));
+                  N :=
+                    Make_Variable_Declaration
+                      (Map_C_Defining_Identifier (S),
+                       Map_C_Data_Type_Designator
+                         (Corresponding_Instance (S)));
 
                   N := Make_Extern_Entity_Declaration (N);
-                  Append_Node_To_List
-                    (N, CTN.Declarations (Current_File));
+                  Append_Node_To_List (N, CTN.Declarations (Current_File));
                end if;
 
                S := Next_Node (S);
             end loop;
          end if;
 
-         if Get_Current_Backend_Kind = PolyORB_HI_C and then
-            not AINU.Is_Empty (Subcomponents (The_System)) then
+         if Get_Current_Backend_Kind = PolyORB_HI_C
+           and then not AINU.Is_Empty (Subcomponents (The_System))
+         then
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
                if AINU.Is_Device (Corresponding_Instance (C))
-               and then
-                 Get_Bound_Processor (Corresponding_Instance (C))
-                 = Get_Bound_Processor (E)
+                 and then
+                   Get_Bound_Processor (Corresponding_Instance (C)) =
+                   Get_Bound_Processor (E)
                then
                   Visit_Device_Instance (Corresponding_Instance (C));
                end if;
@@ -980,14 +994,13 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
                      Parent := Parent_Component (Item (Src));
 
-                     if AINU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
-                        if Get_Provided_Virtual_Bus_Class
-                           (Extra_Item (Src)) /= No_Node then
+                     if AINU.Is_Process (Parent) and then Parent /= E then
+                        if Get_Provided_Virtual_Bus_Class (Extra_Item (Src)) /=
+                          No_Node
+                        then
                            Visit
-                              (Get_Provided_Virtual_Bus_Class
-                                 (Extra_Item (Src)));
+                             (Get_Provided_Virtual_Bus_Class
+                                (Extra_Item (Src)));
                         end if;
                      end if;
 
@@ -1003,14 +1016,13 @@ package body Ocarina.Backends.C_Common.Subprograms is
                   while Present (Dst) loop
                      Parent := Parent_Component (Item (Dst));
 
-                     if AINU.Is_Process (Parent)
-                       and then Parent /= E
-                     then
-                        if Get_Provided_Virtual_Bus_Class
-                           (Extra_Item (Dst)) /= No_Node then
+                     if AINU.Is_Process (Parent) and then Parent /= E then
+                        if Get_Provided_Virtual_Bus_Class (Extra_Item (Dst)) /=
+                          No_Node
+                        then
                            Visit
-                              (Get_Provided_Virtual_Bus_Class
-                                 (Extra_Item (Dst)));
+                             (Get_Provided_Virtual_Bus_Class
+                                (Extra_Item (Dst)));
                         end if;
                      end if;
 
@@ -1037,28 +1049,26 @@ package body Ocarina.Backends.C_Common.Subprograms is
       -------------------------------
 
       procedure Visit_Subprogram_Instance (E : Node_Id) is
-         N                    : Node_Id;
-         Call_Seq             : Node_Id;
-         Spg_Call             : Node_Id;
+         N        : Node_Id;
+         Call_Seq : Node_Id;
+         Spg_Call : Node_Id;
       begin
          --  Generate the body of the subprogram
 
          if No (Get_Handling (E, By_Name, H_C_Subprogram_Body)) then
             if Get_Subprogram_Kind (E) = Subprogram_Scade then
                Append_Node_To_List
-                  (Make_Variable_Declaration
-                     (Defining_Identifier =>
-                        Make_Defining_Identifier (VN (V_In)),
-                     Used_type =>
-                        Map_Scade_Struct_In (E)),
+                 (Make_Variable_Declaration
+                    (Defining_Identifier =>
+                       Make_Defining_Identifier (VN (V_In)),
+                     Used_Type => Map_Scade_Struct_In (E)),
                   CTN.Declarations (Current_File));
 
                Append_Node_To_List
-                  (Make_Variable_Declaration
-                     (Defining_Identifier =>
-                        Make_Defining_Identifier (VN (V_Out)),
-                     Used_type =>
-                        Map_Scade_Struct_Out (E)),
+                 (Make_Variable_Declaration
+                    (Defining_Identifier =>
+                       Make_Defining_Identifier (VN (V_Out)),
+                     Used_Type => Map_Scade_Struct_Out (E)),
                   CTN.Declarations (Current_File));
             end if;
 
@@ -1113,12 +1123,15 @@ package body Ocarina.Backends.C_Common.Subprograms is
                --  Visit the component instance corresponding to the
                --  subcomponent S.
                if Get_Current_Backend_Kind = PolyORB_Kernel_C
-                  and then Get_Category_Of_Component
-                     (Corresponding_Instance (S)) = CC_Process then
+                 and then
+                   Get_Category_Of_Component (Corresponding_Instance (S)) =
+                   CC_Process
+               then
                   null;
                else
-                  if Get_Category_Of_Component
-                     (Corresponding_Instance (S)) /= CC_Device then
+                  if Get_Category_Of_Component (Corresponding_Instance (S)) /=
+                    CC_Device
+                  then
                      Visit (Corresponding_Instance (S));
                   end if;
                end if;
@@ -1188,18 +1201,19 @@ package body Ocarina.Backends.C_Common.Subprograms is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         U               : Node_Id;
-         P               : Node_Id;
-         Implementation  : Node_Id;
-         S               : Node_Id;
+         U              : Node_Id;
+         P              : Node_Id;
+         Implementation : Node_Id;
+         S              : Node_Id;
       begin
 
          Current_Device := E;
 
          if Get_Current_Backend_Kind = PolyORB_Kernel_C then
 
-            U := CTN.Distributed_Application_Unit
-               (CTN.Naming_Node (Backend_Node (Identifier (E))));
+            U :=
+              CTN.Distributed_Application_Unit
+                (CTN.Naming_Node (Backend_Node (Identifier (E))));
 
             P := CTN.Entity (U);
 
@@ -1215,7 +1229,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
                while Present (S) loop
                   if Get_Category_Of_Component (S) = CC_Process then
                      Visit_Process_Instance
-                        (Corresponding_Instance (S), False);
+                       (Corresponding_Instance (S),
+                        False);
                   end if;
 
                   if Get_Current_Backend_Kind = PolyORB_HI_C then

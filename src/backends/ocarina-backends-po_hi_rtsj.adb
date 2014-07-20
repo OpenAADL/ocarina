@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet; use Namet;
+with Ocarina.Namet;             use Ocarina.Namet;
 with GNAT.Command_Line; use GNAT.Command_Line;
 
 with Ocarina.Instances;
@@ -66,8 +66,8 @@ package body Ocarina.Backends.PO_HI_RTSJ is
    use Ocarina.Backends.PO_HI_RTSJ.Transport_High_Level;
 
    Generated_Sources_Directory : Name_Id := No_Name;
-   Compile_Generated_Sources : Boolean := False;
-   Remove_Generated_Sources : Boolean := False;
+   Compile_Generated_Sources   : Boolean := False;
+   Remove_Generated_Sources    : Boolean := False;
    --  Execute_Generated_Sources : Boolean := False;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
@@ -148,7 +148,7 @@ package body Ocarina.Backends.PO_HI_RTSJ is
 
             when 'e' =>
                Compile_Generated_Sources := True;
-               --  Execute_Generated_Sources := True;
+            --  Execute_Generated_Sources := True;
 
             when 'o' =>
                declare

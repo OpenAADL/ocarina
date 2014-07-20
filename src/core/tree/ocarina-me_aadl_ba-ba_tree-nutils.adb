@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,11 +31,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 package body Ocarina.ME_AADL_BA.BA_Tree.Nutils is
 
-   use Namet;
+   use Ocarina.Namet;
 
    -------------------
    -- First_Homonym --
@@ -61,9 +61,9 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Nutils is
    -----------------------
 
    procedure Push_Node_To_List (E : Node_Id; L : List_Id) is
-      First_L  : constant Node_Id := First_Node (L);
-      Last_E   : Node_Id;  --  the last element of E
-      Next_E   : Node_Id;
+      First_L : constant Node_Id := First_Node (L);
+      Last_E  : Node_Id;  --  the last element of E
+      Next_E  : Node_Id;
    begin
       Set_First_Node (L, E);
 
@@ -92,8 +92,8 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Nutils is
       Old_Node : Node_Id;
       New_Node : Node_Id)
    is
-      Node  : Node_Id;
-      Next  : Node_Id := No_Node;
+      Node : Node_Id;
+      Next : Node_Id := No_Node;
    begin
       if Old_Node = First_Node (List) then
          if Present (Next_Node (First_Node (List))) then
@@ -244,8 +244,7 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Nutils is
      (Loc          : Location;
       Name         : Name_Id;
       Display_Name : Name_Id;
-      Entity       : Node_Id)
-     return Node_Id
+      Entity       : Node_Id) return Node_Id
    is
       Node : constant Node_Id := New_Node (K_Identifier, Loc);
    begin
@@ -273,10 +272,10 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Nutils is
       N : Node_Id;
    begin
       Entries.Increment_Last;
-      N := Entries.Last;
+      N                 := Entries.Last;
       Entries.Table (N) := Default_Node;
       Set_Kind (N, Kind);
-      Set_Loc  (N, Loc);
+      Set_Loc (N, Loc);
 
       return N;
    end New_Node;
@@ -321,7 +320,7 @@ package body Ocarina.ME_AADL_BA.BA_Tree.Nutils is
          Next := Next_Node (Current);
          exit when No (Next);
          Previous := Current;
-         Current := Next;
+         Current  := Next;
       end loop;
 
       Set_Next_Node (Previous, No_Node);

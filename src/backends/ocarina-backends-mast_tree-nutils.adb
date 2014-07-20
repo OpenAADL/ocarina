@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,13 +35,12 @@ with GNAT.Table;
 
 with Charset;   use Charset;
 with Locations; use Locations;
-with Namet;     use Namet;
+with Ocarina.Namet;     use Ocarina.Namet;
 with Ocarina.Backends.MAST_Values;
 --  with Utils;     use Utils;
 
 --  with Ocarina.Backends.Utils;
-with Ocarina.ME_AADL.AADL_Tree.Nodes;
-use Ocarina.ME_AADL.AADL_Tree.Nodes;
+with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 use Ocarina.Backends.MAST_Values;
 --  use Ocarina.Backends.Utils;
 
@@ -53,13 +52,17 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    Keyword_Suffix : constant String := "%MAST";
 
    type Entity_Stack_Entry is record
-      Current_File    : Node_Id;
-      Current_Entity  : Node_Id;
+      Current_File   : Node_Id;
+      Current_Entity : Node_Id;
    end record;
 
    No_Depth : constant Int := -1;
-   package Entity_Stack is
-      new GNAT.Table (Entity_Stack_Entry, Int, No_Depth + 1, 10, 10);
+   package Entity_Stack is new GNAT.Table
+     (Entity_Stack_Entry,
+      Int,
+      No_Depth + 1,
+      10,
+      10);
 
    use Entity_Stack;
 
@@ -69,8 +72,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
 
    function Add_Prefix_To_Name
      (Prefix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Set_Str_To_Name_Buffer (Prefix);
@@ -95,8 +97,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
 
    function Add_Suffix_To_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
    begin
       Get_Name_String (Name);
@@ -110,8 +111,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
 
    function Remove_Suffix_From_Name
      (Suffix : String;
-      Name   : Name_Id)
-     return Name_Id
+      Name   : Name_Id) return Name_Id
    is
       Length   : Natural;
       Temp_Str : String (1 .. Suffix'Length);
@@ -272,9 +272,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    -- Make_Defining_Identifier --
    ------------------------------
 
-   function Make_Defining_Identifier (Name         : Name_Id)
-     return Node_Id
-   is
+   function Make_Defining_Identifier (Name : Name_Id) return Node_Id is
       N : Node_Id;
 
    begin
@@ -290,8 +288,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    function Make_List_Id
      (N1 : Node_Id;
       N2 : Node_Id := No_Node;
-      N3 : Node_Id := No_Node)
-     return List_Id
+      N3 : Node_Id := No_Node) return List_Id
    is
       L : List_Id;
    begin
@@ -327,19 +324,19 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
 
    function New_List
      (Kind : MTN.Node_Kind;
-      From : Node_Id := No_Node)
-     return List_Id is
+      From : Node_Id := No_Node) return List_Id
+   is
       N : Node_Id;
 
    begin
       MTN.Entries.Increment_Last;
-      N := MTN.Entries.Last;
+      N                     := MTN.Entries.Last;
       MTN.Entries.Table (N) := MTN.Default_Node;
       Set_Kind (N, Kind);
       if Present (From) then
-         MTN.Set_Loc  (N, MTN.Loc (From));
+         MTN.Set_Loc (N, MTN.Loc (From));
       else
-         MTN.Set_Loc  (N, No_Location);
+         MTN.Set_Loc (N, No_Location);
       end if;
       return List_Id (N);
    end New_List;
@@ -350,13 +347,12 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
 
    function New_Node
      (Kind : MTN.Node_Kind;
-      From : Node_Id := No_Node)
-     return Node_Id
+      From : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
    begin
       MTN.Entries.Increment_Last;
-      N := MTN.Entries.Last;
+      N                     := MTN.Entries.Last;
       MTN.Entries.Table (N) := MTN.Default_Node;
       MTN.Set_Kind (N, Kind);
 
@@ -373,10 +369,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    -- New_Token --
    ---------------
 
-   procedure New_Token
-     (T : Token_Type;
-      I : String := "")
-   is
+   procedure New_Token (T : Token_Type; I : String := "") is
       Name : Name_Id;
    begin
       if T in Keyword_Type then
@@ -387,7 +380,8 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
          Set_Str_To_Name_Buffer (Image (T));
          Name := Name_Find;
          Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
-         Set_Name_Table_Byte (Name, Types.Byte (Token_Type'Pos (T) + 1));
+         Set_Name_Table_Byte
+           (Name, Ocarina.Types.Byte (Token_Type'Pos (T) + 1));
 
          Set_Str_To_Name_Buffer (Image (T));
       else
@@ -530,8 +524,9 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    ------------------------------
 
    function Make_Processing_Resource
-      (PR_Name : Name_Id; PR_Type : Processing_Resource_Kind)
-      return Node_Id is
+     (PR_Name : Name_Id;
+      PR_Type : Processing_Resource_Kind) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (MTN.K_Processing_Resource);
@@ -553,20 +548,21 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
       MTN.Set_Is_Full_Duplex (N, False);
       MTN.Set_Is_Half_Duplex (N, False);
       MTN.Set_Is_Simplex (N, False);
-      MTN.Set_Throughput
-         (N, Make_Literal (New_Floating_Point_Value (0.0)));
-      MTN.Set_Max_Blocking
-         (N, Make_Literal (New_Floating_Point_Value (0.0)));
+      MTN.Set_Throughput (N, Make_Literal (New_Floating_Point_Value (0.0)));
+      MTN.Set_Max_Blocking (N, Make_Literal (New_Floating_Point_Value (0.0)));
       MTN.Set_Max_Packet_Size
-         (N, Make_Literal (New_Floating_Point_Value (10.0)));
+        (N,
+         Make_Literal (New_Floating_Point_Value (10.0)));
       MTN.Set_Min_Packet_Size
-         (N, Make_Literal (New_Floating_Point_Value (1.0)));
+        (N,
+         Make_Literal (New_Floating_Point_Value (1.0)));
       MTN.Set_Max_Packet_Transmission_Time
-         (N, Make_Literal (New_Floating_Point_Value (10.0)));
+        (N,
+         Make_Literal (New_Floating_Point_Value (10.0)));
       MTN.Set_Min_Packet_Transmission_Time
-         (N, Make_Literal (New_Floating_Point_Value (0.1)));
-      MTN.Set_List_Of_Drivers
-         (N, New_List (MTN.K_List_Id));
+        (N,
+         Make_Literal (New_Floating_Point_Value (0.1)));
+      MTN.Set_List_Of_Drivers (N, New_List (MTN.K_List_Id));
 
       return N;
    end Make_Processing_Resource;
@@ -576,9 +572,9 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    ----------------------------
 
    function Make_Scheduling_Server
-      (Server_Name : Name_Id;
-       Associated_Processor : Name_Id)
-      return Node_Id is
+     (Server_Name          : Name_Id;
+      Associated_Processor : Name_Id) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (MTN.K_Scheduling_Server);
@@ -595,18 +591,16 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    ---------------------------------------
 
    function Make_Scheduling_Server_Parameters
-      (Server_Kind : Scheduling_Server_Parameter_Kind;
-      Prio         : Unsigned_Long_Long)
-      return Node_Id is
+     (Server_Kind : Scheduling_Server_Parameter_Kind;
+      Prio        : Unsigned_Long_Long) return Node_Id
+   is
       N : Node_Id;
    begin
       N := New_Node (MTN.K_Scheduling_Server_Parameters);
 
       MTN.Set_Fixed_Priority (N, False);
       MTN.Set_Is_Preassigned (N, False);
-      MTN.Set_Priority
-         (N, Make_Literal
-            (New_Numeric_Value (Prio, 1, 10)));
+      MTN.Set_Priority (N, Make_Literal (New_Numeric_Value (Prio, 1, 10)));
 
       if Server_Kind = Fixed_Priority then
          MTN.Set_Fixed_Priority (N, True);
@@ -619,9 +613,8 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    ----------------------
 
    function Make_Transaction
-      (Trans_Name : Name_Id;
-       Trans_Type : Transaction_Kind)
-      return Node_Id
+     (Trans_Name : Name_Id;
+      Trans_Type : Transaction_Kind) return Node_Id
    is
       pragma Unreferenced (Trans_Type);
 
@@ -641,9 +634,10 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    ----------------
 
    function Make_Event
-      (E_Name : Name_Id;
-      E_Kind : Event_Kind) return Node_Id is
-         N : Node_Id;
+     (E_Name : Name_Id;
+      E_Kind : Event_Kind) return Node_Id
+   is
+      N : Node_Id;
    begin
       N := New_Node (MTN.K_Event);
       MTN.Set_Node_Name (N, E_Name);
@@ -669,11 +663,11 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    ------------------------
 
    function Make_Event_Handler
-     (Kind          : Event_Handler_Kind;
-      Input_Event    : Name_Id;
-      Output_Event   : Name_Id;
-      Operation      : Name_Id;
-      Server         : Name_Id) return Node_Id
+     (Kind         : Event_Handler_Kind;
+      Input_Event  : Name_Id;
+      Output_Event : Name_Id;
+      Operation    : Name_Id;
+      Server       : Name_Id) return Node_Id
    is
       pragma Unreferenced (Kind);
 
@@ -694,11 +688,11 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    --------------------
 
    function Make_Operation
-      (Op_Name       : Name_Id;
-      Op_Kind        : Operation_Kind;
-      Op_List        : List_Id := No_List)
-      return Node_Id is
-         N : Node_Id;
+     (Op_Name : Name_Id;
+      Op_Kind : Operation_Kind;
+      Op_List : List_Id := No_List) return Node_Id
+   is
+      N : Node_Id;
    begin
       N := New_Node (MTN.K_Operation);
 
@@ -739,10 +733,9 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    -----------------------------------
 
    function Make_Event_Timing_Requirement
-      (Req_Kind      : Event_Timing_Requirement_Kind;
-      Deadline       : Unsigned_Long_Long;
-      Ref_Event      : Name_Id)
-      return Node_Id
+     (Req_Kind  : Event_Timing_Requirement_Kind;
+      Deadline  : Unsigned_Long_Long;
+      Ref_Event : Name_Id) return Node_Id
    is
       pragma Unreferenced (Req_Kind);
 
@@ -750,9 +743,7 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    begin
       N := New_Node (MTN.K_Event_Timing_Requirements);
       MTN.Set_Is_Hard_Deadline (N, True);
-      MTN.Set_Deadline
-         (N, Make_Literal
-            (New_Numeric_Value (Deadline, 1, 10)));
+      MTN.Set_Deadline (N, Make_Literal (New_Numeric_Value (Deadline, 1, 10)));
 
       MTN.Set_Referenced_Event (N, Ref_Event);
       return N;
@@ -763,8 +754,8 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    --------------------------
 
    function Make_Shared_Resource
-      (Res_Kind : Shared_Resource_Kind; Res_Name : Name_Id)
-      return Node_Id
+     (Res_Kind : Shared_Resource_Kind;
+      Res_Name : Name_Id) return Node_Id
    is
       N : Node_Id;
    begin
@@ -784,14 +775,13 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    -----------------
 
    function Make_Driver
-      (Driver_Name      : Name_Id;
+     (Driver_Name       : Name_Id;
       Drv_Kind          : Driver_Kind;
       Server_Sched_Name : Name_Id;
       Send_Name         : Name_Id;
       Receive_Name      : Name_Id;
       Partitioning      : Boolean;
-      Overhead_Kind     : RTA_Overhead_Model_Kind)
-      return Node_Id
+      Overhead_Kind     : RTA_Overhead_Model_Kind) return Node_Id
    is
       N : Node_Id;
    begin
@@ -820,8 +810,9 @@ package body Ocarina.Backends.MAST_Tree.Nutils is
    -- Make_Scheduler --
    --------------------
 
-   function Make_Scheduler (Sched_Name : Name_Id; Host_Name : Name_Id)
-      return Node_Id
+   function Make_Scheduler
+     (Sched_Name : Name_Id;
+      Host_Name  : Name_Id) return Node_Id
    is
       N : Node_Id;
    begin

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Types;     use Types;
+with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.ME_AADL.Tokens is
 
@@ -41,7 +41,7 @@ package Ocarina.ME_AADL.Tokens is
      (T_Error,
       T_Identifier,
 
-      --  Special_Characters
+   --  Special_Characters
 
       T_Quotation_Mark,        --  "    (for T_String_Literal)
       T_Number_Sign,           --  #
@@ -81,7 +81,7 @@ package Ocarina.ME_AADL.Tokens is
       T_Right_Step_Bracket,    --  ]->
       T_End_Annex,             --  **}   Last Closing Delimiter, Last Delimiter
 
-      --  Reserved Words
+   --  Reserved Words
 
       T_AADLBoolean,           --  'aadlboolean'
       T_AADLInteger,           --  'aadlinteger'
@@ -164,19 +164,19 @@ package Ocarina.ME_AADL.Tokens is
       T_Virtual,               --  'virtual'
       T_With,                  --  'with'
 
-      --  Numeric Literals
+   --  Numeric Literals
 
       T_Real_Literal,          --  real number
       T_Integer_Literal,       --  integer number
 
-      --  Others
+   --  Others
 
       T_String_Literal,        --  string
       T_Comment,               --  comment      (ignored)
       T_Raw_Text,              --  raw text (used for annex parsing / printing)
 
       T_EOF                    --  end of file
-     );
+      );
 
    First_Token_Pos : constant := Token_Type'Pos (Token_Type'First);
    Last_Token_Pos  : constant := Token_Type'Pos (Token_Type'Last);
@@ -185,30 +185,26 @@ package Ocarina.ME_AADL.Tokens is
 
    --  Sybtype definitions
 
-   subtype Binary_Operator_Type is Token_Type
-     range T_Plus .. T_Divide;
+   subtype Binary_Operator_Type is Token_Type range T_Plus .. T_Divide;
 
-   subtype Boolean_Type is Token_Type
-     range T_False .. T_True;
+   subtype Boolean_Type is Token_Type range T_False .. T_True;
 
-   subtype Opening_Delimiter is Token_Type
-     range T_Left_Parenthesis .. T_Begin_Annex;
+   subtype Opening_Delimiter is
+     Token_Type range T_Left_Parenthesis .. T_Begin_Annex;
 
-   subtype Closing_Delimiter is Token_Type
-     range T_Right_Parenthesis .. T_End_Annex;
+   subtype Closing_Delimiter is
+     Token_Type range T_Right_Parenthesis .. T_End_Annex;
 
-   subtype Delimiter_Type is Token_Type
-     range T_Comma .. T_End_Annex;
+   subtype Delimiter_Type is Token_Type range T_Comma .. T_End_Annex;
 
-   subtype Numeric_Type is Token_Type
-     range T_Real_Literal .. T_Integer_Literal;
+   subtype Numeric_Type is
+     Token_Type range T_Real_Literal .. T_Integer_Literal;
 
-   subtype Reserved_Word_Type is Token_Type
-     range T_AADLBoolean .. T_With;
+   subtype Reserved_Word_Type is Token_Type range T_AADLBoolean .. T_With;
 
    First_Reserved_Word_Pos : constant :=
      Reserved_Word_Type'Pos (Reserved_Word_Type'First);
-   Last_Reserved_Word_Pos  : constant :=
+   Last_Reserved_Word_Pos : constant :=
      Reserved_Word_Type'Pos (Reserved_Word_Type'Last);
 
    type Property_Owner_Token is
@@ -224,16 +220,16 @@ package Ocarina.ME_AADL.Tokens is
       POT_Specification,       --  'specification'
       POT_Subcomponent,        --  'subcomponent'
       POT_Transition           --  'transition'
-     );
+      );
    --  Elements defined in this enumeration must not be AADL keywords
 
-   subtype Property_Owner_Type is Property_Owner_Token
-     range POT_Call .. POT_Transition;
+   subtype Property_Owner_Type is
+     Property_Owner_Token range POT_Call .. POT_Transition;
 
-   First_PO_Type_Pos : constant := Property_Owner_Type'Pos
-     (Property_Owner_Type'First);
-   Last_PO_Type_Pos  : constant := Property_Owner_Type'Pos
-     (Property_Owner_Type'Last);
+   First_PO_Type_Pos : constant :=
+     Property_Owner_Type'Pos (Property_Owner_Type'First);
+   Last_PO_Type_Pos : constant :=
+     Property_Owner_Type'Pos (Property_Owner_Type'Last);
 
    Token_Image    : array (Token_Type) of Name_Id;
    Token_PO_Image : array (Property_Owner_Token) of Name_Id;
@@ -246,13 +242,13 @@ package Ocarina.ME_AADL.Tokens is
    Integer_Literal_Value : Unsigned_Long_Long;
    --  for Tokens : T_Integer_Literal
 
-   Float_Literal_Value   : Long_Long_Float;
+   Float_Literal_Value : Long_Long_Float;
    --  for Tokens : T_Real_Literal
 
-   Numeric_Literal_Base  : Unsigned_Short_Short;
+   Numeric_Literal_Base : Unsigned_Short_Short;
    --  for Tokens : T_Integer_Literal, T_Real_Literal
 
-   Numeric_Literal_Exp   : Integer;
+   Numeric_Literal_Exp : Integer;
    --  for Tokens : T_Integer_Literal, T_Real_Literal
 
    function Image (T : Token_Type) return String;

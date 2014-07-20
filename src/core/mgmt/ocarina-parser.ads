@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,22 +32,20 @@
 ------------------------------------------------------------------------------
 
 with Locations; use Locations;
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 
 package Ocarina.Parser is
 
    type Parser_Subprogram is access function
      (AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location)
-     return Node_Id;
+      To        : Location := No_Location) return Node_Id;
 
    function Parse
      (Language  : Name_Id;
       AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location)
-     return Node_Id;
+      To        : Location := No_Location) return Node_Id;
    --  Parse the file File_Name and return the Node_Id or the root of
    --  the resulting AADL tree, or No_Node if the parsing failed. If
    --  AADL_Root is not No_Node, then add the parsed entities to
@@ -57,9 +55,7 @@ package Ocarina.Parser is
    procedure Init_Parsers;
    --  Initialize all the registered parsers
 
-   procedure Register_Parser
-     (Language : String;
-      Parser   : Parser_Subprogram);
+   procedure Register_Parser (Language : String; Parser : Parser_Subprogram);
 
    procedure Reset_Parsers;
    --  Unregister all the registered parsers

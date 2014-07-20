@@ -1,91 +1,28 @@
-# For now, do not build real documentation, it requires LaTeX files
-# that may not be installed. However, its source is included in the
-# packaging.
-DIST_SUBDIRS = real
-
-ADAFILES=  $(srcdir)/sources/parse_and_print_aadl.adb
-
-AADLFILES= $(srcdir)/sources/scenario_ada.aadl			\
-	$(srcdir)/sources/scenario_c.aadl			\
-	$(srcdir)/sources/scenario_common.aadl			\
-	$(srcdir)/sources/example_pn.aadl			\
-	$(top_srcdir)/resources/AADLv1/aadl_project.aadl	\
-	$(top_srcdir)/resources/AADLv1/aadl_properties.aadl	\
-	$(top_srcdir)/resources/deployment.aadl			\
-	$(top_srcdir)/resources/ocarina_config.aadl
-
-APIFILES=								      \
-$(top_srcdir)/src/core/tree/ocarina-me_aadl-aadl_tree-entities.ads	      \
-$(top_srcdir)/src/core/tree/ocarina-me_aadl-aadl_tree-entities-properties.ads \
-$(top_srcdir)/src/core/model/ocarina-builder.ads			      \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl.ads                         \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-annexes.ads		      \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-components.ads	      \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-components-connections.ads  \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-components-features.ads     \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-components-flows.ads	      \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-components-modes.ads	      \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-components-subcomponents.ads\
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-components-subprogram_calls.ads  \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-namespaces.ads              \
-$(top_srcdir)/src/core/model/ocarina-builder-aadl-properties.ads	      \
-$(top_srcdir)/src/core/model/ocarina-analyzer-aadl-finder.ads		      \
-$(top_srcdir)/src/core/model/ocarina-analyzer-aadl-queries.ads
-
-GEN_TEXIFILES= ${notdir $(ADAFILES:=.texi) $(AADLFILES:=.texi) $(APIFILES:=.texi)}
-
-IMAGE_NAMES=\
-	$(srcdir)/images/component\
-	$(srcdir)/images/connection\
-	$(srcdir)/images/feature\
-	$(srcdir)/images/mubroker_complet\
-	$(srcdir)/images/spg_connection\
-	$(srcdir)/images/subprogram
-
-ALL_IMAGES= $(IMAGE_NAMES:=.eps) $(IMAGE_NAMES:=.png) $(IMAGE_NAMES:=.pdf)
-
-KW_FILES = \
-	$(srcdir)/aadl.kw\
-	$(srcdir)/ada.kw
-
-SED_FILES = ${notdir $(KW_FILES:.kw=.sed)}
-
 GUIDE=ocarina
-
-GUIDE_TEXIFILES =\
-	$(srcdir)/$(GUIDE).texi\
-	$(GEN_TEXIFILES) \
-	gfdl.texi
-
-info_TEXINFOS = ocarina.texi
-ocarina_TEXINFOS=$(GUIDE_TEXIFILES)
 
 man_MANS = ocarina-config.1 ocarina.1
 
+GUIDE_RSTFILES = $(srcdir)/about.rst $(srcdir)/gfdl.rst			\
+	$(srcdir)/introduction.rst $(srcdir)/annexes.rst index.rst	\
+	$(srcdir)/python.rst $(srcdir)/editors.rst			\
+	$(srcdir)/installation.rst $(srcdir)/usage.rst
+
 EXTRA_DIST= $(srcdir)/CODING_GUIDELINES $(srcdir)/CONTRIBUTING		\
 	$(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES) $(ALL_IMAGES)	\
-	$(ADAFILES) $(AADLFILES) $(KW_FILES) $(srcdir)/ocarina.css	\
 	$(man_MANS) $(srcdir)/ocarina-config.html			\
 	$(srcdir)/ocarina_man.html
 
 all-local: $(GUIDE).html $(GUIDE).pdf
 
-$(GUIDE).html: $(IMAGES) $(GUIDE_TEXIFILES)
-	-$(MAKEINFO) --css-include=$(srcdir)/ocarina.css --force --html --ifhtml --number-sections $(srcdir)/$(GUIDE).texi -o $(GUIDE).html
-	rm -rf $(GUIDE).html/images
-	mkdir -p $(GUIDE).html/images
-	cp -p $(srcdir)/images/*.png $(GUIDE).html/images/
-	INDEX_FILE="$(GUIDE).html/index.html";\
-	TMP_FILE="$$INDEX_FILE.tmp"; \
-	cat "$$INDEX_FILE" | sed 's/$$LastChangedDate: \([^$$]*\) \$$/Last Modified: \1/g' > "$$TMP_FILE"; \
-	mv -f "$$TMP_FILE" "$$INDEX_FILE"
+$(GUIDE).html: $(GUIDE_RSTFILES)
+	make  html
 
-$(GUIDE).pdf: $(IMAGES) $(GUIDE_TEXIFILES)
-	-$(TEXI2PDF) $(srcdir)/$(GUIDE).texi
+$(GUIDE).pdf: $(IMAGES) $(GUIDE_RSTFILES)
+	make  latexpdf
 
 clean-local:
-	rm -f *.aux *.log *.dvi *.info *.tmp
-	rm -f *.cp *.pg *.toc *.vr *.fn *.ky *.tp *~
+	rm -f *~
+	-rm -rf $(BUILDDIR)/*
 
 distclean-local:
 	rm -f $(GEN_TEXIFILES)
@@ -112,28 +49,11 @@ dist-hook: all
 
 install-data-local: all
 	$(INSTALL) -d $(DESTDIR)$(datadir)/doc/ocarina
-	if [ -r $(GUIDE).pdf ]; then \
-	  $(INSTALL_DATA) $(GUIDE).pdf $(DESTDIR)$(datadir)/doc/ocarina; \
+	if [ -r $(builddir)/_build/latex/$(GUIDE).pdf ]; then \
+	  $(INSTALL_DATA) $(builddir)/_build/latex/$(GUIDE).pdf $(DESTDIR)$(datadir)/doc/ocarina; \
 	  $(INSTALL) -d $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html; \
-	  for f in $(GUIDE).html/*.html; do \
-            $(INSTALL_DATA) $$f $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html; \
-          done; \
-	  $(INSTALL) -d $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html/images; \
-	  for f in $(GUIDE).html/images/*.png; do \
-            $(INSTALL_DATA) $$f $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html/images; \
-          done; \
-	else \
-	  $(INSTALL_DATA) $(srcdir)/$(GUIDE).pdf $(DESTDIR)$(datadir)/doc/ocarina; \
-	  $(INSTALL) -d $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html; \
-	  for f in $(srcdir)/$(GUIDE).html/*.html; do \
-            $(INSTALL_DATA) $$f $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html; \
-          done; \
-	  $(INSTALL) -d $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html/images; \
-	  for f in $(srcdir)/$(GUIDE).html/images/*.png; do \
-            $(INSTALL_DATA) $$f $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html/images; \
-          done; \
+	  $(CP) -r $(builddir)/_build/html/* $(DESTDIR)$(datadir)/doc/ocarina/$(GUIDE).html; \
 	fi
-	$(INSTALL_DATA)	$(srcdir)/CONTRIBUTING $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_DATA)	$(srcdir)/PROBLEM-REPORT-FORM $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_DATA)	$(srcdir)/ocarina-config.html $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_DATA)	$(srcdir)/ocarina_man.html $(DESTDIR)$(datadir)/doc/ocarina
@@ -142,41 +62,38 @@ install-data-local: all
 uninstall-local:
 	rm -rf $(DESTDIR)$(datadir)/doc/ocarina
 
-$(GUIDE_TEXIFILES): ada-stamp adb-stamp ads-stamp aadl-stamp
 
-ada-stamp: $(top_srcdir)/tools/gentexifile $(ADAFILES) sed-stamp
-	for f in ${filter %.ada, $(ADAFILES)}; do \
-	  $(SHELL) $(top_srcdir)/tools/gentexifile $$f; \
-	done
-	touch ada-stamp
+###############################################################################
+# SPHINX rules
 
-adb-stamp: $(top_srcdir)/tools/gentexifile $(ADAFILES) sed-stamp
-	for f in ${filter %.adb, $(ADAFILES)}; do \
-	  $(SHELL) $(top_srcdir)/tools/gentexifile $$f; \
-	done
-	touch adb-stamp
+# You can set these variables from the command line.
+SPHINXOPTS    =
+SPHINXBUILD   = sphinx-build
+PAPER         =
+BUILDDIR      = $(builddir)/_build
 
-ads-stamp: $(top_srcdir)/tools/gen_api_doc $(APIFILES)
-	ABS_TOP_SRCDIR="@abs_top_srcdir@" \
-	ABS_TOP_BUILDDIR="@abs_top_builddir@" \
-	  $(SHELL) $(top_srcdir)/tools/gen_api_doc
-	touch ads-stamp
+# Internal variables.
+PAPEROPT_a4     = -D latex_paper_size=a4
+PAPEROPT_letter = -D latex_paper_size=letter
+ALLSPHINXOPTS   = -c $(srcdir) -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(srcdir)
+# the i18n builder cannot share the environment and doctrees with the others
+I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
-aadl-stamp: $(top_srcdir)/tools/gentexifile $(AADLFILES) sed-stamp
-	for f in $(AADLFILES); do \
-	  $(SHELL) $(top_srcdir)/tools/gentexifile $$f; \
-	done
-	touch aadl-stamp
+.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
-sed-stamp: $(top_srcdir)/tools/gensedfile $(KW_FILES)
-	for f in $(KW_FILES); do \
-	  $(SHELL) $(top_srcdir)/tools/gensedfile $$f; \
-	done
-	touch sed-stamp
+html:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+latexpdf:
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+	@echo "Running LaTeX files through pdflatex..."
+	$(MAKE) -C $(BUILDDIR)/latex all-pdf
+	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
 
 ###############################################################################
 # Building manpages
-
 
 build_man: $(top_srcdir)/ocarina-config.in
 	chmod 755 $(top_builddir)/ocarina-config

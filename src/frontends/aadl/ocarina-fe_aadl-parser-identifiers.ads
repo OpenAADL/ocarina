@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -42,7 +42,7 @@ package Ocarina.FE_AADL.Parser.Identifiers is
    Refinable_To_RT : constant array (Boolean) of Refinement_Type :=
      (True => RT_Refinable, False => RT_Not_Refinable);
 
-   function Make_Current_Identifier (Entity  : Node_Id) return Node_Id;
+   function Make_Current_Identifier (Entity : Node_Id) return Node_Id;
    --  Make an identifier from current token
 
    function P_Expected_Identifier (Expected_Id : Node_Id) return Boolean;
@@ -51,22 +51,21 @@ package Ocarina.FE_AADL.Parser.Identifiers is
 
    function P_Expected_Identifiers
      (Identifiers : List_Id;
-      Delimiter   : Ocarina.ME_AADL.Tokens.Token_Type)
-     return Boolean;
+      Delimiter   : Ocarina.ME_AADL.Tokens.Token_Type) return Boolean;
    --  Parse ( { Identifier Delimiter }* Identifier )
    --  These parsed identifiers must be the same as in list L
    --  These parsed identifiers will NOT be added in list L
    --  This function is useful for parsing 'end' clause for example
    --  Return TRUE if everything is OK
 
-   function P_Identifier (Container : Types.Node_Id) return Node_Id;
+   function P_Identifier (Container : Ocarina.Types.Node_Id) return Node_Id;
 
    procedure P_Identifier_Refined_To
-     (Option              : Refinement_Type;
-      Optional_Identifier : Boolean;
-      Code                : Parsing_Code;
-      Refinement_Code     : Parsing_Code;
-      Skip_Until_Token    : Ocarina.ME_AADL.Tokens.Token_Type;
+     (Option              :     Refinement_Type;
+      Optional_Identifier :     Boolean;
+      Code                :     Parsing_Code;
+      Refinement_Code     :     Parsing_Code;
+      Skip_Until_Token    :     Ocarina.ME_AADL.Tokens.Token_Type;
       Identifier          : out Node_Id;
       Is_Refinement       : out Boolean;
       OK                  : out Boolean);
@@ -87,7 +86,8 @@ package Ocarina.FE_AADL.Parser.Identifiers is
    --  [ package_name :: ] identifier [.identifier]
    --  Parse Unique_..._Identifier, etc.
 
-   function P_Entity_Reference (Container : Types.Node_Id) return Node_Id;
+   function P_Entity_Reference
+     (Container : Ocarina.Types.Node_Id) return Node_Id;
    --  Allow the possibility to parse entitiy reference in list of items
 
 end Ocarina.FE_AADL.Parser.Identifiers;

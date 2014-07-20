@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -64,40 +64,40 @@ package body Ocarina.Instances.Components.Subcomponents is
 
    function Instantiate_Subcomponent
      (Instance_Root : Node_Id;
-      Subcomponent  : Node_Id)
-     return Node_Id
+      Subcomponent  : Node_Id) return Node_Id
    is
       pragma Assert (Kind (Instance_Root) = K_Architecture_Instance);
       pragma Assert (Kind (Subcomponent) = K_Subcomponent);
 
-      New_Instance        : Node_Id := No_Node;
-      New_Subinstance     : Node_Id;
+      New_Instance    : Node_Id := No_Node;
+      New_Subinstance : Node_Id;
    begin
       if Present (Entity_Ref (Subcomponent))
-        and then Present (ATE.Get_Referenced_Entity
-                            (Entity_Ref (Subcomponent)))
+        and then Present
+          (ATE.Get_Referenced_Entity (Entity_Ref (Subcomponent)))
       then
-         New_Instance  := New_Node
-           (K_Subcomponent_Instance, ATN.Loc (Subcomponent));
-         AIN.Set_Identifier (New_Instance,
-                         Duplicate_Identifier (ATN.Identifier (Subcomponent)));
+         New_Instance :=
+           New_Node (K_Subcomponent_Instance, ATN.Loc (Subcomponent));
+         AIN.Set_Identifier
+           (New_Instance,
+            Duplicate_Identifier (ATN.Identifier (Subcomponent)));
          AIN.Set_Corresponding_Declaration (New_Instance, Subcomponent);
-         Set_Destinations (New_Instance,
-                           New_List (K_List_Id, No_Location));
+         Set_Destinations (New_Instance, New_List (K_List_Id, No_Location));
 
          --  Verify whether the component has been instantiateed or not
 
-         New_Subinstance := Instantiate_Component
-           (Instance_Root,
-            ATE.Get_Referenced_Entity (Entity_Ref (Subcomponent)));
+         New_Subinstance :=
+           Instantiate_Component
+             (Instance_Root,
+              ATE.Get_Referenced_Entity (Entity_Ref (Subcomponent)));
 
          if Present (New_Subinstance) then
             Set_Corresponding_Instance (New_Instance, New_Subinstance);
             Set_Parent_Subcomponent (New_Subinstance, New_Instance);
          end if;
 
-         if ATN.Kind (ATE.Get_Referenced_Entity
-                        (Entity_Ref (Subcomponent))) = K_Component_Type
+         if ATN.Kind (ATE.Get_Referenced_Entity (Entity_Ref (Subcomponent))) =
+           K_Component_Type
          then
             Display_Entity_Is_A_Component_Type (Subcomponent);
          end if;

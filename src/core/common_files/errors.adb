@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -34,8 +34,8 @@
 with Ada.Command_Line;          use Ada.Command_Line;
 with GNAT.OS_Lib;               use GNAT.OS_Lib;
 with GNAT.Directory_Operations; use GNAT.Directory_Operations;
-with Output;                    use Output;
-with Namet;                     use Namet;
+with Ocarina.Output;                    use Ocarina.Output;
+with Ocarina.Namet;                     use Ocarina.Namet;
 
 package body Errors is
 
@@ -184,16 +184,16 @@ package body Errors is
    ---------------------
 
    procedure Display_Bug_Box (E : Ada.Exceptions.Exception_Occurrence) is
-      Exception_String : constant String := "| Detected exception: "
-        & Ada.Exceptions.Exception_Name (E);
+      Exception_String : constant String :=
+        "| Detected exception: " & Ada.Exceptions.Exception_Name (E);
       Error_String : constant String :=
-        "| Error: "
-        & Ada.Exceptions.Exception_Message (E);
+        "| Error: " & Ada.Exceptions.Exception_Message (E);
    begin
       Set_Standard_Error;
 
-      Write_Line ("+========================== OCARINA BUG DETECTED"
-                    & " =========================+");
+      Write_Line
+        ("+========================== OCARINA BUG DETECTED" &
+         " =========================+");
 
       Write_Str (Exception_String);
       for J in Exception_String'Length .. 72 loop
@@ -209,11 +209,13 @@ package body Errors is
       Write_Str (" |");
       Write_Eol;
 
-      Write_Str ("| Please refer to the User's Guide for more details."
-                   & "                      |");
+      Write_Str
+        ("| Please refer to the User's Guide for more details." &
+         "                      |");
       Write_Eol;
-      Write_Line ("+============================================="
-                    & "============================+");
+      Write_Line
+        ("+=============================================" &
+         "============================+");
       Write_Eol;
       Write_Line (Ada.Exceptions.Exception_Information (E));
 

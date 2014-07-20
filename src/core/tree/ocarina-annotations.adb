@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,7 +33,7 @@
 
 with GNAT.Table;
 
-with Namet;  use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Annotations is
 
@@ -46,8 +46,12 @@ package body Ocarina.Annotations is
       Next : Annotation_Id;
    end record;
 
-   package Annotation_Table is
-      new GNAT.Table (Annotation_Record, Annotation_Id, 1, 10, 10);
+   package Annotation_Table is new GNAT.Table
+     (Annotation_Record,
+      Annotation_Id,
+      1,
+      10,
+      10);
    use Annotation_Table;
 
    function Internal_Name (N : Node_Id) return Name_Id;

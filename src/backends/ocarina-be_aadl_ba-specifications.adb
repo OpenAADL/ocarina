@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 
 with Ocarina.ME_AADL_BA;
 with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
@@ -44,7 +44,7 @@ with Ocarina.BE_AADL_BA.Expressions;
 
 package body Ocarina.BE_AADL_BA.Specifications is
 
-   use Output;
+   use Ocarina.Output;
    use Ocarina.ME_AADL_BA;
    use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
@@ -55,13 +55,13 @@ package body Ocarina.BE_AADL_BA.Specifications is
 
    package BAN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
-   procedure Print_Behavior_Variable             (Node : Node_Id);
-   procedure Print_Behavior_State                (Node : Node_Id);
-   procedure Print_Behavior_State_Kind           (State_Kind : Byte);
-   procedure Print_Behavior_Transition           (Node : Node_Id);
+   procedure Print_Behavior_Variable (Node : Node_Id);
+   procedure Print_Behavior_State (Node : Node_Id);
+   procedure Print_Behavior_State_Kind (State_Kind : Byte);
+   procedure Print_Behavior_Transition (Node : Node_Id);
    procedure Print_Execution_Behavior_Transition (Node : Node_Id);
-   procedure Print_Mode_Transition               (Node : Node_Id);
-   procedure Print_Behavior_Condition            (Node : Node_Id);
+   procedure Print_Mode_Transition (Node : Node_Id);
+   procedure Print_Behavior_Condition (Node : Node_Id);
 
    --------------------------
    -- Print_Behavior_Annex --
@@ -202,20 +202,23 @@ package body Ocarina.BE_AADL_BA.Specifications is
    procedure Print_Behavior_State_Kind (State_Kind : Byte) is
    begin
       case Behavior_State_Kind'Val (State_Kind) is
-         when BSK_Initial                => Print_Token  (T_Initial);
-         when BSK_Initial_Complete       => Print_Tokens ((T_Initial,
-                                                           T_Complete));
-         when BSK_Initial_Complete_Final => Print_Tokens ((T_Initial,
-                                                           T_Complete,
-                                                           T_Final));
-         when BSK_Initial_Final          => Print_Tokens ((T_Initial,
-                                                           T_Final));
-         when BSK_Complete               => Print_Token  (T_Complete);
-         when BSK_Complete_Final         => Print_Tokens ((T_Complete,
-                                                           T_Final));
-         when BSK_Final                  => Print_Token  (T_Final);
+         when BSK_Initial =>
+            Print_Token (T_Initial);
+         when BSK_Initial_Complete =>
+            Print_Tokens ((T_Initial, T_Complete));
+         when BSK_Initial_Complete_Final =>
+            Print_Tokens ((T_Initial, T_Complete, T_Final));
+         when BSK_Initial_Final =>
+            Print_Tokens ((T_Initial, T_Final));
+         when BSK_Complete =>
+            Print_Token (T_Complete);
+         when BSK_Complete_Final =>
+            Print_Tokens ((T_Complete, T_Final));
+         when BSK_Final =>
+            Print_Token (T_Final);
 
-         when others                     => Write_Line   (Bug_Str);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Behavior_State_Kind;
 
@@ -230,8 +233,7 @@ package body Ocarina.BE_AADL_BA.Specifications is
    begin
       if Kind (Transition_Node) = K_Execution_Behavior_Transition then
          Print_Execution_Behavior_Transition (Transition_Node);
-      elsif
-        Kind (Transition_Node) = K_Mode_Transition then
+      elsif Kind (Transition_Node) = K_Mode_Transition then
          Print_Mode_Transition (Transition_Node);
       end if;
    end Print_Behavior_Transition;
@@ -322,14 +324,17 @@ package body Ocarina.BE_AADL_BA.Specifications is
       pragma Assert (Kind (Node) = K_Behavior_Condition);
 
       Cond_Node : constant Node_Id := Condition (Node);
-      --  Execution_condition node is logical_value_expression node
+   --  Execution_condition node is logical_value_expression node
    begin
       case Kind (Cond_Node) is
-         when K_Value_Expression   => Print_Value_Expression   (Cond_Node);
+         when K_Value_Expression =>
+            Print_Value_Expression (Cond_Node);
 
-         when K_Dispatch_Condition => Print_Dispatch_Condition (Cond_Node);
+         when K_Dispatch_Condition =>
+            Print_Dispatch_Condition (Cond_Node);
 
-         when others               => Write_Line               (Bug_Str);
+         when others =>
+            Write_Line (Bug_Str);
       end case;
    end Print_Behavior_Condition;
 

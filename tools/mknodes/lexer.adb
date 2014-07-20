@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -83,15 +83,18 @@ package body Lexer is
 
       Token_Location.Scan := 1;
       loop
-         Code := GNAT.OS_Lib.Read
-           (Source_File, Buffer (Token_Location.Scan)'Address, Len);
+         Code :=
+           GNAT.OS_Lib.Read
+             (Source_File,
+              Buffer (Token_Location.Scan)'Address,
+              Len);
          exit when Code = Len;
          if Code <= 0 then
             Errors.DE ("cannot read preprocessor output");
             GNAT.OS_Lib.OS_Exit (4);
          end if;
          Token_Location.Scan := Token_Location.Scan + Types.Text_Ptr (Code);
-         Len := Len - Code;
+         Len                 := Len - Code;
       end loop;
       GNAT.OS_Lib.Close (Source_File);
 
@@ -113,20 +116,18 @@ package body Lexer is
    -- New_Token --
    ---------------
 
-   procedure New_Token
-     (Token : Token_Type;
-      Image : String) is
+   procedure New_Token (Token : Token_Type; Image : String) is
    begin
       Namet.Set_Str_To_Name_Buffer (Image);
       Token_Image (Token) := Namet.Name_Find;
 
       if Token in Keyword_Type then
          for I in Natural range 1 .. Namet.Name_Len loop
-            Namet.Name_Buffer (I)
-              := Charset.To_Lower (Namet.Name_Buffer (I));
+            Namet.Name_Buffer (I) := Charset.To_Lower (Namet.Name_Buffer (I));
          end loop;
          Namet.Set_Name_Table_Byte
-           (Namet.Name_Find, Types.Byte (Token_Type'Pos (Token)));
+           (Namet.Name_Find,
+            Types.Byte (Token_Type'Pos (Token)));
       end if;
    end New_Token;
 
@@ -144,10 +145,10 @@ package body Lexer is
       Current_Token          := Token;
       Current_Token_Location := Token_Location;
       Scan_Token (Fatal => False);
-      Next_Token_Value       := Token;
-      Token_Name             := Current_Token_Name;
-      Token                  := Current_Token;
-      Token_Location         := Current_Token_Location;
+      Next_Token_Value := Token;
+      Token_Name       := Current_Token_Name;
+      Token            := Current_Token;
+      Token_Location   := Current_Token_Location;
       return Next_Token_Value;
    end Next_Token;
 
@@ -242,13 +243,13 @@ package body Lexer is
    ---------------------
 
    procedure Scan_Identifier (Fatal : Boolean) is
-      Escaped : Boolean  := False;
+      Escaped : Boolean := False;
    begin
 
       --  Read escaped identifier
 
       if Buffer (Token_Location.Scan) = '_' then
-         Escaped := True;
+         Escaped             := True;
          Token_Location.Scan := Token_Location.Scan + 1;
       end if;
 
@@ -256,9 +257,9 @@ package body Lexer is
 
       Namet.Name_Len := 0;
       while Charset.Is_Identifier_Character (Buffer (Token_Location.Scan)) loop
-         Namet.Name_Len := Namet.Name_Len + 1;
+         Namet.Name_Len                     := Namet.Name_Len + 1;
          Namet.Name_Buffer (Namet.Name_Len) := Buffer (Token_Location.Scan);
-         Token_Location.Scan := Token_Location.Scan + 1;
+         Token_Location.Scan                := Token_Location.Scan + 1;
       end loop;
 
       if Namet.Name_Len = 0 then
@@ -267,7 +268,7 @@ package body Lexer is
             Errors.DE ("identifier must start with alphabetic character");
          end if;
          Namet.Name_Buffer (1) := ' ';
-         Namet.Name_Len := 1;
+         Namet.Name_Len        := 1;
 
       else
          Token_Name := Namet.Name_Find;
@@ -395,36 +396,36 @@ package body Lexer is
 
                when ';' =>
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Semi_Colon;
+                  Token               := T_Semi_Colon;
 
                when '{' =>
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Left_Brace;
+                  Token               := T_Left_Brace;
 
                when '}' =>
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Right_Brace;
+                  Token               := T_Right_Brace;
 
                when ':' =>
                   Token_Location.Scan := Token_Location.Scan + 1;
                   if Buffer (Token_Location.Scan) = ':' then
                      Token_Location.Scan := Token_Location.Scan + 1;
-                     Token := T_Colon_Colon;
+                     Token               := T_Colon_Colon;
                   else
                      Token := T_Colon;
                   end if;
 
                when ',' =>
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Comma;
+                  Token               := T_Comma;
 
                when '(' =>
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Left_Paren;
+                  Token               := T_Left_Paren;
 
                when ')' =>
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_Right_Paren;
+                  Token               := T_Right_Paren;
 
                when '/' =>
 
@@ -440,7 +441,7 @@ package body Lexer is
                      while Buffer (Token_Location.Scan) /= Types.EOF
                        and then
                        (Buffer (Token_Location.Scan) /= '*'
-                          or else Buffer (Token_Location.Scan + 1) /= '/')
+                        or else Buffer (Token_Location.Scan + 1) /= '/')
                      loop
                         case Buffer (Token_Location.Scan) is
                            when ASCII.LF | ASCII.FF | ASCII.CR | ASCII.VT =>
@@ -462,7 +463,7 @@ package body Lexer is
                      Errors.Error_Loc (1) := Token_Location;
                      Errors.DE ("invalid character");
                      Token_Location.Scan := Token_Location.Scan + 1;
-                     Token := T_Error;
+                     Token               := T_Error;
                   end if;
 
                when '_' =>
@@ -470,11 +471,11 @@ package body Lexer is
 
                when Types.EOF =>
                   Token_Location.Scan := Token_Location.Scan + 1;
-                  Token := T_EOF;
+                  Token               := T_EOF;
 
                when others =>
                   if Charset.Is_Alphabetic_Character
-                    (Buffer (Token_Location.Scan))
+                      (Buffer (Token_Location.Scan))
                   then
                      Scan_Identifier (Fatal);
 
@@ -487,7 +488,7 @@ package body Lexer is
 
                      Token_Location.Scan := Token_Location.Scan + 1;
                      while Charset.Is_Alphabetic_Character
-                       (Buffer (Token_Location.Scan))
+                         (Buffer (Token_Location.Scan))
                        or else Buffer (Token_Location.Scan) = '_'
                      loop
                         Token_Location.Scan := Token_Location.Scan + 1;

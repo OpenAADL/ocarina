@@ -2,25 +2,16 @@ include $(top_srcdir)/Makefile.common
 
 # The order of the project files is important for saving compile time
 
-BUILD_PROJECTS=\
-	ocarina-core.gpr \
-	ocarina-frontends.gpr \
-	ocarina-backends.gpr \
-	ocarina-config.gpr \
-	ocarina-transfo.gpr \
+BUILD_PROJECTS= ocarina-core.gpr ocarina-frontends.gpr			\
+	ocarina-backends.gpr ocarina-config.gpr ocarina-transfo.gpr	\
 	ocarina-main.gpr
 
 # All project files have to be packaged with "make dist"
 
-EXTRA_DIST=\
-	$(srcdir)/ocarina.gpr.in \
-	$(srcdir)/ocarina-frontends.gpr \
-	$(srcdir)/ocarina-backends.gpr \
-	$(srcdir)/ocarina-core.gpr \
-	$(srcdir)/ocarina-main.gpr \
-	$(srcdir)/ocarina-transfo.gpr \
-	$(srcdir)/ocarina-config.gpr \
-	$(srcdir)/restrictions.adc
+EXTRA_DIST= $(srcdir)/ocarina.gpr.in $(srcdir)/ocarina-frontends.gpr	\
+	$(srcdir)/ocarina-backends.gpr $(srcdir)/ocarina-core.gpr	\
+	$(srcdir)/ocarina-main.gpr $(srcdir)/ocarina-transfo.gpr	\
+	$(srcdir)/ocarina-config.gpr $(srcdir)/restrictions.adc
 
 
 BUILD_STAMPS = $(BUILD_PROJECTS:.gpr=.gpr-build)
@@ -30,20 +21,20 @@ CLEAN_STAMPS = $(CLEAN_PROJECTS:.gpr=.gpr-clean)
 
 # Object directories (*.o, *.ali)
 
-OBJECT_DIRS = $(top_builddir)/src/core/objects \
-	$(top_builddir)/src/frontends/objects \
-	$(top_builddir)/src/backends/objects \
-	$(top_builddir)/src/transfo/objects \
+OBJECT_DIRS = $(top_builddir)/src/core/objects	\
+	$(top_builddir)/src/config/objects	\
+	$(top_builddir)/src/frontends/objects	\
+	$(top_builddir)/src/backends/objects	\
+	$(top_builddir)/src/transfo/objects	\
 	$(top_builddir)/src/main/objects
 
 # Library directories (*.ali, *.a)
 
-LIB_DIRS = $(top_builddir)/src/core/libs \
-	$(top_builddir)/src/frontends/libs \
-	$(top_builddir)/src/backends/libs \
-	$(top_builddir)/src/transfo/libs \
-	$(top_builddir)/src/config/libs \
-	$(top_builddir)/src/main/libs
+LIB_DIRS = $(top_builddir)/src/core/libs				\
+	$(top_builddir)/src/frontends/libs				\
+	$(top_builddir)/src/backends/libs				\
+	$(top_builddir)/src/transfo/libs				\
+	$(top_builddir)/src/config/libs $(top_builddir)/src/main/libs
 
 # All directories used for the build process. If the configure is
 # performed from a directory different from the top source directory,
@@ -60,17 +51,16 @@ BUILD_DIRS_STAMPS = $(BUILD_DIRS:=-stamp)
 
 # Pseudo-IDL files that are used to generate the tree manipulators.
 
-TREE_PIDL_SPECS = \
-	src/core/tree/ocarina-me_aadl-aadl_tree-nodes.idl \
-	src/core/tree/ocarina-me_aadl-aadl_instances-nodes.idl \
-   src/core/tree/ocarina-me_aadl_ba-ba_tree-nodes.idl \
-   src/core/tree/ocarina-me_real-real_tree-nodes.idl \
-   src/backends/ocarina-backends-ada_tree-nodes.idl \
-	src/backends/ocarina-backends-c_tree-nodes.idl \
-	src/backends/ocarina-backends-asn1_tree-nodes.idl \
-	src/backends/ocarina-backends-xml_tree-nodes.idl \
-	src/backends/ocarina-backends-pn-nodes.idl \
-	src/backends/ocarina-backends-mast_tree-nodes.idl \
+TREE_PIDL_SPECS = src/core/tree/ocarina-me_aadl-aadl_tree-nodes.idl	\
+	src/core/tree/ocarina-me_aadl-aadl_instances-nodes.idl		\
+	src/core/tree/ocarina-me_aadl_ba-ba_tree-nodes.idl		\
+	src/core/tree/ocarina-me_real-real_tree-nodes.idl		\
+	src/backends/ocarina-backends-ada_tree-nodes.idl		\
+	src/backends/ocarina-backends-c_tree-nodes.idl			\
+	src/backends/ocarina-backends-asn1_tree-nodes.idl		\
+	src/backends/ocarina-backends-xml_tree-nodes.idl		\
+	src/backends/ocarina-backends-pn-nodes.idl			\
+	src/backends/ocarina-backends-mast_tree-nodes.idl		\
 	src/backends/ocarina-backends-rtsj_tree-nodes.idl
 
 TREE_ADA_SPECS = ${addprefix $(top_builddir)/, $(TREE_PIDL_SPECS:.idl=.ads)}

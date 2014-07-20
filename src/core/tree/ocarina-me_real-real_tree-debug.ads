@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,27 +32,27 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
-with Output; use Output;
-with Types;
+with Ocarina.Output; use Ocarina.Output;
+with Ocarina.Types;
 
 package Ocarina.ME_REAL.REAL_Tree.Debug is
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
-   use Types;
+   use Ocarina.Types;
 
-   procedure W_Eol         (N : Natural := 1) renames Output.Write_Eol;
-   procedure W_Int         (N : Int)          renames Output.Write_Int;
+   procedure W_Eol (N : Natural := 1) renames Ocarina.Output.Write_Eol;
+   procedure W_Int (N : Int) renames Ocarina.Output.Write_Int;
    procedure W_Indentation (N : Natural);
-   procedure W_Line        (N : String)       renames Output.Write_Line;
-   procedure W_Str         (N : String)       renames Output.Write_Str;
+   procedure W_Line (N : String) renames Ocarina.Output.Write_Line;
+   procedure W_Str (N : String) renames Ocarina.Output.Write_Str;
 
-   procedure W_Boolean     (N : Boolean);
-   procedure W_Byte        (N : Byte);
-   procedure W_List_Id     (I : Natural; L : List_Id);
-   procedure W_Node_Id     (I : Natural; N : Node_Id);
+   procedure W_Boolean (N : Boolean);
+   procedure W_Byte (N : Byte);
+   procedure W_List_Id (I : Natural; L : List_Id);
+   procedure W_Node_Id (I : Natural; N : Node_Id);
    procedure W_Node_Header (I : Natural; N : Node_Id);
 
-   procedure W_List_Id     (L : List_Id);
-   procedure W_Node_Id     (N : Node_Id);
+   procedure W_List_Id (L : List_Id);
+   procedure W_Node_Id (N : Node_Id);
    procedure W_Node_Header (N : Node_Id);
 
    procedure W_Full_Tree (Root : Node_Id);

@@ -44,9 +44,7 @@ with Ocarina.FE_AADL.Parser.Components.Arrays;
 
 with Ocarina.Builder.AADL.Properties;
 with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
-with Ocarina.ME_AADL.AADL_Tree.Entities;
-
-use Ocarina.ME_AADL;
+with Ocarina.ME_AADL.AADL_Tree.Entities; use Ocarina.ME_AADL;
 use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 use Ocarina.ME_AADL.AADL_Tree.Entities;
 
@@ -126,9 +124,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    function P_Range_Type return Node_Id;
    --  Current token must be 'range'
 
-   function P_Referable_Element_Category
-     (Container : Node_Id)
-     return Node_Id;
+   function P_Referable_Element_Category (Container : Node_Id) return Node_Id;
 
    function P_Reference_Category (Container : Node_Id) return Node_Id;
 
@@ -136,8 +132,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --  Current token must be 'reference'
 
    function P_Unique_Property_Identifier_Or_Term
-     (Code : Parsing_Code)
-     return Node_Id;
+     (Code : Parsing_Code) return Node_Id;
    --  Current token must be 'value'
 
    function P_Unit_Definition (Container : Node_Id) return Node_Id;
@@ -150,8 +145,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    function P_Named_Element_Component return Named_Element;
 
    function P_Named_Element_Component_With_Access
-     (Component_Cat : Component_Category)
-     return Named_Element;
+     (Component_Cat : Component_Category) return Named_Element;
 
    function P_Named_Element_Feature return Named_Element;
    --  Current token must be 'feature'
@@ -215,9 +209,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          if No (Second_Bool_Term) then
             return No_Node;
          else
-            And_Term := New_Node (K_And_Boolean_Term,
-                                  Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
-                                    (Bool_Term));
+            And_Term :=
+              New_Node
+                (K_And_Boolean_Term,
+                 Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Bool_Term));
             Set_First_Term (And_Term, Bool_Term);
             Set_Second_Term (And_Term, Second_Bool_Term);
 
@@ -300,7 +295,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                Restore_Lexer (Loc);
                Bool_Term :=
                  P_Unique_Property_Identifier_Or_Term
-                 (PC_Boolean_Property_Term);
+                   (PC_Boolean_Property_Term);
 
                if No (Bool_Term) then
                   return No_Node;
@@ -308,9 +303,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                   return Bool_Term;
                end if;
             else
-               DPE (PC_Boolean_Term,
-                    EMC_Not_Allowed_In_AADL_V1,
-                    T_Identifier);
+               DPE (PC_Boolean_Term, EMC_Not_Allowed_In_AADL_V1, T_Identifier);
                return No_Node;
             end if;
 
@@ -344,8 +337,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             end if;
 
          when others =>
-            DPE (PC_Boolean_Term,
-                 (T_True, T_False, T_Value, T_Not, T_Left_Parenthesis));
+            DPE
+              (PC_Boolean_Term,
+               (T_True, T_False, T_Value, T_Not, T_Left_Parenthesis));
             return No_Node;
       end case;
    end P_Boolean_Term;
@@ -414,16 +408,22 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       else
          case AADL_Version is
             when AADL_V1 =>
-               Class_List := P_Items_List (P_Component_Category'Access,
-                                           No_Node, T_Comma,
-                                           T_Right_Parenthesis,
-                                           PC_Classifier_Type);
+               Class_List :=
+                 P_Items_List
+                   (P_Component_Category'Access,
+                    No_Node,
+                    T_Comma,
+                    T_Right_Parenthesis,
+                    PC_Classifier_Type);
 
             when AADL_V2 =>
-               Class_List := P_Items_List (P_Classifier_Category'Access,
-                                           No_Node, T_Comma,
-                                           T_Right_Parenthesis,
-                                           PC_Classifier_Type);
+               Class_List :=
+                 P_Items_List
+                   (P_Classifier_Category'Access,
+                    No_Node,
+                    T_Comma,
+                    T_Right_Parenthesis,
+                    PC_Classifier_Type);
          end case;
 
          if No (Class_List) then
@@ -475,8 +475,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          when AADL_V2 =>
             Scan_Token;
             if Token /= T_Left_Parenthesis then
-               DPE (PC_Component_Classifier_Term,
-                    T_Left_Parenthesis);
+               DPE (PC_Component_Classifier_Term, T_Left_Parenthesis);
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
@@ -501,8 +500,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       if AADL_Version = AADL_V2 then
          Scan_Token;
          if Token /= T_Right_Parenthesis then
-            DPE (PC_Component_Classifier_Term,
-                 T_Right_Parenthesis);
+            DPE (PC_Component_Classifier_Term, T_Right_Parenthesis);
             Skip_Tokens (T_Semicolon);
             return No_Node;
          end if;
@@ -519,10 +517,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    -- P_Constant_Property_Value --
    -------------------------------
 
-   function P_Constant_Property_Value
-     (Container : Node_Id)
-     return Node_Id
-   is
+   function P_Constant_Property_Value (Container : Node_Id) return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.AADL_Values;
@@ -592,9 +587,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Ocarina.ME_AADL.Tokens;
       use Ocarina.FE_AADL.Parser.Identifiers;
 
-      Enum          : Node_Id;
-      Items         : List_Id;
-      Item          : Node_Id;
+      Enum  : Node_Id;
+      Items : List_Id;
+      Item  : Node_Id;
    begin
       Enum := New_Node (K_Enumeration_Type, Token_Location);
       Scan_Token;
@@ -677,11 +672,12 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          if Token /= T_Right_Parenthesis then
             Restore_Lexer (Loc);
             Property_Expressions :=
-              P_Items_List (Func => P_Property_Expression'Access,
-                            Container => No_Node,
-                            Separator => T_Comma,
-                            Delimiter => T_Right_Parenthesis,
-                            Code => PC_Multi_Valued_Property);
+              P_Items_List
+                (Func      => P_Property_Expression'Access,
+                 Container => No_Node,
+                 Separator => T_Comma,
+                 Delimiter => T_Right_Parenthesis,
+                 Code      => PC_Multi_Valued_Property);
          else
             Property_Expressions := New_List (K_List_Id, Token_Location);
          end if;
@@ -736,8 +732,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             Scan_Token;
 
             case Token is
-               when T_Real_Literal
-                 | T_Integer_Literal =>
+               when T_Real_Literal | T_Integer_Literal =>
 
                   Restore_Lexer (Start_Loc);
                   return P_Signed_AADLNumber (NC_Unknown, Code);
@@ -770,9 +765,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
                      return Term;
                   else
-                     DPE (Code,
-                          EMC_Not_Allowed_In_AADL_V1,
-                          T_Identifier);
+                     DPE (Code, EMC_Not_Allowed_In_AADL_V1, T_Identifier);
                      return No_Node;
                   end if;
 
@@ -781,8 +774,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                   return No_Node;
             end case;
 
-         when T_Real_Literal
-           | T_Integer_Literal =>
+         when T_Real_Literal | T_Integer_Literal =>
             Restore_Lexer (Start_Loc);
             return P_Signed_AADLNumber (NC_Unknown, Code);
 
@@ -814,9 +806,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
                return Term;
             else
-               DPE (Code,
-                    EMC_Not_Allowed_In_AADL_V1,
-                    T_Identifier);
+               DPE (Code, EMC_Not_Allowed_In_AADL_V1, T_Identifier);
                return No_Node;
             end if;
 
@@ -838,7 +828,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Ocarina.ME_AADL.Tokens;
       use Ocarina.FE_AADL.Parser.Identifiers;
 
-      Loc : Location;
+      Loc          : Location;
       Numeric_Term : constant Node_Id :=
         New_Node (K_Minus_Numeric_Term, No_Location);
       Subterm : Node_Id;
@@ -850,8 +840,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       case Token is
          when T_Real_Literal | T_Integer_Literal =>
             Restore_Lexer (Loc);
-            Subterm := P_Signed_AADLNumber (NC_Unknown,
-                                            PC_Property_Expression);
+            Subterm :=
+              P_Signed_AADLNumber (NC_Unknown, PC_Property_Expression);
 
          when T_Value =>
             --  This token had been disabled in AADLv2
@@ -862,8 +852,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                return No_Node;
             end if;
 
-            Subterm := P_Unique_Property_Identifier_Or_Term
-              (PC_Unique_Property_Constant_Identifier);
+            Subterm :=
+              P_Unique_Property_Identifier_Or_Term
+                (PC_Unique_Property_Constant_Identifier);
 
             Scan_Token;
             if Token /= T_Right_Parenthesis then
@@ -878,9 +869,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                Restore_Lexer (Loc);
                Subterm := P_Unique_Property_Identifier_Or_Term (Code);
             else
-               DPE (Code,
-                    EMC_Not_Allowed_In_AADL_V1,
-                    T_Identifier);
+               DPE (Code, EMC_Not_Allowed_In_AADL_V1, T_Identifier);
             end if;
 
          when others =>
@@ -915,16 +904,19 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
 
-      Number_Range   : Node_Id;
-      Lower_Bound    : Node_Id;
-      Upper_Bound    : Node_Id;
-      Code           : Parsing_Code;
+      Number_Range : Node_Id;
+      Lower_Bound  : Node_Id;
+      Upper_Bound  : Node_Id;
+      Code         : Parsing_Code;
 
    begin
       case Number_Cat is
-         when NC_Real    => Code := PC_Real_Range;
-         when NC_Integer => Code := PC_Integer_Range;
-         when NC_Unknown => Code := PC_Number_Range;
+         when NC_Real =>
+            Code := PC_Real_Range;
+         when NC_Integer =>
+            Code := PC_Integer_Range;
+         when NC_Unknown =>
+            Code := PC_Number_Range;
       end case;
 
       Lower_Bound := P_Numeric_Term (Code);
@@ -990,8 +982,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       Save_Lexer (Loc);
       Scan_Token;
-      if Token = T_Real_Literal or else Token = T_Integer_Literal
-        or else Token = T_Minus or else Token = T_Plus
+      if Token = T_Real_Literal
+        or else Token = T_Integer_Literal
+        or else Token = T_Minus
+        or else Token = T_Plus
         or else Token = T_Value
 
       then
@@ -1020,8 +1014,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             end if;
          elsif Token = T_Identifier then
             Restore_Lexer (Loc);
-            Unit_Designator := P_Unique_Property_Identifier_Or_Term
-              (PC_Unique_Property_Type_Identifier);
+            Unit_Designator :=
+              P_Unique_Property_Identifier_Or_Term
+                (PC_Unique_Property_Type_Identifier);
 
             if No (Unit_Designator) then
                return No_Node;
@@ -1083,9 +1078,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          if No (Second_Bool_Term) then
             return No_Node;
          else
-            Or_Term := New_Node (K_Or_Boolean_Term,
-                                 Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
-                                   (Bool_Term));
+            Or_Term :=
+              New_Node
+                (K_Or_Boolean_Term,
+                 Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Bool_Term));
             Set_First_Term (Or_Term, Bool_Term);
             Set_Second_Term (Or_Term, Second_Bool_Term);
 
@@ -1144,9 +1140,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --                               { , constant_property_expression }* ] ) ;
 
    function P_Property_Constant
-     (Identifier : Node_Id;
-      Property_Set : Node_Id)
-     return Node_Id
+     (Identifier   : Node_Id;
+      Property_Set : Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -1155,9 +1150,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Ocarina.FE_AADL.Parser.Identifiers;
       use Ocarina.Builder.AADL.Properties;
 
-      Property        : Node_Id;       --  output
-      Constant_Type   : Node_Id;
-      Unit_Ident      : Node_Id := No_Node;
+      Property      : Node_Id;       --  output
+      Constant_Type : Node_Id;
+      Unit_Ident    : Node_Id := No_Node;
       --  used only for AADLInteger and AADLReal
 
       Property_Value  : Node_Id := No_Node; --  only for single_valued_property
@@ -1190,8 +1185,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             case Token is
                when T_AADLInteger | T_AADLReal =>
                   if Token = T_AADLInteger then
-                     Constant_Type := New_Node
-                       (K_Integer_Type, Token_Location);
+                     Constant_Type :=
+                       New_Node (K_Integer_Type, Token_Location);
                   else
                      Constant_Type := New_Node (K_Real_Type, Token_Location);
                   end if;
@@ -1206,8 +1201,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
                   if Token = T_Identifier then
                      Restore_Lexer (Loc);
-                     Unit_Ident := P_Unique_Property_Identifier_Or_Term
-                       (PC_Unique_Property_Type_Identifier);
+                     Unit_Ident :=
+                       P_Unique_Property_Identifier_Or_Term
+                         (PC_Unique_Property_Type_Identifier);
 
                      if No (Unit_Ident) then
                         Skip_Tokens (T_Semicolon);
@@ -1228,8 +1224,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                   --  parse xxxxxx_unique_property_type_identifier
 
                   Restore_Lexer (Loc);
-                  Constant_Type := P_Unique_Property_Identifier_Or_Term
-                    (PC_Unique_Property_Type_Identifier);
+                  Constant_Type :=
+                    P_Unique_Property_Identifier_Or_Term
+                      (PC_Unique_Property_Type_Identifier);
 
                   if No (Constant_Type) then
                      Skip_Tokens (T_Semicolon);
@@ -1238,12 +1235,22 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
                when others =>
                   if Code = PC_Single_Valued_Property_Constant then
-                     DPE (PC_Property_Constant,
-                          (T_List, T_AADLInteger, T_AADLReal,
-                           T_AADLString, T_AADLBoolean, T_Identifier));
+                     DPE
+                       (PC_Property_Constant,
+                        (T_List,
+                         T_AADLInteger,
+                         T_AADLReal,
+                         T_AADLString,
+                         T_AADLBoolean,
+                         T_Identifier));
                   else
-                     DPE (Code, (T_AADLInteger, T_AADLReal,
-                                 T_AADLString, T_AADLBoolean, T_Identifier));
+                     DPE
+                       (Code,
+                        (T_AADLInteger,
+                         T_AADLReal,
+                         T_AADLString,
+                         T_AADLBoolean,
+                         T_Identifier));
                   end if;
                   Skip_Tokens (T_Semicolon);
                   return No_Node;
@@ -1282,9 +1289,12 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                else
                   Restore_Lexer (Loc);
                   Property_Values :=
-                    P_Items_List (P_Constant_Property_Value'Access,
-                                  No_Node,
-                                  T_Comma, T_Right_Parenthesis, Code);
+                    P_Items_List
+                      (P_Constant_Property_Value'Access,
+                       No_Node,
+                       T_Comma,
+                       T_Right_Parenthesis,
+                       Code);
 
                   if No (Property_Values) then
                      --  error when parsing Constant_Property_Value list, quit
@@ -1335,9 +1345,12 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                else
                   Restore_Lexer (Loc);
                   Property_Values :=
-                    P_Items_List (P_Property_Expression'Access,
-                                  No_Node,
-                                  T_Comma, T_Right_Parenthesis, Code);
+                    P_Items_List
+                      (P_Property_Expression'Access,
+                       No_Node,
+                       T_Comma,
+                       T_Right_Parenthesis,
+                       Code);
 
                   if No (Property_Values) then
                      --  error when parsing Property_Values list, quit
@@ -1357,14 +1370,15 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          return No_Node;
       end if;
 
-      Property := Add_New_Property_Constant_Declaration
-        (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Name => Identifier,
-         Property_Set => Property_Set,
-         Single_Value => Property_Value,
-         Multiple_Values => Property_Values,
-         Unit_Identifier => Unit_Ident,
-         Constant_Type => Constant_Type);
+      Property :=
+        Add_New_Property_Constant_Declaration
+          (Loc             => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Name            => Identifier,
+           Property_Set    => Property_Set,
+           Single_Value    => Property_Value,
+           Multiple_Values => Property_Values,
+           Unit_Identifier => Unit_Ident,
+           Constant_Type   => Constant_Type);
       return Property;
    end P_Property_Constant;
 
@@ -1381,9 +1395,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --     defining_property_type_identifier : type property_type ;
 
    function P_Property_Type_Declaration
-     (Identifier : Node_Id;
-      Property_Set : Node_Id)
-     return Node_Id
+     (Identifier   : Node_Id;
+      Property_Set : Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -1417,11 +1430,12 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          return No_Node;
       end if;
 
-      Property := Add_New_Property_Type_Declaration
-        (Loc => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-         Property_Set => Property_Set,
-         Name => Identifier,
-         Type_Designator => Designator);
+      Property :=
+        Add_New_Property_Type_Declaration
+          (Loc             => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
+           Property_Set    => Property_Set,
+           Name            => Identifier,
+           Type_Designator => Designator);
 
       return Property;
    end P_Property_Type_Declaration;
@@ -1469,15 +1483,15 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Scan_Token;
 
       case Token is
-         when T_AADLBoolean
-           | T_AADLString
-           | T_Enumeration
-           | T_Units
-           | T_AADLReal
-           | T_AADLInteger
-           | T_Range
-           | T_Classifier
-           | T_Reference =>
+         when T_AADLBoolean |
+           T_AADLString     |
+           T_Enumeration    |
+           T_Units          |
+           T_AADLReal       |
+           T_AADLInteger    |
+           T_Range          |
+           T_Classifier     |
+           T_Reference      =>
             Restore_Lexer (Loc);
             return P_Property_Type;
 
@@ -1486,17 +1500,19 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                Restore_Lexer (Loc);
                return P_Property_Type;
             else
-               DPE (PC_Property_Type_Designator,
-                    EMC_Not_Allowed_In_AADL_V1,
-                    T_Record);
+               DPE
+                 (PC_Property_Type_Designator,
+                  EMC_Not_Allowed_In_AADL_V1,
+                  T_Record);
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
 
          when T_Identifier =>
             Restore_Lexer (Loc);
-            Prop_Id := P_Unique_Property_Identifier_Or_Term
-              (PC_Unique_Property_Type_Identifier);
+            Prop_Id :=
+              P_Unique_Property_Identifier_Or_Term
+                (PC_Unique_Property_Type_Identifier);
 
             if No (Prop_Id) then
                DPE (PC_Property_Type_Designator, T_Identifier);
@@ -1507,10 +1523,19 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             return Prop_Id;
 
          when others =>
-            DPE (PC_Property_Type_Designator,
-                 (T_AADLBoolean, T_AADLString, T_AADLInteger, T_AADLReal,
-                  T_Enumeration, T_Units, T_Range, T_Classifier, T_Reference,
-                  T_Identifier, T_Record));
+            DPE
+              (PC_Property_Type_Designator,
+               (T_AADLBoolean,
+                T_AADLString,
+                T_AADLInteger,
+                T_AADLReal,
+                T_Enumeration,
+                T_Units,
+                T_Range,
+                T_Classifier,
+                T_Reference,
+                T_Identifier,
+                T_Record));
             return No_Node;
       end case;
    end P_Property_Type_Designator;
@@ -1574,17 +1599,24 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             if AADL_Version = AADL_V2 then
                return P_Record_Type;
             else
-               DPE (PC_Property_Type,
-                    EMC_Not_Allowed_In_AADL_V1,
-                    T_Record);
+               DPE (PC_Property_Type, EMC_Not_Allowed_In_AADL_V1, T_Record);
                return No_Node;
             end if;
 
          when others =>
-            DPE (PC_Property_Type,
-                 (T_AADLBoolean, T_AADLString, T_AADLInteger, T_AADLReal,
-                  T_Enumeration, T_Units, T_Range, T_Classifier, T_Reference,
-                  T_Identifier, T_Record));
+            DPE
+              (PC_Property_Type,
+               (T_AADLBoolean,
+                T_AADLString,
+                T_AADLInteger,
+                T_AADLReal,
+                T_Enumeration,
+                T_Units,
+                T_Range,
+                T_Classifier,
+                T_Reference,
+                T_Identifier,
+                T_Record));
             return No_Node;
       end case;
    end P_Property_Type;
@@ -1629,7 +1661,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          Restore_Lexer (Loc);
          Number_Type :=
            P_Unique_Property_Identifier_Or_Term
-           (PC_Unique_Property_Type_Identifier);
+             (PC_Unique_Property_Type_Identifier);
 
          if No (Number_Type) then
             return No_Node;
@@ -1654,8 +1686,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --                                   | server subprogram
 
    function P_Referable_Element_Category
-     (Container : Node_Id)
-     return Node_Id
+     (Container : Node_Id) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -1689,9 +1720,17 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             Comp_Cat := CC_Unknown;
             Category := REC_Server_Subprogram;
 
-         when T_Data | T_Subprogram | T_Thread | T_Process
-           | T_Memory | T_Processor | T_Bus | T_Device
-           | T_System | T_Virtual | T_Abstract =>
+         when T_Data    |
+           T_Subprogram |
+           T_Thread     |
+           T_Process    |
+           T_Memory     |
+           T_Processor  |
+           T_Bus        |
+           T_Device     |
+           T_System     |
+           T_Virtual    |
+           T_Abstract   =>
             Comp_Cat := P_Component_Category;
             Category := REC_Component_Category;
 
@@ -1722,9 +1761,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
 
-      Start_Loc    : Location;
-      Record_Type  : Node_Id;
-      Record_List  : List_Id := No_List;
+      Start_Loc   : Location;
+      Record_Type : Node_Id;
+      Record_List : List_Id := No_List;
 
    begin
       Save_Lexer (Start_Loc);
@@ -1738,12 +1777,14 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Save_Lexer (Start_Loc);
       Scan_Token;
       if Token /= T_Right_Parenthesis then
-         Record_List := P_Items_List (P_Record_Type_Element'Access,
-                                      No_Node,
-                                      T_Semicolon,
-                                      T_Right_Parenthesis,
-                                      PC_Record_Type,
-                                      True);
+         Record_List :=
+           P_Items_List
+             (P_Record_Type_Element'Access,
+              No_Node,
+              T_Semicolon,
+              T_Right_Parenthesis,
+              PC_Record_Type,
+              True);
          if No (Record_List) then
             DPE (PC_Record_Type, EMC_List_Is_Empty);
             return No_Node;
@@ -1769,9 +1810,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --
    --  defining_field_identifier : [list of ] property_type_designator
 
-   function P_Record_Type_Element
-     (Container : Node_Id)
-     return Node_Id is
+   function P_Record_Type_Element (Container : Node_Id) return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;
@@ -1780,11 +1819,11 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       pragma Unreferenced (Container);
 
-      Loc                       : Location;
-      Identifier                : Node_Id;
-      Record_Element            : Node_Id;
-      Property_Type_Designator  : Node_Id;
-      Is_List : Boolean := False;
+      Loc                      : Location;
+      Identifier               : Node_Id;
+      Record_Element           : Node_Id;
+      Property_Type_Designator : Node_Id;
+      Is_List                  : Boolean := False;
 
    begin
       Save_Lexer (Loc);
@@ -1796,7 +1835,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       end if;
 
       Record_Element := New_Node (K_Record_Type_Element, Token_Location);
-      Identifier := Make_Current_Identifier (Record_Element);
+      Identifier     := Make_Current_Identifier (Record_Element);
       Set_Identifier (Record_Element, Identifier);
 
       Save_Lexer (Loc);
@@ -1830,8 +1869,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          return No_Node;
       end if;
 
-      Set_Property_Type_Designator (Record_Element,
-                                    Property_Type_Designator);
+      Set_Property_Type_Designator (Record_Element, Property_Type_Designator);
       Set_Is_List (Record_Element, Is_List);
       return Record_Element;
    end P_Record_Type_Element;
@@ -1885,9 +1923,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
 
-      Ref_Type   : Node_Id;
-      Ref_List   : List_Id;
-      Start_Loc  : Location;
+      Ref_Type  : Node_Id;
+      Ref_List  : List_Id;
+      Start_Loc : Location;
 
    begin
       Save_Lexer (Start_Loc);
@@ -1899,16 +1937,22 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       else
          case AADL_Version is
             when AADL_V1 =>
-               Ref_List := P_Items_List (P_Referable_Element_Category'Access,
-                                         No_Node, T_Comma,
-                                         T_Right_Parenthesis,
-                                         PC_Reference_Type);
+               Ref_List :=
+                 P_Items_List
+                   (P_Referable_Element_Category'Access,
+                    No_Node,
+                    T_Comma,
+                    T_Right_Parenthesis,
+                    PC_Reference_Type);
 
             when AADL_V2 =>
-               Ref_List := P_Items_List (P_Reference_Category'Access,
-                                         No_Node, T_Comma,
-                                         T_Right_Parenthesis,
-                                         PC_Reference_Type);
+               Ref_List :=
+                 P_Items_List
+                   (P_Reference_Category'Access,
+                    No_Node,
+                    T_Comma,
+                    T_Right_Parenthesis,
+                    PC_Reference_Type);
          end case;
 
          if No (Ref_List) then
@@ -1927,9 +1971,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    -- P_Signed_AADLNumber --
    -------------------------
 
-   function P_Signed_AADLNumber (Number_Cat : Number_Category;
-                                 Code       : Parsing_Code)
-                                return Node_Id
+   function P_Signed_AADLNumber
+     (Number_Cat : Number_Category;
+      Code       : Parsing_Code) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -1965,20 +2009,24 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             end if;
 
             Number_Value := New_Node (K_Literal, Token_Location);
-            Set_Value (Number_Value,
-                       New_Real_Value (Float_Literal_Value,
-                                       False,
-                                       Numeric_Literal_Base,
-                                       Numeric_Literal_Exp));
+            Set_Value
+              (Number_Value,
+               New_Real_Value
+                 (Float_Literal_Value,
+                  False,
+                  Numeric_Literal_Base,
+                  Numeric_Literal_Exp));
             Unitable := True;
 
          when T_Integer_Literal =>
             Number_Value := New_Node (K_Literal, Token_Location);
-            Set_Value (Number_Value,
-                       New_Integer_Value (Integer_Literal_Value,
-                                          False,
-                                          Numeric_Literal_Base,
-                                          Numeric_Literal_Exp));
+            Set_Value
+              (Number_Value,
+               New_Integer_Value
+                 (Integer_Literal_Value,
+                  False,
+                  Numeric_Literal_Base,
+                  Numeric_Literal_Exp));
             Unitable := True;
 
          when T_Value =>
@@ -1991,8 +2039,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                return No_Node;
             end if;
 
-            Number_Value := P_Unique_Property_Identifier_Or_Term
-              (PC_Unique_Property_Constant_Identifier);
+            Number_Value :=
+              P_Unique_Property_Identifier_Or_Term
+                (PC_Unique_Property_Constant_Identifier);
 
             Scan_Token;
             if Token /= T_Right_Parenthesis then
@@ -2009,24 +2058,25 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
             if AADL_Version = AADL_V2 then
                Restore_Lexer (Loc);
-               Number_Value := P_Unique_Property_Identifier_Or_Term
-                 (PC_Unique_Property_Constant_Identifier);
+               Number_Value :=
+                 P_Unique_Property_Identifier_Or_Term
+                   (PC_Unique_Property_Constant_Identifier);
 
                if No (Number_Value) then
                   return No_Node;
                end if;
             else
-               DPE (Code,
-                    EMC_Not_Allowed_In_AADL_V1,
-                    T_Identifier);
+               DPE (Code, EMC_Not_Allowed_In_AADL_V1, T_Identifier);
             end if;
 
          when others =>
             case Number_Cat is
-               when NC_Real    => DPE (Code, (T_Value, T_Real_Literal));
-               when NC_Integer => DPE (Code, (T_Value, T_Integer_Literal));
-               when NC_Unknown => DPE (Code, (T_Value, T_Real_Literal,
-                                              T_Integer_Literal));
+               when NC_Real =>
+                  DPE (Code, (T_Value, T_Real_Literal));
+               when NC_Integer =>
+                  DPE (Code, (T_Value, T_Integer_Literal));
+               when NC_Unknown =>
+                  DPE (Code, (T_Value, T_Real_Literal, T_Integer_Literal));
             end case;
             return No_Node;
       end case;
@@ -2059,10 +2109,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
 
-      Range_Term   : Node_Id;            --  output
-      Second_Term  : Node_Id;
-      Delta_Term   : Node_Id;
-      Loc          : Location;
+      Range_Term  : Node_Id;            --  output
+      Second_Term : Node_Id;
+      Delta_Term  : Node_Id;
+      Loc         : Location;
 
    begin
       --  First_Term contains a Real_Term or an Integer_Term
@@ -2096,9 +2146,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          Delta_Term := No_Node;
       end if;
 
-      Range_Term := New_Node (K_Number_Range_Term,
-                              Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
-                                (First_Term));
+      Range_Term :=
+        New_Node
+          (K_Number_Range_Term,
+           Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (First_Term));
       Set_Lower_Bound (Range_Term, First_Term);
       Set_Upper_Bound (Range_Term, Second_Term);
       Set_Delta_Term (Range_Term, Delta_Term);
@@ -2149,9 +2200,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          Property_Expression := No_Node;
       end if;
 
-      Valued_Property := New_Node (K_Single_Valued_Property,
-                                   Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
-                                   (Property_Type_Designator));
+      Valued_Property :=
+        New_Node
+          (K_Single_Valued_Property,
+           Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Property_Type_Designator));
       Set_Property_Type_Designator (Valued_Property, Property_Type_Designator);
       Set_Property_Expression (Valued_Property, Property_Expression);
 
@@ -2222,8 +2274,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                return No_Node;
             end if;
 
-            Property := P_Unique_Property_Identifier_Or_Term
-              (PC_Property_Term);
+            Property :=
+              P_Unique_Property_Identifier_Or_Term (PC_Property_Term);
 
             Scan_Token;
             if Token /= T_Right_Parenthesis then
@@ -2257,8 +2309,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                   Restore_Lexer (Loc);
 
                   First_Num_Term :=
-                    New_Node (K_Signed_AADLNumber,
-                              Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Property));
+                    New_Node
+                      (K_Signed_AADLNumber,
+                       Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Property));
                   Set_Number_Value (First_Num_Term, Property);
                   Set_Unit_Identifier (First_Num_Term, No_Node);
 
@@ -2294,8 +2347,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
                when AADL_V2 =>
                   Restore_Lexer (Loc);
-                  Property := P_Unique_Property_Identifier_Or_Term
-                    (PC_Property_Term);
+                  Property :=
+                    P_Unique_Property_Identifier_Or_Term (PC_Property_Term);
 
                   if No (Property) then
                      return No_Node;
@@ -2323,9 +2376,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                         Restore_Lexer (Loc);
 
                         First_Num_Term :=
-                          New_Node (K_Signed_AADLNumber,
-                                    Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
-                                                      (Property));
+                          New_Node
+                            (K_Signed_AADLNumber,
+                             Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Property));
                         Set_Number_Value (First_Num_Term, Property);
                         Set_Unit_Identifier (First_Num_Term, No_Node);
 
@@ -2337,14 +2390,21 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                   return Property;
             end case;
 
-         when T_Data | T_Subprogram | T_Thread | T_Process
-           | T_Memory | T_Processor | T_Bus | T_Device
-           | T_System | T_Virtual | T_Abstract =>
+         when T_Data    |
+           T_Subprogram |
+           T_Thread     |
+           T_Process    |
+           T_Memory     |
+           T_Processor  |
+           T_Bus        |
+           T_Device     |
+           T_System     |
+           T_Virtual    |
+           T_Abstract   =>
             if AADL_Version = AADL_V1 then
                return P_Component_Classifier_Term;
             else
-               DPE (PC_Property_Expression,
-                    EMC_Not_Allowed_In_AADL_V2);
+               DPE (PC_Property_Expression, EMC_Not_Allowed_In_AADL_V2);
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
@@ -2353,8 +2413,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             if AADL_Version = AADL_V2 then
                return P_Component_Classifier_Term;
             else
-               DPE (PC_Property_Expression,
-                    EMC_Not_Allowed_In_AADL_V1);
+               DPE (PC_Property_Expression, EMC_Not_Allowed_In_AADL_V1);
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
@@ -2369,8 +2428,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             if AADL_Version = AADL_V2 then
                return P_Record_Term;
             else
-               DPE (PC_Property_Expression,
-                    EMC_Not_Allowed_In_AADL_V1);
+               DPE (PC_Property_Expression, EMC_Not_Allowed_In_AADL_V1);
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
@@ -2379,8 +2437,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             if AADL_Version = AADL_V2 then
                return P_Computed_Term;
             else
-               DPE (PC_Property_Expression,
-                    EMC_Not_Allowed_In_AADL_V1);
+               DPE (PC_Property_Expression, EMC_Not_Allowed_In_AADL_V1);
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
@@ -2403,7 +2460,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
 
-      Loc  : Location;
+      Loc : Location;
 
    begin
       Save_Lexer (Loc);
@@ -2423,8 +2480,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                Restore_Lexer (Loc);
                return P_Record_Term;
             else
-               DPE (PC_Boolean_Or_Record_Term,
-                   EMC_Not_Allowed_In_AADL_V2);
+               DPE (PC_Boolean_Or_Record_Term, EMC_Not_Allowed_In_AADL_V2);
                return No_Node;
             end if;
 
@@ -2455,8 +2511,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Ocarina.FE_AADL.Parser.Identifiers;
 
       Reference : Node_Id;
-      Ref_Term : constant Node_Id := New_Node (K_Reference_Term,
-                                               Token_Location);
+      Ref_Term  : constant Node_Id :=
+        New_Node (K_Reference_Term, Token_Location);
    begin
       case AADL_Version is
          when AADL_V1 =>
@@ -2558,10 +2614,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
 
-      Record_Term         : Node_Id;
-      Item                : Node_Id;
-      Items               : List_Id;
-      Start_Loc           : Location;
+      Record_Term : Node_Id;
+      Item        : Node_Id;
+      Items       : List_Id;
+      Start_Loc   : Location;
 
    begin
       Save_Lexer (Start_Loc);
@@ -2574,12 +2630,14 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       Save_Lexer (Start_Loc);
       Scan_Token;
-      Items := P_Items_List (P_Record_Term_Element'Access,
-                             No_Node,
-                             T_Semicolon,
-                             T_Right_Square_Bracket,
-                             PC_Record_Term,
-                             True);
+      Items :=
+        P_Items_List
+          (P_Record_Term_Element'Access,
+           No_Node,
+           T_Semicolon,
+           T_Right_Square_Bracket,
+           PC_Record_Term,
+           True);
 
       if No (Items) then
          Skip_Tokens (T_Semicolon);
@@ -2588,7 +2646,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       Set_List_Items (Record_Term, Items);
 
-      Item  := First_Node (Items);
+      Item := First_Node (Items);
       while Present (Item) loop
          --         Set_Corresponding_Entity (Item, Record_Term);
          Item := Next_Node (Item);
@@ -2604,10 +2662,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --  AADL_V2
    --    record_field_identifier => property_expression
 
-   function P_Record_Term_Element
-     (Container : Node_Id)
-     return Node_Id
-   is
+   function P_Record_Term_Element (Container : Node_Id) return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;
@@ -2631,7 +2686,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       end if;
 
       Record_Term_Element := New_Node (K_Record_Term_Element, Token_Location);
-      Identifier := Make_Current_Identifier (Record_Term_Element);
+      Identifier          := Make_Current_Identifier (Record_Term_Element);
       Set_Identifier (Record_Term_Element, Identifier);
 
       Save_Lexer (Loc);
@@ -2675,8 +2730,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --  property_term ::=
    --     [ property_set_identifier :: ] property_name_identifier
 
-   function P_Unique_Property_Identifier_Or_Term (Code : Parsing_Code)
-     return Node_Id
+   function P_Unique_Property_Identifier_Or_Term
+     (Code : Parsing_Code) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -2688,7 +2743,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Loc       : Location;
       Property  : Node_Id;
       Ident1    : Node_Id;
-      Ident2    : Node_Id  := No_Node;
+      Ident2    : Node_Id := No_Node;
 
    begin
       Save_Lexer (Start_Loc);
@@ -2797,25 +2852,28 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       Scan_Token;
       if Token = T_Integer_Literal then
-         Literal_Value := New_Integer_Value
-           (Integer_Literal_Value,
-            False,
-            Numeric_Literal_Base,
-            Numeric_Literal_Exp);
+         Literal_Value :=
+           New_Integer_Value
+             (Integer_Literal_Value,
+              False,
+              Numeric_Literal_Base,
+              Numeric_Literal_Exp);
       elsif Token = T_Real_Literal then
-         Literal_Value := New_Real_Value
-           (Float_Literal_Value,
-            False,
-            Numeric_Literal_Base,
-            Numeric_Literal_Exp);
+         Literal_Value :=
+           New_Real_Value
+             (Float_Literal_Value,
+              False,
+              Numeric_Literal_Base,
+              Numeric_Literal_Exp);
       else
          DPE (PC_Unit_Definition, (T_Integer_Literal, T_Real_Literal));
          return No_Node;
       end if;
 
       Numeric_Literal := New_Node (K_Literal, Token_Location);
-      Ocarina.ME_AADL.AADL_Tree.Nodes.Set_Value (Numeric_Literal,
-                                                 Literal_Value);
+      Ocarina.ME_AADL.AADL_Tree.Nodes.Set_Value
+        (Numeric_Literal,
+         Literal_Value);
 
       Set_Unit_Identifier (Definition, Unit_Identifier);
       Set_Numeric_Literal (Definition, Numeric_Literal);
@@ -2841,9 +2899,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Ocarina.ME_AADL.Tokens;
       use Ocarina.FE_AADL.Parser.Identifiers;
 
-      Units         : Node_Id;
-      Base          : Node_Id;
-      Items         : List_Id;
+      Units : Node_Id;
+      Base  : Node_Id;
+      Items : List_Id;
    begin
       Units := New_Node (K_Units_Type, Token_Location);
 
@@ -2863,12 +2921,13 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Scan_Token;
 
       if Token = T_Comma then
-         Items := P_Items_List
-           (P_Unit_Definition'Access,
-            Units,
-            T_Comma,
-            T_Right_Parenthesis,
-            PC_Units_Type);
+         Items :=
+           P_Items_List
+             (P_Unit_Definition'Access,
+              Units,
+              T_Comma,
+              T_Right_Parenthesis,
+              PC_Units_Type);
 
          if No (Items) then
             --  error when parsing units elements, quit
@@ -2908,8 +2967,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Owner_Category : Node_Id;
       Category       : Named_Element;
       Comp_Cat       : Component_Category := CC_Unknown;
-      Classifier_Ref : Node_Id := No_Node;
-      Identifier     : Node_Id := No_Node;
+      Classifier_Ref : Node_Id            := No_Node;
+      Identifier     : Node_Id            := No_Node;
 
    begin
       Save_Lexer (Loc);
@@ -2926,10 +2985,13 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             Category := PO_Alien_Meta_Model;
             Comp_Cat := CC_Unknown;
 
-         when T_Abstract | T_System
-           | T_Processor | T_Thread
-           | T_Process | T_Virtual
-           | T_Device =>
+         when T_Abstract |
+           T_System      |
+           T_Processor   |
+           T_Thread      |
+           T_Process     |
+           T_Virtual     |
+           T_Device      =>
             Comp_Cat := P_Component_Category;
             Category := P_Named_Element_Component;
 
@@ -2951,14 +3013,10 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          when T_Subprogram =>
             Scan_Token;
 
-            if Token = T_Identifier
-              and then Token_Owner = POT_Call
-            then
+            if Token = T_Identifier and then Token_Owner = POT_Call then
                Save_Lexer (Loc);
                Scan_Token;
-               if Token = T_Identifier
-                 and then Token_Owner = POT_Sequence
-               then
+               if Token = T_Identifier and then Token_Owner = POT_Sequence then
                   Category := PO_Subprogram_Call_Sequence;
                else
                   Restore_Lexer (Loc);
@@ -2997,9 +3055,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             Category := PO_Parameter;
 
          when T_Identifier =>
-            Comp_Cat := CC_Unknown;
+            Comp_Cat   := CC_Unknown;
             Identifier := Make_Current_Identifier (No_Node);
-            Category := P_Named_Element_Identifier;
+            Category   := P_Named_Element_Identifier;
 
          when others =>
             return No_Node;
@@ -3087,8 +3145,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    -------------------------------------------
 
    function P_Named_Element_Component_With_Access
-     (Component_Cat : Component_Category)
-     return Named_Element
+     (Component_Cat : Component_Category) return Named_Element
    is
 
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -3106,14 +3163,13 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          when T_Access =>
             Save_Lexer (Loc);
             Scan_Token;
-            if Token = T_Identifier
-              and then Token_Owner = POT_Connection
-            then
+            if Token = T_Identifier and then Token_Owner = POT_Connection then
                if Component_Cat /= CC_Memory then
                   Category := PO_Component_Access_Connection;
                else
-                  DPE (PC_Named_Element_Component_With_Access,
-                       EMC_Memory_Access_Connection_Is_Not_Allowed);
+                  DPE
+                    (PC_Named_Element_Component_With_Access,
+                     EMC_Memory_Access_Connection_Is_Not_Allowed);
                   Category := PO_Error;
                end if;
             else
@@ -3187,9 +3243,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             then
                Category := PO_Feature_Group_Connection;
 
-            elsif Token = T_Identifier
-              and then Token_Owner = POT_Instance
-            then
+            elsif Token = T_Identifier and then Token_Owner = POT_Instance then
                Category := PO_Feature_Group_Instance;
 
             else
@@ -3229,9 +3283,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                Save_Lexer (Loc2);
                Scan_Token;
 
-               if Token = T_Identifier
-                 and then Token_Owner = POT_Instance
-               then
+               if Token = T_Identifier and then Token_Owner = POT_Instance then
                   Category := PO_Mode_Transition_Instance;
 
                elsif Token = T_Identifier
@@ -3240,8 +3292,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                   Save_Lexer (Loc2);
                   Scan_Token;
                   if Token_Owner = POT_Instance then
-                     Category :=
-                       PO_Mode_Transition_Connection_Instance;
+                     Category := PO_Mode_Transition_Connection_Instance;
                   else
                      Restore_Lexer (Loc2);
                      DPE (PC_Named_Element_Mode);
@@ -3292,9 +3343,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             if Token_Owner = POT_Specification then
                Save_Lexer (Loc2);
                Scan_Token;
-               if Token = T_Identifier
-                 and then Token_Owner = POT_Instance
-               then
+               if Token = T_Identifier and then Token_Owner = POT_Instance then
                   Category := PO_Flow_Specification_Instance;
                else
                   Restore_Lexer (Loc2);
@@ -3385,14 +3434,12 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       else
          Save_Lexer (Loc2);
          Scan_Token;
-         if Token = T_Identifier
-           and then Token_Owner = POT_Instance
-         then
-            Success := True;
+         if Token = T_Identifier and then Token_Owner = POT_Instance then
+            Success  := True;
             Category := PO_End_To_End_Flow_Instance;
          else
             Restore_Lexer (Loc2);
-            Success := True;
+            Success  := True;
             Category := PO_End_To_End_Flow;
          end if;
       end if;
@@ -3432,9 +3479,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          when POT_Named =>
             Save_Lexer (Loc);
             Scan_Token;
-            if Token = T_Identifier
-              and then Token_Owner = POT_Element
-            then
+            if Token = T_Identifier and then Token_Owner = POT_Element then
                Category := PO_Named_Element;
             else
                Restore_Lexer (Loc);
@@ -3447,9 +3492,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          when POT_Connection =>
             Save_Lexer (Loc);
             Scan_Token;
-            if Token = T_Identifier
-              and then Token_Owner = POT_Instance
-            then
+            if Token = T_Identifier and then Token_Owner = POT_Instance then
                Category := PO_Connection_Instance;
             else
                Restore_Lexer (Loc);
@@ -3471,8 +3514,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                Category := PO_Component_Type;
             else
                Restore_Lexer (Loc);
-               DPE (PC_Named_Element_Identifier,
-                    (T_Classifier, T_Implementation, T_Type));
+               DPE
+                 (PC_Named_Element_Identifier,
+                  (T_Classifier, T_Implementation, T_Type));
             end if;
 
          when others =>
@@ -3523,8 +3567,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                      end if;
 
                   when others =>
-                     DPE (PC_Named_Element_Port_Or_Access_Or_Event,
-                          T_Identifier);
+                     DPE
+                       (PC_Named_Element_Port_Or_Access_Or_Event,
+                        T_Identifier);
                      Category := PO_Error;
                end case;
             else
@@ -3543,16 +3588,16 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                when T_Data =>
                   Scan_Token;
                   if Token /= T_Port then
-                     DPE (PC_Named_Element_Port_Or_Access_Or_Event,
-                          T_Port);
+                     DPE (PC_Named_Element_Port_Or_Access_Or_Event, T_Port);
                      Category := PO_Error;
                   else
                      Category := PO_Event_Data_Port;
                   end if;
 
                when others =>
-                  DPE (PC_Named_Element_Port_Or_Access_Or_Event,
-                       (T_Port, T_Data));
+                  DPE
+                    (PC_Named_Element_Port_Or_Access_Or_Event,
+                     (T_Port, T_Data));
                   Category := PO_Error;
             end case;
 
@@ -3560,9 +3605,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             Save_Lexer (Loc);
             Scan_Token;
 
-            if Token = T_Identifier
-              and then Token_Owner = POT_Instance
-            then
+            if Token = T_Identifier and then Token_Owner = POT_Instance then
                Category := PO_Access_Instance;
 
             elsif Token = T_Identifier
@@ -3571,9 +3614,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                Save_Lexer (Loc2);
                Scan_Token;
 
-               if Token = T_Identifier
-                 and then Token_Owner = POT_Instance
-               then
+               if Token = T_Identifier and then Token_Owner = POT_Instance then
                   Category := PO_Access_Connection_Instance;
                else
                   Restore_Lexer (Loc2);
@@ -3607,9 +3648,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --  contained_model_element ::=
    --     named_element_identifier | named_element_array_selection_identifier
 
-   function P_Contained_Element_Path (Container : Node_Id)
-     return Node_Id
-   is
+   function P_Contained_Element_Path (Container : Node_Id) return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;
@@ -3619,9 +3658,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       use Ocarina.Builder.AADL.Properties;
 
       Start_Loc     : Location;
-      List_Items    : List_Id   := No_List;
+      List_Items    : List_Id := No_List;
       Contained_Elt : Node_Id;
-      Annex_Path    : Node_Id   := No_Node;
+      Annex_Path    : Node_Id := No_Node;
 
    begin
       Save_Lexer (Start_Loc);
@@ -3635,19 +3674,17 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
          when T_Identifier =>
             Restore_Lexer (Start_Loc);
 
-            List_Items := P_Items_List (P_Contained_Element'Access,
-                                        Container, T_Dot);
+            List_Items :=
+              P_Items_List (P_Contained_Element'Access, Container, T_Dot);
             if Is_Empty (List_Items) then
                DPE (PC_Contained_Element_Path, T_Identifier);
-                  Skip_Tokens (T_Semicolon);
-                  return No_Node;
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
             end if;
 
             Save_Lexer (Start_Loc);
             Scan_Token;
-            if Token = T_Left_Curly_Bracket
-              or else Token = T_Multiply
-            then
+            if Token = T_Left_Curly_Bracket or else Token = T_Multiply then
                Restore_Lexer (Start_Loc);
                Annex_Path := P_Annex_Path (Container);
             else
@@ -3655,25 +3692,27 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
             end if;
 
          when others =>
-            DPE (PC_Contained_Element_Path,
-                 (T_Identifier, T_Left_Curly_Bracket, T_Multiply));
+            DPE
+              (PC_Contained_Element_Path,
+               (T_Identifier, T_Left_Curly_Bracket, T_Multiply));
             Skip_Tokens (T_Semicolon);
             return No_Node;
 
       end case;
 
-      if Annex_Path = No_Node
-        and then List_Items = No_List
-      then
-         DPE (PC_Contained_Element_Path,
-              (T_Identifier, T_Left_Curly_Bracket, T_Multiply));
+      if Annex_Path = No_Node and then List_Items = No_List then
+         DPE
+           (PC_Contained_Element_Path,
+            (T_Identifier, T_Left_Curly_Bracket, T_Multiply));
          Skip_Tokens (T_Semicolon);
          return No_Node;
       else
-         Contained_Elt := Add_New_Contained_Element_Path (Start_Loc,
-                                                          Container,
-                                                          List_Items,
-                                                          Annex_Path);
+         Contained_Elt :=
+           Add_New_Contained_Element_Path
+             (Start_Loc,
+              Container,
+              List_Items,
+              Annex_Path);
       end if;
 
       if No (Contained_Elt) then
@@ -3693,9 +3732,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --  contained_element ::=
    --     named_element_identifier | named_element_array_selection_identifier
 
-   function P_Contained_Element (Container : Node_Id)
-     return Node_Id
-   is
+   function P_Contained_Element (Container : Node_Id) return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;

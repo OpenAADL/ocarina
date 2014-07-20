@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,7 +47,7 @@ with Ocarina.Instances.Queries;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
 
-with Namet; use Namet;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.POK_Cheddar is
 
@@ -78,8 +78,8 @@ package body Ocarina.Backends.POK_Cheddar is
    procedure Visit_Process_Instance (E : Node_Id);
    procedure Visit_Thread_Instance (E : Node_Id);
 
-   Remove_Generated_Sources    : Boolean := False;
-   Generated_Sources_Directory : Name_Id := No_Name;
+   Remove_Generated_Sources    : Boolean            := False;
+   Generated_Sources_Directory : Name_Id            := No_Name;
    Task_Id                     : Unsigned_Long_Long := 0;
    Current_System              : Node_Id;
    Current_Virtual_Processor   : Node_Id;
@@ -91,9 +91,9 @@ package body Ocarina.Backends.POK_Cheddar is
    ----------------
 
    procedure Map_Thread (E : Node_Id) is
-      N : Node_Id;
-      L : Node_Id;
-      R : Node_Id;
+      N   : Node_Id;
+      L   : Node_Id;
+      R   : Node_Id;
       Tmp : Name_Id;
    begin
       --  Delete the space introduced by Ada.
@@ -119,10 +119,10 @@ package body Ocarina.Backends.POK_Cheddar is
          Set_Str_To_Name_Buffer ("aadlprocessor");
          L := Make_Defining_Identifier (Name_Find);
 
-         R := Make_Defining_Identifier
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent (Current_Processor))));
+         R :=
+           Make_Defining_Identifier
+             (Display_Name
+                (Identifier (Parent_Subcomponent (Current_Processor))));
 
          Append_Node_To_List (Make_Assignement (L, R), XTN.Items (N));
       end if;
@@ -132,11 +132,10 @@ package body Ocarina.Backends.POK_Cheddar is
          Set_Str_To_Name_Buffer ("aadlprocess");
          L := Make_Defining_Identifier (Name_Find);
 
-         R := Make_Defining_Identifier
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent
-                        (Current_Process))));
+         R :=
+           Make_Defining_Identifier
+             (Display_Name
+                (Identifier (Parent_Subcomponent (Current_Process))));
 
          Append_Node_To_List (Make_Assignement (L, R), XTN.Items (N));
       end if;
@@ -146,11 +145,11 @@ package body Ocarina.Backends.POK_Cheddar is
          Set_Str_To_Name_Buffer ("aadlvirtualprocessor");
          L := Make_Defining_Identifier (Name_Find);
 
-         R := Make_Defining_Identifier
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent
-                        (Current_Virtual_Processor))));
+         R :=
+           Make_Defining_Identifier
+             (Display_Name
+                (Identifier
+                   (Parent_Subcomponent (Current_Virtual_Processor))));
 
          Append_Node_To_List (Make_Assignement (L, R), XTN.Items (N));
       end if;
@@ -161,18 +160,13 @@ package body Ocarina.Backends.POK_Cheddar is
          L := Make_Defining_Identifier (Name_Find);
 
          Get_Name_String
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent
-                        (Current_Virtual_Processor))));
+           (Display_Name
+              (Identifier (Parent_Subcomponent (Current_Virtual_Processor))));
 
          Add_Str_To_Name_Buffer (".");
 
          Get_Name_String_And_Append
-               (Display_Name
-                  (Identifier
-                     (Parent_Subcomponent
-                        (E))));
+           (Display_Name (Identifier (Parent_Subcomponent (E))));
 
          R := Make_Defining_Identifier (Name_Find);
 
@@ -191,17 +185,17 @@ package body Ocarina.Backends.POK_Cheddar is
    function Map_HI_Node (E : Node_Id) return Node_Id is
       N : constant Node_Id := New_Node (XTN.K_HI_Node);
    begin
-      pragma Assert (AINU.Is_Process (E)
-                     or else AINU.Is_System (E)
-                     or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_Process (E)
+         or else AINU.Is_System (E)
+         or else AINU.Is_Processor (E));
 
       if AINU.Is_System (E) then
          Set_Str_To_Name_Buffer ("general");
       else
          Get_Name_String
-            (To_XML_Name (AIN.Name
-               (AIN.Identifier
-                  (AIN.Parent_Subcomponent (E)))));
+           (To_XML_Name
+              (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E)))));
          Add_Str_To_Name_Buffer ("_pok_cheddar_mapping");
       end if;
 
@@ -221,24 +215,22 @@ package body Ocarina.Backends.POK_Cheddar is
    -- Map_HI_Unit --
    -----------------
 
-   function Map_HI_Unit (E : Node_Id)
-      return Node_Id is
-      U        : Node_Id;
-      N        : Node_Id;
-      P        : Node_Id;
-      Root     : Node_Id;
+   function Map_HI_Unit (E : Node_Id) return Node_Id is
+      U    : Node_Id;
+      N    : Node_Id;
+      P    : Node_Id;
+      Root : Node_Id;
    begin
-      pragma Assert (AINU.Is_System (E)
-                     or else AINU.Is_Process (E)
-                     or else AINU.Is_Processor (E));
+      pragma Assert
+        (AINU.Is_System (E)
+         or else AINU.Is_Process (E)
+         or else AINU.Is_Processor (E));
 
       U := XTU.New_Node (XTN.K_HI_Unit, AIN.Identifier (E));
 
       --  Packages that are common to all nodes
       Get_Name_String
-            (To_XML_Name
-               (Display_Name
-                  (Identifier (Parent_Subcomponent (E)))));
+        (To_XML_Name (Display_Name (Identifier (Parent_Subcomponent (E)))));
       Add_Str_To_Name_Buffer ("_pok-mapping");
       N := XTU.Make_Defining_Identifier (Name_Find);
       P := XTU.Make_XML_File (N);
@@ -273,8 +265,7 @@ package body Ocarina.Backends.POK_Cheddar is
       --  Abort if the construction of the C tree failed
 
       if No (XML_Root) then
-         Display_Error
-            ("POK_Cheddar generation failed", Fatal => True);
+         Display_Error ("POK_Cheddar generation failed", Fatal => True);
       end if;
 
       --  At this point, we have a valid tree, we can begin the XML
@@ -361,8 +352,7 @@ package body Ocarina.Backends.POK_Cheddar is
    -- Get_XML_Root --
    ------------------
 
-   function Get_XML_Root return Node_Id
-   is
+   function Get_XML_Root return Node_Id is
    begin
       return XML_Root;
    end Get_XML_Root;
@@ -390,8 +380,7 @@ package body Ocarina.Backends.POK_Cheddar is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -426,8 +415,8 @@ package body Ocarina.Backends.POK_Cheddar is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -449,8 +438,8 @@ package body Ocarina.Backends.POK_Cheddar is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -463,15 +452,15 @@ package body Ocarina.Backends.POK_Cheddar is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S     : Node_Id;
+      S : Node_Id;
    begin
       Current_System := E;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -497,14 +486,13 @@ package body Ocarina.Backends.POK_Cheddar is
       U := Map_HI_Unit (E);
       Push_Entity (U);
 
-      Current_XML_Node := XTN.Root_Node
-                              (XTN.XML_File (U));
+      Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -522,16 +510,16 @@ package body Ocarina.Backends.POK_Cheddar is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S        : Node_Id;
-      Process  : Node_Id;
+      S       : Node_Id;
+      Process : Node_Id;
    begin
       Current_Virtual_Processor := E;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -541,8 +529,8 @@ package body Ocarina.Backends.POK_Cheddar is
       if not AINU.Is_Empty (Subcomponents (Current_System)) then
          S := First_Node (Subcomponents (Current_System));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             if AINU.Is_Process (Corresponding_Instance (S)) then
                Process := Corresponding_Instance (S);
@@ -552,8 +540,9 @@ package body Ocarina.Backends.POK_Cheddar is
                   Task_Id := Task_Id + 1;
                   Visit (Process);
 
-                  if Is_Defined_Property (E, "arinc653::hm_errors") or else
-                     Is_Defined_Property (E, "pok::recovery_errors") then
+                  if Is_Defined_Property (E, "arinc653::hm_errors")
+                    or else Is_Defined_Property (E, "pok::recovery_errors")
+                  then
                      --  If we handle errors, we need to consider the error
                      --  recovery task.
                      Task_Id := Task_Id + 1;

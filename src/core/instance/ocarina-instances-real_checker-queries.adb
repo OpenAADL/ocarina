@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -41,8 +41,8 @@ with Ocarina.Instances.Finder;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Debug;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
-with Namet; use Namet;
-with Output; use Output;
+with Ocarina.Namet;  use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
 
 package body Ocarina.Instances.REAL_Checker.Queries is
 
@@ -63,8 +63,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
 
    function Is_Component
      (E           : Node_Id;
-      Component_T : Instance_Type)
-     return Boolean;
+      Component_T : Instance_Type) return Boolean;
 
    ------------------
    -- Is_Component --
@@ -72,8 +71,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
 
    function Is_Component
      (E           : Node_Id;
-      Component_T : Instance_Type)
-     return Boolean
+      Component_T : Instance_Type) return Boolean
    is
       use Ocarina.ME_AADL;
    begin
@@ -128,9 +126,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Get_Instances_Of_End_To_End_Flows --
    ---------------------------------------
 
-   function Get_Instances_Of_End_To_End_Flows
-     return Result_Set
-   is
+   function Get_Instances_Of_End_To_End_Flows return Result_Set is
       Results : Result_Set;
       EL      : Node_List;
    begin
@@ -150,19 +146,20 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -------------------------------------
 
    function Get_Instances_Of_Component_Type
-     (Component_T : Instance_Type)
-     return Result_Set
+     (Component_T : Instance_Type) return Result_Set
    is
 
       function Find_Subprogram_Declaration
-        (E : Node_Id; Set : Result_Set) return Boolean;
+        (E   : Node_Id;
+         Set : Result_Set) return Boolean;
 
       ---------------------------------
       -- Find_Subprogram_Declaration --
       ---------------------------------
 
       function Find_Subprogram_Declaration
-        (E : Node_Id; Set : Result_Set) return Boolean
+        (E   : Node_Id;
+         Set : Result_Set) return Boolean
       is
       begin
          for N in First .. Last (Set) loop
@@ -183,33 +180,38 @@ package body Ocarina.Instances.REAL_Checker.Queries is
             Find_All_Instances
               (Root_Instance,
                (1 => K_Call_Sequence_Instance),
-               EL.First, EL.Last);
+               EL.First,
+               EL.Last);
 
          when C_Subprogram_Call =>
             Find_All_Instances
               (Root_Instance,
                (1 => K_Call_Instance),
-               EL.First, EL.Last);
+               EL.First,
+               EL.Last);
 
          when C_Connection =>
             Find_All_Instances
               (Root_Instance,
                (1 => K_Connection_Instance),
-               EL.First, EL.Last);
+               EL.First,
+               EL.Last);
 
          when others =>
             Find_All_Instances
               (Root_Instance,
                (1 => K_Component_Instance),
-               EL.First, EL.Last);
+               EL.First,
+               EL.Last);
       end case;
 
       while Present (EL.First) loop
          if Is_Component (EL.First, Component_T)
-           and then (Component_T /= C_Subprogram
-                       or else
-                       not Find_Subprogram_Declaration
-                       (Corresponding_Declaration (EL.First), Results))
+           and then
+           (Component_T /= C_Subprogram
+            or else not Find_Subprogram_Declaration
+              (Corresponding_Declaration (EL.First),
+               Results))
          then
             Add (Results, EL.First, Distinct => True);
          end if;
@@ -223,13 +225,11 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Get_Instances_Of_Component_Type --
    -------------------------------------
 
-   function Get_Instances_Of_Component_Type
-     (E : Node_Id)
-     return Result_Set
-   is
-      pragma Assert (Kind (E) = K_Component_Type or else
-                     Kind (E) = K_Component_Implementation or else
-                     Kind (E) = K_Feature_Group_Type);
+   function Get_Instances_Of_Component_Type (E : Node_Id) return Result_Set is
+      pragma Assert
+        (Kind (E) = K_Component_Type
+         or else Kind (E) = K_Component_Implementation
+         or else Kind (E) = K_Feature_Group_Type);
 
       Results : Result_Set;
       EL      : Node_List;
@@ -239,7 +239,8 @@ package body Ocarina.Instances.REAL_Checker.Queries is
       Find_All_Instances
         (Root_Instance,
          (1 => K_Component_Instance),
-         EL.First, EL.Last);
+         EL.First,
+         EL.Last);
 
       while Present (EL.First) loop
          if Corresponding_Declaration (EL.First) = E then
@@ -257,8 +258,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
 
    function Get_Instances_With_Property
      (Set           : Result_Set;
-      Property_Name : String)
-     return Result_Set
+      Property_Name : String) return Result_Set
    is
       Result : Result_Set;
    begin
@@ -266,7 +266,10 @@ package body Ocarina.Instances.REAL_Checker.Queries is
 
       for N in First .. Last (Set) loop
          if Find_Property_Association_From_Name
-           (AIN.Properties (Set.Table (N)), Property_Name) /= No_Node then
+             (AIN.Properties (Set.Table (N)),
+              Property_Name) /=
+           No_Node
+         then
             Append (Result, Set.Table (N));
          end if;
       end loop;
@@ -280,8 +283,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Is_In --
    -----------
 
-   function Is_In (E : Node_Id; Set : Result_Set) return Boolean
-   is
+   function Is_In (E : Node_Id; Set : Result_Set) return Boolean is
    begin
       for N in First .. Last (Set) loop
          if Set.Table (N) = E then
@@ -296,9 +298,10 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Add --
    ---------
 
-   procedure Add (Set : in out Result_Set;
-                  E : Node_Id;
-                  Distinct : Boolean := False)
+   procedure Add
+     (Set      : in out Result_Set;
+      E        :        Node_Id;
+      Distinct :        Boolean := False)
    is
    begin
       if Distinct then
@@ -317,8 +320,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    function Union
      (Set_1    : Result_Set;
       Set_2    : Result_Set;
-      Distinct : Boolean := False)
-     return Result_Set
+      Distinct : Boolean := False) return Result_Set
    is
       Result : Result_Set;
    begin
@@ -328,7 +330,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
       --  Add Set_1
 
       for N in First .. Last (Set_1) loop
-         Result.Table (N) :=  Set_1.Table (N);
+         Result.Table (N) := Set_1.Table (N);
       end loop;
 
       if Distinct then
@@ -356,9 +358,8 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    ------------------
 
    function Intersection
-     (Set_1  : Result_Set;
-      Set_2  : Result_Set)
-     return Result_Set
+     (Set_1 : Result_Set;
+      Set_2 : Result_Set) return Result_Set
    is
       Result : Result_Set;
    begin
@@ -380,9 +381,8 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    ---------------
 
    function Exclusion
-     (Set_1  : Result_Set;
-      Set_2  : Result_Set)
-     return Result_Set
+     (Set_1 : Result_Set;
+      Set_2 : Result_Set) return Result_Set
    is
       Result : Result_Set;
    begin
@@ -402,11 +402,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Includes --
    --------------
 
-   function Includes
-     (Set_1  : Result_Set;
-      Set_2  : Result_Set)
-     return Boolean
-   is
+   function Includes (Set_1 : Result_Set; Set_2 : Result_Set) return Boolean is
    begin
       for N in First .. Last (Set_2) loop
          if not Is_In (Set_2.Table (N), Set_1) then
@@ -422,20 +418,18 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    ----------------------
 
    function Mutual_Inclusion
-     (Set_1  : Result_Set;
-      Set_2  : Result_Set)
-     return Boolean
+     (Set_1 : Result_Set;
+      Set_2 : Result_Set) return Boolean
    is
    begin
-      return (Includes (Set_1, Set_2) and then
-              Last (Set_1) = Last (Set_2));
+      return (Includes (Set_1, Set_2) and then Last (Set_1) = Last (Set_2));
    end Mutual_Inclusion;
 
    --------------
    -- Is_Empty --
    --------------
 
-   function Is_Empty (Set  : Result_Set) return Boolean is
+   function Is_Empty (Set : Result_Set) return Boolean is
    begin
       return (Last (Set) < First);
    end Is_Empty;
@@ -444,7 +438,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Cardinal --
    --------------
 
-   function Cardinal (Set  : Result_Set) return Natural is
+   function Cardinal (Set : Result_Set) return Natural is
    begin
       return Natural (Last (Set) - First + 1);
    end Cardinal;
@@ -465,15 +459,17 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    ------------------------
 
    function Get_Property_Value
-     (E : Types.Node_Id; Name : String)
-     return Types.Node_Id
+     (E    : Ocarina.Types.Node_Id;
+      Name : String) return Ocarina.Types.Node_Id
    is
-      N : Types.Node_Id;
+      N : Ocarina.Types.Node_Id;
    begin
       case AIN.Kind (E) is
          when K_Call_Instance | K_Call_Sequence_Instance =>
-            N := Get_Value_Of_Property_Association
-              (Corresponding_Instance (E), Get_String_Name (Name));
+            N :=
+              Get_Value_Of_Property_Association
+                (Corresponding_Instance (E),
+                 Get_String_Name (Name));
 
          when others =>
             N := Get_Value_Of_Property_Association (E, Get_String_Name (Name));
@@ -486,8 +482,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Get --
    ---------
 
-   function Get (Set  : Result_Set; Index : Natural) return Node_Id
-   is
+   function Get (Set : Result_Set; Index : Natural) return Node_Id is
    begin
       return Set.Table (Index);
    end Get;
@@ -496,10 +491,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Test_Dummy --
    ----------------
 
-   function Test_Dummy
-     (C : Instance_Type)
-     return Result_Set
-   is
+   function Test_Dummy (C : Instance_Type) return Result_Set is
       Results : Result_Set;
    begin
       Results := Get_Instances_Of_Component_Type (C);
@@ -511,9 +503,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Test_Dummy_Sets --
    ---------------------
 
-   function Test_Dummy_Sets
-     return Result_Set
-   is
+   function Test_Dummy_Sets return Result_Set is
       C1 : constant Instance_Type := C_Subprogram_Call;
       C2 : constant Instance_Type := C_Thread;
       R1 : Result_Set;
@@ -534,7 +524,7 @@ package body Ocarina.Instances.REAL_Checker.Queries is
    -- Display_Set --
    -----------------
 
-   procedure Display_Set (Set  : Result_Set) is
+   procedure Display_Set (Set : Result_Set) is
    begin
       for N in First .. Last (Set) loop
 

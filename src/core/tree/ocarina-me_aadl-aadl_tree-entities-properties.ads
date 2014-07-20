@@ -34,11 +34,11 @@
 --  This package provides functions to create or read property names,
 --  types, constants and associations.
 
-with Types;                           use Types;
 with Ocarina.AADL_Values;             use Ocarina.AADL_Values;
 with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
+   use Ocarina.Types;
 
    type Property_Type is
      (PT_Boolean,
@@ -58,7 +58,7 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
    type Named_Element is
      (PO_Error,
 
-      --  This following elements are used only for AADL_V1
+   --  This following elements are used only for AADL_V1
       PO_Port_Group,
       PO_Server_Subprogram,
       PO_Parameter,
@@ -70,7 +70,7 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
       PO_Event_Data_Port_Connections,
       PO_Parameter_Connections,
 
-      --  This following elements are used for AADL_V1 and AADL_V2
+   --  This following elements are used for AADL_V1 and AADL_V2
       PO_Component_Category,
       PO_Mode,
       PO_Flow,
@@ -81,7 +81,7 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
 
       PO_Access_Connection,    --  POC_Access_Connections
 
-      --  This following elements are use only for AADL_V2
+   --  This following elements are use only for AADL_V2
       PO_Identifier,
 
       PO_Named_Element,
@@ -135,7 +135,7 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
       PO_Package,
 
       PO_Alien_Meta_Model -- Not support alien meta-model elements, e.g. EMV2
-     );
+      );
 
    type Referable_Element_Category is
      (REC_Component_Category,
@@ -150,74 +150,57 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
    -----------------------------
 
    function Value_Of_Property_Association_Is_Undefined
-     (Property : Node_Id)
-     return Boolean;
+     (Property : Node_Id) return Boolean;
 
-   function Type_Of_Property_Is_A_List
-     (Property : Node_Id)
-     return Boolean;
+   function Type_Of_Property_Is_A_List (Property : Node_Id) return Boolean;
 
    function Get_Type_Of_Property
      (Property             : Node_Id;
-      Use_Evaluated_Values : Boolean := True)
-     return Property_Type;
+      Use_Evaluated_Values : Boolean := True) return Property_Type;
 
    function Get_Type_Of_Property_Value
      (Property_Value       : Node_Id;
-      Use_Evaluated_Values : Boolean := True)
-     return Property_Type;
+      Use_Evaluated_Values : Boolean := True) return Property_Type;
 
    function Get_Integer_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Unsigned_Long_Long;
+     (Property_Value : Node_Id) return Unsigned_Long_Long;
 
    function Get_Float_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Long_Long_Float;
+     (Property_Value : Node_Id) return Long_Long_Float;
 
    function Get_String_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Name_Id;
+     (Property_Value : Node_Id) return Name_Id;
 
    function Get_String_Of_Property_Value
-     (Property_Value : Node_Id)
-     return String;
+     (Property_Value : Node_Id) return String;
 
    function Get_Enumeration_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Name_Id;
+     (Property_Value : Node_Id) return Name_Id;
 
    function Get_Enumeration_Of_Property_Value
-     (Property_Value : Node_Id)
-     return String;
+     (Property_Value : Node_Id) return String;
 
    function Get_Boolean_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Boolean;
+     (Property_Value : Node_Id) return Boolean;
 
    function Get_Classifier_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Node_Id;
+     (Property_Value : Node_Id) return Node_Id;
 
    function Get_Reference_Of_Property_Value
-     (Property_Value : Node_Id)
-     return Node_Id;
+     (Property_Value : Node_Id) return Node_Id;
 
    function Get_Value_Of_Property_Association
-     (Property : Node_Id)
-     return Value_Type;
+     (Property : Node_Id) return Value_Type;
 
    function Find_Property_Association_From_Name
      (Property_List : List_Id;
       Property_Name : Name_Id;
-      In_Mode       : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode       : Name_Id := No_Name) return Node_Id;
 
    function Find_Property_Association_From_Name
      (Property_List : List_Id;
       Property_Name : String;
-      In_Mode       : Name_Id := No_Name)
-     return Node_Id;
+      In_Mode       : Name_Id := No_Name) return Node_Id;
 
    procedure Resolve_Term_In_Property
      (Property  : Node_Id;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -60,29 +60,24 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    function P_Conditional_Statement
      (Container : Node_Id;
-      Code : Parsing_Code)
-     return Node_Id;
+      Code      : Parsing_Code) return Node_Id;
 
-   function P_If_Cond_Struct    (Start_Loc : Location) return Node_Id;
-   function P_For_Cond_Struct   (Start_Loc : Location) return Node_Id;
+   function P_If_Cond_Struct (Start_Loc : Location) return Node_Id;
+   function P_For_Cond_Struct (Start_Loc : Location) return Node_Id;
    function P_While_Cond_Struct (Start_Loc : Location) return Node_Id;
-   function P_Basic_Action      (Start_Loc : Location) return Node_Id;
-   function P_Timed_Action      (Start_Loc : Location) return Node_Id;
+   function P_Basic_Action (Start_Loc : Location) return Node_Id;
+   function P_Timed_Action (Start_Loc : Location) return Node_Id;
 
    function P_Assignment_Or_Communication_Action
-     (Start_Loc : Location)
-     return Node_Id;
+     (Start_Loc : Location) return Node_Id;
 
-   function P_Range
-     (Container : Node_Id;
-      Start_Loc : Location)
-     return Node_Id;
+   function P_Range (Container : Node_Id; Start_Loc : Location) return Node_Id;
 
    function P_Subprogram_Parameter_List
-     (Container : Types.Node_Id)
-     return List_Id;
+     (Container : Ocarina.Types.Node_Id) return List_Id;
 
-   function P_Parameter_Label (Container : Types.Node_Id) return Node_Id;
+   function P_Parameter_Label (Container : Ocarina.Types.Node_Id)
+                              return Node_Id;
 
    ------------------------
    -- P_Behavior_Actions --
@@ -92,10 +87,11 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    function P_Behavior_Actions (Container : Node_Id) return List_Id is
    begin
-      return P_Elements_List (P_Behavior_Action'Access,
-                              Container,
-                              (T_Right_Curly_Bracket, T_None),
-                              PC_Behavior_Actions);
+      return P_Elements_List
+          (P_Behavior_Action'Access,
+           Container,
+           (T_Right_Curly_Bracket, T_None),
+           PC_Behavior_Actions);
    end P_Behavior_Actions;
 
    -----------------------
@@ -113,7 +109,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    --  | while ( logical_expression ) { { behavior_action }+ };
 
    function P_Behavior_Action (Container : Node_Id) return Node_Id is
-      Start_Loc            : Location;
+      Start_Loc : Location;
 
       Action_Node          : Node_Id;
       Behavior_Action_Node : Node_Id;
@@ -135,16 +131,16 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
             Action_Node := P_Basic_Action (Start_Loc);
 
          when others =>
-            DPE (PC_Behavior_Action,
-                 Expected_Tokens => (T_If, T_For, T_While,
-                                     T_Identifier, T_Computation,
-                                     T_Delay));
+            DPE
+              (PC_Behavior_Action,
+               Expected_Tokens =>
+                 (T_If, T_For, T_While, T_Identifier, T_Computation, T_Delay));
             Skip_Tokens (T_Semicolon);
             return No_Node;
       end case;
 
-      Behavior_Action_Node := Add_New_Behavior_Action (Start_Loc, Container,
-                                                       Action_Node);
+      Behavior_Action_Node :=
+        Add_New_Behavior_Action (Start_Loc, Container, Action_Node);
       if No (Behavior_Action_Node) then
          DPE (PC_Behavior_Action, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -168,14 +164,13 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       If_Cond_Struct := Add_New_If_Cond_Struct (Start_Loc);
 
       if Token /= T_If then
-         DPE (PC_If_Cond_Struct,
-              Expected_Token => T_If);
+         DPE (PC_If_Cond_Struct, Expected_Token => T_If);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
-      If_Node := P_Conditional_Statement (If_Cond_Struct,
-                                          PC_If_Cond_Statement);
+      If_Node :=
+        P_Conditional_Statement (If_Cond_Struct, PC_If_Cond_Statement);
       if No (If_Node) then
          DPE (PC_If_Cond_Struct, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -185,8 +180,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       Save_Lexer (Loc);
       Scan_Token;
       if Token = T_Elsif then
-         Elsif_Node := P_Conditional_Statement (If_Cond_Struct,
-                                                PC_Elsif_Cond_Statement);
+         Elsif_Node :=
+           P_Conditional_Statement (If_Cond_Struct, PC_Elsif_Cond_Statement);
       else
          Restore_Lexer (Loc);
       end if;
@@ -194,8 +189,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       Save_Lexer (Loc);
       Scan_Token;
       if Token = T_Else then
-         Else_Node := P_Conditional_Statement (If_Cond_Struct,
-                                               PC_Else_Cond_Statement);
+         Else_Node :=
+           P_Conditional_Statement (If_Cond_Struct, PC_Else_Cond_Statement);
       else
          Restore_Lexer (Loc);
       end if;
@@ -221,8 +216,12 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
          return No_Node;
       end if;
 
-      Add_New_If_Cond_Struct (If_Cond_Struct, No_Node,
-                              If_Node, Elsif_Node, Else_Node);
+      Add_New_If_Cond_Struct
+        (If_Cond_Struct,
+         No_Node,
+         If_Node,
+         Elsif_Node,
+         Else_Node);
       return If_Cond_Struct;
    end P_If_Cond_Struct;
 
@@ -232,8 +231,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    function P_Conditional_Statement
      (Container : Node_Id;
-      Code : Parsing_Code)
-     return Node_Id
+      Code      : Parsing_Code) return Node_Id
    is
       Start_Loc      : Location;
       Loc            : Location;
@@ -246,8 +244,9 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
       if Code /= PC_Else_Cond_Statement then
          if Token /= T_Left_Parenthesis then
-            DPE (PC_Conditional_Statement,
-                 Expected_Token => T_Left_Parenthesis);
+            DPE
+              (PC_Conditional_Statement,
+               Expected_Token => T_Left_Parenthesis);
             Skip_Tokens (T_Semicolon);
             return No_Node;
          end if;
@@ -261,8 +260,9 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
          Scan_Token;
          if Token /= T_Right_Parenthesis then
-            DPE (PC_Conditional_Statement,
-                 Expected_Token => T_Right_Parenthesis);
+            DPE
+              (PC_Conditional_Statement,
+               Expected_Token => T_Right_Parenthesis);
             Skip_Tokens (T_Semicolon);
             return No_Node;
          end if;
@@ -273,9 +273,12 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       Save_Lexer (Loc);
       Scan_Token;
       case Token is
-         when T_If | T_For | T_While
-           | T_Identifier | T_Computation
-           | T_Delay =>
+         when T_If       |
+           T_For         |
+           T_While       |
+           T_Identifier  |
+           T_Computation |
+           T_Delay       =>
             Restore_Lexer (Loc);
             Actions := P_Behavior_Actions (No_Node);
 
@@ -283,10 +286,12 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
             Restore_Lexer (Loc);
       end case;
 
-      Cond_Stat_Node := Add_New_Conditional_Statement (Start_Loc,
-                                                       Container,
-                                                       Expression,
-                                                       Actions);
+      Cond_Stat_Node :=
+        Add_New_Conditional_Statement
+          (Start_Loc,
+           Container,
+           Expression,
+           Actions);
       if No (Cond_Stat_Node) then
          DPE (PC_Conditional_Statement, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -317,24 +322,21 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
       Scan_Token;
       if Token /= T_Left_Parenthesis then
-         DPE (PC_For_Cond_Struct,
-              Expected_Token => T_Left_Parenthesis);
+         DPE (PC_For_Cond_Struct, Expected_Token => T_Left_Parenthesis);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
       Var_Identifier := P_Identifier (For_Cond_Struct);
       if No (Var_Identifier) then
-         DPE (PC_For_Cond_Struct,
-              Expected_Token => T_Identifier);
+         DPE (PC_For_Cond_Struct, Expected_Token => T_Identifier);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
       Scan_Token;
       if Token /= T_In then
-         DPE (PC_For_Cond_Struct,
-              Expected_Token => T_In);
+         DPE (PC_For_Cond_Struct, Expected_Token => T_In);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
@@ -349,16 +351,14 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
       Scan_Token;
       if Token /= T_Right_Parenthesis then
-         DPE (PC_For_Cond_Struct,
-              Expected_Token => T_Right_Parenthesis);
+         DPE (PC_For_Cond_Struct, Expected_Token => T_Right_Parenthesis);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
       Scan_Token;
       if Token /= T_Left_Curly_Bracket then
-         DPE (PC_For_Cond_Struct,
-              Expected_Token => T_Left_Curly_Bracket);
+         DPE (PC_For_Cond_Struct, Expected_Token => T_Left_Curly_Bracket);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
@@ -371,14 +371,17 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
       Scan_Token;
       if Token /= T_Right_Curly_Bracket then
-         DPE (PC_For_Cond_Struct,
-              Expected_Token => T_Right_Curly_Bracket);
+         DPE (PC_For_Cond_Struct, Expected_Token => T_Right_Curly_Bracket);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
-      Add_New_For_Cond_Struct (For_Cond_Struct, No_Node,
-                               Var_Identifier, Range_Node, Actions);
+      Add_New_For_Cond_Struct
+        (For_Cond_Struct,
+         No_Node,
+         Var_Identifier,
+         Range_Node,
+         Actions);
 
       return For_Cond_Struct;
 
@@ -392,9 +395,9 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
       pragma Assert (Token = T_While);
 
-      While_Cond_Struct : constant Node_Id := New_Node (K_While_Cond_Struct,
-                                                        Start_Loc);
-      Cond_Stat_Node    : Node_Id;
+      While_Cond_Struct : constant Node_Id :=
+        New_Node (K_While_Cond_Struct, Start_Loc);
+      Cond_Stat_Node : Node_Id;
    begin
       if No (While_Cond_Struct) then
          DPE (PC_While_Cond_Statement, EMC_Failed);
@@ -402,8 +405,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
          return No_Node;
       end if;
 
-      Cond_Stat_Node := P_Conditional_Statement (While_Cond_Struct,
-                                                 PC_While_Cond_Struct);
+      Cond_Stat_Node :=
+        P_Conditional_Statement (While_Cond_Struct, PC_While_Cond_Struct);
 
       Set_While_Statement (While_Cond_Struct, Cond_Stat_Node);
 
@@ -429,8 +432,9 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
             return P_Timed_Action (Start_Loc);
 
          when others =>
-            DPE (PC_Basic_Action,
-                 Expected_Tokens => (T_Identifier, T_Delay, T_Computation));
+            DPE
+              (PC_Basic_Action,
+               Expected_Tokens => (T_Identifier, T_Delay, T_Computation));
             Skip_Tokens (T_Semicolon);
             return No_Node;
       end case;
@@ -456,18 +460,18 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    --  | input_port_id >>
    --  | input_port_id ? [ ( target ) ]
 
-   function P_Assignment_Or_Communication_Action (Start_Loc : Location)
-     return Node_Id
+   function P_Assignment_Or_Communication_Action
+     (Start_Loc : Location) return Node_Id
    is
-      Loc               : Location;
-      Loc2              : Location;
-      Node              : Node_Id;
-      Ident             : Node_Id;
-      Value_Expr        : Node_Id            := No_Node;
-      Target            : Node_Id            := No_Node;
-      Sub_Parameters    : List_Id            := No_List;
-      Com_Kind          : Communication_Kind := CK_No_Kind;
-      IS_Any_Bool       : Boolean            := False;
+      Loc            : Location;
+      Loc2           : Location;
+      Node           : Node_Id;
+      Ident          : Node_Id;
+      Value_Expr     : Node_Id            := No_Node;
+      Target         : Node_Id            := No_Node;
+      Sub_Parameters : List_Id            := No_List;
+      Com_Kind       : Communication_Kind := CK_No_Kind;
+      IS_Any_Bool    : Boolean            := False;
    begin
       Restore_Lexer (Start_Loc);
       Ident := P_Id (No_Node);
@@ -509,11 +513,13 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
             end if;
 
          when others =>
-            DPE (PC_Assignment_Or_Communication_Action,
-                 Expected_Tokens => (T_Exclamation,
-                                     T_Interrogative,
-                                     T_Greater_Greater_Than,
-                                     T_Assignment));
+            DPE
+              (PC_Assignment_Or_Communication_Action,
+               Expected_Tokens =>
+                 (T_Exclamation,
+                  T_Interrogative,
+                  T_Greater_Greater_Than,
+                  T_Assignment));
             Skip_Tokens (T_Semicolon);
             return No_Node;
       end case;
@@ -562,8 +568,9 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
          Scan_Token;
          if Token /= T_Right_Parenthesis then
-            DPE (PC_Assignment_Or_Communication_Action,
-                 Expected_Token => T_Right_Parenthesis);
+            DPE
+              (PC_Assignment_Or_Communication_Action,
+               Expected_Token => T_Right_Parenthesis);
             Skip_Tokens (T_Semicolon);
             return No_Node;
          end if;
@@ -587,19 +594,30 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
          Restore_Lexer (Loc);
 
       elsif Token /= T_Semicolon then
-         DPE (PC_Assignment_Or_Communication_Action,
-              Expected_Token => T_Semicolon);
+         DPE
+           (PC_Assignment_Or_Communication_Action,
+            Expected_Token => T_Semicolon);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
       if No (Value_Expr) then
-         Node := Add_New_Communication_Action (Start_Loc, No_Node, Ident,
-                                               Target, Sub_Parameters,
-                                               Com_Kind);
+         Node :=
+           Add_New_Communication_Action
+             (Start_Loc,
+              No_Node,
+              Ident,
+              Target,
+              Sub_Parameters,
+              Com_Kind);
       else
-         Node := Add_New_Assignment_Action (Start_Loc, No_Node, Ident,
-                                            Value_Expr, Is_Any_Bool);
+         Node :=
+           Add_New_Assignment_Action
+             (Start_Loc,
+              No_Node,
+              Ident,
+              Value_Expr,
+              IS_Any_Bool);
       end if;
 
       if No (Node) then
@@ -622,12 +640,12 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    --  distribution ::= fixed | normal | poisson | random
 
    function P_Timed_Action (Start_Loc : Location) return Node_Id is
-      Loc               : Location;
-      Timed_Action      : Node_Id;
-      Fst_Behav_Time    : Node_Id;
-      Scd_Behav_Time    : Node_Id           := No_Node;
-      Is_Comput         : Boolean           := False;
-      Distribution      : Distribution_Kind := DK_No_Kind;
+      Loc            : Location;
+      Timed_Action   : Node_Id;
+      Fst_Behav_Time : Node_Id;
+      Scd_Behav_Time : Node_Id           := No_Node;
+      Is_Comput      : Boolean           := False;
+      Distribution   : Distribution_Kind := DK_No_Kind;
    begin
       Restore_Lexer (Start_Loc);
 
@@ -691,10 +709,14 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
                Restore_Lexer (Loc);
 
             when others =>
-               DPE (PC_Timed_Action,
-                    Expected_Tokens => (T_Fixed, T_Normal,
-                                        T_Poisson, T_Random,
-                                        T_Right_Parenthesis));
+               DPE
+                 (PC_Timed_Action,
+                  Expected_Tokens =>
+                    (T_Fixed,
+                     T_Normal,
+                     T_Poisson,
+                     T_Random,
+                     T_Right_Parenthesis));
                Skip_Tokens (T_Semicolon);
                return No_Node;
          end case;
@@ -707,11 +729,14 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
          return No_Node;
       end if;
 
-      Timed_Action := Add_New_Timed_Action (Start_Loc, No_Node,
-                                            Fst_Behav_Time,
-                                            Scd_Behav_Time,
-                                            Distribution,
-                                            Is_Comput);
+      Timed_Action :=
+        Add_New_Timed_Action
+          (Start_Loc,
+           No_Node,
+           Fst_Behav_Time,
+           Scd_Behav_Time,
+           Distribution,
+           Is_Comput);
       if No (Timed_Action) then
          DPE (PC_Timed_Action, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -729,25 +754,20 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    --    | data_subcomponent_identifier [ . data_subcomponent_identifier ]
    --    | data_access_feature_identifier [ . data_subcomponent_identifier ]
 
-   function P_Data_Component_Reference
-     (Container : Node_Id)
-     return Node_Id
-   is
+   function P_Data_Component_Reference (Container : Node_Id) return Node_Id is
       Loc           : Location;
       Idents        : List_Id;
       Data_Comp_Ref : Node_Id;
    begin
       Save_Lexer (Loc);
-      Idents := P_Items_List (P_Identifier'Access,
-                              Container,
-                              T_Dot);
+      Idents := P_Items_List (P_Identifier'Access, Container, T_Dot);
       if Is_Empty (Idents) then
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
-      Data_Comp_Ref := Add_New_Data_Component_Reference (Loc, Container,
-                                                         Idents);
+      Data_Comp_Ref :=
+        Add_New_Data_Component_Reference (Loc, Container, Idents);
       if No (Data_Comp_Ref) then
          DPE (PC_Data_Component_Reference, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -769,8 +789,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    function P_Range
      (Container : Node_Id;
-      Start_Loc : Location)
-     return Node_Id
+      Start_Loc : Location) return Node_Id
    is
 
       Loc        : Location;
@@ -796,9 +815,9 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       end if;
 
       if No (Node_Range) then
-            DPE (PC_Range, EMC_Failed);
-            Skip_Tokens (T_Semicolon);
-            return No_Node;
+         DPE (PC_Range, EMC_Failed);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
       else
          return Node_Range;
       end if;
@@ -812,13 +831,10 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    --  subprogram_parameter_list ::= parameter_label { , parameter_label } *
 
    function P_Subprogram_Parameter_List
-     (Container : Types.Node_Id)
-     return List_Id
+     (Container : Ocarina.Types.Node_Id) return List_Id
    is
    begin
-      return P_Items_List (P_Parameter_Label'Access,
-                           Container,
-                           T_Comma);
+      return P_Items_List (P_Parameter_Label'Access, Container, T_Comma);
    end P_Subprogram_Parameter_List;
 
    -----------------------
@@ -827,8 +843,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    --  parameter_label ::= in_parameter_value_expression | out_parameter_target
 
-   function P_Parameter_Label (Container : Types.Node_Id) return Node_Id
-   is
+   function P_Parameter_Label (Container : Ocarina.Types.Node_Id)
+                              return Node_Id is
       Start_Loc   : Location;
       Parameter   : Node_Id;
       Param_Label : Node_Id;
@@ -858,12 +874,12 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
 
    --  id ::= identifier { [ integer_value_holder ] }*
 
-   function P_Id (Container : Types.Node_Id) return Node_Id is
+   function P_Id (Container : Ocarina.Types.Node_Id) return Node_Id is
       Start_Loc    : Location;
       Loc          : Location;
       Id_Node      : Node_Id;
       Ident        : Node_Id;
-      Value_Holder : Node_Id  := No_Node;
+      Value_Holder : Node_Id := No_Node;
    begin
       Save_Lexer (Start_Loc);
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2012 ESA & ISAE.                       --
+--                   Copyright (C) 2012-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,12 +32,12 @@
 ------------------------------------------------------------------------------
 
 with Locations; use Locations;
-with Types;     use Types;
+with Ocarina.Types;     use Ocarina.Types;
 with Ada.Exceptions;
 
 package Errors is
 
-   procedure Display_Error  (S : String);
+   procedure Display_Error (S : String);
    procedure DE (S : String) renames Display_Error;
    procedure Display_Warning (S : String);
    procedure DW (S : String) renames Display_Warning;

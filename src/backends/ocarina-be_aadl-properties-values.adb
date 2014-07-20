@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Output;
+with Ocarina.Output;
 with Charset;
 
 with Ocarina.ME_AADL;
@@ -47,7 +47,7 @@ with Ocarina.BE_AADL.Components.Arrays;
 
 package body Ocarina.BE_AADL.Properties.Values is
 
-   use Output;
+   use Ocarina.Output;
    use Charset;
 
    use Ocarina.ME_AADL;
@@ -148,7 +148,7 @@ package body Ocarina.BE_AADL.Properties.Values is
 
    procedure Print_Number_Type (Node : Node_Id) is
       Number_Kind : constant Node_Kind := Kind (Node);
-      Type_Range  : constant Node_Id :=
+      Type_Range  : constant Node_Id   :=
         Ocarina.ME_AADL.AADL_Tree.Nodes.Type_Range (Node);
       Unit_Design : constant Node_Id := Unit_Designator (Node);
    begin
@@ -245,7 +245,7 @@ package body Ocarina.BE_AADL.Properties.Values is
    procedure Print_Range_Type (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Range_Type);
 
-      Number_Type     : constant Node_Id :=
+      Number_Type : constant Node_Id :=
         Ocarina.ME_AADL.AADL_Tree.Nodes.Number_Type (Node);
       Range_Type_Kind : constant Node_Kind := Kind (Number_Type);
    begin
@@ -253,7 +253,8 @@ package body Ocarina.BE_AADL.Properties.Values is
       Write_Space;
 
       if Range_Type_Kind = K_Integer_Type
-        or else Range_Type_Kind = K_Real_Type then
+        or else Range_Type_Kind = K_Real_Type
+      then
          Print_Number_Type (Number_Type);
       else
          Print_Entity_Reference (Number_Type);
@@ -314,8 +315,8 @@ package body Ocarina.BE_AADL.Properties.Values is
       Print_Token (T_Left_Square_Bracket);
       Write_Space;
 
-      List_Node := First_Node
-        (Ocarina.ME_AADL.AADL_Tree.Nodes.List_Items (Node));
+      List_Node :=
+        First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.List_Items (Node));
 
       while Present (List_Node) loop
          case Kind (List_Node) is
@@ -361,12 +362,13 @@ package body Ocarina.BE_AADL.Properties.Values is
       Write_Space;
       Print_Token (T_Left_Parenthesis);
 
-      List_Node := First_Node
-        (Ocarina.ME_AADL.AADL_Tree.Nodes.List_Items (Node));
+      List_Node :=
+        First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.List_Items (Node));
 
       while Present (List_Node) loop
          if List_Node /=
-           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.List_Items (Node)) then
+           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.List_Items (Node))
+         then
             Write_Space;
          end if;
 
@@ -470,20 +472,21 @@ package body Ocarina.BE_AADL.Properties.Values is
    ------------------------
 
    procedure Print_Numeric_Term (Node : Node_Id) is
-      pragma Assert (Kind (Node) = K_Minus_Numeric_Term
-                     or else Kind (Node) = K_Signed_AADLNumber
-                     or else Kind (Node) = K_Property_Term
-                     or else Kind (Node) = K_Unique_Property_Const_Identifier
-                     or else Kind (Node) = K_Entity_Reference);
+      pragma Assert
+        (Kind (Node) = K_Minus_Numeric_Term
+         or else Kind (Node) = K_Signed_AADLNumber
+         or else Kind (Node) = K_Property_Term
+         or else Kind (Node) = K_Unique_Property_Const_Identifier
+         or else Kind (Node) = K_Entity_Reference);
    begin
       case Kind (Node) is
          when K_Minus_Numeric_Term =>
             Print_Minus_Numeric_Term (Node);
          when K_Signed_AADLNumber =>
             Print_Signed_AADLNumber (Node);
-         when K_Property_Term
-           | K_Entity_Reference
-           | K_Unique_Property_Const_Identifier =>
+         when K_Property_Term                 |
+           K_Entity_Reference                 |
+           K_Unique_Property_Const_Identifier =>
             Print_Unique_Property_Constant_Identifier (Node);
          when others =>
             raise Program_Error;
@@ -508,8 +511,8 @@ package body Ocarina.BE_AADL.Properties.Values is
    procedure Print_Signed_AADLNumber (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_Signed_AADLNumber);
 
-      Value  : constant Node_Id := Number_Value (Node);
-      Unit   : constant Node_Id := Unit_Identifier (Node);
+      Value : constant Node_Id := Number_Value (Node);
+      Unit  : constant Node_Id := Unit_Identifier (Node);
 
    begin
       if Kind (Value) = K_Literal then
@@ -536,8 +539,7 @@ package body Ocarina.BE_AADL.Properties.Values is
          when K_Identifier =>
             Print_Identifier (Node);
 
-         when K_Signed_AADLNumber
-           | K_Minus_Numeric_Term =>
+         when K_Signed_AADLNumber | K_Minus_Numeric_Term =>
             Print_Numeric_Term (Node);
 
          when K_Literal =>
@@ -546,15 +548,15 @@ package body Ocarina.BE_AADL.Properties.Values is
          when K_Number_Range_Term =>
             Print_Number_Range_Term (Node);
 
-         when K_Not_Boolean_Term
-           | K_And_Boolean_Term
-           | K_Or_Boolean_Term
-           | K_Parenthesis_Boolean_Term =>
+         when K_Not_Boolean_Term      |
+           K_And_Boolean_Term         |
+           K_Or_Boolean_Term          |
+           K_Parenthesis_Boolean_Term =>
             Print_Boolean_Term (Node);
 
-         when K_Unique_Property_Const_Identifier
-           | K_Property_Term
-           | K_Enumeration_Term =>
+         when K_Unique_Property_Const_Identifier |
+           K_Property_Term                       |
+           K_Enumeration_Term                    =>
             Print_Unique_Property_Constant_Identifier (Node);
 
          when K_Reference_Term =>
@@ -579,27 +581,29 @@ package body Ocarina.BE_AADL.Properties.Values is
    ------------------------------------
 
    procedure Print_Property_Type_Designator (Node : Node_Id) is
-      pragma Assert (Kind (Node) = K_Unique_Property_Type_Identifier
-                     or else Kind (Node) = K_String_Type
-                     or else Kind (Node) = K_Boolean_Type
-                     or else Kind (Node) = K_Real_Type
-                     or else Kind (Node) = K_Integer_Type
-                     or else Kind (Node) = K_Range_Type
-                     or else Kind (Node) = K_Enumeration_Type
-                     or else Kind (Node) = K_Reference_Type
-                     or else Kind (Node) = K_Classifier_Type
-                     or else Kind (Node) = K_Units_Type
-                     or else Kind (Node) = K_Record_Type);
+      pragma Assert
+        (Kind (Node) = K_Unique_Property_Type_Identifier
+         or else Kind (Node) = K_String_Type
+         or else Kind (Node) = K_Boolean_Type
+         or else Kind (Node) = K_Real_Type
+         or else Kind (Node) = K_Integer_Type
+         or else Kind (Node) = K_Range_Type
+         or else Kind (Node) = K_Enumeration_Type
+         or else Kind (Node) = K_Reference_Type
+         or else Kind (Node) = K_Classifier_Type
+         or else Kind (Node) = K_Units_Type
+         or else Kind (Node) = K_Record_Type);
    begin
       case Kind (Node) is
          when K_Unique_Property_Type_Identifier =>
             Print_Entity_Reference (Node);
 
-         when K_String_Type => Print_Token (T_AADLString);
-         when K_Boolean_Type => Print_Token (T_AADLBoolean);
+         when K_String_Type =>
+            Print_Token (T_AADLString);
+         when K_Boolean_Type =>
+            Print_Token (T_AADLBoolean);
 
-         when K_Real_Type
-           | K_Integer_Type =>
+         when K_Real_Type | K_Integer_Type =>
             Print_Number_Type (Node);
 
          when K_Range_Type =>
@@ -630,24 +634,24 @@ package body Ocarina.BE_AADL.Properties.Values is
    -----------------------------------------------
 
    procedure Print_Unique_Property_Constant_Identifier (Node : Node_Id) is
-      pragma Assert (Kind (Node) = K_Unique_Property_Const_Identifier
-                     or else Kind (Node) = K_Property_Term
-                     or else Kind (Node) = K_Enumeration_Term
-                     or else Kind (Node) = K_Entity_Reference);
+      pragma Assert
+        (Kind (Node) = K_Unique_Property_Const_Identifier
+         or else Kind (Node) = K_Property_Term
+         or else Kind (Node) = K_Enumeration_Term
+         or else Kind (Node) = K_Entity_Reference);
    begin
       if AADL_Version = AADL_V1 then
          Print_Tokens ((T_Value, T_Left_Parenthesis));
       end if;
 
       case Kind (Node) is
-         when K_Entity_Reference
-           | K_Unique_Property_Type_Identifier
-           | K_Property_Term
-           | K_Enumeration_Term
-           | K_Unique_Property_Const_Identifier =>
+         when K_Entity_Reference              |
+           K_Unique_Property_Type_Identifier  |
+           K_Property_Term                    |
+           K_Enumeration_Term                 |
+           K_Unique_Property_Const_Identifier =>
             Print_Entity_Reference (Node);
-         when K_Real_Type
-           | K_Integer_Type =>
+         when K_Real_Type | K_Integer_Type =>
             Print_Number_Type (Node);
          when others =>
             Node_Not_Handled (Node);
@@ -806,12 +810,13 @@ package body Ocarina.BE_AADL.Properties.Values is
       Print_Tokens ((T_Enumeration, T_Left_Parenthesis));
 
       if not Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (Node)) then
-         List_Node := First_Node
-           (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (Node));
+         List_Node :=
+           First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (Node));
 
          while Present (List_Node) loop
-            if List_Node /= First_Node
-              (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (Node)) then
+            if List_Node /=
+              First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifiers (Node))
+            then
                Print_Token (T_Comma);
                Write_Space;
             end if;
@@ -853,7 +858,7 @@ package body Ocarina.BE_AADL.Properties.Values is
    -------------------------
 
    procedure Print_Named_Element (Node : Node_Id) is
-      Class_Ref  : constant Node_Id := Classifier_Ref (Node);
+      Class_Ref : constant Node_Id := Classifier_Ref (Node);
    begin
       case Named_Element'Val (Category (Node)) is
          when PO_Port_Group =>
@@ -897,8 +902,7 @@ package body Ocarina.BE_AADL.Properties.Values is
          when PO_Feature =>
             Print_Token (T_Feature);
          when PO_Connection =>
-            Print_Named_Element_Identifier
-              (PO_Connection);
+            Print_Named_Element_Identifier (PO_Connection);
          when PO_Feature_Group_Connection =>
             Print_Tokens ((T_Feature, T_Group, T_Connections));
          when PO_Component_Category =>
@@ -952,7 +956,7 @@ package body Ocarina.BE_AADL.Properties.Values is
 
    begin
       Contained_Elts := List_Items (Node);
-      Ann_Path := Annex_Path (Node);
+      Ann_Path       := Annex_Path (Node);
 
       if not Is_Empty (Contained_Elts) then
          List_Node := First_Node (Contained_Elts);

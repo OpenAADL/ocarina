@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,12 +31,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 with Charset;
 
 package body Ocarina.ME_AADL.Tokens is
 
-   use Namet;
+   use Ocarina.Namet;
    use Charset;
 
    procedure New_Token (Token : Token_Type; Image : String);
@@ -47,7 +47,8 @@ package body Ocarina.ME_AADL.Tokens is
    --  order to resolve it easily.
 
    procedure New_Property_Owner_Token
-     (Token : Property_Owner_Token; Image : String);
+     (Token : Property_Owner_Token;
+      Image : String);
 
    -----------
    -- Image --
@@ -246,15 +247,16 @@ package body Ocarina.ME_AADL.Tokens is
    procedure New_Property_Owner_Token
      (Token : Property_Owner_Token;
       Image : String)
-    is
+   is
    begin
       Set_Str_To_Name_Buffer (Image);
       Token_PO_Image (Token) := Name_Find;
 
       if Token in Property_Owner_Type then
          To_Lower (Name_Buffer (1 .. Name_Len));
-         Set_Name_Table_Byte (Name_Find,
-                              Byte (Property_Owner_Token'Pos (Token)));
+         Set_Name_Table_Byte
+           (Name_Find,
+            Byte (Property_Owner_Token'Pos (Token)));
       end if;
    end New_Property_Owner_Token;
 
@@ -265,8 +267,10 @@ package body Ocarina.ME_AADL.Tokens is
    function Quoted_Image (T : Token_Type) return String is
    begin
       case T is
-         when T_Identifier
-           | T_Integer_Literal | T_Real_Literal | T_String_Literal =>
+         when T_Identifier   |
+           T_Integer_Literal |
+           T_Real_Literal    |
+           T_String_Literal  =>
             return Image (T);
 
          when others =>

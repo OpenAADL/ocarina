@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,8 +38,7 @@ package Ocarina.Builder.AADL.Components.Features is
 
    function Add_Property_Association
      (Feature              : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean;
+      Property_Association : Node_Id) return Boolean;
 
    function Add_New_Port_Spec
      (Loc               : Location;
@@ -51,45 +50,39 @@ package Ocarina.Builder.AADL.Components.Features is
       Is_Event          : Boolean;
       Is_Feature        : Boolean;
       Is_Refinement     : Boolean := False;
-      Associated_Entity : Node_Id := No_Node)
-     return Node_Id;
+      Associated_Entity : Node_Id := No_Node) return Node_Id;
 
    function Add_New_Port_Group_Spec
      (Loc           : Location;
       Name          : Node_Id;
       Container     : Node_Id;
-      Is_Refinement : Boolean := False)
-     return Node_Id;
+      Is_Refinement : Boolean := False) return Node_Id;
 
    function Add_New_Feature_Group_Spec
      (Loc           : Location;
       Name          : Node_Id;
       Container     : Node_Id;
-      Is_Refinement : Boolean := False)
-     return Node_Id;
+      Is_Refinement : Boolean := False) return Node_Id;
 
    function Add_New_Server_Subprogram
      (Loc           : Location;
       Name          : Node_Id;
       Container     : Node_Id;
-      Is_Refinement : Boolean := False)
-     return Node_Id;
+      Is_Refinement : Boolean := False) return Node_Id;
 
    function Add_New_Data_Subprogram_Spec
      (Loc           : Location;
       Name          : Node_Id;
       Container     : Node_Id;
-      Is_Refinement : Boolean := False)
-     return Node_Id;
+      Is_Refinement : Boolean := False) return Node_Id;
 
    function Add_New_Subcomponent_Access
      (Loc           : Location;
       Name          : Node_Id;
       Container     : Node_Id;
       Is_Refinement : Boolean := False;
-      Category      : Ocarina.Me_AADL.Component_Category;
-      Is_Provided   : Boolean)
-     return Node_Id;
+      Category      : Ocarina.ME_AADL.Component_Category;
+      Is_Provided   : Boolean) return Node_Id;
 
    function Add_New_Parameter
      (Loc           : Location;
@@ -97,7 +90,6 @@ package Ocarina.Builder.AADL.Components.Features is
       Container     : Node_Id;
       Is_In         : Boolean := True;
       Is_Out        : Boolean := True;
-      Is_Refinement : Boolean := False)
-     return Node_Id;
+      Is_Refinement : Boolean := False) return Node_Id;
 
 end Ocarina.Builder.AADL.Components.Features;

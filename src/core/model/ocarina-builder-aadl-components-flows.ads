@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,8 +39,7 @@ package Ocarina.Builder.AADL.Components.Flows is
 
    function Add_Property_Association
      (Flow                 : Node_Id;
-      Property_Association : Node_Id)
-     return Boolean;
+      Property_Association : Node_Id) return Boolean;
    --  Add a property association to the flow declaration. Flow must
    --  reference a flow implementation or a flow
    --  specification. Property_Association references the property
@@ -53,8 +52,7 @@ package Ocarina.Builder.AADL.Components.Flows is
       Category      : Flow_Category;
       Source_Flow   : Node_Id;
       Sink_Flow     : Node_Id;
-      Is_Refinement : Boolean := False)
-     return Node_Id;
+      Is_Refinement : Boolean := False) return Node_Id;
    --  Create a new flow specification inside a component type
 
    function Add_New_Flow_Implementation
@@ -65,8 +63,7 @@ package Ocarina.Builder.AADL.Components.Flows is
       In_Modes      : Node_Id;
       Is_Refinement : Boolean;
       Source_Flow   : Node_Id;
-      Sink_Flow     : Node_id)
-     return Node_Id;
+      Sink_Flow     : Node_Id) return Node_Id;
    --  Create a new flow implementation inside a component
    --  implementation
 
@@ -77,8 +74,7 @@ package Ocarina.Builder.AADL.Components.Flows is
       In_Modes      : Node_Id;
       Is_Refinement : Boolean;
       Source_Flow   : Node_Id;
-      Sink_Flow     : Node_id)
-     return Node_Id;
+      Sink_Flow     : Node_Id) return Node_Id;
    --  Create a new end to end flow specification inside a component
    --  implementation
 

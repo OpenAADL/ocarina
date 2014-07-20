@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2013 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -35,7 +35,7 @@ with GNAT.OS_Lib; use GNAT.OS_Lib;
 with GNAT.Case_Util;
 
 with Charset; use Charset;
-with Namet;   use Namet;
+with Ocarina.Namet;   use Ocarina.Namet;
 
 with Ocarina.Backends.Ada_Tree.Nodes;
 with Ocarina.Backends.Ada_Tree.Nutils;
@@ -60,7 +60,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
       Into : String_Access;
    end record;
 
-   Rules : array (1 .. 64) of Casing_Rule;
+   Rules      : array (1 .. 64) of Casing_Rule;
    Rules_Last : Natural := 0;
 
    procedure Apply_Casing_Rules (S : in out String);
@@ -85,7 +85,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
 
    function Get_Unit_Internal_Name (U_Name : Name_Id) return Name_Id is
       Old_Name_Len    : constant Integer := Name_Len;
-      Old_Name_Buffer : constant String := Name_Buffer;
+      Old_Name_Buffer : constant String  := Name_Buffer;
       Result          : Name_Id;
    begin
       Set_Str_To_Name_Buffer ("PO_HI_Ada%RU%");
@@ -94,7 +94,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
 
       --  Restore the name buffer
 
-      Name_Len := Old_Name_Len;
+      Name_Len    := Old_Name_Len;
       Name_Buffer := Old_Name_Buffer;
 
       return Result;
@@ -105,7 +105,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
    -----------------------
 
    function Get_Unit_Position (U : Name_Id) return Int is
-      U_Name : constant Name_Id := Get_Unit_Internal_Name  (U);
+      U_Name : constant Name_Id := Get_Unit_Internal_Name (U);
    begin
       return Get_Name_Table_Info (U_Name);
    end Get_Unit_Position;
@@ -115,7 +115,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
    -----------------------
 
    procedure Set_Unit_Position (U : Name_Id; Pos : Int) is
-      U_Name : constant Name_Id := Get_Unit_Internal_Name  (U);
+      U_Name : constant Name_Id := Get_Unit_Internal_Name (U);
    begin
       Set_Name_Table_Info (U_Name, Pos);
    end Set_Unit_Position;
@@ -125,8 +125,8 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
    ------------------------
 
    procedure Apply_Casing_Rules (S : in out String) is
-      New_Word : Boolean := True;
-      Length   : Natural := S'Length;
+      New_Word : Boolean         := True;
+      Length   : Natural         := S'Length;
       S1       : constant String := To_Lower (S);
    begin
       GNAT.Case_Util.To_Mixed (S);
@@ -202,11 +202,11 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
 
       --  Register the custom runtime entity images
 
-      REI (RE_Integer_8) := Get_String_Name ("Integer_8");
-      REI (RE_Integer_16) := Get_String_Name ("Integer_16");
-      REI (RE_Integer_32) := Get_String_Name ("Integer_32");
-      REI (RE_Integer_64) := Get_String_Name ("Integer_64");
-      REI (RE_Unsigned_8) := Get_String_Name ("Unsigned_8");
+      REI (RE_Integer_8)   := Get_String_Name ("Integer_8");
+      REI (RE_Integer_16)  := Get_String_Name ("Integer_16");
+      REI (RE_Integer_32)  := Get_String_Name ("Integer_32");
+      REI (RE_Integer_64)  := Get_String_Name ("Integer_64");
+      REI (RE_Unsigned_8)  := Get_String_Name ("Unsigned_8");
       REI (RE_Unsigned_16) := Get_String_Name ("Unsigned_16");
       REI (RE_Unsigned_32) := Get_String_Name ("Unsigned_32");
       REI (RE_Unsigned_64) := Get_String_Name ("Unsigned_64");
@@ -239,11 +239,11 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
          --  unit name to get real identifier.
 
          if Position > 0 then
-            Set_Str_To_Name_Buffer
-              (Name_Buffer (Name_Len + 2 .. Length));
+            Set_Str_To_Name_Buffer (Name_Buffer (Name_Len + 2 .. Length));
             Name := Name_Find;
             Set_Homogeneous_Parent_Unit_Name
-              (RUD (U), RUD (RU_Id'Val (Position)));
+              (RUD (U),
+               RUD (RU_Id'Val (Position)));
          end if;
 
          Get_Name_String (Name);
@@ -293,8 +293,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
          end if;
 
          RED (E) := New_Node (K_Designator);
-         Set_Defining_Identifier
-           (RED (E), Make_Defining_Identifier (Name));
+         Set_Defining_Identifier (RED (E), Make_Defining_Identifier (Name));
          Set_Homogeneous_Parent_Unit_Name (RED (E), RUD (RE_Unit_Table (E)));
       end loop;
    end Initialize;
@@ -305,8 +304,8 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
 
    procedure Reset is
    begin
-      RUD := (RU_Id'Range => No_Node);
-      RED := (RE_Id'Range => No_Node);
+      RUD        := (RU_Id'Range => No_Node);
+      RED        := (RE_Id'Range => No_Node);
       Rules_Last := 0;
 
       Initialized := False;
@@ -327,7 +326,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
 
    procedure Register_Casing_Rule (S : String) is
    begin
-      Rules_Last := Rules_Last + 1;
+      Rules_Last              := Rules_Last + 1;
       Rules (Rules_Last).Size := S'Length;
       Rules (Rules_Last).Into := new String'(S);
       Rules (Rules_Last).From := new String'(S);

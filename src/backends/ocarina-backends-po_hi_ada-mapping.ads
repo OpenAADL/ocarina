@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -107,8 +107,7 @@ package Ocarina.Backends.PO_HI_Ada.Mapping is
 
    function Map_Port_Status
      (E                : Node_Id;
-      Full_Declaration : Boolean)
-     return Node_Id;
+      Full_Declaration : Boolean) return Node_Id;
    --  Creates the type declaration that gathers the state of the out
    --  ports of a subprogram. If 'Full_Declaration' is False, cretes a
    --  provate type declaration, otherwise, creates the full type
@@ -179,8 +178,7 @@ package Ocarina.Backends.PO_HI_Ada.Mapping is
 
    function Extract_Enumerator
      (E : Node_Id;
-      D : Boolean := True)
-     return Node_Id;
+      D : Boolean := True) return Node_Id;
    --  Extracts the enumeration literal associated to node E (process,
    --  thread or port) and adds the appropriate with clause.  If E is
    --  a port instance and then D is False, return the enumeration

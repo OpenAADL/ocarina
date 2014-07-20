@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -62,9 +62,9 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
    procedure Visit_Data_Instance (E : Node_Id);
 
-   System_Nb_Processes     : Unsigned_Long_Long := 0;
-   Current_Parent_Node     : Node_Id;
-   Process_Node            : Node_Id;
+   System_Nb_Processes : Unsigned_Long_Long := 0;
+   Current_Parent_Node : Node_Id;
+   Process_Node        : Node_Id;
 
    -----------
    -- Visit --
@@ -98,8 +98,7 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category : constant Component_Category
-        := Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -133,8 +132,8 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      S : Node_Id;
-      F : Node_Id;
+      S                  : Node_Id;
+      F                  : Node_Id;
       Old_Current_Parent : Node_Id;
    begin
       System_Nb_Processes := System_Nb_Processes + 1;
@@ -145,14 +144,14 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
       --  Look for a possible bounded virtual processor/processor
       --  N := Get_Bound_Processor (E);
 
-      Old_Current_Parent := Current_Parent_Node;
+      Old_Current_Parent  := Current_Parent_Node;
       Current_Parent_Node := Process_Node;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -164,7 +163,8 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
 
          while Present (F) loop
             if Kind (F) = K_Port_Spec_Instance
-               and then Get_Connection_Pattern (F) = Inter_Process then
+              and then Get_Connection_Pattern (F) = Inter_Process
+            then
                Append_Node_To_List (Map_Port (F), XTN.Subitems (Process_Node));
             end if;
             F := Next_Node (F);
@@ -193,13 +193,13 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S     : Node_Id;
+      S : Node_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -219,14 +219,14 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
       O : Node_Id;
    begin
       --  Create the main node and set its name as an item
-      N := Map_Bus (E);
-      O := Current_Parent_Node;
+      N                   := Map_Bus (E);
+      O                   := Current_Parent_Node;
       Current_Parent_Node := N;
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -248,22 +248,21 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
       P : Node_Id;
    begin
       System_Nb_Processes := 0;
-      U := XTN.Unit (Backend_Node (Identifier (E)));
-      P := XTN.Node (Backend_Node (Identifier (E)));
+      U                   := XTN.Unit (Backend_Node (Identifier (E)));
+      P                   := XTN.Node (Backend_Node (Identifier (E)));
 
       Push_Entity (U);
       Push_Entity (P);
 
-      Current_XML_Node := XTN.Root_Node
-                              (XTN.XML_File (U));
+      Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
       Current_Parent_Node := Current_XML_Node;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -279,14 +278,14 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
+      S         : Node_Id;
       Processes : List_Id;
    begin
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-         --  Visit the component instance corresponding to the
-         --  subcomponent S.
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);
@@ -295,7 +294,7 @@ package body Ocarina.Backends.ARINC653_Conf.Partitions is
 
       if Present (Backend_Node (Identifier (E))) then
          Processes := XTN.Processes (Backend_Node (Identifier (E)));
-         S := XTN.First_Node (Processes);
+         S         := XTN.First_Node (Processes);
          while Present (S) loop
             Visit (XTN.Content (S));
             S := XTN.Next_Node (S);

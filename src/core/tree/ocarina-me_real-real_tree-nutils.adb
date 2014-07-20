@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -44,12 +44,12 @@ package body Ocarina.ME_REAL.REAL_Tree.Nutils is
 
    procedure Init is
    begin
-      REAL_Root := No_Node;
-      AADL_Model_Root := No_Node;
-      Owner_Node := No_Node;
+      REAL_Root                               := No_Node;
+      AADL_Model_Root                         := No_Node;
+      Owner_Node                              := No_Node;
       Ocarina.ME_REAL.REAL_Tree.Nutils.Domain :=
         Ocarina.Instances.REAL_Checker.Queries.Empty_Set;
-      Environment := No_List;
+      Environment      := No_List;
       Global_Variables := New_List (K_List_Id, No_Location);
       Node_List.Init (Library_Theorems);
       Node_List.Init (To_Run_Theorem_List);
@@ -71,8 +71,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Nutils is
    -- Find_Global_Variables --
    ---------------------------
 
-   function Find_Global_Variable (Key : Name_Id) return Node_Id
-   is
+   function Find_Global_Variable (Key : Name_Id) return Node_Id is
    begin
       return Find_Node_By_Name (Key, Global_Variables);
    end Find_Global_Variable;
@@ -81,8 +80,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Nutils is
    -- Append_Variable_To_Global_Variables --
    -----------------------------------------
 
-   procedure Append_Variable_To_Global_Variables (Node : Node_Id)
-   is
+   procedure Append_Variable_To_Global_Variables (Node : Node_Id) is
    begin
       Append_Node_To_List (Node, Global_Variables);
    end Append_Variable_To_Global_Variables;
@@ -91,14 +89,14 @@ package body Ocarina.ME_REAL.REAL_Tree.Nutils is
    -- Find_Declared_Theorem --
    ---------------------------
 
-   function Find_Declared_Theorem (Theorem_Name : Name_Id) return Node_Id
-   is
+   function Find_Declared_Theorem (Theorem_Name : Name_Id) return Node_Id is
       use Node_List;
       use Utils;
    begin
       for I in Node_List.First .. Node_List.Last (Library_Theorems) loop
          if To_Lower (Name (Identifier (Library_Theorems.Table (I).Node))) =
-           To_Lower (Theorem_Name) then
+           To_Lower (Theorem_Name)
+         then
             return Library_Theorems.Table (I).Node;
          end if;
       end loop;
@@ -139,8 +137,7 @@ package body Ocarina.ME_REAL.REAL_Tree.Nutils is
    -- New_List --
    --------------
 
-   function New_List (Kind : Node_Kind; Loc : Location) return List_Id
-   is
+   function New_List (Kind : Node_Kind; Loc : Location) return List_Id is
    begin
       return List_Id (New_Node (Kind, Loc));
    end New_List;
@@ -149,15 +146,14 @@ package body Ocarina.ME_REAL.REAL_Tree.Nutils is
    -- New_Node --
    --------------
 
-   function New_Node (Kind : Node_Kind; Loc : Location) return Node_Id
-   is
+   function New_Node (Kind : Node_Kind; Loc : Location) return Node_Id is
       N : Node_Id;
    begin
       Entries.Increment_Last;
-      N := Entries.Last;
+      N                 := Entries.Last;
       Entries.Table (N) := Default_Node;
       Set_Kind (N, Kind);
-      Set_Loc  (N, Loc);
+      Set_Loc (N, Loc);
       return N;
    end New_Node;
 
@@ -170,8 +166,8 @@ package body Ocarina.ME_REAL.REAL_Tree.Nutils is
       Old_Node : Node_Id;
       New_Node : Node_Id)
    is
-      Node  : Node_Id;
-      Next  : Node_Id := No_Node;
+      Node : Node_Id;
+      Next : Node_Id := No_Node;
    begin
       if Old_Node = First_Node (List) then
          if Present (Next_Node (First_Node (List))) then
@@ -225,9 +221,11 @@ package body Ocarina.ME_REAL.REAL_Tree.Nutils is
    -- Find_Node_By_Name --
    -----------------------
 
-   function Find_Node_By_Name (Key : Name_Id; Target : List_Id) return Node_Id
+   function Find_Node_By_Name
+     (Key    : Name_Id;
+      Target : List_Id) return Node_Id
    is
-      N  : Node_Id;
+      N : Node_Id;
    begin
       if Is_Empty (Target) then
          return No_Node;

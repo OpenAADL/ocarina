@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -48,9 +48,9 @@ package Ocarina.Backends.C_Common.Mapping is
 
    --  Tree binding operations
    function Map_Distributed_Application (E : Node_Id) return Node_Id;
-   function Map_HI_Node (E : Node_Id;
-                         Kernel : Boolean := False)
-                         return Node_Id;
+   function Map_HI_Node
+     (E      : Node_Id;
+      Kernel : Boolean := False) return Node_Id;
    function Map_HI_Unit (E : Node_Id) return Node_Id;
    procedure Bind_AADL_To_Activity (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Global_Names (G : Node_Id; A : Node_Id);
@@ -65,31 +65,30 @@ package Ocarina.Backends.C_Common.Mapping is
    procedure Bind_AADL_To_Servers (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Entities (G : Node_Id; A : Node_Id);
    function Map_Task_Job_Identifier
-      (E : Node_Id; Prefix_Component : Node_Id := No_Node)
-      return Node_Id;
-   function Map_Time (T : Time_Type;
-                      Variable : Name_Id := No_Name) return Node_Id;
+     (E                : Node_Id;
+      Prefix_Component : Node_Id := No_Node) return Node_Id;
+   function Map_Time
+     (T        : Time_Type;
+      Variable : Name_Id := No_Name) return Node_Id;
    function Map_C_Enum_Name (E : Node_Id; Enumerator : Name_Id) return Name_Id;
-   function Map_C_Enumerator_Name (E               : Node_Id;
-                                   Custom_Parent   : Node_Id := No_Node;
-                                   Entity          : Boolean := False;
-                                   Server          : Boolean := False;
-                                   Port_Type       : Boolean := False;
-                                   Local_Port      : Boolean := False)
-                                  return Name_Id;
+   function Map_C_Enumerator_Name
+     (E             : Node_Id;
+      Custom_Parent : Node_Id := No_Node;
+      Entity        : Boolean := False;
+      Server        : Boolean := False;
+      Port_Type     : Boolean := False;
+      Local_Port    : Boolean := False) return Name_Id;
    function Map_C_Define_Name
-     (E          : Node_Id;
-      Nb_Ports   : Boolean := False) return Name_Id;
+     (E        : Node_Id;
+      Nb_Ports : Boolean := False) return Name_Id;
    function Map_C_Full_Parameter_Name
      (Spg    : Node_Id;
       P      : Node_Id;
-      Suffix : Character := ASCII.NUL)
-     return Name_Id;
+      Suffix : Character := ASCII.NUL) return Name_Id;
 
    function Map_C_Feature_Subprogram
      (A     : Node_Id;
-      Owner : Node_Id := No_Node)
-     return Node_Id;
+      Owner : Node_Id := No_Node) return Node_Id;
    --  Maps an Identifier from the given Subprogram spec instance. If
    --  Owner is not given (typically when mapping a data component
    --  instance to a C type) deduce it from the parent component of
@@ -100,7 +99,8 @@ package Ocarina.Backends.C_Common.Mapping is
 
    function Map_C_Data_Type_Designator (E : Node_Id) return Node_Id;
    function Map_C_Defining_Identifier
-      (A : Node_Id; Is_Pointer : Boolean := False) return Node_Id;
+     (A          : Node_Id;
+      Is_Pointer : Boolean := False) return Node_Id;
    procedure Bind_AADL_To_Type_Definition (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Process_Request (G : Node_Id; A : Node_Id);
    procedure Bind_AADL_To_Types (G : Node_Id; A : Node_Id);
@@ -114,25 +114,20 @@ package Ocarina.Backends.C_Common.Mapping is
    procedure Bind_AADL_To_Global_Port (G : Node_Id; A : Node_Id);
    function Map_Stub_Identifier (E : Node_Id) return Node_Id;
    function Map_C_Subprogram_Spec
-      (S : Node_Id; Containing_Device : Node_Id := No_Node)
-      return Node_Id;
+     (S                 : Node_Id;
+      Containing_Device : Node_Id := No_Node) return Node_Id;
    function Map_C_Subprogram_Body
-      (S : Node_Id; Containing_Device : Node_Id := No_Node)
-      return Node_Id;
+     (S                 : Node_Id;
+      Containing_Device : Node_Id := No_Node) return Node_Id;
    function Map_C_Subprogram_Identifier (E : Node_Id) return Node_Id;
-   function Map_C_Marshaller_Subprogram (A : Node_Id;
-                                         Is_Unmarshall : Boolean := False;
-                                         Is_Request : Boolean := False)
-                                        return Node_Id;
+   function Map_C_Marshaller_Subprogram
+     (A             : Node_Id;
+      Is_Unmarshall : Boolean := False;
+      Is_Request    : Boolean := False) return Node_Id;
    procedure Bind_AADL_To_Default_Value (G : Node_Id; A : Node_Id);
    function Map_Task_Deliver_Identifier (E : Node_Id) return Node_Id;
-   function Map_C_Operation_Name
-     (E      : Node_Id)
-     return Name_Id;
-   function Map_C_Port_Data_Name
-     (E      : Node_Id;
-      P      : Node_Id)
-     return Name_Id;
+   function Map_C_Operation_Name (E : Node_Id) return Name_Id;
+   function Map_C_Port_Data_Name (E : Node_Id; P : Node_Id) return Name_Id;
    function Map_C_Variable_Name
      (E                 : Node_Id;
       Port_Variable     : Boolean := False;
@@ -150,14 +145,12 @@ package Ocarina.Backends.C_Common.Mapping is
       Port_Destinations : Boolean := False;
       Port_Total_Fifo   : Boolean := False;
       Port_Request      : Boolean := False;
-      Request_Variable  : Boolean := False)
-     return Name_Id;
+      Request_Variable  : Boolean := False) return Name_Id;
 
    function Map_Port_Data_With_Virtual_Bus
-     (E          : Node_Id;
-      Virtual_Bus : Node_Id;
-      Containing_Component : Node_Id := No_Node)
-     return Name_Id;
+     (E                    : Node_Id;
+      Virtual_Bus          : Node_Id;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
    --  Map the name of the data variable when we receive on a port.
    --  Here, this function is dedicated to virtual bus and should be
@@ -166,28 +159,26 @@ package Ocarina.Backends.C_Common.Mapping is
    --  model whereas parameter Virtual_Bus is a component from the AADL tree.
 
    function Map_Port_Name
-      (E          : Node_Id;
-      Is_Global   : Boolean := False;
-      Containing_Component : Node_Id := No_Node)
-     return Name_Id;
+     (E                    : Node_Id;
+      Is_Global            : Boolean := False;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
-   function Map_Port_Data (E : Node_Id;
-      Containing_Component : Node_Id := No_Node)
-     return Name_Id;
+   function Map_Port_Data
+     (E                    : Node_Id;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
-   function Map_Port_Var (E : Node_Id;
-      Containing_Component : Node_Id := No_Node)
-     return Name_Id;
+   function Map_Port_Var
+     (E                    : Node_Id;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
-   function Map_Port_Var_Length (E : Node_Id;
-      Containing_Component : Node_Id := No_Node)
-     return Name_Id;
+   function Map_Port_Var_Length
+     (E                    : Node_Id;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
    function Map_Port_Var_Length_With_Virtual_Bus
-      (E : Node_Id;
-      Virtual_Bus : Node_Id;
-      Containing_Component : Node_Id := No_Node)
-     return Name_Id;
+     (E                    : Node_Id;
+      Virtual_Bus          : Node_Id;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
    --  Map the name of the length variable when we receive on a port.
    --  Here, this function is dedicated to virtual bus and should be
@@ -195,22 +186,19 @@ package Ocarina.Backends.C_Common.Mapping is
    --  Parameter E and Containing_Component come from the instance
    --  model whereas parameter Virtual_Bus is a component from the AADL tree.
 
-   function Map_Port_Var_Valid (E : Node_Id;
-      Containing_Component : Node_Id := No_Node)
-     return Name_Id;
+   function Map_Port_Var_Valid
+     (E                    : Node_Id;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
-   function Map_Port (E : Node_Id;
-      Containing_Component : Node_Id := No_Node)
-      return Name_Id;
+   function Map_Port
+     (E                    : Node_Id;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
    function Map_Port_Deployment_Destinations
-               (E : Node_Id;
-               Containing_Component : Node_Id := No_Node)
-      return Name_Id;
+     (E                    : Node_Id;
+      Containing_Component : Node_Id := No_Node) return Name_Id;
 
-   function Map_Port_Deployment_Partition
-     (E          : Node_Id)
-     return Name_Id;
+   function Map_Port_Deployment_Partition (E : Node_Id) return Name_Id;
 
    function Map_Queue_Size (Port : Node_Id) return Node_Id;
    --  Return a node that represents the required size of the port (in bytes).
@@ -248,12 +236,14 @@ package Ocarina.Backends.C_Common.Mapping is
    --  Map a SCADE parameter
 
    function Map_Lustre_Output_Function_Name
-      (Subprogram : Node_Id; Port : Node_Id) return Node_Id;
+     (Subprogram : Node_Id;
+      Port       : Node_Id) return Node_Id;
    --  Generate the name of the output function for the context to use for
    --  a given Lustre node and a given port.
 
    function Map_Lustre_Input_Function_Name
-      (Subprogram : Node_Id; Port : Node_Id) return Node_Id;
+     (Subprogram : Node_Id;
+      Port       : Node_Id) return Node_Id;
    --  Generate the name of the input function for the context to use for
    --  a given Lustre node and a given port.
 
@@ -280,16 +270,16 @@ package Ocarina.Backends.C_Common.Mapping is
    --  a given Lustre node.
 
    function Map_Lustre_Temp_Var
-      (Subprogram : Node_Id; Port : Node_Id) return Node_Id;
+     (Subprogram : Node_Id;
+      Port       : Node_Id) return Node_Id;
    --  When we use the Lustre academic version, we need to make a temporary
    --  variable between the thread and other generated functions.
    --  This function generates the name of the temporary variable.
 
    function Map_POK_Action
-      (Action              : Supported_POK_Action;
-      Thread_Id            : Unsigned_Long_Long := 0;
-      Corresponding_Error  : Node_Id := No_Node)
-      return Node_Id;
+     (Action              : Supported_POK_Action;
+      Thread_Id           : Unsigned_Long_Long := 0;
+      Corresponding_Error : Node_Id            := No_Node) return Node_Id;
    --  For a given recovery action, map it and make the right
    --  function call to recover the error. This function is
    --  dedicated to threads. There is another function
@@ -297,43 +287,38 @@ package Ocarina.Backends.C_Common.Mapping is
    --  partitions.
 
    function Map_POK_Kernel_Action
-      (Action : Supported_POK_Action;
+     (Action       : Supported_POK_Action;
       Partition_Id : Unsigned_Long_Long := 0;
-      Kernel_Level : Boolean := True)
-      return Node_Id;
+      Kernel_Level : Boolean            := True) return Node_Id;
 
    function Map_POK_Kernel_Action
-      (Action              : Supported_ARINC653_Action;
-      Partition_Id         : Unsigned_Long_Long := 0;
-      Kernel_Level : Boolean := True)
-
-      return Node_Id;
+     (Action       : Supported_ARINC653_Action;
+      Partition_Id : Unsigned_Long_Long := 0;
+      Kernel_Level : Boolean            := True) return Node_Id;
 
    function Map_POK_Action
-      (Action              : Supported_ARINC653_Action;
-      Thread_Id            : Unsigned_Long_Long := 0;
-      Corresponding_Error  : Node_Id := No_Node)
-      return Node_Id;
+     (Action              : Supported_ARINC653_Action;
+      Thread_Id           : Unsigned_Long_Long := 0;
+      Corresponding_Error : Node_Id            := No_Node) return Node_Id;
 
    function Map_Esterel_Output_Function
-      (Subprogram : Node_Id; Feature : Node_Id)
-      return Node_Id;
+     (Subprogram : Node_Id;
+      Feature    : Node_Id) return Node_Id;
    --  Generate the name of the function
    --  used to store out signals.
 
    function Map_Esterel_Input_Function
-      (Subprogram : Node_Id; Feature : Node_Id)
-      return Node_Id;
+     (Subprogram : Node_Id;
+      Feature    : Node_Id) return Node_Id;
    --  Map the name of a given function to transmit
    --  the input signals.
 
    function Map_Esterel_Temp_Var
-      (Subprogram : Node_Id; Port : Node_Id)
-      return Node_Id;
+     (Subprogram : Node_Id;
+      Port       : Node_Id) return Node_Id;
    --  Map a temporary variable to store output signals.
 
-   function Map_Esterel_Reset_Function (Subprogram : Node_Id)
-      return Node_Id;
+   function Map_Esterel_Reset_Function (Subprogram : Node_Id) return Node_Id;
    --  Map the reset function used in the Esterel application
    --  code. This function should be called before any reaction
    --  of the Esterel application code.
@@ -347,8 +332,8 @@ package Ocarina.Backends.C_Common.Mapping is
 
    function Map_Associated_Locking_Entity_Name (E : Node_Id) return Name_Id;
 
-   function Map_ARINC653_Error (Error : Supported_ARINC653_Error)
-      return Node_Id;
+   function Map_ARINC653_Error
+     (Error : Supported_ARINC653_Error) return Node_Id;
    --  Map an ARINC653 error property into a runtime entity.
 
    function Map_POK_Error (Error : Supported_POK_Error) return Node_Id;
@@ -363,26 +348,24 @@ package Ocarina.Backends.C_Common.Mapping is
    type Virtual_Bus_Call_Kind is (Sending, Receiving);
 
    procedure Map_Virtual_Bus_Calls
-      (Port                : Node_Id;
-      Declarations         : List_Id;
-      Statements           : List_Id;
-      Handled_Kind         : Virtual_Bus_Call_Kind;
+     (Port                 :     Node_Id;
+      Declarations         :     List_Id;
+      Statements           :     List_Id;
+      Handled_Kind         :     Virtual_Bus_Call_Kind;
       New_Data             : out Node_Id;
       New_Size             : out Node_Id;
-      Containing_Component : Node_Id := No_Node);
+      Containing_Component :     Node_Id := No_Node);
    --  Makes calls to the protocol stack designed by a port.
 
    function Get_Type_Identifier_Associated_With_Virtual_Bus
-      (Port                : Node_Id) return Node_Id;
+     (Port : Node_Id) return Node_Id;
    --  Returns the type identifier that should be used with a port
    --  if this port is associated to virtual bus layers.
 
-   function Map_Port_Name_For_Asn1
-     (E                    : Node_Id) return Name_Id;
+   function Map_Port_Name_For_Asn1 (E : Node_Id) return Name_Id;
    --  Map the name of a port for ASN1 marshalling.
 
-   function Map_Port_Name_Present_For_Asn1
-     (E                    : Node_Id) return Name_Id;
+   function Map_Port_Name_Present_For_Asn1 (E : Node_Id) return Name_Id;
    --  Map the name of a port for ASN1 marshalling.
 
    procedure Handle_Virtual_Buses_Properties (Port : Node_Id);

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -33,13 +33,13 @@
 
 --  Description of REAL tokens
 
-with Types;
+with Ocarina.Types;
 with Locations;
 with Ocarina.Files;
 
 package Ocarina.ME_REAL.Tokens is
    use Locations;
-   use Types;
+   use Ocarina.Types;
    use Ocarina.Files;
 
    type Token_Type is
@@ -47,14 +47,14 @@ package Ocarina.ME_REAL.Tokens is
       T_Identifier,
       T_Pragma,
 
-      --  About template types
+   --  About template types
 
       T_Sequence,
       T_String,
       T_Wstring,
       T_Fixed,
 
-      --  Graphic characters
+   --  Graphic characters
 
       T_Colon,
       T_Colon_Colon,
@@ -84,7 +84,7 @@ package Ocarina.ME_REAL.Tokens is
       T_Power,
       T_Affect,
 
-      --  pre-defined sets
+   --  pre-defined sets
 
       T_Processor_Set,
       T_Virtual_Processor_Set,
@@ -107,7 +107,7 @@ package Ocarina.ME_REAL.Tokens is
       T_Unknown_Set,
       T_Local_Set,
 
-      --  Selection function
+   --  Selection function
 
       T_Is_Subcomponent_Of,
       T_Is_Bound_To,
@@ -121,7 +121,7 @@ package Ocarina.ME_REAL.Tokens is
       T_Is_Predecessor_Of,
       T_Is_Connecting_To,
 
-      --  Verification function
+   --  Verification function
 
       T_Get_Property_Value,
       T_Get_System_Property_Value,
@@ -158,7 +158,7 @@ package Ocarina.ME_REAL.Tokens is
       T_Product,
       T_Sum,
 
-      --  Ranges set-level functions
+   --  Ranges set-level functions
 
       T_MMax,
       T_MProduct,
@@ -166,7 +166,7 @@ package Ocarina.ME_REAL.Tokens is
       T_MAll_Equals,
       T_MSum,
 
-      --  Literals
+   --  Literals
 
       T_False,
       T_True,
@@ -179,7 +179,7 @@ package Ocarina.ME_REAL.Tokens is
       T_String_Literal,
       T_Wide_String_Literal,
 
-      --  keywords
+   --  keywords
 
       T_Check,
       T_End,
@@ -200,33 +200,27 @@ package Ocarina.ME_REAL.Tokens is
       T_Anonymous_Set,
       T_EOF);
 
-   First_Token_Pos : constant := Token_Type'Pos (Token_Type'First);
-   Last_Token_Pos  : constant := Token_Type'Pos (Token_Type'Last);
-   Prefix : constant String := "%real%";
+   First_Token_Pos : constant        := Token_Type'Pos (Token_Type'First);
+   Last_Token_Pos  : constant        := Token_Type'Pos (Token_Type'Last);
+   Prefix          : constant String := "%real%";
 
-   subtype Literal_Type is Token_Type
-     range T_False .. T_Wide_String_Literal;
+   subtype Literal_Type is Token_Type range T_False .. T_Wide_String_Literal;
 
-   subtype Operator_Type is Token_Type
-     range T_Equal .. T_Affect;
+   subtype Operator_Type is Token_Type range T_Equal .. T_Affect;
 
-   subtype Predefined_Sets is Token_Type
-     range T_Processor_Set .. T_Local_Set;
+   subtype Predefined_Sets is Token_Type range T_Processor_Set .. T_Local_Set;
 
-   subtype Selection_Function_Type is Token_Type
-     range T_Processor_Set .. T_Is_Connecting_To;
+   subtype Selection_Function_Type is
+     Token_Type range T_Processor_Set .. T_Is_Connecting_To;
 
-   subtype Verification_Function_Type is Token_Type
-     range T_Get_Property_Value .. T_Sum;
+   subtype Verification_Function_Type is
+     Token_Type range T_Get_Property_Value .. T_Sum;
 
-   subtype Higher_Level_Function_Type is Token_Type
-     range T_MMax .. T_MSum;
+   subtype Higher_Level_Function_Type is Token_Type range T_MMax .. T_MSum;
 
-   subtype Boolean_Operator_Type is Token_Type
-     range T_Not .. T_Or;
+   subtype Boolean_Operator_Type is Token_Type range T_Not .. T_Or;
 
-   subtype Keyword_Type is Token_Type
-     range T_Check .. T_Theorem;
+   subtype Keyword_Type is Token_Type range T_Check .. T_Theorem;
 
    Token_Image : array (Token_Type) of Name_Id;
 
@@ -234,12 +228,12 @@ package Ocarina.ME_REAL.Tokens is
    -- Global variables updated by the token scanner --
    ---------------------------------------------------
 
-   Token          : Token_Type;
-   Token_Name     : Name_Id;
+   Token      : Token_Type;
+   Token_Name : Name_Id;
    Token_Location : Location renames Ocarina.Files.Buffer_Location;
 
-   Language       : constant String := "real_specification";
-   REAL_Language  : Name_Id;
+   Language      : constant String := "real_specification";
+   REAL_Language : Name_Id;
 
    procedure Init_Tokens;
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2012 ESA & ISAE.                       --
+--                   Copyright (C) 2012-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -47,8 +47,7 @@ package body Ocarina.Instances.REAL_Checker.Queries.Predecessor_Predicates is
    function Is_Predecessor_Of_Predicate
      (E      : Node_Id;
       C      : Node_Id;
-      Option : Predicates_Search_Options := PSO_Direct)
-     return Boolean
+      Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
       use ATN;
 
@@ -60,33 +59,38 @@ package body Ocarina.Instances.REAL_Checker.Queries.Predecessor_Predicates is
       F1, F2 : Boolean;
    begin
 
-      if AIN.Kind (E) /= K_Component_Instance or else
-        AIN.Kind (C) /= K_Component_Instance then
+      if AIN.Kind (E) /= K_Component_Instance
+        or else AIN.Kind (C) /= K_Component_Instance
+      then
          return False;
       end if;
 
       for I in 1 .. Cardinal (Flows) loop
-         F := Get (Flows, I);
-         P := AIN.First_Node (ATN.Connections (F));
+         F  := Get (Flows, I);
+         P  := AIN.First_Node (ATN.Connections (F));
          F1 := False;
          F2 := False;
 
          while Present (P) loop
-            if AIN.Kind (P) = AIN.K_Identifier and then
-              (AIN.Kind (AIN.Corresponding_Entity (P)) =
-               K_Port_Spec_Instance or else
-               AIN.Kind (AIN.Corresponding_Entity (P)) =
-               K_Parameter_Instance) then
+            if AIN.Kind (P) = AIN.K_Identifier
+              and then
+              (AIN.Kind (AIN.Corresponding_Entity (P)) = K_Port_Spec_Instance
+               or else
+                 AIN.Kind (AIN.Corresponding_Entity (P)) =
+                 K_Parameter_Instance)
+            then
                if AIN.Parent_Component (AIN.Corresponding_Entity (P)) = E then
                   F1 := True;
                   exit;
                end if;
 
             elsif AIN.Kind (AIN.Corresponding_Entity (P)) =
-              K_Subcomponent_Access_Instance then
+              K_Subcomponent_Access_Instance
+            then
 
                if Corresponding_Instance (AIN.Corresponding_Entity (P)) =
-                 E then
+                 E
+               then
                   F1 := True;
                   exit;
                end if;
@@ -102,22 +106,28 @@ package body Ocarina.Instances.REAL_Checker.Queries.Predecessor_Predicates is
             P2 := AIN.Next_Node (P);
 
             while Present (P2) loop
-               if AIN.Kind (P2) = AIN.K_Identifier and then
+               if AIN.Kind (P2) = AIN.K_Identifier
+                 and then
                  (AIN.Kind (AIN.Corresponding_Entity (P2)) =
-                  K_Port_Spec_Instance or else
-                  AIN.Kind (AIN.Corresponding_Entity (P2)) =
-                  K_Parameter_Instance) then
+                  K_Port_Spec_Instance
+                  or else
+                    AIN.Kind (AIN.Corresponding_Entity (P2)) =
+                    K_Parameter_Instance)
+               then
                   if AIN.Parent_Component (AIN.Corresponding_Entity (P2)) =
-                    C then
+                    C
+                  then
                      F2 := True;
                      exit;
                   end if;
 
                elsif AIN.Kind (AIN.Corresponding_Entity (P2)) =
-                 K_Subcomponent_Access_Instance then
+                 K_Subcomponent_Access_Instance
+               then
 
                   if Corresponding_Instance (AIN.Corresponding_Entity (P2)) =
-                    C then
+                    C
+                  then
                      F2 := True;
                      exit;
                   end if;

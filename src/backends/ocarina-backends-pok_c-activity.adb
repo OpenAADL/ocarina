@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,7 +31,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Namet;
+with Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -50,7 +50,7 @@ with Ocarina.Instances.Queries;
 
 package body Ocarina.Backends.POK_C.Activity is
 
-   use Namet;
+   use Ocarina.Namet;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.Backends.Utils;
@@ -81,7 +81,8 @@ package body Ocarina.Backends.POK_C.Activity is
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True);
+        (E            : Node_Id;
+         Real_Process : Boolean := True);
       procedure Visit_Processor_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
       procedure Visit_Virtual_Processor_Instance (E : Node_Id);
@@ -96,12 +97,11 @@ package body Ocarina.Backends.POK_C.Activity is
          N : Node_Id;
          S : constant Node_Id := Parent_Subcomponent (E);
       begin
-         N := Make_Function_Specification
-           (Defining_Identifier => Map_Task_Job_Identifier (S),
-            Parameters          => No_List,
-            Return_Type         => CTU.Make_Pointer_Type
-              (New_Node (CTN.K_Void))
-           );
+         N :=
+           Make_Function_Specification
+             (Defining_Identifier => Map_Task_Job_Identifier (S),
+              Parameters          => No_List,
+              Return_Type => CTU.Make_Pointer_Type (New_Node (CTN.K_Void)));
          return N;
       end Task_Job_Spec;
 
@@ -137,8 +137,8 @@ package body Ocarina.Backends.POK_C.Activity is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -170,13 +170,13 @@ package body Ocarina.Backends.POK_C.Activity is
       --------------------------------------
 
       procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-         S : Node_Id;
-         U : Node_Id;
+         S         : Node_Id;
+         U         : Node_Id;
          Processes : List_Id;
       begin
          if Present (Backend_Node (Identifier (E))) then
             Processes := CTN.Processes (Backend_Node (Identifier (E)));
-            S := AIN.First_Node (Processes);
+            S         := AIN.First_Node (Processes);
             while Present (S) loop
                U := Current_Entity;
                Pop_Entity;
@@ -225,14 +225,17 @@ package body Ocarina.Backends.POK_C.Activity is
       ----------------------------
 
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True) is
-         U          : Node_Id;
-         P          : Node_Id;
-         S          : Node_Id;
+        (E            : Node_Id;
+         Real_Process : Boolean := True)
+      is
+         U : Node_Id;
+         P : Node_Id;
+         S : Node_Id;
       begin
          if Real_Process then
-            U := CTN.Distributed_Application_Unit
-                  (CTN.Naming_Node (Backend_Node (Identifier (E))));
+            U :=
+              CTN.Distributed_Application_Unit
+                (CTN.Naming_Node (Backend_Node (Identifier (E))));
             P := CTN.Entity (U);
 
             Push_Entity (P);
@@ -284,11 +287,12 @@ package body Ocarina.Backends.POK_C.Activity is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         U               : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P               : constant Node_Id := CTN.Entity (U);
-         Implementation  : Node_Id;
-         S               : Node_Id;
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P              : constant Node_Id := CTN.Entity (U);
+         Implementation : Node_Id;
+         S              : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -301,7 +305,8 @@ package body Ocarina.Backends.POK_C.Activity is
                while Present (S) loop
                   if Get_Category_Of_Component (S) = CC_Process then
                      Visit_Process_Instance
-                        (Corresponding_Instance (S), False);
+                       (Corresponding_Instance (S),
+                        False);
                   end if;
 
                   S := Next_Node (S);
@@ -327,9 +332,10 @@ package body Ocarina.Backends.POK_C.Activity is
          case P is
             when Thread_Periodic =>
 
-               N := Message_Comment
-                 ("Periodic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Periodic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                --  Create the spec of the parameterless subprogram
@@ -340,9 +346,10 @@ package body Ocarina.Backends.POK_C.Activity is
                Bind_AADL_To_Job (Identifier (S), N);
 
             when Thread_Sporadic =>
-               N := Message_Comment
-                 ("Sporadic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Sporadic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                N := Task_Job_Spec (E);
@@ -366,7 +373,8 @@ package body Ocarina.Backends.POK_C.Activity is
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True);
+        (E            : Node_Id;
+         Real_Process : Boolean := True);
       procedure Visit_Processor_Instance (E : Node_Id);
       procedure Visit_Virtual_Processor_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
@@ -397,15 +405,13 @@ package body Ocarina.Backends.POK_C.Activity is
       -------------------
 
       function Task_Job_Body (E : Node_Id) return Node_Id is
-         S               : constant Node_Id := Parent_Subcomponent (E);
-         Spec            : constant Node_Id := CTN.Job_Node
-           (Backend_Node (Identifier (S)));
-         Declarations    : constant List_Id := New_List
-           (CTN.K_Declaration_List);
-         Statements      : constant List_Id := New_List (CTN.K_Statement_List);
-         WStatements     : constant List_Id := New_List
-           (CTN.K_Statement_List);
-         P               : constant Supported_Thread_Dispatch_Protocol :=
+         S    : constant Node_Id := Parent_Subcomponent (E);
+         Spec : constant Node_Id :=
+           CTN.Job_Node (Backend_Node (Identifier (S)));
+         Declarations : constant List_Id := New_List (CTN.K_Declaration_List);
+         Statements   : constant List_Id := New_List (CTN.K_Statement_List);
+         WStatements  : constant List_Id := New_List (CTN.K_Statement_List);
+         P            : constant Supported_Thread_Dispatch_Protocol :=
            Get_Thread_Dispatch_Protocol (E);
          Call_Parameters : List_Id;
          N               : Node_Id;
@@ -427,13 +433,12 @@ package body Ocarina.Backends.POK_C.Activity is
          ---------------
 
          procedure Make_Init is
-            Entrypoint : constant Node_Id
-                  := Get_Thread_Initialize_Entrypoint (E);
+            Entrypoint : constant Node_Id :=
+              Get_Thread_Initialize_Entrypoint (E);
          begin
             if Entrypoint /= No_Node then
                Append_Node_To_List
-                  (Make_Call_Profile
-                     (Map_C_Subprogram_Identifier (Entrypoint)),
+                 (Make_Call_Profile (Map_C_Subprogram_Identifier (Entrypoint)),
                   Statements);
             end if;
          end Make_Init;
@@ -450,7 +455,10 @@ package body Ocarina.Backends.POK_C.Activity is
                --  unique call sequence, handle it.
 
                CTU.Handle_Call_Sequence
-                 (S, Call_Seq, Declarations, WStatements);
+                 (S,
+                  Call_Seq,
+                  Declarations,
+                  WStatements);
             else
                N := Message_Comment ("not implemented yet");
                Append_Node_To_List (N, WStatements);
@@ -462,63 +470,68 @@ package body Ocarina.Backends.POK_C.Activity is
          ---------------------
 
          procedure Make_Receive_In is
-            F                    : Node_Id;
-            Function_Call        : Node_Id;
-            Destination_Port     : Node_Id;
-            Transport_Type       : Node_Id := No_Node;
-            Compute_Entrypoint   : Node_Id;
-            Virtual_Bus_Size     : Node_Id := No_Node;
-            Virtual_Bus_Data     : Node_Id := No_Node;
+            F                  : Node_Id;
+            Function_Call      : Node_Id;
+            Destination_Port   : Node_Id;
+            Transport_Type     : Node_Id := No_Node;
+            Compute_Entrypoint : Node_Id;
+            Virtual_Bus_Size   : Node_Id := No_Node;
+            Virtual_Bus_Data   : Node_Id := No_Node;
          begin
-            N := Message_Comment
-              ("Get the IN ports values");
+            N := Message_Comment ("Get the IN ports values");
             Append_Node_To_List (N, WStatements);
 
             F := First_Node (Features (E));
 
             while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance
-                 and then Is_In (F)
-               then
-                  Transport_Type := No_Node;
+               if Kind (F) = K_Port_Spec_Instance and then Is_In (F) then
+                  Transport_Type   := No_Node;
                   Destination_Port := No_Node;
 
                   if Is_Data (F) then
 
                      if Current_Device /= No_Node then
                         Destination_Port :=
-                           Get_Corresponding_Port_In_Component (F);
+                          Get_Corresponding_Port_In_Component (F);
 
-                        if Destination_Port /= No_Node and then
-                           Is_Using_Virtual_Bus
-                              (Get_Port_By_Name
-                                 (Destination_Port, Current_Device)) then
-                           Transport_Type := Get_Inter_Partition_Port_Type
-                              (Get_Port_By_Name
-                                 (Destination_Port, Current_Device));
+                        if Destination_Port /= No_Node
+                          and then Is_Using_Virtual_Bus
+                            (Get_Port_By_Name
+                               (Destination_Port,
+                                Current_Device))
+                        then
+                           Transport_Type :=
+                             Get_Inter_Partition_Port_Type
+                               (Get_Port_By_Name
+                                  (Destination_Port,
+                                   Current_Device));
                         end if;
 
-                        if Transport_Type = No_Node and then
-                           Is_Using_Virtual_Bus
-                              (Get_Port_By_Name (F, Current_Device)) then
-                           Transport_Type := Get_Inter_Partition_Port_Type
-                              (Get_Port_By_Name (F, Current_Device));
+                        if Transport_Type = No_Node
+                          and then Is_Using_Virtual_Bus
+                            (Get_Port_By_Name (F, Current_Device))
+                        then
+                           Transport_Type :=
+                             Get_Inter_Partition_Port_Type
+                               (Get_Port_By_Name (F, Current_Device));
                         end if;
                      else
-                        Transport_Type := Map_C_Data_Type_Designator
-                           (Corresponding_Instance (F));
+                        Transport_Type :=
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (F));
                      end if;
 
                      if Transport_Type = No_Node then
-                        Transport_Type := Map_C_Data_Type_Designator
-                           (Corresponding_Instance (F));
+                        Transport_Type :=
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (F));
                      end if;
 
                      Append_Node_To_List
-                        (Make_Variable_Declaration
-                           (Defining_Identifier =>
-                              Make_Defining_Identifier
-                                 (Map_Port_Data (F, Current_Device)),
+                       (Make_Variable_Declaration
+                          (Defining_Identifier =>
+                             Make_Defining_Identifier
+                               (Map_Port_Data (F, Current_Device)),
                            Used_Type => Transport_Type),
                         CTN.Declarations (Current_File));
                   end if;
@@ -526,17 +539,20 @@ package body Ocarina.Backends.POK_C.Activity is
                   Call_Parameters := New_List (CTN.K_Parameter_List);
 
                   if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
-                     if (Get_Connection_Pattern (F) = Inter_Process and then
-                     not Is_Virtual (Get_Port_By_Name (F, Current_Device)))
-                     or else
-                     (Get_Port_By_Name (F, Current_Device) /= No_Node and then
-                     not Is_Pure_Device_Port
-                        (Get_Port_By_Name (F, Current_Device)))
+                     if
+                       (Get_Connection_Pattern (F) = Inter_Process
+                        and then not Is_Virtual
+                          (Get_Port_By_Name (F, Current_Device)))
+                       or else
+                       (Get_Port_By_Name (F, Current_Device) /= No_Node
+                        and then not Is_Pure_Device_Port
+                          (Get_Port_By_Name (F, Current_Device)))
                      then
 
-                        if Current_Device /= No_Node and then
-                           Is_Using_Virtual_Bus
-                              (Get_Port_By_Name (F, Current_Device)) then
+                        if Current_Device /= No_Node
+                          and then Is_Using_Virtual_Bus
+                            (Get_Port_By_Name (F, Current_Device))
+                        then
                            Add_Include (RH (RH_Protocols));
                         end if;
                         --  Check if we are in a device and if the port
@@ -545,23 +561,25 @@ package body Ocarina.Backends.POK_C.Activity is
 
                         if POK_Flavor = ARINC653 then
                            Called_Function := RE (RE_Read_Sampling_Message);
-                           Type_Used := RE (RE_Sampling_Port_Id_Type);
+                           Type_Used       := RE (RE_Sampling_Port_Id_Type);
                         else
                            Called_Function := RE (RE_Pok_Port_Sampling_Read);
-                           Type_Used := RE (RE_Uint8_T);
+                           Type_Used       := RE (RE_Uint8_T);
                         end if;
 
-                        Function_Call := CTU.POK_Make_Function_Call_With_Assert
-                              (Called_Function, Call_Parameters);
+                        Function_Call :=
+                          CTU.POK_Make_Function_Call_With_Assert
+                            (Called_Function,
+                             Call_Parameters);
 
                         Append_Node_To_List
-                           (Make_Extern_Entity_Declaration
-                              (Make_Variable_Declaration
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Var (F, Current_Device))),
-                                 Used_type => Type_Used)),
-                            CTN.Declarations (Current_File));
+                          (Make_Extern_Entity_Declaration
+                             (Make_Variable_Declaration
+                                (Defining_Identifier =>
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Var (F, Current_Device))),
+                                 Used_Type => Type_Used)),
+                           CTN.Declarations (Current_File));
 
                         if POK_Flavor = ARINC653 then
                            Type_Used := RE (RE_Validity_Type);
@@ -570,11 +588,11 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var_Valid (F, Current_Device))),
-                              Used_type => Type_Used),
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var_Valid (F, Current_Device))),
+                              Used_Type => Type_Used),
                            Statements);
 
                         if POK_Flavor = ARINC653 then
@@ -584,26 +602,24 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var_Length (F, Current_Device))),
-                               Used_type => Type_Used),
-                            Statements);
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var_Length (F, Current_Device))),
+                              Used_Type => Type_Used),
+                           Statements);
 
                         Append_Node_To_List (Function_Call, WStatements);
 
                         POK_Add_Return_Assertion
-                           (WStatements, RE (RE_Pok_Errno_Empty));
+                          (WStatements,
+                           RE (RE_Pok_Errno_Empty));
 
                         --  Call virtual bus hierarchy
 
-                        if AIN.First_Node
-                           (AIN.Sources (F)) /= No_Node then
+                        if AIN.First_Node (AIN.Sources (F)) /= No_Node then
                            Map_Virtual_Bus_Calls
-                              (AIN.Item
-                                 (AIN.First_Node
-                                    (AIN.Sources (F))),
+                             (AIN.Item (AIN.First_Node (AIN.Sources (F))),
                               CTN.Declarations (Current_File),
                               WStatements,
                               Receiving,
@@ -613,96 +629,97 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Map_Port_Var (F, Current_Device)),
-                            Call_Parameters);
+                          (Make_Defining_Identifier
+                             (Map_Port_Var (F, Current_Device)),
+                           Call_Parameters);
 
                         if Virtual_Bus_Data /= No_Node then
                            Append_Node_To_List
-                              (Make_Variable_Address (Virtual_Bus_Data),
+                             (Make_Variable_Address (Virtual_Bus_Data),
                               Call_Parameters);
                         else
                            if Get_Data_Representation
-                                 (Corresponding_Instance (F)) = Data_Array then
+                               (Corresponding_Instance (F)) =
+                             Data_Array
+                           then
                               Append_Node_To_List
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Data (F, Current_Device)),
+                                (Make_Defining_Identifier
+                                   (Map_Port_Data (F, Current_Device)),
                                  Call_Parameters);
                            else
                               Append_Node_To_List
-                                 (Make_Variable_Address
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Data (F, Current_Device))),
+                                (Make_Variable_Address
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Data (F, Current_Device))),
                                  Call_Parameters);
                            end if;
                         end if;
 
                         if Virtual_Bus_Size /= No_Node then
                            Append_Node_To_List
-                              (Make_Variable_Address (Virtual_Bus_Size),
+                             (Make_Variable_Address (Virtual_Bus_Size),
                               Call_Parameters);
                         else
                            Append_Node_To_List
-                              (Make_Variable_Address
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var_Length (F, Current_Device))),
-                               Call_Parameters);
+                             (Make_Variable_Address
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var_Length (F, Current_Device))),
+                              Call_Parameters);
                         end if;
 
                         Append_Node_To_List
-                           (Make_Variable_Address
-                              (Make_Defining_Identifier
-                                 (Map_Port_Var_Valid (F, Current_Device))),
-                            Call_Parameters);
+                          (Make_Variable_Address
+                             (Make_Defining_Identifier
+                                (Map_Port_Var_Valid (F, Current_Device))),
+                           Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
-                           Add_Return_Variable_In_Parameters
-                              (Call_Parameters);
+                           Add_Return_Variable_In_Parameters (Call_Parameters);
                         end if;
 
                      elsif Get_Connection_Pattern (F) = Intra_Process then
 
                         Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Map_Port_Var (F, Current_Device)),
-                            Call_Parameters);
+                          (Make_Defining_Identifier
+                             (Map_Port_Var (F, Current_Device)),
+                           Call_Parameters);
 
                         if Get_Timeout_Value (F) /= Null_Time then
                            if POK_Flavor = ARINC653 then
-                              N := Map_Time_To_Millisecond
-                                 (Get_Timeout_Value (F));
+                              N :=
+                                Map_Time_To_Millisecond
+                                  (Get_Timeout_Value (F));
                            else
                               N := Map_Time (Get_Timeout_Value (F));
                            end if;
                         else
-                           N := CTU.Make_Literal
-                              (CV.New_Int_Value (0, 1, 10));
+                           N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                         end if;
                         Append_Node_To_List (N, Call_Parameters);
 
                         Append_Node_To_List
-                           (Make_Variable_Address
-                              (Make_Defining_Identifier
-                                 (Map_Port_Data (F, Current_Device))),
-                            Call_Parameters);
+                          (Make_Variable_Address
+                             (Make_Defining_Identifier
+                                (Map_Port_Data (F, Current_Device))),
+                           Call_Parameters);
 
                         Append_Node_To_List
-                           (Make_Variable_Address
-                              (Make_Defining_Identifier
-                                 (Map_Port_Var_Length (F, Current_Device))),
-                            Call_Parameters);
+                          (Make_Variable_Address
+                             (Make_Defining_Identifier
+                                (Map_Port_Var_Length (F, Current_Device))),
+                           Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
-                           Add_Return_Variable_In_Parameters
-                              (Call_Parameters);
+                           Add_Return_Variable_In_Parameters (Call_Parameters);
                            Called_Function := RF (RE_Read_Blackboard);
                         else
-                           Called_Function
-                              := RF (RE_Pok_Blackboard_Read);
+                           Called_Function := RF (RE_Pok_Blackboard_Read);
                         end if;
 
-                        Function_Call := CTU.POK_Make_Function_Call_With_Assert
-                              (Called_Function, Call_Parameters);
+                        Function_Call :=
+                          CTU.POK_Make_Function_Call_With_Assert
+                            (Called_Function,
+                             Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
                            Type_Used := RE (RE_Message_Size_Type);
@@ -711,12 +728,12 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var_Length (F, Current_Device))),
-                               Used_type => Type_Used),
-                            Statements);
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var_Length (F, Current_Device))),
+                              Used_Type => Type_Used),
+                           Statements);
 
                         if POK_Flavor = ARINC653 then
                            Type_Used := RE (RE_Blackboard_Id_Type);
@@ -725,29 +742,27 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Extern_Entity_Declaration
-                              (Make_Variable_Declaration
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Var (F, Current_Device))),
-                                 Used_type => Type_Used)),
-                            CTN.Declarations (Current_File));
+                          (Make_Extern_Entity_Declaration
+                             (Make_Variable_Declaration
+                                (Defining_Identifier =>
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Var (F, Current_Device))),
+                                 Used_Type => Type_Used)),
+                           CTN.Declarations (Current_File));
 
                         Append_Node_To_List (Function_Call, WStatements);
 
                         POK_Add_Return_Assertion
-                           (WStatements, RE (RE_Pok_Errno_Empty));
+                          (WStatements,
+                           RE (RE_Pok_Errno_Empty));
                      end if;
 
                   elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
 
                      if Get_Connection_Pattern (F) = Inter_Process then
-                        if AIN.First_Node
-                           (AIN.Sources (F)) /= No_Node then
+                        if AIN.First_Node (AIN.Sources (F)) /= No_Node then
                            Map_Virtual_Bus_Calls
-                              (AIN.Item
-                                 (AIN.First_Node
-                                    (AIN.Sources (F))),
+                             (AIN.Item (AIN.First_Node (AIN.Sources (F))),
                               CTN.Declarations (Current_File),
                               WStatements,
                               Receiving,
@@ -759,80 +774,80 @@ package body Ocarina.Backends.POK_C.Activity is
                         if POK_Flavor = ARINC653 then
 
                            Append_Node_To_List
-                              (Make_Expression
-                                 (Left_Expr =>
-                                    Make_Defining_Identifier
-                                       (Map_Port_Var_Length
-                                          (F, Current_Device)),
-                                 Operator => Op_Equal,
+                             (Make_Expression
+                                (Left_Expr =>
+                                   Make_Defining_Identifier
+                                     (Map_Port_Var_Length (F, Current_Device)),
+                                 Operator   => Op_Equal,
                                  Right_Expr =>
-                                    Get_Data_Size
-                                       (Corresponding_Instance (F))),
+                                   Get_Data_Size (Corresponding_Instance (F))),
                               WStatements);
 
                            Append_Node_To_List
-                              (Make_Defining_Identifier
-                                 (Map_Port_Var (F, Current_Device)),
-                               Call_Parameters);
+                             (Make_Defining_Identifier
+                                (Map_Port_Var (F, Current_Device)),
+                              Call_Parameters);
 
                            if Get_Timeout_Value (F) /= Null_Time then
                               if POK_Flavor = ARINC653 then
-                                 N := Map_Time_To_Millisecond
-                                    (Get_Timeout_Value (F));
+                                 N :=
+                                   Map_Time_To_Millisecond
+                                     (Get_Timeout_Value (F));
                               else
                                  N := Map_Time (Get_Timeout_Value (F));
                               end if;
                            else
-                              N := CTU.Make_Literal
-                                 (CV.New_Int_Value (0, 1, 10));
+                              N :=
+                                CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                            end if;
                            Append_Node_To_List (N, Call_Parameters);
 
                            if Get_Data_Representation
-                                 (Corresponding_Instance (F)) = Data_Array then
+                               (Corresponding_Instance (F)) =
+                             Data_Array
+                           then
                               Append_Node_To_List
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Data (F, Current_Device)),
+                                (Make_Defining_Identifier
+                                   (Map_Port_Data (F, Current_Device)),
                                  Call_Parameters);
                            else
                               Append_Node_To_List
-                                 (Make_Variable_Address
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Data (F, Current_Device))),
-                                    Call_Parameters);
+                                (Make_Variable_Address
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Data (F, Current_Device))),
+                                 Call_Parameters);
                            end if;
 
                            Append_Node_To_List
-                              (Make_Variable_Address
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var_Length (F, Current_Device))),
-                               Call_Parameters);
+                             (Make_Variable_Address
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var_Length (F, Current_Device))),
+                              Call_Parameters);
 
-                           Add_Return_Variable_In_Parameters
-                              (Call_Parameters);
+                           Add_Return_Variable_In_Parameters (Call_Parameters);
 
-                           Called_Function
-                              := RE (RE_Receive_Queuing_Message);
+                           Called_Function := RE (RE_Receive_Queuing_Message);
 
                            Type_Used := RE (RE_Queuing_Port_Id_Type);
 
                         else
 
                            Append_Node_To_List
-                              (Make_Defining_Identifier
-                                 (Map_Port_Var (F, Current_Device)),
-                               Call_Parameters);
+                             (Make_Defining_Identifier
+                                (Map_Port_Var (F, Current_Device)),
+                              Call_Parameters);
 
                            if Get_Timeout_Value (F) /= Null_Time then
                               if POK_Flavor = ARINC653 then
-                                 N := Map_Time_To_Millisecond
-                                    (Get_Timeout_Value (F));
+                                 N :=
+                                   Map_Time_To_Millisecond
+                                     (Get_Timeout_Value (F));
                               else
                                  N := Map_Time (Get_Timeout_Value (F));
                               end if;
                            else
-                              N := CTU.Make_Literal
-                                 (CV.New_Int_Value (0, 1, 10));
+                              N :=
+                                CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                            end if;
                            Append_Node_To_List (N, Call_Parameters);
 
@@ -840,43 +855,47 @@ package body Ocarina.Backends.POK_C.Activity is
                            Append_Node_To_List (N, Call_Parameters);
 
                            if Get_Data_Representation
-                                 (Corresponding_Instance (F)) = Data_Array then
+                               (Corresponding_Instance (F)) =
+                             Data_Array
+                           then
                               Append_Node_To_List
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Data (F, Current_Device)),
+                                (Make_Defining_Identifier
+                                   (Map_Port_Data (F, Current_Device)),
                                  Call_Parameters);
                            else
                               Append_Node_To_List
-                                 (Make_Variable_Address
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Data (F, Current_Device))),
-                                    Call_Parameters);
+                                (Make_Variable_Address
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Data (F, Current_Device))),
+                                 Call_Parameters);
                            end if;
 
                            Append_Node_To_List
-                              (Make_Variable_Address
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var_Length (F, Current_Device))),
-                               Call_Parameters);
+                             (Make_Variable_Address
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var_Length (F, Current_Device))),
+                              Call_Parameters);
 
-                           Called_Function
-                              := RE (RE_Pok_Port_Queueing_Receive);
+                           Called_Function :=
+                             RE (RE_Pok_Port_Queueing_Receive);
 
                            Type_Used := RE (RE_Uint8_T);
 
                         end if;
 
-                        Function_Call := CTU.POK_Make_Function_Call_With_Assert
-                           (Called_Function, Call_Parameters);
+                        Function_Call :=
+                          CTU.POK_Make_Function_Call_With_Assert
+                            (Called_Function,
+                             Call_Parameters);
 
                         Append_Node_To_List
-                           (Make_Extern_Entity_Declaration
-                              (Make_Variable_Declaration
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Var (F, Current_Device))),
-                                 Used_type => Type_Used)),
-                            CTN.Declarations (Current_File));
+                          (Make_Extern_Entity_Declaration
+                             (Make_Variable_Declaration
+                                (Defining_Identifier =>
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Var (F, Current_Device))),
+                                 Used_Type => Type_Used)),
+                           CTN.Declarations (Current_File));
 
                         if POK_Flavor = ARINC653 then
                            Type_Used := RE (RE_Message_Size_Type);
@@ -885,62 +904,62 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var_Length (F, Current_Device))),
-                               Used_type => Type_Used),
-                            Statements);
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var_Length (F, Current_Device))),
+                              Used_Type => Type_Used),
+                           Statements);
                      else
                         Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Map_Port_Var (F)),
-                            Call_Parameters);
+                          (Make_Defining_Identifier (Map_Port_Var (F)),
+                           Call_Parameters);
 
                         if Get_Timeout_Value (F) /= Null_Time then
                            if POK_Flavor = ARINC653 then
-                              N := Map_Time_To_Millisecond
-                                 (Get_Timeout_Value (F));
+                              N :=
+                                Map_Time_To_Millisecond
+                                  (Get_Timeout_Value (F));
                            else
                               N := Map_Time (Get_Timeout_Value (F));
                            end if;
                         else
-                           N := CTU.Make_Literal
-                              (CV.New_Int_Value (0, 1, 10));
+                           N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                         end if;
                         Append_Node_To_List (N, Call_Parameters);
 
                         if Get_Data_Representation
-                              (Corresponding_Instance (F)) = Data_Array then
+                            (Corresponding_Instance (F)) =
+                          Data_Array
+                        then
                            Append_Node_To_List
-                              (Make_Defining_Identifier
-                                 (Map_Port_Data (F)),
+                             (Make_Defining_Identifier (Map_Port_Data (F)),
                               Call_Parameters);
                         else
                            Append_Node_To_List
-                              (Make_Variable_Address
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Data (F))),
-                                 Call_Parameters);
+                             (Make_Variable_Address
+                                (Make_Defining_Identifier (Map_Port_Data (F))),
+                              Call_Parameters);
                         end if;
 
                         Append_Node_To_List
-                           (Make_Variable_Address
-                              (Make_Defining_Identifier
-                                 (Map_Port_Var_Length (F))),
-                            Call_Parameters);
+                          (Make_Variable_Address
+                             (Make_Defining_Identifier
+                                (Map_Port_Var_Length (F))),
+                           Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
-                           Add_Return_Variable_In_Parameters
-                              (Call_Parameters);
+                           Add_Return_Variable_In_Parameters (Call_Parameters);
 
                            Called_Function := RE (RE_Receive_Buffer);
                         else
                            Called_Function := RE (RE_Pok_Buffer_Receive);
                         end if;
 
-                        Function_Call := CTU.POK_Make_Function_Call_With_Assert
-                           (Called_Function, Call_Parameters);
+                        Function_Call :=
+                          CTU.POK_Make_Function_Call_With_Assert
+                            (Called_Function,
+                             Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
                            Type_Used := RE (RE_Message_Size_Type);
@@ -949,12 +968,12 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var_Length (F))),
-                               Used_type => Type_Used),
-                            Statements);
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var_Length (F))),
+                              Used_Type => Type_Used),
+                           Statements);
 
                         if POK_Flavor = ARINC653 then
                            Type_Used := RE (RE_Buffer_Id_Type);
@@ -963,22 +982,25 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Extern_Entity_Declaration
-                              (Make_Variable_Declaration
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Var (F))),
-                                 Used_type => Type_Used)),
-                            CTN.Declarations (Current_File));
+                          (Make_Extern_Entity_Declaration
+                             (Make_Variable_Declaration
+                                (Defining_Identifier =>
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Var (F))),
+                                 Used_Type => Type_Used)),
+                           CTN.Declarations (Current_File));
                      end if;
 
                      Append_Node_To_List (Function_Call, WStatements);
 
                      POK_Add_Return_Assertion
-                        (WStatements, RE (RE_Pok_Errno_Empty));
+                       (WStatements,
+                        RE (RE_Pok_Errno_Empty));
 
-                  elsif not AIN.Is_Data (F) and then AIN.Is_Event (F) and then
-                     Get_Connection_Pattern (F) = Intra_Process then
+                  elsif not AIN.Is_Data (F)
+                    and then AIN.Is_Event (F)
+                    and then Get_Connection_Pattern (F) = Intra_Process
+                  then
                      --  Now, handle events data ports across threads
                      --  located in the same partition.
 
@@ -988,54 +1010,57 @@ package body Ocarina.Backends.POK_C.Activity is
 
                      if Compute_Entrypoint = No_Node then
                         Display_Error
-                           ("With a pure event port, the compute_entrypoint " &
-                            "property must be set", Fatal => True);
+                          ("With a pure event port, the compute_entrypoint " &
+                           "property must be set",
+                           Fatal => True);
                      end if;
 
                      Append_Node_To_List
-                        (Make_Defining_Identifier (Map_Port_Var (F)),
+                       (Make_Defining_Identifier (Map_Port_Var (F)),
                         Call_Parameters);
 
                      Append_Node_To_List
-                        (CTU.Make_Literal (CV.New_Int_Value (0, 1, 10)),
+                       (CTU.Make_Literal (CV.New_Int_Value (0, 1, 10)),
                         Call_Parameters);
 
                      if POK_Flavor = ARINC653 then
                         Called_Function := RE (RE_Wait_Event);
                         Append_Node_To_List
-                           (Make_Variable_Address
-                              (Make_Defining_Identifier (VN (V_Ret))),
+                          (Make_Variable_Address
+                             (Make_Defining_Identifier (VN (V_Ret))),
                            Call_Parameters);
 
-                        N := Make_Call_Profile
-                           (Called_Function, Call_Parameters);
+                        N :=
+                          Make_Call_Profile (Called_Function, Call_Parameters);
                      else
                         Called_Function := RE (RE_Pok_Event_Wait);
-                        N := Make_Expression
-                           (Left_Expr =>
-                              Make_Defining_Identifier (VN (V_Ret)),
-                           Operator => Op_Equal,
-                           Right_Expr =>
-                              Make_Call_Profile
-                                 (Called_Function, Call_Parameters));
+                        N               :=
+                          Make_Expression
+                            (Left_Expr =>
+                               Make_Defining_Identifier (VN (V_Ret)),
+                             Operator   => Op_Equal,
+                             Right_Expr =>
+                               Make_Call_Profile
+                                 (Called_Function,
+                                  Call_Parameters));
                      end if;
 
                      Append_Node_To_List (N, WStatements);
 
-                     N := Make_If_Statement
-                     (Condition =>
-                        Make_Expression
-                           (Left_Expr =>
-                              Make_Defining_Identifier (VN (V_Ret)),
-                           Operator => Op_Equal_Equal,
-                           Right_Expr => Get_Errcode_OK),
-                      Statements =>
-                        Make_List_Id
-                           (Make_Call_Profile
-                              (Map_C_Defining_Identifier
-                                 (Compute_Entrypoint),
-                              No_List))
-                     );
+                     N :=
+                       Make_If_Statement
+                         (Condition =>
+                            Make_Expression
+                              (Left_Expr =>
+                                 Make_Defining_Identifier (VN (V_Ret)),
+                               Operator   => Op_Equal_Equal,
+                               Right_Expr => Get_Errcode_OK),
+                          Statements =>
+                            Make_List_Id
+                              (Make_Call_Profile
+                                 (Map_C_Defining_Identifier
+                                    (Compute_Entrypoint),
+                                  No_List)));
                      Append_Node_To_List (N, WStatements);
 
                      if POK_Flavor = ARINC653 then
@@ -1045,13 +1070,12 @@ package body Ocarina.Backends.POK_C.Activity is
                      end if;
 
                      Append_Node_To_List
-                        (Make_Extern_Entity_Declaration
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var (F))),
-                              Used_type => Type_Used)),
-                         CTN.Declarations (Current_File));
+                       (Make_Extern_Entity_Declaration
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier (Map_Port_Var (F))),
+                              Used_Type => Type_Used)),
+                        CTN.Declarations (Current_File));
                   else
                      Display_Communication_Error;
                      --  Pattern not handled at this time
@@ -1060,44 +1084,45 @@ package body Ocarina.Backends.POK_C.Activity is
                   --  If we are in a device, then, we receive the data
                   --  that comes inside the device.
 
-                  if Get_Connection_Pattern (F) = Inter_Process and then
-                     Current_Device /= No_Node and then
-                     Is_Virtual (Get_Port_By_Name (F, Current_Device)) then
+                  if Get_Connection_Pattern (F) = Inter_Process
+                    and then Current_Device /= No_Node
+                    and then Is_Virtual (Get_Port_By_Name (F, Current_Device))
+                  then
 
                      Append_Node_To_List
-                        (Make_Extern_Entity_Declaration
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var (F, Current_Device))),
-                              Used_type => RE (RE_Uint8_T))),
-                         CTN.Declarations (Current_File));
+                       (Make_Extern_Entity_Declaration
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var (F, Current_Device))),
+                              Used_Type => RE (RE_Uint8_T))),
+                        CTN.Declarations (Current_File));
 
                      Call_Parameters := New_List (CTN.K_Parameter_List);
 
                      Append_Node_To_List
-                        (Make_Defining_Identifier
-                           (Map_Port_Var (F, Current_Device)),
-                         Call_Parameters);
-
-                     Append_Node_To_List
-                        (Make_Variable_Address
-                           (Make_Defining_Identifier
-                              (Map_Port_Data (F, Current_Device))),
-                         Call_Parameters);
-
-                     Append_Node_To_List
-                        (Get_Inter_Partition_Port_Size
-                           (Get_Port_By_Name
-                              (Item
-                                 (First_Node
-                                    (Destinations (F))), Current_Device)),
+                       (Make_Defining_Identifier
+                          (Map_Port_Var (F, Current_Device)),
                         Call_Parameters);
 
-                     Function_Call := CTU.Make_Call_Profile
-                           (Make_Defining_Identifier
-                              (Map_Device_Function_Read (Current_Device)),
-                            Call_Parameters);
+                     Append_Node_To_List
+                       (Make_Variable_Address
+                          (Make_Defining_Identifier
+                             (Map_Port_Data (F, Current_Device))),
+                        Call_Parameters);
+
+                     Append_Node_To_List
+                       (Get_Inter_Partition_Port_Size
+                          (Get_Port_By_Name
+                             (Item (First_Node (Destinations (F))),
+                              Current_Device)),
+                        Call_Parameters);
+
+                     Function_Call :=
+                       CTU.Make_Call_Profile
+                         (Make_Defining_Identifier
+                            (Map_Device_Function_Read (Current_Device)),
+                          Call_Parameters);
 
                      Append_Node_To_List (Function_Call, WStatements);
                   end if;
@@ -1117,8 +1142,9 @@ package body Ocarina.Backends.POK_C.Activity is
             F         : Node_Id;
             D         : Node_Id;
          begin
-            Statement := Message_Comment
-              ("Copy directly the data from IN ports to OUT ports");
+            Statement :=
+              Message_Comment
+                ("Copy directly the data from IN ports to OUT ports");
             Append_Node_To_List (Statement, WStatements);
 
             F := First_Node (Features (E));
@@ -1132,21 +1158,24 @@ package body Ocarina.Backends.POK_C.Activity is
                then
                   D := First_Node (Destinations (F));
                   while Present (D) loop
-                     if Parent_Subcomponent (Parent_Component (Item (D)))
-                        = Parent_Subcomponent (Parent_Component (F)) then
+                     if Parent_Subcomponent (Parent_Component (Item (D))) =
+                       Parent_Subcomponent (Parent_Component (F))
+                     then
 
                         if Get_Data_Representation
-                              (Corresponding_Instance (F)) = Data_Array then
+                            (Corresponding_Instance (F)) =
+                          Data_Array
+                        then
 
-                           Statement := Message_Comment
-                             ("Must handle arrays");
+                           Statement := Message_Comment ("Must handle arrays");
                         else
-                           Statement := Make_Expression
-                              (Make_Defining_Identifier
-                                 (Map_Port_Data (Item (D), Current_Device)),
-                              Op_Equal,
-                              Make_Defining_Identifier
-                                 (Map_Port_Data (F, Current_Device)));
+                           Statement :=
+                             Make_Expression
+                               (Make_Defining_Identifier
+                                  (Map_Port_Data (Item (D), Current_Device)),
+                                Op_Equal,
+                                Make_Defining_Identifier
+                                  (Map_Port_Data (F, Current_Device)));
                         end if;
 
                         Append_Node_To_List (Statement, WStatements);
@@ -1178,8 +1207,7 @@ package body Ocarina.Backends.POK_C.Activity is
             end if;
 
             Append_Node_To_List
-               (CTU.Make_Call_Profile
-                  (Called_Function, Call_Parameters),
+              (CTU.Make_Call_Profile (Called_Function, Call_Parameters),
                WStatements);
          end Make_End_Period;
 
@@ -1188,13 +1216,13 @@ package body Ocarina.Backends.POK_C.Activity is
          -------------------
 
          procedure Make_Send_Out is
-            N                 : Node_Id;
-            F                 : Node_Id;
-            Function_Call     : Node_Id;
-            Source_Port       : Node_Id;
-            Transport_Type    : Node_Id := No_Node;
-            Virtual_Bus_Data  : Node_Id := No_Node;
-            Virtual_Bus_Size  : Node_Id := No_Node;
+            N                : Node_Id;
+            F                : Node_Id;
+            Function_Call    : Node_Id;
+            Source_Port      : Node_Id;
+            Transport_Type   : Node_Id := No_Node;
+            Virtual_Bus_Data : Node_Id := No_Node;
+            Virtual_Bus_Size : Node_Id := No_Node;
          begin
             N := Message_Comment ("Send the OUT ports");
             Append_Node_To_List (N, WStatements);
@@ -1205,84 +1233,91 @@ package body Ocarina.Backends.POK_C.Activity is
                if Kind (F) = K_Port_Spec_Instance and then Is_Out (F) then
 
                   if Is_Data (F) then
-                     if Current_Device /= No_Node and then
-                        not AINU.Is_Empty (AIN.Sources (F)) then
-                        Source_Port := AIN.Item
-                           (AIN.First_Node (AIN.Sources (F)));
+                     if Current_Device /= No_Node
+                       and then not AINU.Is_Empty (AIN.Sources (F))
+                     then
+                        Source_Port :=
+                          AIN.Item (AIN.First_Node (AIN.Sources (F)));
 
-                        if Is_Using_Virtual_Bus (Get_Port_By_Name
-                           (Source_Port, Current_Device)) then
-                           Transport_Type := Get_Inter_Partition_Port_Type
-                              (Get_Port_By_Name (Source_Port,
-                              Current_Device));
+                        if Is_Using_Virtual_Bus
+                            (Get_Port_By_Name (Source_Port, Current_Device))
+                        then
+                           Transport_Type :=
+                             Get_Inter_Partition_Port_Type
+                               (Get_Port_By_Name
+                                  (Source_Port,
+                                   Current_Device));
                         elsif Is_Using_Virtual_Bus
-                           (Get_Port_By_Name (F, Current_Device)) then
-                           Transport_Type := Get_Inter_Partition_Port_Type
-                              (Get_Port_By_Name (F,
-                              Current_Device));
+                            (Get_Port_By_Name (F, Current_Device))
+                        then
+                           Transport_Type :=
+                             Get_Inter_Partition_Port_Type
+                               (Get_Port_By_Name (F, Current_Device));
                         end if;
 
                         if Transport_Type = No_Node then
-                           Transport_Type := Map_C_Data_Type_Designator
-                              (Corresponding_Instance (F));
+                           Transport_Type :=
+                             Map_C_Data_Type_Designator
+                               (Corresponding_Instance (F));
                         end if;
                      else
-                        Transport_Type := Map_C_Data_Type_Designator
-                           (Corresponding_Instance (F));
+                        Transport_Type :=
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (F));
                      end if;
 
                      Append_Node_To_List
-                        (Make_Variable_Declaration
-                           (Defining_Identifier =>
-                              Make_Defining_Identifier
-                                 (Map_Port_Data (F, Current_Device)),
+                       (Make_Variable_Declaration
+                          (Defining_Identifier =>
+                             Make_Defining_Identifier
+                               (Map_Port_Data (F, Current_Device)),
                            Used_Type => Transport_Type),
                         CTN.Declarations (Current_File));
                   end if;
 
                   --  If we are in a device, then, we send the data
                   --  that comes inside the device.
-                  if Get_Connection_Pattern (F) = Inter_Process and then
-                     Is_Data (F) and then
-                     Current_Device /= No_Node and then
-                     Is_Virtual (Get_Port_By_Name (F, Current_Device)) then
+                  if Get_Connection_Pattern (F) = Inter_Process
+                    and then Is_Data (F)
+                    and then Current_Device /= No_Node
+                    and then Is_Virtual (Get_Port_By_Name (F, Current_Device))
+                  then
 
-                     Source_Port := AIN.Item
-                        (AIN.First_Node
-                           (AIN.Sources (F)));
+                     Source_Port :=
+                       AIN.Item (AIN.First_Node (AIN.Sources (F)));
 
                      Append_Node_To_List
-                        (Make_Extern_Entity_Declaration
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var (F, Current_Device))),
-                              Used_type => RE (RE_Uint8_T))),
-                         CTN.Declarations (Current_File));
+                       (Make_Extern_Entity_Declaration
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier
+                                   (Map_Port_Var (F, Current_Device))),
+                              Used_Type => RE (RE_Uint8_T))),
+                        CTN.Declarations (Current_File));
 
                      Call_Parameters := New_List (CTN.K_Parameter_List);
 
                      Append_Node_To_List
-                        (Make_Defining_Identifier
-                           (Map_Port_Var (F, Current_Device)),
-                         Call_Parameters);
+                       (Make_Defining_Identifier
+                          (Map_Port_Var (F, Current_Device)),
+                        Call_Parameters);
 
                      Append_Node_To_List
-                        (Make_Variable_Address
-                           (Make_Defining_Identifier
-                              (Map_Port_Data (F, Current_Device))),
-                         Call_Parameters);
+                       (Make_Variable_Address
+                          (Make_Defining_Identifier
+                             (Map_Port_Data (F, Current_Device))),
+                        Call_Parameters);
 
                      Append_Node_To_List
-                        (Make_Defining_Identifier
-                            (Map_Port_Var_Length
-                              (Source_Port, Current_Device)),
-                         Call_Parameters);
+                       (Make_Defining_Identifier
+                          (Map_Port_Var_Length (Source_Port, Current_Device)),
+                        Call_Parameters);
 
-                     Function_Call := CTU.Make_Call_Profile
-                           (Make_Defining_Identifier
-                              (Map_Device_Function_Write (Current_Device)),
-                            Call_Parameters);
+                     Function_Call :=
+                       CTU.Make_Call_Profile
+                         (Make_Defining_Identifier
+                            (Map_Device_Function_Write (Current_Device)),
+                          Call_Parameters);
 
                      Append_Node_To_List (Function_Call, WStatements);
                   end if;
@@ -1290,16 +1325,16 @@ package body Ocarina.Backends.POK_C.Activity is
                   Call_Parameters := New_List (CTN.K_Parameter_List);
 
                   if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
-                     if Get_Connection_Pattern (F) = Inter_Process and then
-                        not Is_Virtual
-                           (Get_Port_By_Name (F, Current_Device)) then
+                     if Get_Connection_Pattern (F) = Inter_Process
+                       and then not Is_Virtual
+                         (Get_Port_By_Name (F, Current_Device))
+                     then
 
-                        if AIN.First_Node
-                           (AIN.Destinations (F)) /= No_Node then
+                        if AIN.First_Node (AIN.Destinations (F)) /=
+                          No_Node
+                        then
                            Map_Virtual_Bus_Calls
-                              (AIN.Item
-                                 (AIN.First_Node
-                                    (AIN.Destinations (F))),
+                             (AIN.Item (AIN.First_Node (AIN.Destinations (F))),
                               CTN.Declarations (Current_File),
                               WStatements,
                               Sending,
@@ -1309,28 +1344,30 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Map_Port_Var (F, Current_Device)),
-                            Call_Parameters);
+                          (Make_Defining_Identifier
+                             (Map_Port_Var (F, Current_Device)),
+                           Call_Parameters);
 
                         if Virtual_Bus_Data = No_Node then
                            if Get_Data_Representation
-                            (Corresponding_Instance (F)) = Data_Array then
+                               (Corresponding_Instance (F)) =
+                             Data_Array
+                           then
                               Append_Node_To_List
-                                 (Make_Defining_Identifier
-                                  (Map_Port_Data (F, Current_Device)),
-                               Call_Parameters);
+                                (Make_Defining_Identifier
+                                   (Map_Port_Data (F, Current_Device)),
+                                 Call_Parameters);
                            else
                               Append_Node_To_List
-                                 (Make_Variable_Address
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Data (F, Current_Device))),
+                                (Make_Variable_Address
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Data (F, Current_Device))),
                                  Call_Parameters);
                            end if;
                         else
                            Append_Node_To_List
-                              (Make_Variable_Address (Virtual_Bus_Data),
-                                 Call_Parameters);
+                             (Make_Variable_Address (Virtual_Bus_Data),
+                              Call_Parameters);
                         end if;
 
                         if Virtual_Bus_Size /= No_Node then
@@ -1339,11 +1376,13 @@ package body Ocarina.Backends.POK_C.Activity is
                            if Current_Device = No_Node then
                               N := Get_Inter_Partition_Port_Size (F);
                            else
-                              N := Get_Inter_Partition_Port_Size
-                                 (Get_Port_By_Name (F, Current_Device));
+                              N :=
+                                Get_Inter_Partition_Port_Size
+                                  (Get_Port_By_Name (F, Current_Device));
 
                               if Is_Using_Virtual_Bus
-                                 (Get_Port_By_Name (F, Current_Device)) then
+                                  (Get_Port_By_Name (F, Current_Device))
+                              then
                                  Add_Include (RH (RH_Protocols));
                               end if;
                            end if;
@@ -1352,26 +1391,27 @@ package body Ocarina.Backends.POK_C.Activity is
                         Append_Node_To_List (N, Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
-                           Add_Return_Variable_In_Parameters
-                              (Call_Parameters);
+                           Add_Return_Variable_In_Parameters (Call_Parameters);
                            Called_Function := RE (RE_Write_Sampling_Message);
-                           Type_Used := RE (RE_Sampling_Port_Id_Type);
+                           Type_Used       := RE (RE_Sampling_Port_Id_Type);
                         else
                            Called_Function := RE (RE_Pok_Port_Sampling_Write);
-                           Type_Used := RE (RE_Uint8_T);
+                           Type_Used       := RE (RE_Uint8_T);
                         end if;
 
-                        N := CTU.POK_Make_Function_Call_With_Assert
-                           (Called_Function, Call_Parameters);
+                        N :=
+                          CTU.POK_Make_Function_Call_With_Assert
+                            (Called_Function,
+                             Call_Parameters);
 
                         Append_Node_To_List
-                           (Make_Extern_Entity_Declaration
-                              (Make_Variable_Declaration
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Var (F, Current_Device))),
-                                 Used_type => Type_Used)),
-                            CTN.Declarations (Current_File));
+                          (Make_Extern_Entity_Declaration
+                             (Make_Variable_Declaration
+                                (Defining_Identifier =>
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Var (F, Current_Device))),
+                                 Used_Type => Type_Used)),
+                           CTN.Declarations (Current_File));
 
                         Append_Node_To_List (N, WStatements);
 
@@ -1379,21 +1419,20 @@ package body Ocarina.Backends.POK_C.Activity is
 
                      elsif Get_Connection_Pattern (F) = Intra_Process then
                         Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Map_Port_Var (F)),
-                            Call_Parameters);
+                          (Make_Defining_Identifier (Map_Port_Var (F)),
+                           Call_Parameters);
 
                         if Get_Data_Representation
-                         (Corresponding_Instance (F)) = Data_Array then
+                            (Corresponding_Instance (F)) =
+                          Data_Array
+                        then
                            Append_Node_To_List
-                              (Make_Defining_Identifier
-                                 (Map_Port_Data (F)),
+                             (Make_Defining_Identifier (Map_Port_Data (F)),
                               Call_Parameters);
                         else
                            Append_Node_To_List
-                              (Make_Variable_Address
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Data (F))),
+                             (Make_Variable_Address
+                                (Make_Defining_Identifier (Map_Port_Data (F))),
                               Call_Parameters);
                         end if;
 
@@ -1401,15 +1440,16 @@ package body Ocarina.Backends.POK_C.Activity is
                         Append_Node_To_List (N, Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
-                           Add_Return_Variable_In_Parameters
-                              (Call_Parameters);
+                           Add_Return_Variable_In_Parameters (Call_Parameters);
                            Called_Function := RF (RE_Display_Blackboard);
                         else
                            Called_Function := RF (RE_Pok_Blackboard_Display);
                         end if;
 
-                        N := CTU.POK_Make_Function_Call_With_Assert
-                           (Called_Function, Call_Parameters);
+                        N :=
+                          CTU.POK_Make_Function_Call_With_Assert
+                            (Called_Function,
+                             Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
                            Type_Used := RE (RE_Blackboard_Id_Type);
@@ -1418,13 +1458,13 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Extern_Entity_Declaration
-                              (Make_Variable_Declaration
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Var (F))),
-                                 Used_type => Type_Used)),
-                            CTN.Declarations (Current_File));
+                          (Make_Extern_Entity_Declaration
+                             (Make_Variable_Declaration
+                                (Defining_Identifier =>
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Var (F))),
+                                 Used_Type => Type_Used)),
+                           CTN.Declarations (Current_File));
 
                         Append_Node_To_List (N, WStatements);
 
@@ -1432,15 +1472,16 @@ package body Ocarina.Backends.POK_C.Activity is
                      end if;
 
                   elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
-                     if Get_Connection_Pattern (F) = Inter_Process and then
-                     not Is_Virtual (Get_Port_By_Name (F, Current_Device)) then
+                     if Get_Connection_Pattern (F) = Inter_Process
+                       and then not Is_Virtual
+                         (Get_Port_By_Name (F, Current_Device))
+                     then
                         --  Call virtual bus layers
-                        if AIN.First_Node
-                           (AIN.Destinations (F)) /= No_Node then
+                        if AIN.First_Node (AIN.Destinations (F)) /=
+                          No_Node
+                        then
                            Map_Virtual_Bus_Calls
-                              (AIN.Item
-                                 (AIN.First_Node
-                                    (AIN.Destinations (F))),
+                             (AIN.Item (AIN.First_Node (AIN.Destinations (F))),
                               CTN.Declarations (Current_File),
                               WStatements,
                               Sending,
@@ -1450,22 +1491,21 @@ package body Ocarina.Backends.POK_C.Activity is
                         end if;
 
                         Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Map_Port_Var (F)),
-                            Call_Parameters);
+                          (Make_Defining_Identifier (Map_Port_Var (F)),
+                           Call_Parameters);
 
                         if Get_Data_Representation
-                           (Corresponding_Instance (F)) = Data_Array then
+                            (Corresponding_Instance (F)) =
+                          Data_Array
+                        then
                            Append_Node_To_List
-                              (Make_Defining_Identifier
-                                 (Map_Port_Data (F)),
+                             (Make_Defining_Identifier (Map_Port_Data (F)),
                               Call_Parameters);
                         else
                            Append_Node_To_List
-                              (Make_Variable_Address
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Data (F))),
-                                 Call_Parameters);
+                             (Make_Variable_Address
+                                (Make_Defining_Identifier (Map_Port_Data (F))),
+                              Call_Parameters);
                         end if;
 
                         N := CTU.Get_Data_Size (Corresponding_Instance (F));
@@ -1473,58 +1513,58 @@ package body Ocarina.Backends.POK_C.Activity is
 
                         if Get_Timeout_Value (F) /= Null_Time then
                            if POK_Flavor = ARINC653 then
-                              N := Map_Time_To_Millisecond
-                                 (Get_Timeout_Value (F));
+                              N :=
+                                Map_Time_To_Millisecond
+                                  (Get_Timeout_Value (F));
                            else
                               N := Map_Time (Get_Timeout_Value (F));
                            end if;
                         else
-                           N := CTU.Make_Literal
-                              (CV.New_Int_Value (0, 1, 10));
+                           N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                         end if;
 
                         Append_Node_To_List (N, Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
-                           Add_Return_Variable_In_Parameters
-                              (Call_Parameters);
+                           Add_Return_Variable_In_Parameters (Call_Parameters);
 
                            Called_Function := RE (RE_Send_Queuing_Message);
-                           Type_Used := RE (RE_Queuing_Port_Id_Type);
+                           Type_Used       := RE (RE_Queuing_Port_Id_Type);
                         else
                            Called_Function := RE (RE_Pok_Port_Queueing_Send);
-                           Type_Used := RE (RE_Uint8_T);
+                           Type_Used       := RE (RE_Uint8_T);
                         end if;
 
-                        N := POK_Make_Function_Call_With_Assert
-                              (Called_Function, Call_Parameters);
+                        N :=
+                          POK_Make_Function_Call_With_Assert
+                            (Called_Function,
+                             Call_Parameters);
 
                         Append_Node_To_List
-                           (Make_Extern_Entity_Declaration
-                              (Make_Variable_Declaration
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Var (F))),
-                                 Used_type => Type_Used)),
-                            CTN.Declarations (Current_File));
+                          (Make_Extern_Entity_Declaration
+                             (Make_Variable_Declaration
+                                (Defining_Identifier =>
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Var (F))),
+                                 Used_Type => Type_Used)),
+                           CTN.Declarations (Current_File));
 
                         Append_Node_To_List (N, WStatements);
 
                         POK_Add_Return_Assertion (WStatements);
 
-                     elsif Get_Connection_Pattern (F) = Intra_Process and then
-                        not Is_Virtual
-                           (Get_Port_By_Name (F, Current_Device)) then
+                     elsif Get_Connection_Pattern (F) = Intra_Process
+                       and then not Is_Virtual
+                         (Get_Port_By_Name (F, Current_Device))
+                     then
                         Append_Node_To_List
-                           (Make_Defining_Identifier
-                              (Map_Port_Var (F)),
-                            Call_Parameters);
+                          (Make_Defining_Identifier (Map_Port_Var (F)),
+                           Call_Parameters);
 
                         Append_Node_To_List
-                           (Make_Variable_Address
-                              (Make_Defining_Identifier
-                                 (Map_Port_Data (F))),
-                            Call_Parameters);
+                          (Make_Variable_Address
+                             (Make_Defining_Identifier (Map_Port_Data (F))),
+                           Call_Parameters);
 
                         N := CTU.Get_Data_Size (Corresponding_Instance (F));
                         Append_Node_To_List (N, Call_Parameters);
@@ -1533,81 +1573,84 @@ package body Ocarina.Backends.POK_C.Activity is
                            if POK_Flavor = POK then
                               N := Map_Time (Get_Timeout_Value (F));
                            else
-                              N := Map_Time_To_Millisecond
-                                 (Get_Timeout_Value (F));
+                              N :=
+                                Map_Time_To_Millisecond
+                                  (Get_Timeout_Value (F));
                            end if;
                         else
-                           N := CTU.Make_Literal
-                              (CV.New_Int_Value (0, 1, 10));
+                           N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                         end if;
 
                         Append_Node_To_List (N, Call_Parameters);
 
                         if POK_Flavor = ARINC653 then
-                           Add_Return_Variable_In_Parameters
-                              (Call_Parameters);
+                           Add_Return_Variable_In_Parameters (Call_Parameters);
 
                            Called_Function := RE (RE_Send_Buffer);
-                           Type_Used := RE (RE_Buffer_Id_Type);
+                           Type_Used       := RE (RE_Buffer_Id_Type);
                         else
                            Called_Function := RE (RE_Pok_Buffer_Send);
-                           Type_Used := RE (RE_Uint8_T);
+                           Type_Used       := RE (RE_Uint8_T);
                         end if;
 
-                        N := CTU.POK_Make_Function_Call_With_Assert
-                           (Called_Function, Call_Parameters);
+                        N :=
+                          CTU.POK_Make_Function_Call_With_Assert
+                            (Called_Function,
+                             Call_Parameters);
 
                         Append_Node_To_List
-                           (Make_Extern_Entity_Declaration
-                              (Make_Variable_Declaration
-                                 (Defining_Identifier =>
-                                    (Make_Defining_Identifier
-                                       (Map_Port_Var (F))),
-                                 Used_type => Type_Used)),
-                            CTN.Declarations (Current_File));
+                          (Make_Extern_Entity_Declaration
+                             (Make_Variable_Declaration
+                                (Defining_Identifier =>
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Var (F))),
+                                 Used_Type => Type_Used)),
+                           CTN.Declarations (Current_File));
 
                         Append_Node_To_List (N, WStatements);
 
                         POK_Add_Return_Assertion (WStatements);
                      end if;
 
-                  elsif AIN.Is_Event (F) and then not AIN.Is_Data (F) and then
-                     Get_Connection_Pattern (F) = Intra_Process then
+                  elsif AIN.Is_Event (F)
+                    and then not AIN.Is_Data (F)
+                    and then Get_Connection_Pattern (F) = Intra_Process
+                  then
 
                      if POK_Flavor = ARINC653 then
-                        Type_Used := RE (RE_Event_Id_Type);
+                        Type_Used       := RE (RE_Event_Id_Type);
                         Called_Function := RE (RE_Set_Event);
 
                         Append_Node_To_List
-                           (Make_Defining_Identifier (Map_Port_Var (F)),
+                          (Make_Defining_Identifier (Map_Port_Var (F)),
                            Call_Parameters);
 
-                        Add_Return_Variable_In_Parameters
-                           (Call_Parameters);
+                        Add_Return_Variable_In_Parameters (Call_Parameters);
                      else
-                        Type_Used := RE (RE_Pok_Event_Id_T);
+                        Type_Used       := RE (RE_Pok_Event_Id_T);
                         Called_Function := RE (RE_Pok_Event_Signal);
 
                         Append_Node_To_List
-                           (Make_Defining_Identifier (Map_Port_Var (F)),
+                          (Make_Defining_Identifier (Map_Port_Var (F)),
                            Call_Parameters);
                      end if;
 
-                     N := POK_Make_Function_Call_With_Assert
-                        (Called_Function, Call_Parameters);
+                     N :=
+                       POK_Make_Function_Call_With_Assert
+                         (Called_Function,
+                          Call_Parameters);
 
                      Append_Node_To_List (N, WStatements);
 
                      POK_Add_Return_Assertion (WStatements);
 
                      Append_Node_To_List
-                        (Make_Extern_Entity_Declaration
-                           (Make_Variable_Declaration
-                              (Defining_Identifier =>
-                                 (Make_Defining_Identifier
-                                    (Map_Port_Var (F))),
-                              Used_type => Type_Used)),
-                         CTN.Declarations (Current_File));
+                       (Make_Extern_Entity_Declaration
+                          (Make_Variable_Declaration
+                             (Defining_Identifier =>
+                                (Make_Defining_Identifier (Map_Port_Var (F))),
+                              Used_Type => Type_Used)),
+                        CTN.Declarations (Current_File));
                   else
                      Display_Communication_Error;
                      --  Pattern not handled at this time
@@ -1625,12 +1668,10 @@ package body Ocarina.Backends.POK_C.Activity is
          end if;
 
          Append_Node_To_List
-            (Make_Variable_Declaration
-               (Defining_Identifier =>
-                  (Make_Defining_Identifier
-                     (VN (V_Ret))),
-                Used_type => Type_Used),
-             Statements);
+           (Make_Variable_Declaration
+              (Defining_Identifier => (Make_Defining_Identifier (VN (V_Ret))),
+               Used_Type           => Type_Used),
+            Statements);
 
          if not AINU.Is_Empty (Calls (E)) then
             Call_Seq := First_Node (Calls (E));
@@ -1648,33 +1689,36 @@ package body Ocarina.Backends.POK_C.Activity is
                      if Get_Subprogram_Kind (Spg) = Subprogram_Lustre then
 
                         Add_Include
-                           (Make_Include_Clause
-                              (Map_Source_Name (Spg)), Preserve_Case => True);
+                          (Make_Include_Clause (Map_Source_Name (Spg)),
+                           Preserve_Case => True);
 
-                        N := Make_Variable_Declaration
-                           (Defining_Identifier =>
-                              Map_Lustre_Context_Name (Spg),
-                           Used_Type =>
-                              Make_Pointer_Type
+                        N :=
+                          Make_Variable_Declaration
+                            (Defining_Identifier =>
+                               Map_Lustre_Context_Name (Spg),
+                             Used_Type =>
+                               Make_Pointer_Type
                                  (Map_Lustre_Context_Type (Spg)));
 
                         Append_Node_To_List
-                           (N, CTN.Declarations (Current_File));
+                          (N,
+                           CTN.Declarations (Current_File));
 
-                        N := Make_Expression
-                           (Left_Expr => Map_Lustre_Context_Name (Spg),
-                           Operator => Op_Equal,
-                           Right_Expr =>
-                              Make_Call_Profile
+                        N :=
+                          Make_Expression
+                            (Left_Expr  => Map_Lustre_Context_Name (Spg),
+                             Operator   => Op_Equal,
+                             Right_Expr =>
+                               Make_Call_Profile
                                  (Map_Lustre_Context_Init (Spg),
-                                 Make_List_Id
+                                  Make_List_Id
                                     (Make_Literal
                                        (C_Values.New_Int_Value (0, 1, 10)))));
                         Append_Node_To_List (N, Statements);
 
                      elsif Get_Subprogram_Kind (Spg) = Subprogram_Esterel then
-                        N := Make_Call_Profile
-                           (Map_Esterel_Reset_Function (Spg));
+                        N :=
+                          Make_Call_Profile (Map_Esterel_Reset_Function (Spg));
                         Append_Node_To_List (N, Statements);
                      end if;
 
@@ -1688,15 +1732,17 @@ package body Ocarina.Backends.POK_C.Activity is
 
          case P is
             when Thread_Periodic =>
-               N := Message_Comment
-                 ("Periodic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Periodic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             when Thread_Sporadic =>
-               N := Message_Comment
-                 ("Sporadic task : "
-                  & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Sporadic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             when others =>
@@ -1731,33 +1777,33 @@ package body Ocarina.Backends.POK_C.Activity is
          declare
             Init_Entrypoint : constant Name_Id :=
               Get_Thread_Initialize_Entrypoint (E);
-            Parameter_List : constant List_Id :=
-              New_List (CTN.K_List_Id);
+            Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
          begin
             if Init_Entrypoint /= No_Name then
-               N := Make_Extern_Entity_Declaration
-                 (Make_Function_Specification
-                    (Make_Defining_Identifier (Init_Entrypoint),
-                     Parameters          => Parameter_List, --  XXX
-                     Return_Type         => New_Node (CTN.K_Void)));
-               Append_Node_To_List
-                 (N, CTN.Declarations (Current_File));
-               N := CTU.Make_Call_Profile
-                 (Make_Defining_Identifier (Init_Entrypoint),
-                  No_List);
+               N :=
+                 Make_Extern_Entity_Declaration
+                   (Make_Function_Specification
+                      (Make_Defining_Identifier (Init_Entrypoint),
+                       Parameters  => Parameter_List, --  XXX
+                       Return_Type => New_Node (CTN.K_Void)));
+               Append_Node_To_List (N, CTN.Declarations (Current_File));
+               N :=
+                 CTU.Make_Call_Profile
+                   (Make_Defining_Identifier (Init_Entrypoint),
+                    No_List);
                Append_Node_To_List (N, Statements);
             end if;
          end;
 
          --  Make the while (1){} and add all statements
 
-         N := Make_While_Statement
-           (Make_Literal (CV.New_Int_Value (1, 0, 10)),
-            WStatements);
+         N :=
+           Make_While_Statement
+             (Make_Literal (CV.New_Int_Value (1, 0, 10)),
+              WStatements);
          Append_Node_To_List (N, Statements);
 
-         N := Make_Function_Implementation
-           (Spec, Declarations, Statements);
+         N := Make_Function_Implementation (Spec, Declarations, Statements);
          return N;
       end Task_Job_Body;
 
@@ -1793,8 +1839,8 @@ package body Ocarina.Backends.POK_C.Activity is
       ------------------------------
 
       procedure Visit_Component_Instance (E : Node_Id) is
-         Category : constant Component_Category
-           := Get_Category_Of_Component (E);
+         Category : constant Component_Category :=
+           Get_Category_Of_Component (E);
       begin
          case Category is
             when CC_System =>
@@ -1825,15 +1871,18 @@ package body Ocarina.Backends.POK_C.Activity is
       ----------------------------
 
       procedure Visit_Process_Instance
-         (E : Node_Id; Real_Process : Boolean := True) is
-         U : Node_Id;
-         P : Node_Id;
-         S : Node_Id;
+        (E            : Node_Id;
+         Real_Process : Boolean := True)
+      is
+         U         : Node_Id;
+         P         : Node_Id;
+         S         : Node_Id;
          Statement : Node_Id;
       begin
          if Real_Process then
-            U := CTN.Distributed_Application_Unit
-               (CTN.Naming_Node (Backend_Node (Identifier (E))));
+            U :=
+              CTN.Distributed_Application_Unit
+                (CTN.Naming_Node (Backend_Node (Identifier (E))));
             P := CTN.Entity (U);
             Push_Entity (P);
             Push_Entity (U);
@@ -1858,11 +1907,12 @@ package body Ocarina.Backends.POK_C.Activity is
 
                   Add_Include (RH (RH_Types));
 
-                  Statement := Make_Extern_Entity_Declaration
-                     (Make_Variable_Declaration
-                        (Map_C_Defining_Identifier (S),
-                           Map_C_Data_Type_Designator
-                              (Corresponding_Instance (S))));
+                  Statement :=
+                    Make_Extern_Entity_Declaration
+                      (Make_Variable_Declaration
+                         (Map_C_Defining_Identifier (S),
+                          Map_C_Data_Type_Designator
+                            (Corresponding_Instance (S))));
 
                   Append_Node_To_List
                     (Statement,
@@ -1917,11 +1967,10 @@ package body Ocarina.Backends.POK_C.Activity is
       ---------------------------
 
       procedure Visit_Thread_Instance (E : Node_Id) is
-         N                    : Node_Id;
+         N : Node_Id;
       begin
          N := Task_Job_Body (E);
-         Append_Node_To_List
-           (N, CTN.Declarations (Current_File));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
       end Visit_Thread_Instance;
 
       --------------------------------------
@@ -1929,13 +1978,13 @@ package body Ocarina.Backends.POK_C.Activity is
       --------------------------------------
 
       procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-         S : Node_Id;
-         U : Node_Id;
+         S         : Node_Id;
+         U         : Node_Id;
          Processes : List_Id;
       begin
          if Present (Backend_Node (Identifier (E))) then
             Processes := CTN.Processes (Backend_Node (Identifier (E)));
-            S := AIN.First_Node (Processes);
+            S         := AIN.First_Node (Processes);
             while Present (S) loop
                U := Current_Entity;
                Pop_Entity;
@@ -1984,11 +2033,12 @@ package body Ocarina.Backends.POK_C.Activity is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         U               : constant Node_Id := CTN.Distributed_Application_Unit
-           (CTN.Naming_Node (Backend_Node (Identifier (E))));
-         P               : constant Node_Id := CTN.Entity (U);
-         Implementation  : Node_Id;
-         S               : Node_Id;
+         U : constant Node_Id :=
+           CTN.Distributed_Application_Unit
+             (CTN.Naming_Node (Backend_Node (Identifier (E))));
+         P              : constant Node_Id := CTN.Entity (U);
+         Implementation : Node_Id;
+         S              : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -2003,7 +2053,8 @@ package body Ocarina.Backends.POK_C.Activity is
                while Present (S) loop
                   if Get_Category_Of_Component (S) = CC_Process then
                      Visit_Process_Instance
-                        (Corresponding_Instance (S), False);
+                       (Corresponding_Instance (S),
+                        False);
                   end if;
 
                   S := Next_Node (S);

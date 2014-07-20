@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2012 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -59,8 +59,7 @@ package Ocarina.Analyzer.AADL.Semantics is
 
    function Check_Qualified_References
      (Container           : Node_Id;
-      Qualified_Reference : Node_Id)
-     return Boolean;
+      Qualified_Reference : Node_Id) return Boolean;
    --  Qualified_Reference refers to a Package::ComponentElt
    --  or to a PropertySet::PropertyElt, return true if the
    --  qualified name Package or PropertySet is present in

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,23 +32,26 @@
 ------------------------------------------------------------------------------
 
 with GNAT.Command_Line;
-with GNAT.OS_Lib; use type GNAT.OS_Lib.File_Descriptor;
+with GNAT.OS_Lib;
+use type GNAT.OS_Lib.File_Descriptor;
 
 with Errors;
-with Lexer; use type Lexer.Token_Type;
+with Lexer;
+use type Lexer.Token_Type;
 with Namet;
 with Output;
-with Types; use type Types.Byte, Types.Name_Id, Types.Node_Id, Types.Int;
+with Types;
+use type Types.Byte, Types.Name_Id, Types.Node_Id, Types.Int;
 
 package body Parser is
 
-   Debug     : Boolean := False;
+   Debug : Boolean := False;
    --  Provide debugging info from mknodes
 
    Dump_Tree : Boolean := True;
    --  Include full code to dump node tree
 
-   Output_Dir  : Types.Name_Id := Types.No_Name;
+   Output_Dir : Types.Name_Id := Types.No_Name;
    --  Directory storing generated files
 
    Output_Name : Types.Name_Id := Types.No_Name;
@@ -71,32 +74,33 @@ package body Parser is
 
    subtype Base_Type_Node_Kind is Node_Kind range K_Boolean .. K_Long;
    type Base_Type_Node_Array is array (Base_Type_Node_Kind) of Types.Node_Id;
-   Base_Types  : Base_Type_Node_Array;
+   Base_Types : Base_Type_Node_Array;
    --  Nodes corresponding for the Pseudo-IDL base types
 
    type Node_Kind_Image_Array is array (Node_Kind) of Character;
-   Image : constant Node_Kind_Image_Array
-     := Node_Kind_Image_Array'(K_Boolean               => 'B',
-                               K_Octet                 => 'O',
-                               K_Long                  => 'L',
-                               K_Interface_Declaration => 'I',
-                               K_Typedef               => 'T',
-                               K_Attribute             => 'A',
-                               K_None                  => ' ');
+   Image : constant Node_Kind_Image_Array :=
+     Node_Kind_Image_Array'
+       (K_Boolean               => 'B',
+        K_Octet                 => 'O',
+        K_Long                  => 'L',
+        K_Interface_Declaration => 'I',
+        K_Typedef               => 'T',
+        K_Attribute             => 'A',
+        K_None                  => ' ');
 
    Module_Name : Types.Name_Id;
 
    First_Attribute : Types.Node_Id := Types.No_Node;
    Last_Attribute  : Types.Node_Id := Types.No_Node;
-   N_Attributes    : Natural := 0;
+   N_Attributes    : Natural       := 0;
 
    First_Interface : Types.Node_Id := Types.No_Node;
    Last_Interface  : Types.Node_Id := Types.No_Node;
-   N_Interfaces    : Natural := 0;
+   N_Interfaces    : Natural       := 0;
 
    subtype Valid_Node_Id is Types.Node_Id range 1 .. 10_000;
    type Valid_Node_Array is array (Valid_Node_Id) of Node_Type;
-   Table : Valid_Node_Array;
+   Table         : Valid_Node_Array;
    Current_Index : Valid_Node_Id := Valid_Node_Id'First;
 
    -----------------------------
@@ -104,16 +108,15 @@ package body Parser is
    -----------------------------
 
    function Copy_Str_At_End_Of_Name
-     (Name  : Types.Name_Id;
-      Str   : String)
-     return String
+     (Name : Types.Name_Id;
+      Str  : String) return String
    is
       Str_Len : constant Natural := Str'Length;
    begin
       Namet.Get_Name_String (Name);
       for I in Natural range 0 .. Str_Len - 1 loop
-         Namet.Name_Buffer (Namet.Name_Len - Str_Len + I + 1)
-           := Str (Str'First + I);
+         Namet.Name_Buffer (Namet.Name_Len - Str_Len + I + 1) :=
+           Str (Str'First + I);
       end loop;
       return Namet.Get_Name_String (Namet.Name_Find);
    end Copy_Str_At_End_Of_Name;
@@ -133,7 +136,7 @@ package body Parser is
 
    function Identifier (N : Types.Node_Id) return Types.Name_Id is
    begin
-         return Table (N).Identifier;
+      return Table (N).Identifier;
    end Identifier;
 
    ----------
@@ -168,8 +171,8 @@ package body Parser is
    --------------
 
    function New_Node
-     (Kind : Node_Kind; Loc : Locations.Location)
-     return Types.Node_Id
+     (Kind : Node_Kind;
+      Loc  : Locations.Location) return Types.Node_Id
    is
       Node : Types.Node_Id;
    begin
@@ -177,9 +180,9 @@ package body Parser is
          return Types.No_Node;
       end if;
       Current_Index := Current_Index + 1;
-      Node := Current_Index;
+      Node          := Current_Index;
 
-      Table (Node) := Default_Node;
+      Table (Node)      := Default_Node;
       Table (Node).Kind := Kind;
       Table (Node).Loc  := Loc;
 
@@ -365,7 +368,7 @@ package body Parser is
       Type_Name : constant Types.Name_Id := Identifier (Type_Spec (A));
       Attr_Name : constant Types.Name_Id := Identifier (A);
       Attribute : Types.Node_Id;
-      N_Errors  : Integer := 0;
+      N_Errors  : Integer                := 0;
 
    begin
       Attribute := First_Attribute;
@@ -394,7 +397,7 @@ package body Parser is
          end if;
 
          Last_Attribute := A;
-         N_Attributes := N_Attributes + 1;
+         N_Attributes   := N_Attributes + 1;
       end if;
    end Declare_Attribute;
 
@@ -468,7 +471,7 @@ package body Parser is
       Parent := I;
       loop
          Tree (Index) := Parent;
-         Parent := Type_Spec (Parent);
+         Parent       := Type_Spec (Parent);
          exit when Parent = Types.No_Node;
          Index := Index - 1;
       end loop;
@@ -482,16 +485,14 @@ package body Parser is
 
    function Is_Attribute_In_Interface
      (Attribute : Types.Node_Id;
-      Intf     : Types.Node_Id)
-     return Boolean
+      Intf      : Types.Node_Id) return Boolean
    is
       N : constant Types.Name_Id := Identifier (Attribute);
-      I : Types.Node_Id := Intf;
+      I : Types.Node_Id          := Intf;
    begin
       while I /= Types.No_Node loop
          if Has_Attribute (I) then
-            for A in Types.Node_Id
-              range First_Entity (I) .. Last_Entity (I)
+            for A in Types.Node_Id range First_Entity (I) .. Last_Entity (I)
             loop
                if Identifier (A) = N then
                   return True;
@@ -510,7 +511,8 @@ package body Parser is
 
    procedure Add_Attribute_To_Interface
      (Attribute : Types.Node_Id;
-      Intf     : Types.Node_Id) is
+      Intf      : Types.Node_Id)
+   is
    begin
       --  Attribute nodes are contiguous. There is no need to chain them
 
@@ -568,7 +570,7 @@ package body Parser is
    -----------------
 
    function P_Interface return Types.Node_Id is
-      Intf     : Types.Node_Id;
+      Intf      : Types.Node_Id;
       Attribute : Types.Node_Id;
       Type_Spec : Types.Node_Id;
    begin
@@ -600,12 +602,10 @@ package body Parser is
       end if;
 
       Last_Interface := Intf;
-      N_Interfaces := N_Interfaces + 1;
+      N_Interfaces   := N_Interfaces + 1;
 
       Lexer.Scan_Token
-        (Lexer.Token_List_Type'
-           (Lexer.T_Left_Brace,
-            Lexer.T_Colon));
+        (Lexer.Token_List_Type'(Lexer.T_Left_Brace, Lexer.T_Colon));
 
       if Lexer.Token = Lexer.T_Error then
          return Types.No_Node;
@@ -643,10 +643,10 @@ package body Parser is
 
       loop
          case Lexer.Next_Token is
-            when Lexer.T_Identifier
-              | Lexer.T_Boolean
-              | Lexer.T_Octet
-              | Lexer.T_Long =>
+            when Lexer.T_Identifier |
+              Lexer.T_Boolean       |
+              Lexer.T_Octet         |
+              Lexer.T_Long          =>
                Attribute := P_Attribute;
 
                if Is_Attribute_In_Interface (Attribute, Intf) then
@@ -686,10 +686,7 @@ package body Parser is
 
       Lexer.Scan_Token
         (Lexer.Token_List_Type'
-           (Lexer.T_Identifier,
-            Lexer.T_Boolean,
-            Lexer.T_Octet,
-            Lexer.T_Long));
+           (Lexer.T_Identifier, Lexer.T_Boolean, Lexer.T_Octet, Lexer.T_Long));
 
       if Lexer.Token = Lexer.T_Error then
          return Types.No_Node;
@@ -736,9 +733,7 @@ package body Parser is
    begin
       Lexer.Save_Lexer (State);
       Lexer.Scan_Token
-        (Lexer.Token_List_Type'
-           (Lexer.T_Typedef,
-            Lexer.T_Interface));
+        (Lexer.Token_List_Type'(Lexer.T_Typedef, Lexer.T_Interface));
       case Lexer.Token is
          when Lexer.T_Typedef =>
             Lexer.Restore_Lexer (State);
@@ -856,15 +851,15 @@ package body Parser is
    -------------------------------
 
    procedure Assign_Color_To_Attribute (Attribute : Types.Node_Id) is
-      Kind  : constant Node_Kind := Base_Kind (Type_Spec (Attribute));
-      Used  : Color_Flag_Array;
-      Attr  : Types.Node_Id;
-      Name  : constant Types.Name_Id := Identifier (Attribute);
+      Kind : constant Node_Kind     := Base_Kind (Type_Spec (Attribute));
+      Used : Color_Flag_Array;
+      Attr : Types.Node_Id;
+      Name : constant Types.Name_Id := Identifier (Attribute);
       Intf : Types.Node_Id;
 
    begin
       if Debug then
-         Output.Write_Str  ("--  Assign color to ");
+         Output.Write_Str ("--  Assign color to ");
          Namet.Write_Name (Identifier (Attribute));
          Output.Write_Eol;
       end if;
@@ -901,8 +896,11 @@ package body Parser is
                --  couple of adjacent attributes, we mark this couple.
 
                if Has_Attribute (Intf) then
-                  for Adjacent in Types.Node_Id
-                    range First_Entity (Intf) .. Last_Entity (Intf)
+                  for Adjacent in
+                    Types
+                      .Node_Id range
+                      First_Entity (Intf) ..
+                        Last_Entity (Intf)
                   loop
                      --  Mark the two attributes as adjacent
 
@@ -982,10 +980,12 @@ package body Parser is
 
    procedure W_Comment_Message is
    begin
-      Output.Write_Line ("--  This file has been generated automatically"
-                 & " by `mknodes'. Do not");
-      Output.Write_Line ("--  hand modify this file since your changes"
-                 & " will be overridden.");
+      Output.Write_Line
+        ("--  This file has been generated automatically" &
+         " by `mknodes'. Do not");
+      Output.Write_Line
+        ("--  hand modify this file since your changes" &
+         " will be overridden.");
       Output.Write_Eol;
    end W_Comment_Message;
 
@@ -1004,11 +1004,7 @@ package body Parser is
    -- W_Subprogram_Call --
    -----------------------
 
-   procedure W_Subprogram_Call
-     (I   : Natural;
-      F   : String;
-      PN1 : String)
-   is
+   procedure W_Subprogram_Call (I : Natural; F : String; PN1 : String) is
    begin
       W_Subprogram_Call (I, F, PN1, Types.No_Str, Types.No_Str, Types.No_Str);
    end W_Subprogram_Call;
@@ -1040,7 +1036,8 @@ package body Parser is
       PN1 : String;
       PN2 : String;
       PN3 : String;
-      PN4 : String) is
+      PN4 : String)
+   is
    begin
       W_Indentation (I);
       Output.Write_Line (F);
@@ -1082,35 +1079,36 @@ package body Parser is
       PN1 : Character;
       PT1 : String;
       PN2 : Character;
-      PT2 : String) is
+      PT2 : String)
+   is
    begin
       W_Indentation (I);
 
       if PN2 = ' ' and then PT2 /= Types.No_Str then
-         Output.Write_Str  ("function");
+         Output.Write_Str ("function");
       else
-         Output.Write_Str  ("procedure");
+         Output.Write_Str ("procedure");
       end if;
 
-      Output.Write_Str  (" ");
-      Output.Write_Str  (F);
-      Output.Write_Str  (" (");
+      Output.Write_Str (" ");
+      Output.Write_Str (F);
+      Output.Write_Str (" (");
       Output.Write_Char (PN1);
-      Output.Write_Str  (" : ");
-      Output.Write_Str  (PT1);
+      Output.Write_Str (" : ");
+      Output.Write_Str (PT1);
 
       if PT2 = Types.No_Str then
          Output.Write_Char (')');
 
       elsif PN2 = ' ' then
-         Output.Write_Str  (") return ");
-         Output.Write_Str  (PT2);
+         Output.Write_Str (") return ");
+         Output.Write_Str (PT2);
 
       else
-         Output.Write_Str  ("; ");
+         Output.Write_Str ("; ");
          Output.Write_Char (PN2);
-         Output.Write_Str  (" : ");
-         Output.Write_Str  (PT2);
+         Output.Write_Str (" : ");
+         Output.Write_Str (PT2);
          Output.Write_Char (')');
       end if;
    end W_Subprogram_Signature;
@@ -1125,7 +1123,8 @@ package body Parser is
       PN1 : Character;
       PT1 : String;
       PN2 : Character;
-      PT2 : String) is
+      PT2 : String)
+   is
    begin
       W_Subprogram_Signature (I, F, PN1, PT1, PN2, PT2);
       Output.Write_Line (";");
@@ -1141,7 +1140,8 @@ package body Parser is
       PN1 : Character;
       PT1 : String;
       PN2 : Character;
-      PT2 : String) is
+      PT2 : String)
+   is
    begin
       W_Subprogram_Signature (I, F, PN1, PT1, PN2, PT2);
       Output.Write_Line (" is");
@@ -1153,9 +1153,7 @@ package body Parser is
    -- W_Subprogram_Definition_End --
    ---------------------------------
 
-   procedure W_Subprogram_Definition_End
-     (I   : Natural;
-      F   : String) is
+   procedure W_Subprogram_Definition_End (I : Natural; F : String) is
    begin
       W_Indentation (I);
       Output.Write_Line ("end " & F & ";");
@@ -1167,10 +1165,10 @@ package body Parser is
 
    procedure W_Table_Access (N : Character; A : String) is
    begin
-      Output.Write_Str  ("Table (Types.Node_Id (");
+      Output.Write_Str ("Table (Types.Node_Id (");
       Output.Write_Char (N);
-      Output.Write_Str  (")).");
-      Output.Write_Str  (A);
+      Output.Write_Str (")).");
+      Output.Write_Str (A);
    end W_Table_Access;
 
    ---------------------
@@ -1182,16 +1180,16 @@ package body Parser is
 
    begin
       W_Indentation (2);
-      Output.Write_Str     ("pragma Assert (False");
+      Output.Write_Str ("pragma Assert (False");
 
       Intf := First_Interface;
       while Intf /= Types.No_Node loop
          if Is_Attribute_In_Interface (Attribute, Intf) then
             Output.Write_Eol;
             W_Indentation (2);
-            Output.Write_Str  ("  or else ");
+            Output.Write_Str ("  or else ");
             W_Table_Access ('N', "Kind");
-            Output.Write_Str  (" = K_");
+            Output.Write_Str (" = K_");
             Namet.Write_Name (Identifier (Intf));
          end if;
 
@@ -1209,9 +1207,9 @@ package body Parser is
    procedure W_Type_Attribute (A : String; T : String) is
    begin
       W_Indentation (2);
-      Output.Write_Str  (A);
-      Output.Write_Str  (" : ");
-      Output.Write_Str  (T);
+      Output.Write_Str (A);
+      Output.Write_Str (" : ");
+      Output.Write_Str (T);
       Output.Write_Line (";");
    end W_Type_Attribute;
 
@@ -1223,8 +1221,8 @@ package body Parser is
    begin
       W_Indentation (2);
       Output.Write_Char (Image (K));
-      Output.Write_Str  (" : ");
-      Namet.Write_Name  (Identifier (Base_Types (K)));
+      Output.Write_Str (" : ");
+      Namet.Write_Name (Identifier (Base_Types (K)));
       Output.Write_Line ("_Array;");
    end W_Type_Attribute;
 
@@ -1242,17 +1240,20 @@ package body Parser is
       end loop;
       K := Base_Kind (Type_Spec (A));
       W_Subprogram_Definition
-        (1, GNS (Identifier (A)),
-         'N', GNS (Identifier (NS)),
-         ' ', GNS (Identifier (Type_Spec (A))));
+        (1,
+         GNS (Identifier (A)),
+         'N',
+         GNS (Identifier (NS)),
+         ' ',
+         GNS (Identifier (Type_Spec (A))));
       W_Pragma_Assert (A);
       W_Indentation (2);
-      Output.Write_Str  ("return ");
+      Output.Write_Str ("return ");
       Namet.Write_Name (Identifier (Type_Spec (A)));
-      Output.Write_Str  (" (");
+      Output.Write_Str (" (");
       Namet.Set_Char_To_Name_Buffer (Image (K));
-      Namet.Add_Str_To_Name_Buffer  (" (");
-      Namet.Add_Nat_To_Name_Buffer  (Types.Int (Color (A)));
+      Namet.Add_Str_To_Name_Buffer (" (");
+      Namet.Add_Nat_To_Name_Buffer (Types.Int (Color (A)));
       Namet.Add_Char_To_Name_Buffer (')');
       W_Table_Access ('N', GNS (Namet.Name_Find));
       Output.Write_Line (");");
@@ -1260,17 +1261,20 @@ package body Parser is
       Output.Write_Eol;
 
       W_Subprogram_Definition
-        (1, WS (GNS (Identifier (A))),
-         'N', GNS (Identifier (NS)),
-         'V', GNS (Identifier (Type_Spec (A))));
+        (1,
+         WS (GNS (Identifier (A))),
+         'N',
+         GNS (Identifier (NS)),
+         'V',
+         GNS (Identifier (Type_Spec (A))));
       W_Pragma_Assert (A);
       W_Indentation (2);
       Namet.Set_Char_To_Name_Buffer (Image (K));
-      Namet.Add_Str_To_Name_Buffer  (" (");
-      Namet.Add_Nat_To_Name_Buffer  (Types.Int (Color (A)));
+      Namet.Add_Str_To_Name_Buffer (" (");
+      Namet.Add_Nat_To_Name_Buffer (Types.Int (Color (A)));
       Namet.Add_Char_To_Name_Buffer (')');
       W_Table_Access ('N', GNS (Namet.Name_Find));
-      Output.Write_Str  (" := ");
+      Output.Write_Str (" := ");
       Namet.Write_Name (Identifier (Base_Types (K)));
       Output.Write_Line (" (V);");
       W_Subprogram_Definition_End (1, WS (GNS (Identifier (A))));
@@ -1285,7 +1289,7 @@ package body Parser is
    begin
       W_Subprogram_Definition (1, A, 'N', N, ' ', T);
       W_Indentation (2);
-      Output.Write_Str  ("return ");
+      Output.Write_Str ("return ");
       W_Table_Access ('N', A);
       Output.Write_Line (";");
       W_Subprogram_Definition_End (1, A);
@@ -1314,7 +1318,7 @@ package body Parser is
    ----------------------
 
    procedure W_Attribute_Spec (A : Types.Node_Id) is
-      NS   : Types.Node_Id;
+      NS : Types.Node_Id;
    begin
       NS := Scope_Entity (A);
 
@@ -1343,7 +1347,7 @@ package body Parser is
 
    procedure W_Package_Body is
       Attribute : Types.Node_Id;
-      Intf     : Types.Node_Id;
+      Intf      : Types.Node_Id;
       Base_Type : Types.Node_Id;
    begin
       Output.Write_Line ("pragma Style_Checks (""NM32766"");");
@@ -1392,7 +1396,12 @@ package body Parser is
       end loop;
 
       W_Subprogram_Definition
-        (1, W ("Node"), 'N', "Node_Id", ' ', Types.No_Str);
+        (1,
+         W ("Node"),
+         'N',
+         "Node_Id",
+         ' ',
+         Types.No_Str);
       W_Indentation (2);
 
       if not Dump_Tree then
@@ -1405,7 +1414,7 @@ package body Parser is
          while Intf /= Types.No_Node loop
             if Type_Spec (Intf) /= Types.No_Node then
                W_Indentation (3);
-               Output.Write_Str  ("when K_");
+               Output.Write_Str ("when K_");
                Namet.Write_Name (Identifier (Intf));
                Output.Write_Line (" =>");
                Base_Type := Intf;
@@ -1415,7 +1424,8 @@ package body Parser is
                end loop;
 
                W_Subprogram_Call
-                 (4, W (GNS (Identifier (Intf))),
+                 (4,
+                  W (GNS (Identifier (Intf))),
                   GNS (Identifier (Base_Type)) & " (N)");
             end if;
 
@@ -1445,12 +1455,14 @@ package body Parser is
                end loop;
 
                W_Subprogram_Definition
-                 (1, W (GNS (Identifier (Intf))),
-                  'N', GNS (Identifier (Base_Type)),
-                    ' ', Types.No_Str);
+                 (1,
+                  W (GNS (Identifier (Intf))),
+                  'N',
+                  GNS (Identifier (Base_Type)),
+                  ' ',
+                  Types.No_Str);
 
-               W_Subprogram_Call
-                 (2, W ("Node_Header"), "Node_Id (N)");
+               W_Subprogram_Call (2, W ("Node_Header"), "Node_Id (N)");
 
                Attribute := First_Attribute;
                while Attribute /= Types.No_Node loop
@@ -1467,14 +1479,16 @@ package body Parser is
                        K_Interface_Declaration
                      then
                         W_Subprogram_Call
-                          (2, W ("Node_Attribute"),
+                          (2,
+                           W ("Node_Attribute"),
                            Quote (GNS (Identifier (Attribute))),
                            Quote (GNS (Identifier (Type_Spec (Attribute)))),
                            "Image (" & GNS (Identifier (Attribute)) & " (N))",
                            "Int (" & GNS (Identifier (Attribute)) & " (N))");
                      else
                         W_Subprogram_Call
-                          (2, W ("Node_Attribute"),
+                          (2,
+                           W ("Node_Attribute"),
                            Quote (GNS (Identifier (Attribute))),
                            Quote (GNS (Identifier (Type_Spec (Attribute)))),
                            "Image (" & GNS (Identifier (Attribute)) & " (N))");
@@ -1486,8 +1500,7 @@ package body Parser is
                   Attribute := Next_Entity (Attribute);
                end loop;
 
-               W_Subprogram_Definition_End
-                 (1, W (GNS (Identifier (Intf))));
+               W_Subprogram_Definition_End (1, W (GNS (Identifier (Intf))));
                Output.Write_Eol;
             end if;
 
@@ -1495,7 +1508,7 @@ package body Parser is
          end loop;
       end if;
 
-      Output.Write_Str  ("end ");
+      Output.Write_Str ("end ");
       Namet.Write_Name (Module_Name);
       Output.Write_Line (";");
    end W_Package_Body;
@@ -1524,10 +1537,10 @@ package body Parser is
 
       Output.Write_Line ("pragma Warnings (Off);");
       Output.Write_Line ("with Locations; use Locations;");
-      Output.Write_Line ("with Types;     use Types;");
+      Output.Write_Line ("with Ocarina.Types;     use Ocarina.Types;");
       Output.Write_Line ("pragma Warnings (On);");
       Output.Write_Eol;
-      Output.Write_Str  ("package ");
+      Output.Write_Str ("package ");
       Namet.Write_Name (Module_Name);
       Output.Write_Line (" is");
       Output.Write_Eol;
@@ -1535,13 +1548,13 @@ package body Parser is
       --  Describe Node_Kind type (all interfaces)
 
       W_Indentation (1);
-      Output.Write_Line  ("type Node_Kind is");
+      Output.Write_Line ("type Node_Kind is");
       W_Indentation (1);
       Output.Write_Str ("  (");
 
       Intf := First_Interface;
       while Intf /= Types.No_Node loop
-         Output.Write_Str  ("K_");
+         Output.Write_Str ("K_");
          Namet.Write_Name (Identifier (Intf));
 
          if Intf = Last_Interface then
@@ -1565,7 +1578,7 @@ package body Parser is
          W_Indentation (1);
          Output.Write_Line ("--");
          W_Indentation (1);
-         Output.Write_Str  ("--  ");
+         Output.Write_Str ("--  ");
          Namet.Write_Name (Identifier (Intf));
          Output.Write_Eol;
          W_Indentation (1);
@@ -1575,11 +1588,14 @@ package body Parser is
          for I in Node_Array_Range loop
             exit when Tree (I) = Types.No_Node;
             if Has_Attribute (Tree (I)) then
-               for A in Types.Node_Id
-                 range First_Entity (Tree (I)) .. Last_Entity (Tree (I))
+               for A in
+                 Types
+                   .Node_Id range
+                   First_Entity (Tree (I)) ..
+                     Last_Entity (Tree (I))
                loop
                   W_Indentation (1);
-                  Output.Write_Str  ("--    ");
+                  Output.Write_Str ("--    ");
                   Namet.Get_Name_String (Identifier (A));
                   for J in Natural range 1 .. Namet.Name_Len loop
                      Output.Write_Char (Namet.Name_Buffer (J));
@@ -1587,8 +1603,8 @@ package body Parser is
                   for J in Natural range Namet.Name_Len + 1 .. 25 loop
                      Output.Write_Char (' ');
                   end loop;
-                  Output.Write_Str  (": ");
-                  Namet.Write_Name  (Identifier (Type_Spec (A)));
+                  Output.Write_Str (": ");
+                  Namet.Write_Name (Identifier (Type_Spec (A)));
                   Output.Write_Eol;
                end loop;
             end if;
@@ -1604,9 +1620,12 @@ package body Parser is
          if Dump_Tree then
             if Tree (Tree'First + 1) /= Types.No_Node then
                W_Subprogram_Declaration
-                 (1, W (GNS (Identifier (Intf))),
-                  'N', GNS (Identifier (Tree (Tree'First))),
-                  ' ', Types.No_Str);
+                 (1,
+                  W (GNS (Identifier (Intf))),
+                  'N',
+                  GNS (Identifier (Tree (Tree'First))),
+                  ' ',
+                  Types.No_Str);
                Output.Write_Eol;
             end if;
          end if;
@@ -1648,18 +1667,23 @@ package body Parser is
       end loop;
 
       W_Subprogram_Declaration
-        (1, W ("Node"), 'N', "Node_Id", ' ', Types.No_Str);
+        (1,
+         W ("Node"),
+         'N',
+         "Node_Id",
+         ' ',
+         Types.No_Str);
       Output.Write_Eol;
 
       --  Describe slot table types
 
       for K in Node_Kind range K_Boolean .. K_Long loop
          W_Indentation (1);
-         Output.Write_Str  ("type ");
+         Output.Write_Str ("type ");
          Namet.Write_Name (Identifier (Base_Types (K)));
-         Output.Write_Str  ("_Array is array (1 .. ");
-         Output.Write_Int  (Types.Int (Color (Base_Types (K))));
-         Output.Write_Str  (") of ");
+         Output.Write_Str ("_Array is array (1 .. ");
+         Output.Write_Int (Types.Int (Color (Base_Types (K))));
+         Output.Write_Str (") of ");
          Namet.Write_Name (Identifier (Base_Types (K)));
          Output.Write_Line (";");
       end loop;
@@ -1669,7 +1693,7 @@ package body Parser is
       --  Describe Node_Entry type and its attributes
 
       W_Indentation (1);
-      Output.Write_Line  ("type Node_Entry is record");
+      Output.Write_Line ("type Node_Entry is record");
       W_Type_Attribute ("Kind", "Node_Kind");
 
       for K in Node_Kind range K_Boolean .. K_Long loop
@@ -1680,20 +1704,20 @@ package body Parser is
 
       W_Type_Attribute ("Loc", "Location");
       W_Indentation (1);
-      Output.Write_Line  ("end record;");
+      Output.Write_Line ("end record;");
       Output.Write_Eol;
 
       --  Provide a default node
 
       W_Indentation (1);
-      Output.Write_Line  ("Default_Node : constant Node_Entry :=");
+      Output.Write_Line ("Default_Node : constant Node_Entry :=");
       W_Indentation (1);
-      Output.Write_Line  ("  (Node_Kind'First,");
+      Output.Write_Line ("  (Node_Kind'First,");
 
       for K in Node_Kind range K_Boolean .. K_Long loop
          if Color (Base_Types (K)) > 0 then
             W_Indentation (2);
-            Output.Write_Str  ("(others => ");
+            Output.Write_Str ("(others => ");
 
             if K = K_Boolean then
                Output.Write_Str ("False");
@@ -1706,7 +1730,7 @@ package body Parser is
       end loop;
 
       W_Indentation (2);
-      Output.Write_Line  ("No_Location);");
+      Output.Write_Line ("No_Location);");
       Output.Write_Eol;
 
       --  Provide node table
@@ -1716,7 +1740,7 @@ package body Parser is
       W_Indentation (1);
       Output.Write_Line ("  (Node_Entry, Node_Id, No_Node + 1, 1000, 100);");
       Output.Write_Eol;
-      Output.Write_Str  ("end ");
+      Output.Write_Str ("end ");
       Namet.Write_Name (Module_Name);
       Output.Write_Line (";");
    end W_Package_Spec;
@@ -1726,8 +1750,8 @@ package body Parser is
    ----------
 
    procedure Main is
-      Attribute         : Types.Node_Id;
-      Definition        : Types.Node_Id;
+      Attribute  : Types.Node_Id;
+      Definition : Types.Node_Id;
       pragma Unreferenced (Definition); --  Because never read
 
       Dir_Sep_Idx : Natural;
@@ -1752,9 +1776,11 @@ package body Parser is
                Output_Dir := Namet.Name_Find;
 
                if not GNAT.OS_Lib.Is_Directory
-                 (GNAT.Command_Line.Parameter) then
-                  Errors.DE (GNAT.Command_Line.Parameter &
-                               " is not a valid directory");
+                   (GNAT.Command_Line.Parameter)
+               then
+                  Errors.DE
+                    (GNAT.Command_Line.Parameter &
+                     " is not a valid directory");
                   exit;
                end if;
 
@@ -1785,7 +1811,7 @@ package body Parser is
 
       Source_Name := Namet.Name_Find;
       if not GNAT.OS_Lib.Is_Regular_File
-        (Namet.Get_Name_String (Source_Name))
+          (Namet.Get_Name_String (Source_Name))
       then
          Errors.Error_Name (1) := Source_Name;
          Errors.DE ("% not found");
@@ -1818,7 +1844,7 @@ package body Parser is
 
       if Output_Dir = Types.No_Name then
          Namet.Name_Len := Dir_Sep_Idx - 1;
-         Output_Dir := Namet.Name_Find;
+         Output_Dir     := Namet.Name_Find;
       end if;
 
       if Debug then
@@ -1836,7 +1862,7 @@ package body Parser is
          Namet.Name_Buffer (I) := Namet.Name_Buffer (Dir_Sep_Idx + I);
       end loop;
       Namet.Name_Len := Namet.Name_Len - Dir_Sep_Idx;
-      Output_Name := Namet.Name_Find;
+      Output_Name    := Namet.Name_Find;
 
       if Debug then
          Output.Write_Str ("output filename is ");
@@ -1852,8 +1878,8 @@ package body Parser is
 
       Namet.Get_Name_String (Source_Name);
       Namet.Name_Buffer (Namet.Name_Len + 1) := ASCII.NUL;
-      Source_File := GNAT.OS_Lib.Open_Read
-        (Namet.Name_Buffer'Address, GNAT.OS_Lib.Binary);
+      Source_File                            :=
+        GNAT.OS_Lib.Open_Read (Namet.Name_Buffer'Address, GNAT.OS_Lib.Binary);
 
       --  Lexer step
 
@@ -1971,9 +1997,10 @@ package body Parser is
       --  filename and redirect output.
 
       if Output_Name /= Types.No_Name then
-         Output_File := GNAT.OS_Lib.Create_File
-           (Copy_Str_At_End_Of_Name (Output_Name, Spec_Suffix),
-            GNAT.OS_Lib.Binary);
+         Output_File :=
+           GNAT.OS_Lib.Create_File
+             (Copy_Str_At_End_Of_Name (Output_Name, Spec_Suffix),
+              GNAT.OS_Lib.Binary);
          Output.Set_Output (Output_File);
       end if;
 
@@ -1983,9 +2010,10 @@ package body Parser is
       --  filename and redirect output.
 
       if Output_Name /= Types.No_Name then
-         Output_File := GNAT.OS_Lib.Create_File
-           (Copy_Str_At_End_Of_Name (Output_Name, Body_Suffix),
-            GNAT.OS_Lib.Binary);
+         Output_File :=
+           GNAT.OS_Lib.Create_File
+             (Copy_Str_At_End_Of_Name (Output_Name, Body_Suffix),
+              GNAT.OS_Lib.Binary);
          Output.Set_Output (Output_File);
       end if;
 

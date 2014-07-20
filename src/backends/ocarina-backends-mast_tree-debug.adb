@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2012 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2014 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,11 +31,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Charset;                       use Charset;
-with Locations;                     use Locations;
-with Namet;                         use Namet;
-with Utils;                         use Utils;
-with Ocarina.Backends.MAST_Values;   use Ocarina.Backends.MAST_Values;
+with Charset;                      use Charset;
+with Locations;                    use Locations;
+with Ocarina.Namet;                        use Ocarina.Namet;
+with Utils;                        use Utils;
+with Ocarina.Backends.MAST_Values; use Ocarina.Backends.MAST_Values;
 
 package body Ocarina.Backends.MAST_Tree.Debug is
 
@@ -157,25 +157,21 @@ package body Ocarina.Backends.MAST_Tree.Debug is
    is
       C : Node_Id;
    begin
-      if A = "Next_Node"
-        or else A = "Package_Declaration"
-      then
+      if A = "Next_Node" or else A = "Package_Declaration" then
          return;
       end if;
 
       N_Indents := N_Indents + 1;
       W_Indents;
-      Write_Str  (A);
+      Write_Str (A);
       Write_Char (' ');
-      Write_Str  (K);
+      Write_Str (K);
       Write_Char (' ');
       C := Node_Id (N);
 
       if K = "Name_Id" then
          Write_Line (Quoted (V));
-      elsif K = "Node_Id"
-        and then Present (C)
-      then
+      elsif K = "Node_Id" and then Present (C) then
          case Kind (C) is
             when K_Numeric =>
                Write_Line ('(' & Image (Kind (Node_Id (N))) & ')');
@@ -210,9 +206,9 @@ package body Ocarina.Backends.MAST_Tree.Debug is
    procedure W_Node_Header (N : Node_Id) is
    begin
       W_Indents;
-      Write_Int  (Int (N));
+      Write_Int (Int (N));
       Write_Char (' ');
-      Write_Str  (Image (Kind (N)));
+      Write_Str (Image (Kind (N)));
       Write_Char (' ');
       Write_Line (Image (Loc (N)));
    end W_Node_Header;
