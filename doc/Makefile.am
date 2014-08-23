@@ -37,7 +37,8 @@ dist-hook: all
 	if [ -r $(GUIDE).pdf ]; then \
 	  cp -p -r $(GUIDE).html $(GUIDE).pdf $(distdir); \
 	  cp -p $(SED_FILES) $(distdir); \
-	else \
+	fi
+	if [ -r $(srcdir)/$(GUIDE).pdf ]; then \
 	  cp -r $(srcdir)/$(GUIDE).html $(srcdir)/$(GUIDE).pdf $(distdir); \
 	  cp -p ${addprefix $(srcdir)/, $(SED_FILES)} $(distdir); \
 	fi
