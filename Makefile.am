@@ -1,4 +1,4 @@
-SUBDIRS = support tools projects src resources projects-distrib examples @DOC_DIR@
+SUBDIRS = support tools projects src resources projects-distrib examples doc
 
 AUTOMAKE_OPTIONS = no-dependencies
 ACLOCAL_AMFLAGS = -I support

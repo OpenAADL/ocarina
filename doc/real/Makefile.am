@@ -13,7 +13,9 @@ export TEXINPUTS:=$(texinputs)
 bibinputs:=$(srcdir):$(BIBINPUTS)
 export BIBINPUTS:=$(bibinputs)
 
-all-local: $(LATEX_FILE).tex biblio.bib $(REAL_CODE)
+all-local:
+
+build: $(LATEX_FILE).tex biblio.bib $(REAL_CODE)
 	latex $(srcdir)/$(LATEX_FILE).tex ;
 	bibtex $(LATEX_FILE) ;
 	latex $(srcdir)/$(LATEX_FILE).tex ;
@@ -34,7 +36,7 @@ distclean-local: clean
 
 install-data-local: all
 	$(INSTALL) -d $(DESTDIR)$(datadir)/doc/ocarina
-	$(INSTALL_DATA) $(LATEX_FILE).pdf $(DESTDIR)$(datadir)/doc/ocarina
+	-$(INSTALL_DATA) $(LATEX_FILE).pdf $(DESTDIR)$(datadir)/doc/ocarina
 
 EXTRA_DIST= $(srcdir)/sources2/range_set.real				\
 $(srcdir)/sources2/evaluation.real $(srcdir)/sources2/data.aadl		\

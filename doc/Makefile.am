@@ -1,3 +1,5 @@
+SUBDIRS=real
+
 GUIDE=ocarina
 
 man_MANS = ocarina-config.1 ocarina.1
@@ -7,12 +9,13 @@ GUIDE_RSTFILES = $(srcdir)/about.rst $(srcdir)/gfdl.rst			\
 	$(srcdir)/python.rst $(srcdir)/editors.rst			\
 	$(srcdir)/installation.rst $(srcdir)/usage.rst
 
-EXTRA_DIST= $(srcdir)/CODING_GUIDELINES $(srcdir)/CONTRIBUTING		\
-	$(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES) $(ALL_IMAGES)	\
-	$(man_MANS) $(srcdir)/ocarina-config.html			\
-	$(srcdir)/ocarina_man.html
+EXTRA_DIST= $(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES)	\
+	$(ALL_IMAGES) $(man_MANS) $(srcdir)/ocarina-config.html	\
+	 $(srcdir)/ocarina_man.html
 
-all-local: $(GUIDE).html $(GUIDE).pdf
+docs=$(GUIDE).html $(GUIDE).pdf
+
+all-local: @DOC_TARGETS@
 
 $(GUIDE).html: $(GUIDE_RSTFILES)
 	make  html

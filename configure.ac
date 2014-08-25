@@ -379,18 +379,18 @@ AC_SUBST(CYGPATH_U)
 
 AC_CHECK_PROGS(TEXI2HTML, texi2html)
 
-DOC_DIR=
+DOC_TARGETS=
 DOC_FLAG=
 
 AC_ARG_ENABLE(doc,
 [  --enable-doc            Build documentation [default=no]],
 [if [[ "$enableval" = "yes" ]]; then
-        DOC_DIR=doc
+        DOC_TARGETS=docs
         DOC_FLAG=--enable-doc
 fi],
 [])
 
-AC_SUBST(DOC_DIR)
+AC_SUBST(DOC_TARGETS)
 AC_SUBST(DOC_FLAG)
 
 ##########################################
