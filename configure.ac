@@ -195,7 +195,7 @@ AC_SUBST(EXE_SUFFIX)
 
 root="`dirname $0`"
 
-AC_MSG_CHECKING([default services])
+AC_MSG_CHECKING([AADL runtime to build])
 AC_ARG_WITH(ocarina-runtimes,
 AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
 [
@@ -279,6 +279,14 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
 ],
 [
   RUNTIME_LIST=""
+  for P in polyorb-hi-ada polyorb-hi-c polyorb-hi-java
+  do
+  if test -d ${root}/resources/runtime/${P}
+  then
+	RUNTIME_LIST="${RUNTIME_LIST}${P} "
+  fi
+  done
+
   AM_CONDITIONAL(POK, test -d "${root}/resources/runtime/pok")
   AM_CONDITIONAL(PO_HI_ADA, test -d "${root}/resources/runtime/polyorb-hi-ada")
   AM_CONDITIONAL(PO_HI_C, test -d "${root}/resources/runtime/polyorb-hi-c")
