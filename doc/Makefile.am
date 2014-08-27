@@ -11,7 +11,7 @@ GUIDE_RSTFILES = $(srcdir)/about.rst $(srcdir)/gfdl.rst			\
 
 EXTRA_DIST= $(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES)	\
 	$(ALL_IMAGES) $(man_MANS) $(srcdir)/ocarina-config.html	\
-	 $(srcdir)/ocarina_man.html
+	 $(srcdir)/ocarina_man.html $(srcdir)/ocarina.css
 
 docs: $(GUIDE).html $(GUIDE).pdf
 

@@ -195,7 +195,7 @@ AC_SUBST(EXE_SUFFIX)
 
 root="`dirname $0`"
 
-AC_MSG_CHECKING([default services])
+AC_MSG_CHECKING([AADL runtime to build])
 AC_ARG_WITH(ocarina-runtimes,
 AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
 [
@@ -203,7 +203,6 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
   AM_CONDITIONAL(PO_HI_ADA, false)
   AM_CONDITIONAL(PO_HI_C, false)
   AM_CONDITIONAL(PO_HI_JAVA, false)
-  AM_CONDITIONAL(PO_QOS_ADA, false)
   AM_CONDITIONAL(POK, false)
 
   newwithval=`echo ${withval} | tr "[A-Z]" "[a-z]"`
@@ -211,7 +210,7 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
   do
      case ${R} in
         all )
-	    for P in polyorb-hi-ada polyorb-hi-c polyorb-qos-ada polyorb-hi-java
+	    for P in polyorb-hi-ada polyorb-hi-c polyorb-hi-java
             do
 	       if test -d ${root}/resources/runtime/${P}
      	       then
@@ -224,13 +223,11 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
             AM_CONDITIONAL(PO_HI_ADA, true)
 	    AM_CONDITIONAL(PO_HI_C, true)
 	    AM_CONDITIONAL(PO_HI_JAVA, true)
-            AM_CONDITIONAL(PO_QOS_ADA, true)
 	    ;;
 
         none )
 	    AM_CONDITIONAL(PO_HI_ADA, false)
 	    AM_CONDITIONAL(PO_HI_C, false)
-            AM_CONDITIONAL(PO_QOS_ADA, false)
 	    ;;
 
 	pok )
@@ -273,16 +270,6 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
 	    AM_CONDITIONAL(PO_HI_JAVA, true)
 	    ;;
 
-	polyorb-qos-ada )
-            if test -d ${root}/resources/runtime/${R}
-            then
-               RUNTIME_LIST="${RUNTIME_LIST}${R} "
-            else
-               AC_MSG_ERROR([runtime ${R} not found])
-            fi
-	    AM_CONDITIONAL(PO_QOS_ADA, true)
-	    ;;
-
 	* )
 	    AC_MSG_ERROR([unknown runtime ${R}])
 	    ;;
@@ -292,11 +279,18 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
 ],
 [
   RUNTIME_LIST=""
+  for P in polyorb-hi-ada polyorb-hi-c polyorb-hi-java
+  do
+  if test -d ${root}/resources/runtime/${P}
+  then
+	RUNTIME_LIST="${RUNTIME_LIST}${P} "
+  fi
+  done
+
   AM_CONDITIONAL(POK, test -d "${root}/resources/runtime/pok")
   AM_CONDITIONAL(PO_HI_ADA, test -d "${root}/resources/runtime/polyorb-hi-ada")
   AM_CONDITIONAL(PO_HI_C, test -d "${root}/resources/runtime/polyorb-hi-c")
   AM_CONDITIONAL(PO_HI_JAVA, test -d "${root}/resources/runtime/polyorb-hi-java")
-  AM_CONDITIONAL(PO_QOS_ADA, test -d "${root}/resources/runtime/polyorb-qos-ada")
 ])
 AC_MSG_RESULT(${RUNTIME_LIST})
 AC_SUBST(RUNTIME_LIST)
