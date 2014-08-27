@@ -13,7 +13,7 @@ EXTRA_DIST= $(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES)	\
 	$(ALL_IMAGES) $(man_MANS) $(srcdir)/ocarina-config.html	\
 	 $(srcdir)/ocarina_man.html
 
-docs=$(GUIDE).html $(GUIDE).pdf
+docs: $(GUIDE).html $(GUIDE).pdf
 
 all-local: @DOC_TARGETS@
 
