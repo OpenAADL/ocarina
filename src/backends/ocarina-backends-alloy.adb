@@ -36,7 +36,6 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.Instances;           use Ocarina.Instances;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
-with Ocarina.Options;             use Ocarina.Options;
 with GNAT.Command_Line;
 
 with Ada.Text_IO;
@@ -145,7 +144,6 @@ package body Ocarina.Backends.Alloy is
                  String'(Get_Name_String
                            (Display_Name
                               (Identifier (T))));
---                              (Identifier (Corresponding_Instance (T)))));
             begin
                Put (FD, Subcomponent_Name);
 
@@ -236,11 +234,12 @@ package body Ocarina.Backends.Alloy is
 
       --  Open a new .als file
 
-      if Boundt_Process = No_Name then
-         Create (File => FD, Name => "output.als");
-      end if;
+      Create (File => FD, Name => "tran_model.als");
 
-      --  Parse all the processes, each one will be an TPO program
+      Put_Line (FD, "module tran_model");
+      Put_Line (FD, "open lib_sig");
+
+      --  Visit instance model
 
       Visit_Architecture_Instance (Instance_Root);
 
