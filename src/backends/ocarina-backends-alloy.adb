@@ -272,8 +272,7 @@ package body Ocarina.Backends.Alloy is
       Put_Line (FD, "// Declaration of the contract(s) "
                   & "representing the model(s)");
       New_Line (FD);
-      Put_Line (FD, "one sig aadl_model extends Contract{");
-      Put_Line (FD, "}");
+      Put_Line (FD, "one sig aadl_model extends Contract{}{");
       Put_Line (FD, ASCII.HT & "assumption=none");
       Put_Line (FD, ASCII.HT & "input=none");
       Put_Line (FD, ASCII.HT & "guarantee=none");
