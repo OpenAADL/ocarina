@@ -333,6 +333,12 @@ package body Ocarina.Backends.Utils is
                   if Ada_Style then
                      Add_Char_To_Name_Buffer ('_');
                   end if;
+               elsif Initial_Name (Index) = ':' then
+                  Add_Char_To_Name_Buffer ('_');
+                  if Ada_Style then
+                     Add_Char_To_Name_Buffer ('_');
+                  end if;
+
                else
                   Add_Char_To_Name_Buffer (Initial_Name (Index));
                end if;
