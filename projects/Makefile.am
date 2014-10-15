@@ -4,7 +4,7 @@ include $(top_srcdir)/Makefile.common
 
 BUILD_PROJECTS= ocarina-core.gpr ocarina-frontends.gpr			\
 	ocarina-backends.gpr ocarina-config.gpr ocarina-transfo.gpr	\
-	ocarina-main.gpr
+	ocarina-main.gpr $(PYTHON_PRJ)
 
 # All project files have to be packaged with "make dist"
 
@@ -26,7 +26,8 @@ OBJECT_DIRS = $(top_builddir)/src/core/objects	\
 	$(top_builddir)/src/frontends/objects	\
 	$(top_builddir)/src/backends/objects	\
 	$(top_builddir)/src/transfo/objects	\
-	$(top_builddir)/src/main/objects
+	$(top_builddir)/src/main/objects	\
+	$(top_builddir)/src/python/objects
 
 # Library directories (*.ali, *.a)
 
@@ -34,7 +35,8 @@ LIB_DIRS = $(top_builddir)/src/core/libs				\
 	$(top_builddir)/src/frontends/libs				\
 	$(top_builddir)/src/backends/libs				\
 	$(top_builddir)/src/transfo/libs				\
-	$(top_builddir)/src/config/libs $(top_builddir)/src/main/libs
+	$(top_builddir)/src/config/libs $(top_builddir)/src/main/libs	\
+	$(top_builddir)/src/python/libs
 
 # All directories used for the build process. If the configure is
 # performed from a directory different from the top source directory,

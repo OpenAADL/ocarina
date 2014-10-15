@@ -31,6 +31,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+pragma Warnings (Off);
+--  Silence all warnings
+
 with GNATCOLL.Scripts;
 
 package Ocarina.Python_Cmd is
