@@ -2,7 +2,7 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                   O C A R I N A . P Y T H O N _ C M D                    --
+--               O C A R I N A . B A C K E N D S . A L L O Y                --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
@@ -31,28 +31,16 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-pragma Warnings (Off);
---  Silence all warnings
+package Ocarina.Backends.Alloy is
 
-with GNATCOLL.Scripts;
+   procedure Init;
+   --  Initialize Ocarina.
+   --  To be called before any action.
 
-package Ocarina.Python_Cmd is
+   procedure Generate (AADL_Root : Node_Id);
+   --  Generate TPO file for Bound-T
 
-   --  This package provides a central access to register functions to
-   --  the Python bindings
+   procedure Reset;
+   --  Reset the internal data
 
-   function Register_Scripts_And_Functions
-     return GNATCOLL.Scripts.Scripts_Repository;
-   --  Register the Python scripting language, and the functions we
-   --  export
-
-   procedure Initialize_Lib;
-   pragma Export (C, Initialize_Lib, "initlibocarina_python");
-
-   procedure Initialize;
-
-private
-
-   Repo : GNATCOLL.Scripts.Scripts_Repository;
-
-end Ocarina.Python_Cmd;
+end Ocarina.Backends.Alloy;

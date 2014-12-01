@@ -59,7 +59,7 @@ project Ocarina is
               "-gnatoa",
               "-fstack-check",
               "-gnaty",
-              "-gnatwl",
+              "-gnatwL", -- elaboration warnings disabled
 	      "-gnatyu", -- not in -gnaty: check multiple blank lines
 	      "-gnatys", -- not in -gnatx: check useless parentheses
 	      @GCOV@"-fprofile-arcs",

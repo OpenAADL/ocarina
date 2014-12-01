@@ -124,9 +124,9 @@ package body Ocarina.Backends.BoundT is
                   (AIN.Name (AIN.Identifier (AIN.Parent_Subcomponent (E)))) =
                 Boundt_Process
             then
-
                Visit_Process_Instance (E);
             end if;
+
          when CC_Thread =>
             Visit_Thread_Instance (E);
 

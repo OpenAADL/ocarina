@@ -31,12 +31,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+pragma Warnings (Off);
+--  Silence all warnings
+
 with Ada.Directories;           use Ada.Directories;
 with Ada.Environment_Variables; use Ada.Environment_Variables;
 with Ada.Text_IO;               use Ada.Text_IO;
 
 with GNATCOLL.Scripts;          use GNATCOLL.Scripts;
-
 with Ocarina.Python_Cmd;
 
 package body Ocarina.Python is
