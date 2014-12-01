@@ -20,3 +20,4 @@ tools/compare.py
 log.*
 support/headers_ocarina*
 
+auto.cgpr
