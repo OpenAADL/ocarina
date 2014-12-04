@@ -39,6 +39,7 @@ Usage:
    -g  Generate code from the AADL instance tree
        Registered backends:
         arinc653_conf
+        deos_conf
         petri_nets
         boundt
         mast
