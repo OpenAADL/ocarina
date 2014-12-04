@@ -141,6 +141,10 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
 
       Root := Make_XML_Node ("Deos653Config");
 
+      XTU.Add_Attribute ("validityKey", "0000", Root);
+      XTU.Add_Attribute ("toolVersion", "1.10.2", Root);
+      XTU.Add_Attribute ("hmShutdownHyperstartIndex", "2", Root);
+      XTU.Add_Attribute ("minimumWindowDurationInNs", "100000", Root);
       XTU.Add_Attribute ("hmShutdownRegistry", "platreg.bin", Root);
       XTU.Add_Attribute ("xsi.schemaLocation", "deos653.xsd", Root);
       XTU.Add_Attribute ("xmlns:xsi",
@@ -958,17 +962,5 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       Module_HM := Make_XML_Node ("Module_HM_Table");
       return Module_HM;
    end Map_Processor_HM_Table;
-
-   ----------------------------
-   -- Map_System_HM_Table --
-   ----------------------------
-
-   function Map_System_HM_Table (System : Node_Id) return Node_Id is
-      System_HM : Node_Id;
-      pragma Unreferenced (System);
-   begin
-      System_HM := Make_XML_Node ("System_HM_Table");
-      return System_HM;
-   end Map_System_HM_Table;
 
 end Ocarina.Backends.Deos_Conf.Mapping;

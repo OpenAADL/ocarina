@@ -7,7 +7,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 --  with Ocarina.Backends.Properties;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
-with Ocarina.Backends.Deos_Conf.Mapping;
+--  with Ocarina.Backends.Deos_Conf.Mapping;
 
 package body Ocarina.Backends.Deos_Conf.Partitions is
 
@@ -17,7 +17,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
 --   use Ocarina.Backends.Properties;
-   use Ocarina.Backends.Deos_Conf.Mapping;
+--   use Ocarina.Backends.Deos_Conf.Mapping;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
@@ -152,7 +152,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
       Append_Node_To_List
-        (Map_System_HM_Table (E),
+        (Make_XML_Node ("Partitions"),
          XTN.Subitems (Current_XML_Node));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
