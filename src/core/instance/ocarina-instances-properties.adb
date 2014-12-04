@@ -553,18 +553,25 @@ package body Ocarina.Instances.Properties is
                  (Duplicated_Property_Value,
                   Multi_Value (Duplicated_Property_Value));
 
-               List_Node :=
-                 ATN.First_Node (Expanded_Multi_Value (Property_Value));
+               if Present (Expanded_Multi_Value (Property_Value)) then
+                  --  XXX It appears that for record properties,
+                  --  Expanded_Multi_Value is set to No_Node. An
+                  --  inspection of the declarative tree reveals this
+                  --  seems OK. To be investigated further
 
-               while Present (List_Node) loop
-                  Append_Node_To_List
-                    (Instantiate_Property_Value
-                       (Instance_Root,
-                        List_Node,
-                        Instance),
-                     Multi_Value (Duplicated_Property_Value));
-                  List_Node := ATN.Next_Node (List_Node);
-               end loop;
+                  List_Node :=
+                    ATN.First_Node (Expanded_Multi_Value (Property_Value));
+
+                  while Present (List_Node) loop
+                     Append_Node_To_List
+                       (Instantiate_Property_Value
+                          (Instance_Root,
+                           List_Node,
+                           Instance),
+                        Multi_Value (Duplicated_Property_Value));
+                     List_Node := ATN.Next_Node (List_Node);
+                  end loop;
+               end if;
             end if;
          end if;
 
