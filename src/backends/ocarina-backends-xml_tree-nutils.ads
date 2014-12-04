@@ -185,4 +185,6 @@ Tok_Slash,           -- /
 
    function Make_Assignement (Left : Node_Id; Right : Node_Id) return Node_Id;
 
+   procedure Add_Attribute (Key : String; Value : String; N : Node_Id);
+
 end Ocarina.Backends.XML_Tree.Nutils;

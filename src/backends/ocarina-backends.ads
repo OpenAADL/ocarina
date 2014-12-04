@@ -58,6 +58,7 @@ package Ocarina.Backends is
       Bound_T,
       Carts_XML,
       Cheddar_XML,
+      Deos_XML,
       Connection_Matrix_Analysis,
       Functions_Matrix_Analysis,
       MAST_Scheduling,

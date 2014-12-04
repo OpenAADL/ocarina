@@ -37,6 +37,8 @@ with Ocarina.Backends.Expander;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
+with Ocarina.Backends.Deos_Conf.Naming;
+with Ocarina.Backends.Deos_Conf.Partitions;
 with Ocarina.Backends.Utils;
 
 with GNAT.Command_Line; use GNAT.Command_Line;
@@ -49,6 +51,8 @@ package body Ocarina.Backends.Deos_Conf is
    use Ocarina.Backends.Expander;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.XML_Tree.Generator;
+   use Ocarina.Backends.Deos_Conf.Naming;
+   use Ocarina.Backends.Deos_Conf.Partitions;
    use Ocarina.Backends.Utils;
 
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
@@ -126,7 +130,7 @@ package body Ocarina.Backends.Deos_Conf is
          end case;
       end loop;
 
-      Register_Backend ("Deos_Conf", Generate'Access, Statistics);
+      Register_Backend ("Deos_Conf", Generate'Access, Deos_XML);
    end Init;
 
    -----------
@@ -143,7 +147,6 @@ package body Ocarina.Backends.Deos_Conf is
    ---------------------------------
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
    begin
       XML_Root := XTU.New_Node (XTN.K_HI_Distributed_Application);
       Set_Str_To_Name_Buffer ("generated-code");
@@ -152,6 +155,9 @@ package body Ocarina.Backends.Deos_Conf is
       XTN.Set_HI_Nodes (XML_Root, XTU.New_List (XTN.K_List_Id));
 
       XTU.Push_Entity (XML_Root);
+
+      Deos_Conf.Naming.Visit (E);
+      Deos_Conf.Partitions.Visit (E);
 
       XTU.Pop_Entity;
 

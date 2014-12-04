@@ -651,4 +651,19 @@ package body Ocarina.Backends.XML_Tree.Nutils is
       return N;
    end Make_Container;
 
+   -------------------
+   -- Add_Attribute --
+   -------------------
+
+   procedure Add_Attribute (Key : String; Value : String; N : Node_Id) is
+      R : Node_Id;
+      Q : Node_Id;
+   begin
+      Set_Str_To_Name_Buffer (Key);
+      R := Make_Defining_Identifier (Name_Find);
+      Set_Str_To_Name_Buffer (Value);
+      Q := Make_Defining_Identifier (Name_Find);
+      Append_Node_To_List (Make_Assignement (R, Q), XTN.Items (N));
+   end Add_Attribute;
+
 end Ocarina.Backends.XML_Tree.Nutils;
