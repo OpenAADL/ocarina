@@ -42,13 +42,25 @@ property set Memory_Properties is
 	Source_Code_Size: Size
 		applies to (data, thread, thread group, process, system, subprogram, processor, device);
 
+	Code_Size: Size
+		applies to (data, thread, thread group, process, system, subprogram, processor, device);
+
 	Source_Data_Size: Size
+		applies to (data, subprogram, thread, thread group, process, system, processor, device);
+
+	Data_Size: Size
 		applies to (data, subprogram, thread, thread group, process, system, processor, device);
 
 	Source_Heap_Size: Size
 		applies to (thread, subprogram);
 
+	Heap_Size: Size
+		applies to (thread, subprogram);
+
 	Source_Stack_Size: Size
+		applies to (thread, subprogram, processor, device);
+
+	Stack_Size: Size
 		applies to (thread, subprogram, processor, device);
 
 	Byte_Count: aadlinteger 0 .. Max_Byte_Count
