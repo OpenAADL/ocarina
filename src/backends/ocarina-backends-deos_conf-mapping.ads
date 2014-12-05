@@ -16,6 +16,8 @@ package Ocarina.Backends.Deos_Conf.Mapping is
    function Map_Data_Size (T : Size_Type) return Unsigned_Long_Long;
    function Map_Virtual_Processor (E : Node_Id) return Node_Id;
    function Map_Processor (E : Node_Id) return Node_Id;
+   function Map_Partition (Process : Node_Id;
+                           Runtime : Node_Id) return Node_Id;
    function Map_Bus (E : Node_Id) return Node_Id;
    function Map_Port_Connection (E : Node_Id) return Node_Id;
    function Map_Process_Memory (Process : Node_Id) return Node_Id;

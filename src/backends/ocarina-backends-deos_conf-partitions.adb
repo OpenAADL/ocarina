@@ -4,10 +4,10 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
---  with Ocarina.Backends.Properties;
+with Ocarina.Backends.Properties;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
---  with Ocarina.Backends.Deos_Conf.Mapping;
+with Ocarina.Backends.Deos_Conf.Mapping;
 
 package body Ocarina.Backends.Deos_Conf.Partitions is
 
@@ -16,11 +16,14 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
---   use Ocarina.Backends.Properties;
---   use Ocarina.Backends.Deos_Conf.Mapping;
+   use Ocarina.Backends.Properties;
+   use Ocarina.Backends.Deos_Conf.Mapping;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+
+   Root_Node : Node_Id := No_Node;
+   Partitions_Node : Node_Id := No_Node;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -29,6 +32,42 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+   function Find_Associated_Process (Runtime : Node_Id;
+                                     Current_Node : Node_Id := Root_Node)
+                                     return Node_Id;
+
+   -----------------------------
+   -- Find_Associated_Process --
+   -----------------------------
+
+   function Find_Associated_Process (Runtime : Node_Id;
+                                     Current_Node : Node_Id := Root_Node)
+                                     return Node_Id is
+      T : Node_Id;
+      S : Node_Id;
+   begin
+      if Get_Category_Of_Component (Current_Node) = CC_Process and then
+         Get_Bound_Processor (Current_Node) = Runtime
+      then
+         return Current_Node;
+      end if;
+
+      if not AINU.Is_Empty (Subcomponents (Current_Node)) then
+         S := First_Node (Subcomponents (Current_Node));
+         while Present (S) loop
+            T := Find_Associated_Process
+               (Runtime, Corresponding_Instance (S));
+
+            if T /= No_Node then
+               return T;
+            end if;
+
+            S := Next_Node (S);
+         end loop;
+      end if;
+
+      return No_Node;
+   end Find_Associated_Process;
 
    -----------
    -- Visit --
@@ -54,7 +93,8 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
    begin
-      Visit (Root_System (E));
+      Root_Node := Root_System (E);
+      Visit (Root_Node);
    end Visit_Architecture_Instance;
 
    ------------------------------
@@ -151,8 +191,10 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
+      Partitions_Node := Make_XML_Node ("Partitions");
+
       Append_Node_To_List
-        (Make_XML_Node ("Partitions"),
+        (Partitions_Node,
          XTN.Subitems (Current_XML_Node));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
@@ -176,12 +218,19 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
       S : Node_Id;
+      Corresponding_Process : Node_Id := No_Node;
    begin
+      Corresponding_Process := Find_Associated_Process (E);
+
+      if Corresponding_Process /= No_Node then
+         Append_Node_To_List
+            (Map_Partition (Corresponding_Process, E),
+             XTN.Subitems (Partitions_Node));
+      end if;
+
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
 
             Visit (Corresponding_Instance (S));
             S := Next_Node (S);

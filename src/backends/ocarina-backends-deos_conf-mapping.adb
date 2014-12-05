@@ -963,4 +963,18 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       return Module_HM;
    end Map_Processor_HM_Table;
 
+   -------------------
+   -- Map_Partition --
+   -------------------
+
+   function Map_Partition (Process : Node_Id;
+                           Runtime : Node_Id) return Node_Id is
+      pragma Unreferenced (Process);
+      pragma Unreferenced (Runtime);
+      Partition_Node : Node_Id;
+   begin
+      Partition_Node := Make_XML_Node ("Partition");
+      return Partition_Node;
+   end Map_Partition;
+
 end Ocarina.Backends.Deos_Conf.Mapping;
