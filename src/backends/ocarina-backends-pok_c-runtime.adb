@@ -124,6 +124,12 @@ package body Ocarina.Backends.POK_C.Runtime is
 
       Initialized := True;
 
+
+      --
+      --  If we use DeOS, all the types and functions
+      --  related to ARINC are associated to the file apex.h
+      --
+
       if POK_Flavor = DEOS then
 
          for E in ARF_Id loop
