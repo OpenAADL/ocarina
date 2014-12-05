@@ -138,7 +138,7 @@ package body Ocarina.Backends.POK_C.Main is
          Member_Value : Node_Id;
       begin
          --  Initializes thread attributes.
-         if Use_ARINC653_API then
+         if Use_ARINC653_API = False then
             N :=
               POK_Make_Function_Call_With_Assert
                 (RF (RE_Pok_Thread_Attr_Init),
@@ -228,7 +228,7 @@ package body Ocarina.Backends.POK_C.Main is
          end if;
 
          if Get_Thread_Period (E) /= Null_Time then
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Member_Value := Map_Time_To_Millisecond (Get_Thread_Period (E));
             else
                Member_Value := Map_Time (Get_Thread_Period (E));
@@ -269,7 +269,7 @@ package body Ocarina.Backends.POK_C.Main is
             Capacity : Node_Id;
          begin
             if TA /= Empty_Time_Array then
-               if POK_Flavor = ARINC653 then
+               if Use_ARINC653_API then
                   Capacity := Map_Time_To_Millisecond (TA (1));
                else
                   Capacity := Map_Time (TA (1));
@@ -300,7 +300,7 @@ package body Ocarina.Backends.POK_C.Main is
 
          Parameters := New_List (CTN.K_Parameter_List);
 
-         if POK_Flavor = ARINC653 then
+         if Use_ARINC653_API then
             Append_Node_To_List
               (Make_Variable_Address (Copy_Node (Tattr)),
                Parameters);
@@ -496,7 +496,7 @@ package body Ocarina.Backends.POK_C.Main is
                         Append_Node_To_List (N, Call_Parameters);
                      end if;
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Added_Parameter := RE (RE_Destination);
                      else
                         Added_Parameter := RE (RE_Pok_Port_Direction_In);
@@ -513,7 +513,7 @@ package body Ocarina.Backends.POK_C.Main is
                           (Make_Defining_Identifier (Map_Port_Var (F))),
                         Call_Parameters);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Append_Node_To_List
                           (Make_Variable_Address
                              (Make_Defining_Identifier (VN (V_Ret))),
@@ -532,7 +532,7 @@ package body Ocarina.Backends.POK_C.Main is
 
                      POK_Add_Return_Assertion (Statements);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Variable_Type := RE (RE_Queuing_Port_Id_Type);
                      else
                         Variable_Type := RE (RE_Uint8_T);
@@ -583,7 +583,7 @@ package body Ocarina.Backends.POK_C.Main is
                      --  Map the port of the sampling port, take in
                      --  account potential virtual bus layers.
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Append_Node_To_List
                           (RE (RE_Destination),
                            Call_Parameters);
@@ -594,7 +594,7 @@ package body Ocarina.Backends.POK_C.Main is
                      end if;
 
                      if Get_POK_Refresh_Time (F) /= Null_Time then
-                        if POK_Flavor = ARINC653 then
+                        if Use_ARINC653_API then
                            N :=
                              Map_Time_To_Millisecond
                                (Get_POK_Refresh_Time (F));
@@ -611,7 +611,7 @@ package body Ocarina.Backends.POK_C.Main is
                           (Make_Defining_Identifier (Map_Port_Var (F))),
                         Call_Parameters);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Add_Return_Variable_In_Parameters (Call_Parameters);
                         Called_Function := RF (RE_Create_Sampling_Port);
                      else
@@ -626,7 +626,7 @@ package body Ocarina.Backends.POK_C.Main is
 
                      POK_Add_Return_Assertion (Statements);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Variable_Type := RE (RE_Sampling_Port_Id_Type);
                      else
                         Variable_Type := RE (RE_Uint8_T);
@@ -712,7 +712,7 @@ package body Ocarina.Backends.POK_C.Main is
                      --  Map the size of the port, take in account
                      --  potential virtual bus layers.
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Append_Node_To_List (RE (RE_Source), Call_Parameters);
                      else
                         Append_Node_To_List
@@ -722,7 +722,7 @@ package body Ocarina.Backends.POK_C.Main is
 
                      if Get_POK_Refresh_Time (F) /= Null_Time then
 
-                        if POK_Flavor = ARINC653 then
+                        if Use_ARINC653_API then
                            N :=
                              Map_Time_To_Millisecond
                                (Get_POK_Refresh_Time (F));
@@ -741,7 +741,7 @@ package body Ocarina.Backends.POK_C.Main is
                           (Make_Defining_Identifier (Map_Port_Var (F))),
                         Call_Parameters);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Add_Return_Variable_In_Parameters (Call_Parameters);
                         Called_Function := RF (RE_Create_Sampling_Port);
                      else
@@ -756,7 +756,7 @@ package body Ocarina.Backends.POK_C.Main is
 
                      POK_Add_Return_Assertion (Statements);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Variable_Type := RE (RE_Sampling_Port_Id_Type);
                      else
                         Variable_Type := RE (RE_Uint8_T);
@@ -798,7 +798,7 @@ package body Ocarina.Backends.POK_C.Main is
                         Append_Node_To_List (N, Call_Parameters);
                      end if;
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Added_Parameter := RE (RE_Source);
                      else
                         Added_Parameter := RE (RE_Pok_Port_Direction_Out);
@@ -815,7 +815,7 @@ package body Ocarina.Backends.POK_C.Main is
                           (Make_Defining_Identifier (Map_Port_Var (F))),
                         Call_Parameters);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Add_Return_Variable_In_Parameters (Call_Parameters);
 
                         Called_Function := RF (RE_Create_Queuing_Port);
@@ -832,7 +832,7 @@ package body Ocarina.Backends.POK_C.Main is
 
                      POK_Add_Return_Assertion (Statements);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Variable_Type := RE (RE_Queuing_Port_Id_Type);
                      else
                         Variable_Type := RE (RE_Uint8_T);
@@ -933,7 +933,7 @@ package body Ocarina.Backends.POK_C.Main is
 
          Add_Include (E => RH (RH_Activity));
 
-         if POK_Flavor = ARINC653 then
+         if Use_ARINC653_API then
             Process_Variable_Type := RE (RE_Process_Id_Type);
             Process_Variable_Name := RE (RE_Arinc_Threads);
          else
@@ -953,7 +953,7 @@ package body Ocarina.Backends.POK_C.Main is
          Set_Str_To_Name_Buffer ("tattr");
          Tattr := Make_Defining_Identifier (Name_Find);
 
-         if POK_Flavor = ARINC653 then
+         if Use_ARINC653_API then
             N :=
               Make_Variable_Declaration
                 (Defining_Identifier => Copy_Node (Tattr),
@@ -1018,7 +1018,7 @@ package body Ocarina.Backends.POK_C.Main is
                   if Is_Protected_Data (Shared_Data) then
                      Call_Parameters := New_List (CTN.K_Parameter_List);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         --  Add the semaphore name.
                         Append_Node_To_List
                           (Make_Literal
@@ -1101,7 +1101,7 @@ package body Ocarina.Backends.POK_C.Main is
          if Use_Error_Handling then
             Call_Parameters := New_List (CTN.K_Parameter_List);
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Called_Function := RF (RE_Create_Error_Handler);
 
                Append_Node_To_List
@@ -1188,7 +1188,7 @@ package body Ocarina.Backends.POK_C.Main is
             Declarations := New_List (CTN.K_Declaration_List);
             Statements   := New_List (CTN.K_Statement_List);
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Used_Type := RE (RE_Error_Status_Type);
             else
                Used_Type := RE (RE_Pok_Error_Status_T);
@@ -1201,7 +1201,7 @@ package body Ocarina.Backends.POK_C.Main is
                   Used_Type => Used_Type),
                Statements);
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Append_Node_To_List
                  (Make_Variable_Declaration
                     (Defining_Identifier =>
@@ -1242,7 +1242,7 @@ package body Ocarina.Backends.POK_C.Main is
 
             CTU.Append_Node_To_List (N, Statements);
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Called_Function := RF (RE_Stop_Self);
             else
                Called_Function := RF (RE_Pok_Thread_Stop_Self);
@@ -1252,7 +1252,7 @@ package body Ocarina.Backends.POK_C.Main is
               (Make_Call_Profile (Called_Function, No_List),
                While_Statements);
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Called_Function := RF (RE_Get_Error_Status);
             else
                Called_Function := RF (RE_Pok_Error_Get);
@@ -1265,7 +1265,7 @@ package body Ocarina.Backends.POK_C.Main is
                  (Make_Defining_Identifier (VN (V_Error_Status))),
                Call_Parameters);
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Append_Node_To_List
                  (Make_Variable_Address
                     (Make_Defining_Identifier (VN (V_Ret))),
@@ -1276,7 +1276,7 @@ package body Ocarina.Backends.POK_C.Main is
               (Make_Call_Profile (Called_Function, Call_Parameters),
                While_Statements);
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Used_Member := RE (RE_Failed_Process_Id);
             else
                Used_Member := Make_Defining_Identifier (MN (M_Failed_Thread));
@@ -1496,7 +1496,7 @@ package body Ocarina.Backends.POK_C.Main is
                           (Make_Defining_Identifier (Map_Port_Var (F))),
                         Call_Parameters);
 
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Add_Return_Variable_In_Parameters (Call_Parameters);
 
                         Called_Function := RF (RE_Create_Blackboard);
@@ -1526,7 +1526,7 @@ package body Ocarina.Backends.POK_C.Main is
                     and then Is_Event (F)
                     and then Is_In (F)
                   then
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Append_Node_To_List
                           (Make_Literal
                              (CV.New_Pointed_Char_Value (Map_Port_Name (F))),
@@ -1595,7 +1595,7 @@ package body Ocarina.Backends.POK_C.Main is
                     and then Is_Event (F)
                     and then Is_In (F)
                   then
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Append_Node_To_List
                           (Make_Literal
                              (CV.New_Pointed_Char_Value (Map_Port_Name (F))),
@@ -1697,7 +1697,7 @@ package body Ocarina.Backends.POK_C.Main is
                   end if;
                end loop;
 
-               if POK_Flavor = ARINC653 then
+               if Use_ARINC653_API then
                   Used_Member := RE (RE_Error_Code);
                else
                   Used_Member := Make_Defining_Identifier (MN (M_Error_Kind));
@@ -1770,7 +1770,7 @@ package body Ocarina.Backends.POK_C.Main is
                   end if;
                end loop;
 
-               if POK_Flavor = ARINC653 then
+               if Use_ARINC653_API then
                   Used_Member := RE (RE_Error_Code);
                else
                   Used_Member := Make_Defining_Identifier (MN (M_Error_Kind));

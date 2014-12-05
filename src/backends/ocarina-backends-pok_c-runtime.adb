@@ -125,7 +125,14 @@ package body Ocarina.Backends.POK_C.Runtime is
       Initialized := True;
 
       if POK_Flavor = DEOS then
-         RE_Header_Table (RE_Create_Process) := RH_Apex;
+
+         for E in ARF_Id loop
+            RE_Header_Table (E) := RH_Apex;
+         end loop;
+
+         for E in ART_Id loop
+            RE_Header_Table (E) := RH_Apex;
+         end loop;
       end if;
 
       if POK_Flavor = ARINC653 then
