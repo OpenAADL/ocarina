@@ -113,14 +113,14 @@ package body Ocarina.Backends.POK_C.Main is
            and then ARINC653_Discipline = Priority_Based
          then
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                return RE (RE_Priority);
             else
                return RE (RE_Pok_Port_Queueing_Discipline_Fifo);
             end if;
          end if;
 
-         if POK_Flavor = ARINC653 then
+         if Use_ARINC653_API then
             return RE (RE_Fifo);
          else
             return RE (RE_Pok_Port_Queueing_Discipline_Fifo);
@@ -138,7 +138,7 @@ package body Ocarina.Backends.POK_C.Main is
          Member_Value : Node_Id;
       begin
          --  Initializes thread attributes.
-         if POK_Flavor = POK then
+         if Use_ARINC653_API then
             N :=
               POK_Make_Function_Call_With_Assert
                 (RF (RE_Pok_Thread_Attr_Init),
@@ -151,7 +151,7 @@ package body Ocarina.Backends.POK_C.Main is
 
          --  Make tattr.entry = entrypoint
 
-         if POK_Flavor = ARINC653 then
+         if Use_ARINC653_API then
             N :=
               Make_Expression
                 (Left_Expr =>
@@ -183,7 +183,7 @@ package body Ocarina.Backends.POK_C.Main is
          if Get_Thread_Priority (E) /= 0 then
             N := Make_Literal (New_Int_Value (Get_Thread_Priority (E), 1, 10));
 
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                N :=
                  Make_Expression
                    (Left_Expr =>
@@ -207,7 +207,7 @@ package body Ocarina.Backends.POK_C.Main is
          end if;
 
          if Get_Thread_Deadline (E) /= Null_Time then
-            if POK_Flavor = ARINC653 then
+            if Use_ARINC653_API then
                Member_Value :=
                  Map_Time_To_Millisecond (Get_Thread_Deadline (E));
             else
@@ -326,7 +326,7 @@ package body Ocarina.Backends.POK_C.Main is
 
          end if;
 
-         if POK_Flavor = ARINC653 then
+         if Use_ARINC653_API then
             Append_Node_To_List
               (POK_Make_Function_Call_With_Assert
                  (RF (RE_Create_Process),

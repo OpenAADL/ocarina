@@ -124,6 +124,10 @@ package body Ocarina.Backends.POK_C.Runtime is
 
       Initialized := True;
 
+      if POK_Flavor = DEOS then
+         RE_Header_Table (RE_Create_Process) := RH_Apex;
+      end if;
+
       if POK_Flavor = ARINC653 then
          RH_Service_Table (RH_Assert)     := RHS_Null;
          RH_Service_Table (RH_Thread)     := RHS_Core;
@@ -327,7 +331,7 @@ package body Ocarina.Backends.POK_C.Runtime is
          --  members are in upper case. Otherwise, we use
          --  lower case.
 
-         if POK_Flavor = ARINC653 then
+         if POK_Flavor = ARINC653 or else POK_Flavor = DEOS then
             Name := To_Upper (Name);
          else
             Name := To_Lower (Name);
@@ -562,7 +566,7 @@ package body Ocarina.Backends.POK_C.Runtime is
 
    function Get_Errcode_OK return Node_Id is
    begin
-      if POK_Flavor = ARINC653 then
+      if POK_Flavor = ARINC653 or else POK_Flavor = DEOS then
          return RE (RE_No_Error);
       else
          return RE (RE_Pok_Errno_Ok);

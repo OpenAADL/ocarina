@@ -390,7 +390,7 @@ package body Ocarina.Backends.POK_C.Deployment is
          U         : Node_Id;
          Processes : List_Id;
       begin
-         if POK_Flavor = ARINC653 then
+         if POK_Flavor = ARINC653 or else POK_Flavor = DEOS then
             CTU.Append_Node_To_List
               (RE (RE_Pok_Sched_Rr),
                CTN.Values (System_Partitions_Scheduler));

@@ -33,7 +33,7 @@
 
 package Ocarina.Backends.POK_C is
 
-   type POK_Flavor_Type is (POK, ARINC653);
+   type POK_Flavor_Type is (POK, ARINC653, DEOS);
 
    POK_Flavor : POK_Flavor_Type := POK;
 
@@ -53,6 +53,9 @@ package Ocarina.Backends.POK_C is
    procedure Display_Communication_Error;
    --  Display a message when a modeling pattern is not correct
    --  about ports.
+
+   function Use_ARINC653_API return Boolean;
+   --  Indicate if the Flavor uses the ARINC653 API.
 
 private
    C_Root : Node_Id;

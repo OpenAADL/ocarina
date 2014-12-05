@@ -38,6 +38,7 @@ package Ocarina.Backends.POK_C.Runtime is
    type RH_Id is
      (RH_Null,                       --  Workaround to denote a null RH
       RH_Activity,                   --  Activity.h from generated code
+      RH_Apex,                       --  apex.h from deos
       RH_Assert,                     --  Assert.h from POK
       RH_Blackboard,                 --  Middleware/blackboard.h from POK
       RH_Buffer,                     --  Middleware/buffer.h from POK
@@ -512,6 +513,7 @@ package Ocarina.Backends.POK_C.Runtime is
      (RH_Null        => RHS_Null,
       RH_Activity    => RHS_Generated,
       RH_Assert      => RHS_Null,
+      RH_Apex        => RHS_Null,
       RH_Blackboard  => RHS_Middleware,
       RH_Buffer      => RHS_Middleware,
       RH_Event       => RHS_Core,
@@ -534,7 +536,7 @@ package Ocarina.Backends.POK_C.Runtime is
       RH_Subprograms => RHS_Generated,
       RH_Deployment  => RHS_Generated);
 
-   RE_Header_Table : constant array (RE_Id) of RH_Id :=
+   RE_Header_Table : array (RE_Id) of RH_Id :=
      (
    --  Runtime functions associations
    RE_Pok_Thread_Sleep                => RH_Thread,

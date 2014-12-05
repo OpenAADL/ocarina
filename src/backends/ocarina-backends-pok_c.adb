@@ -196,6 +196,11 @@ package body Ocarina.Backends.POK_C is
       Leave_Directory;
    end Generate;
 
+   function Use_ARINC653_API return Boolean is
+   begin
+      return POK_Flavor = ARINC653 or else POK_Flavor = DEOS;
+   end Use_ARINC653_API;
+
    ----------
    -- Init --
    ----------
@@ -212,6 +217,10 @@ package body Ocarina.Backends.POK_C is
             when 'k' =>
                if Parameter = "arinc653" then
                   POK_Flavor := ARINC653;
+               end if;
+
+               if Parameter = "deos" then
+                  POK_Flavor := DEOS;
                end if;
 
                if Parameter = "no-assert" then
