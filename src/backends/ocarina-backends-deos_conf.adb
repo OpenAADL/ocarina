@@ -37,6 +37,8 @@ with Ocarina.Backends.Expander;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
+with Ocarina.Backends.Deos_Conf.HM;
+with Ocarina.Backends.Deos_Conf.Schedule;
 with Ocarina.Backends.Deos_Conf.Naming;
 with Ocarina.Backends.Deos_Conf.Partitions;
 with Ocarina.Backends.Utils;
@@ -158,6 +160,8 @@ package body Ocarina.Backends.Deos_Conf is
 
       Deos_Conf.Naming.Visit (E);
       Deos_Conf.Partitions.Visit (E);
+      Deos_Conf.Schedule.Visit (E);
+      Deos_Conf.HM.Visit (E);
 
       XTU.Pop_Entity;
 
