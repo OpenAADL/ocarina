@@ -390,12 +390,12 @@ package body Ocarina.Backends.POK_C.Deployment is
          U         : Node_Id;
          Processes : List_Id;
       begin
-         if POK_Flavor = ARINC653 or else POK_Flavor = DEOS then
+         if POK_Flavor = ARINC653 then
             CTU.Append_Node_To_List
               (RE (RE_Pok_Sched_Rr),
                CTN.Values (System_Partitions_Scheduler));
             Kernel_Needs_Sched_Rr := True;
-         else
+         elsif POK_Flavor = POK then
             if Get_POK_Scheduler (E) = RR then
                Kernel_Needs_Sched_Rr := True;
                CTU.Append_Node_To_List
@@ -519,6 +519,22 @@ package body Ocarina.Backends.POK_C.Deployment is
                Visit (Corresponding_Instance (S));
                S := Next_Node (S);
             end loop;
+         end if;
+
+         --
+         --  If we are using DEOS, we do not need
+         --  to write code to configure the kernel, this
+         --  is done through the XML file of the deos_conf
+         --  backend.
+         --
+
+         if POK_Flavor = DEOS then
+            Reset_Handlings;
+
+            Pop_Entity;
+            Pop_Entity;
+            Pop_Entity;
+            return;
          end if;
 
          Runtime.Kernel_Mode;
@@ -2464,6 +2480,21 @@ package body Ocarina.Backends.POK_C.Deployment is
                Visit (Corresponding_Instance (S));
                S := Next_Node (S);
             end loop;
+         end if;
+
+         --
+         --  If we are using DEOS, we do not need
+         --  to write code to configure the kernel, this
+         --  is done through the XML file of the deos_conf
+         --  backend.
+         --
+
+         if POK_Flavor = DEOS then
+
+            Pop_Entity;
+            Pop_Entity;
+            Pop_Entity;
+            return;
          end if;
 
          if Nports > 0 then
