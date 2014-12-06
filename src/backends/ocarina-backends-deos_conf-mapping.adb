@@ -968,12 +968,67 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
    -------------------
 
    function Map_Partition (Process : Node_Id;
-                           Runtime : Node_Id) return Node_Id is
+                           Runtime : Node_Id;
+                           Partition_Identifier : Integer)
+      return Node_Id is
       pragma Unreferenced (Process);
-      pragma Unreferenced (Runtime);
       Partition_Node : Node_Id;
    begin
       Partition_Node := Make_XML_Node ("Partition");
+
+      XTU.Add_Attribute ("Name",
+                         Get_Name_String
+                           (AIN.Name
+                              (Identifier
+                                 (Parent_Subcomponent
+                                    (Runtime)))),
+                         Partition_Node);
+      XTU.Add_Attribute ("Identifier",
+                         Integer'Image (Partition_Identifier),
+                         Partition_Node);
+      XTU.Add_Attribute ("Period", "25000000", Partition_Node);
+      XTU.Add_Attribute ("Duration", "6000000", Partition_Node);
+      XTU.Add_Attribute ("ExecutableImageName",
+                         Get_Name_String
+                           (AIN.Name
+                              (Identifier
+                                 (Parent_Subcomponent
+                                    (Runtime)))) & ".exe", Partition_Node);
+      XTU.Add_Attribute ("MainProcessStackSizeInPages", "1", Partition_Node);
+      XTU.Add_Attribute ("BreakAtStartup", "no", Partition_Node);
+      XTU.Add_Attribute ("InDebugSet", "no", Partition_Node);
+      XTU.Add_Attribute ("MapConfigurationFileTo", "RAM", Partition_Node);
+      XTU.Add_Attribute ("ExecuteFrom", "RAM", Partition_Node);
+      XTU.Add_Attribute ("PartitionUsesFPU", "no", Partition_Node);
+      XTU.Add_Attribute ("ProcessStackSpaceInPages", "6", Partition_Node);
+      XTU.Add_Attribute ("MinimumProcessStackSizeInBytes",
+                         "512", Partition_Node);
+      XTU.Add_Attribute ("ProcessQuota", "4", Partition_Node);
+      XTU.Add_Attribute ("BlackboardQuota", "1", Partition_Node);
+      XTU.Add_Attribute ("BlackboardMessageSpaceInBytes",
+                         "256", Partition_Node);
+      XTU.Add_Attribute ("BufferQuota", "0", Partition_Node);
+      XTU.Add_Attribute ("BufferMessageSpaceInBytes", "0", Partition_Node);
+      XTU.Add_Attribute ("SemaphoreQuota", "0", Partition_Node);
+      XTU.Add_Attribute ("EventQuota", "1", Partition_Node);
+      XTU.Add_Attribute ("MaximumPartitionLockLevel", "16", Partition_Node);
+      XTU.Add_Attribute ("MinimumProcessPriority", "1", Partition_Node);
+      XTU.Add_Attribute ("MaximumProcessPriority", "239", Partition_Node);
+      XTU.Add_Attribute ("LoggingFunction", "", Partition_Node);
+      XTU.Add_Attribute ("DeosKernelAttributeAccess",
+                         "no", Partition_Node);
+      XTU.Add_Attribute ("ProcessStackGapSizeInDwords",
+                         "0", Partition_Node);
+      XTU.Add_Attribute ("ProcessStackTagIntervalInDwords",
+                         "0", Partition_Node);
+      XTU.Add_Attribute ("SourcePortSharedMemoryType",
+                         "DeosSharedMemory", Partition_Node);
+      XTU.Add_Attribute ("PlatformResourcePhysicalAddress",
+                         "0x0", Partition_Node);
+      XTU.Add_Attribute ("PlatformResourceSizeInPages", "0", Partition_Node);
+      XTU.Add_Attribute ("PlatformResourceCachePolicy", "off", Partition_Node);
+      XTU.Add_Attribute ("HealthMonitorEventLogSize", "30", Partition_Node);
+      XTU.Add_Attribute ("EventLoggingEnabled", "yes", Partition_Node);
       return Partition_Node;
    end Map_Partition;
 

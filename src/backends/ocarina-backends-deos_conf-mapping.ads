@@ -17,7 +17,8 @@ package Ocarina.Backends.Deos_Conf.Mapping is
    function Map_Virtual_Processor (E : Node_Id) return Node_Id;
    function Map_Processor (E : Node_Id) return Node_Id;
    function Map_Partition (Process : Node_Id;
-                           Runtime : Node_Id) return Node_Id;
+                           Runtime : Node_Id;
+                           Partition_Identifier : Integer) return Node_Id;
    function Map_Bus (E : Node_Id) return Node_Id;
    function Map_Port_Connection (E : Node_Id) return Node_Id;
    function Map_Process_Memory (Process : Node_Id) return Node_Id;

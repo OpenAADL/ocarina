@@ -21,10 +21,12 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+   package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
    Root_Node : Node_Id := No_Node;
    Partitions_Node : Node_Id := No_Node;
    Memory_Regions : Node_Id := No_Node;
+   Partition_Identifier : Integer := 0;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -47,6 +49,14 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       N : Node_Id;
    begin
       N := Make_XML_Node ("MemoryRegion");
+
+      XTU.Add_Attribute ("Name", "Initial RAM Pool", N);
+      XTU.Add_Attribute ("Type", "Initial RAM Pool", N);
+      XTU.Add_Attribute ("Address", "0x0", N);
+      XTU.Add_Attribute ("Size", "0x19000", N);
+      XTU.Add_Attribute ("AccessRights", "READ_WRITE", N);
+      XTU.Add_Attribute ("PlatformMemoryPool", "0", N);
+
       return N;
    end Make_Default_Memory_Region;
 
@@ -203,6 +213,8 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       Push_Entity (P);
       Push_Entity (U);
 
+      Partition_Identifier := 0;
+
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
       Partitions_Node := Make_XML_Node ("Partitions");
@@ -258,7 +270,9 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
       if Corresponding_Process /= No_Node then
          Append_Node_To_List
-            (Map_Partition (Corresponding_Process, E),
+            (Map_Partition (Corresponding_Process,
+                            E,
+                            Partition_Identifier),
              XTN.Subitems (Partitions_Node));
       end if;
 

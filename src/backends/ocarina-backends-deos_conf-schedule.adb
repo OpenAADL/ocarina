@@ -1,4 +1,5 @@
 --  with Locations;
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -20,7 +21,9 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
 --   use Ocarina.Backends.Deos_Conf.Mapping;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+   package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
    Root_Node : Node_Id := No_Node;
    Schedule_Node : Node_Id := No_Node;
@@ -157,6 +160,9 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
 
       Schedule_Node := Make_XML_Node ("Schedule");
 
+      XTU.Add_Attribute ("MajorFrameLength",
+                         "Automatic", Schedule_Node);
+
       Append_Node_To_List
         (Schedule_Node,
          XTN.Subitems (Current_XML_Node));
@@ -183,16 +189,27 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
+      Time_Window_Node : Node_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
+      Time_Window_Node := Make_XML_Node ("PartitionTimeWindow");
 
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Append_Node_To_List
+        (Time_Window_Node,
+         XTN.Subitems (Schedule_Node));
+
+      XTU.Add_Attribute ("Duration", "6000000", Time_Window_Node);
+      XTU.Add_Attribute ("Offset", "0", Time_Window_Node);
+      XTU.Add_Attribute ("PeriodicProcessingStart", "", Time_Window_Node);
+      XTU.Add_Attribute ("RepeatWindowAtNanosecondInterval",
+                         "PartitionPeriod", Time_Window_Node);
+      XTU.Add_Attribute ("InhibitEarlyCompletion", "false", Time_Window_Node);
+      XTU.Add_Attribute ("PartitionNameRef",
+                         Get_Name_String
+                           (AIN.Name
+                              (Identifier
+                                 (Parent_Subcomponent
+                                    (E)))),
+                         Time_Window_Node);
    end Visit_Virtual_Processor_Instance;
 
 end Ocarina.Backends.Deos_Conf.Schedule;
