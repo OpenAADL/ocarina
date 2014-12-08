@@ -207,41 +207,54 @@ package body Ocarina.Backends.POK_C.Main is
          end if;
 
          if Get_Thread_Deadline (E) /= Null_Time then
-            if Use_ARINC653_API then
+            if POK_Flavor = ARINC653 then
                Member_Value :=
                  Map_Time_To_Millisecond (Get_Thread_Deadline (E));
-            else
+            elsif POK_Flavor = POK then
                Member_Value := Map_Time (Get_Thread_Deadline (E));
+            else
+               Member_Value := No_Node;
             end if;
 
-            N :=
-              Make_Expression
-                (Left_Expr =>
-                   Make_Member_Designator
-                     (RE (RE_Deadline),
-                      Copy_Node (Tattr)),
-                 Operator   => Op_Equal,
-                 Right_Expr => Member_Value);
-            Append_Node_To_List (N, Statements);
+            if Member_Value /= No_Node then
+               N :=
+                 Make_Expression
+                   (Left_Expr =>
+                      Make_Member_Designator
+                        (RE (RE_Deadline),
+                         Copy_Node (Tattr)),
+                    Operator   => Op_Equal,
+                    Right_Expr => Member_Value);
+               Append_Node_To_List (N, Statements);
+            end if;
          else
             Display_Error ("Deadline not specified", Fatal => False);
          end if;
 
          if Get_Thread_Period (E) /= Null_Time then
             if Use_ARINC653_API then
-               Member_Value := Map_Time_To_Millisecond (Get_Thread_Period (E));
+               if POK_Flavor = POK then
+                  Member_Value := Map_Time_To_Millisecond
+                                    (Get_Thread_Period (E));
+               elsif POK_Flavor = DEOS then
+                  Member_Value := Map_Time_To_Nanosecond
+                                    (Get_Thread_Period (E));
+               end if;
             else
                Member_Value := Map_Time (Get_Thread_Period (E));
             end if;
 
-            N :=
-              Make_Expression
-                (Left_Expr =>
-                   Make_Member_Designator (RE (RE_Period), Copy_Node (Tattr)),
-                 Operator   => Op_Equal,
-                 Right_Expr => Member_Value);
+            if Member_Value /= No_Node then
+               N :=
+                 Make_Expression
+                   (Left_Expr =>
+                      Make_Member_Designator
+                        (RE (RE_Period), Copy_Node (Tattr)),
+                    Operator   => Op_Equal,
+                    Right_Expr => Member_Value);
 
-            Append_Node_To_List (N, Statements);
+               Append_Node_To_List (N, Statements);
+            end if;
          else
             Display_Error ("Period not specified", Fatal => True);
          end if;
@@ -270,7 +283,13 @@ package body Ocarina.Backends.POK_C.Main is
          begin
             if TA /= Empty_Time_Array then
                if Use_ARINC653_API then
-                  Capacity := Map_Time_To_Millisecond (TA (1));
+                  if POK_Flavor = ARINC653 then
+                     Capacity := Map_Time_To_Millisecond (TA (1));
+                  elsif POK_Flavor = DEOS then
+                     Capacity := Map_Time_To_Nanosecond (TA (1));
+                  else
+                     Capacity := No_Node;
+                  end if;
                else
                   Capacity := Map_Time (TA (1));
                end if;
@@ -282,6 +301,9 @@ package body Ocarina.Backends.POK_C.Main is
                --  By default, we allocate 1 ms for thread execution.
                Capacity :=
                  CTU.Make_Literal (CV.New_Int_Value (Thread_Id, 1, 10));
+
+               --  DeOS works with Nanoseconds
+
             end if;
             N :=
               Make_Expression

@@ -3357,6 +3357,33 @@ package body Ocarina.Backends.C_Common.Mapping is
       return Make_Call_Profile (S, Parameters);
    end Map_Time;
 
+   ----------------------------
+   -- Map_Time_To_Nanosecond --
+   ----------------------------
+
+   function Map_Time_To_Nanosecond (T : Time_Type) return Node_Id is
+      Time : Unsigned_Long_Long;
+   begin
+      case T.U is
+         when Millisecond =>
+            Time := T.T * 1000_000;
+
+         when Second =>
+            Time := T.T * 1000_000_000;
+
+         when Microsecond =>
+            Time := T.T * 1000;
+
+         when Nanosecond =>
+            Time := T.T;
+
+         when others =>
+            raise Program_Error with "time value not handled at this time";
+      end case;
+
+      return Make_Literal (New_Int_Value (Time, 1, 10));
+   end Map_Time_To_Nanosecond;
+
    -----------------------------
    -- Map_Time_To_Millisecond --
    -----------------------------

@@ -2265,7 +2265,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
              (Defining_Identifier => Make_Defining_Identifier (VN (V_Ret)),
               Used_Type           => RE (RE_Pok_Ret_T));
          Append_Node_To_List (N, Declarations);
-      elsif POK_Flavor = ARINC653 then
+      elsif Use_ARINC653_API then
          N :=
            Make_Variable_Declaration
              (Defining_Identifier => Make_Defining_Identifier (VN (V_Ret)),

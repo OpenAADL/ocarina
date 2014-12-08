@@ -209,6 +209,9 @@ package Ocarina.Backends.C_Common.Mapping is
    function Map_Time_To_Millisecond (T : Time_Type) return Node_Id;
    --  Return a amount of millisecond from a time
 
+   function Map_Time_To_Nanosecond (T : Time_Type) return Node_Id;
+   --  Return a amount of nanosecond from a time
+
    function Map_Simulink_Var (Corresponding_Feature : Node_Id) return Node_Id;
    --  Map simulink variable name
 
