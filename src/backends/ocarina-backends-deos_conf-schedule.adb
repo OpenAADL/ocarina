@@ -199,7 +199,7 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
 
       XTU.Add_Attribute ("Duration", "6000000", Time_Window_Node);
       XTU.Add_Attribute ("Offset", "0", Time_Window_Node);
-      XTU.Add_Attribute ("PeriodicProcessingStart", "", Time_Window_Node);
+      XTU.Add_Attribute ("PeriodicProcessingStart", "true", Time_Window_Node);
       XTU.Add_Attribute ("RepeatWindowAtNanosecondInterval",
                          "PartitionPeriod", Time_Window_Node);
       XTU.Add_Attribute ("InhibitEarlyCompletion", "false", Time_Window_Node);

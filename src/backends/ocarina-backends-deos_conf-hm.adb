@@ -21,6 +21,7 @@ package body Ocarina.Backends.Deos_Conf.Hm is
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+   package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
    Root_Node : Node_Id := No_Node;
    HM_Node : Node_Id := No_Node;
@@ -33,6 +34,14 @@ package body Ocarina.Backends.Deos_Conf.Hm is
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
 
+   procedure Add_System_Error (XML_Node : Node_Id;
+                               Identifier : String;
+                               Description : String);
+
+   procedure Add_Error_Action (XML_Node : Node_Id;
+                               Identifier : String;
+                               Level      : String;
+                               Action     : String);
    -----------
    -- Visit --
    -----------
@@ -138,14 +147,51 @@ package body Ocarina.Backends.Deos_Conf.Hm is
       null;
    end Visit_Bus_Instance;
 
+   ------------------------
+   --  Add_System_Error  --
+   ------------------------
+
+   procedure Add_System_Error (XML_Node : Node_Id;
+                               Identifier : String;
+                               Description : String) is
+      Intermediate : Node_Id;
+   begin
+      Intermediate := Make_XML_Node ("SystemError");
+      XTU.Add_Attribute ("ErrorIdentifier", Identifier, Intermediate);
+      XTU.Add_Attribute ("Description", Description, Intermediate);
+      Append_Node_To_List
+         (Intermediate, XTN.Subitems (XML_Node));
+   end Add_System_Error;
+
+   ------------------------
+   --  Add_Error_Action  --
+   ------------------------
+
+   procedure Add_Error_Action (XML_Node : Node_Id;
+                               Identifier : String;
+                               Level      : String;
+                               Action     : String) is
+      Intermediate : Node_Id;
+   begin
+      Intermediate := Make_XML_Node ("ErrorAction");
+      XTU.Add_Attribute ("ErrorIdentifierRef", Identifier, Intermediate);
+      XTU.Add_Attribute ("ErrorLevel", Level, Intermediate);
+      XTU.Add_Attribute ("ModuleRecoveryAction", Action, Intermediate);
+      Append_Node_To_List
+         (Intermediate, XTN.Subitems (XML_Node));
+   end Add_Error_Action;
+
    ------------------------------
    -- Visit_Processor_Instance --
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
-      U : Node_Id;
-      P : Node_Id;
+      S                    : Node_Id;
+      U                    : Node_Id;
+      P                    : Node_Id;
+      System_Errors        : Node_Id;
+      Multi_Partition_HM   : Node_Id;
+      Partition_HM         : Node_Id;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       P := XTN.Node (Backend_Node (Identifier (E)));
@@ -155,11 +201,69 @@ package body Ocarina.Backends.Deos_Conf.Hm is
 
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
+      --
+      --  For now, just generate the default HM policy.
+      --
+
       HM_Node := Make_XML_Node ("HealthMonitoring");
 
       Append_Node_To_List
         (HM_Node,
          XTN.Subitems (Current_XML_Node));
+
+      System_Errors := Make_XML_Node ("SystemErrors");
+
+      Append_Node_To_List
+        (System_Errors,
+         XTN.Subitems (HM_Node));
+      Add_System_Error (System_Errors, "1", "processorSpecific");
+      Add_System_Error (System_Errors, "2", "floatingPoint");
+      Add_System_Error (System_Errors, "3", "accessViolation");
+      Add_System_Error (System_Errors, "4", "powerTransient");
+      Add_System_Error (System_Errors, "5", "platformSpecific");
+      Add_System_Error (System_Errors, "6", "frameResync");
+      Add_System_Error (System_Errors, "7", "deadlineMissed");
+      Add_System_Error (System_Errors, "8", "applicationError");
+      Add_System_Error (System_Errors, "9", "illegalRequest");
+      Add_System_Error (System_Errors, "10", "stackOverflow");
+
+      --
+      --  The MultiPartitionHM
+      --
+
+      Multi_Partition_HM := Make_XML_Node ("MultiPartitionHM");
+      XTU.Add_Attribute ("TableIdentifier", "1", Multi_Partition_HM);
+      XTU.Add_Attribute ("TableName",
+                         "default MultiPartitionHM",
+                         Multi_Partition_HM);
+      Append_Node_To_List
+        (Multi_Partition_HM,
+         XTN.Subitems (HM_Node));
+      Add_Error_Action (Multi_Partition_HM, "1", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "2", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "3", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "4", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "5", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "6", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "7", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "8", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "9", "MODULE", "IGNORE");
+      Add_Error_Action (Multi_Partition_HM, "10", "MODULE", "IGNORE");
+
+      --
+      --  The PartitionHM
+      --
+
+      Partition_HM := Make_XML_Node ("PartitionHM");
+      Append_Node_To_List
+        (Partition_HM,
+         XTN.Subitems (HM_Node));
+
+      XTU.Add_Attribute ("TableIdentifier", "1", Partition_HM);
+      XTU.Add_Attribute ("TableName", "1", Partition_HM);
+      XTU.Add_Attribute ("MultiPartitionHMTableNameRef",
+                         "default MultiPartitionHM",
+                         Partition_HM);
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));

@@ -146,7 +146,8 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       XTU.Add_Attribute ("hmShutdownHyperstartIndex", "2", Root);
       XTU.Add_Attribute ("minimumWindowDurationInNs", "100000", Root);
       XTU.Add_Attribute ("hmShutdownRegistry", "platreg.bin", Root);
-      XTU.Add_Attribute ("xsi.schemaLocation", "deos653.xsd", Root);
+      XTU.Add_Attribute ("xsi:schemaLocation", "deos653.xsd", Root);
+      XTU.Add_Attribute ("comment", "please insert comment", Root);
       XTU.Add_Attribute ("xmlns:xsi",
                          "http://www.w3.org/2001/XMLSchema-instance", Root);
       XTU.Add_Attribute ("xmlns", "http://ddci.com/ARINC653", Root);

@@ -26,7 +26,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    Root_Node : Node_Id := No_Node;
    Partitions_Node : Node_Id := No_Node;
    Memory_Regions : Node_Id := No_Node;
-   Partition_Identifier : Integer := 0;
+   Partition_Identifier : Integer := 1;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -213,7 +213,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       Push_Entity (P);
       Push_Entity (U);
 
-      Partition_Identifier := 0;
+      Partition_Identifier := 1;
 
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
@@ -240,20 +240,6 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
          end loop;
       end if;
 
-      --
-      --  Then, make the <MemoryRegions> nodes
-      --
-
-      Memory_Regions := Make_XML_Node ("MemoryRegions");
-
-      Append_Node_To_List
-        (Make_Default_Memory_Region,
-         XTN.Subitems (Memory_Regions));
-
-      Append_Node_To_List
-        (Memory_Regions,
-         XTN.Subitems (Partitions_Node));
-
       Pop_Entity;
       Pop_Entity;
    end Visit_Processor_Instance;
@@ -265,15 +251,38 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
       S : Node_Id;
       Corresponding_Process : Node_Id := No_Node;
+      Partition_Node : Node_Id;
    begin
       Corresponding_Process := Find_Associated_Process (E);
 
       if Corresponding_Process /= No_Node then
-         Append_Node_To_List
-            (Map_Partition (Corresponding_Process,
+         --
+         --  First, we create the description of the partition.
+         --
+         Partition_Node := Map_Partition (Corresponding_Process,
                             E,
-                            Partition_Identifier),
+                            Partition_Identifier);
+         Append_Node_To_List
+            (Partition_Node,
              XTN.Subitems (Partitions_Node));
+
+         --
+         --  Then, we associate the partition with memory region
+         --
+
+         Memory_Regions := Make_XML_Node ("MemoryRegions");
+
+         --
+         --  FIXME: for now, we associate with the default
+         --  memory. Has to work to get the AADL memory component.
+         --
+         Append_Node_To_List
+            (Make_Default_Memory_Region,
+            XTN.Subitems (Memory_Regions));
+
+         Append_Node_To_List
+            (Memory_Regions,
+            XTN.Subitems (Partition_Node));
       end if;
 
       if not AINU.Is_Empty (Subcomponents (E)) then
