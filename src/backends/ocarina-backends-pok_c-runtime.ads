@@ -634,9 +634,10 @@ package Ocarina.Backends.POK_C.Runtime is
    --  Runtime types associations
 
       RE_Task_Id                     => RH_Deployment,
+
       RE_Error_Status_Type           => RH_Error,
-      RE_Process_Attribute_Type      => RH_Types,
       RE_Apex_Char                   => RH_Types,
+      RE_Process_Attribute_Type      => RH_Types,
       RE_Process_Id_Type             => RH_Types,
       RE_Sampling_Port_Id_Type       => RH_Types,
       RE_Semaphore_Id_Type           => RH_Semaphore,
@@ -649,6 +650,7 @@ package Ocarina.Backends.POK_C.Runtime is
       RE_Apex_Integer                => RH_Types,
       RE_Apex_Natural                => RH_Types,
       RE_Return_Code_Type            => RH_Types,
+
       RE_Pok_Ret_T                   => RH_Types,
       RE_Size_T                      => RH_Types,
       RE_Uint8_T                     => RH_Types,

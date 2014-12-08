@@ -136,6 +136,7 @@ package body Ocarina.Backends.POK_C.Main is
          N            : Node_Id;
          S            : constant Node_Id := Parent_Subcomponent (E);
          Member_Value : Node_Id;
+         Stack_Size   : Unsigned_Long_Long;
       begin
          --  Initializes thread attributes.
          if Use_ARINC653_API = False then
@@ -259,23 +260,31 @@ package body Ocarina.Backends.POK_C.Main is
             Display_Error ("Period not specified", Fatal => True);
          end if;
 
-         if Get_Thread_Stack_Size (E) /= Null_Size then
-            N :=
-              Make_Expression
-                (Left_Expr =>
-                   Make_Member_Designator
-                     (RE (RE_Stack_Size),
-                      Copy_Node (Tattr)),
-                 Operator   => Op_Equal,
-                 Right_Expr =>
-                   Make_Literal
-                     (New_Int_Value
-                        (To_Bytes (Get_Thread_Stack_Size (E)),
-                         1,
-                         10)));
+         --
+         --  Set up the Stack Size
+         --  On most system, the default is 4096. So, we set
+         --  up 4096 if not explicitly declared. We use
+         --  The AADL property Stack_Size if declared.
+         --
 
-            Append_Node_To_List (N, Statements);
+         Stack_Size := 4096;
+
+         if Get_Thread_Stack_Size (E) /= Null_Size then
+            Stack_Size := To_Bytes (Get_Thread_Stack_Size (E));
          end if;
+         N :=
+           Make_Expression
+             (Left_Expr =>
+                Make_Member_Designator
+                  (RE (RE_Stack_Size),
+                   Copy_Node (Tattr)),
+              Operator   => Op_Equal,
+              Right_Expr =>
+                Make_Literal
+                  (New_Int_Value (Stack_Size,
+                                 1,
+                                 10)));
+         Append_Node_To_List (N, Statements);
 
          declare
             TA       : constant Time_Array := Get_Execution_Time (E);
@@ -301,10 +310,8 @@ package body Ocarina.Backends.POK_C.Main is
                --  By default, we allocate 1 ms for thread execution.
                Capacity :=
                  CTU.Make_Literal (CV.New_Int_Value (Thread_Id, 1, 10));
-
-               --  DeOS works with Nanoseconds
-
             end if;
+
             N :=
               Make_Expression
                 (Left_Expr =>

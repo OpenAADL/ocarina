@@ -128,7 +128,9 @@ package body Ocarina.Backends.POK_C is
          C_Tree.Generator.Generate (C_Root);
       end if;
 
-      Makefile.Visit (Instance_Root);
+      if POK_Flavor /= DEOS then
+         Makefile.Visit (Instance_Root);
+      end if;
 
       --  If the user requested to build the applications then build it
 

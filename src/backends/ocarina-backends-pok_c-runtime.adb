@@ -133,6 +133,8 @@ package body Ocarina.Backends.POK_C.Runtime is
 
          for E in ARF_Id loop
             RE_Header_Table (E) := RH_Apex;
+            RE_Header_Table (RE_Null) := RH_Apex;
+            RE_Header_Table (RE_Normal) := RH_Apex;
          end loop;
 
          for E in ART_Id loop
