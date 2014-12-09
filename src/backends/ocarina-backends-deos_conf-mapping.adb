@@ -1,4 +1,7 @@
+with Ada.Strings; use Ada.Strings;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ocarina.Namet; use Ocarina.Namet;
+
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
@@ -984,8 +987,13 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
                                  (Parent_Subcomponent
                                     (Runtime)))),
                          Partition_Node);
+      --
+      --  Integer'Image adds a space in the beginning. To avoid that,
+      --  see http://rosettacode.org/wiki/
+      --  Strip_whitespace_from_a_string/Top_and_tail#Ada
+      --
       XTU.Add_Attribute ("Identifier",
-                         Integer'Image (Partition_Identifier),
+                        Trim (Integer'Image (Partition_Identifier), Left),
                          Partition_Node);
       XTU.Add_Attribute ("Period", "25000000", Partition_Node);
       XTU.Add_Attribute ("Duration", "6000000", Partition_Node);
