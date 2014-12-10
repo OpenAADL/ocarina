@@ -477,8 +477,6 @@ package body Ocarina.Backends.Properties is
       Property_Name : Name_Id) return Size_Type;
    --  Code factorization between thread and data interrogators
 
-   function Convert_Value_To_Time_Type (V : Node_Id) return Time_Type;
-
    function Get_Compute_Entrypoint
      (E       : Node_Id;
       In_Mode : Name_Id := No_Name) return Name_Id;

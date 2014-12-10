@@ -358,6 +358,8 @@ package Ocarina.Backends.Properties is
 
    Null_Time : constant Time_Type;
 
+   function Convert_Value_To_Time_Type (V : Node_Id) return Time_Type;
+
    type Supported_Thread_Implementation is
      (Thread_With_Call_Sequence,
       Thread_With_Compute_Entrypoint,
