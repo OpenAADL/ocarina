@@ -203,6 +203,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
                   when K_Classifier_Type =>
                      return PT_Classifier;
 
+                  when K_Record_Type =>
+                     return PT_Record;
+
                   when others =>
                      return PT_Other;
                end case;
@@ -283,23 +286,26 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
          if Use_Evaluated_Values then
             if Expanded_Single_Value (Property_Value) /= No_Node then
                Value_Node := Expanded_Single_Value (Property_Value);
+
             elsif Expanded_Multi_Value (Property_Value) /= No_List then
                Value_Node :=
                  First_Node (Expanded_Multi_Value (Property_Value));
 
-            --  If we are dealing with a list of value, only
-            --  consider the first value, assuming the other ones
-            --  are of the same type.
+               --  If we are dealing with a list of values, only
+               --  consider the first value, assuming the other ones
+               --  are of the same type.
             else
                Value_Node := No_Node;
             end if;
 
-            --  XXX todo : fix why Property_Association with Range_Term
-            --  Property_Value doesn't have Expanded_Value.
+            --  XXX todo : fix why Property_Association with
+            --  Range_Term _and_ Record_Term Property_Value doesn't
+            --  have Expanded_Value.
 
             if No (Value_Node) then
                if Single_Value (Property_Value) /= No_Node then
                   Value_Node := Single_Value (Property_Value);
+
                elsif Multi_Value (Property_Value) /= No_List then
                   Value_Node := First_Node (Multi_Value (Property_Value));
                end if;
@@ -353,6 +359,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
 
             when K_Component_Classifier_Term =>
                Value_Type := PT_Classifier;
+
+            when K_Record_Term =>
+               Value_Type := PT_Record;
 
             --  XXX add here unit_term and record_term case
 
@@ -409,10 +418,6 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
       return Get_Value_Type (Value (Property_Value)).SVal;
    end Get_String_Of_Property_Value;
 
-   ----------------------------------
-   -- Get_String_Of_Property_Value --
-   ----------------------------------
-
    function Get_String_Of_Property_Value
      (Property_Value : Node_Id) return String
    is
@@ -447,10 +452,6 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
             raise Program_Error;
       end case;
    end Get_Enumeration_Of_Property_Value;
-
-   ---------------------------------------
-   -- Get_Enumeration_Of_Property_Value --
-   ---------------------------------------
 
    function Get_Enumeration_Of_Property_Value
      (Property_Value : Node_Id) return String
@@ -511,6 +512,18 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
    begin
       return Get_Referenced_Entity (Property_Value);
    end Get_Classifier_Of_Property_Value;
+
+   ----------------------------------
+   -- Get_Record_Of_Property_Value --
+   ----------------------------------
+
+   function Get_Record_Of_Property_Value
+     (Property_Value : Node_Id) return List_Id
+   is
+      pragma Unreferenced (Property_Value);
+   begin
+      return No_List;
+   end Get_Record_Of_Property_Value;
 
    ---------------------------------------
    -- Get_Value_Of_Property_Association --

@@ -466,11 +466,11 @@ package body Ocarina.Instances.Properties is
                      AIN.Property_Association_Value (Property_Association),
                      Entity_Instance));
 
-               --  IMPORTANT: we use entity instance where the property
-               --  has been declared, as the reference node to
-               --  duplicate the property, and not pointed_instance,
-               --  which is the node on which the property
-               --  applies. Indeed, for properties that are
+               --  IMPORTANT: we use entity instance where the
+               --  property has been declared, as the reference node
+               --  to duplicate the property, and not
+               --  pointed_instance, which is the node on which the
+               --  property applies. Indeed, for properties that are
                --  references, the reference path is set from
                --  entity_instance.
             end if;
@@ -561,17 +561,21 @@ package body Ocarina.Instances.Properties is
 
                   List_Node :=
                     ATN.First_Node (Expanded_Multi_Value (Property_Value));
-
-                  while Present (List_Node) loop
-                     Append_Node_To_List
-                       (Instantiate_Property_Value
-                          (Instance_Root,
-                           List_Node,
-                           Instance),
-                        Multi_Value (Duplicated_Property_Value));
-                     List_Node := ATN.Next_Node (List_Node);
-                  end loop;
+               else
+                  List_Node :=
+                    ATN.First_Node (Multi_Value (Property_Value));
                end if;
+
+               while Present (List_Node) loop
+                  Append_Node_To_List
+                    (Instantiate_Property_Value
+                       (Instance_Root,
+                        List_Node,
+                        Instance),
+                     Multi_Value (Duplicated_Property_Value));
+                  List_Node := ATN.Next_Node (List_Node);
+               end loop;
+
             end if;
          end if;
 
@@ -645,18 +649,19 @@ package body Ocarina.Instances.Properties is
    is
       pragma Assert
         (No (Property_Value)
-         or else Kind (Property_Value) = K_Literal
-         or else Kind (Property_Value) = K_Property_Term
-         or else Kind (Property_Value) = K_Enumeration_Term
-         or else Kind (Property_Value) = K_Number_Range_Term
-         or else Kind (Property_Value) = K_Reference_Term
-         or else Kind (Property_Value) = K_Minus_Numeric_Term
-         or else Kind (Property_Value) = K_Signed_AADLNumber
-         or else Kind (Property_Value) = K_Not_Boolean_Term
-         or else Kind (Property_Value) = K_And_Boolean_Term
-         or else Kind (Property_Value) = K_Or_Boolean_Term
-         or else Kind (Property_Value) = K_Parenthesis_Boolean_Term
-         or else Kind (Property_Value) = K_Component_Classifier_Term);
+           or else Kind (Property_Value) = K_Literal
+           or else Kind (Property_Value) = K_Property_Term
+           or else Kind (Property_Value) = K_Enumeration_Term
+           or else Kind (Property_Value) = K_Number_Range_Term
+           or else Kind (Property_Value) = K_Reference_Term
+           or else Kind (Property_Value) = K_Minus_Numeric_Term
+           or else Kind (Property_Value) = K_Signed_AADLNumber
+           or else Kind (Property_Value) = K_Not_Boolean_Term
+           or else Kind (Property_Value) = K_And_Boolean_Term
+           or else Kind (Property_Value) = K_Or_Boolean_Term
+           or else Kind (Property_Value) = K_Parenthesis_Boolean_Term
+           or else Kind (Property_Value) = K_Component_Classifier_Term
+           or else Kind (Property_Value) = K_Record_Term);
       pragma Assert (Present (Instance));
 
       Instantiated_Value : Node_Id := No_Node;
@@ -675,7 +680,6 @@ package body Ocarina.Instances.Properties is
             Set_Value (Instantiated_Value, Value (Property_Value));
 
          when K_Property_Term | K_Enumeration_Term =>
-
             Instantiated_Value :=
               New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
             ATN.Set_Identifier
@@ -799,6 +803,15 @@ package body Ocarina.Instances.Properties is
             Set_Component_Cat
               (Instantiated_Value,
                Component_Cat (Property_Value));
+
+         when K_Record_Term =>
+            --  Simply propagate the list to the instance
+
+            Instantiated_Value :=
+              New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
+            Set_List_Items
+              (Instantiated_Value,
+               ATN.List_Items (Property_Value));
 
          when others =>
             raise Program_Error;

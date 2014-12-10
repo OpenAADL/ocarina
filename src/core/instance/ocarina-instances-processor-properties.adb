@@ -259,7 +259,8 @@ package body Ocarina.Instances.Processor.Properties is
          or else Kind (Property_Value) = K_And_Boolean_Term
          or else Kind (Property_Value) = K_Or_Boolean_Term
          or else Kind (Property_Value) = K_Parenthesis_Boolean_Term
-         or else Kind (Property_Value) = K_Component_Classifier_Term);
+         or else Kind (Property_Value) = K_Component_Classifier_Term
+         or else Kind (Property_Value) = K_Record_Term);
 
       Evaluated_Value : Node_Id;
       Node            : Node_Id;
@@ -602,6 +603,15 @@ package body Ocarina.Instances.Processor.Properties is
                Set_Component_Cat
                  (Evaluated_Value,
                   Component_Cat (Property_Value));
+
+            when K_Record_Term =>
+            --  Simply propagate the list to the instance
+
+               Evaluated_Value :=
+                 New_Node (Kind (Property_Value), ATN.Loc (Property_Value));
+               Set_List_Items
+                 (Evaluated_Value,
+                  ATN.List_Items (Property_Value));
 
             when others =>
                raise Program_Error;

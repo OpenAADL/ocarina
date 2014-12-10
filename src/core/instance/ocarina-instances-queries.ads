@@ -107,6 +107,11 @@ package Ocarina.Instances.Queries is
    --  Cf. the documentation of
    --  Ocarina.Analyzer.Queries.Is_Defined_Range_Property
 
+   function Is_Defined_Record_Property
+     (Entity  : Node_Id;
+      Name    : Name_Id;
+      In_Mode : Name_Id := No_Name) return Boolean;
+
    function Is_Defined_List_Property
      (Entity  : Node_Id;
       Name    : Name_Id;

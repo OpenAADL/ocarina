@@ -53,6 +53,7 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
       PT_Classifier,
       PT_Range,
       PT_List,
+      Pt_Record,
       PT_Other);
 
    type Named_Element is
@@ -188,6 +189,10 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
 
    function Get_Reference_Of_Property_Value
      (Property_Value : Node_Id) return Node_Id;
+
+   function Get_Record_Of_Property_Value
+     (Property_Value : Node_Id) return List_Id;
+   --  For record, values as stored as a list
 
    function Get_Value_Of_Property_Association
      (Property : Node_Id) return Value_Type;

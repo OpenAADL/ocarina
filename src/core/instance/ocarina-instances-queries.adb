@@ -243,10 +243,6 @@ package body Ocarina.Instances.Queries is
       end if;
    end Get_Enumeration_Property;
 
-   ------------------------------
-   -- Get_Enumeration_Property --
-   ------------------------------
-
    function Get_Enumeration_Property
      (Entity  : Node_Id;
       Name    : Name_Id;
@@ -443,12 +439,14 @@ package body Ocarina.Instances.Queries is
          return No_List;
       end if;
 
-      if Present
-          (Expanded_Multi_Value (AIN.Property_Association_Value (Property)))
-        and then No
-          (ATN.First_Node
-             (Expanded_Multi_Value
-                (AIN.Property_Association_Value (Property))))
+      if No (Expanded_Multi_Value (AIN.Property_Association_Value (Property)))
+        or else
+        (Present
+           (Expanded_Multi_Value (AIN.Property_Association_Value (Property)))
+           and then No
+           (ATN.First_Node
+              (Expanded_Multi_Value
+                 (AIN.Property_Association_Value (Property)))))
       then
          return Multi_Value (AIN.Property_Association_Value (Property));
       end if;
@@ -642,25 +640,6 @@ package body Ocarina.Instances.Queries is
           PT_Reference;
    end Is_Defined_Reference_Property;
 
-   ------------------------------------
-   -- Is_Defined_Classifier_Property --
-   ------------------------------------
-
-   function Is_Defined_Classifier_Property
-     (Entity  : Node_Id;
-      Name    : Name_Id;
-      In_Mode : Name_Id := No_Name) return Boolean
-   is
-      Property_Value : constant Node_Id :=
-        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
-
-   begin
-      return Present (Property_Value)
-        and then
-          Get_Type_Of_Property_Value (Property_Value, True) =
-          PT_Classifier;
-   end Is_Defined_Classifier_Property;
-
    -------------------------------
    -- Is_Defined_Range_Property --
    -------------------------------
@@ -681,6 +660,46 @@ package body Ocarina.Instances.Queries is
              True) =
           PT_Range;
    end Is_Defined_Range_Property;
+
+   --------------------------------
+   -- Is_Defined_Record_Property --
+   --------------------------------
+
+   function Is_Defined_Record_Property
+     (Entity  : Node_Id;
+      Name    : Name_Id;
+      In_Mode : Name_Id := No_Name) return Boolean
+   is
+      Property : constant Node_Id
+        := Get_Property_Association (Entity, Name, In_Mode);
+
+   begin
+      return Present (Property)
+        and then
+        Get_Type_Of_Property_Value
+        (ATN.Property_Association_Value
+           (AIN.Corresponding_Declaration (Property)),
+         True) = PT_Record;
+   end Is_Defined_Record_Property;
+
+   ------------------------------------
+   -- Is_Defined_Classifier_Property --
+   ------------------------------------
+
+   function Is_Defined_Classifier_Property
+     (Entity  : Node_Id;
+      Name    : Name_Id;
+      In_Mode : Name_Id := No_Name) return Boolean
+   is
+      Property_Value : constant Node_Id :=
+        Get_Value_Of_Property_Association (Entity, Name, In_Mode);
+
+   begin
+      return Present (Property_Value)
+        and then
+          Get_Type_Of_Property_Value (Property_Value, True) =
+          PT_Classifier;
+   end Is_Defined_Classifier_Property;
 
    ------------------------------
    -- Is_Defined_List_Property --
