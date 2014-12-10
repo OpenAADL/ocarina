@@ -329,8 +329,8 @@ package body Ocarina.Backends.XML_Values is
       end if;
       V        := VT.Table (Value);
       Name_Len := 0;
-      case V.K is
 
+      case V.K is
          when K_Numeric =>
             if V.Sign < 0 then
                Add_Char_To_Name_Buffer ('-');
