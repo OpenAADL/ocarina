@@ -51,7 +51,11 @@ package Ocarina.Files is
 
    procedure Add_File_To_Parse_List
      (File_Name  : Name_Id;
-      Add_Suffix : Boolean := True);
+      Add_Suffix : Boolean);
+   --  Add File_Name to the list of files to be parsed. If Add_Suffix
+   --  is true, and File_Name does not end with ".aadl", add this
+   --  suffix. It Add_Suffix is false, and File_Name does not end with
+   --  ".aadl", simply discard this name.
 
    function Search_File (File_Name : Name_Id) return Name_Id;
 

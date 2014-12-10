@@ -883,7 +883,8 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
 
                while Present (I) loop
                   if Kind (I) = K_Identifier then
-                     Ocarina.Files.Add_File_To_Parse_List (Name (I));
+                     Ocarina.Files.Add_File_To_Parse_List
+                       (Name (I), Add_Suffix => True);
                   elsif Kind (I) = K_Package_Name then
                      declare
                         J : Node_Id;
@@ -899,7 +900,8 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
                                 ("-" & Get_Name_String (Name (J)));
                               J := Next_Node (J);
                            end loop;
-                           Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+                           Ocarina.Files.Add_File_To_Parse_List
+                             (Name_Find, Add_Suffix => True);
                         end if;
                      end;
                   end if;

@@ -774,7 +774,8 @@ procedure Ocarina_Cmd is
                      Add_Str_To_Name_Buffer (File_Name & ".aadl");
                end;
 
-               Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+               Ocarina.Files.Add_File_To_Parse_List
+                 (Name_Find, Add_Suffix => True);
 
                N := Next_Node (N);
             end loop;
@@ -788,7 +789,8 @@ procedure Ocarina_Cmd is
             begin
                Get_Name_String (Current_Scenario_Dirname);
                Add_Str_To_Name_Buffer (File_Name);
-               Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+               Ocarina.Files.Add_File_To_Parse_List
+                 (Name_Find, Add_Suffix => True);
                N := Next_Node (N);
             end;
          end loop;
@@ -963,9 +965,9 @@ procedure Ocarina_Cmd is
 
       if Use_CL then
          Set_Str_To_Name_Buffer ("ocarina_components.aadl");
-         Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+         Ocarina.Files.Add_File_To_Parse_List (Name_Find, Add_Suffix => True);
          Set_Str_To_Name_Buffer ("base_types.aadl");
-         Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+         Ocarina.Files.Add_File_To_Parse_List (Name_Find, Add_Suffix => True);
       end if;
 
       Extract_Referencial_Files (Ref_Files, Ref_Map);
@@ -1021,7 +1023,8 @@ procedure Ocarina_Cmd is
 
          for J in Result'Range loop
             Set_Str_To_Name_Buffer (Result (J).all);
-            Ocarina.Files.Add_File_To_Parse_List (Name_Find);
+            Ocarina.Files.Add_File_To_Parse_List
+              (Name_Find, Add_Suffix => True);
          end loop;
 
          --  Avoid memory leaks
@@ -1161,16 +1164,9 @@ procedure Ocarina_Cmd is
                declare
                   S : constant String := Full_Switch;
                begin
-                  --  FIXME: this is not correct. For instance, an
-                  --  unknown switch may be followed by a parameter.
-                  --  The parameter is considered as a file to parse
-                  --  when it is not. Only sections would fix the
-                  --  issue.
-
-                  --  If there is a new switch, then the previous
-                  --  files must be discarded.
-
                   if S (S'First) = '-' then
+                     --  If there is a new switch, then the previous
+                     --  files are discarded.
                      Sources.Init;
 
                   elsif S (S'First) = '@' then

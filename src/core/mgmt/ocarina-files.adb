@@ -52,7 +52,7 @@ package body Ocarina.Files is
 
    procedure Add_File_To_Parse_List
      (File_Name  : Name_Id;
-      Add_Suffix : Boolean := True)
+      Add_Suffix : Boolean)
    is
 
       File_Name_With_Extension : Name_Id;
@@ -60,13 +60,17 @@ package body Ocarina.Files is
 
    begin
       Get_Name_String (File_Name);
-      if Add_Suffix then
-         if Name_Len < 5
-           or else Name_Buffer (Name_Len - 4 .. Name_Len) /= ".aadl"
-         then
+
+      if Name_Len < 5
+        or else Name_Buffer (Name_Len - 4 .. Name_Len) /= ".aadl"
+      then
+         if Add_Suffix then
             Add_Str_To_Name_Buffer (".aadl");
+         else
+            return;
          end if;
       end if;
+
       File_Name_With_Extension := Name_Find;
 
       for J in 1 .. Sources.Last loop
