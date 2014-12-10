@@ -2302,7 +2302,6 @@ package body Ocarina.Backends.POK_C.Deployment is
                  and then Get_Connection_Pattern (F) = Intra_Process
                then
                   if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
-
                      if POK_Flavor = ARINC653 then
                         Type_Used := RE (RE_Blackboard_Id_Type);
                      else
@@ -2320,7 +2319,7 @@ package body Ocarina.Backends.POK_C.Deployment is
                        CTU.Make_Variable_Declaration
                          (Defining_Identifier =>
                             CTU.Make_Defining_Identifier (Map_Port_Var (F)),
-                          Used_Type => RE (RE_Uint8_T));
+                          Used_Type => Type_Used);
 
                      CTU.Append_Node_To_List
                        (N,
@@ -2341,7 +2340,7 @@ package body Ocarina.Backends.POK_C.Deployment is
                        CTU.Make_Variable_Declaration
                          (Defining_Identifier =>
                             CTU.Make_Defining_Identifier (Map_Port_Var (F)),
-                          Used_Type => RE (RE_Uint8_T));
+                          Used_Type => Type_Used);
 
                      CTU.Append_Node_To_List
                        (N,
