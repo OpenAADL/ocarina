@@ -59,11 +59,11 @@ package body Ocarina.Processor.Properties is
 
    function Expand_Property_Value
      (Property, Reference_Property : Node_Id) return Node_Id;
-   --  expand the property terms of the property, and return all the
+   --  Expand the property terms of the property, and return all the
    --  property values
 
    function Expand_Property_Type (Property_Type : Node_Id) return Node_Id;
-   --  computes the actual property type, by resolving references
+   --  Computes the actual property type, by resolving references
 
    function Resolve_Type (Root, Property : Node_Id) return Boolean;
    --  Set a direct type (i.e. not a reference to a type declaration)
