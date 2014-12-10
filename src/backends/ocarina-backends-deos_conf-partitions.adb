@@ -34,8 +34,6 @@
 with Ada.Text_IO; use Ada.Text_IO;
 with Ocarina.Namet; use Ocarina.Namet;
 
-with Ocarina.ME_AADL.AADL_Instances.Debug;
-use Ocarina.ME_AADL.AADL_Instances.Debug;
 with Ocarina.Backends.Properties.ARINC653;
 use Ocarina.Backends.Properties.ARINC653;
 
