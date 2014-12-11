@@ -45,6 +45,10 @@ package Ocarina.Backends.Properties.ARINC653 is
    type Schedule_Window_Record_Term_Array is array (Natural range <>)
      of Schedule_Window_Record_Term;
 
+   Empty_Schedule_Window_Record_Term_Array :
+     constant Schedule_Window_Record_Term_Array (1 .. 0)
+     := (others => (No_Name, (0, Picosecond), False));
+
    function Get_Module_Schedule_Property
      (E : Node_Id)
      return Schedule_Window_Record_Term_Array;

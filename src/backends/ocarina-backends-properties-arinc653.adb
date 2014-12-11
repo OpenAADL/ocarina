@@ -101,6 +101,10 @@ package body Ocarina.Backends.Properties.ARINC653 is
          Init;
       end if;
 
+      if not Is_Defined_List_Property (E, Module_Schedule_Name) then
+         return Empty_Schedule_Window_Record_Term_Array;
+      end if;
+
       Property_Value := Get_List_Property (E, Module_Schedule_Name);
 
       declare
