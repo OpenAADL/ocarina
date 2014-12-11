@@ -31,12 +31,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Text_IO; use Ada.Text_IO;
-with Ocarina.Namet; use Ocarina.Namet;
-
-with Ocarina.Backends.Properties.ARINC653;
-use Ocarina.Backends.Properties.ARINC653;
-
 --  with Locations;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -253,22 +247,6 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       Push_Entity (U);
 
       Partition_Identifier := 1;
-
-      declare
-         Module_Schedule : constant Schedule_Window_Record_Term_Array
-           := Get_Module_Schedule_Property (E);
-      begin
-         for J in Module_Schedule'Range loop
-            Put_Line ("Module Schedule slot #" & J'Img);
-            Put_Line (" -> "
-                        & Get_Name_String (Module_Schedule (J).Partition));
-            Put_Line (" -> "
-                        & Module_Schedule (J).Duration.T'Img
-                        & " " & Module_Schedule (J).Duration.U'Img);
-            Put_Line (" -> "
-                        & Module_Schedule (J).Periodic_Processing_Start'Img);
-         end loop;
-      end;
 
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
