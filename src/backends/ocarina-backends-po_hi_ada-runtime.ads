@@ -63,6 +63,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RU_PolyORB_HI_Hybrid_Task_Driver_Driver,
       RU_PolyORB_HI_Aperiodic_Task,
       RU_PolyORB_HI_Background_Task,
+      RU_PolyORB_HI_Null_Task,
       RU_PolyORB_HI_Periodic_Task,
       RU_PolyORB_HI_Sporadic_Task,
       RU_PolyORB_HI_Hybrid_Task,
