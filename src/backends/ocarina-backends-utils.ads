@@ -158,7 +158,8 @@ package Ocarina.Backends.Utils is
 
    function Get_Container_Process (E : Node_Id) return Node_Id;
    --  Return the process subcomponent instance that contains the
-   --  subprogram call or thread instance E.
+   --  subprogram call or thread instance E, return No_Node if it
+   --  cannot be determined.
 
    function Get_Container_Thread (E : Node_Id) return Node_Id;
    --  Return the thread subcomponent instance that contains the

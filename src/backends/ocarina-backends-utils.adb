@@ -945,9 +945,8 @@ package body Ocarina.Backends.Utils is
    ---------------------------
 
    function Get_Container_Process (E : Node_Id) return Node_Id is
-   begin
       pragma Assert (Present (E));
-
+   begin
       case Kind (E) is
          when K_Call_Instance =>
             return Get_Container_Process (Parent_Sequence (E));
@@ -964,6 +963,14 @@ package body Ocarina.Backends.Utils is
 
             elsif Is_Process (E) or else Is_Device (E) then
                return Parent_Subcomponent (E);
+
+            elsif Is_Abstract (E) then
+               --  It is allowed for a thread to be part of an
+               --  abstract component (e.g. a device driver). In this
+               --  case, we cannot retrieve the corresponding process
+               --  instance.
+
+               return No_Node;
 
             else
                raise Program_Error
