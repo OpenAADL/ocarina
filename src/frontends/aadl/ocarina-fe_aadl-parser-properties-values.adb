@@ -1114,7 +1114,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    --     => constant_property_value ;
 
    --  multi_valued_property_constant ::=
-   --     defining_property_constant_identifier : constant list of
+   --     defining_property_constant_identifier : constant (list of)+
    --        ( ( aadlinteger
    --            | aadlreal ) [ units_unique_property_type_identifier ]
    --          | aadlstring | aadlboolean
@@ -1159,6 +1159,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       Property_Values : List_Id := No_List; --  only for multi_valued_property
       Code            : Parsing_Code;
       Loc             : Location;
+      Multiplicity    : Int := 0;
 
    begin
       Save_Lexer (Loc);
@@ -1166,7 +1167,7 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
 
       if Token = T_List then
          Code := PC_Multi_Valued_Property_Constant;
-
+         Multiplicity := 1;
          Scan_Token;
          if Token /= T_Of then
             DPE (Code, T_Of);
@@ -1176,6 +1177,28 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
       else
          Restore_Lexer (Loc);
          Code := PC_Single_Valued_Property_Constant;
+      end if;
+
+      if AADL_Version = AADL_V2
+        and then Code = PC_Multi_Valued_Property_Constant
+      then
+         loop
+            Save_Lexer (Loc);
+            Scan_Token;
+
+            if Token = T_List then
+               Scan_Token;
+               if Token /= T_Of then
+                  DPE (Code, T_Of);
+                  Skip_Tokens (T_Semicolon);
+                  return No_Node;
+               end if;
+               Multiplicity := Multiplicity + 1;
+            else
+               Restore_Lexer (Loc);
+               exit;
+            end if;
+         end loop;
       end if;
 
       case AADL_Version is
@@ -1378,7 +1401,8 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
            Single_Value    => Property_Value,
            Multiple_Values => Property_Values,
            Unit_Identifier => Unit_Ident,
-           Constant_Type   => Constant_Type);
+           Constant_Type   => Constant_Type,
+           Multiplicity    => Multiplicity);
       return Property;
    end P_Property_Constant;
 

@@ -355,8 +355,10 @@ package body Ocarina.BE_AADL.Properties is
       Write_Space;
 
       if Single_Value (Constant_Value (Node)) = No_Node then
-         Print_Tokens ((T_List, T_Of));
-         Write_Space;
+         for J in 1 .. Multiplicity (Node) loop
+            Print_Tokens ((T_List, T_Of));
+            Write_Space;
+         end loop;
       end if;
 
       case Kind (Constant_Type (Node)) is
@@ -370,6 +372,8 @@ package body Ocarina.BE_AADL.Properties is
             Print_Token (T_AADLString);
          when K_Unique_Property_Type_Identifier =>
             Print_Entity_Reference (Constant_Type (Node));
+         when K_Classifier_Type =>
+            Print_Classifier_Type (List_Items (Constant_Type (Node)));
          when others =>
             Node_Not_Handled (Constant_Type (Node));
       end case;

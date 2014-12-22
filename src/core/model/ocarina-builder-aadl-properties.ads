@@ -51,7 +51,8 @@ package Ocarina.Builder.AADL.Properties is
       Constant_Type   : Node_Id;
       Unit_Identifier : Node_Id;
       Single_Value    : Node_Id;
-      Multiple_Values : List_Id) return Node_Id;
+      Multiple_Values : List_Id;
+      Multiplicity    : Int) return Node_Id;
    --  Either Single_Value /= No_Node and Mulitple_Values = No_Node,
    --  then we have a single valued constant; or Single_Value =
    --  No_Node, then we have a muli valued constant

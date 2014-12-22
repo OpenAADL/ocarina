@@ -595,6 +595,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Data_Volume"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 148
   148 integer type aadl_project.aadl:91:29
    Type_Range Node_Id 0
@@ -633,6 +634,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Aadlinteger"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 157
   157 integer type aadl_project.aadl:93:29
    Type_Range Node_Id 0
@@ -657,6 +659,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Target_Integer"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 163
   163 integer type aadl_project.aadl:95:32
    Type_Range Node_Id 0
@@ -681,6 +684,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Base_Address"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 169
   169 integer type aadl_project.aadl:97:30
    Type_Range Node_Id 0
@@ -705,6 +709,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Memory_Size"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 176
   176 unique property type identifier aadl_project.aadl:99:20
    Identifier Node_Id 175
@@ -740,6 +745,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Queue_Size"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 183
   183 integer type aadl_project.aadl:101:28
    Type_Range Node_Id 0
@@ -764,6 +770,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Thread_Limit"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 189
   189 integer type aadl_project.aadl:103:30
    Type_Range Node_Id 0
@@ -788,6 +795,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Time"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 196
   196 unique property type identifier aadl_project.aadl:105:13
    Identifier Node_Id 195
@@ -823,6 +831,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Urgency"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 203
   203 integer type aadl_project.aadl:107:25
    Type_Range Node_Id 0
@@ -847,6 +856,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Byte_Count"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 209
   209 integer type aadl_project.aadl:109:28
    Type_Range Node_Id 0
@@ -871,6 +881,7 @@ Declarations List_Id 7
    Display_Name Name_Id "Max_Word_Space"
    Scope_Entity Node_Id 6
    Backend_Node Node_Id 0
+  Multiplicity Int 0
   Constant_Type Node_Id 215
   215 integer type aadl_project.aadl:111:28
    Type_Range Node_Id 0

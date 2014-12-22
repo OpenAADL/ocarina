@@ -186,7 +186,8 @@ package body Ocarina.Builder.AADL.Properties is
       Constant_Type   : Node_Id;
       Unit_Identifier : Node_Id;
       Single_Value    : Node_Id;
-      Multiple_Values : List_Id) return Node_Id
+      Multiple_Values : List_Id;
+      Multiplicity    : Int) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -205,20 +206,20 @@ package body Ocarina.Builder.AADL.Properties is
          or else Kind (Constant_Type) = K_Real_Type
          or else Kind (Constant_Type) = K_String_Type
          or else Kind (Constant_Type) = K_Boolean_Type
-         or else Kind (Constant_Type) = K_Unique_Property_Type_Identifier);
+         or else Kind (Constant_Type) = K_Unique_Property_Type_Identifier
+         or else Kind (Constant_Type) = K_Classifier_Type);
 
       Node : constant Node_Id :=
         New_Node (K_Constant_Property_Declaration, Loc);
       Value_Node : constant Node_Id := New_Node (K_Property_Value, Loc);
       Success    : Boolean          := True;
    begin
-      Set_Single_Value (Value_Node, Single_Value);
-      Set_Multi_Value (Value_Node, Multiple_Values);
       Set_Constant_Value (Node, Value_Node);
       Set_Identifier (Node, Name);
       Set_Corresponding_Entity (Name, Node);
       Set_Constant_Type (Node, Constant_Type);
       Set_Unique_Unit_Identifier (Node, Unit_Identifier);
+      Set_Multiplicity (Node, Multiplicity);
 
       Set_Value_Container (Value_Node, Property_Set);
       Set_Single_Value (Value_Node, Single_Value);

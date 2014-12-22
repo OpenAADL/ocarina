@@ -1136,6 +1136,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
   interface Multi_Valued_Property : Node_Id {
     Node_Id  Property_Type_Designator;
     List_Id  Property_Expressions;
+    long     Multiplicity; // number of "list of" in property type
   };
 
   // FIXME: Single_Valued_Property and multi_valued_property should inherit
@@ -1192,7 +1193,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
 
   // AADL_V2
   // multi_valued_property_constant ::=
-  //     defining_property_constant_identifier : constant list of
+  //     defining_property_constant_identifier : constant (list of)+
   //         property_type_designator =>
   //                        ( [ constant_property_expression
   //                               { , constant_property_expression }* ] ) ;
@@ -1201,6 +1202,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
     Node_Id  Constant_Type;
     Node_Id  Unique_Unit_Identifier;
     Node_Id  Constant_Value;	// is of kind property_value
+    long     Multiplicity; // number of "list of" in property type
   };
 
   interface Property_Value : Node_Id {
