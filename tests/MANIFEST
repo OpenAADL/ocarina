@@ -285,5 +285,6 @@ tests/github/issue_6/test_spg.aadl
 tests/github/issue_7/test.aadl
 tests/github/issue_10/test.aadl
 tests/github/issue_10/test2.aadl
+tests/github/issue_22/p.aadl
 tests/root_system/test.aadl
 
