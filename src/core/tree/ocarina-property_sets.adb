@@ -151,7 +151,7 @@ package body Ocarina.Property_Sets is
       Tag : constant String := "%property_set%";
 
    begin
-      if S (S'First + 1) = '_' then
+      if S'Length > 2 and then S (S'First + 1) = '_' then
          Set_Str_To_Name_Buffer (S (S'First + 2 .. S'Last));
       else
          Set_Str_To_Name_Buffer (S);
