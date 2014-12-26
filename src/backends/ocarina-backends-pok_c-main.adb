@@ -150,6 +150,23 @@ package body Ocarina.Backends.POK_C.Main is
             POK_Add_Return_Assertion (Statements);
          end if;
 
+         --  Make strcpy(tattr.NAME, "prname")
+
+         if POK_Flavor = DEOS then
+            N :=
+              Make_Call_Profile
+                (Make_Defining_Identifier
+                  (Get_String_Name ("strcpy")),
+                 Make_List_Id (
+                  Make_Member_Designator
+                     (RE (RE_Name),
+                      Copy_Node (Tattr)),
+                  Make_Literal
+                    (CV.New_Pointed_Char_Value
+                     (Name (Identifier (S))))));
+            Append_Node_To_List (N, Statements);
+         end if;
+
          --  Make tattr.entry = entrypoint
 
          if Use_ARINC653_API then

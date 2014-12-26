@@ -2302,7 +2302,7 @@ package body Ocarina.Backends.POK_C.Deployment is
                  and then Get_Connection_Pattern (F) = Intra_Process
                then
                   if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Type_Used := RE (RE_Blackboard_Id_Type);
                      else
                         Type_Used := RE (RE_Uint8_T);
@@ -2325,7 +2325,7 @@ package body Ocarina.Backends.POK_C.Deployment is
                        (N,
                         CTN.Declarations (CTU.Current_File));
                   elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Type_Used := RE (RE_Buffer_Id_Type);
                      else
                         Type_Used := RE (RE_Uint8_T);
@@ -2346,7 +2346,7 @@ package body Ocarina.Backends.POK_C.Deployment is
                        (N,
                         CTN.Declarations (CTU.Current_File));
                   elsif AIN.Is_Event (F) and then not AIN.Is_Data (F) then
-                     if POK_Flavor = ARINC653 then
+                     if Use_ARINC653_API then
                         Type_Used                    := RE (RE_Event_Id_Type);
                         Partition_ARINC653_Nb_Events :=
                           Partition_ARINC653_Nb_Events + 1;
