@@ -518,12 +518,6 @@ package Ocarina.Backends.Properties is
    function Get_Port_Number (P : Node_Id) return Value_Id;
    --  Return the port number of the process or device P
 
-   function Get_Process_Id (P : Node_Id) return Value_Id;
-   --  Return the process id of the process P
-
-   function Get_Channel_Address (P : Node_Id) return Value_Id;
-   --  Return the address of the SpaceWire channel of the process P
-
    function Get_Byte_Count (S : Node_Id) return Unsigned_Long_Long;
    --  Get the Byte_Count property of a memory component. Return 0
    --  if the component is not set.

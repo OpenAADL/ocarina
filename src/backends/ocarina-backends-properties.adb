@@ -49,6 +49,9 @@ with Ocarina.Instances.Queries;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
 
+with Ocarina.Backends.Properties.Utils;
+use Ocarina.Backends.Properties.Utils;
+
 package body Ocarina.Backends.Properties is
 
    use Locations;
@@ -150,11 +153,9 @@ package body Ocarina.Backends.Properties is
    ----------------------------------
 
    Port_Number             : Name_Id;
-   Process_Id              : Name_Id;
    Processor_Binding       : Name_Id;
    Function_Binding        : Name_Id;
    Memory_Binding          : Name_Id;
-   Process_Channel_Address : Name_Id;
 
    Scheduling_Protocol                                   : Name_Id;
    PARAMETRIC_PROTOCOL_Name                              : Name_Id;
@@ -672,14 +673,9 @@ package body Ocarina.Backends.Properties is
    ------------------
 
    function Get_Code_Set (D : Node_Id) return Unsigned_Long_Long is
-   begin
       pragma Assert (AINU.Is_Data (D));
-
-      if Is_Defined_Integer_Property (D, Code_Set) then
-         return Get_Integer_Property (D, Code_Set);
-      else
-         return 0;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Code_Set);
    end Get_Code_Set;
 
    ---------------------
@@ -687,14 +683,9 @@ package body Ocarina.Backends.Properties is
    ---------------------
 
    function Get_Data_Digits (D : Node_Id) return Unsigned_Long_Long is
-   begin
       pragma Assert (Get_Data_Representation (D) = Data_Fixed);
-
-      if Is_Defined_Integer_Property (D, Data_Digits) then
-         return Get_Integer_Property (D, Data_Digits);
-      else
-         return 0;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Data_Digits);
    end Get_Data_Digits;
 
    --------------------
@@ -702,14 +693,9 @@ package body Ocarina.Backends.Properties is
    --------------------
 
    function Get_Data_Scale (D : Node_Id) return Unsigned_Long_Long is
-   begin
       pragma Assert (Get_Data_Representation (D) = Data_Fixed);
-
-      if Is_Defined_Integer_Property (D, Data_Scale) then
-         return Get_Integer_Property (D, Data_Scale);
-      else
-         return 0;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Data_Scale);
    end Get_Data_Scale;
 
    -----------------------------
@@ -2501,39 +2487,6 @@ package body Ocarina.Backends.Properties is
       return New_Integer_Value (Get_Integer_Property (P, Port_Number));
    end Get_Port_Number;
 
-   --------------------
-   -- Get_Process_Id --
-   --------------------
-
-   function Get_Process_Id (P : Node_Id) return Value_Id is
-      use Ocarina.AADL_Values;
-   begin
-      pragma Assert (Is_Process_Or_Device (P));
-
-      if not Is_Defined_Integer_Property (P, Process_Id) then
-         return No_Value;
-      end if;
-
-      return New_Integer_Value (Get_Integer_Property (P, Process_Id));
-   end Get_Process_Id;
-
-   -------------------------
-   -- Get_Channel_Address --
-   -------------------------
-
-   function Get_Channel_Address (P : Node_Id) return Value_Id is
-      use Ocarina.AADL_Values;
-   begin
-      pragma Assert (Is_Process_Or_Device (P));
-
-      if not Is_Defined_Integer_Property (P, Process_Channel_Address) then
-         return No_Value;
-      end if;
-
-      return New_Integer_Value
-          (Get_Integer_Property (P, Process_Channel_Address));
-   end Get_Channel_Address;
-
    -------------------------
    -- Get_Bound_Processor --
    -------------------------
@@ -2881,11 +2834,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Port_Urgency (P : Node_Id) return Unsigned_Long_Long is
    begin
-      if Is_Defined_Integer_Property (P, Port_Urgency) then
-         return Get_Integer_Property (P, Port_Urgency);
-      else
-         return 0;
-      end if;
+      return Check_And_Get_Property (P, Port_Urgency);
    end Get_Port_Urgency;
 
    ---------------------------------
@@ -2959,14 +2908,9 @@ package body Ocarina.Backends.Properties is
    --------------------
 
    function Get_Byte_Count (S : Node_Id) return Unsigned_Long_Long is
-   begin
       pragma Assert (Is_Memory (S));
-
-      if Is_Defined_Integer_Property (S, Byte_Count) then
-         return Get_Integer_Property (S, Byte_Count);
-      else
-         return 0;
-      end if;
+   begin
+      return Check_And_Get_Property (S, Byte_Count);
    end Get_Byte_Count;
 
    -------------------
@@ -3154,15 +3098,12 @@ package body Ocarina.Backends.Properties is
       Overflow_Handling_Protocol_Error_Name := Get_String_Name ("error");
 
       Port_Number       := Get_String_Name ("deployment::port_number");
-      Process_Id        := Get_String_Name ("deployment::process_id");
       Processor_Binding := Get_String_Name ("actual_processor_binding");
       Function_Binding  :=
         Get_String_Name ("aram_properties::actual_function_binding");
       Memory_Binding          := Get_String_Name ("actual_memory_binding");
       Byte_Count              := Get_String_Name ("byte_count");
       Word_Size               := Get_String_Name ("word_size");
-      Process_Channel_Address :=
-        Get_String_Name ("deployment::channel_address");
 
       Location                  := Get_String_Name ("deployment::location");
       Execution_Platform := Get_String_Name ("deployment::execution_platform");
@@ -3865,11 +3806,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Security_Level (E : Node_Id) return Unsigned_Long_Long is
    begin
-      if Is_Defined_Integer_Property (E, POK_Security_Level) then
-         return Get_Integer_Property (E, POK_Security_Level);
-      else
-         return 0;
-      end if;
+      return Check_And_Get_Property (E, POK_Security_Level);
    end Get_Security_Level;
 
    --------------------------------------------
