@@ -362,6 +362,7 @@ package Ocarina.Backends.POK_C.Runtime is
       RE_Pok_Blackboards_Names,          --  pok_blackboards_names
 
       RE_Entry_Point,
+      RE_Name,
       RE_Entry,
       RE_Deadline,
       RE_Time_Capacity,
@@ -833,6 +834,7 @@ package Ocarina.Backends.POK_C.Runtime is
 
    --  Runtime member elements
       RE_Entry_Point       => RH_Null,
+      RE_Name              => RH_Null,
       RE_Entry             => RH_Null,
       RE_Stack_Size        => RH_Null,
       RE_Deadline          => RH_Null,

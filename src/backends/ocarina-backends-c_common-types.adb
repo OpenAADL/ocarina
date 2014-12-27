@@ -423,7 +423,9 @@ package body Ocarina.Backends.C_Common.Types is
                Type_Uint64 := PHR.RE (RE_Uint64_T);
                Type_Int64  := PHR.RE (RE_Int64_T);
             elsif Get_Current_Backend_Kind = PolyORB_Kernel_C then
-               Add_Include (PKR.RH (RH_Types));
+               if Use_ARINC653_API = False then
+                  Add_Include (PKR.RH (RH_Types));
+               end if;
                Type_Uint8  := PKR.RE (RE_Uint8_T);
                Type_Int8   := PKR.RE (RE_Int8_T);
                Type_Uint16 := PKR.RE (RE_Uint16_T);

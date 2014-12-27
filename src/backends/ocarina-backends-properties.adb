@@ -119,6 +119,7 @@ package body Ocarina.Backends.Properties is
    Real_Range                : Name_Id;
    Data_Required_Access      : Name_Id;
    Data_Provided_Access      : Name_Id;
+   Source_Data_Size          : Name_Id;
    Data_Size                 : Name_Id;
    Code_Size                 : Name_Id;
    Data_Concurrency_Protocol : Name_Id;
@@ -1129,10 +1130,17 @@ package body Ocarina.Backends.Properties is
    -------------------
 
    function Get_Data_Size (D : Node_Id) return Size_Type is
+      Ret : Size_Type;
    begin
       pragma Assert (AINU.Is_Data (D) or else AINU.Is_Process (D));
 
-      return (Get_Size_Property_Value (D, Data_Size));
+      Ret := Get_Size_Property_Value (D, Data_Size);
+
+      if Ret = Null_Size then
+         Ret := Get_Size_Property_Value (D, Source_Data_Size);
+      end if;
+
+      return Ret;
    end Get_Data_Size;
 
    -------------------
@@ -3058,7 +3066,8 @@ package body Ocarina.Backends.Properties is
       Real_Range           := Get_String_Name ("data_model::real_range");
       Data_Required_Access := Get_String_Name ("required_access");
       Data_Provided_Access := Get_String_Name ("provided_access");
-      Data_Size            := Get_String_Name ("source_data_size");
+      Data_Size            := Get_String_Name ("data_size");
+      Source_Data_Size     := Get_String_Name ("source_data_size");
       Code_Size            := Get_String_Name ("source_code_size");
       Data_Representation  :=
         Get_String_Name ("data_model::data_representation");

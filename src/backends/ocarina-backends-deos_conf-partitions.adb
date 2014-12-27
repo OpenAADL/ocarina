@@ -31,12 +31,13 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  with Locations;
+with Ocarina.Backends.Messages;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -44,27 +45,38 @@ with Ocarina.Backends.Deos_Conf.Mapping;
 
 package body Ocarina.Backends.Deos_Conf.Partitions is
 
---   use Locations;
    use Ocarina.ME_AADL;
+
+   use Ocarina.Backends.Utils;
+   use Ocarina.Backends.Messages;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Deos_Conf.Mapping;
 
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
-   Root_Node : Node_Id := No_Node;
-   Partitions_Node : Node_Id := No_Node;
-   Memory_Regions : Node_Id := No_Node;
-   Partition_Identifier : Integer := 1;
+   Root_Node                : Node_Id := No_Node;
+   Partitions_Node          : Node_Id := No_Node;
+   Memory_Regions           : Node_Id := No_Node;
+   Partition_Identifier     : Integer := 1;
+   Process_Nb_Threads       : Unsigned_Long_Long := 0;
+   Process_Nb_Buffers       : Unsigned_Long_Long := 0;
+   Process_Nb_Events        : Unsigned_Long_Long := 0;
+   Process_Nb_Lock_Objects  : Unsigned_Long_Long := 0;
+   Process_Nb_Blackboards   : Unsigned_Long_Long := 0;
+   Process_Blackboards_Size : Unsigned_Long_Long := 0;
+   Process_Buffers_Size     : Unsigned_Long_Long := 0;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
    procedure Visit_Process_Instance (E : Node_Id);
+   procedure Visit_Thread_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
@@ -168,6 +180,9 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
          when CC_Process =>
             Visit_Process_Instance (E);
 
+         when CC_Thread =>
+            Visit_Thread_Instance (E);
+
          when CC_Processor =>
             Visit_Processor_Instance (E);
 
@@ -181,6 +196,48 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
             null;
       end case;
    end Visit_Component_Instance;
+
+      ---------------------------
+      -- Visit_Thread_Instance --
+      ---------------------------
+
+      procedure Visit_Thread_Instance (E : Node_Id) is
+         F : Node_Id;
+      begin
+         Process_Nb_Threads := Process_Nb_Threads + 1;
+
+         if not AINU.Is_Empty (Features (E)) then
+            F := First_Node (Features (E));
+
+            while Present (F) loop
+               if Kind (F) = K_Port_Spec_Instance then
+                  if Get_Connection_Pattern (F) = Intra_Process
+                    and then Is_In (F)
+                  then
+                     if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
+                        Process_Nb_Blackboards := Process_Nb_Blackboards + 1;
+                        Process_Blackboards_Size :=
+                           Process_Blackboards_Size +
+                              To_Bytes
+                                 (Get_Data_Size
+                                    (Corresponding_Instance (F)));
+                     elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
+                        Process_Nb_Buffers := Process_Nb_Buffers + 1;
+                     elsif AIN.Is_Event (F) and then not AIN.Is_Data (F) then
+                        Process_Nb_Events := Process_Nb_Events + 1;
+                     else
+                        Display_Error ("Communication Pattern not handled",
+                                       Fatal => True);
+                     end if;
+
+                     Process_Nb_Lock_Objects := Process_Nb_Lock_Objects + 1;
+                  end if;
+               end if;
+               F := Next_Node (F);
+            end loop;
+         end if;
+
+      end Visit_Thread_Instance;
 
    ----------------------------
    -- Visit_Process_Instance --
@@ -289,12 +346,30 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       Corresponding_Process := Find_Associated_Process (E);
 
       if Corresponding_Process /= No_Node then
+
+         Process_Nb_Threads         := 0;
+         Process_Nb_Buffers         := 0;
+         Process_Nb_Events          := 0;
+         Process_Nb_Lock_Objects    := 0;
+         Process_Nb_Blackboards     := 0;
+         Process_Blackboards_Size   := 0;
+         Process_Buffers_Size       := 0;
+
+         Visit (Corresponding_Process);
+
          --
          --  First, we create the description of the partition.
          --
          Partition_Node := Map_Partition (Corresponding_Process,
                             E,
-                            Partition_Identifier);
+                            Partition_Identifier,
+                            Process_Nb_Threads,
+                            Process_Nb_Buffers,
+                            Process_Nb_Events,
+                            Process_Nb_Lock_Objects,
+                            Process_Nb_Blackboards,
+                            Process_Blackboards_Size,
+                            Process_Buffers_Size);
          Append_Node_To_List
             (Partition_Node,
              XTN.Subitems (Partitions_Node));
