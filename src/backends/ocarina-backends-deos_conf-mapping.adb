@@ -973,8 +973,19 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
 
    function Map_Partition (Process : Node_Id;
                            Runtime : Node_Id;
-                           Partition_Identifier : Integer)
+                           Partition_Identifier : Integer;
+                           Nb_Threads : Unsigned_Long_Long;
+                           Nb_Buffers : Unsigned_Long_Long;
+                           Nb_Events : Unsigned_Long_Long;
+                           Nb_Lock_Objects : Unsigned_Long_Long;
+                           Nb_Blackboards : Unsigned_Long_Long;
+                           Blackboards_Size : Unsigned_Long_Long;
+                           Buffers_Size : Unsigned_Long_Long)
       return Node_Id is
+      pragma Unreferenced (Nb_Buffers);
+      pragma Unreferenced (Nb_Events);
+      pragma Unreferenced (Nb_Lock_Objects);
+      pragma Unreferenced (Buffers_Size);
       pragma Unreferenced (Process);
       Partition_Node : Node_Id;
    begin
@@ -1012,10 +1023,19 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       XTU.Add_Attribute ("ProcessStackSpaceInPages", "6", Partition_Node);
       XTU.Add_Attribute ("MinimumProcessStackSizeInBytes",
                          "512", Partition_Node);
-      XTU.Add_Attribute ("ProcessQuota", "4", Partition_Node);
-      XTU.Add_Attribute ("BlackboardQuota", "1", Partition_Node);
+      XTU.Add_Attribute ("ProcessQuota",
+                        Trim (Unsigned_Long_Long'Image
+                           (Nb_Threads + 2), Left),
+                        Partition_Node);
+      XTU.Add_Attribute ("BlackboardQuota",
+                        Trim (Unsigned_Long_Long'Image
+                           (Nb_Blackboards), Left),
+                        Partition_Node);
+
       XTU.Add_Attribute ("BlackboardMessageSpaceInBytes",
-                         "256", Partition_Node);
+                        Trim (Unsigned_Long_Long'Image
+                           (Blackboards_Size), Left),
+                        Partition_Node);
       XTU.Add_Attribute ("BufferQuota", "0", Partition_Node);
       XTU.Add_Attribute ("BufferMessageSpaceInBytes", "0", Partition_Node);
       XTU.Add_Attribute ("SemaphoreQuota", "0", Partition_Node);
