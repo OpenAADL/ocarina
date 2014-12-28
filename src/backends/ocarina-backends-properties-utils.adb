@@ -53,4 +53,43 @@ package body Ocarina.Backends.Properties.Utils is
       end if;
    end Check_And_Get_Property;
 
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
+      Default_Value : Name_Id := No_Name)
+     return Name_Id is
+   begin
+      if Is_Defined_String_Property (E, Property_Name) then
+         return Get_String_Property (E, Property_Name);
+      else
+         return Default_Value;
+      end if;
+   end Check_And_Get_Property;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
+      Default_Value : Node_Id := No_Node)
+     return Node_Id is
+   begin
+      if Is_Defined_Property (E, Property_Name) then
+         return Get_Classifier_Property (E, Property_Name);
+      else
+         return Default_Value;
+      end if;
+   end Check_And_Get_Property;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
+      Default_Value : Boolean := False)
+     return Boolean is
+   begin
+      if Is_Defined_Boolean_Property (E, Property_Name) then
+         return Get_Boolean_Property (E, Property_Name);
+      else
+         return Default_Value;
+      end if;
+   end Check_And_Get_Property;
+
 end Ocarina.Backends.Properties.Utils;

@@ -587,7 +587,6 @@ package body Ocarina.Backends.Properties is
          Spg_Classifier :=
            Get_Classifier_Property (E, Compute_Entrypoint_Name, In_Mode);
          return Get_Source_Name (Spg_Classifier);
-
       end if;
 
       return No_Name;
@@ -1047,14 +1046,9 @@ package body Ocarina.Backends.Properties is
    -------------------------
 
    function Get_Mesurement_Unit (D : Node_Id) return Name_Id is
-   begin
       pragma Assert (AINU.Is_Data (D));
-
-      if Is_Defined_String_Property (D, Measurement_Unit) then
-         return Get_String_Property (D, Measurement_Unit);
-      else
-         return No_Name;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Measurement_Unit);
    end Get_Mesurement_Unit;
 
    -------------------------------
@@ -1661,11 +1655,7 @@ package body Ocarina.Backends.Properties is
 
    function Is_Fusioned (E : Node_Id) return Boolean is
    begin
-      if Is_Defined_Boolean_Property (E, Fusion_Occurred) then
-         return Get_Boolean_Property (E, Fusion_Occurred);
-      else
-         return False;
-      end if;
+      return Check_And_Get_Property (E, Fusion_Occurred);
    end Is_Fusioned;
 
    --------------------------
@@ -1674,11 +1664,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Thread_Scheduler (E : Node_Id) return Name_Id is
    begin
-      if Is_Defined_String_Property (E, Scheduler_Name) then
-         return Get_String_Property (E, Scheduler_Name);
-      else
-         return No_Name;
-      end if;
+      return Check_And_Get_Property (E, Scheduler_Name);
    end Get_Thread_Scheduler;
 
    -------------------------------
@@ -1687,11 +1673,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Thread_Reference_Name (E : Node_Id) return Name_Id is
    begin
-      if Is_Defined_String_Property (E, Original_Name) then
-         return Get_String_Property (E, Original_Name);
-      else
-         return No_Name;
-      end if;
+      return Check_And_Get_Property (E, Original_Name);
    end Get_Thread_Reference_Name;
 
    -------------------------
@@ -1700,11 +1682,7 @@ package body Ocarina.Backends.Properties is
 
    function Is_Priority_Shifter (E : Node_Id) return Boolean is
    begin
-      if Is_Defined_Boolean_Property (E, Priority_Shifter) then
-         return Get_Boolean_Property (E, Priority_Shifter);
-      else
-         return False;
-      end if;
+      return Check_And_Get_Property (E, Priority_Shifter);
    end Is_Priority_Shifter;
 
    ---------------------
@@ -1713,11 +1691,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Source_Name (E : Node_Id) return Name_Id is
    begin
-      if Is_Defined_String_Property (E, Source_Name) then
-         return Get_String_Property (E, Source_Name);
-      else
-         return No_Name;
-      end if;
+      return Check_And_Get_Property (E, Source_Name);
    end Get_Source_Name;
 
    -----------------------------
@@ -1726,11 +1700,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Transfo_Source_Name (E : Node_Id) return Name_Id is
    begin
-      if Is_Defined_String_Property (E, T_Source_Name) then
-         return Get_String_Property (E, T_Source_Name);
-      else
-         return No_Name;
-      end if;
+      return Check_And_Get_Property (E, T_Source_Name);
    end Get_Transfo_Source_Name;
 
    --------------------------
@@ -1739,11 +1709,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Type_Source_Name (E : Node_Id) return Name_Id is
    begin
-      if Is_Defined_String_Property (E, Type_Source_Name) then
-         return Get_String_Property (E, Type_Source_Name);
-      else
-         return No_Name;
-      end if;
+      return Check_And_Get_Property (E, Type_Source_Name);
    end Get_Type_Source_Name;
 
    ---------------------
@@ -1790,10 +1756,6 @@ package body Ocarina.Backends.Properties is
 
       if Is_Defined_Enumeration_Property (T, Thread_Dispatch_Protocol) then
          P_Name := Get_Enumeration_Property (T, Thread_Dispatch_Protocol);
-
-         --  Although Name_Id is a scalar type, we cannot use a switch
-         --  case since the <..>_Name global variables are not (and
-         --  cannot be) static.
 
          if P_Name = Thread_Periodic_Name then
             if not Is_Defined_Integer_Property (T, Thread_Period) then
@@ -2374,11 +2336,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Thread_Initialize_Entrypoint (T : Node_Id) return Node_Id is
    begin
-      if Is_Defined_Property (T, Initialize_Entrypoint) then
-         return Get_Classifier_Property (T, Initialize_Entrypoint);
-      else
-         return No_Node;
-      end if;
+      return Check_And_Get_Property (T, Initialize_Entrypoint);
    end Get_Thread_Initialize_Entrypoint;
 
    ------------------------------------
@@ -2406,11 +2364,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Thread_Activate_Entrypoint (T : Node_Id) return Node_Id is
    begin
-      if Is_Defined_Property (T, Activate_Entrypoint) then
-         return Get_Classifier_Property (T, Activate_Entrypoint);
-      else
-         return No_Node;
-      end if;
+      return Check_And_Get_Property (T, Activate_Entrypoint);
    end Get_Thread_Activate_Entrypoint;
 
    -----------------------------------
@@ -2434,11 +2388,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Thread_Recover_Entrypoint (T : Node_Id) return Node_Id is
    begin
-      if Is_Defined_Property (T, Recover_Entrypoint) then
-         return Get_Classifier_Property (T, Recover_Entrypoint);
-      else
-         return No_Node;
-      end if;
+      return Check_And_Get_Property (T, Recover_Entrypoint);
    end Get_Thread_Recover_Entrypoint;
 
    ------------------
@@ -3741,11 +3691,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Source_Location (E : Node_Id) return Name_Id is
    begin
-      if Is_Defined_String_Property (E, POK_Source_Location) then
-         return Get_String_Property (E, POK_Source_Location);
-      else
-         return No_Name;
-      end if;
+      return Check_And_Get_Property (E, POK_Source_Location);
    end Get_Source_Location;
 
    ----------------------------

@@ -38,6 +38,25 @@ package Ocarina.Backends.Properties.Utils is
       Property_Name : Name_Id;
       Default_Value : Unsigned_Long_Long := 0)
      return Unsigned_Long_Long;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
+      Default_Value : Name_Id := No_Name)
+     return Name_Id;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
+      Default_Value : Node_Id := No_Node)
+     return Node_Id;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
+      Default_Value : Boolean := False)
+     return Boolean;
+
    --  Check Property_Name is set on node E, if so returns its value
    --  otherwise return the default value.
 
