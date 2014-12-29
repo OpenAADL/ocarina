@@ -54,8 +54,21 @@ package Ocarina.Backends.Properties.Utils is
    function Check_And_Get_Property
      (E : Node_Id;
       Property_Name : Name_Id;
+      Default_Value : List_Id := No_List)
+     return List_Id;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
       Default_Value : Boolean := False)
      return Boolean;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
+      Names : Name_Array;
+      Default_Value : Int := Int'First)
+     return Int;
 
    --  Check Property_Name is set on node E, if so returns its value
    --  otherwise return the default value.

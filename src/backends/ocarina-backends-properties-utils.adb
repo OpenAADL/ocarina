@@ -31,10 +31,17 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Ocarina.Backends.Messages;
 with Ocarina.Instances.Queries;
+with Ocarina.ME_AADL.AADL_Instances.Nodes;
+with Ocarina.Namet;
 
 package body Ocarina.Backends.Properties.Utils is
+
+   use Ocarina.Backends.Messages;
    use Ocarina.Instances.Queries;
+   use Ocarina.ME_AADL.AADL_Instances.Nodes;
+   use Ocarina.Namet;
 
    ----------------------------
    -- Check_And_Get_Property --
@@ -82,6 +89,19 @@ package body Ocarina.Backends.Properties.Utils is
    function Check_And_Get_Property
      (E : Node_Id;
       Property_Name : Name_Id;
+      Default_Value : List_Id := No_List)
+     return List_Id is
+   begin
+      if Is_Defined_List_Property (E, Property_Name) then
+         return Get_List_Property (E, Property_Name);
+      else
+         return Default_Value;
+      end if;
+   end Check_And_Get_Property;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
       Default_Value : Boolean := False)
      return Boolean is
    begin
@@ -90,6 +110,33 @@ package body Ocarina.Backends.Properties.Utils is
       else
          return Default_Value;
       end if;
+   end Check_And_Get_Property;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id;
+      Names : Name_Array;
+      Default_Value : Int := Int'First)
+     return Int
+   is
+      P_Name : Name_Id;
+   begin
+      if not Is_Defined_Enumeration_Property (E, Property_Name) then
+         return Default_Value;
+      end if;
+
+      P_Name := Get_Enumeration_Property (E, Property_Name);
+      for J in Names'Range loop
+         if P_Name = Names (J) then
+            return J;
+         end if;
+      end loop;
+
+      Display_Located_Error
+        (Loc (E),
+         "Unknown enumerator " & Get_Name_String (P_Name),
+         Fatal => True);
+      return Default_Value;
    end Check_And_Get_Property;
 
 end Ocarina.Backends.Properties.Utils;

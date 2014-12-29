@@ -658,14 +658,9 @@ package body Ocarina.Backends.Properties is
    -------------------
 
    function Get_Base_Type (D : Node_Id) return List_Id is
-   begin
       pragma Assert (AINU.Is_Data (D));
-
-      if Is_Defined_List_Property (D, Base_Type) then
-         return Get_List_Property (D, Base_Type);
-      else
-         return No_List;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Base_Type);
    end Get_Base_Type;
 
    ------------------
@@ -947,27 +942,26 @@ package body Ocarina.Backends.Properties is
    function Get_IEEE754_Precision
      (D : Node_Id) return Supported_IEEE754_Precision
    is
-      P_Name : Name_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
 
-      if Is_Defined_Enumeration_Property (D, IEEE754_Precision) then
-         P_Name := Get_Enumeration_Property (D, IEEE754_Precision);
+      IEEE754_Names : constant Name_Array
+        (Supported_IEEE754_Precision'Pos (Supported_IEEE754_Precision'First) ..
+           Supported_IEEE754_Precision'Pos (Supported_IEEE754_Precision'Last))
+        := (Supported_IEEE754_Precision'Pos (Precision_Simple)
+              => Precision_Simple_Name,
+            Supported_IEEE754_Precision'Pos (Precision_Double)
+              => Precision_Double_Name,
+            Supported_IEEE754_Precision'Pos (Precision_None)
+              => No_Name
+           );
 
-         if P_Name = Precision_Simple_Name then
-            return Precision_Simple;
-         elsif P_Name = Precision_Double_Name then
-            return Precision_Double;
-         else
-            Display_Located_Error
-              (AIN.Loc (D),
-               "Unknown floating point precision",
-               Fatal => True);
-            return Precision_None;
-         end if;
-      else
-         return Precision_None;
-      end if;
+   begin
+      return Supported_IEEE754_Precision'Val
+        (Check_And_Get_Property
+           (D,
+            IEEE754_Precision,
+            IEEE754_Names,
+            Supported_IEEE754_Precision'Pos (Precision_None)));
    end Get_IEEE754_Precision;
 
    -----------------------

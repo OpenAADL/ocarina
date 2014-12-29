@@ -14,12 +14,6 @@ property set Deployment is
   Port_Number : aadlinteger applies to (process, device);
   --  IP port number of a process (BSD_Sockets specific)
 
-  Process_ID : aadlinteger applies to (process, device);
-  --  Process identifier (SpaceWire specific)
-
-  Channel_Address : aadlinteger applies to (process, device);
-  --  Communication channel address (SpaceWire specific)
-
   Protocol_Type : type enumeration (iiop, diop);
   --  Supported communication protocols
   Protocol : Deployment::Protocol_Type applies to (system);
