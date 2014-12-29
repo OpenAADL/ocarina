@@ -421,6 +421,7 @@ package Ocarina.Backends.Utils is
 
    function To_Seconds (S : Time_Type) return Long_Double;
    function To_Milliseconds (S : Time_Type) return Unsigned_Long_Long;
+   function To_Nanoseconds (S : Time_Type) return Unsigned_Long_Long;
 
    function Get_Accessed_Data (Data_Access : Node_Id) return Node_Id;
    --  Get accessed data when a thread or subprogram has a data access.
@@ -484,7 +485,5 @@ package Ocarina.Backends.Utils is
      (The_Process : Node_Id) return Boolean;
 
    function Get_Associated_Bus (Port : Node_Id) return Node_Id;
-
-   function To_Nanoseconds (S : Time_Type) return Unsigned_Long_Long;
 
 end Ocarina.Backends.Utils;

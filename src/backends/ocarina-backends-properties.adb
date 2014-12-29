@@ -1971,10 +1971,8 @@ package body Ocarina.Backends.Properties is
    ----------------
 
    function Get_Period (T : Node_Id) return Time_Type is
-      The_Period : Time_Type;
    begin
-      The_Period := Get_Time_Property_Value (T, Thread_Period);
-      return The_Period;
+      return Get_Time_Property_Value (T, Thread_Period);
    end Get_Period;
 
    ------------------------
