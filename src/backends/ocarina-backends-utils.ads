@@ -485,4 +485,6 @@ package Ocarina.Backends.Utils is
 
    function Get_Associated_Bus (Port : Node_Id) return Node_Id;
 
+   function To_Nanoseconds (S : Time_Type) return Unsigned_Long_Long;
+
 end Ocarina.Backends.Utils;

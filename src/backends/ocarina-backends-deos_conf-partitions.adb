@@ -31,6 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Ada.Strings; use Ada.Strings;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ocarina.Backends.Messages;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -83,8 +85,13 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    function Find_Associated_Process (Runtime : Node_Id;
                                      Current_Node : Node_Id := Root_Node)
                                      return Node_Id;
+   function Find_Associated_Memory_Segment
+      (Process       : Node_Id;
+       Current_Node  : Node_Id := Root_Node)
+      return Node_Id;
 
    function Make_Default_Memory_Region return Node_Id;
+   function Make_Memory_Region (Segment : Node_Id) return Node_Id;
 
    --------------------------------
    -- Make_Default_Memory_Region --
@@ -104,6 +111,36 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
       return N;
    end Make_Default_Memory_Region;
+
+   ------------------------
+   -- Make_Memory_Region --
+   ------------------------
+
+   function Make_Memory_Region (Segment : Node_Id)
+      return Node_Id is
+      N : Node_Id;
+   begin
+      N := Make_XML_Node ("MemoryRegion");
+
+      XTU.Add_Attribute ("Name", "Initial RAM Pool", N);
+      XTU.Add_Attribute ("Type", "Initial RAM Pool", N);
+      XTU.Add_Attribute ("Address",
+                         Trim
+                           (Unsigned_Long_Long'Image
+                              (Get_Base_Address (Segment)), Left),
+                         N);
+      XTU.Add_Attribute ("Size",
+                         Trim
+                           (Unsigned_Long_Long'Image
+                              (To_Bytes
+                                 (Get_Memory_Size (Segment))),
+                           Left),
+                         N);
+      XTU.Add_Attribute ("AccessRights", "READ_WRITE", N);
+      XTU.Add_Attribute ("PlatformMemoryPool", "0", N);
+
+      return N;
+   end Make_Memory_Region;
 
    -----------------------------
    -- Find_Associated_Process --
@@ -137,6 +174,40 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
       return No_Node;
    end Find_Associated_Process;
+
+   ------------------------------------
+   -- Find_Associated_Memory_Segment --
+   ------------------------------------
+
+   function Find_Associated_Memory_Segment
+      (Process : Node_Id;
+       Current_Node : Node_Id := Root_Node)
+      return Node_Id is
+      T : Node_Id;
+      S : Node_Id;
+   begin
+      if Get_Category_Of_Component (Current_Node) = CC_Memory and then
+         Get_Bound_Memory (Process) = Current_Node
+      then
+         return Current_Node;
+      end if;
+
+      if not AINU.Is_Empty (Subcomponents (Current_Node)) then
+         S := First_Node (Subcomponents (Current_Node));
+         while Present (S) loop
+            T := Find_Associated_Memory_Segment
+               (Process, Corresponding_Instance (S));
+
+            if T /= No_Node then
+               return T;
+            end if;
+
+            S := Next_Node (S);
+         end loop;
+      end if;
+
+      return No_Node;
+   end Find_Associated_Memory_Segment;
 
    -----------
    -- Visit --
@@ -339,9 +410,10 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
-      Corresponding_Process : Node_Id := No_Node;
-      Partition_Node : Node_Id;
+      S                       : Node_Id;
+      Corresponding_Process   : Node_Id := No_Node;
+      Memory_Segment          : Node_Id := No_Node;
+      Partition_Node          : Node_Id;
    begin
       Corresponding_Process := Find_Associated_Process (E);
 
@@ -380,13 +452,18 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
          Memory_Regions := Make_XML_Node ("MemoryRegions");
 
-         --
-         --  FIXME: for now, we associate with the default
-         --  memory. Has to work to get the AADL memory component.
-         --
-         Append_Node_To_List
-            (Make_Default_Memory_Region,
-            XTN.Subitems (Memory_Regions));
+         Memory_Segment := Find_Associated_Memory_Segment
+            (Corresponding_Process);
+
+         if Memory_Segment = No_Node then
+            Append_Node_To_List
+               (Make_Default_Memory_Region,
+               XTN.Subitems (Memory_Regions));
+         else
+            Append_Node_To_List
+               (Make_Memory_Region (Memory_Segment),
+               XTN.Subitems (Memory_Regions));
+         end if;
 
          Append_Node_To_List
             (Memory_Regions,

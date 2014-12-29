@@ -104,6 +104,8 @@ package body Ocarina.Backends.Properties is
    -------------------------------
 
    Base_Type                 : Name_Id;
+   Base_Address              : Name_Id;
+   Memory_Size               : Name_Id;
    Code_Set                  : Name_Id;
    Data_Digits               : Name_Id;
    Data_Scale                : Name_Id;
@@ -347,6 +349,7 @@ package body Ocarina.Backends.Properties is
    Provided_Virtual_Bus_Class       : Name_Id;
    Allowed_Connection_Binding_Class : Name_Id;
    Compute_Execution_Time           : Name_Id;
+   Execution_Time                   : Name_Id;
    Compute_Deadline                 : Name_Id;
 
    --------------------
@@ -1963,6 +1966,26 @@ package body Ocarina.Backends.Properties is
       end case;
    end Get_Thread_Period;
 
+   ----------------
+   -- Get_Period --
+   ----------------
+
+   function Get_Period (T : Node_Id) return Time_Type is
+      The_Period : Time_Type;
+   begin
+      The_Period := Get_Time_Property_Value (T, Thread_Period);
+      return The_Period;
+   end Get_Period;
+
+   ------------------------
+   -- Get_Execution_Time --
+   ------------------------
+
+   function Get_Execution_Time (T : Node_Id) return Time_Type is
+   begin
+      return Get_Time_Property_Value (T, Execution_Time);
+   end Get_Execution_Time;
+
    ------------------------------------
    -- Get_Thread_First_Dispatch_Time --
    ------------------------------------
@@ -3070,6 +3093,8 @@ package body Ocarina.Backends.Properties is
 
       Queue_Size := Get_String_Name ("queue_size");
 
+      Base_Address        := Get_String_Name ("base_address");
+      Memory_Size         := Get_String_Name ("memory_size");
       Data_Array_Name     := Get_String_Name ("array");
       Data_Boolean_Name   := Get_String_Name ("boolean");
       Data_Character_Name := Get_String_Name ("character");
@@ -3370,6 +3395,7 @@ package body Ocarina.Backends.Properties is
         Get_String_Name ("allowed_connection_binding_class");
 
       Compute_Execution_Time := Get_String_Name ("compute_execution_time");
+      Execution_Time         := Get_String_Name ("execution_time");
 
       Compute_Deadline := Get_String_Name ("compute_deadline");
 
@@ -4385,5 +4411,23 @@ package body Ocarina.Backends.Properties is
 
       return No_Name;
    end Get_Send_Function_Name;
+
+   ---------------------
+   -- Get_Memory_Size --
+   ---------------------
+
+   function Get_Base_Address (D : Node_Id) return Unsigned_Long_Long is
+   begin
+      return Check_And_Get_Property (D, Base_Address);
+   end Get_Base_Address;
+
+   ---------------------
+   -- Get_Memory_Size --
+   ---------------------
+
+   function Get_Memory_Size (D : Node_Id) return Size_Type is
+   begin
+      return Get_Size_Property_Value (D, Memory_Size);
+   end Get_Memory_Size;
 
 end Ocarina.Backends.Properties;

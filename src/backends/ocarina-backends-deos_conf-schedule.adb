@@ -160,14 +160,6 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
         := Get_Module_Schedule_Property (Processor);
    begin
       for J in Module_Schedule'Range loop
---            Put_Line ("Module Schedule slot #" & J'Img);
---            Put_Line (" -> "
---                        & Get_Name_String (Module_Schedule (J).Partition));
---            Put_Line (" -> "
---                        & Module_Schedule (J).Duration.T'Img
---                        & " " & Module_Schedule (J).Duration.U'Img);
---            Put_Line (" -> "
---                        & Module_Schedule (J).Periodic_Processing_Start'Img);
 
          Time_Window_Node := Make_XML_Node ("PartitionTimeWindow");
 
