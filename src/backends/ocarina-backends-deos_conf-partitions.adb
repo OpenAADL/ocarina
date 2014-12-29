@@ -41,6 +41,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Properties;
+with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Deos_Conf.Mapping;
@@ -56,6 +57,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Deos_Conf.Mapping;
+   use Ocarina.Backends.XML_Values;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -125,9 +127,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       XTU.Add_Attribute ("Name", "Initial RAM Pool", N);
       XTU.Add_Attribute ("Type", "Initial RAM Pool", N);
       XTU.Add_Attribute ("Address",
-                         Trim
-                           (Unsigned_Long_Long'Image
-                              (Get_Base_Address (Segment)), Left),
+                         New_Numeric_Value (Get_Base_Address (Segment), 1, 16),
                          N);
       XTU.Add_Attribute ("Size",
                          Trim

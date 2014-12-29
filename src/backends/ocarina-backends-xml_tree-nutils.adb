@@ -41,6 +41,7 @@ with Utils;     use Utils;
 with Ocarina.Backends.Utils;
 with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 use Ocarina.Backends.Utils;
+with Ocarina.Backends.XML_Values;     use Ocarina.Backends.XML_Values;
 
 package body Ocarina.Backends.XML_Tree.Nutils is
 
@@ -664,6 +665,11 @@ package body Ocarina.Backends.XML_Tree.Nutils is
       Set_Str_To_Name_Buffer (Value);
       Q := Make_Defining_Identifier (Name_Find);
       Append_Node_To_List (Make_Assignement (R, Q), XTN.Items (N));
+   end Add_Attribute;
+
+   procedure Add_Attribute (Key : String; Value : Value_Id; N : Node_Id) is
+   begin
+      Add_Attribute (Key, Image (Value), N);
    end Add_Attribute;
 
 end Ocarina.Backends.XML_Tree.Nutils;
