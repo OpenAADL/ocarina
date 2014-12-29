@@ -795,6 +795,12 @@ package Ocarina.Backends.Properties is
    --  It corresponds to the receiver subcomponent in the abstract
    --  device that models the content of the device.
 
+   function Get_Execution_Time (T : Node_Id) return Time_Type;
+   function Get_Period (T : Node_Id) return Time_Type;
+
+   function Get_Base_Address (D : Node_Id) return Unsigned_Long_Long;
+   function Get_Memory_Size (D : Node_Id) return Size_Type;
+
 private
 
    Empty_Name_Array : constant Name_Array (1 .. 0) := (others => No_Name);

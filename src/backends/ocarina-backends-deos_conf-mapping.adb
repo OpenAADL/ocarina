@@ -988,7 +988,26 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       pragma Unreferenced (Buffers_Size);
       pragma Unreferenced (Process);
       Partition_Node : Node_Id;
+      Partition_Period     : Time_Type;
+      Partition_Duration   : Time_Type;
+      Period_Ns            : Unsigned_Long_Long;
+      Duration_Ns          : Unsigned_Long_Long;
    begin
+      Partition_Period := Get_Period (Runtime);
+      Partition_Duration := Get_Execution_Time (Runtime);
+
+      if Partition_Period = Null_Time then
+         Period_Ns := 0;
+      else
+         Period_Ns := To_Nanoseconds (Partition_Period);
+      end if;
+
+      if Partition_Duration = Null_Time then
+         Duration_Ns := 0;
+      else
+         Duration_Ns := To_Nanoseconds (Partition_Duration);
+      end if;
+
       Partition_Node := Make_XML_Node ("Partition");
 
       XTU.Add_Attribute ("Name",
@@ -1006,8 +1025,21 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       XTU.Add_Attribute ("Identifier",
                         Trim (Integer'Image (Partition_Identifier), Left),
                          Partition_Node);
-      XTU.Add_Attribute ("Period", "25000000", Partition_Node);
-      XTU.Add_Attribute ("Duration", "6000000", Partition_Node);
+
+      XTU.Add_Attribute ("Period",
+                        Trim
+                           (Unsigned_Long_Long'Image
+                              (Period_Ns),
+                           Left) & "000000",
+                        Partition_Node);
+
+      XTU.Add_Attribute ("Duration",
+                        Trim
+                           (Unsigned_Long_Long'Image
+                              (Duration_Ns),
+                           Left) & "000000",
+                        Partition_Node);
+
       XTU.Add_Attribute ("ExecutableImageName",
                          Get_Name_String
                            (AIN.Name
