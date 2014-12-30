@@ -967,6 +967,39 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       return Module_HM;
    end Map_Processor_HM_Table;
 
+   -----------------------
+   -- Map_Sampling_Port --
+   -----------------------
+
+   function Map_Sampling_Port (Port : Node_Id) return Node_Id is
+      Sampling_Port : Node_Id;
+      Size : Unsigned_Long_Long;
+   begin
+      Sampling_Port := Make_XML_Node ("SamplingPort");
+      Size := To_Bytes (Get_Data_Size
+                        (Corresponding_Instance (Port)));
+      XTU.Add_Attribute ("Name",
+                         Get_Name_String
+                           (AIN.Name (Identifier (Port))),
+                         Sampling_Port);
+
+      XTU.Add_Attribute ("MaxMessageSize",
+                        Trim (Unsigned_Long_Long'Image
+                           (Size), Left),
+                         Sampling_Port);
+
+      if Is_In (Port) then
+         XTU.Add_Attribute ("Direction", "DESTINATION", Sampling_Port);
+      elsif Is_Out (Port) then
+         XTU.Add_Attribute ("Direction", "SOURCE", Sampling_Port);
+      end if;
+      XTU.Add_Attribute ("SourcePartitionName", "", Sampling_Port);
+      XTU.Add_Attribute ("SourcePortName", "", Sampling_Port);
+      XTU.Add_Attribute ("CustomIOFunction", "", Sampling_Port);
+      XTU.Add_Attribute ("AccessRateInNanoseconds", "12500000", Sampling_Port);
+      return Sampling_Port;
+   end Map_Sampling_Port;
+
    -------------------
    -- Map_Partition --
    -------------------
