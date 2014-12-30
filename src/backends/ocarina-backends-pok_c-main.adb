@@ -648,7 +648,17 @@ package body Ocarina.Backends.POK_C.Main is
                            N := Map_Time (Get_POK_Refresh_Time (F));
                         end if;
                      else
-                        N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
+                        if POK_Flavor = DEOS then
+
+                           --
+                           --  DeOS needs a value to refresh the port.
+                           --
+
+                           N := CTU.Make_Literal
+                              (CV.New_Int_Value (1_000_000, 1, 10));
+                        else
+                           N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
+                        end if;
                      end if;
                      Append_Node_To_List (N, Call_Parameters);
 
@@ -777,7 +787,17 @@ package body Ocarina.Backends.POK_C.Main is
                         end if;
 
                      else
-                        N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
+                        if POK_Flavor = DEOS then
+
+                           --
+                           --  DeOS needs a value to refresh the port.
+                           --
+
+                           N := CTU.Make_Literal
+                              (CV.New_Int_Value (1_000_000, 1, 10));
+                        else
+                           N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
+                        end if;
                      end if;
 
                      Append_Node_To_List (N, Call_Parameters);
@@ -978,6 +998,7 @@ package body Ocarina.Backends.POK_C.Main is
          Statements := New_List (CTN.K_Statement_List);
 
          Add_Include (E => RH (RH_Activity));
+         Add_Include (E => RH (RH_Gtypes));
 
          if Use_ARINC653_API then
             Process_Variable_Type := RE (RE_Process_Id_Type);

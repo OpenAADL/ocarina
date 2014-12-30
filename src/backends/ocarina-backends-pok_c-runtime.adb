@@ -131,19 +131,28 @@ package body Ocarina.Backends.POK_C.Runtime is
 
       if POK_Flavor = DEOS then
 
+         for E in ART_Id loop
+            RE_Header_Table (E) := RH_Apex;
+         end loop;
+
+         RE_Header_Table (RE_Pok_Port_Kind_Sampling) := RH_Apex;
+         RE_Header_Table (RE_Source) := RH_Apex;
+         RE_Header_Table (RE_Destination) := RH_Apex;
+         RE_Header_Table (RE_Pok_Errno_Empty) := RH_Apex;
+         RE_Header_Table (RE_Null) := RH_Apex;
+         RE_Header_Table (RE_Normal) := RH_Apex;
+         RE_Header_Table (RE_Bool_T) := RH_Apex;
+         RE_Header_Table (RE_Uint8_T) := RH_Apex;
+         RE_Header_Table (RE_Uint16_T) := RH_Apex;
+         RE_Header_Table (RE_Uint32_T) := RH_Apex;
+         RE_Header_Table (RE_Uint64_T) := RH_Apex;
+         RE_Header_Table (RE_Int8_T) := RH_Apex;
+         RE_Header_Table (RE_Int16_T) := RH_Apex;
+         RE_Header_Table (RE_Int32_T) := RH_Apex;
+         RE_Header_Table (RE_Int64_T) := RH_Apex;
+
          for E in ARF_Id loop
             RE_Header_Table (E) := RH_Apex;
-            RE_Header_Table (RE_Null) := RH_Apex;
-            RE_Header_Table (RE_Normal) := RH_Apex;
-            RE_Header_Table (RE_Bool_T) := RH_Apex;
-            RE_Header_Table (RE_Uint8_T) := RH_Apex;
-            RE_Header_Table (RE_Uint16_T) := RH_Apex;
-            RE_Header_Table (RE_Uint32_T) := RH_Apex;
-            RE_Header_Table (RE_Uint64_T) := RH_Apex;
-            RE_Header_Table (RE_Int8_T) := RH_Apex;
-            RE_Header_Table (RE_Int16_T) := RH_Apex;
-            RE_Header_Table (RE_Int32_T) := RH_Apex;
-            RE_Header_Table (RE_Int64_T) := RH_Apex;
          end loop;
 
          for E in ART_Id loop
