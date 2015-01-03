@@ -2986,8 +2986,8 @@ package body Ocarina.Backends.C_Common.Mapping is
          end if;
 
          Get_Name_String (Display_Name (Identifier (Parent)));
-
          Add_Str_To_Name_Buffer ("_");
+
       else
          if Is_Out (E) then
             F := Item (AIN.First_Node (Get_Destination_Ports (E)));
@@ -3026,7 +3026,30 @@ package body Ocarina.Backends.C_Common.Mapping is
    is
       N : Name_Id;
    begin
-      N := Map_Port (E, Containing_Component);
+
+      --
+      --  Typically, the following block of code is used
+      --  to prefix the port name by the parent subcomponent
+      --  name. For DeOS, we do not prefix by the subcomponent,
+      --  Port Name have to be the same.
+      --
+
+      if Get_Connection_Pattern (E) = Inter_Process and then
+         POK_Flavor = DEOS
+      then
+         if Is_In (E) then
+            Get_Name_String (Display_Name (Identifier (E)));
+         else
+            Get_Name_String
+               (Display_Name
+                  (Identifier
+                     (Item (AIN.First_Node (Destinations (E))))));
+         end if;
+
+         N := Name_Find;
+      else
+         N := Map_Port (E, Containing_Component);
+      end if;
 
       if Is_Global then
          Get_Name_String (N);

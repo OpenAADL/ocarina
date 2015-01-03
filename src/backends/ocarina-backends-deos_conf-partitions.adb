@@ -31,8 +31,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Strings; use Ada.Strings;
-with Ada.Strings.Fixed; use Ada.Strings.Fixed;
+--  with Ada.Strings; use Ada.Strings;
+--  with Ada.Strings.Fixed; use Ada.Strings.Fixed;
+with Ada.Text_IO;
+with Ada.Integer_Text_IO;
 with Ocarina.Backends.Messages;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -41,13 +43,14 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Properties;
-with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Deos_Conf.Mapping;
 
 package body Ocarina.Backends.Deos_Conf.Partitions is
 
+   use Ada.Text_IO;
+   use Ada.Integer_Text_IO;
    use Ocarina.ME_AADL;
 
    use Ocarina.Backends.Utils;
@@ -57,7 +60,6 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Deos_Conf.Mapping;
-   use Ocarina.Backends.XML_Values;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -94,6 +96,29 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
    function Make_Default_Memory_Region return Node_Id;
    function Make_Memory_Region (Segment : Node_Id) return Node_Id;
+   function Hex_Print (Num : in Integer;
+                       Num_Of_Digits : in Positive) return String;
+
+   function Hex_Print (Num           : in Integer;
+                       Num_Of_Digits : in Positive) return String is
+      Temp_Str    : String (1 .. Num_Of_Digits + 5) := (others => '0');
+      New_Str     : String (1 .. Num_Of_Digits)     := (others => '0');
+      First_Digit : Positive;
+   begin
+
+      Put (To => Temp_Str, Item => Num, Base => 16);
+
+      for I in 1 .. Num_Of_Digits + 4 loop
+         if Temp_Str (I) = '#' then
+            First_Digit := I + 1;
+            exit;
+         end if;
+      end loop;
+
+      New_Str (First_Digit - 4 .. Num_Of_Digits) :=
+         Temp_Str (First_Digit .. Num_Of_Digits + 4);
+      return New_Str;
+   end Hex_Print;
 
    --------------------------------
    -- Make_Default_Memory_Region --
@@ -126,15 +151,18 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
       XTU.Add_Attribute ("Name", "Initial RAM Pool", N);
       XTU.Add_Attribute ("Type", "Initial RAM Pool", N);
+
       XTU.Add_Attribute ("Address",
-                         New_Numeric_Value (Get_Base_Address (Segment), 1, 16),
+                        "0x" & Hex_Print
+                           (Integer
+                              (Get_Base_Address (Segment)), 8),
                          N);
+--      Put (Size_Str, To_Bytes
+--                      (Get_Memory_Size (Segment)), 16);
       XTU.Add_Attribute ("Size",
-                         Trim
-                           (Unsigned_Long_Long'Image
-                              (To_Bytes
-                                 (Get_Memory_Size (Segment))),
-                           Left),
+                        "0x" & Hex_Print
+                           (Integer (To_Bytes
+                              (Get_Memory_Size (Segment))), 8),
                          N);
       XTU.Add_Attribute ("AccessRights", "READ_WRITE", N);
       XTU.Add_Attribute ("PlatformMemoryPool", "0", N);
@@ -411,9 +439,11 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
       S                       : Node_Id;
+      F                       : Node_Id;
       Corresponding_Process   : Node_Id := No_Node;
       Memory_Segment          : Node_Id := No_Node;
       Partition_Node          : Node_Id;
+      Sampling_Ports          : Node_Id := No_Node;
    begin
       Corresponding_Process := Find_Associated_Process (E);
 
@@ -468,6 +498,42 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
          Append_Node_To_List
             (Memory_Regions,
             XTN.Subitems (Partition_Node));
+
+         --
+         --  Then, we configure the inter-partitions communication
+         --  ports (sampling/queueing).
+         --
+
+         if not AINU.Is_Empty (Features (Corresponding_Process)) then
+            Sampling_Ports := Make_XML_Node ("SamplingPorts");
+            F := First_Node (Features (Corresponding_Process));
+
+            while Present (F) loop
+               if Kind (F) = K_Port_Spec_Instance
+                 and then Get_Connection_Pattern (F) = Inter_Process
+               then
+
+                  if Is_Data (F) and then not Is_Event (F)
+                     and then not (Is_In (F) and then Is_Out (F))
+                  then
+                     Append_Node_To_List
+                        (Map_Sampling_Port (F),
+                        XTN.Subitems (Sampling_Ports));
+                  end if;
+               end if;
+               F := Next_Node (F);
+            end loop;
+         end if;
+
+         if Sampling_Ports /= No_Node and then
+            XTN.Subitems (Sampling_Ports) /= No_List
+         then
+            Append_Node_To_List
+               (Sampling_Ports,
+               XTN.Subitems (Partition_Node));
+         end if;
+
+         Partition_Identifier := Partition_Identifier + 1;
       end if;
 
       if not AINU.Is_Empty (Subcomponents (E)) then

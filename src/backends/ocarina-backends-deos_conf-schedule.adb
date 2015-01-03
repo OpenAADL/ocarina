@@ -12,6 +12,7 @@ with Ocarina.Instances.Queries;
 with Ocarina.Backends.Properties.ARINC653;
 
 --  with Ocarina.Backends.Properties;
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 --  with Ocarina.Backends.Deos_Conf.Mapping;
@@ -26,6 +27,7 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
 
+   use Ocarina.Backends.Utils;
    use Ocarina.Backends.Properties.ARINC653;
 --   use Ocarina.Backends.Properties;
 --   use Ocarina.Backends.Deos_Conf.Mapping;
@@ -158,7 +160,10 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
       Time_Window_Node  : Node_Id;
       Module_Schedule   : constant Schedule_Window_Record_Term_Array
         := Get_Module_Schedule_Property (Processor);
+      Offset            : Unsigned_Long_Long;
+      Slot_Duration     : Unsigned_Long_Long;
    begin
+      Offset := 0;
       for J in Module_Schedule'Range loop
 
          Time_Window_Node := Make_XML_Node ("PartitionTimeWindow");
@@ -172,13 +177,16 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
          --  For now, we assume the partition duration
          --  is in milliseconds.
          --
-
+         Slot_Duration := To_Milliseconds
+                           (Module_Schedule (J).Duration) * 1_000_000;
          XTU.Add_Attribute ("Duration",
-                           Trim
-                              (Module_Schedule (J).Duration.T'Img,
-                              Left) & "000000",
+                           Trim (Unsigned_Long_Long'Image
+                                (Slot_Duration), Left),
                            Time_Window_Node);
-         XTU.Add_Attribute ("Offset", "0", Time_Window_Node);
+         XTU.Add_Attribute ("Offset",
+                           Trim (Unsigned_Long_Long'Image
+                                (Offset), Left),
+                           Time_Window_Node);
          XTU.Add_Attribute ("PeriodicProcessingStart",
                             "true", Time_Window_Node);
          XTU.Add_Attribute ("RepeatWindowAtNanosecondInterval",
@@ -189,6 +197,7 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
                             Get_Name_String
                               (Module_Schedule (J).Partition),
                             Time_Window_Node);
+         Offset := Offset + Slot_Duration;
       end loop;
    end Fill_Scheduling_Slots;
 

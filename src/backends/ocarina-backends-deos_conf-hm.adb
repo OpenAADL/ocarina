@@ -1,4 +1,8 @@
+with Ada.Strings; use Ada.Strings;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
+
 --  with Locations;
+
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -192,6 +196,7 @@ package body Ocarina.Backends.Deos_Conf.Hm is
       System_Errors        : Node_Id;
       Multi_Partition_HM   : Node_Id;
       Partition_HM         : Node_Id;
+      Partition_Identifier : Unsigned_Long_Long;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       P := XTN.Node (Backend_Node (Identifier (E)));
@@ -200,6 +205,8 @@ package body Ocarina.Backends.Deos_Conf.Hm is
       Push_Entity (U);
 
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
+
+      Partition_Identifier := 1;
 
       --
       --  For now, just generate the default HM policy.
@@ -250,21 +257,6 @@ package body Ocarina.Backends.Deos_Conf.Hm is
       Add_Error_Action (Multi_Partition_HM, "9", "MODULE", "IGNORE");
       Add_Error_Action (Multi_Partition_HM, "10", "MODULE", "IGNORE");
 
-      --
-      --  The PartitionHM
-      --
-
-      Partition_HM := Make_XML_Node ("PartitionHM");
-      Append_Node_To_List
-        (Partition_HM,
-         XTN.Subitems (HM_Node));
-
-      XTU.Add_Attribute ("TableIdentifier", "1", Partition_HM);
-      XTU.Add_Attribute ("TableName", "1", Partition_HM);
-      XTU.Add_Attribute ("MultiPartitionHMTableNameRef",
-                         "default MultiPartitionHM",
-                         Partition_HM);
-
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
@@ -273,6 +265,29 @@ package body Ocarina.Backends.Deos_Conf.Hm is
 
             if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
+               --
+               --  The PartitionHM
+               --
+
+               Partition_HM := Make_XML_Node ("PartitionHM");
+               Append_Node_To_List
+                 (Partition_HM,
+                  XTN.Subitems (HM_Node));
+
+               XTU.Add_Attribute ("TableIdentifier",
+                                 Trim (Unsigned_Long_Long'Image
+                                    (Partition_Identifier), Left),
+                                  Partition_HM);
+
+               XTU.Add_Attribute ("TableName",
+                                  "Unique name for partition " &
+                                 Trim (Unsigned_Long_Long'Image
+                                    (Partition_Identifier), Left),
+                                  Partition_HM);
+               XTU.Add_Attribute ("MultiPartitionHMTableNameRef",
+                                  "default MultiPartitionHM",
+                                  Partition_HM);
+               Partition_Identifier := Partition_Identifier + 1;
             end if;
             S := Next_Node (S);
          end loop;
