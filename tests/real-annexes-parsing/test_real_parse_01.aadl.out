@@ -22,12 +22,6 @@ property set Deployment is
   Port_Number : aadlinteger
     applies to (process, device);
 
-  Process_ID : aadlinteger
-    applies to (process, device);
-
-  Channel_Address : aadlinteger
-    applies to (process, device);
-
   Protocol_Type : type enumeration (iiop, diop);
 
   Protocol : Deployment::Protocol_Type
