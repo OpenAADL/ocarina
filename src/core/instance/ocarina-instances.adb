@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -210,7 +210,7 @@ package body Ocarina.Instances is
              Root_System_Name
          then
             Error_Name (1) := Root_System_Name;
-            Error_Name (2) := ATE.Get_Name_Of_Entity (List_Node);
+            Error_Name (2) := ATE.Get_Name_Of_Entity (Root_System);
             DE ("system % is not a root system, use %");
             Root_System := No_Node;
             Exit_On_Error (True, "Cannot instantiate AADL model");
