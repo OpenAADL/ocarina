@@ -250,6 +250,16 @@ private
    procedure W_Type_Attribute (A : String; T : String);
    procedure W_With (P : String);
 
+   procedure W_Package_Body_Python (prefix : String);
+   procedure W_Attribute_Body_python (A : String);
+   procedure W_Attribute_Body_python (A : Types.Node_Id);
+   procedure W_Attribute_Register_python (A : String; prefix : String);
+   procedure W_Attribute_Register_python (A : Types.Node_Id; prefix : String);
+   procedure W_Package_Spec_Python;
+   procedure W_Python_Script;
+   procedure W_Attribute_Python_Script (A : String);
+   procedure W_Attribute_Python_Script (A : Types.Node_Id);
+
    ------------------------
    -- General facilities --
    ------------------------

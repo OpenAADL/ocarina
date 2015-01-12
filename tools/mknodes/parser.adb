@@ -43,6 +43,11 @@ with Output;
 with Types;
 use type Types.Byte, Types.Name_Id, Types.Node_Id, Types.Int;
 
+with Utils;
+with Ada.Directories;
+with Ada.Strings.Fixed;
+with Ada.Strings.Maps;
+
 package body Parser is
 
    Debug : Boolean := False;
@@ -65,6 +70,11 @@ package body Parser is
 
    Source_File : GNAT.OS_Lib.File_Descriptor;
    --  File descriptor of the source file
+
+   Target_Language : Integer := 1;
+   --  Used To set the target Language to generate
+   --  1 for ADA
+   --  2 for ADA Python
 
    Spec_Suffix : constant String := "ads";
    Body_Suffix : constant String := "adb";
@@ -815,10 +825,11 @@ package body Parser is
       Output.Write_Line ("      mknodes [options] filename");
       Output.Write_Eol;
       Output.Write_Line ("  General purpose options:");
-      Output.Write_Line ("   -D ARG  Generate files in given directory");
-      Output.Write_Line ("   -d      Output debugging info");
-      Output.Write_Line ("   -O      Exclude code to dump tree");
-      Output.Write_Line ("   -p      Output files on stdout");
+      Output.Write_Line ("   -D ARG   Generate files in given directory");
+      Output.Write_Line ("   -d       Output debugging info");
+      Output.Write_Line ("   -O       Exclude code to dump tree");
+      Output.Write_Line ("   -p       Output files on stdout");
+      Output.Write_Line ("   -t LANG  Target language (either Ada or python)");
       Output.Write_Eol;
    end Usage;
 
@@ -1764,7 +1775,7 @@ package body Parser is
       Errors.Initialize;
 
       loop
-         case GNAT.Command_Line.Getopt ("d O p D:") is
+         case GNAT.Command_Line.Getopt ("d O p D: t:") is
             when 'd' =>
                Debug := True;
 
@@ -1786,6 +1797,12 @@ package body Parser is
 
             when 'p' =>
                Output_File := GNAT.OS_Lib.Standout;
+
+            when 't' =>
+               if GNAT.Command_Line.Parameter = "python"
+               then
+                  Target_Language := 2;
+               end if;
 
             when ASCII.NUL =>
                exit;
@@ -1993,31 +2010,787 @@ package body Parser is
          Output_Name := Namet.Name_Find;
       end if;
 
-      --  If the output is not the standard output, compute the spec
-      --  filename and redirect output.
+      if Target_Language = 1 then
+          --  If the output is not the standard output, compute the spec
+          --  filename and redirect output.
 
-      if Output_Name /= Types.No_Name then
-         Output_File :=
-           GNAT.OS_Lib.Create_File
-             (Copy_Str_At_End_Of_Name (Output_Name, Spec_Suffix),
-              GNAT.OS_Lib.Binary);
-         Output.Set_Output (Output_File);
+         if Output_Name /= Types.No_Name then
+            Output_File :=
+              GNAT.OS_Lib.Create_File
+                (Copy_Str_At_End_Of_Name (Output_Name, Spec_Suffix),
+                 GNAT.OS_Lib.Binary);
+            Output.Set_Output (Output_File);
+         end if;
+
+         W_Package_Spec;
+
+         --  If the output is not the standard output, compute the body
+         --  filename and redirect output.
+
+         if Output_Name /= Types.No_Name then
+            Output_File :=
+              GNAT.OS_Lib.Create_File
+                (Copy_Str_At_End_Of_Name (Output_Name, Body_Suffix),
+                 GNAT.OS_Lib.Binary);
+            Output.Set_Output (Output_File);
+         end if;
+
+         W_Package_Body;
       end if;
 
-      W_Package_Spec;
+      if Target_Language = 2 then
+          --  If the output is not the standard output, compute the body
+          --  filename and redirect output.
 
-      --  If the output is not the standard output, compute the body
-      --  filename and redirect output.
+         if Output_Name /= Types.No_Name then
+            Output_Name := Utils.Remove_Suffix_From_Name (
+               ".idl", Output_Name);
+            Output_Name := Utils.Add_Suffix_To_Name (
+               "-python.idl", Output_Name);
+            Output_File :=
+              GNAT.OS_Lib.Create_File
+                (Copy_Str_At_End_Of_Name (Output_Name, Body_Suffix),
+                 GNAT.OS_Lib.Binary);
+            Output.Set_Output (Output_File);
+         end if;
 
-      if Output_Name /= Types.No_Name then
-         Output_File :=
-           GNAT.OS_Lib.Create_File
-             (Copy_Str_At_End_Of_Name (Output_Name, Body_Suffix),
-              GNAT.OS_Lib.Binary);
-         Output.Set_Output (Output_File);
+         W_Package_Body_Python (Ada.Directories.Base_Name (
+            Namet.Get_Name_String (
+               Utils.Replace_Char(Output_Name, '-', '_'))));
+         --  If the output is not the standard output, compute the body
+         --  filename and redirect output.
+
+         if Output_Name /= Types.No_Name then
+            Output_File :=
+              GNAT.OS_Lib.Create_File
+                (Copy_Str_At_End_Of_Name (Output_Name, Spec_Suffix),
+                 GNAT.OS_Lib.Binary);
+            Output.Set_Output (Output_File);
+         end if;
+
+         W_Package_Spec_Python;
+
+         --  If the output is not the standard output, compute the body
+         --  filename and redirect output.
+
+         if Output_Name /= Types.No_Name then
+            Output_Name := Utils.Remove_Suffix_From_Name
+               ("-python.idl", Output_Name);
+            Output_Name := Utils.Replace_Char(Output_Name, '-', '_');
+            Output_Name := Utils.Add_Suffix_To_Name (".py", Output_Name);
+            Output_File :=
+              GNAT.OS_Lib.Create_File
+                (Copy_Str_At_End_Of_Name (Output_Name, ""),
+                 GNAT.OS_Lib.Binary);
+            Output.Set_Output (Output_File);
+         end if;
+
+         W_Python_Script;
       end if;
-
-      W_Package_Body;
    end Main;
+
+   ---------------------------
+   -- W_Package_Body_Python --
+   ---------------------------
+
+   procedure W_Package_Body_Python (prefix : String) is
+      Attribute : Types.Node_Id;
+   begin
+      Output.Write_Line ("pragma Style_Checks (""NM32766"");");
+      Output.Write_Eol;
+      Output.Write_Line ("pragma Warnings (Off);");
+      Output.Write_Eol;
+
+      W_Comment_Message;
+
+      W_With (Copy_Str_At_End_Of_Name (Module_Name, ""));
+      W_With (Copy_Str_At_End_Of_Name (Module_Name, "Entit") & "ies");
+      W_With ("Ocarina.Utils");
+      Output.Write_Eol;
+      Output.Write_Str ("package body ");
+      Namet.Write_Name (Module_Name);
+      Output.Write_Str (".Python is");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure return_List");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class; ");
+      Output.Write_Str ("List : Node_List) is");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("List_Node : Node_Id;");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("begin");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("List_Node := List.first;");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("Set_Return_Value_As_List (Data);");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("while Present (List_Node) loop");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("Set_Return_Value (Data, Integer'Image ");
+      Output.Write_Str ("(Integer (List_Node)));");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("List_Node := Next_Entity (List_Node);");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("end loop;");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("end return_List;");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure return_List");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class; List : List_Id) is");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("List_Node : Node_Id;");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("begin");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("if List /= No_List then");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("List_Node := First_Node (List);");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("Set_Return_Value_As_List (Data);");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("while Present (List_Node) loop");
+      Output.Write_Eol;
+      W_Indentation (4);
+      Output.Write_Str ("Set_Return_Value (Data, Integer'Image (Integer (List_Node)));");
+      Output.Write_Eol;
+      W_Indentation (4);
+      Output.Write_Str ("List_Node := Next_Node (List_Node);");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("end loop;");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("end if;");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("end return_List;");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      --  Some attributes may appear several times in different
+      --  interfaces. We do not want to generate them several
+      --  times. We mark attributes as not generated and when we visit
+      --  them we mark them back as generated.
+
+      Attribute := First_Attribute;
+      while Attribute /= Types.No_Node loop
+         Set_Generated (Attribute, False);
+         Attribute := Next_Entity (Attribute);
+      end loop;
+
+      --  We generate a getter/setter for each attribute. We mark them
+      --  as generated in order not to generate them several
+      --  times. See above.
+
+      Attribute := First_Attribute;
+      while Attribute /= Types.No_Node loop
+         if not Generated (Attribute) then
+            W_Attribute_Body_python (Attribute);
+            Set_Generated (Attribute, True);
+         end if;
+
+         Attribute := Next_Entity (Attribute);
+      end loop;
+
+      W_Indentation (1);
+      Output.Write_Str ("function Register_Generated_Functions ");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str (
+         "(Repo : Scripts_Repository) return Scripts_Repository is");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("begin");
+      Output.Write_Eol;
+
+      --  Some attributes may appear several times in different
+      --  interfaces. We do not want to generate them several
+      --  times. We mark attributes as not generated and when we visit
+      --  them we mark them back as generated.
+
+      Attribute := First_Attribute;
+      while Attribute /= Types.No_Node loop
+         Set_Generated (Attribute, False);
+         Attribute := Next_Entity (Attribute);
+      end loop;
+
+      --  We generate a getter/setter for each attribute. We mark them
+      --  as generated in order not to generate them several
+      --  times. See above.
+
+      Attribute := First_Attribute;
+      while Attribute /= Types.No_Node loop
+         if not Generated (Attribute) then
+            W_Attribute_Register_python (Attribute, prefix);
+            Set_Generated (Attribute, True);
+         end if;
+
+         Attribute := Next_Entity (Attribute);
+      end loop;
+
+      W_Indentation (2);
+      Output.Write_Str ("return Repo;");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("end Register_Generated_Functions;");
+      Output.Write_Eol;
+
+      Output.Write_Str ("end ");
+      Namet.Write_Name (Module_Name);
+      Output.Write_Str (".Python;");
+   end W_Package_Body_Python;
+
+   -----------------------------
+   -- W_Attribute_Body_python --
+   -----------------------------
+
+   procedure W_Attribute_Body_python (A : String) is
+   begin
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure On_");
+      Output.Write_Str (A);
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class;");
+      Output.Write_Str (" Command : String);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure On_");
+      Output.Write_Str (A);
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class;");
+      Output.Write_Str (" Command : String)");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("is");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("pragma Unreferenced (Command);");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("begin");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("Set_Return_Value (Data, Get_Name_Of_Entity (");
+      Output.Write_Str (A);
+      Output.Write_Str (" (get_Node_Id_From_String ");
+      Output.Write_Str ("(Nth_Arg (Data, 1, """")))");
+      Output.Write_Str (", false);");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("end On_");
+      Output.Write_Str (A);
+      Output.Write_Str (";");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure On_");
+      Output.Write_Str (WS (A));
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class;");
+      Output.Write_Str (" Command : String);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure On_");
+      Output.Write_Str (WS (A));
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class;");
+      Output.Write_Str (" Command : String)");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("is");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("pragma Unreferenced (Command, Data);");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("begin");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str (WS (A));
+      Output.Write_Str (" (get_Node_Id_From_String (Nth_Arg ");
+      Output.Write_Str ("(Data, 1, """")),");
+      Output.Write_Str ("get_Node_Id_From_String (Nth_Arg ");
+      Output.Write_Str ("(Data, 2, """")));");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("end On_");
+      Output.Write_Str (WS (A));
+      Output.Write_Str (";");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+   end W_Attribute_Body_python;
+
+   -----------------------------
+   -- W_Attribute_Body_python --
+   -----------------------------
+
+   procedure W_Attribute_Body_python (A : Types.Node_Id) is
+      NS : Types.Node_Id;
+      isDummy : Boolean := False;
+   begin
+      NS := Scope_Entity (A);
+
+      while Type_Spec (NS) /= Types.No_Node loop
+         NS := Type_Spec (NS);
+      end loop;
+
+      -- output setter
+      
+      W_Indentation (1);
+      Output.Write_Str ("procedure On_");
+      Output.Write_Str (WS (GNS (Identifier (A))));
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class;");
+      Output.Write_Str (" Command : String);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure On_");
+      Output.Write_Str (WS (GNS (Identifier (A))));
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class;");
+      Output.Write_Str (" Command : String)");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("is");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("pragma Unreferenced (Command, Data);");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("begin");
+      Output.Write_Eol;
+      W_Indentation (2);
+      if GNS (Identifier (NS)) = "Node_Id" then
+         Output.Write_Str (WS (GNS (Identifier (A))));
+         Output.Write_Str (" (get_Node_Id_From_String");
+         Output.Write_Str (" (Nth_Arg (Data, 1, """")), ");
+      elsif GNS (Identifier (NS)) = "List_Id" then
+         Output.Write_Str (WS (GNS (Identifier (A))));
+         Output.Write_Str (" (get_List_Id_From_String");
+         Output.Write_Str (" (Nth_Arg (Data, 1, """")), ");
+      else
+         Output.Write_Str ("dummy;");
+         isDummy := True;
+      end if;
+      if isDummy = False then 
+         Output.Write_Eol;
+         W_Indentation (3);
+         if GNS (Identifier (Type_Spec (A))) = "Node_Id" then
+            Output.Write_Str ("get_Node_Id_From_String ");
+            Output.Write_Str ("(Nth_Arg (Data, 2, """")));");
+         elsif GNS (Identifier (Type_Spec (A))) = "List_Id" then
+            Output.Write_Str ("get_List_Id_From_String ");
+            Output.Write_Str ("(Nth_Arg (Data, 2, """")));");
+         elsif GNS (Identifier (Type_Spec (A))) = "Name_Id" then
+            Output.Write_Str ("get_Name_Id_From_String ");
+            Output.Write_Str ("(Nth_Arg (Data, 2, """")));");
+         elsif GNS (Identifier (Type_Spec (A))) = "Boolean" then
+            Output.Write_Str ("Boolean'Value ");
+            Output.Write_Str ("(Nth_Arg (Data, 2, """")));");
+         elsif GNS (Identifier (Type_Spec (A))) = "Byte" then
+            Output.Write_Str ("get_Byte_From_String ");
+            Output.Write_Str ("(Nth_Arg (Data, 2, """")));");
+         elsif GNS (Identifier (Type_Spec (A))) = "Int" then
+            Output.Write_Str ("get_Int_From_String ");
+            Output.Write_Str ("(Nth_Arg (Data, 2, """")));");
+         elsif GNS (Identifier (Type_Spec (A))) = "Value_Id" then
+            Output.Write_Str ("get_Value_Id_From_String ");
+            Output.Write_Str ("(Nth_Arg (Data, 2, """")));");
+         end if;
+      end if;
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("end On_");
+      Output.Write_Str (WS (GNS (Identifier (A))));
+      Output.Write_Str (";");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      --  output getter
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure On_");
+      Output.Write_Str (GNS (Identifier (A)));
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class;");
+      Output.Write_Str (" Command : String);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure On_");
+      Output.Write_Str (GNS (Identifier (A)));
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class;");
+      Output.Write_Str (" Command : String)");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("is");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("pragma Unreferenced (Command);");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("begin");
+      Output.Write_Eol;
+      W_Indentation (2);
+      if isDummy = False then 
+         if GNS (Identifier (Type_Spec (A))) = "Node_Id" then
+            Output.Write_Str ("Set_Return_Value (Data, Integer (");
+         elsif GNS (Identifier (Type_Spec (A))) = "List_Id" then
+            Output.Write_Str ("return_List (Data,");
+         elsif GNS (Identifier (Type_Spec (A))) = "Name_Id" then
+            Output.Write_Str ("Set_Return_Value (Data, Integer (");
+         elsif GNS (Identifier (Type_Spec (A))) = "Boolean" then
+            Output.Write_Str ("Set_Return_Value (Data, Boolean (");
+         elsif GNS (Identifier (Type_Spec (A))) = "Byte" then
+            Output.Write_Str ("Set_Return_Value (Data, Integer (");
+         elsif GNS (Identifier (Type_Spec (A))) = "Int" then
+            Output.Write_Str ("Set_Return_Value (Data, Integer (");
+         elsif GNS (Identifier (Type_Spec (A))) = "Value_Id" then
+            Output.Write_Str ("Set_Return_Value (Data, Integer (");
+         end if;
+
+         Output.Write_Eol;
+         W_Indentation (3);
+         Output.Write_Str (GNS (Identifier (A)));
+         Output.Write_Str (" (");
+         Output.Write_Eol;
+         W_Indentation (4);
+
+         if GNS (Identifier (NS)) = "Node_Id" then
+            Output.Write_Str ("get_Node_Id_From_String");
+         elsif GNS (Identifier (NS)) = "List_Id" then
+            Output.Write_Str ("get_List_Id_From_String");
+         end if;
+
+         if GNS (Identifier (Type_Spec (A))) = "List_Id" then
+            Output.Write_Str (" (Nth_Arg (Data, 1, """"))));");
+         else
+            Output.Write_Str (" (Nth_Arg (Data, 1, """")))));");
+         end if;
+      else
+         Output.Write_Str ("dummy;");
+      end if;
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("end On_");
+      Output.Write_Str (GNS (Identifier (A)));
+      Output.Write_Str (";");
+      Output.Write_Eol;
+      Output.Write_Eol;
+   end W_Attribute_Body_python;
+
+   ---------------------------------
+   -- W_Attribute_Register_python --
+   ---------------------------------
+
+   procedure W_Attribute_Register_python (A : String; prefix : String) is
+   begin
+      W_Indentation (2);
+      Output.Write_Str ("Register_Command ");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("(Repo, """);
+      Output.Write_Str (prefix);
+      Output.Write_Str ("_");
+      Output.Write_Str (A);
+      Output.Write_Str (""", 1, 1,");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("Handler => On_");
+      Output.Write_Str (A);
+      Output.Write_Str ("'Unrestricted_Access)");
+      Output.Write_Str (";");
+      Output.Write_Eol;
+
+      W_Indentation (2);
+      Output.Write_Str ("Register_Command ");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("(Repo, """);
+      Output.Write_Str (prefix);
+      Output.Write_Str ("_");
+      Output.Write_Str (WS (A));
+      Output.Write_Str (""", 2, 2,");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("Handler => On_");
+      Output.Write_Str (WS (A));
+      Output.Write_Str ("'Unrestricted_Access)");
+      Output.Write_Str (";");
+      Output.Write_Eol;
+
+   end W_Attribute_Register_python;
+
+   ---------------------------------
+   -- W_Attribute_Register_python --
+   ---------------------------------
+
+   procedure W_Attribute_Register_python (A : Types.Node_Id; prefix : String) is
+   begin
+      W_Indentation (2);
+      Output.Write_Str ("Register_Command ");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("(Repo, """);
+      Output.Write_Str (prefix);
+      Output.Write_Str ("_");
+      Output.Write_Str (GNS (Identifier (A)));
+      Output.Write_Str (""", 1, 1,");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("Handler => On_");
+      Output.Write_Str (GNS (Identifier (A)));
+      Output.Write_Str ("'Unrestricted_Access)");
+      Output.Write_Str (";");
+      Output.Write_Eol;
+
+      W_Indentation (2);
+      Output.Write_Str ("Register_Command ");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("(Repo, """);
+      Output.Write_Str (prefix);
+      Output.Write_Str ("_");
+      Output.Write_Str (WS (GNS (Identifier (A))));
+      Output.Write_Str (""", 2, 2,");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("Handler => On_");
+      Output.Write_Str (WS (GNS (Identifier (A))));
+      Output.Write_Str ("'Unrestricted_Access)");
+      Output.Write_Str (";");
+      Output.Write_Eol;
+   end W_Attribute_Register_python;
+
+   ---------------------------
+   -- W_Package_Spec_Python --
+   ---------------------------
+
+   procedure W_Package_Spec_Python is
+   begin
+      Output.Write_Line ("pragma Style_Checks (""NM32766"");");
+      Output.Write_Eol;
+
+      W_Comment_Message;
+
+      W_With ("GNATCOLL.Scripts");
+      Output.Write_Eol;
+      Output.Write_Str ("package ");
+      Namet.Write_Name (Module_Name);
+      Output.Write_Str (".Python is");
+      Output.Write_Eol;
+      
+      W_Indentation (1);
+      Output.Write_Str ("procedure return_List");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class; ");
+      Output.Write_Str ("List : Node_List);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("procedure return_List");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("(Data : in out Callback_Data'Class; List : List_Id);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      W_Indentation (1);
+      Output.Write_Str ("function Register_Generated_Functions ");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str (
+         "(Repo : Scripts_Repository)");
+      Output.Write_Str (" return Scripts_Repository;");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      Output.Write_Str ("end ");
+      Namet.Write_Name (Module_Name);
+      Output.Write_Str (".Python;");
+   end W_Package_Spec_Python;
+
+   ---------------------
+   -- W_Python_Script --
+   ---------------------
+
+   procedure W_Python_Script is
+      Attribute : Types.Node_Id;
+   begin
+
+      Output.Write_Str ("#! /usr/bin/python");
+      Output.Write_Eol;
+      Output.Write_Eol;
+      
+      Output.Write_Str ("import libocarina_python; # Ocarina bindings");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      --  W_Comment_Message;
+
+      W_Attribute_Python_Script ("Kind");
+      W_Attribute_Python_Script ("Loc");
+
+      --  Some attributes may appear several times in different
+      --  interfaces. We do not want to generate them several
+      --  times. We mark attributes as not generated and when we visit
+      --  them we mark them back as generated.
+
+      Attribute := First_Attribute;
+      while Attribute /= Types.No_Node loop
+         Set_Generated (Attribute, False);
+         Attribute := Next_Entity (Attribute);
+      end loop;
+
+      --  We generate a getter/setter for each attribute. We mark them
+      --  as generated in order not to generate them several
+      --  times. See above.
+
+      Attribute := First_Attribute;
+      while Attribute /= Types.No_Node loop
+         if not Generated (Attribute) then
+            W_Attribute_Python_Script (Attribute);
+            Set_Generated (Attribute, True);
+         end if;
+
+         Attribute := Next_Entity (Attribute);
+      end loop;
+   end W_Python_Script;
+
+   -------------------------------
+   -- W_Attribute_Python_Script --
+   -------------------------------
+
+   procedure W_Attribute_Python_Script (A : String) is
+   begin
+
+      Output.Write_Str
+         ("##########################################################");
+      Output.Write_Eol;
+      Output.Write_Str ("def ");
+      Output.Write_Str (A);
+      Output.Write_Str (" (N):");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("return libocarina_python.");
+      Output.Write_Str (Ada.Directories.Base_Name (
+         Namet.get_Name_String (Output_Name)));
+      Output.Write_Str ("_");
+      Output.Write_Str (A);
+      Output.Write_Str (" (N);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      Output.Write_Str
+         ("##########################################################");
+      Output.Write_Eol;
+      Output.Write_Str ("def ");
+      Output.Write_Str (WS (A));
+      Output.Write_Str (" (N, V):");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("libocarina_python.");
+      Output.Write_Str (Ada.Directories.Base_Name (
+         Namet.get_Name_String (Output_Name)));
+      Output.Write_Str ("_");
+      Output.Write_Str (WS (A));
+      Output.Write_Str (" (N, V);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+   end W_Attribute_Python_Script;
+
+   -------------------------------
+   -- W_Attribute_Python_Script --
+   -------------------------------
+
+   procedure W_Attribute_Python_Script (A : Types.Node_Id) is
+      NS : Types.Node_Id;
+   begin
+      NS := Scope_Entity (A);
+      while Type_Spec (NS) /= Types.No_Node loop
+         NS := Type_Spec (NS);
+      end loop;
+
+      Output.Write_Str
+         ("##########################################################");
+      Output.Write_Eol;
+      Output.Write_Str ("def ");
+      Output.Write_Str (GNS (Identifier (A)));
+      Output.Write_Str (" (N):");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("return libocarina_python.");
+      Output.Write_Str (Ada.Directories.Base_Name (
+         Namet.get_Name_String (Output_Name)) & "_python");
+      Output.Write_Str ("_");
+      Output.Write_Str (GNS (Identifier (A)));
+      Output.Write_Str (" (N);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+      Output.Write_Str
+         ("##########################################################");
+      Output.Write_Eol;
+      Output.Write_Str ("def ");
+      Output.Write_Str (WS (GNS (Identifier (A))));
+      Output.Write_Str (" (N, V):");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("libocarina_python.");
+      Output.Write_Str (Ada.Directories.Base_Name (
+         Namet.get_Name_String (Output_Name)) & "_python");
+      Output.Write_Str ("_");
+      Output.Write_Str (WS (GNS (Identifier (A))));
+      Output.Write_Str (" (N, V);");
+      Output.Write_Eol;
+      Output.Write_Eol;
+
+   end W_Attribute_Python_Script;
 
 end Parser;
