@@ -31,6 +31,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+pragma Warnings (Off);
+with Ocarina.Types;                      use Ocarina.Types;
+with GNATCOLL.Scripts;                   use GNATCOLL.Scripts;
+with Ocarina.ME_AADL;
+with Ocarina.ME_AADL.AADL_Tree.Nodes;
+
 package Ocarina.Utils is
 
    procedure Version;
@@ -47,5 +53,15 @@ package Ocarina.Utils is
    procedure Instantiate (Root_System : String);
    procedure Generate (Backend_Name : String);
    procedure Reset;
+
+   function Get_AADL_Root return Node_Id;
+   function Get_Node_Id_From_String (Name : String) return Node_Id;
+   function Get_Name_Id_From_String (Name : String) return Name_Id;
+   function Get_Boolean_From_String (Name : String) return Boolean;
+   function Get_Byte_From_String (Name : String) return Byte;
+   function Get_List_Id_From_String (Name : String) return List_Id;
+   function Get_Int_From_String (Name : String) return Int;
+   function Get_Value_Id_From_String (Name : String) return Value_Id;
+   procedure Get_Node_Id (Data : in out Callback_Data'Class; N : String);
 
 end Ocarina.Utils;
