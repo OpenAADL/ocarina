@@ -34,13 +34,28 @@
 pragma Warnings (Off);
 --  Silence all warnings
 
-with GNATCOLL.Scripts;        use GNATCOLL.Scripts;
-with GNATCOLL.Scripts.Python; use GNATCOLL.Scripts.Python;
+with GNATCOLL.Scripts;           use GNATCOLL.Scripts;
+with GNATCOLL.Scripts.Python;    use GNATCOLL.Scripts.Python;
 
-with Ocarina.Configuration;   use Ocarina.Configuration;
-with Ocarina.Utils;
+with Ocarina.Configuration;      use Ocarina.Configuration;
+
+with GNATCOLL.VFS;               use GNATCOLL.VFS;
+with Ocarina.Output;             use Ocarina.Output;
+
+with Ocarina.Types;              use Ocarina.Types;
+with Ocarina.Utils;              use Ocarina.Utils;
+with Ocarina.Lmp;                use Ocarina.Lmp;
+with Ocarina.ME_AADL.AADL_Tree.Nodes.Python;
+with Ocarina.ME_AADL.AADL_Instances.Nodes.Python;
+with Ocarina.ME_AADL.AADL_Tree.Entities;
+
+with Ocarina.Namet;
 
 package body Ocarina.Python_Cmd is
+
+   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
+   package ATNP renames Ocarina.ME_AADL.AADL_Tree.Nodes.Python;
+   package AINP renames Ocarina.ME_AADL.AADL_Instances.Nodes.Python;
 
    --------------
    -- On_Reset --
@@ -151,6 +166,349 @@ package body Ocarina.Python_Cmd is
       Ocarina.Utils.Generate (Nth_Arg (Data, 1, ""));
    end On_Generate;
 
+   ---------------------
+   -- On_Get_Packages --
+   ---------------------
+
+   procedure On_Get_Packages
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Packages
+     (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Packages);
+   end On_Get_Packages;
+
+   --------------------------------
+   -- On_Get_Import_Declarations --
+   --------------------------------
+
+   procedure On_Get_Import_Declarations
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Import_Declarations
+     (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Import_Declarations);
+   end On_Get_Import_Declarations;
+
+   -------------------------------
+   -- On_Get_Alias_Declarations --
+   -------------------------------
+
+   procedure On_Get_Alias_Declarations
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Alias_Declarations
+     (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Alias_Declarations);
+   end On_Get_Alias_Declarations;
+
+   ----------------------------
+   -- On_Get_Component_Types --
+   ----------------------------
+
+   procedure On_Get_Component_Types
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Component_Types
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Component_Types (Nth_Arg (Data, 1, "")));
+   end On_Get_Component_Types;
+
+   --------------------------------------
+   -- On_Get_Component_Implementations --
+   --------------------------------------
+
+   procedure On_Get_Component_Implementations
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Component_Implementations
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Component_Implementations
+         (Nth_Arg (Data, 1, "")));
+   end On_Get_Component_Implementations;
+
+   --------------------
+   -- On_Get_Annexes --
+   --------------------
+
+   procedure On_Get_Annexes
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Annexes
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Annexes);
+   end On_Get_Annexes;
+
+   ----------------------
+   -- On_Get_Prototype --
+   ----------------------
+
+   procedure On_Get_Prototype
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Prototype
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Prototype);
+   end On_Get_Prototype;
+
+   ------------------------------
+   -- On_Get_Prototype_Binding --
+   ------------------------------
+
+   procedure On_Get_Prototype_Binding
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Prototype_Binding
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Prototype_Binding);
+   end On_Get_Prototype_Binding;
+
+   -----------------------
+   -- On_Get_Flow_Specs --
+   -----------------------
+
+   procedure On_Get_Flow_Specs
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Flow_Specs
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Flow_Specs);
+   end On_Get_Flow_Specs;
+
+   ---------------------------------
+   -- On_Get_Flow_Implementations --
+   ---------------------------------
+
+   procedure On_Get_Flow_Implementations
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Flow_Implementations
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Flow_Implementations);
+   end On_Get_Flow_Implementations;
+
+   ------------------
+   -- On_Get_Modes --
+   ------------------
+
+   procedure On_Get_Modes
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Modes
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Modes);
+   end On_Get_Modes;
+
+   -----------------------------
+   -- On_Get_Mode_Transitions --
+   -----------------------------
+
+   procedure On_Get_Mode_Transitions
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Mode_Transitions
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Mode_Transitions);
+   end On_Get_Mode_Transitions;
+
+   ---------------------
+   -- On_Get_In_Modes --
+   ---------------------
+
+   procedure On_Get_In_Modes
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_In_Modes
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_In_Modes);
+   end On_Get_In_Modes;
+
+   --------------------------
+   -- On_Get_Property_Sets --
+   --------------------------
+
+   --  procedure Get_PropertyBinding return Node_List;
+
+   procedure On_Get_Property_Sets
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Property_Sets
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Property_Sets);
+   end On_Get_Property_Sets;
+
+   ---------------------------
+   -- On_Get_Property_Types --
+   ---------------------------
+
+   procedure On_Get_Property_Types
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Property_Types
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Property_Types (
+         Get_Node_Id_From_String (Nth_Arg (Data, 1, ""))));
+   end On_Get_Property_Types;
+
+   ---------------------------------
+   -- On_Get_Property_Definitions --
+   ---------------------------------
+
+   procedure On_Get_Property_Definitions
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Property_Definitions
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Property_Definitions (
+         Get_Node_Id_From_String (Nth_Arg (Data, 1, ""))));
+   end On_Get_Property_Definitions;
+
+   ------------------------------
+   -- On_Get_PropertyConstants --
+   ------------------------------
+
+   procedure On_Get_PropertyConstants
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_PropertyConstants
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      ATNP.return_List (Data, Get_Property_Constants (
+         Get_Node_Id_From_String (Nth_Arg (Data, 1, ""))));
+   end On_Get_PropertyConstants;
+
+   ----------------------
+   -- On_Get_Instances --
+   ----------------------
+
+   procedure On_Get_Instances
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Instances
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+      List_Node : Node_Id;
+   begin
+      AINP.return_List (Data, Get_Instances (Nth_Arg (Data, 1, "")));
+   end On_Get_Instances;
+
+   --------------------
+   -- On_Get_Node_Id --
+   --------------------
+
+   procedure On_Get_Node_Id
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Node_Id
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+   begin
+      Ocarina.Utils.Get_Node_Id (Data, Nth_Arg (Data, 1, ""));
+   end On_Get_Node_Id;
+
+   ---------------------------
+   -- On_Get_Component_Name --
+   ---------------------------
+
+   procedure On_Get_Component_Name
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Component_Name
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+   begin
+      Ocarina.Lmp.Get_Component_Name (Data,
+         Node_Id (Integer'Value (Nth_Arg (Data, 1, ""))));
+   end On_Get_Component_Name;
+
+   -------------------------------
+   -- On_Get_Component_Fullname --
+   -------------------------------
+
+   procedure On_Get_Component_Fullname
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Component_Fullname
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+   begin
+      Ocarina.Lmp.Get_Component_Fullname (Data,
+         Node_Id (Integer'Value (Nth_Arg (Data, 1, ""))));
+   end On_Get_Component_Fullname;
+
+   --------------------------
+   -- On_Get_Instance_Name --
+   --------------------------
+
+   procedure On_Get_Instance_Name
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Instance_Name
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+   begin
+      Ocarina.Lmp.Get_Instance_Name (Data,
+         Node_Id (Integer'Value (Nth_Arg (Data, 1, ""))));
+   end On_Get_Instance_Name;
+
    ------------------------------------
    -- Register_Scripts_And_Functions --
    ------------------------------------
@@ -183,12 +541,104 @@ package body Ocarina.Python_Cmd is
 
       --  load() function
       Register_Command
-        (Repo, "load", 1, 1, Handler => On_Load_AADL_File'Unrestricted_Access);
+        (Repo, "load", 1, 1,
+          Handler => On_Load_AADL_File'Unrestricted_Access);
 
       --  analyze() function
       Register_Command
-        (Repo, "analyze", 0, 0,
-         Handler => On_Analyze'Unrestricted_Access);
+        (Repo, "analyze", 0, 0, Handler => On_Analyze'Unrestricted_Access);
+
+      --  LMP accessor
+
+      --  getPackages() function
+      Register_Command
+        (Repo, "getPackages", 0, 0,
+        Handler => On_Get_Packages'Unrestricted_Access);
+
+      --  getImportDeclarations() function
+      Register_Command
+        (Repo, "getImportDeclarations", 0, 0,
+        Handler => On_Get_Import_Declarations'Unrestricted_Access);
+
+      --  getAliasDeclarations() function
+      Register_Command
+        (Repo, "getAliasDeclarations", 0, 0,
+        Handler => On_Get_Alias_Declarations'Unrestricted_Access);
+
+      --  getComponentTypes(kind) function
+      Register_Command
+        (Repo, "getComponentTypes", 1, 1,
+         Handler => On_Get_Component_Types'Unrestricted_Access);
+
+      --  getComponentImplementations(kind) function
+      Register_Command
+        (Repo, "getComponentImplementations", 1, 1,
+         Handler => On_Get_Component_Implementations'Unrestricted_Access);
+
+      --  getAnnexes() function
+      Register_Command
+        (Repo, "getAnnexes", 0, 0,
+        Handler => On_Get_Annexes'Unrestricted_Access);
+
+      --  getPrototypes() function
+      Register_Command
+        (Repo, "getPrototypes", 0, 0,
+         Handler => On_Get_Prototype'Unrestricted_Access);
+
+      --  getPrototypeBindings() function
+      Register_Command
+        (Repo, "getPrototypeBindings", 0, 0,
+         Handler => On_Get_Prototype_Binding'Unrestricted_Access);
+
+      --  getFlowSpecifications() function
+      Register_Command
+        (Repo, "getFlowSpecifications", 0, 0,
+         Handler => On_Get_Flow_Specs'Unrestricted_Access);
+
+      --  getFlowImplementations() function
+      Register_Command
+        (Repo, "getFlowImplementations", 0, 0,
+         Handler => On_Get_Flow_Implementations'Unrestricted_Access);
+
+      --  getModes() function
+      Register_Command
+        (Repo, "getModes", 0, 0,
+         Handler => On_Get_Modes'Unrestricted_Access);
+
+      --  getModeTransitions() function
+      Register_Command
+        (Repo, "getModeTransitions", 0, 0,
+         Handler => On_Get_Mode_Transitions'Unrestricted_Access);
+
+      --  getInModes() function
+      Register_Command
+        (Repo, "getInModes", 0, 0,
+         Handler => On_Get_In_Modes'Unrestricted_Access);
+
+      --  getPropertySets() function
+      Register_Command
+        (Repo, "getPropertySets", 0, 0,
+         Handler => On_Get_Property_Sets'Unrestricted_Access);
+
+      --  getPropertyTypes() function
+      Register_Command
+        (Repo, "getPropertyTypes", 1, 1,
+         Handler => On_Get_Property_Types'Unrestricted_Access);
+
+      --  getPropertyDefinitions() function
+      Register_Command
+        (Repo, "getPropertyDefinitions", 1, 1,
+         Handler => On_Get_Property_Definitions'Unrestricted_Access);
+
+      --  getPropertyConstants() function
+      Register_Command
+        (Repo, "getPropertyConstants", 1, 1,
+         Handler => On_Get_PropertyConstants'Unrestricted_Access);
+
+      --  getInstances() function
+      Register_Command
+        (Repo, "getInstances", 1, 1,
+         Handler => On_Get_Instances'Unrestricted_Access);
 
       --  instantiate() function
       Register_Command
@@ -199,6 +649,32 @@ package body Ocarina.Python_Cmd is
       Register_Command
         (Repo, "generate", 1, 1,
          Handler => On_Generate'Unrestricted_Access);
+
+      --  getComponentName() function
+      Register_Command
+        (Repo, "getComponentName", 1, 1,
+         Handler => On_Get_Component_Name'Unrestricted_Access);
+
+      --  getComponentFullname() function
+      Register_Command
+        (Repo, "getComponentFullname", 1, 1,
+         Handler => On_Get_Component_Fullname'Unrestricted_Access);
+
+      --  getInstanceName() function
+      Register_Command
+        (Repo, "getInstanceName", 1, 1,
+         Handler => On_Get_Instance_Name'Unrestricted_Access);
+
+      --  getNodeId() function
+      Register_Command
+        (Repo, "getNodeId", 1, 1,
+         Handler => On_Get_Node_Id'Unrestricted_Access);
+
+      Repo := Ocarina.ME_AADL.AADL_Instances.Nodes.Python.
+         Register_Generated_Functions (Repo);
+
+      Repo := Ocarina.ME_AADL.AADL_Tree.Nodes.Python.
+         Register_Generated_Functions (Repo);
 
       return Repo;
    end Register_Scripts_And_Functions;
