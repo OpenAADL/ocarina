@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -351,6 +351,8 @@ package body Ocarina.Backends.Properties is
    Compute_Execution_Time           : Name_Id;
    Execution_Time                   : Name_Id;
    Compute_Deadline                 : Name_Id;
+
+   Core_Id : Name_Id;
 
    --------------------
    -- SEI properties --
@@ -3004,6 +3006,7 @@ package body Ocarina.Backends.Properties is
 
    procedure Init is
    begin
+      Core_Id := Get_String_Name ("processor_properties::core_id");
       Source_Language  := Get_String_Name ("source_language");
       Source_Name      := Get_String_Name ("source_name");
       T_Source_Name    := Get_String_Name ("transformations::source_name");
@@ -4410,9 +4413,9 @@ package body Ocarina.Backends.Properties is
       return No_Name;
    end Get_Send_Function_Name;
 
-   ---------------------
-   -- Get_Memory_Size --
-   ---------------------
+   ----------------------
+   -- Get_Base_Address --
+   ----------------------
 
    function Get_Base_Address (D : Node_Id) return Unsigned_Long_Long is
    begin
@@ -4427,5 +4430,14 @@ package body Ocarina.Backends.Properties is
    begin
       return Get_Size_Property_Value (D, Memory_Size);
    end Get_Memory_Size;
+
+   -----------------
+   -- Get_Core_Id --
+   -----------------
+
+   function Get_Core_Id (D : Node_Id) return Unsigned_Long_Long is
+   begin
+      return Check_And_Get_Property (D, Core_Id);
+   end Get_Core_Id;
 
 end Ocarina.Backends.Properties;

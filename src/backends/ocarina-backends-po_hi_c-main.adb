@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -100,6 +100,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
          Parameters : List_Id;
          Priority   : Unsigned_Long_Long;
          Stack_Size : Unsigned_Long_Long;
+         Core_Id    : Unsigned_Long_Long;
          S          : constant Node_Id := Parent_Subcomponent (E);
       begin
          Parameters := New_List (CTN.K_Parameter_List);
@@ -176,6 +177,15 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          Stack_Size := To_Bytes (Get_Thread_Stack_Size (E));
          N          := Make_Literal (New_Int_Value (Stack_Size, 1, 10));
+         Append_Node_To_List (N, Parameters);
+
+         --  Add the core this thread is attached to
+
+         Core_Id := Get_Core_Id (Get_Bound_Processor
+                                   (Corresponding_Instance
+                                      (Get_Container_Process (E))));
+
+         N          := Make_Literal (New_Int_Value (Core_Id, 1, 10));
          Append_Node_To_List (N, Parameters);
 
          --  Add the name of function executed by the task in the

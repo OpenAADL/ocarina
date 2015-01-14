@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -800,6 +800,12 @@ package Ocarina.Backends.Properties is
 
    function Get_Base_Address (D : Node_Id) return Unsigned_Long_Long;
    function Get_Memory_Size (D : Node_Id) return Size_Type;
+
+   --------------------------
+   -- Processor properties --
+   --------------------------
+
+   function Get_Core_Id (D : Node_Id) return Unsigned_Long_Long;
 
 private
 
