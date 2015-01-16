@@ -45,4 +45,6 @@ package Ocarina.Backends.Deos_Conf.Mapping is
 
    function Map_Sampling_Port (Port : Node_Id) return Node_Id;
 
+   function Map_Queuing_Port (Port : Node_Id) return Node_Id;
+
 end Ocarina.Backends.Deos_Conf.Mapping;

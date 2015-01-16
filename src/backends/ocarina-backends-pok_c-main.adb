@@ -599,6 +599,11 @@ package body Ocarina.Backends.POK_C.Main is
 
                      CTU.Append_Node_To_List (N, Statements);
                   elsif AIN.Is_Data (F) and then not Is_Event (F) then
+
+                     --
+                     --  Here, we have a sampling port.
+                     --
+
                      Append_Node_To_List
                        (Make_Literal
                           (CV.New_Pointed_Char_Value (Map_Port_Name (F))),
