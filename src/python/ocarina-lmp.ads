@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                        O C A R I N A . L M P                         --
+--                          O C A R I N A . L M P                           --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2013 ESA & ISAE.                       --
+--                     Copyright (C) 2015 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,6 +32,7 @@
 ------------------------------------------------------------------------------
 
 pragma Warnings (Off);
+
 with Ocarina.Types;                      use Ocarina.Types;
 with GNATCOLL.Scripts;                   use GNATCOLL.Scripts;
 with Ocarina.ME_AADL;
