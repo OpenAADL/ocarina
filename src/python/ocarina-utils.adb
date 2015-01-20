@@ -31,6 +31,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+pragma Warnings (Off);
+
 with Ada.Command_Line;           use Ada.Command_Line;
 with GNAT.Directory_Operations;  use GNAT.Directory_Operations;
 with GNAT.OS_Lib;                use GNAT.OS_Lib;
@@ -39,7 +41,6 @@ with Errors;                     use Errors;
 with Locations;                  use Locations;
 with Ocarina.Namet;                      use Ocarina.Namet;
 with Ocarina.Output;                     use Ocarina.Output;
-with Ocarina.Types;                      use Ocarina.Types;
 with Utils;                      use Utils;
 
 with Ocarina.Analyzer;           use Ocarina.Analyzer;
@@ -53,12 +54,33 @@ with Ocarina.Parser;             use Ocarina.Parser;
 with Ocarina.Options;            use Ocarina.Options;
 with Ocarina.Files;              use Ocarina.Files;
 
+with Ocarina.Analyzer.AADL.Finder;         use Ocarina.Analyzer.AADL.Finder;
+with Ocarina.ME_AADL.AADL_Tree.Entities;
+with Ocarina.ME_AADL.AADL_Tree.Nutils;
+with Ocarina.ME_AADL.AADL_Instances.Nodes;
+with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.ME_AADL.AADL_Instances.Nutils;
+
+with Namet;
+with Ocarina.Instances.Finder;
+
+with Ada.Strings.Equal_Case_Insensitive;
+with Ada.Text_IO;
+
 package body Ocarina.Utils is
+
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
+   package ATNU renames Ocarina.ME_AADL.AADL_Tree.Nutils;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package AIE renames Ocarina.ME_AADL.AADL_Instances.Entities;
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
 
    AADL_Root             : Node_Id := No_Node;
    File_Name             : Name_Id := No_Name;
    Buffer                : Location;
    Language              : Name_Id := No_Name;
+   Components            : Node_List;
 
    -----------
    -- Reset --
@@ -246,5 +268,94 @@ package body Ocarina.Utils is
       Write_Line ("Generating code using backend " & Backend_Name);
       Generate_Code (AADL_Root);
    end Generate;
+
+   -------------------
+   -- Get_AADL_Root --
+   -------------------
+
+   function Get_AADL_Root return Node_Id is
+   begin
+      return AADL_Root;
+   end Get_AADL_Root;
+
+   -----------------
+   -- Get_Node_Id --
+   -----------------
+
+   procedure Get_Node_Id (Data : in out Callback_Data'Class;
+      N : String) is
+   begin
+      Set_Return_Value (Data, Integer'Image (Integer
+         (Namet.Get_String_Name (N))));
+   end Get_Node_Id;
+
+   -----------------------------
+   -- Get_Node_Id_From_String --
+   -----------------------------
+
+   function Get_Node_Id_From_String (Name : String) return Node_Id is
+   begin
+      return Node_Id (Integer'Value (Name));
+   end Get_Node_Id_From_String;
+
+   -----------------------------
+   -- Get_List_Id_From_String --
+   -----------------------------
+
+   function Get_List_Id_From_String (Name : String) return List_Id is
+   begin
+      return List_Id (Integer'Value (Name));
+   end Get_List_Id_From_String;
+
+   -----------------------------
+   -- Get_Boolean_From_String --
+   -----------------------------
+
+   function Get_Boolean_From_String (Name : String) return Boolean is
+   begin
+      return Boolean'Value (Name);
+   end Get_Boolean_From_String;
+
+   --------------------------
+   -- Get_Byte_From_String --
+   --------------------------
+
+   function Get_Byte_From_String (Name : String) return Byte is
+   begin
+      return Byte (Integer'Value (Name));
+   end Get_Byte_From_String;
+
+   -------------------------
+   -- Get_Int_From_String --
+   -------------------------
+
+   function Get_Int_From_String (Name : String) return Int is
+   begin
+      return Int (Integer'Value (Name));
+   end Get_Int_From_String;
+
+   ------------------------------
+   -- Get_Value_Id_From_String --
+   ------------------------------
+
+   function Get_Value_Id_From_String (Name : String) return Value_Id is
+   begin
+      return Value_Id (Integer'Value (Name));
+   end Get_Value_Id_From_String;
+
+   -----------------------------
+   -- Get_Name_Id_From_String --
+   -----------------------------
+
+   function Get_Name_Id_From_String (Name : String) return Name_Id is
+      val : Integer;
+   begin
+      val := Integer'Value (Name);
+      if val > 300_000_000 and then val < 399_999_999 then
+         return Name_Id (val);
+      else
+         return No_Name;
+      end if;
+   end Get_Name_Id_From_String;
 
 end Ocarina.Utils;
