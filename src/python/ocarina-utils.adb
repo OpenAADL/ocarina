@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2013-2014 ESA & ISAE.                    --
+--                   Copyright (C) 2013-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -31,8 +31,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-pragma Warnings (Off);
-
 with Ada.Command_Line;           use Ada.Command_Line;
 with GNAT.Directory_Operations;  use GNAT.Directory_Operations;
 with GNAT.OS_Lib;                use GNAT.OS_Lib;
@@ -54,33 +52,12 @@ with Ocarina.Parser;             use Ocarina.Parser;
 with Ocarina.Options;            use Ocarina.Options;
 with Ocarina.Files;              use Ocarina.Files;
 
-with Ocarina.Analyzer.AADL.Finder;         use Ocarina.Analyzer.AADL.Finder;
-with Ocarina.ME_AADL.AADL_Tree.Entities;
-with Ocarina.ME_AADL.AADL_Tree.Nutils;
-with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Ocarina.ME_AADL.AADL_Instances.Entities;
-with Ocarina.ME_AADL.AADL_Instances.Nutils;
-
-with Namet;
-with Ocarina.Instances.Finder;
-
-with Ada.Strings.Equal_Case_Insensitive;
-with Ada.Text_IO;
-
 package body Ocarina.Utils is
-
-   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
-   package ATNU renames Ocarina.ME_AADL.AADL_Tree.Nutils;
-   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package AIE renames Ocarina.ME_AADL.AADL_Instances.Entities;
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
 
    AADL_Root             : Node_Id := No_Node;
    File_Name             : Name_Id := No_Name;
    Buffer                : Location;
    Language              : Name_Id := No_Name;
-   Components            : Node_List;
 
    -----------
    -- Reset --

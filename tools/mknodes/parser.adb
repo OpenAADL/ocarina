@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -45,8 +45,6 @@ use type Types.Byte, Types.Name_Id, Types.Node_Id, Types.Int;
 
 with Utils;
 with Ada.Directories;
-with Ada.Strings.Fixed;
-with Ada.Strings.Maps;
 
 package body Parser is
 
@@ -2054,9 +2052,11 @@ package body Parser is
             Output.Set_Output (Output_File);
          end if;
 
-         W_Package_Body_Python (Ada.Directories.Base_Name (
-            Namet.Get_Name_String (
-               Utils.Replace_Char(Output_Name, '-', '_'))));
+         W_Package_Body_Python
+           (Ada.Directories.Base_Name
+              (Namet.Get_Name_String
+                 (Utils.Replace_Char (Output_Name, '-', '_'))));
+
          --  If the output is not the standard output, compute the body
          --  filename and redirect output.
 
@@ -2076,7 +2076,7 @@ package body Parser is
          if Output_Name /= Types.No_Name then
             Output_Name := Utils.Remove_Suffix_From_Name
                ("-python.idl", Output_Name);
-            Output_Name := Utils.Replace_Char(Output_Name, '-', '_');
+            Output_Name := Utils.Replace_Char (Output_Name, '-', '_');
             Output_Name := Utils.Add_Suffix_To_Name (".py", Output_Name);
             Output_File :=
               GNAT.OS_Lib.Create_File
@@ -2154,7 +2154,8 @@ package body Parser is
       Output.Write_Str ("procedure return_List");
       Output.Write_Eol;
       W_Indentation (2);
-      Output.Write_Str ("(Data : in out Callback_Data'Class; List : List_Id) is");
+      Output.Write_Str
+        ("(Data : in out Callback_Data'Class; List : List_Id) is");
       Output.Write_Eol;
       W_Indentation (2);
       Output.Write_Str ("List_Node : Node_Id;");
@@ -2175,7 +2176,8 @@ package body Parser is
       Output.Write_Str ("while Present (List_Node) loop");
       Output.Write_Eol;
       W_Indentation (4);
-      Output.Write_Str ("Set_Return_Value (Data, Integer'Image (Integer (List_Node)));");
+      Output.Write_Str
+        ("Set_Return_Value (Data, Integer'Image (Integer (List_Node)));");
       Output.Write_Eol;
       W_Indentation (4);
       Output.Write_Str ("List_Node := Next_Node (List_Node);");
@@ -2369,8 +2371,8 @@ package body Parser is
          NS := Type_Spec (NS);
       end loop;
 
-      -- output setter
-      
+      --  Output setter
+
       W_Indentation (1);
       Output.Write_Str ("procedure On_");
       Output.Write_Str (WS (GNS (Identifier (A))));
@@ -2411,7 +2413,7 @@ package body Parser is
          Output.Write_Str ("dummy;");
          isDummy := True;
       end if;
-      if isDummy = False then 
+      if isDummy = False then
          Output.Write_Eol;
          W_Indentation (3);
          if GNS (Identifier (Type_Spec (A))) = "Node_Id" then
@@ -2475,7 +2477,7 @@ package body Parser is
       Output.Write_Str ("begin");
       Output.Write_Eol;
       W_Indentation (2);
-      if isDummy = False then 
+      if isDummy = False then
          if GNS (Identifier (Type_Spec (A))) = "Node_Id" then
             Output.Write_Str ("Set_Return_Value (Data, Integer (");
          elsif GNS (Identifier (Type_Spec (A))) = "List_Id" then
@@ -2568,7 +2570,9 @@ package body Parser is
    -- W_Attribute_Register_python --
    ---------------------------------
 
-   procedure W_Attribute_Register_python (A : Types.Node_Id; prefix : String) is
+   procedure W_Attribute_Register_python
+     (A : Types.Node_Id; prefix : String)
+   is
    begin
       W_Indentation (2);
       Output.Write_Str ("Register_Command ");
@@ -2622,7 +2626,7 @@ package body Parser is
       Namet.Write_Name (Module_Name);
       Output.Write_Str (".Python is");
       Output.Write_Eol;
-      
+
       W_Indentation (1);
       Output.Write_Str ("procedure return_List");
       Output.Write_Eol;
@@ -2636,7 +2640,8 @@ package body Parser is
       Output.Write_Str ("procedure return_List");
       Output.Write_Eol;
       W_Indentation (2);
-      Output.Write_Str ("(Data : in out Callback_Data'Class; List : List_Id);");
+      Output.Write_Str
+        ("(Data : in out Callback_Data'Class; List : List_Id);");
       Output.Write_Eol;
       Output.Write_Eol;
 
@@ -2666,7 +2671,7 @@ package body Parser is
       Output.Write_Str ("#! /usr/bin/python");
       Output.Write_Eol;
       Output.Write_Eol;
-      
+
       Output.Write_Str ("import libocarina_python; # Ocarina bindings");
       Output.Write_Eol;
       Output.Write_Eol;
@@ -2718,8 +2723,8 @@ package body Parser is
       Output.Write_Eol;
       W_Indentation (1);
       Output.Write_Str ("return libocarina_python.");
-      Output.Write_Str (Ada.Directories.Base_Name (
-         Namet.get_Name_String (Output_Name)));
+      Output.Write_Str (Ada.Directories.Base_Name
+                          (Namet.Get_Name_String (Output_Name)));
       Output.Write_Str ("_");
       Output.Write_Str (A);
       Output.Write_Str (" (N);");
@@ -2735,8 +2740,8 @@ package body Parser is
       Output.Write_Eol;
       W_Indentation (1);
       Output.Write_Str ("libocarina_python.");
-      Output.Write_Str (Ada.Directories.Base_Name (
-         Namet.get_Name_String (Output_Name)));
+      Output.Write_Str (Ada.Directories.Base_Name
+                          (Namet.Get_Name_String (Output_Name)));
       Output.Write_Str ("_");
       Output.Write_Str (WS (A));
       Output.Write_Str (" (N, V);");
@@ -2767,7 +2772,7 @@ package body Parser is
       W_Indentation (1);
       Output.Write_Str ("return libocarina_python.");
       Output.Write_Str (Ada.Directories.Base_Name (
-         Namet.get_Name_String (Output_Name)) & "_python");
+         Namet.Get_Name_String (Output_Name)) & "_python");
       Output.Write_Str ("_");
       Output.Write_Str (GNS (Identifier (A)));
       Output.Write_Str (" (N);");
@@ -2783,8 +2788,8 @@ package body Parser is
       Output.Write_Eol;
       W_Indentation (1);
       Output.Write_Str ("libocarina_python.");
-      Output.Write_Str (Ada.Directories.Base_Name (
-         Namet.get_Name_String (Output_Name)) & "_python");
+      Output.Write_Str (Ada.Directories.Base_Name
+                          (Namet.Get_Name_String (Output_Name)) & "_python");
       Output.Write_Str ("_");
       Output.Write_Str (WS (GNS (Identifier (A))));
       Output.Write_Str (" (N, V);");
