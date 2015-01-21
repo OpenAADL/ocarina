@@ -135,7 +135,9 @@ package body Ocarina.Backends.POK_C.Runtime is
             RE_Header_Table (E) := RH_Apex;
          end loop;
 
+         RE_Header_Table (RE_Fifo) := RH_Apex;
          RE_Header_Table (RE_Pok_Port_Kind_Sampling) := RH_Apex;
+         RE_Header_Table (RE_Pok_Port_Kind_Queueing) := RH_Apex;
          RE_Header_Table (RE_Source) := RH_Apex;
          RE_Header_Table (RE_Destination) := RH_Apex;
          RE_Header_Table (RE_Pok_Errno_Empty) := RH_Apex;

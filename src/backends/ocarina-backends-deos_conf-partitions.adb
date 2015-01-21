@@ -444,6 +444,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       Memory_Segment          : Node_Id := No_Node;
       Partition_Node          : Node_Id;
       Sampling_Ports          : Node_Id := No_Node;
+      Queuing_Ports           : Node_Id := No_Node;
    begin
       Corresponding_Process := Find_Associated_Process (E);
 
@@ -506,6 +507,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
          if not AINU.Is_Empty (Features (Corresponding_Process)) then
             Sampling_Ports := Make_XML_Node ("SamplingPorts");
+            Queuing_Ports := Make_XML_Node ("QueuingPorts");
             F := First_Node (Features (Corresponding_Process));
 
             while Present (F) loop
@@ -520,6 +522,15 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
                         (Map_Sampling_Port (F),
                         XTN.Subitems (Sampling_Ports));
                   end if;
+
+                  if Is_Data (F) and then Is_Event (F)
+                     and then not (Is_In (F) and then Is_Out (F))
+                  then
+                     Append_Node_To_List
+                        (Map_Queuing_Port (F),
+                        XTN.Subitems (Queuing_Ports));
+                  end if;
+
                end if;
                F := Next_Node (F);
             end loop;
@@ -530,6 +541,14 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
          then
             Append_Node_To_List
                (Sampling_Ports,
+               XTN.Subitems (Partition_Node));
+         end if;
+
+         if Queuing_Ports /= No_Node and then
+            XTN.Subitems (Queuing_Ports) /= No_List
+         then
+            Append_Node_To_List
+               (Queuing_Ports,
                XTN.Subitems (Partition_Node));
          end if;
 

@@ -1011,6 +1011,60 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       return Sampling_Port;
    end Map_Sampling_Port;
 
+   ----------------------
+   -- Map_Queuing_Port --
+   ----------------------
+
+   function Map_Queuing_Port (Port : Node_Id) return Node_Id is
+      Queuing_Port   : Node_Id;
+      Size           : Unsigned_Long_Long;
+      Queue_Size     : Long_Long;
+   begin
+      Queuing_Port := Make_XML_Node ("QueuingPort");
+      Size := To_Bytes (Get_Data_Size
+                        (Corresponding_Instance (Port)));
+      Queue_Size := Get_Queue_Size (Port);
+
+      if Queue_Size = -1 then
+         Queue_Size := 1;
+      end if;
+
+      if Is_In (Port) then
+         XTU.Add_Attribute ("Name",
+                            Get_Name_String
+                              (AIN.Name (Identifier (Port))),
+                            Queuing_Port);
+      else
+         XTU.Add_Attribute ("Name",
+                            Get_Name_String
+                              (AIN.Name
+                                 (Identifier
+                                    (Item
+                                       (AIN.First_Node
+                                          (Destinations (Port)))))),
+                            Queuing_Port);
+      end if;
+      XTU.Add_Attribute ("MaxMessageSize",
+                        Trim (Unsigned_Long_Long'Image
+                           (Size), Left),
+                         Queuing_Port);
+
+      XTU.Add_Attribute ("MaxNbMessage",
+                        Trim (Long_Long'Image
+                           (Queue_Size), Left),
+                         Queuing_Port);
+
+      if Is_In (Port) then
+         XTU.Add_Attribute ("Direction", "DESTINATION", Queuing_Port);
+      elsif Is_Out (Port) then
+         XTU.Add_Attribute ("Direction", "SOURCE", Queuing_Port);
+      end if;
+      XTU.Add_Attribute ("SourcePartitionName", "", Queuing_Port);
+      XTU.Add_Attribute ("SourcePortName", "", Queuing_Port);
+      XTU.Add_Attribute ("CustomIOFunction", "", Queuing_Port);
+      return Queuing_Port;
+   end Map_Queuing_Port;
+
    -------------------
    -- Map_Partition --
    -------------------
