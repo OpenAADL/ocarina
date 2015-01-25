@@ -1,6 +1,8 @@
 AUTOMAKE_OPTIONS = no-dependencies
 
-PYTHON_FILES = $(srcdir)/ocarina.py
+PYTHON_FILES = $(srcdir)/ocarina.py					    \
+	 $(top_builddir)/src/python/ocarina_me_aadl_aadl_instances_nodes.py \
+	 $(top_builddir)/src/python/ocarina_me_aadl_aadl_tree_nodes.py
 
 EXTRA_DIST = $(PYTHON_FILES)
 
