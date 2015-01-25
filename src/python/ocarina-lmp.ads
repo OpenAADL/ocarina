@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                        O C A R I N A . U T I L S                         --
+--                          O C A R I N A . L M P                           --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2013 ESA & ISAE.                       --
+--                     Copyright (C) 2015 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -32,36 +32,52 @@
 ------------------------------------------------------------------------------
 
 pragma Warnings (Off);
+
 with Ocarina.Types;                      use Ocarina.Types;
 with GNATCOLL.Scripts;                   use GNATCOLL.Scripts;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 
-package Ocarina.Utils is
+package Ocarina.Lmp is
 
-   procedure Version;
-   --  Display version information
+   function Get_Packages return Node_List;
+   function Get_Import_Declarations return Node_List;
+   function Get_Alias_Declarations return Node_List;
+   function Get_Component_Types (kind : String) return Node_List;
+   function Get_Component_Implementations (kind : String) return Node_List;
+   function Get_Annexes return Node_List;
+   function Get_Prototype return Node_List;
+   function Get_Prototype_Binding return Node_List;
+   function Get_Flow_Specs return Node_List;
+   function Get_Flow_Implementations return Node_List;
+   function Get_Modes return Node_List;
+   function Get_Mode_Transitions return Node_List;
+   function Get_In_Modes return Node_List;
+   --  function Get_PropertyBinding return Node_List;
+   function Get_Property_Sets return Node_List;
+   function Get_Property_Types (PropertySet : Node_Id) return Node_List;
+   function Get_Property_Definitions (PropertySet : Node_Id) return Node_List;
+   function Get_Property_Constants (PropertySet : Node_Id) return Node_List;
 
-   procedure Usage;
-   --  Display a message describing the usage of Ocarina
+   function Get_Instances (kind : String) return Node_List;
+   function Filter_Component_By_Category (components : Node_List;
+      category : Ocarina.ME_AADL.Component_Category) return Node_List;
+   function Filter_Node_By_Kind (components : List_Id;
+      category : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind) return Node_List;
+   function Filter_Instance_By_Category (components : Node_List;
+      category : Ocarina.ME_AADL.Component_Category) return Node_List;
 
-   procedure Print_Status;
-   --  Display status information on Ocarina
+   procedure Get_Component_Name (Data : in out Callback_Data'Class;
+      N : Node_Id);
+   procedure Get_Component_Fullname (Data : in out Callback_Data'Class;
+      N : Node_Id);
+   procedure Get_Instance_Name (Data : in out Callback_Data'Class;
+      N : Node_Id);
 
-   procedure Load_AADL_File (Filename : String);
-   procedure Analyze;
-   procedure Instantiate (Root_System : String);
-   procedure Generate (Backend_Name : String);
-   procedure Reset;
+   function Find_All_Component_Implementations
+     (Root      : Node_Id;
+      Namespace : Node_Id := No_Node) return Node_List;
+   function Find_All_Component_Instances
+     (Root      : Node_Id) return Node_List;
 
-   function Get_AADL_Root return Node_Id;
-   function Get_Node_Id_From_String (Name : String) return Node_Id;
-   function Get_Name_Id_From_String (Name : String) return Name_Id;
-   function Get_Boolean_From_String (Name : String) return Boolean;
-   function Get_Byte_From_String (Name : String) return Byte;
-   function Get_List_Id_From_String (Name : String) return List_Id;
-   function Get_Int_From_String (Name : String) return Int;
-   function Get_Value_Id_From_String (Name : String) return Value_Id;
-   procedure Get_Node_Id (Data : in out Callback_Data'Class; N : String);
-
-end Ocarina.Utils;
+end Ocarina.Lmp;

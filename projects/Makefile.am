@@ -90,7 +90,7 @@ DISTCLEANFILES = \
 
 PARALLEL_GNATMAKE_FLAGS = -j4
 
-all-local: $(BUILD_DIRS) maybe-generate-tree-files $(BUILD_STAMPS)
+all-local: $(BUILD_DIRS) maybe-generate-tree-files $(PYTHON_TARGET) $(BUILD_STAMPS)
 
 $(BUILD_STAMPS): %-build:
 	$(INIT_ADA_PROJECT_PATH) $(GNATMAKE_FOR_TARGET) \
@@ -165,6 +165,14 @@ $(top_builddir)/%.ads $(top_builddir)/%.adb: $(top_srcdir)/%.idl $(top_builddir)
 	mkdir -p ${dir $@}
 	touch $*.idl-stamp
 
+python_tree:
+	echo "*****"
+	$(MKNODES_BUILD_DIR)/mknodes -t python $(top_srcdir)/src/core/tree/ocarina-me_aadl-aadl_tree-nodes.idl	\
+	 -D $(top_builddir)/src/python
+	$(MKNODES_BUILD_DIR)/mknodes -t python $(top_srcdir)/src/core/tree/ocarina-me_aadl-aadl_instances-nodes.idl	\
+	 -D $(top_builddir)/src/python
+	echo "*****"
+
 dist-hook: build-mknodes $(TREE_ADA_SPECS) $(TREE_ADA_BODIES)
 
 debug-makefile:
@@ -177,4 +185,3 @@ debug-makefile:
 	@echo "=========================================================="
 	@echo "TREE_ADA_BODIES = $(TREE_ADA_BODIES)"
 	@echo "=========================================================="
-

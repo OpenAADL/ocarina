@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2013-2014 ESA & ISAE.                    --
+--                   Copyright (C) 2013-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -39,7 +39,6 @@ with Errors;                     use Errors;
 with Locations;                  use Locations;
 with Ocarina.Namet;                      use Ocarina.Namet;
 with Ocarina.Output;                     use Ocarina.Output;
-with Ocarina.Types;                      use Ocarina.Types;
 with Utils;                      use Utils;
 
 with Ocarina.Analyzer;           use Ocarina.Analyzer;
@@ -246,5 +245,94 @@ package body Ocarina.Utils is
       Write_Line ("Generating code using backend " & Backend_Name);
       Generate_Code (AADL_Root);
    end Generate;
+
+   -------------------
+   -- Get_AADL_Root --
+   -------------------
+
+   function Get_AADL_Root return Node_Id is
+   begin
+      return AADL_Root;
+   end Get_AADL_Root;
+
+   -----------------
+   -- Get_Node_Id --
+   -----------------
+
+   procedure Get_Node_Id (Data : in out Callback_Data'Class;
+      N : String) is
+   begin
+      Set_Return_Value (Data, Integer'Image (Integer
+         (Namet.Get_String_Name (N))));
+   end Get_Node_Id;
+
+   -----------------------------
+   -- Get_Node_Id_From_String --
+   -----------------------------
+
+   function Get_Node_Id_From_String (Name : String) return Node_Id is
+   begin
+      return Node_Id (Integer'Value (Name));
+   end Get_Node_Id_From_String;
+
+   -----------------------------
+   -- Get_List_Id_From_String --
+   -----------------------------
+
+   function Get_List_Id_From_String (Name : String) return List_Id is
+   begin
+      return List_Id (Integer'Value (Name));
+   end Get_List_Id_From_String;
+
+   -----------------------------
+   -- Get_Boolean_From_String --
+   -----------------------------
+
+   function Get_Boolean_From_String (Name : String) return Boolean is
+   begin
+      return Boolean'Value (Name);
+   end Get_Boolean_From_String;
+
+   --------------------------
+   -- Get_Byte_From_String --
+   --------------------------
+
+   function Get_Byte_From_String (Name : String) return Byte is
+   begin
+      return Byte (Integer'Value (Name));
+   end Get_Byte_From_String;
+
+   -------------------------
+   -- Get_Int_From_String --
+   -------------------------
+
+   function Get_Int_From_String (Name : String) return Int is
+   begin
+      return Int (Integer'Value (Name));
+   end Get_Int_From_String;
+
+   ------------------------------
+   -- Get_Value_Id_From_String --
+   ------------------------------
+
+   function Get_Value_Id_From_String (Name : String) return Value_Id is
+   begin
+      return Value_Id (Integer'Value (Name));
+   end Get_Value_Id_From_String;
+
+   -----------------------------
+   -- Get_Name_Id_From_String --
+   -----------------------------
+
+   function Get_Name_Id_From_String (Name : String) return Name_Id is
+      val : Integer;
+   begin
+      val := Integer'Value (Name);
+      if val > 300_000_000 and then val < 399_999_999 then
+         return Name_Id (val);
+      else
+         return No_Name;
+      end if;
+   end Get_Name_Id_From_String;
 
 end Ocarina.Utils;

@@ -327,10 +327,12 @@ AC_ARG_ENABLE(python,
 [  --enable-python         Build Python bindings [default=no]],
 [if [[ "$enableval" = "yes" ]]; then
         PYTHON_PRJ=ocarina-python.gpr
+        PYTHON_TARGET=python_tree
 fi],
 [])
 
 AC_SUBST(PYTHON_PRJ)
+AC_SUBST(PYTHON_TARGET)
 
 ##########################################
 # Some version control stuff
