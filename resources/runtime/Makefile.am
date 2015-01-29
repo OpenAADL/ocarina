@@ -1,4 +1,4 @@
-SUBDIRS = cheddar aadl_xml python
+SUBDIRS = cheddar aadl_xml ${PYTHON_RUNTIME}
 
 @DEBUG_FALSE@DEBUG_FLAG = --disable-debug
 @DEBUG_TRUE@DEBUG_FLAG = --enable-debug

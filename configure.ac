@@ -328,11 +328,13 @@ AC_ARG_ENABLE(python,
 [if [[ "$enableval" = "yes" ]]; then
         PYTHON_PRJ=ocarina-python.gpr
         PYTHON_TARGET=python_tree
+        PYTHON_RUNTIME=python
 fi],
 [])
 
 AC_SUBST(PYTHON_PRJ)
 AC_SUBST(PYTHON_TARGET)
+AC_SUBST(PYTHON_RUNTIME)
 
 ##########################################
 # Some version control stuff
