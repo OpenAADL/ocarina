@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -36,6 +36,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.Backends.Messages;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.C_Tree.Nodes;
@@ -50,6 +51,7 @@ package body Ocarina.Backends.POK_C.Naming is
    use Ocarina.Backends.C_Common.Mapping;
    use Ocarina.Backends.C_Tree.Nutils;
    use Ocarina.Backends.Properties;
+   use Ocarina.Backends.Messages;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -131,9 +133,18 @@ package body Ocarina.Backends.POK_C.Naming is
       procedure Visit_First_Pass_Process_Or_Device (E : Node_Id) is
          N              : Node_Id;
          Processes_List : List_Id;
+
+         Proc : constant Node_Id := Get_Bound_Processor (E);
       begin
+         if No (Proc) then
+            Display_Located_Error
+              (Loc (Parent_Subcomponent (E)),
+               "This device or process is not bound to a processor",
+               Fatal => True, Warning => False);
+         end if;
+
          Processes_List :=
-           CTN.Processes (Backend_Node (Identifier (Get_Bound_Processor (E))));
+           CTN.Processes (Backend_Node (Identifier (Proc)));
 
          N := AINU.Make_Node_Container (E);
 
