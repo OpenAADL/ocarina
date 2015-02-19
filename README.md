@@ -1,0 +1,16 @@
+* Installation
+
+See INSTALL file for more details on supported platforms and
+installation process.
+
+* Examples
+
+Examples are located in the examples/ directory and are essentially
+code generation examples. For more details, read the examples/README file
+
+* Documentation
+
+The documentation of Ocarina is located in the doc/ directory. The
+documentation is automatically built and installed when running
+'make install'. To build the documentation manually just run 'make html'
+or 'make pdf' in the doc/ directory.
