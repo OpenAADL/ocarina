@@ -3,7 +3,7 @@
 :mod:`ocarina` -- Python binding to the Ocarina AADL processor
 ==============================================================
 
-.. moduleauthor:: Jerome Hugues
+.. moduleauthor:: Jerome Hugues, Arnaud Schach
 
 This module provides direct access to top-level functions of Ocarina
 to load, parse, instantiate AADL models, and to invoke backends.
@@ -12,7 +12,7 @@ to load, parse, instantiate AADL models, and to invoke backends.
 
 ################################################################################
 import libocarina_python; # Ocarina bindings
-import ocarina_me_aadl_aadl_instances_nodes as AIN; 
+import ocarina_me_aadl_aadl_instances_nodes as AIN;
 import ocarina_me_aadl_aadl_tree_nodes as ATN;
 
 class Enum(tuple): __getattr__ = tuple.index
@@ -198,10 +198,10 @@ def getPropertySets ():
 def getPropertyTypes (propertySetId):
     '''Return the list of all the property types defined in the provided property set
 
-    :param propertySetId: the nodeId of the property set in the current AADL project 
+    :param propertySetId: the nodeId of the property set in the current AADL project
     to serach in
 
-    For instance, to retrieve all the property types from property set propertySet, 
+    For instance, to retrieve all the property types from property set propertySet,
     retrieve its id (propertySetId) and use the following
 
     >>> getPropertyTypes (propertySetId);
@@ -213,10 +213,10 @@ def getPropertyTypes (propertySetId):
 def getPropertyDefinitions (propertySetId):
     '''Return the list of all the property declaration defined in the provided property set
 
-    :param propertySetId: the nodeId of the property set in the current AADL project 
+    :param propertySetId: the nodeId of the property set in the current AADL project
     to serach in
 
-    For instance, to retrieve all the property declaration from property set propertySet, 
+    For instance, to retrieve all the property declaration from property set propertySet,
     retrieve its id (propertySetId) and use the following
 
     >>> getPropertyDefinitions (propertySetId);
@@ -228,10 +228,10 @@ def getPropertyDefinitions (propertySetId):
 def getPropertyConstants (propertySetId):
     '''Return the list of all the constant property defined in the provided property set
 
-    :param propertySetId: the nodeId of the property set in the current AADL project 
+    :param propertySetId: the nodeId of the property set in the current AADL project
     to serach in
 
-    For instance, to retrieve all the constant property from property set propertySet, 
+    For instance, to retrieve all the constant property from property set propertySet,
     retrieve its id (propertySetId) and use the following
 
     >>> getPropertyConstants (propertySetId);
@@ -259,7 +259,7 @@ def getComponentName (nodeId):
 
     :param nodeId: the id of the component whose name is searched
 
-    For instance, to retrieve the name of MyComponent, 
+    For instance, to retrieve the name of MyComponent,
     retrieve its id (nodeId) and use the following
 
     >>> getComponentName (nodeId);
@@ -271,10 +271,10 @@ def getComponentName (nodeId):
 def getComponentFullname (nodeId):
     '''Get the full qualified name of an AADL component
 
-    :param nodeId: the id of the component whose 
+    :param nodeId: the id of the component whose
     full qualified name is searched
 
-    For instance, to retrieve the full qualified name of MyComponent, 
+    For instance, to retrieve the full qualified name of MyComponent,
     retrieve its id (nodeId) and use the following
 
     >>> getComponentFullname (nodeId);
@@ -288,7 +288,7 @@ def getInstanceName (nodeId):
 
     :param nodeId: the id of the instance whose name is searched
 
-    For instance, to retrieve the name of MyInstance, 
+    For instance, to retrieve the name of MyInstance,
     retrieve its id (nodeId) and use the following
 
     >>> getInstanceName (nodeId);
