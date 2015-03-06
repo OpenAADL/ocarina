@@ -1,3 +1,12 @@
+Ocarina AADL toolset
+====================
+
+|docs|
+
+Ocarina is an AADL model processor, providing code generation
+facilities towards C and Ada; Petri Nets; scheduling tools (MAST,
+Cheddar); WCET; REAL
+
 * Installation
 
 See INSTALL file for more details on supported platforms and
