@@ -11,9 +11,13 @@ to load, parse, instantiate AADL models, and to invoke backends.
 '''
 
 ################################################################################
-import libocarina_python; # Ocarina bindings
-import ocarina_me_aadl_aadl_instances_nodes as AIN;
-import ocarina_me_aadl_aadl_tree_nodes as ATN;
+
+try:
+    import libocarina_python; # Ocarina bindings
+    import ocarina_me_aadl_aadl_instances_nodes as AIN;
+    import ocarina_me_aadl_aadl_tree_nodes as ATN;
+except ImportError:
+    pass
 
 class Enum(tuple): __getattr__ = tuple.index
 
