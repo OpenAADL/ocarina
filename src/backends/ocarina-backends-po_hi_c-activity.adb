@@ -381,11 +381,22 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Activate_Entrypoint is
             Entrypoint : constant Node_Id :=
               Get_Thread_Activate_Entrypoint (E);
+
+            Parameter_List : constant List_Id :=
+              New_List (CTN.K_List_Id);
          begin
             if Entrypoint /= No_Node then
                Append_Node_To_List
                  (Make_Call_Profile (Map_C_Subprogram_Identifier (Entrypoint)),
                   Statements);
+
+               Append_Node_To_List
+                 (Make_Extern_Entity_Declaration
+                    (Make_Function_Specification
+                       (Map_C_Subprogram_Identifier (Entrypoint),
+                        Parameters  => Parameter_List, --  XXX
+                        Return_Type => New_Node (CTN.K_Void))),
+                  CTN.Declarations (Current_File));
             end if;
          end Make_Activate_Entrypoint;
 
@@ -1303,26 +1314,26 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Make_Task_Blocking;
          end if;
 
-         --  If an initialize entrypoint has been specified for the
+         --  If an activate entrypoint has been specified for the
          --  thread, add a call to the corresponding function before
          --  initialization of the runtime is done.
 
          declare
-            Init_Entrypoint : constant Name_Id :=
+            Activate_Entrypoint : constant Name_Id :=
               Get_Thread_Activate_Entrypoint (E);
             Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
          begin
-            if Init_Entrypoint /= No_Name then
+            if Activate_Entrypoint /= No_Name then
                N :=
                  Make_Extern_Entity_Declaration
                    (Make_Function_Specification
-                      (Make_Defining_Identifier (Init_Entrypoint),
+                      (Make_Defining_Identifier (Activate_Entrypoint),
                        Parameters  => Parameter_List, --  XXX
                        Return_Type => New_Node (CTN.K_Void)));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
                N :=
                  CTU.Make_Call_Profile
-                   (Make_Defining_Identifier (Init_Entrypoint),
+                   (Make_Defining_Identifier (Activate_Entrypoint),
                     No_List);
                Append_Node_To_List (N, Statements);
             end if;
