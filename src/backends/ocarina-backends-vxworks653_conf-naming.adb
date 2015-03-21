@@ -200,6 +200,10 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
 
    end Visit_System;
 
+   ------------------------
+   --  Add_Applications  --
+   ------------------------
+
    procedure Add_Applications
       (AADL_Processor : Node_Id; XML_Node : Node_Id) is
       pragma Unreferenced (AADL_Processor);
@@ -246,6 +250,10 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
 
    end Add_Applications;
 
+   -------------------------------
+   --  Add_Shared_Data_Regions  --
+   -------------------------------
+
    procedure Add_Shared_Data_Regions
       (AADL_Processor : Node_Id; XML_Node : Node_Id) is
       pragma Unreferenced (AADL_Processor);
@@ -256,14 +264,92 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Append_Node_To_List (Shared_Data_Node, XTN.Subitems (XML_Node));
    end Add_Shared_Data_Regions;
 
+   ----------------------------------
+   --  Add_Shared_Library_Regions  --
+   ----------------------------------
+
    procedure Add_Shared_Library_Regions
       (AADL_Processor : Node_Id; XML_Node : Node_Id) is
       pragma Unreferenced (AADL_Processor);
 
       Shared_Library_Node : Node_Id;
+      Shared_Library_Regions_Node : Node_Id;
+      Shared_Library_Description_Node : Node_Id;
+      Shared_Memory_Size_Node : Node_Id;
    begin
-      Shared_Library_Node := Make_XML_Node ("SharedLibraryRegions");
-      Append_Node_To_List (Shared_Library_Node, XTN.Subitems (XML_Node));
+      --  We have to generate a file that will
+      --  look like the following.
+      --
+      --  <SharedLibraryRegions>
+      --    <SharedLibrary Name="vxSysLib">
+      --      <SharedLibraryDescription ...>
+      --        <MemorySize
+      --           MemorySizeText="0x40000"
+      --           MemorySizeRoData="0x10000"
+      --           MemorySizeData="0x10000"
+      --           MemorySizeBss="0x10000"
+      --           MemorySizePersistentData="0x10000"
+      --           MemorySizePersistentBss="0x10000"/>
+      --      </SharedLibraryDescription>
+      --    </SharedLibrary>
+      --  </SharedLibraryRegions>
+
+      --  First, add a central node for all shared library regions.
+
+      Shared_Library_Regions_Node := Make_XML_Node ("SharedLibraryRegions");
+      Append_Node_To_List (Shared_Library_Regions_Node,
+                           XTN.Subitems (XML_Node));
+
+      --  Take care of all sub shared libraries.
+
+      Shared_Library_Node := Make_XML_Node ("SharedLibrary");
+      XTU.Add_Attribute ("Name", "vxSysLib", Shared_Library_Node);
+      Append_Node_To_List (Shared_Library_Node,
+                           XTN.Subitems
+                              (Shared_Library_Regions_Node));
+
+      --  The SharedLibraryDescription node now.
+
+      Shared_Library_Description_Node
+         := Make_XML_Node ("SharedLibraryDescription");
+      XTU.Add_Attribute ("SystemSharedLibrary",
+                         "true",
+                         Shared_Library_Description_Node);
+      XTU.Add_Attribute ("VirtualAddress",
+                         "0x50000000",
+                         Shared_Library_Description_Node);
+      Append_Node_To_List (Shared_Library_Description_Node,
+                           XTN.Subitems (Shared_Library_Node));
+
+      --  The MemorySize node now.
+
+      Shared_Memory_Size_Node := Make_XML_Node ("MemorySize");
+      XTU.Add_Attribute ("MemorySizeText",
+                         "0x40000",
+                         Shared_Memory_Size_Node);
+
+      XTU.Add_Attribute ("MemorySizeRoData",
+                         "0x10000",
+                         Shared_Memory_Size_Node);
+
+      XTU.Add_Attribute ("MemorySizeData",
+                         "0x10000",
+                         Shared_Memory_Size_Node);
+
+      XTU.Add_Attribute ("MemorySizeBss",
+                         "0x10000",
+                         Shared_Memory_Size_Node);
+
+      XTU.Add_Attribute ("MemorySizePersistentData",
+                         "0x10000",
+                         Shared_Memory_Size_Node);
+
+      XTU.Add_Attribute ("MemorySizePersistentBss",
+                         "0x10000",
+                         Shared_Memory_Size_Node);
+
+      Append_Node_To_List (Shared_Memory_Size_Node,
+                           XTN.Subitems (Shared_Library_Description_Node));
    end Add_Shared_Library_Regions;
 
 end Ocarina.Backends.Vxworks653_Conf.Naming;
