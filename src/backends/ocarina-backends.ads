@@ -59,6 +59,7 @@ package Ocarina.Backends is
       Carts_XML,
       Cheddar_XML,
       Deos_XML,
+      Vxworks653_XML,
       Connection_Matrix_Analysis,
       Functions_Matrix_Analysis,
       MAST_Scheduling,
