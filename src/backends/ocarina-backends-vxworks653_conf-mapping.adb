@@ -1087,31 +1087,22 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       return Node_Id is
       pragma Unreferenced (Nb_Buffers);
       pragma Unreferenced (Nb_Events);
+      pragma Unreferenced (Nb_Threads);
+      pragma Unreferenced (Nb_Blackboards);
+      pragma Unreferenced (Blackboards_Size);
       pragma Unreferenced (Nb_Lock_Objects);
       pragma Unreferenced (Buffers_Size);
       pragma Unreferenced (Process);
       Partition_Node : Node_Id;
-      Partition_Period     : Time_Type;
-      Partition_Duration   : Time_Type;
-      Period_Ns            : Unsigned_Long_Long;
-      Duration_Ns          : Unsigned_Long_Long;
+      Partition_Description_Node : Node_Id;
+      Application_Node     : Node_Id;
+      Shared_Library_Region_Node : Node_Id;
+      Settings_Node : Node_Id;
    begin
-      Partition_Period := Get_Period (Runtime);
-      Partition_Duration := Get_Execution_Time (Runtime);
-
-      if Partition_Period = Null_Time then
-         Period_Ns := 0;
-      else
-         Period_Ns := To_Nanoseconds (Partition_Period);
-      end if;
-
-      if Partition_Duration = Null_Time then
-         Duration_Ns := 0;
-      else
-         Duration_Ns := To_Nanoseconds (Partition_Duration);
-      end if;
-
       Partition_Node := Make_XML_Node ("Partition");
+      Partition_Description_Node := Make_XML_Node ("PartitionDescription");
+      Append_Node_To_List (Partition_Description_Node,
+                           XTN.Subitems (Partition_Node));
 
       XTU.Add_Attribute ("Name",
                          Get_Name_String
@@ -1125,74 +1116,46 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       --  see http://rosettacode.org/wiki/
       --  Strip_whitespace_from_a_string/Top_and_tail#Ada
       --
-      XTU.Add_Attribute ("Identifier",
+      XTU.Add_Attribute ("Id",
                         Trim (Integer'Image (Partition_Identifier), Left),
                          Partition_Node);
 
-      XTU.Add_Attribute ("Period",
-                        Trim
-                           (Unsigned_Long_Long'Image
-                              (Period_Ns),
-                           Left),
-                        Partition_Node);
+      Settings_Node := Make_XML_Node ("Settings");
+      Append_Node_To_List (Settings_Node,
+                           XTN.Subitems (Partition_Description_Node));
+      XTU.Add_Attribute ("RequiredMemorySize", "0x300000", Settings_Node);
+      XTU.Add_Attribute ("PartitionHMTable", "part1Hm", Settings_Node);
+      XTU.Add_Attribute ("watchDogDuration", "0", Settings_Node);
+      XTU.Add_Attribute ("allocDisable", "0", Settings_Node);
+      XTU.Add_Attribute ("numWorkerTasks", "0", Settings_Node);
+      XTU.Add_Attribute ("numStackGuardPages", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("isrStackSize", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("selScrQSize", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("syscallPermissions", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("numFiles", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("numDrivers", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("numLogMsgs", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("maxGlobalFDs", "10", Settings_Node);
+      XTU.Add_Attribute ("fpExcEnable", "1", Settings_Node);
+      XTU.Add_Attribute ("maxEventQStallDuration", "INFINITE_TIME",
+                        Settings_Node);
 
-      XTU.Add_Attribute ("Duration",
-                        Trim
-                           (Unsigned_Long_Long'Image
-                              (Duration_Ns),
-                           Left),
-                        Partition_Node);
+      Shared_Library_Region_Node := Make_XML_Node ("SharedLibraryRegion");
+      XTU.Add_Attribute ("NamedRef", "vxSysLib", Shared_Library_Region_Node);
+      Append_Node_To_List (Shared_Library_Region_Node,
+                        XTN.Subitems (Partition_Description_Node));
 
-      XTU.Add_Attribute ("ExecutableImageName",
+      Application_Node := Make_XML_Node ("Application");
+      Append_Node_To_List (Application_Node,
+                           XTN.Subitems (Partition_Description_Node));
+      XTU.Add_Attribute ("NameRef",
                          Get_Name_String
                            (AIN.Name
                               (Identifier
                                  (Parent_Subcomponent
-                                    (Runtime)))) & ".exe", Partition_Node);
-      XTU.Add_Attribute ("MainProcessStackSizeInPages", "1", Partition_Node);
-      XTU.Add_Attribute ("BreakAtStartup", "no", Partition_Node);
-      XTU.Add_Attribute ("InDebugSet", "no", Partition_Node);
-      XTU.Add_Attribute ("MapConfigurationFileTo", "RAM", Partition_Node);
-      XTU.Add_Attribute ("ExecuteFrom", "RAM", Partition_Node);
-      XTU.Add_Attribute ("PartitionUsesFPU", "no", Partition_Node);
-      XTU.Add_Attribute ("ProcessStackSpaceInPages", "6", Partition_Node);
-      XTU.Add_Attribute ("MinimumProcessStackSizeInBytes",
-                         "512", Partition_Node);
-      XTU.Add_Attribute ("ProcessQuota",
-                        Trim (Unsigned_Long_Long'Image
-                           (Nb_Threads + 2), Left),
-                        Partition_Node);
-      XTU.Add_Attribute ("BlackboardQuota",
-                        Trim (Unsigned_Long_Long'Image
-                           (Nb_Blackboards), Left),
-                        Partition_Node);
+                                    (Runtime)))),
+                         Partition_Node);
 
-      XTU.Add_Attribute ("BlackboardMessageSpaceInBytes",
-                        Trim (Unsigned_Long_Long'Image
-                           (Blackboards_Size), Left),
-                        Partition_Node);
-      XTU.Add_Attribute ("BufferQuota", "0", Partition_Node);
-      XTU.Add_Attribute ("BufferMessageSpaceInBytes", "0", Partition_Node);
-      XTU.Add_Attribute ("SemaphoreQuota", "0", Partition_Node);
-      XTU.Add_Attribute ("EventQuota", "1", Partition_Node);
-      XTU.Add_Attribute ("MaximumPartitionLockLevel", "16", Partition_Node);
-      XTU.Add_Attribute ("MinimumProcessPriority", "1", Partition_Node);
-      XTU.Add_Attribute ("MaximumProcessPriority", "239", Partition_Node);
-      XTU.Add_Attribute ("LoggingFunction", "", Partition_Node);
-      XTU.Add_Attribute ("Vxworks653KernelAttributeAccess",
-                         "no", Partition_Node);
-      XTU.Add_Attribute ("ProcessStackGapSizeInDwords",
-                         "0", Partition_Node);
-      XTU.Add_Attribute ("ProcessStackTagIntervalInDwords",
-                         "0", Partition_Node);
-      XTU.Add_Attribute ("SourcePortSharedMemoryType",
-                         "Vxworks653SharedMemory", Partition_Node);
-      XTU.Add_Attribute ("PlatformResourcePhysicalAddress",
-                         "0x0", Partition_Node);
-      XTU.Add_Attribute ("PlatformResourceSizeInPages", "0", Partition_Node);
-      XTU.Add_Attribute ("PlatformResourceCachePolicy", "off", Partition_Node);
-      XTU.Add_Attribute ("HealthMonitorEventLogSize", "30", Partition_Node);
-      XTU.Add_Attribute ("EventLoggingEnabled", "yes", Partition_Node);
       return Partition_Node;
    end Map_Partition;
 

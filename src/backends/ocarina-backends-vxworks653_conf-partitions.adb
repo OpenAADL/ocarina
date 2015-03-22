@@ -1,7 +1,5 @@
 --  with Ada.Strings; use Ada.Strings;
 --  with Ada.Strings.Fixed; use Ada.Strings.Fixed;
-with Ada.Text_IO;
-with Ada.Integer_Text_IO;
 with Ocarina.Backends.Messages;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -16,8 +14,6 @@ with Ocarina.Backends.Vxworks653_Conf.Mapping;
 
 package body Ocarina.Backends.Vxworks653_Conf.Partitions is
 
-   use Ada.Text_IO;
-   use Ada.Integer_Text_IO;
    use Ocarina.ME_AADL;
 
    use Ocarina.Backends.Utils;
@@ -31,11 +27,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
-   package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
    Root_Node                : Node_Id := No_Node;
    Partitions_Node          : Node_Id := No_Node;
-   Memory_Regions           : Node_Id := No_Node;
    Partition_Identifier     : Integer := 1;
    Process_Nb_Threads       : Unsigned_Long_Long := 0;
    Process_Nb_Buffers       : Unsigned_Long_Long := 0;
@@ -56,86 +50,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
    function Find_Associated_Process (Runtime : Node_Id;
                                      Current_Node : Node_Id := Root_Node)
                                      return Node_Id;
-   function Find_Associated_Memory_Segment
-      (Process       : Node_Id;
-       Current_Node  : Node_Id := Root_Node)
-      return Node_Id;
-
-   function Make_Default_Memory_Region return Node_Id;
-   function Make_Memory_Region (Segment : Node_Id) return Node_Id;
-   function Hex_Print (Num : in Integer;
-                       Num_Of_Digits : in Positive) return String;
-
-   function Hex_Print (Num           : in Integer;
-                       Num_Of_Digits : in Positive) return String is
-      Temp_Str    : String (1 .. Num_Of_Digits + 5) := (others => '0');
-      New_Str     : String (1 .. Num_Of_Digits)     := (others => '0');
-      First_Digit : Positive;
-   begin
-
-      Put (To => Temp_Str, Item => Num, Base => 16);
-
-      for I in 1 .. Num_Of_Digits + 4 loop
-         if Temp_Str (I) = '#' then
-            First_Digit := I + 1;
-            exit;
-         end if;
-      end loop;
-
-      New_Str (First_Digit - 4 .. Num_Of_Digits) :=
-         Temp_Str (First_Digit .. Num_Of_Digits + 4);
-      return New_Str;
-   end Hex_Print;
-
-   --------------------------------
-   -- Make_Default_Memory_Region --
-   --------------------------------
-
-   function Make_Default_Memory_Region return Node_Id is
-      N : Node_Id;
-   begin
-      N := Make_XML_Node ("MemoryRegion");
-
-      XTU.Add_Attribute ("Name", "Initial RAM Pool", N);
-      XTU.Add_Attribute ("Type", "Initial RAM Pool", N);
-      XTU.Add_Attribute ("Address", "0x0", N);
-      XTU.Add_Attribute ("Size", "0x19000", N);
-      XTU.Add_Attribute ("AccessRights", "READ_WRITE", N);
-      XTU.Add_Attribute ("PlatformMemoryPool", "0", N);
-
-      return N;
-   end Make_Default_Memory_Region;
-
-   ------------------------
-   -- Make_Memory_Region --
-   ------------------------
-
-   function Make_Memory_Region (Segment : Node_Id)
-      return Node_Id is
-      N : Node_Id;
-   begin
-      N := Make_XML_Node ("MemoryRegion");
-
-      XTU.Add_Attribute ("Name", "Initial RAM Pool", N);
-      XTU.Add_Attribute ("Type", "Initial RAM Pool", N);
-
-      XTU.Add_Attribute ("Address",
-                        "0x" & Hex_Print
-                           (Integer
-                              (Get_Base_Address (Segment)), 8),
-                         N);
---      Put (Size_Str, To_Bytes
---                      (Get_Memory_Size (Segment)), 16);
-      XTU.Add_Attribute ("Size",
-                        "0x" & Hex_Print
-                           (Integer (To_Bytes
-                              (Get_Memory_Size (Segment))), 8),
-                         N);
-      XTU.Add_Attribute ("AccessRights", "READ_WRITE", N);
-      XTU.Add_Attribute ("PlatformMemoryPool", "0", N);
-
-      return N;
-   end Make_Memory_Region;
 
    -----------------------------
    -- Find_Associated_Process --
@@ -169,40 +83,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
 
       return No_Node;
    end Find_Associated_Process;
-
-   ------------------------------------
-   -- Find_Associated_Memory_Segment --
-   ------------------------------------
-
-   function Find_Associated_Memory_Segment
-      (Process : Node_Id;
-       Current_Node : Node_Id := Root_Node)
-      return Node_Id is
-      T : Node_Id;
-      S : Node_Id;
-   begin
-      if Get_Category_Of_Component (Current_Node) = CC_Memory and then
-         Get_Bound_Memory (Process) = Current_Node
-      then
-         return Current_Node;
-      end if;
-
-      if not AINU.Is_Empty (Subcomponents (Current_Node)) then
-         S := First_Node (Subcomponents (Current_Node));
-         while Present (S) loop
-            T := Find_Associated_Memory_Segment
-               (Process, Corresponding_Instance (S));
-
-            if T /= No_Node then
-               return T;
-            end if;
-
-            S := Next_Node (S);
-         end loop;
-      end if;
-
-      return No_Node;
-   end Find_Associated_Memory_Segment;
 
    -----------
    -- Visit --
@@ -406,12 +286,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
       S                       : Node_Id;
-      F                       : Node_Id;
       Corresponding_Process   : Node_Id := No_Node;
-      Memory_Segment          : Node_Id := No_Node;
       Partition_Node          : Node_Id;
-      Sampling_Ports          : Node_Id := No_Node;
-      Queuing_Ports           : Node_Id := No_Node;
    begin
       Corresponding_Process := Find_Associated_Process (E);
 
@@ -443,81 +319,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
          Append_Node_To_List
             (Partition_Node,
              XTN.Subitems (Partitions_Node));
-
-         --
-         --  Then, we associate the partition with memory region
-         --
-
-         Memory_Regions := Make_XML_Node ("MemoryRegions");
-
-         Memory_Segment := Find_Associated_Memory_Segment
-            (Corresponding_Process);
-
-         if Memory_Segment = No_Node then
-            Append_Node_To_List
-               (Make_Default_Memory_Region,
-               XTN.Subitems (Memory_Regions));
-         else
-            Append_Node_To_List
-               (Make_Memory_Region (Memory_Segment),
-               XTN.Subitems (Memory_Regions));
-         end if;
-
-         Append_Node_To_List
-            (Memory_Regions,
-            XTN.Subitems (Partition_Node));
-
-         --
-         --  Then, we configure the inter-partitions communication
-         --  ports (sampling/queueing).
-         --
-
-         if not AINU.Is_Empty (Features (Corresponding_Process)) then
-            Sampling_Ports := Make_XML_Node ("SamplingPorts");
-            Queuing_Ports := Make_XML_Node ("QueuingPorts");
-            F := First_Node (Features (Corresponding_Process));
-
-            while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance
-                 and then Get_Connection_Pattern (F) = Inter_Process
-               then
-
-                  if Is_Data (F) and then not Is_Event (F)
-                     and then not (Is_In (F) and then Is_Out (F))
-                  then
-                     Append_Node_To_List
-                        (Map_Sampling_Port (F),
-                        XTN.Subitems (Sampling_Ports));
-                  end if;
-
-                  if Is_Data (F) and then Is_Event (F)
-                     and then not (Is_In (F) and then Is_Out (F))
-                  then
-                     Append_Node_To_List
-                        (Map_Queuing_Port (F),
-                        XTN.Subitems (Queuing_Ports));
-                  end if;
-
-               end if;
-               F := Next_Node (F);
-            end loop;
-         end if;
-
-         if Sampling_Ports /= No_Node and then
-            XTN.Subitems (Sampling_Ports) /= No_List
-         then
-            Append_Node_To_List
-               (Sampling_Ports,
-               XTN.Subitems (Partition_Node));
-         end if;
-
-         if Queuing_Ports /= No_Node and then
-            XTN.Subitems (Queuing_Ports) /= No_List
-         then
-            Append_Node_To_List
-               (Queuing_Ports,
-               XTN.Subitems (Partition_Node));
-         end if;
 
          Partition_Identifier := Partition_Identifier + 1;
       end if;
