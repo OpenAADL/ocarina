@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -145,6 +145,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       --  This function is used to warrant that all entities will have
       --  the same values on each node.
 
+      Nb_Ports_List           : List_Id;
       Node_Enumerator_List    : List_Id;
       Tasks_Enumerator_List   : List_Id;
       Devices_Enumerator_List : List_Id;
@@ -887,6 +888,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          The_System  : constant Node_Id :=
            Parent_Component (Parent_Subcomponent (E));
          Device_Implementation : Node_Id;
+
       begin
          pragma Assert (AAU.Is_System (Root_Sys));
 
@@ -899,6 +901,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Tasks_Enumerator_List := New_List (CTN.K_Enumeration_Literals);
          Node_Enumerator_List  := New_List (CTN.K_Enumeration_Literals);
 
+         Nb_Ports_List := New_List (CTN.K_List_Id);
+
          Push_Entity (P);
          Push_Entity (U);
          Set_Deployment_Header;
@@ -907,6 +911,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Task_Identifier     := 0;
          Nb_Protected        := 0;
          Nb_Ports_In_Process := 0;
+
+         --  Define the name of the current node
 
          N :=
            Make_Define_Statement
@@ -1370,6 +1376,33 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               Value               => Nb_Protocols_Node);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+         --  Define the PORT_TYPE_CONTENT macro for the monitoring of entities
+
+         declare
+            K : Node_Id;
+            Nb_Ports_List_Name : Name_Id := No_Name;
+         begin
+            K := CTN.First_Node (Nb_Ports_List);
+
+            if Present (K) then
+               Get_Name_String (CTN.Name (K));
+               K := CTN.Next_Node (K);
+               while Present (K) loop
+                  Add_Str_To_Name_Buffer
+                    (", " & Get_Name_String (CTN.Name (K)));
+                  K := CTN.Next_Node (K);
+               end loop;
+            end if;
+            Nb_Ports_List_Name := Name_Find;
+
+            N :=
+              Make_Define_Statement
+              (Defining_Identifier => RE (RE_Port_Type_Content),
+               Value               =>
+                 Make_Defining_Identifier (Nb_Ports_List_Name));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end;
+
          Current_Process_Instance := No_Node;
 
          Pop_Entity; -- U
@@ -1805,6 +1838,10 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                       Make_Literal
                         (New_Int_Value (Local_Port_Identifier, 1, 10)));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+               N := Make_Defining_Identifier
+                 (Map_C_Define_Name (S, Nb_Ports => True));
+               Append_Node_To_List (N, Nb_Ports_List);
             end if;
          end if;
 
