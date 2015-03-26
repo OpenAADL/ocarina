@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -41,6 +41,7 @@ with Ocarina.Backends.Properties;
 with Ocarina.Backends.C_Tree.Nutils;
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Common.Mapping;
+with Ocarina.Backends.PO_HI_C.Runtime;
 
 package body Ocarina.Backends.C_Common.Subprograms is
 
@@ -51,6 +52,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.C_Tree.Nutils;
    use Ocarina.Backends.C_Common.Mapping;
+
+   package PHCR renames Ocarina.Backends.PO_HI_C.Runtime;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -896,6 +899,10 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          Start_Recording_Handlings;
 
+         --  Include associated header file
+
+         Add_Include (PHCR.RH (PHCR.RH_Subprograms));
+
          --  First, generate extern declaration for globvars.
 
          if not AINU.Is_Empty (Subcomponents (E)) then
@@ -1144,6 +1151,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
             Pop_Entity;
             Pop_Entity;
          end if;
+
       end Visit_System_Instance;
 
       ---------------------------
