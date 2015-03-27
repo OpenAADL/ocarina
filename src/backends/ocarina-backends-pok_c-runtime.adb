@@ -162,6 +162,41 @@ package body Ocarina.Backends.POK_C.Runtime is
          end loop;
       end if;
 
+      if POK_Flavor = VXWORKS then
+         for E in ART_Id loop
+            RE_Header_Table (E) := RH_ApexType;
+         end loop;
+
+         RE_Header_Table (RE_Periodic_Wait) := RH_ApexTime;
+
+         RE_Header_Table (RE_Create_Process) := RH_ApexProcess;
+         RE_Header_Table (RE_Start) := RH_ApexProcess;
+
+         RE_Header_Table (RE_Create_Process) := RH_ApexProcess;
+
+         RE_Header_Table (RE_Set_Partition_Mode) := RH_ApexPartition;
+
+         RE_Header_Table (RE_Normal) := RH_ApexType;
+         RE_Header_Table (RE_Process_Attribute_Type) := RH_ApexType;
+         RE_Header_Table (RE_Fifo) := RH_ApexType;
+         RE_Header_Table (RE_Pok_Port_Kind_Sampling) := RH_ApexType;
+         RE_Header_Table (RE_Pok_Port_Kind_Queueing) := RH_ApexType;
+         RE_Header_Table (RE_Source) := RH_ApexType;
+         RE_Header_Table (RE_Destination) := RH_ApexType;
+         RE_Header_Table (RE_Pok_Errno_Empty) := RH_ApexType;
+         RE_Header_Table (RE_Null) := RH_ApexType;
+         RE_Header_Table (RE_Normal) := RH_ApexType;
+         RE_Header_Table (RE_Bool_T) := RH_ApexType;
+         RE_Header_Table (RE_Uint8_T) := RH_ApexType;
+         RE_Header_Table (RE_Uint16_T) := RH_ApexType;
+         RE_Header_Table (RE_Uint32_T) := RH_ApexType;
+         RE_Header_Table (RE_Uint64_T) := RH_ApexType;
+         RE_Header_Table (RE_Int8_T) := RH_ApexType;
+         RE_Header_Table (RE_Int16_T) := RH_ApexType;
+         RE_Header_Table (RE_Int32_T) := RH_ApexType;
+         RE_Header_Table (RE_Int64_T) := RH_ApexType;
+      end if;
+
       if POK_Flavor = ARINC653 then
          RH_Service_Table (RH_Assert)     := RHS_Null;
          RH_Service_Table (RH_Thread)     := RHS_Core;
@@ -365,7 +400,9 @@ package body Ocarina.Backends.POK_C.Runtime is
          --  members are in upper case. Otherwise, we use
          --  lower case.
 
-         if POK_Flavor = ARINC653 or else POK_Flavor = DEOS then
+         if POK_Flavor = ARINC653 or else POK_Flavor = DEOS
+            or else POK_Flavor = VXWORKS
+         then
             Name := To_Upper (Name);
          else
             Name := To_Lower (Name);

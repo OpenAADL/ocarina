@@ -39,6 +39,17 @@ package Ocarina.Backends.POK_C.Runtime is
      (RH_Null,                       --  Workaround to denote a null RH
       RH_Activity,                   --  Activity.h from generated code
       RH_Apex,                       --  apex.h from deos
+      RH_ApexType,                   --  apexType.h from vxworks653
+      RH_ApexProcess,                --  apexProcess.h from vxworks653
+      RH_ApexPartition,              --  apexPartition.h from vxworks653
+      RH_ApexBuffer,                 --  apexBuffer.h from vxworks653
+      RH_ApexBlackboard,             --  apexBlackboard.h from vxworks653
+      RH_ApexEvent,                  --  apexEvent.h from vxworks653
+      RH_ApexError,                  --  apexError.h from vxworks653
+      RH_ApexQueuing,                --  apexQueuing.h from vxworks653
+      RH_ApexSampling,               --  apexSampling.h from vxworks653
+      RH_ApexSemaphore,              --  apexSemaphore.h from vxworks653
+      RH_ApexTime,                   --  apexTime.h from vxworks653
       RH_Assert,                     --  Assert.h from POK
       RH_Blackboard,                 --  Middleware/blackboard.h from POK
       RH_Buffer,                     --  Middleware/buffer.h from POK
@@ -67,6 +78,7 @@ package Ocarina.Backends.POK_C.Runtime is
      (RHS_Null,
       RHS_Generated,
       RHS_ARINC653,
+      RHS_Apex,
       RHS_Middleware,
       RHS_Protocols,
       RHS_Core);
@@ -522,7 +534,18 @@ package Ocarina.Backends.POK_C.Runtime is
       RH_Thread      => RHS_Core,
       RH_Time        => RHS_Core,
       RH_Errno       => RHS_Null,
-      RH_Kernel      => RHS_Core,
+      RH_ApexType    => RHS_Apex,
+      RH_ApexProcess => RHS_Apex,
+      RH_ApexPartition  => RHS_Apex,
+      RH_ApexBuffer     => RHS_Apex,
+      RH_ApexBlackboard => RHS_Apex,
+      RH_ApexEvent      => RHS_Apex,
+      RH_ApexError      => RHS_Apex,
+      RH_ApexQueuing    => RHS_Apex,
+      RH_ApexSampling   => RHS_Apex,
+      RH_ApexSemaphore  => RHS_Apex,
+      RH_ApexTime       => RHS_Apex,
+      RH_Kernel         => RHS_Core,
       RH_Error       => RHS_Core,
       RH_Partition   => RHS_Core,
       RH_Port        => RHS_Middleware,

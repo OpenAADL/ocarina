@@ -33,7 +33,7 @@
 
 package Ocarina.Backends.POK_C is
 
-   type POK_Flavor_Type is (POK, ARINC653, DEOS);
+   type POK_Flavor_Type is (POK, ARINC653, DEOS, VXWORKS);
 
    POK_Flavor : POK_Flavor_Type := POK;
 

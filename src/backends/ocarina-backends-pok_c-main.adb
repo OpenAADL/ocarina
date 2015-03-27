@@ -152,7 +152,7 @@ package body Ocarina.Backends.POK_C.Main is
 
          --  Make strcpy(tattr.NAME, "prname")
 
-         if POK_Flavor = DEOS then
+         if POK_Flavor = DEOS or else POK_Flavor = VXWORKS then
             N :=
               Make_Call_Profile
                 (Make_Defining_Identifier
@@ -254,7 +254,7 @@ package body Ocarina.Backends.POK_C.Main is
                if POK_Flavor = POK then
                   Member_Value := Map_Time_To_Millisecond
                                     (Get_Thread_Period (E));
-               elsif POK_Flavor = DEOS then
+               elsif POK_Flavor = DEOS or else POK_Flavor = VXWORKS then
                   Member_Value := Map_Time_To_Nanosecond
                                     (Get_Thread_Period (E));
                end if;
@@ -312,6 +312,8 @@ package body Ocarina.Backends.POK_C.Main is
                   if POK_Flavor = ARINC653 then
                      Capacity := Map_Time_To_Millisecond (TA (1));
                   elsif POK_Flavor = DEOS then
+                     Capacity := Map_Time_To_Nanosecond (TA (1));
+                  elsif POK_Flavor = VXWORKS then
                      Capacity := Map_Time_To_Nanosecond (TA (1));
                   else
                      Capacity := No_Node;
@@ -653,7 +655,9 @@ package body Ocarina.Backends.POK_C.Main is
                            N := Map_Time (Get_POK_Refresh_Time (F));
                         end if;
                      else
-                        if POK_Flavor = DEOS then
+                        if POK_Flavor = DEOS
+                           or else POK_Flavor = VXWORKS
+                        then
 
                            --
                            --  DeOS needs a value to refresh the port.

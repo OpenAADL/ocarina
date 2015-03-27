@@ -522,13 +522,13 @@ package body Ocarina.Backends.POK_C.Deployment is
          end if;
 
          --
-         --  If we are using DEOS, we do not need
+         --  If we are using DEOS or VxWorks, we do not need
          --  to write code to configure the kernel, this
          --  is done through the XML file of the deos_conf
          --  backend.
          --
 
-         if POK_Flavor = DEOS then
+         if POK_Flavor = DEOS or else POK_Flavor = VXWORKS then
             Reset_Handlings;
 
             Pop_Entity;
@@ -2488,7 +2488,7 @@ package body Ocarina.Backends.POK_C.Deployment is
          --  backend.
          --
 
-         if POK_Flavor = DEOS then
+         if POK_Flavor = DEOS or else POK_Flavor = VXWORKS then
 
             Pop_Entity;
             Pop_Entity;
