@@ -176,6 +176,12 @@ package body Ocarina.Backends.POK_C.Runtime is
 
          RE_Header_Table (RE_Set_Partition_Mode) := RH_ApexPartition;
 
+         RE_Header_Table (RE_Create_Blackboard) := RH_ApexBlackboard;
+         RE_Header_Table (RE_Display_Blackboard) := RH_ApexBlackboard;
+         RE_Header_Table (RE_Read_Blackboard) := RH_ApexBlackboard;
+         RE_Header_Table (RE_Clear_Blackboard) := RH_ApexBlackboard;
+         RE_Header_Table (RE_Blackboard_Id_Type) := RH_ApexBlackboard;
+
          RE_Header_Table (RE_Normal) := RH_ApexType;
          RE_Header_Table (RE_Process_Attribute_Type) := RH_ApexType;
          RE_Header_Table (RE_Fifo) := RH_ApexType;
