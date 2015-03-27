@@ -182,10 +182,10 @@ package body Ocarina.Backends.POK_C.Runtime is
          RE_Header_Table (RE_Clear_Blackboard) := RH_ApexBlackboard;
          RE_Header_Table (RE_Blackboard_Id_Type) := RH_ApexBlackboard;
 
-         RE_Header_Table (RE_Create_Buffer) := RH_ApexBlackboard;
-         RE_Header_Table (RE_Send_Buffer) := RH_ApexBlackboard;
-         RE_Header_Table (RE_Receive_Buffer) := RH_ApexBlackboard;
-         RE_Header_Table (RE_Buffer_Id_Type) := RH_ApexBlackboard;
+         RE_Header_Table (RE_Create_Buffer) := RH_ApexBuffer;
+         RE_Header_Table (RE_Send_Buffer) := RH_ApexBuffer;
+         RE_Header_Table (RE_Receive_Buffer) := RH_ApexBuffer;
+         RE_Header_Table (RE_Buffer_Id_Type) := RH_ApexBuffer;
 
          RE_Header_Table (RE_Normal) := RH_ApexType;
          RE_Header_Table (RE_Process_Attribute_Type) := RH_ApexType;
