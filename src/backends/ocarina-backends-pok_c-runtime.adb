@@ -182,6 +182,18 @@ package body Ocarina.Backends.POK_C.Runtime is
          RE_Header_Table (RE_Clear_Blackboard) := RH_ApexBlackboard;
          RE_Header_Table (RE_Blackboard_Id_Type) := RH_ApexBlackboard;
 
+         RE_Header_Table (RE_Queuing_Port_Id_Type) := RH_ApexQueuing;
+         RE_Header_Table (RE_Create_Queuing_Port) := RH_ApexQueuing;
+         RE_Header_Table (RE_Send_Queuing_Message) := RH_ApexQueuing;
+         RE_Header_Table (RE_Receive_Queuing_Message) := RH_ApexQueuing;
+         RE_Header_Table (RE_Get_Queuing_Port_Id) := RH_ApexQueuing;
+
+         RE_Header_Table (RE_Sampling_Port_Id_Type) := RH_ApexSampling;
+         RE_Header_Table (RE_Create_Sampling_Port) := RH_ApexSampling;
+         RE_Header_Table (RE_Write_Sampling_Message) := RH_ApexSampling;
+         RE_Header_Table (RE_Read_Sampling_Message) := RH_ApexSampling;
+         RE_Header_Table (RE_Get_Sampling_Port_Id) := RH_ApexSampling;
+
          RE_Header_Table (RE_Create_Buffer) := RH_ApexBuffer;
          RE_Header_Table (RE_Send_Buffer) := RH_ApexBuffer;
          RE_Header_Table (RE_Receive_Buffer) := RH_ApexBuffer;
