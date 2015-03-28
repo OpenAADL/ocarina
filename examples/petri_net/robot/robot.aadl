@@ -61,7 +61,7 @@ public
     D_Spg : subprogram collecte_donnee;
     };
   connections
-    parameter D_Spg.d_source -> evenement;
+    conn1: parameter D_Spg.d_source -> evenement;
   properties
     Dispatch_Protocol => Periodic;
     Period            => 110 ms;
@@ -72,8 +72,8 @@ public
     T_Spg : subprogram traite;
     };
   connections
-    parameter info_capteur  -> T_Spg.d_info;
-    parameter T_Spg.d_ordre -> comm_servo;
+    conn1: parameter info_capteur  -> T_Spg.d_info;
+    conn2: parameter T_Spg.d_ordre -> comm_servo;
   properties
     Dispatch_Protocol => Sporadic;
     Period            => 110 ms;
@@ -85,7 +85,7 @@ public
     A_Spg : subprogram action;
     };
   connections
-    parameter ordre -> A_Spg.d_action;
+    conn1: parameter ordre -> A_Spg.d_action;
   properties
     Dispatch_Protocol => Aperiodic;
     Deployment::Priority          => 1;
@@ -122,7 +122,7 @@ public
   subcomponents
     th_c : thread capteur.i;
   connections
-    port th_c.evenement            -> evenement;
+    conn1: port th_c.evenement            -> evenement;
   end p_capteur.i;
 
   process implementation p_controle.i
@@ -130,17 +130,17 @@ public
     th_ctrl_droit  : thread controle.i;
     th_ctrl_gauche : thread controle.i;
   connections
-    port info_capteur_droit        -> th_ctrl_droit.info_capteur;
-    port th_ctrl_droit.comm_servo  -> comm_servo_droit;
-    port info_capteur_gauche       -> th_ctrl_gauche.info_capteur;
-    port th_ctrl_gauche.comm_servo -> comm_servo_gauche;
+    conn1: port info_capteur_droit        -> th_ctrl_droit.info_capteur;
+    conn2: port th_ctrl_droit.comm_servo  -> comm_servo_droit;
+    conn3: port info_capteur_gauche       -> th_ctrl_gauche.info_capteur;
+    conn4: port th_ctrl_gauche.comm_servo -> comm_servo_gauche;
   end p_controle.i;
 
   process implementation p_servomoteur.i
   subcomponents
     th_servomoteur : thread servomoteur.i;
   connections
-    port ordre -> th_servomoteur.ordre;
+    conn1: port ordre -> th_servomoteur.ordre;
   end p_servomoteur.i;
 
   --------------
@@ -169,19 +169,19 @@ public
 
     CPU1                    : processor the_processor;
   connections
-    port proc_capteur_droit.evenement    -> proc_controle.info_capteur_droit;
-    port proc_capteur_gauche.evenement   -> proc_controle.info_capteur_gauche;
+    conn1: port proc_capteur_droit.evenement    -> proc_controle.info_capteur_droit;
+    conn2: port proc_capteur_gauche.evenement   -> proc_controle.info_capteur_gauche;
 
-    port proc_controle.comm_servo_droit  -> proc_servomoteur_droit.ordre;
-    port proc_controle.comm_servo_gauche -> proc_servomoteur_gauche.ordre;
+    conn3: port proc_controle.comm_servo_droit  -> proc_servomoteur_droit.ordre;
+    conn4: port proc_controle.comm_servo_gauche -> proc_servomoteur_gauche.ordre;
   properties
-    actual_processor_binding => reference (CPU1) applies to proc_capteur_droit;
-    actual_processor_binding => reference (CPU1) applies to proc_capteur_gauche;
+    actual_processor_binding => (reference (CPU1)) applies to proc_capteur_droit;
+    actual_processor_binding => (reference (CPU1)) applies to proc_capteur_gauche;
 
-    actual_processor_binding => reference (CPU1) applies to proc_controle;
+    actual_processor_binding => (reference (CPU1)) applies to proc_controle;
 
-    actual_processor_binding => reference (CPU1) applies to proc_servomoteur_droit;
-    actual_processor_binding => reference (CPU1) applies to proc_servomoteur_gauche;
+    actual_processor_binding => (reference (CPU1)) applies to proc_servomoteur_droit;
+    actual_processor_binding => (reference (CPU1)) applies to proc_servomoteur_gauche;
   end robot.i;
 
 end Robot;
