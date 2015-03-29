@@ -315,6 +315,7 @@ package Ocarina.Backends.POK_C.Runtime is
       RE_Error_Status_Type,              --  ARINC653 Error Status Type
       RE_Process_Attribute_Type,         --  ARINC653 Process Attribute Type
       RE_Process_Id_Type,                --  ARIND653 Process_Id_Type
+      RE_Infinite_Time_Value,            --  ARIND653 INFINITE_TIME_VALUE
       RE_Message_Size_Type,              --  ARINC653 Message_size_type
       RE_Validity_Type,                  --  ARINC653 Validity_type
       RE_Buffer_Id_Type,                 --  ARINC653 Buffer_Id_Type
@@ -663,6 +664,7 @@ package Ocarina.Backends.POK_C.Runtime is
       RE_Apex_Char                   => RH_Types,
       RE_Process_Attribute_Type      => RH_Types,
       RE_Process_Id_Type             => RH_Types,
+      RE_Infinite_Time_Value        => RH_Types,
       RE_Sampling_Port_Id_Type       => RH_Types,
       RE_Semaphore_Id_Type           => RH_Semaphore,
       RE_Validity_Type               => RH_Types,

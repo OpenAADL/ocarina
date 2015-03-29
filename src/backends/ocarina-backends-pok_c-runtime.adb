@@ -203,6 +203,7 @@ package body Ocarina.Backends.POK_C.Runtime is
          RE_Header_Table (RE_Process_Attribute_Type) := RH_ApexType;
          RE_Header_Table (RE_Fifo) := RH_ApexType;
          RE_Header_Table (RE_Pok_Port_Kind_Sampling) := RH_ApexType;
+         RE_Header_Table (RE_Infinite_Time_Value) := RH_ApexType;
          RE_Header_Table (RE_Pok_Port_Kind_Queueing) := RH_ApexType;
          RE_Header_Table (RE_Source) := RH_ApexType;
          RE_Header_Table (RE_Destination) := RH_ApexType;

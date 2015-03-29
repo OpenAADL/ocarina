@@ -649,7 +649,7 @@ package body Ocarina.Backends.POK_C.Main is
                      if Get_POK_Refresh_Time (F) /= Null_Time then
                         if Use_ARINC653_API then
                            N :=
-                             Map_Time_To_Millisecond
+                             Map_Time_To_Nanosecond
                                (Get_POK_Refresh_Time (F));
                         else
                            N := Map_Time (Get_POK_Refresh_Time (F));
@@ -807,6 +807,10 @@ package body Ocarina.Backends.POK_C.Main is
                         else
                            N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                         end if;
+                     end if;
+
+                     if POK_Flavor = VXWORKS then
+                        N := RE (RE_Infinite_Time_Value);
                      end if;
 
                      Append_Node_To_List (N, Call_Parameters);
