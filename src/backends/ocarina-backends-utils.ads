@@ -486,4 +486,8 @@ package Ocarina.Backends.Utils is
 
    function Get_Associated_Bus (Port : Node_Id) return Node_Id;
 
+   function Find_Associated_Process (Runtime       : Node_Id;
+                                     Root_Node     : Node_Id := No_Node)
+                                     return Node_Id;
+
 end Ocarina.Backends.Utils;

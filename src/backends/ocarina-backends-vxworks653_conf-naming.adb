@@ -5,9 +5,11 @@ with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Properties;
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Vxworks653_Conf.Mapping;
+with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Vxworks653_Conf.Naming is
 
@@ -17,6 +19,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Properties;
+   use Ocarina.Backends.Utils;
    use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -36,6 +39,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       (AADL_Processor : Node_Id; XML_Node : Node_Id);
    procedure Add_Shared_Library_Regions
       (AADL_Processor : Node_Id; XML_Node : Node_Id);
+   procedure Add_Application
+      (AADL_Virtual_Processor : Node_Id;
+       XML_Node : Node_Id);
 
    -----------
    -- Visit --
@@ -200,31 +206,36 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
 
    end Visit_System;
 
-   ------------------------
-   --  Add_Applications  --
-   ------------------------
+   -----------------------
+   --  Add_Application  --
+   -----------------------
 
-   procedure Add_Applications
-      (AADL_Processor : Node_Id; XML_Node : Node_Id) is
-      pragma Unreferenced (AADL_Processor);
-      Applications_Node : Node_Id;
-      Application_Node : Node_Id;
-      Application_Description_Node : Node_Id;
-      Memory_Size_Node : Node_Id;
-      Ports_Node : Node_Id;
+   procedure Add_Application
+      (AADL_Virtual_Processor : Node_Id;
+       XML_Node : Node_Id) is
+      Application_Node              : Node_Id;
+      Application_Description_Node  : Node_Id;
+      Memory_Size_Node              : Node_Id;
+      Ports_Node                    : Node_Id;
+      Port_Node                     : Node_Id;
+      Corresponding_Process         : Node_Id;
+      Feature                       : Node_Id;
    begin
-
-      --  Applications Node first
-
-      Applications_Node := Make_XML_Node ("Applications");
-      Append_Node_To_List (Applications_Node, XTN.Subitems (XML_Node));
-
       --  Application Node that is the child of Applications
 
+      Corresponding_Process := Find_Associated_Process
+         (AADL_Virtual_Processor);
+
       Application_Node := Make_XML_Node ("Application");
-      XTU.Add_Attribute ("Name", "bla", Application_Node);
+      XTU.Add_Attribute ("Name",
+                        Get_Name_String
+                           (AIN.Name
+                              (AIN.Identifier
+                                 (Parent_Subcomponent
+                                    (AADL_Virtual_Processor)))),
+                        Application_Node);
       Append_Node_To_List (Application_Node,
-                           XTN.Subitems (Applications_Node));
+                           XTN.Subitems (XML_Node));
 
       --  Application Description with MemorySize and Ports nodes
 
@@ -248,6 +259,102 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Append_Node_To_List (Ports_Node,
                            XTN.Subitems (Application_Description_Node));
 
+      Feature := First_Node (Features (Corresponding_Process));
+
+      while Present (Feature) loop
+         if Is_Event (Feature) and then Is_Data (Feature)
+         then
+            Port_Node := Make_XML_Node ("QueuingPort");
+
+            XTU.Add_Attribute ("MessageSize", "1", Port_Node);
+            XTU.Add_Attribute ("Name", "1", Port_Node);
+            XTU.Add_Attribute ("QueueLength", "1", Port_Node);
+
+            if not Is_In (Feature) and then
+               Is_Out (Feature)
+            then
+               XTU.Add_Attribute ("Direction",
+                                  "SOURCE",
+                                  Port_Node);
+
+               XTU.Add_Attribute ("Protocol",
+                                  "SENDER_BLOCK",
+                                  Port_Node);
+            end if;
+
+            if Is_In (Feature) and then
+               not Is_Out (Feature)
+            then
+               XTU.Add_Attribute ("Direction",
+                                  "DESTINATION",
+                                  Port_Node);
+               XTU.Add_Attribute ("Protocol",
+                                  "NOT_APPLICABLE",
+                                  Port_Node);
+            end if;
+
+            Append_Node_To_List (Port_Node,
+                                 XTN.Subitems (Ports_Node));
+         end if;
+
+         if not Is_Event (Feature) and then Is_Data (Feature)
+         then
+            Port_Node := Make_XML_Node ("SamplingPort");
+            XTU.Add_Attribute ("MessageSize", "1", Port_Node);
+            XTU.Add_Attribute ("Name", "1", Port_Node);
+            XTU.Add_Attribute ("RefreshRate", "1", Port_Node);
+
+            if Is_In (Feature) and then
+               not Is_Out (Feature)
+            then
+               XTU.Add_Attribute ("Direction",
+                                  "DESTINATION",
+                                  Port_Node);
+            end if;
+
+            if not Is_In (Feature) and then
+               Is_Out (Feature)
+            then
+               XTU.Add_Attribute ("Direction",
+                                  "SOURCE",
+                                  Port_Node);
+            end if;
+
+            Append_Node_To_List (Port_Node,
+                                 XTN.Subitems (Ports_Node));
+         end if;
+
+         Feature := Next_Node (Feature);
+      end loop;
+   end Add_Application;
+
+   ------------------------
+   --  Add_Applications  --
+   ------------------------
+
+   procedure Add_Applications
+      (AADL_Processor : Node_Id; XML_Node : Node_Id) is
+      Applications_Node : Node_Id;
+      S : Node_Id;
+   begin
+
+      --  Applications Node first
+
+      Applications_Node := Make_XML_Node ("Applications");
+      Append_Node_To_List (Applications_Node, XTN.Subitems (XML_Node));
+
+      if not AINU.Is_Empty (Subcomponents (AADL_Processor)) then
+         S := First_Node (Subcomponents (AADL_Processor));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+
+            if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
+               Add_Application (Corresponding_Instance (S), Applications_Node);
+            end if;
+            S := Next_Node (S);
+         end loop;
+      end if;
    end Add_Applications;
 
    -------------------------------

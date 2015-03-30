@@ -47,42 +47,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
-   function Find_Associated_Process (Runtime : Node_Id;
-                                     Current_Node : Node_Id := Root_Node)
-                                     return Node_Id;
-
-   -----------------------------
-   -- Find_Associated_Process --
-   -----------------------------
-
-   function Find_Associated_Process (Runtime : Node_Id;
-                                     Current_Node : Node_Id := Root_Node)
-                                     return Node_Id is
-      T : Node_Id;
-      S : Node_Id;
-   begin
-      if Get_Category_Of_Component (Current_Node) = CC_Process and then
-         Get_Bound_Processor (Current_Node) = Runtime
-      then
-         return Current_Node;
-      end if;
-
-      if not AINU.Is_Empty (Subcomponents (Current_Node)) then
-         S := First_Node (Subcomponents (Current_Node));
-         while Present (S) loop
-            T := Find_Associated_Process
-               (Runtime, Corresponding_Instance (S));
-
-            if T /= No_Node then
-               return T;
-            end if;
-
-            S := Next_Node (S);
-         end loop;
-      end if;
-
-      return No_Node;
-   end Find_Associated_Process;
 
    -----------
    -- Visit --

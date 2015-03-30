@@ -3897,4 +3897,48 @@ package body Ocarina.Backends.Utils is
       return No_Node;
    end Get_Associated_Bus;
 
+   -----------------------------
+   -- Find_Associated_Process --
+   -----------------------------
+
+   function Find_Associated_Process (Runtime    : Node_Id;
+                                     Root_Node  : Node_Id := No_Node)
+                                     return Node_Id is
+      T : Node_Id;
+      S : Node_Id;
+      Current_Node : Node_Id;
+   begin
+      if Root_Node = No_Node then
+         Current_Node := Runtime;
+         while (Parent_Subcomponent (Current_Node) /= No_Node) loop
+            Current_Node := Parent_Component
+               (Parent_Subcomponent (Current_Node));
+         end loop;
+      else
+         Current_Node := Root_Node;
+      end if;
+
+      if Get_Category_Of_Component (Current_Node) = CC_Process and then
+         Get_Bound_Processor (Current_Node) = Runtime
+      then
+         return Current_Node;
+      end if;
+
+      if not AAU.Is_Empty (Subcomponents (Current_Node)) then
+         S := First_Node (Subcomponents (Current_Node));
+         while Present (S) loop
+            T := Find_Associated_Process
+               (Runtime, Corresponding_Instance (S));
+
+            if T /= No_Node then
+               return T;
+            end if;
+
+            S := Next_Node (S);
+         end loop;
+      end if;
+
+      return No_Node;
+   end Find_Associated_Process;
+
 end Ocarina.Backends.Utils;
