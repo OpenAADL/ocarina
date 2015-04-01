@@ -1,5 +1,6 @@
 --  with Locations;
 
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -21,6 +22,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
 --   use Ocarina.Backends.Properties;
 --   use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
@@ -145,6 +147,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
    procedure Visit_Processor_Instance (E : Node_Id) is
       U                             : Node_Id;
       P                             : Node_Id;
+      S                             : Node_Id;
       Payloads_Node                 : Node_Id;
       Core_OS_Payload_Node          : Node_Id;
       Shared_Library_Payload_Node   : Node_Id;
@@ -186,13 +189,28 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
       Append_Node_To_List (Config_Record_Payload_Node,
                            XTN.Subitems (Payloads_Node));
 
-      Partition_Payload_Node
-         := Make_XML_Node ("PartitionPayload");
-      Add_Attribute ("NameRef",
-                     "tobefixed",
-                     Partition_Payload_Node);
-      Append_Node_To_List (Partition_Payload_Node,
-                           XTN.Subitems (Payloads_Node));
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+
+            if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
+               Partition_Payload_Node
+                := Make_XML_Node ("PartitionPayload");
+               Add_Attribute ("NameRef",
+                              Get_Name_String
+                                 (AIN.Name
+                                    (AIN.Identifier
+                                       (Parent_Subcomponent
+                                          (Corresponding_Instance (S))))),
+                              Partition_Payload_Node);
+               Append_Node_To_List (Partition_Payload_Node,
+                                    XTN.Subitems (Payloads_Node));
+            end if;
+            S := Next_Node (S);
+         end loop;
+      end if;
 
       Pop_Entity;
       Pop_Entity;

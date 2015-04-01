@@ -4,6 +4,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
@@ -267,7 +268,10 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
             Port_Node := Make_XML_Node ("QueuingPort");
 
             XTU.Add_Attribute ("MessageSize", "1", Port_Node);
-            XTU.Add_Attribute ("Name", "1", Port_Node);
+            XTU.Add_Attribute ("Name",
+                               Get_Name_String
+                                 (C_Common.Mapping.Map_Port_Name (Feature)),
+                               Port_Node);
             XTU.Add_Attribute ("QueueLength", "1", Port_Node);
 
             if not Is_In (Feature) and then
@@ -384,7 +388,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Shared_Library_Description_Node : Node_Id;
       Shared_Memory_Size_Node : Node_Id;
    begin
-      --  We have to generate a file that will
       --  look like the following.
       --
       --  <SharedLibraryRegions>

@@ -490,4 +490,11 @@ package Ocarina.Backends.Utils is
                                      Root_Node     : Node_Id := No_Node)
                                      return Node_Id;
 
+   function Get_Partition_Runtime (Process    : Node_Id;
+                                   Root_Node  : Node_Id := No_Node)
+                                     return Node_Id;
+
+   function Get_Root_Component (C : Node_Id)
+                               return Node_Id;
+
 end Ocarina.Backends.Utils;

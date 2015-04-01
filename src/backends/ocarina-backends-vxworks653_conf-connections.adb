@@ -1,10 +1,12 @@
 --  with Locations;
-
+with Ocarina.Backends.Utils;
+with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 --  with Ocarina.Backends.Vxworks653_Conf.Mapping;
@@ -13,6 +15,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
 
 --   use Locations;
    use Ocarina.ME_AADL;
+   use Ocarina.Backends.Utils;
 
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -20,16 +23,16 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
 
 --   use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
    Root_Node : Node_Id := No_Node;
-   Schedules_Node : Node_Id := No_Node;
+   Connections_Node : Node_Id := No_Node;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
-   procedure Visit_Process_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
@@ -72,9 +75,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
          when CC_System =>
             Visit_System_Instance (E);
 
-         when CC_Process =>
-            Visit_Process_Instance (E);
-
          when CC_Processor =>
             Visit_Processor_Instance (E);
 
@@ -88,25 +88,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
             null;
       end case;
    end Visit_Component_Instance;
-
-   ----------------------------
-   -- Visit_Process_Instance --
-   ----------------------------
-
-   procedure Visit_Process_Instance (E : Node_Id) is
-      S : Node_Id;
-   begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
-   end Visit_Process_Instance;
 
    ---------------------------
    -- Visit_System_Instance --
@@ -145,6 +126,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
    procedure Visit_Processor_Instance (E : Node_Id) is
       U                 : Node_Id;
       P                 : Node_Id;
+      S                 : Node_Id;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       P := XTN.Node (Backend_Node (Identifier (E)));
@@ -154,10 +136,22 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
 
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
-      Schedules_Node := Make_XML_Node ("Connections");
+      Connections_Node := Make_XML_Node ("Connections");
+
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+            if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
+               Visit (Corresponding_Instance (S));
+            end if;
+            S := Next_Node (S);
+         end loop;
+      end if;
 
       Append_Node_To_List
-        (Schedules_Node,
+        (Connections_Node,
          XTN.Subitems (Current_XML_Node));
 
       Pop_Entity;
@@ -169,9 +163,69 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
+      Corresponding_Process : Node_Id;
+      Connection_Node       : Node_Id;
+      Source_Node           : Node_Id;
+      Destination_Node      : Node_Id;
+      Feature               : Node_Id;
+      Port_Source           : Node_Id;
+      Port_Destination      : Node_Id;
+      Partition_Destination : Node_Id;
    begin
-      null;
+      Corresponding_Process := Find_Associated_Process (E);
+
+      Feature := First_Node (Features (Corresponding_Process));
+
+      while Present (Feature) loop
+         if Is_Data (Feature) and then Is_Out (Feature)
+         then
+            Port_Source := Feature;
+            Port_Destination := Item (First_Node (Destinations (Feature)));
+            Partition_Destination := Parent_Component (Port_Destination);
+
+            Connection_Node := Make_XML_Node ("Connection");
+            Source_Node := Make_XML_Node ("Source");
+            Add_Attribute ("PartitionNameRef",
+                        Get_Name_String
+                           (AIN.Name
+                              (AIN.Identifier
+                                 (Parent_Subcomponent
+                                    (E)))),
+                           Source_Node);
+
+            Add_Attribute ("PortNameRef",
+                           Get_Name_String
+                              (C_Common.Mapping.Map_Port_Name
+                                 (Port_Source)),
+                           Source_Node);
+
+            Append_Node_To_List (Source_Node,
+                                 XTN.Subitems (Connection_Node));
+
+            Destination_Node := Make_XML_Node ("Destination");
+            Add_Attribute ("PortNameRef",
+                           Get_Name_String
+                              (C_Common.Mapping.Map_Port_Name
+                                 (Port_Destination)),
+                           Destination_Node);
+
+            Add_Attribute ("PartitionNameRef",
+                           Get_Name_String
+                              (AIN.Name
+                                 (AIN.Identifier
+                                    (Parent_Subcomponent
+                                       (Get_Partition_Runtime
+                                          (Partition_Destination))))),
+                         Destination_Node);
+
+            Append_Node_To_List (Destination_Node,
+                                 XTN.Subitems (Connection_Node));
+            Append_Node_To_List (Connection_Node,
+                                 XTN.Subitems (Connections_Node));
+         end if;
+         Feature := Next_Node (Feature);
+      end loop;
+
    end Visit_Virtual_Processor_Instance;
 
 end Ocarina.Backends.Vxworks653_Conf.Connections;
