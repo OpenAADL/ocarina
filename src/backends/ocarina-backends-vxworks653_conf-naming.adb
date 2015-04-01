@@ -1,3 +1,6 @@
+with Ada.Strings; use Ada.Strings;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
+
 with Locations;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -221,6 +224,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Port_Node                     : Node_Id;
       Corresponding_Process         : Node_Id;
       Feature                       : Node_Id;
+      Size                          : Unsigned_Long_Long;
+      Queue_Size                    : Long_Long;
    begin
       --  Application Node that is the child of Applications
 
@@ -265,14 +270,30 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       while Present (Feature) loop
          if Is_Event (Feature) and then Is_Data (Feature)
          then
+            Size := To_Bytes (Get_Data_Size
+                        (Corresponding_Instance (Feature)));
+            Queue_Size := Get_Queue_Size (Feature);
+
+            if Queue_Size = -1 then
+               Queue_Size := 1;
+            end if;
+
             Port_Node := Make_XML_Node ("QueuingPort");
 
-            XTU.Add_Attribute ("MessageSize", "1", Port_Node);
+            XTU.Add_Attribute ("MessageSize",
+                              Trim (Unsigned_Long_Long'Image
+                                 (Size), Left),
+                              Port_Node);
+
             XTU.Add_Attribute ("Name",
                                Get_Name_String
                                  (C_Common.Mapping.Map_Port_Name (Feature)),
                                Port_Node);
-            XTU.Add_Attribute ("QueueLength", "1", Port_Node);
+
+            XTU.Add_Attribute ("QueueLength",
+                               Trim (Long_Long'Image
+                                 (Queue_Size), Left),
+                              Port_Node);
 
             if not Is_In (Feature) and then
                Is_Out (Feature)
@@ -303,8 +324,14 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
 
          if not Is_Event (Feature) and then Is_Data (Feature)
          then
+            Size := To_Bytes (Get_Data_Size
+                        (Corresponding_Instance (Feature)));
+
             Port_Node := Make_XML_Node ("SamplingPort");
-            XTU.Add_Attribute ("MessageSize", "1", Port_Node);
+            XTU.Add_Attribute ("MessageSize",
+                              Trim (Unsigned_Long_Long'Image
+                                 (Size), Left),
+                              Port_Node);
             XTU.Add_Attribute ("Name", "1", Port_Node);
             XTU.Add_Attribute ("RefreshRate", "1", Port_Node);
 
