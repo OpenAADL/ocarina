@@ -226,6 +226,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Feature                       : Node_Id;
       Size                          : Unsigned_Long_Long;
       Queue_Size                    : Long_Long;
+      Refresh_Period                : Time_Type;
+      Refresh_Period_Second         : Float;
    begin
       --  Application Node that is the child of Applications
 
@@ -333,13 +335,22 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
                                  (Size), Left),
                               Port_Node);
             XTU.Add_Attribute ("Name", "1", Port_Node);
-            XTU.Add_Attribute ("RefreshRate", "1", Port_Node);
 
             if Is_In (Feature) and then
                not Is_Out (Feature)
             then
+               Refresh_Period := Get_POK_Refresh_Time (Feature);
+               Refresh_Period_Second := 1000.0 /
+                  (Float (To_Milliseconds (Refresh_Period)) *
+                   Float (100.0));
+
                XTU.Add_Attribute ("Direction",
                                   "DESTINATION",
+                                  Port_Node);
+
+               XTU.Add_Attribute ("RefreshRate",
+                              Trim (Float'Image
+                                 (Refresh_Period_Second), Left),
                                   Port_Node);
             end if;
 
@@ -348,6 +359,10 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
             then
                XTU.Add_Attribute ("Direction",
                                   "SOURCE",
+                                  Port_Node);
+
+               XTU.Add_Attribute ("RefreshRate",
+                                  "INFINITE_TIME",
                                   Port_Node);
             end if;
 
