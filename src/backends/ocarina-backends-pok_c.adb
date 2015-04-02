@@ -128,7 +128,7 @@ package body Ocarina.Backends.POK_C is
          C_Tree.Generator.Generate (C_Root);
       end if;
 
-      if POK_Flavor /= DEOS then
+      if POK_Flavor /= DEOS and then POK_Flavor /= VXWORKS then
          Makefile.Visit (Instance_Root);
       end if;
 
@@ -200,7 +200,8 @@ package body Ocarina.Backends.POK_C is
 
    function Use_ARINC653_API return Boolean is
    begin
-      return POK_Flavor = ARINC653 or else POK_Flavor = DEOS;
+      return POK_Flavor = ARINC653 or else POK_Flavor = DEOS
+         or else POK_Flavor = VXWORKS;
    end Use_ARINC653_API;
 
    ----------
@@ -223,6 +224,10 @@ package body Ocarina.Backends.POK_C is
 
                if Parameter = "deos" then
                   POK_Flavor := DEOS;
+               end if;
+
+               if Parameter = "vxworks653" then
+                  POK_Flavor := VXWORKS;
                end if;
 
                if Parameter = "no-assert" then
