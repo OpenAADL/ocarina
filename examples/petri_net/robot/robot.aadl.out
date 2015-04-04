@@ -1,13 +1,3 @@
-robot.aadl:178:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
-robot.aadl:178:05: Warning: The value of actual_processor_binding has been converted into a list.
-robot.aadl:179:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
-robot.aadl:179:05: Warning: The value of actual_processor_binding has been converted into a list.
-robot.aadl:181:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
-robot.aadl:181:05: Warning: The value of actual_processor_binding has been converted into a list.
-robot.aadl:183:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
-robot.aadl:183:05: Warning: The value of actual_processor_binding has been converted into a list.
-robot.aadl:184:05: Warning: actual_processor_binding is not a list while the corresponding property name at deployment_properties.aadl:14:02 is a list.
-robot.aadl:184:05: Warning: The value of actual_processor_binding has been converted into a list.
 robot.aadl:170:05: warning: CPU1 references a component type
 ocarina: Total: 0 error and 1 warning
 robot.aadl:170:05: warning: CPU1 references a component type
