@@ -977,6 +977,9 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
    function Map_Sampling_Port (Port : Node_Id) return Node_Id is
       Sampling_Port : Node_Id;
       Size : Unsigned_Long_Long;
+      Source_Port    : Node_Id;
+      Source_Process : Node_Id;
+      Source_Runtime : Node_Id;
    begin
       Sampling_Port := Make_XML_Node ("SamplingPort");
       Size := To_Bytes (Get_Data_Size
@@ -996,8 +999,31 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       elsif Is_Out (Port) then
          XTU.Add_Attribute ("Direction", "SOURCE", Sampling_Port);
       end if;
-      XTU.Add_Attribute ("SourcePartitionName", "", Sampling_Port);
-      XTU.Add_Attribute ("SourcePortName", "", Sampling_Port);
+
+      if Is_In (Port) then
+         Source_Port := Item (AIN.First_Node (Sources (Port)));
+         Source_Process := Parent_Component
+                                 (Source_Port);
+         Source_Runtime := Parent_Subcomponent
+            (Get_Partition_Runtime
+                              (Source_Process));
+         XTU.Add_Attribute
+            ("SourcePortName",
+            Get_Name_String
+               (Map_Port_Name (Source_Port)),
+             Sampling_Port);
+         XTU.Add_Attribute
+            ("SourcePartitionName",
+            Get_Name_String
+               (Display_Name
+                  (Identifier
+                     (Source_Runtime))),
+             Sampling_Port);
+      else
+         XTU.Add_Attribute ("SourcePartitionName", "", Sampling_Port);
+         XTU.Add_Attribute ("SourcePortName", "", Sampling_Port);
+      end if;
+
       XTU.Add_Attribute ("CustomIOFunction", "", Sampling_Port);
       XTU.Add_Attribute ("AccessRateInNanoseconds", "12500000", Sampling_Port);
       return Sampling_Port;
@@ -1011,6 +1037,9 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       Queuing_Port   : Node_Id;
       Size           : Unsigned_Long_Long;
       Queue_Size     : Long_Long;
+      Source_Port    : Node_Id;
+      Source_Process : Node_Id;
+      Source_Runtime : Node_Id;
    begin
       Queuing_Port := Make_XML_Node ("QueuingPort");
       Size := To_Bytes (Get_Data_Size
@@ -1040,8 +1069,31 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       elsif Is_Out (Port) then
          XTU.Add_Attribute ("Direction", "SOURCE", Queuing_Port);
       end if;
-      XTU.Add_Attribute ("SourcePartitionName", "", Queuing_Port);
-      XTU.Add_Attribute ("SourcePortName", "", Queuing_Port);
+
+      if Is_In (Port) then
+         Source_Port := Item (AIN.First_Node (Sources (Port)));
+         Source_Process := Parent_Component
+                                 (Source_Port);
+         Source_Runtime := Parent_Subcomponent
+            (Get_Partition_Runtime
+                              (Source_Process));
+         XTU.Add_Attribute
+            ("SourcePortName",
+            Get_Name_String
+               (Map_Port_Name (Source_Port)),
+             Queuing_Port);
+         XTU.Add_Attribute
+            ("SourcePartitionName",
+            Get_Name_String
+               (Display_Name
+                  (Identifier
+                     (Source_Runtime))),
+             Queuing_Port);
+      else
+         XTU.Add_Attribute ("SourcePartitionName", "", Queuing_Port);
+         XTU.Add_Attribute ("SourcePortName", "", Queuing_Port);
+      end if;
+
       XTU.Add_Attribute ("CustomIOFunction", "", Queuing_Port);
       return Queuing_Port;
    end Map_Queuing_Port;
@@ -1179,38 +1231,11 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
    function Map_Port_Name (E : Node_Id) return Name_Id
    is
       N     : Name_Id;
-      Port  : Node_Id;
    begin
+      Get_Name_String
+         (Display_Name (Identifier (E)));
 
-      --
-      --  Typically, the following block of code is used
-      --  to prefix the port name by the parent subcomponent
-      --  name. For DeOS, we do not prefix by the subcomponent,
-      --  Port Name have to be the same.
-      --
-
-      if Get_Connection_Pattern (E) = Inter_Process
-      then
-         if Is_Out (E) then
-            Port := Item (AIN.First_Node (Destinations (E)));
-         else
-            Port := E;
-         end if;
-
-         Get_Name_String
-            (Display_Name
-               (Identifier
-                  (Parent_Subcomponent
-                     (Parent_Component (Port)))));
-
-         Add_Str_To_Name_Buffer ("_");
-
-         Get_Name_String_And_Append
-            (Display_Name (Identifier (Port)));
-
-         N := Name_Find;
-      end if;
-
+      N := Name_Find;
       return (To_Lower (N));
    end Map_Port_Name;
 
