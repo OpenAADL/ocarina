@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -173,6 +173,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Nb_Buses,                       --  __PO_HI_NB_BUSES
       RE_Nb_Protocols,                   --  __PO_HI_NB_PROTOCOLS
       RE_My_Node,                        --  __PO_HI_MY_NODE
+      RE_Port_Type_Content,              --  __PO_HI_PORT_TYPE_CONTENT
       RE_Gqueue_Fifo_Indata,             --  __PO_HI_GQUEUE_FIFO_DATA
       RE_Gqueue_Fifo_Out,                --  __PO_HI_GQUEUE_FIFO_OUT
       RE_Nb_Operations,                  --  __PO_HI_NB_OPERATIONS
@@ -403,6 +404,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Nb_Devices                   => RH_Deployment,
       RE_Nb_Buses                     => RH_Deployment,
       RE_Nb_Protocols                 => RH_Deployment,
+      RE_Port_Type_Content            => RH_Deployment,
       RE_My_Node                      => RH_Deployment,
       RE_Nb_Ports                     => RH_Deployment,
       RE_Nb_Servers                   => RH_Deployment,
