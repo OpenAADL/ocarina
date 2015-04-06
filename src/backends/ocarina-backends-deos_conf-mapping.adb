@@ -2,6 +2,7 @@ with Ada.Strings; use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ocarina.Namet; use Ocarina.Namet;
 
+with Utils; use Utils;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
@@ -34,6 +35,8 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
    package XV renames Ocarina.Backends.XML_Values;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
+
+   function Map_Port_Name (E : Node_Id) return Name_Id;
 
    procedure Map_Scheduler (E : Node_Id; N : Node_Id) is
       Scheduler : Supported_POK_Scheduler;
@@ -979,21 +982,10 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       Size := To_Bytes (Get_Data_Size
                         (Corresponding_Instance (Port)));
 
-      if Is_In (Port) then
-         XTU.Add_Attribute ("Name",
-                            Get_Name_String
-                              (AIN.Name (Identifier (Port))),
-                            Sampling_Port);
-      else
-         XTU.Add_Attribute ("Name",
-                            Get_Name_String
-                              (AIN.Name
-                                 (Identifier
-                                    (Item
-                                       (AIN.First_Node
-                                          (Destinations (Port)))))),
-                            Sampling_Port);
-      end if;
+      XTU.Add_Attribute ("Name",
+                        Get_Name_String
+                          (Map_Port_Name (Port)),
+                        Sampling_Port);
       XTU.Add_Attribute ("MaxMessageSize",
                         Trim (Unsigned_Long_Long'Image
                            (Size), Left),
@@ -1029,21 +1021,10 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
          Queue_Size := 1;
       end if;
 
-      if Is_In (Port) then
-         XTU.Add_Attribute ("Name",
-                            Get_Name_String
-                              (AIN.Name (Identifier (Port))),
-                            Queuing_Port);
-      else
-         XTU.Add_Attribute ("Name",
-                            Get_Name_String
-                              (AIN.Name
-                                 (Identifier
-                                    (Item
-                                       (AIN.First_Node
-                                          (Destinations (Port)))))),
-                            Queuing_Port);
-      end if;
+      XTU.Add_Attribute ("Name",
+                         Get_Name_String
+                           (Map_Port_Name (Port)),
+                         Queuing_Port);
       XTU.Add_Attribute ("MaxMessageSize",
                         Trim (Unsigned_Long_Long'Image
                            (Size), Left),
@@ -1190,5 +1171,47 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       XTU.Add_Attribute ("EventLoggingEnabled", "yes", Partition_Node);
       return Partition_Node;
    end Map_Partition;
+
+   -------------------
+   -- Map_Port_Name --
+   -------------------
+
+   function Map_Port_Name (E : Node_Id) return Name_Id
+   is
+      N     : Name_Id;
+      Port  : Node_Id;
+   begin
+
+      --
+      --  Typically, the following block of code is used
+      --  to prefix the port name by the parent subcomponent
+      --  name. For DeOS, we do not prefix by the subcomponent,
+      --  Port Name have to be the same.
+      --
+
+      if Get_Connection_Pattern (E) = Inter_Process
+      then
+         if Is_Out (E) then
+            Port := Item (AIN.First_Node (Destinations (E)));
+         else
+            Port := E;
+         end if;
+
+         Get_Name_String
+            (Display_Name
+               (Identifier
+                  (Parent_Subcomponent
+                     (Parent_Component (Port)))));
+
+         Add_Str_To_Name_Buffer ("_");
+
+         Get_Name_String_And_Append
+            (Display_Name (Identifier (Port)));
+
+         N := Name_Find;
+      end if;
+
+      return (To_Lower (N));
+   end Map_Port_Name;
 
 end Ocarina.Backends.Deos_Conf.Mapping;
