@@ -335,6 +335,7 @@ fi],
 AC_SUBST(PYTHON_PRJ)
 AC_SUBST(PYTHON_TARGET)
 AC_SUBST(PYTHON_RUNTIME)
+AM_CONDITIONAL(INSTALL_PYTHON,[test x"$PYTHON_RUNTIME" = xpython])
 
 ##########################################
 # Some version control stuff
