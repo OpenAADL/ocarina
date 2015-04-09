@@ -36,8 +36,6 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
-   function Map_Port_Name (E : Node_Id) return Name_Id;
-
    procedure Map_Scheduler (E : Node_Id; N : Node_Id) is
       Scheduler : Supported_POK_Scheduler;
       R         : Node_Id;
