@@ -1169,12 +1169,18 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
                            Left),
                         Partition_Node);
 
-      XTU.Add_Attribute ("ExecutableImageName",
-                         Get_Name_String
-                           (AIN.Name
-                              (Identifier
-                                 (Parent_Subcomponent
-                                    (Runtime)))) & ".exe", Partition_Node);
+      if Get_Source_Name (Runtime) = No_Name then
+         XTU.Add_Attribute ("ExecutableImageName",
+                            Get_Name_String
+                              (AIN.Name
+                                 (Identifier
+                                    (Parent_Subcomponent
+                                       (Runtime)))) & ".exe", Partition_Node);
+      else
+         XTU.Add_Attribute ("ExecutableImageName",
+                            Get_Name_String
+                              (Get_Source_Name (Runtime)), Partition_Node);
+      end if;
       XTU.Add_Attribute ("MainProcessStackSizeInPages", "1", Partition_Node);
       XTU.Add_Attribute ("BreakAtStartup", "no", Partition_Node);
       XTU.Add_Attribute ("InDebugSet", "no", Partition_Node);
