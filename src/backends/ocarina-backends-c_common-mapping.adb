@@ -3037,15 +3037,7 @@ package body Ocarina.Backends.C_Common.Mapping is
       if Get_Connection_Pattern (E) = Inter_Process and then
          POK_Flavor = DEOS
       then
-         if Is_In (E) then
-            Get_Name_String (Display_Name (Identifier (E)));
-         else
-            Get_Name_String
-               (Display_Name
-                  (Identifier
-                     (Item (AIN.First_Node (Destinations (E))))));
-         end if;
-
+         Get_Name_String (Display_Name (Identifier (E)));
          N := Name_Find;
       else
          N := Map_Port (E, Containing_Component);
