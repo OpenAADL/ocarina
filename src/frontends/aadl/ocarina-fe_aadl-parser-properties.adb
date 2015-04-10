@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -85,7 +85,6 @@ package body Ocarina.FE_AADL.Parser.Properties is
 
       Loc                      : Location;
       Prop_Value               : Node_Id;
-      Parse_List_Of_Properties : Boolean := True;
 
    begin
       --  Parse Property_Value
@@ -93,30 +92,7 @@ package body Ocarina.FE_AADL.Parser.Properties is
       Save_Lexer (Loc);
       Scan_Token;
 
-      --  The AADLv2 BNF is ambiguous, a string starting with a '('
-      --  can either be a list of property expressions e.g. "(foo,
-      --  bar);" _or_ a single_expression containing a record term,
-      --  e.g. "(foo => 1; bar =>2;)". This look ahead loop scans
-      --  token to see which case we are currently processing.
-
-      declare
-         Loc2 : Location;
-      begin
-         Save_Lexer (Loc2);
-         if Token = T_Left_Parenthesis then
-            while Token /= T_Right_Parenthesis loop
-               Scan_Token;
-               if Token = T_Semicolon or else Token = T_Applies then
-                  Parse_List_Of_Properties := False;
-               end if;
-            end loop;
-         else
-            Parse_List_Of_Properties := False;
-         end if;
-         Restore_Lexer (Loc2);
-      end;
-
-      if Parse_List_Of_Properties then
+      if Token = T_Left_Parenthesis then
          Save_Lexer (Loc);
          Scan_Token;
 

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2507,6 +2507,9 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
                DPE (PC_Boolean_Or_Record_Term, EMC_Not_Allowed_In_AADL_V2);
                return No_Node;
             end if;
+
+         when T_Left_Square_Bracket =>
+            return P_Record_Term;
 
          when others =>
             DPE (PC_Boolean_Or_Record_Term);
