@@ -14,7 +14,6 @@ AADL_V1_PROPERTIES = $(srcdir)/AADLv1/aadl_properties.aadl \
 
 AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
 	$(srcdir)/AADLv2/arinc653.aadl \
-	$(srcdir)/AADLv2/arinc653_properties.aadl \
 	$(srcdir)/AADLv2/assert_types.aadl \
 	$(srcdir)/AADLv2/assert_properties.aadl \
 	$(srcdir)/AADLv2/behavior_properties.aadl \
