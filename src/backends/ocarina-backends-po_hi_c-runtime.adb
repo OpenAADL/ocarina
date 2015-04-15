@@ -110,8 +110,9 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
    ----------------
 
    procedure Initialize is
-      Name : Name_Id;
-      N    : Node_Id;
+      Name  : Name_Id;
+      N     : Node_Id;
+      Local : Boolean;
    begin
       --  Initialize the runtime only once
 
@@ -120,6 +121,7 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
       end if;
 
       Initialized := True;
+      Local := False;
 
       Register_Casing_Rule ("AADL");
       Register_Casing_Rule ("char_array");
@@ -157,7 +159,13 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
          N    := New_Node (K_Defining_Identifier);
          Set_Name (N, Name);
 
-         RHD (E) := Make_Include_Clause (N, False);
+         if E = RH_Subprograms then
+            Local := True;
+         else
+            Local := False;
+         end if;
+
+         RHD (E) := Make_Include_Clause (N, Local);
       end loop;
 
       for E in RC_Id loop

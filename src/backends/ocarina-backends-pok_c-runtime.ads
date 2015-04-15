@@ -190,6 +190,9 @@ package Ocarina.Backends.POK_C.Runtime is
       RE_Assert_Ret_With_Exception,      --  ASSERT_RET_WITH_EXCEPTION
       RE_Pok_Generated_Code,             --  POK_GENERATED_CODE
       RE_Pok_Needs_Time,                 --  POK_NEEDS_TIME
+      RE_Ocarina_Runtime_Deos,           --  OCARINA_RUNTIME_DEOS
+      RE_Ocarina_Runtime_Pok,            --  OCARINA_RUNTIME_DEOS
+      RE_Ocarina_Runtime_Vxworks653,     --  OCARINA_RUNTIME_DEOS
       RE_Pok_Needs_Events,               --  POK_NEEDS_EVENTS
       RE_Pok_Needs_Threads,              --  POK_NEEDS_THREADS
       RE_Pok_Needs_Debug,                --  POK_NEEDS_DEBUG
@@ -732,6 +735,9 @@ package Ocarina.Backends.POK_C.Runtime is
       RE_Pok_Needs_Time                             => RH_Deployment,
       RE_Pok_Generated_Code                         => RH_Deployment,
       RE_Pok_Needs_Events                           => RH_Deployment,
+      RE_Ocarina_Runtime_Deos                       => RH_Deployment,
+      RE_Ocarina_Runtime_Pok                        => RH_Deployment,
+      RE_Ocarina_Runtime_Vxworks653                 => RH_Deployment,
       RE_Pok_Needs_Ports_Sampling                   => RH_Deployment,
       RE_Pok_Needs_Ports_Virtual                    => RH_Deployment,
       RE_Pok_Needs_Gettick                          => RH_Null,

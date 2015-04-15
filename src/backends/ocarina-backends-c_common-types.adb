@@ -440,6 +440,19 @@ package body Ocarina.Backends.C_Common.Types is
             Data_Size           := Get_Data_Size (E);
             Actual_Data_Size    := To_Bytes (Data_Size);
 
+            Type_Source_Name := Get_Type_Source_Name (E);
+
+            --
+            --  If the user specifies Type_Source_Name property
+            --  on the data type, then, the generator takes
+            --  it over everything else. This is a way to
+            --  override some assumptions from the code generator.
+            --
+
+            if Type_Source_Name /= No_Name then
+               Data_Representation := Data_None;
+            end if;
+
             case Data_Representation is
                when Data_Boolean =>
                   N :=
@@ -743,8 +756,6 @@ package body Ocarina.Backends.C_Common.Types is
                      Fatal => True);
 
                when Data_None =>
-                  Type_Source_Name := Get_Type_Source_Name (E);
-
                   if Type_Source_Name /= No_Name then
                      N :=
                        Make_Full_Type_Declaration
