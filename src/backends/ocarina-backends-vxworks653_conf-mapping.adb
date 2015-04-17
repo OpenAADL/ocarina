@@ -1121,7 +1121,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       Append_Node_To_List (Settings_Node,
                            XTN.Subitems (Partition_Description_Node));
       XTU.Add_Attribute ("RequiredMemorySize", "0x300000", Settings_Node);
-      XTU.Add_Attribute ("PartitionHMTable", "part1Hm", Settings_Node);
+      XTU.Add_Attribute ("PartitionHMTable",
+                        Get_Name_String (Map_Partition_Name (Runtime)) & "_hm",
+                        Settings_Node);
       XTU.Add_Attribute ("watchDogDuration", "0", Settings_Node);
       XTU.Add_Attribute ("allocDisable", "0", Settings_Node);
       XTU.Add_Attribute ("numWorkerTasks", "0", Settings_Node);
@@ -1138,32 +1140,34 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
                         Settings_Node);
 
       Shared_Library_Region_Node := Make_XML_Node ("SharedLibraryRegion");
-      XTU.Add_Attribute ("NamedRef", "vxSysLib", Shared_Library_Region_Node);
+      XTU.Add_Attribute ("NameRef", "vxSysLib", Shared_Library_Region_Node);
       Append_Node_To_List (Shared_Library_Region_Node,
                         XTN.Subitems (Partition_Description_Node));
 
       Application_Node := Make_XML_Node ("Application");
-      Append_Node_To_List (Application_Node,
-                           XTN.Subitems (Partition_Description_Node));
       XTU.Add_Attribute ("NameRef",
                          Get_Name_String
-                           (Map_Partition_Name (Runtime)),
-                         Partition_Node);
+                           (Map_Partition_Name (Runtime, True)),
+                         Application_Node);
+      Append_Node_To_List (Application_Node,
+                           XTN.Subitems (Partition_Description_Node));
 
       return Partition_Node;
    end Map_Partition;
 
-   function Map_Partition_Name (Runtime : Node_Id) return Name_Id is
+   function Map_Partition_Name (Runtime : Node_Id;
+                                Use_Source_Name : Boolean := False)
+   return Name_Id is
       Result : Name_Id;
    begin
       Result := Get_Source_Name (Runtime);
-      if Result = No_Name then
-         Result := AIN.Name
-                     (Identifier
-                        (Parent_Subcomponent
-                           (Runtime)));
+      if Result /= No_Name and then Use_Source_Name then
+         return Result;
       end if;
-
+      Result := AIN.Name
+                  (Identifier
+                     (Parent_Subcomponent
+                        (Runtime)));
       return Result;
    end Map_Partition_Name;
 

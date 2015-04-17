@@ -238,7 +238,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       XTU.Add_Attribute ("Name",
                         Get_Name_String
                            (Map_Partition_Name
-                              (AADL_Virtual_Processor)),
+                              (AADL_Virtual_Processor, True)),
                         Application_Node);
       Append_Node_To_List (Application_Node,
                            XTN.Subitems (XML_Node));
@@ -332,7 +332,11 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
                               Trim (Unsigned_Long_Long'Image
                                  (Size), Left),
                               Port_Node);
-            XTU.Add_Attribute ("Name", "1", Port_Node);
+
+            XTU.Add_Attribute ("Name",
+                               Get_Name_String
+                                 (C_Common.Mapping.Map_Port_Name (Feature)),
+                               Port_Node);
 
             if Is_In (Feature) and then
                not Is_Out (Feature)
