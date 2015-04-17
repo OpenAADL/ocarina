@@ -8,7 +8,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
---  with Ocarina.Backends.Vxworks653_Conf.Mapping;
+with Ocarina.Backends.Vxworks653_Conf.Mapping;
 
 package body Ocarina.Backends.Vxworks653_Conf.Payloads is
 
@@ -20,9 +20,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
    use Ocarina.Backends.XML_Tree.Nutils;
 
 --   use Ocarina.Backends.Properties;
---   use Ocarina.Backends.Vxworks653_Conf.Mapping;
+   use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
-   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
@@ -200,10 +199,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
                 := Make_XML_Node ("PartitionPayload");
                Add_Attribute ("NameRef",
                               Get_Name_String
-                                 (AIN.Name
-                                    (AIN.Identifier
-                                       (Parent_Subcomponent
-                                          (Corresponding_Instance (S))))),
+                                 (Map_Partition_Name
+                                    (Corresponding_Instance (S))),
                               Partition_Payload_Node);
                Append_Node_To_List (Partition_Payload_Node,
                                     XTN.Subitems (Payloads_Node));

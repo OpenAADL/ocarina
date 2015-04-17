@@ -1106,10 +1106,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
 
       XTU.Add_Attribute ("Name",
                          Get_Name_String
-                           (AIN.Name
-                              (Identifier
-                                 (Parent_Subcomponent
-                                    (Runtime)))),
+                           (Map_Partition_Name (Runtime)),
                          Partition_Node);
       --
       --  Integer'Image adds a space in the beginning. To avoid that,
@@ -1150,13 +1147,24 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
                            XTN.Subitems (Partition_Description_Node));
       XTU.Add_Attribute ("NameRef",
                          Get_Name_String
-                           (AIN.Name
-                              (Identifier
-                                 (Parent_Subcomponent
-                                    (Runtime)))),
+                           (Map_Partition_Name (Runtime)),
                          Partition_Node);
 
       return Partition_Node;
    end Map_Partition;
+
+   function Map_Partition_Name (Runtime : Node_Id) return Name_Id is
+      Result : Name_Id;
+   begin
+      Result := Get_Source_Name (Runtime);
+      if Result = No_Name then
+         Result := AIN.Name
+                     (Identifier
+                        (Parent_Subcomponent
+                           (Runtime)));
+      end if;
+
+      return Result;
+   end Map_Partition_Name;
 
 end Ocarina.Backends.Vxworks653_Conf.Mapping;

@@ -237,10 +237,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Application_Node := Make_XML_Node ("Application");
       XTU.Add_Attribute ("Name",
                         Get_Name_String
-                           (AIN.Name
-                              (AIN.Identifier
-                                 (Parent_Subcomponent
-                                    (AADL_Virtual_Processor)))),
+                           (Map_Partition_Name
+                              (AADL_Virtual_Processor)),
                         Application_Node);
       Append_Node_To_List (Application_Node,
                            XTN.Subitems (XML_Node));
