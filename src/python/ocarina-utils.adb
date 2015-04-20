@@ -208,7 +208,7 @@ package body Ocarina.Utils is
    -- Analyze --
    -------------
 
-   procedure Analyze is
+   function Analyze return Boolean is
       Success : Boolean;
    begin
       Success := Analyze (Language, AADL_Root);
@@ -217,6 +217,7 @@ package body Ocarina.Utils is
       else
          Write_Line ("Model analyzed sucessfully");
       end if;
+      return Success;
    end Analyze;
 
    -----------------

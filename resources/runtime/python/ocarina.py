@@ -35,8 +35,8 @@ def status ():
 def reset ():
     '''Reset Ocarina internal state
 
-    **Note:** this function must be called before processing a new set of models.
-    '''
+    **Note:** this function must be called before processing a new set of
+    models.'''
 
     libocarina_python.reset();
 
@@ -44,7 +44,7 @@ def reset ():
 def load (filename):
     '''Load a file
 
-    :param filename: name of the file to be loaded, following Ocarina search path
+    :param filename: name of the file to be loaded, using Ocarina search path
     :type filename: string
 
     E.g. to load "foo.aadl":
@@ -57,7 +57,7 @@ def load (filename):
 ################################################################################
 def analyze ():
     '''Analyze models'''
-    libocarina_python.analyze ();
+    return libocarina_python.analyze ();
 
 ################################################################################
 def instantiate (root_system):
@@ -311,5 +311,3 @@ def getNodeId (name):
     >>> getNodeId (MyHome);
     '''
     return libocarina_python.getNodeId (name);
-
-

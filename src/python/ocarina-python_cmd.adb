@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2014 ESA & ISAE.                       --
+--                   Copyright (C) 2014-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -145,9 +145,10 @@ package body Ocarina.Python_Cmd is
      (Data : in out Callback_Data'Class;
       Command : String)
    is
-      pragma Unreferenced (Command, Data);
+      pragma Unreferenced (Command);
+      Result : constant Boolean := Ocarina.Utils.Analyze;
    begin
-      Ocarina.Utils.Analyze;
+      Set_Return_Value (Data, Result);
    end On_Analyze;
 
    -----------------
