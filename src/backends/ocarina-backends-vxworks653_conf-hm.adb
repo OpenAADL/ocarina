@@ -286,7 +286,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Add_Error_Action (System_State_Node,
                         "HME_NUMERIC_ERROR", "");
       Add_Error_Action (System_State_Node,
-                        "HME_POWER_FAIL", "hmDH_HME_POWER_FAILT");
+                        "HME_POWER_FAIL", "hmDH_HME_POWER_FAIL");
       Add_Error_Action (System_State_Node,
                         "HME_KERNEL", "hmDH_HME_KERNEL");
       Add_Error_Action (System_State_Node,
@@ -396,7 +396,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Add_Error_Action (System_State_Node,
                         "HME_NUMERIC_ERROR", "");
       Add_Error_Action (System_State_Node,
-                        "HME_POWER_FAIL", "hmDH_HME_POWER_FAILT");
+                        "HME_POWER_FAIL", "hmDH_HME_POWER_FAIL");
       Add_Error_Action (System_State_Node,
                         "HME_KERNEL", "hmDH_HME_KERNEL");
       Add_Error_Action (System_State_Node,
