@@ -10,7 +10,8 @@ def main ():
 
     load("rma.aadl");             # load a file
     load("deployment.aadl");      # load a file
-    analyze();                    # analyze models
+    result = analyze();                    # analyze models
+    print "Analysis result %r" % (result);
     instantiate("rma.erc32");     # instantiate
     generate (Backends.polyorb_hi_ada);
 

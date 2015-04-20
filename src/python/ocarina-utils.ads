@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2013 ESA & ISAE.                       --
+--                   Copyright (C) 2013-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -49,7 +49,7 @@ package Ocarina.Utils is
    --  Display status information on Ocarina
 
    procedure Load_AADL_File (Filename : String);
-   procedure Analyze;
+   function Analyze return Boolean;
    procedure Instantiate (Root_System : String);
    procedure Generate (Backend_Name : String);
    procedure Reset;
