@@ -1330,93 +1330,109 @@ package body Ocarina.Backends.POK_C.Activity is
                          (Get_Port_By_Name (F, Current_Device))
                      then
 
-                        if AIN.First_Node (AIN.Destinations (F)) /=
-                          No_Node
-                        then
-                           Map_Virtual_Bus_Calls
-                             (AIN.Item (AIN.First_Node (AIN.Destinations (F))),
-                              CTN.Declarations (Current_File),
-                              WStatements,
-                              Sending,
-                              Virtual_Bus_Data,
-                              Virtual_Bus_Size,
-                              Current_Device);
-                        end if;
+                        Source_Port := First_Node (Destinations (F));
 
-                        Append_Node_To_List
-                          (Make_Defining_Identifier
-                             (Map_Port_Var (F, Current_Device)),
-                           Call_Parameters);
+                        while Source_Port /= No_Node loop
 
-                        if Virtual_Bus_Data = No_Node then
-                           if Get_Data_Representation
-                               (Corresponding_Instance (F)) =
-                             Data_Array
+                           Call_Parameters := New_List (CTN.K_Parameter_List);
+
+                           if AIN.First_Node (AIN.Destinations (F)) /=
+                             No_Node
                            then
-                              Append_Node_To_List
-                                (Make_Defining_Identifier
-                                   (Map_Port_Data (F, Current_Device)),
-                                 Call_Parameters);
+                              Map_Virtual_Bus_Calls
+                                (AIN.Item
+                                 (AIN.First_Node
+                                    (AIN.Destinations (F))),
+                                 CTN.Declarations (Current_File),
+                                 WStatements,
+                                 Sending,
+                                 Virtual_Bus_Data,
+                                 Virtual_Bus_Size,
+                                 Current_Device);
+                           end if;
+
+                           Append_Node_To_List
+                             (Make_Defining_Identifier
+                                (Map_Port_Var
+                                 (Item (Source_Port), Current_Device)),
+                              Call_Parameters);
+
+                           if Virtual_Bus_Data = No_Node then
+                              if Get_Data_Representation
+                                  (Corresponding_Instance (F)) =
+                                Data_Array
+                              then
+                                 Append_Node_To_List
+                                   (Make_Defining_Identifier
+                                      (Map_Port_Data (F, Current_Device)),
+                                    Call_Parameters);
+                              else
+                                 Append_Node_To_List
+                                   (Make_Variable_Address
+                                      (Make_Defining_Identifier
+                                         (Map_Port_Data (F, Current_Device))),
+                                    Call_Parameters);
+                              end if;
                            else
                               Append_Node_To_List
-                                (Make_Variable_Address
-                                   (Make_Defining_Identifier
-                                      (Map_Port_Data (F, Current_Device))),
+                                 (Make_Variable_Address (Virtual_Bus_Data),
                                  Call_Parameters);
                            end if;
-                        else
-                           Append_Node_To_List
-                             (Make_Variable_Address (Virtual_Bus_Data),
-                              Call_Parameters);
-                        end if;
 
-                        if Virtual_Bus_Size /= No_Node then
-                           N := Copy_Node (Virtual_Bus_Size);
-                        else
-                           if Current_Device = No_Node then
-                              N := Get_Inter_Partition_Port_Size (F);
+                           if Virtual_Bus_Size /= No_Node then
+                              N := Copy_Node (Virtual_Bus_Size);
                            else
-                              N :=
-                                Get_Inter_Partition_Port_Size
-                                  (Get_Port_By_Name (F, Current_Device));
+                              if Current_Device = No_Node then
+                                 N := Get_Inter_Partition_Port_Size (F);
+                              else
+                                 N :=
+                                   Get_Inter_Partition_Port_Size
+                                     (Get_Port_By_Name (F, Current_Device));
 
-                              if Is_Using_Virtual_Bus
-                                  (Get_Port_By_Name (F, Current_Device))
-                              then
-                                 Add_Include (RH (RH_Protocols));
+                                 if Is_Using_Virtual_Bus
+                                     (Get_Port_By_Name (F, Current_Device))
+                                 then
+                                    Add_Include (RH (RH_Protocols));
+                                 end if;
                               end if;
                            end if;
-                        end if;
 
-                        Append_Node_To_List (N, Call_Parameters);
+                           Append_Node_To_List (N, Call_Parameters);
 
-                        if Use_ARINC653_API then
-                           Add_Return_Variable_In_Parameters (Call_Parameters);
-                           Called_Function := RE (RE_Write_Sampling_Message);
-                           Type_Used       := RE (RE_Sampling_Port_Id_Type);
-                        else
-                           Called_Function := RE (RE_Pok_Port_Sampling_Write);
-                           Type_Used       := RE (RE_Uint8_T);
-                        end if;
+                           if Use_ARINC653_API then
+                              Add_Return_Variable_In_Parameters
+                                 (Call_Parameters);
+                              Called_Function :=
+                                 RE (RE_Write_Sampling_Message);
+                              Type_Used       := RE (RE_Sampling_Port_Id_Type);
+                           else
+                              Called_Function :=
+                                 RE (RE_Pok_Port_Sampling_Write);
+                              Type_Used       := RE (RE_Uint8_T);
+                           end if;
 
-                        N :=
-                          CTU.POK_Make_Function_Call_With_Assert
-                            (Called_Function,
-                             Call_Parameters);
+                           N :=
+                             CTU.POK_Make_Function_Call_With_Assert
+                               (Called_Function,
+                                Call_Parameters);
 
-                        Append_Node_To_List
-                          (Make_Extern_Entity_Declaration
-                             (Make_Variable_Declaration
-                                (Defining_Identifier =>
-                                   (Make_Defining_Identifier
-                                      (Map_Port_Var (F, Current_Device))),
-                                 Used_Type => Type_Used)),
-                           CTN.Declarations (Current_File));
+                           Append_Node_To_List
+                             (Make_Extern_Entity_Declaration
+                                (Make_Variable_Declaration
+                                   (Defining_Identifier =>
+                                      (Make_Defining_Identifier
+                                         (Map_Port_Var
+                                          (Item (Source_Port),
+                                          Current_Device))),
+                                    Used_Type => Type_Used)),
+                              CTN.Declarations (Current_File));
 
-                        Append_Node_To_List (N, WStatements);
+                           Append_Node_To_List (N, WStatements);
 
-                        POK_Add_Return_Assertion (WStatements);
+                           POK_Add_Return_Assertion (WStatements);
 
+                           Source_Port := Next_Node (Source_Port);
+                        end loop;
                      elsif Get_Connection_Pattern (F) = Intra_Process then
                         Append_Node_To_List
                           (Make_Defining_Identifier (Map_Port_Var (F)),
@@ -1490,69 +1506,81 @@ package body Ocarina.Backends.POK_C.Activity is
                               Current_Device);
                         end if;
 
-                        Append_Node_To_List
-                          (Make_Defining_Identifier (Map_Port_Var (F)),
-                           Call_Parameters);
+                        Source_Port := AIN.First_Node (AIN.Destinations (F));
 
-                        if Get_Data_Representation
-                            (Corresponding_Instance (F)) =
-                          Data_Array
-                        then
+                        while (Source_Port /= No_Node) loop
+
+                           Call_Parameters := New_List (CTN.K_Parameter_List);
+
                            Append_Node_To_List
-                             (Make_Defining_Identifier (Map_Port_Data (F)),
+                             (Make_Defining_Identifier
+                              (Map_Port_Var (Item (Source_Port))),
                               Call_Parameters);
-                        else
-                           Append_Node_To_List
-                             (Make_Variable_Address
-                                (Make_Defining_Identifier (Map_Port_Data (F))),
-                              Call_Parameters);
-                        end if;
 
-                        N := CTU.Get_Data_Size (Corresponding_Instance (F));
-                        Append_Node_To_List (N, Call_Parameters);
-
-                        if Get_Timeout_Value (F) /= Null_Time then
-                           if Use_ARINC653_API then
-                              N :=
-                                Map_Time_To_Millisecond
-                                  (Get_Timeout_Value (F));
+                           if Get_Data_Representation
+                               (Corresponding_Instance (F)) =
+                             Data_Array
+                           then
+                              Append_Node_To_List
+                                (Make_Defining_Identifier (Map_Port_Data (F)),
+                                 Call_Parameters);
                            else
-                              N := Map_Time (Get_Timeout_Value (F));
-                           end if;
-                        else
-                           N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
-                        end if;
-
-                        Append_Node_To_List (N, Call_Parameters);
-
-                        if Use_ARINC653_API then
-                           Add_Return_Variable_In_Parameters (Call_Parameters);
-
-                           Called_Function := RE (RE_Send_Queuing_Message);
-                           Type_Used       := RE (RE_Queuing_Port_Id_Type);
-                        else
-                           Called_Function := RE (RE_Pok_Port_Queueing_Send);
-                           Type_Used       := RE (RE_Uint8_T);
-                        end if;
-
-                        N :=
-                          POK_Make_Function_Call_With_Assert
-                            (Called_Function,
-                             Call_Parameters);
-
-                        Append_Node_To_List
-                          (Make_Extern_Entity_Declaration
-                             (Make_Variable_Declaration
-                                (Defining_Identifier =>
+                              Append_Node_To_List
+                                (Make_Variable_Address
                                    (Make_Defining_Identifier
-                                      (Map_Port_Var (F))),
-                                 Used_Type => Type_Used)),
-                           CTN.Declarations (Current_File));
+                                    (Map_Port_Data (F))),
+                                 Call_Parameters);
+                           end if;
 
-                        Append_Node_To_List (N, WStatements);
+                           N := CTU.Get_Data_Size (Corresponding_Instance (F));
+                           Append_Node_To_List (N, Call_Parameters);
 
-                        POK_Add_Return_Assertion (WStatements);
+                           if Get_Timeout_Value (F) /= Null_Time then
+                              if Use_ARINC653_API then
+                                 N :=
+                                   Map_Time_To_Millisecond
+                                     (Get_Timeout_Value (F));
+                              else
+                                 N := Map_Time (Get_Timeout_Value (F));
+                              end if;
+                           else
+                              N := CTU.Make_Literal
+                                 (CV.New_Int_Value (0, 1, 10));
+                           end if;
 
+                           Append_Node_To_List (N, Call_Parameters);
+
+                           if Use_ARINC653_API then
+                              Add_Return_Variable_In_Parameters
+                                 (Call_Parameters);
+
+                              Called_Function := RE (RE_Send_Queuing_Message);
+                              Type_Used       := RE (RE_Queuing_Port_Id_Type);
+                           else
+                              Called_Function := RE
+                                 (RE_Pok_Port_Queueing_Send);
+                              Type_Used       := RE (RE_Uint8_T);
+                           end if;
+
+                           N :=
+                             POK_Make_Function_Call_With_Assert
+                               (Called_Function,
+                                Call_Parameters);
+
+                           Append_Node_To_List
+                             (Make_Extern_Entity_Declaration
+                                (Make_Variable_Declaration
+                                   (Defining_Identifier =>
+                                      (Make_Defining_Identifier
+                                         (Map_Port_Var
+                                          (Item (Source_Port)))),
+                                    Used_Type => Type_Used)),
+                              CTN.Declarations (Current_File));
+                           Append_Node_To_List (N, WStatements);
+
+                           POK_Add_Return_Assertion (WStatements);
+                           Source_Port := Next_Node (Source_Port);
+                        end loop;
                      elsif Get_Connection_Pattern (F) = Intra_Process
                        and then not Is_Virtual
                          (Get_Port_By_Name (F, Current_Device))

@@ -1154,6 +1154,42 @@ package body Ocarina.Backends.POK_C.Deployment is
             Bound_Processor := Get_Bound_Processor (Associated_Component);
          end if;
 
+         --
+         --  Add a maccro to specify on which platform we are deploying
+         --  the code. This can be used to make some adjustment in the
+         --  user code.
+         --
+
+         case POK_Flavor is
+            when DEOS =>
+               N :=
+                  CTU.Make_Define_Statement
+                     (Defining_Identifier => RE (RE_Ocarina_Runtime_Deos),
+                     Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
+
+               CTU.Append_Node_To_List
+                  (N, CTN.Declarations (CTU.Current_File));
+            when Vxworks =>
+               N :=
+                  CTU.Make_Define_Statement
+                     (Defining_Identifier =>
+                        RE (RE_Ocarina_Runtime_Vxworks653),
+                     Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
+
+               CTU.Append_Node_To_List
+                  (N, CTN.Declarations (CTU.Current_File));
+
+            when POK | Arinc653 =>
+               N :=
+                  CTU.Make_Define_Statement
+                     (Defining_Identifier =>
+                        RE (RE_Ocarina_Runtime_Pok),
+                     Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
+
+               CTU.Append_Node_To_List
+                  (N, CTN.Declarations (CTU.Current_File));
+         end case;
+
          N :=
            CTU.Make_Define_Statement
              (Defining_Identifier => RE (RE_Pok_Generated_Code),

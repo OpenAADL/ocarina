@@ -10,7 +10,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 --  with Ocarina.Backends.Properties;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
---  with Ocarina.Backends.Vxworks653_Conf.Mapping;
+with Ocarina.Backends.Vxworks653_Conf.Mapping;
 
 package body Ocarina.Backends.Vxworks653_Conf.Hm is
 
@@ -20,9 +20,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
 --   use Ocarina.Backends.Properties;
---   use Ocarina.Backends.Vxworks653_Conf.Mapping;
+   use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
-   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
@@ -384,10 +383,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Partition_HM_Table_Node := Make_XML_Node ("PartitionHMTable");
       XTU.Add_Attribute ("Name",
                          Get_Name_String
-                           (AIN.Name
-                              (Identifier
-                                 (Parent_Subcomponent
-                                    (Virtual_Processor)))),
+                           (Map_Partition_Name (Virtual_Processor))
+                           & "_hm",
                          Partition_HM_Table_Node);
 
       Settings_Node := Make_XML_Node ("Settings");
@@ -408,11 +405,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Trusted_Partition_Node := Make_XML_Node ("TrustedPartition");
       XTU.Add_Attribute ("NameRef",
                          Get_Name_String
-                           (AIN.Name
-                              (Identifier
-                                 (Parent_Subcomponent
-                                    (Virtual_Processor)))),
-                         Settings_Node);
+                           (Map_Partition_Name
+                              (Virtual_Processor)),
+                         Trusted_Partition_Node);
       Append_Node_To_List (Trusted_Partition_Node,
                            XTN.Subitems (Settings_Node));
 

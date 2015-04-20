@@ -9,7 +9,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
---  with Ocarina.Backends.Vxworks653_Conf.Mapping;
+with Ocarina.Backends.Vxworks653_Conf.Mapping;
 
 package body Ocarina.Backends.Vxworks653_Conf.Connections is
 
@@ -21,9 +21,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
 
---   use Ocarina.Backends.Vxworks653_Conf.Mapping;
+   use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
-   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
@@ -186,11 +185,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
             Connection_Node := Make_XML_Node ("Connection");
             Source_Node := Make_XML_Node ("Source");
             Add_Attribute ("PartitionNameRef",
-                        Get_Name_String
-                           (AIN.Name
-                              (AIN.Identifier
-                                 (Parent_Subcomponent
-                                    (E)))),
+                           Get_Name_String
+                              (Map_Partition_Name (E)),
                            Source_Node);
 
             Add_Attribute ("PortNameRef",
@@ -211,11 +207,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
 
             Add_Attribute ("PartitionNameRef",
                            Get_Name_String
-                              (AIN.Name
-                                 (AIN.Identifier
-                                    (Parent_Subcomponent
-                                       (Get_Partition_Runtime
-                                          (Partition_Destination))))),
+                              (Map_Partition_Name
+                                 (Get_Partition_Runtime
+                                          (Partition_Destination))),
                          Destination_Node);
 
             Append_Node_To_List (Destination_Node,

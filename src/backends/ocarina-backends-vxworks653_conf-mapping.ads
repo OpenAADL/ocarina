@@ -47,4 +47,8 @@ package Ocarina.Backends.Vxworks653_Conf.Mapping is
 
    function Map_Queuing_Port (Port : Node_Id) return Node_Id;
 
+   function Map_Partition_Name (Runtime : Node_Id;
+                                Use_Source_Name : Boolean := False)
+   return Name_Id;
+
 end Ocarina.Backends.Vxworks653_Conf.Mapping;
