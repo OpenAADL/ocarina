@@ -228,6 +228,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
                                  XTN.Subitems (Channel_Node));
             Append_Node_To_List (Channel_Node,
                                  XTN.Subitems (Connections_Node));
+
+            Channel_Identifier := Channel_Identifier + 1;
          end if;
          Feature := Next_Node (Feature);
       end loop;

@@ -1,7 +1,4 @@
 --  with Locations;
-
-with Ada.Strings; use Ada.Strings;
-with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -12,6 +9,7 @@ with Ocarina.Instances.Queries;
 with Ocarina.Backends.Properties.ARINC653;
 
 --  with Ocarina.Backends.Properties;
+with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -29,12 +27,14 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
 
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Properties.ARINC653;
+   use Ocarina.Backends.XML_Values;
 --   use Ocarina.Backends.Properties;
 --   use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
+   package XV  renames Ocarina.Backends.XML_Values;
 
    Root_Node : Node_Id := No_Node;
    Schedules_Node : Node_Id := No_Node;
@@ -161,7 +161,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
       Schedule_Node  : Node_Id;
       Module_Schedule   : constant Schedule_Window_Record_Term_Array
         := Get_Module_Schedule_Property (Processor);
-      Partition_Duration : Float;
+      Partition_Duration : Long_Double;
    begin
       Schedule_Node := Make_XML_Node ("Schedule");
       XTU.Add_Attribute ("Id", "0", Schedule_Node);
@@ -179,13 +179,12 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
          --  For now, we assume the partition duration
          --  is in milliseconds.
          --
-         Partition_Duration := 1000.0 /
-            (Float
+         Partition_Duration :=
+            (Long_Double
                (To_Milliseconds
-                  (Module_Schedule (J).Duration)) * Float (100.0));
+                  (Module_Schedule (J).Duration)) / Long_Double (1000.0));
          XTU.Add_Attribute ("Duration",
-                           Trim (Float'Image
-                                (Partition_Duration), Left),
+                           XV.New_Floating_Point_Value (Partition_Duration),
                            Partition_Window_Node);
          XTU.Add_Attribute ("ReleasePoint",
                             "1", Partition_Window_Node);

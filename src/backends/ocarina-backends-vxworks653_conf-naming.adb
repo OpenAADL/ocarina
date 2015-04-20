@@ -13,6 +13,7 @@ with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Vxworks653_Conf.Mapping;
+with Ocarina.Backends.XML_Values;
 with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Vxworks653_Conf.Naming is
@@ -30,6 +31,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
+   package XV  renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Component (E : Node_Id);
    procedure Visit_System (E : Node_Id);
@@ -227,7 +229,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Size                          : Unsigned_Long_Long;
       Queue_Size                    : Long_Long;
       Refresh_Period                : Time_Type;
-      Refresh_Period_Second         : Float;
+      Refresh_Period_Second         : Long_Double;
    begin
       --  Application Node that is the child of Applications
 
@@ -237,7 +239,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Application_Node := Make_XML_Node ("Application");
       XTU.Add_Attribute ("Name",
                         Get_Name_String
-                           (Map_Partition_Name
+                           (Map_Application_Name
                               (AADL_Virtual_Processor, True)),
                         Application_Node);
       Append_Node_To_List (Application_Node,
@@ -344,18 +346,17 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
                not Is_Out (Feature)
             then
                Refresh_Period := Get_POK_Refresh_Time (Feature);
-               Refresh_Period_Second := 1000.0 /
-                  (Float (To_Milliseconds (Refresh_Period)) *
-                   Float (100.0));
+               Refresh_Period_Second :=
+                  (Long_Double (To_Milliseconds (Refresh_Period)) /
+                   Long_Double (1000.0));
 
                XTU.Add_Attribute ("Direction",
                                   "DESTINATION",
                                   Port_Node);
 
                XTU.Add_Attribute ("RefreshRate",
-                              Trim (Float'Image
-                                 (Refresh_Period_Second), Left),
-                                  Port_Node);
+                           XV.New_Floating_Point_Value (Refresh_Period_Second),
+                           Port_Node);
             end if;
 
             if not Is_In (Feature) and then

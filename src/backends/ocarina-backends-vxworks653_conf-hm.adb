@@ -315,7 +315,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Add_Error_Action (System_State_Node,
                         "HME_HM_DEADLINE_MISSED", "hmDefaultHandler");
       Add_Error_Action (System_State_Node,
-                        "HME_HM_MSG", "hmDH_EventLog");
+                        "HM_MSG", "hmDH_EventLog");
       Add_Error_Action (System_State_Node,
                         "HME_DEFAULT", "hmDefaultHandler");
 
@@ -385,7 +385,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       XTU.Add_Attribute ("Name",
                          Get_Name_String
                            (Map_Partition_Name (Virtual_Processor))
-                           & "_hm",
+                           & "_hmtable",
                          Partition_HM_Table_Node);
 
       System_State_Node := Make_XML_Node ("SystemState");
@@ -425,7 +425,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Add_Error_Action (System_State_Node,
                         "HME_HM_DEADLINE_MISSED", "hmDefaultHandler");
       Add_Error_Action (System_State_Node,
-                        "HME_HM_MSG", "hmDH_EventLog");
+                        "HM_MSG", "hmDH_EventLog");
       Add_Error_Action (System_State_Node,
                         "HME_DEFAULT", "hmDefaultHandler");
 
