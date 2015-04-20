@@ -232,10 +232,11 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Error_Id_Level_Node := Make_XML_Node ("ErrorIDLevel");
       XTU.Add_Attribute ("ErrorIdentifier",
                          "HME_DEFAULT",
-                         System_State_Node);
+                         Error_Id_Level_Node);
       XTU.Add_Attribute ("ErrorLevel",
                          "HM_PARTITION_LVL",
-                         System_State_Node);
+                         Error_Id_Level_Node);
+
       Append_Node_To_List (Error_Id_Level_Node,
                            XTN.Subitems (System_State_Node));
 
@@ -249,10 +250,10 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Error_Id_Level_Node := Make_XML_Node ("ErrorIDLevel");
       XTU.Add_Attribute ("ErrorIdentifier",
                          "HME_DEFAULT",
-                         System_State_Node);
+                         Error_Id_Level_Node);
       XTU.Add_Attribute ("ErrorLevel",
                          "HM_MODULE_LVL",
-                         System_State_Node);
+                         Error_Id_Level_Node);
       Append_Node_To_List (Error_Id_Level_Node,
                            XTN.Subitems (System_State_Node));
 
@@ -265,9 +266,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
 
       Error_Id_Level_Node := Make_XML_Node ("ErrorIDLevel");
       XTU.Add_Attribute ("ErrorIdentifier",
-                         "HME_DEFAULT", System_State_Node);
+                         "HME_DEFAULT", Error_Id_Level_Node);
       XTU.Add_Attribute ("ErrorLevel",
-                         "HM_PROCESS_LVL", System_State_Node);
+                         "HM_PROCESS_LVL", Error_Id_Level_Node);
       Append_Node_To_List (Error_Id_Level_Node,
                            XTN.Subitems (System_State_Node));
 
@@ -276,20 +277,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Module_HM_Table_Node := Make_XML_Node ("ModuleHMTable");
       XTU.Add_Attribute ("Name", "moduleHm", Module_HM_Table_Node);
       Append_Node_To_List (Module_HM_Table_Node, XTN.Subitems (HM_Node));
-
-      Settings_Node := Make_XML_Node ("Settings");
-      XTU.Add_Attribute ("maxQueueDepth", "34", Settings_Node);
-      XTU.Add_Attribute ("queueThreShold", "32", Settings_Node);
-      XTU.Add_Attribute ("stackSize", "16384", Settings_Node);
-      XTU.Add_Attribute ("maxLogEntries", "100", Settings_Node);
-      XTU.Add_Attribute ("logEntriesThreshold", "98", Settings_Node);
-      XTU.Add_Attribute ("attributeMask", "0x00000001", Settings_Node);
-      XTU.Add_Attribute ("notificationHandler", "", Settings_Node);
-      XTU.Add_Attribute ("notifMaxQueueDepth", "0", Settings_Node);
-      XTU.Add_Attribute ("eventFilterMask", "0x00000000", Settings_Node);
-      XTU.Add_Attribute ("maxErrorHandlerQueueDepth", "0", Settings_Node);
-      XTU.Add_Attribute ("errorHandlerQueueThreshold", "0", Settings_Node);
-      Append_Node_To_List (Settings_Node, XTN.Subitems (Module_HM_Table_Node));
 
       System_State_Node := Make_XML_Node ("SystemState");
       Append_Node_To_List (System_State_Node,
@@ -347,6 +334,20 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
          end loop;
       end if;
 
+      Settings_Node := Make_XML_Node ("Settings");
+      XTU.Add_Attribute ("maxQueueDepth", "34", Settings_Node);
+      XTU.Add_Attribute ("queueThreshold", "32", Settings_Node);
+      XTU.Add_Attribute ("stackSize", "16384", Settings_Node);
+      XTU.Add_Attribute ("maxLogEntries", "100", Settings_Node);
+      XTU.Add_Attribute ("logEntriesThreshold", "98", Settings_Node);
+      XTU.Add_Attribute ("attributeMask", "0x00000001", Settings_Node);
+      XTU.Add_Attribute ("notificationHandler", "", Settings_Node);
+      XTU.Add_Attribute ("notifMaxQueueDepth", "0", Settings_Node);
+      XTU.Add_Attribute ("eventFilterMask", "0x00000000", Settings_Node);
+      XTU.Add_Attribute ("maxErrorHandlerQueueDepth", "0", Settings_Node);
+      XTU.Add_Attribute ("errorHandlerQueueThreshold", "0", Settings_Node);
+      Append_Node_To_List (Settings_Node, XTN.Subitems (Module_HM_Table_Node));
+
       Pop_Entity;
       Pop_Entity;
    end Visit_Processor_Instance;
@@ -386,30 +387,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
                            (Map_Partition_Name (Virtual_Processor))
                            & "_hm",
                          Partition_HM_Table_Node);
-
-      Settings_Node := Make_XML_Node ("Settings");
-      XTU.Add_Attribute ("maxQueueDepth", "34", Settings_Node);
-      XTU.Add_Attribute ("queueThreShold", "32", Settings_Node);
-      XTU.Add_Attribute ("stackSize", "16384", Settings_Node);
-      XTU.Add_Attribute ("maxLogEntries", "100", Settings_Node);
-      XTU.Add_Attribute ("logEntriesThreshold", "98", Settings_Node);
-      XTU.Add_Attribute ("attributeMask", "0x00000001", Settings_Node);
-      XTU.Add_Attribute ("notificationHandler", "", Settings_Node);
-      XTU.Add_Attribute ("notifMaxQueueDepth", "0", Settings_Node);
-      XTU.Add_Attribute ("eventFilterMask", "0xFFFFFFFF", Settings_Node);
-      XTU.Add_Attribute ("maxErrorHandlerQueueDepth", "128", Settings_Node);
-      XTU.Add_Attribute ("errorHandlerQueueThreshold", "126", Settings_Node);
-      Append_Node_To_List (Settings_Node,
-                           XTN.Subitems (Partition_HM_Table_Node));
-
-      Trusted_Partition_Node := Make_XML_Node ("TrustedPartition");
-      XTU.Add_Attribute ("NameRef",
-                         Get_Name_String
-                           (Map_Partition_Name
-                              (Virtual_Processor)),
-                         Trusted_Partition_Node);
-      Append_Node_To_List (Trusted_Partition_Node,
-                           XTN.Subitems (Settings_Node));
 
       System_State_Node := Make_XML_Node ("SystemState");
       Append_Node_To_List (System_State_Node,
@@ -451,6 +428,31 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
                         "HME_HM_MSG", "hmDH_EventLog");
       Add_Error_Action (System_State_Node,
                         "HME_DEFAULT", "hmDefaultHandler");
+
+      Settings_Node := Make_XML_Node ("Settings");
+      XTU.Add_Attribute ("maxQueueDepth", "34", Settings_Node);
+      XTU.Add_Attribute ("queueThreshold", "32", Settings_Node);
+      XTU.Add_Attribute ("stackSize", "16384", Settings_Node);
+      XTU.Add_Attribute ("maxLogEntries", "100", Settings_Node);
+      XTU.Add_Attribute ("logEntriesThreshold", "98", Settings_Node);
+      XTU.Add_Attribute ("attributeMask", "0x00000001", Settings_Node);
+      XTU.Add_Attribute ("notificationHandler", "", Settings_Node);
+      XTU.Add_Attribute ("notifMaxQueueDepth", "0", Settings_Node);
+      XTU.Add_Attribute ("eventFilterMask", "0xFFFFFFFF", Settings_Node);
+      XTU.Add_Attribute ("maxErrorHandlerQueueDepth", "128", Settings_Node);
+      XTU.Add_Attribute ("errorHandlerQueueThreshold", "126", Settings_Node);
+      Append_Node_To_List (Settings_Node,
+                           XTN.Subitems (Partition_HM_Table_Node));
+
+      Trusted_Partition_Node := Make_XML_Node ("TrustedPartition");
+      XTU.Add_Attribute ("NameRef",
+                         Get_Name_String
+                           (Map_Partition_Name
+                              (Virtual_Processor)),
+                         Trusted_Partition_Node);
+      Append_Node_To_List (Trusted_Partition_Node,
+                           XTN.Subitems (Settings_Node));
+
       return Partition_HM_Table_Node;
    end Generate_Partition_HM_Table;
 

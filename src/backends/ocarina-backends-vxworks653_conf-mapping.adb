@@ -1117,6 +1117,25 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
                         Trim (Integer'Image (Partition_Identifier), Left),
                          Partition_Node);
 
+      --  Create the <Application/> sub-node.
+
+      Application_Node := Make_XML_Node ("Application");
+      XTU.Add_Attribute ("NameRef",
+                         Get_Name_String
+                           (Map_Partition_Name (Runtime, True)),
+                         Application_Node);
+      Append_Node_To_List (Application_Node,
+                           XTN.Subitems (Partition_Description_Node));
+
+      --  Create the <SharedLibraryRegion/> sub-node.
+
+      Shared_Library_Region_Node := Make_XML_Node ("SharedLibraryRegion");
+      XTU.Add_Attribute ("NameRef", "vxSysLib", Shared_Library_Region_Node);
+      Append_Node_To_List (Shared_Library_Region_Node,
+                        XTN.Subitems (Partition_Description_Node));
+
+      --  Create the <Settings/> sub-node.
+
       Settings_Node := Make_XML_Node ("Settings");
       Append_Node_To_List (Settings_Node,
                            XTN.Subitems (Partition_Description_Node));
@@ -1129,7 +1148,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       XTU.Add_Attribute ("numWorkerTasks", "0", Settings_Node);
       XTU.Add_Attribute ("numStackGuardPages", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("isrStackSize", "0xffffffff", Settings_Node);
-      XTU.Add_Attribute ("selScrQSize", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("selSvrQSize", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("syscallPermissions", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("numFiles", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("numDrivers", "0xffffffff", Settings_Node);
@@ -1138,19 +1157,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       XTU.Add_Attribute ("fpExcEnable", "1", Settings_Node);
       XTU.Add_Attribute ("maxEventQStallDuration", "INFINITE_TIME",
                         Settings_Node);
-
-      Shared_Library_Region_Node := Make_XML_Node ("SharedLibraryRegion");
-      XTU.Add_Attribute ("NameRef", "vxSysLib", Shared_Library_Region_Node);
-      Append_Node_To_List (Shared_Library_Region_Node,
-                        XTN.Subitems (Partition_Description_Node));
-
-      Application_Node := Make_XML_Node ("Application");
-      XTU.Add_Attribute ("NameRef",
-                         Get_Name_String
-                           (Map_Partition_Name (Runtime, True)),
-                         Application_Node);
-      Append_Node_To_List (Application_Node,
-                           XTN.Subitems (Partition_Description_Node));
 
       return Partition_Node;
    end Map_Partition;

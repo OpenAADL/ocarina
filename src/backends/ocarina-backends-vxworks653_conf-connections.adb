@@ -1,4 +1,8 @@
 --  with Locations;
+
+with Ada.Strings; use Ada.Strings;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
+
 with Ocarina.Backends.Utils;
 with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
@@ -28,6 +32,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
 
    Root_Node : Node_Id := No_Node;
    Connections_Node : Node_Id := No_Node;
+   Channel_Identifier : Unsigned_Long_Long := 0;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -133,6 +138,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
       Push_Entity (P);
       Push_Entity (U);
 
+      Channel_Identifier := 0;
+
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
       Connections_Node := Make_XML_Node ("Connections");
@@ -163,7 +170,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
       Corresponding_Process : Node_Id;
-      Connection_Node       : Node_Id;
+      Channel_Node          : Node_Id;
       Source_Node           : Node_Id;
       Destination_Node      : Node_Id;
       Feature               : Node_Id;
@@ -182,7 +189,12 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
             Port_Destination := Item (First_Node (Destinations (Feature)));
             Partition_Destination := Parent_Component (Port_Destination);
 
-            Connection_Node := Make_XML_Node ("Connection");
+            Channel_Node := Make_XML_Node ("Channel");
+            Add_Attribute ("Id",
+                        Trim (Unsigned_Long_Long'Image
+                           (Channel_Identifier), Left),
+                         Channel_Node);
+
             Source_Node := Make_XML_Node ("Source");
             Add_Attribute ("PartitionNameRef",
                            Get_Name_String
@@ -196,7 +208,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
                            Source_Node);
 
             Append_Node_To_List (Source_Node,
-                                 XTN.Subitems (Connection_Node));
+                                 XTN.Subitems (Channel_Node));
 
             Destination_Node := Make_XML_Node ("Destination");
             Add_Attribute ("PortNameRef",
@@ -213,8 +225,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
                          Destination_Node);
 
             Append_Node_To_List (Destination_Node,
-                                 XTN.Subitems (Connection_Node));
-            Append_Node_To_List (Connection_Node,
+                                 XTN.Subitems (Channel_Node));
+            Append_Node_To_List (Channel_Node,
                                  XTN.Subitems (Connections_Node));
          end if;
          Feature := Next_Node (Feature);

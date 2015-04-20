@@ -257,7 +257,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       XTU.Add_Attribute ("MemorySizeText", "0x10000", Memory_Size_Node);
       XTU.Add_Attribute ("MemorySizeData", "0x10000", Memory_Size_Node);
       XTU.Add_Attribute ("MemorySizeRoData", "0x10000", Memory_Size_Node);
-      XTU.Add_Attribute ("MemorySizePersistent", "0x10000", Memory_Size_Node);
+      XTU.Add_Attribute ("MemorySizePersistentData",
+                         "0x10000",
+                         Memory_Size_Node);
       XTU.Add_Attribute ("MemorySizePersistentBss",
                          "0x10000", Memory_Size_Node);
 
