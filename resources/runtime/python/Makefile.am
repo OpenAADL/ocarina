@@ -1,9 +1,9 @@
 AUTOMAKE_OPTIONS = no-dependencies
 
-PYTHON_FILES = $(srcdir)/ocarina.py					   
+PYTHON_FILES = $(srcdir)/ocarina.py
 
 if INSTALL_PYTHON
-PYTHON_FILES + = \
+PYTHON_FILES += \
 	 $(top_builddir)/src/python/ocarina_me_aadl_aadl_instances_nodes.py \
 	 $(top_builddir)/src/python/ocarina_me_aadl_aadl_tree_nodes.py
 endif
