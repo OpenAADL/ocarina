@@ -177,8 +177,8 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
          --  For now, we assume the partition duration
          --  is in milliseconds.
          --
-         Slot_Duration := To_Milliseconds
-                           (Module_Schedule (J).Duration) * 1_000_000;
+         Slot_Duration := To_Nanoseconds
+                           (Module_Schedule (J).Duration);
          XTU.Add_Attribute ("Duration",
                            Trim (Unsigned_Long_Long'Image
                                 (Slot_Duration), Left),
