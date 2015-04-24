@@ -181,8 +181,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
          --
          Partition_Duration :=
             (Long_Double
-               (To_Milliseconds
-                  (Module_Schedule (J).Duration)) / Long_Double (1000.0));
+               (To_Nanoseconds
+                  (Module_Schedule (J).Duration))
+                  / Long_Double (1_000_000_000.0));
          XTU.Add_Attribute ("Duration",
                            XV.New_Floating_Point_Value (Partition_Duration),
                            Partition_Window_Node);
