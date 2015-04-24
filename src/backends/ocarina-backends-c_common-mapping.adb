@@ -2457,8 +2457,8 @@ package body Ocarina.Backends.C_Common.Mapping is
          when Subprogram_Simulink =>
             Add_Include
               (Make_Include_Clause
-                 (Make_Defining_Identifier (Get_Source_Name (S), False),
-                  False),
+                 (Make_Defining_Identifier (Get_Source_Name (S), True),
+                  True),
                True);
 
             if not AINU.Is_Empty (Features (S)) then
@@ -2540,7 +2540,7 @@ package body Ocarina.Backends.C_Common.Mapping is
 
          when Subprogram_Scade =>
             Add_Include
-              (Make_Include_Clause (Map_Scade_Function_Name (S)),
+              (Make_Include_Clause (Map_Scade_Function_Name (S), True),
                Preserve_Case => True);
             --  At first, we declare structures used as parameters
             --  for SCADE functions. So, if the subprograms has IN
