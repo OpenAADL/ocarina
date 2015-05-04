@@ -11,7 +11,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
-with Ocarina.Backends.XML_Common.Mapping;
+--  with Ocarina.Backends.XML_Common.Mapping;
 with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -23,7 +23,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Messages;
-   use Ocarina.Backends.XML_Common.Mapping;
+--   use Ocarina.Backends.XML_Common.Mapping;
    use Ocarina.Backends.XML_Tree.Nodes;
    use Ocarina.Backends.XML_Tree.Nutils;
 
@@ -845,99 +845,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
 
    end Map_Process_Scheduling;
 
-   --------------
-   -- Map_Port --
-   --------------
-
-   function Map_Port (F : Node_Id) return Node_Id is
-      N : Node_Id;
-      P : Node_Id;
-      Q : Node_Id;
-      R : Node_Id;
-   begin
-      if AIN.Is_Event (F) and then AIN.Is_Data (F) then
-         N := Make_XML_Node ("Queueing_Port");
-      elsif AIN.Is_Data (F) and then not AIN.Is_Event (F) then
-         N := Make_XML_Node ("Sampling_Port");
-      else
-         return No_Node;
-      end if;
-
-      --  Add the direction of the port as attribute
-
-      Set_Str_To_Name_Buffer ("Direction");
-      P := Make_Defining_Identifier (Name_Find);
-      if AIN.Is_In (F) and then not AIN.Is_Out (F) then
-         Set_Str_To_Name_Buffer ("DESTINATION");
-      elsif AIN.Is_Out (F) and then not AIN.Is_In (F) then
-         Set_Str_To_Name_Buffer ("SOURCE");
-      else
-         return No_Node;
-      end if;
-      Q := Make_Defining_Identifier (Name_Find);
-      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
-
-      --  Add the name of the port as an attribute
-
-      Set_Str_To_Name_Buffer ("Name");
-      R := Make_Defining_Identifier (Name_Find);
-
-      Q :=
-        Make_Defining_Identifier (To_XML_Name (Display_Name (Identifier (F))));
-
-      Append_Node_To_List (Make_Assignement (R, Q), XTN.Items (N));
-
-      if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
-         Set_Str_To_Name_Buffer ("RefreshRateSeconds");
-         R := Make_Defining_Identifier (Name_Find);
-
-         if Get_POK_Refresh_Time (F) /= Null_Time then
-            Q :=
-              Make_Literal
-                (XV.New_Floating_Point_Value
-                   (To_Seconds (Get_POK_Refresh_Time (F))));
-         else
-            Q := Map_Time (Null_Time);
-         end if;
-         Append_Node_To_List (Make_Assignement (R, Q), XTN.Items (N));
-      elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
-         Set_Str_To_Name_Buffer ("MaxNbMessages");
-         P := Make_Defining_Identifier (Name_Find);
-
-         if Get_Queue_Size (F) /= -1 then
-            Q :=
-              Make_Literal
-                (XV.New_Numeric_Value
-                   (Unsigned_Long_Long (Get_Queue_Size (F)),
-                    1,
-                    10));
-         else
-            Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
-         end if;
-
-         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
-      end if;
-
-      if AIN.Is_Data (F) then
-         Set_Str_To_Name_Buffer ("MaxMessageSize");
-         P := Make_Defining_Identifier (Name_Find);
-
-         if Get_Data_Size (Corresponding_Instance (F)) /= Null_Size then
-            Q :=
-              Make_Literal
-                (XV.New_Numeric_Value
-                   (To_Bytes (Get_Data_Size (Corresponding_Instance (F))),
-                    1,
-                    10));
-         else
-            Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
-         end if;
-
-         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (N));
-      end if;
-      return N;
-   end Map_Port;
-
    -------------------
    -- Map_Data_Size --
    -------------------
@@ -1117,19 +1024,39 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
                         Trim (Integer'Image (Partition_Identifier), Left),
                          Partition_Node);
 
+      --  Create the <Application/> sub-node.
+
+      Application_Node := Make_XML_Node ("Application");
+      XTU.Add_Attribute ("NameRef",
+                         Get_Name_String
+                           (Map_Application_Name (Runtime, True)),
+                         Application_Node);
+      Append_Node_To_List (Application_Node,
+                           XTN.Subitems (Partition_Description_Node));
+
+      --  Create the <SharedLibraryRegion/> sub-node.
+
+      Shared_Library_Region_Node := Make_XML_Node ("SharedLibraryRegion");
+      XTU.Add_Attribute ("NameRef", "vxSysLib", Shared_Library_Region_Node);
+      Append_Node_To_List (Shared_Library_Region_Node,
+                        XTN.Subitems (Partition_Description_Node));
+
+      --  Create the <Settings/> sub-node.
+
       Settings_Node := Make_XML_Node ("Settings");
       Append_Node_To_List (Settings_Node,
                            XTN.Subitems (Partition_Description_Node));
       XTU.Add_Attribute ("RequiredMemorySize", "0x300000", Settings_Node);
       XTU.Add_Attribute ("PartitionHMTable",
-                        Get_Name_String (Map_Partition_Name (Runtime)) & "_hm",
+                        Get_Name_String
+                           (Map_Partition_Name (Runtime)) & "_hmtable",
                         Settings_Node);
       XTU.Add_Attribute ("watchDogDuration", "0", Settings_Node);
       XTU.Add_Attribute ("allocDisable", "0", Settings_Node);
       XTU.Add_Attribute ("numWorkerTasks", "0", Settings_Node);
       XTU.Add_Attribute ("numStackGuardPages", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("isrStackSize", "0xffffffff", Settings_Node);
-      XTU.Add_Attribute ("selScrQSize", "0xffffffff", Settings_Node);
+      XTU.Add_Attribute ("selSvrQSize", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("syscallPermissions", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("numFiles", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("numDrivers", "0xffffffff", Settings_Node);
@@ -1139,24 +1066,11 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       XTU.Add_Attribute ("maxEventQStallDuration", "INFINITE_TIME",
                         Settings_Node);
 
-      Shared_Library_Region_Node := Make_XML_Node ("SharedLibraryRegion");
-      XTU.Add_Attribute ("NameRef", "vxSysLib", Shared_Library_Region_Node);
-      Append_Node_To_List (Shared_Library_Region_Node,
-                        XTN.Subitems (Partition_Description_Node));
-
-      Application_Node := Make_XML_Node ("Application");
-      XTU.Add_Attribute ("NameRef",
-                         Get_Name_String
-                           (Map_Partition_Name (Runtime, True)),
-                         Application_Node);
-      Append_Node_To_List (Application_Node,
-                           XTN.Subitems (Partition_Description_Node));
-
       return Partition_Node;
    end Map_Partition;
 
    function Map_Partition_Name (Runtime : Node_Id;
-                                Use_Source_Name : Boolean := False)
+                                Use_Source_Name : Boolean := True)
    return Name_Id is
       Result : Name_Id;
    begin
@@ -1170,5 +1084,17 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
                         (Runtime)));
       return Result;
    end Map_Partition_Name;
+
+   function Map_Application_Name (Runtime : Node_Id;
+                                Use_Source_Name : Boolean := True)
+   return Name_Id is
+      Result : Name_Id;
+   begin
+      Result := Map_Partition_Name (Runtime, Use_Source_Name);
+      Get_Name_String (Result);
+      Add_Str_To_Name_Buffer ("_app");
+      Result := Name_Find;
+      return Result;
+   end Map_Application_Name;
 
 end Ocarina.Backends.Vxworks653_Conf.Mapping;

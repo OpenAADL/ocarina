@@ -1365,10 +1365,22 @@ package body Ocarina.Backends.C_Common.Mapping is
    -------------------------
 
    function Map_Scade_Parameter (Parameter : Node_Id) return Node_Id is
+      Scade_Name : Name_Id;
    begin
-      Get_Name_String (Get_Scade_Signal (Parameter));
+      Scade_Name := Get_Scade_Signal (Parameter);
 
-      return CTU.Make_Defining_Identifier (Name_Find, C_Conversion => False);
+      if Scade_Name = No_Name then
+         Scade_Name := Get_Source_Name (Parameter);
+      end if;
+
+      if Scade_Name = No_Name then
+         Display_Located_Error
+            (AIN.Loc (Parameter),
+             "The Parameter does not specify a SCADE mapping",
+             Fatal => True);
+      end if;
+
+      return CTU.Make_Defining_Identifier (Scade_Name, C_Conversion => False);
    end Map_Scade_Parameter;
 
    ----------------------
@@ -2445,8 +2457,8 @@ package body Ocarina.Backends.C_Common.Mapping is
          when Subprogram_Simulink =>
             Add_Include
               (Make_Include_Clause
-                 (Make_Defining_Identifier (Get_Source_Name (S), False),
-                  False),
+                 (Make_Defining_Identifier (Get_Source_Name (S), True),
+                  True),
                True);
 
             if not AINU.Is_Empty (Features (S)) then
@@ -2528,7 +2540,7 @@ package body Ocarina.Backends.C_Common.Mapping is
 
          when Subprogram_Scade =>
             Add_Include
-              (Make_Include_Clause (Map_Scade_Function_Name (S)),
+              (Make_Include_Clause (Map_Scade_Function_Name (S), True),
                Preserve_Case => True);
             --  At first, we declare structures used as parameters
             --  for SCADE functions. So, if the subprograms has IN

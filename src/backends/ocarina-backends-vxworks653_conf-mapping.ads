@@ -5,7 +5,6 @@ package Ocarina.Backends.Vxworks653_Conf.Mapping is
    function Map_Distributed_Application (E : Node_Id) return Node_Id;
    function Map_HI_Node (E : Node_Id) return Node_Id;
    function Map_HI_Unit (E : Node_Id) return Node_Id;
-   function Map_Port (F : Node_Id) return Node_Id;
    function Map_Data (E : Node_Id) return Node_Id;
    function Map_Data_Access (E : Node_Id) return Node_Id;
    function Map_Bus_Access (E : Node_Id) return Node_Id;
@@ -48,7 +47,11 @@ package Ocarina.Backends.Vxworks653_Conf.Mapping is
    function Map_Queuing_Port (Port : Node_Id) return Node_Id;
 
    function Map_Partition_Name (Runtime : Node_Id;
-                                Use_Source_Name : Boolean := False)
+                                Use_Source_Name : Boolean := True)
+   return Name_Id;
+
+   function Map_Application_Name (Runtime : Node_Id;
+                                Use_Source_Name : Boolean := True)
    return Name_Id;
 
 end Ocarina.Backends.Vxworks653_Conf.Mapping;

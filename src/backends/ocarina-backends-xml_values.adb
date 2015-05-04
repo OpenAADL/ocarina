@@ -353,11 +353,13 @@ package body Ocarina.Backends.XML_Values is
                Index : Integer;
             begin
 
-               FLT_IO.Put (S, Float (V.FVal), Aft => 4, Exp => 0);
+               FLT_IO.Put (S, Float (V.FVal),
+                           Aft => 4,
+                           Exp => 0);
                Tmp := Get_String_Name (S);
                Get_Name_String (Tmp);
 
-               Index := 2;
+               Index := 1;
 
                while Name_Buffer (Index) = ' ' loop
                   Index := Index + 1;
@@ -366,7 +368,7 @@ package body Ocarina.Backends.XML_Values is
                --  Temporary fix
                --  FIXME: Need to find better solution later.
 
-               return Name_Buffer (Name_Len - 6 .. Name_Len);
+               return Name_Buffer (Name_Len - 5 .. Name_Len);
             end;
 
          when K_String =>
