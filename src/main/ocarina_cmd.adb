@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -91,11 +91,6 @@ procedure Ocarina_Cmd is
    procedure Version;
    --  Display version information
 
-   procedure Run_Command
-     (Command_Name  :     String;
-      Argument_List :     GNAT.OS_Lib.Argument_List;
-      Success       : out Boolean);
-
    procedure Ocarina_Shell;
    --  Launch Ocarina interactive mode
 
@@ -111,72 +106,6 @@ procedure Ocarina_Cmd is
    Buffer                : Location;
    Language              : Name_Id;
    Position              : String_String_Maps.Cursor;
-
-   -----------------
-   -- Run_Command --
-   -----------------
-
-   procedure Run_Command
-     (Command_Name  :     String;
-      Argument_List :     GNAT.OS_Lib.Argument_List;
-      Success       : out Boolean)
-   is
-      Path         : GNAT.OS_Lib.String_Access := Getenv ("PATH");
-      Command_Path : GNAT.OS_Lib.String_Access :=
-        Locate_Exec_On_Path (Command_Name);
-      Pid     : Process_Id;
-      Out_Pid : Process_Id := Invalid_Pid;
-   begin
-      --  First off, we put the 'bin' directory of the Ocarina
-      --  installation at the top of the PATH envvironment variable.
-
-      Get_Name_String (Installation_Directory);
-      Add_Str_To_Name_Buffer ("bin");
-      Add_Char_To_Name_Buffer (Path_Separator);
-      Add_Str_To_Name_Buffer (Path.all);
-      Setenv ("PATH", Name_Buffer (1 .. Name_Len));
-
-      Free (Path);
-      Path := Getenv ("PATH");
-
-      --  Some debugging stuff
-
-      pragma Debug (Write_Line ("Executing command:"));
-      pragma Debug (Write_Line (" Name: " & Command_Name));
-      pragma Debug (Write_Str (" Args: "));
-      for J in Argument_List'Range loop
-         pragma Debug (Write_Str ("'" & Argument_List (J).all & "' "));
-         null;
-      end loop;
-      pragma Debug (Write_Eol);
-      pragma Debug (Write_Line ("Current directory: " & Get_Current_Dir));
-      pragma Debug (Write_Line ("PATH=" & Path.all));
-
-      Exit_On_Error (Command_Path = null, Command_Name & ": not found!");
-
-      Pid :=
-        Non_Blocking_Spawn
-          (Program_Name => Command_Path.all,
-           Args         => Argument_List);
-
-      --  Wait until the command achieves its execution
-
-      while Out_Pid /= Pid loop
-         Wait_Process (Out_Pid, Success);
-         exit when Out_Pid = Pid or else Out_Pid = Invalid_Pid;
-      end loop;
-
-      if Out_Pid = Pid then
-         if not Success then
-            pragma Debug
-              (Write_Line (Command_Path.all & " terminated unexpectedly"));
-            null;
-         end if;
-      end if;
-
-      Free (Path);
-      Free (Command_Path);
-   end Run_Command;
 
    -------------------
    -- Ocarina_Shell --
@@ -1064,9 +993,6 @@ procedure Ocarina_Cmd is
                   raise Invalid_Switch;
                end if;
 
-            when 'c' =>
-               After_Scenario_Action := Analyze_With_Cheddar;
-
             when 'o' =>
                declare
                   D : constant String := Parameter;
@@ -1267,7 +1193,6 @@ procedure Ocarina_Cmd is
       Write_Line ("   -er Execute the generated application code and");
       Write_Line ("       verify that there is no regression");
       Write_Line ("   -p  Only parse and instantiate the application model");
-      Write_Line ("   -c  Only perform schedulability analysis");
 
       Write_Eol;
       Write_Line ("  Advanced user options:");
@@ -1364,37 +1289,34 @@ begin
          null;
    end case;
 
-   if Get_Current_Action /= Analyze_With_Cheddar then
-      --  Parse the AADL files
+   --  Parse the AADL files
 
-      AADL_Root := No_Node;
-      declare
-         F : Types.Int := Sources.First;
-      begin
-         loop
-            File_Name := Search_File (Sources.Table (F));
-            Exit_On_Error
-              ((File_Name = No_Name),
-               "Cannot find file " & Get_Name_String (Sources.Table (F)));
-            Buffer := Load_File (File_Name);
-            Exit_On_Error
-              ((File_Name = No_Name),
-               "Cannot read file " & Get_Name_String (Sources.Table (F)));
-            AADL_Root := Parse (Language, AADL_Root, Buffer);
-            Exit_On_Error (No (AADL_Root), "Cannot parse AADL specifications");
-            exit when F = Sources.Last;
-            F := F + 1;
-         end loop;
-      end;
+   AADL_Root := No_Node;
+   declare
+      F : Types.Int := Sources.First;
+   begin
+      loop
+         File_Name := Search_File (Sources.Table (F));
+         Exit_On_Error
+           ((File_Name = No_Name),
+            "Cannot find file " & Get_Name_String (Sources.Table (F)));
+         Buffer := Load_File (File_Name);
+         Exit_On_Error
+           ((File_Name = No_Name),
+            "Cannot read file " & Get_Name_String (Sources.Table (F)));
+         AADL_Root := Parse (Language, AADL_Root, Buffer);
+         Exit_On_Error (No (AADL_Root), "Cannot parse AADL specifications");
+         exit when F = Sources.Last;
+         F := F + 1;
+      end loop;
+   end;
 
-      Success := Analyze (Language, AADL_Root);
-      Exit_On_Error (not Success, "Cannot analyze AADL specifications");
+   Success := Analyze (Language, AADL_Root);
+   Exit_On_Error (not Success, "Cannot analyze AADL specifications");
 
-      if Verbose_Mode then
-         Write_Line ("Model parsing: completed");
-         Write_Eol;
-      end if;
-
+   if Verbose_Mode then
+      Write_Line ("Model parsing: completed");
+      Write_Eol;
    end if;
 
    case Get_Current_Action is
@@ -1429,49 +1351,6 @@ begin
             Write_Eol;
             Set_Standard_Output;
          end if;
-
-      when Analyze_With_Cheddar =>
-         declare
-            Args : Argument_List_Access :=
-              new Argument_List
-              (1 .. Integer (Sources.Last) - Integer (Sources.First) + 2);
-            --  '-aadlv?' + all source files
-
-            Index            : Integer         := 1;
-            Cheddar_Analyzer : constant String := "cheddar_analyzer";
-         begin
-            Args (Index) := new String'("-aadlv?");
-            case AADL_Version is
-               when AADL_V1 =>
-                  Args (Index) (Args (Index)'Last) := '1';
-               when AADL_V2 =>
-                  Args (Index) (Args (Index)'Last) := '2';
-            end case;
-            Index := Index + 1;
-
-            for F in Sources.First .. Sources.Last loop
-               File_Name := Search_File (Sources.Table (F));
-               Exit_On_Error
-                 ((File_Name = No_Name),
-                  "Cannot find file " & Get_Name_String (Sources.Table (F)));
-
-               Args (Index) := new String'(Get_Name_String (File_Name));
-               Index        := Index + 1;
-            end loop;
-
-            --  Invoke cheddar_analyzer
-
-            Run_Command
-              (Command_Name  => Cheddar_Analyzer,
-               Argument_List => Args.all,
-               Success       => Success);
-
-            Free (Args);
-
-            Exit_On_Error
-              (not Success,
-               Cheddar_Analyzer & " died unexpectedly");
-         end;
 
       when others =>
          null;
