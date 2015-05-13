@@ -1797,8 +1797,7 @@ package body Parser is
                Output_File := GNAT.OS_Lib.Standout;
 
             when 't' =>
-               if GNAT.Command_Line.Parameter = "python"
-               then
+               if GNAT.Command_Line.Parameter = "python" then
                   Target_Language := 2;
                end if;
 
@@ -2009,8 +2008,8 @@ package body Parser is
       end if;
 
       if Target_Language = 1 then
-          --  If the output is not the standard output, compute the spec
-          --  filename and redirect output.
+      --  If the output is not the standard output, compute the spec
+      --  filename and redirect output.
 
          if Output_Name /= Types.No_Name then
             Output_File :=
@@ -2037,8 +2036,8 @@ package body Parser is
       end if;
 
       if Target_Language = 2 then
-          --  If the output is not the standard output, compute the body
-          --  filename and redirect output.
+      --  If the output is not the standard output, compute the body
+      --  filename and redirect output.
 
          if Output_Name /= Types.No_Name then
             Output_Name := Utils.Remove_Suffix_From_Name (
