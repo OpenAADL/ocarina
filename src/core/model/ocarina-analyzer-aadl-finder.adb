@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -69,12 +69,13 @@ package body Ocarina.Analyzer.AADL.Finder is
    function Filter_Declarations_According_To_Modes
      (Declaration_Node : Node_Id;
       In_Modes         : Node_Id) return Node_Id;
-   --  Given a chained list of homonyms 'Declaration_Node', if
-   --  In_Modes is not nul, return the node coprresponding to the
-   --  declaration that matches these modes or else the declaration
-   --  that has no "in modes" clause or else No_Node. If In_Modes is
-   --  nul, return the node coprresponding to the declaration with no
-   --  "in modes" clause or else No_Node.
+   --  Given a chained list of homonyms 'Declaration_Node',
+   --
+   --  * if In_Modes is not null, return the node coprresponding to
+   --  the declaration that matches these modes or else the
+   --  declaration that has no "in modes" clause or else No_Node.
+   --  * if In_Modes is nul, return the node coprresponding to the
+   --  declaration with no "in modes" clause or else No_Node.
 
    --------------------------------------------
    -- Filter_Declarations_According_To_Modes --
@@ -449,7 +450,8 @@ package body Ocarina.Analyzer.AADL.Finder is
          or else Kind (Property_Container) = K_Constant_Property_Declaration
          or else Kind (Property_Container) = K_Property_Type
          or else Kind (Property_Container) = K_Property_Definition_Declaration
-         or else Kind (Property_Container) = K_Property_Type_Declaration);
+         or else Kind (Property_Container) = K_Property_Type_Declaration
+         or else Kind (Property_Container) = K_Record_Term_Element);
 
       List_Node     : Node_Id := No_Node;
       Property_Type : Node_Id;
@@ -475,25 +477,58 @@ package body Ocarina.Analyzer.AADL.Finder is
                   Property_Type := Property_Name_Type (Pointed_Node);
                end if;
 
-               if Kind (Property_Type) /= K_Enumeration_Type then
+               if Kind (Property_Type) /= K_Enumeration_Type
+                 and then Kind (Property_Type) /= K_Record_Type
+               then
                   return No_Node;
-               elsif not Is_Empty (Identifiers (Property_Type)) then
-                  List_Node := First_Node (Identifiers (Property_Type));
                end if;
 
-               while Present (List_Node) loop
-                  if Ocarina.ME_AADL.AADL_Tree.Nodes.Name (List_Node) =
-                    Name (Identifier (Default_Value))
-                  then
-                     Resolve_Term_In_Property
-                       (Property_Container,
-                        Default_Value,
-                        K_Enumeration_Term);
-                     return Pointed_Node;
-                  end if;
+               if Kind (Property_Type) = K_Enumeration_Type
+                 and then not Is_Empty (Identifiers (Property_Type))
+               then
+                  List_Node := First_Node (Identifiers (Property_Type));
 
-                  List_Node := Next_Node (List_Node);
-               end loop;
+                  while Present (List_Node) loop
+                     if Ocarina.ME_AADL.AADL_Tree.Nodes.Name (List_Node) =
+                       Name (Identifier (Default_Value))
+                     then
+                        Resolve_Term_In_Property
+                          (Property_Container,
+                           Default_Value,
+                           K_Enumeration_Term);
+                        return Pointed_Node;
+                     end if;
+
+                     List_Node := Next_Node (List_Node);
+                  end loop;
+
+               elsif Kind (Property_Type) = K_Record_Type then
+
+                  --  When processing a Record_Type, we iterate over
+                  --  the property container that holds the record
+                  --  term element (i.e. foo => bar) and check that
+                  --
+
+                  List_Node := First_Node (List_Items (Property_Type));
+                  while Present (List_Node) loop
+                     --  A property type is a list of record_type element
+                     --  XXX should use case insensitive match ?
+                     if Ocarina.ME_AADL.AADL_Tree.Nodes.Display_Name
+                       (Identifier (List_Node)) =
+                       Display_Name (Identifier (Property_Container))
+                     then
+                        Resolve_Term_In_Property
+                          (List_Node, --  Property_Container,
+                           Default_Value,
+                           K_Enumeration_Term);
+
+                        return Pointed_Node;
+                     end if;
+
+                     List_Node := Next_Node (List_Node);
+                  end loop;
+
+               end if;
             end if;
 
          when K_Enumeration_Type =>
@@ -521,7 +556,6 @@ package body Ocarina.Analyzer.AADL.Finder is
       end case;
 
       return No_Node;
-
    end Find_Property_Enumeration;
 
    -------------------------------------------------------

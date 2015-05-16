@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2555,19 +2555,13 @@ package body Ocarina.Analyzer.AADL.Links is
    -- Link_Property_Name --
    ------------------------
 
-   function Link_Property_Name
+   function Link_Property_Type_Name
      (Root : Node_Id;
-      Node : Node_Id) return Boolean
+      Node : Node_Id;
+      Type_Designator : Node_Id)
+     return Boolean
    is
-      pragma Assert (Kind (Root) = K_AADL_Specification);
-      pragma Assert (Kind (Node) = K_Property_Definition_Declaration);
-      pragma Assert (Present (Property_Name_Type (Node)));
-
-      Success         : Boolean          := True;
-      List_Node       : Node_Id;
-      Type_Designator : constant Node_Id :=
-        Property_Type_Designator (Property_Name_Type (Node));
-      Property_Type : constant Node_Id := Property_Name_Type (Node);
+      Success : Boolean := True;
    begin
       case Kind (Type_Designator) is
          when K_Unique_Property_Type_Identifier =>
@@ -2576,10 +2570,10 @@ package body Ocarina.Analyzer.AADL.Links is
             begin
                Pointed_Node :=
                  Find_Property_Entity
-                   (Root                    => Root,
-                    Property_Set_Identifier =>
-                      Property_Set_Identifier (Type_Designator),
-                    Property_Identifier => Identifier (Type_Designator));
+                 (Root                    => Root,
+                  Property_Set_Identifier =>
+                    Property_Set_Identifier (Type_Designator),
+                  Property_Identifier => Identifier (Type_Designator));
 
                if No (Pointed_Node) then
                   DAE
@@ -2609,9 +2603,48 @@ package body Ocarina.Analyzer.AADL.Links is
          when K_Range_Type =>
             Success := Link_Type_Designator (Root, Type_Designator);
 
+         when K_Classifier_Type | K_Reference_Type | K_Enumeration_Type
+           | K_Boolean_Type | K_String_Type =>
+            null; -- Nothing to do here
+
+         when K_Record_Type =>
+            declare
+               J : Node_Id;
+            begin
+               J := First_Node (List_Items (Type_Designator));
+               while Present (J) loop
+                  Success := Success and then
+                    Link_Property_Type_Name
+                    (Root, J, Property_Type_Designator (J));
+                  J := Next_Node (J);
+               end loop;
+            end;
+
          when others =>
-            null;
+            raise Program_Error;
+            --  Null;
       end case;
+
+      return Success;
+   end Link_Property_Type_Name;
+
+   function Link_Property_Name
+     (Root : Node_Id;
+      Node : Node_Id) return Boolean
+   is
+      pragma Assert (Kind (Root) = K_AADL_Specification);
+      pragma Assert (Kind (Node) = K_Property_Definition_Declaration
+                    or else Kind (Node) = K_Record_Type_Element);
+      pragma Assert (Present (Property_Name_Type (Node)));
+
+      Success         : Boolean          := True;
+      List_Node       : Node_Id;
+      Type_Designator : constant Node_Id :=
+        Property_Type_Designator (Property_Name_Type (Node));
+      Property_Type : constant Node_Id := Property_Name_Type (Node);
+
+   begin
+      Success := Link_Property_Type_Name (Root, Node, Type_Designator);
 
       --  Link optional default value
 
@@ -2698,7 +2731,6 @@ package body Ocarina.Analyzer.AADL.Links is
                     (Classifier_Ref (List_Node),
                      Get_Referenced_Entity (Classifier_Ref (List_Node)),
                      Warning => True);
-
                   --  Not finding the corresponding entity is not a
                   --  problem if the property is not to be used.
                end if;
@@ -2744,7 +2776,10 @@ package body Ocarina.Analyzer.AADL.Links is
          or else Kind (Property_Type) = K_Real_Type
          or else Kind (Property_Type) = K_Integer_Type
          or else Kind (Property_Type) = K_Property_Type
-         or else Kind (Property_Type) = K_Constant_Property_Declaration);
+         or else Kind (Property_Type) = K_Constant_Property_Declaration
+         or else Kind (Property_Type) = K_Record_Type_Element
+         or else Kind (Property_Type) = K_Property_Term
+         or else Kind (Property_Type) = K_Unique_Property_Type_Identifier);
 
       Success                 : Boolean          := True;
       Pointed_Node            : Node_Id;
@@ -2753,6 +2788,7 @@ package body Ocarina.Analyzer.AADL.Links is
       Corresponding_Container : Node_Id;
       Type_Designator         : Node_Id;
    begin
+
       case Kind (Node) is
          when K_Component_Classifier_Term =>
             Pop_Scope;
@@ -2910,7 +2946,6 @@ package body Ocarina.Analyzer.AADL.Links is
             end if;
 
          when K_Unique_Property_Const_Identifier | K_Property_Term =>
-
             if Kind (Container) = K_Component_Type
               or else Kind (Container) = K_Component_Implementation
               or else Kind (Container) = K_Feature_Group_Type
@@ -2940,27 +2975,105 @@ package body Ocarina.Analyzer.AADL.Links is
 
             --  If we did not find anything, we look for an enumeration in
             --  properties
+            if Present (Property_Type)
+              and then (Kind (Property_Type) = K_Property_Type
+                          or else Kind (Property_Type)
+                          = K_Unique_Property_Type_Identifier)
+            then
+               if Kind (Property_Type) = K_Property_Type
+                 and then Present (Property_Type_Designator (Property_Type))
+               then
+                  Type_Designator := Property_Type_Designator (Property_Type);
+               else
+                  Type_Designator := Property_Type_Designator
+                    (Entity (Property_Type));
+               end if;
+
+               if No (Pointed_Node) then
+                  if (Kind (Type_Designator)
+                        = K_Unique_Property_Type_Identifier
+                        or else Kind (Type_Designator) = K_Enumeration_Type)
+                  then
+                     Pointed_Node :=
+                       Find_Property_Enumeration
+                       (Root,
+                        Container,
+                        Property_Container,
+                        Node,
+                        Type_Designator);
+
+                  elsif Kind (Type_Designator) = K_Record_Type_Element then
+                     raise Program_Error;
+
+                  else
+                     raise Program_Error;
+                  end if;
+               end if;
+            end if;
 
             if Present (Property_Type)
-              and then Kind (Property_Type) = K_Property_Type
+              and then Kind (Property_Type) = K_Record_Type_Element
             then
-               if Present (Property_Type_Designator (Property_Type)) then
-                  Type_Designator := Property_Type_Designator (Property_Type);
-               end if;
+               declare
+                  Unit_Node : Node_Id := Node;
+               begin
+                  if No (Entity (Property_Type_Designator (Property_Type)))
+                  then
+                     Success := Success
+                       and then Link_Property_Type_Name
+                       (Root, Property_Type,
+                        Property_Type_Designator (Property_Type));
+                  end if;
+                  --  When processing a record_term_element, we
+                  --  iterate over the property designator until we
+                  --  find the corresponding entity to operate on.
 
-               if No (Pointed_Node)
-                 and then
-                 (Kind (Type_Designator) = K_Unique_Property_Type_Identifier
-                  or else Kind (Type_Designator) = K_Enumeration_Type)
-               then
-                  Pointed_Node :=
-                    Find_Property_Enumeration
-                      (Root,
-                       Container,
-                       Property_Container,
-                       Node,
-                       Type_Designator);
-               end if;
+                  if Kind (Property_Type_Designator
+                             (Entity (Property_Type_Designator
+                                        (Property_Type)))) = K_Record_Type
+                  then
+                     List_Node := First_Node
+                       (List_Items
+                          (Property_Type_Designator
+                             (Entity
+                                (Property_Type_Designator (Property_Type)))));
+                     while Present (List_Node) loop
+                        --  A property type is a list of record_type element
+                        --  XXX should use case insensitive match ?
+
+                        if Ocarina.ME_AADL.AADL_Tree.Nodes.Display_Name
+                          (Identifier (List_Node)) =
+                          Display_Name (Identifier (Property_Container))
+                        then
+                           Unit_Node := Property_Type_Designator (List_Node);
+
+                           declare
+                              Toto : Node_Id;
+                           begin
+                              Toto := Find_Property_Entity
+                                (Root                    => Root,
+                                 Property_Set_Identifier =>
+                                   Property_Set_Identifier (Unit_Node),
+                                 Property_Identifier =>
+                                   Identifier (Unit_Node));
+
+                              if No (Entity (Unit_Node)) then
+                                 Set_Entity (Unit_Node, Toto);
+                              end if;
+                           end;
+                        end if;
+
+                        List_Node := Next_Node (List_Node);
+                     end loop;
+                  end if;
+
+                  Success := Success and then Link_Property_Value
+                    (Root,
+                     Container,
+                     Property_Container,
+                     Node,
+                     Unit_Node);
+               end;
             end if;
 
             if Present (Pointed_Node)
@@ -2979,7 +3092,18 @@ package body Ocarina.Analyzer.AADL.Links is
             --  multi-valued constant. This is checked in the
             --  semantics packages.
 
+            elsif Present (Pointed_Node)
+              and then Kind (Pointed_Node) = K_Record_Term_Element
+            then
+               Set_Entity (Node, Pointed_Node);
+
+            elsif Present (Property_Type)
+              and then Kind (Property_Type) = K_Record_Type_Element
+            then
+               null;
+
             else
+
                DLTWN (Node, Pointed_Node);
                Success := False;
             end if;
@@ -3055,18 +3179,47 @@ package body Ocarina.Analyzer.AADL.Links is
 
          when K_Signed_AADLNumber =>
             --  If the number has a unit identifier, link it to the
-            --  corresponfing identifier of the unit type. We do not
-            --  this test if the propoerty type was not found to avoid
-            --  cascading errors.
+            --  corresponding identifier of the unit type. We do not
+            --  perform this test if the property type was not found
+            --  to avoid cascading errors.
 
             if Present (Property_Type) then
                declare
-                  Unit_Type : constant Node_Id :=
-                    Unwind_Units_Type (Root, Property_Type);
+                  Unit_Type : Node_Id;
+
                   V_Unit_Id : constant Node_Id := Unit_Identifier (Node);
                   Unit_Id               : Node_Id;
                   Compatible_Unit_Types : Boolean          := False;
                begin
+                  if Kind (Property_Container) = K_Record_Term_Element then
+                     --  When processing a record_term_element, we
+                     --  iterate over the property designator until we
+                     --  find the corresponding entity to operate on.
+
+                     List_Node := First_Node
+                       (List_Items
+                          (Property_Type_Designator
+                             (Entity
+                                (Property_Type_Designator
+                                   (Property_Type)))));
+
+                     while Present (List_Node) loop
+                        --  A property type is a list of record_type element
+                        --  XXX should use case insensitive match ?
+                        if Ocarina.ME_AADL.AADL_Tree.Nodes.Display_Name
+                          (Identifier (List_Node)) =
+                          Display_Name (Identifier (Property_Container))
+                        then
+                           Unit_Type := Unwind_Units_Type (Root, List_Node);
+                           exit;
+                        end if;
+                        List_Node := Next_Node (List_Node);
+                     end loop;
+
+                  else
+                     Unit_Type := Unwind_Units_Type (Root, Property_Type);
+                  end if;
+
                   if Present (Unit_Identifier (Node))
                     and then Present (Property_Type)
                   then
@@ -3113,6 +3266,7 @@ package body Ocarina.Analyzer.AADL.Links is
                            Success := False;
                         end if;
                      end if;
+
                   elsif Present (Unit_Type) then
                      --  We accept that the user does not give the
                      --  unit for a literal only in the case where the
@@ -3129,6 +3283,37 @@ package body Ocarina.Analyzer.AADL.Links is
                   end if;
                end;
             end if;
+
+         when K_Record_Term =>
+            declare
+               J : Node_Id := First_Node (List_Items (Node));
+               Actual_Property_Type : Node_Id := Property_Type;
+            begin
+               if Kind (Property_Type_Designator (Property_Type))
+                 = K_Record_Type
+               then
+                  Actual_Property_Type :=
+                    First_Node
+                    (List_Items (Property_Type_Designator (Property_Type)));
+               end if;
+
+               while Present (J) loop
+                  Success := Success and then Link_Property_Value
+                    (Root,
+                     Container,
+                     J, --  Use current record_term_element as property
+                        --  container
+                     Property_Expression (J),
+                     Actual_Property_Type);
+
+                  J := Next_Node (J);
+                  if Kind (Property_Type_Designator (Property_Type))
+                    = K_Record_Type
+                  then
+                     Actual_Property_Type := Next_Node (Actual_Property_Type);
+                  end if;
+               end loop;
+            end;
 
          when others =>
             null;
@@ -3648,7 +3833,7 @@ package body Ocarina.Analyzer.AADL.Links is
 
                if Present (Unit_Designator (Property_Type)) then
                   return Recursive_Unwind_Units_Type
-                      (Unit_Designator (Property_Type));
+                    (Unit_Designator (Property_Type));
 
                else
                   return No_Node;
@@ -3738,6 +3923,30 @@ package body Ocarina.Analyzer.AADL.Links is
                return Property_Type;
 
             --  No match, there is no units type definition
+
+            when K_Record_Term_Element =>
+               return Recursive_Unwind_Units_Type
+                 (Property_Expression (Property_Type));
+
+            when K_Number_Range_Term => --  XXX
+               declare
+                  First : constant Node_Id
+                    := Recursive_Unwind_Units_Type
+                    (Lower_Bound (Property_Type));
+               begin
+                  return First;
+               end;
+
+            when K_Signed_Aadlnumber =>
+               if No (Unit_Identifier (Property_Type)) then
+                  return No_Node;
+               else
+                  return No_Node;
+               end if;
+
+            when K_Record_Type_Element =>
+               return Recursive_Unwind_Units_Type
+                 (Property_Type_Designator (Property_Type));
 
             when others =>
                return No_Node;

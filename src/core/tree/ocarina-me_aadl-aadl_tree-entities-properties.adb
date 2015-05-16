@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -272,6 +272,7 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
          or else Kind (Property_Value) = K_Or_Boolean_Term
          or else Kind (Property_Value) = K_Parenthesis_Boolean_Term
          or else Kind (Property_Value) = K_Reference_Term
+         or else Kind (Property_Value) = K_Record_Term
          or else Kind (Property_Value) = K_Property_Term
          or else Kind (Property_Value) = K_Enumeration_Term
          or else Kind (Property_Value) = K_Component_Classifier_Term);
@@ -662,7 +663,9 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
       pragma Assert
         (Kind (Property) = K_Property_Association
          or else Kind (Property) = K_Constant_Property_Declaration
-         or else Kind (Property) = K_Property_Definition_Declaration);
+         or else Kind (Property) = K_Property_Definition_Declaration
+         or else Kind (Property) = K_Record_Term_Element
+         or else Kind (Property) = K_Record_Type_Element);
       pragma Assert
         (Kind_Node = K_Enumeration_Term or else Kind_Node = K_Unit_Term);
 

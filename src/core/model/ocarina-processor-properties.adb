@@ -6,6 +6,39 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
+--                     Copyright (C) 2015 ESA & ISAE.                       --
+--                                                                          --
+-- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
+-- it under terms of the GNU General Public License as published by the     --
+-- Free Software Foundation; either version 2, or (at your option) any      --
+-- later version. Ocarina is distributed  in  the  hope  that it will be    --
+-- useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General --
+-- Public License for more details. You should have received  a copy of the --
+-- GNU General Public License distributed with Ocarina; see file COPYING.   --
+-- If not, write to the Free Software Foundation, 51 Franklin Street, Fifth --
+-- Floor, Boston, MA 02111-1301, USA.                                       --
+--                                                                          --
+-- As a special exception,  if other files  instantiate  generics from this --
+-- unit, or you link  this unit with other files  to produce an executable, --
+-- this  unit  does not  by itself cause  the resulting  executable to be   --
+-- covered  by the  GNU  General  Public  License. This exception does not  --
+-- however invalidate  any other reasons why the executable file might be   --
+-- covered by the GNU Public License.                                       --
+--                                                                          --
+--                 Ocarina is maintained by the TASTE project               --
+--                      (taste-users@lists.tuxfamily.org)                   --
+--                                                                          --
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+--                                                                          --
+--                           OCARINA COMPONENTS                             --
+--                                                                          --
+--         O C A R I N A . P R O C E S S O R . P R O P E R T I E S          --
+--                                                                          --
+--                                 B o d y                                  --
+--                                                                          --
 --    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
@@ -431,21 +464,23 @@ package body Ocarina.Processor.Properties is
       use Ocarina.Analyzer.Messages;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
+      pragma Assert (Reference_Property /= No_Node);
       pragma Assert
         (Property = No_Node
          or else Kind (Property) = K_Property_Association
          or else Kind (Property) = K_Constant_Property_Declaration
          or else Kind (Property) = K_Property_Definition_Declaration
          or else Kind (Property) = K_Property_Type_Declaration
+         or else Kind (Property) = K_Record_Term_Element
          or else DNKE (Property));
-
-      pragma Assert (Reference_Property /= No_Node);
 
       Value, List_Node, Expanded_List_Node, Computed_Value : Node_Id;
       Expanded_List                                        : List_Id;
       Undefined_Values                                     : Boolean;
    begin
-      if Property = No_Node then
+      if Property = No_Node
+        or else Kind (Property) = K_Record_Term_Element
+      then
          return No_Node;
       end if;
 
@@ -557,7 +592,6 @@ package body Ocarina.Processor.Properties is
          or else Kind (Property_Value) = K_Number_Range_Term
          or else Kind (Property_Value) = K_Reference_Term
          or else Kind (Property_Value) = K_Enumeration_Term
-         or else Kind (Property_Value) = K_Property_Term
          or else Kind (Property_Value) = K_Minus_Numeric_Term
          or else Kind (Property_Value) = K_Signed_AADLNumber
          or else Kind (Property_Value) = K_Not_Boolean_Term
@@ -1074,7 +1108,34 @@ package body Ocarina.Processor.Properties is
                   Component_Cat (Property_Value));
 
             when K_Record_Term =>
-               null; --  XXX
+               Evaluated_Value :=
+                 New_Node (Kind (Property_Value), Loc (Property_Value));
+
+               declare
+                  Record_Terms_List : constant List_Id :=
+                    New_List (K_List_Id, Loc (Property_Value));
+
+                  J : Node_Id := First_Node (List_Items (Property_Value));
+                  List_Node : Node_Id;
+                  Record_Term_Element_Node : Node_Id;
+               begin
+                  while Present (J) loop
+                     Record_Term_Element_Node := New_Node
+                       (K_Record_Term_Element, Loc (Property_Value));
+                     List_Node := Evaluate_Property_Value
+                       (Property_Expression (J), Reference_Property);
+                     --                     Put_Line (Kind (List_Node)'Img);
+
+                     Set_Identifier (Record_Term_Element_Node, Identifier (J));
+                     Set_Property_Expression
+                       (Record_Term_Element_Node, List_Node);
+
+                     Append_Node_To_List
+                       (Record_Term_Element_Node, Record_Terms_List);
+                     J := Next_Node (J);
+                  end loop;
+                  Set_List_Items (Evaluated_Value, Record_Terms_List);
+               end;
 
             when others =>
                raise Program_Error;
