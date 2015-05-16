@@ -3199,26 +3199,37 @@ package body Ocarina.Analyzer.AADL.Links is
                      --  iterate over the property designator until we
                      --  find the corresponding entity to operate on.
 
-                     List_Node := First_Node
-                       (List_Items
-                          (Property_Type_Designator
-                             (Entity
-                                (Property_Type_Designator
-                                   (Property_Type)))));
+                     if Kind (Property_Type_Designator
+                                (Entity
+                                   (Property_Type_Designator
+                                      (Property_Type)))) = K_Record_Type
+                     then
+                        List_Node := First_Node
+                          (List_Items
+                             (Property_Type_Designator
+                                (Entity
+                                   (Property_Type_Designator
+                                      (Property_Type)))));
 
-                     while Present (List_Node) loop
-                        --  A property type is a list of record_type element
-                        --  XXX should use case insensitive match ?
-                        if Ocarina.ME_AADL.AADL_Tree.Nodes.Display_Name
-                          (Identifier (List_Node)) =
-                          Display_Name (Identifier (Property_Container))
-                        then
-                           Unit_Type := Unwind_Units_Type (Root, List_Node);
-                           exit;
-                        end if;
-                        List_Node := Next_Node (List_Node);
-                     end loop;
-
+                        while Present (List_Node) loop
+                           --  A property type is a list of record_type element
+                           --  XXX should use case insensitive match ?
+                           if Ocarina.ME_AADL.AADL_Tree.Nodes.Display_Name
+                             (Identifier (List_Node)) =
+                             Display_Name (Identifier (Property_Container))
+                           then
+                              Unit_Type := Unwind_Units_Type (Root, List_Node);
+                              exit;
+                           end if;
+                           List_Node := Next_Node (List_Node);
+                        end loop;
+                     else
+                        Unit_Type := Unwind_Units_Type
+                          (Root, Property_Type_Designator
+                                (Entity
+                                   (Property_Type_Designator
+                                      (Property_Type))));
+                     end if;
                   else
                      Unit_Type := Unwind_Units_Type (Root, Property_Type);
                   end if;
