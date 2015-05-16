@@ -2581,7 +2581,10 @@ package body Ocarina.Analyzer.AADL.Links is
                      Message1 => "does not point to anything");
                   Success := False;
 
-               elsif Kind (Pointed_Node) /= K_Property_Type_Declaration then
+               elsif (Kind (Pointed_Node) /= K_Property_Type_Declaration
+                        and then Kind (Pointed_Node)
+                        /= K_Property_Definition_Declaration)
+               then
                   DAE
                     (Node1    => Node,
                      Message1 => " points to ",
