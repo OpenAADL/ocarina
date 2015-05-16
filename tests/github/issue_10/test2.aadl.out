@@ -1,2 +1,1 @@
-taste_properties.aadl:19:08:  (record type element)  points to Supported_Source_Language (property definition declaration) , which is not a property type
-Cannot analyze AADL specifications
+test2.aadl:24:09 Backends: fatal error : This IN port is not connected to any destination
