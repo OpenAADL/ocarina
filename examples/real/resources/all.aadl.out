@@ -1,3 +1,4 @@
+taste_properties.aadl:19:08:  (record type element)  points to Supported_Source_Language (property definition declaration) , which is not a property type
 all.aadl:11:03: Criticity (property definition declaration) does not point to anything
 all.aadl:18:03: Actual_Subprogram_Type (property definition declaration) does not point to anything
 Cannot analyze AADL specifications

@@ -1,4 +1,2 @@
-robot.aadl:170:05: warning: CPU1 references a component type
-ocarina: Total: 0 error and 1 warning
-robot.aadl:170:05: warning: CPU1 references a component type
-ocarina: Total: 0 error and 1 warning
+taste_properties.aadl:19:08:  (record type element)  points to Supported_Source_Language (property definition declaration) , which is not a property type
+Cannot analyze AADL specifications
