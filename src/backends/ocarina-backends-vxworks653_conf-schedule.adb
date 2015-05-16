@@ -1,4 +1,3 @@
---  with Locations;
 with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -14,6 +13,7 @@ with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 --  with Ocarina.Backends.Vxworks653_Conf.Mapping;
+with Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package body Ocarina.Backends.Vxworks653_Conf.Schedule is
 
@@ -31,6 +31,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
 --   use Ocarina.Backends.Properties;
 --   use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
@@ -191,7 +192,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
                             "1", Partition_Window_Node);
          XTU.Add_Attribute ("PartitionNameRef",
                             Get_Name_String
-                              (Module_Schedule (J).Partition),
+                              (ATN.Display_Name
+                                 (ATN.Identifier
+                                    (Module_Schedule (J).Partition))),
                            Partition_Window_Node);
       end loop;
    end Fill_Scheduling_Slots;
