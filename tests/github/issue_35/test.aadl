@@ -1,0 +1,19 @@
+PACKAGE client_server_Pkg
+PUBLIC
+WITH AI;
+
+SYSTEM client_server
+END client_server;
+
+SYSTEM IMPLEMENTATION client_server.others
+PROPERTIES
+AI::root_system => "SELECTED";
+END client_server.others;
+
+END client_server_Pkg;
+
+PROPERTY SET ai IS
+
+Root_System : AADLSTRING
+APPLIES TO (SYSTEM IMPLEMENTATION);
+END ai;
