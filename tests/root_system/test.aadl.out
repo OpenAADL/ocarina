@@ -1,4 +1,4 @@
 ocarina: Please select a root system among 
-test.aadl:13:01: r2.i
-test.aadl:7:01: r1.i
+test.aadl:13:01: p1::r2.i
+test.aadl:7:01: p1::r1.i
 Cannot instantiate AADL model
