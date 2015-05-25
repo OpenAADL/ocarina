@@ -7534,121 +7534,121 @@ Declarations List_Id 7
   1498 property value memory_properties.aadl:16:02
    Value_Container Node_Id 1403
    Single_Value Node_Id 1456
-   1456 record term memory_properties.aadl:19:04
+   1456 record term memory_properties.aadl:19:06
     List_Items List_Id 1457
-    1458 record term element memory_properties.aadl:19:06
+    1458 record term element memory_properties.aadl:19:08
      Identifier Node_Id 1459
-     1459 identifier memory_properties.aadl:19:06
+     1459 identifier memory_properties.aadl:19:08
       Corresponding_Entity Node_Id 1458
       Display_Name Name_Id "First"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1460
-     1460 record term memory_properties.aadl:19:15
+     1460 record term memory_properties.aadl:19:17
       List_Items List_Id 1461
-      1462 record term element memory_properties.aadl:19:17
+      1462 record term element memory_properties.aadl:19:19
        Identifier Node_Id 1463
-       1463 identifier memory_properties.aadl:19:17
+       1463 identifier memory_properties.aadl:19:19
         Corresponding_Entity Node_Id 1462
         Display_Name Name_Id "Time"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 1465
-       1465 property term memory_properties.aadl:19:22
+       1465 property term memory_properties.aadl:19:24
         Identifier Node_Id 1464
-        1464 identifier memory_properties.aadl:19:25
+        1464 identifier memory_properties.aadl:19:27
          Corresponding_Entity Node_Id 0
          Display_Name Name_Id "Start"
          Scope_Entity Node_Id 0
          Backend_Node Node_Id 0
         Entity Node_Id 1462
         Property_Set_Identifier Node_Id 0
-      1466 record term element memory_properties.aadl:19:32
+      1466 record term element memory_properties.aadl:19:34
        Identifier Node_Id 1467
-       1467 identifier memory_properties.aadl:19:32
+       1467 identifier memory_properties.aadl:19:34
         Corresponding_Entity Node_Id 1466
         Display_Name Name_Id "Offset"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 1474
-       1474 number range term memory_properties.aadl:19:42
+       1474 number range term memory_properties.aadl:19:44
         Lower_Bound Node_Id 1468
-        1468 signed aadlnumber memory_properties.aadl:19:42
+        1468 signed aadlnumber memory_properties.aadl:19:44
          Number_Value Node_Id 1469
-         1469 literal memory_properties.aadl:19:42
+         1469 literal memory_properties.aadl:19:44
           Value Value_Id 47
          Unit_Identifier Node_Id 1470
-         1470 identifier memory_properties.aadl:19:44
+         1470 identifier memory_properties.aadl:19:46
           Corresponding_Entity Node_Id 250
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
           Backend_Node Node_Id 0
         Upper_Bound Node_Id 1471
-        1471 signed aadlnumber memory_properties.aadl:19:50
+        1471 signed aadlnumber memory_properties.aadl:19:52
          Number_Value Node_Id 1472
-         1472 literal memory_properties.aadl:19:50
+         1472 literal memory_properties.aadl:19:52
           Value Value_Id 48
          Unit_Identifier Node_Id 1473
-         1473 identifier memory_properties.aadl:19:52
+         1473 identifier memory_properties.aadl:19:54
           Corresponding_Entity Node_Id 250
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
           Backend_Node Node_Id 0
         Delta_Term Node_Id 0
-    1475 record term element memory_properties.aadl:20:10
+    1475 record term element memory_properties.aadl:20:04
      Identifier Node_Id 1476
-     1476 identifier memory_properties.aadl:20:10
+     1476 identifier memory_properties.aadl:20:04
       Corresponding_Entity Node_Id 1475
       Display_Name Name_Id "Last"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 1477
-     1477 record term memory_properties.aadl:20:18
+     1477 record term memory_properties.aadl:20:12
       List_Items List_Id 1478
-      1479 record term element memory_properties.aadl:20:20
+      1479 record term element memory_properties.aadl:20:14
        Identifier Node_Id 1480
-       1480 identifier memory_properties.aadl:20:20
+       1480 identifier memory_properties.aadl:20:14
         Corresponding_Entity Node_Id 1479
         Display_Name Name_Id "Time"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 1482
-       1482 property term memory_properties.aadl:20:25
+       1482 property term memory_properties.aadl:20:19
         Identifier Node_Id 1481
-        1481 identifier memory_properties.aadl:20:28
+        1481 identifier memory_properties.aadl:20:22
          Corresponding_Entity Node_Id 0
          Display_Name Name_Id "Completion"
          Scope_Entity Node_Id 0
          Backend_Node Node_Id 0
         Entity Node_Id 1479
         Property_Set_Identifier Node_Id 0
-      1483 record term element memory_properties.aadl:20:40
+      1483 record term element memory_properties.aadl:20:34
        Identifier Node_Id 1484
-       1484 identifier memory_properties.aadl:20:40
+       1484 identifier memory_properties.aadl:20:34
         Corresponding_Entity Node_Id 1483
         Display_Name Name_Id "Offset"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 1491
-       1491 number range term memory_properties.aadl:20:50
+       1491 number range term memory_properties.aadl:20:44
         Lower_Bound Node_Id 1485
-        1485 signed aadlnumber memory_properties.aadl:20:50
+        1485 signed aadlnumber memory_properties.aadl:20:44
          Number_Value Node_Id 1486
-         1486 literal memory_properties.aadl:20:50
+         1486 literal memory_properties.aadl:20:44
           Value Value_Id 49
          Unit_Identifier Node_Id 1487
-         1487 identifier memory_properties.aadl:20:52
+         1487 identifier memory_properties.aadl:20:46
           Corresponding_Entity Node_Id 250
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
           Backend_Node Node_Id 0
         Upper_Bound Node_Id 1488
-        1488 signed aadlnumber memory_properties.aadl:20:58
+        1488 signed aadlnumber memory_properties.aadl:20:52
          Number_Value Node_Id 1489
-         1489 literal memory_properties.aadl:20:58
+         1489 literal memory_properties.aadl:20:52
           Value Value_Id 50
          Unit_Identifier Node_Id 1490
-         1490 identifier memory_properties.aadl:20:60
+         1490 identifier memory_properties.aadl:20:54
           Corresponding_Entity Node_Id 250
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
@@ -7656,103 +7656,103 @@ Declarations List_Id 7
         Delta_Term Node_Id 0
    Multi_Value List_Id 0
    Expanded_Single_Value Node_Id 2638
-   2638 record term memory_properties.aadl:19:04
+   2638 record term memory_properties.aadl:19:06
     List_Items List_Id 2639
-    2640 record term element memory_properties.aadl:19:04
+    2640 record term element memory_properties.aadl:19:06
      Identifier Node_Id 1459
-     1459 identifier memory_properties.aadl:19:06
+     1459 identifier memory_properties.aadl:19:08
       Corresponding_Entity Node_Id 1458
       Display_Name Name_Id "First"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 2641
-     2641 record term memory_properties.aadl:19:15
+     2641 record term memory_properties.aadl:19:17
       List_Items List_Id 2642
-      2643 record term element memory_properties.aadl:19:15
+      2643 record term element memory_properties.aadl:19:17
        Identifier Node_Id 1463
-       1463 identifier memory_properties.aadl:19:17
+       1463 identifier memory_properties.aadl:19:19
         Corresponding_Entity Node_Id 1462
         Display_Name Name_Id "Time"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 0
-      2644 record term element memory_properties.aadl:19:15
+      2644 record term element memory_properties.aadl:19:17
        Identifier Node_Id 1467
-       1467 identifier memory_properties.aadl:19:32
+       1467 identifier memory_properties.aadl:19:34
         Corresponding_Entity Node_Id 1466
         Display_Name Name_Id "Offset"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 2645
-       2645 number range term memory_properties.aadl:19:42
+       2645 number range term memory_properties.aadl:19:44
         Lower_Bound Node_Id 2646
-        2646 signed aadlnumber memory_properties.aadl:19:42
+        2646 signed aadlnumber memory_properties.aadl:19:44
          Number_Value Node_Id 2647
-         2647 literal memory_properties.aadl:19:42
+         2647 literal memory_properties.aadl:19:44
           Value Value_Id 82
          Unit_Identifier Node_Id 1470
-         1470 identifier memory_properties.aadl:19:44
+         1470 identifier memory_properties.aadl:19:46
           Corresponding_Entity Node_Id 250
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
           Backend_Node Node_Id 0
         Upper_Bound Node_Id 2648
-        2648 signed aadlnumber memory_properties.aadl:19:50
+        2648 signed aadlnumber memory_properties.aadl:19:52
          Number_Value Node_Id 2649
-         2649 literal memory_properties.aadl:19:50
+         2649 literal memory_properties.aadl:19:52
           Value Value_Id 83
          Unit_Identifier Node_Id 1473
-         1473 identifier memory_properties.aadl:19:52
+         1473 identifier memory_properties.aadl:19:54
           Corresponding_Entity Node_Id 250
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
           Backend_Node Node_Id 0
         Delta_Term Node_Id 0
-    2650 record term element memory_properties.aadl:19:04
+    2650 record term element memory_properties.aadl:19:06
      Identifier Node_Id 1476
-     1476 identifier memory_properties.aadl:20:10
+     1476 identifier memory_properties.aadl:20:04
       Corresponding_Entity Node_Id 1475
       Display_Name Name_Id "Last"
       Scope_Entity Node_Id 0
       Backend_Node Node_Id 0
      Property_Expression Node_Id 2651
-     2651 record term memory_properties.aadl:20:18
+     2651 record term memory_properties.aadl:20:12
       List_Items List_Id 2652
-      2653 record term element memory_properties.aadl:20:18
+      2653 record term element memory_properties.aadl:20:12
        Identifier Node_Id 1480
-       1480 identifier memory_properties.aadl:20:20
+       1480 identifier memory_properties.aadl:20:14
         Corresponding_Entity Node_Id 1479
         Display_Name Name_Id "Time"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 0
-      2654 record term element memory_properties.aadl:20:18
+      2654 record term element memory_properties.aadl:20:12
        Identifier Node_Id 1484
-       1484 identifier memory_properties.aadl:20:40
+       1484 identifier memory_properties.aadl:20:34
         Corresponding_Entity Node_Id 1483
         Display_Name Name_Id "Offset"
         Scope_Entity Node_Id 0
         Backend_Node Node_Id 0
        Property_Expression Node_Id 2655
-       2655 number range term memory_properties.aadl:20:50
+       2655 number range term memory_properties.aadl:20:44
         Lower_Bound Node_Id 2656
-        2656 signed aadlnumber memory_properties.aadl:20:50
+        2656 signed aadlnumber memory_properties.aadl:20:44
          Number_Value Node_Id 2657
-         2657 literal memory_properties.aadl:20:50
+         2657 literal memory_properties.aadl:20:44
           Value Value_Id 84
          Unit_Identifier Node_Id 1487
-         1487 identifier memory_properties.aadl:20:52
+         1487 identifier memory_properties.aadl:20:46
           Corresponding_Entity Node_Id 250
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
           Backend_Node Node_Id 0
         Upper_Bound Node_Id 2658
-        2658 signed aadlnumber memory_properties.aadl:20:58
+        2658 signed aadlnumber memory_properties.aadl:20:52
          Number_Value Node_Id 2659
-         2659 literal memory_properties.aadl:20:58
+         2659 literal memory_properties.aadl:20:52
           Value Value_Id 85
          Unit_Identifier Node_Id 1490
-         1490 identifier memory_properties.aadl:20:60
+         1490 identifier memory_properties.aadl:20:54
           Corresponding_Entity Node_Id 250
           Display_Name Name_Id "ns"
           Scope_Entity Node_Id 0
