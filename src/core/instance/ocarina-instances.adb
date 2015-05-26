@@ -33,6 +33,7 @@
 
 with Errors;
 with Locations;
+with Utils;
 with Ocarina.Namet;
 with Ocarina.Output;
 
@@ -55,6 +56,7 @@ package body Ocarina.Instances is
 
    use Errors;
    use Locations;
+   use Utils;
    use Ocarina.Namet;
    use Ocarina.Output;
 
@@ -174,10 +176,11 @@ package body Ocarina.Instances is
             List_Node := Root_Systems.First;
             while Present (List_Node) loop
                exit when
-                 (ATE.Get_Name_Of_Entity (List_Node, False) = Root_System_Name
+                 (To_Lower (ATE.Get_Name_Of_Entity (List_Node, False))
+                    = To_Lower (Root_System_Name)
                     or else
-                    ATE.Get_Name_Of_Entity (List_Node, False, True)
-                    = Root_System_Name);
+                    To_Lower (ATE.Get_Name_Of_Entity (List_Node, False, True))
+                    = To_Lower (Root_System_Name));
 
                List_Node := ATN.Next_Entity (List_Node);
             end loop;
@@ -211,11 +214,15 @@ package body Ocarina.Instances is
 
          if Root_System_Name /= No_Name
            and then
-             ATE.Get_Name_Of_Entity (Root_System, False) /=
-             Root_System_Name
+           To_Lower (ATE.Get_Name_Of_Entity (Root_System, False)) /=
+           To_Lower (Root_System_Name)
+           and then
+           To_Lower (ATE.Get_Name_Of_Entity (Root_System, False, True)) /=
+           To_Lower (Root_System_Name)
          then
             Error_Name (1) := Root_System_Name;
-            Error_Name (2) := ATE.Get_Name_Of_Entity (Root_System);
+            Error_Name (2) := ATE.Get_Name_Of_Entity
+              (Root_System, False, True);
             DE ("system % is not a root system, use %");
             Root_System := No_Node;
             Exit_On_Error (True, "Cannot instantiate AADL model");
