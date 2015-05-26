@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2014 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -2325,6 +2325,289 @@ package body Ocarina.Analyzer.AADL.Semantics is
    -- Test_Property_Value_Validity --
    ----------------------------------
 
+   function Check_Property_Value
+     (Type_Designator : Node_Id;
+      Property_Value : Node_Id)
+     return Boolean
+   is
+      List_Node       : Node_Id;
+      Temp_Node       : Node_Id;
+
+      Is_Integer      : Boolean;
+      Actual_Literal  : Node_Id;
+      Success : Boolean := True;
+
+   begin
+      case Kind (Type_Designator) is
+         when K_Classifier_Type =>
+            List_Node := First_Node (List_Items (Type_Designator));
+            Success   := False;
+
+            if Kind (Property_Value) = K_Component_Classifier_Term then
+               Temp_Node := Get_Referenced_Entity (Property_Value);
+
+               if Present (Temp_Node) then
+                  case AADL_Version is
+                     when AADL_V1 =>
+                        while Present (List_Node) loop
+                           if Get_Category_Of_Component (Temp_Node) =
+                             Component_Category'Val (Category (List_Node))
+                           then
+                              Success := True;
+                           end if;
+
+                           List_Node := Next_Node (List_Node);
+                        end loop;
+
+                     when AADL_V2 =>
+                        Success := True;
+                  end case;
+               end if;
+            end if;
+
+         when K_Record_Term => --  XXX incomplete implementation
+            Success := True;
+            null;
+
+         when K_Record_Type => --  XXX incomplete implementation
+            Success := True;
+--              declare
+--                 J : Node_Id := First_Node (List_Items (Property_Value));
+--              begin
+--                 while Present (J) loop
+--                    Put_Line ("plop"
+--                                & Kind (J)'Img);
+--                    wni (J);
+--                    J := Next_Node (J);
+--                 end loop;
+--              end;
+
+         when K_Reference_Type =>
+            if List_Items (Type_Designator) = No_List then
+               List_Node := No_Node;
+            else
+               List_Node := First_Node (List_Items (Type_Designator));
+            end if;
+
+            if Present (List_Node) then
+                  Success := False;
+            else
+               Success := True;
+
+               --  If no type is indicated, then any reference is
+               --  correct.
+            end if;
+
+            if Kind (Property_Value) = K_Reference_Term then
+               Temp_Node :=
+                    Get_Referenced_Entity (Reference_Term (Property_Value));
+
+               if Present (Temp_Node) then
+                  while Present (List_Node) loop
+                     case AADL_Version is
+                        when AADL_V1 =>
+                           case
+                             (Referable_Element_Category'Val
+                                (Category (List_Node)))
+                              is
+                              when REC_Component_Category =>
+                                 if Get_Entity_Category (Temp_Node) =
+                                   EC_Subcomponent
+                                 then
+                                    --  If the subcomponent
+                                    --  specification is incomplete
+                                    --  (see AADL 1.0 standard
+                                    --  paragraph 4.5 section
+                                    --  `semantics'), then there is
+                                    --  nothing else to analyze.
+
+                                    if No (Entity_Ref (Temp_Node)) then
+                                       Success := True;
+                                    elsif Get_Category_Of_Component
+                                      (Get_Referenced_Entity
+                                         (Entity_Ref (Temp_Node))) =
+                                      Component_Category'Val
+                                      (Component_Cat (List_Node))
+                                    then
+                                       Success := True;
+                                    end if;
+                                 end if;
+                              when REC_Connections =>
+                                 if Get_Entity_Category (Temp_Node) =
+                                   EC_Connection
+                                 then
+                                    Success := True;
+                                 end if;
+                              when REC_Server_Subprogram =>
+                                 if Get_Entity_Category (Temp_Node) =
+                                   EC_Feature
+                                 then
+                                    --  XXX This is incomplete
+
+                                    Success := True;
+                                 end if;
+                              when REC_Identifier =>
+                                 --  XXX This is incomplete
+
+                                 Success := True;
+                              when REC_Subprogram_Call_Sequence =>
+                                 --  XXX This is incomplete
+
+                                 Success := True;
+                           end case;
+                        when AADL_V2 =>
+                           Success := True;
+                           --  XXX This incomplete
+
+                     end case;
+
+                     List_Node := Next_Node (List_Node);
+                  end loop;
+               end if;
+            else
+               Success := False;
+            end if;
+
+         when K_Real_Type =>
+            if Kind (Property_Value) = K_Literal
+              or else Kind (Property_Value) = K_Signed_AADLNumber
+            then
+               Actual_Literal := Property_Value;
+            else
+               Actual_Literal := No_Node;
+            end if;
+
+            if Present (Actual_Literal) then
+               if No (Type_Range (Type_Designator)) then
+                  Success := True;
+               else
+                  Success :=
+                    (Compare_Numbers
+                       (Lower_Bound (Type_Range (Type_Designator)),
+                        Actual_Literal) >=
+                       0)
+                    and then
+                    (Compare_Numbers
+                       (Actual_Literal,
+                        Upper_Bound (Type_Range (Type_Designator))) >=
+                       0);
+                  if not Success then
+                     Error_Loc (1) := Loc (Property_Value);
+                     DE ("Property value is not in the range" &
+                           " defined for this property type");
+                  end if;
+               end if;
+            else
+               Success := False;
+            end if;
+
+         when K_Integer_Type =>
+            if Kind (Property_Value) = K_Literal then
+               Actual_Literal := Property_Value;
+               Is_Integer := Value (Value (Actual_Literal)).T = LT_Integer;
+            elsif Kind (Property_Value) = K_Signed_AADLNumber then
+               Actual_Literal := Property_Value;
+               Is_Integer     :=
+                 Value (Value (Number_Value (Actual_Literal))).T =
+                 LT_Integer;
+            else
+               Actual_Literal := No_Node;
+               Is_Integer     := False;
+            end if;
+
+            if Is_Integer then
+               if Type_Range (Type_Designator) = No_Node then
+                  Success := True;
+               else
+                  Success :=
+                    Present (Lower_Bound (Type_Range (Type_Designator)))
+                    and then
+                    (Compare_Numbers
+                       (Lower_Bound (Type_Range (Type_Designator)),
+                        Actual_Literal) >=
+                       0)
+                    and then Present
+                    (Upper_Bound (Type_Range (Type_Designator)))
+                    and then
+                    (Compare_Numbers
+                       (Actual_Literal,
+                        Upper_Bound (Type_Range (Type_Designator))) >=
+                       0);
+                  if not Success then
+                     Error_Loc (1) := Loc (Property_Value);
+                     DE ("Property value is not in the range" &
+                           " defined for this property type");
+                  end if;
+               end if;
+            else
+               Success := False;
+            end if;
+
+         when K_Range_Type =>
+            Success := True;
+
+         when K_Boolean_Type =>
+            Success :=
+              Kind (Property_Value) = K_Literal
+              and then Value (Value (Property_Value)).T = LT_Boolean;
+
+         when K_String_Type =>
+            Success :=
+              Kind (Property_Value) = K_Literal
+              and then Value (Value (Property_Value)).T = LT_String;
+
+         when K_Enumeration_Type =>
+            case AADL_Version is
+               when AADL_V1 =>
+                  Success :=
+                    Kind (Property_Value) = K_Literal
+                    and then
+                    Value (Value (Property_Value)).T =
+                    LT_Enumeration;
+
+                  if Success then
+                     Success   := False;
+                     List_Node :=
+                       First_Node (Identifiers (Type_Designator));
+
+                     while Present (List_Node) loop
+                        Success :=
+                          Success
+                          or else
+                               Name (List_Node) =
+                          Value (Value (Property_Value)).EVal;
+
+                        List_Node := Next_Node (List_Node);
+                     end loop;
+                  end if;
+
+               when AADL_V2 =>
+                  Success := Kind (Property_Value) = K_Enumeration_Term;
+
+                  if Success then
+                     Success   := False;
+                     List_Node :=
+                       First_Node (Identifiers (Type_Designator));
+
+                     while Present (List_Node) loop
+                        Success :=
+                          Success
+                          or else
+                          Name (List_Node) =
+                          Name (Identifier (Property_Value));
+
+                        List_Node := Next_Node (List_Node);
+                     end loop;
+                  end if;
+            end case;
+
+         when others =>
+            Success := False;
+      end case;
+
+      return Success;
+   end Check_Property_Value;
+
    function Test_Property_Value_Validity
      (Property_Type  : Node_Id;
       Property_Value : Node_Id) return Boolean
@@ -2333,274 +2616,19 @@ package body Ocarina.Analyzer.AADL.Semantics is
       pragma Assert
         (Kind (Property_Value) = K_Component_Classifier_Term
          or else Kind (Property_Value) = K_Reference_Term
+         or else Kind (Property_Value) = K_Record_Term
          or else Kind (Property_Value) = K_Enumeration_Term
          or else Kind (Property_Value) = K_Number_Range_Term
          or else Kind (Property_Value) = K_Literal
          or else Kind (Property_Value) = K_Signed_AADLNumber);
 
-      List_Node       : Node_Id;
-      Temp_Node       : Node_Id;
       Type_Designator : Node_Id;
-      Is_Integer      : Boolean;
-      Actual_Literal  : Node_Id;
-      Success         : Boolean := True;
+
    begin
       Type_Designator := Expanded_Type_Designator (Property_Type);
-      Success         := Check_Property_Type (Type_Designator);
 
-      if Success then
-         case Kind (Type_Designator) is
-            when K_Classifier_Type =>
-               List_Node := First_Node (List_Items (Type_Designator));
-               Success   := False;
-
-               if Kind (Property_Value) = K_Component_Classifier_Term then
-                  Temp_Node := Get_Referenced_Entity (Property_Value);
-
-                  if Present (Temp_Node) then
-                     case AADL_Version is
-                        when AADL_V1 =>
-                           while Present (List_Node) loop
-                              if Get_Category_Of_Component (Temp_Node) =
-                                Component_Category'Val (Category (List_Node))
-                              then
-                                 Success := True;
-                              end if;
-
-                              List_Node := Next_Node (List_Node);
-                           end loop;
-
-                        when AADL_V2 =>
-                           Success := True;
-                     end case;
-                  end if;
-               end if;
-
-            when K_Reference_Type =>
-               if List_Items (Type_Designator) = No_List then
-                  List_Node := No_Node;
-               else
-                  List_Node := First_Node (List_Items (Type_Designator));
-               end if;
-
-               if Present (List_Node) then
-                  Success := False;
-               else
-                  Success := True;
-
-                  --  If no type is indicated, then any reference is
-                  --  correct.
-               end if;
-
-               if Kind (Property_Value) = K_Reference_Term then
-                  Temp_Node :=
-                    Get_Referenced_Entity (Reference_Term (Property_Value));
-
-                  if Present (Temp_Node) then
-                     while Present (List_Node) loop
-                        case AADL_Version is
-                           when AADL_V1 =>
-                              case
-                              (Referable_Element_Category'Val
-                                 (Category (List_Node)))
-                              is
-                                 when REC_Component_Category =>
-                                    if Get_Entity_Category (Temp_Node) =
-                                      EC_Subcomponent
-                                    then
-                                       --  If the subcomponent
-                                       --  specification is incomplete
-                                       --  (see AADL 1.0 standard
-                                       --  paragraph 4.5 section
-                                       --  `semantics'), then there is
-                                       --  nothing else to analyze.
-
-                                       if No (Entity_Ref (Temp_Node)) then
-                                          Success := True;
-                                       elsif Get_Category_Of_Component
-                                           (Get_Referenced_Entity
-                                              (Entity_Ref (Temp_Node))) =
-                                         Component_Category'Val
-                                           (Component_Cat (List_Node))
-                                       then
-                                          Success := True;
-                                       end if;
-                                    end if;
-                                 when REC_Connections =>
-                                    if Get_Entity_Category (Temp_Node) =
-                                      EC_Connection
-                                    then
-                                       Success := True;
-                                    end if;
-                                 when REC_Server_Subprogram =>
-                                    if Get_Entity_Category (Temp_Node) =
-                                      EC_Feature
-                                    then
-                                       --  XXX This is incomplete
-
-                                       Success := True;
-                                    end if;
-                                 when REC_Identifier =>
-                                    --  XXX This is incomplete
-
-                                    Success := True;
-                                 when REC_Subprogram_Call_Sequence =>
-                                    --  XXX This is incomplete
-
-                                    Success := True;
-                              end case;
-                           when AADL_V2 =>
-                              Success := True;
-                              --  XXX This incomplete
-
-                        end case;
-
-                        List_Node := Next_Node (List_Node);
-                     end loop;
-                  end if;
-               else
-                  Success := False;
-               end if;
-
-            when K_Real_Type =>
-               if Kind (Property_Value) = K_Literal
-                 or else Kind (Property_Value) = K_Signed_AADLNumber
-               then
-                  Actual_Literal := Property_Value;
-               else
-                  Actual_Literal := No_Node;
-               end if;
-
-               if Present (Actual_Literal) then
-                  if No (Type_Range (Type_Designator)) then
-                     Success := True;
-                  else
-                     Success :=
-                       (Compare_Numbers
-                          (Lower_Bound (Type_Range (Type_Designator)),
-                           Actual_Literal) >=
-                        0)
-                       and then
-                       (Compare_Numbers
-                          (Actual_Literal,
-                           Upper_Bound (Type_Range (Type_Designator))) >=
-                        0);
-                     if not Success then
-                        Error_Loc (1) := Loc (Property_Value);
-                        DE ("Property value is not in the range" &
-                           " defined for this property type");
-                     end if;
-                  end if;
-               else
-                  Success := False;
-               end if;
-
-            when K_Integer_Type =>
-               if Kind (Property_Value) = K_Literal then
-                  Actual_Literal := Property_Value;
-                  Is_Integer := Value (Value (Actual_Literal)).T = LT_Integer;
-               elsif Kind (Property_Value) = K_Signed_AADLNumber then
-                  Actual_Literal := Property_Value;
-                  Is_Integer     :=
-                    Value (Value (Number_Value (Actual_Literal))).T =
-                    LT_Integer;
-               else
-                  Actual_Literal := No_Node;
-                  Is_Integer     := False;
-               end if;
-
-               if Is_Integer then
-                  if Type_Range (Type_Designator) = No_Node then
-                     Success := True;
-                  else
-                     Success :=
-                       Present (Lower_Bound (Type_Range (Type_Designator)))
-                       and then
-                       (Compare_Numbers
-                          (Lower_Bound (Type_Range (Type_Designator)),
-                           Actual_Literal) >=
-                        0)
-                       and then Present
-                         (Upper_Bound (Type_Range (Type_Designator)))
-                       and then
-                       (Compare_Numbers
-                          (Actual_Literal,
-                           Upper_Bound (Type_Range (Type_Designator))) >=
-                        0);
-                     if not Success then
-                        Error_Loc (1) := Loc (Property_Value);
-                        DE ("Property value is not in the range" &
-                           " defined for this property type");
-                     end if;
-                  end if;
-               else
-                  Success := False;
-               end if;
-
-            when K_Range_Type =>
-               Success := True;
-
-            when K_Boolean_Type =>
-               Success :=
-                 Kind (Property_Value) = K_Literal
-                 and then Value (Value (Property_Value)).T = LT_Boolean;
-
-            when K_String_Type =>
-               Success :=
-                 Kind (Property_Value) = K_Literal
-                 and then Value (Value (Property_Value)).T = LT_String;
-
-            when K_Enumeration_Type =>
-               case AADL_Version is
-                  when AADL_V1 =>
-                     Success :=
-                       Kind (Property_Value) = K_Literal
-                       and then
-                         Value (Value (Property_Value)).T =
-                         LT_Enumeration;
-
-                     if Success then
-                        Success   := False;
-                        List_Node :=
-                          First_Node (Identifiers (Type_Designator));
-
-                        while Present (List_Node) loop
-                           Success :=
-                             Success
-                             or else
-                               Name (List_Node) =
-                               Value (Value (Property_Value)).EVal;
-
-                           List_Node := Next_Node (List_Node);
-                        end loop;
-                     end if;
-
-                  when AADL_V2 =>
-                     Success := Kind (Property_Value) = K_Enumeration_Term;
-
-                     if Success then
-                        Success   := False;
-                        List_Node :=
-                          First_Node (Identifiers (Type_Designator));
-
-                        while Present (List_Node) loop
-                           Success :=
-                             Success
-                             or else
-                               Name (List_Node) =
-                               Name (Identifier (Property_Value));
-
-                           List_Node := Next_Node (List_Node);
-                        end loop;
-                     end if;
-               end case;
-
-            when others =>
-               Success := False;
-         end case;
-      end if;
-
-      return Success;
+      return Check_Property_Type (Type_Designator)
+        and then Check_Property_Value (Type_Designator, Property_Value);
    end Test_Property_Value_Validity;
 
 end Ocarina.Analyzer.AADL.Semantics;

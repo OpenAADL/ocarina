@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2014 ESA & ISAE.                       --
+--                   Copyright (C) 2014-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -121,17 +121,11 @@ package body Ocarina.Backends.Properties.ARINC653 is
             begin
                while Present (L) loop
                   if Name (Identifier (L)) = Partition_Name then
-                     --  Partition is a component reference. XXX For
-                     --  now, we do not fully resolve this part during
-                     --  analysis or instance, we thus resort to a
-                     --  work-around, that is to simply return the
-                     --  name of the referenced component.
+                     --  Partition is a component reference
 
                      Result (J).Partition :=
-                       Display_Name
-                       (First_Node
-                          (List_Items
-                             (Reference_Term (Property_Expression (L)))));
+                       Entity
+                       (Reference_Term (Property_Expression (L)));
 
                   elsif Name (Identifier (L)) = Duration_Name then
                      Result (J).Duration := Convert_Value_To_Time_Type

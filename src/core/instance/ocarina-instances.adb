@@ -173,8 +173,12 @@ package body Ocarina.Instances is
          if Root_System_Name /= No_Name then
             List_Node := Root_Systems.First;
             while Present (List_Node) loop
-               exit when ATE.Get_Name_Of_Entity (List_Node, False) =
-                 Root_System_Name;
+               exit when
+                 (ATE.Get_Name_Of_Entity (List_Node, False) = Root_System_Name
+                    or else
+                    ATE.Get_Name_Of_Entity (List_Node, False, True)
+                    = Root_System_Name);
+
                List_Node := ATN.Next_Entity (List_Node);
             end loop;
 
@@ -188,7 +192,8 @@ package body Ocarina.Instances is
             List_Node := Root_Systems.First;
             while Present (List_Node) loop
                Error_Loc (1)  := ATN.Loc (List_Node);
-               Error_Name (1) := ATE.Get_Name_Of_Entity (List_Node);
+               Error_Name (1) := ATE.Get_Name_Of_Entity
+                 (List_Node, False, True);
                DE ("%");
                List_Node := ATN.Next_Entity (List_Node);
             end loop;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2013-2014 ESA & ISAE.                    --
+--                   Copyright (C) 2013-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -405,5 +405,71 @@ package body Ocarina.Scripts is
          end if;
       end loop;
    end Ocarina_Shell;
+
+   -----------------
+   -- Run_Command --
+   -----------------
+
+   procedure Run_Command
+     (Command_Name  :     String;
+      Argument_List :     GNAT.OS_Lib.Argument_List;
+      Success       : out Boolean)
+   is
+      Path         : GNAT.OS_Lib.String_Access := Getenv ("PATH");
+      Command_Path : GNAT.OS_Lib.String_Access :=
+        Locate_Exec_On_Path (Command_Name);
+      Pid     : Process_Id;
+      Out_Pid : Process_Id := Invalid_Pid;
+   begin
+      --  First off, we put the 'bin' directory of the Ocarina
+      --  installation at the top of the PATH envvironment variable.
+
+      Get_Name_String (Installation_Directory);
+      Add_Str_To_Name_Buffer ("bin");
+      Add_Char_To_Name_Buffer (Path_Separator);
+      Add_Str_To_Name_Buffer (Path.all);
+      Setenv ("PATH", Name_Buffer (1 .. Name_Len));
+
+      Free (Path);
+      Path := Getenv ("PATH");
+
+      --  Some debugging stuff
+
+      pragma Debug (Write_Line ("Executing command:"));
+      pragma Debug (Write_Line (" Name: " & Command_Name));
+      pragma Debug (Write_Str (" Args: "));
+      for J in Argument_List'Range loop
+         pragma Debug (Write_Str ("'" & Argument_List (J).all & "' "));
+         null;
+      end loop;
+      pragma Debug (Write_Eol);
+      pragma Debug (Write_Line ("Current directory: " & Get_Current_Dir));
+      pragma Debug (Write_Line ("PATH=" & Path.all));
+
+      Exit_On_Error (Command_Path = null, Command_Name & ": not found!");
+
+      Pid :=
+        Non_Blocking_Spawn
+          (Program_Name => Command_Path.all,
+           Args         => Argument_List);
+
+      --  Wait until the command achieves its execution
+
+      while Out_Pid /= Pid loop
+         Wait_Process (Out_Pid, Success);
+         exit when Out_Pid = Pid or else Out_Pid = Invalid_Pid;
+      end loop;
+
+      if Out_Pid = Pid then
+         if not Success then
+            pragma Debug
+              (Write_Line (Command_Path.all & " terminated unexpectedly"));
+            null;
+         end if;
+      end if;
+
+      Free (Path);
+      Free (Command_Path);
+   end Run_Command;
 
 end Ocarina.Scripts;

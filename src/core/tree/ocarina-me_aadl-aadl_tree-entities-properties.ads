@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -59,7 +59,7 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
    type Named_Element is
      (PO_Error,
 
-   --  This following elements are used only for AADL_V1
+   --  The following elements are used only for AADL_V1
       PO_Port_Group,
       PO_Server_Subprogram,
       PO_Parameter,
@@ -71,7 +71,7 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
       PO_Event_Data_Port_Connections,
       PO_Parameter_Connections,
 
-   --  This following elements are used for AADL_V1 and AADL_V2
+   --  The following elements are used for AADL_V1 and AADL_V2
       PO_Component_Category,
       PO_Mode,
       PO_Flow,
@@ -82,7 +82,7 @@ package Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
 
       PO_Access_Connection,    --  POC_Access_Connections
 
-   --  This following elements are use only for AADL_V2
+   --  The following elements are used only for AADL_V2
       PO_Identifier,
 
       PO_Named_Element,

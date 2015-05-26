@@ -120,9 +120,11 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
 
    function Get_Name_Of_Entity
      (Entity           : Ocarina.Types.Node_Id;
-      Get_Display_Name : Boolean := True) return Ocarina.Types.Name_Id
+      Get_Display_Name : Boolean := True;
+      Fully_Qualified  : Boolean := False) return Ocarina.Types.Name_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
+      use Ocarina.Namet;
       use Ocarina.Types;
 
       pragma Assert
@@ -153,32 +155,52 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
          or else Kind (Entity) = K_Annex_Subclause
          or else Kind (Entity) = K_Annex_Library
          or else DNKE (Entity));
+      use Ocarina.ME_AADL.AADL_Tree.Debug;
+
+      Entity_Name : Name_Id := No_Name;
+      Package_Name : Name_Id;
+
+      Name_Of_Entity : Name_Id := No_Name;
    begin
       if Kind (Entity) /= K_AADL_Specification
         and then Identifier (Entity) /= No_Node
       then
          if Get_Display_Name then
-            return Display_Name (Identifier (Entity));
+            Entity_Name := Display_Name (Identifier (Entity));
          else
-            return Name (Identifier (Entity));
+            Entity_Name := Name (Identifier (Entity));
          end if;
       else
          return No_Name;
       end if;
-   end Get_Name_Of_Entity;
 
-   ------------------------
-   -- Get_Name_Of_Entity --
-   ------------------------
+      if Fully_Qualified then
+         Package_Name :=
+           Display_Name (Identifier (Namespace (Entity)));
+
+         Set_Str_To_Name_Buffer ("");
+         Set_Str_To_Name_Buffer
+           (Get_Name_String (Package_Name) &
+              "::" &
+              Get_Name_String (Entity_Name));
+         Name_Of_Entity := Name_Find;
+      else
+         Name_Of_Entity := Entity_Name;
+      end if;
+
+      return Name_Of_Entity;
+   end Get_Name_Of_Entity;
 
    function Get_Name_Of_Entity
      (Entity           : Ocarina.Types.Node_Id;
-      Get_Display_Name : Boolean := True) return String
+      Get_Display_Name : Boolean := True;
+      Fully_Qualified  : Boolean := False) return String
    is
       use Ocarina.Types;
       use Ocarina.Namet;
 
-      Name : constant Name_Id := Get_Name_Of_Entity (Entity, Get_Display_Name);
+      Name : constant Name_Id := Get_Name_Of_Entity
+        (Entity, Get_Display_Name, Fully_Qualified);
    begin
       if Name /= No_Name then
          return Get_Name_String (Name);
@@ -532,7 +554,7 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    end Package_Has_Private_Declarations_Or_Properties;
 
    --
-   --  This following section is relative to Entities MEssages
+   --  This following section is relative to Entities Messages
    --
    -----------------------------
    -- Display_Node_Kind_Error --

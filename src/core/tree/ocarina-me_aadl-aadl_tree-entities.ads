@@ -44,11 +44,13 @@ package Ocarina.ME_AADL.AADL_Tree.Entities is
 
    function Get_Name_Of_Entity
      (Entity           : Ocarina.Types.Node_Id;
-      Get_Display_Name : Boolean := True) return Ocarina.Types.Name_Id;
+      Get_Display_Name : Boolean := True;
+      Fully_Qualified  : Boolean := False) return Ocarina.Types.Name_Id;
 
    function Get_Name_Of_Entity
      (Entity           : Ocarina.Types.Node_Id;
-      Get_Display_Name : Boolean := True) return String;
+      Get_Display_Name : Boolean := True;
+      Fully_Qualified  : Boolean := False) return String;
 
    function Get_Name_Of_Entity_Reference
      (Entity_Ref       : Ocarina.Types.Node_Id;

@@ -16,7 +16,6 @@ Usage:
    -er Execute the generated application code and
        verify that there is no regression
    -p  Only parse and instantiate the application model
-   -c  Only perform schedulability analysis
 
   Advanced user options:
    -d  Debug mode for developpers

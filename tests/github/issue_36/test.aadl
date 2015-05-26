@@ -1,0 +1,13 @@
+package test
+public
+
+  system s
+  end s;
+
+  system implementation s.i
+  end s.i;
+
+  system implementation s.i2
+  end s.i2;
+
+end test;

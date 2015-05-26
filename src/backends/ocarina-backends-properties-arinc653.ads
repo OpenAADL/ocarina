@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2014 ESA & ISAE.                       --
+--                   Copyright (C) 2014-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,7 +37,7 @@
 package Ocarina.Backends.Properties.ARINC653 is
 
    type Schedule_Window_Record_Term is record
-      Partition : Name_Id;
+      Partition : Node_Id;
       Duration : Time_Type;
       Periodic_Processing_Start : Boolean;
    end record;
@@ -47,7 +47,7 @@ package Ocarina.Backends.Properties.ARINC653 is
 
    Empty_Schedule_Window_Record_Term_Array :
      constant Schedule_Window_Record_Term_Array (1 .. 0)
-     := (others => (No_Name, (0, Picosecond), False));
+     := (others => (No_Node, (0, Picosecond), False));
 
    function Get_Module_Schedule_Property
      (E : Node_Id)

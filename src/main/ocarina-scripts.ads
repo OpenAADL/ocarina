@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2013 ESA & ISAE.                       --
+--                   Copyright (C) 2013-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -37,5 +37,11 @@ package Ocarina.Scripts is
    --  Launch Ocarina interactive mode
 
    Standard_Input        : Boolean := True;
+
+   procedure Run_Command
+     (Command_Name  :     String;
+      Argument_List :     GNAT.OS_Lib.Argument_List;
+      Success       : out Boolean);
+   --  Run an external command
 
 end Ocarina.Scripts;

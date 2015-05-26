@@ -1,9 +1,8 @@
---  with Locations;
-
 with Ada.Strings; use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.ME_AADL;
+with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -32,6 +31,7 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
 --   use Ocarina.Backends.Properties;
 --   use Ocarina.Backends.Deos_Conf.Mapping;
 
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
@@ -165,7 +165,6 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
    begin
       Offset := 0;
       for J in Module_Schedule'Range loop
-
          Time_Window_Node := Make_XML_Node ("PartitionTimeWindow");
 
          Append_Node_To_List
@@ -177,8 +176,8 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
          --  For now, we assume the partition duration
          --  is in milliseconds.
          --
-         Slot_Duration := To_Milliseconds
-                           (Module_Schedule (J).Duration) * 1_000_000;
+         Slot_Duration := To_Nanoseconds
+                           (Module_Schedule (J).Duration);
          XTU.Add_Attribute ("Duration",
                            Trim (Unsigned_Long_Long'Image
                                 (Slot_Duration), Left),
@@ -195,7 +194,9 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
                             "false", Time_Window_Node);
          XTU.Add_Attribute ("PartitionNameRef",
                             Get_Name_String
-                              (Module_Schedule (J).Partition),
+                              (ATN.Display_Name
+                                 (ATN.Identifier
+                                    (Module_Schedule (J).Partition))),
                             Time_Window_Node);
          Offset := Offset + Slot_Duration;
       end loop;
