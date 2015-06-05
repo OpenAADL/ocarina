@@ -1,0 +1,3 @@
+AADL_VERSION=-aadlv2 -disable-annexes=all
+OCARINA_FLAGS=
+

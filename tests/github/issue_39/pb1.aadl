@@ -1,0 +1,834 @@
+--AADL2
+--SAE Aerospace Standard AS5506A
+--Proposed Draft (2008-11-08)
+--Appendix A: Predeclared Property Sets
+
+property set AADL_Project is
+
+  Supported_Active_Thread_Handling_Protocols: type enumeration (abort);
+
+  Supported_Connection_Patterns: type enumeration
+  (One_To_One, All_To_All, One_To_All, All_To_One,
+  Next, Previous, Cyclic_Next, Cyclic_Previous);
+
+  Supported_Concurrency_Control_Protocols: type enumeration
+  (None_Specified,
+  Interrupt_Masking,
+  Maximum_Priority,
+  Immediate_Priority_Ceiling_Protocol,
+  Protected_Access,
+  Priority_Inheritance,
+  Priority_Ceiling,
+  Priority_Ceiling_Protocol, -- XXX
+  Spin_Lock,
+  Semaphore,
+  PIP, PCP ); -- AI aliases
+
+  Supported_Dispatch_Protocols: type enumeration (Periodic, Sporadic, Aperiodic, Timed, Hybrid, Background, Interrupt);
+
+  Supported_Queue_Processing_Protocols: type enumeration (Fifo);
+
+  Supported_Hardware_Source_Languages: type enumeration (VHDL);
+
+  Supported_Connection_QoS: type enumeration (GuaranteedDelivery, OrderedDelivery, SecureDelivery);
+
+  Supported_Scheduling_Protocols: type enumeration -- Updated for Cheddar
+  (SporadicServer, RMS, FixedTimeline,
+  PARAMETRIC_PROTOCOL,
+  EDF,
+  EARLIEST_DEADLINE_FIRST_PROTOCOL,
+  LEAST_LAXITY_FIRST_PROTOCOL,
+  RATE_MONOTONIC_PROTOCOL,
+  DEADLINE_MONOTONIC_PROTOCOL,
+  ROUND_ROBIN_PROTOCOL,
+  TIME_SHARING_BASED_ON_WAIT_TIME_PROTOCOL,
+  POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL,
+  D_OVER_PROTOCOL,
+  MAXIMUM_URGENCY_FIRST_BASED_ON_LAXITY_PROTOCOL,
+  MAXIMUM_URGENCY_FIRST_BASED_ON_DEADLINE_PROTOCOL,
+  TIME_SHARING_BASED_ON_CPU_USAGE_PROTOCOL,
+  NO_SCHEDULING_PROTOCOL,
+  HIERARCHICAL_CYCLIC_PROTOCOL,
+  HIERARCHICAL_ROUND_ROBIN_PROTOCOL,
+  HIERARCHICAL_FIXED_PRIORITY_PROTOCOL,
+  HIERARCHICAL_PARAMETRIC_PROTOCOL,
+  RM, DM, HPF, ARINC653, static, cyclic ); -- AI aliases
+
+  Supported_Source_Languages: type enumeration -- Updated for TASTE/Ocarina
+    (Ada95,
+     Ada,     -- alias for Ada95
+     Ada05,   -- alias for Ada95
+     ASN1,
+     Blackbox_Device,
+     C,
+     CPP,     -- C++
+     Esterel,
+     GUI,
+     LUA,
+     Lustre,
+     Lustre5, -- alias for Lustre
+     Lustre6, -- alias for Lustre
+     RTDS,    -- alias for SDL_RTDS
+     SDL_RTDS,
+     RTSJ,    -- Real Time Specification for Java
+     SCADE6,  -- alias for Lustre
+     SDL,     -- alias for SDL_ObjectGeode
+     SDL_ObjectGeode,
+     SDL_OpenGEODE,
+     Scade,
+     Simulink,
+     Simulink_6_5,
+     System_C,
+     VHDL,
+     ACN);
+
+  Supported_Distributions: type enumeration (Fixed, Poisson);
+
+  Supported_Classifier_Substitutions: type enumeration (Classifier_Match, Type_Extension, Signature_Match);
+
+
+  Data_Volume: type aadlinteger 0 bitsps .. Max_Data_Volume
+  units Data_Volume_Units;
+
+  Max_Data_Volume: constant aadlinteger units Data_Volume_Units => 2#1#e62 bitsps; -- XXX extended
+
+  Max_Aadlinteger: constant aadlinteger => 2#1#e32;
+
+  Max_Target_Integer: constant aadlinteger => 2#1#e32;
+
+  Max_Base_Address: constant aadlinteger => 2#1#e32;
+
+  Max_Memory_Size: constant Size => 2#1#e32 Bytes;
+
+  Max_Queue_Size: constant aadlinteger => 512;
+
+  Max_Thread_Limit: constant aadlinteger => 32;
+
+  Max_Time: constant Time => 1000 hr;
+
+  Max_Urgency: constant aadlinteger => 12;
+
+  Max_Byte_Count: constant aadlinteger => 2#1#e32;
+
+  Max_Word_Space: constant aadlinteger => 64;
+
+  Size_Units: type units (
+  bits,
+  Bytes => bits * 8,
+  KByte => Bytes * 1000,
+  MByte => KByte * 1000,
+  GByte => MByte * 1000,
+  TByte => GByte * 1000);
+
+  Time_Units: type units (
+  ps,
+  ns => ps * 1000,
+  us => ns * 1000,
+  ms => us * 1000,
+  sec => ms * 1000,
+  min => sec * 60,
+  hr => min * 60);
+
+  Data_Volume_Units: type units (
+  bitsps,
+  Bytesps => bitsps * 8,
+  KBytesps => Bytesps * 1000,
+  MBytesps => KBytesps * 1000,
+  GBytesps => MBytesps * 1000);
+
+end AADL_Project;
+-- This property set conforms to the Data Modeling annex, v15 (20090609).
+
+property set Data_Model is
+
+   Base_Type : list of classifier ( data ) applies to ( data );
+   --  The Base_Type property specifies the base type of a data
+   --  component type. The classifiers being referenced are those
+   --  defined in the Base_Types package or from user defined
+   --  packages.
+
+   Code_Set : aadlinteger applies to ( data );
+   --  The Code_Set property is used to specify the code set used to
+   --  represent a wide character or wide string. The value applied is
+   --  the registered value affected and defined in the ``OSF
+   --  character and Code Set Registry'' by the OSF. This document is
+   --  available at http://www.opengroup.org/dce/info/.
+
+   Data_Digits : aadlinteger applies to ( data );
+   --  The Data_Digits property specifies the total number of digits
+   --  of the fixed point type.
+
+   Data_Scale : aadlinteger applies to ( data );
+   --  The Data_Scale property defines the scale of the fixed point
+   --  types (10**(-scale) is the precision).
+
+   Data_Representation : enumeration
+     (Array, Boolean, Character, Enum, Float,
+      Fixed, Integer, String, Struct, Union)
+      applies to ( data );
+   --  The Data_Representation property may be used to specify the
+   --  representation of simple or composite data types within the
+   --  programming language source code.
+   --  Note: An implementation is allowed to support only a subset of
+   --  these structures.
+
+   Dimension : list of aadlinteger applies to ( data );
+   --  The Dimension property is used to specify the dimensions of a
+   --  multi-dimensional array, ordered.  This property shall be used
+   --  in conjunction with the Data_Representation property.
+
+   Indefinite_Dimension : constant aadlinteger => -1;
+   -- Use this constant to indicate that one of the dimension of your
+   --  array is non definite for now
+
+   Infinite_Dimension : constant aadlinteger => -2;
+   --  Use this constant to indicate that this array is (potentially) of
+   --  unbounded size.
+
+   Element_Names : list of aadlstring applies to ( data );
+   --  The Element_Names provides the names of a struct or union
+   --  members in order of appearance as defined by the Base_Type
+   --  property.
+
+   Enumerators : list of aadlstring applies to ( data );
+   --  The Enumerators provides the list of enumeration litterals
+   --  attached to an enumeration data component.
+
+   IEEE754_Precision : enumeration ( Simple, Double ) applies to ( data );
+   --  The IEEE754_Precision property indicates, for a float data
+   --  component type, the precision used. This property is derived
+   --  from the notion of precision per the 754-1985 IEEE Standard for
+   --  Binary Floating-Point Arithmetic.
+
+   Initial_Value : list of aadlstring applies to ( data, port, parameter );
+   --  Initial_Value specifies a list of initial values for a data
+   --  component or port in string form. For a subprogram parameter,
+   --  it defines a default value.
+
+   --  It can be used to represent initial values other than strings
+   --  as string.  This (list of) string is interpreted by the source
+   --  language processor.  In this case, consistency of the initial
+   --  values with the data type of the data component is not checked
+   --  by the core AADL language processor.
+
+   Integer_Range : range of aadlinteger applies to ( data, port, parameter );
+   --  Integer_Range specifies a range of integer values that apply to
+   --  the data component.  This property is used to represent integer
+   --  range constraints on data that is of some integer type.
+
+   Measurement_Unit : aadlstring applies to ( data, port, parameter );
+   --  The Measurement_Unit property specifies the measurement unit of
+   --  the data being communicated.
+
+   Number_Representation : enumeration (Signed, Unsigned) applies to ( data );
+   --  Number_Representation specifies whether an integer data
+   --  component is signed or unsigned.
+
+   Real_Range: range of aadlreal applies to ( data, port, parameter );
+   --  Real_Range specifies a range of real values that apply to the
+   --  data component.  This property is used to represent real range
+   --  constraints on data that is of some real type.
+
+   Representation : list of aadlstring applies to ( data );
+   -- Representation specifies the actual representation of
+   -- enumerators value.
+
+end Data_Model;
+package Base_Types
+public
+
+  with data_model;
+
+  data Boolean
+  properties
+    Data_Model::Data_Representation => Boolean;
+  end Boolean;
+
+  data Integer
+  properties
+    Data_Model::Data_Representation => Integer;
+  end Integer;
+
+  -- Signed integer of various byte sizes
+
+  data Integer_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 1 Bytes;
+  end Integer_8;
+
+  data Integer_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 2 Bytes;
+  end Integer_16;
+
+  data Integer_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 4 Bytes;
+  end Integer_32;
+
+  data Integer_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 8 Bytes;
+  end Integer_64;
+
+  -- Unsigned integer of various byte sizes
+
+  data Unsigned_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 1 Bytes;
+  end Unsigned_8;
+
+  data Unsigned_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 2 Bytes;
+  end Unsigned_16;
+
+  data Unsigned_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 4 Bytes;
+  end Unsigned_32;
+
+  data Unsigned_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 8 Bytes;
+  end Unsigned_64;
+
+  data Natural extends Integer
+  properties
+    Data_Model::Integer_Range => 0 .. Max_Target_Integer;
+  end Natural;
+
+  data Float
+  properties
+    Data_Model::Data_Representation => Float;
+  end Float;
+
+  data Float_32 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Simple;
+    Source_Data_Size => 4 Bytes;
+  end Float_32;
+
+  data Float_64 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Double;
+    Source_Data_Size => 8 Bytes;
+  end Float_64;
+
+  data Character
+  properties
+    Data_Model::Data_Representation => Character;
+  end Character;
+
+  data String
+  properties
+    Data_Model::Data_Representation => String;
+  end String;
+
+end Base_Types;
+----------------------------------------
+-- Arithmetic Library
+-- AADL Inspector
+-- (c) Ellidiss Technologies
+-- Updated: May 2015
+----------------------------------------
+-- Package: Ellidiss::Math::Int
+--   Data: int
+--   Subp: add; sub; mul; div; rand; inc; dec; square; err; fact
+-- Package: Ellidiss::Math::Real
+--   Data: float
+--   Subp: addf; subf; mulf; divf; ln; log; exp; sin; cos; tan
+-- Package: Ellidiss::Marzhin (for internal use)
+-- Property Set: Num_Errors
+--   AboveRange; BelowRange; IncorrectValue
+----------------------------------------
+
+PACKAGE Ellidiss::Math::Int
+PUBLIC
+WITH Base_Types;
+WITH Ellidiss::Marzhin;
+WITH Num_Errors;
+
+DATA int
+EXTENDS Base_Types::Integer
+END int;
+
+SUBPROGRAM add
+FEATURES
+  x1 : IN PARAMETER int;
+  x2 : IN PARAMETER int;
+  y : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s { y := x1 + x2 };
+**};
+END add;
+
+SUBPROGRAM sub
+FEATURES
+  x1 : IN PARAMETER int;
+  x2 : IN PARAMETER int;
+  y : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s { y := x1 - x2 };
+**};
+END sub;
+
+SUBPROGRAM mul
+FEATURES
+  x1 : IN PARAMETER int;
+  x2 : IN PARAMETER int;
+  y : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s { y := x1 * x2 };
+**};
+END mul;
+
+SUBPROGRAM div
+FEATURES
+  x1 : IN PARAMETER int;
+  x2 : IN PARAMETER int;
+  y : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  if ( x2 = 0 ) y := ABOVERANGE end if;
+  if ( x2 != 0 ) ELLIDISS::MARZHIN::DIVF!(y,x1,x2,0) end if };
+**};
+END div;
+
+SUBPROGRAM rand
+FEATURES
+  r : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  ELLIDISS::MARZHIN::RAND!(r,0,100) };
+**};
+END rand;
+
+SUBPROGRAM inc
+FEATURES
+  x : IN PARAMETER int;
+  y : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s { y := x + 1 };
+**};
+END inc;
+
+SUBPROGRAM dec
+FEATURES
+  x : IN PARAMETER int;
+  y : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s { y := x - 1 };
+**};
+END dec;
+
+SUBPROGRAM square
+FEATURES
+  x : IN PARAMETER int;
+  y : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  if ( x > 46340 ) y := ABOVERANGE end if;
+  if ( x <= 46340 ) y := x * x end if };
+**};
+END square;
+
+SUBPROGRAM err
+FEATURES
+  r : IN PARAMETER int;
+  e : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+VARIABLES a, b : int;
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  ELLIDISS::MARZHIN::RAND!(a,-100,100);
+  b := a * r;
+  e := b / 100 };
+**};
+END err;
+
+SUBPROGRAM fact
+FEATURES
+  x : IN PARAMETER int;
+  y : OUT PARAMETER int;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  if ( x > 12 ) y := ABOVERANGE end if;
+  if ( x <= 12 ) ELLIDISS::MARZHIN::FACT!(y,x) end if };
+**};
+END fact;
+
+END Ellidiss::Math::Int;
+
+PACKAGE Ellidiss::Math::Real
+PUBLIC
+WITH Base_Types;
+WITH Ellidiss::Marzhin;
+WITH Num_Errors;
+
+DATA flt
+EXTENDS Base_Types::Float
+END flt;
+
+SUBPROGRAM addf
+FEATURES
+  x1 : IN PARAMETER flt;
+  x2 : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  ELLIDISS::MARZHIN::ADDF!(y,x1,x2,2) };
+**};
+END addf;
+
+SUBPROGRAM subf
+FEATURES
+  x1 : IN PARAMETER flt;
+  x2 : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  ELLIDISS::MARZHIN::SUBF!(y,x1,x2,2) };
+**};
+END subf;
+
+SUBPROGRAM mulf
+FEATURES
+  x1 : IN PARAMETER flt;
+  x2 : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  ELLIDISS::MARZHIN::MULF!(y,x1,x2,2) };
+**};
+END mulf;
+
+SUBPROGRAM divf
+FEATURES
+  x1 : IN PARAMETER flt;
+  x2 : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  if ( x2 = 0 ) y := ABOVERANGE end if;
+  if ( x2 != 0 ) ELLIDISS::MARZHIN::DIVF!(y,x1,x2,2) end if };
+**};
+END divf;
+
+SUBPROGRAM ln
+FEATURES
+  x : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  if ( x < 0 ) y := INCORRECTVALUE end if;
+  if ( x = 0 ) y := BELOWRANGE end if;
+  if ( x > 0 ) ELLIDISS::MARZHIN::LN!(y,x,2) end if };
+**};
+END ln;
+
+SUBPROGRAM log
+FEATURES
+  x : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  if ( x < 0 ) y := INCORRECTVALUE end if;
+  if ( x = 0 ) y := BELOWRANGE end if;
+  if ( x > 0 ) ELLIDISS::MARZHIN::LOG!(y,x,2) end if };
+**};
+END log;
+
+SUBPROGRAM exp
+FEATURES
+  x : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  if ( x > 39 ) y := ABOVERANGE end if;
+  if ( x <= 39 ) ELLIDISS::MARZHIN::EXP!(y,x,2) end if };
+**};
+END exp;
+
+SUBPROGRAM sin
+FEATURES
+  x : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  ELLIDISS::MARZHIN::SIN!(y,x,2) };
+**};
+END sin;
+
+SUBPROGRAM cos
+FEATURES
+  x : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  ELLIDISS::MARZHIN::COS!(y,x,2) };
+**};
+END cos;
+
+SUBPROGRAM tan
+FEATURES
+  x : IN PARAMETER flt;
+  y : OUT PARAMETER flt;
+ANNEX BEHAVIOR_SPECIFICATION {**
+STATES s : INITIAL FINAL STATE;
+TRANSITIONS t : s -[]-> s {
+  ELLIDISS::MARZHIN::TAN!(y,x,2) };
+**};
+END tan;
+
+END Ellidiss::Math::Real;
+
+-----------------------------------
+-- Marzhin Simulator Library
+-- Hardwired Functions
+-----------------------------------
+
+PACKAGE Ellidiss::Marzhin
+PUBLIC
+WITH Base_Types;
+
+DATA marzhin_int
+EXTENDS Base_Types::Integer
+END marzhin_int;
+
+DATA marzhin_float
+EXTENDS Base_Types::Float
+END marzhin_float;
+
+SUBPROGRAM rand
+FEATURES
+  lvalue : OUT PARAMETER marzhin_int;
+  min : IN PARAMETER marzhin_int;
+  max : IN PARAMETER marzhin_int;
+END rand;
+
+SUBPROGRAM fact
+FEATURES
+  lvalue : OUT PARAMETER marzhin_int;
+  rvalue : IN PARAMETER marzhin_int;
+END fact;
+
+SUBPROGRAM ln
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END ln;
+
+SUBPROGRAM log
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END log;
+
+SUBPROGRAM exp
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END exp;
+
+SUBPROGRAM sin
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END sin;
+
+SUBPROGRAM cos
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END cos;
+
+SUBPROGRAM tan
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END tan;
+
+SUBPROGRAM addf
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue1 : IN PARAMETER marzhin_float;
+  rvalue2 : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END addf;
+
+SUBPROGRAM subf
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue1 : IN PARAMETER marzhin_float;
+  rvalue2 : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END subf;
+
+SUBPROGRAM mulf
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue1 : IN PARAMETER marzhin_float;
+  rvalue2 : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END mulf;
+
+SUBPROGRAM divf
+FEATURES
+  lvalue : OUT PARAMETER marzhin_float;
+  rvalue1 : IN PARAMETER marzhin_float;
+  rvalue2 : IN PARAMETER marzhin_float;
+  fdigits : IN PARAMETER marzhin_int;
+END divf;
+
+END Ellidiss::Marzhin;
+
+PROPERTY SET Num_Errors IS
+-- note: uses EMV2 error types name
+  AboveRange : CONSTANT aadlinteger => +00;
+  BelowRange : CONSTANT aadlinteger => -00;
+  IncorrectValue : CONSTANT aadlinteger => 00;
+
+END Num_Errors;
+PACKAGE HW
+PUBLIC
+
+  SYSTEM RMA_board
+  END RMA_board;
+
+  SYSTEM IMPLEMENTATION RMA_board.others
+  SUBCOMPONENTS
+    CPU : PROCESSOR CPU;
+    DATA_BUS : BUS DATA_BUS;
+    RAM : MEMORY RAM;
+  CONNECTIONS
+    C1 : BUS ACCESS DATA_BUS -> CPU.DATA_BUS;
+    C2 : BUS ACCESS DATA_BUS -> RAM.DATA_BUS;
+  END RMA_board.others;
+
+  PROCESSOR CPU
+  FEATURES
+    DATA_BUS : REQUIRES BUS ACCESS DATA_BUS;
+  PROPERTIES
+    Scheduling_Protocol => (RATE_MONOTONIC_PROTOCOL);
+  END CPU;
+
+  BUS DATA_BUS
+  END DATA_BUS;
+
+  MEMORY RAM
+  FEATURES
+    DATA_BUS : REQUIRES BUS ACCESS DATA_BUS;
+  END RAM;
+
+END HW;
+
+
+----------------------------------------
+-- Inter-threads data port communication
+-- AADL Inspector
+-- (c) Ellidiss Technologies
+-- Updated: January 2015
+----------------------------------------
+
+PACKAGE dataflow_Pkg
+PUBLIC
+WITH HW;
+WITH Ellidiss::Math::Int;
+RENAMES Ellidiss::Math::Int::ALL;
+
+SYSTEM dataflow
+END dataflow;
+
+SYSTEM IMPLEMENTATION dataflow.others
+SUBCOMPONENTS
+  my_process : PROCESS my_process.others;
+  my_platform : SYSTEM HW::RMA_board.others;
+PROPERTIES
+  Actual_Processor_Binding => ( reference(my_platform.cpu) ) applies to my_process;
+END dataflow.others;
+
+PROCESS my_process
+FEATURES
+  input : IN DATA PORT int;
+  output : OUT DATA PORT int;
+END my_process;
+
+PROCESS IMPLEMENTATION my_process.others
+SUBCOMPONENTS
+  T1 : THREAD a_thread
+    { Dispatch_Protocol => Periodic;
+      Compute_Execution_Time => 3 ms .. 3 ms;
+      Period => 20 ms;
+      Deadline => 20 ms; };
+  T2 : THREAD a_thread
+    { Dispatch_Protocol => Periodic;
+      Compute_Execution_Time => 3 ms .. 3 ms;
+      Period => 20 ms;
+      Deadline => 20 ms; };
+  T3 : THREAD a_thread
+    { Dispatch_Protocol => Periodic;
+      Compute_Execution_Time => 3 ms .. 3 ms;
+      Period => 20 ms;
+      Deadline => 20 ms; };
+-- a fourth thread to disturb the sampling
+  T4 : THREAD a_thread
+    { Dispatch_Protocol => Periodic;
+      Compute_Execution_Time => 3 ms .. 3 ms;
+      Period => 15 ms;
+      Deadline => 15 ms; };
+CONNECTIONS
+  C0 : PORT input -> T1.input;
+  C1 : PORT T1.output -> T2.input;
+  C2 : PORT T2.output -> T3.input;
+  C3 : PORT T3.output -> output;
+PROPERTIES
+  Timing => sampled applies to C1, C2;
+--  Timing => immediate applies to C1, C2;
+--  Timing => delayed applies to C1, C2;
+END my_process.others;
+
+THREAD a_thread
+FEATURES
+  input : IN DATA PORT int;
+  output : OUT DATA PORT int;
+ANNEX Behavior_Specification {**
+  STATES s : INITIAL COMPLETE FINAL STATE;
+  TRANSITIONS t : s -[ ON DISPATCH ]-> s
+  { square!(input,output) };
+**};
+END a_thread;
+
+END dataflow_Pkg;
