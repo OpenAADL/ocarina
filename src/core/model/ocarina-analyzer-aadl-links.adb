@@ -1952,6 +1952,10 @@ package body Ocarina.Analyzer.AADL.Links is
                   when K_Component_Type | K_Component_Implementation =>
                      Corresponding_Container := Pointed_Node;
 
+                  when K_Connection =>
+                     Corresponding_Container :=
+                       Container_Component (Pointed_Node);
+
                   when others =>
                      --  These entities cannot have 'applies to'
                      --  clause in their property associations.

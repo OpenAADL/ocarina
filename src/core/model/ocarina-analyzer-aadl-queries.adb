@@ -1023,6 +1023,9 @@ package body Ocarina.Analyzer.AADL.Queries is
                       PO_Port_Connections
                     or else
                       Named_Element'Val (Category (List_Node)) =
+                      PO_Port_Connection
+                    or else
+                      Named_Element'Val (Category (List_Node)) =
                       PO_Connection
                     or else
                       Named_Element'Val (Category (List_Node)) =

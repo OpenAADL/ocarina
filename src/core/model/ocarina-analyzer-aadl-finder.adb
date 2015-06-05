@@ -1113,7 +1113,8 @@ package body Ocarina.Analyzer.AADL.Finder is
    is
       pragma Assert
         (Kind (Component) = K_Component_Implementation
-         or else Kind (Component) = K_Component_Type);
+         or else Kind (Component) = K_Component_Type
+         or else Kind (Component) = K_Port_Spec);
       pragma Assert (Kind (Identifier) = K_Identifier);
    begin
       return Find_Subclause_Declaration_Classifier
@@ -1148,6 +1149,7 @@ package body Ocarina.Analyzer.AADL.Finder is
         (Kind (Component) = K_Component_Implementation
          or else Kind (Component) = K_Component_Type
          or else Kind (Component) = K_Feature_Group_Type
+         or else Kind (Component) = K_Port_spec
          or else Kind (Component) = K_Subcomponent_Access);
       pragma Assert (Kind (Declaration_Identifier) = K_Identifier);
       pragma Assert (Subclause_Kinds'Length > 0);
