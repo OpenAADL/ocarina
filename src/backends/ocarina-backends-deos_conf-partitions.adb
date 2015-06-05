@@ -517,15 +517,13 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
                  and then Get_Connection_Pattern (F) = Inter_Process
                then
 
-                  if Is_Data (F) and then not Is_Event (F)
-                  then
+                  if Is_Data (F) and then not Is_Event (F) then
                      Append_Node_To_List
                         (Map_Sampling_Port (F),
                         XTN.Subitems (Sampling_Ports));
                   end if;
 
-                  if Is_Data (F) and then Is_Event (F)
-                  then
+                  if Is_Data (F) and then Is_Event (F) then
                      Append_Node_To_List
                         (Map_Queuing_Port (F),
                         XTN.Subitems (Queuing_Ports));

@@ -272,8 +272,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Feature := First_Node (Features (Corresponding_Process));
 
       while Present (Feature) loop
-         if Is_Event (Feature) and then Is_Data (Feature)
-         then
+         if Is_Event (Feature) and then Is_Data (Feature) then
             Size := To_Bytes (Get_Data_Size
                         (Corresponding_Instance (Feature)));
             Queue_Size := Get_Queue_Size (Feature);
@@ -326,8 +325,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
                                  XTN.Subitems (Ports_Node));
          end if;
 
-         if not Is_Event (Feature) and then Is_Data (Feature)
-         then
+         if not Is_Event (Feature) and then Is_Data (Feature) then
             Size := To_Bytes (Get_Data_Size
                         (Corresponding_Instance (Feature)));
 

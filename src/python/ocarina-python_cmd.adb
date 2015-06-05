@@ -135,6 +135,24 @@ package body Ocarina.Python_Cmd is
       Ocarina.Utils.Instantiate (Nth_Arg (Data, 1, ""));
    end On_Instantiate;
 
+   ----------------------
+   -- On_Get_AADL_Root --
+   ----------------------
+
+   procedure On_Get_AADL_Root
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_AADL_Root
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+   begin
+      Set_Return_Value (Data, Integer'Image (Integer (
+         Ocarina.ME_AADL.AADL_Instances.Nodes.Root_System (
+         Ocarina.Utils.Get_AADL_Root))));
+   end On_Get_AADL_Root;
+
    ----------------
    -- On_Analyze --
    ----------------
@@ -646,6 +664,11 @@ package body Ocarina.Python_Cmd is
       Register_Command
         (Repo, "instantiate", 1, 1,
          Handler => On_Instantiate'Unrestricted_Access);
+
+      --  getRoot() function
+      Register_Command
+        (Repo, "getRoot", 0, 0,
+         Handler => On_Get_AADL_Root'Unrestricted_Access);
 
       --  generate() function
       Register_Command

@@ -183,8 +183,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
       Feature := First_Node (Features (Corresponding_Process));
 
       while Present (Feature) loop
-         if Is_Data (Feature) and then Is_Out (Feature)
-         then
+         if Is_Data (Feature) and then Is_Out (Feature) then
             Port_Source := Feature;
             Port_Destination := Item (First_Node (Destinations (Feature)));
             Partition_Destination := Parent_Component (Port_Destination);

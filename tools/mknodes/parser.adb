@@ -1797,8 +1797,7 @@ package body Parser is
                Output_File := GNAT.OS_Lib.Standout;
 
             when 't' =>
-               if GNAT.Command_Line.Parameter = "python"
-               then
+               if GNAT.Command_Line.Parameter = "python" then
                   Target_Language := 2;
                end if;
 
@@ -2009,8 +2008,8 @@ package body Parser is
       end if;
 
       if Target_Language = 1 then
-          --  If the output is not the standard output, compute the spec
-          --  filename and redirect output.
+      --  If the output is not the standard output, compute the spec
+      --  filename and redirect output.
 
          if Output_Name /= Types.No_Name then
             Output_File :=
@@ -2037,8 +2036,8 @@ package body Parser is
       end if;
 
       if Target_Language = 2 then
-          --  If the output is not the standard output, compute the body
-          --  filename and redirect output.
+      --  If the output is not the standard output, compute the body
+      --  filename and redirect output.
 
          if Output_Name /= Types.No_Name then
             Output_Name := Utils.Remove_Suffix_From_Name (
@@ -2672,7 +2671,11 @@ package body Parser is
       Output.Write_Eol;
       Output.Write_Eol;
 
-      Output.Write_Str ("import libocarina_python; # Ocarina bindings");
+      Output.Write_Str ("import libocarina_python");
+      Output.Write_Eol;
+      Output.Write_Str ("# Ocarina bindings");
+      Output.Write_Eol;
+      Output.Write_Str ("from ocarina_common_tools import *");
       Output.Write_Eol;
       Output.Write_Eol;
 
@@ -2722,12 +2725,56 @@ package body Parser is
       Output.Write_Str (" (N):");
       Output.Write_Eol;
       W_Indentation (1);
-      Output.Write_Str ("return libocarina_python.");
+      Output.Write_Str ("info = io.BytesIO()");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("error = io.BytesIO()");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("raisedError = []");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("res = ''");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("with std_redirector(info,error):");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("try:");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("res = libocarina_python.");
       Output.Write_Str (Ada.Directories.Base_Name
                           (Namet.Get_Name_String (Output_Name)));
       Output.Write_Str ("_");
       Output.Write_Str (A);
-      Output.Write_Str (" (N);");
+      Output.Write_Str (" (");
+      Output.Write_Eol;
+      W_Indentation (4);
+      Output.Write_Str ("N)");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("except:");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("raisedError.append(getErrorMessage())");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("stderrMsg = sortStderrMessages(error");
+      Output.Write_Str (".getvalue().decode('utf-8'))");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("if stderrMsg[1]!=[]:");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("raisedError.append(stderrMsg[1])");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("return [ res , info.getvalue().");
+      Output.Write_Str ("decode('utf-8'), stderrMsg[0] , ");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("raisedError ]");
       Output.Write_Eol;
       Output.Write_Eol;
 
@@ -2739,12 +2786,56 @@ package body Parser is
       Output.Write_Str (" (N, V):");
       Output.Write_Eol;
       W_Indentation (1);
+      Output.Write_Str ("info = io.BytesIO()");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("error = io.BytesIO()");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("raisedError = []");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("res = ''");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("with std_redirector(info,error):");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("try:");
+      Output.Write_Eol;
+      W_Indentation (3);
       Output.Write_Str ("libocarina_python.");
       Output.Write_Str (Ada.Directories.Base_Name
                           (Namet.Get_Name_String (Output_Name)));
       Output.Write_Str ("_");
       Output.Write_Str (WS (A));
-      Output.Write_Str (" (N, V);");
+      Output.Write_Str (" (");
+      Output.Write_Eol;
+      W_Indentation (4);
+      Output.Write_Str ("N, V)");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("except:");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("raisedError.append(getErrorMessage())");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("stderrMsg = sortStderrMessages(error.");
+      Output.Write_Str ("getvalue().decode('utf-8'))");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("if stderrMsg[1]!=[]:");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("raisedError.append(stderrMsg[1])");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("return [ res , info.getvalue().");
+      Output.Write_Str ("decode('utf-8'), stderrMsg[0] , ");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("raisedError ]");
       Output.Write_Eol;
       Output.Write_Eol;
 
@@ -2770,12 +2861,56 @@ package body Parser is
       Output.Write_Str (" (N):");
       Output.Write_Eol;
       W_Indentation (1);
-      Output.Write_Str ("return libocarina_python.");
-      Output.Write_Str (Ada.Directories.Base_Name (
-         Namet.Get_Name_String (Output_Name)) & "_python");
+      Output.Write_Str ("info = io.BytesIO()");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("error = io.BytesIO()");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("raisedError = []");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("res = ''");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("with std_redirector(info,error):");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("try:");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("res = libocarina_python.");
+      Output.Write_Str (Ada.Directories.Base_Name
+         (Namet.Get_Name_String (Output_Name)) & "_python");
       Output.Write_Str ("_");
       Output.Write_Str (GNS (Identifier (A)));
-      Output.Write_Str (" (N);");
+      Output.Write_Str (" (");
+      Output.Write_Eol;
+      W_Indentation (4);
+      Output.Write_Str ("N)");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("except:");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("raisedError.append(getErrorMessage())");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("stderrMsg = sortStderrMessages(error.");
+      Output.Write_Str ("getvalue().decode('utf-8'))");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("if stderrMsg[1]!=[]:");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("raisedError.append(stderrMsg[1])");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("return [ res , info.getvalue().");
+      Output.Write_Str ("decode('utf-8'), stderrMsg[0] , ");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("raisedError ]");
       Output.Write_Eol;
       Output.Write_Eol;
 
@@ -2787,12 +2922,56 @@ package body Parser is
       Output.Write_Str (" (N, V):");
       Output.Write_Eol;
       W_Indentation (1);
+      Output.Write_Str ("info = io.BytesIO()");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("error = io.BytesIO()");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("raisedError = []");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("res = ''");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("with std_redirector(info,error):");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("try:");
+      Output.Write_Eol;
+      W_Indentation (3);
       Output.Write_Str ("libocarina_python.");
       Output.Write_Str (Ada.Directories.Base_Name
-                          (Namet.Get_Name_String (Output_Name)) & "_python");
+                  (Namet.Get_Name_String (Output_Name)) & "_python");
       Output.Write_Str ("_");
       Output.Write_Str (WS (GNS (Identifier (A))));
-      Output.Write_Str (" (N, V);");
+      Output.Write_Str (" (");
+      Output.Write_Eol;
+      W_Indentation (4);
+      Output.Write_Str ("N, V)");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("except:");
+      Output.Write_Eol;
+      W_Indentation (3);
+      Output.Write_Str ("raisedError.append(getErrorMessage())");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("stderrMsg = sortStderrMessages(error.");
+      Output.Write_Str ("getvalue().decode('utf-8'))");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("if stderrMsg[1]!=[]:");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("raisedError.append(stderrMsg[1])");
+      Output.Write_Eol;
+      W_Indentation (1);
+      Output.Write_Str ("return [ res , info.getvalue().");
+      Output.Write_Str ("decode('utf-8'), stderrMsg[0] , ");
+      Output.Write_Eol;
+      W_Indentation (2);
+      Output.Write_Str ("raisedError ]");
       Output.Write_Eol;
       Output.Write_Eol;
 
