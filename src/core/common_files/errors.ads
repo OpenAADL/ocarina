@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2012-2014 ESA & ISAE.                    --
+--                   Copyright (C) 2012-2015 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -67,6 +67,14 @@ package Errors is
    N_Warnings : Int := 0;
 
    procedure Display_Bug_Box (E : Ada.Exceptions.Exception_Occurrence);
+
+   --  Error reporting
+   --  * by default, Exit_On_Error directly exists;
+   --  * if Use_Exception_To_Exit is called, Exit_On_Error raises the
+   --    Ocarina_Error exception
+
+   procedure Use_Exception_To_Exit;
+   Ocarina_Error : exception;
 
    procedure Exit_On_Error (Error : Boolean; Reason : String);
 

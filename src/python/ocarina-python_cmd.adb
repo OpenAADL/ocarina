@@ -42,6 +42,7 @@ with Ocarina.Configuration;      use Ocarina.Configuration;
 with GNATCOLL.VFS;               use GNATCOLL.VFS;
 with Ocarina.Output;             use Ocarina.Output;
 
+with Errors;
 with Ocarina.Types;              use Ocarina.Types;
 with Ocarina.Utils;              use Ocarina.Utils;
 with Ocarina.Lmp;                use Ocarina.Lmp;
@@ -697,6 +698,7 @@ package body Ocarina.Python_Cmd is
       Default_AADL_Version := Get_Default_AADL_Version;
       AADL_Version         := Ocarina.AADL_V2;
       Ocarina.Configuration.Init_Modules;
+      Errors.Use_Exception_To_Exit;
 
       --  Initialize Python bindings
       Repo := Register_Scripts_And_Functions;

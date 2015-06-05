@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -38,6 +38,17 @@ with Ocarina.Output;                    use Ocarina.Output;
 with Ocarina.Namet;                     use Ocarina.Namet;
 
 package body Errors is
+
+   ---------------------------
+   -- Use_Exception_To_Exit --
+   ---------------------------
+
+   Use_Exception : Boolean := True;
+
+   procedure Use_Exception_To_Exit is
+   begin
+      Use_Exception := True;
+   end Use_Exception_To_Exit;
 
    procedure Internal_Display_Message (S : String);
 
@@ -230,8 +241,12 @@ package body Errors is
    begin
       if Error then
          Set_Standard_Error;
-         Write_Line (Reason);
-         OS_Exit (1);
+         if Use_Exception then
+            raise Ocarina_Error with Reason;
+         else
+            Write_Line (Reason);
+            OS_Exit (1);
+         end if;
       end if;
    end Exit_On_Error;
 
