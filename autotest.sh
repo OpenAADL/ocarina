@@ -186,7 +186,7 @@ if test  $# != 0 ; then
 	    ;;
 	--lcov|-l)
 	    lcov -d . -c -o ocarina.gcov-info -t ocarina
-	    genhtml -o html -s -f ocarina.gcov-info 
+	    genhtml -o html -s -f ocarina.gcov-info
 	    exit 0
 	    ;;
 	--clean|-c)
@@ -226,11 +226,11 @@ if test ${doprojects} = "true" ; then
     if test $? != 0 ; then
 	banner "Projects" FAILED
 	failures=`expr ${failures} + 1`
-	
+
     else
 	passed ${entry}
     fi;
-    
+
     cd ${old_dir}
 fi
 
@@ -239,7 +239,7 @@ if test ${doall} = "true" ; then
     if test $? != 0 ; then
 	banner "Ocarina_Core" FAILED
 	failures=`expr ${failures} + 1`
-	
+
     else
 	banner "Ocarina_Core" PASSED
     fi;
@@ -248,7 +248,7 @@ if test ${doall} = "true" ; then
     if test $? != 0 ; then
 	banner "Runtimes" FAILED
 	failures=`expr ${failures} + 1`
-	
+
     else
 	banner "Runtimes" PASSED
     fi;
@@ -257,7 +257,7 @@ if test ${doall} = "true" ; then
     if test $? != 0 ; then
 	banner "Projects" FAILED
 	failures=`expr ${failures} + 1`
-	
+
     else
 	banner "Projects" PASSED
     fi;
@@ -341,7 +341,7 @@ if test ${dotests} = "true" ; then
 
 	    real_lib_base=`dirname ${file}`
 	    real_libs_nb=`ls ${real_lib_base} | grep "\.real" | wc -l` > /dev/null
-	    if [ ${real_libs_nb} -gt 0 ] 
+	    if [ ${real_libs_nb} -gt 0 ]
 		then
 		real_lib=`dirname ${file}`/"*.real"
 		cp -f ${real_lib} .
@@ -350,7 +350,7 @@ if test ${dotests} = "true" ; then
 	    flags=${default_flags}
 	    version=${default_version}
             if test -r ${manifest}; then
-		flags=`grep OCARINA_FLAGS ${manifest} | awk -F= '{print $2}'`
+		flags=`grep OCARINA_FLAGS ${manifest} | sed  's/OCARINA_FLAGS=//'`
 		version=`grep AADL_VERSION ${manifest} | awk -F= '{print $2}'`
 		flags=${flags:-${default_flags}}
 		version=${version:-${default_version}}
