@@ -1,3 +1,3 @@
-AADL_VERSION=-aadlv2 -disable-annexes=all
-OCARINA_FLAGS=
+AADL_VERSION=-aadlv2
+OCARINA_FLAGS=-disable-annexes=all
 
