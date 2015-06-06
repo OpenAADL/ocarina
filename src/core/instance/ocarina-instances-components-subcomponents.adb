@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -72,18 +72,18 @@ package body Ocarina.Instances.Components.Subcomponents is
       New_Instance    : Node_Id := No_Node;
       New_Subinstance : Node_Id;
    begin
+      New_Instance :=
+        New_Node (K_Subcomponent_Instance, ATN.Loc (Subcomponent));
+      AIN.Set_Identifier
+        (New_Instance,
+         Duplicate_Identifier (ATN.Identifier (Subcomponent)));
+      AIN.Set_Corresponding_Declaration (New_Instance, Subcomponent);
+      Set_Destinations (New_Instance, New_List (K_List_Id, No_Location));
+
       if Present (Entity_Ref (Subcomponent))
         and then Present
           (ATE.Get_Referenced_Entity (Entity_Ref (Subcomponent)))
       then
-         New_Instance :=
-           New_Node (K_Subcomponent_Instance, ATN.Loc (Subcomponent));
-         AIN.Set_Identifier
-           (New_Instance,
-            Duplicate_Identifier (ATN.Identifier (Subcomponent)));
-         AIN.Set_Corresponding_Declaration (New_Instance, Subcomponent);
-         Set_Destinations (New_Instance, New_List (K_List_Id, No_Location));
-
          --  Verify whether the component has been instantiateed or not
 
          New_Subinstance :=
@@ -103,7 +103,6 @@ package body Ocarina.Instances.Components.Subcomponents is
          end if;
       else
          Display_No_Entity_Ref (Subcomponent);
-         Display_Instantiation_Error (Subcomponent);
       end if;
 
       return New_Instance;

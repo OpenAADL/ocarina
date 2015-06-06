@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -249,9 +249,11 @@ package body Ocarina.Instances.Components is
                      --  subcomponent with the current AADL component
                      --  implementation.
 
-                     Annotate
-                       (ATE.Get_Referenced_Entity (Entity_Ref (List_Node)),
-                        Component);
+                     if Present (Entity_Ref (List_Node)) then
+                        Annotate
+                          (ATE.Get_Referenced_Entity (Entity_Ref (List_Node)),
+                           Component);
+                     end if;
 
                      --  Set the component instance and the
                      --  subcomponent instance.
@@ -265,14 +267,15 @@ package body Ocarina.Instances.Components is
                      --  We apply the properties to the component
                      --  corresponding to the subcomponent.
 
-                     Success :=
-                       Apply_Properties
-                         (Instance_Root,
-                          Corresponding_Instance (Instance_Node),
-                          ATN.Properties (List_Node),
-                          Override_Mode => True)
-                       and then Success;
-
+                     if Present (Entity_Ref (List_Node)) then
+                        Success :=
+                          Apply_Properties
+                          (Instance_Root,
+                           Corresponding_Instance (Instance_Node),
+                           ATN.Properties (List_Node),
+                           Override_Mode => True)
+                          and then Success;
+                     end if;
                   else
                      Display_Instantiation_Error (List_Node);
                      Success := False;

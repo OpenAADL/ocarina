@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -683,9 +683,11 @@ package body Ocarina.Instances.Processor.Properties is
          List_Node := AIN.First_Node (AIN.Subcomponents (Component));
 
          while Present (List_Node) loop
-            Resolve_Properties_Of_Component_Instance
-              (Root      => Root,
-               Component => Corresponding_Instance (List_Node));
+            if Present (Corresponding_Instance (List_Node)) then
+               Resolve_Properties_Of_Component_Instance
+                 (Root      => Root,
+                  Component => Corresponding_Instance (List_Node));
+            end if;
             List_Node := AIN.Next_Node (List_Node);
          end loop;
       end if;

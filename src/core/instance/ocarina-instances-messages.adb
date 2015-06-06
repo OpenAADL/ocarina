@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
 -- it under terms of the GNU General Public License as published by the     --
@@ -54,7 +54,7 @@ package body Ocarina.Instances.Messages is
       pragma Assert (Present (Node));
       Error_Loc (1)  := Loc (Node);
       Error_Name (1) := Get_Name_Of_Entity (Node);
-      DE ("%is not associated with any entity");
+      DW ("%is not associated with any entity");
    end Display_No_Entity_Ref;
 
    ----------------------------------------
