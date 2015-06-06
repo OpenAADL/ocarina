@@ -155,6 +155,23 @@ package body Ocarina.Instances is
       Root_System   : Node_Id := No_Node;
       List_Node     : Node_Id;
 
+      procedure Report_Root_Systems_To_User;
+
+      procedure Report_Root_Systems_To_User is
+      begin
+         Error_Loc (1) := No_Location;
+         DE ("Please select a root system among ");
+         List_Node := Root_Systems.First;
+         while Present (List_Node) loop
+            Error_Loc (1)  := ATN.Loc (List_Node);
+            Error_Name (1) := ATE.Get_Name_Of_Entity
+                    (List_Node, False, True);
+            DE ("%");
+            List_Node := ATN.Next_Entity (List_Node);
+         end loop;
+         Exit_On_Error (True, "Cannot instantiate AADL model");
+      end Report_Root_Systems_To_User;
+
    begin
       Errors.Initialize;
       N_Errors   := 0;
@@ -166,7 +183,6 @@ package body Ocarina.Instances is
       Root_Systems := Find_All_Root_Systems (Root);
 
       if Root_Systems.First /= Root_Systems.Last then
-
          --  If the user provided a particular root system to
          --  instantiate, find this system in the root system
          --  list. Otherwise, display an error message indicating that
@@ -186,27 +202,24 @@ package body Ocarina.Instances is
             end loop;
 
             if Present (List_Node) then
+               --  We found a root system matching user name, use it
                Root_System := List_Node;
+            else
+               --  Else report error to user
+               Report_Root_Systems_To_User;
             end if;
 
          else
-            Error_Loc (1) := No_Location;
-            DE ("Please select a root system among ");
-            List_Node := Root_Systems.First;
-            while Present (List_Node) loop
-               Error_Loc (1)  := ATN.Loc (List_Node);
-               Error_Name (1) := ATE.Get_Name_Of_Entity
-                 (List_Node, False, True);
-               DE ("%");
-               List_Node := ATN.Next_Entity (List_Node);
-            end loop;
-            Exit_On_Error (True, "Cannot instantiate AADL model");
+            --  User provided no root system, there are multiple ones,
+            --  report and exit
+            Report_Root_Systems_To_User;
          end if;
 
       else
          --  If there is only one root system, choose it
 
          Root_System := Root_Systems.First;
+
          if No (Root_System) then
             Error_Loc (1) := No_Location;
             DE ("Cannot find a root system");
