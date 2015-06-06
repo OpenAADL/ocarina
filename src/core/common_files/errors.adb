@@ -34,8 +34,8 @@
 with Ada.Command_Line;          use Ada.Command_Line;
 with GNAT.OS_Lib;               use GNAT.OS_Lib;
 with GNAT.Directory_Operations; use GNAT.Directory_Operations;
-with Ocarina.Output;                    use Ocarina.Output;
-with Ocarina.Namet;                     use Ocarina.Namet;
+with Ocarina.Output;            use Ocarina.Output;
+with Ocarina.Namet;             use Ocarina.Namet;
 
 package body Errors is
 
@@ -43,7 +43,7 @@ package body Errors is
    -- Use_Exception_To_Exit --
    ---------------------------
 
-   Use_Exception : Boolean := True;
+   Use_Exception : Boolean := False;
 
    procedure Use_Exception_To_Exit is
    begin
