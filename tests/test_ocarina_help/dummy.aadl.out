@@ -71,6 +71,6 @@ Usage:
    -disable-annexes={annexes}  Desactive one or all annexes
        Annexes :
         all
-        behavior
+        behavior_specification
         real
 

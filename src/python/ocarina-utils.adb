@@ -167,7 +167,7 @@ package body Ocarina.Utils is
                     & "  Desactive one or all annexes");
       Write_Line ("       Annexes :");
       Write_Line ("        all");
-      Write_Line ("        behavior");
+      Write_Line ("        behavior_specification");
       Write_Line ("        real");
       Write_Eol;
 
