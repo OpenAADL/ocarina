@@ -16,4 +16,5 @@ ocarina_python = ${shell $(CYGPATH_U) '$(includedir)/ocarina/runtime/python'}
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(ocarina_python)
-	pip install --user .
+	pip install --user $(srcdir)
+
