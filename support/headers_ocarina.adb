@@ -6,25 +6,23 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2012 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
 --                                                                          --
--- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --
--- it under terms of the GNU General Public License as published by the     --
--- Free Software Foundation; either version 2, or (at your option) any      --
--- later version. Ocarina is distributed  in  the  hope  that it will be    --
--- useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  --
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General --
--- Public License for more details. You should have received  a copy of the --
--- GNU General Public License distributed with Ocarina; see file COPYING.   --
--- If not, write to the Free Software Foundation, 51 Franklin Street, Fifth --
--- Floor, Boston, MA 02111-1301, USA.                                       --
+-- Ocarina  is free software; you can redistribute it and/or modify under   --
+-- terms of the  GNU General Public License as published  by the Free Soft- --
+-- ware  Foundation;  either version 3,  or (at your option) any later ver- --
+-- sion. Ocarina is distributed in the hope that it will be useful, but     --
+-- WITHOUT ANY WARRANTY; without even the implied warranty of               --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     --
 --                                                                          --
--- As a special exception,  if other files  instantiate  generics from this --
--- unit, or you link  this unit with other files  to produce an executable, --
--- this  unit  does not  by itself cause  the resulting  executable to be   --
--- covered  by the  GNU  General  Public  License. This exception does not  --
--- however invalidate  any other reasons why the executable file might be   --
--- covered by the GNU Public License.                                       --
+-- As a special exception under Section 7 of GPL version 3, you are granted --
+-- additional permissions described in the GCC Runtime Library Exception,   --
+-- version 3.1, as published by the Free Software Foundation.               --
+--                                                                          --
+-- You should have received a copy of the GNU General Public License and    --
+-- a copy of the GCC Runtime Library Exception along with this program;     --
+-- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
+-- <http://www.gnu.org/licenses/>.                                          --
 --                                                                          --
 --                 Ocarina is maintained by the TASTE project               --
 --                      (taste-users@lists.tuxfamily.org)                   --
@@ -59,23 +57,21 @@ procedure Headers_Ocarina is
    "--                                                                          --" & ASCII.LF &
    "@COPYRIGHT@" &
    "--                                                                          --" & ASCII.LF &
-   "-- Ocarina  is free software;  you  can  redistribute  it and/or  modify    --" & ASCII.LF &
-   "-- it under terms of the GNU General Public License as published by the     --" & ASCII.LF &
-   "-- Free Software Foundation; either version 2, or (at your option) any      --" & ASCII.LF &
-   "-- later version. Ocarina is distributed  in  the  hope  that it will be    --" & ASCII.LF &
-   "-- useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  --" & ASCII.LF &
-   "-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General --" & ASCII.LF &
-   "-- Public License for more details. You should have received  a copy of the --" & ASCII.LF &
-   "-- GNU General Public License distributed with Ocarina; see file COPYING.   --" & ASCII.LF &
-   "-- If not, write to the Free Software Foundation, 51 Franklin Street, Fifth --" & ASCII.LF &
-   "-- Floor, Boston, MA 02111-1301, USA.                                       --" & ASCII.LF &
+   "-- Ocarina  is free software; you can redistribute it and/or modify under   --" & ASCII.LF &
+   "-- terms of the  GNU General Public License as published  by the Free Soft- --" & ASCII.LF &
+   "-- ware  Foundation;  either version 3,  or (at your option) any later ver- --" & ASCII.LF &
+   "-- sion. Ocarina is distributed in the hope that it will be useful, but     --" & ASCII.LF &
+   "-- WITHOUT ANY WARRANTY; without even the implied warranty of               --" & ASCII.LF &
+   "-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     --" & ASCII.LF &
    "--                                                                          --" & ASCII.LF &
-   "-- As a special exception,  if other files  instantiate  generics from this --" & ASCII.LF &
-   "-- unit, or you link  this unit with other files  to produce an executable, --" & ASCII.LF &
-   "-- this  unit  does not  by itself cause  the resulting  executable to be   --" & ASCII.LF &
-   "-- covered  by the  GNU  General  Public  License. This exception does not  --" & ASCII.LF &
-   "-- however invalidate  any other reasons why the executable file might be   --" & ASCII.LF &
-   "-- covered by the GNU Public License.                                       --" & ASCII.LF &
+   "-- As a special exception under Section 7 of GPL version 3, you are granted --" & ASCII.LF &
+   "-- additional permissions described in the GCC Runtime Library Exception,   --" & ASCII.LF &
+   "-- version 3.1, as published by the Free Software Foundation.               --" & ASCII.LF &
+   "--                                                                          --" & ASCII.LF &
+   "-- You should have received a copy of the GNU General Public License and    --" & ASCII.LF &
+   "-- a copy of the GCC Runtime Library Exception along with this program;     --" & ASCII.LF &
+   "-- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --" & ASCII.LF &
+   "-- <http://www.gnu.org/licenses/>.                                          --" & ASCII.LF &
    "--                                                                          --" & ASCII.LF &
    "--                 Ocarina is maintained by the TASTE project               --" & ASCII.LF &
    "--                      (taste-users@lists.tuxfamily.org)                   --" & ASCII.LF &
