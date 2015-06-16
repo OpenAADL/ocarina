@@ -37,22 +37,14 @@ standards and proposes the following features :
   scheduling analysis tool from the Université de Bretagne
   Occidentale, and MAST from the University of Cantabria
 
+Licence
+#######
 
-Ocarina is distributed under the GNAT Modified GPL licence, or
-GMGPL. The GMGPL is an extension of GPLv2, adding the following
-provision:
+Ocarina is distributed under the GPLv3 plus runtime exception.
 
-        As a special exception, if other files instantiate generics
-        from this unit, or you link this unit with other files to
-        produce an executable, this unit does not by itself cause the
-        resulting executable to be covered by the GNU General Public
-        License. This exception does not however invalidate any other
-        reasons why the executable file might be covered by the GNU
-        Public License.
-
-The GMGPL guarantees that Ocarina, but also the code it generates can
-be distributed under customer-specific terms and
-conditions. Specifically, the GMGPL ensures that you can generate
+The GPLv3 plus runtime exception guarantees that Ocarina, but also the
+code it generates can be distributed under customer-specific terms and
+conditions. Specifically, the licence ensures that you can generate
 proprietary, classified, or otherwise restricted executables.
 
 About AADL

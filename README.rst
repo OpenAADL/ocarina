@@ -19,10 +19,9 @@ code generation examples. For more details, read the examples/README file
 
 * Documentation
 
-The documentation of Ocarina is located in the doc/ directory. The
-documentation is automatically built and installed when running
-'make install'. To build the documentation manually just run 'make html'
-or 'make pdf' in the doc/ directory.
+The documentation of Ocarina is located in the doc/ directory. To
+build the documentation manually just run 'make html' or 'make pdf' in
+the doc/ directory.
 
 .. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=latest
     :alt: Documentation Status
