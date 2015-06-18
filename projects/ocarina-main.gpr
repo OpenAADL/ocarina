@@ -52,7 +52,7 @@ project Ocarina.Main is
    package Linker renames Ocarina.Linker;
 
    package Builder is
-      for Executable ("ocarina_cmd") use "ocarina";
+      for Executable ("ocarina_cmd.adb") use "ocarina";
       for Default_Switches ("Ada") use
         Ocarina.Builder'Default_Switches ("Ada");
    end Builder;
