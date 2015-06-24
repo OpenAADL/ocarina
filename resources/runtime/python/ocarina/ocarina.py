@@ -62,11 +62,11 @@ def load (filename):
         try:
             libocarina_python.load (filename)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -80,11 +80,11 @@ def analyze ():
         try:
             res = libocarina_python.analyze ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -95,20 +95,20 @@ def instantiate (root_system):
     :type root_system: string
 
     '''
-    
+
     info = io.BytesIO()
     error = io.BytesIO()
     raisedError = []
     res = ''
     with std_redirector(info,error):
         try:
-            libocarina_python.instantiate (root_system)
+            res = libocarina_python.instantiate (root_system)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -133,11 +133,11 @@ def generate (generator):
         try:
             libocarina_python.generate (Backends[generator])
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -153,17 +153,17 @@ def getPackages ():
         try:
             res = libocarina_python.getPackages()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getImportDeclarations ():
-    '''Return the list of all the import declaration used in the 
+    '''Return the list of all the import declaration used in the
     current AADL project
     '''
     info = io.BytesIO()
@@ -178,13 +178,13 @@ def getImportDeclarations ():
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getAliasDeclarations ():
-    '''Return the list of all the alias declaration defined in the 
+    '''Return the list of all the alias declaration defined in the
     current AADL project
     '''
     info = io.BytesIO()
@@ -195,11 +195,11 @@ def getAliasDeclarations ():
         try:
             res = libocarina_python.getAliasDeclarations ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -222,22 +222,22 @@ def getComponentTypes (category):
         try:
             res = libocarina_python.getComponentTypes (category)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getComponentImplementations (category):
-    '''Return a list of component implementations defined in the 
+    '''Return a list of component implementations defined in the
     current AADL project
 
     :param category: one of the AADL category defined in the standard
 
-    For instance, to retrieve all the system implementations from the 
+    For instance, to retrieve all the system implementations from the
     current project, you may use the following
 
     >>> getComponentImplementations (System)
@@ -250,11 +250,11 @@ def getComponentImplementations (category):
         try:
             res = libocarina_python.getComponentImplementations (category)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -270,11 +270,11 @@ def getAnnexes ():
         try:
             res = libocarina_python.getAnnexes ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -290,17 +290,17 @@ def getPrototypes ():
         try:
             res = libocarina_python.getPrototypes ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getPrototypeBindings ():
-    '''Return the list of all the prototype bindings defined in the 
+    '''Return the list of all the prototype bindings defined in the
     current AADL project
     '''
     info = io.BytesIO()
@@ -311,17 +311,17 @@ def getPrototypeBindings ():
         try:
             res = libocarina_python.getPrototypeBindings ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getFlowSpecifications ():
-    '''Return the list of all the flow specification defined in the 
+    '''Return the list of all the flow specification defined in the
     current AADL project
     '''
     info = io.BytesIO()
@@ -332,17 +332,17 @@ def getFlowSpecifications ():
         try:
             res = libocarina_python.getFlowSpecifications ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getFlowImplementations ():
-    '''Return the list of all the flow implementation defined in the 
+    '''Return the list of all the flow implementation defined in the
     current AADL project
     '''
     info = io.BytesIO()
@@ -353,11 +353,11 @@ def getFlowImplementations ():
         try:
             res = libocarina_python.getFlowImplementations ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -373,17 +373,17 @@ def getModes ():
         try:
             res = libocarina_python.getModes ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getModeTransitions ():
-    '''Return the list of all the mode transition defined in the 
+    '''Return the list of all the mode transition defined in the
     current AADL project
     '''
     info = io.BytesIO()
@@ -394,11 +394,11 @@ def getModeTransitions ():
         try:
             res = libocarina_python.getModeTransitions ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -414,17 +414,17 @@ def getInModes ():
         try:
             res = libocarina_python.getInModes ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getPropertySets ():
-    '''Return the list of all the property set defined in the 
+    '''Return the list of all the property set defined in the
     current AADL project
     '''
     info = io.BytesIO()
@@ -435,23 +435,23 @@ def getPropertySets ():
         try:
             res = libocarina_python.getPropertySets ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getPropertyTypes (propertySetId):
-    '''Return the list of all the property types defined in the 
+    '''Return the list of all the property types defined in the
     provided property set
 
-    :param propertySetId: the nodeId of the property set in the 
+    :param propertySetId: the nodeId of the property set in the
     current AADL project to serach in
 
-    For instance, to retrieve all the property types from property 
+    For instance, to retrieve all the property types from property
     set propertySet, retrieve its id (propertySetId) and use the following
 
     >>> getPropertyTypes (propertySetId)
@@ -464,24 +464,24 @@ def getPropertyTypes (propertySetId):
         try:
             res = libocarina_python.getPropertyTypes (propertySetId)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getPropertyDefinitions (propertySetId):
-    '''Return the list of all the property declaration defined in the 
+    '''Return the list of all the property declaration defined in the
     provided property set
 
-    :param propertySetId: the nodeId of the property set in the 
+    :param propertySetId: the nodeId of the property set in the
     current AADL project to serach in
 
-    For instance, to retrieve all the property declaration from 
-    property set propertySet, retrieve its id (propertySetId) 
+    For instance, to retrieve all the property declaration from
+    property set propertySet, retrieve its id (propertySetId)
     and use the following
 
     >>> getPropertyDefinitions (propertySetId)
@@ -494,23 +494,23 @@ def getPropertyDefinitions (propertySetId):
         try:
             res = libocarina_python.getPropertyDefinitions (propertySetId)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
 
 def getPropertyConstants (propertySetId):
-    '''Return the list of all the constant property defined in the 
+    '''Return the list of all the constant property defined in the
     provided property set
 
-    :param propertySetId: the nodeId of the property set in the 
+    :param propertySetId: the nodeId of the property set in the
     current AADL project to serach in
 
-    For instance, to retrieve all the constant property from property 
+    For instance, to retrieve all the constant property from property
     set propertySet, retrieve its id (propertySetId) and use the following
 
     >>> getPropertyConstants (propertySetId)
@@ -523,11 +523,11 @@ def getPropertyConstants (propertySetId):
         try:
             res = libocarina_python.getPropertyConstants (propertySetId)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -550,11 +550,11 @@ def getInstances (category):
         try:
             res = libocarina_python.getInstances (category)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -577,11 +577,11 @@ def getComponentName (nodeId):
         try:
             res = libocarina_python.getComponentName (nodeId)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -609,7 +609,7 @@ def getComponentFullname (nodeId):
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -632,11 +632,11 @@ def getInstanceName (nodeId):
         try:
             res = libocarina_python.getInstanceName (nodeId)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -658,11 +658,11 @@ def getNodeId (name):
         try:
             res = libocarina_python.getNodeId (name)
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
 
 ################################################################################
@@ -678,9 +678,9 @@ def getRoot ():
         try:
             res = libocarina_python.getRoot ()
         except:
-            raisedError.append(getErrorMessage()) 
+            raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] , 
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
         raisedError ]
