@@ -48,7 +48,7 @@ package Ocarina.Utils is
 
    procedure Load_AADL_File (Filename : String);
    function Analyze return Boolean;
-   procedure Instantiate (Root_System : String);
+   function Instantiate (Root_System : String) return Boolean;
    procedure Generate (Backend_Name : String);
    procedure Reset;
 

@@ -222,7 +222,8 @@ package body Ocarina.Utils is
    -- Instantiate --
    -----------------
 
-   procedure Instantiate (Root_System : String) is
+   function Instantiate (Root_System : String) return Boolean is
+      Success : Boolean;
    begin
       if Root_System /= "" then
          Root_System_Name := To_Lower
@@ -231,7 +232,12 @@ package body Ocarina.Utils is
       AADL_Root := Instantiate_Model (AADL_Root);
       if Present (AADL_Root) then
          Write_Line ("Model instantiated sucessfully");
+         Success := True;
+      else
+         Success := False;
       end if;
+
+      return Success;
    end Instantiate;
 
    --------------

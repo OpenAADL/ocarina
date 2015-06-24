@@ -129,8 +129,11 @@ package body Ocarina.Python_Cmd is
       Command : String)
    is
       pragma Unreferenced (Command);
+      Result : constant Boolean :=
+        Ocarina.Utils.Instantiate (Nth_Arg (Data, 1, ""));
+
    begin
-      Ocarina.Utils.Instantiate (Nth_Arg (Data, 1, ""));
+      Set_Return_Value (Data, Result);
    end On_Instantiate;
 
    ----------------------
