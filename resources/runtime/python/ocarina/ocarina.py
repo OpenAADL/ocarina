@@ -54,38 +54,13 @@ def load (filename):
     >>> load("foo.aadl")
 
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            libocarina_python.load (filename)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+    return runOcarinaFunction (libocarina_python.load, filename)
 
 ################################################################################
 def analyze ():
     '''Analyze models'''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.analyze ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.analyze)
 
 ################################################################################
 def instantiate (root_system):
@@ -96,20 +71,7 @@ def instantiate (root_system):
 
     '''
 
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.instantiate (root_system)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+    return runOcarinaFunction (libocarina_python.instantiate, root_system)
 
 ################################################################################
 Backends = Enum ([ "polyorb_hi_ada", "polyorb_hi_c"])
@@ -125,61 +87,25 @@ def generate (generator):
 
     >>> generate (Backends.polyorb_hi_ada)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            libocarina_python.generate (Backends[generator])
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.generate, Backends[generator])
 
 ################################################################################
 
 def getPackages ():
     '''Return the list of all the packages defined in the current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getPackages()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getPackages)
 
 ################################################################################
 
 def getImportDeclarations ():
-    '''Return the list of all the import declaration used in the
+    '''Return the list of all the import declarations used in the
     current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getImportDeclarations()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getImportDeclarations)
 
 ################################################################################
 
@@ -187,20 +113,8 @@ def getAliasDeclarations ():
     '''Return the list of all the alias declaration defined in the
     current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getAliasDeclarations ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getAliasDeclarations)
 
 ################################################################################
 
@@ -214,20 +128,8 @@ def getComponentTypes (category):
 
     >>> getComponentTypes (System)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getComponentTypes (category)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getComponentTypes, category)
 
 ################################################################################
 
@@ -242,60 +144,23 @@ def getComponentImplementations (category):
 
     >>> getComponentImplementations (System)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getComponentImplementations (category)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+    return runOcarinaFunction (libocarina_python.getComponentImplementations, category)
 
 ################################################################################
 
 def getAnnexes ():
     '''Return the list of all the annexes defined in the current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getAnnexes ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getAnnexes)
 
 ################################################################################
 
 def getPrototypes ():
     '''Return the list of all the prototypes defined in the current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getPrototypes ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getPrototypes)
 
 ################################################################################
 
@@ -303,20 +168,8 @@ def getPrototypeBindings ():
     '''Return the list of all the prototype bindings defined in the
     current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getPrototypeBindings ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getPrototypeBindings)
 
 ################################################################################
 
@@ -324,20 +177,8 @@ def getFlowSpecifications ():
     '''Return the list of all the flow specification defined in the
     current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getFlowSpecifications ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getFlowSpecifications)
 
 ################################################################################
 
@@ -345,40 +186,16 @@ def getFlowImplementations ():
     '''Return the list of all the flow implementation defined in the
     current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getFlowImplementations ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getFlowImplementations)
 
 ################################################################################
 
 def getModes ():
     '''Return the list of all the modes defined in the current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getModes ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getModes)
 
 ################################################################################
 
@@ -386,40 +203,15 @@ def getModeTransitions ():
     '''Return the list of all the mode transition defined in the
     current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getModeTransitions ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getModeTransitions)
 
 ################################################################################
 
 def getInModes ():
     '''Return the list of all the in mode used in the current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getInModes ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
 
 ################################################################################
 
@@ -427,20 +219,8 @@ def getPropertySets ():
     '''Return the list of all the property set defined in the
     current AADL project
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getPropertySets ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getPropertySets)
 
 ################################################################################
 
@@ -456,20 +236,8 @@ def getPropertyTypes (propertySetId):
 
     >>> getPropertyTypes (propertySetId)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getPropertyTypes (propertySetId)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getPropertyTypes, propertySetId)
 
 ################################################################################
 
@@ -486,20 +254,8 @@ def getPropertyDefinitions (propertySetId):
 
     >>> getPropertyDefinitions (propertySetId)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getPropertyDefinitions (propertySetId)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getPropertyDefinitions, propertySetId)
 
 ################################################################################
 
@@ -515,20 +271,8 @@ def getPropertyConstants (propertySetId):
 
     >>> getPropertyConstants (propertySetId)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getPropertyConstants (propertySetId)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getPropertyConstants,propertySetId)
 
 ################################################################################
 
@@ -542,20 +286,8 @@ def getInstances (category):
 
     >>> getInstances (System)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getInstances (category)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getInstances, category)
 
 ################################################################################
 
@@ -569,20 +301,8 @@ def getComponentName (nodeId):
 
     >>> getComponentName (nodeId)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getComponentName (nodeId)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getComponentName, nodeId)
 
 ################################################################################
 
@@ -597,20 +317,8 @@ def getComponentFullname (nodeId):
 
     >>> getComponentFullname (nodeId)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getComponentFullname (nodeId)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getComponentFullname, nodeId)
 
 ################################################################################
 
@@ -624,20 +332,8 @@ def getInstanceName (nodeId):
 
     >>> getInstanceName (nodeId)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getInstanceName (nodeId)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getInstanceName, nodeId)
 
 ################################################################################
 
@@ -650,37 +346,13 @@ def getNodeId (name):
 
     >>> getNodeId (MyHome)
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getNodeId (name)
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getNodeId, name)
 
 ################################################################################
 
 def getRoot ():
     '''Get the Id of the current root instantiated model
     '''
-    info = io.BytesIO()
-    error = io.BytesIO()
-    raisedError = []
-    res = ''
-    with std_redirector(info,error):
-        try:
-            res = libocarina_python.getRoot ()
-        except:
-            raisedError.append(getErrorMessage())
-    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
-    if stderrMsg[1]!=[]:
-        raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+
+    return runOcarinaFunction (libocarina_python.getRoot)
