@@ -1,12 +1,12 @@
 #! /usr/bin/python
 '''
-:mod:`ocarina_common_tools` -- Tools used by Python binding 
+:mod:`ocarina_common_tools` -- Tools used by Python binding
 to the Ocarina AADL processor
 ==============================================================
 
 .. moduleauthor:: Jerome Hugues, Arnaud Schach
 
-This module provides tools to be used by the Python scripts 
+This module provides tools to be used by the Python scripts
 form the Python binding to the Ocarina AADL processor.
 
 '''
@@ -21,8 +21,27 @@ try:
     import io
     import os
     import tempfile
+    import platform
+
 except ImportError:
     pass
+
+################################################################################
+def runOcarinaFunction (f, *parameters):
+    info = io.BytesIO()
+    error = io.BytesIO()
+    raisedError = []
+    res = ''
+    with std_redirector(info,error):
+        try:
+            res = f (*parameters)
+        except:
+            raisedError.append(getErrorMessage())
+    stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
+    if stderrMsg[1]!=[]:
+        raisedError.append(stderrMsg[1])
+    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
+        raisedError ]
 
 ################################################################################
 
@@ -46,11 +65,11 @@ def sortStderrMessages (messages):
     '''Get the error and warning messages from the stderr
 
     :param messages: the messages written on stderr
-    
+
     return a pair of the form [ warnings , errors ]
-    
+
     '''
-    
+
     msgType = 'error'
     warningMsg = ''
     errorMsg = ''
@@ -92,8 +111,17 @@ def sortStderrMessages (messages):
 def std_redirector(stdoutStream, stderrStream):
 
     libc = ctypes.CDLL(None)
-    c_stdout = ctypes.c_void_p.in_dll(libc, 'stdout')
-    c_stderr = ctypes.c_void_p.in_dll(libc, 'stderr')
+
+    # Note: Darwin (OS X) does ont export stdout/stderr as symbols,
+    # but exports __stdoutp/__stderrp instead
+
+    if platform.system () == "Darwin":
+        c_stdout = ctypes.c_void_p.in_dll(libc, '__stdoutp')
+        c_stderr = ctypes.c_void_p.in_dll(libc, '__stderrp')
+    else:
+        c_stdout = ctypes.c_void_p.in_dll(libc, 'stdout')
+        c_stderr = ctypes.c_void_p.in_dll(libc, 'stderr')
+
     original_stdout_fd = sys.stdout.fileno()
     original_stderr_fd = sys.stderr.fileno()
 
@@ -119,7 +147,7 @@ def std_redirector(stdoutStream, stderrStream):
         yield
         _redirect_stdout(saved_stdout_fd)
         _redirect_stderr(saved_stderr_fd)
-        
+
         stdoutfile.flush()
         stdoutfile.seek(0, io.SEEK_SET)
         stdoutStream.write(stdoutfile.read())
