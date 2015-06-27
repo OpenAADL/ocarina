@@ -11,11 +11,11 @@ def printError(source, messages):
 
 def main(argv):
     '''Test function'''
-    import OcarinaPython as ocarina
-    
+    import ocarina;
+
     aadlFiles = ''
     root = ''
-    
+
     try:
         opts, args = getopt.getopt(argv,"ha:r:",["aadlFiles=","root="])
     except getopt.GetoptError:
@@ -40,13 +40,13 @@ def main(argv):
         print 'At least one aadl file shall be loaded. Usage is:'
         print 'metrics.py -a <aadlfile>[,<aadlfile>]* -r <root object>'
         sys.exit(2)
-    
+
     for aadlFile  in aadlFiles:
         err = ocarina.load(aadlFile)
         if err[3]!=[]:
             printError('ocarina.load('+aadlFile+')', err[3])
             sys.exit(2)
-    err = ocarina.analyze() 
+    err = ocarina.analyze()
     if err[3]!=[]:
         printError('ocarina.analyze()', err[3])
         sys.exit(2)
