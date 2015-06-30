@@ -72,7 +72,7 @@ package body Ocarina.Property_Sets is
       O_POK_Properties,
       O_Base_Types,
       O_Taste_Properties,
-      O_ARINC653_Properties,
+      O_ARINC653,
       O_ASSERT_Properties);
 
    Ocarina_Property_Sets_Table : constant array

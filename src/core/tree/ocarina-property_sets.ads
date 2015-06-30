@@ -55,7 +55,7 @@ package Ocarina.Property_Sets is
       O_Ocarina_Config,
       O_Transformations,
       O_POK_Properties,
-      O_ARINC653_Properties,
+      O_ARINC653,
       O_Taste_Properties,
       O_ASSERT_Types,
       O_ASSERT_Properties);
