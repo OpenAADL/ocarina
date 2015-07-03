@@ -64,7 +64,7 @@ project Ocarina is
 	      "-gnatys", -- not in -gnatx: check useless parentheses
 	      @GCOV@"-fprofile-arcs",
               @GCOV@"-ftest-coverage",
-	      "-gnat05");
+	      "-gnat12");
         when "release" =>
            for Default_Switches ("Ada") use
              ("-O2",
