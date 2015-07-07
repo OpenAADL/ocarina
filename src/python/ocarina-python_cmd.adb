@@ -444,9 +444,26 @@ package body Ocarina.Python_Cmd is
       pragma Unreferenced (Command);
       List_Node : Node_Id;
    begin
-      ATNP.return_List (Data, Get_Property_Constants (
-         Get_Node_Id_From_String (Nth_Arg (Data, 1, ""))));
+      ATNP.return_List
+        (Data, Get_Property_Constants
+           (Get_Node_Id_From_String (Nth_Arg (Data, 1, ""))));
    end On_Get_PropertyConstants;
+
+   ---------------------------
+   -- On_Get_Property_Value --
+   ---------------------------
+
+   procedure On_Get_Property_Value
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Property_Value
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+   begin
+      Get_Property_Value
+        (Data, Nth_Arg (Data, 1, ""),
+         Nth_Arg (Data, 2, ""));
+   end On_Get_Property_Value;
 
    ----------------------
    -- On_Get_Instances --
@@ -650,6 +667,11 @@ package body Ocarina.Python_Cmd is
       Register_Command
         (Repo, "getPropertyDefinitions", 1, 1,
          Handler => On_Get_Property_Definitions'Unrestricted_Access);
+
+      --  getPropertyValue() function
+      Register_Command
+        (Repo, "getPropertyValue", 2, 2,
+         Handler => On_Get_Property_Value'Unrestricted_Access);
 
       --  getPropertyConstants() function
       Register_Command

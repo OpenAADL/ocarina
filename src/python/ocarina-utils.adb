@@ -49,6 +49,7 @@ with Ocarina.Instances;          use Ocarina.Instances;
 with Ocarina.Parser;             use Ocarina.Parser;
 with Ocarina.Options;            use Ocarina.Options;
 with Ocarina.Files;              use Ocarina.Files;
+with Ocarina.Backends.Properties.Utils;
 
 package body Ocarina.Utils is
 
@@ -259,6 +260,25 @@ package body Ocarina.Utils is
    begin
       return AADL_Root;
    end Get_AADL_Root;
+
+   ------------------------
+   -- Get_Property_Value --
+   ------------------------
+
+   procedure Get_Property_Value (Data : in out Callback_Data'Class;
+                                 PropId : String; PropName : String)
+   is
+      Result : constant String_List :=
+        Ocarina.Backends.Properties.Utils.Check_And_Get_Property
+        (Get_Node_Id_From_String (PropId),
+         Get_Node_Id_From_String (PropName));
+   begin
+      Set_Return_Value_As_List (Data);
+
+      for Elt of Result loop
+         Set_Return_Value (Data, Elt.all);
+      end loop;
+   end Get_Property_Value;
 
    -----------------
    -- Get_Node_Id --

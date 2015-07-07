@@ -356,3 +356,10 @@ def getRoot ():
     '''
 
     return runOcarinaFunction (libocarina_python.getRoot)
+
+################################################################################
+
+def getPropertyValue (nodeId,nameId):
+    '''Get the value of the property
+    '''
+    return runOcarinaFunction (libocarina_python.getPropertyValue, nodeId,nameId)

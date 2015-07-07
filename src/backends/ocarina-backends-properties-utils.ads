@@ -29,7 +29,33 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with GNAT.OS_Lib; use GNAT.OS_Lib;
+
 package Ocarina.Backends.Properties.Utils is
+
+   --  This package proposes various generic accessor to ease the
+   --  retrieval of property values.
+
+   --  This high-level accessor return a GNAT.OS_Lib.String_List made
+   --  of the name of the property in lower case, followed by a list
+   --  of strings representing the property value. E.g.
+   --
+   --  ("source_stack_size", "13952 Bytes")
+   --  ("Deadline", "500 Ms")
+   --  ("Compute_Execution_Time", "0 Ms .. 3 Ms")
+   --  ("Dispatch_Offset", "100 Ms")
+   --  ("Period", "500 Ms")
+   --  ("Dispatch_Protocol", "Periodic")
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property : Node_Id)
+     return String_List;
+
+   --  The following accessors takes as parameters the following entities
+   --  * E: entity from the instance tree for which we look for a property
+   --  * Property_Name: name of the property we are looking for, in
+   --    lower case
 
    function Check_And_Get_Property
      (E : Node_Id;
@@ -67,8 +93,5 @@ package Ocarina.Backends.Properties.Utils is
       Names : Name_Array;
       Default_Value : Int := Int'First)
      return Int;
-
-   --  Check Property_Name is set on node E, if so returns its value
-   --  otherwise return the default value.
 
 end Ocarina.Backends.Properties.Utils;
