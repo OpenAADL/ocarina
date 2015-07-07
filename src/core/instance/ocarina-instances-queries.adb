@@ -411,11 +411,15 @@ package body Ocarina.Instances.Queries is
         Get_Property_Association (Entity, Name, In_Mode);
 
    begin
-      if No (Property) or else Get_Type_Of_Property (Property) /= PT_Range then
+      if No (Property)
+        or else Get_Type_Of_Property
+          (ATE.Get_Referenced_Entity
+             (AIN.Property_Name (Property))) /= PT_Range
+      then
          return No_Node;
       end if;
 
-      return Expanded_Single_Value (AIN.Property_Association_Value (Property));
+      return Single_Value (AIN.Property_Association_Value (Property));
    end Get_Range_Property;
 
    -----------------------
