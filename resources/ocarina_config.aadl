@@ -30,13 +30,13 @@ property set Ocarina_Config is
   Deployment          : constant aadlstring => "Deployment";
   Cheddar_Properties  : constant aadlstring => "Cheddar_Properties";
   POK_Properties      : constant aadlstring => "pok_properties";
-  ARINC653_Properties : constant aadlstring => "arinc653_properties";
+  ARINC653_Properties : constant aadlstring => "arinc653";
   ASSERT_Properties   : constant aadlstring => "ASSERT_Properties";
   TASTE_Properties    : constant aadlstring => "taste_properties";
   --  List of the predefined NON STANDARD property sets that can be used
   --  by an AADL application.
 
-  Needed_Property_Sets : list of aadlstring applies to (system); 
+  Needed_Property_Sets : list of aadlstring applies to (system);
   --  The actual property sets needed by one particular application.
   --  This avoid to parse systematically all the predefined non
   --  standard property sets. The user can also give the name of a
