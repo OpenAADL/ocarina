@@ -1577,11 +1577,13 @@ package body Ocarina.Backends.Build_Utils is
             Compile_Ada_Files (M.Ada_Sources);
             Write_Eol;
 
-            Write_Line ("prove:");
-            Write_Line
-              (ASCII.HT &
-               "gnatprove -P$(PROJECT_FILE) --warnings=continue " &
-               "--report=fail");
+            if Get_Current_Backend_Kind = PolyORB_HI_Ada then
+               Write_Line ("prove:");
+               Write_Line
+                 (ASCII.HT &
+                    "gnatprove -P$(PROJECT_FILE) --warnings=continue " &
+                    "--report=fail");
+            end if;
 
             --  Close the file
 
