@@ -69,7 +69,7 @@ project Ocarina is
            for Default_Switches ("Ada") use
              ("-O2",
 	      "-fPIC",
-              "-gnat05",
+              "-gnat12",
               "-gnata",
               "-gnaty",
 	      "-gnatyu", -- not in -gnaty: check multiple blank lines
