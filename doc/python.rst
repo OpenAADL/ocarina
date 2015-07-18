@@ -21,28 +21,10 @@ At run-time, the following environment variables must be set up::
 Example
 #######
 
-Here is a small examples illustrating Python API capabilities::
+Here is a small examples illustrating Python API capabilities
 
-     #! /usr/bin/python
-
-     from ocarina import *;
-
-     def main ():
-         '''Test function'''
-
-         # Print all registered backends
-         for backends in Backends:
-             print(backends);
-
-         load("rma.aadl");                   # load a file
-         load("deployment.aadl");            # load a file
-         analyze();                          # analyze models
-         instantiate("rma.erc32");           # instantiate system
-         generate (Backends.polyorb_hi_ada); # generate code using the PolyORB/HI-Ada backend
-
-     if __name__ == "__main__":
-         main ()
-         sys.exit (0);                       # exit
+.. literalinclude:: ../resources/runtime/python/test/visitor.py
+   :language: python
 
 Python API description
 ######################
