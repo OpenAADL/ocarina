@@ -31,5 +31,11 @@ Python API description
 
 The following lists all functions defined in the `ocarina` module
 
-.. automodule:: ocarina
+.. automodule:: ocarina.ocarina
+   :members:
+
+.. automodule:: lmp
+   :members:
+
+.. automodule:: ocarina_common_tools
    :members:

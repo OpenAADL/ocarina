@@ -1,14 +1,10 @@
 #! /usr/bin/python
 '''
-:mod:`ocarina_common_tools` -- Tools used by Python binding
-to the Ocarina AADL processor
-==============================================================
+:mod:`ocarina_common_tools`
 
 .. moduleauthor:: Jerome Hugues, Arnaud Schach
 
-This module provides tools to be used by the Python scripts
-form the Python binding to the Ocarina AADL processor.
-
+Tools used by Python binding to the Ocarina AADL processor
 '''
 
 ################################################################################
@@ -28,6 +24,10 @@ except ImportError:
 
 ################################################################################
 def runOcarinaFunction (f, *parameters):
+    '''Wrapper to run an Ada function provided by Ocarina. It performs all
+       the redirections
+    '''
+
     info = io.BytesIO()
     error = io.BytesIO()
     raisedError = []

@@ -2,7 +2,8 @@ AUTOMAKE_OPTIONS = no-dependencies
 
 PYTHON_FILES = $(srcdir)/ocarina/ocarina.py				\
 	$(srcdir)/ocarina/__init__.py					\
-	$(srcdir)/ocarina/ocarina_common_tools.py $(srcdir)/setup.py
+	$(srcdir)/ocarina/ocarina_common_tools.py $(srcdir)/setup.py \
+	$(srcdir)/ocarina/lmp.py
 
 if INSTALL_PYTHON
 PYTHON_FILES += \
