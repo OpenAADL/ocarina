@@ -6,6 +6,7 @@ config.log
 config.status
 configure
 *cheddar.xml
+gnatinspect.db
 
 aclocal.m4
 doc/ocarina.info
