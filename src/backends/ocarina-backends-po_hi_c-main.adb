@@ -493,18 +493,23 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
                   Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-                  N :=
-                    Make_Expression
-                      (Left_Expr =>
-                         Make_Member_Designator
-                           (Defining_Identifier =>
-                              Make_Defining_Identifier (MN (M_Protected_Id)),
-                            Aggregate_Name => Map_C_Defining_Identifier (S)),
-                       Operator   => Op_Equal,
-                       Right_Expr =>
+                  if Get_Concurrency_Protocol (Corresponding_Instance (S))
+                     /= Concurrency_NoneSpecified
+                  then
+                     N :=
+                     Make_Expression
+                        (Left_Expr =>
+                           Make_Member_Designator
+                              (Defining_Identifier =>
+                                 Make_Defining_Identifier
+                                    (MN (M_Protected_Id)),
+                              Aggregate_Name => Map_C_Defining_Identifier (S)),
+                        Operator   => Op_Equal,
+                        Right_Expr =>
                          CTN.Default_Value_Node
                            (Backend_Node (Identifier (S))));
-                  Append_Node_To_List (N, CTN.Statements (Main_Function));
+                     Append_Node_To_List (N, CTN.Statements (Main_Function));
+                  end if;
                else
                   --  Visit the component instance corresponding to the
                   --  subcomponent S.
