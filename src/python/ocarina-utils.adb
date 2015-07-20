@@ -280,6 +280,25 @@ package body Ocarina.Utils is
       end loop;
    end Get_Property_Value;
 
+   --------------------------------
+   -- Get_Property_Value_By_Name --
+   --------------------------------
+
+   procedure Get_Property_Value_By_Name (Data : in out Callback_Data'Class;
+                                         PropId : String; PropName : String)
+   is
+      Result : constant String_List :=
+        Ocarina.Backends.Properties.Utils.Check_And_Get_Property
+        (Get_Node_Id_From_String (PropId),
+         Get_String_Name (PropName));
+   begin
+      Set_Return_Value_As_List (Data);
+
+      for Elt of Result loop
+         Set_Return_Value (Data, Elt.all);
+      end loop;
+   end Get_Property_Value_By_Name;
+
    -----------------
    -- Get_Node_Id --
    -----------------

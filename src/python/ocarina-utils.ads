@@ -60,8 +60,11 @@ package Ocarina.Utils is
    function Get_List_Id_From_String (Name : String) return List_Id;
    function Get_Int_From_String (Name : String) return Int;
    function Get_Value_Id_From_String (Name : String) return Value_Id;
+
    procedure Get_Node_Id (Data : in out Callback_Data'Class; N : String);
    procedure Get_Property_Value (Data : in out Callback_Data'Class;
+      PropId : String; PropName : String);
+   procedure Get_Property_Value_By_Name (Data : in out Callback_Data'Class;
       PropId : String; PropName : String);
 
 end Ocarina.Utils;

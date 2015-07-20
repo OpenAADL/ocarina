@@ -49,6 +49,11 @@ package Ocarina.Backends.Properties.Utils is
 
    function Check_And_Get_Property
      (E : Node_Id;
+      Prop_Name : Name_Id)
+     return String_List;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
       Property : Node_Id)
      return String_List;
 

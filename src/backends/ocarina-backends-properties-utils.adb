@@ -157,6 +157,15 @@ package body Ocarina.Backends.Properties.Utils is
    is
       Prop_Name : constant Name_Id
         := Standard.Utils.To_Lower (Display_Name (Identifier (Property)));
+   begin
+      return Check_And_Get_Property (E, Prop_Name);
+   end Check_And_Get_Property;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Prop_Name : Name_Id)
+     return String_List
+   is
       A : constant String_Access
         := new String'(Get_Name_String (Prop_Name));
       AADL_Property_Value : Node_Id;

@@ -465,6 +465,18 @@ package body Ocarina.Python_Cmd is
          Nth_Arg (Data, 2, ""));
    end On_Get_Property_Value;
 
+   procedure On_Get_Property_Value_By_Name
+      (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Property_Value_By_Name
+      (Data : in out Callback_Data'Class; Command : String) is
+      pragma Unreferenced (Command);
+   begin
+      Get_Property_Value_By_Name
+        (Data, Nth_Arg (Data, 1, ""),
+         Nth_Arg (Data, 2, ""));
+   end On_Get_Property_Value_By_Name;
+
    ----------------------
    -- On_Get_Instances --
    ----------------------
@@ -672,6 +684,11 @@ package body Ocarina.Python_Cmd is
       Register_Command
         (Repo, "getPropertyValue", 2, 2,
          Handler => On_Get_Property_Value'Unrestricted_Access);
+
+      --  getPropertyValueByName() function
+      Register_Command
+        (Repo, "getPropertyValueByName", 2, 2,
+         Handler => On_Get_Property_Value_By_Name'Unrestricted_Access);
 
       --  getPropertyConstants() function
       Register_Command

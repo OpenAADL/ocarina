@@ -92,7 +92,14 @@ def generate (generator):
 
 ################################################################################
 
-def getPropertyValue (nodeId,nameId):
+def getPropertyValue (nodeId,propertyId):
     '''Get the value of the property
     '''
-    return runOcarinaFunction (libocarina_python.getPropertyValue, nodeId,nameId)
+    return runOcarinaFunction (libocarina_python.getPropertyValue, nodeId,propertyId)
+
+################################################################################
+
+def getPropertyValueByName (nodeId,propertyString):
+    '''Get the value of the property
+    '''
+    return runOcarinaFunction (libocarina_python.getPropertyValueByName, nodeId, propertyString)
