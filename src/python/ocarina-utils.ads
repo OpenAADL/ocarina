@@ -37,9 +37,6 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package Ocarina.Utils is
 
-   procedure Usage;
-   --  Display a message describing the usage of Ocarina
-
    procedure Print_Status;
    --  Display status information on Ocarina
 
