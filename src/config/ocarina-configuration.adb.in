@@ -45,12 +45,14 @@ with Ocarina.Analyzer;
 with Ocarina.Options;  use Ocarina.Options;
 with Ocarina.Parser;   use Ocarina.Parser;
 
+with GNAT.Compiler_Version;
 with GNAT.OS_Lib;      use GNAT.OS_Lib;
-
+with GNAT.Source_Info;
 with Ada.Command_Line; use Ada.Command_Line;
 
 with Charset; use Charset;
 with Ocarina.Namet;   use Ocarina.Namet;
+with Ocarina.Output;  use Ocarina.Output;
 with Ocarina.Types;   use Ocarina.Types;
 
 package body Ocarina.Configuration is
@@ -58,8 +60,7 @@ package body Ocarina.Configuration is
    --  As some of the values of the constants below may make the lines
    --  too long for GNAT styles, we put the litterals in a new line.
 
-   Version          : constant String :=
-     "@VERSION@";
+   Ocarina_V : constant String := "@VERSION@";
    --  This is the official version of Ocarina Stored in configure.ac
 
    Default_AADL_Version : constant AADL_Version_Type :=
@@ -74,10 +75,6 @@ package body Ocarina.Configuration is
    --  declaration must be done in one single line in order for the
    --  substitution pattern to work. We disable style checks because
    --  this line may be too long.
-
-   Last_Config_Date : constant String :=
-     "@LAST_CONFIG_DATE@";
-   --  The date of the latest execution of the configure script
 
    Last_Config_Year : constant String :=
      "@LAST_CONFIG_YEAR@";
@@ -239,12 +236,12 @@ package body Ocarina.Configuration is
 
    function Ocarina_Version return String is
    begin
-      return Version;
+      return Ocarina_V;
    end Ocarina_Version;
 
-   --------------------------
+   ----------------------
    -- Ocarina_Revision --
-   --------------------------
+   -----------------------
 
    function Ocarina_Revision return String is
    begin
@@ -257,7 +254,8 @@ package body Ocarina.Configuration is
 
    function Ocarina_Last_Configure_Date return String is
    begin
-      return Last_Config_Date;
+      return GNAT.Source_Info.Compilation_Date & " "
+        & GNAT.Source_Info.Compilation_Time;
    end Ocarina_Last_Configure_Date;
 
    ---------------------------------
@@ -277,5 +275,23 @@ package body Ocarina.Configuration is
    begin
       return GNU_Make_Str;
    end GNU_Make_Cmd;
+
+   -------------
+   -- Version --
+   -------------
+
+   procedure Version is
+      package Compiler_Version is new GNAT.Compiler_Version;
+
+   begin
+      Write_Line
+        ("Ocarina " & Ocarina_Version & " (" & Ocarina_Revision & ")");
+      Write_Line
+        ("Copyright (c) 2003-2009 Telecom ParisTech, 2010-" &
+         Ocarina_Last_Configure_Year &
+         " ESA & ISAE");
+      Write_Line ("Build date: " & Ocarina_Last_Configure_Date);
+      Write_Line ("Compiled with: " & Compiler_Version.Version);
+   end Version;
 
 end Ocarina.Configuration;

@@ -86,9 +86,6 @@ procedure Ocarina_Cmd is
    procedure Usage;
    --  Display a message describing the usage of Ocarina
 
-   procedure Version;
-   --  Display version information
-
    procedure Ocarina_Shell;
    --  Launch Ocarina interactive mode
 
@@ -1216,26 +1213,8 @@ procedure Ocarina_Cmd is
       Free (Exec_Suffix);
    end Usage;
 
-   -------------
-   -- Version --
-   -------------
-
-   procedure Version is
-   begin
-      Write_Line
-        ("Ocarina " & Ocarina_Version & " (" & Ocarina_Revision & ")");
-
-      if Ocarina_Last_Configure_Date /= "" then
-         Write_Line ("Build date: " & Ocarina_Last_Configure_Date);
-      end if;
-
-      Write_Line
-        ("Copyright (c) 2003-2009 Telecom ParisTech, 2010-" &
-         Ocarina_Last_Configure_Year &
-         " ESA & ISAE");
-   end Version;
-
    package RT renames Ocarina.ME_REAL.Tokens;
+
 begin
    --  Init
 

@@ -83,25 +83,6 @@ package body Ocarina.Utils is
       Language := No_Name;
    end Reset;
 
-   -------------
-   -- Version --
-   -------------
-
-   procedure Version is
-   begin
-      Write_Line
-        ("Ocarina " & Ocarina_Version
-           & " (" & Ocarina_Revision & ")");
-
-      if Ocarina_Last_Configure_Date /= "" then
-         Write_Line ("Build date: " & Ocarina_Last_Configure_Date);
-      end if;
-
-      Write_Line
-        ("Copyright (c) 2003-2009 Telecom ParisTech, 2010-"
-           & Ocarina_Last_Configure_Year & " ESA & ISAE");
-   end Version;
-
    ------------------
    -- Print_Status --
    ------------------

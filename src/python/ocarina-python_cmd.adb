@@ -83,7 +83,7 @@ package body Ocarina.Python_Cmd is
    is
       pragma Unreferenced (Data, Command);
    begin
-      Ocarina.Utils.Version;
+      Ocarina.Configuration.Version;
    end On_Version;
 
    ---------------

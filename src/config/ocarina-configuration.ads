@@ -43,6 +43,9 @@ package Ocarina.Configuration is
    function Ocarina_Last_Configure_Year return String;
    --  Version control routines
 
+   procedure Version;
+   --  Display a text with Ocarina version information
+
 private
 
    function GNU_Make_Cmd return String;

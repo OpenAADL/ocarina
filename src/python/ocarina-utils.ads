@@ -37,9 +37,6 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package Ocarina.Utils is
 
-   procedure Version;
-   --  Display version information
-
    procedure Usage;
    --  Display a message describing the usage of Ocarina
 
