@@ -1,0 +1,2 @@
+test.aadl:6:09: parsing Package_Specification, token ';' is expected, found [EOF]
+Cannot parse AADL specifications

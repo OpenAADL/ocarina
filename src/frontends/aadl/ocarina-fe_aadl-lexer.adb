@@ -379,8 +379,9 @@ package body Ocarina.FE_AADL.Lexer is
       Display_Name_Buffer (Display_Name_Len) := Buffer (Token_Location.Scan);
 
       Token_Location.Scan := Token_Location.Scan + 1;
-
-      while Is_Identifier_Character (Buffer (Token_Location.Scan)) loop
+      while Token_Location.Scan <= Token_Location.EOF
+        and then Is_Identifier_Character (Buffer (Token_Location.Scan))
+      loop
          Add_Char_To_Name_Buffer (To_Lower (Buffer (Token_Location.Scan)));
 
          Display_Name_Len                       := Display_Name_Len + 1;
