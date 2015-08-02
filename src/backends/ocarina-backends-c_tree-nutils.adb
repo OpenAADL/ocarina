@@ -1629,6 +1629,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       M             : Node_Id;
       Owner         : Node_Id;
       Declaration   : Node_Id;
+      Data_Accessed : Node_Id;
       Hybrid        : constant Boolean :=
         AINU.Is_Subprogram (Caller)
         and then
@@ -1664,15 +1665,23 @@ package body Ocarina.Backends.C_Tree.Nutils is
             F := AIN.First_Node (AIN.Features (Spg));
             while Present (F) loop
                if Kind (F) = K_Subcomponent_Access_Instance
-                 and then Get_Current_Backend_Kind = PolyORB_Kernel_C
                then
                   --  This case is specific to POK since we don't
                   --  handle the shared data with the same patterns as
                   --  in PolyORB-HI-C. This could be updated later.
+                  Data_Accessed := Get_Accessed_Data (F);
+
+                  if Data_Accessed = No_Node then
+                     Display_Located_Error
+                       (AIN.Loc (F),
+                        "is not properly conected to" &
+                        " any source",
+                        Fatal => True);
+                  end if;
 
                   Param_Value :=
                     Make_Variable_Address
-                      (Map_C_Defining_Identifier (Get_Accessed_Data (F)));
+                      (Map_C_Defining_Identifier (Data_Accessed));
 
                   Append_Node_To_List (Param_Value, Call_Profile);
 
