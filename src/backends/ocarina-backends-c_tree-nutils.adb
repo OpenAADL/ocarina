@@ -1627,7 +1627,6 @@ package body Ocarina.Backends.C_Tree.Nutils is
       N             : Node_Id;
       F             : Node_Id;
       M             : Node_Id;
-      Owner         : Node_Id;
       Declaration   : Node_Id;
       Data_Accessed : Node_Id;
       Hybrid        : constant Boolean :=
@@ -1933,15 +1932,6 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
             N := Message_Comment ("Invoking method");
             CTU.Append_Node_To_List (N, Statements);
-            Owner := Get_Actual_Owner (Spg_Call);
-
-            N :=
-              Make_Variable_Address
-                (CTN.Defining_Identifier
-                   (CTN.Object_Node (Backend_Node (Identifier (Owner)))));
-
-            Append_Node_To_List (N, Call_Profile);
-
             --  The name of the called subprogram is deduced from the
             --  corresponding subprogram spec instance (last element
             --  of the 'Path' list) and from the actual data component
