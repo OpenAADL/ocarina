@@ -1951,113 +1951,111 @@ package body Ocarina.Backends.C_Common.Mapping is
       --  mapped in the case of pure call sequence subprogram because
       --  they are used only to close the access chain.
 
-      if Get_Subprogram_Kind (S) /= Subprogram_Pure_Call_Sequence then
-         if not AINU.Is_Empty (Features (S)) then
-            F := AIN.First_Node (Features (S));
+      if not AINU.Is_Empty (Features (S)) then
+         F := AIN.First_Node (Features (S));
 
-            while Present (F) loop
-               if Kind (F) = K_Subcomponent_Access_Instance then
-                  case Get_Required_Data_Access (Corresponding_Instance (F)) is
-                     when Access_Read_Only =>
-                        Mode := Mode_In;
-                     when Access_Write_Only =>
-                        Mode := Mode_Out;
-                     when Access_Read_Write =>
-                        Mode := Mode_Inout;
-                     when Access_None =>
-                        --  By default, we allow read/write access
-                        Mode := Mode_Inout;
-                     when others =>
-                        Display_Located_Error
-                          (AIN.Loc (F),
-                           "Unsupported required access",
-                           Fatal => True);
-                  end case;
+         while Present (F) loop
+            if Kind (F) = K_Subcomponent_Access_Instance then
+               case Get_Required_Data_Access (Corresponding_Instance (F)) is
+                  when Access_Read_Only =>
+                     Mode := Mode_In;
+                  when Access_Write_Only =>
+                     Mode := Mode_Out;
+                  when Access_Read_Write =>
+                     Mode := Mode_Inout;
+                  when Access_None =>
+                     --  By default, we allow read/write access
+                     Mode := Mode_Inout;
+                  when others =>
+                     Display_Located_Error
+                       (AIN.Loc (F),
+                        "Unsupported required access",
+                        Fatal => True);
+               end case;
 
-                  D := Corresponding_Instance (F);
+               D := Corresponding_Instance (F);
 
-                  case Get_Data_Representation (D) is
-                     when Data_Integer     |
-                       Data_Boolean        |
-                       Data_Float          |
-                       Data_Fixed          |
-                       Data_Struct         |
-                       Data_String         |
-                       Data_Wide_String    |
-                       Data_Character      |
-                       Data_Wide_Character |
-                       Data_Array          =>
-                        --  If the data component is a simple data
-                        --  component (not a structure), we simply add a
-                        --  parameter with the computed mode and with a
-                        --  type mapped from the data component.
+               case Get_Data_Representation (D) is
+                  when Data_Integer     |
+                    Data_Boolean        |
+                    Data_Float          |
+                    Data_Fixed          |
+                    Data_Struct         |
+                    Data_String         |
+                    Data_Wide_String    |
+                    Data_Character      |
+                    Data_Wide_Character |
+                    Data_Array          =>
+                     --  If the data component is a simple data
+                     --  component (not a structure), we simply add a
+                     --  parameter with the computed mode and with a
+                     --  type mapped from the data component.
 
-                        if Mode = Mode_In then
-                           Param :=
-                             CTU.Make_Parameter_Specification
-                               (Defining_Identifier =>
-                                  Map_C_Defining_Identifier (F),
-                                Parameter_Type =>
-                                  Map_C_Data_Type_Designator (D));
-                        else
-                           Param :=
-                             CTU.Make_Parameter_Specification
-                               (Defining_Identifier =>
-                                  Map_C_Defining_Identifier (F),
-                                Parameter_Type =>
-                                  CTU.Make_Pointer_Type
-                                    (Map_C_Data_Type_Designator (D)));
-                        end if;
+                     if Mode = Mode_In then
+                        Param :=
+                          CTU.Make_Parameter_Specification
+                            (Defining_Identifier =>
+                               Map_C_Defining_Identifier (F),
+                             Parameter_Type =>
+                               Map_C_Data_Type_Designator (D));
+                     else
+                        Param :=
+                          CTU.Make_Parameter_Specification
+                            (Defining_Identifier =>
+                               Map_C_Defining_Identifier (F),
+                             Parameter_Type =>
+                               CTU.Make_Pointer_Type
+                                 (Map_C_Data_Type_Designator (D)));
+                     end if;
 
-                        CTU.Append_Node_To_List (Param, Profile);
+                     CTU.Append_Node_To_List (Param, Profile);
 
-                     when Data_With_Accessors =>
-                        --  If the data component is a complex data
-                        --  component (which has subcomponents), we add a
-                        --  parameter with the computed mode and with a
-                        --  type mapped from each subcomponent type.
+                  when Data_With_Accessors =>
+                     --  If the data component is a complex data
+                     --  component (which has subcomponents), we add a
+                     --  parameter with the computed mode and with a
+                     --  type mapped from each subcomponent type.
 
-                        Field := AIN.First_Node (Subcomponents (D));
+                     Field := AIN.First_Node (Subcomponents (D));
 
-                        while Present (Field) loop
-                           if AINU.Is_Data
-                               (Corresponding_Instance (Field))
-                           then
-                              if Mode = Mode_In then
-                                 Param :=
-                                   CTU.Make_Parameter_Specification
-                                     (Defining_Identifier =>
-                                        Map_C_Defining_Identifier (Field),
-                                      Parameter_Type =>
-                                        Map_C_Data_Type_Designator
-                                          (Corresponding_Instance (Field)));
-                              else
-                                 Param :=
-                                   CTU.Make_Parameter_Specification
-                                     (Defining_Identifier =>
-                                        Map_C_Defining_Identifier (Field),
-                                      Parameter_Type =>
-                                        Make_Pointer_Type
-                                          (Map_C_Data_Type_Designator
-                                             (Corresponding_Instance
-                                                (Field))));
-                              end if;
-                              CTU.Append_Node_To_List (Param, Profile);
+                     while Present (Field) loop
+                        if AINU.Is_Data
+                            (Corresponding_Instance (Field))
+                        then
+                           if Mode = Mode_In then
+                              Param :=
+                               CTU.Make_Parameter_Specification
+                                 (Defining_Identifier =>
+                                     Map_C_Defining_Identifier (Field),
+                                   Parameter_Type =>
+                                     Map_C_Data_Type_Designator
+                                       (Corresponding_Instance (Field)));
+                           else
+                              Param :=
+                                CTU.Make_Parameter_Specification
+                                  (Defining_Identifier =>
+                                     Map_C_Defining_Identifier (Field),
+                                   Parameter_Type =>
+                                     Make_Pointer_Type
+                                       (Map_C_Data_Type_Designator
+                                          (Corresponding_Instance
+                                             (Field))));
                            end if;
-                           Field := AIN.Next_Node (Field);
-                        end loop;
+                           CTU.Append_Node_To_List (Param, Profile);
+                        end if;
+                        Field := AIN.Next_Node (Field);
+                     end loop;
 
-                     when others =>
-                        Display_Located_Error
-                          (AIN.Loc (F),
-                           "Unsupported data type",
-                           Fatal => True);
-                  end case;
-               end if;
+                  when others =>
+                     Display_Located_Error
+                       (AIN.Loc (F),
+                        "Unsupported data type",
+                        Fatal => True);
+               end case;
+            end if;
 
-               F := AIN.Next_Node (F);
-            end loop;
-         end if;
+            F := AIN.Next_Node (F);
+         end loop;
       end if;
 
       N :=
