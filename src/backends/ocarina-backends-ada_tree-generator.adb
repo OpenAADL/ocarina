@@ -40,7 +40,6 @@ with Ocarina.Backends.Utils;
 with Ocarina.Backends.Ada_Tree.Nodes;
 with Ocarina.Backends.Ada_Tree.Nutils;
 with Ocarina.Backends.Ada_Values;
-with Ocarina.Backends.Ada_Tree.Generator.Spark;
 
 package body Ocarina.Backends.Ada_Tree.Generator is
 
@@ -304,9 +303,6 @@ package body Ocarina.Backends.Ada_Tree.Generator is
 
          when K_Object_Declaration =>
             Generate_Object_Declaration (N);
-
-         when K_SPARK_Own_Annotation =>
-            Spark.Generate_Own_Annotation (N);
 
          when K_Object_Instantiation =>
             Generate_Object_Instantiation (N);
@@ -1729,9 +1725,6 @@ package body Ocarina.Backends.Ada_Tree.Generator is
       end loop;
       Write_Eol;
 
-      --  Generate inherit annotations for SPARK
-      Spark.Generate_Inherit_Annotations (N);
-
       if Is_Instantiated_Package (N) then
          Generate (Package_Instantiation (N));
          Generate_Statement_Delimiter (Package_Instantiation (N));
@@ -1743,10 +1736,6 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          Write_Space;
          Write (Tok_Is);
          Write_Eol (2);
-
-         if not Is_Empty (SPARK_Own_Annotations (N)) then
-            Spark.Generate_Own_Annotation_List (SPARK_Own_Annotations (N));
-         end if;
 
          Increment_Indentation;
          P := First_Node (Visible_Part (N));
@@ -2251,11 +2240,6 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          Write_Indentation;
       end if;
 
-      --  Generate inherit annotations for SPARK
-      if Present (Main_Subprogram_Unit (N)) then
-         Spark.Generate_Inherit_Annotations (N);
-      end if;
-
       Generate_Comment_Box (Name (Defining_Identifier (P)));
       Write_Eol;
 
@@ -2349,11 +2333,6 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          end loop;
          Write_Eol;
          Write_Indentation;
-      end if;
-
-      --  Generate inherit annotations for SPARK
-      if Present (Main_Subprogram_Unit (N)) then
-         Spark.Generate_Inherit_Annotations (N);
       end if;
 
       if Present (T) then
