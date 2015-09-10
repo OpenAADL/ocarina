@@ -1,2 +1,0 @@
-AADL_VERSION=-aadlv2
-OCARINA_FLAGS= -f -g petri_nets

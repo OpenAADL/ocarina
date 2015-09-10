@@ -406,8 +406,6 @@ AC_OUTPUT([
 	doc/Makefile
 	doc/real/Makefile
 	examples/Makefile
-	examples/petri_net/Makefile
-	examples/petri_net/robot/Makefile
 	examples/real/Makefile
 	examples/real/lib/Makefile
 	examples/real/resources/Makefile
