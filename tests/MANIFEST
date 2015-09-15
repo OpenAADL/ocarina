@@ -270,7 +270,6 @@ tests/ocarina/test004/ocarina_script.aadl
 tests/bound-t/rma.aadl
 # Test for the Petri Net backend
 tests/pn/test001/test.aadl
-examples/petri_net/robot/robot.aadl
 # Test for the REAL backend
 examples/real/security/all.aadl
 examples/real/resources/all.aadl
