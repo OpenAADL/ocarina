@@ -273,7 +273,7 @@ tests/pn/test001/test.aadl
 # Test for the REAL backend
 examples/real/security/all.aadl
 examples/real/resources/all.aadl
-examples/real/safety/model.aadl
+#examples/real/safety/model.aadl
 
 tests/test_identifier/t.aadl
 tests/example_04_03/t.aadl
