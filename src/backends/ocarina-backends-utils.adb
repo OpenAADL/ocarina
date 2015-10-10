@@ -3328,12 +3328,10 @@ package body Ocarina.Backends.Utils is
    -----------------------
 
    function Is_Protected_Data (Data_Component : Node_Id) return Boolean is
-      Concurrency_Protocol : Supported_Concurrency_Control_Protocol;
+      Concurrency_Protocol : constant Supported_Concurrency_Control_Protocol
+        := Get_Concurrency_Protocol (Data_Component);
    begin
-      Concurrency_Protocol := Get_Concurrency_Protocol (Data_Component);
-
-      return Concurrency_Protocol = Concurrency_Protected_Access
-        or else Concurrency_Protocol = Concurrency_Priority_Ceiling;
+      return Concurrency_Protocol = Priority_Ceiling;
    end Is_Protected_Data;
 
    ----------------------

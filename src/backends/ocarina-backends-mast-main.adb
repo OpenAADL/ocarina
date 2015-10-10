@@ -553,8 +553,7 @@ package body Ocarina.Backends.MAST.Main is
       end if;
       Append_Node_To_List (N, MTN.Declarations (MAST_File));
 
-      if CP = Concurrency_Protected_Access
-        or else CP = Concurrency_Priority_Ceiling
+      if CP = Priority_Ceiling
         or else Is_Protected_Data (E)
         or else Get_Data_Representation (E) = Data_With_Accessors
       then

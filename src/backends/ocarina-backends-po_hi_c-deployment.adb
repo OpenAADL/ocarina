@@ -2014,7 +2014,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                     Make_Literal (New_Int_Value (0, 1, 10));
 
                   case Get_Concurrency_Protocol (Corresponding_Instance (C)) is
-                     when Concurrency_Priority_Ceiling =>
+                     when Priority_Ceiling =>
                         Protected_Priority :=
                           Make_Literal
                             (New_Int_Value
@@ -2023,12 +2023,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                                 1,
                                 10));
                         Protected_Protocol := RE (RE_Protected_PCP);
-
-                     when Concurrency_Immediate_Priority_Ceiling =>
-                        Protected_Protocol := RE (RE_Protected_IPCP);
-
-                     when Concurrency_Priority_Inheritance =>
-                        Protected_Protocol := RE (RE_Protected_PIP);
 
                      when others =>
                         Protected_Protocol := RE (RE_Protected_Regular);

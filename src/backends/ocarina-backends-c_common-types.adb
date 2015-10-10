@@ -390,8 +390,7 @@ package body Ocarina.Backends.C_Common.Types is
          Data_Array_Size       : constant ULL_Array := Get_Dimension (E);
          Number_Representation : constant Supported_Number_Representation :=
            Get_Number_Representation (E);
-         Is_Signed : constant Boolean :=
-           (Number_Representation = Representation_Signed);
+         Is_Signed : constant Boolean := Number_Representation = Signed;
 
          Type_Uint8       : Node_Id;
          Type_Int8        : Node_Id;
@@ -801,16 +800,7 @@ package body Ocarina.Backends.C_Common.Types is
                            True);
                      end if;
                   elsif Get_Concurrency_Protocol (E) =
-                    Concurrency_Protected_Access
-                    or else
-                      Get_Concurrency_Protocol (E) =
-                      Concurrency_Immediate_Priority_Ceiling
-                    or else
-                      Get_Concurrency_Protocol (E) =
-                      Concurrency_Priority_Inheritance
-                    or else
-                      Get_Concurrency_Protocol (E) =
-                      Concurrency_Priority_Ceiling
+                    Priority_Ceiling
                   then
 
                      --  Protected type that does not have struct members.

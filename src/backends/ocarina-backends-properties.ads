@@ -36,9 +36,16 @@
 package Ocarina.Backends.Properties is
 
    type Name_Array is array (Nat range <>) of Name_Id;
+   Empty_Name_Array : constant Name_Array;
+
    type ULL_Array is array (Nat range <>) of Unsigned_Long_Long;
+   Empty_ULL_Array  : constant ULL_Array;
+
    type LL_Array is array (Nat range <>) of Long_Long;
+   Empty_LL_Array   : constant LL_Array;
+
    type LD_Array is array (Nat range <>) of Long_Double;
+   Empty_LD_Array   : constant LD_Array;
 
    --  Common types to several components and entities
 
@@ -237,19 +244,16 @@ package Ocarina.Backends.Properties is
       Access_By_Method,
       Access_None);
 
-   type Supported_Concurrency_Control_Protocol is
-     (Concurrency_NoneSpecified,
-      Concurrency_Read_Only,
-      Concurrency_Protected_Access,
-      Concurrency_Immediate_Priority_Ceiling,
-      Concurrency_Priority_Inheritance,
-      Concurrency_Priority_Ceiling);
+   type Supported_Concurrency_Control_Protocol is --  XXX
+     (None_Specified,
+      Priority_Inheritance,
+      Priority_Ceiling);
 
    type Supported_IEEE754_Precision is
      (Precision_Simple, Precision_Double, Precision_None);
 
    type Supported_Number_Representation is
-     (Representation_Signed, Representation_Unsigned, Representation_None);
+     (Signed, Unsigned, None);
 
    function Get_Base_Type (D : Node_Id) return List_Id;
    --  Return the component instance that defines the base data type

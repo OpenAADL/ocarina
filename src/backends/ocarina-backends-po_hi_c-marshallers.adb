@@ -910,8 +910,7 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
            To_Bytes (Data_Size);
          Number_Representation : constant Supported_Number_Representation :=
            Get_Number_Representation (E);
-         Is_Signed : constant Boolean :=
-           (Number_Representation = Representation_Signed);
+         Is_Signed : constant Boolean := Number_Representation = Signed;
 
       begin
          case Data_Representation is
@@ -986,8 +985,7 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
            To_Bytes (Data_Size);
          Number_Representation : constant Supported_Number_Representation :=
            Get_Number_Representation (E);
-         Is_Signed : constant Boolean :=
-           (Number_Representation = Representation_Signed);
+         Is_Signed : constant Boolean := Number_Representation = Signed;
 
       begin
          case Data_Representation is

@@ -43,7 +43,6 @@ with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.AADL_Values;
 with Ocarina.Instances.Queries;
---  with Ocarina.Analyzer.AADL.Queries;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
 
@@ -246,20 +245,6 @@ package body Ocarina.Backends.Properties is
    Access_Write_Only_Name : Name_Id;
    Access_Read_Write_Name : Name_Id;
    Access_By_Method_Name  : Name_Id;
-
-   Precision_Simple_Name : Name_Id;
-   Precision_Double_Name : Name_Id;
-
-   Representation_Signed_Name   : Name_Id;
-   Representation_Unsigned_Name : Name_Id;
-
-   Concurrency_NoneSpecified_Name              : Name_Id;
-   Concurrency_Read_Only_Name                  : Name_Id;
-   Concurrency_Protected_Access_Name           : Name_Id;
-   Concurrency_Priority_Ceiling_Name           : Name_Id;
-   Concurrency_Immediate_Priority_Ceiling_Name : Name_Id;
-   Concurrency_Priority_Ceiling_Protocol_Name  : Name_Id;
-   Concurrency_Priority_Inheritance_Name       : Name_Id;
 
    Language_Ada_Name             : Name_Id;
    Language_Ada_95_Name          : Name_Id;
@@ -844,32 +829,9 @@ package body Ocarina.Backends.Properties is
    -------------------
 
    function Get_Dimension (D : Node_Id) return ULL_Array is
-      D_List : List_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
-
-      if Is_Defined_List_Property (D, Dimension) then
-         D_List := Get_List_Property (D, Dimension);
-
-         declare
-            use Ocarina.AADL_Values;
-
-            L   : constant Nat := Nat (ATNU.Length (D_List));
-            Res : ULL_Array (1 .. L);
-            N   : Node_Id;
-         begin
-            N := ATN.First_Node (D_List);
-
-            for J in Res'Range loop
-               Res (J) := Value (Value (Number_Value (N))).IVal;
-               N       := ATN.Next_Node (N);
-            end loop;
-
-            return Res;
-         end;
-      else
-         return Empty_ULL_Array;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Dimension);
    end Get_Dimension;
 
    -----------------------
@@ -877,32 +839,10 @@ package body Ocarina.Backends.Properties is
    -----------------------
 
    function Get_Element_Names (D : Node_Id) return Name_Array is
-      N_List : List_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
 
-      if Is_Defined_List_Property (D, Element_Names) then
-         N_List := Get_List_Property (D, Element_Names);
-
-         declare
-            use Ocarina.AADL_Values;
-
-            L   : constant Nat := Nat (ATNU.Length (N_List));
-            Res : Name_Array (1 .. L);
-            N   : Node_Id;
-         begin
-            N := ATN.First_Node (N_List);
-
-            for J in Res'Range loop
-               Res (J) := Value (Value (N)).SVal;
-               N       := ATN.Next_Node (N);
-            end loop;
-
-            return Res;
-         end;
-      else
-         return Empty_Name_Array;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Element_Names);
    end Get_Element_Names;
 
    ---------------------
@@ -910,32 +850,9 @@ package body Ocarina.Backends.Properties is
    ---------------------
 
    function Get_Enumerators (D : Node_Id) return Name_Array is
-      E_List : List_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
-
-      if Is_Defined_List_Property (D, Enumerators) then
-         E_List := Get_List_Property (D, Enumerators);
-
-         declare
-            use Ocarina.AADL_Values;
-
-            L   : constant Nat := Nat (ATNU.Length (E_List));
-            Res : Name_Array (1 .. L);
-            N   : Node_Id;
-         begin
-            N := ATN.First_Node (E_List);
-
-            for J in Res'Range loop
-               Res (J) := Value (Value (N)).SVal;
-               N       := ATN.Next_Node (N);
-            end loop;
-
-            return Res;
-         end;
-      else
-         return Empty_Name_Array;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Enumerators);
    end Get_Enumerators;
 
    ---------------------------
@@ -947,24 +864,10 @@ package body Ocarina.Backends.Properties is
    is
       pragma Assert (AINU.Is_Data (D));
 
-      IEEE754_Names : constant Name_Array
-        (Supported_IEEE754_Precision'Pos (Supported_IEEE754_Precision'First) ..
-           Supported_IEEE754_Precision'Pos (Supported_IEEE754_Precision'Last))
-        := (Supported_IEEE754_Precision'Pos (Precision_Simple)
-              => Precision_Simple_Name,
-            Supported_IEEE754_Precision'Pos (Precision_Double)
-              => Precision_Double_Name,
-            Supported_IEEE754_Precision'Pos (Precision_None)
-              => No_Name
-           );
-
+      function Get_IEEE754_Precision_Enumerator is new
+        Check_And_Get_Property_Enumerator (T => Supported_IEEE754_Precision);
    begin
-      return Supported_IEEE754_Precision'Val
-        (Check_And_Get_Property
-           (D,
-            IEEE754_Precision,
-            IEEE754_Names,
-            Supported_IEEE754_Precision'Pos (Precision_None)));
+      return Get_IEEE754_Precision_Enumerator (D, IEEE754_Precision);
    end Get_IEEE754_Precision;
 
    -----------------------
@@ -972,32 +875,10 @@ package body Ocarina.Backends.Properties is
    -----------------------
 
    function Get_Initial_Value (D : Node_Id) return Name_Array is
-      I_List : List_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
 
-      if Is_Defined_List_Property (D, Initial_Value) then
-         I_List := Get_List_Property (D, Initial_Value);
-
-         declare
-            use Ocarina.AADL_Values;
-
-            L   : constant Nat := Nat (Length (I_List));
-            Res : Name_Array (1 .. L);
-            N   : Node_Id;
-         begin
-            N := AIN.First_Node (I_List);
-
-            for J in Res'Range loop
-               Res (J) := Value (Value (N)).SVal;
-               N       := AIN.Next_Node (N);
-            end loop;
-
-            return Res;
-         end;
-      else
-         return Empty_Name_Array;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Initial_Value);
    end Get_Initial_Value;
 
    -----------------------
@@ -1005,37 +886,9 @@ package body Ocarina.Backends.Properties is
    -----------------------
 
    function Get_Integer_Range (D : Node_Id) return LL_Array is
-      R_List : List_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
-
-      if Is_Defined_List_Property (D, Integer_Range) then
-         R_List := Get_List_Property (D, Integer_Range);
-
-         declare
-            use Ocarina.AADL_Values;
-
-            L   : constant Nat := Nat (Length (R_List));
-            Res : LL_Array (1 .. L);
-            N   : Node_Id;
-         begin
-            N := AIN.First_Node (R_List);
-
-            for J in Res'Range loop
-               if Value (Value (N)).ISign then
-                  Res (J) := -Long_Long (Value (Value (N)).IVal);
-               else
-                  Res (J) := Long_Long (Value (Value (N)).IVal);
-               end if;
-
-               N := AIN.Next_Node (N);
-            end loop;
-
-            return Res;
-         end;
-      else
-         return Empty_LL_Array;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Integer_Range);
    end Get_Integer_Range;
 
    -------------------------
@@ -1055,27 +908,15 @@ package body Ocarina.Backends.Properties is
    function Get_Number_Representation
      (D : Node_Id) return Supported_Number_Representation
    is
-      R_Name : Name_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
 
-      if Is_Defined_Enumeration_Property (D, Number_Representation) then
-         R_Name := Get_Enumeration_Property (D, Number_Representation);
+      function Get_Number_Representation_Enumerator is new
+        Check_And_Get_Property_Enumerator_With_Default
+        (T => Supported_Number_Representation,
+        Default_Value => None);
 
-         if R_Name = Representation_Signed_Name then
-            return Representation_Signed;
-         elsif R_Name = Representation_Unsigned_Name then
-            return Representation_Unsigned;
-         else
-            Display_Located_Error
-              (AIN.Loc (D),
-               "Unknown floating point representation",
-               Fatal => True);
-            return Representation_None;
-         end if;
-      else
-         return Representation_None;
-      end if;
+   begin
+      return Get_Number_Representation_Enumerator (D, Number_Representation);
    end Get_Number_Representation;
 
    --------------------
@@ -1083,37 +924,9 @@ package body Ocarina.Backends.Properties is
    --------------------
 
    function Get_Real_Range (D : Node_Id) return LD_Array is
-      R_List : List_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
-
-      if Is_Defined_List_Property (D, Real_Range) then
-         R_List := Get_List_Property (D, Real_Range);
-
-         declare
-            use Ocarina.AADL_Values;
-
-            L   : constant Nat := Nat (Length (R_List));
-            Res : LD_Array (1 .. L);
-            N   : Node_Id;
-         begin
-            N := AIN.First_Node (R_List);
-
-            for J in Res'Range loop
-               if Value (Value (N)).RSign then
-                  Res (J) := -Long_Double (Value (Value (N)).RVal);
-               else
-                  Res (J) := Long_Double (Value (Value (N)).RVal);
-               end if;
-
-               N := AIN.Next_Node (N);
-            end loop;
-
-            return Res;
-         end;
-      else
-         return Empty_LD_Array;
-      end if;
+   begin
+      return Check_And_Get_Property (D, Real_Range);
    end Get_Real_Range;
 
    -------------------
@@ -1140,7 +953,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Code_Size (E : Node_Id) return Size_Type is
    begin
-      return (Get_Size_Property_Value (E, Code_Size));
+      return Get_Size_Property_Value (E, Code_Size);
    end Get_Code_Size;
 
    ------------------------------------
@@ -1187,7 +1000,7 @@ package body Ocarina.Backends.Properties is
       Prio := Get_Priority (D);
 
       if Prio /= 0
-        and then Get_Concurrency_Protocol (D) /= Concurrency_Priority_Ceiling
+        and then Get_Concurrency_Protocol (D) /= Priority_Ceiling
       then
          Display_Located_Error
            (AIN.Loc (D),
@@ -1275,49 +1088,16 @@ package body Ocarina.Backends.Properties is
    function Get_Concurrency_Protocol
      (D : Node_Id) return Supported_Concurrency_Control_Protocol
    is
-      C_Name : Name_Id;
-   begin
       pragma Assert (AINU.Is_Data (D));
 
-      if Is_Defined_Enumeration_Property (D, Data_Concurrency_Protocol) then
-         C_Name := Get_Enumeration_Property (D, Data_Concurrency_Protocol);
+      function Get_Concurrency_Protocol_Enumerator is new
+        Check_And_Get_Property_Enumerator_With_Default
+        (T => Supported_Concurrency_Control_Protocol,
+         Default_Value => None_Specified);
 
-         if C_Name = Concurrency_NoneSpecified_Name then
-            return Concurrency_NoneSpecified;
-
-         elsif C_Name = Concurrency_Read_Only_Name then
-            return Concurrency_Read_Only;
-
-         elsif C_Name = Concurrency_Protected_Access_Name then
-
-            return Concurrency_Protected_Access;
-
-         elsif C_Name = Concurrency_Priority_Ceiling_Name then
-
-            return Concurrency_Priority_Ceiling;
-
-         elsif C_Name = Concurrency_Priority_Ceiling_Protocol_Name then
-
-            return Concurrency_Priority_Ceiling;
-
-         elsif C_Name = Concurrency_Priority_Inheritance_Name then
-
-            return Concurrency_Priority_Inheritance;
-
-         elsif C_Name = Concurrency_Immediate_Priority_Ceiling_Name then
-
-            return Concurrency_Immediate_Priority_Ceiling;
-
-         else
-            Display_Located_Error
-              (AIN.Loc (D),
-               "Unknown concurrency protocol",
-               Fatal => True);
-            return Concurrency_NoneSpecified;
-         end if;
-      else
-         return Concurrency_NoneSpecified;
-      end if;
+   begin
+      return Get_Concurrency_Protocol_Enumerator
+        (D, Data_Concurrency_Protocol);
    end Get_Concurrency_Protocol;
 
    -------------------------
@@ -1714,30 +1494,8 @@ package body Ocarina.Backends.Properties is
    ---------------------
 
    function Get_Source_Text (E : Node_Id) return Name_Array is
-      T_List : List_Id;
    begin
-      if Is_Defined_List_Property (E, Source_Text) then
-         T_List := Get_List_Property (E, Source_Text);
-
-         declare
-            use Ocarina.AADL_Values;
-
-            L   : constant Nat := Nat (ATNU.Length (T_List));
-            Res : Name_Array (1 .. L);
-            N   : Node_Id;
-         begin
-            N := ATN.First_Node (T_List);
-
-            for J in Res'Range loop
-               Res (J) := Value (Value (N)).SVal;
-               N       := ATN.Next_Node (N);
-            end loop;
-
-            return Res;
-         end;
-      else
-         return Empty_Name_Array;
-      end if;
+      return Check_And_Get_Property (E, Source_Text);
    end Get_Source_Text;
 
    ----------------------------------
@@ -3110,28 +2868,6 @@ package body Ocarina.Backends.Properties is
       Access_Read_Write_Name := Get_String_Name ("read_write");
       Access_By_Method_Name  := Get_String_Name ("by_method");
 
-      Concurrency_NoneSpecified_Name    := Get_String_Name ("none_specified");
-      Concurrency_Read_Only_Name        := Get_String_Name ("read_only");
-      Concurrency_Protected_Access_Name :=
-        Get_String_Name ("protected_access");
-      Concurrency_Priority_Ceiling_Name :=
-        Get_String_Name ("priority_ceiling");
-
-      Concurrency_Immediate_Priority_Ceiling_Name :=
-        Get_String_Name ("immediate_priority_ceiling_protocol");
-
-      Concurrency_Priority_Inheritance_Name :=
-        Get_String_Name ("priority_inheritance");
-
-      Concurrency_Priority_Ceiling_Protocol_Name :=
-        Get_String_Name ("priority_ceiling_protocol");
-
-      Precision_Simple_Name := Get_String_Name ("simple");
-      Precision_Double_Name := Get_String_Name ("double");
-
-      Representation_Signed_Name   := Get_String_Name ("signed");
-      Representation_Unsigned_Name := Get_String_Name ("unsigned");
-
       Language_Ada_95_Name          := Get_String_Name ("ada95");
       Language_Ada_Name             := Get_String_Name ("ada");
       Language_Ada_05_Name          := Get_String_Name ("ada05");
@@ -3888,11 +3624,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_POK_Mils_Verified (E : Node_Id) return Boolean is
    begin
-      if Is_Defined_Property (E, POK_Mils_Verified) then
-         return Get_Boolean_Property (E, POK_Mils_Verified);
-      end if;
-
-      return False;
+      return Check_And_Get_Property (E, POK_Mils_Verified);
    end Get_POK_Mils_Verified;
 
    -------------------
@@ -3916,10 +3648,7 @@ package body Ocarina.Backends.Properties is
 
    function Get_Wait_For_All_Events (E : Node_Id) return Boolean is
    begin
-      if Is_Defined_Property (E, SEI_Wait_For_All_Events) then
-         return Get_Boolean_Property (E, SEI_Wait_For_All_Events);
-      end if;
-      return False;
+      return Check_And_Get_Property (E, SEI_Wait_For_All_Events);
    end Get_Wait_For_All_Events;
 
    -----------------------
@@ -4027,12 +3756,9 @@ package body Ocarina.Backends.Properties is
      (E       : Node_Id;
       In_Mode : Name_Id := No_Name) return Name_Id
    is
+      pragma Unreferenced (In_Mode);
    begin
-      if Is_Defined_String_Property (E, Scade_Signal_Name, In_Mode) then
-         return Get_String_Property (E, Scade_Signal_Name, In_Mode);
-      else
-         return No_Name;
-      end if;
+      return Check_And_Get_Property (E, Scade_Signal_Name);
    end Get_Scade_Signal;
 
    -------------------------------------
@@ -4345,16 +4071,8 @@ package body Ocarina.Backends.Properties is
 
    function Get_Driver_Name (Device : Node_Id) return Name_Id is
    begin
-      if Is_Defined_String_Property
-          (Device,
-           Get_String_Name ("deployment::driver_name"))
-      then
-         return Get_String_Property
-             (Device,
-              Get_String_Name ("deployment::driver_name"));
-      end if;
-
-      return No_Name;
+      return Check_And_Get_Property
+        (Device, Get_String_Name ("deployment::driver_name"));
    end Get_Driver_Name;
 
    -----------------------
@@ -4363,16 +4081,8 @@ package body Ocarina.Backends.Properties is
 
    function Get_Configuration (Device : Node_Id) return Name_Id is
    begin
-      if Is_Defined_String_Property
-          (Device,
-           Get_String_Name ("deployment::configuration"))
-      then
-         return Get_String_Property
-             (Device,
-              Get_String_Name ("deployment::configuration"));
-      end if;
-
-      return No_Name;
+      return Check_And_Get_Property
+        (Device, Get_String_Name ("deployment::configuration"));
    end Get_Configuration;
 
    ----------------------------

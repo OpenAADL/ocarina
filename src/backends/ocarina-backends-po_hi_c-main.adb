@@ -494,7 +494,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
                   Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                   if Get_Concurrency_Protocol (Corresponding_Instance (S))
-                     /= Concurrency_NoneSpecified
+                     /= None_Specified
                   then
                      N :=
                      Make_Expression

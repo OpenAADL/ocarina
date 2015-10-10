@@ -263,8 +263,7 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
          Data_Size             : Size_Type;
          Number_Representation : constant Supported_Number_Representation :=
            Get_Number_Representation (E);
-         Is_Signed : constant Boolean :=
-           (Number_Representation = Representation_Signed);
+         Is_Signed : constant Boolean := Number_Representation = Signed;
       begin
          --  Do not generate Ada type more than once
 
@@ -700,7 +699,7 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                               --  the AADL model.
 
                               CCP := Get_Concurrency_Protocol (E);
-                              if CCP /= Concurrency_Priority_Ceiling then
+                              if CCP /= Priority_Ceiling then
                                  Display_Located_Error
                                    (Loc (E),
                                     "Incompatible concurrency protocol, " &

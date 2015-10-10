@@ -234,8 +234,8 @@ package body Ocarina.Backends.Cheddar.Mapping is
 
       Concurrency_Protocols : constant array
       (Supported_Concurrency_Control_Protocol'Range) of Name_Id :=
-        (Concurrency_NoneSpecified    => Get_String_Name ("NO_PROTOCOL"),
-         Concurrency_Priority_Ceiling =>
+        (None_Specified    => Get_String_Name ("NO_PROTOCOL"),
+         Priority_Ceiling =>
            Get_String_Name ("PRIORITY_CEILING_PROTOCOL"),
          others => No_Name);
 

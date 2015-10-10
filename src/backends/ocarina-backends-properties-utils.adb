@@ -33,10 +33,10 @@ with Ocarina.Backends.Messages;
 with Ocarina.Instances.Queries;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.Namet;
+with Charset; use Charset;
 with Utils;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.NUtils;
-with Ocarina.AADL_Values;
 
 package body Ocarina.Backends.Properties.Utils is
 
@@ -47,6 +47,7 @@ package body Ocarina.Backends.Properties.Utils is
    use Standard.Utils;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package ATNU renames Ocarina.ME_AADL.AADL_Tree.NUtils;
    use type ATN.Node_Kind;
 
@@ -313,5 +314,162 @@ package body Ocarina.Backends.Properties.Utils is
          Fatal => True);
       return Default_Value;
    end Check_And_Get_Property;
+
+   function Check_And_Get_Property_Enumerator
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return T
+   is
+      Enumerator : Name_Id;
+   begin
+      if not Is_Defined_Enumeration_Property (E, Property_Name) then
+         Display_Located_Error
+           (AIN.Loc (E),
+            "Property " & Get_Name_String (Property_Name) & " not defined",
+            Fatal => True);
+         raise Program_Error;
+      end if;
+
+      Enumerator := Get_Enumeration_Property (E, Property_Name);
+      for Elt in T'Range loop
+         if To_Upper (Get_Name_String (Enumerator)) = Elt'Img then
+            return Elt;
+         end if;
+      end loop;
+
+      Display_Located_Error
+        (AIN.Loc (E),
+         "Enumerator """ & Get_Name_String (Enumerator) & """ not supported",
+         Fatal => True);
+
+      raise Program_Error;
+   end Check_And_Get_Property_Enumerator;
+
+   function Check_And_Get_Property_Enumerator_With_Default
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return T
+   is
+      Enumerator : Name_Id;
+   begin
+      if not Is_Defined_Enumeration_Property (E, Property_Name) then
+         return Default_Value;
+      end if;
+
+      Enumerator := Get_Enumeration_Property (E, Property_Name);
+      declare
+         Enumerator_String : constant String :=
+           To_Upper (Get_Name_String (Enumerator));
+      begin
+         for Elt in T'Range loop
+            if Enumerator_String = Elt'Img then
+               return Elt;
+            end if;
+         end loop;
+      end;
+
+      Display_Located_Error
+        (AIN.Loc (E),
+         "Enumerator " & Get_Name_String (Enumerator) & " not supported",
+         Fatal => True);
+
+      raise Program_Error;
+   end Check_And_Get_Property_Enumerator_With_Default;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return Name_Array
+   is
+      N_List : List_Id;
+   begin
+      if Is_Defined_List_Property (E, Property_Name) then
+         N_List := Get_List_Property (E, Property_Name);
+
+         declare
+            L   : constant Nat := Nat (ATNU.Length (N_List));
+            Res : Name_Array (1 .. L);
+            N   : Node_Id;
+         begin
+            N := ATN.First_Node (N_List);
+
+            for Elt of Res loop
+               Elt := Value (ATN.Value (N)).SVal;
+               N   := ATN.Next_Node (N);
+            end loop;
+
+            return Res;
+         end;
+      else
+         return Empty_Name_Array;
+      end if;
+   end Check_And_Get_Property;
+
+   function Check_And_Get_Property_Generic
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return Elt_Array
+   is
+      D_List : List_Id;
+   begin
+      if Is_Defined_List_Property (E, Property_Name) then
+         D_List := Get_List_Property (E, Property_Name);
+
+         declare
+            L   : constant Nat := Nat (ATNU.Length (D_List));
+            Res : Elt_Array (1 .. L);
+            N   : Node_Id;
+         begin
+            N := ATN.First_Node (D_List);
+
+            for J in Res'Range loop
+               Res (J) := Extract_Value
+                 (Value (ATN.Value (ATN.Number_Value (N))));
+
+               N       := ATN.Next_Node (N);
+            end loop;
+
+            return Res;
+         end;
+      else
+         return Default_Value;
+      end if;
+   end Check_And_Get_Property_Generic;
+
+   function Check_And_Get_Property_ULL
+   is new Check_And_Get_Property_Generic
+     (Elt_Type => Unsigned_Long_Long,
+      Elt_Array => ULL_Array,
+      Extract_Value => Extract_Value,
+      Default_Value => Empty_ULL_Array);
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return ULL_Array renames Check_And_Get_Property_ULL;
+
+   function Check_And_Get_Property_LL
+   is new Check_And_Get_Property_Generic
+     (Elt_Type => Long_Long,
+      Elt_Array => LL_Array,
+      Extract_Value => Extract_Value,
+      Default_Value => Empty_LL_Array);
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return LL_Array renames Check_And_Get_Property_LL;
+
+   function Check_And_Get_Property_LD
+   is new Check_And_Get_Property_Generic
+     (Elt_Type => Long_Double,
+      Elt_Array => LD_Array,
+      Extract_Value => Extract_Value,
+      Default_Value => Empty_LD_Array);
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return LD_Array renames Check_And_Get_Property_LD;
 
 end Ocarina.Backends.Properties.Utils;

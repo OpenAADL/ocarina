@@ -30,6 +30,8 @@
 ------------------------------------------------------------------------------
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
+with Ocarina.AADL_Values; use Ocarina.AADL_Values;
+with Ocarina.Backends.Properties; use Ocarina.Backends.Properties;
 
 package Ocarina.Backends.Properties.Utils is
 
@@ -98,5 +100,51 @@ package Ocarina.Backends.Properties.Utils is
       Names : Name_Array;
       Default_Value : Int := Int'First)
      return Int;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return Name_Array;
+
+   generic
+      type Elt_Type is private;
+      type Elt_Array is array (Nat range <>) of Elt_Type;
+      with function Extract_Value (V : Value_Type) return Elt_Type;
+      Default_Value : Elt_Array;
+
+   function Check_And_Get_Property_Generic
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return Elt_Array;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return ULL_Array;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return LL_Array;
+
+   function Check_And_Get_Property
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return LD_Array;
+
+   generic
+      type T is (<>);
+   function Check_And_Get_Property_Enumerator
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return T;
+
+   generic
+      type T is (<>);
+      Default_Value : T;
+   function Check_And_Get_Property_Enumerator_With_Default
+     (E : Node_Id;
+      Property_Name : Name_Id)
+     return T;
 
 end Ocarina.Backends.Properties.Utils;
