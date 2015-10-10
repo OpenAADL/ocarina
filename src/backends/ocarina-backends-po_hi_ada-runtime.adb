@@ -335,7 +335,10 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
    -- RU --
    --------
 
-   function RU (Id : RU_Id; Withed : Boolean := True) return Node_Id is
+   function RU
+     (Id : RU_Id; Withed : Boolean := True; Elaborated : Boolean := False)
+     return Node_Id
+   is
       Result : Node_Id;
    begin
       --  This is a runtime unit and not a runtime entity, so it's
@@ -343,7 +346,7 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
 
       Result := Copy_Designator (RUD (Id), False);
       if Withed then
-         Add_With_Package (Result);
+         Add_With_Package (Result, Elaborated => Elaborated);
       end if;
       return Result;
    end RU;

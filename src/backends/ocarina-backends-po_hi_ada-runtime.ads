@@ -293,7 +293,9 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
    function RE (Id : RE_Id; Withed : Boolean := True) return Node_Id;
    --  Return a designator for entity Id
 
-   function RU (Id : RU_Id; Withed : Boolean := True) return Node_Id;
+   function RU
+     (Id : RU_Id; Withed : Boolean := True; Elaborated : Boolean := False)
+     return Node_Id;
    --  Return a node for Unit Id
 
 end Ocarina.Backends.PO_HI_Ada.Runtime;
