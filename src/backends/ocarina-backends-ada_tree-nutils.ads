@@ -42,9 +42,9 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    type Token_Type is
      (
-   --   Token name      Token type
-   --   Keywords
-   Tok_Mod,             -- MOD   **** First Keyword
+      --   Token name      Token type
+      --   Keywords
+      Tok_Mod,             -- MOD   **** First Keyword
       Tok_Rem,             -- REM
       Tok_New,             -- NEW
       Tok_Abs,             -- ABS
@@ -425,6 +425,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Pragma_No_Return,
       Pragma_Preelaborate,
       Pragma_Priority,
+      Pragma_SPARK_Mode,
       Pragma_Style_Checks,
       Pragma_Suppress,
       Pragma_Unreferenced,
