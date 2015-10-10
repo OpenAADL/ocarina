@@ -714,8 +714,8 @@ package body Ocarina.Backends.PO_HI_Ada is
 
       Types.Package_Body.Visit (E);
       Subprograms.Package_Body.Visit (E);
-      Activity.Package_Body.Visit (E);
       Transport.Package_Body.Visit (E);
+      Activity.Package_Body.Visit (E);
       Marshallers.Package_Body.Visit (E);
 
       --  The main subprogram
