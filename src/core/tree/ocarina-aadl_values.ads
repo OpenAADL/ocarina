@@ -61,6 +61,21 @@ package Ocarina.AADL_Values is
       end case;
    end record;
 
+   function Extract_Value (Value : Value_Type) return Long_Long is
+     (if Value.ISign then -Long_Long (Value.IVal) else Long_Long (Value.IVal));
+
+   function Extract_Value (Value : Value_Type) return Unsigned_Long_Long is
+     (if Value.ISign then raise Constraint_Error else Value.IVal);
+
+   function Extract_Value (Value : Value_Type) return Long_Double is
+     (if Value.RSign then -Long_Double (Value.RVal)
+      else Long_Double (Value.RVal));
+
+   function Extract_Value (Value : Value_Type) return Name_Id is
+      (if Value.T = LT_String then Value.SVal else Value.EVal);
+
+   function Extract_Value (Value : Value_Type) return Boolean is (Value.BVal);
+
    No_Value : constant Value_Id;
    V_Zero : Value_Id;
    V_One  : Value_Id;
