@@ -29,14 +29,12 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Command_Line;           use Ada.Command_Line;
-with GNAT.Directory_Operations;  use GNAT.Directory_Operations;
 with GNAT.OS_Lib;                use GNAT.OS_Lib;
 
 with Errors;                     use Errors;
 with Locations;                  use Locations;
-with Ocarina.Namet;                      use Ocarina.Namet;
-with Ocarina.Output;                     use Ocarina.Output;
+with Ocarina.Namet;              use Ocarina.Namet;
+with Ocarina.Output;             use Ocarina.Output;
 with Utils;                      use Utils;
 
 with Ocarina.Analyzer;           use Ocarina.Analyzer;
@@ -44,7 +42,6 @@ with Ocarina.Backends;           use Ocarina.Backends;
 with Ocarina.Configuration;      use Ocarina.Configuration;
 with Ocarina.FE_AADL;            use Ocarina.FE_AADL;
 with Ocarina.FE_AADL.Parser;
-with Ocarina.FE_REAL;            use Ocarina.FE_REAL;
 with Ocarina.Instances;          use Ocarina.Instances;
 with Ocarina.Parser;             use Ocarina.Parser;
 with Ocarina.Options;            use Ocarina.Options;
