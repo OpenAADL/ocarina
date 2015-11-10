@@ -88,6 +88,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
    procedure Reset_Connections (Node : Node_Id);
 
    function Connection_End_Is_Local (Node : Node_Id) return Boolean;
+   --  Return true iff Node is local to a given component, i.e. does
+   --  not belong to another entity.
 
    function Check_End_Types_Consistency (Node : Node_Id) return Boolean;
    --  Check that the end of the connection have compatible types
@@ -974,12 +976,12 @@ package body Ocarina.Analyzer.AADL.Semantics is
          when K_Port_Spec | K_Parameter =>
             if
               (Present (Inversed_Entity (Connection_Source))
-               and then
+                 and then
                  Connection_Source /=
                  Inversed_Entity (Connection_Source))
               or else
               (Present (Inversed_Entity (Connection_Destination))
-               and then
+                 and then
                  Connection_Destination /=
                  Inversed_Entity (Connection_Destination))
             then
@@ -988,65 +990,92 @@ package body Ocarina.Analyzer.AADL.Semantics is
             else
                Directions :=
                  ((not Source_Is_Local)
-                  and then (not Destination_Is_Local)
-                  and then Is_Out (Connection_Source)
-                  and then Is_In (Connection_Destination))
+                    and then (not Destination_Is_Local)
+                    and then Is_Out (Connection_Source)
+                    and then Is_In (Connection_Destination))
                  or else
                  (Source_Is_Local
-                  and then (not Destination_Is_Local)
-                  and then Is_In (Connection_Source)
-                  and then Is_In (Connection_Destination))
+                    and then (not Destination_Is_Local)
+                    and then Is_In (Connection_Source)
+                    and then Is_In (Connection_Destination))
                  or else
                  ((not Source_Is_Local)
-                  and then Destination_Is_Local
-                  and then Is_Out (Connection_Source)
-                  and then Is_Out (Connection_Destination))
+                    and then Destination_Is_Local
+                    and then Is_Out (Connection_Source)
+                    and then Is_Out (Connection_Destination))
                  or else
                  (Source_Is_Local
-                  and then Destination_Is_Local
-                  and then Is_In (Connection_Source)
-                  and then Is_Out (Connection_Destination))
+                    and then Destination_Is_Local
+                    and then Is_In (Connection_Source)
+                    and then Is_Out (Connection_Destination))
                  or else
                  (Is_In (Connection_Source)
-                  and then Is_Out (Connection_Source)
-                  and then Is_Out (Connection_Destination)
-                  and then Is_In (Connection_Destination));
+                    and then Is_Out (Connection_Source)
+                    and then Is_Out (Connection_Destination)
+                    and then Is_In (Connection_Destination));
                --  XXX The latest test may be redudant with the previous
                --  ones
             end if;
 
          when K_Feature_Group_Spec =>
             Directions := True;
-         --  There is no direction for a port group
+            --  There is no direction for a port group
 
          when K_Subcomponent_Access =>
-            Directions :=
-              Is_Bidirectional (Node)
+            Directions := Is_Bidirectional (Node)
+
               or else
+              --  AS5506/B 9.4 (L5) : if the access connection
+              --  declaration represents an access connection between
+              --  access features of sibling components, then the source
+              --  must be a provides access, and the destination must be
+              --  a requires access, or vice versa.
+
+              (not Source_Is_Local and then
+                 not Destination_Is_Local and then
+                 not Is_Provided (Connection_Destination) and then
+                 Kind (Connection_Source) = K_Subcomponent_Access and then
+                 Is_Provided (Connection_Source))
+
+              or else
+              --  AS5506/B 9.4 (L6): If the access connection
+              --  declaration represents a feature mapping up the
+              --  containment hierarchy, then one connection end must be
+              --  a provides access of a subcomponent, or a data,
+              --  subprogram, or bus subcomponent; and the other
+              --  connection end must be a provides access feature of
+              --  the enclosing component or a provides feature of a
+              --  feature group of the enclosing component.
+
               (not Source_Is_Local
-               and then not Destination_Is_Local
-               and then not Is_Provided (Connection_Destination)
-               and then Kind (Connection_Source) = K_Subcomponent_Access
-               and then Is_Provided (Connection_Source))
+                 and then Destination_Is_Local
+                 and then Is_Provided (Connection_Destination)
+                 and then Kind (Connection_Source) = K_Subcomponent_Access
+                 and then Is_Provided (Connection_Source))
+
               or else
               (Source_Is_Local
-               and then not Destination_Is_Local
-               and then not Is_Provided (Connection_Destination)
-               and then
-               ((Kind (Connection_Source) = K_Subcomponent_Access
-                 and then not Is_Provided (Connection_Source))
-                or else Kind (Connection_Source) = K_Subcomponent))
+                 and then Destination_Is_Local
+                 and then Is_Provided (Connection_Destination)
+                 and then Kind (Connection_Source) = K_Subcomponent)
+
               or else
-              (not Source_Is_Local
-               and then Destination_Is_Local
-               and then Is_Provided (Connection_Destination)
-               and then Kind (Connection_Source) = K_Subcomponent_Access
-               and then Is_Provided (Connection_Source))
-              or else
-              (Source_Is_Local
-               and then Destination_Is_Local
-               and then Is_Provided (Connection_Destination)
-               and then Kind (Connection_Source) = K_Subcomponent);
+              --  AS5506/B 9.4 (L7): If the access connection
+              --  declaration represents a feature mapping down the
+              --  containment hierarchy, then one connection end must be
+              --  a requires access of the enclosing component, a
+              --  requires access of a feature group of the enclosing
+              --  component, or a data, subprogram, or bus subcomponent;
+              --  and the other connection end must be a requires access
+              --  of a subcomponent.
+
+              (((Source_Is_Local and then not Destination_Is_Local)
+                  or else (not Source_Is_Local and then Destination_Is_Local))
+                 and then not Is_Provided (Connection_Destination)
+                 and then
+                 ((Kind (Connection_Source) = K_Subcomponent_Access
+                     and then not Is_Provided (Connection_Source))
+                    or else Kind (Connection_Source) = K_Subcomponent));
 
          when K_Subcomponent =>
             Directions := Is_Bidirectional (Node);
@@ -2147,8 +2176,8 @@ package body Ocarina.Analyzer.AADL.Semantics is
    -----------------------------
 
    function Connection_End_Is_Local (Node : Node_Id) return Boolean is
-
       pragma Assert (Kind (Node) = K_Entity_Reference);
+
    begin
       return Next_Node (First_Node (Path (Node))) = No_Node
         or else
