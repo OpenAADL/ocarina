@@ -1,0 +1,26 @@
+package S
+public
+
+  bus BusType_1 end BusType_1;
+  bus implementation BusType_1.impl end BusType_1.impl;
+
+  processor PC
+  features
+    pp_1: requires bus access BusType_1;
+  end PC;
+
+  processor implementation PC.impl end PC.impl;
+
+  system S
+  features
+    bustype_1_1: requires bus access BusType_1;
+  end S;
+
+  system implementation S.impl
+  subcomponents
+    pc_part: processor PC.impl;
+  connections
+    bustype_1_1_1_connection: bus access pc_part.pp_1 -> bustype_1_1;
+  end S.impl;
+
+end S;
