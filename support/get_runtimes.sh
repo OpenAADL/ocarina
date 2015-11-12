@@ -46,7 +46,7 @@ while test $# -ne 0; do
 	*pok* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf pok 2>/dev/null
-	    svn co --username anon --password anon http://svn.freebits.fr/pok/trunk pok \
+            git clone https://github.com/pok-kernel/pok.git \
 		|| exit 2
 	    ;;
 
