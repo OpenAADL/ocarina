@@ -1,5 +1,5 @@
 AC_PREREQ(2.57)
-AC_INIT(ocarina, 2.0w, ocarina-users@enst.fr)
+AC_INIT(ocarina, 2.0w, http://www.openaadl.org)
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_AUX_DIR(support)
 
