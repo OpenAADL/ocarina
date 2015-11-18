@@ -32,6 +32,7 @@
 with Ada.Command_Line;          use Ada.Command_Line;
 with GNAT.OS_Lib;               use GNAT.OS_Lib;
 with GNAT.Directory_Operations; use GNAT.Directory_Operations;
+with GNAT.Traceback.Symbolic;   use GNAT.Traceback.Symbolic;
 with Ocarina.Output;            use Ocarina.Output;
 with Ocarina.Namet;             use Ocarina.Namet;
 
@@ -227,6 +228,8 @@ package body Errors is
          "============================+");
       Write_Eol;
       Write_Line (Ada.Exceptions.Exception_Information (E));
+      Write_Line ("Symbolic Traceback:");
+      Write_Line (Symbolic_Traceback (E));
 
       OS_Exit (3);
    end Display_Bug_Box;
