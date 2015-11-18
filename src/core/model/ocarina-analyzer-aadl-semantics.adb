@@ -1021,7 +1021,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
             Directions := True;
             --  There is no direction for a port group
 
-         when K_Subcomponent_Access =>
+         when K_Subcomponent_Access | K_Subcomponent =>
             Directions := Is_Bidirectional (Node)
 
               or else
@@ -1033,7 +1033,9 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
               (not Source_Is_Local and then
                  not Destination_Is_Local and then
-                 not Is_Provided (Connection_Destination) and then
+                 not (Kind (Connection_Destination) = K_Subcomponent_Access
+                        and then Is_Provided (Connection_Destination))
+                 and then
                  Kind (Connection_Source) = K_Subcomponent_Access and then
                  Is_Provided (Connection_Source))
 
@@ -1049,14 +1051,18 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
               (not Source_Is_Local
                  and then Destination_Is_Local
-                 and then Is_Provided (Connection_Destination)
+                 and then
+                 (Kind (Connection_Destination) = K_Subcomponent_Access
+                    and then Is_Provided (Connection_Destination))
                  and then Kind (Connection_Source) = K_Subcomponent_Access
                  and then Is_Provided (Connection_Source))
 
               or else
               (Source_Is_Local
                  and then Destination_Is_Local
-                 and then Is_Provided (Connection_Destination)
+                 and then
+                 (Kind (Connection_Destination) = K_Subcomponent_Access
+                    and then Is_Provided (Connection_Destination))
                  and then Kind (Connection_Source) = K_Subcomponent)
 
               or else
@@ -1071,14 +1077,14 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
               (((Source_Is_Local and then not Destination_Is_Local)
                   or else (not Source_Is_Local and then Destination_Is_Local))
-                 and then not Is_Provided (Connection_Destination)
+               and then
+                 ((Kind (Connection_Destination) = K_Subcomponent_Access
+                     and then not Is_Provided (Connection_Destination))
+                  or else Kind (Connection_Destination) = K_Subcomponent)
                  and then
                  ((Kind (Connection_Source) = K_Subcomponent_Access
                      and then not Is_Provided (Connection_Source))
                     or else Kind (Connection_Source) = K_Subcomponent));
-
-         when K_Subcomponent =>
-            Directions := Is_Bidirectional (Node);
 
          when others =>
             Directions := True;

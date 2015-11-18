@@ -1,0 +1,23 @@
+package Test
+public
+
+  system t1
+  features
+    rba: requires bus access b1.i1;
+  end t1;
+
+  bus b1 end b1;
+
+  bus implementation b1.i1 end b1.i1;
+
+  system s end s;
+
+  system implementation s.impl
+  subcomponents
+    part1: system t1;
+    bus1: bus b1;
+  connections
+    c1: bus access part1.rba -> bus1;
+  end s.impl;
+
+end Test;
