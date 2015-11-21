@@ -1066,7 +1066,6 @@ package body Ocarina.FE_AADL.Parser.Components.Features is
                  Is_Refinement => Is_Refinement);
 
          when others =>
-
             if Is_Refinement then
                case AADL_Version is
                   when AADL_V1 =>
