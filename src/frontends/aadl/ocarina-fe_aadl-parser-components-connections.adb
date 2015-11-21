@@ -530,7 +530,9 @@ package body Ocarina.FE_AADL.Parser.Components.Connections is
          --  Property_Associations are not defined,
          --  In_Modes_And_Transitions must exist if Is_Refinement = TRUE
 
-         if Is_Refinement and then Token /= T_In then
+         if Aadl_Version = AADL_V1
+           and then Is_Refinement and then Token /= T_In
+         then
             DPE (Code, (T_In, T_Left_Curly_Bracket));
             Skip_Tokens (T_Semicolon);
             return No_Node;
