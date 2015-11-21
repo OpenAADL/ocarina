@@ -291,5 +291,6 @@ tests/github/issue_39/pb1.aadl
 tests/github/issue_47/test.aadl
 tests/github/issue_50/test.aadl
 tests/github/issue_50/test2.aadl
+tests/github/issue_55/test.aadl
 tests/root_system/test.aadl
 

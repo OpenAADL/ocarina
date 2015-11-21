@@ -1,0 +1,41 @@
+package t
+public
+
+  process a
+  features
+    outp : out feature;
+  end a;
+
+  process b
+  features
+    inp : in feature;
+  end b;
+
+  system s end s;
+
+  system implementation s.i
+  subcomponents
+    a : process a;
+    b : process b;
+  connections
+    c1 : feature a.outp -> b.inp;
+  end s.i;
+
+  process a2 extends a
+  features
+    outp : refined to out event port;
+  end a2;
+
+  process B2 extends b
+  features
+    inp : refined to in event port;
+  end b2;
+
+  system s2 extends s end s2;
+
+  system implementation s2.i extends s.i
+  connections
+    c1 : refined to port;
+  end s2.i;
+
+end t;
