@@ -303,8 +303,6 @@ package body Ocarina.Backends.PO_HI_C.Request is
       begin
          Push_Entity (C_Root);
 
-         Start_Recording_Handlings;
-
          Request_Union_List := New_List (CTN.K_Enumeration_Literals);
 
          Ports_Names_Array := Make_Array_Values;
@@ -320,8 +318,6 @@ package body Ocarina.Backends.PO_HI_C.Request is
                S := Next_Node (S);
             end loop;
          end if;
-
-         Reset_Handlings;
 
          Pop_Entity; --  C_Root
       end Visit_System_Instance;
