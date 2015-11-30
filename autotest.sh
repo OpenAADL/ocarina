@@ -116,6 +116,9 @@ path_conv="${path_conv-echo}"
 # platforms).
 path_sep="${path_sep-:}"
 
+# Set execute mode
+chmod 755 ${scriptdir}/tools/compare.py 
+
 # If dos2unix is not present, we display a warning
 if which dos2unix 2>&1 >/dev/null; then
     dos2unix="dos2unix"
