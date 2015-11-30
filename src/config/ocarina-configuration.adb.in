@@ -254,8 +254,10 @@ package body Ocarina.Configuration is
 
    function Ocarina_Last_Configure_Date return String is
    begin
-      return GNAT.Source_Info.Compilation_Date & " "
-        & GNAT.Source_Info.Compilation_Time;
+      return "";
+      --  XXX The following is disabled, requires GCC 5.x
+      --      return GNAT.Source_Info.Compilation_Date & " "
+      --        & GNAT.Source_Info.Compilation_Time;
    end Ocarina_Last_Configure_Date;
 
    ---------------------------------
