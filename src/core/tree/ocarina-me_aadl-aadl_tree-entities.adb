@@ -172,7 +172,7 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
          return No_Name;
       end if;
 
-      if Fully_Qualified then
+      if Fully_Qualified and then AADL_Version = AADL_V2 then
          Package_Name :=
            Display_Name (Identifier (Namespace (Entity)));
 

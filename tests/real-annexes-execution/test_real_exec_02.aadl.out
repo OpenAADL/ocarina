@@ -151,22 +151,22 @@ Evaluating theorem set_declaration_is_passing_through
 
  * Iterate for variable: rma.erc32_node_a_task_1
 Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :3964 end to end flow spec 
+anonymous end to end flow :3996 end to end flow spec 
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_2
 Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :3964 end to end flow spec 
+anonymous end to end flow :3996 end to end flow spec 
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_12
 Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :3965 end to end flow spec 
+anonymous end to end flow :3997 end to end flow spec 
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_22
 Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :3965 end to end flow spec 
+anonymous end to end flow :3997 end to end flow spec 
  => Result: TRUE
 
 theorem set_declaration_is_passing_through is: TRUE

@@ -17,6 +17,8 @@ property set Communication_Properties is
 		src: list of aadlinteger;
 		dst: list of aadlinteger;);
 
+   Data_Rate : aadlinteger units Data_Rate_Units applies to (feature);
+
 	Overflow_Handling_Protocol: enumeration (DropOldest, DropNewest, Error) => DropOldest
 		applies to (event port, event data port, subprogram access);
 
@@ -54,7 +56,6 @@ property set Communication_Properties is
 
 	Output_Time: list of IO_Time_Spec => ([ Time => Completion; Offset => 0 ns .. 0 ns; ])
 		applies to (port);
-
 
 	Rate_Spec: type record (
 		Value_Range: range of aadlreal;

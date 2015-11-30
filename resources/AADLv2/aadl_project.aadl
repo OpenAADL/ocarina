@@ -134,4 +134,6 @@ property set AADL_Project is
   MBytesps => KBytesps * 1000,
   GBytesps => MBytesps * 1000);
 
+  Data_Rate_Units: type   units (bitsps, Bytesps => bitsps * 8, KBytesps => Bytesps * 1000, MBytesps => KBytesps * 1000, GBytesps => MBytesps * 1000);
+
 end AADL_Project;
