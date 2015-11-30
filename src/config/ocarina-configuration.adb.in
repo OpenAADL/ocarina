@@ -47,7 +47,7 @@ with Ocarina.Parser;   use Ocarina.Parser;
 
 --  with GNAT.Compiler_Version;
 with GNAT.OS_Lib;      use GNAT.OS_Lib;
-with GNAT.Source_Info;
+--  with GNAT.Source_Info;
 with Ada.Command_Line; use Ada.Command_Line;
 
 with Charset; use Charset;
