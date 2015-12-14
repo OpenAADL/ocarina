@@ -1307,7 +1307,7 @@ package body Ocarina.FE_AADL.Parser.Components is
       if Token = T_Features then
          Nb_Items :=
            P_Items_List
-             (Func => P_Feature_Group_Or_Port_Group_Or_Port_Spec'Access,
+             (Func => P_Feature'Access,
               Container    => Feature_Group_Type,
               Refinable    => Refinable,
               Code         => Code,
