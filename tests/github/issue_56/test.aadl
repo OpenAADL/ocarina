@@ -1,0 +1,13 @@
+package Test
+public
+
+  subprogram foo
+  end foo;
+
+  FEATURE GROUP G1
+  FEATURES
+    RI : REQUIRES SUBPROGRAM ACCESS foo;
+    PI: PROVIDES SUBPROGRAM ACCESS foo;
+  END G1;
+
+end Test;

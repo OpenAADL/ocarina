@@ -1,0 +1,2 @@
+testFeatureGroup.aadl:12:03: s1.fg (entity reference)  and s2.fg (entity reference)  do not have compatible types
+Cannot analyze AADL specifications
