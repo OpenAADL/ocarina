@@ -423,55 +423,65 @@ if test ${dotests} = "true" ; then
 
 	    else
 		total=`expr ${total} + 1`
-		if test -r ${gprfile} ; then
-		    ocarina_gpr="`ocarina-config --projects`"
-		    command="gnatmake -P\"`${path_conv} ${gprfile}`\" -aP${ocarina_gpr} -XOBJ_DIR=\"`${path_conv} ${tmpdir}`\""
-		    ADA_PROJECT_PATH="${ocarina_gpr}${path_sep}${ADA_PROJECT_PATH}" \
-			gnatmake -P"`${path_conv} ${gprfile}`" -aP${ocarina_gpr} \
-			-XOBJ_DIR="`${path_conv} ${tmpdir}`" \
-			>${actual_output} 2>&1
-		else
-		    command="gnatmake '`${path_conv} ${file}`' `ocarina-config`"
-		    gnatmake "`${path_conv} ${file}`" `ocarina-config` \
-			>${actual_output} 2>&1
-		fi
 
-		if test $? != 0 ; then
-		    failed ${entry} \
-			"${command}" \
-			"" \
-			"${actual_output}"
-		    failures=`expr ${failures} + 1`
+		case "$(uname -s)" in
 
-		else
-		    ./`basename ${file} .adb` >${actual_output} 2>&1
-		    command="./`basename ${file} .adb`"
-		    result=$?
+		    CYGWIN*|MINGW32*|MSYS*)
+			ignored ${entry}
+			;;
 
-		    if test -r ${expected_output} ; then
-			${scriptdir}/tools/compare.py \
-			    ${expected_output} \
-			    ${actual_output} > /dev/null
-			result=$?
-		    fi;
-
-		    if test ${result} != 0 ; then
-			if test -r ${expected_output} ; then
-			    failed ${entry} \
-				"${command}" \
-				${expected_output} \
-				${actual_output}
-
+		    *)
+			
+			if test -r ${gprfile} ; then
+			    ocarina_gpr="`ocarina-config --projects`"
+			    command="gnatmake -P\"`${path_conv} ${gprfile}`\" -aP${ocarina_gpr} -XOBJ_DIR=\"`${path_conv} ${tmpdir}`\""
+			    ADA_PROJECT_PATH="${ocarina_gpr}${path_sep}${ADA_PROJECT_PATH}" \
+					    gnatmake -P"`${path_conv} ${gprfile}`" -aP${ocarina_gpr} \
+					    -XOBJ_DIR="`${path_conv} ${tmpdir}`" \
+					    >${actual_output} 2>&1
 			else
-			    failed ${entry} \
-				"${command}"
+			    command="gnatmake '`${path_conv} ${file}`' `ocarina-config`"
+			    gnatmake "`${path_conv} ${file}`" `ocarina-config` \
+				     >${actual_output} 2>&1
 			fi
-			failures=`expr ${failure} + 1`
-
-		    else
-			passed ${entry}
-		    fi
-		fi
+			
+			if test $? != 0 ; then
+			    failed ${entry} \
+				   "${command}" \
+				   "" \
+				   "${actual_output}"
+			    failures=`expr ${failures} + 1`
+			    
+			else
+			    ./`basename ${file} .adb` >${actual_output} 2>&1
+			    command="./`basename ${file} .adb`"
+			    result=$?
+			    
+			    if test -r ${expected_output} ; then
+				${scriptdir}/tools/compare.py \
+					    ${expected_output} \
+					    ${actual_output} > /dev/null
+				result=$?
+			    fi;
+			    
+			    if test ${result} != 0 ; then
+				if test -r ${expected_output} ; then
+				    failed ${entry} \
+					   "${command}" \
+					   ${expected_output} \
+					   ${actual_output}
+				    
+				else
+				    failed ${entry} \
+					   "${command}"
+				fi
+				failures=`expr ${failure} + 1`
+				
+			    else
+				passed ${entry}
+			    fi
+			fi;;
+		esac
 	    fi
 	done
     done
