@@ -388,7 +388,6 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                      C_End := First_Node (End_List);
 
                      while Present (C_End) loop
-
                         Parent := Parent_Component (Item (C_End));
 
                         if AAU.Is_Process (Parent) then
