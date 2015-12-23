@@ -1581,8 +1581,8 @@ package body Ocarina.Backends.Build_Utils is
                Write_Line ("prove:");
                Write_Line
                  (ASCII.HT &
-                    "gnatprove -P$(PROJECT_FILE) --warnings=continue " &
-                    "--report=fail");
+                    "gnatprove -P$(PROJECT_FILE) -XTARGET=SPARK "
+                    & "--warnings=continue --report=fail");
             end if;
 
             --  Close the file
