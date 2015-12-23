@@ -2313,6 +2313,7 @@ package body Ocarina.Backends.Properties is
                (Parent_Component (Get_Referenced_Entity (AIN.Source (C)))))
       then
          return No_Node;
+
       elsif not Is_Defined_List_Property (C, Connection_Binding) then
          if Check then
             Display_Located_Error

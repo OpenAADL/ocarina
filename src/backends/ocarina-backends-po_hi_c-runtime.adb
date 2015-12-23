@@ -157,11 +157,7 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
          N    := New_Node (K_Defining_Identifier);
          Set_Name (N, Name);
 
-         if E = RH_Subprograms then
-            Local := True;
-         else
-            Local := False;
-         end if;
+         Local := E = Rh_Subprograms;
 
          RHD (E) := Make_Include_Clause (N, Local);
       end loop;
