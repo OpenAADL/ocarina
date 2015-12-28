@@ -56,6 +56,61 @@ package body Ocarina.Python_Cmd is
    package ATNP renames Ocarina.ME_AADL.AADL_Tree.Nodes.Python;
    package AINP renames Ocarina.ME_AADL.AADL_Instances.Nodes.Python;
 
+   procedure Get_Node_Id (Data : in out Callback_Data'Class; N : String);
+   procedure Get_Property_Value (Data : in out Callback_Data'Class;
+      PropId : String; PropName : String);
+   procedure Get_Property_Value_By_Name (Data : in out Callback_Data'Class;
+      PropId : String; PropName : String);
+
+   ------------------------
+   -- Get_Property_Value --
+   ------------------------
+
+   procedure Get_Property_Value (Data : in out Callback_Data'Class;
+                                 PropId : String; PropName : String)
+   is
+      Result : constant String_List :=
+        Ocarina.Backends.Properties.Utils.Check_And_Get_Property
+        (Get_Node_Id_From_String (PropId),
+         Get_Node_Id_From_String (PropName));
+   begin
+      Set_Return_Value_As_List (Data);
+
+      for Elt of Result loop
+         Set_Return_Value (Data, Elt.all);
+      end loop;
+   end Get_Property_Value;
+
+   --------------------------------
+   -- Get_Property_Value_By_Name --
+   --------------------------------
+
+   procedure Get_Property_Value_By_Name (Data : in out Callback_Data'Class;
+                                         PropId : String; PropName : String)
+   is
+      Result : constant String_List :=
+        Ocarina.Backends.Properties.Utils.Check_And_Get_Property
+        (Get_Node_Id_From_String (PropId),
+         Get_String_Name (PropName));
+   begin
+      Set_Return_Value_As_List (Data);
+
+      for Elt of Result loop
+         Set_Return_Value (Data, Elt.all);
+      end loop;
+   end Get_Property_Value_By_Name;
+
+   -----------------
+   -- Get_Node_Id --
+   -----------------
+
+   procedure Get_Node_Id (Data : in out Callback_Data'Class;
+      N : String) is
+   begin
+      Set_Return_Value (Data, Integer'Image (Integer
+         (Namet.Get_String_Name (N))));
+   end Get_Node_Id;
+
    --------------
    -- On_Reset --
    --------------
