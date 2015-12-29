@@ -117,7 +117,7 @@ path_conv="${path_conv-echo}"
 path_sep="${path_sep-:}"
 
 # Set execute mode
-chmod 755 ${scriptdir}/tools/compare.py 
+chmod 755 ${scriptdir}/tools/compare.py
 
 # If dos2unix is not present, we display a warning
 if which dos2unix 2>&1 >/dev/null; then
@@ -431,7 +431,7 @@ if test ${dotests} = "true" ; then
 			;;
 
 		    *)
-			
+
 			if test -r ${gprfile} ; then
 			    ocarina_gpr="`ocarina-config --projects`"
 			    command="gnatmake -P\"`${path_conv} ${gprfile}`\" -aP${ocarina_gpr} -XOBJ_DIR=\"`${path_conv} ${tmpdir}`\""
@@ -444,39 +444,39 @@ if test ${dotests} = "true" ; then
 			    gnatmake "`${path_conv} ${file}`" `ocarina-config` \
 				     >${actual_output} 2>&1
 			fi
-			
+
 			if test $? != 0 ; then
 			    failed ${entry} \
 				   "${command}" \
 				   "" \
 				   "${actual_output}"
 			    failures=`expr ${failures} + 1`
-			    
+
 			else
 			    ./`basename ${file} .adb` >${actual_output} 2>&1
 			    command="./`basename ${file} .adb`"
 			    result=$?
-			    
+
 			    if test -r ${expected_output} ; then
 				${scriptdir}/tools/compare.py \
 					    ${expected_output} \
 					    ${actual_output} > /dev/null
 				result=$?
 			    fi;
-			    
+
 			    if test ${result} != 0 ; then
 				if test -r ${expected_output} ; then
 				    failed ${entry} \
 					   "${command}" \
 					   ${expected_output} \
 					   ${actual_output}
-				    
+
 				else
 				    failed ${entry} \
 					   "${command}"
 				fi
 				failures=`expr ${failure} + 1`
-				
+
 			    else
 				passed ${entry}
 			    fi
