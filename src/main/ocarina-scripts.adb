@@ -30,9 +30,9 @@
 ------------------------------------------------------------------------------
 
 with Errors;                           use Errors;
-with Ocarina.Namet;                            use Ocarina.Namet;
-with Ocarina.Output;                           use Ocarina.Output;
-with Ocarina.Types;                            use Ocarina.Types;
+with Ocarina.Namet;                    use Ocarina.Namet;
+with Ocarina.Output;                   use Ocarina.Output;
+with Ocarina.Types;                    use Ocarina.Types;
 
 with Ada.Unchecked_Deallocation;
 with Ada.Exceptions;                   use Ada.Exceptions;
@@ -40,6 +40,7 @@ with Ada.IO_Exceptions;
 with Ada.Text_IO;
 
 with GNAT.OS_Lib;                      use GNAT.OS_Lib;
+with GNAT.Directory_Operations;        use GNAT.Directory_Operations;
 
 with Ocarina.Backends;                 use Ocarina.Backends;
 with Ocarina.Instances;                use Ocarina.Instances;
@@ -47,6 +48,8 @@ with Ocarina.Transfo.Fusions;          use Ocarina.Transfo.Fusions;
 with Ocarina.Transfo.Move;             use Ocarina.Transfo.Move;
 with Ocarina.Transfo.Optim;            use Ocarina.Transfo.Optim;
 with Ocarina.Utils;                    use Ocarina.Utils;
+with Ocarina.Configuration;            use Ocarina.Configuration;
+with Ocarina.Options;                  use Ocarina.Options;
 
 package body Ocarina.Scripts is
 
@@ -164,7 +167,7 @@ package body Ocarina.Scripts is
                return Argc;
 
             when E : others =>
-               Write_Line ("raised "& Exception_Information (E));
+               Write_Line ("raised " & Exception_Information (E));
                Write_Line (Exception_Message (E));
                raise;
          end;
@@ -264,14 +267,27 @@ package body Ocarina.Scripts is
                      Show_Help;
 
                   when Analyze =>
-                     Ocarina.Utils.Analyze;
+                     declare
+                        Result : constant Boolean
+                          := Ocarina.Utils.Analyze;
+                     begin
+                        Exit_On_Error (not Result,
+                                       "Cannot analyze AADL models");
+                     end;
 
                   when Instantiate =>
-                     if Argc = 2 then
-                        Ocarina.Utils.Instantiate (Argument (2).all);
-                     else
-                        Ocarina.Utils.Instantiate ("");
-                     end if;
+                     declare
+                        Result : Boolean;
+                     begin
+                        if Argc = 2 then
+                           Result :=
+                             Ocarina.Utils.Instantiate (Argument (2).all);
+                        else
+                           Result := Ocarina.Utils.Instantiate ("");
+                        end if;
+                        Exit_On_Error (not Result,
+                                       "Cannot instantiatee AADL models");
+                     end;
 
                   when Generate =>
                      if Argc /= 2 then
@@ -387,7 +403,7 @@ package body Ocarina.Scripts is
                      Print_Status;
 
                   when Version =>
-                     Version;
+                     Ocarina.Configuration.Version;
 
                   when Quit =>
                      exit;
@@ -397,7 +413,7 @@ package body Ocarina.Scripts is
                   Write_Line ("syntax error");
 
                when E : others =>
-                  Write_Line ("raised "& Exception_Information (E));
+                  Write_Line ("raised " & Exception_Information (E));
                   Write_Line (Exception_Message (E));
             end;
          end if;

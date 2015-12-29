@@ -29,6 +29,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with GNAT.OS_Lib;
+
 package Ocarina.Scripts is
 
    procedure Ocarina_Shell;
