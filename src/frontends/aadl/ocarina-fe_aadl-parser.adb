@@ -44,13 +44,13 @@ with Ocarina.Options;                  use Ocarina.Options;
 with Ocarina.Parser;                   use Ocarina.Parser;
 with Ocarina.Property_Sets;            use Ocarina.Property_Sets;
 
-with GNAT.Command_Line; use GNAT.Command_Line;
 with GNAT.OS_Lib;       use GNAT.OS_Lib;
 
 package body Ocarina.FE_AADL.Parser is
 
    Language : constant String := "aadl";
    Suffix   : constant String := ".aadl";
+   First_Parsing     : Boolean := True;
 
    procedure Exit_On_Error (Error : Boolean; Reason : String);
 
@@ -72,34 +72,10 @@ package body Ocarina.FE_AADL.Parser is
    ----------
 
    procedure Init is
-      C : Character;
    begin
       First_Parsing     := True;
-      Add_Pre_Prop_Sets := False;
 
-      Initialize_Option_Scan;
-      loop
-         C := Getopt ("* y s f I:");
-         case C is
-            when ASCII.NUL =>
-               exit;
-
-            when 'y' =>
-               Auto_Load_AADL_Files := True;
-
-            when 'I' =>
-               Add_Library_Path (Parameter);
-
-            when 'f' | 's' =>
-               Add_Pre_Prop_Sets := True;
-
-            when others =>
-               null;
-
-         end case;
-      end loop;
       Add_Library_Path (Get_Name_String (Default_Library_Path));
-
       Ocarina.Parser.Register_Parser (Language, Process'Access);
    end Init;
 

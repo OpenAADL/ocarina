@@ -35,6 +35,14 @@ with GNAT.Table;
 
 package Ocarina.Options is
 
+   Quiet : aliased Boolean;
+   Verbose : aliased Boolean;
+   --  Note: Display_Help is implicitly defined as part of GNAT.Command_Line
+   Display_Version : aliased Boolean;
+   Show_Search_Directory : aliased Boolean;
+   Auto_Load_AADL_Files   : aliased Boolean := False;
+   Debug_Mode             : aliased Boolean := False;
+
    type Action_Kind is
      (None,
       Analyze_Model,
@@ -48,15 +56,16 @@ package Ocarina.Options is
       Shell,
       Python_Shell);
 
+   After_Scenario_Action : Action_Kind := Generate_Code;
+   --  Action to be performed _after_ performing scenario activities
+
    Root_System_Name       : Name_Id := No_Name;
    Installation_Directory : Name_Id := No_Name;
    Output_Filename        : Name_Id := No_Name;
    Boundt_Process         : Name_Id := No_Name;
    Quiet_Mode             : Boolean := False;
    Verbose_Mode           : Boolean := False;
-   Debug_Mode             : Boolean := False;
    Use_Scenario_File      : Boolean := False;
-   Auto_Load_AADL_Files   : Boolean := False;
 
    procedure Set_Current_Action (Action : Action_Kind);
    function Get_Current_Action return Action_Kind;

@@ -36,10 +36,6 @@ with Ocarina.Backends.XML_Tree.Generator;
 with Ocarina.Backends.Stats.Main;
 with Ocarina.Backends.Utils;
 
-with GNAT.Command_Line; use GNAT.Command_Line;
-
-with Ocarina.Namet; use Ocarina.Namet;
-
 package body Ocarina.Backends.Stats is
 
    use Ocarina.Instances;
@@ -48,9 +44,6 @@ package body Ocarina.Backends.Stats is
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.XML_Tree.Generator;
    use Ocarina.Backends.Utils;
-
-   Remove_Generated_Sources    : Boolean := False;
-   Generated_Sources_Directory : Name_Id := No_Name;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -100,30 +93,6 @@ package body Ocarina.Backends.Stats is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* b z o:") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend ("Stats", Generate'Access, Statistics);
    end Init;
 

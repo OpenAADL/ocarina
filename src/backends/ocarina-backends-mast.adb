@@ -33,11 +33,9 @@ with Ocarina.Instances;
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.Utils;
---  with Ocarina.Backends.MAST_Tree.Nodes;
 with Ocarina.Backends.MAST_Tree.Nutils;
 with Ocarina.Backends.MAST.Main;
 with Ocarina.Backends.MAST_Tree.Generator;
-with GNAT.Command_Line; use GNAT.Command_Line;
 
 with Ocarina.Namet; use Ocarina.Namet;
 
@@ -48,11 +46,7 @@ package body Ocarina.Backends.MAST is
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Expander;
 
---     package MTN renames Ocarina.Backends.MAST_Tree.Nodes;
    package MTU renames Ocarina.Backends.MAST_Tree.Nutils;
-
-   Generated_Sources_Directory : Name_Id := No_Name;
-   Remove_Generated_Sources    : Boolean := False;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -85,8 +79,8 @@ package body Ocarina.Backends.MAST is
       if not Remove_Generated_Sources then
          MAST_Tree.Generator.Generate (MAST_File);
       end if;
-      Leave_Directory;
 
+      Leave_Directory;
    end Generate;
 
    ----------
@@ -95,30 +89,6 @@ package body Ocarina.Backends.MAST is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* z o:") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend ("mast", Generate'Access, MAST_Scheduling);
    end Init;
 

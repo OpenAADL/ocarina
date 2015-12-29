@@ -37,7 +37,6 @@ with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
-with GNAT.Command_Line; use GNAT.Command_Line;
 
 with Ocarina.Namet; use Ocarina.Namet;
 
@@ -50,9 +49,6 @@ package body Ocarina.Backends.Carts is
 
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
-
-   Generated_Sources_Directory : Name_Id := No_Name;
-   Remove_Generated_Sources    : Boolean := False;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -97,30 +93,6 @@ package body Ocarina.Backends.Carts is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* z o:") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend ("carts", Generate'Access, Carts_XML);
    end Init;
 

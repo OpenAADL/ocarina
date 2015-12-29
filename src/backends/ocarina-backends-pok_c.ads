@@ -55,6 +55,9 @@ package Ocarina.Backends.POK_C is
    function Use_ARINC653_API return Boolean;
    --  Indicate if the Flavor uses the ARINC653 API.
 
+   procedure Set_POK_Flavor (S : String);
+   --  Set POK_Flavor
+
 private
    C_Root : Node_Id;
    --  The root of the C trees

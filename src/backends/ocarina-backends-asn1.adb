@@ -36,15 +36,8 @@ with Ocarina.Backends.ASN1_Tree.Generator;
 with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1.Deployment;
 with Ocarina.Backends.Utils;
-with GNAT.Command_Line;
-
-with Ocarina.Namet;
 
 package body Ocarina.Backends.ASN1 is
-
-   use GNAT.Command_Line;
-
-   use Ocarina.Namet;
 
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.ASN1_Tree.Generator;
@@ -52,8 +45,6 @@ package body Ocarina.Backends.ASN1 is
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Expander;
    use Ocarina.Instances;
-
-   Generated_Sources_Directory : Name_Id := No_Name;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -99,27 +90,6 @@ package body Ocarina.Backends.ASN1 is
    procedure Init is
    begin
       ASN1_Tree.Nutils.Initialize;
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* b z ec er o: perf") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend ("asn1_deployment", Generate'Access, ASN1_Deployment);
    end Init;
 

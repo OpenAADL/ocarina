@@ -44,8 +44,6 @@ with Ocarina.Backends.Xtratum_Conf.Resident_Sw;
 with Ocarina.Backends.Xtratum_Conf.Partition_Table;
 with Ocarina.Backends.Xtratum_Conf.Channels;
 
-with GNAT.Command_Line; use GNAT.Command_Line;
-
 with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.Xtratum_Conf is
@@ -61,9 +59,6 @@ package body Ocarina.Backends.Xtratum_Conf is
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-
-   Remove_Generated_Sources    : Boolean := False;
-   Generated_Sources_Directory : Name_Id := No_Name;
 
    --------------
    -- Generate --
@@ -110,34 +105,8 @@ package body Ocarina.Backends.Xtratum_Conf is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* b z o:") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend
-        ("Xtratum_Configuration",
-         Generate'Access,
-         Xtratum_Configuration);
+        ("Xtratum_Configuration", Generate'Access, Xtratum_Configuration);
    end Init;
 
    -----------

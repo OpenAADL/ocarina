@@ -43,8 +43,6 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Instances.Queries;
 
-with GNAT.Command_Line; use GNAT.Command_Line;
-
 with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.POK_Cheddar is
@@ -76,8 +74,6 @@ package body Ocarina.Backends.POK_Cheddar is
    procedure Visit_Process_Instance (E : Node_Id);
    procedure Visit_Thread_Instance (E : Node_Id);
 
-   Remove_Generated_Sources    : Boolean            := False;
-   Generated_Sources_Directory : Name_Id            := No_Name;
    Task_Id                     : Unsigned_Long_Long := 0;
    Current_System              : Node_Id;
    Current_Virtual_Processor   : Node_Id;
@@ -290,30 +286,6 @@ package body Ocarina.Backends.POK_Cheddar is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* b z o:") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend ("POK_Cheddar", Generate'Access, Statistics);
    end Init;
 

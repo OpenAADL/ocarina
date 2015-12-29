@@ -37,7 +37,6 @@ with Ocarina.Instances;           use Ocarina.Instances;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 use Ocarina.ME_AADL.AADL_Instances.Entities;
 
-with GNAT.Command_Line;
 with Ocarina.Backends.Utils;
 with Ada.Text_IO;
 
@@ -224,9 +223,8 @@ package body Ocarina.Backends.Alloy is
    --------------
 
    procedure Generate (AADL_Root : Node_Id) is
-      use GNAT.Command_Line;
-
       Instance_Root : Node_Id;
+
    begin
       --  Instantiate the AADL tree
 
@@ -234,18 +232,6 @@ package body Ocarina.Backends.Alloy is
       if No (Instance_Root) then
          raise Program_Error;
       end if;
-
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* ") is
-
-            when ASCII.NUL =>
-               exit;
-
-            when others =>
-               null;
-         end case;
-      end loop;
 
       --  Open a new .als file
 

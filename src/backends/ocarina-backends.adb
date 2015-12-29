@@ -102,10 +102,6 @@ package body Ocarina.Backends is
       10,
       10);
 
-   procedure Write_Backends (Indent : Natural);
-   --  Displays the list of registered generators each one on a new
-   --  line indented by 'Indent'.
-
    -------------------
    -- Generate_Code --
    -------------------
@@ -181,6 +177,13 @@ package body Ocarina.Backends is
       XML_Tree.Nutils.Initialize;
       MAST_Tree.Nutils.Initialize;
       ASN1_Tree.Nutils.Initialize;
+
+      if Generated_Sources_Directory = No_Name then
+         Generated_Sources_Directory := Get_String_Name (".");
+      end if;
+
+      Compile_Generated_Sources := Compile_Generated_Sources or else
+        Do_Regression_Test or else Do_Coverage_Test;
 
       --  Register the several code generators
 
@@ -325,23 +328,6 @@ package body Ocarina.Backends is
    begin
       return Current_Backend_Name;
    end Get_Current_Backend_Name;
-
-   -----------
-   -- Usage --
-   -----------
-
-   procedure Usage is
-   begin
-      Write_Line ("   -g  Generate code from the AADL instance tree");
-      Ocarina.Backends.Write_Backends (7);
-      Write_Line ("   -perf  Enable profiling with gprof (PolyORB-HI-C only)");
-      Write_Line
-        ("   -asn1  Generate ASN1 deployment file (PolyORB-HI-C only)");
-      Write_Line
-        ("   -arinc653  Generate code for ARINC653 API (POK backend only)");
-      Write_Line ("   -b  Generate and build code from the AADL model");
-      Write_Line ("   -z  Clean code generated from the AADL model");
-   end Usage;
 
    --------------------
    -- Write_Backends --

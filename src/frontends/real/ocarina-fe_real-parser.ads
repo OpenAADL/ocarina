@@ -33,6 +33,7 @@
 
 with Ocarina.Types;
 with Locations;
+with GNAT.Table;
 
 package Ocarina.FE_REAL.Parser is
    use Ocarina.Types;
@@ -46,5 +47,8 @@ package Ocarina.FE_REAL.Parser is
 
    procedure Init;
    --  Initialize the parser
+
+   package REAL_Libs is new GNAT.Table (Name_Id, Nat, 1, 10, 10);
+   --  Table of REAL libraries to consider
 
 end Ocarina.FE_REAL.Parser;

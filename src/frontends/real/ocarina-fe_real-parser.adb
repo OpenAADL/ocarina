@@ -29,8 +29,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with GNAT.Table;
-with GNAT.Command_Line;
 with Ocarina.FE_REAL.Lexer;
 with Ocarina.FE_REAL.Parser_Errors;
 with Ocarina.ME_REAL.Tokens;
@@ -93,7 +91,6 @@ package body Ocarina.FE_REAL.Parser is
    Current_Theorem_Name : Name_Id;
 
    package Expressions is new GNAT.Table (Node_Id, Natural, 1, 100, 10);
-   package REAL_Libs is new GNAT.Table (Name_Id, Nat, 1, 10, 10);
 
    Preferences : constant array (OV_Equal .. OV_Power) of Natural :=
      (OV_Power         => 1,
@@ -1924,38 +1921,11 @@ package body Ocarina.FE_REAL.Parser is
    ----------
 
    procedure Init is
-      use GNAT.Command_Line;
       use Ocarina.Parser;
       use Ocarina.Namet;
 
-      C : Character;
    begin
       Current_Theorem_Node := No_Node;
-
-      Initialize_Option_Scan;
-      loop
-         C := Getopt ("* real_lib: real_theorem: real_continue_eval");
-         case C is
-            when ASCII.NUL =>
-               exit;
-
-            when 'r' =>
-               if Full_Switch = "real_lib" then
-                  REAL_Libs.Append (Get_String_Name (Parameter));
-               end if;
-
-               if Full_Switch = "real_theorem" then
-                  Main_Theorem := Get_String_Name (Parameter);
-               end if;
-
-               if Full_Switch = "real_continue_eval" then
-                  Continue_Evaluation := True;
-               end if;
-
-            when others =>
-               null;
-         end case;
-      end loop;
 
       REAL_Language := Get_String_Name (Language);
       Register_Parser (Ocarina.ME_REAL.Tokens.Language, Process'Access);

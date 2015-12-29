@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                O C A R I N A . A N A L Y Z E R . R E A L                 --
+--                     O C A R I N A . C M D _ L I N E                      --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--                     Copyright (C) 2015 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,38 +29,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  Analyze REAL theorems
+package Ocarina.Cmd_Line is
 
-package Ocarina.Analyzer.REAL is
+   procedure Process;
+   --  Process command line parameters
 
-   procedure Init;
-
-   procedure Reset;
-
-   procedure Build_Theorem_List (AADL_Root : Node_Id);
-   --  Build the list of theorems to be run
-
-   procedure Analyze_Theorem
-     (Theorem   :     Node_Id;
-      AADL_Root :     Node_Id;
-      Success   : out Boolean);
-   --  Root procedure of analysis
-
-   function Analyze_Model (Root : Node_Id) return Boolean;
-   --  Proceed to both REAL expansion and analysis on the whole
-   --  AADL model
-
-   procedure Register_Library_Theorems (REAL_Library : Node_Id);
-   --  Append the content of a parsed REAL specification to
-   --  the library theorem list (ie. REAL theorems that must *not*
-   --  be called directly).
-
-   Main_Theorem : Name_Id := No_Name;
-   --  Name of the main theorem to be evaluated, by default evaluate
-   --  all theorems.
-
-   Continue_Evaluation : aliased Boolean := False;
-   --  In case of a theorem evaluates to false, continue the
-   --  evaluation.
-
-end Ocarina.Analyzer.REAL;
+end Ocarina.Cmd_Line;

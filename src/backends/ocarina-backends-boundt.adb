@@ -39,7 +39,7 @@ with Ocarina.Instances;           use Ocarina.Instances;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.Properties; use Ocarina.Backends.Properties;
 with Ocarina.Options;             use Ocarina.Options;
-with GNAT.Command_Line;
+
 with Utils;                       use Utils;
 
 with Ada.Text_IO;
@@ -290,8 +290,6 @@ package body Ocarina.Backends.BoundT is
 
    procedure Init is
    begin
-      --  Registration of the generator
-
       Register_Backend ("boundt", Generate'Access, Bound_T);
    end Init;
 
@@ -300,9 +298,8 @@ package body Ocarina.Backends.BoundT is
    --------------
 
    procedure Generate (AADL_Root : Node_Id) is
-      use GNAT.Command_Line;
-
       Instance_Root : Node_Id;
+
    begin
       --  Instantiate the AADL tree
 
@@ -310,23 +307,6 @@ package body Ocarina.Backends.BoundT is
       if No (Instance_Root) then
          raise Program_Error;
       end if;
-
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* boundt_process:") is
-
-            when ASCII.NUL =>
-               exit;
-
-            when 'b' =>
-               if Full_Switch = "boundt_process" then
-                  Boundt_Process := To_Lower (Get_String_Name (Parameter));
-               end if;
-
-            when others =>
-               null;
-         end case;
-      end loop;
 
       --  Open a new TPO file
 

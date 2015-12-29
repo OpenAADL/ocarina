@@ -44,8 +44,6 @@ with Ocarina.Backends.ARINC653_Conf.System_HM;
 with Ocarina.Backends.ARINC653_Conf.Module_HM;
 with Ocarina.Backends.Utils;
 
-with GNAT.Command_Line; use GNAT.Command_Line;
-
 with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.ARINC653_Conf is
@@ -58,9 +56,6 @@ package body Ocarina.Backends.ARINC653_Conf is
 
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
-
-   Remove_Generated_Sources    : Boolean := False;
-   Generated_Sources_Directory : Name_Id := No_Name;
 
    --------------
    -- Generate --
@@ -107,30 +102,6 @@ package body Ocarina.Backends.ARINC653_Conf is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* b z o:") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend ("ARINC653_Conf", Generate'Access, Statistics);
    end Init;
 

@@ -98,7 +98,18 @@ package Ocarina.Backends is
    --  Resets the Backends module by resetting the node entries of
    --  the several trees.
 
-   procedure Usage;
-   --  Print usage for all registered backends
+   procedure Write_Backends (Indent : Natural);
+   --  Displays the list of registered generators each one on a new
+   --  line indented by 'Indent'.
+
+   Generated_Sources_Directory : Name_Id := No_Name;
+   --  Generated code will be in this directory
+
+   Compile_Generated_Sources : aliased Boolean := False;
+   Remove_Generated_Sources  : aliased Boolean := False;
+   Do_Coverage_Test          : aliased Boolean := False;
+   Do_Regression_Test        : aliased Boolean := False;
+   Generate_ASN1_Deployment  : aliased Boolean := False;
+   Add_Performance_Analysis  : aliased Boolean := False;
 
 end Ocarina.Backends;

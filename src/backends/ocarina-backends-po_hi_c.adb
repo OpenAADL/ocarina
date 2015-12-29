@@ -58,13 +58,11 @@ with Ocarina.Backends.Execution_Utils;
 with Ocarina.Backends.Execution_Tests;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.ASN1;
-with GNAT.Command_Line;
 
 with Ocarina.Namet;
 
 package body Ocarina.Backends.PO_HI_C is
 
-   use GNAT.Command_Line;
    use GNAT.OS_Lib;
 
    use Ocarina.Namet;
@@ -97,15 +95,6 @@ package body Ocarina.Backends.PO_HI_C is
    package AAN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
-
-   Generate_ASN1_Deployment    : Boolean := False;
-   Compile_Generated_Sources   : Boolean := False;
-   Remove_Generated_Sources    : Boolean := False;
-   Add_Performance_Analysis    : Boolean := False;
-   Do_Regression_Test          : Boolean := False;
-   Do_Coverage_Test            : Boolean := False;
-   Generated_Sources_Directory : Name_Id := No_Name;
-   Verbose_Mode                : Boolean := False;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -540,13 +529,6 @@ package body Ocarina.Backends.PO_HI_C is
       --  Enter the output directory
 
       Enter_Directory (Generated_Sources_Directory);
-      if Verbose_Mode then
-         Set_Standard_Error;
-         Write_Str ("Generating code in directory: ");
-         Write_Name (Generated_Sources_Directory);
-         Write_Eol;
-         Set_Standard_Output;
-      end if;
 
       if Remove_Generated_Sources then
          Build_Utils.Makefiles.Clean (Instance_Root);
@@ -640,54 +622,6 @@ package body Ocarina.Backends.PO_HI_C is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* b z ec er o: perf asn1 v") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'a' =>
-               if Full_Switch = "asn1" then
-                  Generate_ASN1_Deployment := True;
-               end if;
-
-            when 'b' =>
-               Compile_Generated_Sources := True;
-
-            when 'v' =>
-               Verbose_Mode := True;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'p' =>
-               if Full_Switch = "perf" then
-                  Add_Performance_Analysis := True;
-               end if;
-
-            when 'e' =>
-               Compile_Generated_Sources := True;
-               if Full_Switch = "ec" then
-                  Do_Coverage_Test := True;
-               elsif Full_Switch = "er" then
-                  Do_Regression_Test := True;
-               end if;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend ("polyorb_hi_c", Generate'Access, PolyORB_HI_C);
       Ocarina.Backends.PO_HI_C.Runtime.Initialize;
    end Init;

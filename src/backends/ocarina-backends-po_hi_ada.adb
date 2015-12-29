@@ -54,8 +54,6 @@ with Ocarina.Backends.Build_Utils;
 with Ocarina.Backends.Execution_Utils;
 with Ocarina.Backends.Execution_Tests;
 
-with GNAT.Command_Line; use GNAT.Command_Line;
-
 with Ocarina.Namet; use Ocarina.Namet;
 
 package body Ocarina.Backends.PO_HI_Ada is
@@ -72,12 +70,6 @@ package body Ocarina.Backends.PO_HI_Ada is
    use Ocarina.Backends.Build_Utils;
    use Ocarina.Backends.Execution_Utils;
    use Ocarina.Backends.Execution_Tests;
-
-   Compile_Generated_Sources   : Boolean := False;
-   Remove_Generated_Sources    : Boolean := False;
-   Do_Coverage_Test            : Boolean := False;
-   Do_Regression_Test          : Boolean := False;
-   Generated_Sources_Directory : Name_Id := No_Name;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -392,7 +384,9 @@ package body Ocarina.Backends.PO_HI_Ada is
          end loop;
       end if;
 
-      Write_Line (");");
+      Write_Line
+        (") & external_as_list(""" & "ADA_INCLUDE_PATH" & """, """ & ":" &
+           """);");
 
       Decrement_Indentation;
 
@@ -641,41 +635,6 @@ package body Ocarina.Backends.PO_HI_Ada is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* b z ec er o:") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'b' =>
-               Compile_Generated_Sources := True;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'e' =>
-               Compile_Generated_Sources := True;
-               if Full_Switch = "ec" then
-                  Do_Coverage_Test := True;
-               elsif Full_Switch = "er" then
-                  Do_Regression_Test := True;
-               end if;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       --  Registration of the generator
 
       Register_Backend ("polyorb_hi_ada", Generate'Access, PolyORB_HI_Ada);

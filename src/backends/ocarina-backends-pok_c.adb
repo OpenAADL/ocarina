@@ -50,7 +50,6 @@ with Ocarina.Backends.ARINC653_Conf;
 with Ocarina.Backends.POK_Cheddar;
 with Ocarina.Backends.XML_Tree.Generator;
 
-with GNAT.Command_Line; use GNAT.Command_Line;
 with GNAT.OS_Lib;       use GNAT.OS_Lib;
 
 with Ocarina.Namet;  use Ocarina.Namet;
@@ -71,12 +70,6 @@ package body Ocarina.Backends.POK_C is
 
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
-
-   Generated_Sources_Directory : Name_Id := No_Name;
-   Remove_Generated_Sources    : Boolean := False;
-   Build_Generated_Sources     : Boolean := False;
-   Do_Regression_Test          : Boolean := False;
-   Do_Coverage_Test            : Boolean := False;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL
@@ -132,7 +125,7 @@ package body Ocarina.Backends.POK_C is
 
       --  If the user requested to build the applications then build it
 
-      if Build_Generated_Sources then
+      if Compile_Generated_Sources then
          --  Build the source files
 
          Makefile.Build (Instance_Root);
@@ -196,11 +189,37 @@ package body Ocarina.Backends.POK_C is
       Leave_Directory;
    end Generate;
 
+   ----------------------
+   -- Use_ARINC653_API --
+   ----------------------
+
    function Use_ARINC653_API return Boolean is
    begin
       return POK_Flavor = ARINC653 or else POK_Flavor = DEOS
          or else POK_Flavor = VXWORKS;
    end Use_ARINC653_API;
+
+   --------------------
+   -- Set_POK_Flavor --
+   --------------------
+
+   procedure Set_POK_Flavor (S : String) is
+   begin
+      if S = "arinc653" then
+         POK_Flavor := ARINC653;
+
+      elsif S = "deos" then
+         POK_Flavor := DEOS;
+
+      elsif S = "vxworks653" then
+         POK_Flavor := VXWORKS;
+
+      elsif S = "no-assert" then
+         Add_Assertions := False;
+      else
+         raise Constraint_Error with S;
+      end if;
+   end Set_POK_Flavor;
 
    ----------
    -- Init --
@@ -208,57 +227,6 @@ package body Ocarina.Backends.POK_C is
 
    procedure Init is
    begin
-      Generated_Sources_Directory := Get_String_Name (".");
-      Initialize_Option_Scan;
-      loop
-         case Getopt ("* b er ec z o: k:") is
-            when ASCII.NUL =>
-               exit;
-
-            when 'k' =>
-               if Parameter = "arinc653" then
-                  POK_Flavor := ARINC653;
-               end if;
-
-               if Parameter = "deos" then
-                  POK_Flavor := DEOS;
-               end if;
-
-               if Parameter = "vxworks653" then
-                  POK_Flavor := VXWORKS;
-               end if;
-
-               if Parameter = "no-assert" then
-                  Add_Assertions := False;
-               end if;
-
-            when 'b' =>
-               Build_Generated_Sources := True;
-
-            when 'e' =>
-               if Full_Switch = "er" then
-                  Do_Regression_Test := True;
-               elsif Full_Switch = "ec" then
-                  Do_Coverage_Test := True;
-               end if;
-
-            when 'z' =>
-               Remove_Generated_Sources := True;
-
-            when 'o' =>
-               declare
-                  D : constant String := Parameter;
-               begin
-                  if Full_Switch = "o" and then D'Length /= 0 then
-                     Generated_Sources_Directory := Get_String_Name (D);
-                  end if;
-               end;
-
-            when others =>
-               null;
-         end case;
-      end loop;
-
       Register_Backend ("POK_C", Generate'Access, PolyORB_Kernel_C);
       Ocarina.Backends.POK_C.Runtime.Initialize;
    end Init;

@@ -43,8 +43,7 @@ package Ocarina.FE_AADL.Parser is
 
    --  Default configuration parameters for the parser
 
-   First_Parsing     : Boolean := True;
-   Add_Pre_Prop_Sets : Boolean := False;
+   Add_Pre_Prop_Sets : aliased Boolean := False;
 
    function Process
      (AADL_Root : Node_Id;
