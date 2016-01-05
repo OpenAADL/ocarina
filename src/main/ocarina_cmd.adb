@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -559,7 +559,9 @@ begin
 
    if Verbose then
       Set_Standard_Error;
-      Version;
+      if not Display_Version then
+         Version;
+      end if;
    end if;
 
    if Display_Version then
@@ -568,6 +570,10 @@ begin
 
    elsif Show_Search_Directory then
       Write_Line (Get_Name_String (Default_Library_Path));
+      OS_Exit (0);
+
+   elsif Get_Current_Action = List_Backends then
+      Write_Backends (1);
       OS_Exit (0);
 
    elsif Get_Current_Action = Shell then

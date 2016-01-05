@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2015 ESA & ISAE.                       --
+--                   Copyright (C) 2015-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -104,6 +104,9 @@ package body Ocarina.Cmd_Line is
          if Parameter'Length > 0 then
             Add_Library_Path (Parameter);
          end if;
+
+      elsif Switch = "--list-backends" then
+         Set_Current_Action (List_Backends);
 
       elsif Switch = "-o" then
          Output_Filename := Get_String_Name (Parameter);
@@ -272,6 +275,10 @@ package body Ocarina.Cmd_Line is
       --  -g flag
       Define_Switch (Ocarina_Options, "-g:",
                      Help => "Generate code using Ocarina backend 'ARG'");
+
+      --  --list-backends flag
+      Define_Switch (Ocarina_Options, Long_Switch => "--list-backends",
+                     Help => "List available backends");
 
       --  -b flag
       Define_Switch (Ocarina_Options,
