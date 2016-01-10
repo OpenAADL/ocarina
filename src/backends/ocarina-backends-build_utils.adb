@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -266,9 +266,6 @@ package body Ocarina.Backends.Build_Utils is
 
             when PolyORB_HI_C =>
                Language := Language_C;
-
-            when PolyORB_HI_RTSJ =>
-               Language := Language_RTSJ;
 
             when others =>
                raise Program_Error;

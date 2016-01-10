@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -47,7 +47,6 @@ with Ocarina.Backends.Vxworks653_Conf;
 with Ocarina.Backends.PO_HI_Ada;
 with Ocarina.Backends.ASN1;
 with Ocarina.Backends.PO_HI_C;
-with Ocarina.Backends.PO_HI_RTSJ;
 with Ocarina.Backends.Stats;
 with Ocarina.Backends.Subprograms;
 with Ocarina.Backends.Carts;
@@ -66,9 +65,6 @@ with Ocarina.Backends.Ada_Values;
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Tree.Nutils;
 with Ocarina.Backends.C_Values;
-with Ocarina.Backends.RTSJ_Tree.Nodes;
-with Ocarina.Backends.RTSJ_Tree.Nutils;
-with Ocarina.Backends.RTSJ_Values;
 with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.BoundT;
@@ -173,7 +169,6 @@ package body Ocarina.Backends is
       Properties.Init;
       Ada_Tree.Nutils.Initialize;
       C_Tree.Nutils.Initialize;
-      RTSJ_Tree.Nutils.Initialize;
       XML_Tree.Nutils.Initialize;
       MAST_Tree.Nutils.Initialize;
       ASN1_Tree.Nutils.Initialize;
@@ -195,7 +190,6 @@ package body Ocarina.Backends is
       MAST.Init;
       PO_HI_Ada.Init;
       PO_HI_C.Init;
-      PO_HI_RTSJ.Init;
       POK_C.Init;
       Xtratum_Conf.Init;
       Stats.Init;
@@ -264,7 +258,6 @@ package body Ocarina.Backends is
    begin
       PO_HI_Ada.Reset;
       PO_HI_C.Reset;
-      PO_HI_RTSJ.Reset;
       POK_C.Reset;
       Xtratum_Conf.Reset;
       Stats.Reset;
@@ -274,7 +267,6 @@ package body Ocarina.Backends is
 
       Ada_Tree.Nutils.Reset;
       C_Tree.Nutils.Reset;
-      RTSJ_Tree.Nutils.Reset;
       ASN1_Tree.Nutils.Reset;
       MAST_Tree.Nutils.Reset;
 
@@ -289,10 +281,6 @@ package body Ocarina.Backends is
       MAST_Tree.Nodes.Entries.Free;
       MAST_Tree.Nodes.Entries.Init;
       MAST_Values.Reset;
-
-      RTSJ_Tree.Nodes.Entries.Free;
-      RTSJ_Tree.Nodes.Entries.Init;
-      RTSJ_Values.Reset;
 
       XML_Values.Reset;
       BoundT.Reset;
