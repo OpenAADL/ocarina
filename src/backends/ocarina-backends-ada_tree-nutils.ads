@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -145,19 +145,13 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Tok_Arrow,           -- =>
       Tok_Vertical_Bar,    -- |
       Tok_Dot_Dot,         -- ..
-      Tok_Minus_Minus,     -- --
+      Tok_Minus_Minus      -- --
 
-   --  SPARK
-      Tok_Annotation,      -- --#
-      Tok_Own,             -- Own
-      Tok_Inherit,
-      Tok_Initialized);
+     );
 
    Token_Image : array (Token_Type) of Name_Id;
 
    subtype Keyword_Type is Token_Type range Tok_Mod .. Tok_Separate;
-
-   subtype Spark_Keyword_Type is Token_Type range Tok_Own .. Tok_Initialized;
 
    type Operator_Type is
      (Op_Not,             -- not
@@ -666,12 +660,6 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    function Make_Object_Instantiation
      (Qualified_Expression : Node_Id) return Node_Id;
-
-   function Make_SPARK_Own_Annotation
-     (Variable       : Node_Id;
-      Own_Mode       : Mode_Id := Mode_In;
-      Is_Initialized : Boolean := True;
-      Is_Protected   : Boolean := False) return Node_Id;
 
    function Make_Package_Declaration (Identifier : Node_Id) return Node_Id;
 
