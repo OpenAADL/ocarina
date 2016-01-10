@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -814,10 +814,6 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
          New_Token (I);
       end loop;
 
-      for I in Spark_Keyword_Type loop
-         New_Token (I);
-      end loop;
-
       --  Graphic Characters
       New_Token (Tok_Double_Asterisk, "**");
       New_Token (Tok_Ampersand, "&");
@@ -846,7 +842,6 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       New_Token (Tok_Vertical_Bar, "|");
       New_Token (Tok_Dot_Dot, "..");
       New_Token (Tok_Minus_Minus, "--");
-      New_Token (Tok_Annotation, "--#");
 
       for O in Op_And .. Op_Or_Else loop
          New_Operator (O);
@@ -1772,26 +1767,6 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       return N;
    end Make_Object_Instantiation;
 
-   -------------------------------
-   -- Make_Spark_Own_Annotation --
-   -------------------------------
-
-   function Make_SPARK_Own_Annotation
-     (Variable       : Node_Id;
-      Own_Mode       : Mode_Id := Mode_In;
-      Is_Initialized : Boolean := True;
-      Is_Protected   : Boolean := False) return Node_Id
-   is
-      N : Node_Id;
-   begin
-      N := New_Node (K_SPARK_Own_Annotation);
-      Set_Variable (N, Variable);
-      Set_Own_Mode (N, Own_Mode);
-      Set_Is_Initialized (N, Is_Initialized);
-      Set_Is_Protected (N, Is_Protected);
-      return N;
-   end Make_SPARK_Own_Annotation;
-
    ------------------------------
    -- Make_Package_Declaration --
    ------------------------------
@@ -1830,7 +1805,6 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
 
       Set_Visible_Part (Pkg, New_List (K_Declaration_List));
       Set_Private_Part (Pkg, New_List (K_Declaration_List));
-      Set_SPARK_Own_Annotations (Pkg, New_List (K_Annotation_list));
       Set_Package_Declaration (Pkg, Unit);
       Set_Package_Specification (Unit, Pkg);
 
@@ -2380,7 +2354,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    procedure New_Token (T : Token_Type; I : String := "") is
       Name : Name_Id;
    begin
-      if T in Keyword_Type or else T in Spark_Keyword_Type then
+      if T in Keyword_Type then
          --  Marking the token image as a keyword for fast searching
          --  purpose, we add the prefix to avoir collision with other
          --  languages keywords

@@ -124,7 +124,6 @@ module Ocarina::Backends::Ada_Tree::Nodes {
 
   interface Package_Specification : Node_Id {
     Node_Id    Package_Declaration;
-    List_Id    SPARK_Own_Annotations;
     List_Id    Withed_Packages;
     List_Id    Visible_Part;
     List_Id    Private_Part;
@@ -355,7 +354,7 @@ module Ocarina::Backends::Ada_Tree::Nodes {
     Node_Id    Condition;
     List_Id    Then_Statements;
   };
- 
+
   interface If_Statement : Node_Id {
     Node_Id    Condition;
     List_Id    Then_Statements;
@@ -366,7 +365,7 @@ module Ocarina::Backends::Ada_Tree::Nodes {
    interface Exit_When_Statement : Node_Id {
     Node_Id    Condition;
    };
- 
+
 
   interface Assignment_Statement : Definition {
     Node_Id    Expression;
@@ -575,19 +574,6 @@ module Ocarina::Backends::Ada_Tree::Nodes {
     Node_Id    Qualified_Expression;
   };
 
-
-  /*********************/
-  /* SPARK Annotations */
-  /*********************/
-  interface Annotation_list : List_Id {
-  };
-
-  interface SPARK_Own_Annotation : Node_Id {
-    Node_Id    Variable;
-    Mode_Id    Own_Mode;
-    boolean    Is_Initialized;
-    boolean    Is_Protected;
-  };
 
   /**************/
   /* Base types */
