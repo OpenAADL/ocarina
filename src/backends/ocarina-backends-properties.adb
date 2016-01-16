@@ -2223,7 +2223,9 @@ package body Ocarina.Backends.Properties is
    -------------------------
 
    function Get_Bound_Processor (P : Node_Id) return Node_Id is
-      pragma Assert (Is_Process_Or_Device (P));
+      pragma Assert (Is_Process_Or_Device (P)
+                    or else Is_Thread (P));
+
    begin
       if not Is_Defined_Reference_Property (P, Processor_Binding)
         and then Is_Process (P)
