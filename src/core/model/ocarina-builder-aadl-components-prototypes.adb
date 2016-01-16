@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -36,6 +36,8 @@ with Ocarina.ME_AADL.AADL_Tree.Nutils;
 package body Ocarina.Builder.AADL.Components.Prototypes is
 
    use Ocarina.ME_AADL;
+   use Ocarina.ME_AADL.AADL_Tree.Nodes;
+   use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
    -----------------------
    -- Add_New_Prototype --
@@ -49,9 +51,6 @@ package body Ocarina.Builder.AADL.Components.Prototypes is
       Category       : Ocarina.ME_AADL.Component_Category;
       Is_Refinement  : Boolean := False) return Node_Id
    is
-      use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
-
       pragma Assert
         (Container /= No_Node
          and then
@@ -79,7 +78,6 @@ package body Ocarina.Builder.AADL.Components.Prototypes is
       else
          return No_Node;
       end if;
-
    end Add_New_Prototype;
 
    -------------------------------
@@ -93,10 +91,8 @@ package body Ocarina.Builder.AADL.Components.Prototypes is
       Classifier_Ref : Node_Id;
       Category       : Ocarina.ME_AADL.Component_Category) return Node_Id
    is
-      use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
-
       Node : constant Node_Id := New_Node (K_Binding_Prototype, Loc);
+
    begin
       Set_Identifier (Node, Name);
       Set_Corresponding_Entity (Name, Node);
@@ -105,7 +101,6 @@ package body Ocarina.Builder.AADL.Components.Prototypes is
       Set_Category (Node, Component_Category'Pos (Category));
 
       return Node;
-
    end Add_New_Prototype_Binding;
 
 end Ocarina.Builder.AADL.Components.Prototypes;

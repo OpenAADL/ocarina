@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -37,6 +37,8 @@ package Ocarina.Analyzer is
 
    type Analyzer_Subprogram is access function
      (AADL_Root : Node_Id) return Boolean;
+
+   type Init_Analyzer_Subprogram is access procedure;
 
    function Analyze (Language : Name_Id; Root : Node_Id) return Boolean;
 
