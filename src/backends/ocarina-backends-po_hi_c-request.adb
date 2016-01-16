@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -199,7 +199,7 @@ package body Ocarina.Backends.PO_HI_C.Request is
                  and then Is_Out (C)
                  and then not AINU.Is_Empty (Destinations (C))
                then
-                  D := First_Node (Destinations (C));
+                  D := First_Node (Get_Destination_Ports (C));
                   while Present (D) loop
                      I := Item (D);
 
@@ -207,7 +207,7 @@ package body Ocarina.Backends.PO_HI_C.Request is
                        and then Kind (I) = K_Port_Spec_Instance
                        and then not AINU.Is_Empty (Destinations (I))
                      then
-                        F := First_Node (Destinations (I));
+                        F := First_Node (Get_Destination_Ports (I));
                         while Present (F) loop
                            J := Item (F);
 
@@ -495,7 +495,7 @@ package body Ocarina.Backends.PO_HI_C.Request is
                     and then Kind (I) = K_Port_Spec_Instance
                     and then not AINU.Is_Empty (Destinations (I))
                   then
-                     F := First_Node (Destinations (I));
+                     F := First_Node (Get_Destination_Ports (I));
                      while Present (F) loop
                         J := Item (F);
 
@@ -528,7 +528,6 @@ package body Ocarina.Backends.PO_HI_C.Request is
          if Present (Backend_Node (Identifier (E)))
            and then Present (CTN.Request_Node (Backend_Node (Identifier (E))))
          then
-
             N :=
               Make_Expression
                 (Left_Expr =>
