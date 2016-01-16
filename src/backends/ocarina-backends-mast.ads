@@ -32,7 +32,7 @@
 package Ocarina.Backends.MAST is
 
    procedure Generate (AADL_Root : Node_Id);
-   --  The main entry point of the CARTS configuration generator
+   --  The main entry point of the MAST configuration generator
 
    procedure Init;
    --  Fills the corresponding location in the generator table by the
