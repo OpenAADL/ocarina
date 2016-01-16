@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -41,9 +41,8 @@ package Ocarina.Backends.MAST is
 
    procedure Reset;
 
-   function Get_MAST_File return Node_Id;
-
 private
+
    MAST_File : Node_Id;
 
 end Ocarina.Backends.MAST;

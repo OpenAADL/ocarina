@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -112,14 +112,5 @@ package body Ocarina.Backends.MAST is
           (MTU.Make_Defining_Identifier (Get_String_Name ("mast-model")));
       MAST.Main.Visit (E);
    end Visit_Architecture_Instance;
-
-   -------------------
-   -- Get_MAST_File --
-   -------------------
-
-   function Get_MAST_File return Node_Id is
-   begin
-      return MAST_File;
-   end Get_MAST_File;
 
 end Ocarina.Backends.MAST;
