@@ -54,7 +54,6 @@ package Ocarina.Backends is
       ASN1_Deployment,
       Behavior_PP,
       Bound_T,
-      Carts_XML,
       Cheddar_XML,
       Deos_XML,
       Vxworks653_XML,

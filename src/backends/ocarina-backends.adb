@@ -49,7 +49,6 @@ with Ocarina.Backends.ASN1;
 with Ocarina.Backends.PO_HI_C;
 with Ocarina.Backends.Stats;
 with Ocarina.Backends.Subprograms;
-with Ocarina.Backends.Carts;
 with Ocarina.Backends.Cheddar;
 with Ocarina.Backends.Connection_Matrix;
 with Ocarina.Backends.Functions_Matrix;
@@ -195,7 +194,6 @@ package body Ocarina.Backends is
       Stats.Init;
       Subprograms.Init;
       REAL.Init;
-      Carts.Init;
       ASN1.Init;
       Cheddar.Init;
       Connection_Matrix.Init;
@@ -261,7 +259,6 @@ package body Ocarina.Backends is
       POK_C.Reset;
       Xtratum_Conf.Reset;
       Stats.Reset;
-      Carts.Reset;
       Connection_Matrix.Reset;
       Functions_Matrix.Reset;
 
