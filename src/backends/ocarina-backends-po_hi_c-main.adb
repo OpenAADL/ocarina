@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -179,9 +179,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          --  Add the core this thread is attached to
 
-         Core_Id := Get_Core_Id (Get_Bound_Processor
-                                   (Corresponding_Instance
-                                      (Get_Container_Process (E))));
+         Core_Id := Utils.Get_Core_Id (E);
 
          N          := Make_Literal (New_Int_Value (Core_Id, 1, 10));
          Append_Node_To_List (N, Parameters);
