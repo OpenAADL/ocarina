@@ -152,7 +152,6 @@ package body Ocarina.Cmd_Line is
             ": invalid parameter for switch -" & Switch);
          Write_Eol;
          OS_Exit (1);
-
    end Parse_Command_Line;
 
    -----------------------------
@@ -161,12 +160,7 @@ package body Ocarina.Cmd_Line is
 
    procedure Parse_Source_Filename (S : String) is
    begin
-      if S (S'First) = '-' then
-         --  If there is a new switch, then the previous
-         --  files are discarded.
-         Sources.Init;
-
-      elsif S (S'First) = '@' then
+      if S (S'First) = '@' then
          declare
             Files : constant Ada.Command_Line.Response_File
               .Argument_List :=
