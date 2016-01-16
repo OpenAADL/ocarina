@@ -189,6 +189,7 @@ if test  $# != 0 ; then
 	    ;;
 	--lcov|-l)
 	    lcov -d . -c -o ocarina.gcov-info -t ocarina
+	    lcov -d . --remove ocarina.gcov-info "*debug*" "*adainclude*" "*python*" "*transfo*" "*nodes*" -o ocarina.gcov-info -t ocarina
 	    genhtml -o html -s -f ocarina.gcov-info
 	    exit 0
 	    ;;
