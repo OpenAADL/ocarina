@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -692,9 +692,10 @@ package body Ocarina.Backends.Utils is
                AAU.Append_Node_To_List
                  (Make_Node_Container (Item (S), B),
                   Result);
+
             elsif Kind (Item (S)) = K_Port_Spec_Instance
               and then Parent_Component (Item (S)) /= No_Node
-              and then (Is_Process_Or_Device (Parent_Component (Item (S))))
+              and then Is_Process_Or_Device (Parent_Component (Item (S)))
             then
 
                if Is_In (Item (S)) then
@@ -730,6 +731,23 @@ package body Ocarina.Backends.Utils is
                AAU.Append_Node_To_List
                  (First_Node (Rec_Get_Source_Ports (Item (S), Bus)),
                   Result);
+
+            elsif Kind (Item (S)) = K_Port_Spec_Instance
+              and then Present (Parent_Component (Item (S)))
+              and then Is_System (Parent_Component (Item (S)))
+            then
+               AAU.Append_Node_To_List
+                 (First_Node (Rec_Get_Source_Ports (Item (S), No_Node)),
+                  Result);
+
+            elsif Kind (Item (S)) = K_Parameter_Instance
+              and then Present (Parent_Component (Item (S)))
+              and then Is_Subprogram (Parent_Component (Item (S)))
+            then
+               AAU.Append_Node_To_List
+                 (Make_Node_Container (Item (S), B),
+                  Result);
+
             else
                Display_Located_Error
                  (Loc (P),
@@ -840,11 +858,11 @@ package body Ocarina.Backends.Utils is
                AAU.Append_Node_To_List
                  (Make_Node_Container (Item (D), B),
                   Result);
+
             elsif Custom_Parent /= No_Node
               and then Is_Device (Custom_Parent)
               and then Get_Port_By_Name (P, Custom_Parent) /= No_Node
             then
-
                AAU.Append_Node_To_List
                  (First_Node
                     (Rec_Get_Destination_Ports
@@ -852,6 +870,23 @@ package body Ocarina.Backends.Utils is
                         B,
                         No_Node)),
                   Result);
+
+            elsif Kind (Item (D)) = K_Port_Spec_Instance
+              and then Present (Parent_Component (Item (D)))
+              and then Is_System (Parent_Component (Item (D)))
+            then
+               AAU.Append_Node_To_List
+                 (First_Node (Rec_Get_Destination_Ports (Item (D), No_Node)),
+                  Result);
+
+            elsif Kind (Item (D)) = K_Parameter_Instance
+              and then Present (Parent_Component (Item (D)))
+              and then Is_Subprogram (Parent_Component (Item (D)))
+            then
+               AAU.Append_Node_To_List
+                 (Make_Node_Container (Item (D), B),
+                  Result);
+
             else
                Display_Located_Error
                  (Loc (P),
@@ -3987,5 +4022,31 @@ package body Ocarina.Backends.Utils is
 
       return No_Node;
    end Get_Partition_Runtime;
+
+   -----------------
+   -- Get_Core_Id --
+   -----------------
+
+   function Get_Core_Id (D : Node_Id) return Unsigned_Long_Long is
+      pragma Assert (Is_Thread (D));
+      Core_Id : Unsigned_Long_Long;
+
+   begin
+      --  First, we check the container process is associated to a
+      --  core. This is the case when we want to allocate one process
+      --  to a core.
+
+      Core_Id := Properties.Get_Core_Id (Get_Bound_Processor
+                                           (Corresponding_Instance
+                                              (Get_Container_Process (D))));
+
+      --  Then, we check whether the thread is directly bound to a core
+
+      if Core_Id = 0 and then Present (Get_Bound_Processor (D)) then
+         Core_Id := Properties.Get_Core_Id (Get_Bound_Processor (D));
+      end if;
+
+      return Core_Id;
+   end Get_Core_Id;
 
 end Ocarina.Backends.Utils;

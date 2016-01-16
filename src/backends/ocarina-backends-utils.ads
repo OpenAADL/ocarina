@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -494,5 +494,8 @@ package Ocarina.Backends.Utils is
 
    function Get_Root_Component (C : Node_Id)
                                return Node_Id;
+
+   function Get_Core_Id (D : Node_Id) return Unsigned_Long_Long;
+   --  Return the id of the core D is bound to
 
 end Ocarina.Backends.Utils;
