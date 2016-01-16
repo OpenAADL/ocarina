@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,14 +29,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ocarina.Output;
-
 with Ocarina.FE_AADL.Parser;
 with Ocarina.ME_AADL.Tokens;
 
 package body Ocarina.FE_AADL is
-
-   use Ocarina.Output;
 
    ----------
    -- Init --
@@ -58,29 +54,5 @@ package body Ocarina.FE_AADL is
       --  Nothing to be done
       null;
    end Reset;
-
-   -----------
-   -- Usage --
-   -----------
-
-   procedure Usage is
-   begin
-      Write_Line ("   -y  Automatically load AADL files on demand");
-      Write_Line ("   -f  Parse predefined non standard property sets");
-      Write_Line ("   -i  Instantiate the AADL model");
-      Write_Line ("   -r  <name> The name of the instance tree root");
-      Write_Line ("   -o  Specify output file");
-      Write_Line ("   -I  Specify the inclusion paths");
-      Write_Str ("   -aadlv1  Use AADL v1 standard");
-      if Default_AADL_Version = AADL_V1 then
-         Write_Str (" (default)");
-      end if;
-      Write_Eol;
-      Write_Str ("   -aadlv2  Use AADL v2 standard");
-      if Default_AADL_Version = AADL_V2 then
-         Write_Str (" (default)");
-      end if;
-      Write_Eol;
-   end Usage;
 
 end Ocarina.FE_AADL;
