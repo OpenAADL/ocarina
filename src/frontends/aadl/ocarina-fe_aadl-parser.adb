@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -126,10 +126,6 @@ package body Ocarina.FE_AADL.Parser is
       return Nb_Items;
    end P_Items_List;
 
-   ------------------
-   -- P_Items_List --
-   ------------------
-
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
@@ -169,10 +165,6 @@ package body Ocarina.FE_AADL.Parser is
 
       return Items;
    end P_Items_List;
-
-   ------------------
-   -- P_Items_List --
-   ------------------
 
    function P_Items_List
      (Func         : P_Refinable_Item_Function_Ptr;
