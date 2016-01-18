@@ -179,7 +179,7 @@ package body Ocarina.Backends is
       Compile_Generated_Sources := Compile_Generated_Sources or else
         Do_Regression_Test or else Do_Coverage_Test;
 
-      --  Register the several code generators
+      --  Register the code generators
 
       Ocarina.Backends.ARINC653_Conf.Init;
       Ocarina.Backends.Vxworks653_Conf.Init;
