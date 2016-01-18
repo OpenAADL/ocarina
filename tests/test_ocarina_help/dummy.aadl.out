@@ -1,76 +1,31 @@
-Usage: 
-      ocarina [options] files
-      OR
-      ocarina -help
-  files are a non null sequence of AADL files
+Usage: ocarina [switches] <aadl_files>
 
-  General purpose options:
-   -V  Output Ocarina version, then exit
-   -s  Output Ocarina search directory, then exit
-
-  Scenario file options:
-   -b  Generate and build code from the AADL model
-   -z  Clean code generated from the AADL model
-   -ec Execute the generated application code and
-       retrieve coverage information
-   -er Execute the generated application code and
-       verify that there is no regression
-   -p  Only parse and instantiate the application model
-
-  Advanced user options:
-   -d  Debug mode for developpers
-   -q  Quiet mode (default)
-   -t  [script] Run Ocarina in terminal interactive mode.
-       If a script is given, interpret it then exit.
-   -v  Verbose mode for users
-   -x  Parse AADL file as an AADL scenario file
-   -y  Automatically load AADL files on demand
-   -f  Parse predefined non standard property sets
-   -i  Instantiate the AADL model
-   -r  <name> The name of the instance tree root
-   -o  Specify output file
-   -I  Specify the inclusion paths
-   -aadlv1  Use AADL v1 standard (default)
-   -aadlv2  Use AADL v2 standard
-   -real_lib Add a REAL file to be used as a theorem library by REAL annexes
-   -real_theorem <theorem> Evaluate only theorem
-   -real_continue_eval Continue evaluation in case of failures
-   -g  Generate code from the AADL instance tree
-       Registered backends:
-        arinc653_conf
-        vxworks653_conf
-        deos_conf
-        petri_nets
-        boundt
-        mast
-        polyorb_hi_ada
-        polyorb_hi_c
-        polyorb_hi_rtsj
-        pok_c
-        xtratum_configuration
-        stats
-        subprograms
-        real_theorem
-        carts
-        asn1_deployment
-        cheddar
-        connection_matrix
-        function_matrix
-        aadl_xml
-        alloy
-        aadl
-        aadl_min
-        aadl_annex
-        behavior_specification
-        real_specification
-   -perf  Enable profiling with gprof (PolyORB-HI-C only)
-   -asn1  Generate ASN1 deployment file (PolyORB-HI-C only)
-   -arinc653  Generate code for ARINC653 API (POK backend only)
-   -b  Generate and build code from the AADL model
-   -z  Clean code generated from the AADL model
-   -disable-annexes={annexes}  Desactive one or all annexes
-       Annexes :
-        all
-        behavior_specification
-        real
-
+ -h, --help           Display help and exit
+ --version            Display version and exit
+ -v, --verbose        Output extra verbose information
+ -q                   Quiet mode (default)
+ -d                   Debug mode
+ -s                   Output default search directory, then exit
+ -aadlv[ARG]          AADL version, ARG = 1 for AADL 1.0, 2 for AADL 2.x
+ -f                   Parse predefined non-standard property sets
+ -disable-annexes=ARG Deactivate annex ARG
+ -r ARG               Use ARG as root system
+ -o ARG               Specify output file/directory
+ -y                   Automatically load AADL files
+ -I ARG               Add ARG to the directory search list
+ -p                   Parse and instantiate the model
+ -i                   Instantiate the model
+ -x                   Parse AADL file as an AADL scenario file
+ -g ARG               Generate code using Ocarina backend 'ARG'
+ -b                   Compile generated code
+ -z                   Clean code generated
+ -k ARG               Set POK flavor (arinc653/deos/pok/vxworks)
+ -t                   Run Ocarina in terminal interactive mode
+ -real_theorem ARG    Name of the main theorem to evaluate
+ -real_lib ARG        Add external library of REAL theorems
+ -real_continue_eval  Continue evaluation of REAL theorems after first failure (REAL backend)
+ -boundt_process ARG  Generate .tpo file for process ARG (Bound-T backend)
+ -ec                  Compute coverage metrics
+ -er                  Execute system
+ -asn1                Generate ASN1 deployment file (PolyORB-HI-C only)
+ -perf                Enable profiling with gprof (PolyORB-HI-C only)

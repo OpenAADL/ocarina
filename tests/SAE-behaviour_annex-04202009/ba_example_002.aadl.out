@@ -6,56 +6,34 @@
 
 
 
-property set Data_Model is
-  Base_Type : list of classifier (
-data)
-    applies to (data);
+package Test
+public
+  with Base_types;
 
-  Code_Set : aadlinteger
-    applies to (data);
+  thread speed
+  features
+    tick : in event port
+      {Dequeue_Protocol => AllItems;};
+    sp : out data port Base_types::integer;
 
-  Data_Digits : aadlinteger
-    applies to (data);
+  properties
+    Dispatch_Protocol => periodic;
+    Period => 1000 Ms;
 
-  Data_Scale : aadlinteger
-    applies to (data);
+  end speed;
 
-  Data_Representation : enumeration (Array, Boolean, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
-    applies to (data);
+  thread implementation speed.i
+    annex behavior_specification {**
+    states
+      s0 : initial complete state;
+    transitions      
+      s0 -[]-> s0 {
+        sp := tick'count
+        };
+    **};
+  end speed.i;
 
-  Dimension : list of aadlinteger
-    applies to (data);
-
-  Indefinite_Dimension : constant aadlinteger => -1;
-  Infinite_Dimension : constant aadlinteger => -2;
-  Element_Names : list of aadlstring
-    applies to (data);
-
-  Enumerators : list of aadlstring
-    applies to (data);
-
-  IEEE754_Precision : enumeration (Simple, Double)
-    applies to (data);
-
-  Initial_Value : list of aadlstring
-    applies to (data, port, parameter);
-
-  Integer_Range : range of aadlinteger
-    applies to (data, port, parameter);
-
-  Measurement_Unit : aadlstring
-    applies to (data, port, parameter);
-
-  Number_Representation : enumeration (Signed, Unsigned)
-    applies to (data);
-
-  Real_Range : range of aadlreal
-    applies to (data, port, parameter);
-
-  Representation : list of aadlstring
-    applies to (data);
-
-end Data_Model;
+end Test;
 
 package Base_Types
 public
@@ -169,32 +147,54 @@ public
 
 end Base_Types;
 
-package Test
-public
-  with Base_types;
+property set Data_Model is
+  Base_Type : list of classifier (
+data)
+    applies to (data);
 
-  thread speed
-  features
-    tick : in event port
-      {Dequeue_Protocol => AllItems;};
-    sp : out data port Base_types::integer;
+  Code_Set : aadlinteger
+    applies to (data);
 
-  properties
-    Dispatch_Protocol => periodic;
-    Period => 1000 Ms;
+  Data_Digits : aadlinteger
+    applies to (data);
 
-  end speed;
+  Data_Scale : aadlinteger
+    applies to (data);
 
-  thread implementation speed.i
-    annex behavior_specification {**
-    states
-      s0 : initial complete state;
-    transitions      
-      s0 -[]-> s0 {
-        sp := tick'count
-        };
-    **};
-  end speed.i;
+  Data_Representation : enumeration (Array, Boolean, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
+    applies to (data);
 
-end Test;
+  Dimension : list of aadlinteger
+    applies to (data);
+
+  Indefinite_Dimension : constant aadlinteger => -1;
+  Infinite_Dimension : constant aadlinteger => -2;
+  Element_Names : list of aadlstring
+    applies to (data);
+
+  Enumerators : list of aadlstring
+    applies to (data);
+
+  IEEE754_Precision : enumeration (Simple, Double)
+    applies to (data);
+
+  Initial_Value : list of aadlstring
+    applies to (data, port, parameter);
+
+  Integer_Range : range of aadlinteger
+    applies to (data, port, parameter);
+
+  Measurement_Unit : aadlstring
+    applies to (data, port, parameter);
+
+  Number_Representation : enumeration (Signed, Unsigned)
+    applies to (data);
+
+  Real_Range : range of aadlreal
+    applies to (data, port, parameter);
+
+  Representation : list of aadlstring
+    applies to (data);
+
+end Data_Model;
 

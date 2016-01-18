@@ -1,1 +1,1 @@
-AADL_VERSION=-aadlv2 arinc653.aadl
+AADL_VERSION=-aadlv2 -f

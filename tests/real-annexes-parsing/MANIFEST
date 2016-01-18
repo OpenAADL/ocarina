@@ -1,2 +1,2 @@
 AADL_VERSION=-aadlv2
-OCARINA_FLAGS=-g aadl deployment.aadl
+OCARINA_FLAGS=-g aadl -f

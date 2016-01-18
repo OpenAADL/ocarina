@@ -1,1 +1,1 @@
-AADL_VERSION=-aadlv2 data_model.aadl base_types.aadl
+AADL_VERSION=-aadlv2 -y
