@@ -613,17 +613,25 @@ begin
          Exit_On_Error
            ((File_Name = No_Name),
             "Cannot read file " & Get_Name_String (Sources.Table (F)));
+
+         if Verbose then
+            Write_Line ("Loading file " & Get_Name_String (Sources.Table (F)));
+         end if;
+
          AADL_Root := Parse (Language, AADL_Root, Buffer);
          Exit_On_Error (No (AADL_Root), "Cannot parse AADL specifications");
          exit when F = Sources.Last;
          F := F + 1;
       end loop;
    end;
+   if Verbose then
+      Write_Line ("Loading of all files done");
+   end if;
 
    Success := Analyze (Language, AADL_Root);
    Exit_On_Error (not Success, "Cannot analyze AADL specifications");
 
-   if Verbose_Mode then
+   if Verbose then
       Write_Line ("Model parsing: completed");
       Write_Eol;
    end if;
@@ -635,7 +643,7 @@ begin
       when Instantiate_Model =>
          AADL_Root := Instantiate_Model (AADL_Root);
          Exit_On_Error (No (AADL_Root), "Cannot instantiate AADL models");
-         if Verbose_Mode then
+         if Verbose then
             Set_Standard_Error;
             Write_Line ("Model instantiation: completed");
             Write_Eol;
@@ -654,7 +662,7 @@ begin
             Exit_On_Error (not Success, "Cannot analyze REAL specifications");
          end if;
          Generate_Code (AADL_Root);
-         if Verbose_Mode then
+         if Verbose then
             Set_Standard_Error;
             Write_Line ("Code generation: completed");
             Write_Eol;
