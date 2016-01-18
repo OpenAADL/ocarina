@@ -65,7 +65,6 @@ package Ocarina.Options is
    Output_Filename        : Name_Id := No_Name;
    Boundt_Process         : Name_Id := No_Name;
    Quiet_Mode             : Boolean := False;
-   Verbose_Mode           : Boolean := False;
    Use_Scenario_File      : Boolean := False;
 
    procedure Set_Current_Action (Action : Action_Kind);
