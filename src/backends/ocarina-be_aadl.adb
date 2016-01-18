@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -193,7 +193,7 @@ package body Ocarina.BE_AADL is
    -------------------------
 
    procedure Generate_AADL_Model (Node : Node_Id) is
-      pragma Assert (Present (Node));
+      pragma Unreferenced (Node);
 
       procedure Internal_Print_Subtree is new Print_Constrained_Subtree
         (Always_Printable);
@@ -203,7 +203,9 @@ package body Ocarina.BE_AADL is
          Set_Output (Create_File (Get_Name_String (Output_Filename), Binary));
       end if;
 
-      Internal_Print_Subtree (Node, No_Node);
+      Internal_Print_Subtree (Entries.First, No_Node);
+      --  Note: we use Entries.First instead of Node to visit the
+      --  whole declarative tree.
 
       Set_Standard_Error;
    end Generate_AADL_Model;
