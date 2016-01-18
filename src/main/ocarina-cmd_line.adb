@@ -346,15 +346,15 @@ package body Ocarina.Cmd_Line is
       --  that are not caught as regular switches. We assume these are
       --  AADL filenames. They are passed to Parse_Source_Filename.
 
-      declare
-         Args : Argument_List_Access :=
-           GNAT.OS_Lib.Argument_String_To_List (Get_Argument);
-      begin
-         for S of Args.all loop
-            Parse_Source_Filename (S.all);
-         end loop;
-         Free (Args);
-      end;
+      loop
+         declare
+            S : constant String := Get_Argument (Do_Expansion => True);
+         begin
+            exit when S'Length = 0;
+            Parse_Source_Filename (S);
+         end;
+      end loop;
+
    exception
       when GNAT.Command_Line.Invalid_Switch =>
          OS_Exit (1);
