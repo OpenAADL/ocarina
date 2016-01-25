@@ -678,4 +678,7 @@ exception
       --  Expected when Getopt processes -h or --help
       null;
 
+   when E : others =>
+      Display_Bug_Box (E);
+
 end Ocarina_Cmd;
