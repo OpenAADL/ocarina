@@ -213,11 +213,7 @@ package Ocarina.Backends.Utils is
       H_PN_Interconnection,
       H_PN_To_Delete,
       H_PN_Port_Creation,
-      H_PN_Proc_Creation,
-      H_RTSJ_Subprogram_Spec,
-      H_RTSJ_Subprogram_Body,
-      H_RTSJ_Type,
-      H_RTSJ_Deployment);
+      H_PN_Proc_Creation);
    --  These are tags to precise the meaning of "handle"
 
    type Connection_Pattern_Kind is (Inter_Process, Intra_Process);
