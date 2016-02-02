@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -735,13 +735,15 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Variable_Declaration
      (Defining_Identifier : Node_Id;
-      Used_Type           : Node_Id) return Node_Id
+      Used_Type           : Node_Id;
+      Is_Static : Boolean := False) return Node_Id
    is
       P : Node_Id;
    begin
       P := New_Node (K_Variable_Declaration);
       Set_Defining_Identifier (P, Defining_Identifier);
       Set_Used_Type (P, Used_Type);
+      Set_Is_Static (P, Is_Static);
       return P;
    end Make_Variable_Declaration;
 
