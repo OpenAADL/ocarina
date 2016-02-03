@@ -48,7 +48,9 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes.Python;
 with Ocarina.ME_AADL.AADL_Instances.Nodes.Python;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
 
-with Ocarina.Namet;
+with Ocarina.Namet; use Ocarina.Namet;
+with Ocarina.Backends.Properties.Utils;
+with GNAT.Os_Lib; use GNAT.Os_Lib;
 
 package body Ocarina.Python_Cmd is
 
@@ -560,7 +562,7 @@ package body Ocarina.Python_Cmd is
    is
       pragma Unreferenced (Command);
    begin
-      Ocarina.Utils.Get_Node_Id (Data, Nth_Arg (Data, 1, ""));
+      Get_Node_Id (Data, Nth_Arg (Data, 1, ""));
    end On_Get_Node_Id;
 
    ---------------------------
