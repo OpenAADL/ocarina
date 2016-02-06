@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -302,15 +302,12 @@ package body Ocarina.Analyzer.AADL.Naming_Rules is
       if Present (Scope) then
          Scoped_Identifier :=
            Internal_Node_In_Scope (Name_Of_Identifier, Scope);
-      else
-         return No_Node;
+         if Present (Scoped_Identifier) then
+            return Corresponding_Entity (Scoped_Identifier);
+         end if;
       end if;
 
-      if Present (Scoped_Identifier) then
-         return Corresponding_Entity (Scoped_Identifier);
-      else
-         return No_Node;
-      end if;
+      return No_Node;
    end Node_Explicitly_In_Scope;
 
    -------------------

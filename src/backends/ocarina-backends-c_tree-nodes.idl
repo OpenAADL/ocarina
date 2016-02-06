@@ -61,7 +61,7 @@ module Ocarina::Backends::C_Tree::Nodes {
     Name_Id    Name;
     Node_Id    Corresponding_Node;
     Node_Id    Compile_Unit;
-    boolean    Is_Pointer; 
+    boolean    Is_Pointer;
   };
 
   interface Ifdef_Clause : Node_Id {
@@ -73,7 +73,7 @@ module Ocarina::Backends::C_Tree::Nodes {
 
   interface Include_Clause : Node_Id {
     Node_Id    Header_Name;
-    boolean    Is_Local; 
+    boolean    Is_Local;
   };
 
   interface Includes : List_Id {};
@@ -163,7 +163,7 @@ module Ocarina::Backends::C_Tree::Nodes {
     Node_Id    Subprograms_Source;
     Node_Id    Subprograms_Header;
   };
-  
+
   interface Parameter_Specification : Definition {
     Node_Id    Parameter_Type;
   };
@@ -178,7 +178,7 @@ module Ocarina::Backends::C_Tree::Nodes {
     Node_Id    Return_Type;
     Node_Id    Compile_Unit;
   };
-  
+
   /*
    * int myfunc (int arg1 , char arg2)
    * {
@@ -192,7 +192,7 @@ module Ocarina::Backends::C_Tree::Nodes {
     List_Id    Statements;
     Node_Id    Compile_Unit;
   };
-      
+
   /*
    * myfunc (arg1, arg2);
    */
@@ -206,7 +206,7 @@ module Ocarina::Backends::C_Tree::Nodes {
 
 
   /*
-   * Example : 
+   * Example :
    *           - typedef int my_integer;
    *           - typedef struct{....} my_type;
    */
@@ -297,7 +297,7 @@ module Ocarina::Backends::C_Tree::Nodes {
    */
   interface Continue_Statement : Node_Id {
   };
-  
+
   interface C_Comment : Definition {
     boolean     Has_Header_Spaces;
   };
@@ -339,7 +339,7 @@ module Ocarina::Backends::C_Tree::Nodes {
 
   /*
    * Struct_Aggregate interface is used
-   * to generated code like 
+   * to generated code like
    * struct struct_name {
    * member_type member1;
    * member_type member2;
@@ -351,7 +351,7 @@ module Ocarina::Backends::C_Tree::Nodes {
 
   /*
    * Used to generate Union, generated code looks like
-   * the Struct_Aggregate 
+   * the Struct_Aggregate
    */
   interface Union_Aggregate : Definition {
     List_Id    Union_Members;
@@ -365,15 +365,16 @@ module Ocarina::Backends::C_Tree::Nodes {
     List_Id    Enum_Members;
   };
 
-  /* Definition is used in functions to 
+  /* Definition is used in functions to
    * declare variables
    * Generated code looks like :
    * used_type  variable_name;
    */
   interface Variable_Declaration : Definition {
     Node_Id    Used_Type;
+    boolean    Is_Static;
   };
-  
+
   /*
    * Member_Declaration is used in unions
    * or structures
@@ -403,7 +404,7 @@ module Ocarina::Backends::C_Tree::Nodes {
   interface Literal : Node_Id {
     Value_Id   Value;
   };
- 
+
 
   interface Expression : Node_Id {
     Operator_Id Operator;
@@ -457,16 +458,16 @@ module Ocarina::Backends::C_Tree::Nodes {
   interface Tree_Bindings : Node_Id {
     /* Units */
     Node_Id    Main_Node;
-    
+
     /* Entities */
     Node_Id    Type_Definition_Node;
     Node_Id    Feature_Subprogram_Node;
     Node_Id    Subprogram_Node;
-  };  
-  
+  };
+
   interface HI_Tree_Bindings : Tree_Bindings {
     /* Units */
-    
+
     Node_Id    Internals_Node;
     Node_Id    System_Time_Node;
     Node_Id    Marshaller_Node;

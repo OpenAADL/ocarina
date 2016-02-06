@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -70,6 +70,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       Tok_Until,           -- UNTIL
       Tok_For,             -- FOR
       Tok_While,           -- WHILE
+      Tok_Static,          -- STATIC
       Tok_Switch,          -- SWITCH
       Tok_Typedef,         -- TYPEDEF
 
@@ -354,7 +355,8 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    function Make_Variable_Declaration
      (Defining_Identifier : Node_Id;
-      Used_Type           : Node_Id) return Node_Id;
+      Used_Type           : Node_Id;
+      Is_Static           : Boolean := False) return Node_Id;
 
    function Make_Member_Declaration
      (Defining_Identifier : Node_Id;
