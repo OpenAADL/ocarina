@@ -999,11 +999,14 @@ package body Ocarina.Backends.C_Common.Types is
                --  (see ocarina-backends-po_hi_c-request.adb) are used.
 
                elsif AINU.Is_Process (Corresponding_Instance (C)) then
-                  S := First_Node (Subcomponents (Corresponding_Instance (C)));
-                  while Present (S) loop
-                     Visit_Component_Instance (Corresponding_Instance (S));
-                     S := Next_Node (S);
-                  end loop;
+                  if Present (Subcomponents (Corresponding_Instance (C))) then
+                     S := First_Node
+                       (Subcomponents (Corresponding_Instance (C)));
+                     while Present (S) loop
+                        Visit_Component_Instance (Corresponding_Instance (S));
+                        S := Next_Node (S);
+                     end loop;
+                  end if;
                end if;
                C := Next_Node (C);
             end loop;
