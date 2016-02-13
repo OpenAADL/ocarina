@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -398,16 +398,12 @@ package body Ocarina.Backends.PO_HI_C is
 
       procedure Visit_Process_Instance (E : Node_Id) is
          S : constant Node_Id := AAN.Parent_Subcomponent (E);
-         A : constant Node_Id :=
-           AAN.Parent_Component (AAN.Parent_Subcomponent (E));
          Fd    : File_Descriptor;
          Rpath : constant String := Get_Runtime_Path ("polyorb-hi-c");
       begin
-         Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (A))));
          Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (S))));
 
          Fd := Create_File ("doxygen.cfg", Text);
-
          if Fd = Invalid_FD then
             raise Program_Error;
          end if;
@@ -460,14 +456,11 @@ package body Ocarina.Backends.PO_HI_C is
          Write_Line ("DIRECTORY_GRAPH        = YES");
          Write_Line ("DOT_GRAPH_MAX_NODES    = 50");
          Write_Line ("MAX_DOT_GRAPH_DEPTH    = 0");
-
          Write_Eol;
 
          Close (Fd);
-
          Set_Standard_Output;
 
-         Leave_Directory;
          Leave_Directory;
       end Visit_Process_Instance;
 
@@ -478,6 +471,13 @@ package body Ocarina.Backends.PO_HI_C is
       procedure Visit_System_Instance (E : Node_Id) is
          S : Node_Id;
       begin
+         if not Present (AAN.Parent_Subcomponent (E)) then
+            --  We jump one directory iff the current system denotes
+            --  the root system, other systems do not lead to
+            --  generated code, they are silent.
+            Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (E))));
+         end if;
+
          --  Visit all the subcomponents of the system
 
          if not AAU.Is_Empty (AAN.Subcomponents (E)) then
@@ -490,7 +490,12 @@ package body Ocarina.Backends.PO_HI_C is
                S := AAN.Next_Node (S);
             end loop;
          end if;
+
+         if not Present (AAN.Parent_Subcomponent (E)) then
+            Leave_Directory;
+         end if;
       end Visit_System_Instance;
+
    begin
       Visit (My_System);
    end Generate_Doxygen_Configuration;
@@ -503,9 +508,8 @@ package body Ocarina.Backends.PO_HI_C is
       Instance_Root : Node_Id;
       Success       : Boolean := True;
 
-      procedure Generate_PolyORB_HI_C_Makefile is new Build_Utils.Makefiles
-        .Generate
-        (PolyORB_HI_C_Makefile);
+      procedure Generate_PolyORB_HI_C_Makefile is
+         new Build_Utils.Makefiles.Generate (PolyORB_HI_C_Makefile);
 
    begin
       --  Instantiate the AADL tree
@@ -677,6 +681,8 @@ package body Ocarina.Backends.PO_HI_C is
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
    begin
+      --  Generate header files
+
       Naming.Header_File.Visit (E);
       C_Common.Types.Header_File.Visit (E, C_Root);
       Deployment.Header_File.Visit (E);
@@ -684,6 +690,8 @@ package body Ocarina.Backends.PO_HI_C is
       Marshallers.Header_File.Visit (E);
       C_Common.Subprograms.Header_File.Visit (E, C_Root);
       Activity.Header_File.Visit (E);
+
+      --  Generate source files
 
       C_Common.Types.Source_File.Visit (E, C_Root);
       Request.Source_File.Visit (E);
