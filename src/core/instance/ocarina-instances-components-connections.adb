@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -226,11 +226,24 @@ package body Ocarina.Instances.Components.Connections is
             New_Instance),
          Destinations (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Src)))));
 
-      Append_Node_To_List
-        (Make_Node_Container
-           (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Src))),
-            New_Instance),
-         Sources (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Dst)))));
+      if AIN.Kind
+        (AIN.Item (AIN.Last_Node
+                     (AIN.Path (Connection_Dst)))) = K_Subcomponent_Instance
+      then
+         Append_Node_To_List
+           (Make_Node_Container
+              (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Src))),
+               New_Instance),
+            Destinations (AIN.Item
+                            (AIN.Last_Node (AIN.Path (Connection_Dst)))));
+
+      else
+         Append_Node_To_List
+           (Make_Node_Container
+              (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Src))),
+               New_Instance),
+            Sources (AIN.Item (AIN.Last_Node (AIN.Path (Connection_Dst)))));
+      end if;
 
       --  Set the connection type
 

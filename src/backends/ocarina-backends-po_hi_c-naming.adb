@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -150,7 +150,6 @@ package body Ocarina.Backends.PO_HI_C.Naming is
 
          Pop_Entity;
          Pop_Entity;
-
       end Visit_Process_Instance;
 
       ---------------------------
@@ -158,11 +157,18 @@ package body Ocarina.Backends.PO_HI_C.Naming is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         A : constant Node_Id := Map_Distributed_Application (E);
+         A : Node_Id;
          C : Node_Id;
          S : Node_Id;
       begin
-         C_Root := A;
+         if No (C_Root) then
+            --  In the case of deep hierarchy of systems, we store in
+            --  C_Root the root of the C trees, and reuse it for other
+            --  systems.
+            C_Root := Map_Distributed_Application (E);
+         end if;
+
+         A := C_Root;
          Push_Entity (A);
 
          --  Verify the consistency of the distributed application

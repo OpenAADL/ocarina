@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -2792,8 +2792,8 @@ package body Ocarina.Analyzer.AADL.Links is
       List_Node               : Node_Id;
       Corresponding_Container : Node_Id;
       Type_Designator         : Node_Id;
-   begin
 
+   begin
       case Kind (Node) is
          when K_Component_Classifier_Term =>
             Pop_Scope;
