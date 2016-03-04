@@ -65,8 +65,8 @@ another prefix than `/usr/local`, give configure use `--prefix` argument
    ./support/reconfig
 
 .. note:: To install the PolyORB/HI runtimes, you may use the script
-          get_runtimes.sh. It will install required ressources in the
-          Ocarina source tree.
+   get_runtimes.sh. It will install required ressources in the
+   Ocarina source tree::
 
    ./support/get_runtimes.sh po_hi_ada po_hi_c
 
