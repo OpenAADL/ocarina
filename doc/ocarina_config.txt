@@ -1,0 +1,33 @@
+Usage: ocarina-config [OPTIONS]
+Options:
+        No option:
+            Output all the flags (compiler and linker) required
+            to compile your program.
+        [--prefix[=DIR]]
+            Output the directory in which Ocarina architecture-independent 
+           files are installed, or set this directory to DIR.
+        [--exec-prefix[=DIR]]
+            Output the directory in which Ocarina architecture-dependent 
+           files are installed, or set this directory to DIR.
+        [--version|-v]
+            Output the version of Ocarina.
+        [--config]
+            Output Ocarina's configuration parameters.
+        [--runtime[=<Runtime_Name>]]
+            Checks the validity and the presence of the given runtime and 
+            then, outputs its path. Only one runtime can be requested at 
+            a time. If no runtime name is given, outputs the root directory
+            of all runtimes.
+        [--libs]
+            Output the linker flags to use for Ocarina.
+        [--projects]
+            Output the path to GNAT Project files for Ocarina
+        [--properties]
+            Output the location of the standard property file.
+        [--resources]
+            Output the location of resource files 
+            (typically the standard properties)
+        [--cflags]
+            Output the compiler flags to use for Ocarina.
+        [--help]
+            Output this message

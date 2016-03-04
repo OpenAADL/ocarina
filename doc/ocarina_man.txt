@@ -1,0 +1,32 @@
+Usage: ocarina [switches] <aadl_files>
+
+ -h, --help           Display help and exit
+ --version            Display version and exit
+ -v, --verbose        Output extra verbose information
+ -q                   Quiet mode (default)
+ -d                   Debug mode
+ -s                   Output default search directory, then exit
+ -aadlv[ARG]          AADL version, ARG = 1 for AADL 1.0, 2 for AADL 2.x
+ -f                   Parse predefined non-standard property sets
+ -disable-annexes=ARG Deactivate annex ARG
+ -r ARG               Use ARG as root system
+ -o ARG               Specify output file/directory
+ -y                   Automatically load AADL files
+ -I ARG               Add ARG to the directory search list
+ -p                   Parse and instantiate the model
+ -i                   Instantiate the model
+ -x                   Parse AADL file as an AADL scenario file
+ -g ARG               Generate code using Ocarina backend 'ARG'
+ --list-backends      List available backends
+ -b                   Compile generated code
+ -z                   Clean code generated
+ -k ARG               Set POK flavor (arinc653/deos/pok/vxworks)
+ -t                   Run Ocarina in terminal interactive mode
+ -real_theorem ARG    Name of the main theorem to evaluate
+ -real_lib ARG        Add external library of REAL theorems
+ -real_continue_eval  Continue evaluation of REAL theorems after first failure (REAL backend)
+ -boundt_process ARG  Generate .tpo file for process ARG (Bound-T backend)
+ -ec                  Compute coverage metrics
+ -er                  Execute system
+ -asn1                Generate ASN1 deployment file (PolyORB-HI-C only)
+ -perf                Enable profiling with gprof (PolyORB-HI-C only)

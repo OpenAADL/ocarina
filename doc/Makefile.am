@@ -107,3 +107,6 @@ build_man: $(top_srcdir)/ocarina-config.in
 	-help2man --no-discard-stderr `which ocarina` >  $(top_srcdir)/doc/ocarina.1
 	echo ".HEAD \"<link rel=\"\"stylesheet\"\" type=\"\"text/css\"\" href=\"\"ocarina.css\"\" >\"" >> $(top_srcdir)/doc/ocarina.1
 	groff -man -Thtml $(top_srcdir)/doc/ocarina.1 > $(top_srcdir)/doc/ocarina_man.html
+	groff -man -Thtml $(top_srcdir)/doc/ocarina.1 > $(top_srcdir)/doc/ocarina_man.html
+	ocarina -h >  $(top_srcdir)/doc/ocarina_man.txt
+	-ocarina-config -h 2>  $(top_srcdir)/doc/ocarina_config.txt
