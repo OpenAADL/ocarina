@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2014-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2014-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -41,6 +41,9 @@ use Ocarina.AADL_Values;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
+with Ocarina.Backends.Properties.Utils;
+use  Ocarina.Backends.Properties.Utils;
+
 package body Ocarina.Backends.Properties.ARINC653 is
 
    package ATNU renames Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -58,6 +61,9 @@ package body Ocarina.Backends.Properties.ARINC653 is
 
    --  ARINC653::Module_Schedule
    Module_Schedule_Name : Name_Id;
+
+   --  ARINC653::Partition_Identifier
+   Partition_Identifier_Name : Name_Id;
 
    procedure Init;
 
@@ -77,6 +83,10 @@ package body Ocarina.Backends.Properties.ARINC653 is
       Duration_Name := Get_String_Name ("duration");
       Periodic_Processing_Start_Name
         := Get_String_Name ("periodic_processing_start");
+
+      Partition_Identifier_Name
+        := Get_String_Name ("arinc653::partition_identifier");
+
       Is_Initialized := True;
    end Init;
 
@@ -155,5 +165,16 @@ package body Ocarina.Backends.Properties.ARINC653 is
          return Result;
       end;
    end Get_Module_Schedule_Property;
+
+   ------------------------------
+   -- Get_Partition_Identifier --
+   ------------------------------
+
+   function Get_Partition_Identifier
+     (P : Node_Id)
+     return Unsigned_Long_Long is
+   begin
+      return Check_And_Get_Property (P, Partition_Identifier_Name);
+   end Get_Partition_Identifier;
 
 end Ocarina.Backends.Properties.ARINC653;
