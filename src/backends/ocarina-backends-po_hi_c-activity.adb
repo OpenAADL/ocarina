@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -413,7 +413,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                 (Defining_Identifier =>
                    Make_Defining_Identifier
                      (Map_C_Variable_Name (F, Port_Request => True)),
-                 Used_Type => RE (RE_Request_T));
+                 Used_Type => RE (RE_Request_T),
+                 Is_Static => True);
             Append_Node_To_List (N, Declarations);
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
@@ -845,7 +846,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                      Make_List_Id
                        (Make_Variable_Address
                           (Make_Defining_Identifier (VN (V_Offset))))),
-                  WStatements);
+                  Statements);
 
             end if;
          end Make_Wait_Offset;
@@ -1240,8 +1241,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                --  behaviour of subprograms and does not have to worry
                --  about sending and receiving ports.
 
-               Make_Wait_Offset;
-
                --  Get IN ports values and dequeue them
 
                if Has_In_Ports (E) then
@@ -1347,6 +1346,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
          N := CTU.Make_Call_Profile (RE (RE_Wait_Initialization), No_List);
          Append_Node_To_List (N, Statements);
+
+         --  Call __po_hi_wait_offset() iff necessary
+
+         Make_Wait_Offset;
 
          --  Compute the next period after initialization, because
          --  the period has passed after init.
