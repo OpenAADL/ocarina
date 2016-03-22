@@ -29,6 +29,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Locations; use Locations;
+
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.Namet;
@@ -1718,11 +1720,9 @@ package body Ocarina.Backends.PN.Components is
       V_Formalism : constant Value_Type :=
         Get_Value_Type (Formalism (PN_Generated));
    begin
-
       if Get_Thread_Implementation_Kind (Aadl_Instance) = Thread_Unknown then
-
          Display_Error
-           ("Petri Net backend : " & "Thread Implementation Unknown",
+           (Image (AIN.Loc (Aadl_Instance)) & ": Unknown thread kind",
             True);
       end if;
 
