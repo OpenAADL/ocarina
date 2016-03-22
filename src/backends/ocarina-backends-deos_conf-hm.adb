@@ -29,7 +29,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Strings; use Ada.Strings;
+with Ada.Strings;       use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
 --  with Locations;
@@ -59,7 +59,7 @@ package body Ocarina.Backends.Deos_Conf.Hm is
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
    Root_Node : Node_Id := No_Node;
-   HM_Node : Node_Id := No_Node;
+   HM_Node   : Node_Id := No_Node;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -69,14 +69,16 @@ package body Ocarina.Backends.Deos_Conf.Hm is
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
 
-   procedure Add_System_Error (XML_Node : Node_Id;
-                               Identifier : String;
-                               Description : String);
+   procedure Add_System_Error
+     (XML_Node    : Node_Id;
+      Identifier  : String;
+      Description : String);
 
-   procedure Add_Error_Action (XML_Node : Node_Id;
-                               Identifier : String;
-                               Level      : String;
-                               Action     : String);
+   procedure Add_Error_Action
+     (XML_Node   : Node_Id;
+      Identifier : String;
+      Level      : String;
+      Action     : String);
    -----------
    -- Visit --
    -----------
@@ -186,34 +188,36 @@ package body Ocarina.Backends.Deos_Conf.Hm is
    --  Add_System_Error  --
    ------------------------
 
-   procedure Add_System_Error (XML_Node : Node_Id;
-                               Identifier : String;
-                               Description : String) is
+   procedure Add_System_Error
+     (XML_Node    : Node_Id;
+      Identifier  : String;
+      Description : String)
+   is
       Intermediate : Node_Id;
    begin
       Intermediate := Make_XML_Node ("SystemError");
       XTU.Add_Attribute ("ErrorIdentifier", Identifier, Intermediate);
       XTU.Add_Attribute ("Description", Description, Intermediate);
-      Append_Node_To_List
-         (Intermediate, XTN.Subitems (XML_Node));
+      Append_Node_To_List (Intermediate, XTN.Subitems (XML_Node));
    end Add_System_Error;
 
    ------------------------
    --  Add_Error_Action  --
    ------------------------
 
-   procedure Add_Error_Action (XML_Node : Node_Id;
-                               Identifier : String;
-                               Level      : String;
-                               Action     : String) is
+   procedure Add_Error_Action
+     (XML_Node   : Node_Id;
+      Identifier : String;
+      Level      : String;
+      Action     : String)
+   is
       Intermediate : Node_Id;
    begin
       Intermediate := Make_XML_Node ("ErrorAction");
       XTU.Add_Attribute ("ErrorIdentifierRef", Identifier, Intermediate);
       XTU.Add_Attribute ("ErrorLevel", Level, Intermediate);
       XTU.Add_Attribute ("ModuleRecoveryAction", Action, Intermediate);
-      Append_Node_To_List
-         (Intermediate, XTN.Subitems (XML_Node));
+      Append_Node_To_List (Intermediate, XTN.Subitems (XML_Node));
    end Add_Error_Action;
 
    ------------------------------
@@ -245,15 +249,11 @@ package body Ocarina.Backends.Deos_Conf.Hm is
 
       HM_Node := Make_XML_Node ("HealthMonitoring");
 
-      Append_Node_To_List
-        (HM_Node,
-         XTN.Subitems (Current_XML_Node));
+      Append_Node_To_List (HM_Node, XTN.Subitems (Current_XML_Node));
 
       System_Errors := Make_XML_Node ("SystemErrors");
 
-      Append_Node_To_List
-        (System_Errors,
-         XTN.Subitems (HM_Node));
+      Append_Node_To_List (System_Errors, XTN.Subitems (HM_Node));
       Add_System_Error (System_Errors, "1", "processorSpecific");
       Add_System_Error (System_Errors, "2", "floatingPoint");
       Add_System_Error (System_Errors, "3", "accessViolation");
@@ -271,12 +271,11 @@ package body Ocarina.Backends.Deos_Conf.Hm is
 
       Multi_Partition_HM := Make_XML_Node ("MultiPartitionHM");
       XTU.Add_Attribute ("TableIdentifier", "1", Multi_Partition_HM);
-      XTU.Add_Attribute ("TableName",
-                         "default MultiPartitionHM",
-                         Multi_Partition_HM);
-      Append_Node_To_List
-        (Multi_Partition_HM,
-         XTN.Subitems (HM_Node));
+      XTU.Add_Attribute
+        ("TableName",
+         "default MultiPartitionHM",
+         Multi_Partition_HM);
+      Append_Node_To_List (Multi_Partition_HM, XTN.Subitems (HM_Node));
       Add_Error_Action (Multi_Partition_HM, "1", "MODULE", "IGNORE");
       Add_Error_Action (Multi_Partition_HM, "2", "MODULE", "IGNORE");
       Add_Error_Action (Multi_Partition_HM, "3", "MODULE", "IGNORE");
@@ -301,23 +300,22 @@ package body Ocarina.Backends.Deos_Conf.Hm is
                --
 
                Partition_HM := Make_XML_Node ("PartitionHM");
-               Append_Node_To_List
-                 (Partition_HM,
-                  XTN.Subitems (HM_Node));
+               Append_Node_To_List (Partition_HM, XTN.Subitems (HM_Node));
 
-               XTU.Add_Attribute ("TableIdentifier",
-                                 Trim (Unsigned_Long_Long'Image
-                                    (Partition_Identifier), Left),
-                                  Partition_HM);
+               XTU.Add_Attribute
+                 ("TableIdentifier",
+                  Trim (Unsigned_Long_Long'Image (Partition_Identifier), Left),
+                  Partition_HM);
 
-               XTU.Add_Attribute ("TableName",
-                                  "Unique name for partition " &
-                                 Trim (Unsigned_Long_Long'Image
-                                    (Partition_Identifier), Left),
-                                  Partition_HM);
-               XTU.Add_Attribute ("MultiPartitionHMTableNameRef",
-                                  "default MultiPartitionHM",
-                                  Partition_HM);
+               XTU.Add_Attribute
+                 ("TableName",
+                  "Unique name for partition " &
+                  Trim (Unsigned_Long_Long'Image (Partition_Identifier), Left),
+                  Partition_HM);
+               XTU.Add_Attribute
+                 ("MultiPartitionHMTableNameRef",
+                  "default MultiPartitionHM",
+                  Partition_HM);
                Partition_Identifier := Partition_Identifier + 1;
             end if;
             S := Next_Node (S);

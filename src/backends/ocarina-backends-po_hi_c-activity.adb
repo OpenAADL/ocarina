@@ -380,8 +380,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Entrypoint : constant Node_Id :=
               Get_Thread_Activate_Entrypoint (E);
 
-            Parameter_List : constant List_Id :=
-              New_List (CTN.K_List_Id);
+            Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
          begin
             if Entrypoint /= No_Node then
                Append_Node_To_List
@@ -1560,10 +1559,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                  Brief => "Used to deliver request to the appropriate ports",
                  Desc  =>
                    "This function takes a request as argument (\arg request)" &
-                   " and calls the appropriate function for its delivery."
-                   & "To specify which function should be called, it "
-                   & "extracts the receiver entity using the destination "
-                   & "port.",
+                   " and calls the appropriate function for its delivery." &
+                   "To specify which function should be called, it " &
+                   "extracts the receiver entity using the destination " &
+                   "port.",
                  Has_Header_Spaces => False);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
@@ -2039,9 +2038,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                       "Function that delivers requests to the task " &
                       Get_Name_String (Name (Identifier (S))),
                     Desc =>
-                      "When the generated application received a request,"
-                      & " it calls a main delivery function that redirects"
-                      & " to localfunctions for each task. This function (" &
+                      "When the generated application received a request," &
+                      " it calls a main delivery function that redirects" &
+                      " to localfunctions for each task. This function (" &
                       Get_Name_String
                         (CTN.Name
                            (CTN.Defining_Identifier

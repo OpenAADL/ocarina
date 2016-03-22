@@ -799,9 +799,7 @@ package body Ocarina.Backends.C_Common.Types is
                               False),
                            True);
                      end if;
-                  elsif Get_Concurrency_Protocol (E) =
-                    Priority_Ceiling
-                  then
+                  elsif Get_Concurrency_Protocol (E) = Priority_Ceiling then
 
                      --  Protected type that does not have struct members.
                      --  This piece of code is made to handle declaration
@@ -1000,8 +998,8 @@ package body Ocarina.Backends.C_Common.Types is
 
                elsif AINU.Is_Process (Corresponding_Instance (C)) then
                   if Present (Subcomponents (Corresponding_Instance (C))) then
-                     S := First_Node
-                       (Subcomponents (Corresponding_Instance (C)));
+                     S :=
+                       First_Node (Subcomponents (Corresponding_Instance (C)));
                      while Present (S) loop
                         Visit_Component_Instance (Corresponding_Instance (S));
                         S := Next_Node (S);
@@ -1120,8 +1118,8 @@ package body Ocarina.Backends.C_Common.Types is
 
                      if AINU.Is_Process (Parent) and then Parent /= E then
                         if Present (Extra_Item (Src))
-                          and then Present (Get_Provided_Virtual_Bus_Class
-                                              (Extra_Item (Src)))
+                          and then Present
+                            (Get_Provided_Virtual_Bus_Class (Extra_Item (Src)))
                         then
                            Visit
                              (Get_Provided_Virtual_Bus_Class

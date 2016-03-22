@@ -29,9 +29,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Strings; use Ada.Strings;
+with Ada.Strings;       use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
-with Ocarina.Namet; use Ocarina.Namet;
+with Ocarina.Namet;     use Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -67,7 +67,7 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
-   Root_Node : Node_Id := No_Node;
+   Root_Node     : Node_Id := No_Node;
    Schedule_Node : Node_Id := No_Node;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
@@ -188,47 +188,50 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
    ---------------------------
 
    procedure Fill_Scheduling_Slots (Processor : Node_Id) is
-      Time_Window_Node  : Node_Id;
-      Module_Schedule   : constant Schedule_Window_Record_Term_Array
-        := Get_Module_Schedule_Property (Processor);
-      Offset            : Unsigned_Long_Long;
-      Slot_Duration     : Unsigned_Long_Long;
+      Time_Window_Node : Node_Id;
+      Module_Schedule  : constant Schedule_Window_Record_Term_Array :=
+        Get_Module_Schedule_Property (Processor);
+      Offset        : Unsigned_Long_Long;
+      Slot_Duration : Unsigned_Long_Long;
    begin
       Offset := 0;
       for J in Module_Schedule'Range loop
          Time_Window_Node := Make_XML_Node ("PartitionTimeWindow");
 
-         Append_Node_To_List
-           (Time_Window_Node,
-            XTN.Subitems (Schedule_Node));
+         Append_Node_To_List (Time_Window_Node, XTN.Subitems (Schedule_Node));
 
 --            XTU.Add_Attribute ("Duration", "6000000", Time_Window_Node);
          --
          --  For now, we assume the partition duration
          --  is in milliseconds.
          --
-         Slot_Duration := To_Nanoseconds
-                           (Module_Schedule (J).Duration);
-         XTU.Add_Attribute ("Duration",
-                           Trim (Unsigned_Long_Long'Image
-                                (Slot_Duration), Left),
-                           Time_Window_Node);
-         XTU.Add_Attribute ("Offset",
-                           Trim (Unsigned_Long_Long'Image
-                                (Offset), Left),
-                           Time_Window_Node);
-         XTU.Add_Attribute ("PeriodicProcessingStart",
-                            "true", Time_Window_Node);
-         XTU.Add_Attribute ("RepeatWindowAtNanosecondInterval",
-                            "PartitionPeriod", Time_Window_Node);
-         XTU.Add_Attribute ("InhibitEarlyCompletion",
-                            "false", Time_Window_Node);
-         XTU.Add_Attribute ("PartitionNameRef",
-                            Get_Name_String
-                              (ATN.Display_Name
-                                 (ATN.Identifier
-                                    (Module_Schedule (J).Partition))),
-                            Time_Window_Node);
+         Slot_Duration := To_Nanoseconds (Module_Schedule (J).Duration);
+         XTU.Add_Attribute
+           ("Duration",
+            Trim (Unsigned_Long_Long'Image (Slot_Duration), Left),
+            Time_Window_Node);
+         XTU.Add_Attribute
+           ("Offset",
+            Trim (Unsigned_Long_Long'Image (Offset), Left),
+            Time_Window_Node);
+         XTU.Add_Attribute
+           ("PeriodicProcessingStart",
+            "true",
+            Time_Window_Node);
+         XTU.Add_Attribute
+           ("RepeatWindowAtNanosecondInterval",
+            "PartitionPeriod",
+            Time_Window_Node);
+         XTU.Add_Attribute
+           ("InhibitEarlyCompletion",
+            "false",
+            Time_Window_Node);
+         XTU.Add_Attribute
+           ("PartitionNameRef",
+            Get_Name_String
+              (ATN.Display_Name
+                 (ATN.Identifier (Module_Schedule (J).Partition))),
+            Time_Window_Node);
          Offset := Offset + Slot_Duration;
       end loop;
    end Fill_Scheduling_Slots;
@@ -238,9 +241,9 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S                 : Node_Id;
-      U                 : Node_Id;
-      P                 : Node_Id;
+      S : Node_Id;
+      U : Node_Id;
+      P : Node_Id;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       P := XTN.Node (Backend_Node (Identifier (E)));
@@ -252,12 +255,9 @@ package body Ocarina.Backends.Deos_Conf.Schedule is
 
       Schedule_Node := Make_XML_Node ("Schedule");
 
-      XTU.Add_Attribute ("MajorFrameLength",
-                         "Automatic", Schedule_Node);
+      XTU.Add_Attribute ("MajorFrameLength", "Automatic", Schedule_Node);
 
-      Append_Node_To_List
-        (Schedule_Node,
-         XTN.Subitems (Current_XML_Node));
+      Append_Node_To_List (Schedule_Node, XTN.Subitems (Current_XML_Node));
 
       if Is_Defined_Property (E, "arinc653::module_schedule") then
          Fill_Scheduling_Slots (E);

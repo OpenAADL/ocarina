@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -30,11 +30,9 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Namet; use Ocarina.Namet;
-with Utils; use Utils;
+with Utils;         use Utils;
 
 with Ocarina.ME_AADL;
-with Ocarina.ME_AADL.AADL_Tree.Nodes;
-with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -44,6 +42,7 @@ with Ocarina.Instances.Queries;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.Properties;
+with Ocarina.Backends.Properties.ARINC653;
 with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -59,11 +58,10 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.Properties;
+   use Ocarina.Backends.Properties.ARINC653;
    use Ocarina.Backends.XML_Values;
    use Ocarina.Backends.XML_Tree.Nutils;
 
-   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XV renames Ocarina.Backends.XML_Values;
@@ -252,20 +250,22 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S                : Node_Id;
-      P                : Node_Id;
-      Q                : Node_Id;
-      Processor_Node   : Node_Id;
-      Plan_Table_Node  : Node_Id;
-      Plan_Node        : Node_Id;
-      Start_Time       : Unsigned_Long_Long  := 0;
-      Slot_Node        : Node_Id;
-      Partition        : Node_Id;
-      Slot_Identifier  : Unsigned_Long_Long  := 0;
-      Slots            : constant Time_Array := Get_POK_Slots (E);
-      Slots_Allocation : constant List_Id    := Get_POK_Slots_Allocation (E);
+      S               : Node_Id;
+      P               : Node_Id;
+      Q               : Node_Id;
+      Processor_Node  : Node_Id;
+      Plan_Table_Node : Node_Id;
+      Plan_Node       : Node_Id;
+      Start_Time      : Unsigned_Long_Long := 0;
+      Slot_Node       : Node_Id;
+      Partition       : Node_Id;
+      Slot_Identifier : Unsigned_Long_Long := 0;
+
+      Module_Schedule : constant Schedule_Window_Record_Term_Array :=
+        Get_Module_Schedule_Property (E);
+
    begin
-      if Slots_Allocation = No_List then
+      if Module_Schedule'Length = 0 then
          Display_Error
            ("You must provide the slots allocation for each processor",
             Fatal => True);
@@ -320,10 +320,9 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       --  For each time slot for a partition, we declare
       --  it in the scheduling plan.
-      S := ATN.First_Node (Slots_Allocation);
-      for I in Slots'Range loop
 
-         Partition := ATE.Get_Referenced_Entity (S);
+      for J in Module_Schedule'Range loop
+         Partition := Module_Schedule (J).Partition;
 
          --  Create the node that corresponds to the slot.
 
@@ -334,24 +333,6 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          Set_Str_To_Name_Buffer ("id");
          P := Make_Defining_Identifier (Name_Find);
          Q := Make_Literal (XV.New_Numeric_Value (Slot_Identifier, 0, 10));
-
-         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
-
-         --  Associate a fixed identifier to the slot.
-
-         Set_Str_To_Name_Buffer ("partitionId");
-         P := Make_Defining_Identifier (Name_Find);
-         Q := Copy_Node (Backend_Node (Identifier (Partition)));
-
-         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
-
-         --  Define the duration attribute of the <slot/> element.
-         Set_Str_To_Name_Buffer ("duration");
-         P := Make_Defining_Identifier (Name_Find);
-         Set_Str_To_Name_Buffer
-           (Unsigned_Long_Long'Image (To_Milliseconds (Slots (I))));
-         Add_Str_To_Name_Buffer ("ms");
-         Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
          Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
 
          --  Define the start attribute of the <slot/> element.
@@ -362,13 +343,47 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
          Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
          Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
 
+         --  Define the duration attribute of the <slot/> element.
+         Set_Str_To_Name_Buffer ("duration");
+         P := Make_Defining_Identifier (Name_Find);
+
+         Set_Str_To_Name_Buffer
+           (Unsigned_Long_Long'Image
+              (To_Milliseconds (Module_Schedule (J).Duration)));
+         Add_Str_To_Name_Buffer ("ms");
+         Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
+
+         --  Associate a fixed identifier to the slot.
+         if not AINU.Is_Empty (Subcomponents (E)) then
+            S := First_Node (Subcomponents (E));
+            while Present (S) loop
+               if Corresponding_Declaration (S) =
+                 Module_Schedule (J).Partition
+               then
+                  Partition := Corresponding_Instance (S);
+               end if;
+               S := Next_Node (S);
+            end loop;
+         end if;
+         Set_Str_To_Name_Buffer ("partitionId");
+         P := Make_Defining_Identifier (Name_Find);
+
+         Q :=
+           Make_Literal
+             (XV.New_Numeric_Value
+                (Get_Partition_Identifier (Partition),
+                 0,
+                 10));
+         Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Slot_Node));
+
          Append_Node_To_List (Slot_Node, XTN.Subitems (Plan_Node));
 
          Slot_Identifier := Slot_Identifier + 1;
 
-         Start_Time := Start_Time + To_Milliseconds (Slots (I));
+         Start_Time :=
+           Start_Time + To_Milliseconds (Module_Schedule (J).Duration);
 
-         S := ATN.Next_Node (S);
       end loop;
 
       if not AINU.Is_Empty (Subcomponents (E)) then

@@ -1377,7 +1377,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          --  Define the PORT_TYPE_CONTENT macro for the monitoring of entities
 
          declare
-            K : Node_Id;
+            K                  : Node_Id;
             Nb_Ports_List_Name : Name_Id := No_Name;
          begin
             K := CTN.First_Node (Nb_Ports_List);
@@ -1395,9 +1395,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
             N :=
               Make_Define_Statement
-              (Defining_Identifier => RE (RE_Port_Type_Content),
-               Value               =>
-                 Make_Defining_Identifier (Nb_Ports_List_Name));
+                (Defining_Identifier => RE (RE_Port_Type_Content),
+                 Value => Make_Defining_Identifier (Nb_Ports_List_Name));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end;
 
@@ -1837,8 +1836,9 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                         (New_Int_Value (Local_Port_Identifier, 1, 10)));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-               N := Make_Defining_Identifier
-                 (Map_C_Define_Name (S, Nb_Ports => True));
+               N :=
+                 Make_Defining_Identifier
+                   (Map_C_Define_Name (S, Nb_Ports => True));
                Append_Node_To_List (N, Nb_Ports_List);
             end if;
          end if;

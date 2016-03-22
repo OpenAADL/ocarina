@@ -66,9 +66,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
-   package XV  renames Ocarina.Backends.XML_Values;
+   package XV renames Ocarina.Backends.XML_Values;
 
-   Root_Node : Node_Id := No_Node;
+   Root_Node      : Node_Id := No_Node;
    Schedules_Node : Node_Id := No_Node;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
@@ -189,10 +189,10 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
    ---------------------------
 
    procedure Fill_Scheduling_Slots (Processor : Node_Id) is
-      Partition_Window_Node  : Node_Id;
-      Schedule_Node  : Node_Id;
-      Module_Schedule   : constant Schedule_Window_Record_Term_Array
-        := Get_Module_Schedule_Property (Processor);
+      Partition_Window_Node : Node_Id;
+      Schedule_Node         : Node_Id;
+      Module_Schedule       : constant Schedule_Window_Record_Term_Array :=
+        Get_Module_Schedule_Property (Processor);
       Partition_Duration : Long_Double;
    begin
       Schedule_Node := Make_XML_Node ("Schedule");
@@ -209,21 +209,19 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
          --  We assume the partition duration is in milliseconds
 
          Partition_Duration :=
-            (Long_Double
-               (To_Nanoseconds
-                  (Module_Schedule (J).Duration))
-                  / Long_Double (1_000_000_000.0));
-         XTU.Add_Attribute ("Duration",
-                           XV.New_Floating_Point_Value (Partition_Duration),
-                           Partition_Window_Node);
-         XTU.Add_Attribute ("ReleasePoint",
-                            "1", Partition_Window_Node);
-         XTU.Add_Attribute ("PartitionNameRef",
-                            Get_Name_String
-                              (ATN.Display_Name
-                                 (ATN.Identifier
-                                    (Module_Schedule (J).Partition))),
-                           Partition_Window_Node);
+           (Long_Double (To_Nanoseconds (Module_Schedule (J).Duration)) /
+            Long_Double (1_000_000_000.0));
+         XTU.Add_Attribute
+           ("Duration",
+            XV.New_Floating_Point_Value (Partition_Duration),
+            Partition_Window_Node);
+         XTU.Add_Attribute ("ReleasePoint", "1", Partition_Window_Node);
+         XTU.Add_Attribute
+           ("PartitionNameRef",
+            Get_Name_String
+              (ATN.Display_Name
+                 (ATN.Identifier (Module_Schedule (J).Partition))),
+            Partition_Window_Node);
       end loop;
    end Fill_Scheduling_Slots;
 
@@ -232,9 +230,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S                 : Node_Id;
-      U                 : Node_Id;
-      P                 : Node_Id;
+      S : Node_Id;
+      U : Node_Id;
+      P : Node_Id;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       P := XTN.Node (Backend_Node (Identifier (E)));
@@ -246,9 +244,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
 
       Schedules_Node := Make_XML_Node ("Schedules");
 
-      Append_Node_To_List
-        (Schedules_Node,
-         XTN.Subitems (Current_XML_Node));
+      Append_Node_To_List (Schedules_Node, XTN.Subitems (Current_XML_Node));
 
       if Is_Defined_Property (E, "arinc653::module_schedule") then
          Fill_Scheduling_Slots (E);

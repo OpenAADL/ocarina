@@ -1339,8 +1339,7 @@ package body Ocarina.Backends.POK_C.Activity is
                            then
                               Map_Virtual_Bus_Calls
                                 (AIN.Item
-                                 (AIN.First_Node
-                                    (AIN.Destinations (F))),
+                                   (AIN.First_Node (AIN.Destinations (F))),
                                  CTN.Declarations (Current_File),
                                  WStatements,
                                  Sending,
@@ -1352,7 +1351,8 @@ package body Ocarina.Backends.POK_C.Activity is
                            Append_Node_To_List
                              (Make_Defining_Identifier
                                 (Map_Port_Var
-                                 (Item (Source_Port), Current_Device)),
+                                   (Item (Source_Port),
+                                    Current_Device)),
                               Call_Parameters);
 
                            if Virtual_Bus_Data = No_Node then
@@ -1373,7 +1373,7 @@ package body Ocarina.Backends.POK_C.Activity is
                               end if;
                            else
                               Append_Node_To_List
-                                 (Make_Variable_Address (Virtual_Bus_Data),
+                                (Make_Variable_Address (Virtual_Bus_Data),
                                  Call_Parameters);
                            end if;
 
@@ -1399,14 +1399,14 @@ package body Ocarina.Backends.POK_C.Activity is
 
                            if Use_ARINC653_API then
                               Add_Return_Variable_In_Parameters
-                                 (Call_Parameters);
+                                (Call_Parameters);
                               Called_Function :=
-                                 RE (RE_Write_Sampling_Message);
-                              Type_Used       := RE (RE_Sampling_Port_Id_Type);
+                                RE (RE_Write_Sampling_Message);
+                              Type_Used := RE (RE_Sampling_Port_Id_Type);
                            else
                               Called_Function :=
-                                 RE (RE_Pok_Port_Sampling_Write);
-                              Type_Used       := RE (RE_Uint8_T);
+                                RE (RE_Pok_Port_Sampling_Write);
+                              Type_Used := RE (RE_Uint8_T);
                            end if;
 
                            N :=
@@ -1420,8 +1420,8 @@ package body Ocarina.Backends.POK_C.Activity is
                                    (Defining_Identifier =>
                                       (Make_Defining_Identifier
                                          (Map_Port_Var
-                                          (Item (Source_Port),
-                                          Current_Device))),
+                                            (Item (Source_Port),
+                                             Current_Device))),
                                     Used_Type => Type_Used)),
                               CTN.Declarations (Current_File));
 
@@ -1512,7 +1512,7 @@ package body Ocarina.Backends.POK_C.Activity is
 
                            Append_Node_To_List
                              (Make_Defining_Identifier
-                              (Map_Port_Var (Item (Source_Port))),
+                                (Map_Port_Var (Item (Source_Port))),
                               Call_Parameters);
 
                            if Get_Data_Representation
@@ -1526,7 +1526,7 @@ package body Ocarina.Backends.POK_C.Activity is
                               Append_Node_To_List
                                 (Make_Variable_Address
                                    (Make_Defining_Identifier
-                                    (Map_Port_Data (F))),
+                                      (Map_Port_Data (F))),
                                  Call_Parameters);
                            end if;
 
@@ -1542,22 +1542,22 @@ package body Ocarina.Backends.POK_C.Activity is
                                  N := Map_Time (Get_Timeout_Value (F));
                               end if;
                            else
-                              N := CTU.Make_Literal
-                                 (CV.New_Int_Value (0, 1, 10));
+                              N :=
+                                CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                            end if;
 
                            Append_Node_To_List (N, Call_Parameters);
 
                            if Use_ARINC653_API then
                               Add_Return_Variable_In_Parameters
-                                 (Call_Parameters);
+                                (Call_Parameters);
 
                               Called_Function := RE (RE_Send_Queuing_Message);
                               Type_Used       := RE (RE_Queuing_Port_Id_Type);
                            else
-                              Called_Function := RE
-                                 (RE_Pok_Port_Queueing_Send);
-                              Type_Used       := RE (RE_Uint8_T);
+                              Called_Function :=
+                                RE (RE_Pok_Port_Queueing_Send);
+                              Type_Used := RE (RE_Uint8_T);
                            end if;
 
                            N :=
@@ -1570,8 +1570,7 @@ package body Ocarina.Backends.POK_C.Activity is
                                 (Make_Variable_Declaration
                                    (Defining_Identifier =>
                                       (Make_Defining_Identifier
-                                         (Map_Port_Var
-                                          (Item (Source_Port)))),
+                                         (Map_Port_Var (Item (Source_Port)))),
                                     Used_Type => Type_Used)),
                               CTN.Declarations (Current_File));
                            Append_Node_To_List (N, WStatements);

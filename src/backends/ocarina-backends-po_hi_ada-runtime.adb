@@ -32,8 +32,8 @@
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 with GNAT.Case_Util;
 
-with Charset; use Charset;
-with Ocarina.Namet;   use Ocarina.Namet;
+with Charset;       use Charset;
+with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.Backends.Ada_Tree.Nodes;
 with Ocarina.Backends.Ada_Tree.Nutils;
@@ -336,8 +336,9 @@ package body Ocarina.Backends.PO_HI_Ada.Runtime is
    --------
 
    function RU
-     (Id : RU_Id; Withed : Boolean := True; Elaborated : Boolean := False)
-     return Node_Id
+     (Id         : RU_Id;
+      Withed     : Boolean := True;
+      Elaborated : Boolean := False) return Node_Id
    is
       Result : Node_Id;
    begin

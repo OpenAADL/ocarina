@@ -29,9 +29,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Strings; use Ada.Strings;
+with Ada.Strings;       use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
-with Ocarina.Namet; use Ocarina.Namet;
+with Ocarina.Namet;     use Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -150,11 +150,11 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
    -----------------
 
    function Map_HI_Unit (E : Node_Id) return Node_Id is
-      U                 : Node_Id;
-      N                 : Node_Id;
-      P                 : Node_Id;
-      Root              : Node_Id;
-      Core_OS_Node      : Node_Id;
+      U            : Node_Id;
+      N            : Node_Id;
+      P            : Node_Id;
+      Root         : Node_Id;
+      Core_OS_Node : Node_Id;
    begin
       pragma Assert
         (AINU.Is_System (E)
@@ -179,20 +179,23 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       XTU.Add_Attribute ("hmShutdownRegistry", "platreg.bin", Root);
       XTU.Add_Attribute ("comment", "please insert comment", Root);
 
-      XTU.Add_Attribute ("xsi:schemaLocation",
-                         "http://www.windriver.com/vxWorks653/ConfigRecord " &
-                         "../xml/cleanschena/Module.xsd",
-                         Root);
+      XTU.Add_Attribute
+        ("xsi:schemaLocation",
+         "http://www.windriver.com/vxWorks653/ConfigRecord " &
+         "../xml/cleanschena/Module.xsd",
+         Root);
 
-      XTU.Add_Attribute ("xmlns:xi",
-                         "http://www.w3.org/2001/XInclude", Root);
+      XTU.Add_Attribute ("xmlns:xi", "http://www.w3.org/2001/XInclude", Root);
 
-      XTU.Add_Attribute ("xmlns:xsi",
-                         "http://www.w3.org/2001/XMLSchema-instance", Root);
+      XTU.Add_Attribute
+        ("xmlns:xsi",
+         "http://www.w3.org/2001/XMLSchema-instance",
+         Root);
 
-      XTU.Add_Attribute ("xmlns",
-                         "http://www.windriver.com/vxWorks653/ConfigRecord",
-                         Root);
+      XTU.Add_Attribute
+        ("xmlns",
+         "http://www.windriver.com/vxWorks653/ConfigRecord",
+         Root);
 
       Core_OS_Node := Make_XML_Node ("CoreOS");
       Append_Node_To_List (Core_OS_Node, XTN.Subitems (Root));
@@ -916,31 +919,28 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
 
    function Map_Sampling_Port (Port : Node_Id) return Node_Id is
       Sampling_Port : Node_Id;
-      Size : Unsigned_Long_Long;
+      Size          : Unsigned_Long_Long;
    begin
       Sampling_Port := Make_XML_Node ("SamplingPort");
-      Size := To_Bytes (Get_Data_Size
-                        (Corresponding_Instance (Port)));
+      Size := To_Bytes (Get_Data_Size (Corresponding_Instance (Port)));
 
       if Is_In (Port) then
-         XTU.Add_Attribute ("Name",
-                            Get_Name_String
-                              (AIN.Name (Identifier (Port))),
-                            Sampling_Port);
+         XTU.Add_Attribute
+           ("Name",
+            Get_Name_String (AIN.Name (Identifier (Port))),
+            Sampling_Port);
       else
-         XTU.Add_Attribute ("Name",
-                            Get_Name_String
-                              (AIN.Name
-                                 (Identifier
-                                    (Item
-                                       (AIN.First_Node
-                                          (Destinations (Port)))))),
-                            Sampling_Port);
+         XTU.Add_Attribute
+           ("Name",
+            Get_Name_String
+              (AIN.Name
+                 (Identifier (Item (AIN.First_Node (Destinations (Port)))))),
+            Sampling_Port);
       end if;
-      XTU.Add_Attribute ("MaxMessageSize",
-                        Trim (Unsigned_Long_Long'Image
-                           (Size), Left),
-                         Sampling_Port);
+      XTU.Add_Attribute
+        ("MaxMessageSize",
+         Trim (Unsigned_Long_Long'Image (Size), Left),
+         Sampling_Port);
 
       if Is_In (Port) then
          XTU.Add_Attribute ("Direction", "DESTINATION", Sampling_Port);
@@ -959,43 +959,40 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
    ----------------------
 
    function Map_Queuing_Port (Port : Node_Id) return Node_Id is
-      Queuing_Port   : Node_Id;
-      Size           : Unsigned_Long_Long;
-      Queue_Size     : Long_Long;
+      Queuing_Port : Node_Id;
+      Size         : Unsigned_Long_Long;
+      Queue_Size   : Long_Long;
    begin
       Queuing_Port := Make_XML_Node ("QueuingPort");
-      Size := To_Bytes (Get_Data_Size
-                        (Corresponding_Instance (Port)));
-      Queue_Size := Get_Queue_Size (Port);
+      Size         := To_Bytes (Get_Data_Size (Corresponding_Instance (Port)));
+      Queue_Size   := Get_Queue_Size (Port);
 
       if Queue_Size = -1 then
          Queue_Size := 1;
       end if;
 
       if Is_In (Port) then
-         XTU.Add_Attribute ("Name",
-                            Get_Name_String
-                              (AIN.Name (Identifier (Port))),
-                            Queuing_Port);
+         XTU.Add_Attribute
+           ("Name",
+            Get_Name_String (AIN.Name (Identifier (Port))),
+            Queuing_Port);
       else
-         XTU.Add_Attribute ("Name",
-                            Get_Name_String
-                              (AIN.Name
-                                 (Identifier
-                                    (Item
-                                       (AIN.First_Node
-                                          (Destinations (Port)))))),
-                            Queuing_Port);
+         XTU.Add_Attribute
+           ("Name",
+            Get_Name_String
+              (AIN.Name
+                 (Identifier (Item (AIN.First_Node (Destinations (Port)))))),
+            Queuing_Port);
       end if;
-      XTU.Add_Attribute ("MaxMessageSize",
-                        Trim (Unsigned_Long_Long'Image
-                           (Size), Left),
-                         Queuing_Port);
+      XTU.Add_Attribute
+        ("MaxMessageSize",
+         Trim (Unsigned_Long_Long'Image (Size), Left),
+         Queuing_Port);
 
-      XTU.Add_Attribute ("MaxNbMessage",
-                        Trim (Long_Long'Image
-                           (Queue_Size), Left),
-                         Queuing_Port);
+      XTU.Add_Attribute
+        ("MaxNbMessage",
+         Trim (Long_Long'Image (Queue_Size), Left),
+         Queuing_Port);
 
       if Is_In (Port) then
          XTU.Add_Attribute ("Direction", "DESTINATION", Queuing_Port);
@@ -1012,17 +1009,18 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
    -- Map_Partition --
    -------------------
 
-   function Map_Partition (Process : Node_Id;
-                           Runtime : Node_Id;
-                           Partition_Identifier : Integer;
-                           Nb_Threads : Unsigned_Long_Long;
-                           Nb_Buffers : Unsigned_Long_Long;
-                           Nb_Events : Unsigned_Long_Long;
-                           Nb_Lock_Objects : Unsigned_Long_Long;
-                           Nb_Blackboards : Unsigned_Long_Long;
-                           Blackboards_Size : Unsigned_Long_Long;
-                           Buffers_Size : Unsigned_Long_Long)
-      return Node_Id is
+   function Map_Partition
+     (Process              : Node_Id;
+      Runtime              : Node_Id;
+      Partition_Identifier : Integer;
+      Nb_Threads           : Unsigned_Long_Long;
+      Nb_Buffers           : Unsigned_Long_Long;
+      Nb_Events            : Unsigned_Long_Long;
+      Nb_Lock_Objects      : Unsigned_Long_Long;
+      Nb_Blackboards       : Unsigned_Long_Long;
+      Blackboards_Size     : Unsigned_Long_Long;
+      Buffers_Size         : Unsigned_Long_Long) return Node_Id
+   is
       pragma Unreferenced (Nb_Buffers);
       pragma Unreferenced (Nb_Events);
       pragma Unreferenced (Nb_Threads);
@@ -1031,57 +1029,62 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       pragma Unreferenced (Nb_Lock_Objects);
       pragma Unreferenced (Buffers_Size);
       pragma Unreferenced (Process);
-      Partition_Node : Node_Id;
+      Partition_Node             : Node_Id;
       Partition_Description_Node : Node_Id;
-      Application_Node     : Node_Id;
+      Application_Node           : Node_Id;
       Shared_Library_Region_Node : Node_Id;
-      Settings_Node : Node_Id;
+      Settings_Node              : Node_Id;
    begin
-      Partition_Node := Make_XML_Node ("Partition");
+      Partition_Node             := Make_XML_Node ("Partition");
       Partition_Description_Node := Make_XML_Node ("PartitionDescription");
-      Append_Node_To_List (Partition_Description_Node,
-                           XTN.Subitems (Partition_Node));
+      Append_Node_To_List
+        (Partition_Description_Node,
+         XTN.Subitems (Partition_Node));
 
-      XTU.Add_Attribute ("Name",
-                         Get_Name_String
-                           (Map_Partition_Name (Runtime)),
-                         Partition_Node);
+      XTU.Add_Attribute
+        ("Name",
+         Get_Name_String (Map_Partition_Name (Runtime)),
+         Partition_Node);
       --
       --  Integer'Image adds a space in the beginning. To avoid that,
       --  see http://rosettacode.org/wiki/
       --  Strip_whitespace_from_a_string/Top_and_tail#Ada
       --
-      XTU.Add_Attribute ("Id",
-                        Trim (Integer'Image (Partition_Identifier), Left),
-                         Partition_Node);
+      XTU.Add_Attribute
+        ("Id",
+         Trim (Integer'Image (Partition_Identifier), Left),
+         Partition_Node);
 
       --  Create the <Application/> sub-node.
 
       Application_Node := Make_XML_Node ("Application");
-      XTU.Add_Attribute ("NameRef",
-                         Get_Name_String
-                           (Map_Application_Name (Runtime, True)),
-                         Application_Node);
-      Append_Node_To_List (Application_Node,
-                           XTN.Subitems (Partition_Description_Node));
+      XTU.Add_Attribute
+        ("NameRef",
+         Get_Name_String (Map_Application_Name (Runtime, True)),
+         Application_Node);
+      Append_Node_To_List
+        (Application_Node,
+         XTN.Subitems (Partition_Description_Node));
 
       --  Create the <SharedLibraryRegion/> sub-node.
 
       Shared_Library_Region_Node := Make_XML_Node ("SharedLibraryRegion");
       XTU.Add_Attribute ("NameRef", "vxSysLib", Shared_Library_Region_Node);
-      Append_Node_To_List (Shared_Library_Region_Node,
-                        XTN.Subitems (Partition_Description_Node));
+      Append_Node_To_List
+        (Shared_Library_Region_Node,
+         XTN.Subitems (Partition_Description_Node));
 
       --  Create the <Settings/> sub-node.
 
       Settings_Node := Make_XML_Node ("Settings");
-      Append_Node_To_List (Settings_Node,
-                           XTN.Subitems (Partition_Description_Node));
+      Append_Node_To_List
+        (Settings_Node,
+         XTN.Subitems (Partition_Description_Node));
       XTU.Add_Attribute ("RequiredMemorySize", "0x300000", Settings_Node);
-      XTU.Add_Attribute ("PartitionHMTable",
-                        Get_Name_String
-                           (Map_Partition_Name (Runtime)) & "_hmtable",
-                        Settings_Node);
+      XTU.Add_Attribute
+        ("PartitionHMTable",
+         Get_Name_String (Map_Partition_Name (Runtime)) & "_hmtable",
+         Settings_Node);
       XTU.Add_Attribute ("watchDogDuration", "0", Settings_Node);
       XTU.Add_Attribute ("allocDisable", "0", Settings_Node);
       XTU.Add_Attribute ("numWorkerTasks", "0", Settings_Node);
@@ -1094,31 +1097,32 @@ package body Ocarina.Backends.Vxworks653_Conf.Mapping is
       XTU.Add_Attribute ("numLogMsgs", "0xffffffff", Settings_Node);
       XTU.Add_Attribute ("maxGlobalFDs", "10", Settings_Node);
       XTU.Add_Attribute ("fpExcEnable", "1", Settings_Node);
-      XTU.Add_Attribute ("maxEventQStallDuration", "INFINITE_TIME",
-                        Settings_Node);
+      XTU.Add_Attribute
+        ("maxEventQStallDuration",
+         "INFINITE_TIME",
+         Settings_Node);
 
       return Partition_Node;
    end Map_Partition;
 
-   function Map_Partition_Name (Runtime : Node_Id;
-                                Use_Source_Name : Boolean := True)
-   return Name_Id is
+   function Map_Partition_Name
+     (Runtime         : Node_Id;
+      Use_Source_Name : Boolean := True) return Name_Id
+   is
       Result : Name_Id;
    begin
       Result := Get_Source_Name (Runtime);
       if Result /= No_Name and then Use_Source_Name then
          return Result;
       end if;
-      Result := AIN.Name
-                  (Identifier
-                     (Parent_Subcomponent
-                        (Runtime)));
+      Result := AIN.Name (Identifier (Parent_Subcomponent (Runtime)));
       return Result;
    end Map_Partition_Name;
 
-   function Map_Application_Name (Runtime : Node_Id;
-                                Use_Source_Name : Boolean := True)
-   return Name_Id is
+   function Map_Application_Name
+     (Runtime         : Node_Id;
+      Use_Source_Name : Boolean := True) return Name_Id
+   is
       Result : Name_Id;
    begin
       Result := Map_Partition_Name (Runtime, Use_Source_Name);

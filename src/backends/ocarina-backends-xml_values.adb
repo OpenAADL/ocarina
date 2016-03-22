@@ -351,9 +351,7 @@ package body Ocarina.Backends.XML_Values is
                Index : Integer;
             begin
 
-               FLT_IO.Put (S, Float (V.FVal),
-                           Aft => 4,
-                           Exp => 0);
+               FLT_IO.Put (S, Float (V.FVal), Aft => 4, Exp => 0);
                Tmp := Get_String_Name (S);
                Get_Name_String (Tmp);
 

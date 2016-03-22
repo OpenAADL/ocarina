@@ -361,8 +361,8 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                                        Bandwidth :=
                                          Get_Integer_Property
                                            (Conn,
-                                            "bus_properties:"
-                                              & ":required_bandwidth");
+                                            "bus_properties:" &
+                                            ":required_bandwidth");
 
                                        Bandwidth_Unit :=
                                          ATN.Name
@@ -370,9 +370,8 @@ package body Ocarina.Backends.Connection_Matrix.Main is
                                             (Get_Value_Of_Property_Association
                                                (Conn,
                                                 Get_String_Name
-                                                  ("bus_properties:"
-                                                     & ":required_bandwidth"
-                                                  ))));
+                                                  ("bus_properties:" &
+                                                     ":required_bandwidth"))));
                                        Connected := True;
                                     end if;
                                  end if;

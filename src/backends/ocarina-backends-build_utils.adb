@@ -316,7 +316,7 @@ package body Ocarina.Backends.Build_Utils is
          --  The node name (in lower case)
 
          Execution_Platform : Supported_Execution_Platform := Platform_None;
-         Execution_Platform_Name : Name_Id := No_Name;
+         Execution_Platform_Name : Name_Id                      := No_Name;
          --  The execution platform of the processor the current node
          --  is bound to.
 
@@ -1428,13 +1428,13 @@ package body Ocarina.Backends.Build_Utils is
                Write_Line ("all:");
                Write_Line
                  (ASCII.HT &
-                    "set -e; for d in $(SUBDIRS); do $(MAKE) -C $$d ; done");
+                  "set -e; for d in $(SUBDIRS); do $(MAKE) -C $$d ; done");
                Write_Eol;
                Write_Line ("clean:");
                Write_Line
                  (ASCII.HT &
-                    "set -e; for d in $(SUBDIRS); do $(MAKE) " &
-                    "clean -C $$d ; done");
+                  "set -e; for d in $(SUBDIRS); do $(MAKE) " &
+                  "clean -C $$d ; done");
 
                --  Close the file
 
@@ -1576,8 +1576,8 @@ package body Ocarina.Backends.Build_Utils is
                Write_Line ("prove:");
                Write_Line
                  (ASCII.HT &
-                    "gnatprove -P$(PROJECT_FILE) -XTARGET=SPARK "
-                    & "--warnings=continue --report=fail");
+                  "gnatprove -P$(PROJECT_FILE) -XTARGET=SPARK " &
+                  "--warnings=continue --report=fail");
             end if;
 
             --  Close the file

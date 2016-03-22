@@ -29,7 +29,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Strings; use Ada.Strings;
+with Ada.Strings;       use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
 with Ocarina.Backends.Utils;
@@ -59,8 +59,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
-   Root_Node : Node_Id := No_Node;
-   Connections_Node : Node_Id := No_Node;
+   Root_Node          : Node_Id            := No_Node;
+   Connections_Node   : Node_Id            := No_Node;
    Channel_Identifier : Unsigned_Long_Long := 0;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
@@ -157,9 +157,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      U                 : Node_Id;
-      P                 : Node_Id;
-      S                 : Node_Id;
+      U : Node_Id;
+      P : Node_Id;
+      S : Node_Id;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       P := XTN.Node (Backend_Node (Identifier (E)));
@@ -185,9 +185,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
          end loop;
       end if;
 
-      Append_Node_To_List
-        (Connections_Node,
-         XTN.Subitems (Current_XML_Node));
+      Append_Node_To_List (Connections_Node, XTN.Subitems (Current_XML_Node));
 
       Pop_Entity;
       Pop_Entity;
@@ -213,49 +211,49 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
 
       while Present (Feature) loop
          if Is_Data (Feature) and then Is_Out (Feature) then
-            Port_Source := Feature;
+            Port_Source           := Feature;
             Port_Destination := Item (First_Node (Destinations (Feature)));
             Partition_Destination := Parent_Component (Port_Destination);
 
             Channel_Node := Make_XML_Node ("Channel");
-            Add_Attribute ("Id",
-                        Trim (Unsigned_Long_Long'Image
-                           (Channel_Identifier), Left),
-                         Channel_Node);
+            Add_Attribute
+              ("Id",
+               Trim (Unsigned_Long_Long'Image (Channel_Identifier), Left),
+               Channel_Node);
 
             Source_Node := Make_XML_Node ("Source");
-            Add_Attribute ("PartitionNameRef",
-                           Get_Name_String
-                              (Map_Partition_Name (E)),
-                           Source_Node);
+            Add_Attribute
+              ("PartitionNameRef",
+               Get_Name_String (Map_Partition_Name (E)),
+               Source_Node);
 
-            Add_Attribute ("PortNameRef",
-                           Get_Name_String
-                              (C_Common.Mapping.Map_Port_Name
-                                 (Port_Source)),
-                           Source_Node);
+            Add_Attribute
+              ("PortNameRef",
+               Get_Name_String (C_Common.Mapping.Map_Port_Name (Port_Source)),
+               Source_Node);
 
-            Append_Node_To_List (Source_Node,
-                                 XTN.Subitems (Channel_Node));
+            Append_Node_To_List (Source_Node, XTN.Subitems (Channel_Node));
 
             Destination_Node := Make_XML_Node ("Destination");
-            Add_Attribute ("PortNameRef",
-                           Get_Name_String
-                              (C_Common.Mapping.Map_Port_Name
-                                 (Port_Destination)),
-                           Destination_Node);
+            Add_Attribute
+              ("PortNameRef",
+               Get_Name_String
+                 (C_Common.Mapping.Map_Port_Name (Port_Destination)),
+               Destination_Node);
 
-            Add_Attribute ("PartitionNameRef",
-                           Get_Name_String
-                              (Map_Partition_Name
-                                 (Get_Partition_Runtime
-                                          (Partition_Destination))),
-                         Destination_Node);
+            Add_Attribute
+              ("PartitionNameRef",
+               Get_Name_String
+                 (Map_Partition_Name
+                    (Get_Partition_Runtime (Partition_Destination))),
+               Destination_Node);
 
-            Append_Node_To_List (Destination_Node,
-                                 XTN.Subitems (Channel_Node));
-            Append_Node_To_List (Channel_Node,
-                                 XTN.Subitems (Connections_Node));
+            Append_Node_To_List
+              (Destination_Node,
+               XTN.Subitems (Channel_Node));
+            Append_Node_To_List
+              (Channel_Node,
+               XTN.Subitems (Connections_Node));
 
             Channel_Identifier := Channel_Identifier + 1;
          end if;

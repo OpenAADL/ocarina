@@ -29,9 +29,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Strings; use Ada.Strings;
+with Ada.Strings;       use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
-with Ocarina.Namet; use Ocarina.Namet;
+with Ocarina.Namet;     use Ocarina.Namet;
 
 with Utils; use Utils;
 with Ocarina.ME_AADL;
@@ -183,8 +183,10 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       XTU.Add_Attribute ("hmShutdownRegistry", "platreg.bin", Root);
       XTU.Add_Attribute ("xsi:schemaLocation", "deos653.xsd", Root);
       XTU.Add_Attribute ("comment", "please insert comment", Root);
-      XTU.Add_Attribute ("xmlns:xsi",
-                         "http://www.w3.org/2001/XMLSchema-instance", Root);
+      XTU.Add_Attribute
+        ("xmlns:xsi",
+         "http://www.w3.org/2001/XMLSchema-instance",
+         Root);
       XTU.Add_Attribute ("xmlns", "http://ddci.com/ARINC653", Root);
 
       Set_Str_To_Name_Buffer ("name");
@@ -1004,24 +1006,23 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
    -----------------------
 
    function Map_Sampling_Port (Port : Node_Id) return Node_Id is
-      Sampling_Port : Node_Id;
-      Size : Unsigned_Long_Long;
+      Sampling_Port  : Node_Id;
+      Size           : Unsigned_Long_Long;
       Source_Port    : Node_Id;
       Source_Process : Node_Id;
       Source_Runtime : Node_Id;
    begin
       Sampling_Port := Make_XML_Node ("SamplingPort");
-      Size := To_Bytes (Get_Data_Size
-                        (Corresponding_Instance (Port)));
+      Size := To_Bytes (Get_Data_Size (Corresponding_Instance (Port)));
 
-      XTU.Add_Attribute ("Name",
-                        Get_Name_String
-                          (Map_Port_Name (Port)),
-                        Sampling_Port);
-      XTU.Add_Attribute ("MaxMessageSize",
-                        Trim (Unsigned_Long_Long'Image
-                           (Size), Left),
-                         Sampling_Port);
+      XTU.Add_Attribute
+        ("Name",
+         Get_Name_String (Map_Port_Name (Port)),
+         Sampling_Port);
+      XTU.Add_Attribute
+        ("MaxMessageSize",
+         Trim (Unsigned_Long_Long'Image (Size), Left),
+         Sampling_Port);
 
       if Is_In (Port) then
          XTU.Add_Attribute ("Direction", "DESTINATION", Sampling_Port);
@@ -1030,24 +1031,18 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       end if;
 
       if Is_In (Port) then
-         Source_Port := Item (AIN.First_Node (Sources (Port)));
-         Source_Process := Parent_Component
-                                 (Source_Port);
-         Source_Runtime := Parent_Subcomponent
-            (Get_Partition_Runtime
-                              (Source_Process));
+         Source_Port    := Item (AIN.First_Node (Sources (Port)));
+         Source_Process := Parent_Component (Source_Port);
+         Source_Runtime :=
+           Parent_Subcomponent (Get_Partition_Runtime (Source_Process));
          XTU.Add_Attribute
-            ("SourcePortName",
-            Get_Name_String
-               (Map_Port_Name (Source_Port)),
-             Sampling_Port);
+           ("SourcePortName",
+            Get_Name_String (Map_Port_Name (Source_Port)),
+            Sampling_Port);
          XTU.Add_Attribute
-            ("SourcePartitionName",
-            Get_Name_String
-               (Display_Name
-                  (Identifier
-                     (Source_Runtime))),
-             Sampling_Port);
+           ("SourcePartitionName",
+            Get_Name_String (Display_Name (Identifier (Source_Runtime))),
+            Sampling_Port);
       else
          XTU.Add_Attribute ("SourcePartitionName", "", Sampling_Port);
          XTU.Add_Attribute ("SourcePortName", "", Sampling_Port);
@@ -1071,27 +1066,26 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       Source_Runtime : Node_Id;
    begin
       Queuing_Port := Make_XML_Node ("QueuingPort");
-      Size := To_Bytes (Get_Data_Size
-                        (Corresponding_Instance (Port)));
-      Queue_Size := Get_Queue_Size (Port);
+      Size         := To_Bytes (Get_Data_Size (Corresponding_Instance (Port)));
+      Queue_Size   := Get_Queue_Size (Port);
 
       if Queue_Size = -1 then
          Queue_Size := 1;
       end if;
 
-      XTU.Add_Attribute ("Name",
-                         Get_Name_String
-                           (Map_Port_Name (Port)),
-                         Queuing_Port);
-      XTU.Add_Attribute ("MaxMessageSize",
-                        Trim (Unsigned_Long_Long'Image
-                           (Size), Left),
-                         Queuing_Port);
+      XTU.Add_Attribute
+        ("Name",
+         Get_Name_String (Map_Port_Name (Port)),
+         Queuing_Port);
+      XTU.Add_Attribute
+        ("MaxMessageSize",
+         Trim (Unsigned_Long_Long'Image (Size), Left),
+         Queuing_Port);
 
-      XTU.Add_Attribute ("MaxNbMessage",
-                        Trim (Long_Long'Image
-                           (Queue_Size), Left),
-                         Queuing_Port);
+      XTU.Add_Attribute
+        ("MaxNbMessage",
+         Trim (Long_Long'Image (Queue_Size), Left),
+         Queuing_Port);
 
       if Is_In (Port) then
          XTU.Add_Attribute ("Direction", "DESTINATION", Queuing_Port);
@@ -1100,24 +1094,18 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       end if;
 
       if Is_In (Port) then
-         Source_Port := Item (AIN.First_Node (Sources (Port)));
-         Source_Process := Parent_Component
-                                 (Source_Port);
-         Source_Runtime := Parent_Subcomponent
-            (Get_Partition_Runtime
-                              (Source_Process));
+         Source_Port    := Item (AIN.First_Node (Sources (Port)));
+         Source_Process := Parent_Component (Source_Port);
+         Source_Runtime :=
+           Parent_Subcomponent (Get_Partition_Runtime (Source_Process));
          XTU.Add_Attribute
-            ("SourcePortName",
-            Get_Name_String
-               (Map_Port_Name (Source_Port)),
-             Queuing_Port);
+           ("SourcePortName",
+            Get_Name_String (Map_Port_Name (Source_Port)),
+            Queuing_Port);
          XTU.Add_Attribute
-            ("SourcePartitionName",
-            Get_Name_String
-               (Display_Name
-                  (Identifier
-                     (Source_Runtime))),
-             Queuing_Port);
+           ("SourcePartitionName",
+            Get_Name_String (Display_Name (Identifier (Source_Runtime))),
+            Queuing_Port);
       else
          XTU.Add_Attribute ("SourcePartitionName", "", Queuing_Port);
          XTU.Add_Attribute ("SourcePortName", "", Queuing_Port);
@@ -1131,29 +1119,30 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
    -- Map_Partition --
    -------------------
 
-   function Map_Partition (Process : Node_Id;
-                           Runtime : Node_Id;
-                           Partition_Identifier : Integer;
-                           Nb_Threads : Unsigned_Long_Long;
-                           Nb_Buffers : Unsigned_Long_Long;
-                           Nb_Events : Unsigned_Long_Long;
-                           Nb_Lock_Objects : Unsigned_Long_Long;
-                           Nb_Blackboards : Unsigned_Long_Long;
-                           Blackboards_Size : Unsigned_Long_Long;
-                           Buffers_Size : Unsigned_Long_Long)
-      return Node_Id is
+   function Map_Partition
+     (Process              : Node_Id;
+      Runtime              : Node_Id;
+      Partition_Identifier : Integer;
+      Nb_Threads           : Unsigned_Long_Long;
+      Nb_Buffers           : Unsigned_Long_Long;
+      Nb_Events            : Unsigned_Long_Long;
+      Nb_Lock_Objects      : Unsigned_Long_Long;
+      Nb_Blackboards       : Unsigned_Long_Long;
+      Blackboards_Size     : Unsigned_Long_Long;
+      Buffers_Size         : Unsigned_Long_Long) return Node_Id
+   is
       pragma Unreferenced (Nb_Buffers);
       pragma Unreferenced (Nb_Events);
       pragma Unreferenced (Nb_Lock_Objects);
       pragma Unreferenced (Buffers_Size);
       pragma Unreferenced (Process);
-      Partition_Node : Node_Id;
-      Partition_Period     : Time_Type;
-      Partition_Duration   : Time_Type;
-      Period_Ns            : Unsigned_Long_Long;
-      Duration_Ns          : Unsigned_Long_Long;
+      Partition_Node     : Node_Id;
+      Partition_Period   : Time_Type;
+      Partition_Duration : Time_Type;
+      Period_Ns          : Unsigned_Long_Long;
+      Duration_Ns        : Unsigned_Long_Long;
    begin
-      Partition_Period := Get_Period (Runtime);
+      Partition_Period   := Get_Period (Runtime);
       Partition_Duration := Get_Execution_Time (Runtime);
 
       if Partition_Period = Null_Time then
@@ -1170,47 +1159,43 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
 
       Partition_Node := Make_XML_Node ("Partition");
 
-      XTU.Add_Attribute ("Name",
-                         Get_Name_String
-                           (AIN.Name
-                              (Identifier
-                                 (Parent_Subcomponent
-                                    (Runtime)))),
-                         Partition_Node);
+      XTU.Add_Attribute
+        ("Name",
+         Get_Name_String
+           (AIN.Name (Identifier (Parent_Subcomponent (Runtime)))),
+         Partition_Node);
       --
       --  Integer'Image adds a space in the beginning. To avoid that,
       --  see http://rosettacode.org/wiki/
       --  Strip_whitespace_from_a_string/Top_and_tail#Ada
       --
-      XTU.Add_Attribute ("Identifier",
-                        Trim (Integer'Image (Partition_Identifier), Left),
-                         Partition_Node);
+      XTU.Add_Attribute
+        ("Identifier",
+         Trim (Integer'Image (Partition_Identifier), Left),
+         Partition_Node);
 
-      XTU.Add_Attribute ("Period",
-                        Trim
-                           (Unsigned_Long_Long'Image
-                              (Period_Ns),
-                           Left),
-                        Partition_Node);
+      XTU.Add_Attribute
+        ("Period",
+         Trim (Unsigned_Long_Long'Image (Period_Ns), Left),
+         Partition_Node);
 
-      XTU.Add_Attribute ("Duration",
-                        Trim
-                           (Unsigned_Long_Long'Image
-                              (Duration_Ns),
-                           Left),
-                        Partition_Node);
+      XTU.Add_Attribute
+        ("Duration",
+         Trim (Unsigned_Long_Long'Image (Duration_Ns), Left),
+         Partition_Node);
 
       if Get_Source_Name (Runtime) = No_Name then
-         XTU.Add_Attribute ("ExecutableImageName",
-                            Get_Name_String
-                              (AIN.Name
-                                 (Identifier
-                                    (Parent_Subcomponent
-                                       (Runtime)))) & ".exe", Partition_Node);
+         XTU.Add_Attribute
+           ("ExecutableImageName",
+            Get_Name_String
+              (AIN.Name (Identifier (Parent_Subcomponent (Runtime)))) &
+            ".exe",
+            Partition_Node);
       else
-         XTU.Add_Attribute ("ExecutableImageName",
-                            Get_Name_String
-                              (Get_Source_Name (Runtime)), Partition_Node);
+         XTU.Add_Attribute
+           ("ExecutableImageName",
+            Get_Name_String (Get_Source_Name (Runtime)),
+            Partition_Node);
       end if;
       XTU.Add_Attribute ("MainProcessStackSizeInPages", "1", Partition_Node);
       XTU.Add_Attribute ("BreakAtStartup", "no", Partition_Node);
@@ -1219,21 +1204,23 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       XTU.Add_Attribute ("ExecuteFrom", "RAM", Partition_Node);
       XTU.Add_Attribute ("PartitionUsesFPU", "no", Partition_Node);
       XTU.Add_Attribute ("ProcessStackSpaceInPages", "6", Partition_Node);
-      XTU.Add_Attribute ("MinimumProcessStackSizeInBytes",
-                         "512", Partition_Node);
-      XTU.Add_Attribute ("ProcessQuota",
-                        Trim (Unsigned_Long_Long'Image
-                           (Nb_Threads + 2), Left),
-                        Partition_Node);
-      XTU.Add_Attribute ("BlackboardQuota",
-                        Trim (Unsigned_Long_Long'Image
-                           (Nb_Blackboards), Left),
-                        Partition_Node);
+      XTU.Add_Attribute
+        ("MinimumProcessStackSizeInBytes",
+         "512",
+         Partition_Node);
+      XTU.Add_Attribute
+        ("ProcessQuota",
+         Trim (Unsigned_Long_Long'Image (Nb_Threads + 2), Left),
+         Partition_Node);
+      XTU.Add_Attribute
+        ("BlackboardQuota",
+         Trim (Unsigned_Long_Long'Image (Nb_Blackboards), Left),
+         Partition_Node);
 
-      XTU.Add_Attribute ("BlackboardMessageSpaceInBytes",
-                        Trim (Unsigned_Long_Long'Image
-                           (Blackboards_Size), Left),
-                        Partition_Node);
+      XTU.Add_Attribute
+        ("BlackboardMessageSpaceInBytes",
+         Trim (Unsigned_Long_Long'Image (Blackboards_Size), Left),
+         Partition_Node);
       XTU.Add_Attribute ("BufferQuota", "0", Partition_Node);
       XTU.Add_Attribute ("BufferMessageSpaceInBytes", "0", Partition_Node);
       XTU.Add_Attribute ("SemaphoreQuota", "0", Partition_Node);
@@ -1242,16 +1229,20 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
       XTU.Add_Attribute ("MinimumProcessPriority", "1", Partition_Node);
       XTU.Add_Attribute ("MaximumProcessPriority", "239", Partition_Node);
       XTU.Add_Attribute ("LoggingFunction", "", Partition_Node);
-      XTU.Add_Attribute ("DeosKernelAttributeAccess",
-                         "no", Partition_Node);
-      XTU.Add_Attribute ("ProcessStackGapSizeInDwords",
-                         "0", Partition_Node);
-      XTU.Add_Attribute ("ProcessStackTagIntervalInDwords",
-                         "0", Partition_Node);
-      XTU.Add_Attribute ("SourcePortSharedMemoryType",
-                         "DeosSharedMemory", Partition_Node);
-      XTU.Add_Attribute ("PlatformResourcePhysicalAddress",
-                         "0x0", Partition_Node);
+      XTU.Add_Attribute ("DeosKernelAttributeAccess", "no", Partition_Node);
+      XTU.Add_Attribute ("ProcessStackGapSizeInDwords", "0", Partition_Node);
+      XTU.Add_Attribute
+        ("ProcessStackTagIntervalInDwords",
+         "0",
+         Partition_Node);
+      XTU.Add_Attribute
+        ("SourcePortSharedMemoryType",
+         "DeosSharedMemory",
+         Partition_Node);
+      XTU.Add_Attribute
+        ("PlatformResourcePhysicalAddress",
+         "0x0",
+         Partition_Node);
       XTU.Add_Attribute ("PlatformResourceSizeInPages", "0", Partition_Node);
       XTU.Add_Attribute ("PlatformResourceCachePolicy", "off", Partition_Node);
       XTU.Add_Attribute ("HealthMonitorEventLogSize", "30", Partition_Node);
@@ -1263,12 +1254,10 @@ package body Ocarina.Backends.Deos_Conf.Mapping is
    -- Map_Port_Name --
    -------------------
 
-   function Map_Port_Name (E : Node_Id) return Name_Id
-   is
-      N     : Name_Id;
+   function Map_Port_Name (E : Node_Id) return Name_Id is
+      N : Name_Id;
    begin
-      Get_Name_String
-         (Display_Name (Identifier (E)));
+      Get_Name_String (Display_Name (Identifier (E)));
 
       N := Name_Find;
       return (To_Lower (N));

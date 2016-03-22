@@ -35,7 +35,7 @@ with Ocarina.Backends.Expander;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
-with Ocarina.Backends.Deos_Conf.HM;
+with Ocarina.Backends.Deos_Conf.Hm;
 with Ocarina.Backends.Deos_Conf.Schedule;
 with Ocarina.Backends.Deos_Conf.Naming;
 with Ocarina.Backends.Deos_Conf.Partitions;
@@ -72,9 +72,7 @@ package body Ocarina.Backends.Deos_Conf is
       --  Abort if the construction of the tree failed
 
       if No (XML_Root) then
-         Display_Error
-           ("Deos configuration generation failed",
-            Fatal => True);
+         Display_Error ("Deos configuration generation failed", Fatal => True);
       end if;
 
       --  At this point, we have a valid tree, we can begin the XML
@@ -130,7 +128,7 @@ package body Ocarina.Backends.Deos_Conf is
       Deos_Conf.Naming.Visit (E);
       Deos_Conf.Partitions.Visit (E);
       Deos_Conf.Schedule.Visit (E);
-      Deos_Conf.HM.Visit (E);
+      Deos_Conf.Hm.Visit (E);
 
       XTU.Pop_Entity;
 

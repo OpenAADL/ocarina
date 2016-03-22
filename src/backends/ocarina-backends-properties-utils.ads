@@ -29,8 +29,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with GNAT.OS_Lib; use GNAT.OS_Lib;
-with Ocarina.AADL_Values; use Ocarina.AADL_Values;
+with GNAT.OS_Lib;                 use GNAT.OS_Lib;
+with Ocarina.AADL_Values;         use Ocarina.AADL_Values;
 with Ocarina.Backends.Properties; use Ocarina.Backends.Properties;
 
 package Ocarina.Backends.Properties.Utils is
@@ -50,14 +50,12 @@ package Ocarina.Backends.Properties.Utils is
    --  ("Dispatch_Protocol", "Periodic")
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Prop_Name : Name_Id)
-     return String_List;
+     (E         : Node_Id;
+      Prop_Name : Name_Id) return String_List;
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property : Node_Id)
-     return String_List;
+     (E        : Node_Id;
+      Property : Node_Id) return String_List;
 
    --  The following accessors takes as parameters the following entities
    --  * E: entity from the instance tree for which we look for a property
@@ -65,46 +63,39 @@ package Ocarina.Backends.Properties.Utils is
    --    lower case
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : Unsigned_Long_Long := 0)
-     return Unsigned_Long_Long;
+      Default_Value : Unsigned_Long_Long := 0) return Unsigned_Long_Long;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : Name_Id := No_Name)
-     return Name_Id;
+      Default_Value : Name_Id := No_Name) return Name_Id;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : Node_Id := No_Node)
-     return Node_Id;
+      Default_Value : Node_Id := No_Node) return Node_Id;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : List_Id := No_List)
-     return List_Id;
+      Default_Value : List_Id := No_List) return List_Id;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : Boolean := False)
-     return Boolean;
+      Default_Value : Boolean := False) return Boolean;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Names : Name_Array;
-      Default_Value : Int := Int'First)
-     return Int;
+      Names         : Name_Array;
+      Default_Value : Int := Int'First) return Int;
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return Name_Array;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return Name_Array;
 
    generic
       type Elt_Type is private;
@@ -113,38 +104,32 @@ package Ocarina.Backends.Properties.Utils is
       Default_Value : Elt_Array;
 
    function Check_And_Get_Property_Generic
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return Elt_Array;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return Elt_Array;
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return ULL_Array;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return ULL_Array;
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return LL_Array;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return LL_Array;
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return LD_Array;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return LD_Array;
 
    generic
       type T is (<>);
    function Check_And_Get_Property_Enumerator
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return T;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return T;
 
    generic
       type T is (<>);
       Default_Value : T;
    function Check_And_Get_Property_Enumerator_With_Default
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return T;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return T;
 
 end Ocarina.Backends.Properties.Utils;

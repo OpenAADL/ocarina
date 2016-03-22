@@ -29,10 +29,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Charset;   use Charset;
-with Locations; use Locations;
-with Ocarina.Namet;     use Ocarina.Namet;
-with Utils;     use Utils;
+with Charset;       use Charset;
+with Locations;     use Locations;
+with Ocarina.Namet; use Ocarina.Namet;
+with Utils;         use Utils;
 
 package body Ocarina.Backends.PN.Debug is
 

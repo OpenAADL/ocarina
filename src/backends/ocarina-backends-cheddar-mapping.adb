@@ -29,9 +29,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with GNAT.OS_Lib; use GNAT.OS_Lib;
-with Ocarina.Namet;       use Ocarina.Namet;
-with Utils;       use Utils;
+with GNAT.OS_Lib;   use GNAT.OS_Lib;
+with Ocarina.Namet; use Ocarina.Namet;
+with Utils;         use Utils;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -234,10 +234,9 @@ package body Ocarina.Backends.Cheddar.Mapping is
 
       Concurrency_Protocols : constant array
       (Supported_Concurrency_Control_Protocol'Range) of Name_Id :=
-        (None_Specified    => Get_String_Name ("NO_PROTOCOL"),
-         Priority_Ceiling =>
-           Get_String_Name ("PRIORITY_CEILING_PROTOCOL"),
-         others => No_Name);
+        (None_Specified   => Get_String_Name ("NO_PROTOCOL"),
+         Priority_Ceiling => Get_String_Name ("PRIORITY_CEILING_PROTOCOL"),
+         others           => No_Name);
 
    begin
       --  The structure of a XML node for a data is

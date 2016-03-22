@@ -397,9 +397,9 @@ package body Ocarina.Backends.PO_HI_C is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         S : constant Node_Id := AAN.Parent_Subcomponent (E);
+         S     : constant Node_Id := AAN.Parent_Subcomponent (E);
          Fd    : File_Descriptor;
-         Rpath : constant String := Get_Runtime_Path ("polyorb-hi-c");
+         Rpath : constant String  := Get_Runtime_Path ("polyorb-hi-c");
       begin
          Enter_Directory (Normalize_Name (AAN.Name (AAN.Identifier (S))));
 
@@ -508,8 +508,9 @@ package body Ocarina.Backends.PO_HI_C is
       Instance_Root : Node_Id;
       Success       : Boolean := True;
 
-      procedure Generate_PolyORB_HI_C_Makefile is
-         new Build_Utils.Makefiles.Generate (PolyORB_HI_C_Makefile);
+      procedure Generate_PolyORB_HI_C_Makefile is new Build_Utils.Makefiles
+        .Generate
+        (PolyORB_HI_C_Makefile);
 
    begin
       --  Instantiate the AADL tree

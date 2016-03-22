@@ -153,15 +153,11 @@ package body Ocarina.Backends.POK_C.Main is
          if POK_Flavor = DEOS or else POK_Flavor = VXWORKS then
             N :=
               Make_Call_Profile
-                (Make_Defining_Identifier
-                  (Get_String_Name ("strcpy")),
-                 Make_List_Id (
-                  Make_Member_Designator
-                     (RE (RE_Name),
-                      Copy_Node (Tattr)),
-                  Make_Literal
-                    (CV.New_Pointed_Char_Value
-                     (Name (Identifier (S))))));
+                (Make_Defining_Identifier (Get_String_Name ("strcpy")),
+                 Make_List_Id
+                   (Make_Member_Designator (RE (RE_Name), Copy_Node (Tattr)),
+                    Make_Literal
+                      (CV.New_Pointed_Char_Value (Name (Identifier (S))))));
             Append_Node_To_List (N, Statements);
          end if;
 
@@ -250,11 +246,11 @@ package body Ocarina.Backends.POK_C.Main is
          if Get_Thread_Period (E) /= Null_Time then
             if Use_ARINC653_API then
                if POK_Flavor = POK then
-                  Member_Value := Map_Time_To_Millisecond
-                                    (Get_Thread_Period (E));
+                  Member_Value :=
+                    Map_Time_To_Millisecond (Get_Thread_Period (E));
                elsif POK_Flavor = DEOS or else POK_Flavor = VXWORKS then
-                  Member_Value := Map_Time_To_Nanosecond
-                                    (Get_Thread_Period (E));
+                  Member_Value :=
+                    Map_Time_To_Nanosecond (Get_Thread_Period (E));
                end if;
             else
                Member_Value := Map_Time (Get_Thread_Period (E));
@@ -265,7 +261,8 @@ package body Ocarina.Backends.POK_C.Main is
                  Make_Expression
                    (Left_Expr =>
                       Make_Member_Designator
-                        (RE (RE_Period), Copy_Node (Tattr)),
+                        (RE (RE_Period),
+                         Copy_Node (Tattr)),
                     Operator   => Op_Equal,
                     Right_Expr => Member_Value);
 
@@ -290,15 +287,9 @@ package body Ocarina.Backends.POK_C.Main is
          N :=
            Make_Expression
              (Left_Expr =>
-                Make_Member_Designator
-                  (RE (RE_Stack_Size),
-                   Copy_Node (Tattr)),
+                Make_Member_Designator (RE (RE_Stack_Size), Copy_Node (Tattr)),
               Operator   => Op_Equal,
-              Right_Expr =>
-                Make_Literal
-                  (New_Int_Value (Stack_Size,
-                                 1,
-                                 10)));
+              Right_Expr => Make_Literal (New_Int_Value (Stack_Size, 1, 10)));
          Append_Node_To_List (N, Statements);
 
          declare
@@ -647,22 +638,20 @@ package body Ocarina.Backends.POK_C.Main is
                      if Get_POK_Refresh_Time (F) /= Null_Time then
                         if Use_ARINC653_API then
                            N :=
-                             Map_Time_To_Nanosecond
-                               (Get_POK_Refresh_Time (F));
+                             Map_Time_To_Nanosecond (Get_POK_Refresh_Time (F));
                         else
                            N := Map_Time (Get_POK_Refresh_Time (F));
                         end if;
                      else
-                        if POK_Flavor = DEOS
-                           or else POK_Flavor = VXWORKS
-                        then
+                        if POK_Flavor = DEOS or else POK_Flavor = VXWORKS then
 
                            --
                            --  DeOS needs a value to refresh the port.
                            --
 
-                           N := CTU.Make_Literal
-                              (CV.New_Int_Value (1_000_000, 1, 10));
+                           N :=
+                             CTU.Make_Literal
+                               (CV.New_Int_Value (1_000_000, 1, 10));
                         else
                            N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                         end if;
@@ -800,8 +789,9 @@ package body Ocarina.Backends.POK_C.Main is
                            --  DeOS needs a value to refresh the port.
                            --
 
-                           N := CTU.Make_Literal
-                              (CV.New_Int_Value (1_000_000, 1, 10));
+                           N :=
+                             CTU.Make_Literal
+                               (CV.New_Int_Value (1_000_000, 1, 10));
                         else
                            N := CTU.Make_Literal (CV.New_Int_Value (0, 1, 10));
                         end if;

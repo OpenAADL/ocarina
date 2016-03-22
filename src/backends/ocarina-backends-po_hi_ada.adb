@@ -385,8 +385,11 @@ package body Ocarina.Backends.PO_HI_Ada is
       end if;
 
       Write_Line
-        (") & external_as_list(""" & "ADA_INCLUDE_PATH" & """, """ & ":" &
-           """);");
+        (") & external_as_list(""" &
+         "ADA_INCLUDE_PATH" &
+         """, """ &
+         ":" &
+         """);");
 
       Decrement_Indentation;
 

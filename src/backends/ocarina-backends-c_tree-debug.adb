@@ -31,7 +31,7 @@
 
 with Charset;                        use Charset;
 with Locations;                      use Locations;
-with Ocarina.Namet;                          use Ocarina.Namet;
+with Ocarina.Namet;                  use Ocarina.Namet;
 with Utils;                          use Utils;
 with Ocarina.Backends.C_Values;      use Ocarina.Backends.C_Values;
 with Ocarina.Backends.C_Tree.Nutils; use Ocarina.Backends.C_Tree.Nutils;

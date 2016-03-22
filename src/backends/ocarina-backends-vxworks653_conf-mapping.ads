@@ -46,17 +46,17 @@ package Ocarina.Backends.Vxworks653_Conf.Mapping is
    function Map_Data_Size (T : Size_Type) return Unsigned_Long_Long;
    function Map_Virtual_Processor (E : Node_Id) return Node_Id;
    function Map_Processor (E : Node_Id) return Node_Id;
-   function Map_Partition (Process : Node_Id;
-                           Runtime : Node_Id;
-                           Partition_Identifier : Integer;
-                           Nb_Threads : Unsigned_Long_Long;
-                           Nb_Buffers : Unsigned_Long_Long;
-                           Nb_Events : Unsigned_Long_Long;
-                           Nb_Lock_Objects : Unsigned_Long_Long;
-                           Nb_Blackboards : Unsigned_Long_Long;
-                           Blackboards_Size : Unsigned_Long_Long;
-                           Buffers_Size : Unsigned_Long_Long)
-                           return Node_Id;
+   function Map_Partition
+     (Process              : Node_Id;
+      Runtime              : Node_Id;
+      Partition_Identifier : Integer;
+      Nb_Threads           : Unsigned_Long_Long;
+      Nb_Buffers           : Unsigned_Long_Long;
+      Nb_Events            : Unsigned_Long_Long;
+      Nb_Lock_Objects      : Unsigned_Long_Long;
+      Nb_Blackboards       : Unsigned_Long_Long;
+      Blackboards_Size     : Unsigned_Long_Long;
+      Buffers_Size         : Unsigned_Long_Long) return Node_Id;
    function Map_Bus (E : Node_Id) return Node_Id;
    function Map_Port_Connection (E : Node_Id) return Node_Id;
    function Map_Process_Memory (Process : Node_Id) return Node_Id;
@@ -77,12 +77,12 @@ package Ocarina.Backends.Vxworks653_Conf.Mapping is
 
    function Map_Queuing_Port (Port : Node_Id) return Node_Id;
 
-   function Map_Partition_Name (Runtime : Node_Id;
-                                Use_Source_Name : Boolean := True)
-   return Name_Id;
+   function Map_Partition_Name
+     (Runtime         : Node_Id;
+      Use_Source_Name : Boolean := True) return Name_Id;
 
-   function Map_Application_Name (Runtime : Node_Id;
-                                Use_Source_Name : Boolean := True)
-   return Name_Id;
+   function Map_Application_Name
+     (Runtime         : Node_Id;
+      Use_Source_Name : Boolean := True) return Name_Id;
 
 end Ocarina.Backends.Vxworks653_Conf.Mapping;

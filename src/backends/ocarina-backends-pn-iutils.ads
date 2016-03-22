@@ -36,7 +36,8 @@ package Ocarina.Backends.PN.Iutils is
    function PN_Get_New_PN_Generated return Ocarina.Types.Node_Id;
 
    procedure PN_Init_PN_Generated
-     (G : Ocarina.Types.Node_Id; F : Ocarina.Types.Value_Id);
+     (G : Ocarina.Types.Node_Id;
+      F : Ocarina.Types.Value_Id);
 
    function PN_Get_New_TPN_Informations return Ocarina.Types.Node_Id;
 
@@ -148,9 +149,9 @@ package Ocarina.Backends.PN.Iutils is
    procedure PN_TPN_Init_Arc
      (A    : Ocarina.Types.Node_Id;
       Aadl : Ocarina.Types.Node_Id;
-      From : Ocarina.Types.Node_Id      := No_Node;
-      To   : Ocarina.Types.Node_Id      := No_Node;
-      K    : Unsigned_Long_Long := 0);
+      From : Ocarina.Types.Node_Id := No_Node;
+      To   : Ocarina.Types.Node_Id := No_Node;
+      K    : Unsigned_Long_Long    := 0);
 
    procedure PN_TPN_Duplicate_Arc
      (A        : Ocarina.Types.Node_Id;

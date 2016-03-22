@@ -46,9 +46,9 @@ package Ocarina.Backends.C_Tree.Nutils is
 
    type Token_Type is
      (
-      --   Token name      Token type
-      --   Keywords
-      Tok_Null,            -- NULL   **** First Keyword
+   --   Token name      Token type
+   --   Keywords
+   Tok_Null,            -- NULL   **** First Keyword
       Tok_Break,           -- BREAK
       Tok_Case,            -- CASE
       Tok_Const,           -- CONST

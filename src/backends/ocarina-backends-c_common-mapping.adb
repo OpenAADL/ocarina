@@ -1373,9 +1373,9 @@ package body Ocarina.Backends.C_Common.Mapping is
 
       if Scade_Name = No_Name then
          Display_Located_Error
-            (AIN.Loc (Parameter),
-             "The Parameter does not specify a SCADE mapping",
-             Fatal => True);
+           (AIN.Loc (Parameter),
+            "The Parameter does not specify a SCADE mapping",
+            Fatal => True);
       end if;
 
       return CTU.Make_Defining_Identifier (Scade_Name, C_Conversion => False);
@@ -1996,8 +1996,7 @@ package body Ocarina.Backends.C_Common.Mapping is
                           CTU.Make_Parameter_Specification
                             (Defining_Identifier =>
                                Map_C_Defining_Identifier (F),
-                             Parameter_Type =>
-                               Map_C_Data_Type_Designator (D));
+                             Parameter_Type => Map_C_Data_Type_Designator (D));
                      else
                         Param :=
                           CTU.Make_Parameter_Specification
@@ -2019,13 +2018,11 @@ package body Ocarina.Backends.C_Common.Mapping is
                      Field := AIN.First_Node (Subcomponents (D));
 
                      while Present (Field) loop
-                        if AINU.Is_Data
-                            (Corresponding_Instance (Field))
-                        then
+                        if AINU.Is_Data (Corresponding_Instance (Field)) then
                            if Mode = Mode_In then
                               Param :=
-                               CTU.Make_Parameter_Specification
-                                 (Defining_Identifier =>
+                                CTU.Make_Parameter_Specification
+                                  (Defining_Identifier =>
                                      Map_C_Defining_Identifier (Field),
                                    Parameter_Type =>
                                      Map_C_Data_Type_Designator
@@ -2038,8 +2035,7 @@ package body Ocarina.Backends.C_Common.Mapping is
                                    Parameter_Type =>
                                      Make_Pointer_Type
                                        (Map_C_Data_Type_Designator
-                                          (Corresponding_Instance
-                                             (Field))));
+                                          (Corresponding_Instance (Field))));
                            end if;
                            CTU.Append_Node_To_List (Param, Profile);
                         end if;
@@ -3042,8 +3038,8 @@ package body Ocarina.Backends.C_Common.Mapping is
       --  Port Name have to be the same.
       --
 
-      if Get_Connection_Pattern (E) = Inter_Process and then
-         POK_Flavor = DEOS
+      if Get_Connection_Pattern (E) = Inter_Process
+        and then POK_Flavor = DEOS
       then
          Get_Name_String (Display_Name (Identifier (E)));
          N := Name_Find;

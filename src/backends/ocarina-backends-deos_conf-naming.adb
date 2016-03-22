@@ -84,8 +84,7 @@ package body Ocarina.Backends.Deos_Conf.Naming is
    ---------------------
 
    procedure Visit_Component (E : Node_Id) is
-      Category : constant Component_Category :=
-         Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -117,11 +116,11 @@ package body Ocarina.Backends.Deos_Conf.Naming is
       Processes_List : List_Id;
    begin
       Processes_List :=
-         XTN.Processes (Backend_Node (Identifier (Get_Bound_Processor (E))));
+        XTN.Processes (Backend_Node (Identifier (Get_Bound_Processor (E))));
 
-         N := XTU.Make_Container (E);
+      N := XTU.Make_Container (E);
 
-         XTU.Append_Node_To_List (N, Processes_List);
+      XTU.Append_Node_To_List (N, Processes_List);
    end Visit_Process;
 
    --------------------------------------
@@ -198,7 +197,7 @@ package body Ocarina.Backends.Deos_Conf.Naming is
          while Present (S) loop
             Component_Instance := Corresponding_Instance (S);
             if Get_Category_Of_Component (Component_Instance) =
-               CC_Processor
+              CC_Processor
             then
                Visit_Processor (Component_Instance);
             end if;

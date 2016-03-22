@@ -45,14 +45,14 @@ package Ocarina.Backends.XML_Tree.Nutils is
 
    type Token_Type is
      (
-      --   Token name      Token type
-      --   Keywords
-      Tok_Null,            -- NULL   **** First Keyword
-      Tok_Typedef,         -- TYPEDEF
-      Tok_Slash,           -- /
-      Tok_Less,            -- <
-      Tok_Equal,           -- =
-      Tok_Greater);        -- >
+   --   Token name      Token type
+   --   Keywords
+   Tok_Null,            -- NULL   **** First Keyword
+     Tok_Typedef,         -- TYPEDEF
+     Tok_Slash,           -- /
+     Tok_Less,            -- <
+     Tok_Equal,           -- =
+     Tok_Greater);        -- >
 
    Token_Image : array (Token_Type) of Name_Id;
 

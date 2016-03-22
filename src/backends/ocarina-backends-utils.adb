@@ -3363,8 +3363,8 @@ package body Ocarina.Backends.Utils is
    -----------------------
 
    function Is_Protected_Data (Data_Component : Node_Id) return Boolean is
-      Concurrency_Protocol : constant Supported_Concurrency_Control_Protocol
-        := Get_Concurrency_Protocol (Data_Component);
+      Concurrency_Protocol : constant Supported_Concurrency_Control_Protocol :=
+        Get_Concurrency_Protocol (Data_Component);
    begin
       return Concurrency_Protocol = Priority_Ceiling;
    end Is_Protected_Data;
@@ -3932,26 +3932,25 @@ package body Ocarina.Backends.Utils is
    -- Get_Root_Component --
    ------------------------
 
-   function Get_Root_Component (C : Node_Id)
-                               return Node_Id is
+   function Get_Root_Component (C : Node_Id) return Node_Id is
    begin
       if (Parent_Subcomponent (C) = No_Node) then
          return C;
       end if;
 
-      return Get_Root_Component
-         (Parent_Component (Parent_Subcomponent (C)));
+      return Get_Root_Component (Parent_Component (Parent_Subcomponent (C)));
    end Get_Root_Component;
 
    -----------------------------
    -- Find_Associated_Process --
    -----------------------------
 
-   function Find_Associated_Process (Runtime    : Node_Id;
-                                     Root_Node  : Node_Id := No_Node)
-                                     return Node_Id is
-      T : Node_Id;
-      S : Node_Id;
+   function Find_Associated_Process
+     (Runtime   : Node_Id;
+      Root_Node : Node_Id := No_Node) return Node_Id
+   is
+      T            : Node_Id;
+      S            : Node_Id;
       Current_Node : Node_Id;
    begin
       if Root_Node = No_Node then
@@ -3960,8 +3959,8 @@ package body Ocarina.Backends.Utils is
          Current_Node := Root_Node;
       end if;
 
-      if Get_Category_Of_Component (Current_Node) = CC_Process and then
-         Get_Bound_Processor (Current_Node) = Runtime
+      if Get_Category_Of_Component (Current_Node) = CC_Process
+        and then Get_Bound_Processor (Current_Node) = Runtime
       then
          return Current_Node;
       end if;
@@ -3969,8 +3968,7 @@ package body Ocarina.Backends.Utils is
       if not AAU.Is_Empty (Subcomponents (Current_Node)) then
          S := First_Node (Subcomponents (Current_Node));
          while Present (S) loop
-            T := Find_Associated_Process
-               (Runtime, Corresponding_Instance (S));
+            T := Find_Associated_Process (Runtime, Corresponding_Instance (S));
 
             if T /= No_Node then
                return T;
@@ -3987,11 +3985,12 @@ package body Ocarina.Backends.Utils is
    -- Get_Partition_Runtime --
    ---------------------------
 
-   function Get_Partition_Runtime (Process    : Node_Id;
-                                   Root_Node  : Node_Id := No_Node)
-                                     return Node_Id is
-      T : Node_Id;
-      S : Node_Id;
+   function Get_Partition_Runtime
+     (Process   : Node_Id;
+      Root_Node : Node_Id := No_Node) return Node_Id
+   is
+      T            : Node_Id;
+      S            : Node_Id;
       Current_Node : Node_Id;
    begin
       if Root_Node = No_Node then
@@ -4001,7 +4000,7 @@ package body Ocarina.Backends.Utils is
       end if;
 
       if Get_Category_Of_Component (Current_Node) = CC_Virtual_Processor
-         and then Get_Bound_Processor (Process) = Current_Node
+        and then Get_Bound_Processor (Process) = Current_Node
       then
          return Current_Node;
       end if;
@@ -4009,8 +4008,7 @@ package body Ocarina.Backends.Utils is
       if not AAU.Is_Empty (Subcomponents (Current_Node)) then
          S := First_Node (Subcomponents (Current_Node));
          while Present (S) loop
-            T := Get_Partition_Runtime
-               (Process, Corresponding_Instance (S));
+            T := Get_Partition_Runtime (Process, Corresponding_Instance (S));
 
             if T /= No_Node then
                return T;
@@ -4036,9 +4034,10 @@ package body Ocarina.Backends.Utils is
       --  core. This is the case when we want to allocate one process
       --  to a core.
 
-      Core_Id := Properties.Get_Core_Id (Get_Bound_Processor
-                                           (Corresponding_Instance
-                                              (Get_Container_Process (D))));
+      Core_Id :=
+        Properties.Get_Core_Id
+          (Get_Bound_Processor
+             (Corresponding_Instance (Get_Container_Process (D))));
 
       --  Then, we check whether the thread is directly bound to a core
 

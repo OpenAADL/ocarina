@@ -42,9 +42,9 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    type Token_Type is
      (
-      --   Token name      Token type
-      --   Keywords
-      Tok_Mod,             -- MOD   **** First Keyword
+   --   Token name      Token type
+   --   Keywords
+   Tok_Mod,             -- MOD   **** First Keyword
       Tok_Rem,             -- REM
       Tok_New,             -- NEW
       Tok_Abs,             -- ABS
@@ -147,7 +147,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Tok_Dot_Dot,         -- ..
       Tok_Minus_Minus      -- --
 
-     );
+);
 
    Token_Image : array (Token_Type) of Name_Id;
 

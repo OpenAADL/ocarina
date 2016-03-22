@@ -64,10 +64,10 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
-   Root_Node                : Node_Id := No_Node;
-   Partitions_Node          : Node_Id := No_Node;
-   Memory_Regions           : Node_Id := No_Node;
-   Partition_Identifier     : Integer := 1;
+   Root_Node                : Node_Id            := No_Node;
+   Partitions_Node          : Node_Id            := No_Node;
+   Memory_Regions           : Node_Id            := No_Node;
+   Partition_Identifier     : Integer            := 1;
    Process_Nb_Threads       : Unsigned_Long_Long := 0;
    Process_Nb_Buffers       : Unsigned_Long_Long := 0;
    Process_Nb_Events        : Unsigned_Long_Long := 0;
@@ -84,21 +84,23 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
-   function Find_Associated_Process (Runtime : Node_Id;
-                                     Current_Node : Node_Id := Root_Node)
-                                     return Node_Id;
+   function Find_Associated_Process
+     (Runtime      : Node_Id;
+      Current_Node : Node_Id := Root_Node) return Node_Id;
    function Find_Associated_Memory_Segment
-      (Process       : Node_Id;
-       Current_Node  : Node_Id := Root_Node)
-      return Node_Id;
+     (Process      : Node_Id;
+      Current_Node : Node_Id := Root_Node) return Node_Id;
 
    function Make_Default_Memory_Region return Node_Id;
    function Make_Memory_Region (Segment : Node_Id) return Node_Id;
-   function Hex_Print (Num : in Integer;
-                       Num_Of_Digits : in Positive) return String;
+   function Hex_Print
+     (Num           : in Integer;
+      Num_Of_Digits : in Positive) return String;
 
-   function Hex_Print (Num           : in Integer;
-                       Num_Of_Digits : in Positive) return String is
+   function Hex_Print
+     (Num           : in Integer;
+      Num_Of_Digits : in Positive) return String
+   is
       Temp_Str    : String (1 .. Num_Of_Digits + 5) := (others => '0');
       New_Str     : String (1 .. Num_Of_Digits)     := (others => '0');
       First_Digit : Positive;
@@ -114,7 +116,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       end loop;
 
       New_Str (First_Digit - 4 .. Num_Of_Digits) :=
-         Temp_Str (First_Digit .. Num_Of_Digits + 4);
+        Temp_Str (First_Digit .. Num_Of_Digits + 4);
       return New_Str;
    end Hex_Print;
 
@@ -141,8 +143,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    -- Make_Memory_Region --
    ------------------------
 
-   function Make_Memory_Region (Segment : Node_Id)
-      return Node_Id is
+   function Make_Memory_Region (Segment : Node_Id) return Node_Id is
       N : Node_Id;
    begin
       N := Make_XML_Node ("MemoryRegion");
@@ -150,18 +151,16 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       XTU.Add_Attribute ("Name", "Initial RAM Pool", N);
       XTU.Add_Attribute ("Type", "Initial RAM Pool", N);
 
-      XTU.Add_Attribute ("Address",
-                        "0x" & Hex_Print
-                           (Integer
-                              (Get_Base_Address (Segment)), 8),
-                         N);
+      XTU.Add_Attribute
+        ("Address",
+         "0x" & Hex_Print (Integer (Get_Base_Address (Segment)), 8),
+         N);
 --      Put (Size_Str, To_Bytes
 --                      (Get_Memory_Size (Segment)), 16);
-      XTU.Add_Attribute ("Size",
-                        "0x" & Hex_Print
-                           (Integer (To_Bytes
-                              (Get_Memory_Size (Segment))), 8),
-                         N);
+      XTU.Add_Attribute
+        ("Size",
+         "0x" & Hex_Print (Integer (To_Bytes (Get_Memory_Size (Segment))), 8),
+         N);
       XTU.Add_Attribute ("AccessRights", "READ_WRITE", N);
       XTU.Add_Attribute ("PlatformMemoryPool", "0", N);
 
@@ -172,14 +171,15 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    -- Find_Associated_Process --
    -----------------------------
 
-   function Find_Associated_Process (Runtime : Node_Id;
-                                     Current_Node : Node_Id := Root_Node)
-                                     return Node_Id is
+   function Find_Associated_Process
+     (Runtime      : Node_Id;
+      Current_Node : Node_Id := Root_Node) return Node_Id
+   is
       T : Node_Id;
       S : Node_Id;
    begin
-      if Get_Category_Of_Component (Current_Node) = CC_Process and then
-         Get_Bound_Processor (Current_Node) = Runtime
+      if Get_Category_Of_Component (Current_Node) = CC_Process
+        and then Get_Bound_Processor (Current_Node) = Runtime
       then
          return Current_Node;
       end if;
@@ -187,8 +187,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       if not AINU.Is_Empty (Subcomponents (Current_Node)) then
          S := First_Node (Subcomponents (Current_Node));
          while Present (S) loop
-            T := Find_Associated_Process
-               (Runtime, Corresponding_Instance (S));
+            T := Find_Associated_Process (Runtime, Corresponding_Instance (S));
 
             if T /= No_Node then
                return T;
@@ -206,14 +205,14 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    ------------------------------------
 
    function Find_Associated_Memory_Segment
-      (Process : Node_Id;
-       Current_Node : Node_Id := Root_Node)
-      return Node_Id is
+     (Process      : Node_Id;
+      Current_Node : Node_Id := Root_Node) return Node_Id
+   is
       T : Node_Id;
       S : Node_Id;
    begin
-      if Get_Category_Of_Component (Current_Node) = CC_Memory and then
-         Get_Bound_Memory (Process) = Current_Node
+      if Get_Category_Of_Component (Current_Node) = CC_Memory
+        and then Get_Bound_Memory (Process) = Current_Node
       then
          return Current_Node;
       end if;
@@ -221,8 +220,10 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       if not AINU.Is_Empty (Subcomponents (Current_Node)) then
          S := First_Node (Subcomponents (Current_Node));
          while Present (S) loop
-            T := Find_Associated_Memory_Segment
-               (Process, Corresponding_Instance (S));
+            T :=
+              Find_Associated_Memory_Segment
+                (Process,
+                 Corresponding_Instance (S));
 
             if T /= No_Node then
                return T;
@@ -294,47 +295,46 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
       end case;
    end Visit_Component_Instance;
 
-      ---------------------------
-      -- Visit_Thread_Instance --
-      ---------------------------
+   ---------------------------
+   -- Visit_Thread_Instance --
+   ---------------------------
 
-      procedure Visit_Thread_Instance (E : Node_Id) is
-         F : Node_Id;
-      begin
-         Process_Nb_Threads := Process_Nb_Threads + 1;
+   procedure Visit_Thread_Instance (E : Node_Id) is
+      F : Node_Id;
+   begin
+      Process_Nb_Threads := Process_Nb_Threads + 1;
 
-         if not AINU.Is_Empty (Features (E)) then
-            F := First_Node (Features (E));
+      if not AINU.Is_Empty (Features (E)) then
+         F := First_Node (Features (E));
 
-            while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance then
-                  if Get_Connection_Pattern (F) = Intra_Process
-                    and then Is_In (F)
-                  then
-                     if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
-                        Process_Nb_Blackboards := Process_Nb_Blackboards + 1;
-                        Process_Blackboards_Size :=
-                           Process_Blackboards_Size +
-                              To_Bytes
-                                 (Get_Data_Size
-                                    (Corresponding_Instance (F)));
-                     elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
-                        Process_Nb_Buffers := Process_Nb_Buffers + 1;
-                     elsif AIN.Is_Event (F) and then not AIN.Is_Data (F) then
-                        Process_Nb_Events := Process_Nb_Events + 1;
-                     else
-                        Display_Error ("Communication Pattern not handled",
-                                       Fatal => True);
-                     end if;
-
-                     Process_Nb_Lock_Objects := Process_Nb_Lock_Objects + 1;
+         while Present (F) loop
+            if Kind (F) = K_Port_Spec_Instance then
+               if Get_Connection_Pattern (F) = Intra_Process
+                 and then Is_In (F)
+               then
+                  if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
+                     Process_Nb_Blackboards   := Process_Nb_Blackboards + 1;
+                     Process_Blackboards_Size :=
+                       Process_Blackboards_Size +
+                       To_Bytes (Get_Data_Size (Corresponding_Instance (F)));
+                  elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
+                     Process_Nb_Buffers := Process_Nb_Buffers + 1;
+                  elsif AIN.Is_Event (F) and then not AIN.Is_Data (F) then
+                     Process_Nb_Events := Process_Nb_Events + 1;
+                  else
+                     Display_Error
+                       ("Communication Pattern not handled",
+                        Fatal => True);
                   end if;
-               end if;
-               F := Next_Node (F);
-            end loop;
-         end if;
 
-      end Visit_Thread_Instance;
+                  Process_Nb_Lock_Objects := Process_Nb_Lock_Objects + 1;
+               end if;
+            end if;
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+   end Visit_Thread_Instance;
 
    ----------------------------
    -- Visit_Process_Instance --
@@ -406,9 +406,7 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
       Partitions_Node := Make_XML_Node ("Partitions");
 
-      Append_Node_To_List
-        (Partitions_Node,
-         XTN.Subitems (Current_XML_Node));
+      Append_Node_To_List (Partitions_Node, XTN.Subitems (Current_XML_Node));
 
       --
       --  First, make the <Partition/> nodes
@@ -436,48 +434,48 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S                       : Node_Id;
-      F                       : Node_Id;
-      Corresponding_Process   : Node_Id := No_Node;
-      Memory_Segment          : Node_Id := No_Node;
-      Partition_Node          : Node_Id;
-      Sampling_Ports          : Node_Id := No_Node;
-      Queuing_Ports           : Node_Id := No_Node;
+      S                     : Node_Id;
+      F                     : Node_Id;
+      Corresponding_Process : Node_Id := No_Node;
+      Memory_Segment        : Node_Id := No_Node;
+      Partition_Node        : Node_Id;
+      Sampling_Ports        : Node_Id := No_Node;
+      Queuing_Ports         : Node_Id := No_Node;
    begin
 
       Sampling_Ports := Make_XML_Node ("SamplingPorts");
-      Queuing_Ports := Make_XML_Node ("QueuingPorts");
+      Queuing_Ports  := Make_XML_Node ("QueuingPorts");
 
       Corresponding_Process := Find_Associated_Process (E);
 
       if Corresponding_Process /= No_Node then
 
-         Process_Nb_Threads         := 0;
-         Process_Nb_Buffers         := 0;
-         Process_Nb_Events          := 0;
-         Process_Nb_Lock_Objects    := 0;
-         Process_Nb_Blackboards     := 0;
-         Process_Blackboards_Size   := 0;
-         Process_Buffers_Size       := 0;
+         Process_Nb_Threads       := 0;
+         Process_Nb_Buffers       := 0;
+         Process_Nb_Events        := 0;
+         Process_Nb_Lock_Objects  := 0;
+         Process_Nb_Blackboards   := 0;
+         Process_Blackboards_Size := 0;
+         Process_Buffers_Size     := 0;
 
          Visit (Corresponding_Process);
 
          --
          --  First, we create the description of the partition.
          --
-         Partition_Node := Map_Partition (Corresponding_Process,
-                            E,
-                            Partition_Identifier,
-                            Process_Nb_Threads,
-                            Process_Nb_Buffers,
-                            Process_Nb_Events,
-                            Process_Nb_Lock_Objects,
-                            Process_Nb_Blackboards,
-                            Process_Blackboards_Size,
-                            Process_Buffers_Size);
-         Append_Node_To_List
-            (Partition_Node,
-             XTN.Subitems (Partitions_Node));
+         Partition_Node :=
+           Map_Partition
+             (Corresponding_Process,
+              E,
+              Partition_Identifier,
+              Process_Nb_Threads,
+              Process_Nb_Buffers,
+              Process_Nb_Events,
+              Process_Nb_Lock_Objects,
+              Process_Nb_Blackboards,
+              Process_Blackboards_Size,
+              Process_Buffers_Size);
+         Append_Node_To_List (Partition_Node, XTN.Subitems (Partitions_Node));
 
          --
          --  Then, we associate the partition with memory region
@@ -485,22 +483,20 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
          Memory_Regions := Make_XML_Node ("MemoryRegions");
 
-         Memory_Segment := Find_Associated_Memory_Segment
-            (Corresponding_Process);
+         Memory_Segment :=
+           Find_Associated_Memory_Segment (Corresponding_Process);
 
          if Memory_Segment = No_Node then
             Append_Node_To_List
-               (Make_Default_Memory_Region,
+              (Make_Default_Memory_Region,
                XTN.Subitems (Memory_Regions));
          else
             Append_Node_To_List
-               (Make_Memory_Region (Memory_Segment),
+              (Make_Memory_Region (Memory_Segment),
                XTN.Subitems (Memory_Regions));
          end if;
 
-         Append_Node_To_List
-            (Memory_Regions,
-            XTN.Subitems (Partition_Node));
+         Append_Node_To_List (Memory_Regions, XTN.Subitems (Partition_Node));
 
          --
          --  Then, we configure the inter-partitions communication
@@ -517,13 +513,13 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
 
                   if Is_Data (F) and then not Is_Event (F) then
                      Append_Node_To_List
-                        (Map_Sampling_Port (F),
+                       (Map_Sampling_Port (F),
                         XTN.Subitems (Sampling_Ports));
                   end if;
 
                   if Is_Data (F) and then Is_Event (F) then
                      Append_Node_To_List
-                        (Map_Queuing_Port (F),
+                       (Map_Queuing_Port (F),
                         XTN.Subitems (Queuing_Ports));
                   end if;
 
@@ -532,20 +528,18 @@ package body Ocarina.Backends.Deos_Conf.Partitions is
             end loop;
          end if;
 
-         if Sampling_Ports /= No_Node and then
-            XTN.Subitems (Sampling_Ports) /= No_List
+         if Sampling_Ports /= No_Node
+           and then XTN.Subitems (Sampling_Ports) /= No_List
          then
             Append_Node_To_List
-               (Sampling_Ports,
+              (Sampling_Ports,
                XTN.Subitems (Partition_Node));
          end if;
 
-         if Queuing_Ports /= No_Node and then
-            XTN.Subitems (Queuing_Ports) /= No_List
+         if Queuing_Ports /= No_Node
+           and then XTN.Subitems (Queuing_Ports) /= No_List
          then
-            Append_Node_To_List
-               (Queuing_Ports,
-               XTN.Subitems (Partition_Node));
+            Append_Node_To_List (Queuing_Ports, XTN.Subitems (Partition_Node));
          end if;
 
          Partition_Identifier := Partition_Identifier + 1;

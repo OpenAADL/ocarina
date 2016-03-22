@@ -34,8 +34,8 @@ with GNAT.Case_Util;
 
 with Utils; use Utils;
 
-with Charset; use Charset;
-with Ocarina.Namet;   use Ocarina.Namet;
+with Charset;       use Charset;
+with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Tree.Nutils;
@@ -133,23 +133,23 @@ package body Ocarina.Backends.POK_C.Runtime is
             RE_Header_Table (E) := RH_Apex;
          end loop;
 
-         RE_Header_Table (RE_Fifo) := RH_Apex;
+         RE_Header_Table (RE_Fifo)                   := RH_Apex;
          RE_Header_Table (RE_Pok_Port_Kind_Sampling) := RH_Apex;
          RE_Header_Table (RE_Pok_Port_Kind_Queueing) := RH_Apex;
-         RE_Header_Table (RE_Source) := RH_Apex;
-         RE_Header_Table (RE_Destination) := RH_Apex;
-         RE_Header_Table (RE_Pok_Errno_Empty) := RH_Apex;
-         RE_Header_Table (RE_Null) := RH_Apex;
-         RE_Header_Table (RE_Normal) := RH_Apex;
-         RE_Header_Table (RE_Bool_T) := RH_Apex;
-         RE_Header_Table (RE_Uint8_T) := RH_Apex;
-         RE_Header_Table (RE_Uint16_T) := RH_Apex;
-         RE_Header_Table (RE_Uint32_T) := RH_Apex;
-         RE_Header_Table (RE_Uint64_T) := RH_Apex;
-         RE_Header_Table (RE_Int8_T) := RH_Apex;
-         RE_Header_Table (RE_Int16_T) := RH_Apex;
-         RE_Header_Table (RE_Int32_T) := RH_Apex;
-         RE_Header_Table (RE_Int64_T) := RH_Apex;
+         RE_Header_Table (RE_Source)                 := RH_Apex;
+         RE_Header_Table (RE_Destination)            := RH_Apex;
+         RE_Header_Table (RE_Pok_Errno_Empty)        := RH_Apex;
+         RE_Header_Table (RE_Null)                   := RH_Apex;
+         RE_Header_Table (RE_Normal)                 := RH_Apex;
+         RE_Header_Table (RE_Bool_T)                 := RH_Apex;
+         RE_Header_Table (RE_Uint8_T)                := RH_Apex;
+         RE_Header_Table (RE_Uint16_T)               := RH_Apex;
+         RE_Header_Table (RE_Uint32_T)               := RH_Apex;
+         RE_Header_Table (RE_Uint64_T)               := RH_Apex;
+         RE_Header_Table (RE_Int8_T)                 := RH_Apex;
+         RE_Header_Table (RE_Int16_T)                := RH_Apex;
+         RE_Header_Table (RE_Int32_T)                := RH_Apex;
+         RE_Header_Table (RE_Int64_T)                := RH_Apex;
 
          for E in ARF_Id loop
             RE_Header_Table (E) := RH_Apex;
@@ -168,55 +168,55 @@ package body Ocarina.Backends.POK_C.Runtime is
          RE_Header_Table (RE_Periodic_Wait) := RH_ApexTime;
 
          RE_Header_Table (RE_Create_Process) := RH_ApexProcess;
-         RE_Header_Table (RE_Start) := RH_ApexProcess;
+         RE_Header_Table (RE_Start)          := RH_ApexProcess;
 
          RE_Header_Table (RE_Create_Process) := RH_ApexProcess;
 
          RE_Header_Table (RE_Set_Partition_Mode) := RH_ApexPartition;
 
-         RE_Header_Table (RE_Create_Blackboard) := RH_ApexBlackboard;
+         RE_Header_Table (RE_Create_Blackboard)  := RH_ApexBlackboard;
          RE_Header_Table (RE_Display_Blackboard) := RH_ApexBlackboard;
-         RE_Header_Table (RE_Read_Blackboard) := RH_ApexBlackboard;
-         RE_Header_Table (RE_Clear_Blackboard) := RH_ApexBlackboard;
+         RE_Header_Table (RE_Read_Blackboard)    := RH_ApexBlackboard;
+         RE_Header_Table (RE_Clear_Blackboard)   := RH_ApexBlackboard;
          RE_Header_Table (RE_Blackboard_Id_Type) := RH_ApexBlackboard;
 
-         RE_Header_Table (RE_Queuing_Port_Id_Type) := RH_ApexQueuing;
-         RE_Header_Table (RE_Create_Queuing_Port) := RH_ApexQueuing;
-         RE_Header_Table (RE_Send_Queuing_Message) := RH_ApexQueuing;
+         RE_Header_Table (RE_Queuing_Port_Id_Type)    := RH_ApexQueuing;
+         RE_Header_Table (RE_Create_Queuing_Port)     := RH_ApexQueuing;
+         RE_Header_Table (RE_Send_Queuing_Message)    := RH_ApexQueuing;
          RE_Header_Table (RE_Receive_Queuing_Message) := RH_ApexQueuing;
-         RE_Header_Table (RE_Get_Queuing_Port_Id) := RH_ApexQueuing;
+         RE_Header_Table (RE_Get_Queuing_Port_Id)     := RH_ApexQueuing;
 
-         RE_Header_Table (RE_Sampling_Port_Id_Type) := RH_ApexSampling;
-         RE_Header_Table (RE_Create_Sampling_Port) := RH_ApexSampling;
+         RE_Header_Table (RE_Sampling_Port_Id_Type)  := RH_ApexSampling;
+         RE_Header_Table (RE_Create_Sampling_Port)   := RH_ApexSampling;
          RE_Header_Table (RE_Write_Sampling_Message) := RH_ApexSampling;
-         RE_Header_Table (RE_Read_Sampling_Message) := RH_ApexSampling;
-         RE_Header_Table (RE_Get_Sampling_Port_Id) := RH_ApexSampling;
+         RE_Header_Table (RE_Read_Sampling_Message)  := RH_ApexSampling;
+         RE_Header_Table (RE_Get_Sampling_Port_Id)   := RH_ApexSampling;
 
-         RE_Header_Table (RE_Create_Buffer) := RH_ApexBuffer;
-         RE_Header_Table (RE_Send_Buffer) := RH_ApexBuffer;
+         RE_Header_Table (RE_Create_Buffer)  := RH_ApexBuffer;
+         RE_Header_Table (RE_Send_Buffer)    := RH_ApexBuffer;
          RE_Header_Table (RE_Receive_Buffer) := RH_ApexBuffer;
          RE_Header_Table (RE_Buffer_Id_Type) := RH_ApexBuffer;
 
-         RE_Header_Table (RE_Normal) := RH_ApexType;
+         RE_Header_Table (RE_Normal)                 := RH_ApexType;
          RE_Header_Table (RE_Process_Attribute_Type) := RH_ApexType;
-         RE_Header_Table (RE_Fifo) := RH_ApexType;
+         RE_Header_Table (RE_Fifo)                   := RH_ApexType;
          RE_Header_Table (RE_Pok_Port_Kind_Sampling) := RH_ApexType;
-         RE_Header_Table (RE_Infinite_Time_Value) := RH_ApexType;
+         RE_Header_Table (RE_Infinite_Time_Value)    := RH_ApexType;
          RE_Header_Table (RE_Pok_Port_Kind_Queueing) := RH_ApexType;
-         RE_Header_Table (RE_Source) := RH_ApexType;
-         RE_Header_Table (RE_Destination) := RH_ApexType;
-         RE_Header_Table (RE_Pok_Errno_Empty) := RH_ApexType;
-         RE_Header_Table (RE_Null) := RH_ApexType;
-         RE_Header_Table (RE_Normal) := RH_ApexType;
-         RE_Header_Table (RE_Bool_T) := RH_ApexType;
-         RE_Header_Table (RE_Uint8_T) := RH_ApexType;
-         RE_Header_Table (RE_Uint16_T) := RH_ApexType;
-         RE_Header_Table (RE_Uint32_T) := RH_ApexType;
-         RE_Header_Table (RE_Uint64_T) := RH_ApexType;
-         RE_Header_Table (RE_Int8_T) := RH_ApexType;
-         RE_Header_Table (RE_Int16_T) := RH_ApexType;
-         RE_Header_Table (RE_Int32_T) := RH_ApexType;
-         RE_Header_Table (RE_Int64_T) := RH_ApexType;
+         RE_Header_Table (RE_Source)                 := RH_ApexType;
+         RE_Header_Table (RE_Destination)            := RH_ApexType;
+         RE_Header_Table (RE_Pok_Errno_Empty)        := RH_ApexType;
+         RE_Header_Table (RE_Null)                   := RH_ApexType;
+         RE_Header_Table (RE_Normal)                 := RH_ApexType;
+         RE_Header_Table (RE_Bool_T)                 := RH_ApexType;
+         RE_Header_Table (RE_Uint8_T)                := RH_ApexType;
+         RE_Header_Table (RE_Uint16_T)               := RH_ApexType;
+         RE_Header_Table (RE_Uint32_T)               := RH_ApexType;
+         RE_Header_Table (RE_Uint64_T)               := RH_ApexType;
+         RE_Header_Table (RE_Int8_T)                 := RH_ApexType;
+         RE_Header_Table (RE_Int16_T)                := RH_ApexType;
+         RE_Header_Table (RE_Int32_T)                := RH_ApexType;
+         RE_Header_Table (RE_Int64_T)                := RH_ApexType;
       end if;
 
       if POK_Flavor = ARINC653 then
@@ -422,8 +422,9 @@ package body Ocarina.Backends.POK_C.Runtime is
          --  members are in upper case. Otherwise, we use
          --  lower case.
 
-         if POK_Flavor = ARINC653 or else POK_Flavor = DEOS
-            or else POK_Flavor = VXWORKS
+         if POK_Flavor = ARINC653
+           or else POK_Flavor = DEOS
+           or else POK_Flavor = VXWORKS
          then
             Name := To_Upper (Name);
          else

@@ -32,12 +32,12 @@
 with GNAT.Table;
 with GNAT.Case_Util;
 
-with Charset;   use Charset;
-with Locations; use Locations;
-with Ocarina.Namet;     use Ocarina.Namet;
-with Ocarina.Output;    use Ocarina.Output;
-with Ocarina.Types;     use Ocarina.Types;
-with Utils;     use Utils;
+with Charset;        use Charset;
+with Locations;      use Locations;
+with Ocarina.Namet;  use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
+with Ocarina.Types;  use Ocarina.Types;
+with Utils;          use Utils;
 
 with Ocarina.Backends.Ada_Values; use Ocarina.Backends.Ada_Values;
 with Ocarina.Backends.Utils;      use Ocarina.Backends.Utils;

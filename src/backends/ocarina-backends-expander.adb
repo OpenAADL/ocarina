@@ -29,9 +29,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Locations; use Locations;
-with Ocarina.Namet;     use Ocarina.Namet;
-with Utils;     use Utils;
+with Locations;     use Locations;
+with Ocarina.Namet; use Ocarina.Namet;
+with Utils;         use Utils;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;

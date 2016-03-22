@@ -50,7 +50,7 @@ with Ocarina.Backends.ARINC653_Conf;
 with Ocarina.Backends.POK_Cheddar;
 with Ocarina.Backends.XML_Tree.Generator;
 
-with GNAT.OS_Lib;       use GNAT.OS_Lib;
+with GNAT.OS_Lib; use GNAT.OS_Lib;
 
 with Ocarina.Namet;  use Ocarina.Namet;
 with Ocarina.Output; use Ocarina.Output;
@@ -195,8 +195,9 @@ package body Ocarina.Backends.POK_C is
 
    function Use_ARINC653_API return Boolean is
    begin
-      return POK_Flavor = ARINC653 or else POK_Flavor = DEOS
-         or else POK_Flavor = VXWORKS;
+      return POK_Flavor = ARINC653
+        or else POK_Flavor = DEOS
+        or else POK_Flavor = VXWORKS;
    end Use_ARINC653_API;
 
    --------------------

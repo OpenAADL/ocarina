@@ -57,9 +57,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
-   Root_Node                : Node_Id := No_Node;
-   Partitions_Node          : Node_Id := No_Node;
-   Partition_Identifier     : Integer := 1;
+   Root_Node                : Node_Id            := No_Node;
+   Partitions_Node          : Node_Id            := No_Node;
+   Partition_Identifier     : Integer            := 1;
    Process_Nb_Threads       : Unsigned_Long_Long := 0;
    Process_Nb_Buffers       : Unsigned_Long_Long := 0;
    Process_Nb_Events        : Unsigned_Long_Long := 0;
@@ -136,47 +136,46 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
       end case;
    end Visit_Component_Instance;
 
-      ---------------------------
-      -- Visit_Thread_Instance --
-      ---------------------------
+   ---------------------------
+   -- Visit_Thread_Instance --
+   ---------------------------
 
-      procedure Visit_Thread_Instance (E : Node_Id) is
-         F : Node_Id;
-      begin
-         Process_Nb_Threads := Process_Nb_Threads + 1;
+   procedure Visit_Thread_Instance (E : Node_Id) is
+      F : Node_Id;
+   begin
+      Process_Nb_Threads := Process_Nb_Threads + 1;
 
-         if not AINU.Is_Empty (Features (E)) then
-            F := First_Node (Features (E));
+      if not AINU.Is_Empty (Features (E)) then
+         F := First_Node (Features (E));
 
-            while Present (F) loop
-               if Kind (F) = K_Port_Spec_Instance then
-                  if Get_Connection_Pattern (F) = Intra_Process
-                    and then Is_In (F)
-                  then
-                     if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
-                        Process_Nb_Blackboards := Process_Nb_Blackboards + 1;
-                        Process_Blackboards_Size :=
-                           Process_Blackboards_Size +
-                              To_Bytes
-                                 (Get_Data_Size
-                                    (Corresponding_Instance (F)));
-                     elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
-                        Process_Nb_Buffers := Process_Nb_Buffers + 1;
-                     elsif AIN.Is_Event (F) and then not AIN.Is_Data (F) then
-                        Process_Nb_Events := Process_Nb_Events + 1;
-                     else
-                        Display_Error ("Communication Pattern not handled",
-                                       Fatal => True);
-                     end if;
-
-                     Process_Nb_Lock_Objects := Process_Nb_Lock_Objects + 1;
+         while Present (F) loop
+            if Kind (F) = K_Port_Spec_Instance then
+               if Get_Connection_Pattern (F) = Intra_Process
+                 and then Is_In (F)
+               then
+                  if AIN.Is_Data (F) and then not AIN.Is_Event (F) then
+                     Process_Nb_Blackboards   := Process_Nb_Blackboards + 1;
+                     Process_Blackboards_Size :=
+                       Process_Blackboards_Size +
+                       To_Bytes (Get_Data_Size (Corresponding_Instance (F)));
+                  elsif AIN.Is_Data (F) and then AIN.Is_Event (F) then
+                     Process_Nb_Buffers := Process_Nb_Buffers + 1;
+                  elsif AIN.Is_Event (F) and then not AIN.Is_Data (F) then
+                     Process_Nb_Events := Process_Nb_Events + 1;
+                  else
+                     Display_Error
+                       ("Communication Pattern not handled",
+                        Fatal => True);
                   end if;
-               end if;
-               F := Next_Node (F);
-            end loop;
-         end if;
 
-      end Visit_Thread_Instance;
+                  Process_Nb_Lock_Objects := Process_Nb_Lock_Objects + 1;
+               end if;
+            end if;
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+   end Visit_Thread_Instance;
 
    ----------------------------
    -- Visit_Process_Instance --
@@ -248,9 +247,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
 
       Partitions_Node := Make_XML_Node ("Partitions");
 
-      Append_Node_To_List
-        (Partitions_Node,
-         XTN.Subitems (Current_XML_Node));
+      Append_Node_To_List (Partitions_Node, XTN.Subitems (Current_XML_Node));
 
       --
       --  First, make the <Partition/> nodes
@@ -278,40 +275,40 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S                       : Node_Id;
-      Corresponding_Process   : Node_Id := No_Node;
-      Partition_Node          : Node_Id;
+      S                     : Node_Id;
+      Corresponding_Process : Node_Id := No_Node;
+      Partition_Node        : Node_Id;
    begin
       Corresponding_Process := Find_Associated_Process (E);
 
       if Corresponding_Process /= No_Node then
 
-         Process_Nb_Threads         := 0;
-         Process_Nb_Buffers         := 0;
-         Process_Nb_Events          := 0;
-         Process_Nb_Lock_Objects    := 0;
-         Process_Nb_Blackboards     := 0;
-         Process_Blackboards_Size   := 0;
-         Process_Buffers_Size       := 0;
+         Process_Nb_Threads       := 0;
+         Process_Nb_Buffers       := 0;
+         Process_Nb_Events        := 0;
+         Process_Nb_Lock_Objects  := 0;
+         Process_Nb_Blackboards   := 0;
+         Process_Blackboards_Size := 0;
+         Process_Buffers_Size     := 0;
 
          Visit (Corresponding_Process);
 
          --
          --  First, we create the description of the partition.
          --
-         Partition_Node := Map_Partition (Corresponding_Process,
-                            E,
-                            Partition_Identifier,
-                            Process_Nb_Threads,
-                            Process_Nb_Buffers,
-                            Process_Nb_Events,
-                            Process_Nb_Lock_Objects,
-                            Process_Nb_Blackboards,
-                            Process_Blackboards_Size,
-                            Process_Buffers_Size);
-         Append_Node_To_List
-            (Partition_Node,
-             XTN.Subitems (Partitions_Node));
+         Partition_Node :=
+           Map_Partition
+             (Corresponding_Process,
+              E,
+              Partition_Identifier,
+              Process_Nb_Threads,
+              Process_Nb_Buffers,
+              Process_Nb_Events,
+              Process_Nb_Lock_Objects,
+              Process_Nb_Blackboards,
+              Process_Blackboards_Size,
+              Process_Buffers_Size);
+         Append_Node_To_List (Partition_Node, XTN.Subitems (Partitions_Node));
 
          Partition_Identifier := Partition_Identifier + 1;
       end if;

@@ -34,8 +34,8 @@ with GNAT.Case_Util;
 
 with Utils; use Utils;
 
-with Charset; use Charset;
-with Ocarina.Namet;   use Ocarina.Namet;
+with Charset;       use Charset;
+with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Tree.Nutils;
@@ -119,7 +119,7 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
       end if;
 
       Initialized := True;
-      Local := False;
+      Local       := False;
 
       Register_Casing_Rule ("AADL");
       Register_Casing_Rule ("char_array");
@@ -157,7 +157,7 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
          N    := New_Node (K_Defining_Identifier);
          Set_Name (N, Name);
 
-         Local := E = Rh_Subprograms;
+         Local := E = RH_Subprograms;
 
          RHD (E) := Make_Include_Clause (N, Local);
       end loop;

@@ -616,7 +616,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
              (Defining_Identifier => Map_Task_Identifier (E),
               Generic_Package     =>
                 RU (RU_PolyORB_HI_Periodic_Task, Elaborated => True),
-              Parameter_List      => Parameter_List);
+              Parameter_List => Parameter_List);
          return N;
       end Periodic_Task_Instantiation;
 
@@ -677,7 +677,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
              (Defining_Identifier => Map_Task_Identifier (E),
               Generic_Package     =>
                 RU (RU_PolyORB_HI_Sporadic_Task, Elaborated => True),
-              Parameter_List      => Parameter_List);
+              Parameter_List => Parameter_List);
          return N;
       end Sporadic_Task_Instantiation;
 
@@ -737,7 +737,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
              (Defining_Identifier => Map_Task_Identifier (E),
               Generic_Package     =>
                 RU (RU_PolyORB_HI_Aperiodic_Task, Elaborated => True),
-              Parameter_List      => Parameter_List);
+              Parameter_List => Parameter_List);
          return N;
       end Aperiodic_Task_Instantiation;
 
@@ -760,7 +760,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
              (Defining_Identifier => Map_Task_Identifier (E),
               Generic_Package     =>
                 RU (RU_PolyORB_HI_Background_Task, Elaborated => True),
-              Parameter_List      => Parameter_List);
+              Parameter_List => Parameter_List);
          return N;
       end Background_Task_Instantiation;
 
@@ -778,10 +778,11 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
          --  Build the package instantiation
 
-         N := Make_Package_Instantiation
-           (Defining_Identifier => Map_Task_Identifier (E),
-            Generic_Package     => RU (RU_PolyORB_HI_Null_Task),
-            Parameter_List      => Parameter_List);
+         N :=
+           Make_Package_Instantiation
+             (Defining_Identifier => Map_Task_Identifier (E),
+              Generic_Package     => RU (RU_PolyORB_HI_Null_Task),
+              Parameter_List      => Parameter_List);
          return N;
       end Null_Task_Instantiation;
 
@@ -1036,7 +1037,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          U : constant Node_Id :=
            ADN.Distributed_Application_Unit
              (ADN.Deployment_Node (Backend_Node (Identifier (E))));
-         P                   : constant Node_Id := ADN.Entity (U);
+         P                   : constant Node_Id              := ADN.Entity (U);
          S                   : Node_Id;
          N                   : Node_Id;
          Scheduling_Protocol : Supported_Scheduling_Protocol :=
@@ -1062,16 +1063,16 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                Warning => True);
 
             Scheduling_Protocol := POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL;
-         elsif Scheduling_Protocol
-           /= POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL
+         elsif Scheduling_Protocol /=
+           POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL
            and then Scheduling_Protocol /= ROUND_ROBIN_PROTOCOL
          then
             Display_Located_Error
               (Loc (Parent_Subcomponent (E)),
-               "Incompatible scheduling protocol, "
-                 & "PolyORB-HI/Ada runtime requires "
-                 & "POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL or"
-                 & " ROUND_ROBIN_PROTOCOL",
+               "Incompatible scheduling protocol, " &
+               "PolyORB-HI/Ada runtime requires " &
+               "POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL or" &
+               " ROUND_ROBIN_PROTOCOL",
                Fatal => True);
 
             --  XXX In case of Round robin, we should also check that
@@ -1100,18 +1101,21 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
                   Bind_AADL_To_Object (Identifier (S), N);
 
-                  if Get_Concurrency_Protocol (Corresponding_Instance (S))
-                    = Priority_Ceiling
+                  if Get_Concurrency_Protocol (Corresponding_Instance (S)) =
+                    Priority_Ceiling
                   then
                      --  XXX For now, we disable SPARK_Mode due to the
                      --  inability of SPARK GPL2015 to support
                      --  variable that denotes protected objects.
 
-                     N := Make_Pragma_Statement
-                       (Pragma_SPARK_Mode, Make_List_Id (RE (RE_Off)));
+                     N :=
+                       Make_Pragma_Statement
+                         (Pragma_SPARK_Mode,
+                          Make_List_Id (RE (RE_Off)));
 
                      Append_Node_To_List
-                       (N, ADN.Package_Headers (Current_Package));
+                       (N,
+                        ADN.Package_Headers (Current_Package));
                   end if;
 
                else
@@ -1205,20 +1209,19 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          N : Node_Id;
          O : Node_Id;
 
-         Scheduling_Protocol : Supported_Scheduling_Protocol
-           := Unknown_Scheduler;
+         Scheduling_Protocol : Supported_Scheduling_Protocol :=
+           Unknown_Scheduler;
          Process_Node : Node_Id;
 
       begin
          --  Determine the scheduler that controls the current thread instance
 
-         Process_Node := Get_Container_Process
-           (Parent_Subcomponent (E));
+         Process_Node := Get_Container_Process (Parent_Subcomponent (E));
 
          if Present (Process_Node) then
-            Scheduling_Protocol := Get_Scheduling_Protocol
-              (Get_Bound_Processor
-                 (Corresponding_Instance (Process_Node)));
+            Scheduling_Protocol :=
+              Get_Scheduling_Protocol
+                (Get_Bound_Processor (Corresponding_Instance (Process_Node)));
          end if;
 
          if Has_Ports (E) then
@@ -1308,39 +1311,45 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
          case P is
             when Thread_Periodic =>
-               N := Message_Comment
-                 ("Periodic task : "
-                    & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Periodic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             when Thread_Sporadic =>
-               N := Message_Comment
-                 ("Sporadic task : "
-                    & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Sporadic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             when Thread_Hybrid =>
-               N := Message_Comment
-                 ("Hybrid task : "
-                    & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Hybrid task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             when Thread_Aperiodic =>
-               N := Message_Comment
-                 ("Aperiodic task : "
-                    & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Aperiodic task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             when Thread_Background =>
-               N := Message_Comment
-                 ("Background task : "
-                    & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("Background task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             when Thread_ISR =>
-               N := Message_Comment
-                 ("ISR task : "
-                    & Get_Name_String (Display_Name (Identifier (S))));
+               N :=
+                 Message_Comment
+                   ("ISR task : " &
+                    Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
             when others =>
@@ -1365,7 +1374,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
          else
             --  Default case : FIFO_WITHIN_PRIORITIES
-            case P  is
+            case P is
                when Thread_Periodic =>
                   --  Instantiate the periodic task
 
@@ -1390,7 +1399,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                   N := Aperiodic_Task_Instantiation (E);
                   Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-               when Thread_Background  =>
+               when Thread_Background =>
                   --  Instantiate the background task
 
                   N := Background_Task_Instantiation (E);
@@ -1428,12 +1437,13 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
             while Present (O) loop
                if AINU.Is_Data (Corresponding_Instance (O)) then
-                  N := Make_Object_Declaration
-                    (Defining_Identifier => Map_Ada_Defining_Identifier (O),
-                     Object_Definition   => Map_Ada_Data_Type_Designator
-                       (Corresponding_Instance (O)));
-                  Append_Node_To_List
-                    (N, ADN.Visible_Part (Current_Package));
+                  N :=
+                    Make_Object_Declaration
+                      (Defining_Identifier => Map_Ada_Defining_Identifier (O),
+                       Object_Definition   =>
+                         Map_Ada_Data_Type_Designator
+                           (Corresponding_Instance (O)));
+                  Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
                   --  Link the variable and the object
 
@@ -3819,10 +3829,11 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                 (Make_Defining_Identifier (SN (S_Send)),
                  Extract_Designator
                    (ADN.Send_Node
-                      (Backend_Node (Identifier
-                                       (Corresponding_Instance
-                                          (Get_Container_Process
-                                             (Parent_Subcomponent (E))))))));
+                      (Backend_Node
+                         (Identifier
+                            (Corresponding_Instance
+                               (Get_Container_Process
+                                  (Parent_Subcomponent (E))))))));
             Append_Node_To_List (N, Inst_Profile);
 
             --  The 'Next_Deadline' genertic formal
@@ -3841,7 +3852,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                    Make_Defining_Identifier (Map_Interrogators_Name (E)),
                  Generic_Package =>
                    RU (RU_PolyORB_HI_Thread_Interrogators, Elaborated => True),
-                 Parameter_List  => Inst_Profile);
+                 Parameter_List => Inst_Profile);
 
             Append_Node_To_List (N, ADN.Statements (Current_Package));
          end;
@@ -3898,11 +3909,10 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                  Make_Used_Package (RU (RU_PolyORB_HI_Generated_Deployment));
                Append_Node_To_List (N, Declarations);
 
-               N := Make_Pragma_Statement
-                 (Pragma_Unreferenced,
-                  Make_List_Id
-                    (Make_Defining_Identifier
-                       (PN (P_Entity))));
+               N :=
+                 Make_Pragma_Statement
+                   (Pragma_Unreferenced,
+                    Make_List_Id (Make_Defining_Identifier (PN (P_Entity))));
                Append_Node_To_List (N, Declarations);
 
                --  Build a string literal for the pragma Warnings On|Off:
@@ -3990,17 +4000,17 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
             function Make_RR_Call
               (Spec : Node_Id;
-               RR   : Runtime_Routine)
-              return Node_Id
+               RR   : Runtime_Routine) return Node_Id
             is
                Alternatives  : constant List_Id := Get_List (E, RR);
-               Actual_Implem : constant Node_Id := Make_Defining_Identifier
-                 (ADN.Name (ADN.Defining_Identifier (Spec)));
+               Actual_Implem : constant Node_Id :=
+                 Make_Defining_Identifier
+                   (ADN.Name (ADN.Defining_Identifier (Spec)));
                Call_Profile  : constant List_Id := New_List (ADN.K_List_Id);
-               Param_Profile : constant List_Id := ADN.Parameter_Profile
-                 (Spec);
-               P             : Node_Id;
-               N             : Node_Id;
+               Param_Profile : constant List_Id :=
+                 ADN.Parameter_Profile (Spec);
+               P : Node_Id;
+               N : Node_Id;
             begin
                pragma Assert (Alternatives /= No_List);
 
@@ -4013,8 +4023,9 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                P := ADN.Next_Node (ADN.First_Node (Param_Profile));
 
                while Present (P) loop
-                  N := Make_Defining_Identifier
-                    (ADN.Name (ADN.Defining_Identifier (P)));
+                  N :=
+                    Make_Defining_Identifier
+                      (ADN.Name (ADN.Defining_Identifier (P)));
                   Append_Node_To_List (N, Call_Profile);
 
                   P := ADN.Next_Node (P);
@@ -4332,18 +4343,22 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                --  shared variable.
 
                if AINU.Is_Data (Corresponding_Instance (S))
-                 and then Get_Concurrency_Protocol (Corresponding_Instance (S))
-                 = Priority_Ceiling
+                 and then
+                   Get_Concurrency_Protocol (Corresponding_Instance (S)) =
+                   Priority_Ceiling
                then
                   --  XXX For now, we disable SPARK_Mode due to the
                   --  inability of SPARK GPL2015 to support
                   --  variable that denotes protected objects.
 
-                  N := Make_Pragma_Statement
-                    (Pragma_SPARK_Mode, Make_List_Id (RE (RE_Off)));
+                  N :=
+                    Make_Pragma_Statement
+                      (Pragma_SPARK_Mode,
+                       Make_List_Id (RE (RE_Off)));
 
                   Append_Node_To_List
-                    (N, ADN.Package_Headers (Current_Package));
+                    (N,
+                     ADN.Package_Headers (Current_Package));
                end if;
 
                --  Visit the component instance corresponding to the

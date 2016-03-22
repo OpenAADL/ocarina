@@ -29,7 +29,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Strings; use Ada.Strings;
+with Ada.Strings;       use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
 with Locations;
@@ -62,7 +62,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
-   package XV  renames Ocarina.Backends.XML_Values;
+   package XV renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Component (E : Node_Id);
    procedure Visit_System (E : Node_Id);
@@ -70,15 +70,16 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    procedure Visit_Processor (E : Node_Id);
    procedure Visit_Virtual_Processor (E : Node_Id);
 
-   procedure Add_Applications
-      (AADL_Processor : Node_Id; XML_Node : Node_Id);
+   procedure Add_Applications (AADL_Processor : Node_Id; XML_Node : Node_Id);
    procedure Add_Shared_Data_Regions
-      (AADL_Processor : Node_Id; XML_Node : Node_Id);
+     (AADL_Processor : Node_Id;
+      XML_Node       : Node_Id);
    procedure Add_Shared_Library_Regions
-      (AADL_Processor : Node_Id; XML_Node : Node_Id);
+     (AADL_Processor : Node_Id;
+      XML_Node       : Node_Id);
    procedure Add_Application
-      (AADL_Virtual_Processor : Node_Id;
-       XML_Node : Node_Id);
+     (AADL_Virtual_Processor : Node_Id;
+      XML_Node               : Node_Id);
 
    -----------
    -- Visit --
@@ -103,8 +104,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    ---------------------
 
    procedure Visit_Component (E : Node_Id) is
-      Category : constant Component_Category :=
-         Get_Category_Of_Component (E);
+      Category : constant Component_Category := Get_Category_Of_Component (E);
    begin
       case Category is
          when CC_System =>
@@ -136,11 +136,11 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       Processes_List : List_Id;
    begin
       Processes_List :=
-         XTN.Processes (Backend_Node (Identifier (Get_Bound_Processor (E))));
+        XTN.Processes (Backend_Node (Identifier (Get_Bound_Processor (E))));
 
-         N := XTU.Make_Container (E);
+      N := XTU.Make_Container (E);
 
-         XTU.Append_Node_To_List (N, Processes_List);
+      XTU.Append_Node_To_List (N, Processes_List);
    end Visit_Process;
 
    --------------------------------------
@@ -221,7 +221,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
          while Present (S) loop
             Component_Instance := Corresponding_Instance (S);
             if Get_Category_Of_Component (Component_Instance) =
-               CC_Processor
+              CC_Processor
             then
                Visit_Processor (Component_Instance);
             end if;
@@ -248,64 +248,68 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    -----------------------
 
    procedure Add_Application
-      (AADL_Virtual_Processor : Node_Id;
-       XML_Node : Node_Id) is
-      Application_Node              : Node_Id;
-      Application_Description_Node  : Node_Id;
-      Memory_Size_Node              : Node_Id;
-      Ports_Node                    : Node_Id;
-      Port_Node                     : Node_Id;
-      Corresponding_Process         : Node_Id;
-      Feature                       : Node_Id;
-      Size                          : Unsigned_Long_Long;
-      Queue_Size                    : Long_Long;
-      Refresh_Period                : Time_Type;
-      Refresh_Period_Second         : Long_Double;
+     (AADL_Virtual_Processor : Node_Id;
+      XML_Node               : Node_Id)
+   is
+      Application_Node             : Node_Id;
+      Application_Description_Node : Node_Id;
+      Memory_Size_Node             : Node_Id;
+      Ports_Node                   : Node_Id;
+      Port_Node                    : Node_Id;
+      Corresponding_Process        : Node_Id;
+      Feature                      : Node_Id;
+      Size                         : Unsigned_Long_Long;
+      Queue_Size                   : Long_Long;
+      Refresh_Period               : Time_Type;
+      Refresh_Period_Second        : Long_Double;
    begin
       --  Application Node that is the child of Applications
 
-      Corresponding_Process := Find_Associated_Process
-         (AADL_Virtual_Processor);
+      Corresponding_Process :=
+        Find_Associated_Process (AADL_Virtual_Processor);
 
       Application_Node := Make_XML_Node ("Application");
-      XTU.Add_Attribute ("Name",
-                        Get_Name_String
-                           (Map_Application_Name
-                              (AADL_Virtual_Processor, True)),
-                        Application_Node);
-      Append_Node_To_List (Application_Node,
-                           XTN.Subitems (XML_Node));
+      XTU.Add_Attribute
+        ("Name",
+         Get_Name_String (Map_Application_Name (AADL_Virtual_Processor, True)),
+         Application_Node);
+      Append_Node_To_List (Application_Node, XTN.Subitems (XML_Node));
 
       --  Application Description with MemorySize and Ports nodes
 
-      Application_Description_Node :=
-         Make_XML_Node ("ApplicationDescription");
-      Append_Node_To_List (Application_Description_Node,
-                           XTN.Subitems (Application_Node));
+      Application_Description_Node := Make_XML_Node ("ApplicationDescription");
+      Append_Node_To_List
+        (Application_Description_Node,
+         XTN.Subitems (Application_Node));
 
       Memory_Size_Node := Make_XML_Node ("MemorySize");
-      Append_Node_To_List (Memory_Size_Node,
-                           XTN.Subitems (Application_Description_Node));
+      Append_Node_To_List
+        (Memory_Size_Node,
+         XTN.Subitems (Application_Description_Node));
       XTU.Add_Attribute ("MemorySizeBss", "0x10000", Memory_Size_Node);
       XTU.Add_Attribute ("MemorySizeText", "0x10000", Memory_Size_Node);
       XTU.Add_Attribute ("MemorySizeData", "0x10000", Memory_Size_Node);
       XTU.Add_Attribute ("MemorySizeRoData", "0x10000", Memory_Size_Node);
-      XTU.Add_Attribute ("MemorySizePersistentData",
-                         "0x10000",
-                         Memory_Size_Node);
-      XTU.Add_Attribute ("MemorySizePersistentBss",
-                         "0x10000", Memory_Size_Node);
+      XTU.Add_Attribute
+        ("MemorySizePersistentData",
+         "0x10000",
+         Memory_Size_Node);
+      XTU.Add_Attribute
+        ("MemorySizePersistentBss",
+         "0x10000",
+         Memory_Size_Node);
 
       Ports_Node := Make_XML_Node ("Ports");
-      Append_Node_To_List (Ports_Node,
-                           XTN.Subitems (Application_Description_Node));
+      Append_Node_To_List
+        (Ports_Node,
+         XTN.Subitems (Application_Description_Node));
 
       Feature := First_Node (Features (Corresponding_Process));
 
       while Present (Feature) loop
          if Is_Event (Feature) and then Is_Data (Feature) then
-            Size := To_Bytes (Get_Data_Size
-                        (Corresponding_Instance (Feature)));
+            Size :=
+              To_Bytes (Get_Data_Size (Corresponding_Instance (Feature)));
             Queue_Size := Get_Queue_Size (Feature);
 
             if Queue_Size = -1 then
@@ -314,94 +318,71 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
 
             Port_Node := Make_XML_Node ("QueuingPort");
 
-            XTU.Add_Attribute ("MessageSize",
-                              Trim (Unsigned_Long_Long'Image
-                                 (Size), Left),
-                              Port_Node);
+            XTU.Add_Attribute
+              ("MessageSize",
+               Trim (Unsigned_Long_Long'Image (Size), Left),
+               Port_Node);
 
-            XTU.Add_Attribute ("Name",
-                               Get_Name_String
-                                 (C_Common.Mapping.Map_Port_Name (Feature)),
-                               Port_Node);
+            XTU.Add_Attribute
+              ("Name",
+               Get_Name_String (C_Common.Mapping.Map_Port_Name (Feature)),
+               Port_Node);
 
-            XTU.Add_Attribute ("QueueLength",
-                               Trim (Long_Long'Image
-                                 (Queue_Size), Left),
-                              Port_Node);
+            XTU.Add_Attribute
+              ("QueueLength",
+               Trim (Long_Long'Image (Queue_Size), Left),
+               Port_Node);
 
-            if not Is_In (Feature) and then
-               Is_Out (Feature)
-            then
-               XTU.Add_Attribute ("Direction",
-                                  "SOURCE",
-                                  Port_Node);
+            if not Is_In (Feature) and then Is_Out (Feature) then
+               XTU.Add_Attribute ("Direction", "SOURCE", Port_Node);
 
-               XTU.Add_Attribute ("Protocol",
-                                  "SENDER_BLOCK",
-                                  Port_Node);
+               XTU.Add_Attribute ("Protocol", "SENDER_BLOCK", Port_Node);
             end if;
 
-            if Is_In (Feature) and then
-               not Is_Out (Feature)
-            then
-               XTU.Add_Attribute ("Direction",
-                                  "DESTINATION",
-                                  Port_Node);
-               XTU.Add_Attribute ("Protocol",
-                                  "NOT_APPLICABLE",
-                                  Port_Node);
+            if Is_In (Feature) and then not Is_Out (Feature) then
+               XTU.Add_Attribute ("Direction", "DESTINATION", Port_Node);
+               XTU.Add_Attribute ("Protocol", "NOT_APPLICABLE", Port_Node);
             end if;
 
-            Append_Node_To_List (Port_Node,
-                                 XTN.Subitems (Ports_Node));
+            Append_Node_To_List (Port_Node, XTN.Subitems (Ports_Node));
          end if;
 
          if not Is_Event (Feature) and then Is_Data (Feature) then
-            Size := To_Bytes (Get_Data_Size
-                        (Corresponding_Instance (Feature)));
+            Size :=
+              To_Bytes (Get_Data_Size (Corresponding_Instance (Feature)));
 
             Port_Node := Make_XML_Node ("SamplingPort");
-            XTU.Add_Attribute ("MessageSize",
-                              Trim (Unsigned_Long_Long'Image
-                                 (Size), Left),
-                              Port_Node);
+            XTU.Add_Attribute
+              ("MessageSize",
+               Trim (Unsigned_Long_Long'Image (Size), Left),
+               Port_Node);
 
-            XTU.Add_Attribute ("Name",
-                               Get_Name_String
-                                 (C_Common.Mapping.Map_Port_Name (Feature)),
-                               Port_Node);
+            XTU.Add_Attribute
+              ("Name",
+               Get_Name_String (C_Common.Mapping.Map_Port_Name (Feature)),
+               Port_Node);
 
-            if Is_In (Feature) and then
-               not Is_Out (Feature)
-            then
-               Refresh_Period := Get_POK_Refresh_Time (Feature);
+            if Is_In (Feature) and then not Is_Out (Feature) then
+               Refresh_Period        := Get_POK_Refresh_Time (Feature);
                Refresh_Period_Second :=
-                  (Long_Double (To_Milliseconds (Refresh_Period)) /
-                   Long_Double (1000.0));
+                 (Long_Double (To_Milliseconds (Refresh_Period)) /
+                  Long_Double (1000.0));
 
-               XTU.Add_Attribute ("Direction",
-                                  "DESTINATION",
-                                  Port_Node);
+               XTU.Add_Attribute ("Direction", "DESTINATION", Port_Node);
 
-               XTU.Add_Attribute ("RefreshRate",
-                           XV.New_Floating_Point_Value (Refresh_Period_Second),
-                           Port_Node);
+               XTU.Add_Attribute
+                 ("RefreshRate",
+                  XV.New_Floating_Point_Value (Refresh_Period_Second),
+                  Port_Node);
             end if;
 
-            if not Is_In (Feature) and then
-               Is_Out (Feature)
-            then
-               XTU.Add_Attribute ("Direction",
-                                  "SOURCE",
-                                  Port_Node);
+            if not Is_In (Feature) and then Is_Out (Feature) then
+               XTU.Add_Attribute ("Direction", "SOURCE", Port_Node);
 
-               XTU.Add_Attribute ("RefreshRate",
-                                  "INFINITE_TIME",
-                                  Port_Node);
+               XTU.Add_Attribute ("RefreshRate", "INFINITE_TIME", Port_Node);
             end if;
 
-            Append_Node_To_List (Port_Node,
-                                 XTN.Subitems (Ports_Node));
+            Append_Node_To_List (Port_Node, XTN.Subitems (Ports_Node));
          end if;
 
          Feature := Next_Node (Feature);
@@ -412,10 +393,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    --  Add_Applications  --
    ------------------------
 
-   procedure Add_Applications
-      (AADL_Processor : Node_Id; XML_Node : Node_Id) is
+   procedure Add_Applications (AADL_Processor : Node_Id; XML_Node : Node_Id) is
       Applications_Node : Node_Id;
-      S : Node_Id;
+      S                 : Node_Id;
    begin
 
       --  Applications Node first
@@ -442,7 +422,9 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    -------------------------------
 
    procedure Add_Shared_Data_Regions
-      (AADL_Processor : Node_Id; XML_Node : Node_Id) is
+     (AADL_Processor : Node_Id;
+      XML_Node       : Node_Id)
+   is
       pragma Unreferenced (AADL_Processor);
 
       Shared_Data_Node : Node_Id;
@@ -456,13 +438,15 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    ----------------------------------
 
    procedure Add_Shared_Library_Regions
-      (AADL_Processor : Node_Id; XML_Node : Node_Id) is
+     (AADL_Processor : Node_Id;
+      XML_Node       : Node_Id)
+   is
       pragma Unreferenced (AADL_Processor);
 
-      Shared_Library_Node : Node_Id;
-      Shared_Library_Regions_Node : Node_Id;
+      Shared_Library_Node             : Node_Id;
+      Shared_Library_Regions_Node     : Node_Id;
       Shared_Library_Description_Node : Node_Id;
-      Shared_Memory_Size_Node : Node_Id;
+      Shared_Memory_Size_Node         : Node_Id;
    begin
       --  look like the following.
       --
@@ -483,59 +467,61 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       --  First, add a central node for all shared library regions.
 
       Shared_Library_Regions_Node := Make_XML_Node ("SharedLibraryRegions");
-      Append_Node_To_List (Shared_Library_Regions_Node,
-                           XTN.Subitems (XML_Node));
+      Append_Node_To_List
+        (Shared_Library_Regions_Node,
+         XTN.Subitems (XML_Node));
 
       --  Take care of all sub shared libraries.
 
       Shared_Library_Node := Make_XML_Node ("SharedLibrary");
       XTU.Add_Attribute ("Name", "vxSysLib", Shared_Library_Node);
-      Append_Node_To_List (Shared_Library_Node,
-                           XTN.Subitems
-                              (Shared_Library_Regions_Node));
+      Append_Node_To_List
+        (Shared_Library_Node,
+         XTN.Subitems (Shared_Library_Regions_Node));
 
       --  The SharedLibraryDescription node now.
 
-      Shared_Library_Description_Node
-         := Make_XML_Node ("SharedLibraryDescription");
-      XTU.Add_Attribute ("SystemSharedLibrary",
-                         "true",
-                         Shared_Library_Description_Node);
-      XTU.Add_Attribute ("VirtualAddress",
-                         "0x50000000",
-                         Shared_Library_Description_Node);
-      Append_Node_To_List (Shared_Library_Description_Node,
-                           XTN.Subitems (Shared_Library_Node));
+      Shared_Library_Description_Node :=
+        Make_XML_Node ("SharedLibraryDescription");
+      XTU.Add_Attribute
+        ("SystemSharedLibrary",
+         "true",
+         Shared_Library_Description_Node);
+      XTU.Add_Attribute
+        ("VirtualAddress",
+         "0x50000000",
+         Shared_Library_Description_Node);
+      Append_Node_To_List
+        (Shared_Library_Description_Node,
+         XTN.Subitems (Shared_Library_Node));
 
       --  The MemorySize node now.
 
       Shared_Memory_Size_Node := Make_XML_Node ("MemorySize");
-      XTU.Add_Attribute ("MemorySizeText",
-                         "0x40000",
-                         Shared_Memory_Size_Node);
+      XTU.Add_Attribute ("MemorySizeText", "0x40000", Shared_Memory_Size_Node);
 
-      XTU.Add_Attribute ("MemorySizeRoData",
-                         "0x10000",
-                         Shared_Memory_Size_Node);
+      XTU.Add_Attribute
+        ("MemorySizeRoData",
+         "0x10000",
+         Shared_Memory_Size_Node);
 
-      XTU.Add_Attribute ("MemorySizeData",
-                         "0x10000",
-                         Shared_Memory_Size_Node);
+      XTU.Add_Attribute ("MemorySizeData", "0x10000", Shared_Memory_Size_Node);
 
-      XTU.Add_Attribute ("MemorySizeBss",
-                         "0x10000",
-                         Shared_Memory_Size_Node);
+      XTU.Add_Attribute ("MemorySizeBss", "0x10000", Shared_Memory_Size_Node);
 
-      XTU.Add_Attribute ("MemorySizePersistentData",
-                         "0x10000",
-                         Shared_Memory_Size_Node);
+      XTU.Add_Attribute
+        ("MemorySizePersistentData",
+         "0x10000",
+         Shared_Memory_Size_Node);
 
-      XTU.Add_Attribute ("MemorySizePersistentBss",
-                         "0x10000",
-                         Shared_Memory_Size_Node);
+      XTU.Add_Attribute
+        ("MemorySizePersistentBss",
+         "0x10000",
+         Shared_Memory_Size_Node);
 
-      Append_Node_To_List (Shared_Memory_Size_Node,
-                           XTN.Subitems (Shared_Library_Description_Node));
+      Append_Node_To_List
+        (Shared_Memory_Size_Node,
+         XTN.Subitems (Shared_Library_Description_Node));
    end Add_Shared_Library_Regions;
 
 end Ocarina.Backends.Vxworks653_Conf.Naming;

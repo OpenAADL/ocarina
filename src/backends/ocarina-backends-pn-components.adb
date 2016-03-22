@@ -148,7 +148,7 @@ package body Ocarina.Backends.PN.Components is
 
       Instance     : Node_Id;
       PN_Generated : Node_Id;
-      Success : Boolean := False;
+      Success      : Boolean := False;
       pragma Warnings (Off, Success); --  XXX
 
       --  0 for CPN, 1 for TPN

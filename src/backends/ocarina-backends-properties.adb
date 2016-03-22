@@ -46,8 +46,7 @@ with Ocarina.Instances.Queries;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
 
-with Ocarina.Backends.Properties.Utils;
-use Ocarina.Backends.Properties.Utils;
+with Ocarina.Backends.Properties.Utils; use Ocarina.Backends.Properties.Utils;
 
 package body Ocarina.Backends.Properties is
 
@@ -152,10 +151,10 @@ package body Ocarina.Backends.Properties is
    -- Process component properties --
    ----------------------------------
 
-   Port_Number             : Name_Id;
-   Processor_Binding       : Name_Id;
-   Function_Binding        : Name_Id;
-   Memory_Binding          : Name_Id;
+   Port_Number       : Name_Id;
+   Processor_Binding : Name_Id;
+   Function_Binding  : Name_Id;
+   Memory_Binding    : Name_Id;
 
    Scheduling_Protocol                                   : Name_Id;
    PARAMETRIC_PROTOCOL_Name                              : Name_Id;
@@ -864,8 +863,10 @@ package body Ocarina.Backends.Properties is
    is
       pragma Assert (AINU.Is_Data (D));
 
-      function Get_IEEE754_Precision_Enumerator is new
-        Check_And_Get_Property_Enumerator (T => Supported_IEEE754_Precision);
+      function Get_IEEE754_Precision_Enumerator is
+         new Check_And_Get_Property_Enumerator
+        (T => Supported_IEEE754_Precision);
+
    begin
       return Get_IEEE754_Precision_Enumerator (D, IEEE754_Precision);
    end Get_IEEE754_Precision;
@@ -910,10 +911,10 @@ package body Ocarina.Backends.Properties is
    is
       pragma Assert (AINU.Is_Data (D));
 
-      function Get_Number_Representation_Enumerator is new
-        Check_And_Get_Property_Enumerator_With_Default
-        (T => Supported_Number_Representation,
-        Default_Value => None);
+      function Get_Number_Representation_Enumerator is
+         new Check_And_Get_Property_Enumerator_With_Default
+        (T             => Supported_Number_Representation,
+         Default_Value => None);
 
    begin
       return Get_Number_Representation_Enumerator (D, Number_Representation);
@@ -1090,14 +1091,15 @@ package body Ocarina.Backends.Properties is
    is
       pragma Assert (AINU.Is_Data (D));
 
-      function Get_Concurrency_Protocol_Enumerator is new
-        Check_And_Get_Property_Enumerator_With_Default
-        (T => Supported_Concurrency_Control_Protocol,
+      function Get_Concurrency_Protocol_Enumerator is
+         new Check_And_Get_Property_Enumerator_With_Default
+        (T             => Supported_Concurrency_Control_Protocol,
          Default_Value => None_Specified);
 
    begin
       return Get_Concurrency_Protocol_Enumerator
-        (D, Data_Concurrency_Protocol);
+          (D,
+           Data_Concurrency_Protocol);
    end Get_Concurrency_Protocol;
 
    -------------------------
@@ -2223,8 +2225,7 @@ package body Ocarina.Backends.Properties is
    -------------------------
 
    function Get_Bound_Processor (P : Node_Id) return Node_Id is
-      pragma Assert (Is_Process_Or_Device (P)
-                    or else Is_Thread (P));
+      pragma Assert (Is_Process_Or_Device (P) or else Is_Thread (P));
 
    begin
       if not Is_Defined_Reference_Property (P, Processor_Binding)
@@ -2765,7 +2766,7 @@ package body Ocarina.Backends.Properties is
 
    procedure Init is
    begin
-      Core_Id := Get_String_Name ("processor_properties::core_id");
+      Core_Id          := Get_String_Name ("processor_properties::core_id");
       Source_Language  := Get_String_Name ("source_language");
       Source_Name      := Get_String_Name ("source_name");
       T_Source_Name    := Get_String_Name ("transformations::source_name");
@@ -2837,9 +2838,9 @@ package body Ocarina.Backends.Properties is
       Processor_Binding := Get_String_Name ("actual_processor_binding");
       Function_Binding  :=
         Get_String_Name ("aram_properties::actual_function_binding");
-      Memory_Binding          := Get_String_Name ("actual_memory_binding");
-      Byte_Count              := Get_String_Name ("byte_count");
-      Word_Size               := Get_String_Name ("word_size");
+      Memory_Binding := Get_String_Name ("actual_memory_binding");
+      Byte_Count     := Get_String_Name ("byte_count");
+      Word_Size      := Get_String_Name ("word_size");
 
       Location                  := Get_String_Name ("deployment::location");
       Execution_Platform := Get_String_Name ("deployment::execution_platform");
@@ -4075,7 +4076,8 @@ package body Ocarina.Backends.Properties is
    function Get_Driver_Name (Device : Node_Id) return Name_Id is
    begin
       return Check_And_Get_Property
-        (Device, Get_String_Name ("deployment::driver_name"));
+          (Device,
+           Get_String_Name ("deployment::driver_name"));
    end Get_Driver_Name;
 
    -----------------------
@@ -4085,7 +4087,8 @@ package body Ocarina.Backends.Properties is
    function Get_Configuration (Device : Node_Id) return Name_Id is
    begin
       return Check_And_Get_Property
-        (Device, Get_String_Name ("deployment::configuration"));
+          (Device,
+           Get_String_Name ("deployment::configuration"));
    end Get_Configuration;
 
    ----------------------------

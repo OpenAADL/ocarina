@@ -32,10 +32,10 @@
 with GNAT.Table;
 with GNAT.Case_Util;
 
-with Charset;   use Charset;
-with Locations; use Locations;
-with Ocarina.Namet;     use Ocarina.Namet;
-with Utils;     use Utils;
+with Charset;       use Charset;
+with Locations;     use Locations;
+with Ocarina.Namet; use Ocarina.Namet;
+with Utils;         use Utils;
 
 with Ocarina.Backends;
 with Ocarina.Backends.C_Common.Mapping;
@@ -736,7 +736,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
    function Make_Variable_Declaration
      (Defining_Identifier : Node_Id;
       Used_Type           : Node_Id;
-      Is_Static : Boolean := False) return Node_Id
+      Is_Static           : Boolean := False) return Node_Id
    is
       P : Node_Id;
    begin
@@ -1007,7 +1007,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
          Name := Name_Find;
          Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
          Set_Name_Table_Byte
-           (Name, Ocarina.Types.Byte (Token_Type'Pos (T) + 1));
+           (Name,
+            Ocarina.Types.Byte (Token_Type'Pos (T) + 1));
 
          Set_Str_To_Name_Buffer (Image (T));
       else
@@ -1665,8 +1666,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
          if not AINU.Is_Empty (AIN.Features (Spg)) then
             F := AIN.First_Node (AIN.Features (Spg));
             while Present (F) loop
-               if Kind (F) = K_Subcomponent_Access_Instance
-               then
+               if Kind (F) = K_Subcomponent_Access_Instance then
                   --  This case is specific to POK since we don't
                   --  handle the shared data with the same patterns as
                   --  in PolyORB-HI-C. This could be updated later.
@@ -1675,8 +1675,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
                   if Data_Accessed = No_Node then
                      Display_Located_Error
                        (AIN.Loc (F),
-                        "is not properly conected to" &
-                        " any source",
+                        "is not properly conected to" & " any source",
                         Fatal => True);
                   end if;
 

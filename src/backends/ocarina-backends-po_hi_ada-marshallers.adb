@@ -886,11 +886,11 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       function Marshallers_Instantiation (E : Node_Id) return Node_Id is
       begin
          return Make_Package_Instantiation
-           (Defining_Identifier =>
-              Make_Defining_Identifier (Map_Marshallers_Name (E)),
-            Generic_Package =>
-              RU (RU_PolyORB_HI_Marshallers_G, Elaborated => True),
-            Parameter_List  => Make_List_Id (Get_Marshalled_Type (E)));
+             (Defining_Identifier =>
+                Make_Defining_Identifier (Map_Marshallers_Name (E)),
+              Generic_Package =>
+                RU (RU_PolyORB_HI_Marshallers_G, Elaborated => True),
+              Parameter_List => Make_List_Id (Get_Marshalled_Type (E)));
       end Marshallers_Instantiation;
 
       -----------

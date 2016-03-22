@@ -29,11 +29,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Charset; use Charset;
+with Charset;           use Charset;
 with Ocarina.Namet;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Ocarina.Instances;           use Ocarina.Instances;
+with Ocarina.Instances; use Ocarina.Instances;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 use Ocarina.ME_AADL.AADL_Instances.Entities;
 
@@ -56,7 +56,7 @@ package body Ocarina.Backends.Alloy is
 
    procedure Visit_Component_Instance (E : Node_Id);
 
-   FD            : File_Type;
+   FD               : File_Type;
    Root_System_Name : Name_Id;
 
    -----------
@@ -92,7 +92,7 @@ package body Ocarina.Backends.Alloy is
 
    procedure Visit_Component_Instance (E : Node_Id) is
       Category_Name_String : constant array
-        (Component_Category'Range) of Name_Id :=
+      (Component_Category'Range) of Name_Id :=
         (CC_Abstract          => Get_String_Name ("abstract"),
          CC_Bus               => Get_String_Name ("bus"),
          CC_Data              => Get_String_Name ("data"),
@@ -119,25 +119,30 @@ package body Ocarina.Backends.Alloy is
       --  of the corresponding instance name
 
       if Present (Parent_Subcomponent (E)) then
-         Put_Line (FD, "one sig " &
-                     To_Lower
-                     (Get_Name_String
-                        (Normalize_Name
-                           (Fully_Qualified_Instance_Name (E))))
-                     & " extends Component{}{");
+         Put_Line
+           (FD,
+            "one sig " &
+            To_Lower
+              (Get_Name_String
+                 (Normalize_Name (Fully_Qualified_Instance_Name (E)))) &
+            " extends Component{}{");
       else
          Put_Line (Kind (E)'Img);
-         Root_System_Name := Normalize_Name
-           (Display_Name (Identifier (E)));
+         Root_System_Name := Normalize_Name (Display_Name (Identifier (E)));
 
-         Put_Line (FD, "one sig " &
-                     To_Lower (Get_Name_String (Root_System_Name))
-                     & " extends Component{}{");
+         Put_Line
+           (FD,
+            "one sig " &
+            To_Lower (Get_Name_String (Root_System_Name)) &
+            " extends Component{}{");
 
       end if;
 
-      Put_Line (FD, ASCII.HT & "type="
-                  & Get_Name_String (Category_Name_String (Category)));
+      Put_Line
+        (FD,
+         ASCII.HT &
+         "type=" &
+         Get_Name_String (Category_Name_String (Category)));
 
       --  Rule #2: list subcomponents
 
@@ -148,10 +153,10 @@ package body Ocarina.Backends.Alloy is
             declare
                Subcomponent_Name : constant String :=
                  To_Lower
-                 (Get_Name_String
-                    (Normalize_Name
-                       (Fully_Qualified_Instance_Name
-                          (Corresponding_Instance (T)))));
+                   (Get_Name_String
+                      (Normalize_Name
+                         (Fully_Qualified_Instance_Name
+                            (Corresponding_Instance (T)))));
             begin
                Put (FD, Subcomponent_Name);
 
@@ -173,18 +178,17 @@ package body Ocarina.Backends.Alloy is
       if Present (AIN.Properties (E)) then
          T := First_Node (AIN.Properties (E));
          while Present (T) loop
-            Put (FD,
-                 To_Lower
-                   (Get_Name_String
-                      (Normalize_Name
-                         (Display_Name
-                            (Identifier (T))))));
+            Put
+              (FD,
+               To_Lower
+                 (Get_Name_String
+                    (Normalize_Name (Display_Name (Identifier (T))))));
             T := Next_Node (T);
             if Present (T) then
                Put (FD, "+");
             end if;
          end loop;
-         New_Line (Fd);
+         New_Line (FD);
 
       else
          Put_Line (FD, "none");
@@ -255,8 +259,9 @@ package body Ocarina.Backends.Alloy is
       --  Add global contract
 
       New_Line (FD);
-      Put_Line (FD, "// Declaration of the contract(s) "
-                  & "representing the model(s)");
+      Put_Line
+        (FD,
+         "// Declaration of the contract(s) " & "representing the model(s)");
       New_Line (FD);
       Put_Line (FD, "one sig aadl_model extends Contract{}{");
       Put_Line (FD, ASCII.HT & "assumption=none");
@@ -266,9 +271,9 @@ package body Ocarina.Backends.Alloy is
       --  Generate output
 
       declare
-         Print_Subcomponents : Boolean := True;
-         E : constant Node_Id := Root_System (Instance_Root);
-         T : Node_Id;
+         Print_Subcomponents : Boolean          := True;
+         E                   : constant Node_Id := Root_System (Instance_Root);
+         T                   : Node_Id;
       begin
          --  We consider two patterns
          --  a) system with subcomponents as system/bus/device only
@@ -277,10 +282,12 @@ package body Ocarina.Backends.Alloy is
          if Present (Subcomponents (E)) then
             T := First_Node (Subcomponents (E));
             while Present (T) loop
-               Print_Subcomponents := Print_Subcomponents
-                 and then (Get_Category_Of_Component (T) = CC_System
-                             or else Get_Category_Of_Component (T) = CC_Device
-                             or else Get_Category_Of_Component (T) = CC_Bus);
+               Print_Subcomponents :=
+                 Print_Subcomponents
+                 and then
+                 (Get_Category_Of_Component (T) = CC_System
+                  or else Get_Category_Of_Component (T) = CC_Device
+                  or else Get_Category_Of_Component (T) = CC_Bus);
                T := Next_Node (T);
             end loop;
          end if;
@@ -288,17 +295,17 @@ package body Ocarina.Backends.Alloy is
          --  We are in case a), generate all subcomponents of root system
 
          if Print_Subcomponents then
-            Put (Fd, ASCII.HT & "output=");
+            Put (FD, ASCII.HT & "output=");
             if Present (Subcomponents (E)) then
                T := First_Node (Subcomponents (E));
                while Present (T) loop
                   declare
                      Subcomponent_Name : constant String :=
                        To_Lower
-                       (Get_Name_String
-                          (Normalize_Name
-                             (Fully_Qualified_Instance_Name
-                                (Corresponding_Instance (T)))));
+                         (Get_Name_String
+                            (Normalize_Name
+                               (Fully_Qualified_Instance_Name
+                                  (Corresponding_Instance (T)))));
                   begin
                      Put (FD, Subcomponent_Name);
 
@@ -316,8 +323,11 @@ package body Ocarina.Backends.Alloy is
          else
             --  We are in case b), generate only root system
 
-            Put_Line (FD, ASCII.HT & "output="
-                        & To_Lower (Get_Name_String (Root_System_Name)));
+            Put_Line
+              (FD,
+               ASCII.HT &
+               "output=" &
+               To_Lower (Get_Name_String (Root_System_Name)));
          end if;
       end;
 

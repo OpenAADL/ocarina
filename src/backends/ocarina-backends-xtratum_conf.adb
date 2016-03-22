@@ -106,7 +106,9 @@ package body Ocarina.Backends.Xtratum_Conf is
    procedure Init is
    begin
       Register_Backend
-        ("Xtratum_Configuration", Generate'Access, Xtratum_Configuration);
+        ("Xtratum_Configuration",
+         Generate'Access,
+         Xtratum_Configuration);
    end Init;
 
    -----------

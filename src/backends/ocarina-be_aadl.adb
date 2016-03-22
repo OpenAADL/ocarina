@@ -34,7 +34,7 @@ with GNAT.Command_Line; use GNAT.Command_Line;
 
 with Ocarina.Namet;  use Ocarina.Namet;
 with Ocarina.Output; use Ocarina.Output;
-with Utils;  use Utils;
+with Utils;          use Utils;
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -154,7 +154,8 @@ package body Ocarina.BE_AADL is
       procedure Internal_Print_Package is new Print_Constrained_Package
         (Is_Printable);
       procedure Internal_Print_Property_Set is
-         new Print_Constrained_Property_Set (Is_Printable);
+         new Print_Constrained_Property_Set
+        (Is_Printable);
 
    begin
       case Kind (Node) is

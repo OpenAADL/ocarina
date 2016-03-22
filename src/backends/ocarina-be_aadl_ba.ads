@@ -32,7 +32,7 @@
 --  This package gathers functions that regenerate AADL specifications
 --  from an abtract syntax tree
 
-with Ocarina.Types;                     use Ocarina.Types;
+with Ocarina.Types;             use Ocarina.Types;
 with Ocarina.ME_AADL_BA.Tokens; use Ocarina.ME_AADL_BA.Tokens;
 
 package Ocarina.BE_AADL_BA is

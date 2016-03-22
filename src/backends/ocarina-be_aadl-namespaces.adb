@@ -162,6 +162,7 @@ package body Ocarina.BE_AADL.Namespaces is
       procedure Internal_Print_Property_Set is
          new Print_Constrained_Property_Set
         (Always_Printable);
+
    begin
       Internal_Print_Property_Set (Node, No_Node);
    end Print_Property_Set;
@@ -424,6 +425,7 @@ package body Ocarina.BE_AADL.Namespaces is
 
       procedure Internal_Print_Package is new Print_Constrained_Package
         (Is_Printable);
+
       procedure Internal_Print_Property_Set is
          new Print_Constrained_Property_Set
         (Is_Printable);
@@ -474,6 +476,7 @@ package body Ocarina.BE_AADL.Namespaces is
       procedure Internal_Print_AADL_Specification is
          new Print_Constrained_AADL_Specification
         (Always_Printable);
+
    begin
       Internal_Print_AADL_Specification (Node, No_Node);
    end Print_AADL_Specification;

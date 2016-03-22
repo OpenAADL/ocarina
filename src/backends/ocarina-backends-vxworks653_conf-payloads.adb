@@ -173,14 +173,14 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      U                             : Node_Id;
-      P                             : Node_Id;
-      S                             : Node_Id;
-      Payloads_Node                 : Node_Id;
-      Core_OS_Payload_Node          : Node_Id;
-      Shared_Library_Payload_Node   : Node_Id;
-      Config_Record_Payload_Node    : Node_Id;
-      Partition_Payload_Node        : Node_Id;
+      U                           : Node_Id;
+      P                           : Node_Id;
+      S                           : Node_Id;
+      Payloads_Node               : Node_Id;
+      Core_OS_Payload_Node        : Node_Id;
+      Shared_Library_Payload_Node : Node_Id;
+      Config_Record_Payload_Node  : Node_Id;
+      Partition_Payload_Node      : Node_Id;
    begin
       U := XTN.Unit (Backend_Node (Identifier (E)));
       P := XTN.Node (Backend_Node (Identifier (E)));
@@ -192,30 +192,22 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
 
       Payloads_Node := Make_XML_Node ("Payloads");
 
+      Append_Node_To_List (Payloads_Node, XTN.Subitems (Current_XML_Node));
+
+      Core_OS_Payload_Node := Make_XML_Node ("CoreOSPayload");
+      Append_Node_To_List (Core_OS_Payload_Node, XTN.Subitems (Payloads_Node));
+
+      Shared_Library_Payload_Node := Make_XML_Node ("SharedLibraryPayload");
+      Add_Attribute ("NameRef", "vxSysLib", Shared_Library_Payload_Node);
       Append_Node_To_List
-        (Payloads_Node,
-         XTN.Subitems (Current_XML_Node));
+        (Shared_Library_Payload_Node,
+         XTN.Subitems (Payloads_Node));
 
-      Core_OS_Payload_Node
-         := Make_XML_Node ("CoreOSPayload");
-      Append_Node_To_List (Core_OS_Payload_Node,
-                           XTN.Subitems (Payloads_Node));
-
-      Shared_Library_Payload_Node
-         := Make_XML_Node ("SharedLibraryPayload");
-      Add_Attribute ("NameRef",
-                     "vxSysLib",
-                     Shared_Library_Payload_Node);
-      Append_Node_To_List (Shared_Library_Payload_Node,
-                           XTN.Subitems (Payloads_Node));
-
-      Config_Record_Payload_Node
-         := Make_XML_Node ("ConfigRecordPayload");
-      Add_Attribute ("NameRef",
-                     "configRecord",
-                     Config_Record_Payload_Node);
-      Append_Node_To_List (Config_Record_Payload_Node,
-                           XTN.Subitems (Payloads_Node));
+      Config_Record_Payload_Node := Make_XML_Node ("ConfigRecordPayload");
+      Add_Attribute ("NameRef", "configRecord", Config_Record_Payload_Node);
+      Append_Node_To_List
+        (Config_Record_Payload_Node,
+         XTN.Subitems (Payloads_Node));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
@@ -224,15 +216,15 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
             --  subcomponent S.
 
             if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
-               Partition_Payload_Node
-                := Make_XML_Node ("PartitionPayload");
-               Add_Attribute ("NameRef",
-                              Get_Name_String
-                                 (Map_Partition_Name
-                                    (Corresponding_Instance (S))),
-                              Partition_Payload_Node);
-               Append_Node_To_List (Partition_Payload_Node,
-                                    XTN.Subitems (Payloads_Node));
+               Partition_Payload_Node := Make_XML_Node ("PartitionPayload");
+               Add_Attribute
+                 ("NameRef",
+                  Get_Name_String
+                    (Map_Partition_Name (Corresponding_Instance (S))),
+                  Partition_Payload_Node);
+               Append_Node_To_List
+                 (Partition_Payload_Node,
+                  XTN.Subitems (Payloads_Node));
             end if;
             S := Next_Node (S);
          end loop;

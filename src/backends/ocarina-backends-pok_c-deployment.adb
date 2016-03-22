@@ -1161,31 +1161,32 @@ package body Ocarina.Backends.POK_C.Deployment is
          case POK_Flavor is
             when DEOS =>
                N :=
-                  CTU.Make_Define_Statement
-                     (Defining_Identifier => RE (RE_Ocarina_Runtime_Deos),
-                     Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
+                 CTU.Make_Define_Statement
+                   (Defining_Identifier => RE (RE_Ocarina_Runtime_Deos),
+                    Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
 
                CTU.Append_Node_To_List
-                  (N, CTN.Declarations (CTU.Current_File));
-            when Vxworks =>
+                 (N,
+                  CTN.Declarations (CTU.Current_File));
+            when VXWORKS =>
                N :=
-                  CTU.Make_Define_Statement
-                     (Defining_Identifier =>
-                        RE (RE_Ocarina_Runtime_Vxworks653),
-                     Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
+                 CTU.Make_Define_Statement
+                   (Defining_Identifier => RE (RE_Ocarina_Runtime_Vxworks653),
+                    Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
 
                CTU.Append_Node_To_List
-                  (N, CTN.Declarations (CTU.Current_File));
+                 (N,
+                  CTN.Declarations (CTU.Current_File));
 
-            when POK | Arinc653 =>
+            when POK | ARINC653 =>
                N :=
-                  CTU.Make_Define_Statement
-                     (Defining_Identifier =>
-                        RE (RE_Ocarina_Runtime_Pok),
-                     Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
+                 CTU.Make_Define_Statement
+                   (Defining_Identifier => RE (RE_Ocarina_Runtime_Pok),
+                    Value => CTU.Make_Literal (CV.New_Int_Value (1, 1, 10)));
 
                CTU.Append_Node_To_List
-                  (N, CTN.Declarations (CTU.Current_File));
+                 (N,
+                  CTN.Declarations (CTU.Current_File));
          end case;
 
          N :=

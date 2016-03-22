@@ -63,8 +63,8 @@ package body Ocarina.Backends.Subprograms is
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
 
-   Source_File                 : Node_Id;
-   Header_File                 : Node_Id;
+   Source_File : Node_Id;
+   Header_File : Node_Id;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    --  Most top level visitor routine. E is the root of the AADL

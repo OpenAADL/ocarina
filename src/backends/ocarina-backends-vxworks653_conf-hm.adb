@@ -58,7 +58,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
    Root_Node : Node_Id := No_Node;
-   HM_Node : Node_Id := No_Node;
+   HM_Node   : Node_Id := No_Node;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -68,18 +68,20 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
 
-   procedure Add_System_Error (XML_Node : Node_Id;
-                               Identifier : String;
-                               Description : String);
+   procedure Add_System_Error
+     (XML_Node    : Node_Id;
+      Identifier  : String;
+      Description : String);
 
-   procedure Add_Error_Action (XML_Node : Node_Id;
-                               Identifier : String;
-                               Action     : String);
+   procedure Add_Error_Action
+     (XML_Node   : Node_Id;
+      Identifier : String;
+      Action     : String);
 
    pragma Unreferenced (Add_System_Error);
 
    function Generate_Partition_HM_Table
-      (Virtual_Processor : Node_Id) return Node_Id;
+     (Virtual_Processor : Node_Id) return Node_Id;
 
    -----------
    -- Visit --
@@ -190,32 +192,34 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
    --  Add_System_Error  --
    ------------------------
 
-   procedure Add_System_Error (XML_Node : Node_Id;
-                               Identifier : String;
-                               Description : String) is
+   procedure Add_System_Error
+     (XML_Node    : Node_Id;
+      Identifier  : String;
+      Description : String)
+   is
       Intermediate : Node_Id;
    begin
       Intermediate := Make_XML_Node ("SystemError");
       XTU.Add_Attribute ("ErrorIdentifier", Identifier, Intermediate);
       XTU.Add_Attribute ("Description", Description, Intermediate);
-      Append_Node_To_List
-         (Intermediate, XTN.Subitems (XML_Node));
+      Append_Node_To_List (Intermediate, XTN.Subitems (XML_Node));
    end Add_System_Error;
 
    ------------------------
    --  Add_Error_Action  --
    ------------------------
 
-   procedure Add_Error_Action (XML_Node : Node_Id;
-                               Identifier : String;
-                               Action     : String) is
+   procedure Add_Error_Action
+     (XML_Node   : Node_Id;
+      Identifier : String;
+      Action     : String)
+   is
       Intermediate : Node_Id;
    begin
       Intermediate := Make_XML_Node ("ErrorIDAction");
       XTU.Add_Attribute ("ErrorIdentifier", Identifier, Intermediate);
       XTU.Add_Attribute ("ErrorAction", Action, Intermediate);
-      Append_Node_To_List
-         (Intermediate, XTN.Subitems (XML_Node));
+      Append_Node_To_List (Intermediate, XTN.Subitems (XML_Node));
    end Add_Error_Action;
 
    ------------------------------
@@ -254,54 +258,59 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Append_Node_To_List (System_HM_Table_Node, XTN.Subitems (HM_Node));
 
       System_State_Node := Make_XML_Node ("SystemState");
-      XTU.Add_Attribute ("SystemState",
-                         "HM_PARTITION_MODE",
-                         System_State_Node);
-      Append_Node_To_List (System_State_Node,
-                           XTN.Subitems (System_HM_Table_Node));
+      XTU.Add_Attribute
+        ("SystemState",
+         "HM_PARTITION_MODE",
+         System_State_Node);
+      Append_Node_To_List
+        (System_State_Node,
+         XTN.Subitems (System_HM_Table_Node));
 
       Error_Id_Level_Node := Make_XML_Node ("ErrorIDLevel");
-      XTU.Add_Attribute ("ErrorIdentifier",
-                         "HME_DEFAULT",
-                         Error_Id_Level_Node);
-      XTU.Add_Attribute ("ErrorLevel",
-                         "HM_PARTITION_LVL",
-                         Error_Id_Level_Node);
+      XTU.Add_Attribute
+        ("ErrorIdentifier",
+         "HME_DEFAULT",
+         Error_Id_Level_Node);
+      XTU.Add_Attribute
+        ("ErrorLevel",
+         "HM_PARTITION_LVL",
+         Error_Id_Level_Node);
 
-      Append_Node_To_List (Error_Id_Level_Node,
-                           XTN.Subitems (System_State_Node));
+      Append_Node_To_List
+        (Error_Id_Level_Node,
+         XTN.Subitems (System_State_Node));
 
       System_State_Node := Make_XML_Node ("SystemState");
-      XTU.Add_Attribute ("SystemState",
-                         "HM_MODULE_MODE",
-                         System_State_Node);
-      Append_Node_To_List (System_State_Node,
-                           XTN.Subitems (System_HM_Table_Node));
+      XTU.Add_Attribute ("SystemState", "HM_MODULE_MODE", System_State_Node);
+      Append_Node_To_List
+        (System_State_Node,
+         XTN.Subitems (System_HM_Table_Node));
 
       Error_Id_Level_Node := Make_XML_Node ("ErrorIDLevel");
-      XTU.Add_Attribute ("ErrorIdentifier",
-                         "HME_DEFAULT",
-                         Error_Id_Level_Node);
-      XTU.Add_Attribute ("ErrorLevel",
-                         "HM_MODULE_LVL",
-                         Error_Id_Level_Node);
-      Append_Node_To_List (Error_Id_Level_Node,
-                           XTN.Subitems (System_State_Node));
+      XTU.Add_Attribute
+        ("ErrorIdentifier",
+         "HME_DEFAULT",
+         Error_Id_Level_Node);
+      XTU.Add_Attribute ("ErrorLevel", "HM_MODULE_LVL", Error_Id_Level_Node);
+      Append_Node_To_List
+        (Error_Id_Level_Node,
+         XTN.Subitems (System_State_Node));
 
       System_State_Node := Make_XML_Node ("SystemState");
-      XTU.Add_Attribute ("SystemState",
-                         "HM_PROCESS_MODE",
-                         System_State_Node);
-      Append_Node_To_List (System_State_Node,
-                           XTN.Subitems (System_HM_Table_Node));
+      XTU.Add_Attribute ("SystemState", "HM_PROCESS_MODE", System_State_Node);
+      Append_Node_To_List
+        (System_State_Node,
+         XTN.Subitems (System_HM_Table_Node));
 
       Error_Id_Level_Node := Make_XML_Node ("ErrorIDLevel");
-      XTU.Add_Attribute ("ErrorIdentifier",
-                         "HME_DEFAULT", Error_Id_Level_Node);
-      XTU.Add_Attribute ("ErrorLevel",
-                         "HM_PROCESS_LVL", Error_Id_Level_Node);
-      Append_Node_To_List (Error_Id_Level_Node,
-                           XTN.Subitems (System_State_Node));
+      XTU.Add_Attribute
+        ("ErrorIdentifier",
+         "HME_DEFAULT",
+         Error_Id_Level_Node);
+      XTU.Add_Attribute ("ErrorLevel", "HM_PROCESS_LVL", Error_Id_Level_Node);
+      Append_Node_To_List
+        (Error_Id_Level_Node,
+         XTN.Subitems (System_State_Node));
 
       --  Building the ModuleHMTable then.
 
@@ -310,45 +319,60 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       Append_Node_To_List (Module_HM_Table_Node, XTN.Subitems (HM_Node));
 
       System_State_Node := Make_XML_Node ("SystemState");
-      Append_Node_To_List (System_State_Node,
-                           XTN.Subitems (Module_HM_Table_Node));
-      Add_Error_Action (System_State_Node,
-                        "HME_UNKNOWN", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_NUMERIC_ERROR", "");
-      Add_Error_Action (System_State_Node,
-                        "HME_POWER_FAIL", "hmDH_HME_POWER_FAIL");
-      Add_Error_Action (System_State_Node,
-                        "HME_KERNEL", "hmDH_HME_KERNEL");
-      Add_Error_Action (System_State_Node,
-                        "HME_CONFIG_ERROR", "hmDH_EventLog");
-      Add_Error_Action (System_State_Node,
-                        "HME_INIT_ERROR", "hmDH_HME_INIT_ERROR");
-      Add_Error_Action (System_State_Node,
-                        "HME_PARTITION_OVERFLOW", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_PARTITION_MODE_SET",
-                        "hmDH_HME_PARTITION_MODE_SET");
-      Add_Error_Action (System_State_Node,
-                        "HME_APEX_INTERNAL_ERROR", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_HM_INTERNAL_ERROR", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_PORT_INTERNAL_ERROR", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_LOST_TICKS", "hmDH_HME_LOST_TICKS");
-      Add_Error_Action (System_State_Node,
-                        "HME_HM_ERROR", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_HMQ_OVERFLOW", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_DATA_LOSS", "");
-      Add_Error_Action (System_State_Node,
-                        "HME_HM_DEADLINE_MISSED", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HM_MSG", "hmDH_EventLog");
-      Add_Error_Action (System_State_Node,
-                        "HME_DEFAULT", "hmDefaultHandler");
+      Append_Node_To_List
+        (System_State_Node,
+         XTN.Subitems (Module_HM_Table_Node));
+      Add_Error_Action (System_State_Node, "HME_UNKNOWN", "hmDefaultHandler");
+      Add_Error_Action (System_State_Node, "HME_NUMERIC_ERROR", "");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_POWER_FAIL",
+         "hmDH_HME_POWER_FAIL");
+      Add_Error_Action (System_State_Node, "HME_KERNEL", "hmDH_HME_KERNEL");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_CONFIG_ERROR",
+         "hmDH_EventLog");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_INIT_ERROR",
+         "hmDH_HME_INIT_ERROR");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_PARTITION_OVERFLOW",
+         "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_PARTITION_MODE_SET",
+         "hmDH_HME_PARTITION_MODE_SET");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_APEX_INTERNAL_ERROR",
+         "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_HM_INTERNAL_ERROR",
+         "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_PORT_INTERNAL_ERROR",
+         "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_LOST_TICKS",
+         "hmDH_HME_LOST_TICKS");
+      Add_Error_Action (System_State_Node, "HME_HM_ERROR", "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_HMQ_OVERFLOW",
+         "hmDefaultHandler");
+      Add_Error_Action (System_State_Node, "HME_DATA_LOSS", "");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_HM_DEADLINE_MISSED",
+         "hmDefaultHandler");
+      Add_Error_Action (System_State_Node, "HM_MSG", "hmDH_EventLog");
+      Add_Error_Action (System_State_Node, "HME_DEFAULT", "hmDefaultHandler");
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
@@ -358,7 +382,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
 
             if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
                Append_Node_To_List
-                  (Generate_Partition_HM_Table (Corresponding_Instance (S)),
+                 (Generate_Partition_HM_Table (Corresponding_Instance (S)),
                   XTN.Subitems (HM_Node));
             end if;
             S := Next_Node (S);
@@ -405,60 +429,74 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
    ---------------------------------
 
    function Generate_Partition_HM_Table
-      (Virtual_Processor : Node_Id)
-      return Node_Id is
+     (Virtual_Processor : Node_Id) return Node_Id
+   is
       Partition_HM_Table_Node : Node_Id;
-      System_State_Node : Node_Id;
-      Settings_Node : Node_Id;
-      Trusted_Partition_Node : Node_Id;
+      System_State_Node       : Node_Id;
+      Settings_Node           : Node_Id;
+      Trusted_Partition_Node  : Node_Id;
    begin
       Partition_HM_Table_Node := Make_XML_Node ("PartitionHMTable");
-      XTU.Add_Attribute ("Name",
-                         Get_Name_String
-                           (Map_Partition_Name (Virtual_Processor))
-                           & "_hmtable",
-                         Partition_HM_Table_Node);
+      XTU.Add_Attribute
+        ("Name",
+         Get_Name_String (Map_Partition_Name (Virtual_Processor)) & "_hmtable",
+         Partition_HM_Table_Node);
 
       System_State_Node := Make_XML_Node ("SystemState");
-      Append_Node_To_List (System_State_Node,
-                           XTN.Subitems (Partition_HM_Table_Node));
-      Add_Error_Action (System_State_Node,
-                        "HME_UNKNOWN", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_NUMERIC_ERROR", "");
-      Add_Error_Action (System_State_Node,
-                        "HME_POWER_FAIL", "hmDH_HME_POWER_FAIL");
-      Add_Error_Action (System_State_Node,
-                        "HME_KERNEL", "hmDH_HME_KERNEL");
-      Add_Error_Action (System_State_Node,
-                        "HME_CONFIG_ERROR", "hmDH_EventLog");
-      Add_Error_Action (System_State_Node,
-                        "HME_INIT_ERROR", "hmDH_HME_INIT_ERROR");
-      Add_Error_Action (System_State_Node,
-                        "HME_PARTITION_OVERFLOW", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_PARTITION_MODE_SET",
-                        "hmDH_HME_PARTITION_MODE_SET");
-      Add_Error_Action (System_State_Node,
-                        "HME_APEX_INTERNAL_ERROR", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_HM_INTERNAL_ERROR", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_PORT_INTERNAL_ERROR", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_LOST_TICKS", "hmDH_HME_LOST_TICKS");
-      Add_Error_Action (System_State_Node,
-                        "HME_HM_ERROR", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_HMQ_OVERFLOW", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HME_DATA_LOSS", "");
-      Add_Error_Action (System_State_Node,
-                        "HME_HM_DEADLINE_MISSED", "hmDefaultHandler");
-      Add_Error_Action (System_State_Node,
-                        "HM_MSG", "hmDH_EventLog");
-      Add_Error_Action (System_State_Node,
-                        "HME_DEFAULT", "hmDefaultHandler");
+      Append_Node_To_List
+        (System_State_Node,
+         XTN.Subitems (Partition_HM_Table_Node));
+      Add_Error_Action (System_State_Node, "HME_UNKNOWN", "hmDefaultHandler");
+      Add_Error_Action (System_State_Node, "HME_NUMERIC_ERROR", "");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_POWER_FAIL",
+         "hmDH_HME_POWER_FAIL");
+      Add_Error_Action (System_State_Node, "HME_KERNEL", "hmDH_HME_KERNEL");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_CONFIG_ERROR",
+         "hmDH_EventLog");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_INIT_ERROR",
+         "hmDH_HME_INIT_ERROR");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_PARTITION_OVERFLOW",
+         "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_PARTITION_MODE_SET",
+         "hmDH_HME_PARTITION_MODE_SET");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_APEX_INTERNAL_ERROR",
+         "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_HM_INTERNAL_ERROR",
+         "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_PORT_INTERNAL_ERROR",
+         "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_LOST_TICKS",
+         "hmDH_HME_LOST_TICKS");
+      Add_Error_Action (System_State_Node, "HME_HM_ERROR", "hmDefaultHandler");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_HMQ_OVERFLOW",
+         "hmDefaultHandler");
+      Add_Error_Action (System_State_Node, "HME_DATA_LOSS", "");
+      Add_Error_Action
+        (System_State_Node,
+         "HME_HM_DEADLINE_MISSED",
+         "hmDefaultHandler");
+      Add_Error_Action (System_State_Node, "HM_MSG", "hmDH_EventLog");
+      Add_Error_Action (System_State_Node, "HME_DEFAULT", "hmDefaultHandler");
 
       Settings_Node := Make_XML_Node ("Settings");
       XTU.Add_Attribute ("maxQueueDepth", "34", Settings_Node);
@@ -472,17 +510,18 @@ package body Ocarina.Backends.Vxworks653_Conf.Hm is
       XTU.Add_Attribute ("eventFilterMask", "0xFFFFFFFF", Settings_Node);
       XTU.Add_Attribute ("maxErrorHandlerQueueDepth", "128", Settings_Node);
       XTU.Add_Attribute ("errorHandlerQueueThreshold", "126", Settings_Node);
-      Append_Node_To_List (Settings_Node,
-                           XTN.Subitems (Partition_HM_Table_Node));
+      Append_Node_To_List
+        (Settings_Node,
+         XTN.Subitems (Partition_HM_Table_Node));
 
       Trusted_Partition_Node := Make_XML_Node ("TrustedPartition");
-      XTU.Add_Attribute ("NameRef",
-                         Get_Name_String
-                           (Map_Partition_Name
-                              (Virtual_Processor)),
-                         Trusted_Partition_Node);
-      Append_Node_To_List (Trusted_Partition_Node,
-                           XTN.Subitems (Settings_Node));
+      XTU.Add_Attribute
+        ("NameRef",
+         Get_Name_String (Map_Partition_Name (Virtual_Processor)),
+         Trusted_Partition_Node);
+      Append_Node_To_List
+        (Trusted_Partition_Node,
+         XTN.Subitems (Settings_Node));
 
       return Partition_HM_Table_Node;
    end Generate_Partition_HM_Table;

@@ -31,15 +31,15 @@
 
 with GNAT.Table;
 
-with Charset;   use Charset;
-with Locations; use Locations;
-with Ocarina.Namet;     use Ocarina.Namet;
-with Utils;     use Utils;
+with Charset;       use Charset;
+with Locations;     use Locations;
+with Ocarina.Namet; use Ocarina.Namet;
+with Utils;         use Utils;
 
 with Ocarina.Backends.Utils;
 with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 use Ocarina.Backends.Utils;
-with Ocarina.Backends.XML_Values;     use Ocarina.Backends.XML_Values;
+with Ocarina.Backends.XML_Values; use Ocarina.Backends.XML_Values;
 
 package body Ocarina.Backends.XML_Tree.Nutils is
 
@@ -408,7 +408,8 @@ package body Ocarina.Backends.XML_Tree.Nutils is
          Name := Name_Find;
          Name := Add_Suffix_To_Name (Keyword_Suffix, Name);
          Set_Name_Table_Byte
-           (Name, Ocarina.Types.Byte (Token_Type'Pos (T) + 1));
+           (Name,
+            Ocarina.Types.Byte (Token_Type'Pos (T) + 1));
 
          Set_Str_To_Name_Buffer (Image (T));
       else

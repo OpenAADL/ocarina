@@ -36,7 +36,7 @@ with Ocarina.Namet;
 with Charset; use Charset;
 with Utils;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
-with Ocarina.ME_AADL.AADL_Tree.NUtils;
+with Ocarina.ME_AADL.AADL_Tree.Nutils;
 
 package body Ocarina.Backends.Properties.Utils is
 
@@ -48,7 +48,7 @@ package body Ocarina.Backends.Properties.Utils is
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package ATNU renames Ocarina.ME_AADL.AADL_Tree.NUtils;
+   package ATNU renames Ocarina.ME_AADL.AADL_Tree.Nutils;
    use type ATN.Node_Kind;
 
    function SA (S : String) return String_Access is (new String'(S));
@@ -58,26 +58,24 @@ package body Ocarina.Backends.Properties.Utils is
    -----------------------------------------
 
    function Print_Value_Of_Property_Association
-     (AADL_Property_Value : Node_Id)
-     return String;
+     (AADL_Property_Value : Node_Id) return String;
 
    function Print_Value_Of_Property_Association
-     (AADL_Property_Value : Node_Id)
-     return String is
+     (AADL_Property_Value : Node_Id) return String
+   is
    begin
       if Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
       then
          return Ocarina.AADL_Values.Image
-           (ATN.Value
-              (ATN.Number_Value
-                 (AADL_Property_Value)))
-           & " "
-           & (if Present (ATN.Unit_Identifier (AADL_Property_Value))
-                then Get_Name_String
-           (ATN.Display_Name
-              (ATN.Unit_Identifier (AADL_Property_Value)))
-                else "");
+             (ATN.Value (ATN.Number_Value (AADL_Property_Value))) &
+           " " &
+           (if
+              Present (ATN.Unit_Identifier (AADL_Property_Value))
+            then
+              Get_Name_String
+                (ATN.Display_Name (ATN.Unit_Identifier (AADL_Property_Value)))
+            else "");
 
       elsif Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal
@@ -85,26 +83,27 @@ package body Ocarina.Backends.Properties.Utils is
          --  This property value denotes a literal
 
          return Ocarina.AADL_Values.Image
-           (ATN.Value (AADL_Property_Value), Quoted => False);
+             (ATN.Value (AADL_Property_Value),
+              Quoted => False);
 
       elsif Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Reference_Term
       then
          --  This property value denotes a reference term
 
-         return Get_Name_String (ATN.Display_Name
-                                   (ATN.First_Node --  XXX must iterate
-                                      (ATN.List_Items
-                                         (ATN.Reference_Term
-                                            (AADL_Property_Value)))));
+         return Get_Name_String
+             (ATN.Display_Name
+                (ATN.First_Node --  XXX must iterate
+                   (ATN.List_Items
+                      (ATN.Reference_Term (AADL_Property_Value)))));
 
       elsif Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Enumeration_Term
       then
-            --  This property value denotes an enumeration term
+         --  This property value denotes an enumeration term
 
-            return Get_Name_String (ATN.Display_Name
-                                      (ATN.Identifier (AADL_Property_Value)));
+         return Get_Name_String
+             (ATN.Display_Name (ATN.Identifier (AADL_Property_Value)));
 
       elsif Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Number_Range_Term
@@ -112,36 +111,32 @@ package body Ocarina.Backends.Properties.Utils is
          --  This property value denotes a number range term
 
          return Ocarina.AADL_Values.Image
-           (ATN.Value
-              (ATN.Number_Value
-                 (ATN.Lower_Bound
-                    (AADL_Property_Value))))
-           &
-           (if Present
-              (ATN.Unit_Identifier
-                 (ATN.Lower_Bound (AADL_Property_Value)))
-              then
-           " " & Get_Name_String
-           (ATN.Display_Name
-              (ATN.Unit_Identifier
-                 (ATN.Lower_Bound (AADL_Property_Value))))
-              else "")
-                & " .. "
-                & Ocarina.AADL_Values.Image
-                (ATN.Value
-                   (ATN.Number_Value
-                      (ATN.Upper_Bound
-                         (AADL_Property_Value))))
-                &
-                (if Present
-                   (ATN.Unit_Identifier
-                      (ATN.Upper_Bound (AADL_Property_Value)))
-                   then
-                " " & Get_Name_String
+             (ATN.Value
+                (ATN.Number_Value (ATN.Lower_Bound (AADL_Property_Value)))) &
+           (if
+              Present
+                (ATN.Unit_Identifier (ATN.Lower_Bound (AADL_Property_Value)))
+            then
+              " " &
+              Get_Name_String
                 (ATN.Display_Name
                    (ATN.Unit_Identifier
-                   (ATN.Upper_Bound (AADL_Property_Value))))
-                   else "");
+                      (ATN.Lower_Bound (AADL_Property_Value))))
+            else "") &
+           " .. " &
+           Ocarina.AADL_Values.Image
+             (ATN.Value
+                (ATN.Number_Value (ATN.Upper_Bound (AADL_Property_Value)))) &
+           (if
+              Present
+                (ATN.Unit_Identifier (ATN.Upper_Bound (AADL_Property_Value)))
+            then
+              " " &
+              Get_Name_String
+                (ATN.Display_Name
+                   (ATN.Unit_Identifier
+                      (ATN.Upper_Bound (AADL_Property_Value))))
+            else "");
       end if;
 
       raise Program_Error;
@@ -152,41 +147,37 @@ package body Ocarina.Backends.Properties.Utils is
    ----------------------------
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property : Node_Id)
-     return String_List
+     (E        : Node_Id;
+      Property : Node_Id) return String_List
    is
-      Prop_Name : constant Name_Id
-        := Standard.Utils.To_Lower (Display_Name (Identifier (Property)));
+      Prop_Name : constant Name_Id :=
+        Standard.Utils.To_Lower (Display_Name (Identifier (Property)));
    begin
       return Check_And_Get_Property (E, Prop_Name);
    end Check_And_Get_Property;
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Prop_Name : Name_Id)
-     return String_List
+     (E         : Node_Id;
+      Prop_Name : Name_Id) return String_List
    is
-      A : constant String_Access
-        := new String'(Get_Name_String (Prop_Name));
+      A : constant String_Access := new String'(Get_Name_String (Prop_Name));
       AADL_Property_Value : Node_Id;
 
    begin
       if Is_Defined_String_Property (E, Prop_Name) then
-         return
-           A & SA (Get_Name_String (Get_String_Property (E, Prop_Name)));
+         return A & SA (Get_Name_String (Get_String_Property (E, Prop_Name)));
 
-      elsif (Is_Defined_Integer_Property (E, Prop_Name)
-               or else Is_Defined_Float_Property (E, Prop_Name))
+      elsif
+        (Is_Defined_Integer_Property (E, Prop_Name)
+         or else Is_Defined_Float_Property (E, Prop_Name))
       then
          AADL_Property_Value :=
            Get_Value_Of_Property_Association (E, Prop_Name);
-         return
-           A & SA (Print_Value_Of_Property_Association (AADL_Property_Value));
+         return A &
+           SA (Print_Value_Of_Property_Association (AADL_Property_Value));
 
       elsif Is_Defined_Boolean_Property (E, Prop_Name) then
-         return
-           A & SA (Boolean'Image (Get_Boolean_Property (E, Prop_Name)));
+         return A & SA (Boolean'Image (Get_Boolean_Property (E, Prop_Name)));
 
       elsif Is_Defined_Reference_Property (E, Prop_Name) then
          return A & SA (Get_Reference_Property (E, Prop_Name)'Img);
@@ -196,38 +187,37 @@ package body Ocarina.Backends.Properties.Utils is
 
       elsif Is_Defined_Range_Property (E, Prop_Name) then
          AADL_Property_Value := Get_Range_Property (E, Prop_Name);
-         return A
-           & SA (Print_Value_Of_Property_Association (AADL_Property_Value));
+         return A &
+           SA (Print_Value_Of_Property_Association (AADL_Property_Value));
 
       elsif Is_Defined_List_Property (E, Prop_Name) then
          declare
-            It : Node_Id :=
-              ATN.First_Node (Get_List_Property (E, Prop_Name));
-            B : String_List
-              (1 .. ATNU.Length (Get_List_Property (E, Prop_Name)));
+            It : Node_Id := ATN.First_Node (Get_List_Property (E, Prop_Name));
+            B  : String_List
+            (1 .. ATNU.Length (Get_List_Property (E, Prop_Name)));
             J : Integer := B'First;
          begin
             while Present (It) loop
                B (J) := new String'(Print_Value_Of_Property_Association (It));
-               J := J + 1;
-               It := ATN.Next_Node (It);
+               J     := J + 1;
+               It    := ATN.Next_Node (It);
             end loop;
             return A & B;
          end;
 
       elsif Is_Defined_Enumeration_Property (E, Prop_Name) then
-         return A & SA (Get_Name_String
-                          (Get_Enumeration_Property (E, Prop_Name)));
+         return A &
+           SA (Get_Name_String (Get_Enumeration_Property (E, Prop_Name)));
       end if;
 
       return A & SA (" KO");
    end Check_And_Get_Property;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : Unsigned_Long_Long := 0)
-  return Unsigned_Long_Long is
+      Default_Value : Unsigned_Long_Long := 0) return Unsigned_Long_Long
+   is
    begin
       if Is_Defined_Integer_Property (E, Property_Name) then
          return Get_Integer_Property (E, Property_Name);
@@ -237,10 +227,10 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : Name_Id := No_Name)
-     return Name_Id is
+      Default_Value : Name_Id := No_Name) return Name_Id
+   is
    begin
       if Is_Defined_String_Property (E, Property_Name) then
          return Get_String_Property (E, Property_Name);
@@ -250,10 +240,10 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : Node_Id := No_Node)
-     return Node_Id is
+      Default_Value : Node_Id := No_Node) return Node_Id
+   is
    begin
       if Is_Defined_Property (E, Property_Name) then
          return Get_Classifier_Property (E, Property_Name);
@@ -263,10 +253,10 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : List_Id := No_List)
-     return List_Id is
+      Default_Value : List_Id := No_List) return List_Id
+   is
    begin
       if Is_Defined_List_Property (E, Property_Name) then
          return Get_List_Property (E, Property_Name);
@@ -276,10 +266,10 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Default_Value : Boolean := False)
-     return Boolean is
+      Default_Value : Boolean := False) return Boolean
+   is
    begin
       if Is_Defined_Boolean_Property (E, Property_Name) then
          return Get_Boolean_Property (E, Property_Name);
@@ -289,11 +279,10 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property;
 
    function Check_And_Get_Property
-     (E : Node_Id;
+     (E             : Node_Id;
       Property_Name : Name_Id;
-      Names : Name_Array;
-      Default_Value : Int := Int'First)
-     return Int
+      Names         : Name_Array;
+      Default_Value : Int := Int'First) return Int
    is
       P_Name : Name_Id;
    begin
@@ -316,9 +305,8 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property;
 
    function Check_And_Get_Property_Enumerator
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return T
+     (E             : Node_Id;
+      Property_Name : Name_Id) return T
    is
       Enumerator : Name_Id;
    begin
@@ -346,9 +334,8 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property_Enumerator;
 
    function Check_And_Get_Property_Enumerator_With_Default
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return T
+     (E             : Node_Id;
+      Property_Name : Name_Id) return T
    is
       Enumerator : Name_Id;
    begin
@@ -377,9 +364,8 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property_Enumerator_With_Default;
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return Name_Array
+     (E             : Node_Id;
+      Property_Name : Name_Id) return Name_Array
    is
       N_List : List_Id;
    begin
@@ -406,9 +392,8 @@ package body Ocarina.Backends.Properties.Utils is
    end Check_And_Get_Property;
 
    function Check_And_Get_Property_Generic
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return Elt_Array
+     (E             : Node_Id;
+      Property_Name : Name_Id) return Elt_Array
    is
       D_List : List_Id;
    begin
@@ -423,10 +408,10 @@ package body Ocarina.Backends.Properties.Utils is
             N := ATN.First_Node (D_List);
 
             for J in Res'Range loop
-               Res (J) := Extract_Value
-                 (Value (ATN.Value (ATN.Number_Value (N))));
+               Res (J) :=
+                 Extract_Value (Value (ATN.Value (ATN.Number_Value (N))));
 
-               N       := ATN.Next_Node (N);
+               N := ATN.Next_Node (N);
             end loop;
 
             return Res;
@@ -436,40 +421,37 @@ package body Ocarina.Backends.Properties.Utils is
       end if;
    end Check_And_Get_Property_Generic;
 
-   function Check_And_Get_Property_ULL
-   is new Check_And_Get_Property_Generic
-     (Elt_Type => Unsigned_Long_Long,
-      Elt_Array => ULL_Array,
+   function Check_And_Get_Property_ULL is new Check_And_Get_Property_Generic
+     (Elt_Type      => Unsigned_Long_Long,
+      Elt_Array     => ULL_Array,
       Extract_Value => Extract_Value,
       Default_Value => Empty_ULL_Array);
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return ULL_Array renames Check_And_Get_Property_ULL;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return ULL_Array renames
+     Check_And_Get_Property_ULL;
 
-   function Check_And_Get_Property_LL
-   is new Check_And_Get_Property_Generic
-     (Elt_Type => Long_Long,
-      Elt_Array => LL_Array,
+   function Check_And_Get_Property_LL is new Check_And_Get_Property_Generic
+     (Elt_Type      => Long_Long,
+      Elt_Array     => LL_Array,
       Extract_Value => Extract_Value,
       Default_Value => Empty_LL_Array);
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return LL_Array renames Check_And_Get_Property_LL;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return LL_Array renames
+     Check_And_Get_Property_LL;
 
-   function Check_And_Get_Property_LD
-   is new Check_And_Get_Property_Generic
-     (Elt_Type => Long_Double,
-      Elt_Array => LD_Array,
+   function Check_And_Get_Property_LD is new Check_And_Get_Property_Generic
+     (Elt_Type      => Long_Double,
+      Elt_Array     => LD_Array,
       Extract_Value => Extract_Value,
       Default_Value => Empty_LD_Array);
 
    function Check_And_Get_Property
-     (E : Node_Id;
-      Property_Name : Name_Id)
-     return LD_Array renames Check_And_Get_Property_LD;
+     (E             : Node_Id;
+      Property_Name : Name_Id) return LD_Array renames
+     Check_And_Get_Property_LD;
 
 end Ocarina.Backends.Properties.Utils;

@@ -30,7 +30,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Backends.PN.Nodes; use Ocarina.Backends.PN.Nodes;
-with Ocarina.Output;                    use Ocarina.Output;
+with Ocarina.Output;            use Ocarina.Output;
 
 package Ocarina.Backends.PN.Debug is
 

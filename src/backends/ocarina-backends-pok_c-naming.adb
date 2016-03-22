@@ -138,11 +138,11 @@ package body Ocarina.Backends.POK_C.Naming is
             Display_Located_Error
               (Loc (Parent_Subcomponent (E)),
                "This device or process is not bound to a processor",
-               Fatal => True, Warning => False);
+               Fatal   => True,
+               Warning => False);
          end if;
 
-         Processes_List :=
-           CTN.Processes (Backend_Node (Identifier (Proc)));
+         Processes_List := CTN.Processes (Backend_Node (Identifier (Proc)));
 
          N := AINU.Make_Node_Container (E);
 

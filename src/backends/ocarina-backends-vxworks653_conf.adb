@@ -35,9 +35,9 @@ with Ocarina.Backends.Expander;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
-with Ocarina.Backends.Vxworks653_Conf.HM;
-with Ocarina.Backends.VxWorks653_Conf.Schedule;
-with Ocarina.Backends.VxWorks653_Conf.Naming;
+with Ocarina.Backends.Vxworks653_Conf.Hm;
+with Ocarina.Backends.Vxworks653_Conf.Schedule;
+with Ocarina.Backends.Vxworks653_Conf.Naming;
 with Ocarina.Backends.Vxworks653_Conf.Partitions;
 with Ocarina.Backends.Vxworks653_Conf.Payloads;
 with Ocarina.Backends.Vxworks653_Conf.Connections;
@@ -133,7 +133,7 @@ package body Ocarina.Backends.Vxworks653_Conf is
       Vxworks653_Conf.Partitions.Visit (E);
       Vxworks653_Conf.Schedule.Visit (E);
       Vxworks653_Conf.Connections.Visit (E);
-      Vxworks653_Conf.HM.Visit (E);
+      Vxworks653_Conf.Hm.Visit (E);
       Vxworks653_Conf.Payloads.Visit (E);
 
       XTU.Pop_Entity;

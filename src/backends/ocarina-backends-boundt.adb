@@ -40,7 +40,7 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.Properties; use Ocarina.Backends.Properties;
 with Ocarina.Options;             use Ocarina.Options;
 
-with Utils;                       use Utils;
+with Utils; use Utils;
 
 with Ada.Text_IO;
 with GNAT.IO_Aux;

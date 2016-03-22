@@ -50,6 +50,7 @@ package Ocarina.Backends is
       AADL,
       AADL_Min,
       AADL_Annex,
+      SpaceStudio,
       AADLXML,
       ASN1_Deployment,
       Behavior_PP,

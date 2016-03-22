@@ -181,7 +181,7 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
          Core_Id := Utils.Get_Core_Id (E);
 
-         N          := Make_Literal (New_Int_Value (Core_Id, 1, 10));
+         N := Make_Literal (New_Int_Value (Core_Id, 1, 10));
          Append_Node_To_List (N, Parameters);
 
          --  Add the name of function executed by the task in the
@@ -491,21 +491,22 @@ package body Ocarina.Backends.PO_HI_C.Main is
 
                   Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-                  if Get_Concurrency_Protocol (Corresponding_Instance (S))
-                     /= None_Specified
+                  if Get_Concurrency_Protocol (Corresponding_Instance (S)) /=
+                    None_Specified
                   then
                      N :=
-                     Make_Expression
-                        (Left_Expr =>
-                           Make_Member_Designator
+                       Make_Expression
+                         (Left_Expr =>
+                            Make_Member_Designator
                               (Defining_Identifier =>
                                  Make_Defining_Identifier
-                                    (MN (M_Protected_Id)),
-                              Aggregate_Name => Map_C_Defining_Identifier (S)),
-                        Operator   => Op_Equal,
-                        Right_Expr =>
-                         CTN.Default_Value_Node
-                           (Backend_Node (Identifier (S))));
+                                   (MN (M_Protected_Id)),
+                               Aggregate_Name =>
+                                 Map_C_Defining_Identifier (S)),
+                          Operator   => Op_Equal,
+                          Right_Expr =>
+                            CTN.Default_Value_Node
+                              (Backend_Node (Identifier (S))));
                      Append_Node_To_List (N, CTN.Statements (Main_Function));
                   end if;
                else

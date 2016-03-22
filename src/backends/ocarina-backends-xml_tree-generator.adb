@@ -31,7 +31,7 @@
 
 with Ocarina.Namet;  use Ocarina.Namet;
 with Ocarina.Output; use Ocarina.Output;
-with Utils;  use Utils;
+with Utils;          use Utils;
 
 with Ada.Directories;
 with GNAT.OS_Lib; use GNAT.OS_Lib;

@@ -95,7 +95,9 @@ package body Ocarina.Backends.Functions_Matrix is
    procedure Init is
    begin
       Register_Backend
-        ("Function_Matrix", Generate'Access, Functions_Matrix_Analysis);
+        ("Function_Matrix",
+         Generate'Access,
+         Functions_Matrix_Analysis);
    end Init;
 
    -----------

@@ -29,10 +29,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ocarina.Namet;    use Ocarina.Namet;
-with Ocarina.Output;   use Ocarina.Output;
-with Utils;    use Utils;
-with Outfiles; use Outfiles;
+with Ocarina.Namet;  use Ocarina.Namet;
+with Ocarina.Output; use Ocarina.Output;
+with Utils;          use Utils;
+with Outfiles;       use Outfiles;
 
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 

@@ -74,11 +74,11 @@ package body Ocarina.Backends.POK_Cheddar is
    procedure Visit_Process_Instance (E : Node_Id);
    procedure Visit_Thread_Instance (E : Node_Id);
 
-   Task_Id                     : Unsigned_Long_Long := 0;
-   Current_System              : Node_Id;
-   Current_Virtual_Processor   : Node_Id;
-   Current_Process             : Node_Id;
-   Current_Processor           : Node_Id;
+   Task_Id                   : Unsigned_Long_Long := 0;
+   Current_System            : Node_Id;
+   Current_Virtual_Processor : Node_Id;
+   Current_Process           : Node_Id;
+   Current_Processor         : Node_Id;
 
    ----------------
    -- Map_Thread --
