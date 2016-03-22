@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2015 ESA & ISAE.                       --
+--                   Copyright (C) 2015-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -200,17 +200,14 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
       Append_Node_To_List (Schedule_Node, XTN.Subitems (Schedules_Node));
 
       for J in Module_Schedule'Range loop
-
          Partition_Window_Node := Make_XML_Node ("PartitionWindow");
 
          Append_Node_To_List
            (Partition_Window_Node,
             XTN.Subitems (Schedule_Node));
 
-         --
-         --  For now, we assume the partition duration
-         --  is in milliseconds.
-         --
+         --  We assume the partition duration is in milliseconds
+
          Partition_Duration :=
             (Long_Double
                (To_Nanoseconds
