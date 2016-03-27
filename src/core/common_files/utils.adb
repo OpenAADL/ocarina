@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -277,5 +277,31 @@ package body Utils is
 
       return True;
    end Is_Prefix;
+
+   -----------------
+   -- Hash_String --
+   -----------------
+
+   function Hash_String (Key : Name_Id) return Hash_Type is
+      Res : Integer := 0;
+      S : constant String := Get_Name_String (Key);
+   begin
+      for J in S'Range loop
+         Res := Res + Character'Pos (S (J)) * J;
+      end loop;
+      return Hash_Type (Res);
+   end Hash_String;
+
+   ------------
+   -- Equals --
+   ------------
+
+   function Equals (Left, Right : Name_Id) return Boolean is
+      S1 : constant String := Get_Name_String (Left);
+      S2 : constant String := Get_Name_String (Right);
+   begin
+      --   XXX highly suspicious since Name_Id are hashed ..
+      return S1'Length = S2'Length and then S1 = S2;
+   end Equals;
 
 end Utils;

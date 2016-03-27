@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -30,6 +30,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Types; use Ocarina.Types;
+with Ada.Containers.Hashed_Maps;  use Ada.Containers;
 
 package Utils is
 
@@ -79,5 +80,14 @@ package Utils is
 
    function Is_Prefix (N1 : Name_Id; N2 : Name_Id) return Boolean;
    --  Is N1 a prefix of N2
+
+   function Hash_String (Key : Name_Id) return Hash_Type;
+   function Equals (Left, Right : Name_Id) return Boolean;
+
+   package Hash_Property is new Ada.Containers.Hashed_Maps
+     (Key_Type => Name_Id,
+      Element_Type => Name_Id,
+      Hash => Hash_String,
+      Equivalent_Keys => Equals);
 
 end Utils;
