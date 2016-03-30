@@ -1,9 +1,39 @@
-pragma Style_Checks (Off);
+------------------------------------------------------------------------------
+--                                                                          --
+--                           OCARINA COMPONENTS                             --
+--                                                                          --
+--       O C A R I N A . B A C K E N D S . P Y T H O N . N U T I L S        --
+--                                                                          --
+--                                 S p e c                                  --
+--                                                                          --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
+--                                                                          --
+-- Ocarina  is free software; you can redistribute it and/or modify under   --
+-- terms of the  GNU General Public License as published  by the Free Soft- --
+-- ware  Foundation;  either version 3,  or (at your option) any later ver- --
+-- sion. Ocarina is distributed in the hope that it will be useful, but     --
+-- WITHOUT ANY WARRANTY; without even the implied warranty of               --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     --
+--                                                                          --
+-- As a special exception under Section 7 of GPL version 3, you are granted --
+-- additional permissions described in the GCC Runtime Library Exception,   --
+-- version 3.1, as published by the Free Software Foundation.               --
+--                                                                          --
+-- You should have received a copy of the GNU General Public License and    --
+-- a copy of the GCC Runtime Library Exception along with this program;     --
+-- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
+-- <http://www.gnu.org/licenses/>.                                          --
+--                                                                          --
+--                 Ocarina is maintained by the TASTE project               --
+--                      (taste-users@lists.tuxfamily.org)                   --
+--                                                                          --
+------------------------------------------------------------------------------
+
 pragma Warnings (Off);
 
-with Ocarina.Backends.python.Nodes; use Ocarina.Backends.python.Nodes;
+with Ocarina.Backends.Python.Nodes; use Ocarina.Backends.Python.Nodes;
 
-package Ocarina.Backends.python.Nutils is
+package Ocarina.Backends.Python.Nutils is
 
    Int0_Val : Value_Id;
    Int1_Val : Value_Id;
@@ -58,7 +88,7 @@ package Ocarina.Backends.python.Nutils is
 
    TN : array (Type_Id) of Name_Id;
 
-   type python_New_Node_Kind is (K_String, K_Nameid);
+   type Python_New_Node_Kind is (K_String, K_Nameid);
 
    function Add_Prefix_To_Name
      (Prefix : String;
@@ -109,7 +139,7 @@ package Ocarina.Backends.python.Nutils is
    pragma Inline (Is_Empty);
    --  Return True when L is empty
 
-   function Make_python_Comment (N : Name_Id) return Node_Id;
+   function Make_Python_Comment (N : Name_Id) return Node_Id;
    --  This function does only the fllowing thing: it creates a node
    --  whose name is the full text of the comment. It does not split
    --  the comment into many lines. This is done in the code
@@ -132,14 +162,14 @@ package Ocarina.Backends.python.Nutils is
    function Message_Comment (M : String) return Node_Id;
    --  Return a comment message. Used by all the tree
    --  converters
-   function To_python_Name (N : Name_Id) return Name_Id;
+   function To_Python_Name (N : Name_Id) return Name_Id;
    --  Convert N to a valid Ada identifier (no clashing with keywords,
    --  no consecutive '_', no heading '_'...).
 
    function Conventional_Base_Name (N : Name_Id) return Name_Id;
    --  Return a lower case name of N
 
-   function Make_python_File
+   function Make_Python_File
      (Identifier : Node_Id;
       DTD        : Node_Id := No_Node) return Node_Id;
 
@@ -147,14 +177,14 @@ package Ocarina.Backends.python.Nutils is
 
    function Make_Container (Content : Node_Id) return Node_Id;
 
-   function Make_python_Node
+   function Make_Python_Node
      (Name_String : String               := "";
       Name_Nameid : Name_Id              := No_Name;
-      Kind        : python_New_Node_Kind := K_String) return Node_Id;
+      Kind        : Python_New_Node_Kind := K_String) return Node_Id;
 
    function Make_Assignement (Left : Node_Id; Right : Node_Id) return Node_Id;
 
    procedure Add_Attribute (Key : String; Value : String; N : Node_Id);
    procedure Add_Attribute (Key : String; Value : Value_Id; N : Node_Id);
 
-end Ocarina.Backends.python.Nutils;
+end Ocarina.Backends.Python.Nutils;

@@ -1,4 +1,34 @@
-pragma Style_Checks (Off);
+------------------------------------------------------------------------------
+--                                                                          --
+--                           OCARINA COMPONENTS                             --
+--                                                                          --
+--       O C A R I N A . B A C K E N D S . P Y T H O N . N U T I L S        --
+--                                                                          --
+--                                 B o d y                                  --
+--                                                                          --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
+--                                                                          --
+-- Ocarina  is free software; you can redistribute it and/or modify under   --
+-- terms of the  GNU General Public License as published  by the Free Soft- --
+-- ware  Foundation;  either version 3,  or (at your option) any later ver- --
+-- sion. Ocarina is distributed in the hope that it will be useful, but     --
+-- WITHOUT ANY WARRANTY; without even the implied warranty of               --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     --
+--                                                                          --
+-- As a special exception under Section 7 of GPL version 3, you are granted --
+-- additional permissions described in the GCC Runtime Library Exception,   --
+-- version 3.1, as published by the Free Software Foundation.               --
+--                                                                          --
+-- You should have received a copy of the GNU General Public License and    --
+-- a copy of the GCC Runtime Library Exception along with this program;     --
+-- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
+-- <http://www.gnu.org/licenses/>.                                          --
+--                                                                          --
+--                 Ocarina is maintained by the TASTE project               --
+--                      (taste-users@lists.tuxfamily.org)                   --
+--                                                                          --
+------------------------------------------------------------------------------
+
 pragma Warnings (Off);
 
 with GNAT.Table;
@@ -11,15 +41,15 @@ with Utils;         use Utils;
 with Ocarina.Backends.Utils;
 with Ocarina.ME_AADL.AADL_Tree.Nodes; use Ocarina.ME_AADL.AADL_Tree.Nodes;
 use Ocarina.Backends.Utils;
-with Ocarina.Backends.python_Values; use Ocarina.Backends.python_Values;
+with Ocarina.Backends.Python_Values; use Ocarina.Backends.Python_Values;
 
-package body Ocarina.Backends.python.Nutils is
+package body Ocarina.Backends.Python.Nutils is
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package XTN renames Ocarina.Backends.python.Nodes;
+   package XTN renames Ocarina.Backends.Python.Nodes;
 
-   Keyword_Suffix : constant String := "%python";
-   --  Used to mark python keywords and avoid collision with other languages
+   Keyword_Suffix : constant String := "%Python";
+   --  Used to mark Python keywords and avoid collision with other languages
 
    type Entity_Stack_Entry is record
       Current_File   : Node_Id;
@@ -171,7 +201,7 @@ package body Ocarina.Backends.python.Nutils is
    function Message_Comment (M : Name_Id) return Node_Id is
       C : Node_Id;
    begin
-      C := Make_python_Comment (M);
+      C := Make_Python_Comment (M);
       return C;
    end Message_Comment;
 
@@ -183,7 +213,7 @@ package body Ocarina.Backends.python.Nutils is
       C : Node_Id;
    begin
       Set_Str_To_Name_Buffer (M);
-      C := Make_python_Comment (Name_Find);
+      C := Make_Python_Comment (Name_Find);
       return C;
    end Message_Comment;
 
@@ -258,14 +288,14 @@ package body Ocarina.Backends.python.Nutils is
    -- Make_C_Comment --
    --------------------
 
-   function Make_python_Comment (N : Name_Id) return Node_Id is
+   function Make_Python_Comment (N : Name_Id) return Node_Id is
       C : Node_Id;
    begin
-      C := New_Node (K_python_Comment);
+      C := New_Node (K_Python_Comment);
       Set_Defining_Identifier (C, New_Node (K_Defining_Identifier));
       XTN.Set_Name (Defining_Identifier (C), N);
       return C;
-   end Make_python_Comment;
+   end Make_Python_Comment;
 
    ------------------------------
    -- Make_Defining_Identifier --
@@ -443,7 +473,7 @@ package body Ocarina.Backends.python.Nutils is
    -- To_C_Name --
    ---------------
 
-   function To_python_Name (N : Name_Id) return Name_Id is
+   function To_Python_Name (N : Name_Id) return Name_Id is
       First     : Natural := 1;
       Name      : Name_Id;
       Test_Name : Name_Id;
@@ -480,7 +510,7 @@ package body Ocarina.Backends.python.Nutils is
       end if;
 
       return To_Lower (Name);
-   end To_python_Name;
+   end To_Python_Name;
 
    ----------------------------
    -- Conventional_Base_Name --
@@ -524,31 +554,31 @@ package body Ocarina.Backends.python.Nutils is
    end Current_File;
 
    -------------------
-   -- Make_python_File --
+   -- Make_Python_File --
    -------------------
 
-   function Make_python_File
+   function Make_Python_File
      (Identifier : Node_Id;
       DTD        : Node_Id := No_Node) return Node_Id
    is
       File            : Node_Id;
-      The_python_Node : Node_Id;
+      The_Python_Node : Node_Id;
 
    begin
-      File            := New_Node (K_python_File);
-      The_python_Node := New_Node (XTN.K_python_Node);
+      File            := New_Node (K_Python_File);
+      The_Python_Node := New_Node (XTN.K_Python_Node);
 
       Set_Defining_Identifier (File, Identifier);
       Set_Corresponding_Node (Identifier, File);
 
       XTN.Set_Is_HTML (File, False);
-      XTN.Set_Root_Node (File, The_python_Node);
+      XTN.Set_Root_Node (File, The_Python_Node);
       if Present (DTD) then
-         XTN.Set_python_DTD (File, DTD);
+         XTN.Set_Python_DTD (File, DTD);
       end if;
 
       return File;
-   end Make_python_File;
+   end Make_Python_File;
 
    ------------------
    -- Make_Literal --
@@ -563,19 +593,19 @@ package body Ocarina.Backends.python.Nutils is
    end Make_Literal;
 
    -------------------
-   -- Make_python_Node --
+   -- Make_Python_Node --
    -------------------
 
-   function Make_python_Node
+   function Make_Python_Node
      (Name_String : String               := "";
       Name_Nameid : Name_Id              := No_Name;
-      Kind        : python_New_Node_Kind := K_String) return Node_Id
+      Kind        : Python_New_Node_Kind := K_String) return Node_Id
    is
       N : Node_Id;
       L : List_Id;
       K : List_Id;
    begin
-      N := New_Node (K_python_Node);
+      N := New_Node (K_Python_Node);
 
       if Kind = K_String then
          Set_Str_To_Name_Buffer (Name_String);
@@ -593,7 +623,7 @@ package body Ocarina.Backends.python.Nutils is
       XTN.Set_Subitems (N, K);
 
       return N;
-   end Make_python_Node;
+   end Make_Python_Node;
 
    ----------------------
    -- Make_Assignement --
@@ -643,4 +673,4 @@ package body Ocarina.Backends.python.Nutils is
       Add_Attribute (Key, Image (Value), N);
    end Add_Attribute;
 
-end Ocarina.Backends.python.Nutils;
+end Ocarina.Backends.Python.Nutils;
