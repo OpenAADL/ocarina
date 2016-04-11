@@ -31,7 +31,8 @@ An Ada compiler:
    versions installed. See below explanations on the ADA environment
    variable if you need to override the default guess.
 
-.. note:: Ocarina requires at least GCC/FSF 5.1 or GNAT GPL 2015 to be compiled.
+.. note:: Ocarina requires at least GCC/FSF 5.2. GNAT GPL 2015 cannot
+   be used as it lacks some Ada 2012 capabilities.
 
 Optional components:
 
