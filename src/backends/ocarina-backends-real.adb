@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -32,9 +32,12 @@
 with Ada.Numerics.Generic_Elementary_Functions;
 with Ocarina.Namet;
 with Ocarina.Output;
+
+with Errors; use Errors;
 with Locations; use Locations;
 
 with Ocarina.Analyzer.REAL;
+with Ocarina.ME_REAL.Tokens;  use Ocarina.ME_REAL.Tokens;
 with Ocarina.ME_REAL.REAL_Tree.Nodes;
 with Ocarina.ME_REAL.REAL_Tree.Nutils;
 with Ocarina.ME_REAL.REAL_Tree.Utils;
@@ -44,6 +47,8 @@ with Ocarina.Backends.Messages;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 
+with Ocarina.Analyzer;
+with Ocarina.Instances;
 with Ocarina.Instances.REAL_Finder;
 with Ocarina.Instances.REAL_Checker.Queries.Subcomponent_Predicates;
 with Ocarina.Instances.REAL_Checker.Queries.Bound_Predicates;
@@ -62,10 +67,12 @@ package body Ocarina.Backends.REAL is
      (Long_Long_Float);
    use Numerics;
 
+   use Ocarina.Analyzer;
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
    use Ocarina.ME_REAL.REAL_Tree.Utils;
    use Ocarina.REAL_Values;
+   use Ocarina.Instances;
    use Ocarina.Instances.REAL_Finder;
    use Ocarina.Backends.Messages;
    use Ocarina.Namet;
@@ -3187,8 +3194,13 @@ package body Ocarina.Backends.REAL is
 
       It   : Natural := First;
       Node : Node_Id;
+      Success : Boolean;
    begin
-      Root_System := AADL_Root;
+      Root_System := Instantiate_Model (AADL_Root);
+      Exit_On_Error (No (AADL_Root), "Cannot instantiate AADL models");
+
+      Success := Analyze (REAL_Language, Root_System);
+      Exit_On_Error (not Success, "Cannot analyze REAL specifications");
 
       --  Runtime
 
