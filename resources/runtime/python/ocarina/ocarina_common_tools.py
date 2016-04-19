@@ -38,10 +38,11 @@ def runOcarinaFunction (f, *parameters):
         except:
             raisedError.append(getErrorMessage())
     stderrMsg = sortStderrMessages(error.getvalue().decode('utf-8'))
+    stdoutMsg = sortStdoutMessages (info.getvalue().decode('utf-8'))
+
     if stderrMsg[1]!=[]:
         raisedError.append(stderrMsg[1])
-    return [ res , info.getvalue().decode('utf-8'), stderrMsg[0] ,
-        raisedError ]
+    return [ res , stdoutMsg, stderrMsg[0], raisedError ]
 
 ################################################################################
 
@@ -61,8 +62,23 @@ def getErrorMessage ():
 
 ################################################################################
 
+def sortStdoutMessages (messages):
+    '''Get the messages from stdout
+
+    :param messages: the messages written on stdout
+
+    return a pair of the form [ info ]
+    '''
+
+    MsgList = []
+
+    for line in StringIO.StringIO(messages):
+        MsgList.append(line)
+
+    return [ MsgList ]
+
 def sortStderrMessages (messages):
-    '''Get the error and warning messages from the stderr
+    '''Get the error and warning messages from stderr
 
     :param messages: the messages written on stderr
 
@@ -75,6 +91,7 @@ def sortStderrMessages (messages):
     errorMsg = ''
     warningMsgList = []
     errorMsgList = []
+
     for line in StringIO.StringIO(messages):
         if line.lower().startswith('error:'):
             if warningMsg.strip()!='':
@@ -99,6 +116,9 @@ def sortStderrMessages (messages):
                 warningMsg = warningMsg + line + '\n'
             elif msgType == 'error':
                 errorMsg = errorMsg + line + '\n'
+            else:
+                errorMsg = errorMsg + line + '\n'
+
     if warningMsg.strip()!='':
         warningMsgList.append(warningMsg.strip())
     if errorMsg.strip()!='':
@@ -151,6 +171,7 @@ def std_redirector(stdoutStream, stderrStream):
         stdoutfile.flush()
         stdoutfile.seek(0, io.SEEK_SET)
         stdoutStream.write(stdoutfile.read())
+
         stderrfile.flush()
         stderrfile.seek(0, io.SEEK_SET)
         stderrStream.write(stderrfile.read())
