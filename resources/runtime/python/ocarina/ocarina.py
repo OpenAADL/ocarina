@@ -74,7 +74,7 @@ def instantiate (root_system):
     return runOcarinaFunction (libocarina_python.instantiate, root_system)
 
 ################################################################################
-Backends = Enum ([ "polyorb_hi_ada", "polyorb_hi_c"])
+Backends = Enum ([ "polyorb_hi_ada", "polyorb_hi_c", "real_theorem"])
 '''List of supported backends, used by :data:`generate`'''
 # Note, this list should match backend names as specified by Ocarina CLI
 
