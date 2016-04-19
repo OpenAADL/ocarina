@@ -366,6 +366,10 @@ package body Ocarina.Backends.REAL is
          Success := False;
       end if;
 
+      if not Success then
+         N_Errors := N_Errors + 1;
+      end if;
+
       Write_Line
         ("theorem " &
          Get_Name_String (Name (Identifier (R))) &
