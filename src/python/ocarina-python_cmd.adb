@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2014-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2014-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -242,6 +242,7 @@ package body Ocarina.Python_Cmd is
       pragma Unreferenced (Command);
    begin
       Ocarina.Utils.Generate (Nth_Arg (Data, 1, ""));
+      Set_Return_Value (Data, Errors.N_Errors = 0);
    end On_Generate;
 
    ---------------------
@@ -443,8 +444,6 @@ package body Ocarina.Python_Cmd is
    --------------------------
    -- On_Get_Property_Sets --
    --------------------------
-
-   --  procedure Get_PropertyBinding return Node_List;
 
    procedure On_Get_Property_Sets
       (Data : in out Callback_Data'Class; Command : String);
