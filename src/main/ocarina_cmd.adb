@@ -62,11 +62,8 @@ with Ocarina.Options;                  use Ocarina.Options;
 with Ocarina.Parser;                   use Ocarina.Parser;
 with Ocarina.Property_Sets;            use Ocarina.Property_Sets;
 with Ocarina.FE_AADL.Parser;           use Ocarina.FE_AADL.Parser;
---  with Ocarina.FE_REAL;                  use Ocarina.FE_REAL;
-with Ocarina.ME_REAL.Tokens;
-
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Ocarina.Scripts; use Ocarina.Scripts;
+with Ocarina.Scripts;                  use Ocarina.Scripts;
 
 procedure Ocarina_Cmd is
 
@@ -537,8 +534,6 @@ procedure Ocarina_Cmd is
       end;
    end Parse_Scenario_Files;
 
-   package RT renames Ocarina.ME_REAL.Tokens;
-
 begin
    --  Init
 
@@ -651,16 +646,6 @@ begin
          end if;
 
       when Generate_Code =>
-         if Get_Current_Backend_Name = Get_String_Name ("real_theorem")
-           or else Get_Current_Backend_Name = Get_String_Name ("real_pp")
-         then
-
-            AADL_Root := Instantiate_Model (AADL_Root);
-            Exit_On_Error (No (AADL_Root), "Cannot instantiate AADL models");
-
-            Success := Analyze (RT.REAL_Language, AADL_Root);
-            Exit_On_Error (not Success, "Cannot analyze REAL specifications");
-         end if;
          Generate_Code (AADL_Root);
          if Verbose then
             Set_Standard_Error;

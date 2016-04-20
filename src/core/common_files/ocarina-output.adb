@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 1992-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 1992-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -104,7 +104,6 @@ package body Ocarina.Output is
 
    begin
       if Len /= 0 then
-
          if Len /= Write (Current_FD, Buffer'Address, Len) then
 
             --  If there are errors with standard error, just quit
@@ -198,7 +197,7 @@ package body Ocarina.Output is
 
    procedure Write_Eol (N : Natural := 1) is
    begin
-      for I in 1 .. N loop
+      for J in 1 .. N loop
          Buffer (Natural (Next_Column)) := ASCII.LF;
          Next_Column                    := Next_Column + 1;
          Flush_Buffer;
