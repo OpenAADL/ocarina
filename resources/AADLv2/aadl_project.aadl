@@ -78,7 +78,9 @@ property set AADL_Project is
      Simulink_6_5,
      System_C,
      VHDL,
-     ACN);
+     ACN,
+     QGenC,
+     QGenAda);
 
   Supported_Distributions: type enumeration (Fixed, Poisson);
 

@@ -75,6 +75,8 @@ package Ocarina.Backends.Properties is
       Language_Scade,
       Language_SDL,
       Language_Simulink,
+      Language_QGenC,
+      Language_QGenAda,
       Language_System_C,
       Language_VHDL,
       Language_None);
