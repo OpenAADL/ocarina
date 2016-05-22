@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2012-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2012-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -39,13 +39,7 @@ package body Ocarina.Backends.ASN1_Values is
 
    package OV renames Ocarina.AADL_Values;
 
-   Hex : constant String := "0123456789ABCDEF";
-
    package VT is new GNAT.Table (Value_Type, Value_Id, No_Value + 1, 10, 10);
-
-   subtype ULL is Unsigned_Long_Long;
-
-   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1);
 
    ---------
    -- "*" --
@@ -319,20 +313,6 @@ package body Ocarina.Backends.ASN1_Values is
       end case;
       return LV;
    end "xor";
-
-   ----------------------------
-   -- Add_ULL_To_Name_Buffer --
-   ----------------------------
-
-   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1) is
-      Q : constant ULL := U / B;
-      R : constant ULL := U mod B;
-   begin
-      if Q /= 0 or else S > 1 then
-         Add_ULL_To_Name_Buffer (Q, B, S - 1);
-      end if;
-      Add_Char_To_Name_Buffer (Hex (Hex'First + Natural (R)));
-   end Add_ULL_To_Name_Buffer;
 
    -----------
    -- Image --
