@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -143,6 +143,13 @@ package Ocarina.Namet is
    procedure Set_Dnat_To_Name_Buffer (V : Dnat);
    pragma Inline (Set_Dnat_To_Name_Buffer);
    --  Equivalent to Name_Len := 0; followed by Add_Nat_To_Name_Buffer (V);
+
+   subtype ULL is Unsigned_Long_Long;
+
+   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1);
+   --  Add base B representation of U to the end of the string
+   --  currently stored in Name_Buffer, incrementing Name_Len as
+   --  required.
 
    procedure Add_Str_To_Name_Buffer (S : String);
    --  Add characters of string S to the end of the string currently stored
