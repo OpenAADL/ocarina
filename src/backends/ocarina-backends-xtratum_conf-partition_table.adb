@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -186,12 +186,16 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
       Partition_Node := Make_XML_Node ("Partition");
 
+      --  a) id of the partition
+
       Set_Str_To_Name_Buffer ("id");
       P := Make_Defining_Identifier (Name_Find);
       Q := Copy_Node (Backend_Node (Identifier (Associated_Processor)));
       Append_Node_To_List
         (Make_Assignement (P, Q),
          XTN.Items (Partition_Node));
+
+      --  b) name of the partition
 
       Set_Str_To_Name_Buffer ("name");
       P := Make_Defining_Identifier (Name_Find);
@@ -201,6 +205,18 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
       Append_Node_To_List
         (Make_Assignement (P, Q),
          XTN.Items (Partition_Node));
+
+      --  c) hard-coded configuration parameters, part 1
+
+      Set_Str_To_Name_Buffer ("flags");
+      P := Make_Defining_Identifier (Name_Find);
+      Set_Str_To_Name_Buffer ("system boot fp");
+      Q := Make_Defining_Identifier (Name_Find);
+      Append_Node_To_List
+        (Make_Assignement (P, Q),
+         XTN.Items (Partition_Node));
+
+      --  d) hard-coded configuration parameters, part 2
 
       Set_Str_To_Name_Buffer ("console");
       P := Make_Defining_Identifier (Name_Find);
@@ -226,7 +242,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
       Set_Str_To_Name_Buffer ("start");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("0x");
-      Add_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Base_Address_Value));
+      Add_ULL_To_Name_Buffer (Base_Address_Value, 16);
 
       Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
@@ -252,54 +268,62 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
       declare
          Slots : constant Time_Array := Get_POK_Slots (Associated_Module);
          Slots_Allocation : constant List_Id    :=
-           Get_POK_Slots_Allocation (Associated_Module);
+            Get_POK_Slots_Allocation (Associated_Module);
          Duration    : Unsigned_Long_Long          := 0;
          Major_Frame : constant Unsigned_Long_Long :=
-           To_Milliseconds (Get_POK_Major_Frame (Associated_Module));
+            To_Milliseconds (Get_POK_Major_Frame (Associated_Module));
          Part : Node_Id;
       begin
-         S := ATN.First_Node (Slots_Allocation);
-         for I in Slots'Range loop
+         if Present (Slots_Allocation) then
+            --   XXX this code must be adjusted, the property
+            --   Slots_Allocation has been deprecated by AADL, and the
+            --   TemporalRequirements node in XtratuM is reserved for
+            --   future usage.
 
-            Part := ATE.Get_Referenced_Entity (S);
+            S := ATN.First_Node (Slots_Allocation);
+            for J in Slots'Range loop
+               Part := ATE.Get_Referenced_Entity (S);
 
-            if Part = Associated_Processor then
-               Duration := Duration + To_Milliseconds (Slots (I));
-            end if;
+               if Part = Associated_Processor then
+                  Duration := Duration + To_Milliseconds (Slots (J));
+               end if;
 
-            S := ATN.Next_Node (S);
-         end loop;
-         Set_Str_To_Name_Buffer ("duration");
-         P := Make_Defining_Identifier (Name_Find);
-         Set_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Duration));
-         Add_Str_To_Name_Buffer ("ms");
-         Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
+               S := ATN.Next_Node (S);
+            end loop;
+            Set_Str_To_Name_Buffer ("duration");
+            P := Make_Defining_Identifier (Name_Find);
+            Set_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Duration));
+            Add_Str_To_Name_Buffer ("ms");
+            Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
-         Append_Node_To_List
-           (Make_Assignement (P, Q),
-            XTN.Items (Temporal_Req_Node));
+            Append_Node_To_List
+              (Make_Assignement (P, Q),
+               XTN.Items (Temporal_Req_Node));
 
-         Set_Str_To_Name_Buffer ("period");
-         P := Make_Defining_Identifier (Name_Find);
-         Set_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Major_Frame));
-         Add_Str_To_Name_Buffer ("ms");
-         Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
+            Set_Str_To_Name_Buffer ("period");
+            P := Make_Defining_Identifier (Name_Find);
+            Set_Str_To_Name_Buffer (Unsigned_Long_Long'Image (Major_Frame));
+            Add_Str_To_Name_Buffer ("ms");
+            Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
-         Append_Node_To_List
-           (Make_Assignement (P, Q),
-            XTN.Items (Temporal_Req_Node));
-
+            Append_Node_To_List
+              (Make_Assignement (P, Q),
+               XTN.Items (Temporal_Req_Node));
+         end if;
       end;
 
       Append_Node_To_List (Temporal_Req_Node, XTN.Subitems (Partition_Node));
 
       --  Now, handle the ports of the partition.
+
       if Has_Ports (E) then
          Port_Table_Node := Make_XML_Node ("PortTable");
 
          F := First_Node (Features (E));
          while Present (F) loop
             if Kind (F) = K_Port_Spec_Instance then
+
+               --  XXX move out as REAL checks
 
                if not Is_Data (F) then
                   Display_Located_Error
@@ -316,15 +340,6 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
                end if;
 
                Port_Node := Make_XML_Node ("Port");
-
-               Set_Str_To_Name_Buffer ("name");
-               P := Make_Defining_Identifier (Name_Find);
-
-               Get_Name_String (Display_Name (Identifier (F)));
-               Q := Make_Defining_Identifier (To_Lower (Name_Find));
-               Append_Node_To_List
-                 (Make_Assignement (P, Q),
-                  XTN.Items (Port_Node));
 
                Set_Str_To_Name_Buffer ("type");
                P := Make_Defining_Identifier (Name_Find);
@@ -350,6 +365,15 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
                end if;
 
                Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Port_Node));
+
+               Set_Str_To_Name_Buffer ("name");
+               P := Make_Defining_Identifier (Name_Find);
+
+               Get_Name_String (Display_Name (Identifier (F)));
+               Q := Make_Defining_Identifier (To_Lower (Name_Find));
                Append_Node_To_List
                  (Make_Assignement (P, Q),
                   XTN.Items (Port_Node));
