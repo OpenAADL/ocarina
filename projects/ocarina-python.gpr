@@ -55,7 +55,6 @@ project Ocarina.Python is
 
    for Library_Interface use ("ocarina.python_cmd");
    for Library_Standalone use "standard";
---   for Library_Standalone use "encapsulated";
 
    package Compiler renames Ocarina.Compiler;
    package Binder   renames Ocarina.Binder;
