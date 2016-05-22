@@ -263,7 +263,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       Module_Schedule : constant Schedule_Window_Record_Term_Array :=
         Get_Module_Schedule_Property (E);
-
+      Frequency : constant Frequency_Type := Get_Processor_Frequency (E);
    begin
       if Module_Schedule'Length = 0 then
          Display_Error
@@ -271,8 +271,11 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
             Fatal => True);
       end if;
 
-      --  First, add a <Processor> node
+      --  First, add a <Processor> node, made of
+
       Processor_Node := Make_XML_Node ("Processor");
+
+      --  a) processor id
 
       Set_Str_To_Name_Buffer ("id");
       P := Make_Defining_Identifier (Name_Find);
@@ -282,11 +285,14 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
         (Make_Assignement (P, Q),
          XTN.Items (Processor_Node));
 
+      --  b) processor frequency
+
       Set_Str_To_Name_Buffer ("frequency");
       P := Make_Defining_Identifier (Name_Find);
 
-      Set_Str_To_Name_Buffer ("50Mhz");
-      Q := Make_Defining_Identifier (Name_Find);
+      Set_Str_To_Name_Buffer
+        (Unsigned_Long_Long'Image (Frequency.S) & Frequency.F'Img);
+      Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
       Append_Node_To_List
         (Make_Assignement (P, Q),
@@ -301,6 +307,9 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       --  At this time, we support only one plan for each processor.
       Plan_Node := Make_XML_Node ("Plan");
       Append_Node_To_List (Plan_Node, XTN.Subitems (Plan_Table_Node));
+
+      --  XXX by default, we map just one plan. We may support multiple
+      --  plans, one per mode.
 
       Set_Str_To_Name_Buffer ("id");
       P := Make_Defining_Identifier (Name_Find);
