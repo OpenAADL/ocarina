@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -192,6 +192,12 @@ package body Ocarina.Backends.Properties is
    Execution_Platform        : Name_Id;
    Scheduler_Quantum         : Name_Id;
    Cheddar_Scheduler_Quantum : Name_Id;
+
+   Frequency_Hz_Name         : Name_Id;
+   Frequency_Khz_Name        : Name_Id;
+   Frequency_Mhz_Name        : Name_Id;
+   Frequency_Ghz_Name        : Name_Id;
+   Processor_Frequency_Name  : Name_Id;
 
    ---------------------------------
    -- AADL Connections properties --
@@ -2856,6 +2862,13 @@ package body Ocarina.Backends.Properties is
       Cheddar_Scheduler_Quantum :=
         Get_String_Name ("cheddar_properties::scheduler_quantum");
 
+      Frequency_Hz_Name := Get_String_Name ("hz");
+      Frequency_Khz_Name := Get_String_Name ("khz");
+      Frequency_Mhz_Name := Get_String_Name ("mhz");
+      Frequency_Ghz_Name := Get_String_Name ("ghz");
+      Processor_Frequency_Name :=
+        Get_String_Name ("processor_properties::processor_frequency");
+
       Connection_Binding := Get_String_Name ("actual_connection_binding");
 
       Transport_API := Get_String_Name ("deployment::transport_api");
@@ -3712,9 +3725,10 @@ package body Ocarina.Backends.Properties is
    ------------------------------
 
    function Get_POK_Slots_Allocation (E : Node_Id) return List_Id is
+      pragma Assert (AINU.Is_Processor (E));
+
       L : List_Id;
    begin
-      pragma Assert (AINU.Is_Processor (E));
       if Is_Defined_Property (E, POK_Slots_Allocation) then
          L := Get_List_Property (E, POK_Slots_Allocation);
          if L /= No_List then
@@ -4163,5 +4177,64 @@ package body Ocarina.Backends.Properties is
    begin
       return Check_And_Get_Property (D, Core_Id);
    end Get_Core_Id;
+
+   ----------------------------------
+   -- Get_Frequency_Property_Value --
+   ----------------------------------
+
+   function Get_Frequency_Property_Value
+     (C             : Node_Id;
+      Property_Name : Name_Id) return Frequency_Type
+    is
+      V      : Node_Id;
+      U      : Node_Id;
+      Result : Frequency_Type;
+      N      : Name_Id;
+   begin
+      if Is_Defined_Integer_Property (C, Property_Name) then
+         V := Get_Value_Of_Property_Association (C, Property_Name);
+
+         if Present (V) and then Present (Unit_Identifier (V)) then
+            U := Unit_Identifier (V);
+
+            --  Get the size
+
+            Result.S := Get_Integer_Property (C, Property_Name);
+
+            --  Convert the value to its unit
+
+            N := ATN.Name (U);
+
+            if N = Frequency_Hz_Name then
+               Result.F := Hz;
+            elsif N = Frequency_Khz_Name then
+               Result.F := Khz;
+            elsif N = Frequency_Mhz_Name then
+               Result.F := Mhz;
+            elsif N = Frequency_Ghz_Name then
+               Result.F := Ghz;
+            else
+               Display_Located_Error
+                 (AIN.Loc (U),
+                  "Wrong unit",
+                  Fatal => True);
+               return ((0, Hz));
+            end if;
+         end if;
+         return Result;
+      else
+         return ((0, Hz));
+      end if;
+   end Get_Frequency_Property_Value;
+
+   -----------------------------
+   -- Get_Processor_Frequency --
+   -----------------------------
+
+   function Get_Processor_Frequency (P : Node_Id) return Frequency_Type is
+      pragma Assert (AINU.Is_Processor (P));
+   begin
+      return Get_Frequency_Property_Value (P, Processor_Frequency_Name);
+   end Get_Processor_Frequency;
 
 end Ocarina.Backends.Properties;
