@@ -52,8 +52,7 @@ project Ocarina is
       case Build is
         when "debug" =>
            for Default_Switches ("Ada") use
-             ("-fPIC",
-              "-g",
+             ("-g",
               "-gnatfy",
               "-gnatwae",
               "-gnatoa",
@@ -68,7 +67,6 @@ project Ocarina is
         when "release" =>
            for Default_Switches ("Ada") use
              ("-O2",
-	      "-fPIC",
               "-gnat12",
               "-gnata",
               "-gnaty",
