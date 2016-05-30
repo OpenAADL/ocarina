@@ -285,12 +285,12 @@ package body Ocarina.Backends.python.Generator is
 
    procedure write_import is
    begin
+      Write_Line ("import sys");
       Write_Line ("import os");
-      -- Write_Line("import re");
+      Write_Line ("jython_lib=" & '"' & "%s/jython.jar/Lib" & '"' & " % (os.environ['SPACE_CODESIGN_ENV'])");
+      Write_Line ("sys.path.insert(1,jython_lib)");
       Write_Line ("import shutil");
       Write_Line ("import tempfile");
-      --write_Str("from myPowerMetric import MyPowerMetric");
-      --Write_Line("from vivadoHLS import VivadoHLS");
    end write_import;
 
    -----------------------
@@ -632,7 +632,7 @@ package body Ocarina.Backends.python.Generator is
       Increment_Indentation;
       Write_Indentation;
       Write_Line
-      ("processor[processor_name[0]] = design.createProcessorInstance(bus[processor_name[2]], processor_name[1])");
+      ("processor[processor_name[0]] = design.createProcessorInstance(bus[processor_name[3]], processor_name[1])");
       Decrement_Indentation;
       Write_Indentation;
       Write_Line ("else :");
