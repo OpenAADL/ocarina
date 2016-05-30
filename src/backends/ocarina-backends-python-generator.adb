@@ -369,7 +369,7 @@ package body Ocarina.Backends.python.Generator is
       Write_Str ("]");
       Write_Eol;
       Write_Line
-        ("# processor (processor_name, processor_type, binding_bus, scheduling_protocol)");
+        ("# processor (processor_name, processor_type, simulation_model, binding_bus, scheduling_protocol)");
       Write_Str ("PROCESSOR_NAMES = [");
       if not Binding_List.Is_Empty (project.Processor_List) then
          Binding_List.Pop (project.Processor_List, Component);
@@ -380,6 +380,10 @@ package body Ocarina.Backends.python.Generator is
          Write_Str (",");
          Write_Str ("'");
          Write_Str (Get_Name_String (Component.component_type));
+         Write_Str ("'");
+         Write_Str (",");
+         Write_Str ("'");
+         Write_Str (Get_Name_String (Component.Simulation_model));
          Write_Str ("'");
          Write_Str (",");
          Write_Str ("'");
@@ -401,6 +405,10 @@ package body Ocarina.Backends.python.Generator is
          Write_Str (",");
          Write_Str ("'");
          Write_Str (Get_Name_String (Component.component_type));
+         Write_Str ("'");
+         Write_Str (",");
+         Write_Str ("'");
+         Write_Str (Get_Name_String (Component.Simulation_model));
          Write_Str ("'");
          Write_Str (",");
          Write_Str ("'");
@@ -620,8 +628,19 @@ package body Ocarina.Backends.python.Generator is
       Write_Line ("for processor_name in processor_names :");
       Increment_Indentation;
       Write_Indentation;
+      Write_Line ("if processor_name[2] is None:");
+      Increment_Indentation;
+      Write_Indentation;
       Write_Line
-        ("processor[processor_name[0]] = design.createProcessorInstance(bus[processor_name[2]], processor_name[1])");
+      ("processor[processor_name[0]] = design.createProcessorInstance(bus[processor_name[2]], processor_name[1])");
+      Decrement_Indentation;
+      Write_Indentation;
+      Write_Line ("else :");
+      Increment_Indentation;
+      Write_Indentation;
+      Write_Line
+        ("processor[processor_name[0]] = design.createProcessorInstance(bus[processor_name[3]], processor_name[1], processor_name[2])");
+      Decrement_Indentation;
       Decrement_Indentation;
       Write_Indentation;
       Write_Line ("for module_name in module_names :");

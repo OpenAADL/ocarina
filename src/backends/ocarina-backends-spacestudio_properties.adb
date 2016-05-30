@@ -248,6 +248,19 @@ package body Ocarina.Backends.SpaceStudio_properties is
                Processor_B.instance_name  := Instance_Name;
 
                if Hash_Property.Contains
+                 (Map,
+                  Get_String_Name ("spacestudio::simulation_model"))
+               then
+                  Processor_B.Simulation_Model :=
+                    Hash_Property.Element
+                      (Map,
+                       Get_String_Name ("spacestudio::simulation_model"));
+               else
+                  Processor_B.Simulation_Model :=
+                    Get_String_Name ("None");
+               end if;
+
+               if Hash_Property.Contains
                    (Map,
                     Get_String_Name ("scheduling_policy"))
                then
@@ -263,7 +276,6 @@ package body Ocarina.Backends.SpaceStudio_properties is
                Binding_List.Push
                  (python.Generator.project.Processor_List,
                   Processor_B);
-
             end;
 
          when CC_Thread =>

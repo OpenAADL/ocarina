@@ -62,6 +62,7 @@ package Ocarina.Backends.Python.Generator is
    type Binding is record
       first_name        : Name_Id;
       instance_name     : Name_Id;
+      Simulation_Model  : Name_Id;
       second_name       : Name_Id;
       component_type    : Name_Id;
       priority          : Name_Id;
@@ -81,7 +82,6 @@ package Ocarina.Backends.Python.Generator is
       Processor_List : Binding_List.Fifo_Type;
       Bus_List       : Binding_List.Fifo_Type;
       Memory_List    : Binding_List.Fifo_Type;
-      --Sources_List : Binding_List.Fifo_Type;
    end record;
 
    Var_Name_Len    : Natural := 0;
