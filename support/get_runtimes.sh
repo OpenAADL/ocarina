@@ -31,8 +31,8 @@ while test $# -ne 0; do
     case ${r} in
 	*aadlib* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
-	    rm -rf polyorb-hi-ada 2>/dev/null
-	    git clone https://github.com/OpenAADL/AADLib.git \
+	    rm -rf AADLib 2>/dev/null
+	    git clone https://github.com/OpenAADL/AADLib.git aadlib \
 		|| exit 2
 	    ;;
 
