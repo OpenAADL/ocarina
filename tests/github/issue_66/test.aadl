@@ -1,0 +1,15 @@
+package Test
+public
+
+  system s end s;
+  system s2 end s2;
+
+  system implementation s2.i
+  subcomponents
+    a : system s;
+    b : system s;
+  properties
+    Source_Language => (C) applies to a, b;
+  end s2.i;
+
+end Test;
