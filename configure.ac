@@ -200,6 +200,7 @@ AC_ARG_WITH(ocarina-runtimes,
 AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
 [
   RUNTIME_LIST=""
+  AM_CONDITIONAL(AADLIB, false)
   AM_CONDITIONAL(PO_HI_ADA, false)
   AM_CONDITIONAL(PO_HI_C, false)
   AM_CONDITIONAL(POK, false)
@@ -209,7 +210,7 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
   do
      case ${R} in
         all )
-	    for P in polyorb-hi-ada polyorb-hi-c
+	    for P in aadlib polyorb-hi-ada polyorb-hi-c
             do
 	       if test -d ${root}/resources/runtime/${P}
      	       then
@@ -219,13 +220,25 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
      	       fi
             done
 
+            AM_CONDITIONAL(AADLIB, true)
             AM_CONDITIONAL(PO_HI_ADA, true)
 	    AM_CONDITIONAL(PO_HI_C, true)
 	    ;;
 
         none )
+            AM_CONDITIONAL(AADLIB, false)
 	    AM_CONDITIONAL(PO_HI_ADA, false)
 	    AM_CONDITIONAL(PO_HI_C, false)
+	    ;;
+
+         aadlib )
+            if test -d ${root}/resources/runtime/${R}
+            then
+               RUNTIME_LIST="${RUNTIME_LIST}${R} "
+            else
+               AC_MSG_ERROR([runtime ${R} not found])
+            fi
+	    AM_CONDITIONAL(AADLIB, true)
 	    ;;
 
 	pok )
@@ -268,7 +281,7 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
 ],
 [
   RUNTIME_LIST=""
-  for P in polyorb-hi-ada polyorb-hi-c
+  for P in aadlib polyorb-hi-ada polyorb-hi-c
   do
   if test -d ${root}/resources/runtime/${P}
   then
@@ -276,6 +289,7 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
   fi
   done
 
+  AM_CONDITIONAL(AADLIB, test -d "${root}/resources/runtime/aadlib")
   AM_CONDITIONAL(POK, test -d "${root}/resources/runtime/pok")
   AM_CONDITIONAL(PO_HI_ADA, test -d "${root}/resources/runtime/polyorb-hi-ada")
   AM_CONDITIONAL(PO_HI_C, test -d "${root}/resources/runtime/polyorb-hi-c")
