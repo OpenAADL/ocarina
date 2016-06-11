@@ -1351,7 +1351,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Make_Wait_Offset;
 
          --  Compute the next period after initialization, because
-         --  the period has passed after init.
+         --  the period may have passed after init.
 
          if P = Thread_Periodic or else P = Thread_Sporadic then
             N :=
@@ -1363,8 +1363,42 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Append_Node_To_List (N, Statements);
          end if;
 
+         if P = Thread_Periodic then
+            --  For periodic threads, we force a first wait to ensure
+            --  synchronized start after initialization. The runtime
+            --  computes a specific epoch to ensure such start.
+
+            N :=
+              Make_Doxygen_C_Comment
+              ("Waiting for the first dispatch instant",
+               Has_Header_Spaces => False);
+            Append_Node_To_List (N, Statements);
+
+            Call_Parameters := New_List (CTN.K_Parameter_List);
+            if Current_Device /= No_Node then
+               N :=
+                 Make_Defining_Identifier
+                 (Map_C_Enumerator_Name
+                    (S,
+                     Custom_Parent => Current_Device));
+            else
+               N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
+            end if;
+            Append_Node_To_List (N, Call_Parameters);
+            N :=
+              CTU.Make_Call_Profile
+              (RE (RE_Wait_For_Next_Period),
+               Call_Parameters);
+            Append_Node_To_List (N, Statements);
+         end if;
+
          if P /= Thread_Background then
             --  Make the while (1){} and add all statements
+            N :=
+              Make_Doxygen_C_Comment
+              ("Task body",
+               Has_Header_Spaces => False);
+            Append_Node_To_List (N, Statements);
 
             N :=
               Make_While_Statement
