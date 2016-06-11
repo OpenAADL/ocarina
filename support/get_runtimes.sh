@@ -29,17 +29,24 @@ while test $# -ne 0; do
     r="`echo $1 | tr '[A-Z]' '[a-z]'`"
     echo $r
     case ${r} in
+	*aadlib* )
+	    cd ${scriptdir}/../resources/runtime || exit 2
+	    rm -rf AADLib 2>/dev/null
+	    git clone https://github.com/OpenAADL/AADLib.git aadlib \
+		|| exit 2
+	    ;;
+
 	*po*hi*ada* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf polyorb-hi-ada 2>/dev/null
-	    git clone https://github.com/yoogx/polyorb-hi-ada.git \
+	    git clone https://github.com/OpenAADL/polyorb-hi-ada.git \
 		|| exit 2
 	    ;;
 
 	*po*hi*c* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf polyorb-hi-c 2>/dev/null
-	    git clone https://github.com/yoogx/polyorb-hi-c.git \
+	    git clone https://github.com/OpenAADL/polyorb-hi-c.git \
 		|| exit 2
 	    ;;
 

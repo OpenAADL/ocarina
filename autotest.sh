@@ -432,7 +432,6 @@ if test ${dotests} = "true" ; then
 			;;
 
 		    *)
-
 			if test -r ${gprfile} ; then
 			    ocarina_gpr="`ocarina-config --projects`"
 			    command="gnatmake -P\"`${path_conv} ${gprfile}`\" -aP${ocarina_gpr} -XOBJ_DIR=\"`${path_conv} ${tmpdir}`\""
@@ -451,7 +450,13 @@ if test ${dotests} = "true" ; then
 				   "${command}" \
 				   "" \
 				   "${actual_output}"
-			    failures=`expr ${failures} + 1`
+
+                            # We do not increase the number of
+                            # failures for compiled files, as those
+                            # are dependent on external conditions,
+                            # e.g. enabling code coverage, etc.
+
+			    # failures=`expr ${failures} + 1`
 
 			else
 			    ./`basename ${file} .adb` >${actual_output} 2>&1

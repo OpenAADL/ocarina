@@ -215,6 +215,9 @@ package body Ocarina.Backends.POK_C is
       elsif S = "vxworks653" then
          POK_Flavor := VXWORKS;
 
+      elsif S = "pok" then
+         POK_Flavor := POK;
+
       elsif S = "no-assert" then
          Add_Assertions := False;
       else

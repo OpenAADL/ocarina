@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -578,6 +578,15 @@ package Ocarina.Backends.Properties is
    --  processor.
 
    function Get_Scheduler_Quantum (P : Node_Id) return Time_Type;
+
+   type Frequency_Units is (Hz, Khz, Mhz, Ghz);
+
+   type Frequency_Type is record
+      S : Unsigned_Long_Long;
+      F : Frequency_Units;
+   end record;
+
+   function Get_Processor_Frequency (P : Node_Id) return Frequency_Type;
 
    --------------------------------
    -- AADL Connection Properties --

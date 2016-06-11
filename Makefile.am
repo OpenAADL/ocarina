@@ -54,11 +54,9 @@ install-exec-local:
 	$(INSTALL) -d $(DESTDIR)$(datadir)/doc
 	$(INSTALL) -d $(DESTDIR)$(datadir)/doc/ocarina
 	$(INSTALL_SCRIPT) ocarina-config $(DESTDIR)$(bindir)
-	$(INSTALL_DATA) $(srcdir)/ChangeLog $(DESTDIR)$(datadir)/doc/ocarina/ChangeLog_ocarina
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/ocarina-config
-	rm -f $(DESTDIR)$(datadir)/doc/ocarina/ChangeLog_ocarina
 
 release:
 	rm -rf release/

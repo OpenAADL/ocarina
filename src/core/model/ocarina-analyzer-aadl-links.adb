@@ -1930,9 +1930,10 @@ package body Ocarina.Analyzer.AADL.Links is
 
          if not Is_Empty (Applies_To_Prop (Node)) then
             List_Node    := First_Node (Applies_To_Prop (Node));
-            Pointed_Node := Container;
 
             while Present (List_Node) loop
+               Pointed_Node := Container;
+
                case Kind (Pointed_Node) is
                   when K_Subcomponent     |
                     K_Port_Spec           |

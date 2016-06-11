@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -96,6 +96,21 @@ package body Ocarina.Namet is
 
       Add_Char_To_Name_Buffer (Character'Val (Character'Pos ('0') + V rem 10));
    end Add_Nat_To_Name_Buffer;
+
+   ----------------------------
+   -- Add_ULL_To_Name_Buffer --
+   ----------------------------
+
+   procedure Add_ULL_To_Name_Buffer (U : ULL; B : ULL; S : Integer := 1) is
+      Hex : constant String := "0123456789ABCDEF";
+      Q : constant ULL := U / B;
+      R : constant ULL := U mod B;
+   begin
+      if Q /= 0 or else S > 1 then
+         Add_ULL_To_Name_Buffer (Q, B, S - 1);
+      end if;
+      Add_Char_To_Name_Buffer (Hex (Hex'First + Natural (R)));
+   end Add_ULL_To_Name_Buffer;
 
    ----------------------------
    -- Add_Str_To_Name_Buffer --
