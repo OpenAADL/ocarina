@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,11 +29,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with GNAT.OS_Lib; use GNAT.OS_Lib;
+with GNAT.OS_Lib;             use GNAT.OS_Lib;
 
-with Ocarina.Namet;           use Ocarina.Namet;
 with Ocarina.Output;          use Ocarina.Output;
-with Ocarina.Options; use Ocarina.Options;
+with Ocarina.Options;         use Ocarina.Options;
+with Outfiles;                use Outfiles;
 
 package body Ocarina.ME_AADL.Printers is
 
@@ -42,13 +42,14 @@ package body Ocarina.ME_AADL.Printers is
    ---------------------
 
    procedure Print_AADL_Tree (Node : Node_Id; W : W_Node_Spg) is
+      Fd : File_Descriptor;
    begin
       if Output_Filename /= No_Name then
-         Get_Name_String (Output_Filename);
-         Set_Output (Create_File (Name_Buffer (1 .. Name_Len), Binary));
+         Fd := Set_Output (Output_Filename);
       end if;
       W.all (Node);
       Set_Standard_Output;
+      Release_Output (Fd);
    end Print_AADL_Tree;
 
 end Ocarina.ME_AADL.Printers;
