@@ -32,6 +32,9 @@
 with Ada.Numerics.Generic_Elementary_Functions;
 with Ocarina.Namet;
 with Ocarina.Output;
+with GNAT.OS_Lib; use GNAT.OS_Lib;
+with Ocarina.Options; use Ocarina.Options;
+with Outfiles; use Outfiles;
 
 with Errors; use Errors;
 with Locations; use Locations;
@@ -3199,12 +3202,18 @@ package body Ocarina.Backends.REAL is
       It   : Natural := First;
       Node : Node_Id;
       Success : Boolean;
+      Fd : File_Descriptor;
+
    begin
       Root_System := Instantiate_Model (AADL_Root);
       Exit_On_Error (No (AADL_Root), "Cannot instantiate AADL models");
 
       Success := Analyze (REAL_Language, Root_System);
       Exit_On_Error (not Success, "Cannot analyze REAL specifications");
+
+      if Output_Filename /= No_Name then
+         Fd := Set_Output (Output_Filename);
+      end if;
 
       --  Runtime
 
@@ -3243,6 +3252,9 @@ package body Ocarina.Backends.REAL is
 
          It := It + 1;
       end loop;
+
+      Set_Standard_Output;
+      Release_Output (Fd);
    end Generate;
 
    ----------
