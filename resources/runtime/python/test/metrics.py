@@ -9,7 +9,7 @@ def printError(source, messages):
     for message in messages:
         print message
 
-def main(argv):ne
+def main(argv):
     '''Test function'''
     import ocarina;
     import lmp;
