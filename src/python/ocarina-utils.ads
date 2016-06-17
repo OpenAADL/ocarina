@@ -41,6 +41,8 @@ package Ocarina.Utils is
    function Instantiate (Root_System : String) return Boolean;
    procedure Generate (Backend_Name : String);
    procedure Reset;
+   function Set_REAL_Theorem (Theorem_Name : String) return Boolean;
+   function Add_REAL_Library (Library_Name : String) return Boolean;
 
    function Get_AADL_Root return Node_Id;
    function Get_Node_Id_From_String (Name : String) return Node_Id;

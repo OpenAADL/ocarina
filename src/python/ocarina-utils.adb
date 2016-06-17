@@ -36,10 +36,12 @@ with Ocarina.Output;             use Ocarina.Output;
 with Utils;                      use Utils;
 
 with Ocarina.Analyzer;           use Ocarina.Analyzer;
+with Ocarina.Analyzer.REAL;      use Ocarina.Analyzer.REAL;
 with Ocarina.Backends;           use Ocarina.Backends;
 with Ocarina.Configuration;      use Ocarina.Configuration;
 with Ocarina.FE_AADL;            use Ocarina.FE_AADL;
 with Ocarina.FE_AADL.Parser;
+with Ocarina.FE_REAL.Parser;     use Ocarina.FE_REAL.Parser;
 with Ocarina.Instances;          use Ocarina.Instances;
 with Ocarina.Parser;             use Ocarina.Parser;
 with Ocarina.Options;            use Ocarina.Options;
@@ -135,6 +137,33 @@ package body Ocarina.Utils is
       end if;
       return Success;
    end Analyze;
+
+   ----------------------
+   -- Set_REAL_Theorem --
+   ----------------------
+
+   function Set_REAL_Theorem (Theorem_Name : String) return Boolean is
+   begin
+      if Theorem_Name /= "" then
+         Write_Line ("Been there");
+         Main_Theorem := To_Lower (Get_String_Name (Theorem_Name));
+      end if;
+
+      return True;
+   end Set_REAL_Theorem;
+
+   ----------------------
+   -- Add_REAL_Library --
+   ----------------------
+
+   function Add_REAL_Library (Library_Name : String) return Boolean is
+   begin
+      if Library_Name /= "" then
+         Write_Line ("Adding: " & Library_Name);
+         Load_REAL_Library (Get_String_Name (Library_Name));
+      end if;
+      return True;
+   end Add_REAL_Library;
 
    -----------------
    -- Instantiate --
