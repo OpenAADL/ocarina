@@ -1916,6 +1916,32 @@ package body Ocarina.FE_REAL.Parser is
       end if;
    end Process;
 
+   -----------------------
+   -- Load_REAL_Library --
+   -----------------------
+
+   procedure Load_REAL_Library (File_Name : Name_Id) is
+      use Ocarina.Files;
+      use Ocarina.Namet;
+
+      Buffer            : Location;
+      REAL_External_Lib : Node_Id;
+   begin
+      Buffer := Load_File (File_Name);
+      if Buffer = No_Location then
+         Display_And_Exit
+           ("could not load file " &
+              Get_Name_String (File_Name));
+      end if;
+
+      REAL_External_Lib := Process (No_Node, Buffer);
+      if No (REAL_External_Lib) then
+         Display_And_Exit ("could not parse REAL specification");
+      end if;
+
+      Register_Library_Theorems (REAL_External_Lib);
+   end Load_REAL_Library;
+
    ----------
    -- Init --
    ----------
@@ -1934,26 +1960,7 @@ package body Ocarina.FE_REAL.Parser is
       --  parse and register it.
 
       for J in REAL_Libs.First .. REAL_Libs.Last loop
-         declare
-            use Ocarina.Files;
-
-            Buffer            : Location;
-            REAL_External_Lib : Node_Id;
-         begin
-            Buffer := Load_File (REAL_Libs.Table (J));
-            if Buffer = No_Location then
-               Display_And_Exit
-                 ("could not load file " &
-                  Get_Name_String (REAL_Libs.Table (J)));
-            end if;
-
-            REAL_External_Lib := Process (No_Node, Buffer);
-            if No (REAL_External_Lib) then
-               Display_And_Exit ("could not parse REAL specification");
-            end if;
-
-            Register_Library_Theorems (REAL_External_Lib);
-         end;
+         Load_REAL_Library (REAL_Libs.Table (J));
       end loop;
    end Init;
 

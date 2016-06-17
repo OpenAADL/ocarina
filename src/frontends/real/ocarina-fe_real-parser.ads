@@ -48,6 +48,8 @@ package Ocarina.FE_REAL.Parser is
    procedure Init;
    --  Initialize the parser
 
+   procedure Load_REAL_Library (File_Name : Name_Id);
+
    package REAL_Libs is new GNAT.Table (Name_Id, Nat, 1, 10, 10);
    --  Table of REAL libraries to consider
 
