@@ -5,6 +5,7 @@ test_real_exec_env_01.aadl:16:03: Warning: The value of source_language has been
 lib.real:12:17: warning: Unable to determine actualy returned type.
 lib.real:19:24: warning: Unable to determine actualy returned type.
 lib.real:33:03: warning: Returned integer value will be cast to a float at runtime
+lib.real:38:01 Backends: warning : Empty range set, returned value is 0.0
 test_env_subtheorem_call_no_parameter execution
 -------------------------------------
 Evaluating theorem test_env_subtheorem_call_no_parameter
@@ -82,7 +83,6 @@ Evaluating theorem test_env_subtheorem_call_with_empty_domain
  * Iterate for variable: rma.erc32_node_a
 Content of set a_set (test_real_exec_env_01.aadl:133:12) is 
    Evaluating x
-lib.real:38:01 Backends: warning : Empty range set, returned value is 0.0
    value for x after evaluating sub_theorem_6 is 0.00000E+00
  => Result: TRUE
 
