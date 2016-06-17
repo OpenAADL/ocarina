@@ -148,7 +148,6 @@ package body Ocarina.Analyzer.REAL is
 
    procedure Register_Library_Theorems (REAL_Library : Node_Id) is
       pragma Assert (Kind (REAL_Library) = K_Root_Node);
-      package RNU renames Ocarina.ME_REAL.REAL_Tree.Nutils;
 
       N : Node;
       T : Node_Id;
@@ -211,7 +210,9 @@ package body Ocarina.Analyzer.REAL is
 
       else
          --  Otherwise, iterate over Library theorems and fetch the
-         --  corresponding theorems.
+         --  corresponding theorem.
+
+         RNU.Node_List.Init (To_Run_Theorem_List); --  Reset list of theorems
 
          for J in RNU.Node_List.First .. RNU.Node_List.Last (Library_Theorems)
          loop
