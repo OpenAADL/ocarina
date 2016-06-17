@@ -210,6 +210,9 @@ package body Ocarina.Analyzer.REAL is
          end loop;
 
       else
+         --  Otherwise, iterate over Library theorems and fetch the
+         --  corresponding theorems.
+
          for J in RNU.Node_List.First .. RNU.Node_List.Last (Library_Theorems)
          loop
             A := Library_Theorems.Table (J).Node;
@@ -292,18 +295,18 @@ package body Ocarina.Analyzer.REAL is
       --  For non-used library theorems, we still analyze them,
       --  since they can be called directly through the API
 
-      --  for J in RNU.Node_List.First ..
-      --    RNU.Node_List.Last (Library_Theorems) loop
-      --     Node := Library_Theorems.Table (J).Node;
+      for J in RNU.Node_List.First ..
+        RNU.Node_List.Last (Library_Theorems) loop
+         Node := Library_Theorems.Table (J).Node;
 
-      --     RNU.REAL_Root := Node;
+         RNU.REAL_Root := Node;
 
-      --     if not Analyze_Sub_Theorem (RNU.REAL_Root) then
-      --        Display_Analyzer_Error
-      --          (Root, "could not proceed to theorem analysis");
-      --        return False;
-      --     end if;
-      --  end loop;
+         if not Analyze_Sub_Theorem (RNU.REAL_Root) then
+            Display_Analyzer_Error
+              (Root, "could not proceed to theorem analysis");
+            return False;
+         end if;
+      end loop;
 
       return True;
    end Analyze_Model;
