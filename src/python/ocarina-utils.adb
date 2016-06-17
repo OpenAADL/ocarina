@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2013-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2013-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -145,7 +145,6 @@ package body Ocarina.Utils is
    function Set_REAL_Theorem (Theorem_Name : String) return Boolean is
    begin
       if Theorem_Name /= "" then
-         Write_Line ("Been there");
          Main_Theorem := To_Lower (Get_String_Name (Theorem_Name));
       end if;
 
