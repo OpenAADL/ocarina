@@ -6,7 +6,7 @@ with Deployment;
 
 processor x86
 properties
-   Scheduling_Protocol => (RATE_MONOTONIC_PROTOCOL);
+   Scheduling_Protocol => (POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL);
    Deployment::Execution_Platform => Native;
 end x86;
 
@@ -23,7 +23,7 @@ end x86.win32;
 
 processor implementation x86.linux_bench
 properties
-   Scheduling_Protocol => (RATE_MONOTONIC_PROTOCOL);
+   Scheduling_Protocol => (POSIX_1003_HIGHEST_PRIORITY_FIRST_PROTOCOL);
    Deployment::Execution_Platform => bench;
 end x86.linux_bench;
 
