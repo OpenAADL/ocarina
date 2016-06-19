@@ -507,7 +507,7 @@ property set Taste is
     applies to (subprogram access, bus access);
 
   Coordinates : aadlstring
-    applies to (system, package, device, memory, processor, process, access, subprogram access, connection, bus, virtual bus);
+    applies to (system, package, device, memory, processor, process, access, subprogram access, connection, bus, virtual bus, feature group);
 
   HWLibraries : list of aadlstring
     applies to (package);
@@ -664,12 +664,6 @@ system)
   dataviewpath : list of aadlstring
     applies to (package);
 
-  version : aadlstring
-    applies to (package);
-
-  interfacename : aadlstring
-    applies to (subprogram access);
-
   Encoding_type : type enumeration (native, uper, acn);
 
   Encoding : Taste::Encoding_type
@@ -696,6 +690,18 @@ data)
 
   labelInheritance : aadlstring
     applies to (subprogram access);
+
+  version : aadlstring
+    applies to (package);
+
+  InterfaceName : aadlstring
+    applies to (subprogram access, feature group);
+
+  FunctionName : aadlstring
+    applies to (system);
+
+  Active_Interfaces : enumeration (Enabled, Disabled, Any) => Enabled
+    applies to (system);
 
 end Taste;
 
