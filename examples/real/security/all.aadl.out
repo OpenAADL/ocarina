@@ -5,6 +5,74 @@ all.aadl:195:07: warning: layer_topsecret references a component type
 all.aadl:196:07: warning: layer_secret references a component type
 all.aadl:197:07: warning: layer_unclassified references a component type
 ocarina: Total: 0 error and 6 warnings
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:15:23 Backends: warning : cardinal of set b is null
+lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:117:20 Backends: warning : cardinal of set b_dst is null
+lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
+lib.real:119:20 Backends: warning : cardinal of set b_dst is null
+lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
+lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
+lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
 pok_security execution
 Processing requirement : one_security_level_by_memory
 -------------------------------------
@@ -14,80 +82,60 @@ Evaluating theorem one_security_level_by_memory
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_memory_topsecret
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_memory_secret
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_memory_unclassified
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_memory_driver
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_memory
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_memory_topsecret
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_memory_secret
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_memory_unclassified
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_memory_driver
 Content of set p (lib.real:9:12) is 
 Content of set vp (lib.real:11:13) is 
 Content of set b (lib.real:13:12) is 
-lib.real:15:23 Backends: warning : cardinal of set b is null
-lib.real:15:11 Backends: warning : use default boolean value of true for operator '='
  => Result: TRUE
 
 theorem one_security_level_by_memory is: TRUE
@@ -331,14 +379,6 @@ Content of set p_dest (lib.real:104:17) is
 Content of set vp2 (lib.real:106:14) is 
 Content of set b_dst (lib.real:108:16) is 
 Content of set b_cnx (lib.real:110:16) is 
-lib.real:117:20 Backends: warning : cardinal of set b_dst is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:119:20 Backends: warning : cardinal of set b_dst is null
-lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
-lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_partition_secret
@@ -351,14 +391,6 @@ Content of set p_dest (lib.real:104:17) is
 Content of set vp2 (lib.real:106:14) is 
 Content of set b_dst (lib.real:108:16) is 
 Content of set b_cnx (lib.real:110:16) is 
-lib.real:117:20 Backends: warning : cardinal of set b_dst is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:119:20 Backends: warning : cardinal of set b_dst is null
-lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
-lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_partition_unclassified
@@ -371,14 +403,6 @@ Content of set p_dest (lib.real:104:17) is
 Content of set vp2 (lib.real:106:14) is 
 Content of set b_dst (lib.real:108:16) is 
 Content of set b_cnx (lib.real:110:16) is 
-lib.real:117:20 Backends: warning : cardinal of set b_dst is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:119:20 Backends: warning : cardinal of set b_dst is null
-lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
-lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_partition_topsecret
@@ -391,14 +415,6 @@ Content of set p_dest (lib.real:104:17) is
 Content of set vp2 (lib.real:106:14) is 
 Content of set b_dst (lib.real:108:16) is 
 Content of set b_cnx (lib.real:110:16) is 
-lib.real:117:20 Backends: warning : cardinal of set b_dst is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:119:20 Backends: warning : cardinal of set b_dst is null
-lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
-lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_partition_secret
@@ -411,14 +427,6 @@ Content of set p_dest (lib.real:104:17) is
 Content of set vp2 (lib.real:106:14) is 
 Content of set b_dst (lib.real:108:16) is 
 Content of set b_cnx (lib.real:110:16) is 
-lib.real:117:20 Backends: warning : cardinal of set b_dst is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:119:20 Backends: warning : cardinal of set b_dst is null
-lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
-lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_partition_unclassified
@@ -431,14 +439,6 @@ Content of set p_dest (lib.real:104:17) is
 Content of set vp2 (lib.real:106:14) is 
 Content of set b_dst (lib.real:108:16) is 
 Content of set b_cnx (lib.real:110:16) is 
-lib.real:117:20 Backends: warning : cardinal of set b_dst is null
-lib.real:117:15 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:118:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:117:62 Backends: warning : unknown value, use default value of 0.0 for operator Min
-lib.real:119:20 Backends: warning : cardinal of set b_dst is null
-lib.real:119:15 Backends: warning : use default float value of 0.0 for operator Max
-lib.real:120:20 Backends: warning : cardinal of set b_cnx is null
-lib.real:119:62 Backends: warning : use default float value of 0.0 for operator Max
  => Result: TRUE
 
 theorem mils_2 is: TRUE

@@ -2,6 +2,8 @@ test_real_exec_05.aadl:10:03: Warning: source_language is not a list while the c
 test_real_exec_05.aadl:10:03: Warning: The value of source_language has been converted into a list.
 test_real_exec_05.aadl:16:03: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
 test_real_exec_05.aadl:16:03: Warning: The value of source_language has been converted into a list.
+test_real_exec_05.aadl:147:12 Backends: error : Property is false for instance 84 (rma.erc32_cpu_rm)
+test_real_exec_05.aadl:170:12 Backends: error : Property is false for instance 84 (rma.erc32_cpu_rm)
 variables_basis execution
 -------------------------------------
 Evaluating theorem variables_basis
@@ -60,7 +62,6 @@ Content of set threads (test_real_exec_05.aadl:141:14) is
   rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
   rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
      -> value for y is 6000000000.0
-test_real_exec_05.aadl:147:12 Backends: error : Property is false for instance 84 (rma.erc32_cpu_rm)
  => Result: FALSE
 
 theorem variables_iterative_expressions is: FALSE
@@ -77,7 +78,6 @@ Content of set threads (test_real_exec_05.aadl:158:14) is
   rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
   rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
      -> value for y is 7000000000.0
-test_real_exec_05.aadl:170:12 Backends: error : Property is false for instance 84 (rma.erc32_cpu_rm)
  => Result: FALSE
 
 theorem variables_imbricated_iterative_expressions is: FALSE

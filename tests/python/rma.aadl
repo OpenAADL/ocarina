@@ -1,20 +1,8 @@
---  This AADL model illustrates how to conduct schedulability analysis
---  using Cheddar, and then code generation of periodic tasks.
---
---  Two periodic tasks run in parrallel, without interaction. Tasks
---  parameters allows RMA analysis
---
---  $Id: rma.aadl 7042M 2010-03-30 07:55:51Z (local) $
-
 package RMAAadl
 public
   with Deployment;
 
------------------
--- Subprograms --
------------------
-
-subprogram Hello_Spg_1
+  subprogram Hello_Spg_1
 properties
   source_language => (Ada95);
   source_name     => "Hello.Hello_Spg_1";
@@ -100,6 +88,7 @@ subcomponents
    cpu_rm : processor cpurm.impl;
 properties
    Actual_Processor_Binding => (reference (cpu_rm)) applies to node_a;
+
 end rma.ERC32;
 
 end RMAAadl;

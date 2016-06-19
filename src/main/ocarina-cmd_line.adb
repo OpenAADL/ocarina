@@ -192,7 +192,7 @@ package body Ocarina.Cmd_Line is
    begin
       Set_Usage (Ocarina_Options, Usage => "[switches] <aadl_files>");
 
-      --  Note: the order of call to Define_Switch dictate the order
+      --  Note: the order of call to Define_Switch dictates the order
       --  of information when calling GNAT.Command_Line.Display_Help.
 
       --  --help flag, just so that it appears in the online help
@@ -294,7 +294,7 @@ package body Ocarina.Cmd_Line is
 
       --  -real_theorem flag
       Define_Switch (Ocarina_Options, "-real_theorem:",
-                     Help => "Name of the main theorem to evaluate");
+                     Help => "Name of the main REAL theorem to evaluate");
 
       --  -real_lib flag
       Define_Switch (Ocarina_Options, "-real_lib:",

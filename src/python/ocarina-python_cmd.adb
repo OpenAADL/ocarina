@@ -193,6 +193,44 @@ package body Ocarina.Python_Cmd is
       Set_Return_Value (Data, Result);
    end On_Instantiate;
 
+   -------------------------
+   -- On_Set_REAL_Theorem --
+   -------------------------
+
+   procedure On_Set_REAL_Theorem
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Set_REAL_Theorem
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+      Result : constant Boolean :=
+        Ocarina.Utils.Set_REAL_Theorem (Nth_Arg (Data, 1, ""));
+
+   begin
+      Set_Return_Value (Data, Result);
+   end On_Set_REAL_Theorem;
+
+   -------------------------
+   -- On_Add_REAL_Library --
+   -------------------------
+
+   procedure On_Add_REAL_Library
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Add_REAL_Library
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+      Result : constant Boolean :=
+        Ocarina.Utils.Add_REAL_Library (Nth_Arg (Data, 1, ""));
+
+   begin
+      Set_Return_Value (Data, Result);
+   end On_Add_REAL_Library;
+
    ----------------------
    -- On_Get_AADL_Root --
    ----------------------
@@ -761,6 +799,16 @@ package body Ocarina.Python_Cmd is
         (Repo, "instantiate", 1, 1,
          Handler => On_Instantiate'Unrestricted_Access);
 
+      --  set_real_theorem() function
+      Register_Command
+        (Repo, "set_real_theorem", 1, 1,
+         Handler => On_Set_REAL_Theorem'Unrestricted_Access);
+
+      --  add_real_library() function
+      Register_Command
+        (Repo, "add_real_library", 1, 1,
+         Handler => On_Add_REAL_Library'Unrestricted_Access);
+
       --  getRoot() function
       Register_Command
         (Repo, "getRoot", 0, 0,
@@ -791,10 +839,13 @@ package body Ocarina.Python_Cmd is
         (Repo, "getNodeId", 1, 1,
          Handler => On_Get_Node_Id'Unrestricted_Access);
 
-      Repo := Ocarina.ME_AADL.AADL_Instances.Nodes.Python.
-         Register_Generated_Functions (Repo);
+      --  Register functions generated from AADL declarative and
+      --  instance trees
 
       Repo := Ocarina.ME_AADL.AADL_Tree.Nodes.Python.
+         Register_Generated_Functions (Repo);
+
+      Repo := Ocarina.ME_AADL.AADL_Instances.Nodes.Python.
          Register_Generated_Functions (Repo);
 
       return Repo;

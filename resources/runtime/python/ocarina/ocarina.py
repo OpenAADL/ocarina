@@ -74,6 +74,28 @@ def instantiate (root_system):
     return runOcarinaFunction (libocarina_python.instantiate, root_system)
 
 ################################################################################
+def set_real_theorem (theorem_name):
+    '''Set main REAL theorem
+
+    :param theorem_name: name of the theorem
+    :type theorem_name: string
+
+    '''
+
+    return runOcarinaFunction (libocarina_python.set_real_theorem, theorem_name)
+
+################################################################################
+def add_real_library (libraryname):
+    '''
+
+    :param libraryname: name of the theorem
+    :type libraryname: string
+
+    '''
+
+    return runOcarinaFunction (libocarina_python.add_real_library, libraryname)
+
+################################################################################
 Backends = Enum ([ "polyorb_hi_ada", "polyorb_hi_c", "real_theorem"])
 '''List of supported backends, used by :data:`generate`'''
 # Note, this list should match backend names as specified by Ocarina CLI
