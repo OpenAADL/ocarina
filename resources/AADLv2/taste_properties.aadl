@@ -3,7 +3,7 @@ property set Taste is
 
    Coordinates : aadlstring applies to 
 		(system, package, device, memory, processor, process, access,
-       subprogram access, connection, bus, virtual bus);
+       subprogram access, connection, bus, virtual bus, feature group);
 
    HWLibraries : list of aadlstring applies to(package);
 
@@ -218,10 +218,6 @@ dataview : list of aadlstring applies to (package);
 
 dataviewpath : list of aadlstring applies to (package);
 
-version: aadlstring applies to (package);
-
-interfacename: aadlstring applies to (subprogram access);
-
 Encoding_type : type enumeration (native, uper, acn);
 
 Encoding : Taste::Encoding_type applies to (parameter);
@@ -239,5 +235,15 @@ Associated_Queue_Size : aadlinteger applies to (subprogram);
 EncodingDefinitionFile : classifier (data) applies to (data);
 
 labelInheritance : aadlstring applies to (subprogram access);
+
+-- new properties for TASTE-IV and TASTE-DV editors v.1.3.5 and later:
+
+version : aadlstring applies to (package);
+InterfaceName : aadlstring applies to (subprogram access, feature group);
+FunctionName : aadlstring applies to (system);
+
+-- new properties for TASTE-IV editor v.1.4 and later:
+
+Active_Interfaces : enumeration (Enabled,Disabled,Any) => Enabled applies to (system);
 
 end Taste;
