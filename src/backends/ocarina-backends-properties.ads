@@ -247,7 +247,8 @@ package Ocarina.Backends.Properties is
       Access_None);
 
    type Supported_Concurrency_Control_Protocol is --  XXX
-     (None_Specified, Priority_Inheritance, Priority_Ceiling);
+     (None_Specified, Immediate_Priority_Ceiling_Protocol,
+      Priority_Inheritance, Priority_Ceiling);
 
    type Supported_IEEE754_Precision is
      (Precision_Simple, Precision_Double, Precision_None);
