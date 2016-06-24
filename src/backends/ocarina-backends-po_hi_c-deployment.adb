@@ -84,6 +84,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    Global_Port_Queue_Size : Node_Id;
    Global_Port_Data_Size  : Node_Id;
    Global_Ports           : List_Id;
+   Protocol_Identifier    : Unsigned_Long_Long := 0;
 
    function Is_Added (P : Node_Id; E : Node_Id) return Boolean;
    function Added_Internal_Name (P : Node_Id; E : Node_Id) return Name_Id;
@@ -177,7 +178,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       --  process.
 
       Node_Identifier        : Unsigned_Long_Long := 0;
-      Protocol_Identifier    : Unsigned_Long_Long := 0;
       Global_Port_Identifier : Unsigned_Long_Long := 0;
       Local_Port_Identifier  : Unsigned_Long_Long := 0;
       Entity_Identifier      : Unsigned_Long_Long := 0;
@@ -2181,6 +2181,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                 (CTN.Values
                    (CTN.First_Node (CTN.Values (Protocols_Ports_Array))))
               and then not AAU.Is_Empty (Global_Ports)
+              and then Protocol_Identifier > 0
             then
                N :=
                  Make_Expression
