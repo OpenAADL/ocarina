@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -42,6 +42,38 @@ package body Ocarina.BE_AADL.Components.Modes is
    use Ocarina.Output;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.BE_AADL.Identifiers;
+
+   procedure Print_Trigger (Node : Node_Id);
+   --  Displays a mode transition trigger
+
+   -------------------
+   -- Print_Trigger --
+   -------------------
+
+   procedure Print_Trigger (Node : Node_Id) is
+   begin
+      case Kind (Node) is
+         when K_Entity_Reference =>
+            Print_Entity_Reference (Node);
+
+         when K_Identifier =>
+            Print_Identifier (Node);
+
+         when K_Mode_Transition_Trigger =>
+            if Ocarina.ME_AADL.AADL_Tree.Nodes.Is_Self (Node) then
+               Print_Token (T_Self);
+               Print_Token (T_Dot);
+            elsif Ocarina.ME_AADL.AADL_Tree.Nodes.Is_Processor (Node) then
+               Print_Token (T_Processor);
+               Print_Token (T_Dot);
+            end if;
+
+            Print_Trigger (Identifier (Node));
+         when others =>
+            raise Program_Error
+              with "Error when displaying a mode transition trigger";
+      end case;
+   end Print_Trigger;
 
    --------------------
    -- Print_In_Modes --
@@ -158,25 +190,7 @@ package body Ocarina.BE_AADL.Components.Modes is
                Write_Space;
             end if;
 
-            if Ocarina.ME_AADL.AADL_Tree.Nodes.Kind (List_Node) =
-              K_Entity_Reference
-            then
-               Print_Entity_Reference (List_Node);
-            elsif Ocarina.ME_AADL.AADL_Tree.Nodes.Kind (List_Node) =
-              K_Mode_Transition_Trigger
-            then
-               if Ocarina.ME_AADL.AADL_Tree.Nodes.Is_Self (List_Node) then
-                  Print_Token (T_Self);
-                  Print_Token (T_Dot);
-               elsif Ocarina.ME_AADL.AADL_Tree.Nodes.Is_Processor
-                   (List_Node)
-               then
-                  Print_Token (T_Processor);
-                  Print_Token (T_Dot);
-               end if;
-               Print_Identifier
-                 (Ocarina.ME_AADL.AADL_Tree.Nodes.Identifier (List_Node));
-            end if;
+            Print_Trigger (List_Node);
 
             List_Node := Next_Node (List_Node);
          end loop;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -233,6 +233,9 @@ package body Ocarina.BE_AADL.Namespaces is
 
                   when K_Name_Visibility_Declaration =>
                      Print_Name_Visibility_Declaration (List_Node);
+
+                  when K_Annex_Library =>
+                     Print_Annex_Library (List_Node);
 
                   when others =>
                      raise Program_Error;
