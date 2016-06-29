@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -189,6 +189,7 @@ package body Ocarina.ME_AADL.AADL_Instances.Debug is
 
       if A /= "Corresponding_Entity"
         and then A /= "Corresponding_Declaration"
+        and then A /= "Corresponding_Annex"
         and then A /= "Container_Component"
         and then A /= "Item"
         and then A /= "Extra_Item"
