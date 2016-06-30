@@ -64,10 +64,8 @@ package body Ocarina.BE_AADL is
    use Ocarina.BE_AADL.Components;
    use Ocarina.BE_AADL.Identifiers;
 
-   procedure Generate_AADL_Model (Node : Node_Id);
-   --  Prints all the AADL source corresponding to the subtree having
-   --  Node as a root. If given the absolute root of an AADL syntactic
-   --  tree, prints all the parsed AADL source.
+   procedure Generate_Whole_AADL_Model (Node : Node_Id);
+   --  Prints all the AADL parsed sources
 
    procedure Generate_Min_AADL_Model (Node : Node_Id);
    --  Instantiates the AADL tree, then for each node of the root
@@ -90,7 +88,7 @@ package body Ocarina.BE_AADL is
 
    procedure Init is
    begin
-      Register_Backend ("aadl", Generate_AADL_Model'Access, AADL);
+      Register_Backend ("aadl", Generate_Whole_AADL_Model'Access, AADL);
       Register_Backend ("aadl_min", Generate_Min_AADL_Model'Access, AADL_Min);
       Register_Backend ("aadl_annex", Generate_AADL_Annex'Access, AADL_Annex);
 
@@ -193,8 +191,11 @@ package body Ocarina.BE_AADL is
    -- Generate_AADL_Model --
    -------------------------
 
-   procedure Generate_AADL_Model (Node : Node_Id) is
-      pragma Unreferenced (Node);
+   procedure Generate_AADL_Model
+     (Node       : Node_Id;
+      Whole_Tree : Boolean := True)
+   is
+      pragma Assert (Whole_Tree or else Present (Node));
 
       procedure Internal_Print_Subtree is new Print_Constrained_Subtree
         (Always_Printable);
@@ -204,9 +205,11 @@ package body Ocarina.BE_AADL is
          Set_Output (Create_File (Get_Name_String (Output_Filename), Binary));
       end if;
 
-      Internal_Print_Subtree (Entries.First, No_Node);
-      --  Note: we use Entries.First instead of Node to visit the
-      --  whole declarative tree.
+      if Whole_Tree then
+         Internal_Print_Subtree (Entries.First, No_Node);
+      else
+         Internal_Print_Subtree (Node, No_Node);
+      end if;
 
       Set_Standard_Error;
    end Generate_AADL_Model;
@@ -352,6 +355,15 @@ package body Ocarina.BE_AADL is
          end if;
       end if;
    end Always_Printable;
+
+   -------------------------------
+   -- Generate_Whole_AADL_Model --
+   -------------------------------
+
+   procedure Generate_Whole_AADL_Model (Node : Node_Id) is
+   begin
+      Generate_AADL_Model (Node, True);
+   end Generate_Whole_AADL_Model;
 
    -----------------------------
    -- Generate_Min_AADL_Model --
