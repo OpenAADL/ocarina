@@ -46,7 +46,8 @@ package Ocarina.FE_AADL_BA.Parser is
    function Process
      (AADL_Root : Node_Id;
       From      : Locations.Location;
-      To        : Locations.Location := Locations.No_Location) return Node_Id;
+      To        : Locations.Location := Locations.No_Location;
+      Container : Node_Id  := No_Node) return Node_Id;
 
    procedure Init;
    --  Initialize the parser and register it to the general Ocarina

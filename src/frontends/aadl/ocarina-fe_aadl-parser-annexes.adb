@@ -92,7 +92,12 @@ package body Ocarina.FE_AADL.Parser.Annexes is
       elsif Token = T_Begin_Annex then
          Save_Lexer (Loc_Start_Annex);
          if Perform_Annex_Action (Name (Identifier)) then
-            Annex_Root := Parse (Name (Identifier), No_Node, Loc_Start_Annex);
+            Annex_Root := Parse
+              (Name (Identifier),
+               No_Node,
+               Loc_Start_Annex,
+               No_Location,
+               Namespace);
          end if;
 
          --  Do not display error message if No_Node because if there are
