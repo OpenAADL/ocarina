@@ -1,0 +1,109 @@
+package ErrorLibrary
+public
+
+annex EMV2 {**
+error types
+CommonErrors: type set { ServiceError, TimingRelatedError, ValueRelatedError, ReplicationError,
+ConcurrencyError};
+--service related errors
+ServiceError: type;
+ItemOmission: type extends ServiceError;
+ServiceOmission: type extends ServiceError;
+SequenceOmission: type extends ServiceError;
+TransientServiceOmission: type extends SequenceOmission;
+LateServiceStart: type extends SequenceOmission;
+EarlyServiceTermination: type extends SequenceOmission;
+BoundedOmissionInterval: type extends SequenceOmission;
+ItemComission: type extends ServiceError;
+ServiceCommission: type extends ServiceError;
+SequenceCommission: type extends ServiceError;
+EarlyServiceStart: type extends SequenceCommission;
+LateServiceTermination: type extends SequenceCommission;
+--timing related errors
+TimingRelatedError: type set {ItemTimingError, SequenceTimingError, ServiceTimingError};
+-- Item timing errors
+ItemTimingError: type;
+EarlyDelivery: type extends ItemTimingError;
+LateDelivery: type extends ItemTimingError;
+--Rate/sequence timing errors
+SequenceTimingError: type;
+HighRate: type extends SequenceTimingError;
+LowRate: type extends SequenceTimingError;
+RateJitter: type extends SequenceTimingError;
+-- Service timing error
+ServiceTimingError: type;
+DelayedService: type extends ServiceTimingError;
+EarlyService: type extends ServiceTimingError;
+-- aliases for timing errors
+TimingError renames type ItemTimingError; -- legacy
+RateError renames type SequenceTimingError;
+EarlyData renames type HighRate;
+LateData renames type LowRate;
+ServiceTimeShift renames type ServiceTimingError;
+--value related errors
+ValueRelatedError: type set {ItemValueError, SequenceValueError, ServiceValueError};
+-- item value errors
+ItemValueError: type;
+UndetectableValueError: type extends ItemValueError;
+DetectableValueError: type extends ItemValueError;
+OutOfRange: type extends DetectableValueError;
+BelowRange: type extends OutOfRange;
+AboveRange: type extends OutOfRange;
+OutOfBounds: type extends DetectableValueError;
+-- sequence errors
+SequenceValueError: type;
+BoundedValueChange: type extends SequenceError;
+StuckValue: type extends SequenceError;
+OutOfOrder: type extends SequenceError;
+ServiceValueError: type;
+OutOfCalibration: type extends ServiceValueError;
+-- Common aliases for value related errors
+ValueError renames type ItemValueError;
+IncorrectValue renames type ItemValueError;
+ValueCorruption renames type ItemValueError;
+BadValue renames type ItemValueError;
+SequenceError renames type SequenceValueError;
+SubtleValueError renames type UndetectableValueError;
+BenignValueError renames type DetectableValueError;
+SubtleValueCorruption renames type DetectableValueError;
+-- Detectability (Benign/Subtle) represent a characteristic of error types
+--replication errors
+ReplicationError: type;
+AsymmetricReplicatesError: type extends ReplicationError;
+AsymmetricValue: type extends AsymmetricReplicatesError;
+AsymmetricApproximateValue: type extends AsymmetricValue;
+AsymmetricExactValue: type extends AsymmetricValue;
+AsymmetricTiming: type extends AsymmetricReplicatesError;
+AsymmetricOmission: type extends AsymmetricReplicatesError;
+AsymmetricItemOmission: type extends AsymmetricOmission;
+AsymmetricServiceOmission: type extends AsymmetricOmission;
+SymmetricReplicatesError: type extends ReplicationError;
+SymmetricValue: type extends SymmetricReplicatesError;
+SymmetricApproximateValue: type extends SymmetricValue;
+SymmetricExactValue: type extends SymmetricValue;
+SymmetricTiming: type extends SymmetricReplicatesError;
+SymmetricOmission: type extends SymmetricReplicatesError;
+SymmetricItemOmission: type extends SymmetricOmission;
+SymmetricServiceOmission: type extends SymmetricOmission;
+-- aliases for replication
+InconsistentValue renames type AsymmetricValue;
+InconsistentTiming renames type AsymmetricTiming;
+InconsistentOmission renames type AsymmetricOmission;
+InconsistentItemOmission renames type AsymmetricItemOmission;
+InconsistentServiceOmission renames type AsymmetricServiceOmission;
+AsymmetricTransmissive renames type AsymmetricValue;
+--concurrency errors
+ConcurrencyError: type;
+RaceCondition: type extends ConcurrencyError;
+ReadWriteRace: type extends RaceCondition;
+WriteWriteRace: type extends RaceCondition;
+MutExError: type extends ConcurrencyError;
+Deadlock: type extends MutExError;
+Starvation: type extends MutExError;
+--authorization and authentication errors
+AuthorizationError: type;
+AuthenticationError: type;
+end types;
+**};
+
+end ErrorLibrary;
