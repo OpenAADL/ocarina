@@ -82,7 +82,10 @@ package Ocarina.Options is
    procedure Add_Library_Path (Path : String);
    --  Add a library path in Library_Paths
 
-   type Annex_Action_Kind is (Disable_BA, Disable_REAL, Disable_ALL);
+   type Annex_Action_Kind is (Disable_BA,
+                              Disable_REAL,
+                              Disable_EMA,
+                              Disable_ALL);
 
    type Annex_Action is array (Annex_Action_Kind) of Byte;
 

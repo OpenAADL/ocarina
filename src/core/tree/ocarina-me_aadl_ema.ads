@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . I N S T A N C E S . A N N E X E S             --
+--                  O C A R I N A . M E _ A A D L _ E M A                   --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,24 +29,31 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package Ocarina.Instances.Annexes is
+package Ocarina.ME_AADL_EMA is
 
-   function Apply_Annexes
-     (Instance_Root : Node_Id;
-      Instance      : Node_Id;
-      Annex_List    : List_Id;
-      Override_Mode : Boolean)
-     return Boolean;
-   --  Add annexes to the entity instance. If 'Override_Mode' is set
-   --  any previous homonym annex under the same mode will be
-   --  overriden. Otherwise, the old value will be kept.
+   type Operator_Kind is
+     (OK_Error,
+      OK_No_Kind,
 
-   function Add_Annex_Instance
-     (Instance_Root   : Node_Id;
-      Entity_Instance : Node_Id;
-      Annex_Subclause : Node_Id;
-      Override_Mode   : Boolean)
-     return Boolean;
-   --  Same as above but for one single annex
+      --  logical operator
+      OK_And,                     --  and
+      OK_Or,                      --  or
+      OK_OrMore,                  --  ormore
+      OK_OrLess,                  --  orless
+      OK_Not                      --  not
+     );
 
-end Ocarina.Instances.Annexes;
+   type Binding_Kind is
+     (BK_Processor,
+      BK_Memory,
+      BK_Connection,
+      BK_Binding,
+      BK_Bindings,
+      BK_Unknown);
+
+   type Propagation_Kind is
+     (PK_In,
+      PK_Out,
+      PK_Unknown);
+
+end Ocarina.ME_AADL_EMA;

@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . I N S T A N C E S . A N N E X E S             --
+--                 OCARINA.ANALYZER.AADL_EMA.NAMING_RULES                   --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,24 +29,24 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package Ocarina.Instances.Annexes is
+package Ocarina.Analyzer.AADL_EMA.Naming_Rules is
 
-   function Apply_Annexes
-     (Instance_Root : Node_Id;
-      Instance      : Node_Id;
-      Annex_List    : List_Id;
-      Override_Mode : Boolean)
+   procedure Put_In_A_List_Node
+      (Id_First_Node : in out Node_Id;
+       Id_Last_Node  : in out Node_Id;
+       Parent_Node   : Node_Id;
+       Is_Identifier : Boolean := False);
+
+   function Check_Names_In_Library
+     (Root : Node_Id;
+      EMA_Root : Node_Id;
+      Package_Spec : Node_Id)
      return Boolean;
-   --  Add annexes to the entity instance. If 'Override_Mode' is set
-   --  any previous homonym annex under the same mode will be
-   --  overriden. Otherwise, the old value will be kept.
 
-   function Add_Annex_Instance
-     (Instance_Root   : Node_Id;
-      Entity_Instance : Node_Id;
-      Annex_Subclause : Node_Id;
-      Override_Mode   : Boolean)
+   function Check_Names_In_Subclause
+     (Root : Node_Id;
+      EMA_Root : Node_Id;
+      Package_Spec : Node_Id)
      return Boolean;
-   --  Same as above but for one single annex
 
-end Ocarina.Instances.Annexes;
+end Ocarina.Analyzer.AADL_EMA.Naming_Rules;

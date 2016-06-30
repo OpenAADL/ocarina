@@ -1,0 +1,986 @@
+/*****************************************************************************
+**                                                                          **
+**                           OCARINA COMPONENTS                             **
+**                                                                          **
+**                       OCARINA.ME_EMA.EMA_TREE.NODES                      **
+**                                                                          **
+**               Copyright (C) 2004-2009, GET-Telecom Paris.                **
+**                                                                          **
+** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
+** it under terms of the GNU General Public License as published by the     **
+** Free Software Foundation; either version 2, or (at your option) any      **
+** later version. Ocarina is distributed  in  the  hope  that it will be    **
+** useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General **
+** Public License for more details. You should have received  a copy of the **
+** GNU General Public License distributed with Ocarina; see file COPYING.   **
+** If not, write to the Free Software Foundation, 51 Franklin Street, Fifth **
+** Floor, Boston, MA 02111-1301, USA.                                       **
+**                                                                          **
+** As a special exception,  if other files  instantiate  generics from this **
+** unit, or you link  this unit with other files  to produce an executable, **
+** this  unit  does not  by itself cause  the resulting  executable to be   **
+** covered  by the  GNU  General  Public  License. This exception does not  **
+** however invalidate  any other reasons why the executable file might be   **
+** covered by the GNU Public License.                                       **
+**                                                                          **
+**                 Ocarina is maintained by the Ocarina team                **
+**                       (ocarina-users@listes.enst.fr)                     **
+**                                                                          **
+*****************************************************************************/
+
+module Ocarina::ME_AADL_EMA::EMA_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef long  Name_Id;
+  typedef long  Value_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  //  Node_Id:
+  //    Node type from which all the other node types derive.
+  //
+  //  * Next_Node:
+  //    Any node can be part of a container. Thus, the container
+  //    includes a list of nodes. Next_Node designates the next node
+  //    in the list of the container. It is forbidden to define
+  //    another attribute to point to a "next" node.
+
+  interface Node_Id {
+    Node_Id  Next_Node;
+  };
+
+  //  List_Id:
+  //    List type used to represent the entities contained in a
+  //    container.
+  //
+  //  * First_Node, Last_Node:
+  //    First and last nodes of a unidirectional list.
+
+  interface List_Id {
+    Node_Id  First_Node;
+    Node_Id  Last_Node;
+  };
+
+  interface Definition : Node_Id {
+    Node_Id  Identifier;
+  };
+
+  interface Literal : Node_Id {
+    Value_Id  Value;
+  };
+
+  interface EMA_Entity : Node_Id {
+    Node_Id  EMA_Container;   //  EMA entity container, hierarchic parent
+  };
+
+  interface Identifier : EMA_Entity {
+    Name_Id  Name;
+    Name_Id  Display_Name;
+    Node_Id  Corresponding_Entity;
+    Node_Id  Scope_Entity;           // not use
+    Node_Id  Homonym;                // not use
+  };
+
+  /*
+    EMA_Annex ::= {** error_model_library_constructs **}
+    EMA_Annex ::= {** error_model_component_constructs **}
+
+    EMA_Annex may be one of these nodes
+    Annex_Library or Annex_Subclause
+  */
+  interface EMA_Annex : Node_Id {};
+
+  /*
+     [ error_type_library ]
+     { error_behavior_state_machine } *
+     { error_type_mappings } *
+     { error_type_transformations } * 
+  */
+  interface Annex_Library : Node_Id {
+    Node_Id  Error_Type_Library;
+    List_Id  Error_Behavior_State_Machine_List;
+    List_Id  Error_Type_Mappings_List;
+    List_Id  Error_Type_Transformations_List;
+  };
+
+  /*
+      error_type_library ::=
+       error types
+       [ use types error_type_library_list ; ]
+       [ extends error_type_library_list with ]
+       { error_type_library_element } +
+       [ properties
+       { error_type_emv2_contained_property_association } + ]
+       end types;
+  */
+  interface Error_Type_Library : Node_Id {
+    List_Id  Error_Type_Library_List_Used; // ends with ";"
+    List_Id  Error_Type_Library_List_Extended; // ends with "with"
+    List_Id  Error_Type_Library_Element_List;
+    List_Id  Properties;
+  };
+
+  /*
+     error_behavior_state_machine ::=
+       error behavior defining_state_machine_identifier
+       [ use types error_type_library_list ; ]
+       [ use transformations error_type_transformation_set_reference ; ]
+       [ events { error_behavior_event } + ]
+       [ states { error_behavior_state } + ]
+       [ transitions { error_behavior_transition } + ]
+       [ properties
+       { error_behavior_state_machine_emv2_contained_property_association } +
+       ]
+     end behavior ;  
+  */
+  interface Error_Behavior_State_Machine : Definition {
+    List_Id  Error_Type_Library_List;
+    Node_Id  Error_Type_Transformation_Set_Reference;
+    List_Id  Error_Behavior_Event_List;
+    List_Id  Error_Behavior_State_List;
+    List_Id  Error_Behavior_Transition_List;
+    List_Id  Properties;
+  };
+
+  /*
+      Error_type_mappings ::=
+       type mappings defining_type_mappings_identifier
+       [ use types error_type_library_list ; ]
+       { error_type_mapping } +
+      end mappings;
+  */
+  interface Error_Type_Mappings : Definition {
+    List_Id  Error_Type_Library_List;
+    List_Id  Error_Type_Mapping_List;
+  };
+
+  /*
+      error_type_transformations ::=
+       type transformations defining_type_transformation_set_identifier
+       [ use_error_types ]
+       {error_type_transformation } +
+      end transformations;
+  */
+  interface Error_Type_Transformations : Definition {
+    Node_Id Use_Error_Types;
+    List_Id Error_Type_Transformation_List;
+  };
+
+  /*
+    error_type_library_element ::=
+      error_type_definition | error_type_alias
+      | error_type_set_definition | error_type_set_alias
+  */
+  interface Error_Type_Library_Element : Node_Id {
+    Node_Id  Error_Type_Definition;
+    Node_Id  Error_Type_Alias;
+    Node_Id  Error_Type_Set_Definition;
+    Node_Id  Error_Type_Set_Alias;
+  };
+
+  /* 
+     Error_Type_Transformation_Set_Reference ::=
+     [package_reference :: ] Error_Type_Transformations_identifier
+  */
+  interface Error_Type_Transformation_Set_Reference : Definition {
+    Node_Id  Package_Reference;
+  };
+
+
+  /*
+    error_behavior_event ::=
+      error_event | recover_event | repair_event
+  */
+  interface Error_Behavior_Event : Node_Id {
+     Node_Id  Error_Event;
+     Node_Id  Recover_Event;
+     Node_Id  Repair_Event;
+  };
+
+  /*
+    error_behavior_state ::=
+       defining_error_behavior_state_identifier : [ initial ] state
+       [ error_type_set ] ;
+  */
+  interface Error_Behavior_State : Definition {
+     List_Id  Error_Type_Set;
+  };
+
+  /*
+    error_behavior_transition ::=
+       transition | branching_transition
+  */
+  interface Error_Behavior_Transition : Node_Id {
+     Node_Id  Transition;
+     Node_Id  Branching_Transition;
+  };
+  
+  /*
+      error_type_mapping ::=
+       source_error_type_set -> target_error_type_instance ;
+  */
+  interface Error_Type_Mapping : Node_Id {
+     List_Id  Source_Error_Type_Set;
+     Node_Id  Target_Error_Type_Instance;
+  };
+
+
+  // Identifiers from error types and type sets from the listed Error Model libraries
+  interface Use_Error_Types : Node_Id {
+    List_Id  Error_Type_Library_List;
+  };
+
+  /*
+      error_type_transformation ::=
+      ( source_error_type_set_or_noerror | all )
+      –[ [ contributor_error_type_set_or_noerror ] ]-> target_error_type_instance ;
+  */
+  interface Error_Type_Transformation : Node_Id {
+     Node_Id  Source_Error_Type_Set_Or_Noerror;
+     Node_Id  Target_Error_Type_Instance;
+     Node_Id  Contributor_Error_Type_Set_Or_Noerror;
+  };
+
+  interface Error_Type_Library_Element_Node : Definition {
+    Node_Id  Error_Type_Reference;
+  };
+
+  /*
+    error_type_definition ::=
+      defining_error_type_identifier : type
+      [ extends error_type_reference ] ;
+  */
+  interface Error_Type_Definition : Error_Type_Library_Element_Node {
+  };
+
+  /*
+    error_type_alias ::=
+     defining_error_type_alias_identifier renames type error_type_reference ;
+  */
+  interface Error_Type_Alias : Error_Type_Library_Element_Node {
+  };
+
+  /*
+     error_type_set_definition ::=
+       defining_error_type_set_identifier : type set error_type_set ;
+  */
+  interface Error_Type_Set_Definition : Definition {
+    List_Id  Error_Type_Set;
+  };
+
+  /*
+     error_type_set_alias ::=
+       defining_error_type_set_alias_identifier renames type set
+       error_type_set_reference ;
+  */
+  interface Error_Type_Set_Alias : Definition {
+    Node_Id  Error_Type_Set_Reference;
+  };
+
+  /*
+      error_event ::=
+        defining_error_behavior_event_identifier : error event
+        [ error_type_set ]
+        [ if error_event_condition ] ;
+
+      error_event_condition ::= string_literal
+  */
+  interface Error_Event : Definition {
+     List_Id  Error_Type_Set;
+     Node_Id  Error_Event_Condition;
+  };
+
+  /*
+     recover_event ::=
+        defining_error_behavior_event_identifier : recover event
+        [ when recover_event_initiators ]
+        [ if error_event_condition ] ;
+     
+     Note that: recover_event_initiators = event_initiators
+     event_initiators ::=
+     ( initiator_reference { , initiator_reference }* )
+
+     error_event_condition ::= string_literal
+  */
+  interface Recover_Event : Definition {
+     Node_Id  Error_Event_Condition;
+     List_Id  Recover_Event_Initiators;
+  };
+
+  /*
+     repair_event ::=
+        defining_error_behavior_event_identifier : repair event
+        [ repair_event_initiation ] ;
+  */
+  interface Repair_Event : Definition {
+    Node_Id  Repair_Event_Initiation;
+  };
+
+  /*
+     error_type_set_or_noerror ::=
+       error_type_set | { noerror }
+  */
+   // I have defined this node because there will be a difference
+   // in the semantic level between : error_type_set and error_type_set_or_noerror
+   interface Error_Type_Set_Or_No_Error : Node_Id {
+     List_Id Error_Type_Set;
+   };
+
+  /*
+    target_error_type_instance ::=
+    { error_type_reference | error_type_product }
+  */
+  interface Target_Error_Type_Instance : Node_Id {
+    Node_Id  Error_Type_Reference;
+    List_Id  Error_Type_Product;
+  };
+
+  /*
+     transition ::=
+        [ defining_error_transition_identifier : ]
+        error_source_state –[ error_condition ]->
+        ( error_transition_target | error_transition_branch ) ;
+  */
+  interface Transition : Definition {
+    Node_Id  Error_Source_State;
+    Node_Id  Error_Condition;
+    Node_Id  Error_Transition_Target;
+    Node_Id  Error_Transition_Branch;
+  };
+
+
+  //A revoir : on n'a pas une syntaxe claire
+  interface Branching_Transition : Node_Id {
+  };
+
+  /*
+   error_type_set ::=
+     { type_set_element { , type_set_element } * }
+  
+   type_set_element ::=
+     error_type_or_set_reference | error_type_product
+
+   error_type_product ::=
+     error_type_reference ( * error_type_reference )+
+  */
+   interface Type_Set_Element : Node_Id {
+     Node_Id  Error_Type_Or_Set_Reference;
+     List_Id  Error_Type_Product;
+   };
+
+  /*
+     error_type_or_set_reference ::=
+       error_type_set_reference | error_type_reference
+  */
+
+   interface Error_Type_Or_Set_Reference : Node_Id {
+     Node_Id  Error_Type_Set_Reference;
+     Node_Id  Error_Type_Reference;
+   };
+
+  /*
+    error_model_library_reference ::=
+       package_or_package_alias_identifier
+
+    package_reference ::=
+       package_or_package_alias_identifier
+  */
+
+   interface Package_Reference : Node_Id {
+      List_Id  Identifiers;
+      Node_Id  AADL_Package_Reference;
+      // Package_Specification of the AADL Tree. This node is not an EMA
+      // tree node.
+   };
+
+   interface Error_Model_Library_Reference : Package_Reference {};
+
+  /*
+     error_type_reference ::=
+        [ error_model_library_reference :: ] error_type_identifier
+  */
+  interface Error_Type_Reference : Definition {
+     Node_Id  Error_Model_Library_Reference;
+  };
+
+  /*
+   error_type_set_reference ::=
+       [error_model_library_reference :: ] error_type_set_identifier
+ */
+  interface Error_Type_Set_Reference : Definition {
+     Node_Id  Error_Model_Library_Reference;
+  };
+
+  /*
+     initiator_reference ::=
+      mode_transition_reference | port_reference | self_event_reference
+  */
+  interface Initiator_Reference : Node_Id {
+    Node_Id  Mode_Transition_Reference;
+    Node_Id  Port_Reference;
+    Node_Id  Self_Event_Reference;
+  };
+
+  /*
+    port_reference ::=
+      { featuregroup_identifier . } * port_identifier
+  */
+  interface Port_Reference : Definition {
+    List_Id  Featuregroup_Identifier_List;
+  };
+
+  // A revoir : la syntaxe n'est pas claire mais je propose :
+  /*
+    self_event_reference ::=
+      event_identifier
+  */
+  interface Self_Event_Reference : Definition {};
+
+  interface Mode_Transition_Reference : Definition {
+    Node_Id  Package_Reference;
+  };
+
+  // A revoir : la syntaxe n'est pas claire
+  interface Event_Initiation : Node_Id {};
+
+  /*
+     error_source_state ::=
+     all | ( source_error_state_identifier [ source_error_type_set ] )
+  */
+  interface Error_Source_State : Definition {
+    List_Id  Source_Error_Type_Set;
+  };
+
+  /*
+    error_condition ::=
+     error_condition_trigger
+     | ( error_condition )
+     | error_condition and error_condition
+     | error_condition or error_condition
+     | numeric_literal ormore ( error_condition_trigger { , error_condition_trigger } + )
+     | numeric_literal orless ( error_condition_trigger { , error_condition_trigger } + )
+  */
+
+  interface Operator : Node_Id {
+    octet  Operator_Kind;
+  };
+
+  interface Error_Condition : Node_Id {
+    Node_Id  Error_Condition_Trigger;
+    Node_Id  Error_Condition_Node;
+    Node_Id  Numeric_Literal;
+    Node_Id  Operator;
+    List_Id  Error_Condition_Trigger_List;
+  };
+
+  /*
+    error_transition_target ::=
+     ( target_error_state_identifier [ target_error_type_instance ] )
+     | same state
+  */
+   interface Error_Transition_Target : Definition {
+     Node_Id  Target_Error_Type_Instance;
+   };
+
+  /*
+    error_transition_branch ::=
+      ( error_transition_target with branch_probability
+      { , error_transition_target with branch_probability }* )
+  */
+  interface Error_Transition_Branch : Node_Id {
+    List_Id  Error_Transition_Target_List;
+    List_Id  Branch_Probability_List;
+  };
+
+  /*
+     branch_probability ::=
+       fixed_probability_value | others
+  */
+  interface Branch_Probability : Node_Id {
+    Node_Id  Fixed_Probability_Value;
+  };
+
+  /*
+    fixed_probability_value ::=
+       real_literal |
+       ( [ property_set_identifier :: ] real_property_identifier )
+  */
+  interface Fixed_Probability_Value : Node_Id {
+    Node_Id  Property_Set_Identifier;
+    Node_Id  Real_Property_Identifier;
+  };
+
+  /*
+    error_condition_trigger ::=
+      error_behavior_event_identifier [error_type_set ]
+      | [ in ] incoming_error_propagation_point [ error_type_set_or_noerror ]
+      | subcomponent_identifier . outgoing_error_propagation_point [ error_type_set_or_noerror ]
+  */
+  interface Error_Condition_Trigger : Definition {
+    List_Id  Error_Type_Set;
+    Node_Id  Incoming_Error_Propagation_Point;
+    Node_Id  Error_Type_Set_Or_Noerror;
+    Node_Id  Outgoing_Error_Propagation_Point;
+  };
+
+  /*
+      error_propagation_point ::=
+       feature_reference | binding_reference
+       | propagation_point_identifier
+  */
+  interface Error_Propagation_Point : Definition {
+    Node_Id  Feature_Reference;
+    Node_Id  Binding_Reference;
+  };
+
+  /*
+    feature_reference ::=
+      ( { feature_group_identifier . } *
+      feature_identifier )
+      | access
+  */
+  // A revoir : feature_group doit être accollée de même que port_reference 
+  interface Feature_Reference : Definition {
+    List_Id  Featuregroup_Identifier_List;
+  };
+
+  /*
+    binding_reference ::=
+      processor | memory | connection | binding | bindings
+  */
+  interface Binding_Reference : Node_Id {
+    octet  Binding_Kind;
+  };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /*
+     error_model_component_constructs ::=
+       [ use types error_type_library_list ; ]
+       [ use type equivalence error_type_mappings_reference ; ]
+       [ use mappings error_type_mappings_reference ; ]
+       [ use behavior error_behavior_state_machine_reference ; ]
+       [ error_propagations ]
+       [ component_error_behavior ]
+       [ composite_error_behavior ]
+       [ connection_error_behavior ]
+       [ propagation_paths ]
+       [ EMV2_properties_section ]
+  */
+  interface Annex_Subclause : Node_Id {
+    List_Id  Error_Type_Library_List;
+    Node_Id  Error_Type_Mappings_Reference_Equivalence;
+    Node_Id  Error_Type_Mappings_Reference_Mappings;
+    Node_Id  Error_Behavior_State_Machine_Reference;
+    Node_Id  Error_Propagations; // This node cannot be a list_id because a list contains only 1 type of elements
+    Node_Id  Component_Error_Behavior;
+    List_Id  Composite_Error_Behavior; //It's a list of composite_error_state
+    Node_Id  Connection_Error_Behavior;
+    Node_Id  Propagation_Paths;
+    List_Id  EMV2_Properties_Section; //It's a list of emv2_contained_property_association
+    Node_Id  Next_Entity;
+  };
+
+  /*
+    emv2_contained_property_association ::=
+      unique_property_identifier => [ constant ] assignment applies to
+      emv2_containment_path { , emv2_containment_path }* ;
+  */
+  interface Emv2_Contained_Property_Association : Node_Id {
+    List_Id  Emv2_Containment_Path_List;
+    Node_Id  Assignment;
+    boolean  Is_Constant;
+    Node_Id  Property_Identifier;
+  };
+
+  /*
+     emv2_containment_path ::=
+       [ aadl2_core_path ] emv2_annex_specific_path
+  */
+  interface Emv2_Containment_Path : Node_Id {
+    List_Id  Aadl2_Core_Path_List;
+    List_Id  Emv2_Annex_Specific_Path_List;
+  };
+
+  interface Property_Identifier : Node_Id {
+    Node_Id  Property_Set;
+    Node_Id  Property_Name;
+  };
+
+  interface Assignment : Node_Id {
+    Node_Id  Prop_Value;
+    List_Id  Prop_Value_List;
+    List_Id  Prop_Name_List;
+    List_Id  In_Modes_Properties;
+  };
+
+  interface Property_Value : Node_Id {
+    List_Id  List_Of_Strings;
+  };
+
+  interface AADL_Integer : Node_Id {
+    Value_Id  Value;
+  };
+
+  interface AADL_Real : Node_Id {
+    Value_Id  Value;
+  };
+
+  interface Numeric_Term : Node_Id {
+    Node_Id  Number_Value;    // this node is a property_constant_identifier
+                             // in the generic case AADLNumber
+    Node_Id  Unit_Identifier;
+  };
+
+  // This interface is for the property value Duration : Time_Range
+  // that is an interval with units
+  // Lower_Bound and Upper_Bound may be with units
+  interface Range_Type : Node_Id {
+    Node_Id  Lower_Bound;
+    Node_Id  Upper_Bound;
+  };
+
+  /*
+     error_type_mappings_reference ::=
+       [ package_reference :: ] type_mappings_identifier
+  */
+  interface Error_Type_Mappings_Reference : Definition {
+    Node_Id  Package_Reference;
+  };
+
+  /*
+     error_behavior_state_machine_reference ::=
+       [error_model_library_reference :: ] error_behavior_state_machine_identifier
+  */
+  interface Error_Behavior_State_Machine_Reference : Definition {
+    Node_Id  Error_Model_Library_Reference;
+  };
+
+  /*
+    error_propagations ::=
+      error propagations
+        { error_propagation | error_containment } *
+        [ flows { error_flow } + ]
+      end propagations;
+  */
+   interface Error_Propagations : Node_Id {
+     List_Id  Error_Propagation_List;
+     List_Id  Error_Containment_List;
+     List_Id  Error_Flow_List;
+   };
+
+  interface Error_Propagations_Element : Node_Id {
+    Node_Id  Error_Propagation_Point;
+    Node_Id  Propagation;
+    List_Id  Error_Type_Set;
+  };
+
+  interface Propagation : Node_Id {
+    octet  Propagation_Kind;
+  };
+
+  /*
+    error_propagation ::=
+      error_propagation_point :
+      ( in | out ) propagation error_type_set ;
+  */
+  interface Error_Propagation : Error_Propagations_Element {};
+
+  /*
+     error_containment ::=
+       error_propagation_point :
+       not ( in | out ) propagation error_type_set ;
+  */
+  // It's useless to store the node 'not' because we only have the
+  // operator 'not' and we can tell its existance thanks to the node kind
+  interface Error_Containment : Error_Propagations_Element {
+  };
+
+  /*
+     error_flow ::=
+       error_source | error_sink | error_path
+  */
+  interface Error_Flow : Node_Id {
+    Node_Id  Error_Source;
+    Node_Id  Error_Sink;
+    Node_Id  Error_Path;
+  };
+
+  /*
+    fault_source ::=
+       ( error_behavior_state [ error_type_set ])
+       | error_type_set | failure_mode_description
+
+    failure_mode_description ::= string_literal;
+  */
+  interface Fault_Source : Node_Id {
+    Node_Id  Error_Behavior_State;
+    List_Id  Error_Type_Set;
+    Node_Id  Failure_Mode_Description;
+  };
+
+  /*
+    error_sink ::=
+      defining_error_sink_identifier :
+      error sink ( incoming_error_propagation_point | all )
+      [ error_type_set ] ;
+  */
+  interface Error_Sink : Definition {
+    Node_Id  Incoming_Error_Propagation_Point;
+    List_Id  Error_Type_Set;
+  };
+
+  /*
+     error_path ::=
+       defining_error_path_identifier :
+       error path
+       ( incoming_error_propagation_point | all ) [ error_type_set ] ->
+       ( outgoing_error_propagation_point | all )
+       [ target_error_type_instance ] ;
+  */
+  interface Error_Path : Definition {
+    Node_Id  Incoming_Error_Propagation_Point;
+    List_Id  Error_Type_Set;
+    Node_Id  Outgoing_Error_Propagation_Point;
+    Node_Id  Target_Error_Type_Instance;
+  };
+
+  /*
+   component_error_behavior ::=
+     component error behavior
+        [ use transformations error_type_transformation_set_reference ; ]
+        [ events { error_behavior_event } + ]
+        [ transitions { component_specific_error_behavior_transition } + ]
+        [ propagations { outgoing_propagation_condition } + ]
+        [ detections { error_detection } + ]
+        [ mode mappings { error_state_to_mode_mapping } + ]
+     end component;
+  */
+  interface Component_Error_Behavior : Node_Id {
+    Node_Id  Error_Type_Transformation_Set_Reference;
+    List_Id  Error_Behavior_Event_List;
+    List_Id  Component_Specific_Error_Behavior_Transition_List;
+    List_Id  Outgoing_Propagation_Condition_List;
+    List_Id  Error_Detection_List;
+    List_Id  Error_State_To_Mode_Mapping_List;
+  };
+
+  /*
+    outgoing_propagation_condition ::=
+      [ defining_outgoing_propagation_identifier : ]
+      ( error_source_state | all )
+      -[ [ error_condition ] ]->
+      propagation_target ;
+  */
+  interface Component_Error_Behavior_Node : Definition {
+    Node_Id  Error_Source_State;
+    Node_Id  Error_Condition;
+  };
+  interface Outgoing_Propagation_Condition : Component_Error_Behavior_Node {
+    Node_Id  Propagation_Target;
+  };
+
+  /*
+    propagation_target ::=
+      ( error_propagation_point | all )
+      [ propagated_target_error_type_instance | { noerror } ]
+  */
+  interface Propagation_Target : Node_Id {
+     Node_Id  Error_Propagation_Point;
+     Node_Id  Propagated_Target_Error_Type_Instance;
+  };
+
+  /*
+    error_detection ::=
+      [ defining_error_detection_identifier : ]
+      ( error_source_state | all )
+      -[ [ error_condition ] ]->
+      error_detection_effect ;
+  */
+  interface Error_Detection : Component_Error_Behavior_Node {
+    Node_Id  Error_Detection_Effect;
+  };
+
+  /*
+    error_detection_effect ::=
+      ( outgoing_port_reference | internal_event_reference ) !
+      [ ( error_code_value ) ]
+  */
+  interface Error_Detection_Effect : Node_Id {
+    Node_Id  Outgoing_Port_Reference;
+    Node_Id  Internal_Event_Reference;
+    Node_Id  Error_Code_Value;
+  };
+
+  /*
+    internal_event_reference ::=
+      internal_event_identifier
+  */
+  interface Internal_Event_Reference : Definition {};
+
+  // error_code_value ::= integer_literal | enumeration_identifier | property_constant_term
+  interface Error_Code_Value : Node_Id {
+    Node_Id  Enumeration_Identifier;
+    Node_Id  Property_Constant_Term;
+  };
+
+  //  A revoir : C'est extrait des autres annexes
+  /*
+    property_constant ::=
+     [ property_set_identifier :: ] property_constant_identifier
+  */
+  interface Property_Constant_Term : Definition {
+    Node_Id  Property_Set;
+  };
+
+  /*
+    error_state_to_mode_mapping ::=
+      error_behavior_state_identifier [ target_error_type_instance ]
+      in modes ( mode_name { , mode_name } * ) ;
+  */
+  interface Error_State_To_Mode_Mapping : Definition {
+    Node_Id  Target_Error_Type_Instance;
+    List_Id  Mode_Name_List;
+  };
+
+  /*
+    composite_error_state ::=
+     [ defining_composite_error_state_identifier : ]
+     [ ( subcomponent_state_expression | others ) ]->
+     composite_state_identifier [ target_error_type_instance ]
+     ;
+  */
+  // subcomponent_state_expression is the same as composite_state_expression
+  interface Composite_Error_State : Definition {
+    Node_Id  Composite_State_Identifier;
+    Node_Id  Subcomponent_State_Expression;
+    Node_Id  Target_Error_Type_Instance;
+  };
+
+  /*
+    composite_state_expression ::=
+      composite_state_element
+      | (composite_state_expression )
+      | composite_state_expression and composite_state_expression
+      | composite_state_expression or composite_state_expression
+      | numeric_literal ormore
+      (composite_state_element { , composite_state_element } + )
+      | numeric_literal orless
+      (composite_state_element { , composite_state_element } + )
+  */
+  interface Composite_State_Expression : Node_Id {
+    Node_Id  Composite_State_Element;
+    Node_Id  Composite_State_Expression_Node;
+    Node_Id  Numeric_Literal;
+    Node_Id  Operator;
+    List_Id  Composite_State_Element_List;
+  };
+
+  /*
+    composite_state_element ::=
+     subcomponent_error_state [ error_type_set ]
+     | in incoming_error_propagation_point [ error_type_set_or_noerror ]
+  */
+  interface Composite_State_Element : Node_Id {
+    Node_Id  Subcomponent_Error_State;
+    List_Id  Error_Type_Set;
+    Node_Id  Incoming_Error_Propagation_Point;
+    Node_Id  Error_Type_Set_Or_Noerror;
+  };
+
+  /*
+    subcomponent_error_state ::=
+      { subcomponent_identifier . } + error_behavior_state_identifier
+  */
+  interface Subcomponent_Error_State : Definition {
+    List_Id  Subcomponent_Identifier_List;
+  };
+
+  /*
+     connection_error_behavior ::=
+     connection error
+       [ use transformations error_type_transformation_set_reference ; ]
+       { connection_error_source }*
+     end connection;
+  */
+  interface Connection_Error_Behavior : Node_Id {
+    Node_Id  Error_Type_Transformation_Set_Reference;
+    List_Id  Connection_Error_Source_List;
+  };
+
+  interface Error_Source_Parent : Definition {
+    List_Id  Effect_Error_Type_Set;
+    Node_Id  Fault_Source;
+    Node_Id  Fault_Condition;
+  };
+  /*
+    error_source ::=
+     defining_error_source_identifier :
+     error source
+     ( outgoing_error_propagation_point | all )
+     [ effect_error_type_set ] [ when fault_source ] [ if fault_condition ] ;
+  */
+  interface Error_Source : Error_Source_Parent {
+    Node_Id  Outgoing_Error_Propagation_Point;
+  };
+
+  /*
+    connection_error_source ::=
+      defining_error_source_identifier :
+      error source ( connection_identifier | all )
+      [ effect_error_type_set ]
+      [ when ( fault_source_error_type_set | failure_mode_description ) ]
+      [ if fault_condition ] ;
+  */
+  interface Connection_Error_Source : Definition {
+    Node_Id  Connection_Identifier;
+    List_Id  Effect_Error_Type_Set;
+    List_Id  Fault_Source_Error_Type_Set;
+    Node_Id  Fault_Condition;
+    Node_Id  Failure_Mode_Description;
+  };
+
+  /*
+    propagation_paths ::=
+      propagation paths
+        { propagation_point } *
+        { propagation_path } *
+      end paths ;
+  */
+  interface Propagation_Paths : Node_Id {
+    List_Id  Propagation_Point_List;
+    List_Id  Propagation_Path_List;
+  };
+
+  /*
+    propagation_point ::=
+     defining_ propagation_point_identifier : propagation point ;
+  */
+  interface Propagation_Point : Definition {};
+
+  //  A revoir : '->' doit être en gras car elle appartient à la grammaire
+  /*
+    propagation_path ::=
+      defining_observable_propagation_path_identifier :
+      source_qualified_propagation_point ->
+      target_qualified_propagation_point ;
+  */
+  interface Propagation_Path : Definition {
+    Node_Id  Source_Qualified_Propagation_Point;
+    Node_Id  Target_Qualified_Propagation_Point;
+  };
+
+  /*
+    qualified_propagation_point ::=
+        { subcomponent_identifier . } + propagation_point_identifier
+  */
+  interface Qualified_Propagation_Point : Definition {
+    List_Id  Subcomponent_Identifier_List;
+  };
+};

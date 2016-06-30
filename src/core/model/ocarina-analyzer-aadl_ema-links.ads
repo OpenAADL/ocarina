@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . I N S T A N C E S . A N N E X E S             --
+--      O C A R I N A . A N A L Y Z E R . A A D L _ E M A . L I N K S       --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,24 +29,22 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package Ocarina.Instances.Annexes is
+package Ocarina.Analyzer.AADL_EMA.Links is
 
-   function Apply_Annexes
-     (Instance_Root : Node_Id;
-      Instance      : Node_Id;
-      Annex_List    : List_Id;
-      Override_Mode : Boolean)
+   function Link_Properties_Of_Component
+     (Root    : Node_Id;
+      Node    : Node_Id)
      return Boolean;
-   --  Add annexes to the entity instance. If 'Override_Mode' is set
-   --  any previous homonym annex under the same mode will be
-   --  overriden. Otherwise, the old value will be kept.
+   --  Perform the link of a property association to a component
 
-   function Add_Annex_Instance
-     (Instance_Root   : Node_Id;
-      Entity_Instance : Node_Id;
-      Annex_Subclause : Node_Id;
-      Override_Mode   : Boolean)
-     return Boolean;
-   --  Same as above but for one single annex
+   procedure Link_Error_Type_Library_List
+     (Root    : Node_Id;
+      Node    : Node_Id);
+   --  Perform the link between the given package in the
+   --  error_type_library_list to the library contained in the package.
 
-end Ocarina.Instances.Annexes;
+   procedure Link_Error_Type_Reference
+     (Error_Model_Library_Ref : Node_Id;
+      Node_Referenced         : Node_Id);
+
+end Ocarina.Analyzer.AADL_EMA.Links;

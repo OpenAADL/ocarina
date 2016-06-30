@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . I N S T A N C E S . A N N E X E S             --
+--                  O C A R I N A . F E _ A A D L _ E M A                   --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,24 +29,16 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package Ocarina.Instances.Annexes is
+--  The root of the Error Specification parser/printer/analyser hierarchy
 
-   function Apply_Annexes
-     (Instance_Root : Node_Id;
-      Instance      : Node_Id;
-      Annex_List    : List_Id;
-      Override_Mode : Boolean)
-     return Boolean;
-   --  Add annexes to the entity instance. If 'Override_Mode' is set
-   --  any previous homonym annex under the same mode will be
-   --  overriden. Otherwise, the old value will be kept.
+package Ocarina.FE_AADL_EMA is
 
-   function Add_Annex_Instance
-     (Instance_Root   : Node_Id;
-      Entity_Instance : Node_Id;
-      Annex_Subclause : Node_Id;
-      Override_Mode   : Boolean)
-     return Boolean;
-   --  Same as above but for one single annex
+   procedure Init;
+   --  Initializes the parser
 
-end Ocarina.Instances.Annexes;
+   procedure Reset;
+   --  Resets the parser
+
+   procedure Usage;
+
+end Ocarina.FE_AADL_EMA;

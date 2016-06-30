@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . I N S T A N C E S . A N N E X E S             --
+--           O C A R I N A . F E _ A A D L _ E M A . P A R S E R            --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,24 +29,24 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package Ocarina.Instances.Annexes is
+--  This package gathers the functions that parse the global elements
+--  of error model specification.
 
-   function Apply_Annexes
-     (Instance_Root : Node_Id;
-      Instance      : Node_Id;
-      Annex_List    : List_Id;
-      Override_Mode : Boolean)
-     return Boolean;
-   --  Add annexes to the entity instance. If 'Override_Mode' is set
-   --  any previous homonym annex under the same mode will be
-   --  overriden. Otherwise, the old value will be kept.
+with Ocarina.Types; use Ocarina.Types;
+with Locations;     use Locations;
 
-   function Add_Annex_Instance
-     (Instance_Root   : Node_Id;
-      Entity_Instance : Node_Id;
-      Annex_Subclause : Node_Id;
-      Override_Mode   : Boolean)
-     return Boolean;
-   --  Same as above but for one single annex
+package Ocarina.FE_AADL_EMA.Parser is
 
-end Ocarina.Instances.Annexes;
+   procedure Init;
+   --  Initialize the parser and register it to the general Ocarina
+   --  parser.
+
+   function Process (AADL_Root  : Node_Id;
+                     From       : Location;
+                     To         : Location := No_Location;
+                     Container  : Node_Id)
+                    return Node_Id;
+   --  Proceed to parsing an Error Model Annex. The parsed annex will be
+   --  returned and linked to the given AADL node.
+
+end Ocarina.FE_AADL_EMA.Parser;

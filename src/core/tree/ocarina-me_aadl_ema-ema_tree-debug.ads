@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . I N S T A N C E S . A N N E X E S             --
+--   O C A R I N A . M E _ A A D L _ E M A . E M A _ T R E E . D E B U G    --
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,24 +29,43 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package Ocarina.Instances.Annexes is
+with Ocarina.ME_AADL_EMA.EMA_Tree.Nodes;
+with Ocarina.Output; use Ocarina.Output;
+with Ocarina.Types;
 
-   function Apply_Annexes
-     (Instance_Root : Node_Id;
-      Instance      : Node_Id;
-      Annex_List    : List_Id;
-      Override_Mode : Boolean)
-     return Boolean;
-   --  Add annexes to the entity instance. If 'Override_Mode' is set
-   --  any previous homonym annex under the same mode will be
-   --  overriden. Otherwise, the old value will be kept.
+package Ocarina.ME_AADL_EMA.EMA_Tree.Debug is
+   use Ocarina.ME_AADL_EMA.EMA_Tree.Nodes;
+   use Ocarina.Types;
 
-   function Add_Annex_Instance
-     (Instance_Root   : Node_Id;
-      Entity_Instance : Node_Id;
-      Annex_Subclause : Node_Id;
-      Override_Mode   : Boolean)
-     return Boolean;
-   --  Same as above but for one single annex
+   N_Indents : Integer := -1;
 
-end Ocarina.Instances.Annexes;
+   procedure W_Int         (N : Int)          renames Output.Write_Int;
+   procedure W_Indentation;
+   procedure W_Line        (N : String)       renames Output.Write_Line;
+   procedure W_Str         (N : String)       renames Output.Write_Str;
+
+   procedure W_Boolean     (N : Boolean);
+   procedure W_Byte        (N : Byte);
+
+   procedure W_List_Id     (L : List_Id);
+   procedure W_Node_Id     (N : Node_Id);
+   procedure W_Node_Header (N : Node_Id);
+
+   procedure W_Node_Attribute
+     (A : String;
+      T : String;
+      V : String;
+      N : Int := 0);
+
+   function Image (N : Node_Kind) return String;
+   function Image (N : Name_Id) return String;
+   function Image (N : Node_Id) return String;
+   function Image (N : List_Id) return String;
+   function Image (N : Operator_Id) return String;
+   function Image (N : Boolean) return String;
+   function Image (N : Byte) return String;
+   function Image (N : Int) return String;
+   function Image (N : Value_Id) return String;
+   function Image (N : Mode_Id) return String;
+
+end Ocarina.ME_AADL_EMA.EMA_Tree.Debug;

@@ -36,6 +36,7 @@ with GNAT.Table;
 
 with Ocarina.Analyzer.AADL;
 with Ocarina.Analyzer.REAL;
+with Ocarina.Analyzer.AADL_EMA;
 
 package body Ocarina.Analyzer is
 
@@ -74,6 +75,7 @@ package body Ocarina.Analyzer is
    begin
       Ocarina.Analyzer.AADL.Init;
       Ocarina.Analyzer.REAL.Init;
+      Ocarina.Analyzer.AADL_EMA.Init;
    end Init_Analyzers;
 
    ---------------------
@@ -85,6 +87,7 @@ package body Ocarina.Analyzer is
       Analyzers.Init;
       Ocarina.Analyzer.AADL.Reset;
       Ocarina.Analyzer.REAL.Reset;
+      Ocarina.Analyzer.AADL_EMA.Reset;
    end Reset_Analyzers;
 
    -----------------------

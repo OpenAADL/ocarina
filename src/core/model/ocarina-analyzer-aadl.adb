@@ -34,6 +34,7 @@ with Ocarina.Analyzer.AADL.Names;
 with Ocarina.Analyzer.AADL.Links;
 with Ocarina.Analyzer.AADL.Semantics;
 with Ocarina.Analyzer.AADL.Naming_Rules;
+with Ocarina.Analyzer.AADL.Annexes;
 
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
@@ -50,6 +51,7 @@ package body Ocarina.Analyzer.AADL is
    use Ocarina.Analyzer.AADL.Links;
    use Ocarina.Analyzer.AADL.Semantics;
    use Ocarina.Analyzer.AADL.Naming_Rules;
+   use Ocarina.Analyzer.AADL.Annexes;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.ME_AADL.AADL_Tree.Entities;
@@ -125,6 +127,9 @@ package body Ocarina.Analyzer.AADL is
         Success
         and then Link_Properties_Of_AADL_Description (Root)
         and then Check_Semantics_Of_Properties (Root);
+
+      Success := Success
+        and then Find_Analyze_Annexes (Root);
 
       if Success
         and then Get_Current_Action = Analyze_Model

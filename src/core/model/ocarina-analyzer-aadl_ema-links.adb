@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---            O C A R I N A . I N S T A N C E S . A N N E X E S             --
+--      O C A R I N A . A N A L Y Z E R . A A D L _ E M A . L I N K S       --
 --                                                                          --
---                                 S p e c                                  --
+--                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,24 +29,62 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package Ocarina.Instances.Annexes is
+with Ocarina.ME_AADL.AADL_Tree.Nodes;
+with Ocarina.ME_AADL_EMA.EMA_Tree.Nodes;
 
-   function Apply_Annexes
-     (Instance_Root : Node_Id;
-      Instance      : Node_Id;
-      Annex_List    : List_Id;
-      Override_Mode : Boolean)
-     return Boolean;
-   --  Add annexes to the entity instance. If 'Override_Mode' is set
-   --  any previous homonym annex under the same mode will be
-   --  overriden. Otherwise, the old value will be kept.
+package body Ocarina.Analyzer.AADL_EMA.Links is
 
-   function Add_Annex_Instance
-     (Instance_Root   : Node_Id;
-      Entity_Instance : Node_Id;
-      Annex_Subclause : Node_Id;
-      Override_Mode   : Boolean)
-     return Boolean;
-   --  Same as above but for one single annex
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   package EMATN renames Ocarina.ME_AADL_EMA.EMA_Tree.Nodes;
 
-end Ocarina.Instances.Annexes;
+   ----------------------------------
+   -- Link_Properties_Of_Component --
+   ----------------------------------
+
+   function Link_Properties_Of_Component
+   (Root : Node_Id; Node : Node_Id) return Boolean
+   is
+   begin
+      return Root = Node;
+   end Link_Properties_Of_Component;
+
+   ----------------------------------
+   -- Link_Error_Type_Library_List --
+   ----------------------------------
+
+   procedure Link_Error_Type_Library_List
+     (Root    : Node_Id;
+      Node    : Node_Id)
+   is
+      use ATN;
+      use EMATN;
+
+      pragma Assert (ATN.Kind (Root)   = ATN.K_PACKAGE_SPECIFICATION);
+      pragma Assert (EMATN.Kind (Node) =
+                     EMATN.K_Error_Model_Library_Reference);
+   begin
+      Set_AADL_Package_Reference (Node, Root);
+   end Link_Error_Type_Library_List;
+
+   ----------------------------------
+   -- Link_Error_Type_Library_List --
+   ----------------------------------
+
+   procedure Link_Error_Type_Reference
+     (Error_Model_Library_Ref : Node_Id;
+      Node_Referenced         : Node_Id)
+   is
+      use EMATN;
+
+      pragma Assert (EMATN.Kind (Error_Model_Library_Ref)
+                     = K_Error_Model_Library_Reference);
+      pragma Assert (EMATN.Kind (Node_Referenced)
+                     = K_Error_Model_Library_Reference);
+
+      AADL_Package_Ref : Node_Id;
+   begin
+      AADL_Package_Ref := AADL_Package_Reference (Node_Referenced);
+      Set_AADL_Package_Reference (Error_Model_Library_Ref, AADL_Package_Ref);
+   end Link_Error_Type_Reference;
+
+end Ocarina.Analyzer.AADL_EMA.Links;
