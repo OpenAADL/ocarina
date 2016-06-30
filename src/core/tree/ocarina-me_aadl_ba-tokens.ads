@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -214,6 +214,8 @@ package Ocarina.ME_AADL_BA.Tokens is
    Max_Number_Of_Digits : constant Integer := 20;
    --  Number of digits of the biggest allowed integer, 2**64 have 20
    --  digits
+
+   Language       : constant String := "behavior_specification";
 
    Integer_Literal_Value : Unsigned_Long_Long;
    --  for Tokens : T_Integer_Literal
