@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -73,7 +73,8 @@ package body Ocarina.Builder.AADL.Components.Subcomponents is
       Category            : Ocarina.ME_AADL.Component_Category;
       Is_Refinement       : Boolean := False;
       In_Modes            : Node_Id := No_Node;
-      Prototypes_Bindings : List_Id := No_List) return Node_Id
+      Prototypes_Bindings : List_Id := No_List;
+      Entity_Ref          : Node_Id := No_Node) return Node_Id
    is
       use Ocarina.ME_AADL;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -96,6 +97,7 @@ package body Ocarina.Builder.AADL.Components.Subcomponents is
       Set_In_Modes (Node, In_Modes);
       Set_Property_Scope (Node, New_Node (K_Scope_Definition, Loc));
       Set_Corresponding_Entity (Property_Scope (Node), Node);
+      Set_Entity_Ref (Node, Entity_Ref);
 
       Set_Prototype_Bindings (Node, Prototypes_Bindings);
       if Prototypes_Bindings /= No_List then

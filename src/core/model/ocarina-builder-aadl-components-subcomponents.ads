@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -48,7 +48,8 @@ package Ocarina.Builder.AADL.Components.Subcomponents is
       Category            : Ocarina.ME_AADL.Component_Category;
       Is_Refinement       : Boolean := False;
       In_Modes            : Node_Id := No_Node;
-      Prototypes_Bindings : List_Id := No_List) return Node_Id;
+      Prototypes_Bindings : List_Id := No_List;
+      Entity_Ref          : Node_Id := No_Node) return Node_Id;
    --  Create and add a new subcomponent into a component
    --  implementation. Loc is the location of the subcomponent in the
    --  parsed text. Name references an identifier which contains the
@@ -58,5 +59,7 @@ package Ocarina.Builder.AADL.Components.Subcomponents is
    --  a refinement or not. In_Modes contains the list of the modes
    --  associated to the connection. Return the Node_Id of the newly
    --  created subcomponent if everything went right, else No_Node.
+   --  Entity_Ref indicates the entity referenced by the created
+   --  subcomponent.
 
 end Ocarina.Builder.AADL.Components.Subcomponents;
