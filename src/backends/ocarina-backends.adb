@@ -68,6 +68,7 @@ with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.BoundT;
 with Ocarina.Backends.REAL;
+with Ocarina.Backends.Replication_Expander;
 with Ocarina.Backends.Xtratum_Conf;
 with Ocarina.Backends.ASN1_Tree.Nodes;
 with Ocarina.Backends.ASN1_Tree.Nutils;
@@ -198,6 +199,7 @@ package body Ocarina.Backends is
       REAL.Init;
       ASN1.Init;
       Cheddar.Init;
+      Replication_Expander.Init;
       Connection_Matrix.Init;
       Functions_Matrix.Init;
       AADL_XML.Init;
