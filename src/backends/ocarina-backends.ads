@@ -60,6 +60,7 @@ package Ocarina.Backends is
       Vxworks653_XML,
       Connection_Matrix_Analysis,
       Functions_Matrix_Analysis,
+      Lnt_S,
       MAST_Scheduling,
       Petri_Nets,
       PolyORB_HI_Ada,
