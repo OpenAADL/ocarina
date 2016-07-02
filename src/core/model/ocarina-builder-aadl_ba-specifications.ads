@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -34,7 +34,7 @@ with Locations;
 
 with Ocarina.ME_AADL_BA;
 
-package Ocarina.Builder.Aadl_Ba.Specifications is
+package Ocarina.Builder.AADL_BA.Specifications is
 
    use Ocarina.Types;
    use Locations;
@@ -45,7 +45,8 @@ package Ocarina.Builder.Aadl_Ba.Specifications is
       Container   : Node_Id;
       Variables   : List_Id;
       States      : List_Id;
-      Transitions : List_Id) return Node_Id;
+      Transitions : List_Id)
+     return Node_Id;
 
    procedure Add_New_Behavior_Annex
      (Behavior_Annex : Node_Id;
@@ -55,10 +56,11 @@ package Ocarina.Builder.Aadl_Ba.Specifications is
       Transitions    : List_Id := No_List);
 
    function Add_New_Behavior_Variable
-     (Loc        : Location;
-      Container  : Node_Id;
-      Ident_List : List_Id;
-      Class_Ref  : Node_Id) return Node_Id;
+     (Loc          : Location;
+      Container    : Node_Id;
+      Ident_List   : List_Id;
+      Class_Ref    : Node_Id)
+     return Node_Id;
 
    procedure Add_New_Behavior_Variable
      (Behavior_Variable : Node_Id;
@@ -67,10 +69,11 @@ package Ocarina.Builder.Aadl_Ba.Specifications is
       Class_Ref         : Node_Id := No_Node);
 
    function Add_New_Behavior_State
-     (Loc        : Location;
-      Container  : Node_Id;
-      Ident_List : List_Id;
-      State_Kind : Behavior_State_Kind) return Node_Id;
+     (Loc         : Location;
+      Container   : Node_Id;
+      Ident_List  : List_Id;
+      State_Kind  : Behavior_State_Kind)
+     return Node_Id;
 
    procedure Add_New_Behavior_State
      (Behavior_State : Node_Id;
@@ -81,7 +84,8 @@ package Ocarina.Builder.Aadl_Ba.Specifications is
    function Add_New_Behavior_Transition
      (Loc             : Location;
       Container       : Node_Id;
-      Transition_Node : Node_Id) return Node_Id;
+      Transition_Node : Node_Id)
+     return Node_Id;
 
    function Add_New_Execute_Transition
      (Loc                 : Location;
@@ -91,7 +95,8 @@ package Ocarina.Builder.Aadl_Ba.Specifications is
       Sources             : List_Id;
       Behavior_Condition  : Node_Id;
       Destination         : Node_Id;
-      Behavior_Act_List   : List_Id) return Node_Id;
+      Behavior_Act_Block  : Node_Id)
+     return Node_Id;
 
    procedure Add_New_Execute_Transition
      (Execute_Transition  : Node_Id;
@@ -101,11 +106,45 @@ package Ocarina.Builder.Aadl_Ba.Specifications is
       Sources             : List_Id := No_List;
       Behavior_Condition  : Node_Id := No_Node;
       Destination         : Node_Id := No_Node;
-      Behavior_Act_List   : List_Id := No_List);
+      Behavior_Act_Block  : Node_Id := No_Node);
 
    function Add_New_Behavior_Condition
-     (Loc            : Location;
-      Container      : Node_Id;
-      Condition_Node : Node_Id) return Node_Id;
+     (Loc              : Location;
+      Container        : Node_Id;
+      Condition_Node   : Node_Id)
+     return Node_Id;
 
-end Ocarina.Builder.Aadl_Ba.Specifications;
+   function Add_New_Execute_Condition
+     (Loc               : Location;
+      Container         : Node_Id;
+      Value_Expr        : Node_Id;
+      Is_Otherwise_Bool : Boolean)
+     return Node_Id;
+
+   function Add_New_Mode_Condition
+     (Loc                  : Location;
+      Container            : Node_Id;
+      Trigger_Logical_Expr : Node_Id)
+     return Node_Id;
+
+   function Add_New_Trigger_Logical_Expr
+     (Loc                       : Location;
+      Container                 : Node_Id;
+      Trigger_Logical_Expr_List : List_Id)
+     return Node_Id;
+
+   function Add_New_Event_Trigger
+     (Loc                  : Location;
+      Container            : Node_Id;
+      Port_Component_Ref   : Node_Id;
+      Trigger_Logical_Expr : Node_Id)
+     return Node_Id;
+
+   function Add_New_Port_Component_Reference
+     (Loc               : Location;
+      Container         : Node_Id;
+      Subcomponent_Name : Node_Id;
+      Port_Identifier   : Node_Id)
+     return Node_Id;
+
+end Ocarina.Builder.AADL_BA.Specifications;

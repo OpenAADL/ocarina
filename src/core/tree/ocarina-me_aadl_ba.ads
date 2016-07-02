@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -44,7 +44,11 @@ package Ocarina.ME_AADL_BA is
    --  Behavior_State_Kind for Behavior_State Node
 
    type Dispatch_Trigger_Kind is
-     (TRI_Error, TRI_No_Kind, TRI_Abort, TRI_Stop, TRI_Timeout);
+     (TRI_Error,
+      TRI_No_Kind,
+      TRI_Abort,
+      TRI_Stop,
+      TRI_Timeout);
    --  Dispatch_Trigger_Kind for Dispatch_Trigger Node
 
    type Communication_Kind is
@@ -53,26 +57,31 @@ package Ocarina.ME_AADL_BA is
       CK_Exclamation,
       CK_Interrogative,
       CK_Greater_Greater,
-      CK_Exclamation_Less_Than,
-      CK_Exclamation_Greater_Than);
+      CK_Exclamation_Lesser,
+      CK_Exclamation_Greater);
    --  Communication_Kind for Communication_Action Node
 
    type Distribution_Kind is
-     (DK_Error, DK_No_Kind, DK_Fixed, DK_Normal, DK_Poisson, DK_Random);
+     (DK_Error,
+      DK_No_Kind,
+      DK_Fixed,
+      DK_Normal,
+      DK_Poisson,
+      DK_Random);
    --  Distribution_Kind for Timing_Action Node
 
    type Operator_Kind is
      (OK_Error,
       OK_No_Kind,
 
-   --  logical operator
+      --  logical operator
       OK_And,                     --  and
       OK_Or,                      --  or
       OK_Xor,                     --  xor
-      OK_Cand,                    --  cand
-      OK_Cor,                     --  cor
+      OK_And_Then,                --  and then
+      OK_Or_Else,                 --  or else
 
-   --  relational_operator
+      --  relational_operator
       OK_Equal,                   --  =
       OK_Non_Equal,               --  !=
       OK_Less_Than,               --  <
@@ -80,36 +89,40 @@ package Ocarina.ME_AADL_BA is
       OK_Greater_Than,            --  >
       OK_Greater_Or_Equal,        --  >=
 
-   --  unary_adding_opetor
-   --  binary_adding_operator
+      --  unary_adding_opetor
+      --  binary_adding_operator
       OK_Plus,                    --  +
       OK_Minus,                   --  -
-      OK_Concat,                  --  &
 
-   --  multiplying operator
+      --  multiplying operator
       OK_Multiply,                --  *
       OK_Divide,                  --  /
       OK_Mod,                     --  mod
       OK_Rem,                     --  rem
 
-   --  highest precedence operator
+      --  highest precedence operator
       OK_Exponent,                --  **
       OK_Abs,                     --  abs
       OK_Not);                    --  not
 
    --  Subtype definitions
 
-   subtype Logical_Operator is Operator_Kind range OK_And .. OK_Or;
+   subtype Logical_Operator is Operator_Kind
+     range OK_And .. OK_Xor;
 
-   subtype Relational_Operator is
-     Operator_Kind range OK_Equal .. OK_Greater_Or_Equal;
+   subtype Relational_Operator is Operator_Kind
+     range OK_Equal  .. OK_Greater_Or_Equal;
 
-   subtype Unary_Adding_Operator is Operator_Kind range OK_Plus .. OK_Minus;
+   subtype Unary_Adding_Operator is Operator_Kind
+     range OK_Plus .. OK_Minus;
 
-   subtype Binary_Adding_Operator is Operator_Kind range OK_Plus .. OK_Concat;
+   subtype Binary_Adding_Operator is Operator_Kind
+     range OK_Plus .. OK_Minus;
 
-   subtype Multiplying_Operator is Operator_Kind range OK_Multiply .. OK_Rem;
+   subtype Multiplying_Operator is Operator_Kind
+     range OK_Multiply .. OK_Rem;
 
-   subtype Highest_Prec_Operator is Operator_Kind range OK_Exponent .. OK_Not;
+   subtype Highest_Prec_Operator is Operator_Kind
+     range OK_Exponent .. OK_Not;
 
 end Ocarina.ME_AADL_BA;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -57,46 +57,59 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    use Ocarina.Builder.Aadl_Ba.Expressions;
 
-   --------------------
-   -- P_Value_Holder --
-   --------------------
+   ----------------------
+   -- P_Value_Variable --
+   ----------------------
 
-   --  value_holder ::=
-   --    incoming_port_id
-   --  | incoming_port_id ? [ ( target ) ]
-   --  | subprogram_parameter_id
-   --  | local_variable_id
+   --  value_variable ::=
+   --    incoming_port_name
+   --  | incoming_port_name ?
+   --  | incoming_subprogram_parameter_identifier
+   --  | incoming_port_prototype_name
    --  | data_component_reference
-   --  | port_id ’ count
-   --  | port_id ’ fresh
+   --  | port_name ’ count
+   --  | port_name ’ fresh
+   --  | port_name ’ updated
 
-   function P_Value_Holder (Container : Types.Node_Id) return Node_Id is
+   function P_Value_Variable (Container : Types.Node_Id) return Node_Id is
       Start_Loc    : Location;
       Loc          : Location;
-      Loc_Fst_Id   : Location;
       Ident        : Node_Id;
-      Value_Holder : Node_Id;
-      Target_Node  : Node_Id := No_Node;
-      Count        : Boolean := False;
-      Fresh        : Boolean := False;
-      Interrog     : Boolean := False;
+      Value_Variable : Node_Id;
+      Count        : Boolean  := False;
+      Fresh        : Boolean  := False;
+      Updated      : Boolean  := False;
+      Interrog     : Boolean  := False;
 
    begin
       Save_Lexer (Start_Loc);
       Scan_Token;
 
       if Token /= T_Identifier then
-         DPE (PC_Value_Holder, Expected_Token => T_Identifier);
+         DPE (PC_Value_Variable, Expected_Token => T_Identifier);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       else
+         Restore_Lexer (Start_Loc);
+         Ident := P_Name (Container);
+         if No (Ident) then
+            DPE (PC_Value_Variable, EMC_Failed);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+
+         Save_Lexer (Loc);
          Scan_Token;
          if Token = T_Dot then
             Restore_Lexer (Start_Loc);
-            Ident := P_Data_Component_Reference (No_Node);
+            Ident := P_Data_Component_Reference (Container);
+            if No (Ident) then
+               DPE (PC_Value_Variable, EMC_Failed);
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
          else
-            Restore_Lexer (Start_Loc);
-            Ident := P_Id (No_Node);
+            Restore_Lexer (Loc);
          end if;
       end if;
 
@@ -110,8 +123,11 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
                Count := True;
             elsif Token = T_Fresh then
                Fresh := True;
+            elsif Token = T_Updated then
+               Updated := True;
             else
-               DPE (PC_Value_Holder, Expected_Tokens => (T_Count, T_Fresh));
+               DPE (PC_Value_Variable, Expected_Tokens =>
+                                   (T_Count, T_Fresh, T_Updated));
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
@@ -119,62 +135,22 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          when T_Interrogative =>
             Interrog := True;
 
-            Save_Lexer (Loc);
-            Scan_Token;
-
-            if Token = T_Left_Parenthesis then
-               Scan_Token;
-               if Token /= T_Identifier then
-                  DPE (PC_Value_Holder, Expected_Token => T_Identifier);
-                  Skip_Tokens (T_Semicolon);
-                  return No_Node;
-               else
-                  Save_Lexer (Loc_Fst_Id);
-                  Target_Node := P_Id (No_Node);
-                  Save_Lexer (Loc);
-                  Scan_Token;
-                  if Token = T_Dot then
-                     Restore_Lexer (Loc_Fst_Id);
-                     Target_Node := P_Data_Component_Reference (No_Node);
-                  else
-                     Restore_Lexer (Loc);
-                  end if;
-
-                  Scan_Token;
-                  if Token /= T_Right_Parenthesis then
-                     DPE
-                       (PC_Value_Holder,
-                        Expected_Token => T_Right_Parenthesis);
-                     Skip_Tokens (T_Semicolon);
-                     return No_Node;
-                  end if;
-               end if;
-            else
-               Restore_Lexer (Loc);
-            end if;
-
          when others =>
             Restore_Lexer (Loc);
       end case;
 
-      Value_Holder :=
-        Add_New_Value_Holder
-          (Start_Loc,
-           Container,
-           Ident,
-           Target_Node,
-           Count,
-           Fresh,
-           Interrog);
-      if No (Value_Holder) then
-         DPE (PC_Value_Holder, EMC_Failed);
+      Value_Variable := Add_New_Value_Variable (Start_Loc, Container,
+                                                Ident, Count, Fresh,
+                                                Updated, Interrog);
+      if No (Value_Variable) then
+         DPE (PC_Value_Variable, EMC_Failed);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       else
-         return Value_Holder;
+         return Value_Variable;
       end if;
 
-   end P_Value_Holder;
+   end P_Value_Variable;
 
    ----------------------
    -- Value_Expression --
@@ -210,10 +186,24 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          case Token is
             when T_And =>
                Operat_Kind := OK_And;
+               Save_Lexer (Loc);
+               Scan_Token;
+
+               if Token = T_Then then
+                  Operat_Kind := OK_And_Then;
+               else
+                  Restore_Lexer (Loc);
+               end if;
             when T_Or =>
                Operat_Kind := OK_Or;
-            when T_Cand =>
-               Operat_Kind := OK_Cand;
+               Save_Lexer (Loc);
+               Scan_Token;
+
+               if Token = T_Else then
+                  Operat_Kind := OK_Or_Else;
+               else
+                  Restore_Lexer (Loc);
+               end if;
             when T_Xor =>
                Operat_Kind := OK_Xor;
             when others =>
@@ -235,17 +225,18 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          end if;
       end loop;
 
-      Set_Loc
-        (Node_Id (Relation_List),
-         Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node (Relation_List)));
-      if Is_Empty (Relation_List) then
+      if not Is_Empty (Relation_List) then
+         Set_Loc (Node_Id (Relation_List),
+                  Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node
+                                                        (Relation_List)));
+      else
          DPE (PC_Value_Expression, EMC_List_Is_Empty);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
-      Value_Expr :=
-        Add_New_Value_Expression (Start_Loc, Container, Relation_List);
+      Value_Expr := Add_New_Value_Expression (Start_Loc, Container,
+                                              Relation_List);
       if No (Value_Expr) then
          DPE (PC_Value_Expression, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -261,30 +252,34 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    ----------------
 
    --  relation ::=
-   --    boolean_value
-   --  | simple_expression [relational_operator simple_expression]
+   --   simple_expression [relational_operator simple_expression]
 
    function P_Relation (Container : Types.Node_Id) return Node_Id is
       Start_Loc     : Location;
-      Bool_Val      : Boolean := False;
-      Spl_Expr_List : List_Id := No_List;
+      --  Bool_Val      : Boolean  := False;
+      Spl_Expr_List : List_Id  := No_List;
       Node          : Node_Id;
    begin
       Save_Lexer (Start_Loc);
-      Scan_Token;
+      --  Scan_Token;
 
-      case Token is
-         when T_True =>
-            Bool_Val := True;
+      --  case Token is
+      --   when T_True =>
+      --      Bool_Val := True;
 
-         when T_False =>
-            Bool_Val := False;
+      --   when T_False =>
+      --      Bool_Val := False;
 
-         when others =>
-            Spl_Expr_List := P_Simple_Expressions (Start_Loc);
-      end case;
+      --   when others =>
+      Spl_Expr_List := P_Simple_Expressions (Start_Loc);
+      if Is_Empty (Spl_Expr_List) then
+         DPE (PC_Relation, EMC_List_Is_Empty);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
+      end if;
+      --  end case;
 
-      Node := Add_New_Relation (Start_Loc, Container, Bool_Val, Spl_Expr_List);
+      Node := Add_New_Relation (Start_Loc, Container, Spl_Expr_List);
       if No (Node) then
          DPE (PC_Relation, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -301,11 +296,12 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    --  simple_expression [relational_operator simple_expression]
 
-   function P_Simple_Expressions (Start_Loc : Location) return List_Id is
+   function P_Simple_Expressions (Start_Loc : Location) return List_Id
+   is
       Loc             : Location;
       Item            : Node_Id;
       Expression_List : List_Id;
-      First_Parsing   : Boolean := True;
+      First_Parsing   : Boolean   := True;
    begin
       Restore_Lexer (Start_Loc);
       Expression_List := New_List (K_List_Id, Token_Location);
@@ -342,10 +338,11 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
       end loop;
 
-      Set_Loc
-        (Node_Id (Expression_List),
-         Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node (Expression_List)));
-      if Is_Empty (Expression_List) then
+      if not Is_Empty (Expression_List) then
+         Set_Loc (Node_Id (Expression_List),
+               Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node
+                                                       (Expression_List)));
+      else
          DPE (PC_Simple_Expressions, EMC_List_Is_Empty);
          Skip_Tokens (T_Semicolon);
          return No_List;
@@ -369,7 +366,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
       Operator_Node    : Node_Id;
       Term_Node        : Node_Id;
       Simple_Expr_List : List_Id;
-      Escape           : Boolean := False;
+      Escape           : Boolean   := False;
    begin
       Save_Lexer (Start_Loc);
       Simple_Expr_List := New_List (K_List_Id, Start_Loc);
@@ -409,7 +406,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
             else
                DPE (PC_Simple_Expression, EMC_Failed);
                Simple_Expr_List := No_List;
-               Escape           := True;
+               Escape := True;
             end if;
 
             Term_Node := P_Term (No_Node);
@@ -418,7 +415,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
             else
                DPE (PC_Simple_Expression, EMC_Failed);
                Simple_Expr_List := No_List;
-               Escape           := True;
+               Escape := True;
             end if;
          else
             Restore_Lexer (Loc);
@@ -430,17 +427,18 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          end if;
       end loop;
 
-      Set_Loc
-        (Node_Id (Simple_Expr_List),
-         Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node (Simple_Expr_List)));
-      if Is_Empty (Simple_Expr_List) then
+      if not Is_Empty (Simple_Expr_List) then
+         Set_Loc (Node_Id (Simple_Expr_List),
+               Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node
+                                                       (Simple_Expr_List)));
+      else
          DPE (PC_Simple_Expressions, EMC_List_Is_Empty);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
-      Simple_Expr_Node :=
-        Add_New_Simple_Expression (Start_Loc, Container, Simple_Expr_List);
+      Simple_Expr_Node := Add_New_Simple_Expression (Start_Loc, Container,
+                                                     Simple_Expr_List);
 
       if No (Simple_Expr_Node) then
          DPE (PC_Simple_Expression, EMC_Failed);
@@ -502,10 +500,11 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
       end loop;
 
-      Set_Loc
-        (Node_Id (Factor_List),
-         Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node (Factor_List)));
-      if Is_Empty (Factor_List) then
+      if not Is_Empty (Factor_List) then
+         Set_Loc (Node_Id (Factor_List),
+               Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node
+                                                       (Factor_List)));
+      else
          DPE (PC_Term, EMC_List_Is_Empty);
          Skip_Tokens (T_Semicolon);
          return No_Node;
@@ -526,16 +525,16 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    -- P_Factor --
    --------------
 
-   --  factor ::= primary [** primary] | abs primary | not primary
+   --  factor ::= value [** value] | abs value | not value
 
    function P_Factor (Container : Types.Node_Id) return Node_Id is
       Start_Loc   : Location;
       Loc         : Location;
       Factor_Node : Node_Id;
-      Low_Primary : Node_Id;
-      Upp_Primary : Node_Id := No_Node;
-      Is_Abs_Bool : Boolean := False;
-      Is_Not_Bool : Boolean := False;
+      Low_Value : Node_Id;
+      Upp_Value : Node_Id  := No_Node;
+      Is_Abs_Bool : Boolean  := False;
+      Is_Not_Bool : Boolean  := False;
    begin
       Save_Lexer (Start_Loc);
       Scan_Token;
@@ -548,8 +547,8 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          Restore_Lexer (Start_Loc);
       end if;
 
-      Low_Primary := P_Primary (No_Node);
-      if No (Low_Primary) then
+      Low_Value := P_Value (No_Node);
+      if No (Low_Value) then
          DPE (PC_Factor, EMC_Failed);
          Skip_Tokens (T_Semicolon);
          return No_Node;
@@ -559,8 +558,8 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
       Scan_Token;
 
       if Token = T_Exponent then
-         Upp_Primary := P_Primary (No_Node);
-         if No (Upp_Primary) then
+         Upp_Value := P_Value (No_Node);
+         if No (Upp_Value) then
             DPE (PC_Factor, EMC_Failed);
             Skip_Tokens (T_Semicolon);
             return No_Node;
@@ -569,14 +568,9 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          Restore_Lexer (Loc);
       end if;
 
-      Factor_Node :=
-        Add_New_Factor
-          (Start_Loc,
-           Container,
-           Is_Abs_Bool,
-           Is_Not_Bool,
-           Low_Primary,
-           Upp_Primary);
+      Factor_Node := Add_New_Factor (Start_Loc, Container,
+                                     Is_Abs_Bool, Is_Not_Bool,
+                                     Low_Value, Upp_Value);
       if No (Factor_Node) then
          DPE (PC_Factor, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -587,13 +581,13 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
    end P_Factor;
 
-   ---------------
-   -- P_Primary --
-   ---------------
+   -------------
+   -- P_Value --
+   -------------
 
-   --  primary ::= value_holder | value_constant | ( value_expression )
+   --  value ::= value_variable | value_constant | ( value_expression )
 
-   function P_Primary (Container : Types.Node_Id) return Node_Id is
+   function P_Value (Container : Types.Node_Id) return Node_Id is
       Loc  : Location;
       Node : Node_Id;
    begin
@@ -611,65 +605,77 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
          when T_Real_Literal =>
             Node := New_Node (K_Literal, Token_Location);
-            Set_Value
-              (Node,
-               New_Real_Value
-                 (Float_Literal_Value,
-                  False,
-                  Numeric_Literal_Base,
-                  Numeric_Literal_Exp));
+            Set_Value (Node,
+                       New_Real_Value (Float_Literal_Value,
+                                       False,
+                                       Numeric_Literal_Base,
+                                       Numeric_Literal_Exp));
 
          when T_Integer_Literal =>
             Node := New_Node (K_Literal, Token_Location);
-            Set_Value
-              (Node,
-               New_Integer_Value
-                 (Integer_Literal_Value,
-                  False,
-                  Numeric_Literal_Base,
-                  Numeric_Literal_Exp));
+            Set_Value (Node,
+                       New_Integer_Value (Integer_Literal_Value,
+                                          False,
+                                          Numeric_Literal_Base,
+                                          Numeric_Literal_Exp));
+         when T_String_Literal =>
+            Node := New_Node (K_Literal, Token_Location);
+            Set_Value (Node,
+                       New_String_Value (String_Literal_Value));
 
          when T_Identifier =>
             Scan_Token;
-            if Token = T_Tick or else Token = T_Interrogative then
+            if Token = T_Tick
+              or else Token = T_Interrogative
+              or else Token = T_Dot
+              or else Token = T_Left_Square_Bracket
+            then
                Restore_Lexer (Loc);
-               Node := P_Value_Holder (Container);
+               Node := P_Value_Variable (Container);
+            elsif Token = T_Number_Sign
+            then
+               Restore_Lexer (Loc);
+               Node := P_Property_Ref (Container);
             else
                Restore_Lexer (Loc);
-               Node := P_Identifier (Container);
+               Node := P_Property_Constant (Container);
             end if;
+
+         when T_Number_Sign =>
+               Restore_Lexer (Loc);
+               Node := P_Property_Ref (Container);
+
+         when T_Self =>
+               Restore_Lexer (Loc);
+               Node := P_Property_Ref (Container);
 
          when T_Left_Parenthesis =>
             Node := P_Value_Expression (Container);
             Scan_Token;
             if Token /= T_Right_Parenthesis then
-               DPE (PC_Primary, Expected_Token => T_Right_Parenthesis);
+               DPE (PC_Value, Expected_Token => T_Right_Parenthesis);
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
 
          when others =>
-            DPE
-              (PC_Primary,
-               Expected_Tokens =>
-                 (T_False,
-                  T_True,
-                  T_Identifier,
-                  T_Real_Literal,
-                  T_Integer_Literal));
+            DPE (PC_Value,
+                 Expected_Tokens => (T_False, T_True, T_Identifier,
+                                     T_Real_Literal, T_Integer_Literal,
+                                     T_String_Literal));
             Skip_Tokens (T_Semicolon);
             return No_Node;
       end case;
 
       if No (Node) then
-         DPE (PC_Primary, EMC_Failed);
+         DPE (PC_Value, EMC_Failed);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       else
          return Node;
       end if;
 
-   end P_Primary;
+   end P_Value;
 
    ----------------
    -- P_Operator --
@@ -680,11 +686,37 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
       Operator_Node : Node_Id;
       Loc           : Location;
 
-   --  fixme : todo add generic procedure for test operator kind
+      --  fixme : todo add generic procedure for test operator kind
    begin
       Save_Lexer (Loc);
 
       case Token is
+         --  logical operator
+         when T_And =>
+            Operator_Cat := OK_And;
+            Save_Lexer (Loc);
+            Scan_Token;
+
+            if Token = T_Then then
+               Operator_Cat := OK_And_Then;
+            else
+               Restore_Lexer (Loc);
+            end if;
+
+         when T_Or =>
+            Operator_Cat := OK_Or;
+            Save_Lexer (Loc);
+            Scan_Token;
+
+            if Token = T_Else then
+               Operator_Cat := OK_Or_Else;
+            else
+               Restore_Lexer (Loc);
+            end if;
+
+         when T_Xor =>
+            Operator_Cat := OK_Xor;
+
          --  relational operator
          when T_Equals_Sign =>
             Operator_Cat := OK_Equal;
@@ -711,9 +743,6 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          when T_Minus =>
             Operator_Cat := OK_Minus;
 
-         when T_Concat =>
-            Operator_Cat := OK_Concat;
-
          --  multiplying operator
          when T_Multiply =>
             Operator_Cat := OK_Multiply;
@@ -722,20 +751,20 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
             Operator_Cat := OK_Divide;
 
          when T_Mod =>
-            Operator_Cat := OK_Mod;
+            Operator_Cat := Ok_Mod;
 
          when T_Rem =>
-            Operator_Cat := OK_Rem;
+            Operator_Cat := Ok_Rem;
 
          --  highest precedence operator
          when T_Exponent =>
-            Operator_Cat := OK_Exponent;
+            Operator_Cat := Ok_Exponent;
 
          when T_Abs =>
-            Operator_Cat := OK_Abs;
+            Operator_Cat := Ok_Abs;
 
          when T_Not =>
-            Operator_Cat := OK_Not;
+            Operator_Cat := Ok_Not;
 
          when others =>
             Restore_Lexer (Loc);
@@ -763,8 +792,8 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    --    [ property_set_identifier :: ] property_constant_identifier
 
    function P_Property_Constant (Container : Types.Node_Id) return Node_Id is
-      Start_Loc : Location;
-      Loc       : Location;
+      Start_Loc       : Location;
+      Loc             : Location;
 
       Property_Cst_Node : Node_Id;
       Property_Cst_Id   : Node_Id;
@@ -774,6 +803,7 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
       Property_Cst_Id := P_Identifier (No_Node);
       if No (Property_Cst_Id) then
+         Scan_Token;
          DPE (PC_Property_Constant, Expected_Token => T_Identifier);
          Skip_Tokens (T_Semicolon);
          return No_Node;
@@ -785,16 +815,19 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
       if Token = T_Colon_Colon then
          Property_Set_Id := Property_Cst_Id;
          Property_Cst_Id := P_Identifier (No_Node);
+         if No (Property_Cst_Id) then
+            Scan_Token;
+            DPE (PC_Property_Constant, Expected_Token => T_Identifier);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
       else
          Restore_Lexer (Loc);
       end if;
 
-      Property_Cst_Node :=
-        Add_New_Property_Constant
-          (Start_Loc,
-           Container,
-           Property_Set_Id,
-           Property_Cst_Id);
+      Property_Cst_Node := Add_New_Property_Constant (Start_Loc, Container,
+                                                      Property_Set_Id,
+                                                      Property_Cst_Id);
       if No (Property_Cst_Node) then
          DPE (PC_Property_Constant, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -803,6 +836,262 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          return Property_Cst_Node;
       end if;
    end P_Property_Constant;
+
+   --------------------
+   -- P_Property_Ref --
+   --------------------
+
+   --  property_reference ::=
+   --  # [ property_set_identifier :: ] property_name
+   --  | component_element_reference # property_name
+   --  | unique_component_classifier_reference # property_name
+
+   function P_Property_Ref (Container : Types.Node_Id) return Node_Id is
+      Start_Loc       : Location;
+      Loc             : Location;
+      Loc1            : Location;
+      Property_Ref : Node_Id;
+      Ident   : Node_Id;
+      Ident1  : Node_Id := No_Node;
+      Property_Set_Id   : Node_Id := No_Node;
+      Property_Name : Node_Id;
+
+      --  fixme : todo parse unique_component_classifier_reference
+   begin
+      Save_Lexer (Start_Loc);
+      Scan_Token;
+      if Token = T_Number_Sign then
+         Save_Lexer (Loc1);
+         Ident := P_Identifier (No_Node);
+         --  if No (Ident) then
+         --   DPE (PC_Property_Reference, Expected_Token => T_Identifier);
+         --  Skip_Tokens (T_Semicolon);
+         --   return No_Node;
+         --  end if;
+         Save_Lexer (Loc);
+         Scan_Token;
+         if Token = T_Colon_Colon then
+            Property_Set_Id := Ident;
+            Property_Name := P_Property_Name (No_Node);
+            if No (Property_Name) then
+               DPE (PC_Property_Reference, EMC_Failed);
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
+         else
+            Restore_Lexer (Loc1);
+            Property_Name := P_Property_Name (No_Node);
+            if No (Property_Name) then
+               DPE (PC_Property_Reference, EMC_Failed);
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
+         end if;
+      else
+         Restore_Lexer (Start_Loc);
+         Ident1 := P_Component_Element_Ref (No_Node);
+         if No (Ident1) then
+            DPE (PC_Property_Reference, EMC_Failed);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+         Scan_Token;
+         if Token /= T_Number_Sign then
+            DPE (PC_Property_Reference,
+              Expected_Token => T_Number_Sign);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+         Save_Lexer (Loc);
+         Property_Name := P_Property_Name (No_Node);
+         if No (Property_Name) then
+            DPE (PC_Property_Reference, EMC_Failed);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+      end if;
+
+      Property_Ref := Add_New_Property_Reference (Start_Loc, Container,
+                                                      Property_Set_Id,
+                                                      Ident1,
+                                                      Property_Name);
+      if No (Property_Ref) then
+         DPE (PC_Property_Reference, EMC_Failed);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
+      else
+         return Property_Ref;
+      end if;
+   end P_Property_Ref;
+
+   -----------------------------
+   -- P_Component_Element_Ref --
+   -----------------------------
+
+   --  component_element_reference ::=
+   --   subcomponent_identifier
+   --  | local_variable_identifier
+   --  | bound_prototype_identifier
+   --  | feature_identifier
+   --  | self
+
+   function P_Component_Element_Ref (Container : Types.Node_Id) return Node_Id
+   is
+      Start_Loc    : Location;
+      Ident        : Node_Id := No_Node;
+      IS_Self_Bool : Boolean := False;
+      Component_Element_Ref : Node_Id;
+   begin
+      Save_Lexer (Start_Loc);
+      Scan_Token;
+      if Token = T_Self then
+         IS_Self_Bool := True;
+      else
+         Restore_Lexer (Start_Loc);
+         Ident := P_Identifier (No_Node);
+         if No (Ident) then
+            DPE (PC_Component_Element_Ref, Expected_Token => T_Identifier);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+      end if;
+      Component_Element_Ref := Add_New_Component_Element_Ref
+                               (Start_Loc, Container,
+                                Ident, IS_Self_Bool);
+      if No (Component_Element_Ref) then
+         DPE (PC_Component_Element_Ref, EMC_Failed);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
+      else
+         return Component_Element_Ref;
+      end if;
+
+   end P_Component_Element_Ref;
+
+   ---------------------
+   -- P_Property_Name --
+   ---------------------
+
+   --  property_name ::=
+   --   property_identifier { property_field }*
+
+   function P_Property_Name (Container : Types.Node_Id) return Node_Id is
+      Start_Loc        : Location;
+      Loc              : Location;
+      Property_Name_Node        : Node_Id;
+      Property_Idt           : Node_Id;
+      Property_Field_List : List_Id  := No_List;
+   begin
+      Save_Lexer (Start_Loc);
+
+      Property_Idt := P_Identifier (No_Node);
+      if No (Property_Idt) then
+         Scan_Token;
+         DPE (PC_Property_Name, Expected_Token => T_Identifier);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
+      end if;
+
+      Save_Lexer (Loc);
+      Scan_Token;
+
+      if Token = T_Left_Square_Bracket
+        or else Token = T_Dot
+      then
+         Restore_Lexer (Loc);
+         Property_Field_List := P_Items_List (P_Property_Field'Access,
+                                              No_Node,
+                                              PC_Property_Name);
+         if Is_Empty (Property_Field_List) then
+            --  DPE (PC_Property_Name, EMC_List_Is_Empty);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+      else
+         Restore_Lexer (Loc);
+      end if;
+
+      Property_Name_Node := Add_New_Property_Name (Start_Loc, Container,
+                                                   Property_Idt,
+                                                   Property_Field_List);
+      if No (Property_Name_Node) then
+         DPE (PC_Property_Name, EMC_Failed);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
+      else
+         return Property_Name_Node;
+      end if;
+
+   end P_Property_Name;
+
+   ----------------------
+   -- P_Property_Field --
+   ----------------------
+
+   --  property_field ::=
+   --    [ integer_value ]
+   --  | . field_identifier
+   --  | . upper_bound
+   --  | . lower_bound
+
+   function P_Property_Field (Container : Types.Node_Id) return Node_Id is
+      Loc              : Location;
+      Loc1             : Location;
+      Property_Field : Node_Id;
+      Ident               : Node_Id := No_Node;
+      Is_Upper_Bound : Boolean := False;
+      Is_Lower_Bound : Boolean := False;
+   begin
+      Save_Lexer (Loc);
+
+      Scan_Token;
+      if Token = T_Left_Square_Bracket then
+         Ident := P_Integer_Value (Container);
+         if No (Ident) then
+            Skip_Tokens (T_Semicolon);
+            DPE (PC_Property_Field, EMC_Failed);
+            return No_Node;
+         end if;
+
+         Scan_Token;
+         if Token /= T_Right_Square_Bracket then
+            DPE (PC_Property_Field, Expected_Token => T_Right_Square_Bracket);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+      elsif Token = T_Dot then
+         Save_Lexer (Loc1);
+         Scan_Token;
+         if Token = T_Upper_Bound then
+            IS_Upper_Bound := True;
+         elsif Token = T_Lower_Bound then
+            IS_Lower_Bound := True;
+         elsif Token = T_Identifier then
+            Restore_Lexer (Loc1);
+            Ident := P_Identifier (No_Node);
+         else
+            DPE (PC_Property_Field, Expected_Tokens => (T_Identifier,
+                                                        T_Upper_Bound,
+                                                        T_Lower_Bound));
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
+      else
+         Restore_Lexer (Loc);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
+      end if;
+      Property_Field := Add_New_Property_Field (Loc, Container,
+                                              Ident, Is_Upper_Bound,
+                                              Is_Lower_Bound);
+      if No (Property_Field) then
+         DPE (PC_Property_Field, EMC_Failed);
+         Skip_Tokens (T_Semicolon);
+         return No_Node;
+      else
+         return Property_Field;
+      end if;
+   end P_Property_Field;
 
    ---------------------
    -- P_Integer_Range --
@@ -835,8 +1124,8 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
          return No_Node;
       end if;
 
-      Integer_Range :=
-        Add_New_Integer_Range (Start_Loc, Container, Lower_Bound, Upper_Bound);
+      Integer_Range := Add_New_Integer_Range (Start_Loc, Container,
+                                              Lower_Bound, Upper_Bound);
       if No (Integer_Range) then
          DPE (PC_Integer_Range, EMC_Failed);
          Skip_Tokens (T_Semicolon);
@@ -852,50 +1141,56 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
    ---------------------
 
    --  integer_value ::=
-   --    integer_value_holder
+   --    integer_value_variable
    --  | integer_numerical_literal
    --  | integer_property_constant
 
    function P_Integer_Value (Container : Types.Node_Id) return Node_Id is
-      Start_Loc : Location;
+      Start_Loc   : Location;
 
-      Integer_Cst : Node_Id;
-      Integer_Val : Node_Id;
+      Integer_Cst  : Node_Id;
+      Integer_Val  : Node_Id;
 
-   --  fixme : todo parse integer_value_holder
    begin
       Save_Lexer (Start_Loc);
       Scan_Token;
 
       case Token is
          when T_Identifier =>
-            Integer_Cst := P_Property_Constant (No_Node);
+            Scan_Token;
+            if Token = T_Tick
+              or else Token = T_Interrogative
+              or else Token = T_Dot
+              or else Token = T_Left_Square_Bracket
+            then
+               Restore_Lexer (Start_Loc);
+               Integer_Cst := P_Value_Variable (Container);
+            else
+               Restore_Lexer (Start_Loc);
+               Integer_Cst := P_Property_Constant (Container);
+            end if;
 
          when T_Real_Literal =>
             Integer_Cst := New_Node (K_Literal, Token_Location);
-            Set_Value
-              (Integer_Cst,
-               New_Real_Value
-                 (Float_Literal_Value,
-                  False,
-                  Numeric_Literal_Base,
-                  Numeric_Literal_Exp));
+            Set_Value (Integer_Cst,
+                       New_Real_Value (Float_Literal_Value,
+                                       False,
+                                       Numeric_Literal_Base,
+                                       Numeric_Literal_Exp));
 
          when T_Integer_Literal =>
             Integer_Cst := New_Node (K_Literal, Token_Location);
-            Set_Value
-              (Integer_Cst,
-               New_Integer_Value
-                 (Integer_Literal_Value,
-                  False,
-                  Numeric_Literal_Base,
-                  Numeric_Literal_Exp));
+            Set_Value (Integer_Cst,
+                       New_Integer_Value (Integer_Literal_Value,
+                                          False,
+                                          Numeric_Literal_Base,
+                                          Numeric_Literal_Exp));
 
          when others =>
-            DPE
-              (PC_Integer_Value,
-               Expected_Tokens =>
-                 (T_Identifier, T_Real_Literal, T_Integer_Literal));
+            DPE (PC_Integer_Value,
+                 Expected_Tokens => (T_Identifier,
+                                     T_Real_Literal,
+                                     T_Integer_Literal));
             Skip_Tokens (T_Semicolon);
             return No_Node;
       end case;
@@ -934,13 +1229,14 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
 
       Unit_Id := P_Identifier (No_Node);
       if No (Unit_Id) then
-         DPE (PC_Behavior_Time, EMC_Failed);
+         Scan_Token;
+         DPE (PC_Behavior_Time, Expected_Token => T_Identifier);
          Skip_Tokens (T_Semicolon);
          return No_Node;
       end if;
 
-      Behavior_Time :=
-        Add_New_Behavior_Time (Start_Loc, Container, Integer_Val, Unit_Id);
+      Behavior_Time := Add_New_Behavior_Time (Start_Loc, Container,
+                                              Integer_Val, Unit_Id);
       if No (Behavior_Time) then
          DPE (PC_Behavior_Time, EMC_Failed);
          Skip_Tokens (T_Semicolon);

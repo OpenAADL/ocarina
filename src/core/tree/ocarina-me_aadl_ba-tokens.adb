@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -108,6 +108,8 @@ package body Ocarina.ME_AADL_BA.Tokens is
 
       New_Token (T_Interrogative, "?");
       New_Token (T_Exclamation, "!");
+      New_Token (T_Exclamation_Greater, "!>");
+      New_Token (T_Exclamation_Lesser, "!<");
 
       New_Token (T_And, "and");
       New_Token (T_Or, "or");
@@ -118,8 +120,6 @@ package body Ocarina.ME_AADL_BA.Tokens is
       New_Token (T_Orless, "orless");
       New_Token (T_Not, "not");
       New_Token (T_Xor, "xor");
-      New_Token (T_Cand, "cand");
-      New_Token (T_Cor, "cor");
 
       New_Token (T_If, "if");
       New_Token (T_Elsif, "elsif");
@@ -127,6 +127,9 @@ package body Ocarina.ME_AADL_BA.Tokens is
       New_Token (T_End, "end");
       New_Token (T_For, "for");
       New_Token (T_While, "while");
+      New_Token (T_Do, "do");
+      New_Token (T_Until, "until");
+      New_Token (T_Forall, "forall");
 
       New_Token (T_True, "true");
       New_Token (T_False, "false");
@@ -134,6 +137,7 @@ package body Ocarina.ME_AADL_BA.Tokens is
       New_Token (T_Abort, "abort");
       New_Token (T_Abs, "abs");
       New_Token (T_Any, "any");
+      New_Token (T_Binding, "binding");
       New_Token (T_Complete, "complete");
       New_Token (T_Computation, "computation");
       New_Token (T_Count, "count");
@@ -144,19 +148,25 @@ package body Ocarina.ME_AADL_BA.Tokens is
       New_Token (T_Fresh, "fresh");
       New_Token (T_Frozen, "frozen");
       New_Token (T_Initial, "initial");
+      New_Token (T_Lower_Bound, "lower_bound");
       New_Token (T_Mod, "mod");
       New_Token (T_Mode, "mode");
       New_Token (T_Normal, "normal");
       New_Token (T_Others, "others");
+      New_Token (T_Otherwise, "otherwise");
       New_Token (T_Poisson, "poisson");
       New_Token (T_Random, "random");
       New_Token (T_Rem, "rem");
+      New_Token (T_Self, "self");
       New_Token (T_State, "state");
       New_Token (T_States, "states");
       New_Token (T_Stop, "stop");
+      New_Token (T_Then, "then");
       New_Token (T_Timeout, "timeout");
       New_Token (T_Transition, "transition");
       New_Token (T_Transitions, "transitions");
+      New_Token (T_Updated, "updated");
+      New_Token (T_Upper_Bound, "upper_bound");
       New_Token (T_Variables, "variables");
       New_Token (T_None, "none");
 
@@ -192,10 +202,8 @@ package body Ocarina.ME_AADL_BA.Tokens is
    function Quoted_Image (T : BA_Token_Type) return String is
    begin
       case T is
-         when T_Identifier   |
-           T_Integer_Literal |
-           T_Real_Literal    |
-           T_String_Literal  =>
+         when T_Identifier
+           | T_Integer_Literal | T_Real_Literal | T_String_Literal =>
             return Image (T);
 
          when others =>

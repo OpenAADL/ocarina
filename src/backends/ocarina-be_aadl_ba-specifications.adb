@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -53,13 +53,18 @@ package body Ocarina.BE_AADL_BA.Specifications is
 
    package BAN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
-   procedure Print_Behavior_Variable (Node : Node_Id);
-   procedure Print_Behavior_State (Node : Node_Id);
-   procedure Print_Behavior_State_Kind (State_Kind : Byte);
-   procedure Print_Behavior_Transition (Node : Node_Id);
+   procedure Print_Behavior_Variable             (Node : Node_Id);
+   procedure Print_Behavior_State                (Node : Node_Id);
+   procedure Print_Behavior_State_Kind           (State_Kind : Byte);
+   procedure Print_Behavior_Transition           (Node : Node_Id);
    procedure Print_Execution_Behavior_Transition (Node : Node_Id);
-   procedure Print_Mode_Transition (Node : Node_Id);
-   procedure Print_Behavior_Condition (Node : Node_Id);
+   procedure Print_Mode_Transition               (Node : Node_Id);
+   procedure Print_Behavior_Condition            (Node : Node_Id);
+   procedure Print_Execute_Condition             (Node : Node_Id);
+   procedure Print_Mode_Condition                (Node : Node_Id);
+   procedure Print_Trigger_Logical_Expression    (Node : Node_Id);
+   procedure Print_Event_Trigger                 (Node : Node_Id);
+   procedure Print_Port_Component_Ref            (Node : Node_Id);
 
    --------------------------
    -- Print_Behavior_Annex --
@@ -200,23 +205,20 @@ package body Ocarina.BE_AADL_BA.Specifications is
    procedure Print_Behavior_State_Kind (State_Kind : Byte) is
    begin
       case Behavior_State_Kind'Val (State_Kind) is
-         when BSK_Initial =>
-            Print_Token (T_Initial);
-         when BSK_Initial_Complete =>
-            Print_Tokens ((T_Initial, T_Complete));
-         when BSK_Initial_Complete_Final =>
-            Print_Tokens ((T_Initial, T_Complete, T_Final));
-         when BSK_Initial_Final =>
-            Print_Tokens ((T_Initial, T_Final));
-         when BSK_Complete =>
-            Print_Token (T_Complete);
-         when BSK_Complete_Final =>
-            Print_Tokens ((T_Complete, T_Final));
-         when BSK_Final =>
-            Print_Token (T_Final);
+         when BSK_Initial                => Print_Token  (T_Initial);
+         when BSK_Initial_Complete       => Print_Tokens ((T_Initial,
+                                                           T_Complete));
+         when BSK_Initial_Complete_Final => Print_Tokens ((T_Initial,
+                                                           T_Complete,
+                                                           T_Final));
+         when BSK_Initial_Final          => Print_Tokens ((T_Initial,
+                                                           T_Final));
+         when BSK_Complete               => Print_Token  (T_Complete);
+         when BSK_Complete_Final         => Print_Tokens ((T_Complete,
+                                                           T_Final));
+         when BSK_Final                  => Print_Token  (T_Final);
 
-         when others =>
-            Write_Line (Bug_Str);
+         when others                     => Write_Line   (Bug_Str);
       end case;
    end Print_Behavior_State_Kind;
 
@@ -289,13 +291,17 @@ package body Ocarina.BE_AADL_BA.Specifications is
       Write_Space;
       Print_Identifier (Destination (Node));
 
-      if not Is_Empty (Behavior_Actions (Node)) then
-         Write_Space;
-         Print_Token (T_Left_Curly_Bracket);
-         Print_Behavior_Actions (Behavior_Actions (Node));
-         Write_Eol;
-         Write_Indentation (+4);
-         Print_Token (T_Right_Curly_Bracket);
+      --  if not Is_Empty (Behavior_Actions (Node)) then
+      --   Write_Space;
+      --   Print_Token (T_Left_Curly_Bracket);
+      --   Print_Behavior_Actions (Behavior_Actions (Node));
+      --   Write_Eol;
+      --   Write_Indentation (+4);
+      --   Print_Token (T_Right_Curly_Bracket);
+      --  end if;
+
+      if Present (Behavior_Action_Block (Node)) then
+         Print_Behavior_Action_Block (Behavior_Action_Block (Node));
       end if;
 
       Print_Token (T_Semicolon);
@@ -322,18 +328,117 @@ package body Ocarina.BE_AADL_BA.Specifications is
       pragma Assert (Kind (Node) = K_Behavior_Condition);
 
       Cond_Node : constant Node_Id := Condition (Node);
-   --  Execution_condition node is logical_value_expression node
    begin
       case Kind (Cond_Node) is
-         when K_Value_Expression =>
-            Print_Value_Expression (Cond_Node);
 
-         when K_Dispatch_Condition =>
-            Print_Dispatch_Condition (Cond_Node);
+         when K_Dispatch_Condition_Thread =>
+                                    Print_Dispatch_Condition (Cond_Node);
 
-         when others =>
-            Write_Line (Bug_Str);
+         when K_Execute_Condition => Print_Execute_Condition (Cond_Node);
+
+         when K_Mode_Condition => Print_Mode_Condition (Cond_Node);
+
+         when others               => Write_Line               (Bug_Str);
       end case;
    end Print_Behavior_Condition;
+
+   ------------------------------
+   -- Print_Execute_Condition --
+   ------------------------------
+
+   procedure Print_Execute_Condition (Node : Node_Id) is
+      pragma Assert (Kind (Node) = K_Execute_Condition);
+
+      --  Cond_Node : constant Node_Id := Condition (Node);
+   begin
+      if Present (Value_Expression (Node)) then
+         Print_Value_Expression (Value_Expression (Node));
+      end if;
+
+      if Is_Otherwise (Node) then
+         Print_Token (T_Otherwise);
+      end if;
+   end Print_Execute_Condition;
+
+   ------------------------------
+   -- Print_Mode_Condition --
+   ------------------------------
+
+   procedure Print_Mode_Condition (Node : Node_Id) is
+      pragma Assert (Kind (Node) = K_Mode_Condition);
+
+   begin
+      Print_Token (T_On);
+      Write_Space;
+
+      Print_Trigger_Logical_Expression (Trigger_Logical_Expr (Node));
+
+   end Print_Mode_Condition;
+
+   --------------------------------------
+   -- Print_Trigger_Logical_Expression --
+   --------------------------------------
+
+   procedure Print_Trigger_Logical_Expression (Node : Node_Id) is
+      pragma Assert (Kind (Node) = K_Trigger_Logical_Expression);
+      pragma Assert (not Is_Empty (Event_Triggers (Node)));
+
+      List_Node : Node_Id;
+   begin
+      List_Node := First_Node (Event_Triggers (Node));
+      Print_Event_Trigger (List_Node);
+
+      List_Node := Next_Node (List_Node);
+      while Present (List_Node) loop
+         Write_Space;
+
+         case Kind (List_Node) is
+            when K_Event_Trigger => Print_Event_Trigger (List_Node);
+            when K_Operator => Print_Operator (List_Node);
+            when others     => Write_Line     (Bug_Str);
+         end case;
+
+         List_Node := Next_Node (List_Node);
+      end loop;
+   end Print_Trigger_Logical_Expression;
+
+   -------------------------
+   -- Print_Event_Trigger --
+   -------------------------
+
+   procedure Print_Event_Trigger (Node : Node_Id) is
+      pragma Assert (Kind (Node) = K_Event_Trigger);
+
+   begin
+      if Present (Trigger_Log_Expr (Node)) then
+         Write_Space;
+         Print_Token (T_Left_Parenthesis);
+         Print_Trigger_Logical_Expression (Trigger_Log_Expr (Node));
+         Print_Token (T_Right_Parenthesis);
+      end if;
+      if Present (Port_Component_Ref (Node)) then
+         Write_Space;
+         Print_Port_Component_Ref (Port_Component_Ref (Node));
+      end if;
+   end Print_Event_Trigger;
+
+   ------------------------------
+   -- Print_Port_Component_Ref --
+   ------------------------------
+
+   procedure Print_Port_Component_Ref (Node : Node_Id) is
+      pragma Assert (Kind (Node) = K_Port_Component_Reference);
+
+   begin
+      if Present (Subcomponent_Name (Node)) then
+         Print_Identifier (Subcomponent_Name (Node));
+      end if;
+
+      if Present (Port_Idt (Node)) then
+         Print_Token (T_Dot);
+         Print_Identifier (Port_Idt (Node));
+      end if;
+
+   end Print_Port_Component_Ref;
 
 end Ocarina.BE_AADL_BA.Specifications;

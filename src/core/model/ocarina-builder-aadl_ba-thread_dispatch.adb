@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -32,149 +32,138 @@
 with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
-package body Ocarina.Builder.Aadl_Ba.Thread_Dispatch is
+package body Ocarina.Builder.AADL_BA.Thread_Dispatch is
 
    use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
-   --------------------------------
-   -- Add_New_Dispatch_Condition --
-   --------------------------------
+   ---------------------------------------
+   -- Add_New_Dispatch_Condition_Thread --
+   ---------------------------------------
 
-   function Add_New_Dispatch_Condition
-     (Loc              : Location;
-      Container        : Node_Id;
-      Expressions      : List_Id;
-      Frozen_Port_List : List_Id) return Node_Id
+   function Add_New_Dispatch_Condition_Thread
+     (Loc                        : Location;
+      Container                  : Node_Id;
+      Dispatch_Trigger_Condition : Node_Id;
+      Frozen_Port_List           : List_Id)
+     return Node_Id
    is
-      pragma Assert
-        (False
-         or else No (Container)
-         or else Kind (Container) = K_Behavior_Condition);
+      pragma Assert (False
+                       or else No (Container)
+                       or else Kind (Container) = K_Behavior_Condition);
 
-      Dispatch_Condition : constant Node_Id :=
-        New_Node (K_Dispatch_Condition, Loc);
+      Dispatch_Condition_Thread : constant Node_Id
+        := New_Node (K_Dispatch_Condition_Thread, Loc);
 
    begin
-      Add_New_Dispatch_Condition
-        (Dispatch_Condition,
-         Container,
-         Expressions,
-         Frozen_Port_List);
+      Add_New_Dispatch_Condition_Thread (Dispatch_Condition_Thread,
+                                         Container,
+                                         Dispatch_Trigger_Condition,
+                                         Frozen_Port_List);
 
-      if No (Dispatch_Condition) then
+      if No (Dispatch_Condition_Thread) then
          return No_Node;
       end if;
 
-      return Dispatch_Condition;
-   end Add_New_Dispatch_Condition;
+      return Dispatch_Condition_Thread;
+   end Add_New_Dispatch_Condition_Thread;
 
-   procedure Add_New_Dispatch_Condition
-     (Dispatch_Condition : Node_Id;
-      Container          : Node_Id := No_Node;
-      Expressions        : List_Id := No_List;
-      Frozen_Port_List   : List_Id := No_List)
+   procedure Add_New_Dispatch_Condition_Thread
+     (Dispatch_Condition_Thread  : Node_Id;
+      Container                  : Node_Id  := No_Node;
+      Dispatch_Trigger_Condition : Node_Id  := No_Node;
+      Frozen_Port_List           : List_Id  := No_List)
    is
-      pragma Assert
-        (No (Container) or else Kind (Container) = K_Behavior_Condition);
-      pragma Assert (Kind (Dispatch_Condition) = K_Dispatch_Condition);
+      pragma Assert (No (Container)
+                       or else Kind (Container) = K_Behavior_Condition);
+      pragma Assert (Kind (Dispatch_Condition_Thread) =
+                                           K_Dispatch_Condition_Thread);
 
    begin
-      Set_BE_Container (Dispatch_Condition, Container);
+      Set_BE_Container (Dispatch_Condition_Thread, Container);
 
-      if not Is_Empty (Expressions) then
-         Set_Dispatch_Logical_Expressions (Dispatch_Condition, Expressions);
+      if Present (Dispatch_Trigger_Condition) then
+         Set_Dispatch_Trigger_Condition (Dispatch_Condition_Thread,
+                                            Dispatch_Trigger_Condition);
       end if;
 
       if not Is_Empty (Frozen_Port_List) then
-         Set_Frozen_Ports (Dispatch_Condition, Frozen_Port_List);
+         Set_Frozen_Ports (Dispatch_Condition_Thread, Frozen_Port_List);
       end if;
-   end Add_New_Dispatch_Condition;
+   end Add_New_Dispatch_Condition_Thread;
 
-   ------------------------------
-   -- Add_New_Dispatch_Trigger --
-   ------------------------------
+   ----------------------------------------
+   -- Add_New_Dispatch_Trigger_Condition --
+   ----------------------------------------
 
-   function Add_New_Dispatch_Trigger
-     (Loc                 : Location;
-      Container           : Node_Id;
-      Trig_Kind           : Dispatch_Trigger_Kind;
-      Trigger_Conjunction : Node_Id;
-      Behavior_Time_Node  : Node_Id) return Node_Id
+   function Add_New_Dispatch_Trigger_Condition
+     (Loc                       : Location;
+      Container                 : Node_Id;
+      Trig_Kind                 : Dispatch_Trigger_Kind;
+      Dispatch_Conjunction_List : List_Id;
+      Behavior_Time             : Node_Id)
+     return Node_Id
    is
-      pragma Assert (Kind (Container) = K_Dispatch_Condition);
 
-      Dispatch_Trigger : constant Node_Id :=
-        New_Node (K_Dispatch_Trigger, Loc);
+      Dispatch_Trigger_Condition : constant Node_Id := New_Node
+                                        (K_Dispatch_Trigger_Condition, Loc);
    begin
-      Set_BE_Container (Dispatch_Trigger, Container);
+      Set_BE_Container (Dispatch_Trigger_Condition, Container);
 
-      if Present (Trigger_Conjunction) then
-         Set_Dispatch_Trigger_Conjunction
-           (Dispatch_Trigger,
-            Trigger_Conjunction);
-         Set_BE_Container (Trigger_Conjunction, Dispatch_Trigger);
+      if not Is_Empty (Dispatch_Conjunction_List) then
+         Set_Dispatch_Conjunction (Dispatch_Trigger_Condition,
+                                           Dispatch_Conjunction_List);
       end if;
 
       if Trig_Kind /= TRI_Error then
-         Set_Trigger_Kind
-           (Dispatch_Trigger,
-            Dispatch_Trigger_Kind'Pos (Trig_Kind));
+         Set_Trigger_Kind (Dispatch_Trigger_Condition,
+                           Dispatch_Trigger_Kind'Pos (Trig_Kind));
       end if;
 
-      if Present (Behavior_Time_Node) then
-         Set_Behavior_Time (Dispatch_Trigger, Behavior_Time_Node);
-         Set_BE_Container (Behavior_Time_Node, Dispatch_Trigger);
+      if Present (Behavior_Time) then
+         Set_Behavior_Time (Dispatch_Trigger_Condition, Behavior_Time);
       end if;
 
-      if No (Dispatch_Trigger) then
+      if No (Dispatch_Trigger_Condition) then
          return No_Node;
       end if;
 
-      return Dispatch_Trigger;
+      return Dispatch_Trigger_Condition;
 
-   end Add_New_Dispatch_Trigger;
+   end Add_New_Dispatch_Trigger_Condition;
 
-   ------------------------------------------
-   -- Add_New_Dispatch_Trigger_Conjunction --
-   ------------------------------------------
+   ----------------------------------
+   -- Add_New_Dispatch_Conjunction --
+   ----------------------------------
 
-   function Add_New_Dispatch_Trigger_Conjunction
-     (Loc            : Location;
-      Container      : Node_Id;
-      Trigger_Event  : Node_Id;
-      Trigger_Events : List_Id;
-      Numeral        : Node_Id;
-      Is_Ormore      : Boolean;
-      Is_Orless      : Boolean) return Node_Id
+   function Add_New_Dispatch_Conjunction
+     (Loc                : Location;
+      Container          : Node_Id;
+      Dispatch_Trigger_List  : List_Id)
+     return Node_Id
    is
-      pragma Assert
-        (No (Container) or else Kind (Container) = K_Dispatch_Trigger);
-      pragma Assert
-        (No (Trigger_Event)
-         or else Kind (Trigger_Event) = K_Identifier
-         or else Kind (Trigger_Event) = K_Identifier_With_Value);
+      pragma Assert (No (Container));
+      pragma Assert (not Is_Empty (Dispatch_Trigger_List));
 
-      Trigger_Conjunction : constant Node_Id :=
-        New_Node (K_Dispatch_Trigger_Conjunction, Loc);
+      Dispatch_Conjunction : constant Node_Id := New_Node
+                       (K_Dispatch_Conjunction, Loc);
+      List_Node  : Node_Id;
    begin
-      Set_BE_Container (Trigger_Conjunction, Container);
-      Set_Numeral (Trigger_Conjunction, Numeral);
-      Set_Is_Ormore (Trigger_Conjunction, Is_Ormore);
-      Set_Is_Orless (Trigger_Conjunction, Is_Orless);
-
-      if Present (Trigger_Event) then
-         Set_Dispatch_Trigger_Event (Trigger_Conjunction, Trigger_Event);
-      elsif not Is_Empty (Trigger_Events) then
-         Set_Dispatch_Trigger_Events (Trigger_Conjunction, Trigger_Events);
+      if Present (Container) then
+         Set_BE_Container (Dispatch_Conjunction, Container);
       end if;
 
-      if No (Trigger_Conjunction) then
-         return No_Node;
-      end if;
+      Set_Dispatch_Triggers (Dispatch_Conjunction, Dispatch_Trigger_List);
 
-      return Trigger_Conjunction;
+      List_Node := First_Node (Dispatch_Triggers (Dispatch_Conjunction));
+      while Present (List_Node) loop
+         Set_BE_Container (List_Node, Dispatch_Conjunction);
 
-   end Add_New_Dispatch_Trigger_Conjunction;
+         List_Node := Next_Node (List_Node);
+      end loop;
 
-end Ocarina.Builder.Aadl_Ba.Thread_Dispatch;
+      return Dispatch_Conjunction;
+
+   end Add_New_Dispatch_Conjunction;
+
+end Ocarina.Builder.AADL_BA.Thread_Dispatch;

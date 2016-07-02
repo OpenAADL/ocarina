@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -32,8 +32,8 @@
 --  This package gathers functions that regenerate AADL specifications
 --  from an abtract syntax tree
 
-with Ocarina.Types;             use Ocarina.Types;
-with Ocarina.ME_AADL_BA.Tokens; use Ocarina.ME_AADL_BA.Tokens;
+with Ocarina.Types;               use Ocarina.Types;
+with Ocarina.ME_AADL_BA.Tokens;   use Ocarina.ME_AADL_BA.Tokens;
 
 package Ocarina.BE_AADL_BA is
 

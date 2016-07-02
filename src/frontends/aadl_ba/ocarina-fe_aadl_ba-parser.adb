@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -90,11 +90,12 @@ package body Ocarina.FE_AADL_BA.Parser is
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
-      Code      : Parsing_Code) return Integer
+      Code      : Parsing_Code)
+     return Integer
    is
-      Loc      : Location;
+      Loc   : Location;
       Nb_Items : Integer := 0;
-      Item     : Node_Id;
+      Item  : Node_Id;
 
    begin
       loop
@@ -126,7 +127,8 @@ package body Ocarina.FE_AADL_BA.Parser is
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
-      Code      : Parsing_Code) return List_Id
+      Code      : Parsing_Code)
+     return List_Id
    is
       Loc   : Location;
       Items : List_Id;
@@ -160,9 +162,10 @@ package body Ocarina.FE_AADL_BA.Parser is
    --  ( { Item Separator }* Item )
 
    function P_Items_List
-     (Func      : P_Item_Function_Ptr;
-      Container : Node_Id;
-      Separator : Ocarina.ME_AADL_BA.Tokens.BA_Token_Type) return List_Id
+     (Func         : P_Item_Function_Ptr;
+      Container    : Node_Id;
+      Separator    : Ocarina.ME_AADL_BA.Tokens.BA_Token_Type)
+     return List_Id
    is
       Item  : Node_Id;
       Items : List_Id;
@@ -186,9 +189,8 @@ package body Ocarina.FE_AADL_BA.Parser is
          end if;
       end loop;
 
-      Set_Loc
-        (Node_Id (Items),
-         Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node (Items)));
+      Set_Loc (Node_Id (Items),
+               Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node (Items)));
       return Items;
    end P_Items_List;
 
@@ -199,16 +201,17 @@ package body Ocarina.FE_AADL_BA.Parser is
    --  parse ( { Element }* Element Delimiter )
 
    function P_Elements_List
-     (Func       : P_Item_Function_Ptr;
-      Container  : Node_Id;
-      Delimiters : Ocarina.ME_AADL_BA.Tokens.BA_Token_List_Type;
-      Code       : Parsing_Code) return List_Id
+     (Func         : P_Item_Function_Ptr;
+      Container    : Node_Id;
+      Delimiters   : Ocarina.ME_AADL_BA.Tokens.BA_Token_List_Type;
+      Code         : Parsing_Code)
+     return List_Id
    is
       Element       : Node_Id;
       Elements_List : List_Id;
       Loc           : Location;
 
-      Escape : Boolean := False;
+      Escape        : Boolean := False;
    begin
       Elements_List := New_List (K_List_Id, Token_Location);
       loop
@@ -225,7 +228,7 @@ package body Ocarina.FE_AADL_BA.Parser is
          Scan_Token;
 
          for Index in Delimiters'Range loop
-            if Token = (Delimiters (Index)) then
+            if Token =  (Delimiters (Index)) then
                Restore_Lexer (Loc);
                Escape := True;
                exit;
@@ -239,9 +242,9 @@ package body Ocarina.FE_AADL_BA.Parser is
          end if;
       end loop;
 
-      Set_Loc
-        (Node_Id (Elements_List),
-         Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node (Elements_List)));
+      Set_Loc (Node_Id (Elements_List),
+               Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node
+                                                       (Elements_List)));
       return Elements_List;
    end P_Elements_List;
 
@@ -253,11 +256,11 @@ package body Ocarina.FE_AADL_BA.Parser is
      (AADL_Root : Node_Id;
       From      : Location;
       To        : Location := No_Location;
-      Container : Node_Id  := No_Node) return Node_Id
+      Container : Node_Id  := No_Node)
+     return Node_Id
    is
-      Buffer : Location;
-
       pragma Unreferenced (Container);
+      Buffer        : Location;
    begin
 
       Buffer := From;

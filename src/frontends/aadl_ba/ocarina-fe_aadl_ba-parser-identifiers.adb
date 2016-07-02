@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -43,7 +43,7 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
    -- Make_Current_Identifier --
    -----------------------------
 
-   function Make_Current_Identifier (Entity : Node_Id) return Node_Id is
+   function Make_Current_Identifier (Entity  : Node_Id) return Node_Id is
       use Ocarina.ME_AADL_BA.Tokens;
       use Ocarina.FE_AADL_BA.Lexer;
       use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
@@ -88,8 +88,8 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
    --  in_event_data_port_identifier ( ( value_constant | others ) )
 
    function P_Identifier_With_Value
-     (Container : Types.Node_Id) return Node_Id
-   is
+     (Container : Types.Node_Id)
+     return Node_Id is
       use Locations;
       use Ocarina.AADL_Values;
       use Ocarina.ME_AADL_BA.Tokens;
@@ -99,8 +99,8 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
 
       Loc            : Location;
       Node           : Node_Id;
-      Value_Node     : Node_Id := No_Node;
-      Bool_Is_Others : Boolean := False;
+      Value_Node     : Node_Id  := No_Node;
+      Bool_Is_Others : Boolean  := False;
    begin
       Node := P_Identifier (Container);
 
@@ -114,45 +114,39 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
          case Token is
             when T_Real_Literal =>
                Value_Node := New_Node (K_Literal, Token_Location);
-               Set_Value
-                 (Value_Node,
-                  New_Real_Value
-                    (Float_Literal_Value,
-                     False,
-                     Numeric_Literal_Base,
-                     Numeric_Literal_Exp));
+               Set_Value (Value_Node,
+                          New_Real_Value (Float_Literal_Value,
+                                          False,
+                                          Numeric_Literal_Base,
+                                          Numeric_Literal_Exp));
 
             when T_Integer_Literal =>
                Value_Node := New_Node (K_Literal, Token_Location);
-               Set_Value
-                 (Value_Node,
-                  New_Integer_Value
-                    (Integer_Literal_Value,
-                     False,
-                     Numeric_Literal_Base,
-                     Numeric_Literal_Exp));
+               Set_Value (Value_Node,
+                          New_Integer_Value (Integer_Literal_Value,
+                                             False,
+                                             Numeric_Literal_Base,
+                                             Numeric_Literal_Exp));
 
             when T_Identifier =>
                Restore_Lexer (Loc);
                Value_Node := P_Identifier (No_Node);
 
             when T_Others =>
-               Value_Node     := No_Node;
+               Value_Node := No_Node;
                Bool_Is_Others := True;
 
             when others =>
-               DPE
-                 (PC_Identifier_With_Value,
-                  Expected_Tokens =>
-                    (T_Real_Literal,
-                     T_Integer_Literal,
-                     T_Identifier,
-                     T_Others));
+               DPE (PC_Identifier_With_Value,
+                    Expected_Tokens => (T_Real_Literal, T_Integer_Literal,
+                                        T_Identifier, T_Others));
                Skip_Tokens (T_Semicolon);
                return No_Node;
          end case;
 
-         if No (Value_Node) and then not Bool_Is_Others then
+         if No (Value_Node)
+           and then not Bool_Is_Others
+         then
             DPE (PC_Identifier_With_Value, EMC_Failed);
             Skip_Tokens (T_Semicolon);
             return No_Node;
@@ -160,9 +154,8 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
 
          Scan_Token;
          if Token /= T_Right_Parenthesis then
-            DPE
-              (PC_Identifier_With_Value,
-               Expected_Token => T_Right_Parenthesis);
+            DPE (PC_Identifier_With_Value,
+                 Expected_Token => T_Right_Parenthesis);
             Skip_Tokens (T_Semicolon);
             return No_Node;
          end if;
@@ -171,7 +164,9 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
          Restore_Lexer (Loc);
       end if;
 
-      if Present (Value_Node) or else Bool_Is_Others then
+      if Present (Value_Node)
+        or else Bool_Is_Others
+      then
          Set_Kind (Node, K_Identifier_With_Value);
          Set_Value_Constant (Node, Value_Node);
          Set_Is_Others (Node, Bool_Is_Others);
@@ -207,31 +202,40 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
    --    { package_identifier :: }* package_identifier
 
    function P_Unique_Classifier_Reference
-     (Container : Types.Node_Id) return Node_Id
+     (Container : Types.Node_Id)
+     return Node_Id
    is
       use Locations;
-      use Ocarina.Namet;
+      use Namet;
       use Ocarina.ME_AADL_BA.Tokens;
       use Ocarina.FE_AADL_BA.Lexer;
       use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
       use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
       Loc             : Location;
-      Escape          : Boolean := False;
+      Escape          : Boolean  := False;
       Item            : Node_Id;
       List_Node       : Node_Id;
       Comp_Type_Ident : Node_Id;
-      Comp_Impl_Ident : Node_Id := No_Node;
-      Pack_Name_List  : List_Id := No_List;
+      Comp_Impl_Ident : Node_Id  := No_Node;
+      Pack_Name_List  : List_Id  := No_List;
 
-      Full_Ident : constant Node_Id := New_Node (K_Identifier, Token_Location);
-      Classifier_Ref : constant Node_Id :=
-        New_Node (K_Component_Classifier_Ref, Token_Location);
+      Full_Ident      : constant Node_Id
+        := New_Node (K_Identifier, Token_Location);
+      Classifier_Ref  : constant Node_Id
+        := New_Node (K_Component_Classifier_Ref, Token_Location);
    begin
       Pack_Name_List := New_List (K_List_Id, Token_Location);
 
       loop
          Item := P_Identifier (No_Node);
+         if No (Item) then
+            Scan_Token;
+            DPE (PC_Unique_Component_Classifier_Ref,
+                 Expected_Token => T_Identifier);
+            Skip_Tokens (T_Semicolon);
+            return No_Node;
+         end if;
 
          if Present (Item) then
             Save_Lexer (Loc);
@@ -245,7 +249,9 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
 
                Comp_Impl_Ident := P_Identifier (No_Node);
                if No (Comp_Impl_Ident) then
-                  DPE (PC_Unique_Component_Classifier_Ref, EMC_Failed);
+                  Scan_Token;
+                  DPE (PC_Unique_Component_Classifier_Ref,
+                       Expected_Token => T_Identifier);
                   Skip_Tokens (T_Semicolon);
                   return No_Node;
                end if;
@@ -268,10 +274,9 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
       end loop;
 
       if not Is_Empty (Pack_Name_List) then
-         Set_Loc
-           (Node_Id (Pack_Name_List),
-            Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc
-              (First_Node (Pack_Name_List)));
+         Set_Loc (Node_Id (Pack_Name_List),
+                  Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node
+                                                         (Pack_Name_List)));
       end if;
 
       if No (Classifier_Ref) then
@@ -304,14 +309,14 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
          end if;
 
          if Present (Component_Type (Classifier_Ref)) then
-            Get_Name_String_And_Append
-              (Name (Component_Type (Classifier_Ref)));
+            Get_Name_String_And_Append (Name (Component_Type
+                                                (Classifier_Ref)));
          end if;
 
          if Present (Component_Impl (Classifier_Ref)) then
             Add_Str_To_Name_Buffer (".");
-            Get_Name_String_And_Append
-              (Name (Component_Impl (Classifier_Ref)));
+            Get_Name_String_And_Append (Name (Component_Impl
+                                                (Classifier_Ref)));
          end if;
 
          Set_Name (Full_Ident, Name_Find);
@@ -333,14 +338,14 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
          end if;
 
          if Present (Component_Type (Classifier_Ref)) then
-            Get_Name_String_And_Append
-              (Display_Name (Component_Type (Classifier_Ref)));
+            Get_Name_String_And_Append (Display_Name (Component_Type
+                                                        (Classifier_Ref)));
          end if;
 
          if Present (Component_Impl (Classifier_Ref)) then
             Add_Str_To_Name_Buffer (".");
-            Get_Name_String_And_Append
-              (Display_Name (Component_Impl (Classifier_Ref)));
+            Get_Name_String_And_Append (Display_Name (Component_Impl
+                                                        (Classifier_Ref)));
          end if;
 
          Set_Display_Name (Full_Ident, Name_Find);

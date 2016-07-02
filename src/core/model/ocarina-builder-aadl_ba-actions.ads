@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2010-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -34,47 +34,92 @@ with Locations;
 
 with Ocarina.ME_AADL_BA;
 
-package Ocarina.Builder.Aadl_Ba.Actions is
+package Ocarina.Builder.AADL_BA.Actions is
 
    use Ocarina.Types;
    use Locations;
    use Ocarina.ME_AADL_BA;
 
+   function Add_New_Behavior_Action_Block
+     (Loc              : Location;
+      Container        : Node_Id;
+      Behavior_Actions : Node_Id;
+      Behavior_Time    : Node_Id)
+     return Node_Id;
+
+   function Add_New_Behavior_Actions
+     (Loc                      : Location;
+      Container                : Node_Id;
+      Behavior_Action          : Node_Id;
+      Behavior_Action_Sequence : List_Id;
+      Behavior_Action_Set      : List_Id)
+     return Node_Id;
+
    function Add_New_Behavior_Action
-     (Loc         : Location;
-      Container   : Node_Id;
-      Action_Node : Node_Id) return Node_Id;
+     (Loc              : Location;
+      Container        : Node_Id;
+      Action_Node      : Node_Id)
+     return Node_Id;
 
    function Add_New_If_Cond_Struct (Loc : Location) return Node_Id;
 
    procedure Add_New_If_Cond_Struct
-     (If_Cond_Struct : Node_Id;
-      Container      : Node_Id := No_Node;
-      If_Stat        : Node_Id := No_Node;
-      Elsif_Stat     : Node_Id := No_Node;
-      Else_Stat      : Node_Id := No_Node);
+     (If_Cond_Struct  : Node_Id;
+      Container       : Node_Id  := No_Node;
+      If_Stat         : Node_Id  := No_Node;
+      Elsif_Stat      : Node_Id  := No_Node;
+      Else_Stat       : Node_Id  := No_Node);
 
    function Add_New_Conditional_Statement
      (Loc        : Location;
       Container  : Node_Id;
       Expression : Node_Id;
-      Actions    : List_Id) return Node_Id;
+      Actions    : Node_Id)
+     return Node_Id;
 
    function Add_New_For_Cond_Struct (Loc : Location) return Node_Id;
 
    procedure Add_New_For_Cond_Struct
-     (For_Cond_Struct : Node_Id;
+     (For_Cond_Struct          : Node_Id;
+      Container                : Node_Id;
+      Element_Idt              : Node_Id;
+      Classifier_Ref           : Node_Id;
+      Element_Values_Node      : Node_Id;
+      Actions                  : Node_Id);
+
+   function Add_New_While_Cond_Struct (Loc : Location) return Node_Id;
+
+   procedure Add_New_While_Cond_Struct
+     (While_Cond_Struct : Node_Id;
       Container       : Node_Id;
-      Variable_Id     : Node_Id;
-      Range_Node      : Node_Id;
-      Actions         : List_Id);
+      Expression      : Node_Id;
+      Actions         : Node_Id);
+
+   function Add_New_Forall_Cond_Struct (Loc : Location) return Node_Id;
+
+   procedure Add_New_Forall_Cond_Struct
+     (ForAll_Cond_Struct : Node_Id;
+      Container                : Node_Id;
+      Element_Idt              : Node_Id;
+      Classifier_Ref           : Node_Id;
+      Element_Values_Node      : Node_Id;
+      Actions                  : Node_Id);
+
+   function Add_New_DoUntil_Cond_Struct (Loc : Location) return Node_Id;
+
+   procedure Add_New_DoUntil_Cond_Struct
+     (DoUntil_Cond_Struct : Node_Id;
+      Container       : Node_Id;
+      Expression      : Node_Id;
+      Actions         : Node_Id);
 
    function Add_New_Assignment_Action
-     (Loc         : Location;
-      Container   : Node_Id;
-      Ident       : Node_Id;
-      Value_Expr  : Node_Id;
-      Is_Any_Bool : Boolean) return Node_Id;
+     (Loc              : Location;
+      Container        : Node_Id;
+      Ident            : Node_Id;
+      Value_Expr       : Node_Id;
+      Is_Any_Bool      : Boolean)
+     return Node_Id;
 
    function Add_New_Communication_Action
      (Loc            : Location;
@@ -82,30 +127,35 @@ package Ocarina.Builder.Aadl_Ba.Actions is
       Ident          : Node_Id;
       Target_Node    : Node_Id;
       Sub_Parameters : List_Id;
-      Com_Kind       : Communication_Kind) return Node_Id;
+      Com_Kind       : Communication_Kind)
+     return Node_Id;
 
    function Add_New_Timed_Action
      (Loc            : Location;
       Container      : Node_Id;
       Fst_Behav_Time : Node_Id;
       Scd_Behav_Time : Node_Id           := No_Node;
-      Distribution   : Distribution_Kind := DK_No_Kind;
-      Is_Comput      : Boolean           := False) return Node_Id;
+      Processor_Idt  : List_Id           := No_List;
+      Is_InBinding   : Boolean           := False)
+     return Node_Id;
 
    function Add_New_Data_Component_Reference
-     (Loc       : Location;
-      Container : Node_Id;
-      Idents    : List_Id) return Node_Id;
+     (Loc            : Location;
+      Container      : Node_Id;
+      Idents         : List_Id)
+     return Node_Id;
 
    function Add_New_Parameter_Label
      (Loc       : Location;
       Container : Node_Id;
-      Param     : Node_Id) return Node_Id;
+      Param     : Node_Id)
+     return Node_Id;
 
-   function Add_New_Id
-     (Loc          : Location;
-      Container    : Node_Id;
-      Ident        : Node_Id;
-      Value_Holder : Node_Id) return Node_Id;
+   function Add_New_Name
+     (Loc              : Location;
+      Container        : Node_Id;
+      Idents           : List_Id;
+      Array_Index_List : List_Id := No_List)
+     return Node_Id;
 
-end Ocarina.Builder.Aadl_Ba.Actions;
+end Ocarina.Builder.AADL_BA.Actions;
