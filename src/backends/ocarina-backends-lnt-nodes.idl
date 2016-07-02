@@ -1,0 +1,591 @@
+/*****************************************************************************
+**                                                                          **
+**                           OCARINA COMPONENTS                             **
+**                                                                          **
+**           O C A R I N A . B A C K E N D S . L N T . N O D E S            **
+**                                                                          **
+**                 Copyright (C) 2014, GET-Telecom Paris.                   **
+**                                                                          **
+** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
+** it under terms of the GNU General Public License as published by the     **
+** Free Software Foundation; either version 2, or (at your option) any      **
+** later version. Ocarina is distributed  in  the  hope  that it will be    **
+** useful, but WITHOUT ANY WARRANTY;  without even the implied warranty of  **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General **
+** Public License for more details. You should have received  a copy of the **
+** GNU General Public License distributed with Ocarina; see file COPYING.   **
+** If not, write to the Free Software Foundation, 51 Franklin Street, Fifth **
+** Floor, Boston, MA 02111-1301, USA.                                       **
+**                                                                          **
+** As a special exception,  if other files  instantiate  generics from this **
+** unit, or you link  this unit with other files  to produce an executable, **
+** this  unit  does not  by itself cause  the resulting  executable to be   **
+** covered  by the  GNU  General  Public  License. This exception does not  **
+** however invalidate  any other reasons why the executable file might be   **
+** covered by the GNU Public License.                                       **
+**                                                                          **
+**                 Ocarina is maintained by the Ocarina team                **
+**                       (ocarina-users@listes.enst.fr)                     **
+**                                                                          **
+*****************************************************************************/
+
+module Ocarina::Backends::LNT::Nodes {
+
+  /******************/
+  /* Internal Types */
+  /******************/
+
+  typedef long Name_Id;
+  typedef long Value_Id;
+  typedef octet Mode_Id;
+
+  /******************/
+  /* Internal Nodes */
+  /******************/
+
+  interface Node_Id {
+    Node_Id     Next_Node;
+  };
+  interface Node_Container : Node_Id {
+    Node_Id  Item;
+    Node_Id  Extra_Item;
+  };
+  interface List_Id {
+    Node_Id     First_Node;
+    Node_Id     Last_Node;
+  };
+
+  interface Identifier : Node_Id {
+    Name_Id     Name;
+    Node_Id     Ocarina_Node;
+    Node_Id     Corresponding_Entity;    
+  };
+  /******************/
+  /* LNT Nodes */
+  /******************/
+
+  /**********************/
+  /* Module definitions */
+  /**********************/
+
+  //We ignore exceptions and pragmas generation
+
+  /* lnt file ::= module M [(M0 , ..., Mm )]
+   [with predefined function 0 , ..., predefined function n ] is
+   module pragma 1 ...module pragma p
+   definition 0 ...definition q
+   end module
+  */
+  interface Module_Definition : Node_Id {
+    Node_Id Identifier;
+    List_Id Modules; //list of identifiers
+    List_Id Predefined_Functions; //list of Predefined_Function
+    List_Id Module_Pragmas;
+    List_Id Definitions;
+    //  list of:
+    //  Type_Def_List
+    //  Function_Def_List
+    //  Channel_Def_List
+    //  Process_Def_List;
+  };
+
+  interface Predefined_Function : Node_Id {
+    Node_Id LNT_Function;
+    boolean Is_With_Clause;
+  };
+  interface Equality : Predefined_Function {}; // "==", "eq"
+  interface Inequality : Predefined_Function {}; // "ne", "<>", "!="
+
+  interface Less_Than : Predefined_Function {}; // "lt","<"
+  interface Less_Than_Or_Equal_To : Predefined_Function {}; // "le","<="
+
+  interface Greater_Than : Predefined_Function {}; // "gt",">"
+  interface Greater_Than_Or_Equal_To : Predefined_Function {}; // "ge",">="
+
+  interface Ordinal : Predefined_Function {}; // "ord"
+  interface Value : Predefined_Function {}; // "val"
+
+  interface Field_Selection : Predefined_Function {}; // "get"
+  interface Field_Update : Predefined_Function {}; // "set", "update"
+
+  interface Type_Cardinality : Predefined_Function {}; // "card"
+
+  interface First_Element : Predefined_Function {}; // "first"
+  interface Last_Element : Predefined_Function {}; // "last"
+  // Functions on Booleans and, and then, or, or else, xor, implies
+  interface _And : Predefined_Function {};
+  interface _Or : Predefined_Function {};
+
+  /* 
+  module_pragma ::= !nat_bits nat
+                  | !nat_inf nat
+                  | !nat_sup nat
+                  | !nat_check bit 
+                  | !int_sup int
+                  | !int_check bit
+                  | !int_bits nat
+                  | !int_inf int
+                  | !string_card nat
+  */
+
+  interface Module_Pragma : Node_Id {
+    Node_Id Module_Pragma_Type;
+    Node_Id Number_Constant;
+  };
+  interface Nat_Bits : Module_Pragma {};
+
+  /*
+  definition ::= 
+    type definition
+  | function definition
+  | channel definition 
+  | process definition
+  */
+
+  /*
+  type definition ::= type T is type pragma 1 ...type pragma n
+     type expression
+     [with predefined function declaration 0 
+     , ..., predefined function declaration m]
+  end type
+  */
+  interface Type_Def : Node_Id {
+    Node_Id Identifier;
+    Node_Id Type_Exp;
+    List_Id Type_Pragma;
+    List_Id Predefined_Functions; //list of Predefined_Function
+  }; 
+  /*
+  type expression ::=
+  constructor definition 0 , ..., constructor definition n
+   | set of T
+   | sorted set of T
+   | list of T
+   | sorted list of T
+   | array [m..n] of T
+   | range m ..n of T
+   | X : T where V
+
+  constructor definition ::=
+   constructor_descriptor [(constructor parameters 1 , ..., constructor parameters n )]
+   constructor pragma 1 ...constructor pragma m
+  constructor parameters ::= X0 , ..., Xn : T
+  */
+  interface Type_Exp : Node_Id {
+    List_Id Type_Constructors; //list of Type_constructor
+    Node_Id Identifier; // T can be nat, int, float, char, string
+    boolean Is_Set;
+    boolean Is_Sorted_Set;
+    boolean Is_List;
+    boolean Is_Sorted_List;
+    boolean Is_Array;
+    boolean Is_Range;
+    Node_Id RangeLNT;
+    // X : T where V
+  };
+  interface RangeLNT : Node_Id {
+    Node_Id Low_Bound;
+    Node_Id High_Bound;
+  };
+  interface Base_Type : Node_Id {
+    Node_Id Type_Name;
+    Name_Id Image;
+  };
+
+  interface _Float : Base_Type {};
+  interface _Nat : Base_Type {};
+  interface _Int : Base_Type {};
+
+  interface _Char : Base_Type {};
+  interface _String : Base_Type {};
+
+  interface Type_Constructor : Node_Id {
+    Node_Id Identifier;
+    List_Id Constructor_Parameters; // list of Parameter_Specification
+    List_Id Constructor_Pragma;
+  };
+  interface Parameter_Specification : Node_Id {
+    Mode_Id Parameter_Mode; // in, inout, out
+    // X0 , ..., Xn : T
+    Node_Id Parameter_Var;
+    // X
+    Node_Id Parameter_Type; 
+    // Type of the parameter T
+
+
+  };
+  /*
+  function definition ::= 
+   function function descriptor
+   [ (formal parameters 1 ,...,formal parameters n ) ] [ :T ]
+   [ raises exception declaration 0 ,...,exception declaration m ] is
+   function pragma 1 ...function pragma l
+   [ I0 ]
+   end function
+  formal parameters ::= parameter mode X0 ,...,Xn : T
+  */
+
+  interface Function_Definition : Node_Id {
+    Node_Id Identifier;
+    List_Id Function_Parameters; //list of Parameter_Specification
+    Node_Id Function_Return_Type; //[ :T ]
+    List_Id Function_Exceptions;
+    List_Id Function_Pragma;
+    List_Id Statements; // I1 ; I2
+  };
+  /*
+  Statements
+  I::= null
+     | I1 ; I2
+     | return [ V ]
+     | raise E [ () ]--ignored
+     | X := V
+     | X[V0 ] := V1
+     | [ eval ] [X := ] F (actualparameter1 ,..,actualparametern)--ignored
+     | var var_declaration0 ,...,var_declarationn  in
+       I0
+       end var
+     | case V in
+        [ var var_declaration0 ,...,var_declarationn in ]
+        match_clause0 -> I0
+        | ...
+        | match_clausem -> Im
+       end case
+
+     | if V0 then I0
+        [elsif V1 then I1
+        ... 
+        elsif Vn then In ]
+        [ else In+1 ]
+       end if
+
+     | loop L in
+        I0
+       end loop
+
+     | while V loop
+        I0
+       end loop
+
+     | for I0 while V by I1 loop --ignored
+         I2
+       end loop
+
+     | break L
+
+  var_declaration ::= X0 ,...,Xn : T
+  actual_parameter ::= V
+                      | ?X
+                      | !?X
+  match_clause ::= P0 [ where V0 ] 
+           | ... | Pn [ where Vn ]
+                 | any [ where V ]
+  */
+  interface Actual_Parameter : Node_Id {
+    Node_Id Expression;
+    boolean Is_Out; // ?
+    boolean Is_InOut; // !?
+  };
+  interface Null_Statement : Node_Id {}; // null
+
+  interface Return_Statement : Node_Id { // return [ V ]
+    boolean Is_Function;
+    Node_Id Expression; // if Is_Function == true
+  };
+  interface Assignment_Statement : Node_Id { // X
+    Node_Id Identifier;
+    Node_Id Expression; // V
+  };
+
+  interface Array_Element_Assignment_Statement : Node_Id { // X
+    Node_Id Identifier;
+    // X[V0] := V1
+    Node_Id Expression_Index; // V0
+    Node_Id Expression; // V1
+  };
+
+    /* var var_declaration0 ,...,var_declarationn  in
+       I0
+       end var
+       var_declaration ::= X0 ,...,Xn : T
+    */
+  interface Var_Statement : Node_Id {
+    List_Id Variable_Declarations; // list of Var_Declaration
+    // The declarations between "var" and "in"
+    List_Id Statements; // I0
+  };
+
+  interface Var_Declaration : Node_Id { // Xi
+    Node_Id Identifier;
+    Node_Id Var_Type;
+  };
+
+  interface Case_Statement : Node_Id {
+    Node_Id Expression; // V
+    List_Id Variable_Declarations; // list of Var_Declaration
+    List_Id Case_Statement_Alternatives; // separated by |
+    //match_clausei -> Ii
+  };
+  interface Case_Statement_Alternative : Node_Id {
+    //[ where V0 ]--ignored
+    List_Id Pattern_List; // list of pattern separated by |
+    // The choices of the match_clause. If No_List then "any" is generated
+    List_Id Statements; // after ->
+    // Statements of the match_clause
+  };
+  interface If_Statement : Node_Id {
+    Node_Id Condition; // Expression V0
+    List_Id Then_Statements; // (A list of Statements)
+    // The Statements between the "then" and "elsif" or else "else" 
+    // or else "end if"
+    List_Id Elsif_Statements; // (A list of Elsif_Statement)
+    List_Id Else_Statements; // (A list of Statements)
+    // The Statements between "else" and "end if" (if any)
+  };
+
+  interface Elsif_Statement : Node_Id {
+    Node_Id Condition;
+    // The condition of the "elsif" (generally an Expression)
+
+    List_Id Then_Statements; // (A list of Statements)
+    // The Statements between "then" and "elsif" or else "else" 
+    // or else "end if"
+  };
+  interface Loop_Statement : Node_Id {
+    Name_Id Loop_Label;// L
+    List_Id Statements;// I
+  };
+
+  interface While_Statement : Node_Id {
+    Node_Id Expression; // V
+    List_Id Statements;
+  };
+
+  interface Break_Statement : Node_Id {
+    Name_Id    Loop_Label;
+  };
+  /*  Expressions
+  V::= X                  //variable
+    | C [ (V1 ,...,Vn )]  //constructor application
+    | V C V               //infix constructor application
+    | F [ (V1 ,...,Vn )]  //function call
+    | V F V               //infix function call
+    | V .field            //field selection
+    | V .{field 0 =>V0 ,...,field n =>Vn } //field update
+    | V0 [ V1 ]           //array element access
+    | V of T              //type coercion
+    | (V )                //parenthesized expression
+    | {V1 ,...,Vn }       //list expression
+  */
+
+  interface Call : Node_Id {
+    Node_Id Identifier;
+    List_Id Parameters; //List of expression or Pattern
+  };
+
+  interface Infix_Call : Node_Id {
+    Node_Id Operator;
+    Node_Id Left_Part;
+    Node_Id Right_Part;
+  };
+
+  interface List_Of : Node_Id {
+    //{V1 ,...,Vn } or {P1 ,...,Pn }
+    List_Id The_List;
+  };
+  interface Parenthesized : Node_Id {
+    Node_Id Variable; // Expression or pattern
+  };
+
+  interface Expressions : List_Of {
+  };
+
+  interface Parenthesized_Expression : Parenthesized {
+  };
+
+  interface Function_Call_Expression : Call {
+  };
+
+  interface Infix_Function_Call_Expression : Infix_Call {
+  };
+
+  interface Field_Selection_Expression : Node_Id {
+     // V .field 
+     Node_Id Expression; //V
+     Node_Id Field;
+  };
+  interface Field_Update_Expression : Node_Id {
+     Node_Id Expression; //V
+     List_Id Field_Association;
+  };
+  interface Element_Association : Node_Id {
+    // fieldi =>Vi
+    Node_Id Field;
+    Node_Id Expression;
+  };
+  interface Array_Elt_Access_Expression : Node_Id {
+    // V0 [ V1 ]
+    Node_Id Expression;
+    Node_Id Index; //V1
+  };
+  /* Pattern
+  P ::= X
+    | X as P0               //aliasing
+    | C [ (P0 ,...,Pn )]    //constructed pattern
+    | F [ (P0 ,...,Pn )]    //constant pattern2
+    | P1 C P2               //constructed pattern infixed
+    | P1 F P2               //constant pattern infixed
+
+    | P0 of T               //explicit typing
+    | any T                 //wildcard
+
+    | (P )                  //parenthesized pattern
+    | {P1 ,...,Pn }         //list pattern
+  */
+  interface Pattern : Node_Id {
+    Node_Id Sub_Pattern; // P0
+    Node_Id Pattern_Type; // T
+    boolean Is_Any; // any T
+    boolean Is_Of; // P0 of T
+  };
+  interface Constructed_Pattern : Call {
+  };
+  interface Patterns : List_Of {
+  };
+  interface Parenthesized_Pattern : Parenthesized {
+  };
+
+  interface Constant_Pattern_Infixed : Infix_Call {
+  };
+
+  /*
+  channel definition::= channel C is
+    gate profile 0 ,..., gate profile n
+  end channel
+
+  gate profile ::= (T1 ,...,Tn )
+                 | (exp declaration 1 : T1 ,...,
+                    exp declaration n : Tn )-- ignored
+  exp declaration ::= X0 ,...,Xn
+  */
+  interface Channel : Node_Id {
+    Node_Id Identifier;
+    List_Id Gate_Profiles;
+  };
+  interface Gate_Profile : Node_Id {
+    //(T1 ,...,Tn )
+    List_Id Gate_Types; // list of types
+  };
+
+  /*
+  process definition ::= process P 
+   [ [gate declaration 0 ,...,gate declaration m ] ]
+   [ (formal parameters1 ,...,formal parametersn ) ]
+   [ raises exception declaration 0 ,...,exception declaration k ] is
+   process pragma 1 ...process pragma l
+     B
+  end process
+
+  gate declaration ::= G0 ,...,Gn :C
+                     | G0 ,...,Gn :any
+
+  B ::= -- all function statements +
+    stop
+   |
+    P [[actual gates]]
+      [(actualparameter1 ,...,actualparametern )]
+   | 
+    G [ (O0 ,...,On ) ] [ where V ]
+   | 
+    select
+     B0
+     [] ... []
+     Bn
+    end select
+   |
+    par [ G0 ,...,Gn in ]
+      [ G(0,0) ,...,G(0,n0 ) -> ] B0
+      ...
+      [ G(m,0) ,...,G(m,nm ) -> ] Bm
+    end par
+   |
+    hide gate declaration 0 ,...,gate declaration n in
+      B
+    end hide
+   |
+    disrupt --ignored
+      B1 by B2 
+    end disrupt
+
+  actual_gates ::= G1 ,...,Gn
+     |
+     Gformal1 => Gactual1 ,...,
+     Gformaln => Gactualn --ignored
+
+  O ::= [ X => ] [ ! ]V
+      | [ X => ] ?P
+  */
+  interface Process_Definition : Node_Id {
+    Node_Id Corresponding_Component;
+    // Node of the AADL corresponding component
+    // This node is not an LNT tree node
+    Node_Id Identifier;
+    List_Id Process_Gate_Declarations; // list of Gate_Declaration
+    List_Id Process_Parameters; //list of Parameter_Specification
+    List_Id Process_Exceptions;
+    List_Id Process_Pragma;
+    List_Id Statements; // B1 ; B2
+  };
+
+  interface Gate_Declaration : Node_Id {
+    Node_Id Channel_Name; //C
+    Node_Id Gate; // G0, ... ,Gn
+    boolean Is_Any;
+  };
+
+  interface Stop_Statement : Node_Id {}; // stop
+
+  interface Process_Instantiation_Statement : Node_Id {// P
+    // Can be a thread or processor or port instance
+    Node_Id Identifier;
+    List_Id Actual_Gates;// G0, ... ,Gn
+    List_Id Actual_Parameters; // list of actual parameters
+    boolean Is_Sporadic;
+  };
+
+  interface Communication_Statement : Node_Id {
+    //G [ (O0 ,...,On ) ] [ where V ]
+    Node_Id Identifier;
+    List_Id Offers;
+    boolean Has_Where;
+    Node_Id Expression;
+  };
+
+  interface Offer_Statement : Node_Id {
+    // O ::= [ X => ] [ ! ]V
+    //     | [ X => ] ?P
+    boolean Is_Input; //?
+    Node_Id Expression;//[ X => ]
+    Node_Id Pattern;
+  };
+
+  interface Select_Statement : Node_Id {
+    List_Id Select_Statement_Alternatives; //B0 [] B1
+  };
+  interface Select_Statement_Alternative : Node_Id {
+    List_Id Statements;
+  };
+
+  interface Parallel_Composition_Statement : Node_Id {
+    List_Id Global_Synchronisation_Gates; //[ G0 ,...,Gn in]
+    List_Id Interface_Synchronisations;
+  };
+  interface Interface_Synchronisation : Node_Id {
+    List_Id Interface_Synchronisation_Gates; // [G(0,0) ,...,G(0,n0)]
+    List_Id Statements;
+  };
+  interface Hide_Statement : Node_Id {
+    List_Id Hide_Gate_Declarations; // list of Gate_Declaration
+    List_Id Statements; // B1 ; B2
+  };
+};
