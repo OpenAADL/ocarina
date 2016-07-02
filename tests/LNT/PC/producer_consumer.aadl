@@ -1,0 +1,140 @@
+package Producer_Consumer
+public
+  ----------
+  -- Data --
+  ----------
+
+  data Alpha_Type
+
+  end Alpha_Type;
+
+  -----------------
+  -- Subprograms --
+  -----------------
+
+  subprogram Produce_Spg
+  features
+    Data_Source : out parameter Alpha_Type;
+
+  end Produce_Spg;
+
+  subprogram Consume_Spg
+  features
+    Data_Sink : in parameter Alpha_Type;
+
+  end Consume_Spg;
+
+  -------------
+  -- Threads --
+  -------------
+
+  thread P
+  features
+    Data_Source : out event data port Alpha_Type;
+    --  XXX Data seems corrupted if Data_Source is an out event data port
+  properties
+    Dispatch_Protocol => Periodic;
+    Compute_Execution_Time => 1 ms .. 8 ms;
+    Priority => 1;
+    Period => 10 ms;
+  end P;
+
+  thread implementation P.Impl
+  calls
+    Mycall : {
+    P_Spg : subprogram Produce_Spg;
+    };
+  connections
+    Z1:parameter P_Spg.Data_Source -> Data_Source;
+  end P.Impl;
+
+  thread Q
+  features
+    Data_Sink : in event data port Alpha_Type;
+  properties
+    Dispatch_Protocol => Sporadic;
+    Compute_Execution_Time => 1 ms .. 2 ms;
+    Priority => 2;
+    Period => 15 ms;
+  end Q;
+
+  thread implementation Q.Impl
+  calls
+    Mycall : {
+    Q_Spg : subprogram Consume_Spg;
+    };
+  connections
+    Z2:parameter Data_Sink -> Q_Spg.Data_Sink;
+  end Q.Impl;
+
+  ---------
+  -- Bus --
+  ---------
+
+  bus Ethernet_Bus 
+  end Ethernet_Bus;
+
+  ---------------
+  -- Processor --
+  ---------------
+
+  processor the_processor 
+  features
+    ETH : requires bus access Ethernet_Bus;
+  end the_processor;
+
+  ---------------
+  -- Processes --
+  ---------------
+
+  process A
+  features
+    Alpha : out event data port Alpha_Type;
+  end A;
+
+  process implementation A.Impl
+  subcomponents
+    Producer        : thread P.Impl;
+  connections
+    Z3:port Producer.Data_Source -> Alpha;
+  end A.Impl;
+
+  process B
+  features
+    Beta  : in event data port Alpha_Type;
+  end B;
+
+  process implementation B.Impl
+  subcomponents
+    Consumer        : thread Q.Impl;
+  connections
+    Z4:port Beta -> Consumer.Data_Sink;
+  end B.Impl;
+
+  ------------
+  -- System --
+  ------------
+
+  system PC_Simple
+  end PC_Simple;
+
+  system implementation PC_Simple.Native
+  subcomponents
+    T : data Alpha_Type; 
+    pr_A : process A.Impl;
+    pr_B : process B.Impl;
+
+    CPU     : processor the_processor;
+    the_bus : bus Ethernet_Bus;
+  connections
+    Z5:bus access the_bus -> CPU.ETH;
+
+    Z6:port pr_A.Alpha -> pr_B.Beta
+    {Actual_Connection_Binding => (reference (the_bus));};
+  properties
+    Actual_Processor_Binding => (reference (CPU)) applies to pr_A;
+    Actual_Processor_Binding => (reference (CPU)) applies to pr_B;
+
+  end PC_Simple.Native;
+
+end Producer_Consumer;

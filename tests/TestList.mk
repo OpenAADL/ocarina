@@ -118,7 +118,9 @@ SUBDIRS= test001 \
 			po-hi-ada/rma \
 			po-hi-ada/some_types \
 			po-hi-ada/subprogram_ports \
-			po-hi-ada/sunseeker
-
-
+			po-hi-ada/sunseeker \
+			LNT/FCS \
+			LNT/PC \
+			LNT/RADAR \
+			LNT/ROBOT
 

@@ -1,0 +1,199 @@
+package robot
+public
+----------
+-- Data --
+----------
+
+data Alpha_Type
+end Alpha_Type;
+
+-------------------
+--  Subprograms  --
+-------------------
+
+subprogram collecte_donnee
+features
+  d_source : out parameter Alpha_Type;
+  DataAccess : requires data access Alpha_Type;
+end collecte_donnee;
+
+subprogram traite
+features
+  d_info  : in parameter Alpha_Type;
+  d_ordre : out parameter Alpha_Type;
+end traite;
+
+subprogram action
+features
+  d_action : in parameter Alpha_Type;
+end action;
+
+---------------
+--  Threads  --
+---------------
+
+--  interfaces
+
+thread capteur
+features
+  evenement    : out event data port Alpha_Type {Queue_Size => 2;};
+  DataAccess        : requires data access Alpha_Type;
+
+end capteur;
+
+thread controle
+features
+  comm_servo_out   : out event data port Alpha_Type;
+  info_capteur_in : in event data port Alpha_Type {
+                Queue_Size => 5;
+        	Overflow_Handling_Protocol => Error;
+        	Queue_Processing_Protocol => FIFO;
+        	Dequeue_Protocol => OneItem;
+};
+end controle;
+
+thread servomoteur
+features
+  ordre        : in event data port Alpha_Type {Queue_Size => 2;};
+end servomoteur;
+
+--  implementations
+
+thread implementation capteur.i
+calls
+Mycall1 : {
+  D_Spg : subprogram collecte_donnee;
+};
+connections
+  parameter D_Spg.d_source -> evenement;
+  data access DataAccess -> D_Spg.DataAccess;
+   
+properties
+  Dispatch_Protocol => Periodic;
+  Period            => 8 ms;
+  Compute_Execution_Time => 0 ms .. 2 ms;
+end capteur.i;
+
+thread implementation controle.i
+calls
+Mycall2 : {
+  T_Spg : subprogram traite;
+};
+connections
+  parameter info_capteur_in -> T_Spg.d_info;
+  parameter T_Spg.d_ordre -> comm_servo_out;
+properties
+  Dispatch_Protocol => Periodic;
+  Period            => 10 ms;
+  Compute_Execution_Time => 0 ms .. 5 ms;
+end controle.i;
+
+thread implementation servomoteur.i
+calls
+main : {
+  A_Spg : subprogram action;
+};
+connections
+  parameter ordre -> A_Spg.d_action;
+properties
+  Dispatch_Protocol => Sporadic;
+  Period            => 12 ms;
+  Compute_Execution_Time => 0 ms .. 2 ms;
+end servomoteur.i;
+
+-----------------
+--  Processes  --
+-----------------
+
+--  interfaces
+
+process p_capteur
+features
+  evenement1           : out event data port Alpha_Type;
+end p_capteur;
+
+process p_controle
+features
+  info_capteur_droit  : in event data port Alpha_Type;
+  comm_servo_droit    : out event data port Alpha_Type;
+
+  info_capteur_gauche : in event data port Alpha_Type;
+  comm_servo_gauche   : out event data port Alpha_Type;
+end p_controle;
+
+process p_servomoteur
+features
+  ordre               : in event data port Alpha_Type;
+end p_servomoteur;
+
+--  implementations
+
+process implementation p_capteur.i
+subcomponents
+  th_c : thread capteur.i;
+connections
+  port th_c.evenement -> evenement1;
+end p_capteur.i;
+
+process implementation p_controle.i
+subcomponents
+  th_ctrl_droit  : thread controle.i;
+  th_ctrl_gauche : thread controle.i;
+connections
+in_pro1 :  port info_capteur_droit        -> th_ctrl_droit.info_capteur_in;
+  port th_ctrl_droit.comm_servo_out  -> comm_servo_droit;
+  port info_capteur_gauche       -> th_ctrl_gauche.info_capteur_in;
+  port th_ctrl_gauche.comm_servo_out -> comm_servo_gauche;
+end p_controle.i;
+
+process implementation p_servomoteur.i
+subcomponents
+  th_servomoteur : thread servomoteur.i;
+connections
+  port ordre -> th_servomoteur.ordre;
+end p_servomoteur.i;
+
+--------------
+--  System  --
+--------------
+
+processor the_processor
+end the_processor;
+
+--  interface
+
+system robot
+end robot;
+
+--  implementation
+
+system implementation robot.i
+subcomponents
+  T : data Alpha_Type; 
+  proc_capteur_droit      : process p_capteur.i;
+  proc_capteur_gauche     : process p_capteur.i;
+
+  proc_controle           : process p_controle.i;
+
+  proc_servomoteur_droit  : process p_servomoteur.i;
+  proc_servomoteur_gauche : process p_servomoteur.i;
+
+  CPU1                    : processor the_processor;
+connections
+con_1 : port proc_capteur_droit.evenement1    -> proc_controle.info_capteur_droit;
+con_2 :   port proc_capteur_gauche.evenement1   -> proc_controle.info_capteur_gauche;
+
+con_3 :   port proc_controle.comm_servo_droit  -> proc_servomoteur_droit.ordre;
+con_4 :   port proc_controle.comm_servo_gauche -> proc_servomoteur_gauche.ordre;
+properties
+
+  actual_processor_binding => (reference (CPU1)) applies to proc_capteur_droit;
+  actual_processor_binding => (reference (CPU1)) applies to proc_capteur_gauche;
+
+  actual_processor_binding => (reference (CPU1)) applies to proc_controle;
+
+  actual_processor_binding => (reference (CPU1)) applies to proc_servomoteur_droit;
+  actual_processor_binding => (reference (CPU1)) applies to proc_servomoteur_gauche;
+end robot.i;
+
+end robot;
