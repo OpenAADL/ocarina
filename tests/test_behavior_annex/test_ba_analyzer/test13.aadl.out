@@ -1,0 +1,3 @@
+test13.aadl:37:03: "finalState" Transitions out of final states are not allowed
+test13.aadl:37:03: "finalState" Only transition out of complete states may have dispatch condition
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

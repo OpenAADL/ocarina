@@ -1,0 +1,201 @@
+-- **This test hasn't any semantic meaning.
+
+
+package Test
+public
+   with Data_Model, Base_Types;
+
+thread thread1
+prototypes
+  proto : subprogram multiplication ;
+
+features
+  
+
+  inPortA : in event data port Base_Types::Integer ;
+  inPortB : in event data port Base_Types::Integer;
+  inPortC : in event data port Base_Types::Integer;
+  inPortD : in event data port Base_Types::Integer;
+  outPortA : out event data port Base_Types::Integer;
+  outPortB : out event data port Base_Types::Boolean ;
+  inPortArrayA : in event port ;
+  outPortArrayA : out event port ;
+  
+  fakePort : out data port Base_Types::Integer ;
+  
+end thread1;
+
+thread implementation thread1.impl
+ 
+subcomponents
+  --spg1 : subprogram procedure ;
+  --spg2 : subprogram multiplication;
+  --subData1: data MyInteger.impl ;
+  float : data Base_Types::Float ;
+
+properties
+  Dispatch_Protocol => Timed ;
+  Period => 1 sec;
+  
+annex behavior_specification {**
+
+ -- *** VARIABLES *** 
+
+variables 
+ x : Base_Types::Integer;
+ y : Base_Types::Integer;
+ tmp, tmp0 : MyInteger ;
+
+--  *** STATES ***
+ 
+states
+ a, b, c : state ;
+ a2 : complete state ;
+ a3 : complete state ;
+ a4 : final state ;
+ a5 : initial final state ;
+
+-- *** TRANSITIONS ***
+
+transitions
+
+ -- Transition and source identifier variations
+ a -[]-> a ;
+ a -[]-> a {tmp := 1} timeout 20 ms ;
+ a -[]-> a {tmp := 1} timeout x ms ;
+ regular1: a -[]-> a ;
+ regular2 [1] : a -[]-> a ;
+ regular3 [1_2] : a -[]-> a ;
+ a, b -[]-> c ;
+ a -[]-> a ;
+
+-- Dispatch condition tests -- 
+
+ a2 -[on dispatch]-> a ;    
+ a2 -[on dispatch frozen inPortA, inPortB]-> a ;
+ a2 -[on dispatch stop]-> a4 ;
+ a2 -[on dispatch inPortA frozen inPortB]-> a ;
+ a2 -[on dispatch mulProvided]-> a ;
+ a2 -[on dispatch abstractPort]-> a ;
+
+ a2 -[on dispatch inPortA or inPortB]-> a ;
+ a2 -[on dispatch inPortA and inPortB]-> a ;
+ a2 -[on dispatch inPortA or inPortB and inPortC or inPortD]-> a ;
+
+ a2 -[on dispatch timeout]-> a ;
+ a2 -[on dispatch timeout 10 min]-> a ;
+
+-- Execute condition tests --
+ 
+ a -[otherwise]-> a ;
+ a -[2 > 1]-> a ;
+ a -[x < y]-> a ;
+ a -[tmp4 = subData1]-> a ;
+ a -[1 != y]-> a ;
+ a -[bool1 and bool2]-> a ;
+ a -[2>1 xor x=y]-> a ;
+ a -[not bool1 or x=y]-> a ;
+ a -[bool1]-> a ;
+ a -[not bool2]-> a ; 
+
+-- Actions, sequences et action sets tests --
+ 
+ a -[]-> a {tmp := 1 ; x := 1 ; y := 1} timeout 100 ms;
+ a -[]-> a {tmp := 1 & x := 1 & y := 1} timeout x ms;  
+
+-- Communication actions tests --
+ a -[]-> a {dataAccessArray[x].multiplicationAccess ! (1, 2, tmp)};
+ a -[]-> a {dataAccess.multiplicationAccess ! (1, 2, tmp)} ;
+ a -[]-> a {outPortB ! (not (x = y))} ;
+ a -[]-> a { outPortA ! (1 + 1) & outPortB ! (true) } ;
+ a -[]-> a {outPortArrayA[x] !} ;
+ a -[]-> a {inPortA ? (y)} ;
+ a -[]-> a {inPortA >>} ;
+ a -[]-> a {inPortA ? (dataAccess.length)} ;
+ a -[]-> a {dataAccess !<} ;
+   -- Timed actions tests --
+
+ a -[]-> a {computation (2hr)} ;
+ a -[]-> a {computation (1min .. 300 sec)} ;
+ a -[]-> a {computation (100 ms) in binding (untel, park)} ;
+
+-- Assignement actions tests --
+
+ a -[]-> a { tmp :=1 };
+ a -[]-> a { tmp :=1 + 2 } ;
+ a -[]-> a { x := 1 + x } ;
+ a -[]-> a { tmp :=any } ;
+ a -[]-> a { tmp4 :=subData1 } ;
+ a -[]-> a { tab[x] := 1 } ;
+
+-- Control structures tests --
+ 
+ a -[]-> a { if(bool1) outPortA ! (1 + 1) elsif(bool2) tmp := 2 else outPortB ! (true) end if} ;
+ a -[]-> a { for(i : Base_Types::Integer in 0 .. 9) {outPortA ! (1 + 1) ; outPortB ! (true)} } ;
+ a -[]-> a {
+             while(true)
+             {
+               for (i : Base_Types::Integer in 0 .. 9)
+               {
+                 if (true)
+                 
+                   tmp := 1 
+                 
+                 elsif (true)  tmp:= 1 
+                 else
+                 
+                   for (j : Base_Types::Integer in 0 .. 9)
+                   {
+                     do x := i + j  until (true) 
+                   }
+                 
+                   end if
+                 }
+               }
+             } ;
+
+-- Value expression tests --
+
+ a -[]-> a {bool1 := bool1 or bool1 or bool1} ;
+ a -[]-> a {bool1 := bool1 and bool1 and bool1} ;
+ a -[]-> a {bool1 := bool1 xor bool1 xor bool1} ;
+   
+   -- factor tests --
+   
+ a -[]-> a {tmp := tmp0 ** 1} ;
+ a -[]-> a {tmp := abs tmp0} ;
+ a -[]-> a {bool2 := not bool1} ; 
+   
+   -- term tests --
+
+ a -[]-> a {x := x * x * x} ;  
+ a -[]-> a {x := x mod x mod x} ;
+ a -[]-> a {x := x * x / x mod x rem x} ;
+
+   -- simple expression tests --
+ 
+ a -[]-> a {x := x + x + x} ;
+ a -[]-> a {x := -x - x - x} ;
+
+   -- relation tests --
+   
+ a -[]-> a {bool1 := x = y } ;
+ a -[]-> a {bool1 := bool2 = true } ;  
+ a -[]-> a {bool1 := x != y } ;
+ a -[]-> a {bool1 := x >= y } ;
+
+   -- global tests --
+
+ a -[]-> a {bool1 := not(abs x * x / y - x rem y <= 1) != (x ** (1 ** tmp) != ((abs x) + x - y))} ;
+
+ -- real literal and based integer tests -- 
+ 
+ a -[]-> a {tmp := 12 ; tmp := 0 ; tmp := 1E6 ; tmp := 1E+6 ; tmp := 123_456} ;
+ a -[]-> a {float := 12.0 ; float := 0.0 ; float := 0.456 ; float := 3.14159_26 ; float := 1.0E-6 ; float := 1.0E+6} ;
+ a -[]-> a {tmp := 2#1111_1111# ; tmp := 16#FF# ; tmp := 016#0ff# ; tmp := 16#0A#E+2} ;
+                
+**};  
+
+end thread1.impl;
+
+end Test;

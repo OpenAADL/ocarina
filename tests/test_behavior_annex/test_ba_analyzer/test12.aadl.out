@@ -1,0 +1,2 @@
+test12.aadl:35:03: "compState" Transitions out of complete states must have dispatch condition
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

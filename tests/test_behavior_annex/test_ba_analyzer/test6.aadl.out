@@ -1,0 +1,2 @@
+test6.aadl:34:05: "ovf" conflicts with declaration at line 19
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

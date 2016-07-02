@@ -1,0 +1,420 @@
+
+
+
+
+
+
+
+property set Data_Model is
+  Base_Type : list of classifier (
+data)
+    applies to (data);
+
+  Code_Set : aadlinteger
+    applies to (data);
+
+  Data_Digits : aadlinteger
+    applies to (data);
+
+  Data_Scale : aadlinteger
+    applies to (data);
+
+  Data_Representation : enumeration (Array, Boolean, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
+    applies to (data);
+
+  Dimension : list of aadlinteger
+    applies to (data);
+
+  Element_Names : list of aadlstring
+    applies to (data);
+
+  Enumerators : list of aadlstring
+    applies to (data);
+
+  IEEE754_Precision : enumeration (Simple, Double)
+    applies to (data);
+
+  Initial_Value : list of aadlstring
+    applies to (data, port, parameter);
+
+  Integer_Range : range of aadlinteger
+    applies to (data, port, parameter);
+
+  Measurement_Unit : aadlstring
+    applies to (data, port, parameter);
+
+  Number_Representation : enumeration (Signed, Unsigned)
+    applies to (data);
+
+  Real_Range : range of aadlreal
+    applies to (data, port, parameter);
+
+  Representation : list of aadlstring
+    applies to (data);
+
+end Data_Model;
+
+package Base_Types
+public
+  with data_model;
+
+  data Boolean
+  properties
+    Data_Model::Data_Representation => Boolean;
+
+  end Boolean;
+
+  data Integer
+  properties
+    Data_Model::Data_Representation => Integer;
+
+  end Integer;
+
+  data Integer_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 1 Bytes;
+
+  end Integer_8;
+
+  data Integer_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 2 Bytes;
+
+  end Integer_16;
+
+  data Integer_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 4 Bytes;
+
+  end Integer_32;
+
+  data Integer_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 8 Bytes;
+
+  end Integer_64;
+
+  data Unsigned_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 1 Bytes;
+
+  end Unsigned_8;
+
+  data Unsigned_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 2 Bytes;
+
+  end Unsigned_16;
+
+  data Unsigned_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 4 Bytes;
+
+  end Unsigned_32;
+
+  data Unsigned_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 8 Bytes;
+
+  end Unsigned_64;
+
+  data Natural extends Integer
+  properties
+    Data_Model::Integer_Range => 0 .. Max_Target_Integer;
+
+  end Natural;
+
+  data Float
+  properties
+    Data_Model::Data_Representation => Float;
+
+  end Float;
+
+  data Float_32 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Simple;
+    Source_Data_Size => 4 Bytes;
+
+  end Float_32;
+
+  data Float_64 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Double;
+    Source_Data_Size => 8 Bytes;
+
+  end Float_64;
+
+  data Character
+  properties
+    Data_Model::Data_Representation => Character;
+
+  end Character;
+
+  data String
+  properties
+    Data_Model::Data_Representation => String;
+
+  end String;
+
+end Base_Types;
+
+package Test
+public
+  with Data_Model, Base_Types;
+
+  thread thread1
+  prototypes
+    proto : subprogram multiplication;
+
+  features
+    inPortA : in event data port Base_Types::Integer;
+    inPortB : in event data port Base_Types::Integer;
+    inPortC : in event data port Base_Types::Integer;
+    inPortD : in event data port Base_Types::Integer;
+    outPortA : out event data port Base_Types::Integer;
+    outPortB : out event data port Base_Types::Boolean;
+    inPortArrayA : in event port;
+    outPortArrayA : out event port;
+    fakePort : out data port Base_Types::Integer;
+
+  end thread1;
+
+  thread implementation thread1.impl
+  subcomponents
+    float : data Base_Types::Float;
+
+  properties
+    Dispatch_Protocol => Timed;
+    Period => 1 sec;
+
+    annex behavior_specification {**
+    variables
+      x : Base_Types::Integer;
+      y : Base_Types::Integer;
+      tmp, tmp0 : MyInteger;
+    states
+      a, b, c : state;
+      a2 : complete state;
+      a3 : complete state;
+      a4 : final state;
+      a5 : initial final state;
+    transitions      
+      a -[]-> a;      
+      a -[]-> a {
+        tmp  := 1
+        } timeout  20 ms;      
+      a -[]-> a {
+        tmp  := 1
+        } timeout  x ms;      
+      regular1 : a -[]-> a;      
+      regular2 [1] : a -[]-> a;      
+      regular3 [12] : a -[]-> a;      
+      a, b -[]-> c;      
+      a -[]-> a;      
+      a2 -[on dispatch]-> a;      
+      a2 -[on dispatch frozen inPortA, inPortB]-> a;      
+      a2 -[on dispatch stop]-> a4;      
+      a2 -[on dispatch inPortA frozen inPortB]-> a;      
+      a2 -[on dispatch mulProvided]-> a;      
+      a2 -[on dispatch abstractPort]-> a;      
+      a2 -[on dispatch inPortA or inPortB]-> a;      
+      a2 -[on dispatch inPortA and inPortB]-> a;      
+      a2 -[on dispatch inPortA or inPortB and inPortC or inPortD]-> a;      
+      a2 -[on dispatch timeout]-> a;      
+      a2 -[on dispatch timeout  10 min]-> a;      
+      a -[otherwise]-> a;      
+      a -[2 > 1]-> a;      
+      a -[x < y]-> a;      
+      a -[tmp4 = subData1]-> a;      
+      a -[1 != y]-> a;      
+      a -[bool1 and bool2]-> a;      
+      a -[2 > 1 xor x = y]-> a;      
+      a -[not bool1 or x = y]-> a;      
+      a -[bool1]-> a;      
+      a -[not bool2]-> a;      
+      a -[]-> a {
+        tmp  := 1;
+        x  := 1;
+        y  := 1
+        } timeout  100 ms;      
+      a -[]-> a {
+        tmp  := 1&
+        x  := 1&
+        y  := 1
+        } timeout  x ms;      
+      a -[]-> a {
+         dataAccessArray [ x ].multiplicationAccess !(1, 2, tmp)
+        };      
+      a -[]-> a {
+         dataAccess. multiplicationAccess !(1, 2, tmp)
+        };      
+      a -[]-> a {
+         outPortB !(not (x = y))
+        };      
+      a -[]-> a {
+         outPortA !(1 + 1)&
+         outPortB !(true )
+        };      
+      a -[]-> a {
+         outPortArrayA [ x ]!
+        };      
+      a -[]-> a {
+         inPortA ? (y )
+        };      
+      a -[]-> a {
+         inPortA >>
+        };      
+      a -[]-> a {
+         inPortA ? (dataAccess. length )
+        };      
+      a -[]-> a {
+         dataAccess !<
+        };      
+      a -[]-> a {
+         computation ( 2 hr ) 
+        };      
+      a -[]-> a {
+         computation ( 1 min ..  300 sec ) 
+        };      
+      a -[]-> a {
+         computation ( 100 ms ) in binding (untel, park )
+        };      
+      a -[]-> a {
+        tmp  := 1
+        };      
+      a -[]-> a {
+        tmp  := 1 + 2
+        };      
+      a -[]-> a {
+        x  := 1 + x
+        };      
+      a -[]-> a {
+        tmp  := any
+        };      
+      a -[]-> a {
+        tmp4  := subData1
+        };      
+      a -[]-> a {
+        tab [ x ] := 1
+        };      
+      a -[]-> a {
+        if (bool1)
+         outPortA !(1 + 1)
+        elsif (bool2)
+        tmp  := 2
+        else
+
+         outPortB !(true )
+        end if
+        };      
+      a -[]-> a {
+         for (i : Base_Types::Integer in  0 .. 9)
+        {
+         outPortA !(1 + 1);
+         outPortB !(true )
+        }
+        };      
+      a -[]-> a {
+        while (true )
+        {
+         for (i : Base_Types::Integer in  0 .. 9)
+        {
+        if (true )
+        tmp  := 1
+        elsif (true )
+        tmp  := 1
+        else
+
+         for (j : Base_Types::Integer in  0 .. 9)
+        {
+        do
+        {
+        x  := i + j
+        } until (true )
+        }
+        end if
+        }
+        }
+        };      
+      a -[]-> a {
+        bool1  := bool1 or bool1 or bool1
+        };      
+      a -[]-> a {
+        bool1  := bool1 and bool1 and bool1
+        };      
+      a -[]-> a {
+        bool1  := bool1 xor bool1 xor bool1
+        };      
+      a -[]-> a {
+        tmp  := tmp0 ** 1
+        };      
+      a -[]-> a {
+        tmp  := abs tmp0
+        };      
+      a -[]-> a {
+        bool2  := not bool1
+        };      
+      a -[]-> a {
+        x  := x * x * x
+        };      
+      a -[]-> a {
+        x  := x mod x mod x
+        };      
+      a -[]-> a {
+        x  := x * x / x mod x rem x
+        };      
+      a -[]-> a {
+        x  := x + x + x
+        };      
+      a -[]-> a {
+        x  := - x - x - x
+        };      
+      a -[]-> a {
+        bool1  := x = y
+        };      
+      a -[]-> a {
+        bool1  := bool2 = true 
+        };      
+      a -[]-> a {
+        bool1  := x != y
+        };      
+      a -[]-> a {
+        bool1  := x <= y
+        };      
+      a -[]-> a {
+        bool1  := not (abs x * x / y - x rem y >= 1) != (x ** (1 ** tmp) != ((abs x) + x - y))
+        };      
+      a -[]-> a {
+        tmp  := 12;
+        tmp  := 0;
+        tmp  := 1E6;
+        tmp  := 1E6;
+        tmp  := 123456
+        };      
+      a -[]-> a {
+        float  := 12.0;
+        float  := 0.0;
+        float  := 0.456;
+        float  := 3.1415926;
+        float  := 1.0E-6;
+        float  := 1.0E6
+        };      
+      a -[]-> a {
+        tmp  := 2#11111111#;
+        tmp  := 16#FF#;
+        tmp  := 16#FF#;
+        tmp  := 16#A#E2
+        };
+    **};
+  end thread1.impl;
+
+end Test;
+

@@ -1,0 +1,27 @@
+
+package BA_example public
+with Base_Types;
+
+thread merger
+  features
+    p1 : in event data port Base_Types::Integer;
+    p2 : in event data port Base_Types::Integer;
+    m : out event data port Base_Types::Integer;
+    k : in data port Base_Types::Integer;
+end merger;
+
+thread implementation merger.impl 
+annex behavior_specification {**
+  states
+    s0 : initial complete state;
+    comp : state;
+    next1, next2 : complete final state;
+  
+  transitions
+    s0 -[ on dispatch k ]-> next2 { x1 := p1 }; -- errors : "k" (dispatch trigger) must refer to an IN event port or IN event data port
+    s0 -[ on dispatch p2 ]-> next1 { x2 := p2 };
+**};
+end merger.impl;
+
+
+end BA_example;

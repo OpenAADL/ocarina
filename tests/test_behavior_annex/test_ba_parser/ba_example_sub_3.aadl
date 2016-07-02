@@ -1,0 +1,48 @@
+-- This example shows the use of variable labels as local variables to 
+-- pass data between successive actions.
+package BA_example3 public
+
+data number
+end number;
+
+subprogram mul
+features
+  x : in parameter number;
+  y : in parameter number;
+  z : out parameter number;
+end mul;
+
+subprogram cube
+features
+  x : in parameter number;
+  y : out parameter number;
+  mul : requires subprogram access mul;
+end cube;
+
+subprogram implementation cube.ba
+annex behavior_specification {**
+  variables tmp : number;
+  states s : initial state;
+  s1 : final state;
+  transitions t : s -[]-> s1 { mul!(x,x,tmp); mul!(tmp,x,y) };
+**};
+end cube.ba;
+
+-- In the preceding code, mul! represents a call to subprogram mul. This can 
+-- thus be used as a shortcut for the following equivalent call specification 
+-- expressed in core AADL:
+
+subprogram implementation cube.no_ba
+calls t : {
+  mul1 : subprogram mul;
+  mul2 : subprogram mul;
+};
+connections
+  cnx1: parameter x -> mul1.x;
+  cnx2: parameter x -> mul1.y;
+  cnx3: parameter mul1.z -> mul2.x;
+  cnx4: parameter x -> mul2.y;
+  cnx5: parameter mul2.z -> y;
+end cube.no_ba;
+
+end BA_example3;

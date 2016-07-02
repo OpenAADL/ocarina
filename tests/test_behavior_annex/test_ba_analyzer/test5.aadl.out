@@ -1,0 +1,2 @@
+test5.aadl:30:08: "s0" conflicts with declaration at line 29
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

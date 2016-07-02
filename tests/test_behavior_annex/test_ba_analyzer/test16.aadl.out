@@ -1,0 +1,2 @@
+test16.aadl:20:23: "m" (dispatch trigger) must refer to an IN event port or IN event data port
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

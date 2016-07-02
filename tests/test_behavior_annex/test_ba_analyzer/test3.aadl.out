@@ -1,0 +1,2 @@
+test3.aadl:30:05: "v" conflicts with declaration at line 29
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

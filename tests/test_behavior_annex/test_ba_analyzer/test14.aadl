@@ -1,0 +1,25 @@
+
+package example1 public
+with Base_Types;
+
+subprogram addition
+ features
+   x: in parameter Base_Types::Integer;
+   y: in parameter Base_Types::Integer;
+   r: out parameter Base_Types::Integer;
+   ovf: out parameter Base_Types::Boolean;
+end addition;
+
+subprogram implementation addition.default
+ annex behavior_specification {**
+  states
+    s0 : initial state;
+    s1 : final state;
+ transitions
+    regular: s2 -[ ]-> s3 { r := x + y ; ovf := false };
+    overflow: s0 -[ ]-> s1 { r := 0; ovf := true };
+ **};
+end addition.default;
+
+end example1;
+

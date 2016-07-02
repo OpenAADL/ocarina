@@ -1,0 +1,2 @@
+test11.aadl:21:02: Subprogram components must not contain a dispatch condition in any of its transitions
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

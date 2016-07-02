@@ -1,0 +1,27 @@
+
+package exemple
+public
+   with Base_Types ;
+
+subprogram sub
+end sub;
+
+
+subprogram implementation sub.error
+
+annex behavior_specification {**
+
+states
+ uniqueState : initial final state ;
+
+-- Errors :
+--       ** Subprogram can't have dispatch condition in any of its transitions.
+   
+transitions
+ uniqueState -[on dispatch]-> uniqueState ;
+  
+**};
+
+end sub.error ;
+
+end exemple ;

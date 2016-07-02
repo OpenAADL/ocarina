@@ -1,0 +1,56 @@
+package BA_example1
+public
+
+  with Base_types, Data_Model;
+
+
+  thread sender
+   features
+    d: out event data port Base_Types::Integer;
+    a: in event data port Base_Types::Integer;
+
+   properties
+    Dispatch_Protocol => Timed;
+    Period => 10 Ms;
+  end sender;
+
+  thread implementation sender.v1
+   subcomponents
+    v: data Base_Types::Integer;
+   
+   annex behavior_specification {**
+    states
+     st: initial complete state;
+     sf: complete final state;
+     s1, s2: state;
+    transitions
+     st -[on dispatch timeout]-> st { v := 1; d!(v) };
+     st -[on dispatch a]-> s1;
+     s1 -[a=1]-> sf;
+     s1 -[a=0]-> st;
+     sf -[on dispatch timeout]-> sf { v := 0; d!(v) };
+     sf -[on dispatch a]-> s2;
+     s2 -[a=0]-> st;
+     s2 -[a=1]-> sf;
+    **};
+  end sender.v1;
+
+  thread implementation sender.v2
+   annex behavior_specification {**
+    states
+     st: initial complete state;
+     sf: complete final state;
+     s1, s2: state;
+    transitions
+     st -[on dispatch timeout]-> st { d!(1) };
+     st -[on dispatch a]-> s1;
+     s1 -[a=1]-> sf;
+     s1 -[a=0]-> st;
+     sf -[on dispatch timeout]-> sf { d!(0) };
+     sf -[on dispatch a]-> s2;
+     s2 -[a=0]-> st;
+     s2 -[a=1]-> sf;
+    **};
+  end sender.v2;
+
+end BA_example1;

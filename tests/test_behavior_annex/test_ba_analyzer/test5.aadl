@@ -1,0 +1,34 @@
+package BA_example1 public
+with Base_Types;
+
+data stack
+  end stack;
+
+  data implementation stack.default
+    subcomponents
+      elems : data Base_Types::Integer [100];
+      sp : data Base_Types::Integer;
+  end stack.default; 
+
+
+subprogram addition
+ features
+   x: in parameter Base_Types::Integer;
+   y: in parameter Base_Types::Integer;
+   r: out parameter Base_Types::Integer;
+   ovf: out parameter Base_Types::Boolean;
+end addition;
+
+subprogram implementation addition.default
+ annex behavior_specification {**
+
+ -- Errors : The state identifiers must be
+ --          unique within a behavior annex subclause
+
+   states
+    s0 : initial state;
+    s1,s0 : final state;
+ **};
+end addition.default;
+
+end BA_example1;
