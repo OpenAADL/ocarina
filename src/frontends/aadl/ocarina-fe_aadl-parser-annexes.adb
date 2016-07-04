@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -74,7 +74,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
       In_Modes        : Node_Id           := No_Node;
       Loc             : Location;
       Loc_Start_Annex : Location;
-      Annex_Content   : Name_Id;
+      Annex_Content   : Name_Id           := No_Name;
       Annex_Location  : constant Location := Token_Location;
    begin
 
@@ -163,9 +163,8 @@ package body Ocarina.FE_AADL.Parser.Annexes is
               In_Modes);
       end if;
 
-      if Annex /= No_Node
-        and then Set_Annex_Content (Annex, Annex_Content)
-      then
+      if Present (Annex) then
+         Set_Annex_Content (Annex, Annex_Content);
          Set_Corresponding_Annex (Annex, Annex_Root);
          return Annex;
       else
