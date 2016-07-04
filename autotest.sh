@@ -460,9 +460,9 @@ if test ${dotests} = "true" ; then
 			    # failures=`expr ${failures} + 1`
 
 			else
-			    ./`basename ${file} .adb` >${actual_output} 2>&1
-			    command="./`basename ${file} .adb`"
-			    result=$?
+			    OCARINA_PATH="`which ocarina`" ./`basename ${file} .adb` >${actual_output} 2>&1
+                            result=$?
+                            command="./`basename ${file} .adb`"
 
 			    if test -r ${expected_output} ; then
 				${scriptdir}/tools/compare.py \
