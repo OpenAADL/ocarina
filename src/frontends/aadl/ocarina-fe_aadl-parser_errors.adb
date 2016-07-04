@@ -244,6 +244,9 @@ package body Ocarina.FE_AADL.Parser_Errors is
          when EMC_At_Least_Three_Elements_Expected =>
             return "At least 3 elements are expected";
 
+         when EMC_Empty_Package =>
+            return "Empty packages are not allowed";
+
          when others =>
             To_Lower (S);
             for I in S'Range loop

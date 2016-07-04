@@ -266,6 +266,7 @@ package Ocarina.FE_AADL.Parser_Errors is
       EMC_No_Defining_Identifier,
       EMC_Refinement_Is_Not_Allowed,
       EMC_Extends_Incompatible_Entity,
+      EMC_Empty_Package,
       EMC_Not_Allowed_In_AADL_V1,
       EMC_Not_Allowed_In_AADL_V2,
       EMC_Port_Group_Not_Allowed_In_AADL_V2,
