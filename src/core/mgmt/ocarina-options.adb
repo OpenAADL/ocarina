@@ -114,6 +114,15 @@ package body Ocarina.Options is
       Current_Annex_Action (Action) := 1;
    end Set_Annex_Action;
 
+   ------------------------
+   -- Unset_Annex_Action --
+   ------------------------
+
+   procedure Unset_Annex_Action (Action : Annex_Action_Kind) is
+   begin
+      Current_Annex_Action (Action) := 0;
+   end Unset_Annex_Action;
+
    ----------------------
    -- Get_Annex_Action --
    ----------------------

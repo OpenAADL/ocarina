@@ -90,10 +90,25 @@ package Ocarina.Options is
    type Annex_Action is array (Annex_Action_Kind) of Byte;
 
    procedure Set_Annex_Action (Action : Annex_Action_Kind);
+   --  Mark the given annex to be handled by its corresponding parses
+   --  during parsing.
+
+   procedure Unset_Annex_Action (Action : Annex_Action_Kind);
+   --  Unmark the given annex to be ignored during parsing
+
    function Get_Annex_Action (Action : Annex_Action_Kind) return Byte;
+   --  Return 1 if the given annex has been set and 1 if it has been
+   --  unset.
+
    procedure Reset_Annex_Action;
+   --  Unset all annexes
+
    procedure Process_Annex_Action (Parameters : String);
+   --  Analyse the command line --disable-annexes=... part
+
    function Perform_Annex_Action (Language : Name_Id) return Boolean;
+   --  Returns true iff the given language has a corresponding annex
+   --  action.
 
 private
 
