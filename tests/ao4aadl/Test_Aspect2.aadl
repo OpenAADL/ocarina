@@ -1,0 +1,205 @@
+----------
+-- Data --
+----------
+
+data Integer_Type
+properties
+  Data_Model::Data_Representation => integer;
+end Integer_Type;
+
+data String_Type
+properties
+  Data_Model::Data_Representation => string;
+  Data_Model::Dimension => (100);
+end String_Type;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Operation_Spg
+features
+  SessionID: in parameter Integer_Type;
+  NumCard : in parameter Integer_Type;
+  Cmd : in parameter Integer_Type;
+  Amount : in parameter Integer_Type;
+  Result : out parameter String_Type;
+end Operation_Spg;
+
+subprogram implementation Operation_Spg.Impl
+calls{
+  Debit_Op : subprogram Debit.Impl;
+  Credit_Op : subprogram Credit.Impl; 
+ };
+connections
+  parameter SessionID -> Debit_Op.SessionID;
+  parameter SessionID -> Credit_Op.SessionID;
+  parameter Amount -> Debit_Op.Amount;
+  parameter Amount -> Credit_Op.Amount;
+  parameter NumCard -> Debit_Op.NumCard;
+  parameter NumCard -> Credit_Op.NumCard;
+  parameter Debit_Op.Result -> Result;
+  parameter Credit_Op.Result -> Result;
+properties
+  source_language => rtsj;
+  source_name     => "Bank.Operation_Spg";
+end Operation_Spg.Impl;
+
+subprogram Debit
+features
+  SessionID : in parameter Integer_Type;
+  NumCard : in parameter Integer_Type;
+  Amount : in parameter Integer_Type;
+  Result : out parameter String_Type;
+end Debit;
+
+subprogram Credit
+features
+  SessionID : in parameter Integer_Type;
+  NumCard : in parameter Integer_Type;
+  Amount : in parameter Integer_Type;
+  Result : out parameter String_Type;
+end Credit;
+
+subprogram implementation Debit.Impl
+properties
+  source_language => rtsj;
+  source_name     => "Bank.Debit_Spg";
+end Debit.Impl;
+
+subprogram implementation Credit.Impl
+properties
+  source_language => rtsj;
+  source_name     => "Bank.Credit_Spg";
+end Credit.Impl;
+
+-------------
+-- Threads --
+-------------
+
+thread AccountTh
+features
+  NumCard_in_AT : in event data port Integer_Type;
+  Cmd_in_AT : in event data port Integer_Type;
+  SessionID_in_AT : in event data port Integer_Type;
+  Amount_in_AT : in event data port Integer_Type;
+  Result_out_AT : out event data port String_Type;
+end AccountTh;
+
+thread implementation AccountTh.Impl
+calls {
+  Do_Op_Spg : subprogram Operation_Spg.Impl;
+};
+connections
+  parameter NumCard_in_AT -> Do_Op_Spg.NumCard;
+  parameter Cmd_in_AT -> Do_Op_Spg.Cmd;
+  parameter SessionID_in_AT -> Do_Op_Spg.SessionID;
+  parameter Amount_in_AT -> Do_Op_Spg.Amount;
+  parameter Do_Op_Spg.Result -> Result_out_AT;
+properties
+  Initialize_Entrypoint              => "Msgs.Welcome_Account_TH";
+  Dispatch_Protocol                  => Periodic;
+  Period                             => 1000 Ms;
+  Compute_Execution_time             => 0 ms .. 3 ms;
+  Deadline                           => 1000 ms;
+  Cheddar_Properties::Fixed_Priority => 3;
+
+annex ao4aadl {**
+           
+          aspect CheckConstraints {
+
+	    pointcut VerificationAmount (session_id:Integer_Type, amount:Integer_Type): call subprogram (Debit (..)) && args(session_id, amount, ..);
+	    advice around(session_id:Integer_Type, amount:Integer_Type): VerificationAmount(session_id, amount){
+
+		    variables{
+		         amount_Day: Integer_Type;
+		         amount_Week: Integer_Type;
+                         message:String_Type;
+		    }
+		
+                   getAmount_Day!(session_id, amount_Day);
+                   if((amount_Day+amount)>100){
+		      message:="you can not debit more then 100 DT per day!";
+                      Result_out_AT!(message);
+                   }
+                   else{
+                       getAmount_Week!(session_id, amount_Week);
+                       if((amount_Week+amount)>400){
+		          message:="you can not debit more then 400 DT per week!";
+                          Result_out_AT!(message);
+                       }
+                       else{
+                            proceed(session_id,amount);
+                       }
+                   }
+	       }
+         }
+
+
+          aspect Logging {
+
+	    pointcut Log (session_id:Integer_Type, amount:Integer_Type): execution subprogram (Debit (..)) && args(session_id, amount, ..);
+	    advice after(session_id:Integer_Type, amount:Integer_Type): Log(session_id, amount){
+
+		sendSMS!(session_id,amount);    
+               
+             }
+                   
+         }
+
+
+  **};
+
+end AccountTh.Impl;
+
+process Account
+features
+  NumCard_in_A : in event data port Integer_Type;
+  Cmd_in_A : in event data port Integer_Type;
+  SessionID_in_A : in event data port Integer_Type;
+  Amount_in_A : in event data port Integer_Type;
+  Result_out_A : out event data port String_Type;
+end Account;
+
+process implementation Account.Impl
+subcomponents
+  AC : thread AccountTh.Impl;
+connections
+  event data port NumCard_in_A -> AC.NumCard_in_AT;
+  event data port Cmd_in_A -> AC.Cmd_in_AT;
+  event data port SessionID_in_A -> AC.SessionID_in_AT;
+  event data port Amount_in_A -> AC.Amount_in_AT;
+  event data port AC.Result_out_AT -> Result_out_A;
+end Account.Impl;
+
+---------------
+-- Processor --
+---------------
+
+processor the_processor
+end the_processor;
+
+processor implementation the_processor.Impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
+end the_processor.Impl;
+
+system Bank
+end Bank;
+
+system implementation Bank.others
+subcomponents
+  account : process Account.Impl
+   {Deployment::Channel_Address => 2;
+    Deployment::Process_Id      => 1200;};
+
+  CPU : processor the_processor.Impl
+   {Deployment::Execution_Platform => LEON_ORK;};
+properties
+  actual_processor_binding => reference CPU applies to account;
+END Bank.others;
+
+
+

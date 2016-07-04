@@ -1,0 +1,246 @@
+SYSTEM Bank
+END Bank;
+
+SYSTEM IMPLEMENTATION Bank.others
+SUBCOMPONENTS
+  Customer : PROCESS Bank_P::Customer.impl;
+  AccountData : PROCESS Bank_P::AccountData.impl;
+  Account : PROCESS Bank_P::Account.impl;
+CONNECTIONS
+		EVENT DATA PORT Customer.Request_out-> AccountData.Request_in;
+		EVENT DATA PORT Customer.NumCard_out -> AccountData.NumCard_in;
+		EVENT DATA PORT AccountData.session_id_out -> Customer.session_id_in;
+		EVENT DATA PORT Customer.session_id_out-> Account.session_id_in;
+		EVENT DATA PORT Customer.cmd_out -> Account.cmd_in;
+		EVENT DATA PORT Customer.amount_out ->Account.amount_in;
+		EVENT DATA PORT Account.result_out -> Customer.result_in;
+END Bank.others;
+
+PACKAGE Bank_P
+PUBLIC
+
+  PROCESS Customer
+  FEATURES
+    NumCard_in : IN EVENT DATA PORT Integer_Type;
+    Code_in : IN EVENT DATA PORT Integer_Type;
+    result_in : IN EVENT DATA PORT Integer_Type;
+    session_id_in : IN EVENT DATA PORT Integer_Type;
+    NumCard_out : OUT EVENT DATA PORT Integer_Type;
+    cmd_out : OUT EVENT DATA PORT Integer_Type;
+    amount_out: OUT EVENT DATA PORT Integer_Type;
+    session_id_out : OUT EVENT DATA PORT Integer_Type;
+    Request_out : OUT EVENT DATA PORT Integer_Type;
+  END Customer;
+
+  PROCESS IMPLEMENTATION Customer.impl
+  
+  SUBCOMPONENTS
+		GUI: THREAD GUIThread.Impl;
+		validation: THREAD ValidationThread.Impl;
+
+  CONNECTIONS
+		EVENT DATA PORT NumCard_in -> GUI.NumCard_in;
+		EVENT DATA PORT Code_in -> GUI.Code_in;
+		EVENT DATA PORT result_in -> GUI.result_in;
+		EVENT DATA PORT session_id_in -> validation.session_id_in;
+		EVENT DATA PORT validation.NumCard_out -> NumCard_out;
+		EVENT DATA PORT GUI.session_id_out -> session_id_out ;
+		EVENT DATA PORT GUI.cmd_out -> cmd_out;
+		EVENT DATA PORT GUI.amount_out -> amount_out;
+		EVENT DATA PORT validation.Request_out-> Request_out;
+		EVENT DATA PORT GUI.Control_out-> validation.Request_in;
+		EVENT DATA PORT GUI.NumCard_out-> validation.NumCard_in;
+		EVENT DATA PORT GUI.Code_out-> validation.Code_in;
+		EVENT DATA PORT validation.session_id_out-> GUI.session_id_in;
+		EVENT DATA PORT validation.Ok_out-> GUI.Ok_in;
+		EVENT DATA PORT validation.RestoreCode_out-> GUI.RestoreCode_in;
+		EVENT DATA PORT validation.RejectedCard_out-> GUI.RejectedCard_in;
+  
+  
+  END Customer.impl;
+
+  PROCESS AccountData
+   FEATURES
+    Request_in : IN EVENT DATA PORT Integer_Type;
+    NumCard_in : IN EVENT DATA PORT Integer_Type;
+    session_id_out : OUT EVENT DATA PORT Integer_Type;
+  END AccountData;
+
+  PROCESS IMPLEMENTATION AccountData.impl
+    SUBCOMPONENTS
+		AccountDataT: THREAD AccountDataThread.Impl;
+
+	CONNECTIONS
+		EVENT DATA PORT Request_in -> AccountDataT.Request_in;
+		EVENT DATA PORT NumCard_in -> AccountDataT.NumCard_in;
+		EVENT DATA PORT AccountDataT.session_id_out ->session_id_out;
+  
+  END AccountData.impl;
+
+  PROCESS Account
+   FEATURES
+    cmd_in : IN EVENT DATA PORT Integer_Type;
+    amount_in : IN EVENT DATA PORT Integer_Type;
+    session_id_in : IN EVENT DATA PORT Integer_Type; 
+    result_out : OUT EVENT DATA PORT Integer_Type;
+  END Account;
+
+  PROCESS IMPLEMENTATION Account.impl
+  SUBCOMPONENTS
+		AccountT: THREAD AccountThread.Impl;
+
+  CONNECTIONS
+		EVENT DATA PORT cmd_in -> AccountT.cmd_in;
+		EVENT DATA PORT amount_in -> AccountT.amount_in;
+		EVENT DATA PORT AccountT.result_out -> result_out;
+		EVENT DATA PORT session_id_in -> AccountT.session_id_in ;
+  END Account.impl;
+  
+   THREAD GUIThread
+    FEATURES
+       	NumCard_in: IN EVENT DATA PORT Integer_Type;
+		Code_in: IN EVENT DATA PORT Integer_Type;
+		result_in: IN EVENT DATA PORT Integer_Type;
+		RejectedCard_in: IN EVENT DATA PORT Integer_Type;
+		OK_in: IN EVENT DATA PORT Integer_Type;
+		RestoreCode_in: IN EVENT DATA PORT Integer_Type;
+		session_id_in: IN EVENT DATA PORT Integer_Type;
+		Control_out: OUT EVENT DATA PORT Integer_Type;
+		NumCard_out:  OUT EVENT DATA PORT Integer_Type;
+		Code_out: OUT EVENT DATA PORT Integer_Type;
+		cmd_out: OUT EVENT DATA PORT Integer_Type;
+		amount_out: OUT EVENT DATA PORT Integer_Type;
+		session_id_out: OUT EVENT DATA PORT Integer_Type;
+   END GUIThread;
+   
+  
+  THREAD IMPLEMENTATION GUIThread.impl
+
+    PROPERTIES
+		Dispatch_protocol => Sporadic;
+		Period => 10 Ms;
+		deadline => 10 Ms;
+		Compute_Execution_Time => 0 ms..3 ms;
+		cheddar_Properties::Fixed_Priority => 1;
+  END GUIThread.impl;
+  
+   THREAD ValidationThread
+    FEATURES
+        Request_in: IN EVENT DATA PORT Integer_Type;
+		NumCard_in: IN EVENT DATA PORT Integer_Type;
+		Code_in: IN EVENT DATA PORT Integer_Type;
+		session_id_in: IN EVENT DATA PORT Integer_Type;
+		RejectedCard_out: OUT EVENT DATA PORT Integer_Type;
+		OK_out: OUT EVENT DATA PORT Integer_Type;
+		RestoreCode_out: OUT EVENT DATA PORT Integer_Type;
+		NumCard_out: OUT EVENT DATA PORT Integer_Type;
+		Request_out: OUT EVENT DATA PORT Integer_Type;
+		session_id_out: OUT EVENT DATA PORT Integer_Type;
+
+   END ValidationThread;
+  
+  THREAD IMPLEMENTATION ValidationThread.impl
+
+    PROPERTIES
+		Dispatch_protocol => Sporadic;
+		Period => 10 Ms;
+		deadline => 10 Ms;
+		Compute_Execution_Time => 0 ms..3 ms;
+		cheddar_Properties::Fixed_Priority => 2;
+    ANNEX ao4aadl {**
+		
+	   aspect CheckCode {
+ 
+		pointcut Verification ( ) : call outport (RestoreCode_Out (..));
+
+   		advice around ( ) : Verification ( ) {
+ 
+			variables { counter : Integer_Type; 
+                                    message : String_Type;}
+ 
+			initially { counter := 1; message:="Hello!";}
+ 
+			if  ( counter = 3 ) {
+ 
+				RejectedCard_out!(message);
+
+           			counter := 1; }
+
+       			else{
+
+				proceed();
+				counter := counter+1; 
+			}
+
+		 } 
+	 }
+
+		
+		
+		
+   **};
+
+  END ValidationThread.impl;
+  
+  
+    THREAD AccountDataThread
+    FEATURES
+        Request_in: IN EVENT DATA PORT Integer_Type;
+		NumCard_in: IN EVENT DATA PORT Integer_Type;
+		session_id_out: OUT EVENT DATA PORT Integer_Type;
+   END AccountDataThread;
+  
+  THREAD IMPLEMENTATION AccountDataThread.impl
+    CALLS{
+		findSession_Sbg: subprogram FindSession;
+	};
+	
+	CONNECTIONS
+		PARAMETER NumCard_in -> findSession_Sbg.NumCard_in;
+		PARAMETER findSession_Sbg.session_id_out -> session_id_out;
+
+    PROPERTIES
+		Dispatch_protocol => Sporadic;
+		Period => 10 Ms;
+		deadline => 10 Ms;
+		Compute_Execution_Time => 0 ms..3 ms;
+		cheddar_Properties::Fixed_Priority => 3;
+  END AccountDataThread.impl;
+
+  THREAD AccountThread
+    FEATURES
+        cmd_in: IN EVENT DATA PORT Integer_Type;
+		amount_in: IN EVENT DATA PORT Integer_Type;
+		session_id_in: IN EVENT DATA PORT Integer_Type;
+		result_out: OUT EVENT DATA PORT Integer_Type;
+
+  END AccountThread;
+  
+  THREAD IMPLEMENTATION AccountThread.impl
+    PROPERTIES
+		Dispatch_protocol => Sporadic;
+		Period => 10 Ms;
+		deadline => 10 Ms;
+		Compute_Execution_Time => 0 ms..3 ms;
+		cheddar_Properties::Fixed_Priority => 4;
+  END AccountThread.impl;
+  
+  
+  
+  SUBPROGRAM FindSession
+    FEATURES
+        NumCard_in: IN PARAMETER Integer_Type;
+        session_id_out: OUT PARAMETER Integer_Type;
+  END FindSession;
+
+  SUBPROGRAM IMPLEMENTATION FindSession.impl
+  ANNEX behavior_specification {**
+  **};
+  END FindSession.impl;
+
+  DATA Integer_Type
+  PROPERTIES
+	Data_Model::Data_Representation => integer;
+  END Integer_Type;
+
+END Bank_P;
