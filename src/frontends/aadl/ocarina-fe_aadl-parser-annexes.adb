@@ -165,10 +165,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
 
       if Present (Annex) then
          Set_Annex_Content (Annex, Annex_Content);
-
-         if Code = PC_Annex_Subclause then
-            Set_Corresponding_Annex (Annex, Annex_Root);
-         end if;
+         Set_Corresponding_Annex (Annex, Annex_Root);
 
          return Annex;
       else

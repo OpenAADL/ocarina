@@ -1631,6 +1631,9 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
     boolean  Is_Private;
     Node_Id  Annex_Content;
     Node_Id  Container_Package;
+
+    Node_Id  Corresponding_Annex;
+    // Root of the parsed annex tree. This node is not an AADL tree node.
   };
 
   // annex_path ::=
