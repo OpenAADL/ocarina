@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -52,9 +52,14 @@ package Ocarina.FE_AADL.Lexer is
    String_Literal_Value : Name_Id;   --  for T_String
    Raw_Text_Value       : Name_Id;   --  for T_Raw_Text
 
-   Token_Owner : Property_Owner_Token;
+   Token_Owner          : Property_Owner_Token;
    --  for property owner categories which have right to a special
    --  treatement between Identifiers and Keywords
+
+   Quiet                : Boolean := False;
+   --  In some cases, we need the lexer to be silent an not to report
+   --  token errors (especially when scanning through an annex clause
+   --  to find the end annex toekn).
 
    function Current_Token_Image return String;
    --  Return an image of the current token
