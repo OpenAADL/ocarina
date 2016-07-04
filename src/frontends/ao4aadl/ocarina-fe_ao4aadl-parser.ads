@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                    O C A R I N A . F R O N T E N D S                     --
+--            O C A R I N A . F E _ A O 4 A A D L . P A R S E R             --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,25 +29,24 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
-with "ocarina-core";
+--  Parser for AO4AADL
 
-project Ocarina.Frontends is
-   Src_Dir := Ocarina.Top_Src_Dir & "/frontends";
-   Build_Dir := Ocarina.Top_Build_Dir & "/frontends";
+with Ocarina.Types;
+with Locations;
 
-   for Source_Dirs use 
-     (Src_Dir & "/aadl", 
-      Src_Dir & "/aadl_ba",
-      Src_Dir & "/aadl_ema",
-      Src_Dir & "/ao4aadl",
-      Src_Dir & "/real");
-   for Object_Dir use Build_Dir & "/objects";
-   for Library_Dir use Build_Dir & "/libs";
-   for Library_Name use "ocarina-frontends";
-   for Library_Kind use Ocarina.Lib_Type;   
+package Ocarina.FE_AO4AADL.Parser is
+   use Ocarina.Types;
+   use Locations;
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Builder renames Ocarina.Builder;
-end Ocarina.Frontends;
+   function Process (AADL_Root : Node_Id;
+                     From      : Location;
+                     To        : Location := No_Location;
+                     Container : Node_Id  := No_Node)
+                    return Node_Id;
+   --  Proceed to parsing an AO4AADL annex. The parsed annex will be
+   --  returned and linked to the given AADL node.
+
+   procedure Init;
+   --  Initialize the parser
+
+end Ocarina.FE_AO4AADL.Parser;

@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                    O C A R I N A . F R O N T E N D S                     --
+--             O C A R I N A . F E _ A O 4 A A D L . L E X E R              --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,25 +29,53 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
-with "ocarina-core";
+--  Lexer for the AO4AADL frontend
 
-project Ocarina.Frontends is
-   Src_Dir := Ocarina.Top_Src_Dir & "/frontends";
-   Build_Dir := Ocarina.Top_Build_Dir & "/frontends";
+with Locations;
+with Ocarina.Files;
+with Ocarina.ME_AO4AADL.Tokens;
 
-   for Source_Dirs use 
-     (Src_Dir & "/aadl", 
-      Src_Dir & "/aadl_ba",
-      Src_Dir & "/aadl_ema",
-      Src_Dir & "/ao4aadl",
-      Src_Dir & "/real");
-   for Object_Dir use Build_Dir & "/objects";
-   for Library_Dir use Build_Dir & "/libs";
-   for Library_Name use "ocarina-frontends";
-   for Library_Kind use Ocarina.Lib_Type;   
+package Ocarina.FE_AO4AADL.Lexer is
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Builder renames Ocarina.Builder;
-end Ocarina.Frontends;
+   pragma Elaborate_Body (Lexer);
+
+   use Ocarina.ME_AO4AADL.Tokens;
+   use Locations;
+
+   procedure Scan_Token;
+   --  Scans a token and updates global variables Token, Token_Name
+   --  (for identifiers and literals) and Token_Location.
+
+   procedure Scan_Token (T : Token_Type);
+   --  Same as above. When the current token is not the expected token
+   --  T, an error message is output and Token is set to T_Error. As a
+   --  special case, when T_Semi_Colon is expected, we output an error
+   --  location at the end of the line instead of the current token
+   --  location.
+
+   procedure Scan_Token (L : Token_List_Type);
+   --  Same as above. When the current token is not in the list of the
+   --  expected tokens L, an error message is output.
+
+   function Next_Token return Token_Type;
+   --  Return next token but do not update the lexer state that is
+   --  Token, Token_Name and Token_Location.
+
+   procedure Restore_Lexer (State : Location)
+     renames Ocarina.Files.Restore_Location;
+
+   procedure Save_Lexer (State : out Location)
+     renames Ocarina.Files.Save_Location;
+
+   procedure Skip_Declaration (Delimiter : Token_Type);
+   --  Skip until we find a potential end of declaration. Delimiter
+   --  indicates the kind of delimiters we are looking for (';', ',',
+   --  ':') or ('{', '(', '[') or ('}', ')', ']'). We ensure that the
+   --  declaration is well embraced.
+
+   procedure Skip_Line;
+   --  Skip current line
+
+   function Current_Token_Image return String;
+
+end Ocarina.FE_AO4AADL.Lexer;

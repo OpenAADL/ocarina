@@ -57,6 +57,7 @@ TREE_PIDL_SPECS = src/core/tree/ocarina-me_aadl-aadl_tree-nodes.idl	\
 	src/core/tree/ocarina-me_aadl-aadl_instances-nodes.idl		\
 	src/core/tree/ocarina-me_aadl_ba-ba_tree-nodes.idl		\
 	src/core/tree/ocarina-me_real-real_tree-nodes.idl		\
+	src/core/tree/ocarina-me_ao4aadl-ao4aadl_tree-nodes.idl		\
 	src/core/tree/ocarina-me_aadl_ema-ema_tree-nodes.idl            \
 	src/backends/ocarina-backends-ada_tree-nodes.idl		\
 	src/backends/ocarina-backends-c_tree-nodes.idl			\

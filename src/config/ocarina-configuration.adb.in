@@ -32,7 +32,6 @@
 with Ocarina.Backends;
 with Ocarina.BE_AADL;
 with Ocarina.BE_AADL_BA;
-with Ocarina.FE_AADL_EMA;
 with Ocarina.BE_REAL;
 with Ocarina.Transfo;
 with Ocarina.Transfo.Fusions;
@@ -40,6 +39,8 @@ with Ocarina.Transfo.Fusions;
 with Ocarina.FE_REAL;
 with Ocarina.FE_AADL;
 with Ocarina.FE_AADL_BA;
+with Ocarina.FE_AADL_EMA;
+with Ocarina.FE_AO4AADL;
 
 with Ocarina.Analyzer;
 
@@ -203,6 +204,7 @@ package body Ocarina.Configuration is
       Ocarina.FE_AADL_BA.Init;
       Ocarina.FE_AADL_EMA.Init;
       Ocarina.FE_REAL.Init;
+      Ocarina.FE_AO4AADL.Init;
       Ocarina.BE_AADL.Init;
       Ocarina.BE_AADL_BA.Init;
       Ocarina.BE_REAL.Init;
@@ -227,6 +229,7 @@ package body Ocarina.Configuration is
       Ocarina.FE_AADL_BA.Reset;
       Ocarina.FE_AADL_EMA.Reset;
       Ocarina.FE_REAL.Reset;
+      Ocarina.FE_AO4AADL.Reset;
       Ocarina.Parser.Reset_Parsers;
       Ocarina.Analyzer.Reset_Analyzers;
       Ocarina.Backends.Reset;

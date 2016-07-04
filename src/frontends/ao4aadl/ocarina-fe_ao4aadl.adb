@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                    O C A R I N A . F R O N T E N D S                     --
+--                   O C A R I N A . F E _ A O 4 A A D L                    --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,25 +29,42 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
-with "ocarina-core";
+with Ocarina.Output;
 
-project Ocarina.Frontends is
-   Src_Dir := Ocarina.Top_Src_Dir & "/frontends";
-   Build_Dir := Ocarina.Top_Build_Dir & "/frontends";
+with Ocarina.ME_AO4AADL.Tokens;
+with Ocarina.FE_AO4AADL.Parser;
 
-   for Source_Dirs use 
-     (Src_Dir & "/aadl", 
-      Src_Dir & "/aadl_ba",
-      Src_Dir & "/aadl_ema",
-      Src_Dir & "/ao4aadl",
-      Src_Dir & "/real");
-   for Object_Dir use Build_Dir & "/objects";
-   for Library_Dir use Build_Dir & "/libs";
-   for Library_Name use "ocarina-frontends";
-   for Library_Kind use Ocarina.Lib_Type;   
+package body Ocarina.FE_AO4AADL is
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Builder renames Ocarina.Builder;
-end Ocarina.Frontends;
+   use Ocarina.Output;
+
+   ----------
+   -- Init --
+   ----------
+
+   procedure Init is
+   begin
+      Ocarina.ME_AO4AADL.Tokens.Init_Tokens;
+      Ocarina.FE_AO4AADL.Parser.Init;
+   end Init;
+
+   -----------
+   -- Reset --
+   -----------
+
+   procedure Reset is
+   begin
+      --  Nothing to be done
+      null;
+   end Reset;
+
+   -----------
+   -- Usage --
+   -----------
+
+   procedure Usage is
+   begin
+      Write_Line ("fixme : todo");
+   end Usage;
+
+end Ocarina.FE_AO4AADL;

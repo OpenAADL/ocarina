@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                    O C A R I N A . F R O N T E N D S                     --
+--                  OCARINA.ME_AO4AADL.AO4AADL_TREE.DEBUG                   --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,25 +29,44 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
-with "ocarina-core";
+with Ocarina.ME_AO4AADL.AO4AADL_Tree.Nodes;
+with Ocarina.Output; use Ocarina.Output;
+with Ocarina.Types;
 
-project Ocarina.Frontends is
-   Src_Dir := Ocarina.Top_Src_Dir & "/frontends";
-   Build_Dir := Ocarina.Top_Build_Dir & "/frontends";
+package Ocarina.ME_AO4AADL.AO4AADL_Tree.Debug is
+   use Ocarina.ME_AO4AADL.AO4AADL_Tree.Nodes;
+   use Ocarina.Types;
 
-   for Source_Dirs use 
-     (Src_Dir & "/aadl", 
-      Src_Dir & "/aadl_ba",
-      Src_Dir & "/aadl_ema",
-      Src_Dir & "/ao4aadl",
-      Src_Dir & "/real");
-   for Object_Dir use Build_Dir & "/objects";
-   for Library_Dir use Build_Dir & "/libs";
-   for Library_Name use "ocarina-frontends";
-   for Library_Kind use Ocarina.Lib_Type;   
+   N_Indents : Integer := -1;
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Builder renames Ocarina.Builder;
-end Ocarina.Frontends;
+   procedure W_Eol         (N : Natural := 1) renames Output.Write_Eol;
+   procedure W_Int         (N : Int)          renames Output.Write_Int;
+   procedure W_Indentation;
+   procedure W_Line        (N : String)       renames Output.Write_Line;
+   procedure W_Str         (N : String)       renames Output.Write_Str;
+
+   procedure W_Boolean     (N : Boolean);
+   procedure W_Byte        (N : Byte);
+
+   procedure W_List_Id     (L : List_Id);
+   procedure W_Node_Id     (N : Node_Id);
+   procedure W_Node_Header (N : Node_Id);
+
+   procedure W_Node_Attribute
+     (A : String;
+      T : String;
+      V : String;
+      N : Int := 0);
+
+   function Image (N : Node_Kind) return String;
+   function Image (N : Name_Id) return String;
+   function Image (N : Node_Id) return String;
+   function Image (N : List_Id) return String;
+   function Image (N : Operator_Id) return String;
+   function Image (N : Boolean) return String;
+   function Image (N : Byte) return String;
+   function Image (N : Int) return String;
+   function Image (N : Value_Id) return String;
+   function Image (N : Mode_Id) return String;
+
+end Ocarina.ME_AO4AADL.AO4AADL_Tree.Debug;

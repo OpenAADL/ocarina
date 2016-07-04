@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                    O C A R I N A . F R O N T E N D S                     --
+--                 OCARINA.ME_AO4AADL.AO4AADL_TREE.NUTILS                   --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--                     Copyright (C) 2016 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,25 +29,39 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with "ocarina";
-with "ocarina-core";
+--  Offers list manipulation functions
 
-project Ocarina.Frontends is
-   Src_Dir := Ocarina.Top_Src_Dir & "/frontends";
-   Build_Dir := Ocarina.Top_Build_Dir & "/frontends";
+with Ocarina.Types;
+with Locations;
+with Ocarina.ME_AO4AADL.AO4AADL_Tree.Nodes;
 
-   for Source_Dirs use 
-     (Src_Dir & "/aadl", 
-      Src_Dir & "/aadl_ba",
-      Src_Dir & "/aadl_ema",
-      Src_Dir & "/ao4aadl",
-      Src_Dir & "/real");
-   for Object_Dir use Build_Dir & "/objects";
-   for Library_Dir use Build_Dir & "/libs";
-   for Library_Name use "ocarina-frontends";
-   for Library_Kind use Ocarina.Lib_Type;   
+package Ocarina.ME_AO4AADL.AO4AADL_Tree.Nutils is
+   use Ocarina.Types;
+   use Locations;
+   use Ocarina.ME_AO4AADL.AO4AADL_Tree.Nodes;
 
-   package Compiler renames Ocarina.Compiler;
-   package Binder renames Ocarina.Binder;
-   package Builder renames Ocarina.Builder;
-end Ocarina.Frontends;
+   AO4AADL_Root   : Node_Id;
+   --  Current AO4AADL annex root node
+
+   AADL_Model_Root : Node_Id;
+   --  Current AADL model root node
+
+   Owner_Node  : Node_Id;
+   --  Node that is owner of the current AO4AADL annex
+
+   procedure Init;
+   --  Initialize AO4AADL internal routines
+
+   procedure Reset;
+   --  Reset AO4AADL internal routines
+
+   function New_List (Kind : Node_Kind; Loc : Location) return List_Id;
+   function New_Node (Kind : Node_Kind; Loc : Location) return Node_Id;
+
+   procedure Remove_Node_From_List (E : Node_Id; L : List_Id);
+   procedure Append_Node_To_List (E : Node_Id; L : List_Id);
+
+   function Is_Empty (L : List_Id) return Boolean;
+   --  List manipulation
+
+end Ocarina.ME_AO4AADL.AO4AADL_Tree.Nutils;
