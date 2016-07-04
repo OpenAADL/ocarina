@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -280,6 +280,23 @@ package body Ocarina.Instances.Processor.Properties is
                  (Evaluated_Value,
                   New_Value (Value (Value (Property_Value))));
 
+            when K_Enumeration_Term =>
+               --  We clone the enumeration literal
+
+               Evaluated_Value := ATNU.New_Node
+                 (Kind (Property_Value),
+                  ATN.Loc (Property_Value));
+
+               ATN.Set_Identifier
+                 (Evaluated_Value,
+                  ATN.Identifier (Property_Value));
+               ATN.Set_Entity
+                 (Evaluated_Value,
+                  ATN.Entity (Property_Value));
+               ATN.Set_Property_Set_Identifier
+                 (Evaluated_Value,
+                  ATN.Property_Set_Identifier (Property_Value));
+
             when K_Number_Range_Term =>
                declare
                   Evaluated_Lower_Bound : Node_Id;
@@ -378,7 +395,7 @@ package body Ocarina.Instances.Processor.Properties is
 
             --  XXX Todo here evaluate Contained_Element_Path
 
-            when K_Property_Term | K_Enumeration_Term =>
+            when K_Property_Term =>
                Expand_Property_Value
                  (Instance_Root => Instance_Root,
                   Container     => Container,
