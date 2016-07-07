@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1007,7 +1007,9 @@ package body Ocarina.Analyzer.AADL.Queries is
                   Can_Apply :=
                     Named_Element'Val (Category (List_Node)) =
                     Category_Of_Property_Owner
-                    or else Named_Element'Val (Category (List_Node)) = PO_Port;
+                    or else Named_Element'Val (Category (List_Node)) = PO_Port
+                    or else Named_Element'Val (Category (List_Node))
+                    = PO_Feature;
 
                when PO_Data_Port_Connections    |
                  PO_Event_Port_Connections      |
