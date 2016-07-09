@@ -432,6 +432,7 @@ procedure Ocarina_Cmd is
                      Unset_Annex_Action (Disable_ALL);
                      Unset_Annex_Action (Disable_REAL);
                      Unset_Annex_Action (Disable_BA);
+                     Unset_Annex_Action (Disable_EMA);
 
                   elsif A = "annex_none" then
                      null;
@@ -441,6 +442,9 @@ procedure Ocarina_Cmd is
 
                   elsif A = "real_specification" then
                      Unset_Annex_Action (Disable_REAL);
+
+                  elsif A = "emv2" then
+                     Unset_Annex_Action (Disable_EMA);
 
                   else
                      raise Program_Error

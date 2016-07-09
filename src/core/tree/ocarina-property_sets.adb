@@ -73,7 +73,8 @@ package body Ocarina.Property_Sets is
       O_Base_Types,
       O_Taste_Properties,
       O_ARINC653,
-      O_ASSERT_Properties);
+      O_ASSERT_Properties,
+      O_Replication_Properties);
 
    Ocarina_Property_Sets_Table : constant array
    (AADL_Version_Type) of Ocarina_Property_Set_Array_Access :=

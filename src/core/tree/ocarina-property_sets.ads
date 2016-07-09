@@ -58,7 +58,8 @@ package Ocarina.Property_Sets is
       O_ARINC653,
       O_Taste_Properties,
       O_ASSERT_Types,
-      O_ASSERT_Properties);
+      O_ASSERT_Properties,
+      O_Replication_Properties);
    --  The Ocarina property sets
 
    type Standard_Property_Set_Array_Type is
