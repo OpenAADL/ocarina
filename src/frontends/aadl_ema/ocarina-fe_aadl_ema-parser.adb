@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2016 ESA & ISAE.                       --
+--                   Copyright (C) 2015-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -289,7 +289,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Set_Error_Type_Library (Error_Model_Library, Error_Type_Library);
             if Present (Error_Type_Library) then
                Exist_Node_1 := True;
-               Put_Line ("Noeud 1 : Error_Type_Library");
             else
                return No_Node;
             end if;
@@ -320,9 +319,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Error_Behavior_State_Machine := P_Error_Behavior_State_Machine;
             Append_Node_To_List
             (Error_Behavior_State_Machine, Error_Behavior_State_Machine_List);
-            if Present (Error_Behavior_State_Machine) then
-               Put_Line ("Noeud 2 : Error_Behavior_State_Machine");
-            else
+            if No (Error_Behavior_State_Machine) then
                return No_Node;
             end if;
          else
@@ -366,7 +363,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Append_Node_To_List (Error_Type_Mappings,
             Error_Type_Mappings_List);
             if Present (Error_Type_Mappings) then
-               Put_Line ("Noeud 3 : Error_Type_Mappings");
                Exist_Node_3_Or_4 := True;
             else
                return No_Node;
@@ -400,7 +396,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Append_Node_To_List
             (Error_Type_Transformations, Error_Type_Transformations_List);
             if Present (Error_Type_Transformations) then
-               Put_Line ("Noeud 4 : Error_Type_Transformations");
                Exist_Node_3_Or_4 := True;
             else
                return No_Node;
@@ -484,9 +479,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Error_Type_Library_List_Used := P_Error_Type_Library_List_Used;
             Set_Error_Type_Library_List_Used
             (Error_Type_Library, Error_Type_Library_List_Used);
-            if Present (Error_Type_Library_List_Used) then
-               Put_Line ("Noeud 11 : Error_Type_Library_List_Used");
-            else
+            if No (Error_Type_Library_List_Used) then
                return No_Node;
             end if;
          else
@@ -510,9 +503,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
          := P_Error_Type_Library_List_Extended;
          Set_Error_Type_Library_List_Extended
          (Error_Type_Library, Error_Type_Library_List_Extended);
-         if Present (Error_Type_Library_List_Extended) then
-            Put_Line ("Noeud 12 : Error_Type_Library_List_Extended");
-         else
+         if No (Error_Type_Library_List_Extended) then
             return No_Node;
          end if;
       else
@@ -544,7 +535,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
       loop
          Append_Node_To_List
          (Error_Type_Library_Element, Error_Type_Library_Element_List);
-         Put_Line ("Noeud 13 : Error_Type_Library_Element");
          Save_Lexer (Loc);
          if Next_Token = T_End or else Next_Token = T_Properties then
             Restore_Lexer (Loc);
@@ -573,9 +563,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
          Scan_Token;
          Properties := P_EMV2_Properties_Section;
          Set_Properties (Error_Type_Library, Properties);
-         if Present (Properties) then
-            Put_Line ("Noeud 14 : Properties_Error_Type_Library");
-         else
+         if No (Properties) then
             return No_Node;
          end if;
       end if;
@@ -683,7 +671,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Set_Error_Type_Library_List
             (Error_Behavior_State_Machine, Error_Type_Library_List);
             if Present (Error_Type_Library_List) then
-               Put_Line ("Noeud 21 : Error_Type_Library_List");
                Test_Use_Types := True;
                Wait := False;
                --  The node 'use types' may exist once
@@ -722,8 +709,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
                Restore_Lexer (Loc);
                if Next = T_Semi_Colon then
                   Scan_Token;
-                  Put_Line ("Noeud 22 : " &
-                  "Error_Type_Transformation_Set_Reference");
                   Wait := False;
                else
                   Scan_Token;
@@ -760,7 +745,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
          if Present (Error_Behavior_Event_List) then
             Set_Error_Behavior_Event_List (Error_Behavior_State_Machine,
             Error_Behavior_Event_List);
-            Put_Line ("Noeud 23 : Error_Behavior_Event");
             Wait := False;
          else
             return No_Node;
@@ -780,7 +764,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
          Set_Error_Behavior_State_List (Error_Behavior_State_Machine,
          Error_Behavior_State_List);
          if Present (Error_Behavior_State_List) then
-            Put_Line ("Noeud 24 : Error_Behavior_State");
             Wait := False;
          else
             return No_Node;
@@ -801,7 +784,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
          Set_Error_Behavior_Transition_List (Error_Behavior_State_Machine,
          Error_Behavior_Transition_List);
          if Present (Error_Behavior_Transition_List) then
-            Put_Line ("Noeud 25 : Error_Behavior_Transition");
             Wait := False;
          else
             return No_Node;
@@ -821,7 +803,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
          Properties := P_EMV2_Properties_Section;
          Set_Properties (Error_Behavior_State_Machine, Properties);
          if Present (Properties) then
-            Put_Line ("Noeud 26 : Properties_Error_Behavior_State_Machine");
             Wait := False;
          else
             return No_Node;
@@ -911,9 +892,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Error_Type_Library_List := P_Error_Type_Library_List_Used;
             Set_Error_Type_Library_List
             (Error_Type_Mappings, Error_Type_Library_List);
-            if Present (Error_Type_Library_List) then
-               Put_Line ("Noeud 31 : Error_Type_Library_List");
-            else
+            if No (Error_Type_Library_List) then
                return No_Node;
             end if;
          else
@@ -940,7 +919,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
          if Present (Error_Type_Mapping) then
             Append_Node_To_List (Error_Type_Mapping,
             Error_Type_Mapping_List);
-            Put_Line ("Noeud 32 : Error_Type_Mapping");
          elsif Loc_Start /= Loc_End then
             return No_Node;
          end if;
@@ -1028,7 +1006,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
       if Present (Use_Error_Types) then
          Set_Use_Error_Types (Error_Type_Transformations,
          Use_Error_Types);
-         Put_Line ("Noeud 41 : Use_Error_Types");
       elsif Loc_Start /= Loc_End then
          return No_Node;
       end if;
@@ -1047,7 +1024,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
          if Present (Error_Type_Transformation) then
             Append_Node_To_List (Error_Type_Transformation,
             Error_Type_Transformation_List);
-            Put_Line ("Noeud 42 : Error_Type_Transformation");
          elsif Loc_Start /= Loc_End then
             return No_Node;
          end if;
@@ -1610,7 +1586,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
       if Is_Empty (Error_Behavior_State_List) then
          Scan_Token;
          DPE (PC_Error_Behavior_State, EMC_List_Is_Empty, "");
-         Put_Line ("Noeud 24");
          return No_List;
       end if;
 
@@ -4424,7 +4399,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
             else
                Set_Error_Type_Library_List (Annex_Subclause,
                Error_Type_Library_List);
-               Put_Line ("Noeud 1 : Error_Type_Library_List");
             end if;
          else
             if Next /= T_Type and then Next /= T_Mappings
@@ -4465,8 +4439,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
                   Set_Error_Type_Mappings_Reference_Equivalence
                   (Annex_Subclause,
                   Error_Type_Mappings_Reference_Equivalence);
-                  Put_Line ("Noeud 2 : " &
-                  "Error_Type_Mappings_Reference_Equivalence");
                end if;
             else
                Scan_Token;
@@ -4507,7 +4479,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
                Set_Error_Type_Mappings_Reference_Mappings
                (Annex_Subclause,
                Error_Type_Mappings_Reference_Mappings);
-               Put_Line ("Noeud 3 : Error_Type_Mappings_Reference_Mappings");
             end if;
          else
             if Next /= T_Behavior then
@@ -4546,8 +4517,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
                   Set_Error_Behavior_State_Machine_Reference
                   (Annex_Subclause,
                   Error_Behavior_State_Machine_Reference);
-                  Put_Line ("Noeud 4 : " &
-                  "Error_Behavior_State_Machine_Reference");
                else
                   Scan_Token;
                   DPE (PC_Error_Model_Component_Constructs,
@@ -4570,7 +4539,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
       if Present (Error_Propagations) then
          Set_Error_Propagations (Annex_Subclause,
          Error_Propagations);
-         Put_Line ("Noeud 5 : Error_Propagations");
       elsif Loc_Before /= Loc_After then
          return No_Node;
       end if;
@@ -4582,7 +4550,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
       if Present (Component_Error_Behavior) then
          Set_Component_Error_Behavior (Annex_Subclause,
          Component_Error_Behavior);
-         Put_Line ("Noeud 6 : Component_Error_Behavior");
       elsif Loc_Before /= Loc_After then
          return No_Node;
       end if;
@@ -4594,7 +4561,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
       if Present (Composite_Error_Behavior) then
          Set_Composite_Error_Behavior (Annex_Subclause,
          Composite_Error_Behavior);
-         Put_Line ("Noeud 7 : Composite_Error_Behavior");
       elsif Loc_Before /= Loc_After then
          return No_Node;
       end if;
@@ -4606,7 +4572,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
       if Present (Connection_Error_Behavior) then
          Set_Connection_Error_Behavior (Annex_Subclause,
          Connection_Error_Behavior);
-         Put_Line ("Noeud 8 : Connection_Error_Behavior");
       elsif Loc_Before /= Loc_After then
          return No_Node;
       end if;
@@ -4618,7 +4583,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
       if Present (Propagation_Paths) then
          Set_Propagation_Paths (Annex_Subclause,
          Propagation_Paths);
-         Put_Line ("Noeud 9 : Propagation_Paths");
       elsif Loc_Before /= Loc_After then
          return No_Node;
       end if;
