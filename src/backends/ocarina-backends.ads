@@ -91,6 +91,10 @@ package Ocarina.Backends is
    --  set in the command line. If the backend name and the current
    --  backend name are set, backend name has the priority.
 
+   function Get_Backend (Backend_Name : Name_Id := No_Name) return Natural;
+   --  Return the index of the backend corresponding to the given
+   --  name. 0 means no backend was found.
+
    procedure Init;
    --  Initialize the Backends module by registering the several
    --  implemented code generators.

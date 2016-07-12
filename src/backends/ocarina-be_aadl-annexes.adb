@@ -80,7 +80,13 @@ package body Ocarina.BE_AADL.Annexes is
 
       case AADL_Version is
          when AADL_V2 =>
-            if Present (Corresponding_Annex (Node)) then
+            if Present (Corresponding_Annex (Node))
+              and then Get_Backend (Name (Identifier (Node))) /= 0
+            then
+               --  Pretty print Annexe if we can parse them and if
+               --  there is a pretty printer. Should one of these two
+               --  condition fail, we fall back to dumping raw text.
+
                Print_Token (T_Begin_Annex);
                Generate_Code
                  (Corresponding_Annex (Node),

@@ -100,15 +100,12 @@ package body Ocarina.FE_AADL.Parser.Annexes is
                Namespace);
          end if;
 
-         --  Do not display error message if No_Node because if there are
-         --  errors when annex parsing, errors messages were already displaying
-         --  so continue to parse AADL_Specification and just raise a warning
+         --  Keep the raw text of the annex in case we do not have a
+         --  pretty printer for the current annex.
 
-         if No (Annex_Root) then
-            Restore_Lexer (Loc_Start_Annex);
-            Scan_Raw_Text (T_End_Annex);
-            Annex_Content := Raw_Text_Value;
-         end if;
+         Restore_Lexer (Loc_Start_Annex);
+         Scan_Raw_Text (T_End_Annex);
+         Annex_Content := Raw_Text_Value;
 
          Scan_Token;
          if Token /= T_End_Annex then

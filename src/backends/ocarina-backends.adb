@@ -115,25 +115,21 @@ package body Ocarina.Backends is
       --  given in the instance root system.
 
       if Backend_Name /= No_Name then
-         for B in Backend_Table.First .. Backend_Table.Last loop
-            if Backend_Table.Table (B).Name = Backend_Name then
-               Current_Backend      := B;
-               Current_Backend_Kind := Backend_Table.Table (B).Kind;
-               exit;
-            end if;
-         end loop;
+         Current_Backend :=  Get_Backend (Backend_Name);
+
+         if Current_Backend /= 0 then
+            Current_Backend_Kind := Backend_Table.Table (Current_Backend).Kind;
+         end if;
 
       elsif Current_Backend_Name = No_Name then
          Display_Error ("No backend name specified", Fatal => True);
 
       else
-         for B in Backend_Table.First .. Backend_Table.Last loop
-            if Backend_Table.Table (B).Name = Current_Backend_Name then
-               Current_Backend      := B;
-               Current_Backend_Kind := Backend_Table.Table (B).Kind;
-               exit;
-            end if;
-         end loop;
+         Current_Backend :=  Get_Backend (Current_Backend_Name);
+
+         if Current_Backend /= 0 then
+            Current_Backend_Kind := Backend_Table.Table (Current_Backend).Kind;
+         end if;
       end if;
 
       if Current_Backend = 0 then
@@ -150,6 +146,26 @@ package body Ocarina.Backends is
       when E : others =>
          Errors.Display_Bug_Box (E);
    end Generate_Code;
+
+   -----------------
+   -- Get_Backend --
+   -----------------
+
+   function Get_Backend (Backend_Name : Name_Id := No_Name) return Natural is
+      Current_Backend : Natural := 0;
+   begin
+      if Backend_Name /= No_Name then
+         for B in Backend_Table.First .. Backend_Table.Last loop
+
+            if Backend_Table.Table (B).Name = Backend_Name then
+               Current_Backend      := B;
+               exit;
+            end if;
+         end loop;
+      end if;
+
+      return Current_Backend;
+   end Get_Backend;
 
    ------------------------------
    -- Get_Current_Backend_Kind --
