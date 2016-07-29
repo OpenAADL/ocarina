@@ -1,0 +1,5 @@
+
+theorem check_scheduling
+      foreach e in system_set do
+      check(1=1);
+      end check_scheduling;
