@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -36,11 +36,11 @@ with Ocarina.AADL_Values;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
-with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.AADL_XML.Mapping;
+with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.AADL_XML.Main is
 
@@ -49,14 +49,14 @@ package body Ocarina.Backends.AADL_XML.Main is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.AADL_XML.Mapping;
+   use Ocarina.Backends.Utils;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    use type ATN.Node_Kind;
 
    procedure Visit_Component (E : Node_Id);
-   procedure Visit_Subcomponents_Of (E : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    function Map_Component (E : Node_Id) return Node_Id;
 
@@ -125,24 +125,6 @@ package body Ocarina.Backends.AADL_XML.Main is
 
       return N;
    end Map_Component;
-
-   ----------------------------
-   -- Visit_Subcomponents_Of --
-   ----------------------------
-
-   procedure Visit_Subcomponents_Of (E : Node_Id) is
-      S : Node_Id;
-   begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
-   end Visit_Subcomponents_Of;
 
    Root_System_Node : Node_Id := No_Node;
    AADL_XML_Node    : Node_Id := No_Node;

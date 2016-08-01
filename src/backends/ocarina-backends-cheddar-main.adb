@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -31,11 +31,11 @@
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Cheddar.Mapping;
+with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.Cheddar.Main is
 
@@ -44,8 +44,8 @@ package body Ocarina.Backends.Cheddar.Main is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Cheddar.Mapping;
+   use Ocarina.Backends.Utils;
 
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
    procedure Visit_Component (E : Node_Id);
@@ -54,26 +54,7 @@ package body Ocarina.Backends.Cheddar.Main is
    procedure Visit_Thread (E : Node_Id);
    procedure Visit_Process (E : Node_Id);
    procedure Visit_Data (E : Node_Id);
-
-   ----------------------------
-   -- Visit_Subcomponents_Of --
-   ----------------------------
-
-   procedure Visit_Subcomponents_Of (E : Node_Id);
-
-   procedure Visit_Subcomponents_Of (E : Node_Id) is
-      S : Node_Id;
-   begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
-   end Visit_Subcomponents_Of;
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    Root_System_Node  : Node_Id := No_Node;
    Cheddar_Node      : Node_Id := No_Node;
