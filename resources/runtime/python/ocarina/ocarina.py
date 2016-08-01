@@ -88,7 +88,7 @@ def set_real_theorem (theorem_name):
 def add_real_library (libraryname):
     '''
 
-    :param libraryname: name of the theorem
+    :param libraryname: name of the REAL library file to include
     :type libraryname: string
 
     '''

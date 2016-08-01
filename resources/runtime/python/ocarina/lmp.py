@@ -285,4 +285,3 @@ def getRoot ():
     '''
 
     return runOcarinaFunction (libocarina_python.getRoot)
-
