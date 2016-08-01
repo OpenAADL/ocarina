@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2014-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2014-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -126,8 +126,8 @@ package body Ocarina.Backends.Alloy is
               (Get_Name_String
                  (Normalize_Name (Fully_Qualified_Instance_Name (E)))) &
             " extends Component{}{");
+
       else
-         Put_Line (Kind (E)'Img);
          Root_System_Name := Normalize_Name (Display_Name (Identifier (E)));
 
          Put_Line
@@ -135,7 +135,6 @@ package body Ocarina.Backends.Alloy is
             "one sig " &
             To_Lower (Get_Name_String (Root_System_Name)) &
             " extends Component{}{");
-
       end if;
 
       Put_Line
@@ -172,7 +171,7 @@ package body Ocarina.Backends.Alloy is
          Put_Line (FD, "none");
       end if;
 
-      --  Rule#3: list properties
+      --  Rule #3: list properties
 
       Put (FD, ASCII.HT & "properties=");
       if Present (AIN.Properties (E)) then
