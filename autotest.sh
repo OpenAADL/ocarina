@@ -110,6 +110,16 @@ output_file=${workdir}/`mktemp file.XXXXXX`
 # his own path converter (such as 'cygpath -w').
 path_conv="${path_conv-echo}"
 
+case "$(uname -s)" in
+    CYGWIN*)
+	path_conv="cygpath -w"
+	;;
+    MINGW32*|MSYS*)
+	echo "Unsupported build configuration"
+	exit -1
+	;;
+esac
+
 # The default value of the path separator is ':'. By default we use
 # the UNIX path separator. The user may override this value by
 # providing his own path separator (such as ';' for windows
