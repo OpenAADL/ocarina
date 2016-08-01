@@ -35,6 +35,15 @@ package Ocarina.Backends.Utils is
 
    type Browsing_Kind is (By_Source, By_Destination, Default);
 
+   ------------------
+   --  AST visitor --
+   ------------------
+
+   generic
+      with procedure Visit (E : Node_Id);
+   procedure Visit_Subcomponents_Of_G (E : Node_Id);
+   --  Visit the component instance corresponding to the subcomponents of E
+
    --------------------------
    -- Directory Operations --
    --------------------------

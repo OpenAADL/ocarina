@@ -3868,9 +3868,9 @@ package body Ocarina.Backends.Utils is
       return False;
    end Process_Use_Defaults_Sockets;
 
-   --------------------------
-   --  Get_Associated_Bus  --
-   --------------------------
+   -------------------------
+   -- Get_Associated_Bus --
+   -------------------------
 
    function Get_Associated_Bus (Port : Node_Id) return Node_Id is
       C               : Node_Id;
@@ -4047,5 +4047,25 @@ package body Ocarina.Backends.Utils is
 
       return Core_Id;
    end Get_Core_Id;
+
+   ------------------------------
+   -- Visit_Subcomponents_Of_G --
+   ------------------------------
+
+   procedure Visit_Subcomponents_Of_G (E : Node_Id) is
+      package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+
+      S : Node_Id;
+   begin
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+            Visit (Corresponding_Instance (S));
+            S := Next_Node (S);
+         end loop;
+      end if;
+   end Visit_Subcomponents_Of_G;
 
 end Ocarina.Backends.Utils;
