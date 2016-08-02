@@ -60,33 +60,13 @@ It relies on bash constructs to coordinate various activities to:
 - run Ocarina testsuites, and eventually collect coverage metrics
 
 To install this script, simply clone the repository and run the
-script. Here is an excerpt from its command-line interface.
-
-```
-Usage: ./build_ocarina.sh [switches]
- -u : update source directory
- -s : reset source directory (needs -u)
- -h : print usage
- -d : debug traces
-
- -b : build Ocarina
- -c : build Ocarina with coverage on (needs -b or -t)
- -g : build Ocarina with debug on (needs -b)
- -p : package Ocarina
- -t : run tests
-```
+script. Use `build_ocarina.sh -h` to access its help.
 
 * The following command gets a fresh copy of Ocarina source code:
-
-```
-./build_ocarina.sh -s -u
-```
+  `./build_ocarina.sh -s -u`
 
 * The following command compiles and installs Ocarina:
-
-```
-./build_ocarina.sh -b
-```
+  `./build_ocarina.sh -b`
 
 Manual build instructions
 #########################
