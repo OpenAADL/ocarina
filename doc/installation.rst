@@ -48,7 +48,7 @@ Optional components:
 Semi-automated build instructions
 #################################
 
-The [ocarina-build](https://github.com/OpenAADL/ocarina-build/)
+The `ocarina-build https://github.com/OpenAADL/ocarina-build/`_
 repository proposes a script, `build_ocarina.sh`, to get source code,
 compile and test Ocarina.
 
