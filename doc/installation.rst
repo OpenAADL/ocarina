@@ -62,11 +62,13 @@ It relies on bash constructs to coordinate various activities to:
 To install this script, simply clone the repository and run the
 script. Use `build_ocarina.sh -h` to access its help.
 
-* The following command gets a fresh copy of Ocarina source code:
-  `./build_ocarina.sh -s -u`
+* The following command gets a fresh copy of Ocarina source code::
 
-* The following command compiles and installs Ocarina:
-  `./build_ocarina.sh -b`
+  % ./build_ocarina.sh -s -u
+
+* The following command compiles and installs Ocarina::
+
+  % ./build_ocarina.sh -b
 
 Manual build instructions
 #########################
