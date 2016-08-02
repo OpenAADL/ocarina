@@ -14,8 +14,8 @@ Ocarina has been compiled and successfully tested on the following platforms:
 * Mac OS X
 * Windows
 
-.. note:: Ocarina should compile and run on every target for which GNAT is available.
-
+.. note:: Ocarina should compile and run on every target for which
+          GNAT is available.
 
 Build requirements
 ##################
@@ -33,6 +33,8 @@ An Ada compiler:
 
 .. note:: Ocarina requires at least GCC/FSF 5.2 or GNAT GPL 2015.
 
+* autoconf, automake, GNU Make, python
+
 Optional components:
 
 * GNATColl for the Ocarina Python bindings
@@ -43,8 +45,51 @@ Optional components:
 * MAST for scheduling analysis (:code:`mast` backend)
 * RTOS supported by one of the Ocarina runtimes
 
-Build instructions
-##################
+Semi-automated build instructions
+#################################
+
+The [ocarina-build](https://github.com/OpenAADL/ocarina-build/)
+repository proposes a script, `build_ocarina.sh`, to get source code,
+compile and test Ocarina.
+
+It relies on bash constructs to coordinate various activities to:
+
+- fetch Ocarina source, with its runtimes PolyORB-HI/Ada and
+  PolyORB-HI/C
+- compile Ocarina, and install it in a local directory
+- run Ocarina testsuites, and eventually collect coverage metrics
+
+To install this script, simply clone the repository and run the
+script. Here is an excerpt from its command-line interface.
+
+```
+Usage: ./build_ocarina.sh [switches]
+ -u : update source directory
+ -s : reset source directory (needs -u)
+ -h : print usage
+ -d : debug traces
+
+ -b : build Ocarina
+ -c : build Ocarina with coverage on (needs -b or -t)
+ -g : build Ocarina with debug on (needs -b)
+ -p : package Ocarina
+ -t : run tests
+```
+
+* The following command gets a fresh copy of Ocarina source code:
+
+```
+./build_ocarina.sh -s -u
+```
+
+* The following command compiles and installs Ocarina:
+
+```
+./build_ocarina.sh -b
+```
+
+Manual build instructions
+#########################
 
 To compile and install Ocarina, execute in a shell::
 
@@ -135,3 +180,25 @@ User's Guide for more details.
    should be done after each update from the repository. In addition
    to the requirements above, they will need autoconf 2.57 or newer,
    automake 1.6.3 or newer.
+
+Windows-specific options
+########################
+
+Ocarina relies on autotools script to compile, and then on Python for
+testing and running regression testing. Such setting is unusual for
+Windows and requires additional tools.
+
+The recommended set of tools for compiling Ocarina under Windows
+(tested on Windows 7) is to
+
+* install Cygwin, and use its terminal for running all compilation scripts
+
+* install autoconf, automake and GNU Make
+
+* install native gcc, this compiler is used for compiling `mknodes`
+
+* install `x86_64-w64-mingw32` gcc tool-chain, this compiler is used
+  to "cross-compile" from cygwin to regular Windows.
+
+.. note:: It is highly recommended to rely on the `build_ocarina.sh`
+   script for the Windows platform.
