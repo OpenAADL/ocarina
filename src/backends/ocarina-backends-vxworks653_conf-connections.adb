@@ -207,6 +207,10 @@ package body Ocarina.Backends.Vxworks653_Conf.Connections is
    begin
       Corresponding_Process := Find_Associated_Process (E);
 
+      if AINU.Is_Empty (Features (Corresponding_Process)) then
+         return;
+      end if;
+
       Feature := First_Node (Features (Corresponding_Process));
 
       while Present (Feature) loop

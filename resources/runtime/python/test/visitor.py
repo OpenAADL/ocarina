@@ -31,6 +31,8 @@ args = sys.argv[1:]
 
 import ocarina
 import lmp
+from ocarina_common_tools import *
+import libocarina_python
 
 def visitor (component, level):
     """
@@ -49,14 +51,15 @@ def visitor (component, level):
     if features is not None :
         print ' ' * level,' -> features:',features
         for feature in features :
-            print ' ' * level,'   -> ',feature,",",lmp.getInstanceName(feature)[0]
+            print ' ' * level,'   -> feature:',feature,', ',lmp.getInstanceName(feature)[0]
+            print ' ' * level,'      source feature: ', lmp.getInstanceName(ocarina.getSourcePorts(feature)[0])[0]
+            print ' ' * level,'      destination feature: ', lmp.getInstanceName(ocarina.getDestinationPorts(feature)[0])[0]
 
     properties = ocarina.AIN.Properties(component)[0];
     if properties is not None :
         print ' ' * level,' -> properties:'
         for property in properties:
             print ' ' * level,'   ',ocarina.getPropertyValue(component,property)[0]
-            print '[looking for priority] ' * level,'   ',ocarina.getPropertyValueByName(component,u'priority')[0]
 
     subcomponents=ocarina.AIN.Subcomponents(component)[0];
     if subcomponents is not None :

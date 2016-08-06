@@ -3161,7 +3161,6 @@ package body Ocarina.Backends.Utils is
          end if;
 
          N := Next_Node (N);
-
       end loop;
 
       return Return_Value;
@@ -3648,9 +3647,9 @@ package body Ocarina.Backends.Utils is
       return False;
    end Is_Pure_Device_Port;
 
-   ----------------------------
-   --  Is_Using_Virtual_Bus  --
-   ----------------------------
+   ---------------------------
+   -- Is_Using_Virtual_Bus  --
+   ---------------------------
 
    function Is_Using_Virtual_Bus (Port : Node_Id) return Boolean is
 
