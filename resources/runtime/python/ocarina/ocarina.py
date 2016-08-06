@@ -122,6 +122,26 @@ def getPropertyValue (nodeId,propertyId):
 ################################################################################
 
 def getPropertyValueByName (nodeId,propertyString):
-    '''Get the value of the property
+    '''Get the value of the property propertyString applied to model
+       element nodeId.
     '''
     return runOcarinaFunction (libocarina_python.getPropertyValueByName, nodeId, propertyString)
+
+################################################################################
+
+def getSourcePorts (feature_nodeId):
+    '''Get the source port associated to the feature_nodeId passed as
+       parameter, in the case feature_nodeId participates in a
+       connection.
+    '''
+    return runOcarinaFunction (libocarina_python.getSourcePorts, nodeId)
+
+################################################################################
+
+def getDestinationPorts (nodeId):
+    '''Get the destination port associated to the feature_nodeId passed as
+       parameter, in the case feature_nodeId participates in a
+       connection.
+    '''
+
+    return runOcarinaFunction (libocarina_python.getDestinationPorts, nodeId)
