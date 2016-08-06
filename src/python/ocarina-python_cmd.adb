@@ -867,6 +867,8 @@ package body Ocarina.Python_Cmd is
       Ocarina.Initialize;
       Default_AADL_Version := Get_Default_AADL_Version;
       AADL_Version         := Ocarina.AADL_V2;
+      Auto_Load_Aadl_Files := True;
+
       Ocarina.Configuration.Init_Modules;
       Errors.Use_Exception_To_Exit;
 
