@@ -34,10 +34,9 @@ pragma Warnings (Off);
 
 with GNATCOLL.Scripts;           use GNATCOLL.Scripts;
 with GNATCOLL.Scripts.Python;    use GNATCOLL.Scripts.Python;
+with GNATCOLL.VFS;               use GNATCOLL.VFS;
 
 with Ocarina.Configuration;      use Ocarina.Configuration;
-
-with GNATCOLL.VFS;               use GNATCOLL.VFS;
 with Ocarina.Output;             use Ocarina.Output;
 
 with Errors;
@@ -50,14 +49,18 @@ with Ocarina.ME_AADL.AADL_Tree.Entities;
 
 with Ocarina.Namet; use Ocarina.Namet;
 with Ocarina.Backends.Properties.Utils;
+with Ocarina.Backends.Utils;     use Ocarina.Backends.Utils;
 with GNAT.Os_Lib; use GNAT.Os_Lib;
+with Ocarina.ME_AADL.AADL_Instances.Nutils;
+with Ocarina.ME_AADL.AADL_Instances.Nodes;
+use Ocarina.ME_AADL.AADL_Instances.Nodes;
 
 package body Ocarina.Python_Cmd is
 
    package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package ATNP renames Ocarina.ME_AADL.AADL_Tree.Nodes.Python;
    package AINP renames Ocarina.ME_AADL.AADL_Instances.Nodes.Python;
-
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    procedure Get_Node_Id (Data : in out Callback_Data'Class; N : String);
    procedure Get_Property_Value (Data : in out Callback_Data'Class;
       PropId : String; PropName : String);
@@ -100,6 +103,8 @@ package body Ocarina.Python_Cmd is
       for Elt of Result loop
          Set_Return_Value (Data, Elt.all);
       end loop;
+
+      --  XXX shoudl free Result
    end Get_Property_Value_By_Name;
 
    -----------------
@@ -653,6 +658,54 @@ package body Ocarina.Python_Cmd is
          Node_Id (Integer'Value (Nth_Arg (Data, 1, ""))));
    end On_Get_Instance_Name;
 
+   -------------------------
+   -- On_Get_Source_Ports --
+   -------------------------
+
+   procedure On_Get_Source_Ports
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Source_Ports
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+      N : constant Node_Id := Node_Id (Integer'Value (Nth_Arg (Data, 1, "")));
+      Result : List_Id;
+
+   begin
+      if not AINU.Is_Empty (Sources (N)) then
+         Result := Ocarina.Backends.Utils.Get_Source_Ports (N);
+         Set_Return_Value (Data, Item (First_Node (Result))'Img);
+      else
+         Set_Return_Value (Data, Integer'Image (0));
+      end if;
+   end On_Get_Source_Ports;
+
+   ------------------------------
+   -- On_Get_Destination_Ports --
+   ------------------------------
+
+   procedure On_Get_Destination_Ports
+     (Data : in out Callback_Data'Class; Command : String);
+
+   procedure On_Get_Destination_Ports
+     (Data : in out Callback_Data'Class;
+      Command : String)
+   is
+      pragma Unreferenced (Command);
+      N : constant Node_Id := Node_Id (Integer'Value (Nth_Arg (Data, 1, "")));
+      Result : List_Id;
+
+   begin
+      if not AINU.Is_Empty (Destinations (N)) then
+         Result := Ocarina.Backends.Utils.Get_Destination_Ports (N);
+         Set_Return_Value (Data, Item (First_Node (Result))'Img);
+      else
+         Set_Return_Value (Data, Integer'Image (0));
+      end if;
+   end On_Get_Destination_Ports;
+
    ------------------------------------
    -- Register_Scripts_And_Functions --
    ------------------------------------
@@ -838,6 +891,16 @@ package body Ocarina.Python_Cmd is
       Register_Command
         (Repo, "getNodeId", 1, 1,
          Handler => On_Get_Node_Id'Unrestricted_Access);
+
+      --  getSourcePorts() function
+      Register_Command
+        (Repo, "getSourcePorts", 1, 1,
+         Handler => On_Get_Source_Ports'Unrestricted_Access);
+
+      --  getDestinationPorts() function
+      Register_Command
+        (Repo, "getDestinationPorts", 1, 1,
+         Handler => On_Get_Destination_Ports'Unrestricted_Access);
 
       --  Register functions generated from AADL declarative and
       --  instance trees
