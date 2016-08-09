@@ -4026,17 +4026,19 @@ package body Ocarina.Backends.Utils is
 
    function Get_Core_Id (D : Node_Id) return Unsigned_Long_Long is
       pragma Assert (Is_Thread (D));
-      Core_Id : Unsigned_Long_Long;
+      Core_Id : Unsigned_Long_Long := 0;
 
    begin
       --  First, we check the container process is associated to a
       --  core. This is the case when we want to allocate one process
       --  to a core.
 
-      Core_Id :=
-        Properties.Get_Core_Id
-          (Get_Bound_Processor
-             (Corresponding_Instance (Get_Container_Process (D))));
+      if Present (Get_Container_Process (D)) then
+         Core_Id :=
+           Properties.Get_Core_Id
+           (Get_Bound_Processor
+              (Corresponding_Instance (Get_Container_Process (D))));
+      end if;
 
       --  Then, we check whether the thread is directly bound to a core
 
