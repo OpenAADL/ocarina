@@ -77,6 +77,7 @@ property set AADL_Project is
      Simulink,
      Simulink_6_5,
      System_C,
+     VDM,
      VHDL,
      ACN,
      QGenC,
