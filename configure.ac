@@ -419,6 +419,7 @@ AC_OUTPUT([
 	resources/behavioural_properties/Makefile
 	resources/runtime/Makefile
 	resources/runtime/aadl_xml/Makefile
+	resources/runtime/alloy/Makefile
 	resources/runtime/cheddar/Makefile
 	resources/runtime/python/Makefile
 	projects/ocarina.gpr
