@@ -244,7 +244,7 @@ package body Ocarina.Backends.Alloy is
       Put_Line (FD, "// DO NOT EDIT IT");
       New_Line (FD);
       Put_Line (FD, "module con_model");
-      Put_Line (FD, "open alloy/common/lib_sig");
+      Put_Line (FD, "open lib/data_structure");
       New_Line (FD);
 
       --  Visit instance model
