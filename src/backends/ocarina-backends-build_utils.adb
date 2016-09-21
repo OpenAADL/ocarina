@@ -1395,9 +1395,9 @@ package body Ocarina.Backends.Build_Utils is
 
             if Is_Directory (Get_Name_String (Dir_Name)) then
                --  We create a makefile iff. the current system is the
-               --  root system. In the case of ther system, e.g. case
-               --  of a deep hierarchy with systems inside systems, no
-               --  source has been generated.
+               --  root system. In the case of other systems,
+               --  e.g. case of a deep hierarchy with systems inside
+               --  systems, no source has been generated.
 
                Enter_Directory (Dir_Name);
 
@@ -1602,9 +1602,9 @@ package body Ocarina.Backends.Build_Utils is
             PID        : Unsigned_Long_Long := 0;
          begin
 
-         --  The following part is very specific to PolyORB-HI-C and especially
-         --  to the code generator for Xtratum. It creates a Makefile to make
-         --  the final Makefile that integrates all partitions together.
+            --  The following part is very specific to PolyORB-HI-C and especially
+            --  to the code generator for Xtratum. It creates a Makefile to make
+            --  the final Makefile that integrates all partitions together.
 
             if Get_Current_Backend_Kind /= PolyORB_HI_C then
                return;
@@ -1649,7 +1649,10 @@ package body Ocarina.Backends.Build_Utils is
             Write_Line ("###################################################");
             Write_Eol;
 
-            Write_Line ("RUNTIME_PATH=" & Get_Runtime_Path ("polyorb-hi-c"));
+            --  The following syntax esapces whitespace in the path
+            Write_Line ("RUNTIME_PATH=$(shell echo """
+                          & Get_Runtime_Path ("polyorb-hi-c")
+                          & """ | sed 's/ /\\ /g')");
 
             Write_Eol;
 

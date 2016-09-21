@@ -290,7 +290,10 @@ package body Ocarina.Backends.PO_HI_C is
          Write_Eol;
       end if;
 
-      Write_Line ("RUNTIME_PATH=" & Get_Runtime_Path ("polyorb-hi-c"));
+      --  The following syntax esapces whitespace in the path
+      Write_Line ("RUNTIME_PATH=$(shell echo """
+                    & Get_Runtime_Path ("polyorb-hi-c")
+                    & """ | sed 's/ /\\ /g')");
 
       Write_Str ("USER_SOURCES_DIRS=");
       if Length (User_Source_Dirs) > 0 then
