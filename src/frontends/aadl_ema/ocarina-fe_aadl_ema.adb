@@ -54,13 +54,4 @@ package body Ocarina.FE_AADL_EMA is
       null;
    end Reset;
 
-   -----------
-   -- Usage --
-   -----------
-
-   procedure Usage is
-   begin
-      null;
-   end Usage;
-
 end Ocarina.FE_AADL_EMA;
