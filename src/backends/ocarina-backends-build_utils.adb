@@ -1602,9 +1602,10 @@ package body Ocarina.Backends.Build_Utils is
             PID        : Unsigned_Long_Long := 0;
          begin
 
-            --  The following part is very specific to PolyORB-HI-C and especially
-            --  to the code generator for Xtratum. It creates a Makefile to make
-            --  the final Makefile that integrates all partitions together.
+            --  The following part is very specific to PolyORB-HI-C
+            --  and especially to the code generator for Xtratum. It
+            --  creates a Makefile to make the final Makefile that
+            --  integrates all partitions together.
 
             if Get_Current_Backend_Kind /= PolyORB_HI_C then
                return;
