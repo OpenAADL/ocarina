@@ -254,10 +254,6 @@ package body Ocarina.FE_AADL_EMA.Lexer is
 
          end case;
       end loop;
-      --  Ada.Text_IO.Put_Line (Token'Img & "       " & Image (Token) &
-      --  "     " Current_Token_Image);
-      --  Sert au test de lexer
-
    end Scan_Token;
 
    -------------------------------

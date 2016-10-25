@@ -29,7 +29,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Text_IO;   use Ada.Text_IO;
 with Locations;
 
 with Ocarina.FE_AADL_BA.Lexer;
@@ -190,10 +189,6 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
       --  scanning node 1
       Save_Lexer (Loc);
       Scan_Token;
-
-      if Token = T_END_ANNEX then
-         Put_Line ("Warning : Empty Annex : Behavior Specification ");
-      end if;
 
       if Token = T_Variables then
          Behavior_Variables := P_Elements_List (P_Behavior_Variable'Access,
