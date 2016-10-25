@@ -1,0 +1,129 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P ZX
+
+RN
+RV NO_INITIALIZE_SCALARS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV SPARK_05
+
+U ocarina.instances.real_checker.queries.predicates%b  ocarina-instances-real_checker-queries-predicates.adb  b367a4a8 NE OO PK GE IS
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.instances%s	ocarina-instances.adb	ocarina-instances.ali
+W ocarina.instances.finder%s  ocarina-instances-finder.adb  ocarina-instances-finder.ali
+W ocarina.instances.real_checker.queries%s  ocarina-instances-real_checker-queries.adb  ocarina-instances-real_checker-queries.ali
+W ocarina.me_aadl%s	ocarina-me_aadl.ads	ocarina-me_aadl.ali
+W ocarina.me_aadl.aadl_instances%s  ocarina-me_aadl-aadl_instances.ads  ocarina-me_aadl-aadl_instances.ali
+W ocarina.me_aadl.aadl_instances.nodes%s  ocarina-me_aadl-aadl_instances-nodes.adb  ocarina-me_aadl-aadl_instances-nodes.ali
+W ocarina.me_aadl.aadl_tree%s  ocarina-me_aadl-aadl_tree.ads  ocarina-me_aadl-aadl_tree.ali
+W ocarina.me_aadl.aadl_tree.nodes%s  ocarina-me_aadl-aadl_tree-nodes.adb  ocarina-me_aadl-aadl_tree-nodes.ali
+
+U ocarina.instances.real_checker.queries.predicates%s  ocarina-instances-real_checker-queries-predicates.ads  d99dc10b BN EE NE OO PK GE IS
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.instances.real_checker.queries%s  ocarina-instances-real_checker-queries.adb  ocarina-instances-real_checker-queries.ali
+W ocarina.types%s	ocarina-types.adb	ocarina-types.ali
+
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-dyntab.ads		20140225151544 07ce153b gnat.dynamic_tables%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-instances.ads	20160902084437 bb3c6dea ocarina.instances%s
+D ocarina-instances-finder.ads  20160902084437 0f5ea3aa ocarina.instances.finder%s
+D ocarina-instances-real_checker.ads  20160902084437 e5b8ed1a ocarina.instances.real_checker%s
+D ocarina-instances-real_checker-queries.ads  20160902084437 0b515f62 ocarina.instances.real_checker.queries%s
+D ocarina-instances-real_checker-queries-predicates.ads  20160902084437 3255bf32 ocarina.instances.real_checker.queries.predicates%s
+D ocarina-instances-real_checker-queries-predicates.adb  20160902084437 587eb982 ocarina.instances.real_checker.queries.predicates%b
+D ocarina-me_aadl.ads	20160902084437 debca36c ocarina.me_aadl%s
+D ocarina-me_aadl-aadl_instances.ads  20160902084437 8883fa2d ocarina.me_aadl.aadl_instances%s
+D ocarina-me_aadl-aadl_instances-nodes.ads  20160902084801 a82a3b03 ocarina.me_aadl.aadl_instances.nodes%s
+D ocarina-me_aadl-aadl_tree.ads  20160902084437 7b68b93a ocarina.me_aadl.aadl_tree%s
+D ocarina-me_aadl-aadl_tree-nodes.ads  20160902084801 7e383ab1 ocarina.me_aadl.aadl_tree.nodes%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 2 g-dyntab.ads
+92A9*Table_Type(17|195I9)<integer>
+94A12*Big_Table_Type{92A9[9|159]}<integer>
+103P9*Table_Ptr(94A12[9|159])
+111R9*Instance
+112p7*Table{103P9[9|159]} 11|89r27[9|159] 89r28[9|159] 90r32[9|159] 90r33[9|159]
+122U14*Init 11|52s7[9|159] 86s7[9|159]
+127V13*Last{integer} 11|88s25[9|159]
+144i4*First{integer} 11|88r16[9|159]
+164U14*Append 11|61s13[9|159] 69s13[9|159] 90s13[9|159]
+X 5 ocarina.ads
+32K9*Ocarina 61e12 10|32r6 35r33 37r9 48r5 11|32r6 33r6 34r6 36r14 37r8 40r24
+. 41r24 48r11 97r5
+X 6 ocarina-instances.ads
+34K17*Instances 5|32k9 6|105e22 10|37r17 48r13 11|34r14 36r22 37r16 97r13
+X 7 ocarina-instances-finder.ads
+34K27*Finder 77e29 11|34w24 37r26
+62U14*Find_All_Instances 11|54s7
+70U14*Find_All_Flows 11|66s7
+X 8 ocarina-instances-real_checker.ads
+32K27*REAL_Checker 6|34k17 8|50e35 10|37r27 48r23 11|36r32 97r23
+X 9 ocarina-instances-real_checker-queries.ads
+35K40*Queries 8|32k27 9|168e43 10|37r40 48r36 11|36r45 97r36
+37R9*Result_Set<2|111R9[159]> 10|39r54 44r13 44r32 11|47r54 49r16 82r13 82r32
+. 84r16
+154i4*Root_Instance{17|195I9} 11|55r10 66r23
+159K12 Set[2|58] 11|38r8
+X 10 ocarina-instances-real_checker-queries-predicates.ads
+35V18 Predicate{boolean} 35>29 11|60s13 68s13 89s13
+35i29 E{17|195I9}
+37k48*Predicates 9|35k40 10|35z18 48l44 48e54 11|36b53 97l44 97t54
+39V13*Get_Instances_Verifying_Predicate{9|37R9} 11|47b13 75l8 75t41
+43V13*Get_Instances_Verifying_Predicate{9|37R9} 44>7 11|81b13 95l8 95t41
+44r7 Set{9|37R9} 11|82b7 88r31 89r24 90r29
+X 11 ocarina-instances-real_checker-queries-predicates.adb
+40K12 AIN=40:55 63r22
+41K12 ATN=41:50 71r22
+49r7 Result{9|37R9} 52m13 52r13 61m21 61r21 69m21 69r21 74r14
+50r7 EL{17|211R9} 57m10 57r10 58m10 58r10 59r22 60r24 61r29 63m10 63r39 66m38
+. 66r38 66m48 66r48 67r22 68r24 69r29 71m10 71r39
+84r7 Result{9|37R9} 86m13 86r13 90m21 90r21 94r14
+88i11 N{integer} 89r35 90r40
+X 12 ocarina-me_aadl.ads
+32K17*ME_AADL 11|32r14 33r14 40r32 41r32 48r19 12|102e20
+X 13 ocarina-me_aadl-aadl_instances.ads
+32K25*AADL_Instances 11|32r22 40r40 48r27 13|33e35
+X 14 ocarina-me_aadl-aadl_instances-nodes.ads
+12K40*Nodes 11|32w37 40r55 48r42 14|615e41
+25n7*K_Component_Instance{14E9} 11|56r11
+34n7*K_Call_Sequence_Instance{14E9} 11|56r50
+35n7*K_Call_Instance{14E9} 11|56r33
+419V13*Next_Entity{17|195I9} 11|63s26
+X 15 ocarina-me_aadl-aadl_tree.ads
+32K25*AADL_Tree 11|33r22 41r40 15|33e30
+X 16 ocarina-me_aadl-aadl_tree-nodes.ads
+12K35*Nodes 11|33w32 41r50 16|1895e36
+1472V13*Next_Entity{17|195I9} 11|71s26
+X 17 ocarina-types.ads
+34K17*Types 10|32w14 35r41 17|304e18
+49I9*Int<integer>
+195I9*Node_Id<49I9> 10|35r47
+198V13*Present{boolean} 11|59s13 67s13
+211R9*Node_List 11|50r16 17|213e14
+212i7*First{195I9} 11|57m13 59r25 60r27 61r32 63m13 63r42 66m41 67r25 68r27
+. 69r32 71m13 71r42
+212i14*Last{195I9} 11|58m13 66m51
+

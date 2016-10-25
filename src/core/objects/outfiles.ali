@@ -1,0 +1,89 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P ZX
+
+RN
+RV NO_EXCEPTIONS
+RV NO_INITIALIZE_SCALARS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV SPARK_05
+
+U outfiles%b		outfiles.adb		07e88a51 NE OO PK IS
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.namet%s	ocarina-namet.adb	ocarina-namet.ali
+W ocarina.output%s	ocarina-output.adb	ocarina-output.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+
+U outfiles%s		outfiles.ads		fe6cf1df EE NE OO PK IS
+W gnat%s		gnat.ads		gnat.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.types%s	ocarina-types.adb	ocarina-types.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-uncdea.ads		20070406091342 f15a5ed1 ada.unchecked_deallocation%s
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-os_lib.ads		20090409150019 0db74523 gnat.os_lib%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-namet.ads	20160902084437 b31432d0 ocarina.namet%s
+D ocarina-output.ads	20160902084508 edb3fa77 ocarina.output%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D outfiles.ads		20160902084437 134295a7 outfiles%s
+D outfiles.adb		20160902084437 4a0dd751 outfiles%b
+D system.ads		20141031112219 1d274481 system%s
+D s-os_lib.ads		20150220113817 5853d835 system.os_lib%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-string.ads		20140225151139 8fe54fb7 system.strings%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 3 gnat.ads
+34K9*GNAT 37e9 10|32r6 32r23
+X 4 g-os_lib.ads
+51K14*OS_Lib=51:36 10|32w11 32r28
+X 6 ocarina.ads
+32K9*Ocarina 61e12 10|33r6 33r31 11|32r6 32r26 33r6 33r26
+X 7 ocarina-namet.ads
+36K17*Namet 242e18 11|32w14 32r34
+55a4*Name_Buffer{string} 11|52r32
+62i4*Name_Len{natural} 11|52r50
+70U14*Get_Name_String 11|47s13
+X 8 ocarina-output.ads
+40K17*Output 106e19 11|33w14 33r34
+47U14*Set_Output 11|60s13
+55U14*Set_Standard_Output 11|76s10
+X 9 ocarina-types.ads
+34K17*Types 304e18 10|33w14 33r39
+182I9*Name_Id<integer> 10|39r37 11|41r37
+X 10 outfiles.ads
+35K9*Outfiles 46l5 46e13 11|35b14 80l5 80t13
+37b4*Print_On_Stdout{boolean} 11|43r14 74r14
+39V13*Set_Output{13|186I9} 39>25 11|41b13 66l8 66t18
+39i25 File_Name{9|182I9} 11|41b25 47r30
+43U14*Release_Output 43>30 11|72b14 78l8 78t22
+43i30 Fd{13|186I9} 11|72b30 74r39 75r17
+X 11 outfiles.adb
+45i13 Fd{13|186I9} 52m13 54r16 60r25 61r20
+X 13 s-os_lib.ads
+186I9*File_Descriptor<integer> 10|39r53 43r35 11|41r53 45r18 72r35
+194i4*Invalid_FD{186I9} 11|54r21 65r14 74r45
+197n26*Text{197E9} 11|52r61
+228V13*Create_File{186I9} 11|52s19
+307U14*Close 11|75s10
+

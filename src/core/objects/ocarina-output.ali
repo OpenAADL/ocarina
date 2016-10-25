@@ -1,0 +1,115 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P ZX
+
+RN
+RV NO_INITIALIZE_SCALARS
+RV NO_RECURSION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV NO_ELABORATION_CODE
+RV NO_OBSOLESCENT_FEATURES
+RV SPARK_05
+
+U ocarina.output%b	ocarina-output.adb	bded501c OO PK IS
+W gnat%s		gnat.ads		gnat.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W system%s		system.ads		system.ali
+W system.concat_3%s	s-conca3.adb		s-conca3.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+
+U ocarina.output%s	ocarina-output.ads	bf2537d8 BN EB EE NE OO PK IS
+W gnat%s		gnat.ads		gnat.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.types%s	ocarina-types.adb	ocarina-types.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-uncdea.ads		20070406091342 f15a5ed1 ada.unchecked_deallocation%s
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-os_lib.ads		20090409150019 0db74523 gnat.os_lib%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-output.ads	20160902084508 edb3fa77 ocarina.output%s
+D ocarina-output.adb	20160902084508 5de9ef48 ocarina.output%b
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-conca3.ads		20140225151544 0b705ca5 system.concat_3%s
+D s-os_lib.ads		20150220113817 5853d835 system.os_lib%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-string.ads		20140225151139 8fe54fb7 system.strings%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 3 gnat.ads
+34K9*GNAT 37e9 6|36r6 47r39 61r35 7|34r6 34r23 84r35
+X 4 g-os_lib.ads
+51K14*OS_Lib=51:36 6|36w11 47r44 61r40 7|34w11 34r28 84r40
+X 5 ocarina.ads
+32K9*Ocarina 61e12 6|38r6 38r25 40r9 41r27 106r5 7|36r14 285r5
+X 6 ocarina-output.ads
+40K17*Output 5|32k9 6|41r35 106l13 106e19 7|36b22 285l13 285t19
+47U14*Set_Output 47>26 7|144b14 149l8 149t18
+47i26 New_Output{11|186I9} 7|144b26 148r22
+50U14*Set_Standard_Error 7|164b14 169l8 169t26
+55U14*Set_Standard_Output 7|175b14 180l8 180t27
+61V13*Current_Output{11|186I9} 7|84b13 87l8 87t22
+64U14*Write_Char 64>26 7|186b14 192l8 192t18 214s10 225s10 233s10 253s7 267s10
+. 272s10
+64e26 C{character} 7|186b26 189r44
+68U14*Write_Eol 68>25 7|198b14 205l8 205t17 244s7 268s10
+68i25 N{natural} 7|198b25 200r21
+75U14*Write_Int 75>25 7|222b14 226s10 230s13 235l8 235t17
+75i25 Val{8|49I9} 7|222b25 224r10 226r22 229r13 230r24 233r38
+79U14*Write_Str 79>25 7|243s7 260b14 274l8 274t17 282s7
+79a25 S{string} 7|260b25 262r24 271r16 272r22
+85U14*Write_Line 85>26 7|120s16 241b14 245l8 245t18
+85a26 S{string} 7|241b26 243r18
+88U14*Write_Quoted_Str 88>32 7|280b14 283l8 283t24
+88a32 S{string} 7|280b32 282r24
+91V13*Column{8|55I12} 92r19 7|75b13 78l8 78t14
+96i4*Space_Increment{natural} 7|95r28 137r28 157m7
+97i4*N_Space{natural} 7|95m7 95r18 137m7 137r18 213r21
+99U14*Decrement_Indentation 7|93b14 96l8 96t29
+100U14*Increment_Indentation 7|135b14 138l8 138t29
+102U14*Set_Space_Increment 102>35 7|155b14 158l8 158t27
+102i35 Value{natural} 7|155b35 157r26
+103U14*Write_Indentation 103>33 7|211b14 216l8 216t25
+103i33 Offset{integer} 7|211b33 213r31
+104U14*Write_Space 7|251b14 254l8 254t19
+X 7 ocarina-output.adb
+38i4 Current_FD{11|186I9} 86r14 107r27 111r16 118m16 148m7 168m7 179m7
+51N4 Buffer_Max 52r30
+52a4 Buffer{string} 61r33 107m39 107r39 188r24 189m10 201m10 262r35
+61i4 Next_Column{8|60I12} 77r14 103r42 119m16 127m10 147m7 167m7 178m7 188r10
+. 189r27 190m10 190r44 201r27 202m10 202r44 262r10
+68U14 Flush_Buffer 102b14 129l8 129t20 146s7 166s7 177s7 203s10
+103i7 Len{natural} 106r10 107r13 107r55
+200i11 J{integer}
+213i11 I{integer}
+271i11 J{integer} 272r25
+X 8 ocarina-types.ads
+34K17*Types 6|38w14 38r33 8|304e18
+49I9*Int<integer> 6|75r31 7|222r31
+55I12*Nat{49I9} 6|91r27 7|75r27
+60I12*Pos{49I9} 7|61r18
+X 11 s-os_lib.ads
+186I9*File_Descriptor<integer> 6|47r51 61r47 7|38r17 84r47 144r39
+190i4*Standout{186I9} 7|38r36 179r22
+191i4*Standerr{186I9} 7|111r29 118r31 168r22
+415V13*Write{integer} 7|107s20
+978U14*OS_Exit 7|112s16 121s16
+

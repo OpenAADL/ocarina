@@ -1,0 +1,167 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P SS ZX
+
+RN
+RV NO_IMPLICIT_LOOPS
+RV NO_INITIALIZE_SCALARS
+RV NO_SECONDARY_STACK
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV NO_ELABORATION_CODE
+RV SPARK_05
+
+U charset%b		charset.adb		15c9499e OO PK IS
+W ada%s			ada.ads			ada.ali
+W ada.characters%s	a-charac.ads		a-charac.ali
+W ada.characters.latin_1%s  a-chlat1.ads	a-chlat1.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U charset%s		charset.ads		feb5fa5e EE NE OO PK IS
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-charac.ads		20070912115821 2d3ec45b ada.characters%s
+D a-chlat1.ads		20140225151544 66457d31 ada.characters.latin_1%s
+D charset.ads		20160902084437 feb5fa5e charset%s
+D charset.adb		20160902084437 8d39cef1 charset%b
+D system.ads		20141031112219 1d274481 system%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-secsta.ads		20140225151139 86a2856d system.secondary_stack%s
+D s-stoele.ads		20140225151139 2dc34a04 system.storage_elements%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 1 ada.ads
+16K9*Ada 19e8 5|32r6 32r34
+X 2 a-charac.ads
+16K13*Characters 18e19 5|32r10 32r38
+X 3 a-chlat1.ads
+18K24*Latin_1 296e27 5|32w21 32r49
+100e4*LC_A{character} 5|40r30 66r7 66r30 157r7
+101e4*LC_B{character} 5|41r30 67r7 67r30 158r7
+102e4*LC_C{character} 5|42r30 68r7 68r30 159r7
+103e4*LC_D{character} 5|43r30 69r7 69r30 160r7
+104e4*LC_E{character} 5|44r30 70r7 70r30 161r7
+105e4*LC_F{character} 5|45r30 71r7 71r30 162r7
+106e4*LC_G{character} 5|46r30 72r7 72r30 163r7
+107e4*LC_H{character} 5|47r30 73r7 73r30 164r7
+108e4*LC_I{character} 5|48r30 74r7 74r30 165r7
+109e4*LC_J{character} 5|49r30 75r7 75r30 166r7
+110e4*LC_K{character} 5|50r30 76r7 76r30 167r7
+111e4*LC_L{character} 5|51r30 77r7 77r30 168r7
+112e4*LC_M{character} 5|52r30 78r7 78r30 169r7
+113e4*LC_N{character} 5|53r30 79r7 79r30 170r7
+114e4*LC_O{character} 5|54r30 80r7 80r30 171r7
+115e4*LC_P{character} 5|55r30 81r7 81r30 172r7
+116e4*LC_Q{character} 5|56r30 82r7 82r30 173r7
+117e4*LC_R{character} 5|57r30 83r7 83r30 174r7
+118e4*LC_S{character} 5|58r30 84r7 84r30 175r7
+119e4*LC_T{character} 5|59r30 85r7 85r30 176r7
+120e4*LC_U{character} 5|60r30 86r7 86r30 177r7
+121e4*LC_V{character} 5|61r30 87r7 87r30 178r7
+122e4*LC_W{character} 5|62r30 88r7 88r30 179r7
+123e4*LC_X{character} 5|63r30 89r7 89r30 180r7
+124e4*LC_Y{character} 5|64r30 90r7 90r30 181r7
+125e4*LC_Z{character} 5|65r30 91r7 91r30 182r7
+223e4*UC_A_Grave{character} 5|92r7 209r7 209r30 240r30
+224e4*UC_A_Acute{character} 5|93r7 210r7 210r30 241r30
+225e4*UC_A_Circumflex{character} 5|94r7 211r7 211r30 242r30
+226e4*UC_A_Tilde{character} 5|95r7 212r7 212r30 243r30
+227e4*UC_A_Diaeresis{character} 5|96r7 213r7 213r30 244r30
+228e4*UC_A_Ring{character} 5|97r7 214r7 214r30 245r30
+229e4*UC_AE_Diphthong{character} 5|98r7 215r7 215r30 246r30
+230e4*UC_C_Cedilla{character} 5|99r7 216r7 216r30 247r30
+231e4*UC_E_Grave{character} 5|100r7 217r7 217r30 248r30
+232e4*UC_E_Acute{character} 5|101r7 218r7 218r30 249r30
+233e4*UC_E_Circumflex{character} 5|102r7 219r7 219r30 250r30
+234e4*UC_E_Diaeresis{character} 5|103r7 220r7 220r30 251r30
+235e4*UC_I_Grave{character} 5|104r7 221r7 221r30 252r30
+236e4*UC_I_Acute{character} 5|105r7 222r7 222r30 253r30
+237e4*UC_I_Circumflex{character} 5|106r7 223r7 223r30 254r30
+238e4*UC_I_Diaeresis{character} 5|107r7 224r7 224r30 255r30
+242e4*UC_Icelandic_Eth{character} 5|108r7 225r7 225r30 256r30
+243e4*UC_N_Tilde{character} 5|109r7 226r7 226r30 257r30
+244e4*UC_O_Grave{character} 5|110r7 227r7 227r30 258r30
+245e4*UC_O_Acute{character} 5|111r7 228r7 228r30 259r30
+246e4*UC_O_Circumflex{character} 5|112r7 229r7 229r30 260r30
+247e4*UC_O_Tilde{character} 5|113r7 230r7 230r30 261r30
+248e4*UC_O_Diaeresis{character} 5|114r7 231r7 231r30 262r30
+250e4*UC_O_Oblique_Stroke{character} 5|115r7 232r7 232r30 263r30
+251e4*UC_U_Grave{character} 5|116r7 233r7 233r30 264r30
+252e4*UC_U_Acute{character} 5|117r7 234r7 234r30 265r30
+253e4*UC_U_Circumflex{character} 5|118r7 235r7 235r30 266r30
+254e4*UC_U_Diaeresis{character} 5|119r7 236r7 236r30 267r30
+255e4*UC_Y_Acute{character} 5|120r7 237r7 237r30 268r30
+256e4*UC_Icelandic_Thorn{character} 5|121r7 238r7 238r30 269r30
+257e4*LC_German_Sharp_S{character} 5|122r7 122r30 239r7 239r30
+261e4*LC_A_Grave{character} 5|92r30 123r7 123r30 240r7
+262e4*LC_A_Acute{character} 5|93r30 124r7 124r30 241r7
+263e4*LC_A_Circumflex{character} 5|94r30 125r7 125r30 242r7
+264e4*LC_A_Tilde{character} 5|95r30 126r7 126r30 243r7
+265e4*LC_A_Diaeresis{character} 5|96r30 127r7 127r30 244r7
+266e4*LC_A_Ring{character} 5|97r30 128r7 128r30 245r7
+267e4*LC_AE_Diphthong{character} 5|98r30 129r7 129r30 246r7
+268e4*LC_C_Cedilla{character} 5|99r30 130r7 130r30 247r7
+269e4*LC_E_Grave{character} 5|100r30 131r7 131r30 248r7
+270e4*LC_E_Acute{character} 5|101r30 132r7 132r30 249r7
+271e4*LC_E_Circumflex{character} 5|102r30 133r7 133r30 250r7
+272e4*LC_E_Diaeresis{character} 5|103r30 134r7 134r30 251r7
+273e4*LC_I_Grave{character} 5|104r30 135r7 135r30 252r7
+274e4*LC_I_Acute{character} 5|105r30 136r7 136r30 253r7
+275e4*LC_I_Circumflex{character} 5|106r30 137r7 137r30 254r7
+276e4*LC_I_Diaeresis{character} 5|107r30 138r7 138r30 255r7
+279e4*LC_Icelandic_Eth{character} 5|108r30 139r7 139r30 256r7
+280e4*LC_N_Tilde{character} 5|109r30 140r7 140r30 257r7
+281e4*LC_O_Grave{character} 5|110r30 141r7 141r30 258r7
+282e4*LC_O_Acute{character} 5|111r30 142r7 142r30 259r7
+283e4*LC_O_Circumflex{character} 5|112r30 143r7 143r30 260r7
+284e4*LC_O_Tilde{character} 5|113r30 144r7 144r30 261r7
+285e4*LC_O_Diaeresis{character} 5|114r30 145r7 145r30 262r7
+287e4*LC_O_Oblique_Stroke{character} 5|115r30 146r7 146r30 263r7
+288e4*LC_U_Grave{character} 5|116r30 147r7 147r30 264r7
+289e4*LC_U_Acute{character} 5|117r30 148r7 148r30 265r7
+290e4*LC_U_Circumflex{character} 5|118r30 149r7 149r30 266r7
+291e4*LC_U_Diaeresis{character} 5|119r30 150r7 150r30 267r7
+292e4*LC_Y_Acute{character} 5|120r30 151r7 151r30 268r7
+293e4*LC_Icelandic_Thorn{character} 5|121r30 152r7 152r30 269r7
+294e4*LC_Y_Diaeresis{character} 5|153r7 153r30 270r7 270r30
+X 4 charset.ads
+32K9*Charset 50l5 50e12 5|34b14 357l5 357t12
+34V13*Is_Alphabetic_Character{boolean} 34>38 5|277b13 280l8 280t31
+34e38 C{character} 5|277b38 279r26
+37V13*Is_Identifier_Character{boolean} 37>38 5|286b13 289l8 289t31
+37e38 C{character} 5|286b38 288r14 288r30 288r66
+40U14*To_Lower 40=24 5|295b14 302l8 302t16 316s7
+40a24 S{string} 5|295b24 297r16 298r25 299m13 299r34
+41V13*To_Lower{string} 41>23 5|313b13 318l8 318t16
+41a23 S{string} 5|313b23 314r22
+42V13*To_Lower{character} 42>23 5|304b13 311l8 311t16
+42e23 C{character} 5|304b23 306r22 307r29 309r17
+45U14*To_Upper 45=24 5|324b14 331l8 331t16 353s7
+45a24 S{string} 5|324b24 326r16 327r25 328m13 328r34
+46V13*To_Upper{string} 46>23 5|350b13 355l8 355t16
+46a23 S{string} 5|350b23 351r22
+47V13*To_Upper{character} 47>23 5|337b13 344l8 344t16
+47e23 C{character} 5|337b23 339r22 340r29 342r17
+X 5 charset.adb
+36A9 Translate_Table(character)<character> 39r26 156r26
+39a4 Fold_Lower{36A9} 279r14 288r54 298r13 299r22 306r10 307r17 327r13 339r10
+156a4 Fold_Upper{36A9} 328r22 340r17
+297i11 I{integer} 298r28 299r16 299r37
+314a7 LS{string} 316m17 316r17 317r14
+326i11 I{integer} 327r28 328r16 328r37
+351a7 LS{string} 353m17 353r17 354r14
+

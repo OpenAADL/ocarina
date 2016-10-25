@@ -1,0 +1,125 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P ZX
+
+RN
+RV NO_INITIALIZE_SCALARS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV NO_ELABORATION_CODE
+RV SPARK_05
+
+U ocarina.instances.real_checker.queries.access_predicates%b  ocarina-instances-real_checker-queries-access_predicates.adb  858d5135 NE OO PK IS
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.instances.real_checker.queries%s  ocarina-instances-real_checker-queries.adb  ocarina-instances-real_checker-queries.ali
+W ocarina.me_aadl%s	ocarina-me_aadl.ads	ocarina-me_aadl.ali
+W ocarina.me_aadl.aadl_instances%s  ocarina-me_aadl-aadl_instances.ads  ocarina-me_aadl-aadl_instances.ali
+W ocarina.me_aadl.aadl_instances.nodes%s  ocarina-me_aadl-aadl_instances-nodes.adb  ocarina-me_aadl-aadl_instances-nodes.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+
+U ocarina.instances.real_checker.queries.access_predicates%s  ocarina-instances-real_checker-queries-access_predicates.ads  4aa94a0e EE OO PK IS
+W interfaces%s		interfac.ads		interfac.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.instances%s	ocarina-instances.adb	ocarina-instances.ali
+Z ocarina.instances.finder%s  ocarina-instances-finder.adb  ocarina-instances-finder.ali
+W ocarina.instances.real_checker%s  ocarina-instances-real_checker.ads  ocarina-instances-real_checker.ali
+W ocarina.instances.real_checker.queries%s  ocarina-instances-real_checker-queries.adb  ocarina-instances-real_checker-queries.ali
+W ocarina.instances.real_checker.queries.relational_predicates%s  ocarina-instances-real_checker-queries-relational_predicates.adb  ocarina-instances-real_checker-queries-relational_predicates.ali  AD
+Z ocarina.me_aadl%s	ocarina-me_aadl.ads	ocarina-me_aadl.ali
+Z ocarina.me_aadl.aadl_instances%s  ocarina-me_aadl-aadl_instances.ads  ocarina-me_aadl-aadl_instances.ali
+Z ocarina.me_aadl.aadl_instances.nodes%s  ocarina-me_aadl-aadl_instances-nodes.adb  ocarina-me_aadl-aadl_instances-nodes.ali
+Z ocarina.me_aadl.aadl_tree%s  ocarina-me_aadl-aadl_tree.ads  ocarina-me_aadl-aadl_tree.ali
+Z ocarina.me_aadl.aadl_tree.nodes%s  ocarina-me_aadl-aadl_tree-nodes.adb  ocarina-me_aadl-aadl_tree-nodes.ali
+W ocarina.types%s	ocarina-types.adb	ocarina-types.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-dyntab.ads		20140225151544 07ce153b gnat.dynamic_tables%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D interfac.ads		20141120112812 6033a23f interfaces%s
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-instances.ads	20160902084437 bb3c6dea ocarina.instances%s
+D ocarina-instances-finder.ads  20160902084437 0f5ea3aa ocarina.instances.finder%s
+D ocarina-instances-real_checker.ads  20160902084437 e5b8ed1a ocarina.instances.real_checker%s
+D ocarina-instances-real_checker-queries.ads  20160902084437 0b515f62 ocarina.instances.real_checker.queries%s
+D ocarina-instances-real_checker-queries-access_predicates.ads  20160902084437 dcff13ff ocarina.instances.real_checker.queries.access_predicates%s
+D ocarina-instances-real_checker-queries-access_predicates.adb  20160902084437 f15879c9 ocarina.instances.real_checker.queries.access_predicates%b
+D ocarina-instances-real_checker-queries-relational_predicates.ads  20160902084437 7d9e27c8 ocarina.instances.real_checker.queries.relational_predicates%s
+D ocarina-instances-real_checker-queries-relational_predicates.adb  20160902084437 4e153a94 ocarina.instances.real_checker.queries.relational_predicates%b
+D ocarina-me_aadl.ads	20160902084437 debca36c ocarina.me_aadl%s
+D ocarina-me_aadl-aadl_instances.ads  20160902084437 8883fa2d ocarina.me_aadl.aadl_instances%s
+D ocarina-me_aadl-aadl_instances-nodes.ads  20160902084801 a82a3b03 ocarina.me_aadl.aadl_instances.nodes%s
+D ocarina-me_aadl-aadl_tree.ads  20160902084437 7b68b93a ocarina.me_aadl.aadl_tree%s
+D ocarina-me_aadl-aadl_tree-nodes.ads  20160902084801 7e383ab1 ocarina.me_aadl.aadl_tree.nodes%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 6 ocarina.ads
+32K9*Ocarina 61e12 11|32r6 33r6 35r9 38r16 39r16 43r32 50r5 12|32r6 34r14
+. 35r8 98r5
+X 7 ocarina-instances.ads
+34K17*Instances 6|32k9 7|105e22 11|32r14 35r17 43r40 50r13 12|34r22 98r13
+X 9 ocarina-instances-real_checker.ads
+32K27*REAL_Checker 7|34k17 9|50e35 11|32r24 35r27 43r50 50r23 12|34r32 98r23
+X 10 ocarina-instances-real_checker-queries.ads
+35K40*Queries 9|32k27 10|168e43 11|32r37 35r40 43r63 50r36 12|34r45 98r36
+60E9*Predicates_Search_Options 61e18 11|40r16 12|44r16
+60n39*PSO_Direct{60E9} 11|40r45 12|44r45
+X 11 ocarina-instances-real_checker-queries-access_predicates.ads
+35K48*Access_Predicates 10|35k40 11|50l44 50e61 12|34b53 98l44 98t61
+37V13*Is_Accessed_Predicate{boolean} 38>7 39>7 40>7 45r7 12|41b13 96l8 96t29
+38i7 E{20|195I9} 12|42b7 55r24 62r69 66r77 81r51
+39i7 D{20|195I9} 12|43b7 52r16 54r16 60r16 61r28 65r26 70r20 72r37
+40e7 Option{10|60E9} 12|44b7 46r28
+43K12*Access_Query[13|44]
+X 12 ocarina-instances-real_checker-queries-access_predicates.adb
+48i7 P{20|195I9} 61m10 62r61 65m13 66r69 72m10 74r25 75r44 90m13 90r29
+49i7 N{20|195I9} 75m13 76r28 77r27 87m16 87r32
+50i7 K{20|195I9} 77m16 79r25 81r46
+X 13 ocarina-instances-real_checker-queries-relational_predicates.ads
+44k48*Relational_Predicates 11|32w45 44r7 13|72e65
+X 15 ocarina-me_aadl.ads
+32K17*ME_AADL 12|32r14 35r16 15|102e20
+X 16 ocarina-me_aadl-aadl_instances.ads
+32K25*AADL_Instances 12|32r22 35r24 16|33e35
+X 17 ocarina-me_aadl-aadl_instances-nodes.ads
+12K40*Nodes 12|32w37 35r39 17|615e41
+25n7*K_Component_Instance{14E9} 12|54r22
+33n7*K_Subcomponent_Access_Instance{14E9} 12|55r30 79r30
+38n7*K_Connection_Instance{14E9} 12|52r22 60r21
+404V13*Kind{14E9} 12|52s10 54s10 55s18 60s10 79s19
+410V13*Next_Node{20|195I9} 12|87s21 90s18
+413V13*First_Node{20|195I9} 12|62s43 66s51 72s15 75s18
+446V13*Item{20|195I9} 12|62s37 66s45 77s21
+464V13*Path{20|208I9} 12|62s55 66s63
+473V13*Features{20|208I9} 12|70s10 72s27
+506V13*Corresponding_Instance{20|195I9} 12|62s13 66s21 81s22
+509V13*Destinations{20|208I9} 12|75s30
+557V13*Source{20|195I9} 12|65s18
+560V13*Destination{20|195I9} 12|61s15
+X 20 ocarina-types.ads
+34K17*Types 11|33w14 38r24 39r24 20|304e18
+49I9*Int<integer>
+195I9*Node_Id<49I9> 11|38r30 39r30 12|42r16 43r16 48r11 49r11 50r11
+198V13*Present{boolean} 12|74s16 76s19
+208I9*List_Id<195I9>
+209i4*No_List{208I9} 12|70r26
+

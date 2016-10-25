@@ -1,0 +1,112 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P SS ZX
+
+RN
+RV NO_INITIALIZE_SCALARS
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV SPARK_05
+
+U ocarina.backends.messages%b  ocarina-backends-messages.adb  80662892 NE OO PK IS
+W gnat%s		gnat.ads		gnat.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+W ocarina.options%s	ocarina-options.adb	ocarina-options.ali
+W ocarina.output%s	ocarina-output.adb	ocarina-output.ali
+W system.concat_2%s	s-conca2.adb		s-conca2.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U ocarina.backends.messages%s  ocarina-backends-messages.ads  35916529 EE NE OO PK IS
+W locations%s		locations.adb		locations.ali
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-unccon.ads		20070406091342 f9eb8f06 ada.unchecked_conversion%s
+D a-uncdea.ads		20070406091342 f15a5ed1 ada.unchecked_deallocation%s
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-os_lib.ads		20090409150019 0db74523 gnat.os_lib%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-backends.ads	20160902084508 6580b411 ocarina.backends%s
+D ocarina-backends-messages.ads  20160902084437 56b75ee5 ocarina.backends.messages%s
+D ocarina-backends-messages.adb  20160902084437 07cc1f93 ocarina.backends.messages%b
+D ocarina-options.ads	20160902084508 3119d6b0 ocarina.options%s
+D ocarina-output.ads	20160902084508 edb3fa77 ocarina.output%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-conca2.ads		20140225151544 02a0d7d0 system.concat_2%s
+D s-exctab.ads		20140225151139 54135002 system.exception_table%s
+D s-os_lib.ads		20150220113817 5853d835 system.os_lib%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-secsta.ads		20140225151139 86a2856d system.secondary_stack%s
+D s-stalib.ads		20150220094550 fa0a3617 system.standard_library%s
+D s-stoele.ads		20140225151139 2dc34a04 system.storage_elements%s
+D s-string.ads		20140225151139 8fe54fb7 system.strings%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 4 gnat.ads
+34K9*GNAT 37e9 11|32r6 32r27
+X 5 g-os_lib.ads
+51K14*OS_Lib=51:36 11|32w11 32r32
+X 7 locations.ads
+34K9*Locations 80e14 10|32w6 32r21
+36R9*Location 52e14 10|47r17 11|94r17
+58V13*Image{string} 11|102s18
+X 8 ocarina.ads
+32K9*Ocarina 61e12 10|34r9 60r5 11|33r6 33r27 34r6 34r27 36r14 126r5
+X 9 ocarina-backends.ads
+41K17*Backends 8|32k9 9|120e21 10|34r17 60r13 11|36r22 126r13
+X 10 ocarina-backends-messages.ads
+34K26*Messages 9|41k17 10|60l22 60e30 11|36b31 126l22 126t30
+36U14*Display_Error 37>7 38>7 39>7 11|76b14 87l8 87t21
+37a7 Message{string} 11|77b7 82r30
+38b7 Fatal{boolean} 11|78b7 82r39 84r10
+39b7 Warning{boolean} 11|79b7 82r46
+46U14*Display_Located_Error 47>7 48>7 49>7 50>7 11|93b14 109l8 109t29
+47r7 Loc{7|36R9} 11|94b7 102r25
+48a7 Message{string} 11|95b7 103r30
+49b7 Fatal{boolean} 11|96b7 103r39 106r10
+50b7 Warning{boolean} 11|97b7 103r46
+53U14*Display_Debug_Message 54>7 55>7 11|115b14 124l8 124t29
+54a7 Message{string} 11|116b7 122r22
+55b7 Force{boolean} 11|117b7 120r29
+X 11 ocarina-backends-messages.adb
+38U14 Display_Error_Message 39>7 40>7 41>7 47b14 70l8 70t29 82s7 103s7
+39a7 Message{string} 48b7 68r19
+40b7 Fatal{boolean} 49b7 58r10
+41b7 Warning{boolean} 50b7 62r10
+52i7 Current_FD{18|186I9} 69r19
+99i7 Current_FD{18|186I9} 104r19
+X 12 ocarina-options.ads
+36K17*Options 11|34w14 34r35 12|119e20
+44b4*Debug_Mode{boolean} 11|120r10
+X 13 ocarina-output.ads
+40K17*Output 11|33w14 33r35 13|106e19
+47U14*Set_Output 11|69s7 104s7
+50U14*Set_Standard_Error 11|54s7 101s7
+61V13*Current_Output{18|186I9} 11|52s48 99s48
+79U14*Write_Str 11|56s7 59s10 63s10 65s10 102s7 121s10
+85U14*Write_Line 11|68s7 122s10
+X 18 s-os_lib.ads
+186I9*File_Descriptor<integer> 11|52r29 99r29
+978U14*OS_Exit 11|85s10 107s10
+

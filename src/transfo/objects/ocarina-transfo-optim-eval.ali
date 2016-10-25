@@ -1,0 +1,296 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P SS ZX
+
+RN
+RV NO_EXCEPTIONS
+RV NO_FLOATING_POINT
+RV NO_INITIALIZE_SCALARS
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV NO_ELABORATION_CODE
+RV SPARK_05
+
+U ocarina.transfo.optim.eval%b  ocarina-transfo-optim-eval.adb  3276fc2e OO PK IS
+W ada.exceptions%s	a-except.adb		a-except.ali
+W interfaces%s		interfac.ads		interfac.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.analyzer%s	ocarina-analyzer.adb	ocarina-analyzer.ali
+W ocarina.analyzer.real%s  ocarina-analyzer-real.adb  ocarina-analyzer-real.ali
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+W ocarina.backends.real%s  ocarina-backends-real.adb  ocarina-backends-real.ali
+W ocarina.me_real%s	ocarina-me_real.ads	ocarina-me_real.ali
+W ocarina.me_real.real_tree%s  ocarina-me_real-real_tree.ads  ocarina-me_real-real_tree.ali
+W ocarina.me_real.real_tree.nutils%s  ocarina-me_real-real_tree-nutils.adb  ocarina-me_real-real_tree-nutils.ali
+W ocarina.namet%s	ocarina-namet.adb	ocarina-namet.ali
+W ocarina.output%s	ocarina-output.adb	ocarina-output.ali
+W ocarina.real_values%s	ocarina-real_values.adb	ocarina-real_values.ali
+W ocarina.transfo.optim%s  ocarina-transfo-optim.adb  ocarina-transfo-optim.ali
+W system.concat_2%s	s-conca2.adb		s-conca2.ali
+W system.concat_3%s	s-conca3.adb		s-conca3.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U ocarina.transfo.optim.eval%s  ocarina-transfo-optim-eval.ads  b3d09a4e EE OO PK IS
+Z ada%s			ada.ads			ada.ali
+Z ada.unchecked_conversion%s
+W gnat%s		gnat.ads		gnat.ali
+W gnat.dynamic_tables%s
+Z gnat.heap_sort_g%s
+W interfaces%s		interfac.ads		interfac.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.instances%s	ocarina-instances.adb	ocarina-instances.ali
+W ocarina.instances.real_checker%s  ocarina-instances-real_checker.ads  ocarina-instances-real_checker.ali
+W ocarina.instances.real_checker.queries%s  ocarina-instances-real_checker-queries.adb  ocarina-instances-real_checker-queries.ali
+W ocarina.transfo.optim%s  ocarina-transfo-optim.adb  ocarina-transfo-optim.ali
+W system%s		system.ads		system.ali
+Z system.memory%s	s-memory.adb		s-memory.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-except.ads		20140730140058 5250cb69 ada.exceptions%s
+D a-unccon.ads		20070406091342 f9eb8f06 ada.unchecked_conversion%s
+D a-uncdea.ads		20070406091342 f15a5ed1 ada.unchecked_deallocation%s
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-dyntab.ads		20140225151544 07ce153b gnat.dynamic_tables%s
+D g-dyntab.adb		20140521105248 008c9b78 gnat.dynamic_tables%b
+D g-hesorg.ads		20110801150502 106922da gnat.heap_sort_g%s
+D g-hesorg.adb		20110801150502 33b32c5b gnat.heap_sort_g%b
+D g-os_lib.ads		20090409150019 0db74523 gnat.os_lib%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D interfac.ads		20141120112812 6033a23f interfaces%s
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-analyzer.ads	20160902084437 191ec10b ocarina.analyzer%s
+D ocarina-analyzer-real.ads  20160902084437 1792f4f1 ocarina.analyzer.real%s
+D ocarina-backends.ads	20160902084508 6580b411 ocarina.backends%s
+D ocarina-backends-real.ads  20160902084437 94b322b6 ocarina.backends.real%s
+D ocarina-instances.ads	20160902084437 bb3c6dea ocarina.instances%s
+D ocarina-instances-real_checker.ads  20160902084437 e5b8ed1a ocarina.instances.real_checker%s
+D ocarina-instances-real_checker-queries.ads  20160902084437 0b515f62 ocarina.instances.real_checker.queries%s
+D ocarina-me_real.ads	20160902084437 5a2ae67b ocarina.me_real%s
+D ocarina-me_real-real_tree.ads  20160902084437 2b69dd12 ocarina.me_real.real_tree%s
+D ocarina-me_real-real_tree-nodes.ads  20160902084801 a23c2c6b ocarina.me_real.real_tree.nodes%s
+D ocarina-me_real-real_tree-nutils.ads  20160902084437 619c2394 ocarina.me_real.real_tree.nutils%s
+D ocarina-namet.ads	20160902084437 b31432d0 ocarina.namet%s
+D ocarina-output.ads	20160902084508 edb3fa77 ocarina.output%s
+D ocarina-real_values.ads  20160902084437 5af5a9ad ocarina.real_values%s
+D ocarina-transfo.ads	20160902084437 0c6af075 ocarina.transfo%s
+D ocarina-transfo-optim.ads  20160902084437 3943a261 ocarina.transfo.optim%s
+D ocarina-transfo-optim-eval.ads  20160902084437 860c7276 ocarina.transfo.optim.eval%s
+D ocarina-transfo-optim-eval.adb  20160902084437 52951a81 ocarina.transfo.optim.eval%b
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-conca2.ads		20140225151544 02a0d7d0 system.concat_2%s
+D s-conca3.ads		20140225151544 0b705ca5 system.concat_3%s
+D s-memory.ads		20140225151139 597d6634 system.memory%s
+D s-os_lib.ads		20150220113817 5853d835 system.os_lib%s
+D s-parame.ads		20140801093848 7e2a0d7f system.parameters%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-secsta.ads		20140225151139 86a2856d system.secondary_stack%s
+D s-stalib.ads		20150220094550 fa0a3617 system.standard_library%s
+D s-stoele.ads		20140225151139 2dc34a04 system.storage_elements%s
+D s-string.ads		20140225151139 8fe54fb7 system.strings%s
+D s-traent.ads		20140730135025 005bf670 system.traceback_entries%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 5 gnat.ads
+34K9*GNAT 37e9 31|32r6 42r23
+X 6 g-dyntab.ads
+51+9 Table_Component_Type 31|43r7
+52I9 Table_Index_Type 31|44r7
+54*4 Table_Low_Bound{52I9} 31|45r7
+55i4 Table_Initial{positive} 31|46r7
+56i4 Table_Increment{natural} 31|47r7
+58k14*Dynamic_Tables 223e24 31|32w11 42r28
+92A9*Table_Type(31|38R9)<integer>
+94A12*Big_Table_Type{92A9[31|42]}<integer>
+103P9*Table_Ptr(94A12[31|42])
+111R9*Instance 31|49r33[42]
+112p7*Table{103P9[31|42]} 32|96r32[31|42] 204r24[31|42]
+122U14*Init 32|94s7[31|42]
+127V13*Last{integer} 32|95s29[31|42] 203s25[31|42]
+144i4*First{integer} 32|95r20[31|42] 203r16[31|42]
+164U14*Append 32|97s10[31|42]
+X 14 ocarina.ads
+32K9*Ocarina 61e12 31|33r6 35r9 36r8 112r5 32|32r6 33r6 34r6 35r6 36r6 37r6
+. 39r14 40r8 41r8 42r8 44r23 122r11 222r18 534r5
+X 15 ocarina-analyzer.ads
+34K17*Analyzer 55e21 32|35r14 222r26
+X 16 ocarina-analyzer-real.ads
+34K26*REAL 66e26 32|35w23 222r35
+49V13*Analyze_Model{boolean} 32|222s40
+X 17 ocarina-backends.ads
+41K17*Backends 120e21 32|34r14 44r31
+X 18 ocarina-backends-real.ads
+36K26*REAL 72e26 32|34w23 44r40
+49U14*Compute_Theorem_Call 32|272s10 311s10 324s10 363s10 390s10 423s10 434s10
+X 19 ocarina-instances.ads
+34K17*Instances 105e22 31|33r14 36r16
+X 20 ocarina-instances-real_checker.ads
+32K27*REAL_Checker 50e35 31|33r24 36r26
+X 21 ocarina-instances-real_checker-queries.ads
+35K40*Queries 168e43 31|33w37 36r39
+37R9*Result_Set<6|111R9[159]> 31|109r59 32|197r59 200r14 259r24 297r23 352r23
+. 385r33 417r32
+115V13*Empty_Set{37R9} 32|200s28 385s47 417s46
+127U14*Add 32|205s10
+X 22 ocarina-me_real.ads
+32K17*ME_REAL 33e20 32|32r14 122r19
+X 23 ocarina-me_real-real_tree.ads
+32K25*REAL_Tree 33e30 32|32r22 122r27
+X 25 ocarina-me_real-real_tree-nutils.ads
+40K35*Nutils 104e37 32|32w32 122r37
+88V13*Find_Declared_Theorem{33|195I9} 32|127s9 135s31 143s33 154s9 163s9
+. 172s9 182s9
+X 26 ocarina-namet.ads
+36K17*Namet 242e18 32|37w14 41r16
+76V13*Get_Name_String{string} 32|131s13 139s13 147s13 158s13 167s13 176s13
+. 186s13 280s13 319s13 332s13 371s13 398s13 430s30 441s30
+93V13*Get_String_Name{33|182I9} 32|227s36 228s36 230s9 232s9 234s9 240s9
+. 242s9
+X 27 ocarina-output.ads
+40K17*Output 106e19 32|36w14 42r16
+85U14*Write_Line 32|129s10 137s10 145s10 156s10 165s10 174s10 184s10 278s10
+. 317s10 330s10 369s10 396s10 429s10 440s10
+X 28 ocarina-real_values.ads
+35K17*REAL_Values 182e24 32|33w14 40r16
+40n7*LT_Integer{39E9} 32|110r15
+41n7*LT_Real{39E9} 32|108r15
+49e21*T{39E9} 32|107r31
+52m13*IVal{33|257M9} 32|111r46
+57f13*RVal{long_long_float} 32|109r46
+85V13*Get_Value_Type{49R9} 32|107s12 109s27 111s27
+X 29 ocarina-transfo.ads
+34K17*Transfo 14|32k9 29|90e20 31|35r17 112r13 32|39r22 534r13
+X 30 ocarina-transfo-optim.ads
+34K25*Optim 29|34k17 30|49e26 31|35r25 112r21 32|39r30 534r21
+X 31 ocarina-transfo-optim-eval.ads
+35K31*Eval 30|34k25 31|112l27 112e31 32|39b36 534l27 534t31
+38R9*Thread_Unit 40e14 43r31 32|92r12
+39i7*Thread_Node{33|195I9} 32|96m13 96r42 204r34
+42K12*Set[6|58] 49r29 32|95r16 198r11
+49R9*Solution_Set<6|111R9[42]> 51r26 51r50 62r22 69r22 76r22 109r38 32|91r26
+. 91r50 197r38 255r22 293r22 348r22
+51U14*Copy 51>20 51<40 32|91b14 99l8 99t12
+51r20 Src{49R9} 32|91b20 95r35 96r28
+51r40 Dst{49R9} 32|91b40 94m13 97m18
+53i4*Current_System_Value{integer}
+54i4*Current_System_Cost{integer}
+58U14*Init 58>20 32|215b14 248l8 248t12
+58i20 AADL_Instance{33|195I9} 32|215b20 222r55
+61U14*Compute_Relative_Cost 62>7 63<7 64<7 32|254b14 286l8 286t29
+62r7 Solution{49R9} 32|255b7 267r34
+63f7 Result{float} 32|256b7 285m7
+64b7 Success{boolean} 32|257b7 262m7 276m10 277r14
+68U14*Compute_Relative_Value 69>7 70<7 71<7 32|292b14 341l8 341t30
+69r7 Solution{49R9} 32|293b7 306r34
+70f7 Result{float} 32|294b7 337m7
+71b7 Success{boolean} 32|295b7 301m7 315m10 316r14 328m10 329r14
+75U14*Compute_Relative_Move_Value 76>7 77<7 78<7 32|347b14 378l8 378t35
+76r7 Solution{49R9} 32|348b7 358r34
+77f7 Result{float} 32|349b7 376m7
+78b7 Success{boolean} 32|350b7 367m10 368r14
+83V13*Compute_Multi_Criteria_Move_Value{float} 83>48 32|377s9 498b13 504l8
+. 504t41
+83f48 Memory{float} 32|377r44 498b48 503r14
+85U14*Compute_System_Cost 85<35 85<55 32|384b14 407l8 407t27
+85f35 Result{float} 32|384b35 404m7
+85b55 Success{boolean} 32|384b55 388m7 394m10 395r14
+88U14*Compute_System_Value 88<36 88<56 32|413b14 452l8 452t28
+88f36 Result{float} 32|414b7 448m7
+88b56 Success{boolean} 32|415b7 421m7 427m10 428r14 438m10 439r14
+91U14*Precise_System_Evaluation 92<7 93<7 32|458b14 466l8 466t33
+92f7 Result{float} 32|459b7 462r28
+93b7 Success{boolean} 32|460b7 463r28
+100U14*Register_Current_Values 100>39 100>55 32|445s7 519b14 523l8 523t31
+100f39 Memory{float} 32|446r10 519b39 521r23
+100f55 WCET{float} 32|447r10 519b55 522r23
+103V13*Current_Cost{float} 103>27 32|529b13 532l8 532t20
+103f27 Candidate_Cost{float} 32|529b27 531r40
+106V13*Get_Current_Value{float} 32|510b13 513l8 513t25
+109V13*Build_Domain{21|37R9} 109>27 32|197b13 209l8 209t20 267s20 306s20
+. 358s20
+109r27 Solution{49R9} 32|197b27 203r31 204r15
+X 32 ocarina-transfo-optim-eval.adb
+44K12 BR=44:40 272r7 311r7 324r7 363r7 390r7 423r7 434r7
+47i4 Compute_WCET{33|182I9} 135r54 139r30 227m7 430r47
+48i4 Compute_Memory{33|182I9} 143r56 147r30 228m7 441r47
+49i4 Compute_Deadline_Distance{33|182I9} 127r32 131r30 229m7 398r30
+51i4 Compute_Deadline_Distance_Variation{33|182I9} 154r32 158r30 231m7 280r30
+52i4 Compute_WCET_Variation{33|182I9} 163r32 167r30 233m7 319r30
+53i4 Compute_Memory_Variation{33|182I9} 172r32 176r30 239m7 332r30
+54i4 Compute_Move_Memory_Variation{33|182I9} 182r32 186r30 241m7 371r30
+57i4 Compute_WCET_Theorem{33|195I9} 135m7 136r14 424r10
+58i4 Compute_Memory_Theorem{33|195I9} 143m7 144r14 435r10
+59i4 Compute_Deadline_Distance_Theorem{33|195I9} 126m7 128r14 391r10
+61i4 Compute_Deadline_Distance_Variation_Theorem{33|195I9} 153m7 155r14 273r10
+62i4 Compute_WCET_Variation_Theorem{33|195I9} 162m7 164r14 312r10
+63i4 Compute_Memory_Variation_Theorem{33|195I9} 171m7 173r14 325r10
+64i4 Compute_Move_Memory_Variation_Theorem{33|195I9} 181m7 183r14 364r10
+67f4 Deadline_Distance_Value{float} 403m7 531r14
+68f4 WCET_Value{float} 512r58 522m7
+69f4 Memory_Value{float} 512r44 521m7
+71V13 Load_All_Theorems{boolean} 121b13 191l8 191t25 244s14
+76V13 Extract_Returned_Value{float} 76>37 77r53 105b13 115l8 115t30
+76i37 V{33|216I9} 105b37 107r28 109r43 111r43
+77V13 ERV=77:53{float} 285s46 339s22 340s22 377s54 403s34 406s33 446s20 447s20
+. 450s22 451s22
+77i18 V{33|216I9}
+80V13 Compute_Multi_Criteria_Value{float} 80>43 80>51 338s9 449s9 472b13
+. 478l8 478t36 512s14
+80f43 Memory{float} 339r12 450r12 472b43 477r15
+80f51 WCET{float} 340r12 451r12 472b51 477r33
+83V13 Compute_Multi_Criteria_Cost{float} 84>7 285s17 405s9 484b13 492l8 492t35
+84f7 Deadline_Distance{float} 406r12 485b7 491r15
+92r7 TU{31|38R9} 96m10 97r23
+95i11 I{integer} 96r39
+200r7 RSet{21|37R9} 205m15 205r15 208r14
+201i7 N{33|195I9} 204m10 205r21
+203i11 I{integer} 204r31
+216b7 Success{boolean} 222m7 223r14
+259r7 Local_Set{21|37R9} 267m7 274r10
+260i7 Result_Latency{33|216I9} 275m10 285r51
+297r7 Local_Set{21|37R9} 306m7 313r10 326r10
+298i7 Result_Memory{33|216I9} 327m10 339r27
+299i7 Result_WCET{33|216I9} 314m10 340r27
+352r7 Local_Set{21|37R9} 358m7 365r10
+353i7 Result_Memory{33|216I9} 366m10 377r59
+385r7 Local_Set{21|37R9} 392r10
+386i7 Result_Latency{33|216I9} 393m10 403r39 406r38
+417r7 Local_Set{21|37R9} 425r10 436r10
+418i7 Result_Memory{33|216I9} 437m10 446r25 450r27
+419i7 Result_WCET{33|216I9} 426m10 447r25 451r27
+X 33 ocarina-types.ads
+49I9*Int<integer>
+182I9*Name_Id<integer> 32|47r32 48r32 49r32 51r42 52r42 53r42 54r42
+195I9*Node_Id<49I9> 31|39r21 58r36 32|57r40 58r40 59r40 61r50 62r50 63r50
+. 64r50 201r14 215r36
+201V13*No{boolean} 32|128s10 136s10 144s10 155s10 164s10 173s10 183s10
+216I9*Value_Id<49I9> 32|76r41 77r22 105r41 260r24 298r23 299r23 353r23 386r24
+. 418r23 419r23
+257M9*Unsigned_Long_Long
+X 34 system.ads
+67M9*Address
+X 37 s-memory.ads
+53V13*Alloc{34|67M9} 103i<c,__gnat_malloc>22
+68U14*Free 104i<c,__gnat_free>22
+76V13*Realloc{34|67M9} 105i<c,__gnat_realloc>22
+

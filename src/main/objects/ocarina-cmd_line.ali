@@ -1,0 +1,294 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P SS ZX
+
+RN
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTIONS
+RV NO_IO
+RV NO_INITIALIZE_SCALARS
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_UNCHECKED_ACCESS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_ATTRIBUTES
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV SPARK_05
+
+U ocarina.cmd_line%b	ocarina-cmd_line.adb	a069f93a NE OO PK IS
+W ada%s			ada.ads			ada.ali
+W ada.command_line%s	a-comlin.adb		a-comlin.ali
+W ada.command_line.response_file%s  a-clrefi.adb  a-clrefi.ali
+W ada.exceptions%s	a-except.adb		a-except.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W gnat%s		gnat.ads		gnat.ali
+W gnat.command_line%s	g-comlin.adb		g-comlin.ali
+W gnat.directory_operations%s  g-dirope.adb	g-dirope.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.analyzer%s	ocarina-analyzer.adb	ocarina-analyzer.ali
+W ocarina.analyzer.real%s  ocarina-analyzer-real.adb  ocarina-analyzer-real.ali
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+W ocarina.backends.pok_c%s  ocarina-backends-pok_c.adb  ocarina-backends-pok_c.ali
+W ocarina.fe_aadl%s	ocarina-fe_aadl.adb	ocarina-fe_aadl.ali
+W ocarina.fe_aadl.parser%s  ocarina-fe_aadl-parser.adb  ocarina-fe_aadl-parser.ali
+W ocarina.fe_real%s	ocarina-fe_real.adb	ocarina-fe_real.ali
+W ocarina.fe_real.parser%s  ocarina-fe_real-parser.adb  ocarina-fe_real-parser.ali
+W ocarina.files%s	ocarina-files.adb	ocarina-files.ali
+W ocarina.namet%s	ocarina-namet.adb	ocarina-namet.ali
+W ocarina.options%s	ocarina-options.adb	ocarina-options.ali
+W ocarina.output%s	ocarina-output.adb	ocarina-output.ali
+W ocarina.scripts%s	ocarina-scripts.adb	ocarina-scripts.ali
+W system.concat_3%s	s-conca3.adb		s-conca3.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W utils%s		utils.adb		utils.ali
+
+U ocarina.cmd_line%s	ocarina-cmd_line.ads	206e9eb7 EE NE OO PK IS
+W ocarina%s		ocarina.adb		ocarina.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-charac.ads		20070912115821 2d3ec45b ada.characters%s
+D a-chlat1.ads		20140225151544 66457d31 ada.characters.latin_1%s
+D a-comlin.ads		20140225151544 ea62afbc ada.command_line%s
+D a-clrefi.ads		20140225151544 d4017dda ada.command_line.response_file%s
+D a-except.ads		20140730140058 5250cb69 ada.exceptions%s
+D a-finali.ads		20140611123707 69f99942 ada.finalization%s
+D a-ioexce.ads		20140225151544 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20141120112812 119b8fb3 ada.streams%s
+D a-string.ads		20070406091342 90ac6797 ada.strings%s
+D a-strmap.ads		20140611123156 e8bb714a ada.strings.maps%s
+D a-tags.ads		20140730140058 dc4d0634 ada.tags%s
+D a-textio.ads		20140717063745 386df5d4 ada.text_io%s
+D a-unccon.ads		20070406091342 f9eb8f06 ada.unchecked_conversion%s
+D a-uncdea.ads		20070406091342 f15a5ed1 ada.unchecked_deallocation%s
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-comlin.ads		20140717064911 e5012573 gnat.command_line%s
+D g-dirope.ads		20141120111340 940c4438 gnat.directory_operations%s
+D g-os_lib.ads		20090409150019 0db74523 gnat.os_lib%s
+D g-regexp.ads		20110801150502 691be386 gnat.regexp%s
+D g-string.ads		20090409150019 c6abc540 gnat.strings%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D interfac.ads		20141120112812 6033a23f interfaces%s
+D i-cstrea.ads		20140801100435 e53d8b8e interfaces.c_streams%s
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-analyzer.ads	20160902084437 191ec10b ocarina.analyzer%s
+D ocarina-analyzer-real.ads  20160902084437 1792f4f1 ocarina.analyzer.real%s
+D ocarina-backends.ads	20160902084508 6580b411 ocarina.backends%s
+D ocarina-backends-pok_c.ads  20160902084437 f5841934 ocarina.backends.pok_c%s
+D ocarina-cmd_line.ads	20160902084437 9fd63760 ocarina.cmd_line%s
+D ocarina-cmd_line.adb	20160902084437 d6b47a87 ocarina.cmd_line%b
+D ocarina-fe_aadl.ads	20160902084437 b4770820 ocarina.fe_aadl%s
+D ocarina-fe_aadl-parser.ads  20160902084508 0d651b8c ocarina.fe_aadl.parser%s
+D ocarina-fe_aadl-parser_errors.ads  20160902084508 350cabce ocarina.fe_aadl.parser_errors%s
+D ocarina-fe_real.ads	20160902084437 edaadb05 ocarina.fe_real%s
+D ocarina-fe_real-parser.ads  20160902084508 ddf83b48 ocarina.fe_real.parser%s
+D ocarina-files.ads	20160902084437 f091ebe6 ocarina.files%s
+D ocarina-me_aadl.ads	20160902084437 debca36c ocarina.me_aadl%s
+D ocarina-me_aadl-tokens.ads  20160902084437 23405ada ocarina.me_aadl.tokens%s
+D ocarina-namet.ads	20160902084437 b31432d0 ocarina.namet%s
+D ocarina-options.ads	20160902084508 3119d6b0 ocarina.options%s
+D ocarina-output.ads	20160902084508 edb3fa77 ocarina.output%s
+D ocarina-scripts.ads	20160902084437 477e5a9a ocarina.scripts%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-conca3.ads		20140225151544 0b705ca5 system.concat_3%s
+D s-crtl.ads		20141120112812 0ebbdb71 system.crtl%s
+D s-exctab.ads		20140225151139 54135002 system.exception_table%s
+D s-ficobl.ads		20140718105747 078245e4 system.file_control_block%s
+D s-finmas.ads		20140225151139 814daec4 system.finalization_masters%s
+D s-finroo.ads		20120426095924 4ff27390 system.finalization_root%s
+D s-os_lib.ads		20150220113817 5853d835 system.os_lib%s
+D s-parame.ads		20140801093848 7e2a0d7f system.parameters%s
+D s-pooglo.ads		20110804083314 542f33d0 system.pool_global%s
+D s-regexp.ads		20120410054430 9c7d27a7 system.regexp%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-secsta.ads		20140225151139 86a2856d system.secondary_stack%s
+D s-soflin.ads		20140801100131 aa763b52 system.soft_links%s
+D s-stache.ads		20140225151139 a37c21ec system.stack_checking%s
+D s-stalib.ads		20150220094550 fa0a3617 system.standard_library%s
+D s-stoele.ads		20140225151139 2dc34a04 system.storage_elements%s
+D s-stopoo.ads		20131010103753 b16154c2 system.storage_pools%s
+D s-stposu.ads		20140718101241 97a6219c system.storage_pools.subpools%s
+D s-stratt.ads		20131014135145 aedef97e system.stream_attributes%s
+D s-string.ads		20140225151139 8fe54fb7 system.strings%s
+D s-traent.ads		20140730135025 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20140731130224 9d58a4c0 system.unsigned_types%s
+D s-wchcon.ads		20140718092328 1b7d22d2 system.wch_con%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D utils.ads		20160902084437 1ce5617c utils%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 1 ada.ads
+16K9*Ada 19e8 32|32r6 32r37 33r6 34r6 34r37 131r20 134r16 134r40 135r16 165r30
+. 167r15
+X 4 a-comlin.ads
+38K13*Command_Line 139e21 32|32w10 32r41 33r10 165r34 167r19
+57V13*Command_Name{string} 32|151s24
+X 5 a-clrefi.ads
+43K26*Response_File 100e35 32|33w23 165r47 167r32
+51A12*Argument_List{66|54A9}<integer> 32|166r16
+72V13*Arguments_From{51A12} 32|167s46
+X 13 a-textio.ads
+49K13*Text_IO 471e16 32|34w10 34r41 131r24 134r20 134r44 135r20
+52P9*File_Type 32|131r32
+53n23*In_File{53E9} 32|134r52
+92U14*Open 32|134s28
+113U14*Set_Input 32|135s28
+X 16 gnat.ads
+34K9*GNAT 37e9 32|36r6 36r37 37r6 37r37 38r6 38r37 149r12 359r12
+X 17 g-comlin.ads
+287K14*Command_Line 1201e22 32|36w11 36r42 149r17 359r17
+462V13*Get_Argument{string} 32|130s39 351s36
+463b7 Do_Expansion{boolean} 32|351r50
+494X4*Invalid_Switch 32|83r19 359r30
+497X4*Invalid_Parameter 32|149r30
+554P9*Command_Line_Configuration 32|54r22
+597U14*Define_Switch 32|199s7 228s7 239s7 243s7 246s7 254s7 258s7 262s7 266s7
+. 270s7 274s7 288s7 292s7 296s7 300s7 311s7
+599a7 Switch{string} 32|200r22
+600a7 Long_Switch{string} 32|200r38 274r39
+601a7 Help{string} 32|201r22 230r10 240r22 243r46 247r22 255r22 259r22 263r22
+. 267r22 271r22 275r22 289r22 293r22 297r22 301r22 313r10
+629U14*Define_Switch 32|204s7 209s7 214s7 219s7 223s7 233s7 250s7 278s7 283s7
+. 304s7 316s7 320s7 324s7 330s7
+632a7 Switch{string} 32|205r22
+633a7 Long_Switch{string} 32|205r36 210r28
+634a7 Help{string} 32|206r22 211r22 216r22 220r22 225r22 236r10 251r22 280r22
+. 285r22 307r10 317r29 321r29 327r10 332r19
+636b7 Value{boolean} 32|216r54 235r10
+681U14*Set_Usage 32|193s7
+683a7 Usage{string} 32|193r35
+722U14*Getopt 32|343s7
+X 18 g-dirope.ads
+43K14*Directory_Operations 268e30 32|37w11 37r42
+116V13*Base_Name{string} 32|151s13
+X 19 g-os_lib.ads
+51K14*OS_Lib=51:36 32|38w11 38r42
+X 22 g-table.ads
+177U14*Append 32|122s20[37|54]
+X 26 ocarina.ads
+32K9*Ocarina 61e12 31|32r9 37r5 32|40r6 40r37 41r6 41r37 42r6 42r37 43r6
+. 43r37 44r6 44r37 46r6 46r37 47r6 47r37 48r6 48r37 49r6 49r37 50r6 52r14
+. 136r16 172r16 181r10 364r5
+34n31*AADL_V1{34E9} 32|79r29
+34n40*AADL_V2{34E9} 32|81r29
+40e4*AADL_Version{34E9} 32|79m13 81m13
+X 27 ocarina-analyzer.ads
+34K17*Analyzer 55e21 32|49r14 49r45
+X 28 ocarina-analyzer-real.ads
+34K26*REAL 66e26 32|49w23 49r54
+58i4*Main_Theorem{45|182I9} 32|125m10
+62b4*Continue_Evaluation{boolean} 32|305m27 305r27
+X 29 ocarina-backends.ads
+41K17*Backends 120e21 32|40w14 40r45 50r14 98r10 279r22 284r22 316r39 320r39
+. 325r27 331r27
+86U14*Set_Current_Backend_Name 32|95s10
+110i4*Generated_Sources_Directory{45|182I9} 32|113m10
+113b4*Compile_Generated_Sources{boolean} 32|279m31 279r31
+114b4*Remove_Generated_Sources{boolean} 32|284m31 284r31
+115b4*Do_Coverage_Test{boolean} 32|316m48 316r48 320m48 320r48
+117b4*Generate_ASN1_Deployment{boolean} 32|325m36 325r36
+118b4*Add_Performance_Analysis{boolean} 32|331m36 331r36
+X 30 ocarina-backends-pok_c.ads
+32K26*POK_C 65e27 32|50w23 98r19
+58U14*Set_POK_Flavor 32|98s25
+X 31 ocarina-cmd_line.ads
+32K17*Cmd_Line 26|32k9 31|37l13 37e21 32|52b22 364l13 364t21
+34U14*Process 32|340b14 362l8 362t15
+X 32 ocarina-cmd_line.adb
+54p4 Ocarina_Options{17|554P9} 193m18 193r18 199m22 199r22 204m22 204r22
+. 209m22 209r22 214m22 214r22 219m22 219r22 223m22 223r22 229m10 229r10 234m10
+. 234r10 239m22 239r22 243m22 243r22 246m22 246r22 250m22 250r22 254m22 254r22
+. 258m22 258r22 262m22 262r22 266m22 266r22 270m22 270r22 274m22 274r22 278m22
+. 278r22 283m22 283r22 288m22 288r22 292m22 292r22 296m22 296r22 300m22 300r22
+. 305m10 305r10 312m10 312r10 316m22 316r22 320m22 320r22 325m10 325r10 331m10
+. 331r10 343r15
+57U14 Parse_Command_Line 58>7 58>24 58>44 72b14 155l8 155t26 343r32
+58a7 Switch{string} 73b7 77r10 86r13 89r13 93r13 97r13 100r13 103r13 108r13
+. 111r13 115r13 118r13 121r13 124r13 127r13 140r13 145r33 152r50
+58a24 Parameter{string} 73b24 78r13 80r16 87r55 91r32 95r36 98r41 104r13
+. 105r31 112r46 119r57 122r45 125r43
+58a44 Section{string} 73b44 75r28
+62U14 Parse_Source_Filename 62>37 145s10 161b14 185l8 185t29 354s13
+62a37 S{string} 161b37 163r10 163r13 168r16 168r19 168r34 180r34
+65U14 Register_Command_Line_Parameters 191b14 334l8 334t40 342s7
+130a13 N{string} 133r16 134r61
+131p13 File{13|52P9} 134m34 134r34 135r39
+165a13 Files{5|51A12} 170r22 171r40
+170i17 J{integer} 171r47
+351a13 S{string} 353r23 354r36
+X 33 ocarina-fe_aadl.ads
+34K17*FE_AADL 32|46r14 46r45 33|42e20
+X 34 ocarina-fe_aadl-parser.ads
+42K25*Parser 32|46w22 46r53 34|124e27
+46b4*Add_Pre_Prop_Sets{boolean} 32|234m27 234r27
+X 36 ocarina-fe_real.ads
+32K17*FE_REAL 32|47r14 47r45 36|40e20
+X 37 ocarina-fe_real-parser.ads
+38K25*Parser 32|47w22 47r53 37|57e27
+54K12*REAL_Libs[22|56] 32|122r10
+X 38 ocarina-files.ads
+41K17*Files 32|42w14 42r45 172r24 181r18 38|84e18
+50U14*Add_File_To_Parse_List 32|172s30 181s24
+52b7 Add_Suffix{boolean} 32|174r19 183r13
+X 41 ocarina-namet.ads
+36K17*Namet 32|44w14 44r45 41|242e18
+93V13*Get_String_Name{45|182I9} 32|87s38 112s29 119s40 122s28 125s26
+102V13*Name_Find{45|182I9} 32|173s19 182s13
+158U14*Set_Str_To_Name_Buffer 32|171s16 180s10
+X 42 ocarina-options.ads
+36K17*Options 32|41w14 41r45 42|119e20
+38b4*Quiet{boolean} 32|214m39 214r39
+39b4*Verbose{boolean} 32|209m39 209r39
+41b4*Display_Version{boolean} 32|204m39 204r39
+42b4*Show_Search_Directory{boolean} 32|223m39 223r39
+43b4*Auto_Load_AADL_Files{boolean} 32|250m39 250r39
+44b4*Debug_Mode{boolean} 32|219m39 219r39
+49n7*Instantiate_Model{46E9} 32|101r30 116r35
+50n7*Generate_Code{46E9} 32|94r30
+55n7*Parse_Scenario_Files_First{46E9} 32|142r30
+56n7*Shell{46E9} 32|128r30
+57n7*List_Backends{46E9} 32|109r30
+60e4*After_Scenario_Action{46E9} 32|116m10
+63i4*Root_System_Name{45|182I9} 32|119m10
+65i4*Output_Filename{45|182I9} 32|112m10 113r41
+66i4*Boundt_Process{45|182I9} 32|87m10
+68b4*Use_Scenario_File{boolean} 32|141m10
+70U14*Set_Current_Action 32|94s10 101s10 109s10 128s10 142s10
+82U14*Add_Library_Path 32|105s13
+103U14*Reset_Annex_Action 32|90s10
+106U14*Process_Annex_Action 32|91s10
+X 43 ocarina-output.ads
+40K17*Output 32|43w14 43r45 43|106e19
+68U14*Write_Eol 32|153s10
+85U14*Write_Line 32|150s10
+X 44 ocarina-scripts.ads
+34K17*Scripts 32|48w14 48r45 136m24 44|47e20
+39b4*Standard_Input{boolean} 32|136m32
+X 45 ocarina-types.ads
+182I9*Name_Id<integer>
+X 53 s-os_lib.ads
+978U14*OS_Exit 32|154s10 360s10
+X 66 s-string.ads
+45P9*String_Access(string)
+54A9*String_List(45P9)<integer>
+X 71 utils.ads
+34K9*Utils 32|45w6 45r37 71|83e10
+68V13*To_Lower{45|182I9} 32|87s28 119s30
+

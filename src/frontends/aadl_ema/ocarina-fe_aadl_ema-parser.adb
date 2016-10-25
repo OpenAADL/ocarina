@@ -1382,23 +1382,25 @@ package body Ocarina.FE_AADL_EMA.Parser is
                Restore_Lexer (Loc);
 
                case Token_Test is
-               when T_R_Error =>
-                  Restore_Lexer (Loc_Start);
-                  Error_Behavior_Event := P_Error_Event;
-               when T_Recover =>
-                  Restore_Lexer (Loc_Start);
-                  Error_Behavior_Event := P_Recover_Event;
-               when T_Repair =>
-                  Restore_Lexer (Loc_Start);
-                  Error_Behavior_Event := P_Repair_Event;
-               when others =>
-                  Scan_Token;
-                  DPE (PC_Error_Behavior_Event,
-                  Expected_Tokens => (T_R_Error,
-                                      T_Recover,
-                                      T_Repair));
-                  return No_List;
+                  when T_R_Error =>
+                     Restore_Lexer (Loc_Start);
+                     Error_Behavior_Event := P_Error_Event;
+                  when T_Recover =>
+                     Restore_Lexer (Loc_Start);
+                     Error_Behavior_Event := P_Recover_Event;
+                  when T_Repair =>
+                     Restore_Lexer (Loc_Start);
+                     Error_Behavior_Event := P_Repair_Event;
+
+                  when others =>
+                     Scan_Token;
+                     DPE (PC_Error_Behavior_Event,
+                          Expected_Tokens => (T_R_Error,
+                                              T_Recover,
+                                              T_Repair));
+                     return No_List;
                end case;
+
                Append_Node_To_List (Error_Behavior_Event,
                Error_Behavior_Event_List);
 
@@ -1600,7 +1602,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Save_Lexer (Loc_Start_2);
             Error_Behavior_Transition := P_Branching_Transition;
             Save_Lexer (Loc_End_2);
-
             if No (Error_Behavior_Transition) then
                --  The list of the node 'error_behavior_transition'
                --  must contain at least 1 node

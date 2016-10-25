@@ -115,6 +115,7 @@ package Ocarina.FE_AADL_BA.Parser_Errors is
    type Error_Message_Code is
      (EMC_Error,
       EMC_Debug,
+      EMC_Annex_Empty,
       EMC_Execute_Or_Mode_Transition,
       EMC_Invalid_Range,
       EMC_List_Is_Empty,

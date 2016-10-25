@@ -1,0 +1,62 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P ZX
+
+RN
+RV NO_INITIALIZE_SCALARS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+
+U ocarina.fe_aadl%b	ocarina-fe_aadl.adb	03529404 NE OO PK IS
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.fe_aadl%s	ocarina-fe_aadl.adb	ocarina-fe_aadl.ali
+W ocarina.fe_aadl.parser%s  ocarina-fe_aadl-parser.adb  ocarina-fe_aadl-parser.ali
+W ocarina.me_aadl%s	ocarina-me_aadl.ads	ocarina-me_aadl.ali
+W ocarina.me_aadl.tokens%s  ocarina-me_aadl-tokens.adb  ocarina-me_aadl-tokens.ali
+
+U ocarina.fe_aadl%s	ocarina-fe_aadl.ads	0bcfa1f7 EE NE OO PK IS
+W ocarina%s		ocarina.adb		ocarina.ali
+
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-fe_aadl.ads	20160902084437 b4770820 ocarina.fe_aadl%s
+D ocarina-fe_aadl.adb	20160902084437 9900dd72 ocarina.fe_aadl%b
+D ocarina-fe_aadl-parser.ads  20160902084508 0d651b8c ocarina.fe_aadl.parser%s
+D ocarina-fe_aadl-parser_errors.ads  20160902084508 350cabce ocarina.fe_aadl.parser_errors%s
+D ocarina-me_aadl.ads	20160902084437 debca36c ocarina.me_aadl%s
+D ocarina-me_aadl-tokens.ads  20160902084437 23405ada ocarina.me_aadl.tokens%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 2 ocarina.ads
+32K9*Ocarina 61e12 3|34r9 42r5 4|32r6 33r6 35r14 43r7 44r7 58r5
+X 3 ocarina-fe_aadl.ads
+34K17*FE_AADL 2|32k9 3|42l13 42e20 4|32r14 35b22 45r7 58l13 58t20
+36U14*Init 4|41b14 46l8 46t12
+39U14*Reset 4|52b14 56l8 56t13
+X 5 ocarina-fe_aadl-parser.ads
+42K25*Parser 4|32w22 45r15 5|124e27
+59U14*Init 4|45s22
+X 7 ocarina-me_aadl.ads
+32K17*ME_AADL 4|33r14 43r15 44r15 7|102e20
+X 8 ocarina-me_aadl-tokens.ads
+34K25*Tokens 4|33w22 43r23 44r23 8|265e27
+255U14*Init_Tokens 4|43s30
+258U14*Init_Property_Owner_Tokens 4|44s30
+

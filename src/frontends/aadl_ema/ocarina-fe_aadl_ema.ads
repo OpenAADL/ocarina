@@ -39,6 +39,4 @@ package Ocarina.FE_AADL_EMA is
    procedure Reset;
    --  Resets the parser
 
-   procedure Usage;
-
 end Ocarina.FE_AADL_EMA;

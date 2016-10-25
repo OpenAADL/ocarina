@@ -1,0 +1,190 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P ZX
+
+RN
+RV NO_INITIALIZE_SCALARS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV NO_ELABORATION_CODE
+RV SPARK_05
+
+U ocarina.backends.xtratum_conf%b  ocarina-backends-xtratum_conf.adb  9598c28a NE OO PK IS
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+W ocarina.backends.expander%s  ocarina-backends-expander.adb  ocarina-backends-expander.ali
+W ocarina.backends.messages%s  ocarina-backends-messages.adb  ocarina-backends-messages.ali
+W ocarina.backends.utils%s  ocarina-backends-utils.adb  ocarina-backends-utils.ali
+W ocarina.backends.xml_tree%s  ocarina-backends-xml_tree.ads  ocarina-backends-xml_tree.ali
+W ocarina.backends.xml_tree.generator%s  ocarina-backends-xml_tree-generator.adb  ocarina-backends-xml_tree-generator.ali
+W ocarina.backends.xml_tree.nodes%s  ocarina-backends-xml_tree-nodes.adb  ocarina-backends-xml_tree-nodes.ali
+W ocarina.backends.xml_tree.nutils%s  ocarina-backends-xml_tree-nutils.adb  ocarina-backends-xml_tree-nutils.ali
+W ocarina.backends.xtratum_conf%s  ocarina-backends-xtratum_conf.adb  ocarina-backends-xtratum_conf.ali
+W ocarina.backends.xtratum_conf.channels%s  ocarina-backends-xtratum_conf-channels.adb  ocarina-backends-xtratum_conf-channels.ali
+W ocarina.backends.xtratum_conf.hardware_description%s  ocarina-backends-xtratum_conf-hardware_description.adb  ocarina-backends-xtratum_conf-hardware_description.ali
+W ocarina.backends.xtratum_conf.partition_table%s  ocarina-backends-xtratum_conf-partition_table.adb  ocarina-backends-xtratum_conf-partition_table.ali
+W ocarina.backends.xtratum_conf.resident_sw%s  ocarina-backends-xtratum_conf-resident_sw.adb  ocarina-backends-xtratum_conf-resident_sw.ali
+W ocarina.backends.xtratum_conf.system_description%s  ocarina-backends-xtratum_conf-system_description.adb  ocarina-backends-xtratum_conf-system_description.ali
+W ocarina.backends.xtratum_conf.xm_hypervisor%s  ocarina-backends-xtratum_conf-xm_hypervisor.adb  ocarina-backends-xtratum_conf-xm_hypervisor.ali
+W ocarina.instances%s	ocarina-instances.adb	ocarina-instances.ali
+W ocarina.me_aadl%s	ocarina-me_aadl.ads	ocarina-me_aadl.ali
+W ocarina.me_aadl.aadl_instances%s  ocarina-me_aadl-aadl_instances.ads  ocarina-me_aadl-aadl_instances.ali
+W ocarina.me_aadl.aadl_instances.nodes%s  ocarina-me_aadl-aadl_instances-nodes.adb  ocarina-me_aadl-aadl_instances-nodes.ali
+W ocarina.namet%s	ocarina-namet.adb	ocarina-namet.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+
+U ocarina.backends.xtratum_conf%s  ocarina-backends-xtratum_conf.ads  ab3cac2d EE OO PK IS
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-backends.ads	20160902084508 6580b411 ocarina.backends%s
+D ocarina-backends-expander.ads  20160902084437 33b082d8 ocarina.backends.expander%s
+D ocarina-backends-messages.ads  20160902084437 56b75ee5 ocarina.backends.messages%s
+D ocarina-backends-properties.ads  20160902084508 4a09c968 ocarina.backends.properties%s
+D ocarina-backends-utils.ads  20160902084508 2a02dfb4 ocarina.backends.utils%s
+D ocarina-backends-xml_tree.ads  20160902084437 e6c212c3 ocarina.backends.xml_tree%s
+D ocarina-backends-xml_tree-generator.ads  20160902084437 8af53121 ocarina.backends.xml_tree.generator%s
+D ocarina-backends-xml_tree-nodes.ads  20160902084801 4ab03340 ocarina.backends.xml_tree.nodes%s
+D ocarina-backends-xml_tree-nutils.ads  20160902084437 c98ec325 ocarina.backends.xml_tree.nutils%s
+D ocarina-backends-xtratum_conf.ads  20160902084437 cebc183c ocarina.backends.xtratum_conf%s
+D ocarina-backends-xtratum_conf.adb  20160902084437 6d7c89ea ocarina.backends.xtratum_conf%b
+D ocarina-backends-xtratum_conf-channels.ads  20160902084437 06d10aca ocarina.backends.xtratum_conf.channels%s
+D ocarina-backends-xtratum_conf-hardware_description.ads  20160902084437 3b9e779f ocarina.backends.xtratum_conf.hardware_description%s
+D ocarina-backends-xtratum_conf-partition_table.ads  20160902084437 d175652a ocarina.backends.xtratum_conf.partition_table%s
+D ocarina-backends-xtratum_conf-resident_sw.ads  20160902084437 5ce3296d ocarina.backends.xtratum_conf.resident_sw%s
+D ocarina-backends-xtratum_conf-system_description.ads  20160902084437 e1af1488 ocarina.backends.xtratum_conf.system_description%s
+D ocarina-backends-xtratum_conf-xm_hypervisor.ads  20160902084437 81e2d032 ocarina.backends.xtratum_conf.xm_hypervisor%s
+D ocarina-instances.ads	20160902084437 bb3c6dea ocarina.instances%s
+D ocarina-me_aadl.ads	20160902084437 debca36c ocarina.me_aadl%s
+D ocarina-me_aadl-aadl_instances.ads  20160902084437 8883fa2d ocarina.me_aadl.aadl_instances%s
+D ocarina-me_aadl-aadl_instances-nodes.ads  20160902084801 a82a3b03 ocarina.me_aadl.aadl_instances.nodes%s
+D ocarina-namet.ads	20160902084437 b31432d0 ocarina.namet%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 4 ocarina.ads
+32K9*Ocarina 61e12 14|32r9 59r5 15|32r6 33r6 34r6 35r6 36r6 37r6 38r6 39r6
+. 40r6 41r6 42r6 43r6 44r6 45r6 47r6 47r25 49r14 51r8 52r8 53r8 54r8 55r8
+. 56r8 58r24 59r24 61r24 157r5
+X 5 ocarina-backends.ads
+41K17*Backends 4|32k9 5|120e21 14|32r17 59r13 15|33r14 34r14 36r14 37r14
+. 38r14 39r14 40r14 41r14 42r14 43r14 44r14 45r14 49r22 53r16 54r16 55r16
+. 56r16 58r32 59r32 157r13
+71n7*Xtratum_Configuration{48E9} 15|111r10
+79U14*Register_Backend 15|108s7
+110i4*Generated_Sources_Directory{27|182I9} 15|89r24
+114b4*Remove_Generated_Sources{boolean} 15|91r14
+X 6 ocarina-backends-expander.ads
+36K26*Expander 43e30 15|34w23 53r25
+38U14*Expand 15|73s7
+X 7 ocarina-backends-messages.ads
+34K26*Messages 60e30 15|33w23 54r25
+36U14*Display_Error 15|79s10
+38b7 Fatal{boolean} 15|81r13
+X 9 ocarina-backends-utils.ads
+34K26*Utils 492e27 15|39w23 56r25
+45U14*Enter_Directory 15|89s7
+49U14*Leave_Directory 15|99s7
+66V13*Normalize_Name{27|182I9} 15|131s10
+X 10 ocarina-backends-xml_tree.ads
+35K26*XML_Tree 36e30 15|36r23 37r23 38r23 55r25 58r41 59r41 94r10
+X 11 ocarina-backends-xml_tree-generator.ads
+32K35*Generator 42e40 15|38w32 55r34 94r19
+37U14*Generate 15|94s29
+X 12 ocarina-backends-xml_tree-nodes.ads
+12K35*Nodes 327e36 15|36w32 58r50
+20n7*K_List_Id{14E9} 15|133r50 134r53
+24n7*K_HI_Distributed_Application{14E9} 15|129r37
+246U14*Set_Name 15|132s11
+276U14*Set_Units 15|133s11
+279U14*Set_HI_Nodes 15|134s11
+X 13 ocarina-backends-xml_tree-nutils.ads
+34K35*Nutils 188e37 15|37w32 59r50
+110U14*Push_Entity 15|136s11
+111U14*Pop_Entity 15|145s11
+117V13*New_Node{27|195I9} 15|129s23
+121V13*New_List{27|208I9} 15|133s36 134s39
+X 14 ocarina-backends-xtratum_conf.ads
+32K26*Xtratum_Conf 5|41k17 14|52E4 59l22 59e34 15|40r23 41r23 42r23 43r23
+. 44r23 45r23 49b31 157l22 157t34
+37U14*Generate 37>24 15|67b14 100l8 100t16 110r10
+37i24 AADL_Root{27|195I9} 15|67b24 71r43
+40U14*Init 15|106b14 112l8 112t12
+45U14*Reset 15|118b14 121l8 121t13
+47U14*Visit_Architecture_Instance 47>43 15|75s7 127b14 146l8 146t35
+47i43 E{27|195I9} 15|127b43 131r65 138r33 139r35 140r28 141r26 142r30 143r23
+49V13*Get_XML_Root{27|195I9} 15|152b13 155l8 155t20
+52i4 XML_Root{27|195I9} 15|78r14 94r39 129m7 132r21 133r22 134r25 136r24
+. 154r14
+53i4 Current_XML_Node{27|195I9}
+54i4 Distributed_Application{27|195I9}
+55i4 HI_Node{27|195I9}
+56i4 HI_Unit{27|195I9}
+X 15 ocarina-backends-xtratum_conf.adb
+58K12 XTN=58:50 129r33 132r7 133r7 133r46 134r7 134r49
+59K12 XTU=59:50 129r19 133r32 134r35 136r7 145r7
+61K12 AIN=61:55 131r26 131r36
+68i7 Instance_Root{27|195I9} 71m7 73r15 75r36
+X 16 ocarina-backends-xtratum_conf-channels.ads
+32K39*Channels 15|45w36 143r7 16|36e43
+34U14*Visit 15|143s16
+X 17 ocarina-backends-xtratum_conf-hardware_description.ads
+32K39*Hardware_Description 15|41w36 139r7 17|36e55
+34U14*Visit 15|139s28
+X 18 ocarina-backends-xtratum_conf-partition_table.ads
+32K39*Partition_Table 15|44w36 142r7 18|36e50
+34U14*Visit 15|142s23
+X 19 ocarina-backends-xtratum_conf-resident_sw.ads
+32K39*Resident_Sw 15|43w36 141r7 19|36e46
+34U14*Visit 15|141s19
+X 20 ocarina-backends-xtratum_conf-system_description.ads
+32K39*System_Description 15|40w36 138r7 20|36e53
+34U14*Visit 15|138s26
+X 21 ocarina-backends-xtratum_conf-xm_hypervisor.ads
+32K39*Xm_Hypervisor 15|42w36 140r7 21|36e48
+34U14*Visit 15|140s21
+X 22 ocarina-instances.ads
+34K17*Instances 15|32w14 51r16 22|105e22
+36V13*Instantiate_Model{27|195I9} 15|71s24
+X 23 ocarina-me_aadl.ads
+32K17*ME_AADL 15|35r14 52r16 61r32 23|102e20
+X 24 ocarina-me_aadl-aadl_instances.ads
+32K25*AADL_Instances 15|35r22 52r24 61r40 24|33e35
+X 25 ocarina-me_aadl-aadl_instances-nodes.ads
+12K40*Nodes 15|35w37 52r39 61r55 25|615e41
+422V13*Identifier{27|195I9} 15|131s40
+425V13*Name{27|182I9} 15|131s30
+452V13*Root_System{27|195I9} 15|131s52
+X 26 ocarina-namet.ads
+36K17*Namet 15|47w14 47r33 26|242e18
+70U14*Get_Name_String 15|130s7
+102V13*Name_Find{27|182I9} 15|132s31
+X 27 ocarina-types.ads
+49I9*Int<integer>
+182I9*Name_Id<integer>
+195I9*Node_Id<49I9> 14|37r36 47r47 49r33 52r30 53r30 54r30 55r30 56r30 15|67r36
+. 68r23 127r47 152r33
+201V13*No{boolean} 15|78s10
+208I9*List_Id<195I9>
+

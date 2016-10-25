@@ -1,0 +1,272 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P ZX
+
+RN
+RV NO_INITIALIZE_SCALARS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV SPARK_05
+
+U ocarina.builder.aadl_ba.specifications%b  ocarina-builder-aadl_ba-specifications.adb  40a22996 NE OO PK IS
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.builder.aadl_ba%s  ocarina-builder-aadl_ba.ads  ocarina-builder-aadl_ba.ali
+W ocarina.me_aadl_ba%s	ocarina-me_aadl_ba.ads	ocarina-me_aadl_ba.ali
+W ocarina.me_aadl_ba.ba_tree%s  ocarina-me_aadl_ba-ba_tree.ads  ocarina-me_aadl_ba-ba_tree.ali
+W ocarina.me_aadl_ba.ba_tree.nodes%s  ocarina-me_aadl_ba-ba_tree-nodes.adb  ocarina-me_aadl_ba-ba_tree-nodes.ali
+W ocarina.me_aadl_ba.ba_tree.nutils%s  ocarina-me_aadl_ba-ba_tree-nutils.adb  ocarina-me_aadl_ba-ba_tree-nutils.ali
+W system.assertions%s	s-assert.adb		s-assert.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+
+U ocarina.builder.aadl_ba.specifications%s  ocarina-builder-aadl_ba-specifications.ads  59947a73 EE NE OO PK IS
+W locations%s		locations.adb		locations.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.builder.aadl_ba%s  ocarina-builder-aadl_ba.ads  ocarina-builder-aadl_ba.ali
+W ocarina.me_aadl_ba%s	ocarina-me_aadl_ba.ads	ocarina-me_aadl_ba.ali
+W ocarina.types%s	ocarina-types.adb	ocarina-types.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-unccon.ads		20070406091342 f9eb8f06 ada.unchecked_conversion%s
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-builder.ads	20160902084437 1599409a ocarina.builder%s
+D ocarina-builder-aadl_ba.ads  20160902084437 83737681 ocarina.builder.aadl_ba%s
+D ocarina-builder-aadl_ba-specifications.ads  20160902084508 6f460d87 ocarina.builder.aadl_ba.specifications%s
+D ocarina-builder-aadl_ba-specifications.adb  20160902084508 7dd7b5bd ocarina.builder.aadl_ba.specifications%b
+D ocarina-me_aadl_ba.ads  20160902084508 539eaff3 ocarina.me_aadl_ba%s
+D ocarina-me_aadl_ba-ba_tree.ads  20160902084437 1e24f396 ocarina.me_aadl_ba.ba_tree%s
+D ocarina-me_aadl_ba-ba_tree-nodes.ads  20160902084801 16193149 ocarina.me_aadl_ba.ba_tree.nodes%s
+D ocarina-me_aadl_ba-ba_tree-nutils.ads  20160902084508 442aa0e5 ocarina.me_aadl_ba.ba_tree.nutils%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-assert.ads		20140225151544 cd8d2c94 system.assertions%s
+D s-exctab.ads		20140225151139 54135002 system.exception_table%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-stalib.ads		20150220094550 fa0a3617 system.standard_library%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 5 locations.ads
+34K9*Locations 80e14 9|33w6 40r8
+36R9*Location 52e14 9|44r21 59r22 72r21 85r25 91r29 112r26 118r27 125r30
+. 131r35 137r30 144r27 10|45r21 102r22 155r21 206r25 233r29 316r26 351r27
+. 378r30 408r35 442r30 477r27
+X 6 ocarina.ads
+32K9*Ocarina 61e12 9|32r6 35r6 37r9 39r8 41r8 150r5 10|32r6 33r6 35r5 36r5
+. 38r14 507r5
+X 7 ocarina-builder.ads
+32K17*Builder 6|32k9 7|33e20 9|37r17 150r13 10|38r22 507r13
+X 8 ocarina-builder-aadl_ba.ads
+32K25*Aadl_Ba 7|32k17 8|34e28 9|37r25 150r21 10|38r30 507r21
+X 9 ocarina-builder-aadl_ba-specifications.ads
+37K33*Specifications 8|32k25 9|150l29 150e43 10|38b38 507l29 507t43
+43V13*Add_New_Behavior_Annex{15|195I9} 44>7 45>7 46>7 47>7 48>7 10|44b13
+. 68l8 68t30
+44r7 Loc{5|36R9} 10|45b7 55r72
+45i7 Container{15|195I9} 10|46b7 58r31
+46i7 Variables{15|208I9} 10|47b7 59r31
+47i7 States{15|208I9} 10|48b7 60r31
+48i7 Transitions{15|208I9} 10|49b7 61r31
+51U14*Add_New_Behavior_Annex 52>7 53>7 54>7 55>7 56>7 10|57s7 74b14 95l8
+. 95t30
+52i7 Behavior_Annex{15|195I9} 10|75b7 82r28 85r25 89r22 93r27
+53i7 Container{15|195I9} 10|76b7 81r28
+54i7 Variables{15|208I9} 10|77b7 84r24 85r41
+55i7 States{15|208I9} 10|78b7 88r24 89r38
+56i7 Transitions{15|208I9} 10|79b7 92r24 93r43
+58V13*Add_New_Behavior_Variable{15|195I9} 59>7 60>7 61>7 62>7 10|101b13 123l8
+. 123t33
+59r7 Loc{5|36R9} 10|102b7 111r40
+60i7 Container{15|195I9} 10|103b7 108r28 114r34
+61i7 Ident_List{15|208I9} 10|104b7 115r34
+62i7 Class_Ref{15|195I9} 10|105b7 116r34
+65U14*Add_New_Behavior_Variable 66>7 67>7 68>7 69>7 10|113s7 129b14 148l8
+. 148t33
+66i7 Behavior_Variable{15|195I9} 10|130b7 135r28 138r28 142r27 146r30
+67i7 Container{15|195I9} 10|131b7 137r10 138r47
+68i7 Ident_List{15|208I9} 10|132b7 141r24 142r46
+69i7 Class_Ref{15|195I9} 10|133b7 145r10 146r49
+71V13*Add_New_Behavior_State{15|195I9} 72>7 73>7 74>7 75>7 10|154b13 175l8
+. 175t30
+72r7 Loc{5|36R9} 10|155b7 163r72
+73i7 Container{15|195I9} 10|156b7 161r28 166r31
+74i7 Ident_List{15|208I9} 10|157b7 167r31
+75e7 State_Kind{11|34E9} 10|158b7 168r31
+78U14*Add_New_Behavior_State 79>7 80>7 81>7 82>7 10|165s7 181b14 199l8 199t30
+79i7 Behavior_State{15|195I9} 10|182b7 187r28 190r28 194r27 197r23
+80i7 Container{15|195I9} 10|183b7 189r10 190r44
+81i7 Ident_List{15|208I9} 10|184b7 193r24 194r43
+82e7 State_Kind{11|34E9} 10|185b7 197r64
+84V13*Add_New_Behavior_Transition{15|195I9} 85>7 86>7 87>7 10|205b13 226l8
+. 226t35
+85r7 Loc{5|36R9} 10|206b7 214r42
+86i7 Container{15|195I9} 10|207b7 211r28
+87i7 Transition_Node{15|195I9} 10|208b7 216r10 217r47 218r28
+90V13*Add_New_Execute_Transition{15|195I9} 91>7 92>7 93>7 94>7 95>7 96>7
+. 97>7 98>7 10|232b13 262l8 262t34
+91r7 Loc{5|36R9} 10|233b7 246r52
+92i7 Container{15|195I9} 10|234b7 249r35
+93i7 Transition_Idt{15|195I9} 10|235b7 250r35
+94i7 Transition_Priority{15|195I9} 10|236b7 251r35
+95i7 Sources{15|208I9} 10|237b7 252r35
+96i7 Behavior_Condition{15|195I9} 10|238b7 253r35
+97i7 Destination{15|195I9} 10|239b7 254r35
+98i7 Behavior_Act_Block{15|195I9} 10|240b7 255r35
+101U14*Add_New_Execute_Transition 102>7 103>7 104>7 105>7 106>7 107>7 108>7
+. 109>7 10|248s7 268b14 309l8 309t34
+102i7 Execute_Transition{15|195I9} 10|269b7 278r28 282r28 286r39 290r44 295r23
+. 299r34 303r27 307r37
+103i7 Container{15|195I9} 10|270b7 281r10 282r48
+104i7 Transition_Idt{15|195I9} 10|271b7 285r10 286r59
+105i7 Transition_Priority{15|195I9} 10|272b7 289r10 291r44
+106i7 Sources{15|208I9} 10|273b7 294r24 295r43
+107i7 Behavior_Condition{15|195I9} 10|274b7 298r10 299r54
+108i7 Destination{15|195I9} 10|275b7 302r10 303r47
+109i7 Behavior_Act_Block{15|195I9} 10|276b7 306r19 307r57
+111V13*Add_New_Behavior_Condition{15|195I9} 112>7 113>7 114>7 10|315b13 344l8
+. 344t34
+112r7 Loc{5|36R9} 10|316b7 328r58
+113i7 Container{15|195I9} 10|317b7 321r26 322r38 330r19 331r48
+114i7 Condition_Node{15|195I9} 10|318b7 323r28 324r28 325r28 334r10 335r45
+. 336r28
+117V13*Add_New_Execute_Condition{15|195I9} 118>7 119>7 120>7 121>7 10|350b13
+. 371l8 371t33
+118r7 Loc{5|36R9} 10|351b7 362r58
+119i7 Container{15|195I9} 10|352b7 357r26 358r38
+120i7 Value_Expr{15|195I9} 10|353b7 364r10 365r51 366r28
+121b7 Is_Otherwise_Bool{boolean} 10|354b7 368r47
+124V13*Add_New_Mode_Condition{15|195I9} 125>7 126>7 127>7 10|377b13 401l8
+. 401t30
+125r7 Loc{5|36R9} 10|378b7 388r72
+126i7 Container{15|195I9} 10|379b7 383r26 384r38 390r41
+127i7 Trigger_Logical_Expr{15|195I9} 10|380b7 385r28 391r19 393r44 394r28
+130V13*Add_New_Trigger_Logical_Expr{15|195I9} 131>7 132>7 133>7 10|407b13
+. 435l8 435t36
+131r7 Loc{5|36R9} 10|408b7 417r55
+132i7 Container{15|195I9} 10|409b7 413r26 420r19 421r50
+133i7 Trigger_Logical_Expr_List{15|208I9} 10|410b7 414r36 424r49
+136V13*Add_New_Event_Trigger{15|195I9} 137>7 138>7 139>7 140>7 10|441b13
+. 470l8 470t29
+137r7 Loc{5|36R9} 10|442b7 451r55
+138i7 Container{15|195I9} 10|443b7 448r26 453r19 454r43
+139i7 Port_Component_Ref{15|195I9} 10|444b7 461r19 462r49 463r28
+140i7 Trigger_Logical_Expr{15|195I9} 10|445b7 456r19 458r44 459r28
+143V13*Add_New_Port_Component_Reference{15|195I9} 144>7 145>7 146>7 147>7
+. 10|476b13 505l8 505t40
+144r7 Loc{5|36R9} 10|477b7 488r66
+145i7 Container{15|195I9} 10|478b7 483r26 490r45
+146i7 Subcomponent_Name{15|195I9} 10|479b7 484r28 491r19 493r44 494r28
+147i7 Port_Identifier{15|195I9} 10|480b7 485r28 496r19 497r44 498r28
+X 10 ocarina-builder-aadl_ba-specifications.adb
+55i7 Behavior_Annex{15|195I9} 57r31 63r14 66r17
+110i7 Behavior_Variable{15|195I9} 113r34 118r14 121r17
+163i7 Behavior_State{15|195I9} 165r31 170r14 173r17
+213i7 Behavior_Transition{15|195I9} 217r26 218r45 221r14 225r14
+245i7 Execute_Transition{15|195I9} 248r35 257r14 260r17
+327i7 Behavior_Condition{15|195I9} 331r28 335r25 336r44 339r14 343r14
+361i7 Execute_Condition{15|195I9} 365r32 366r40 368r28 370r14
+388i7 Mode_Condition{15|195I9} 390r25 392r36 394r50 396r14 400r14
+416i7 Trigger_Logical_Expr{15|195I9} 421r28 424r27 426r48 428r39 433r14
+418i7 List_Node{15|195I9} 426m7 427r22 428r28 430m10 430r34
+450i7 Event_Trigger{15|195I9} 454r28 457r32 459r50 462r34 463r48 465r14 469r14
+487i7 Port_Component_Ref{15|195I9} 490r25 492r33 494r47 497r24 498r45 500r14
+. 504r14
+X 11 ocarina-me_aadl_ba.ads
+32K17*ME_AADL_BA 9|35w14 41r16 10|32r14 33r14 35r13 36r13 11|128e23
+34E9*Behavior_State_Kind 9|75r21 82r24 10|158r21 185r24 197r39 11|43e17
+35n7*BSK_Error{34E9} 9|82r47 10|185r47
+X 12 ocarina-me_aadl_ba-ba_tree.ads
+32K28*BA_Tree 10|32r25 33r25 35r24 36r24 12|33e31
+X 13 ocarina-me_aadl_ba-ba_tree-nodes.ads
+12K36*Nodes 10|32w33 36r32 13|1091e37
+20n7*K_Identifier{14E9} 10|484r49 485r47
+22n7*K_Behavior_Annex{14E9} 10|55r54 82r46 108r41 161r41 211r41
+24n7*K_Behavior_Variable{14E9} 10|111r19 135r49
+25n7*K_Behavior_State{14E9} 10|163r54 187r46
+26n7*K_Behavior_Transition{14E9} 10|214r19 322r51
+27n7*K_Execution_Behavior_Transition{14E9} 10|246r19 279r24
+28n7*K_Behavior_Condition{14E9} 10|327r58 358r51 384r51
+29n7*K_Execute_Condition{14E9} 10|324r46 361r57
+30n7*K_Mode_Condition{14E9} 10|325r46 388r54
+31n7*K_Trigger_Logical_Expression{14E9} 10|386r24 417r25
+32n7*K_Event_Trigger{14E9} 10|451r38
+33n7*K_Port_Component_Reference{14E9} 10|488r38
+35n7*K_Dispatch_Condition_Thread{14E9} 10|323r46
+758V13*Kind{14E9} 10|82s22 108s22 135s22 161s22 187s22 211s22 278s22 322s32
+. 323s22 324s22 325s22 358s32 384s32 385s22 484s22 485s22
+764V13*Next_Node{15|195I9} 10|430s23
+767V13*First_Node{15|195I9} 10|426s20
+780U14*Set_BE_Container 10|138s10 190s10 218s10 282s10 331s10 336s10 366s10
+. 390s7 394s10 421s10 428s10 454s10 459s10 463s10 490s7 494s10 498s10
+810U14*Set_Variables 10|85s10
+813U14*Set_States 10|89s10
+816U14*Set_Transitions 10|93s10
+831U14*Set_Identifiers 10|142s10 194s10
+834U14*Set_Classifier_Ref 10|146s10
+837U14*Set_State_Kind 10|197s7
+840U14*Set_Transition 10|217s10
+843U14*Set_Sources 10|295s10
+846U14*Set_Destination 10|303s10
+849U14*Set_Behavior_Condition 10|299s10
+852U14*Set_Behavior_Action_Block 10|307s10
+855U14*Set_Behavior_Transition_Idt 10|286s10
+858U14*Set_Behavior_Transition_Priority 10|290s10
+861U14*Set_Condition 10|335s10
+864U14*Set_Value_Expression 10|365s10
+867U14*Set_Is_Otherwise 10|368s10
+870U14*Set_Trigger_Logical_Expr 10|392s10
+872V13*Event_Triggers{15|208I9} 10|426s32
+873U14*Set_Event_Triggers 10|424s7
+876U14*Set_Port_Component_Ref 10|462s10
+879U14*Set_Trigger_Log_Expr 10|457s10
+882U14*Set_Subcomponent_Name 10|492s10
+885U14*Set_Port_Idt 10|497s10
+X 14 ocarina-me_aadl_ba-ba_tree-nutils.ads
+36K36*Nutils 10|33w33 35r32 14|105e38
+74V13*Is_Empty{boolean} 10|84s14 88s14 92s14 141s14 193s14 294s14 414s26
+80V13*New_Node{15|195I9} 10|55s44 111s9 163s44 214s9 246s9 327s48 361s47
+. 388s44 416s50 450s43 487s48
+X 15 ocarina-types.ads
+34K17*Types 9|32w14 39r16 15|304e18
+49I9*Int<integer>
+195I9*Node_Id<49I9> 9|45r21 49r13 52r24 53r24 60r22 62r22 63r13 66r27 67r27
+. 69r27 73r21 76r13 79r24 80r24 86r25 87r25 88r13 92r29 93r29 94r29 96r29
+. 97r29 98r29 99r13 102r29 103r29 104r29 105r29 107r29 108r29 109r29 113r26
+. 114r26 115r13 119r27 120r27 122r13 126r30 127r30 128r13 132r35 134r13 138r30
+. 139r30 140r30 141r13 145r27 146r27 147r27 148r13 10|46r21 50r13 55r33 75r24
+. 76r24 103r22 105r22 106r13 110r36 130r27 131r27 133r27 156r21 159r13 163r33
+. 182r24 183r24 207r25 208r25 209r13 213r38 234r29 235r29 236r29 238r29 239r29
+. 240r29 241r13 245r37 269r29 270r29 271r29 272r29 274r29 275r29 276r29 317r26
+. 318r26 319r13 327r37 352r27 353r27 355r13 361r36 379r30 380r30 381r13 388r33
+. 409r35 411r13 416r39 418r20 443r30 444r30 445r30 446r13 450r32 478r27 479r27
+. 480r27 481r13 487r37
+196i4*No_Node{195I9} 9|53r35 67r38 69r38 80r47 103r40 104r40 105r40 107r40
+. 108r40 109r40 10|64r17 76r35 119r17 131r38 133r38 137r23 145r23 171r17
+. 183r47 189r23 216r29 222r17 258r17 270r40 271r40 272r40 274r40 275r40 276r40
+. 281r23 285r28 289r33 298r32 302r25 334r28 340r17 364r24 397r17 466r17 501r17
+198V13*Present{boolean} 10|306s10 330s10 391s10 420s10 427s13 453s10 456s10
+. 461s10 491s10 496s10
+201V13*No{boolean} 10|63s10 118s10 170s10 221s10 257s10 321s22 339s10 357s22
+. 383s22 396s10 413s22 448s22 465s10 483s22 500s10
+208I9*List_Id<195I9> 9|46r21 47r21 48r21 54r24 55r24 56r24 61r22 68r27 74r21
+. 81r24 95r29 106r29 133r35 10|47r21 48r21 49r21 77r24 78r24 79r24 104r22
+. 132r27 157r21 184r24 237r29 273r29 410r35
+209i4*No_List{208I9} 9|54r35 55r35 56r35 81r47 106r40 10|77r35 78r35 79r35
+. 184r47 273r40
+

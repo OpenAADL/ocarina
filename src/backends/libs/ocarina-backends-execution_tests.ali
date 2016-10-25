@@ -1,0 +1,614 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P SS ZX
+
+RN
+RV NO_ALLOCATORS
+RV NO_DELAY
+RV NO_DISPATCH
+RV NO_ENUMERATION_MAPS
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTION_PROPAGATION
+RV NO_EXCEPTIONS
+RV NO_IO
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_IMPLICIT_LOOPS
+RV NO_INITIALIZE_SCALARS
+RV NO_LOCAL_ALLOCATORS
+RV NO_NESTED_FINALIZATION
+RV NO_RECURSION
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_UNCHECKED_DEALLOCATION
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_ATTRIBUTES
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV NO_ELABORATION_CODE
+RV NO_OBSOLESCENT_FEATURES
+RV SPARK_05
+
+U ocarina.backends.execution_tests%b  ocarina-backends-execution_tests.adb  e6a84df3 OO PF PK IS
+W ada%s			ada.ads			ada.ali
+W ada.command_line%s	a-comlin.adb		a-comlin.ali
+W ada.directories%s	a-direct.adb		a-direct.ali
+W ada.exceptions%s	a-except.adb		a-except.ali
+W ada.real_time%s	a-reatim.adb		a-reatim.ali
+W ada.real_time.delays%s  a-retide.adb		a-retide.ali
+W ada.strings%s		a-string.ads		a-string.ali
+W ada.strings.unbounded%s  a-strunb.adb		a-strunb.ali
+W ada.strings.unbounded.text_io%s  a-suteio.adb	a-suteio.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W gnat%s		gnat.ads		gnat.ali
+W gnat.directory_operations%s  g-dirope.adb	g-dirope.ali
+W gnat.directory_operations.iteration%s  g-diopit.adb  g-diopit.ali
+W interfaces%s		interfac.ads		interfac.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+W ocarina.backends.execution_utils%s  ocarina-backends-execution_utils.adb  ocarina-backends-execution_utils.ali
+W ocarina.backends.utils%s  ocarina-backends-utils.adb  ocarina-backends-utils.ali
+W ocarina.namet%s	ocarina-namet.adb	ocarina-namet.ali
+W ocarina.output%s	ocarina-output.adb	ocarina-output.ali
+W system%s		system.ads		system.ali
+W system.address_to_access_conversions%s
+W system.concat_2%s	s-conca2.adb		s-conca2.ali
+W system.concat_3%s	s-conca3.adb		s-conca3.ali
+W system.concat_4%s	s-conca4.adb		s-conca4.ali
+W system.concat_5%s	s-conca5.adb		s-conca5.ali
+W system.concat_7%s	s-conca7.adb		s-conca7.ali
+W system.finalization_masters%s  s-finmas.adb	s-finmas.ali
+W system.img_enum_new%s	s-imenne.adb		s-imenne.ali
+W system.img_int%s	s-imgint.adb		s-imgint.ali
+W system.img_lli%s	s-imglli.adb		s-imglli.ali
+W system.pool_global%s	s-pooglo.adb		s-pooglo.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.standard_library%s  s-stalib.adb	s-stalib.ali
+W system.storage_elements%s  s-stoele.adb	s-stoele.ali
+W system.storage_pools%s  s-stopoo.adb		s-stopoo.ali
+W system.storage_pools.subpools%s  s-stposu.adb	s-stposu.ali
+
+U ocarina.backends.execution_tests%s  ocarina-backends-execution_tests.ads  c444cb4a EE OO PF PK IS
+W ada%s			ada.ads			ada.ali
+W ada.containers%s	a-contai.ads		a-contai.ali
+Z ada.containers.hash_tables%s  a-cohata.ads	a-cohata.ali
+Z ada.containers.hash_tables.generic_keys%s
+Z ada.containers.hash_tables.generic_operations%s
+W ada.containers.indefinite_hashed_maps%s
+Z ada.containers.prime_numbers%s  a-coprnu.adb	a-coprnu.ali
+W ada.exceptions%s	a-except.adb		a-except.ali
+Z ada.finalization%s	a-finali.adb		a-finali.ali
+Z ada.iterator_interfaces%s
+W ada.streams%s		a-stream.adb		a-stream.ali
+W ada.strings%s		a-string.ads		a-string.ali
+W ada.strings.hash%s	a-strhas.adb		a-strhas.ali
+W ada.strings.unbounded%s  a-strunb.adb		a-strunb.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W ada.unchecked_deallocation%s
+W gnat%s		gnat.ads		gnat.ali
+W gnat.expect%s		g-expect.adb		g-expect.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W gnat.regpat%s		g-regpat.ads		g-regpat.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+W ocarina.backends.properties%s  ocarina-backends-properties.adb  ocarina-backends-properties.ali
+W system%s		system.ads		system.ali
+W system.assertions%s	s-assert.adb		s-assert.ali
+W system.finalization_masters%s  s-finmas.adb	s-finmas.ali
+W system.pool_global%s	s-pooglo.adb		s-pooglo.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.standard_library%s  s-stalib.adb	s-stalib.ali
+W system.storage_elements%s  s-stoele.adb	s-stoele.ali
+W system.storage_pools%s  s-stopoo.adb		s-stopoo.ali
+W system.storage_pools.subpools%s  s-stposu.adb	s-stposu.ali
+W system.stream_attributes%s  s-stratt.adb	s-stratt.ali
+W system.strings.stream_ops%s  s-ststop.adb	s-ststop.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-calend.ads		20141120112812 d986d312 ada.calendar%s
+D a-charac.ads		20070912115821 2d3ec45b ada.characters%s
+D a-chahan.ads		20140611123156 1601a50f ada.characters.handling%s
+D a-chlat1.ads		20140225151544 66457d31 ada.characters.latin_1%s
+D a-comlin.ads		20140225151544 ea62afbc ada.command_line%s
+D a-contai.ads		20101025135029 61e5e089 ada.containers%s
+D a-cohata.ads		20110804151834 04abccc5 ada.containers.hash_tables%s
+D a-chtgke.ads		20140219145932 a7b0f3a2 ada.containers.hash_tables.generic_keys%s
+D a-chtgke.adb		20140220134615 ee7af212 ada.containers.hash_tables.generic_keys%b
+D a-chtgop.ads		20140730142109 654c6672 ada.containers.hash_tables.generic_operations%s
+D a-chtgop.adb		20140730142109 8c01e2ed ada.containers.hash_tables.generic_operations%b
+D a-cihama.ads		20130411133353 6caf5205 ada.containers.indefinite_hashed_maps%s
+D a-cihama.adb		20141120141704 309c8365 ada.containers.indefinite_hashed_maps%b
+D a-coprnu.ads		20090409150019 0cdf1864 ada.containers.prime_numbers%s
+D a-direct.ads		20140801100131 9d42e46d ada.directories%s
+D a-except.ads		20140730140058 5250cb69 ada.exceptions%s
+D a-finali.ads		20140611123707 69f99942 ada.finalization%s
+D a-ioexce.ads		20140225151544 e4a01f64 ada.io_exceptions%s
+D a-iteint.ads		20110906092602 7c7305e9 ada.iterator_interfaces%s
+D a-reatim.ads		20141120112812 02069903 ada.real_time%s
+D a-retide.ads		20090409150019 081cdaa4 ada.real_time.delays%s
+D a-stream.ads		20141120112812 119b8fb3 ada.streams%s
+D a-string.ads		20070406091342 90ac6797 ada.strings%s
+D a-strfix.ads		20101008130255 d07c346e ada.strings.fixed%s
+D a-strhas.ads		20140225151544 c71c2a52 ada.strings.hash%s
+D a-strmap.ads		20140611123156 e8bb714a ada.strings.maps%s
+D a-strunb.ads		20140717072738 3f91d4c5 ada.strings.unbounded%s
+D a-suteio.ads		20090409150019 26d8e9aa ada.strings.unbounded.text_io%s
+D a-tags.ads		20140730140058 dc4d0634 ada.tags%s
+D a-textio.ads		20140717063745 386df5d4 ada.text_io%s
+D a-unccon.ads		20070406091342 f9eb8f06 ada.unchecked_conversion%s
+D a-uncdea.ads		20070406091342 f15a5ed1 ada.unchecked_deallocation%s
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-dirope.ads		20141120111340 940c4438 gnat.directory_operations%s
+D g-diopit.ads		20110801150502 c930d373 gnat.directory_operations.iteration%s
+D g-diopit.adb		20110801150502 7e799736 gnat.directory_operations.iteration%b
+D g-dyntab.ads		20140225151544 07ce153b gnat.dynamic_tables%s
+D g-expect.ads		20140804125100 8c6f1a8c gnat.expect%s
+D g-os_lib.ads		20090409150019 0db74523 gnat.os_lib%s
+D g-regexp.ads		20110801150502 691be386 gnat.regexp%s
+D g-regpat.ads		20110801150502 b85d88ef gnat.regpat%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D interfac.ads		20141120112812 6033a23f interfaces%s
+D i-c.ads		20110801143639 5421119b interfaces.c%s
+D i-cstrea.ads		20140801100435 e53d8b8e interfaces.c_streams%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-backends.ads	20160902084508 6580b411 ocarina.backends%s
+D ocarina-backends-execution_tests.ads  20160902084437 aa17d7b1 ocarina.backends.execution_tests%s
+D ocarina-backends-execution_tests.adb  20160902084437 4c0693d7 ocarina.backends.execution_tests%b
+D ocarina-backends-execution_utils.ads  20160902084437 0e85964e ocarina.backends.execution_utils%s
+D ocarina-backends-properties.ads  20160902084508 4a09c968 ocarina.backends.properties%s
+D ocarina-backends-utils.ads  20160902084508 2a02dfb4 ocarina.backends.utils%s
+D ocarina-namet.ads	20160902084437 b31432d0 ocarina.namet%s
+D ocarina-output.ads	20160902084508 edb3fa77 ocarina.output%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-atacco.ads		20120515093410 4c36d12f system.address_to_access_conversions%s
+D s-assert.ads		20140225151544 cd8d2c94 system.assertions%s
+D s-atocou.ads		20141017084241 cd7c94ca system.atomic_counters%s
+D s-conca2.ads		20140225151544 02a0d7d0 system.concat_2%s
+D s-conca3.ads		20140225151544 0b705ca5 system.concat_3%s
+D s-conca4.ads		20140225151544 7e642b20 system.concat_4%s
+D s-conca5.ads		20140225151544 875e432e system.concat_5%s
+D s-conca7.ads		20140225151544 fcc75b1f system.concat_7%s
+D s-crtl.ads		20141120112812 0ebbdb71 system.crtl%s
+D s-exctab.ads		20140225151139 54135002 system.exception_table%s
+D s-ficobl.ads		20140718105747 078245e4 system.file_control_block%s
+D s-finmas.ads		20140225151139 814daec4 system.finalization_masters%s
+D s-finroo.ads		20120426095924 4ff27390 system.finalization_root%s
+D s-imenne.ads		20140225151139 614c06c0 system.img_enum_new%s
+D s-imgint.ads		20090409150019 02dbe0c2 system.img_int%s
+D s-imglli.ads		20090409150019 114f55d1 system.img_lli%s
+D s-linux.ads		20150107101203 2fda6ad1 system.linux%s
+D s-memory.ads		20140225151139 597d6634 system.memory%s
+D s-multip.ads		20101011073009 38ac9f73 system.multiprocessors%s
+D s-oscons.ads		20151012134217 7da85379 system.os_constants%s
+D s-osinte.ads		20150107101203 e9e28195 system.os_interface%s
+D s-os_lib.ads		20150220113817 5853d835 system.os_lib%s
+D s-parame.ads		20140801093848 7e2a0d7f system.parameters%s
+D s-pooglo.ads		20110804083314 542f33d0 system.pool_global%s
+D s-regexp.ads		20120410054430 9c7d27a7 system.regexp%s
+D s-regpat.ads		20140801101559 825a9b7f system.regpat%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-secsta.ads		20140225151139 86a2856d system.secondary_stack%s
+D s-soflin.ads		20140801100131 aa763b52 system.soft_links%s
+D s-stache.ads		20140225151139 a37c21ec system.stack_checking%s
+D s-stausa.ads		20110804134155 017a0a05 system.stack_usage%s
+D s-stalib.ads		20150220094550 fa0a3617 system.standard_library%s
+D s-stalib.adb		20140225151139 f2fe2716 system.standard_library%b
+D s-stoele.ads		20140225151139 2dc34a04 system.storage_elements%s
+D s-stoele.adb		20140801093848 ed88f8fb system.storage_elements%b
+D s-stopoo.ads		20131010103753 b16154c2 system.storage_pools%s
+D s-stposu.ads		20140718101241 97a6219c system.storage_pools.subpools%s
+D s-stratt.ads		20131014135145 aedef97e system.stream_attributes%s
+D s-string.ads		20140225151139 8fe54fb7 system.strings%s
+D s-ststop.ads		20140225151139 e6693757 system.strings.stream_ops%s
+D s-tasinf.ads		20140613095942 2b3f8252 system.task_info%s
+D s-taspri.ads		20141120144719 e3ab4429 system.task_primitives%s
+D s-taprop.ads		20140521131406 1dd2e1b6 system.task_primitives.operations%s
+D s-taskin.ads		20150106085750 339749f0 system.tasking%s
+D s-traent.ads		20140730135025 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20140731130224 9d58a4c0 system.unsigned_types%s
+D s-wchcon.ads		20140718092328 1b7d22d2 system.wch_con%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 1 ada.ads
+16K9*Ada 19e8 49|38r6 39r6 40r6 41r6 50r8 53r38 56r7 77r18 78r18 85r34 91r19
+. 145r17 150r39 156r26 50|36r6 37r6 38r6 39r6 40r6 52r8 53r8 54r8 55r8 99r15
+. 99r42 281r20 286r20 484r23 491r23 640r11 691r20 820r18 891r19
+X 6 a-comlin.ads
+38K13*Command_Line 139e21 50|37w10 52r12 99r46
+57V13*Command_Name{string} 50|99s59
+X 7 a-contai.ads
+16K13*Containers 24e19 49|40r10 50r12 53r42
+19M9*Hash_Type
+X 13 a-cihama.ads
+45V18 Equivalent_Keys{boolean} 49|57r7
+48k24*Indefinite_Hashed_Maps 435e42 49|40w21 53r53
+52R9*Map<18|43R9> 49|97r45[53] 178r33[53] 50|242r26[49|53]
+60R9*Cursor 50|253r22[49|53]
+67r4*No_Element{60R9[49|53]} 50|262r24[49|53]
+114V13*Element{string} 50|278s34[49|53]
+264V13*Find{60R9[49|53]} 50|260s22[49|53]
+273V13*Element{string} 50|317s15[49|53]
+X 16 a-direct.ads
+76K13*Directories 487e20 50|36w10 99r19 281r24 286r24 484r27 491r27 691r24
+234V13*Full_Name{string} 50|99s31
+295V13*Exists{boolean} 50|281s36 286s36 484s39 491s39 691s36
+X 20 a-iteint.ads
+24h9 Forward_Iterator
+X 21 a-reatim.ads
+39K13*Real_Time 141e18 50|40w10 640r15 891r23
+41O9*Time<duration>
+46O9*Time_Span<duration> 50|648r31
+53V13*Clock{41O9} 50|891s33
+55V14*"+"{41O9} 50|891s39
+87V13*Seconds{46O9} 50|648s44
+X 24 a-string.ads
+16K13*Strings 35e16 49|38r10 41r10 56r11 77r22 78r22 85r38 91r23 145r21 150r43
+. 50|39r10 54r12 55r12 820r22
+X 26 a-strhas.ads
+20V22*Hash{7|19M9} 49|41w18 56r19
+X 28 a-strunb.ads
+76K21*Unbounded 489e26 49|38w18 77r30 78r30 85r46 91r31 145r29 150r51 50|39r18
+. 54r20 55r20 820r30
+79R9*Unbounded_String<18|43R9> 473e14 49|77r40 78r40 85r56 91r41 145r39 150r61
+. 50|62r7 130r18 131r18 200r58 202r30 221r19 246r22 473r28 778r23
+94V13*To_Unbounded_String{79R9} 50|474s18 486s21
+100V13*To_String{string} 50|145s20 146s20 208s40 232s23 484s47 491s47 509s41
+. 752s22 753s22 754s22 836s39 881s27
+111U14*Append 50|208s10 606s10 623s7 795s16
+115U14*Append 50|336s16
+148V13*Slice{string} 50|843s33
+230V13*Index{natural} 50|835s21
+282V13*Count{natural} 50|820s40
+406V13*Tail{79R9} 50|836s24
+416V14*"*"{79R9} 50|752s36 754s36
+X 29 a-suteio.ads
+39K31*Text_IO 61e34 50|39w28 54r30
+42V13*Get_Line{28|79R9} 50|208s51
+X 31 a-textio.ads
+49K13*Text_IO 471e16 50|38w10 53r12
+52P9*File_Type 50|135r24 201r30 224r14 472r28 777r23
+53n23*In_File{53E9} 50|204r19
+53n32*Out_File{53E9} 50|157r27 162r27 231r21 495r30 877r19
+86U14*Create 50|157s13 162s13 231s7 495s16 875s16
+92U14*Open 50|204s7
+98U14*Close 50|159s13 164s13 211s7 233s7 502s16 882s16
+183V13*End_Of_File{boolean} 50|207s20
+241U14*Put 50|158s13 163s13 881s16
+259U14*Put_Line 50|232s7 496s16 497s16 498s16 499s16 500s16 501s16
+X 33 a-uncdea.ads
+20u15*Unchecked_Deallocation 49|39w10 156r30
+X 34 gnat.ads
+34K9*GNAT 37e9 49|34r6 35r6 36r6 47r8 48r8 49r8 69r21 50|42r6 43r6 56r8 91r28
+. 92r28 93r28 94r26 95r28 298r16 322r18 375r21 384r33 402r13 406r23 419r16
+. 430r34 448r13 452r23 456r16 467r23 518r16 664r20 696r29 700r19 706r24 715r19
+. 723r16 733r16 746r18 798r43 821r32 854r16 863r19 868r24 898r23 928r13
+X 35 g-dirope.ads
+43K14*Directory_Operations 268e30 50|42w11 43r11 56r13 798r48
+45A12*Dir_Name_Str{string}<integer>
+66e4*Dir_Separator{character} 50|274r15 469r58 477r21 687r18 914r18
+89V13*Get_Current_Dir{45A12} 50|151s15 153s15 272s15 685s18 808s16 812s16
+. 878s19 907s18 912s18
+107V13*Dir_Name{45A12} 50|98s12 469s18
+145V13*File_Name{string} 50|471s18
+X 36 g-diopit.ads
+34K35*Iteration 92e40 50|43w32 798r69
+37U22 Action 50|800r16
+41u14*Find 50|799r16
+X 38 g-dyntab.ads
+92A9*Table_Type(51|55P9)<56|49I9>
+94A12*Big_Table_Type{92A9[51|57]}<56|49I9>
+103P9*Table_Ptr(94A12[51|57])
+111R9*Instance
+112p7*Table{103P9[51|57]} 50|259r35[51|57] 313r35[51|57] 659r28[51|57] 742r28[51|57]
+. 775r28[51|57] 896r28[51|57]
+127V13*Last{56|49I9} 50|250s54[51|57] 645s60[51|57]
+144i4*First{56|49I9} 50|249r54[51|57] 644r60[51|57]
+X 39 g-expect.ads
+126K14*Expect 647e16 49|35w11 48r13 69r26 50|298r21 322r23 375r26 419r21
+. 456r21 518r21 715r24 723r21 733r21 746r23 854r21 863r24 868r29
+132n25*Output{132E9} 50|298r28 733r28 863r31
+151R9*Process_Descriptor 631e14 49|69r33 117r20 127r20 201r50 50|375r33 592r20
+. 615r20
+163U14*Non_Blocking_Spawn 50|392s16 419s28 438s16 456s28 518s28 715s31 723s28
+. 854s28
+164c7 Descriptor<151R9> 50|393r19 420r19 439r19 457r19 519r19 716r22 724r19
+. 855r19
+165a7 Command{string} 50|394r19 421r19 440r19 458r19 520r19 717r22 725r19
+. 856r19
+166a7 Args{79|701A12} 50|395r19 422r19 441r19 459r19 521r19 718r22 726r19
+. 857r19
+167i7 Buffer_Size{natural} 50|396r19 423r19 442r19 460r19 522r19 719r22 727r19
+. 858r19
+168b7 Err_To_Out{boolean} 50|397r19 424r19 443r19 461r19 523r19 720r22 728r19
+. 859r19
+189U14*Close 50|329s10 763s10 871s16
+211V13*Get_Input_Fd{79|186I9} 50|402s32 448s32
+260U14*Add_Filter 50|295s13 730s13 860s16
+298U14*Send 50|399s13 445s13 761s13
+317I9*Expect_Match<integer> 50|245r22 641r22
+359U14*Expect 50|320s13 744s13 866s19
+569X4*Process_Died 50|322r30 746r30 868r36
+X 40 g-os_lib.ads
+51K14*OS_Lib=51:36 49|34w11 47r13 50|91r33 92r33 93r33 94r31 95r33 384r38
+. 402r18 406r28 430r39 448r18 452r28 467r28 664r25 696r34 700r24 706r29 821r37
+. 898r28 928r18
+X 42 g-regpat.ads
+72K14*Regpat=72:36 49|36w11 49r13
+X 47 ocarina.ads
+32K9*Ocarina 61e12 49|43r6 45r9 51r8 209r5 50|32r6 33r6 45r6 46r6 48r14 50r8
+. 51r8 57r8 58r8 938r5
+X 48 ocarina-backends.ads
+41K17*Backends 47|32k9 48|120e21 49|43r14 45r17 51r16 209r13 50|45r14 46r14
+. 48r22 57r16 58r16 938r13
+68n7*PolyORB_Kernel_C{48E9} 50|667r43 694r43 758r40
+85V13*Get_Current_Backend_Kind{48E9} 50|275s36 667s16 688s39 694s16 758s13
+X 49 ocarina-backends-execution_tests.ads
+45K26*Execution_Tests 48|41k17 49|201E9 209l22 209e37 50|48b31 938l22 938t37
+53K12*String_String_Maps[13|48] 97r26 178r14 50|59r8
+61U14*Init 50|83b14 108l8 108t12
+65U14*Reset 50|114b14 123l8 123t13
+68U14*Launch_Test 69<7 70>7 71>7 72>7 50|290s13 374b14 532l8 532t19
+69r7 Fd{39|151R9} 50|375b7 393m34 400m16 402r46 420m34 439m34 446m16 448r46
+. 457m34 519m34
+70a7 Command{string} 50|376b7 390r50 417r40 436r51 458r34 469r48 471r49
+71e7 Arch{52|540E9} 50|377b7 381r12 530r30
+72i7 Timeout{natural} 50|378b7 401r60 447r60
+76V13*No_Regression{boolean} 77>7 78>7 79>7 80>7 50|129b13 194l8 194t21 338s16
+77r7 Trace{28|79R9} 50|130b7 145r31
+78r7 Ref{28|79R9} 50|131b7 146r31
+79i7 App{56|182I9} 50|132b7 142r61 151r59 153r59
+80a7 Ref_Path{string} 50|133b7 143r54
+84V13*Load_Referencial{28|79R9} 85>7 50|200b13 213l8 213t24 332s28
+85a7 File_Path{string} 50|200b31 204r28
+89U14*Write_Referencial 90>7 91>7 92>7 50|219b14 234l8 234t25 356s13
+90a7 File_Path{string} 50|220b7 230r10 231r31
+91r7 Ref{28|79R9} 50|221b7 232r34
+92i7 App{56|182I9} 50|222b7 228r27
+95V13*Execute_Regression_Test{boolean} 96>7 97>7 98>7 50|240b13 368l8 368t31
+96a7 Scenario_Dirname{string} 50|241b7 278r15 316r15
+97r7 Ref_Map{13|52R9[53]} 50|242b7 260r28 317r24
+98i7 Timeout{natural} 50|243b7 248r38
+101U14*Clean_String_From_Regexp 102=7 103>7 50|538b14 560l8 560t32 568s7
+. 569s7 570s7 571s7 572s7
+102p7 Str{56|103P9} 50|539b7 545r22 548r21 551m10 558r25
+103r7 Regexp{83|383R9} 50|540b7 545r14 558r17
+106U14*Clean_String_From_All_Regexp 106=44 50|566b14 573l8 573t36 584s7
+106p44 Str{56|103P9} 50|566b44 568m33 569m33 570m33 571m33 572m33
+109U14*Filter_Line 109>27 109=42 50|145s7 146s7 579b14 585l8 585t19
+109a27 Line{string} 50|579b27 581r33
+109p42 Output_Str{56|103P9} 50|579b42 581m7 584m37
+116U14*Filter_Procedure 117>7 118>7 119>7 50|297r16 591b14 608l8 608t24
+117c7 Descriptor<39|151R9> 50|592b7 599r28
+118a7 Str{string} 50|593b7 602r39 606r37
+119m7 User_Data{57|67M9} 50|594b7 597r55
+126U14*No_Filter_Procedure 127>7 128>7 129>7 50|614b14 624l8 624t27 732r16
+. 862r19
+127c7 Descriptor<39|151R9> 50|615b7 622r28
+128a7 Str{string} 50|616b7 623r34
+129m7 User_Data{57|67M9} 50|617b7 620r55
+135V13*Execute_Coverage_Test{boolean} 135>36 50|639b13 937l8 937t29
+135i36 Timeout{natural} 50|639b36 643r44
+140V13*Tsim_Cmd{string} 140>23 50|401s16 447s16 630b13 633l8 633t16
+140a23 Cmd{string} 50|630b23 632r14
+144P9*Unbounded_String_Ptr(28|79R9) 50|596r32 597r9 619r32 620r9
+148A9*Trace(28|79R9)<integer> 153r33 156r54 50|256r25 654r25 770r25 850r34
+153P9*Trace_Ptr(148A9) 156r61 159r17
+156U14*Free[33|20] 50|120s7 366s7 769s7 849s16 935s7
+159p4*All_Traces{153P9} 50|120m13 120r13 256m7 299r16 336r24 339r18 358r16
+. 366m13 366r13 654m7 734r16 753r33 769m13 769r13 770m7 849m22 849r22 850m16
+. 864r19 881r38 935m13 935r13
+162b4*Header_Has_Ended{boolean} 50|389m16 435m16 601r14 603m13
+168p4*Command_Name_Path{56|103P9} 50|96m7 122m13 122r13 475r21 487r24
+171p4*Scenario_Dir{56|103P9} 50|121m13 121r13
+174b4*Create_Referencial{boolean} 50|282m16 331r17
+178r4*Ref_Map{13|52R9[53]}
+181m4*Timeout{56|257M9}
+184b4*Write_Log{boolean} 50|148r10
+187r4*Parse_Regexp{83|383R9} 50|100m16 568r38
+189r4*Strip_CR_Regexp{83|383R9} 50|101m16 569r38
+191r4*Header_End_Regexp{83|383R9} 50|102m16 570r38 602r20
+193r4*Tsim_Traces_Regexp{83|383R9} 50|104m10 571r38
+195r4*Empty_Line_Regexp{83|383R9} 50|107m16 572r38
+201A9 Fd_Array(39|151R9)<integer> 50|251r22 646r22
+203p4 TSim_ERC32_Path{79|70P12} 50|91m7 116m13 116r13 433r19 440r34
+204p4 TSim_LEON_Path{79|70P12} 50|92m7 117m13 117r13 387r19 394r34
+205p4 Qemu_Path{79|70P12} 50|93m7 118m13 118r13 481r19 520r34 717r37
+206p4 Qemu_Sparc_Path{79|70P12} 50|94m7 409r19 421r34
+207p4 Xcov_Path{79|70P12} 50|95m7 119m13 119r13 650r10 700r38 725r34 856r34
+. 928r32
+X 50 ocarina-backends-execution_tests.adb
+61K12 Addr_To_Acc[58|39] 597r31 620r31
+64U14 Exit_On_Error 64>29 64>46 70b14 77l8 77t21 263s13 285s13 386s16 408s16
+. 432s16 480s16 490s16 528s13 651s10 676s22 690s13
+64b29 Error{boolean} 70b29 72r10
+64a46 Reason{string} 70b46 74r22
+135p7 File{31|52P9} 157m21 157r21 158r18 159m20 159r20 162m21 162r21 163r18
+. 164m20 164r20
+136p7 Trace_Filtered{56|103P9} 145m39 145r39 163r24 168r10 171r13 177r18
+. 179r34 181r37 188r16
+137p7 Ref_Filtered{56|103P9} 146m37 146r37 158r24 168r38 173r13 177r41 178r16
+. 181r13 186r16
+138i7 Padding{integer} 177m7 179r24 181r61 188r40
+150a13 Referencial_Log_File=151:64{string} 156r54 157r37
+152a13 Trace_Log_File=153:64{string} 161r57 162r37
+178i11 I{integer} 179r20 181r31 181r57 184r16 186r34 188r36
+201p7 File{31|52P9} 204m13 204r13 207r33 208r61 211m14 211r14
+202r7 Complete_File_String{28|79R9} 208m18 208r18 212r14
+224p7 File{31|52P9} 231m15 231r15 232r17 233m14 233r14
+245i7 Result{39|317I9} 320m46
+246r7 Referencial{28|79R9} 332m13 340r18
+247b7 Return_Value{boolean} 349m16 367r14
+248i7 TimeoutVar{integer} 294r16 309m10 320r67 363m10
+249i7 First{56|49I9} 251r41 256r41 258r16 312r16
+250i7 Last{56|49I9} 251r60 256r60 258r25 312r25
+251a7 Processes{49|201A9} 291m16 291r16 296m16 296r16 320m21 320r21 329m17
+. 329r17
+252p7 M{51|55P9} 259m10 260r54 266r33 273r32 275r62 293r16 305r10 306r17
+. 313m10 317r50 325r36 333r16 334r23 341r18 346r36 352r36 359r16
+253r7 Position{13|60R9[49|53]} 260m10 262r13 278r43
+254p7 Ref_Path{56|103P9} 314m10 332r46 342r18 357r16 362m16 362r16
+258i11 J<integer> 259r42 291r36 296r36 299r37
+271a13 Appli_File=274:29{string} 286r44 287r41 289r42 292r16
+277a13 Ref_File=278:32{string} 281r44
+312i11 J<integer> 313r42 320r41 329r37 336r45 339r39 358r37
+384a16 TSim_LEON_Args{79|701A12} 390m16 395r34
+406a16 Args{79|701A12} 413m16 414m16 415m16 416m16 417m16 422r34
+430a16 TSim_ERC32_Args{79|701A12} 436m16 441r34
+452a16 Args{79|701A12} 454m16 459r34
+467a16 Args{79|701A12} 506m16 507m16 508m16 509m16 510m16 511m16 512m16 513m16
+. 514m16 515m16 516m16 521r34
+468a16 Dir{string} 495r40 505r67 511r50
+470a16 App_Name{string} 500r57
+472p16 File{31|52P9} 495m24 495r24 496r26 497r26 498r26 499r26 500r26 501r26
+. 502m23 502r23
+473r16 Boot_File{28|79R9} 484r58 485m19 491r58 509r52
+542a7 Matches{83|342A9} 545m31 546r13 553r49 554r28 558m34
+543p7 Old_Str{56|103P9} 548m10 553r15 553r28 554r15 554r52 557m16 557r16
+596p7 Output_Buffer{49|144P9} 606r18
+619p7 Output_Buffer{49|144P9} 623r15
+641i7 Result{39|317I9} 744m46 866m52
+642b7 Return_Value{boolean} 930m16 936r14
+643i7 TimeoutVar{natural} 744r67 764m10
+644i7 First{56|49I9} 646r41 654r41 658r16 741r16 770r41 774r16 850r50 895r16
+645i7 Last{56|49I9} 646r60 654r60 658r25 741r25 770r60 774r25 850r69 895r25
+646a7 Processes{49|201A9} 716m37 716r37 724m34 724r34 731m16 731r16 744m21
+. 744r21 761m19 761r19 763m17 763r17 855m34 855r34 861m19 861r19 866m27 866r27
+. 871m23 871r23
+647p7 M{51|55P9} 659m10 661r27 670r21 686r35 688r65 742m10 749r36 759r20
+. 775m10 808r51 812r51 879r36 884r36 896m10 908r35 913r35 915r35
+648o7 Span{21|46O9} 891r41
+658i11 J<integer> 659r35 716r57 724r54 731r36 734r37
+664a13 Args{79|701A12} 666m13 668m16 672m22 674m22 683m13 691r44 692r41 693r42
+. 700r53 713r44 726r34
+696a19 Args2{79|701A12} 703m19 704m19 708m19 709m19 710m19 711m19 712m19
+. 713m19 718r37
+697b19 Success{boolean} 700m59
+741i11 J<integer> 742r35 744r41 753r54 761r39 763r37
+774i11 J<integer> 775r35 855r54 861r39 864r40 866r47 871r43 881r59
+777p13 File{31|52P9} 876m19 876r19 881r21 882m23 882r23
+778r13 O_Files{28|79R9} 795m24 795r24 820r47 836r30 836r50 843r40
+780U23 Add_To_O_Files 781>16 782>16 783=16 787b23 796l17 796t31 800r26
+781a16 Item{string} 788b16 795r33
+782i16 Index{positive} 789b16 793r37
+783b16 Quit{boolean} 790b16 793r44
+798U23 Find_O_Files[36|41] 37|46b14 50|807s13 811s13
+819i16 Nb_O_Files{integer} 821r64 829r30
+821a16 Args2{79|701A12} 824m16 842m19 857r34
+822i16 Lst{integer} 834r21 836r68 843r49 844m19
+822i21 Next_Lst{integer} 833m19 843r54 844r26
+829i20 I{integer} 842r26
+895i11 J<integer> 896r35
+898a13 Args{79|701A12} 901m13 902m13 903m13 904m13 910m13 919r16 921r16 923r16
+. 925r16 927r16 928r47
+899b13 Success{boolean} 928m53 929r20
+X 51 ocarina-backends-execution_utils.ads
+36K26*Execution_Utils 50|45w23 57r25 51|76e37
+41i7*Appli_Name{56|182I9} 50|273r34 661r29 686r37 808r53 812r53 913r37
+44i7*Node_Name{56|182I9} 50|260r56 266r35 275r64 317r52 325r38 341r20 346r38
+. 352r38 359r18 688r67 749r38 879r38 884r38 908r37 915r37
+47e7*Execution_Platform{52|540E9} 50|293r18 305r12 306r19 333r18 334r25 670r23
+. 759r22
+55P9*Process_Type(40R9) 50|252r22 647r22
+57K12*Ref_Name_Tables[38|58] 50|249r38 250r38 644r44 645r44
+65r4*Process_List{38|111R9[57]} 50|250r60 259r22 313r22 645r66 659r15 742r15
+. 775r15 896r15
+72V13*Get_Binary_Location{string} 50|275s15 688s18
+X 52 ocarina-backends-properties.ads
+36K26*Properties 49|43w23 51r25 52|846e32
+540E9*Supported_Execution_Platform 49|71r21 50|377r21 52|568e21
+541n7*Platform_Native{540E9} 50|450r15 671r24
+548n7*Platform_LEON_RTEMS{540E9} 50|465r15
+553n7*Platform_LEON_GNAT{540E9} 50|404r15 673r24 759r43
+557n7*Platform_LEON_ORK{540E9} 50|305r33 333r39 382r15
+563n7*Platform_ERC32_ORK{540E9} 50|306r40 334r46 428r15
+568n7*Platform_None{540E9} 50|671r42
+X 53 ocarina-backends-utils.ads
+34K26*Utils 50|46w23 58r25 53|492e27
+45U14*Enter_Directory 50|661s10
+49U14*Leave_Directory 50|736s10
+X 54 ocarina-namet.ads
+36K17*Namet 50|33w14 51r16 54|242e18
+76V13*Get_Name_String{string} 50|142s44 151s42 153s42 228s10 260s37 266s16
+. 273s15 317s33 325s19 346s19 352s19 686s18 749s19 808s34 812s34 879s19 884s19
+. 908s18 913s18 915s18
+X 55 ocarina-output.ads
+40K17*Output 50|32w14 50r16 55|106e19
+50U14*Set_Standard_Error 50|73s10
+68U14*Write_Eol 50|140s7 303s7
+85U14*Write_Line 50|74s10 141s7 143s7 155s13 161s13 169s10 182s13 226s7 289s13
+. 323s16 344s16 350s16 412s16 504s16 693s13 747s16 752s10 753s10 754s10 883s16
+. 917s13
+X 56 ocarina-types.ads
+49I9*Int<integer> 50|249r31 250r31 644r31 645r31
+103P9*String_Ptr(string) 49|102r23 106r57 109r62 168r24 171r19 50|136r24
+. 137r24 254r22 539r23 543r17 566r57 579r62
+106U14*Free[105|20] 50|121s7 122s7 362s10 557s10
+182I9*Name_Id<integer> 49|79r18 92r19 50|132r18 222r19
+257M9*Unsigned_Long_Long 49|181r14
+X 57 system.ads
+37K9*System 49|32w6 119r20 129r20 50|34r6 61r31 594r20 617r20 57|155e11
+67M9*Address 49|119r27 129r27 50|594r27 617r27
+X 58 s-atacco.ads
+39k16*Address_To_Access_Conversions 50|34w13 61r38 58|63e41
+47P9*Object_Pointer(28|79R9)
+57V13*To_Pointer{47P9[50|61]} 50|597s43[61] 620s43[61]
+X 75 s-memory.ads
+53V13*Alloc{57|67M9} 103i<c,__gnat_malloc>22
+68U14*Free 104i<c,__gnat_free>22
+76V13*Realloc{57|67M9} 105i<c,__gnat_realloc>22
+X 79 s-os_lib.ads
+70P12*String_Access{96|45P9} 49|203r22 204r22 205r22 206r22 207r22
+72V14*"="=73:22{boolean} 50|387r34 409r35 433r35 481r29 650r20
+75U14*Free=75:62 50|116s7 117s7 118s7 119s7
+77A12*String_List{96|54A9}<integer>
+186I9*File_Descriptor<integer>
+307U14*Close 50|402s25 448s25
+457V13*Normalize_Pathname{string} 50|469s28 471s29
+579V13*Locate_Exec_On_Path{70P12} 50|91s40 92s40 93s40 94s38 95s40
+701A12*Argument_List{77A12}<integer> 50|384r45 406r35 430r46 452r35 467r35
+. 664r32 696r41 821r44 898r35
+723U14*Spawn 50|700s31 928s25
+958V13*Getenv{70P12} 50|706s36
+978U14*OS_Exit 50|75s10
+X 83 s-regpat.ads
+308M9*Regexp_Flags
+319m4*Single_Line{308M9} 50|100r60 101r41 106r10
+324m4*Multiple_Lines{308M9} 50|102r54 107r44
+338i7*First{natural} 50|553r61
+339i7*Last{natural} 50|554r40
+342A9*Match_Array(337R9)<integer> 50|542r17
+371r4*No_Match{337R9} 50|546r28
+383R9*Pattern_Matcher 49|103r23 187r19 189r22 191r24 193r25 195r24 50|540r23
+. 83|644e14
+386r4*Never_Match{383R9} 50|320r54 744r54 866r60
+437U14*Compile 50|100s7 101s7 102s7 103s7 107s7
+564V14*Match{boolean} 50|602s13
+574U14*Match 50|545s7 558s10
+X 88 s-stausa.ads
+203U14*Initialize 204i<c,__gnat_stack_usage_initialize>22
+268U14*Output_Results 272i<c,__gnat_stack_usage_output_results>22
+X 90 s-stalib.adb
+93U14 Break_Start 94i<c,__gnat_break_start>22
+X 96 s-string.ads
+45P9*String_Access(string)
+54A9*String_List(45P9)<integer>
+

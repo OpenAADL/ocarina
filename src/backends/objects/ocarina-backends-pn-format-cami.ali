@@ -1,0 +1,251 @@
+V "GNAT Lib v5"
+A -fstack-check=specific
+A -g
+A -g
+A -gnatf
+A -gnaty
+A -gnatwa
+A -gnatwe
+A -gnato
+A -gnata
+A -gnaty
+A -gnatwL
+A -gnatyu
+A -gnatys
+A -gnat12
+A -gnatA
+P SS ZX
+
+RN
+RV NO_INITIALIZE_SCALARS
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLEMENTATION_RESTRICTIONS
+RV SPARK_05
+
+U ocarina.backends.pn.format.cami%b  ocarina-backends-pn-format-cami.adb  cee0b35e NE OO PK IS
+W interfaces%s		interfac.ads		interfac.ali
+W ocarina%s		ocarina.adb		ocarina.ali
+W ocarina.aadl_values%s	ocarina-aadl_values.adb	ocarina-aadl_values.ali
+W ocarina.backends%s	ocarina-backends.adb	ocarina-backends.ali
+W ocarina.backends.pn%s	ocarina-backends-pn.adb	ocarina-backends-pn.ali
+W ocarina.backends.pn.debug%s  ocarina-backends-pn-debug.adb  ocarina-backends-pn-debug.ali
+W ocarina.backends.pn.format%s  ocarina-backends-pn-format.ads  ocarina-backends-pn-format.ali
+W ocarina.backends.pn.nodes%s  ocarina-backends-pn-nodes.adb  ocarina-backends-pn-nodes.ali
+W ocarina.backends.pn.nutils%s  ocarina-backends-pn-nutils.adb  ocarina-backends-pn-nutils.ali
+W ocarina.backends.utils%s  ocarina-backends-utils.adb  ocarina-backends-utils.ali
+W ocarina.namet%s	ocarina-namet.adb	ocarina-namet.ali
+W ocarina.output%s	ocarina-output.adb	ocarina-output.ali
+W system.concat_2%s	s-conca2.adb		s-conca2.ali
+W system.concat_3%s	s-conca3.adb		s-conca3.ali
+W system.concat_4%s	s-conca4.adb		s-conca4.ali
+W system.concat_6%s	s-conca6.adb		s-conca6.ali
+W system.concat_7%s	s-conca7.adb		s-conca7.ali
+W system.scalar_values%s  s-scaval.adb		s-scaval.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U ocarina.backends.pn.format.cami%s  ocarina-backends-pn-format-cami.ads  b6a4f2ed EE NE OO PK IS
+W ocarina.backends.pn.format%s  ocarina-backends-pn-format.ads  ocarina-backends-pn-format.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-uncdea.ads		20070406091342 f15a5ed1 ada.unchecked_deallocation%s
+D gnat.ads		20140801083227 fd2ad2f1 gnat%s
+D g-os_lib.ads		20090409150019 0db74523 gnat.os_lib%s
+D g-table.ads		20130910150540 16cef446 gnat.table%s
+D interfac.ads		20141120112812 6033a23f interfaces%s
+D locations.ads		20160902084437 06a68fdd locations%s
+D ocarina.ads		20160902084437 bfb8a9d7 ocarina%s
+D ocarina-aadl_values.ads  20160902084437 af61b867 ocarina.aadl_values%s
+D ocarina-backends.ads	20160902084508 6580b411 ocarina.backends%s
+D ocarina-backends-pn.ads  20160902084437 520d4674 ocarina.backends.pn%s
+D ocarina-backends-pn-debug.ads  20160902084437 ddd8feee ocarina.backends.pn.debug%s
+D ocarina-backends-pn-format.ads  20160902084437 be8d3c37 ocarina.backends.pn.format%s
+D ocarina-backends-pn-format-cami.ads  20160902084437 0829ceda ocarina.backends.pn.format.cami%s
+D ocarina-backends-pn-format-cami.adb  20160902084437 5faf8d3c ocarina.backends.pn.format.cami%b
+D ocarina-backends-pn-nodes.ads  20160902084801 31e07b54 ocarina.backends.pn.nodes%s
+D ocarina-backends-pn-nutils.ads  20160902084437 ae9ada76 ocarina.backends.pn.nutils%s
+D ocarina-backends-properties.ads  20160902084508 4a09c968 ocarina.backends.properties%s
+D ocarina-backends-utils.ads  20160902084508 2a02dfb4 ocarina.backends.utils%s
+D ocarina-me_aadl.ads	20160902084437 debca36c ocarina.me_aadl%s
+D ocarina-me_aadl-aadl_tree.ads  20160902084437 7b68b93a ocarina.me_aadl.aadl_tree%s
+D ocarina-me_aadl-aadl_tree-nodes.ads  20160902084801 7e383ab1 ocarina.me_aadl.aadl_tree.nodes%s
+D ocarina-namet.ads	20160902084437 b31432d0 ocarina.namet%s
+D ocarina-output.ads	20160902084508 edb3fa77 ocarina.output%s
+D ocarina-types.ads	20160902084437 e099215b ocarina.types%s
+D system.ads		20141031112219 1d274481 system%s
+D s-conca2.ads		20140225151544 02a0d7d0 system.concat_2%s
+D s-conca3.ads		20140225151544 0b705ca5 system.concat_3%s
+D s-conca4.ads		20140225151544 7e642b20 system.concat_4%s
+D s-conca6.ads		20140225151544 d2c72db2 system.concat_6%s
+D s-conca7.ads		20140225151544 fcc75b1f system.concat_7%s
+D s-os_lib.ads		20150220113817 5853d835 system.os_lib%s
+D s-scaval.ads		20090409150019 bea40757 system.scalar_values%s
+D s-secsta.ads		20140225151139 86a2856d system.secondary_stack%s
+D s-stoele.ads		20140225151139 2dc34a04 system.storage_elements%s
+D s-string.ads		20140225151139 8fe54fb7 system.strings%s
+D unchdeal.ads		20070406091342 214516a4 unchecked_deallocation%s
+D /home/hugues/Dev/ocarina/src/../projects/restrictions.adc  20160902084437 00000000
+X 8 ocarina.ads
+32K9*Ocarina 61e12 14|32r9 40r5 15|32r6 33r6 35r6 36r6 37r6 38r6 39r6 41r14
+. 43r24 44r24 45r24 52r11 53r11 55r11 163r11 164r11 166r11 169r11 328r11
+. 330r11 609r5
+X 9 ocarina-aadl_values.ads
+38K17*AADL_Values 152e24 15|38w14 45r32
+43R9*Value_Type 62e14 15|133r40
+46m13*IVal{25|257M9} 15|136r32
+83V13*Get_Value_Type{43R9} 15|134s18 364s21 447s41 449s41
+93V13*New_Integer_Value{25|216I9} 15|71s27 87s30 121s36 144s36 187s27 244s39
+. 300s39 346s27 376s33 378s33 403s34 432s40 466s37 470s37 493s27 506s33 535s36
+. 553s27 567s36 593s42
+107V13*Image{string} 15|139s47 363s22 447s34 449s34
+108V13*Image{string} 15|71s20 87s23 121s29 144s29 187s20 244s32 300s32 346s20
+. 376s26 378s26 402s35 431s41 465s38 469s38 493s20 506s26 535s29 553s20 567s29
+. 593s35
+X 10 ocarina-backends.ads
+41K17*Backends 8|32k9 10|120e21 14|32r17 40r13 15|33r14 35r14 36r14 39r14
+. 41r22 43r32 44r32 53r19 164r19 169r19 609r13
+X 11 ocarina-backends-pn.ads
+36K26*PN 10|41k17 11|49e24 14|32r26 40r22 15|33r23 35r23 36r23 41r31 43r41
+. 44r41 53r28 164r28 609r22
+X 12 ocarina-backends-pn-debug.ads
+35K29*Debug 67e30 15|33w26 53r31 164r31
+60V13*Image{string} 15|62s38 69s16 85s19 102s48 138s48 177s44 185s16 207s22
+. 209s22 211s22 215s53 262s22 264s22 266s22 270s53
+X 13 ocarina-backends-pn-format.ads
+32K29*Format 11|36k26 13|34e31 14|32r29 40r25 15|41r34 609r25
+X 14 ocarina-backends-pn-format-cami.ads
+32K36*Cami 13|32k29 14|40l32 40e36 15|41b41 609l32 609t36
+34U14*Print_Place 34>27 34>51 15|51b14 156l8 156t19
+34i27 Pn_Generated{25|195I9} 15|51b27 60r10
+34i51 Pn_P{25|195I9} 15|51b51 60r43 62r45 65r71 69r23 77r21 81r61 85r26 94r21
+. 100r62 102r55 134r40 138r55
+36U14*Print_Trans 36>27 36>51 15|162b14 321l8 321t19
+36i27 Pn_Generated{25|195I9} 15|162b27 172r10
+36i51 Pn_T{25|195I9} 15|162b51 173r18 174r32 177r51 181r71 185r23 202r42
+. 203r52 257r43 258r53
+38U14*Print_Formalism_Information 38>43 15|327b14 607l8 607t35
+38i43 Pn_Generated{25|195I9} 15|327b43 336r10 341r58 361r39 366r63 394r33
+. 489r60 501r60 549r62 561r60
+X 15 ocarina-backends-pn-format-cami.adb
+43K12 OPN=43:44 54r11 100r29 107r25 113r35 165r11 203r24 219r27 227r34 231r43
+. 253r27 258r24 274r27 283r34 287r43 309r27 329r11 357r27 389r18 390r21 397r24
+. 412r33 418r37 422r47 483r33 499r18 515r27 521r31 525r43 543r34 559r18 572r27
+. 577r31 581r40 602r31
+44K12 OPU=44:44 168r11 332r11
+45K12 OAV=45:32 56r11 71r16 87r19 121r25 139r43 144r25 167r11 187r16 244r28
+. 300r28 331r11 346r16 363r18 376r22 378r22 402r31 431r37 447r30 449r30 465r34
+. 469r34 493r16 506r22 535r25 553r16 567r25 593r31
+65a13 S{string} 71r46 73r16
+80a16 S{string} 87r49 89r19
+98i16 Node_Iter{25|195I9} 100m16 101r19 104r34 106r60 107r40 113m22 113r50
+118a22 S{string} 121r55 123r25
+133r16 Tokens_Count{9|43R9} 136r19 139r54
+141a22 S{string} 144r55 146r25
+181a13 S{string} 187r46 189r16
+199i13 Iter{25|195I9} 203m16 204r31 207r29 209r38 211r36 214r48 215r60 219r55
+. 253m19 253r42 258m16 259r31 262r29 264r38 266r36 269r48 270r60 274r55 309m19
+. 309r42
+218i25 Val_Iter{25|195I9} 221r40 223r43 226r55 227r49 231m31 231r58 236r66
+241a25 S{string} 244r58 246r28
+273i25 Val_Iter{25|195I9} 276r40 279r43 282r55 283r49 287m31 287r58 292r66
+297a25 S{string} 300r58 302r28
+334m7 Line_Count{25|257M9} 346r46 348m13 348r27 376r52 382m19 382r33 403r53
+. 437m34 437r48 466r56 475m31 475r45 493r46 495m13 495r27 506r52 539m22 539r36
+. 553r46 555m13 555r27 567r55 597m28 597r42
+353a16 Begin_Range{string} 369r19
+362a16 Max_Range{string} 369r45
+371a19 S{string} 378r52 380r22
+388i16 Class_Iter{25|195I9} 396r31 397r34 399r48 408r52 412r55 445r65 447r63
+. 449r62 483m19 483r48
+411i31 Enum_Iter{25|195I9} 414r46 417r58 418r52 422m34 422r62
+426a34 S{string} 432r59 435r37
+444a28 Begin_Range{string} 452r31
+446a28 Max_Range{string} 456r31
+448a28 Min_Range{string} 454r31
+459a31 S{string} 470r56 473r34
+498i16 Domain_Iter{25|195I9} 503r31 510r57 512r49 515r56 543m19 543r49
+514i25 Domain_Item{25|195I9} 517r40 520r52 521r46 525m28 525r58
+531a22 S{string} 535r55 537r25
+558i16 Var_Iter{25|195I9} 563r31 564r51 572r58 586r61 602m19 602r46
+571i25 Var_Item{25|195I9} 574r40 576r66 577r46 581m28 581r55
+589a28 S{string} 593r61 595r31
+X 16 ocarina-backends-pn-nodes.ads
+12K29*Nodes 15|35w26 43r44 16|785e30
+25n7*K_CPN_Formalism_Class_Item_Range{14E9} 15|441r27
+27n7*K_CPN_Formalism_Class_Item_Enum{14E9} 15|398r27
+538V13*Kind{14E9} 15|397s28
+544V13*Next_Node{25|195I9} 15|107s29 113s39 227s38 231s47 253s31 283s38 287s47
+. 309s31 389s22 418s41 422s51 483s37 521s35 525s47 543s38 577s35 581s44 602s35
+547V13*First_Node{25|195I9} 15|100s33 203s28 219s31 258s28 274s31 357s31
+. 390s25 412s37 499s22 515s31 559s22 572s31
+553V13*Name{25|182I9} 15|65s53 81s35 106s42 181s53 226s37 236s48 282s37 292s48
+. 355s21 408s34 417s40 445s47 510s39 520s34 576s48 586s31
+562V13*Identifier{25|195I9} 15|65s59 81s41 106s48 181s59 226s43 236s54 282s43
+. 292s54 356s24 408s40 417s46 445s53 510s45 520s40 576s54 586s37
+568V13*Pn_From{25|195I9} 15|209s29 264s29
+571V13*Pn_To{25|195I9} 15|211s29 266s29
+574V13*Pn_Arcs_In{25|208I9} 15|202s30 203s40
+577V13*Pn_Arcs_Out{25|208I9} 15|257s30 258s40
+598V13*Pn_Formalism_Specific_Informations{25|195I9} 15|341s22 360s36 366s27
+. 393s30 489s24 501s24 549s26 561s24
+604V13*Low{25|216I9} 15|449s57
+607V13*High{25|216I9} 15|447s57
+610V13*Enum{25|208I9} 15|399s42 412s49
+613V13*Class_List{25|208I9} 15|358s30 391s24
+616V13*Domain_List{25|208I9} 15|512s36 515s43
+619V13*Class_Type{25|195I9} 15|586s49
+622V13*Variable_List{25|208I9} 15|564s36 572s43
+631V13*Classes{25|195I9} 15|341s13 359s33 392s27
+634V13*Domains{25|208I9} 15|489s15 500s21
+637V13*Variables{25|208I9} 15|549s15 560s21
+640V13*Threads_Count{25|216I9} 15|365s24
+649V13*Tokens{25|208I9} 15|100s45
+652V13*Domain{25|195I9} 15|77s13 81s53 94s13
+655V13*Marking{25|195I9} 15|100s53
+658V13*Nb_T{25|216I9} 15|134s34
+673V13*Is_Colored{boolean} 15|221s28 276s28
+676V13*Valuations{25|208I9} 15|214s36 219s43 269s36 274s43
+X 17 ocarina-backends-pn-nutils.ads
+35K29*Nutils 15|36w26 44r44 17|66e31
+45V13*Is_Empty{boolean} 15|202s20 214s26 257s20 269s26 399s32 488s17 512s26
+. 548s17 564s26
+X 19 ocarina-backends-utils.ads
+34K26*Utils 15|39w23 169r28 19|492e27
+174n38*By_Node{174E9} 15|174r38
+210n7*H_PN_To_Delete{181E9} 15|174r47
+225V13*Get_Handling{25|195I9} 15|174s18
+X 23 ocarina-namet.ads
+36K17*Namet 15|37w14 55r19 166r19 330r19 23|242e18
+76V13*Get_Name_String{string} 15|65s36 81s18 106s25 118s45 141s45 181s36
+. 225s34 236s31 241s48 281s34 292s31 297s48 354s18 371s42 407s31 416s37 427s36
+. 445s30 460s33 510s22 519s31 531s45 576s31 585s28 589s51
+102V13*Name_Find{25|182I9} 15|118s62 141s62 241s65 297s65 371s59 427s53 460s50
+. 531s62 589s68
+154U14*Add_Str_To_Name_Buffer 15|105s22 108s25 110s25 224s31 228s34 233s28
+. 280s31 284s34 289s28 415s34 419s37 424s31 518s28 522s31 529s19 575s28 578s31
+. 583s25
+158U14*Set_Str_To_Name_Buffer 15|103s19 139s19 222s28 235s28 278s28 291s28
+. 368s16 406s28 451s28 509s19 569s22
+X 24 ocarina-output.ads
+40K17*Output 15|32w14 52r19 163r19 328r19 24|106e19
+79U14*Write_Str 15|102s19 120s22 138s19 143s22 215s22 243s25 270s22 299s25
+. 400s28 504s19 565s22
+85U14*Write_Line 15|62s10 67s13 83s16 126s19 149s19 177s10 183s13 205s19
+. 249s22 260s19 305s22 338s10 344s13 374s19 430s34 463s31 491s13 534s22 551s13
+. 592s28
+X 25 ocarina-types.ads
+49I9*Int<integer>
+182I9*Name_Id<integer>
+195I9*Node_Id<49I9> 14|34r42 34r58 36r42 36r58 38r58 15|51r42 51r58 98r28
+. 162r42 162r58 199r20 218r36 273r36 327r58 388r29 411r43 498r30 514r39 558r27
+. 571r36
+196i4*No_Node{195I9} 15|60r26 60r51 77r30 94r30 101r32 107r53 172r26 173r26
+. 174r65 227r62 283r62 336r26 342r12 418r66 521r62 577r59
+198V13*Present{boolean} 15|104s25 204s22 223s34 259s22 279s34 396s22 414s37
+. 503s22 517s31 563s22 574s31
+208I9*List_Id<195I9>
+216I9*Value_Id<49I9>
+257M9*Unsigned_Long_Long 15|334r20
+
