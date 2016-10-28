@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -174,8 +174,6 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
       S                  : Node_Id;
       Xm_Hypervisor_Node : Node_Id;
       Memory_Area_Node   : Node_Id;
-      Area_Node          : Node_Id;
---      Associated_Memory    : Node_Id;
       P : Node_Id;
       Q : Node_Id;
    begin
@@ -202,41 +200,22 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
         (Make_Assignement (P, Q),
          XTN.Items (Xm_Hypervisor_Node));
 
-      --  Create the PhysicalMemoryAreas node associated
-      --  to the HMHypervisor node.
-      Memory_Area_Node := Make_XML_Node ("PhysicalMemoryAreas");
+      --  Create the PhysicalMemoryArea node associated
+      --  to the XMHypervisor node.
+      Memory_Area_Node := Make_XML_Node ("PhysicalMemoryArea");
 
       Append_Node_To_List
         (Memory_Area_Node,
          XTN.Subitems (Xm_Hypervisor_Node));
 
-      --  Create the PhysicalMemoryArea node associated
-      --  to the PhysicalMemoryAreas node.
-      Area_Node := Make_XML_Node ("Area");
-
-      Set_Str_To_Name_Buffer ("start");
-      P := Make_Defining_Identifier (Name_Find);
-      Set_Str_To_Name_Buffer ("0x40000000");
-      Q := Make_Defining_Identifier (Name_Find);
---      Q := Make_Literal
---         (XV.New_Numeric_Value
----            (Get_Integer_Property
---               (Associated_Memory, "base_address"), 0, 10));
-
-      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Area_Node));
-
       Set_Str_To_Name_Buffer ("size");
       P := Make_Defining_Identifier (Name_Find);
       Set_Str_To_Name_Buffer ("512KB");
       Q := Make_Defining_Identifier (Name_Find);
---      Q := Make_Literal
---         (XV.New_Numeric_Value
---            (Get_Integer_Property
---              (Associated_Memory, "byte_count"), 0, 10));
 
-      Append_Node_To_List (Make_Assignement (P, Q), XTN.Items (Area_Node));
-
-      Append_Node_To_List (Area_Node, XTN.Subitems (Memory_Area_Node));
+      Append_Node_To_List
+        (Make_Assignement (P, Q),
+         XTN.Items (Memory_Area_Node));
 
       Append_Node_To_List
         (Xm_Hypervisor_Node,

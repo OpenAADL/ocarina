@@ -166,28 +166,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       Append_Node_To_List (Hw_Desc_Node, XTN.Subitems (Current_XML_Node));
 
-      Processor_Node := Make_XML_Node ("ProcessorTable");
-
-      Append_Node_To_List (Processor_Node, XTN.Subitems (Hw_Desc_Node));
-
-      Current_XML_Node := Processor_Node;
-
-      --  First, create the <ProcessorTable> section of the hardware
-      --  description of the system.
-
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-            if AINU.Is_Processor (Corresponding_Instance (S)) then
-               Visit (Corresponding_Instance (S));
-            end if;
-            S := Next_Node (S);
-         end loop;
-      end if;
-
-      --  Then, create the <MemoryLayout> section of the hardware
+      --  First, create the <MemoryLayout> section of the hardware
       --  description of the system.
 
       Memory_Node := Make_XML_Node ("MemoryLayout");
@@ -202,6 +181,27 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
             --  Visit the component instance corresponding to the
             --  subcomponent S.
             if AINU.Is_Memory (Corresponding_Instance (S)) then
+               Visit (Corresponding_Instance (S));
+            end if;
+            S := Next_Node (S);
+         end loop;
+      end if;
+
+      --  Then, create the <ProcessorTable> section of the hardware
+      --  description of the system.
+
+      Processor_Node := Make_XML_Node ("ProcessorTable");
+
+      Append_Node_To_List (Processor_Node, XTN.Subitems (Hw_Desc_Node));
+
+      Current_XML_Node := Processor_Node;
+
+      if not AINU.Is_Empty (Subcomponents (E)) then
+         S := First_Node (Subcomponents (E));
+         while Present (S) loop
+            --  Visit the component instance corresponding to the
+            --  subcomponent S.
+            if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
             S := Next_Node (S);
@@ -291,7 +291,7 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       P := Make_Defining_Identifier (Name_Find);
 
       Set_Str_To_Name_Buffer
-        (Unsigned_Long_Long'Image (Frequency.S) & Frequency.F'Img);
+        (Unsigned_Long_Long'Image (Frequency.S) & "MHz");
       Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
 
       Append_Node_To_List

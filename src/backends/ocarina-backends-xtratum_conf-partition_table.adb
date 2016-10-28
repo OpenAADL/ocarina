@@ -210,7 +210,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
       Set_Str_To_Name_Buffer ("flags");
       P := Make_Defining_Identifier (Name_Find);
-      Set_Str_To_Name_Buffer ("system boot fp");
+      Set_Str_To_Name_Buffer ("system fp");
       Q := Make_Defining_Identifier (Name_Find);
       Append_Node_To_List
         (Make_Assignement (P, Q),
@@ -309,10 +309,11 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
             Append_Node_To_List
               (Make_Assignement (P, Q),
                XTN.Items (Temporal_Req_Node));
+
+            Append_Node_To_List
+              (Temporal_Req_Node, XTN.Subitems (Partition_Node));
          end if;
       end;
-
-      Append_Node_To_List (Temporal_Req_Node, XTN.Subitems (Partition_Node));
 
       --  Now, handle the ports of the partition.
 
