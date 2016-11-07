@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -36,12 +36,10 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
-with Ocarina.Backends.Utils;
-
 with Ocarina.Backends.Properties;
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
-
 with Ocarina.Backends.XML_Values;
 
 package body Ocarina.Backends.Xtratum_Conf.Channels is
@@ -63,10 +61,9 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
-   procedure Visit_Process_Instance (E : Node_Id);
-   procedure Visit_Memory_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    -----------
    -- Visit --
@@ -106,14 +103,8 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
          when CC_System =>
             Visit_System_Instance (E);
 
-         when CC_Process =>
-            Visit_Process_Instance (E);
-
          when CC_Processor =>
             Visit_Processor_Instance (E);
-
-         when CC_Memory =>
-            Visit_Memory_Instance (E);
 
          when CC_Virtual_Processor =>
             Visit_Virtual_Processor_Instance (E);
@@ -123,22 +114,11 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
       end case;
    end Visit_Component_Instance;
 
-   ----------------------------
-   -- Visit_Process_Instance --
-   ----------------------------
-
-   procedure Visit_Process_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
-   begin
-      null;
-   end Visit_Process_Instance;
-
    ---------------------------
    -- Visit_System_Instance --
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S                     : Node_Id;
       C                     : Node_Id;
       U                     : Node_Id;
       R                     : Node_Id;
@@ -318,16 +298,7 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
          Append_Node_To_List (Channels_Node, XTN.Subitems (Current_XML_Node));
       end if;
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
 
       Pop_Entity;
       Pop_Entity;
@@ -338,18 +309,8 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Processor_Instance;
 
    --------------------------------------
@@ -357,28 +318,8 @@ package body Ocarina.Backends.Xtratum_Conf.Channels is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Virtual_Processor_Instance;
-
-   ---------------------------
-   -- Visit_Memory_Instance --
-   ---------------------------
-
-   procedure Visit_Memory_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
-   begin
-      null;
-   end Visit_Memory_Instance;
 
 end Ocarina.Backends.Xtratum_Conf.Channels;

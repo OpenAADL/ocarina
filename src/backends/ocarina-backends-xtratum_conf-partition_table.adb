@@ -70,7 +70,6 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
    procedure Visit_Process_Instance (E : Node_Id);
-   procedure Visit_Memory_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
 
@@ -119,9 +118,6 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
          when CC_Processor =>
             Visit_Processor_Instance (E);
-
-         when CC_Memory =>
-            Visit_Memory_Instance (E);
 
          when CC_Virtual_Processor =>
             Visit_Virtual_Processor_Instance (E);
@@ -488,15 +484,5 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
          end loop;
       end if;
    end Visit_Virtual_Processor_Instance;
-
-   ---------------------------
-   -- Visit_Memory_Instance --
-   ---------------------------
-
-   procedure Visit_Memory_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
-   begin
-      null;
-   end Visit_Memory_Instance;
 
 end Ocarina.Backends.Xtratum_Conf.Partition_Table;

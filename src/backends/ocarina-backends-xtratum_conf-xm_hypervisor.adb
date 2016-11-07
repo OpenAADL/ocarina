@@ -33,14 +33,9 @@ with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
---  with Ocarina.Instances.Queries;
-
---  with Ocarina.Backends.Messages;
---  with Ocarina.Backends.Properties;
---  with Ocarina.Backends.XML_Values;
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 
@@ -50,24 +45,17 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
---     use Ocarina.Instances.Queries;
-
---     use Ocarina.Backends.Messages;
---     use Ocarina.Backends.Properties;
---   use Ocarina.Backends.XML_Values;
+   use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Tree.Nutils;
 
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
---     package XV  renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
    procedure Visit_System_Instance (E : Node_Id);
-   procedure Visit_Process_Instance (E : Node_Id);
-   procedure Visit_Memory_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    -----------
    -- Visit --
@@ -107,14 +95,8 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
          when CC_System =>
             Visit_System_Instance (E);
 
-         when CC_Process =>
-            Visit_Process_Instance (E);
-
          when CC_Processor =>
             Visit_Processor_Instance (E);
-
-         when CC_Memory =>
-            Visit_Memory_Instance (E);
 
          when CC_Virtual_Processor =>
             Visit_Virtual_Processor_Instance (E);
@@ -124,22 +106,11 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
       end case;
    end Visit_Component_Instance;
 
-   ----------------------------
-   -- Visit_Process_Instance --
-   ----------------------------
-
-   procedure Visit_Process_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
-   begin
-      null;
-   end Visit_Process_Instance;
-
    ---------------------------
    -- Visit_System_Instance --
    ---------------------------
 
    procedure Visit_System_Instance (E : Node_Id) is
-      S : Node_Id;
       U : Node_Id;
       R : Node_Id;
    begin
@@ -151,16 +122,7 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
       Push_Entity (U);
       Push_Entity (R);
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
 
       Pop_Entity;
       Pop_Entity;
@@ -171,22 +133,11 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S                  : Node_Id;
       Xm_Hypervisor_Node : Node_Id;
       Memory_Area_Node   : Node_Id;
       P : Node_Id;
       Q : Node_Id;
    begin
-
---      Associated_Memory := Get_Bound_Memory (E);
-
---      if Associated_Memory = No_Node then
---         Display_Located_Error
---            (Loc (E),
---            "The processor has to be associated to a memory",
---            Fatal => True);
---      end if;
-
       --  Create the main XMHypervisor node.
 
       Xm_Hypervisor_Node := Make_XML_Node ("XMHypervisor");
@@ -221,16 +172,7 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
         (Xm_Hypervisor_Node,
          XTN.Subitems (Current_XML_Node));
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Processor_Instance;
 
    --------------------------------------
@@ -238,28 +180,8 @@ package body Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Virtual_Processor_Instance;
-
-   ---------------------------
-   -- Visit_Memory_Instance --
-   ---------------------------
-
-   procedure Visit_Memory_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
-   begin
-      null;
-   end Visit_Memory_Instance;
 
 end Ocarina.Backends.Xtratum_Conf.Xm_Hypervisor;

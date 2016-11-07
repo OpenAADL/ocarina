@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -55,6 +55,10 @@ package body Ocarina.Backends.Xtratum_Conf.Mapping is
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XV renames Ocarina.Backends.XML_Values;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+
+   -------------------
+   -- Map_Scheduler --
+   -------------------
 
    procedure Map_Scheduler (E : Node_Id; N : Node_Id) is
       Scheduler : Supported_POK_Scheduler;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2016 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -35,6 +35,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -46,7 +47,7 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
-
+   use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Xtratum_Conf.Mapping;
 
@@ -60,8 +61,8 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    procedure Visit_System_Instance (E : Node_Id);
    procedure Visit_Process_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
-   procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    Partition_Identifier : Unsigned_Long_Long := 0;
 
@@ -109,9 +110,6 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
          when CC_Processor =>
             Visit_Processor_Instance (E);
 
-         when CC_Bus =>
-            Visit_Bus_Instance (E);
-
          when CC_Virtual_Processor =>
             Visit_Virtual_Processor_Instance (E);
 
@@ -125,18 +123,8 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      S : Node_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Process_Instance;
 
    ---------------------------
@@ -182,34 +170,14 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
       Pop_Entity;
    end Visit_System_Instance;
 
-   ------------------------
-   -- Visit_Bus_Instance --
-   ------------------------
-
-   procedure Visit_Bus_Instance (E : Node_Id) is
-      pragma Unreferenced (E);
-   begin
-      null;
-   end Visit_Bus_Instance;
-
    ------------------------------
    -- Visit_Processor_Instance --
    ------------------------------
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S         : Node_Id;
       N         : Node_Id;
       Processes : List_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
 
       N := New_Node (XTN.K_HI_Tree_Bindings);
 
@@ -225,7 +193,6 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S                         : Node_Id;
       Partition_Identifier_Node : Node_Id;
    begin
       Partition_Identifier_Node :=
@@ -233,19 +200,9 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
 
       AIN.Set_Backend_Node (Identifier (E), Partition_Identifier_Node);
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
 
       Partition_Identifier := Partition_Identifier + 1;
-
    end Visit_Virtual_Processor_Instance;
 
 end Ocarina.Backends.Xtratum_Conf.System_Description;

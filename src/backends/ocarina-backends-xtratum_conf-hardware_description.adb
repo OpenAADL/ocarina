@@ -39,10 +39,10 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Instances.Queries;
 
-with Ocarina.Backends.Utils;
 with Ocarina.Backends.Messages;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Properties.ARINC653;
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -75,6 +75,8 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
 
    Processor_Identifier : Unsigned_Long_Long := 0;
+
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    -----------
    -- Visit --
@@ -395,18 +397,11 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
 
       end loop;
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+      Visit_Subcomponents_Of (E);
 
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
+      if Module_Schedule'Length > 0 then
+         Processor_Identifier := Processor_Identifier + 1;
       end if;
-
-      Processor_Identifier := Processor_Identifier + 1;
 
       Append_Node_To_List (Processor_Node, XTN.Subitems (Current_XML_Node));
    end Visit_Processor_Instance;
@@ -416,18 +411,8 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Virtual_Processor_Instance;
 
    ---------------------------
