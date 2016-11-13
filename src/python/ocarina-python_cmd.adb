@@ -37,6 +37,7 @@ with GNATCOLL.Scripts.Python;    use GNATCOLL.Scripts.Python;
 with GNATCOLL.VFS;               use GNATCOLL.VFS;
 
 with Ocarina.Configuration;      use Ocarina.Configuration;
+with Ocarina.Options;            use Ocarina.Options;
 with Ocarina.Output;             use Ocarina.Output;
 
 with Errors;
