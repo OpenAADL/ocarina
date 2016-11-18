@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -896,28 +896,38 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
            (Identifier (E),
             Get_Handling (E, By_Name, H_Ada_Type_Spec));
 
-         --  Declare the "default value" of a type. This value is not
-         --  declared as a 'constant' so that the user can modify it.
+         --  Declare the "default value" of a type.
+
+         --  Note: If a default value can be computed, then this value
+         --  is declared as a 'constant' so that the user cannot
+         --  modify it.
 
          if No (Get_Handling (E, By_Name, H_Ada_Type_Default_Value)) then
-            Data_Representation := Get_Data_Representation (E);
+               Data_Representation := Get_Data_Representation (E);
 
-            --  We generate default values for all types except
-            --  protected types.
+               --  We generate default values for all types except
+               --  protected types.
 
-            if Data_Representation /= Data_With_Accessors then
-               N :=
-                 Make_Object_Declaration
-                   (Defining_Identifier =>
-                      Map_Ada_Default_Value_Identifier (E),
-                    Object_Definition => Map_Ada_Defining_Identifier (E),
-                    Expression        => Get_Ada_Default_Value (E));
+               if Data_Representation /= Data_With_Accessors then
+                  declare
+                     Default_Value : constant Node_Id :=
+                       Get_Ada_Default_Value (E);
+                  begin
+                     N :=
+                       Make_Object_Declaration
+                       (Defining_Identifier =>
+                          Map_Ada_Default_Value_Identifier (E),
+                        Constant_Present  => Present (Default_Value),
+                        Object_Definition => Map_Ada_Defining_Identifier (E),
+                        Expression        => Default_Value);
 
-               Set_Handling (E, By_Name, H_Ada_Type_Default_Value, N);
-               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
-            else
-               N := No_Node;
-            end if;
+                     Set_Handling (E, By_Name, H_Ada_Type_Default_Value, N);
+                     Append_Node_To_List
+                       (N, ADN.Visible_Part (Current_Package));
+                  end;
+               else
+                  N := No_Node;
+               end if;
          end if;
 
          --  Bind the type to its default value if a default value has
