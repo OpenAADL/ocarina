@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -182,6 +182,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
       Local_Port_Identifier  : Unsigned_Long_Long := 0;
       Entity_Identifier      : Unsigned_Long_Long := 0;
       Task_Identifier        : Unsigned_Long_Long := 0;
+      Tasks_Stack            : Unsigned_Long_Long := 0;
       Nb_Protected           : Unsigned_Long_Long := 0;
       Device_Id              : Unsigned_Long_Long := 0;
       Bus_Id                 : Unsigned_Long_Long := 0;
@@ -907,6 +908,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
          Node_Identifier     := 0;
          Task_Identifier     := 0;
+         Tasks_Stack         := 0;
          Nb_Protected        := 0;
          Nb_Ports_In_Process := 0;
 
@@ -1271,6 +1273,12 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               Value => Make_Literal (New_Int_Value (Task_Identifier, 1, 10)));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+         N :=
+           Make_Define_Statement
+             (Defining_Identifier => RE (RE_Tasks_Stack),
+              Value => Make_Literal (New_Int_Value (Tasks_Stack, 1, 10)));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
+
          --  Add an enumerator corresponding to an INVALID server
          --  entity to the entity list.
 
@@ -1564,6 +1572,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                  (Make_Literal (CV.New_Int_Value (Task_Identifier, 0, 10))));
             Append_Node_To_List (N, Tasks_Enumerator_List);
             Task_Identifier := Task_Identifier + 1;
+
+            Tasks_Stack := Tasks_Stack + To_Bytes (Get_Thread_Stack_Size (E));
          end if;
 
          if Current_Device /= No_Node
@@ -1583,6 +1593,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                  (Make_Literal (CV.New_Int_Value (Task_Identifier, 0, 10))));
             Append_Node_To_List (N, Tasks_Enumerator_List);
             Task_Identifier := Task_Identifier + 1;
+            Tasks_Stack := Tasks_Stack + To_Bytes (Get_Thread_Stack_Size (E));
          end if;
 
          --  Get the Process parent of the thread

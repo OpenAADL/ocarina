@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -180,6 +180,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Simulink_Init_Func,             --  __PO_HI_SIMULINK_INIT
       RE_Simulink_Model_Type,            --  __PO_HI_SIMULINK_MODEL
       RE_Nb_Tasks,                       --  __PO_HI_NB_TASKS
+      RE_Tasks_Stack,                    --  __PO_HI_TASKS_STACK
       RE_In_Data_Inter_Process,
       RE_In_Data_Intra_Process,
       RE_Out_Data_Inter_Process,
@@ -427,6 +428,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Bigendian                    => RH_PO_HI_Transport,
       RE_Littleendian                 => RH_PO_HI_Transport,
       RE_Nb_Tasks                     => RH_Deployment,
+      RE_Tasks_Stack                  => RH_Deployment,
       RE_In_Data_Inter_Process        => RH_PO_HI_Types,
       RE_In_Data_Intra_Process        => RH_PO_HI_Types,
       RE_Out_Data_Inter_Process       => RH_PO_HI_Types,
