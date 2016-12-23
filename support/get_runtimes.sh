@@ -21,32 +21,36 @@ if test $# -eq 0; then
     exit 1
 fi
 
+repository=""
+
 workdir="`pwd`"
 scriptdir="`dirname $0`"; cd "${scriptdir}"; scriptdir="`pwd`"
 cd ${workdir}
 
 while test $# -ne 0; do
     r="`echo $1 | tr '[A-Z]' '[a-z]'`"
-    echo $r
+
     case ${r} in
-	*aadlib* )
+        --root_url=*) repository=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+
+        *aadlib* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf AADLib 2>/dev/null
-	    git clone https://github.com/OpenAADL/AADLib.git aadlib \
+	    git clone ${repository}/AADLib.git aadlib \
 		|| exit 2
 	    ;;
 
 	*po*hi*ada* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf polyorb-hi-ada 2>/dev/null
-	    git clone https://github.com/OpenAADL/polyorb-hi-ada.git \
+	    git clone ${repository}/polyorb-hi-ada.git \
 		|| exit 2
 	    ;;
 
 	*po*hi*c* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf polyorb-hi-c 2>/dev/null
-	    git clone https://github.com/OpenAADL/polyorb-hi-c.git \
+	    git clone ${repository}/polyorb-hi-c.git \
 		|| exit 2
 	    ;;
 
