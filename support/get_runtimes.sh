@@ -21,7 +21,7 @@ if test $# -eq 0; then
     exit 1
 fi
 
-repository=""
+repository="https://github.com/OpenAADL"
 
 workdir="`pwd`"
 scriptdir="`dirname $0`"; cd "${scriptdir}"; scriptdir="`pwd`"
