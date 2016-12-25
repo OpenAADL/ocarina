@@ -32,5 +32,9 @@ install:
   - export PATH=$PWD/gnat-gpl-2016-x86_64-linux-bin/bin/:$PATH
 
 script:
+  # Show GNAT version for the record
+  - gcc --version
+  - gnatls -v
+
   # Just build
   - ./support/reconfig && ./configure && make
