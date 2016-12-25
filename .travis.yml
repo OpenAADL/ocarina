@@ -29,7 +29,7 @@ install:
   - tar -xf $GNAT_TAR_PATH
 
   # Add GNAT to $PATH
-  - export PATH=$PATH:$PWD/gnat-gpl-2016-x86_64-linux-bin/bin/
+  - export PATH=$PWD/gnat-gpl-2016-x86_64-linux-bin/bin/:$PATH
 
 script:
   # Just build
