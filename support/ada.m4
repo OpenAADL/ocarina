@@ -31,6 +31,7 @@ cat > conftest/gnat.adc <<EOF
 [$4]
 EOF
 ac_try="cd conftest && $GNATCHOP -q src.ada && $1 $2 > /dev/null 2>../conftest.out"
+cat ../conftest.out
 if AC_TRY_EVAL(ac_try); then
   ifelse([$5], , :, [rm -rf conftest*
   $5])
