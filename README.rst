@@ -1,7 +1,5 @@
-Ocarina AADL toolset
+Ocarina AADL toolset |build-status| |docs| 
 ====================
-
-|build-status| |docs| 
 
 Ocarina is an AADL model processor, providing code generation
 facilities towards C and Ada; Petri Nets; scheduling tools (MAST,
@@ -21,7 +19,8 @@ code generation examples. For more details, read the examples/README file
 
 The documentation of Ocarina is located in the doc/ directory. To
 build the documentation manually just run 'make html' or 'make pdf' in
-the doc/ directory.
+the doc/ directory. As an alternative, an up-to-date version is available 
+here |docs|.
 
 .. |build-status| image:: https://travis-ci.org/OpenAADL/ocarina.svg?branch=master 
   :target: https://travis-ci.org/OpenAADL/ocarina
