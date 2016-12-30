@@ -9,7 +9,7 @@ GUIDE_RSTFILES = $(srcdir)/about.rst $(srcdir)/gfdl.rst			\
 	$(srcdir)/python.rst $(srcdir)/editors.rst			\
 	$(srcdir)/installation.rst $(srcdir)/usage.rst
 
-EXTRA_DIST= $(srcdir)/PROBLEM-REPORT-FORM $(GUIDE_TEXIFILES)	\
+EXTRA_DIST= $(GUIDE_TEXIFILES)	\
 	$(ALL_IMAGES) $(man_MANS) $(srcdir)/ocarina-config.html	\
 	 $(srcdir)/ocarina_man.html $(srcdir)/ocarina.css
 
