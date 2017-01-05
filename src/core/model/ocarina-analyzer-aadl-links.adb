@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2017 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1386,7 +1386,11 @@ package body Ocarina.Analyzer.AADL.Links is
                      --  Check that the sink is the same as in the
                      --  flow spec.
 
-                     if Get_Referenced_Entity (Sink_Flow (Flow)) /=
+                     if Present (Get_Referenced_Entity
+                                   (Sink_Flow
+                                      (Corresponding_Flow_Spec (Flow))))
+                       and then
+                       Get_Referenced_Entity (Sink_Flow (Flow)) /=
                        Get_Referenced_Entity
                          (Sink_Flow (Corresponding_Flow_Spec (Flow)))
                      then
