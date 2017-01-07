@@ -104,12 +104,10 @@ clean-local: $(BUILD_DIRS) $(CLEAN_STAMPS) clean-mknodes
 # gnatclean that requires this file to be present to delete files ...
 
 $(CLEAN_STAMPS): %-clean:
-	touch $(top_builddir)/src/config/ocarina-configuration.adb
 	$(INIT_ADA_PROJECT_PATH) $(GNATCLEAN) -P $* $(GNATFLAGS) $(GNAT_LIB_FLAGS)\
 	  -XABS_SRC_DIR="$(PL_DEP_ABS_SRC_DIR)" \
 	  -XABS_BUILD_DIR="$(PL_DEP_ABS_BUILD_DIR)" \
 	  $(AP_FLAGS) ;
-	rm $(top_builddir)/src/config/ocarina-configuration.adb
 
 distclean-local:
 	for d in $(BUILD_DIRS); do \
