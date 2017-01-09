@@ -35,7 +35,6 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_REAL.Tokens;
 with Ocarina.ME_AADL_EMA.EMA_Tokens;
 with Ocarina.ME_AADL_BA.Tokens;
-with Ocarina.Instances;
 with Ocarina.Namet;
 with Errors;
 with Charset;
@@ -46,7 +45,6 @@ package body Ocarina.Analyzer.AADL.Annexes is
    use Ocarina.Analyzer;
    use Ocarina.Analyzer.AADL.Finder;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
-   use Ocarina.Instances;
    use Ocarina.Namet;
    use Errors;
 
@@ -75,17 +73,16 @@ package body Ocarina.Analyzer.AADL.Annexes is
                      Root : Node_Id) return Boolean
    is
       Success : Boolean := False;
-      Instance_Root : Node_Id;
+
    begin
-      --  for real annex Analyze_Model takes the aadl root of
-      --  instance tree as parameter
-      if Language_Annex = RT.Language then
-         Instance_Root := Instantiate_Model (Root);
-      end if;
 
       if Language_Annex = RT.Language then
-         Success := Analyze (Language, Instance_Root);
+         --  For the REAL annex, analysis is done as part of the
+         --  backend logic
+
+         Success := True;
       else
+
          Success := Analyze (Language, Root);
       end if;
 
