@@ -29,8 +29,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ada.Text_IO;  use Ada.Text_IO;
-
 with Ocarina.Analyzer.AADL_EMA.Naming_Rules;
 with Ocarina.ME_AADL_EMA.EMA_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -84,7 +82,6 @@ package body Ocarina.Analyzer.AADL_EMA is
       Package_Spec : Node_Id;
       Pass_To_Next : Boolean := False;
    begin
-      Put_Line ("#### Analyze sémantique ####");
       Get_EMA_Annexes_List
       (Root,
        Roots.First,
