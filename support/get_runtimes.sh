@@ -22,6 +22,7 @@ if test $# -eq 0; then
 fi
 
 repository="https://github.com/OpenAADL"
+tag=""
 
 workdir="`pwd`"
 scriptdir="`dirname $0`"; cd "${scriptdir}"; scriptdir="`pwd`"
@@ -33,11 +34,16 @@ while test $# -ne 0; do
     case ${r} in
         --root_url=*) repository=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
 
+        --tag=*) tag=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+
         *aadlib* )
 	    cd ${scriptdir}/../resources/runtime || exit 2
 	    rm -rf AADLib 2>/dev/null
 	    git clone ${repository}/AADLib.git aadlib \
 		|| exit 2
+            if test ! -z "${tag}"; then
+                git checkout ${tag} -b ${tag}
+            fi;
 	    ;;
 
 	*po*hi*ada* )
@@ -45,6 +51,9 @@ while test $# -ne 0; do
 	    rm -rf polyorb-hi-ada 2>/dev/null
 	    git clone ${repository}/polyorb-hi-ada.git \
 		|| exit 2
+            if test ! -z "${tag}"; then
+                git checkout ${tag} -b ${tag}
+            fi;
 	    ;;
 
 	*po*hi*c* )
@@ -52,6 +61,9 @@ while test $# -ne 0; do
 	    rm -rf polyorb-hi-c 2>/dev/null
 	    git clone ${repository}/polyorb-hi-c.git \
 		|| exit 2
+            if test ! -z "${tag}"; then
+                git checkout ${tag} -b ${tag}
+            fi;
 	    ;;
 
 	*pok* )
