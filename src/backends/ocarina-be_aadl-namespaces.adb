@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -195,12 +195,6 @@ package body Ocarina.BE_AADL.Namespaces is
 
             List_Node := Next_Node (List_Node);
          end loop;
-      else
-         raise Program_Error;
-      end if;
-
-      if not Someting_To_Print then
-         return;
       end if;
 
       Increment_Indentation;
