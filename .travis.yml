@@ -1,9 +1,10 @@
 # This script is adapted from https://github.com/AdaCore/Ada_Drivers_Library
 # Thanks to AdaCore for providing it
+
 # We are using Python 2.7 to run the testsuite
 language: python
-python:
-  - "2.7"
+#python:
+#  - "2.7"
 
 # Global variables
 env:
