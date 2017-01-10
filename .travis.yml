@@ -31,7 +31,7 @@ install:
   - tar -xf $GNAT_TAR_PATH
 
   # Add GNAT to $PATH
-  - export PATH=$PWD/gnat-gpl-2016-x86_64-linux-bin/bin/:$PATH
+  - export PATH=$PWD/gnat-gpl-2016-x86_64-linux-bin/bin/:$PWD/gnat-gpl-2016-x86_64-darwin-bin/bin/:$PATH
 
 script:
   # Show GNAT version for the record
@@ -39,5 +39,4 @@ script:
   - gnatls -v
 
   # Just build
-  #- ./support/reconfig && ./configure && make
   - git clone https://github.com/OpenAADL/ocarina-build.git ; ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
