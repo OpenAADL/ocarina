@@ -1,10 +1,6 @@
 package ErrorLibrary
 public
 
-data dummy
-  -- FIXME: Workaround to allow pretty printing this package
-end dummy;
-
 annex EMV2 {**
 error types
 CommonErrors: type set { ServiceError, TimingRelatedError, ValueRelatedError, ReplicationError,

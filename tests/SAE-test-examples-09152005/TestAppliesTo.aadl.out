@@ -2,6 +2,7 @@ TestAppliesTo.aadl:1299:33: parsing Access_Property_Association, token 'constant
 TestAppliesTo.aadl:1297:09: parsing Component_Type, unexpected identifier 'reqDataAccessF'
 TestAppliesTo.aadl:1701:33: parsing Access_Property_Association, token 'constant' or 'access' is expected, found integer value [0]
 TestAppliesTo.aadl:1699:09: parsing Component_Implementation, unexpected identifier 'reqDataAccessF'
+TestAppliesTo.aadl:2281:15: parsing Package_Specification, Empty packages are not allowed
 TestAppliesTo.aadl:2306:05: parsing AADL_Declaration, unexpected keyword 'properties'
 TestAppliesTo.aadl:2308:07: parsing AADL_Declaration, unexpected identifier 'PS'
 TestAppliesTo.aadl:2309:07: parsing AADL_Declaration, unexpected identifier 'PS'
@@ -64,4 +65,5 @@ TestAppliesTo.aadl:2371:07: parsing AADL_Declaration, unexpected identifier 'PS'
 TestAppliesTo.aadl:2372:01: parsing AADL_Declaration, unexpected keyword 'end'
 TestAppliesTo.aadl:2379:09: parsing Defining_Identifier, identifier 'PGsrc' is expected, found identifier 'PG'
 TestAppliesTo.aadl:2383:09: parsing Defining_Identifier, identifier 'PGsink' is expected, found identifier 'PG'
+TestAppliesTo.aadl:2701:20: parsing Package_Specification, Empty packages are not allowed
 Cannot parse AADL specifications

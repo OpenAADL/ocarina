@@ -5,6 +5,7 @@
 
 
 
+
 property set Data_Model is
   Base_Type : list of classifier (
 data)
@@ -25,6 +26,8 @@ data)
   Dimension : list of aadlinteger
     applies to (data);
 
+  Indefinite_Dimension : constant aadlinteger => -1;
+  Infinite_Dimension : constant aadlinteger => -2;
   Element_Names : list of aadlstring
     applies to (data);
 
@@ -168,7 +171,7 @@ end Base_Types;
 
 property set Behavior_Properties is
   Subprogram_Call_Protocol : enumeration (HSER, LSER, ASER) => HSER
-    applies to (component access);
+    applies to (subprogram access);
 
 end Behavior_Properties;
 

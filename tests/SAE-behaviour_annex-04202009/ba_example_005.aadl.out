@@ -26,12 +26,12 @@ public
       s1 : final state;
     transitions      
       regular : s0 -[]-> s1 {
-        r := x + y;
-        ovf := false
+        r  := x + y;
+        ovf  := false 
         };      
       overflow : s0 -[]-> s1 {
-        r := 0;
-        ovf := true
+        r  := 0;
+        ovf  := true 
         };
     **};
   end addition.default;

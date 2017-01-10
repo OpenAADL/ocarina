@@ -2,8 +2,8 @@ test_real_exec_05.aadl:10:03: Warning: source_language is not a list while the c
 test_real_exec_05.aadl:10:03: Warning: The value of source_language has been converted into a list.
 test_real_exec_05.aadl:16:03: Warning: source_language is not a list while the corresponding property name at programming_properties.aadl:61:02 is a list.
 test_real_exec_05.aadl:16:03: Warning: The value of source_language has been converted into a list.
-test_real_exec_05.aadl:147:12 Backends: error : Property is false for instance 84 (rma.erc32_cpu_rm)
-test_real_exec_05.aadl:170:12 Backends: error : Property is false for instance 84 (rma.erc32_cpu_rm)
+test_real_exec_05.aadl:147:12 Backends: error : Property is false for instance 95 (rma.erc32_cpu_rm)
+test_real_exec_05.aadl:170:12 Backends: error : Property is false for instance 95 (rma.erc32_cpu_rm)
 variables_basis execution
 -------------------------------------
 Evaluating theorem variables_basis
@@ -44,7 +44,7 @@ Evaluating theorem variables_set_dependants
 
  * Iterate for variable: rma.erc32_cpu_rm
 Content of set a_set (test_real_exec_05.aadl:125:12) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_05.aadl:72:01
+  rma.erc32_node_a: 14 component instance test_real_exec_05.aadl:72:01
      -> value for x2 is 3
  => Result: TRUE
 
@@ -57,10 +57,10 @@ Evaluating theorem variables_iterative_expressions
 
  * Iterate for variable: rma.erc32_cpu_rm
 Content of set proc_set (test_real_exec_05.aadl:139:18) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_05.aadl:72:01
+  rma.erc32_node_a: 14 component instance test_real_exec_05.aadl:72:01
 Content of set threads (test_real_exec_05.aadl:141:14) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_05.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_05.aadl:40:01
      -> value for y is 6000000000.0
  => Result: FALSE
 
@@ -73,10 +73,10 @@ Evaluating theorem variables_imbricated_iterative_expressions
 
  * Iterate for variable: rma.erc32_cpu_rm
 Content of set proc_set (test_real_exec_05.aadl:156:18) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_05.aadl:72:01
+  rma.erc32_node_a: 14 component instance test_real_exec_05.aadl:72:01
 Content of set threads (test_real_exec_05.aadl:158:14) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_05.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_05.aadl:40:01
      -> value for y is 7000000000.0
  => Result: FALSE
 
@@ -89,8 +89,8 @@ Evaluating theorem variables_product_expression
 
  * Iterate for variable: rma.erc32_node_a
 Content of set new_set (test_real_exec_05.aadl:179:20) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_05.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_05.aadl:40:01
      -> value for x is 500000000000000000.0
  => Result: TRUE
 
@@ -103,8 +103,8 @@ Evaluating theorem element_list_expression
 
  * Iterate for variable: rma.erc32_node_a
 Content of set new_set (test_real_exec_05.aadl:192:18) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_05.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_05.aadl:40:01
  => Result: TRUE
 
 theorem element_list_expression is: TRUE
@@ -116,8 +116,8 @@ Evaluating theorem element_list_static_declaration
 
  * Iterate for variable: rma.erc32_node_a
 Content of set new_set (test_real_exec_05.aadl:203:18) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_05.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_05.aadl:40:01
      -> value for period is (500000000000, 1000000000000, 2000000000000)
  => Result: TRUE
 
@@ -143,8 +143,8 @@ Evaluating theorem is_in_list_and_set_expression
 
  * Iterate for variable: rma.erc32_node_a
 Content of set new_set (test_real_exec_05.aadl:229:18) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_05.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_05.aadl:40:01
  => Result: TRUE
 
 theorem is_in_list_and_set_expression is: TRUE
@@ -169,8 +169,8 @@ Evaluating theorem test_head_and_queue
 
  * Iterate for variable: rma.erc32
 Content of set threads (test_real_exec_05.aadl:255:16) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_05.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_05.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_05.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_05.aadl:40:01
      -> value for period_list is (1000000000000, 500000000000)
      -> value for poped_list is (500000000000)
  => Result: TRUE
@@ -184,7 +184,7 @@ Evaluating theorem test_reference_property
 
  * Iterate for variable: rma.erc32_cpu_rm
 Content of set set (test_real_exec_05.aadl:270:12) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_05.aadl:72:01
+  rma.erc32_node_a: 14 component instance test_real_exec_05.aadl:72:01
  => Result: TRUE
 
 theorem test_reference_property is: TRUE

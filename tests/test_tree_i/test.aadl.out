@@ -17,7 +17,7 @@ Root_System Node_Id 6
  Connections List_Id 0
  Calls List_Id 0
  Flows List_Id 0
- Annexes List_Id 0
+ Annexes List_Id 10
  Parent_Subcomponent Node_Id 0
  Namespace Node_Id 3
 Namespaces List_Id 2

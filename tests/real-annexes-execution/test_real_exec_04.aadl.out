@@ -8,8 +8,8 @@ Evaluating theorem check_expression_max
 
  * Iterate for variable: rma.erc32_node_a
 Content of set new_set (test_real_exec_04.aadl:86:18) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_04.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_04.aadl:40:01
  => Result: TRUE
 
 theorem check_expression_max is: TRUE
@@ -21,8 +21,8 @@ Evaluating theorem check_expression_sum
 
  * Iterate for variable: rma.erc32_node_a
 Content of set new_set (test_real_exec_04.aadl:98:18) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_04.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_04.aadl:40:01
  => Result: TRUE
 
 theorem check_expression_sum is: TRUE
@@ -44,7 +44,7 @@ Evaluating theorem check_expression_complex
 
  * Iterate for variable: rma.erc32_cpu_rm
 Content of set test_set (test_real_exec_04.aadl:136:15) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_04.aadl:72:01
+  rma.erc32_node_a: 14 component instance test_real_exec_04.aadl:72:01
  => Result: TRUE
 
 theorem check_expression_complex is: TRUE
@@ -116,8 +116,8 @@ Evaluating theorem check_is_in
 
  * Iterate for variable: rma.erc32_node_a
 Content of set set (test_real_exec_04.aadl:218:12) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_04.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_04.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_04.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_04.aadl:40:01
  => Result: TRUE
 
 theorem check_is_in is: TRUE
