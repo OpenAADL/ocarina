@@ -42,7 +42,7 @@ cache:
 before_install:
 - which python
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python --universal --framework : fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python --universal --framework ; fi
 
 install:
   # Check if the GNAT package is already available in the cache directory. If
