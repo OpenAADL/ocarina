@@ -8,8 +8,9 @@
 # Thanks to AdaCore for providing it
 
 ################################################################################
-# Note: we are using Python to run Ocarina testsuite. We install a
-# specific GNAT GPL release to compile and run everything.
+# Note: we are using 'generic' as a language. We need GNAT to compile
+# Ocarina, and Python to run Ocarina testsuite. We install a specific
+# GNAT GPL release to compile and run everything.
 
 language: generic
 
@@ -32,18 +33,21 @@ branches:
   - master
 
 ################################################################################
-# Cache directory that allows us to not download GNAT GPL every time, speeding
-# up the process.
+# Install the build environment, derived from travis default installation
+
+# 1/ Cache directory that allows us to not download GNAT GPL every time,
+# speeding up the process.
 
 cache:
   directories:
   - $HOME/build_tools
 
+# 2/ Check Python installation
+
 before_install:
 - which python
 
-#- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
-#- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python --universal --framework ; fi
+# 3/ Install GNAT GPL 2016
 
 install:
   # Check if the GNAT package is already available in the cache directory. If
