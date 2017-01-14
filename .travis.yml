@@ -1,26 +1,48 @@
-# This script is adapted from https://github.com/AdaCore/Ada_Drivers_Library
+################################################################################
+# Ocarina travis-ci configuration file.
+# This script compiles and test Ocarina for Linux and OS X targets
+#
+# Note: this travis-ci script is adapted from
+# https://github.com/AdaCore/Ada_Drivers_Library
+#
 # Thanks to AdaCore for providing it
 
-# We are using Python 2.7 to run the testsuite
-language: python
-#python:
-#  - "2.7"
+################################################################################
+# Note: we are using Python to run Ocarina testsuite. We install a
+# specific GNAT GPL release to compile and run everything.
+
+language: generic
 
 # Global variables
 env:
   global:
     - TOOLS_DIR=$HOME/build_tools
-    - GNAT_TAR_PATH=$TOOLS_DIR/gnat-gpl-2016-x86_64-linux-bin.tar.gz
+    - GNAT_TAR_PATH=$TOOLS_DIR/gnat-gpl-2016-bin.tar.gz
 
+################################################################################
+# Host to run the various tests
 os:
   - linux
   - osx
 
+################################################################################
+# Build only for the master branch
+branches:
+  only:
+  - master
+
+################################################################################
 # Cache directory that allows us to not download GNAT GPL every time, speeding
 # up the process.
+
 cache:
   directories:
   - $HOME/build_tools
+
+before_install:
+- which python
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python --universal --framework : fi
 
 install:
   # Check if the GNAT package is already available in the cache directory. If
@@ -33,6 +55,9 @@ install:
 
   # Add GNAT to $PATH
   - export PATH=$PWD/gnat-gpl-2016-x86_64-linux-bin/bin/:$PWD/gnat-gpl-2016-x86_64-darwin-bin/bin/:$PATH
+
+################################################################################
+# Main processing starts here
 
 script:
   # Show GNAT version for the record
