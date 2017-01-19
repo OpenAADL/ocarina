@@ -1,13 +1,21 @@
 Ocarina AADL toolset  |docs| 
 ====================
 
-Build status for Linux and OS X: |build-status|
-
-Code coverage: |coverage|
+About: 
+------
 
 Ocarina is an AADL model processor, providing code generation
 facilities towards C and Ada; Petri Nets; scheduling tools (MAST,
 Cheddar); WCET; REAL
+
+Q&A:
+----
+
+Build status for Linux and OS X: |build-status|
+
+Code coverage: |coverage|
+
+
 
 .. |build-status| image:: https://travis-ci.org/OpenAADL/ocarina.svg?branch=master 
   :target: https://travis-ci.org/OpenAADL/ocarina
