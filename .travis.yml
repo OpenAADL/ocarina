@@ -71,3 +71,7 @@ script:
 
   # Just build
   - git clone https://github.com/OpenAADL/ocarina-build.git ; ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
+
+# Codecov.io
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
