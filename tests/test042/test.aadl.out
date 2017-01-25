@@ -672,6 +672,9 @@ system)
   Ada_Package_Name : aadlstring
     applies to (data);
 
+  Forbid_In_PI : aadlboolean
+    applies to (data);
+
   interfaceView : aadlstring
     applies to (package);
 
