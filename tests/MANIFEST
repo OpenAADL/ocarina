@@ -1,6 +1,6 @@
 tests/test_ocarina_help
-tests/test_ocarina_config
-tests/test_ocarina_gpr
+#tests/test_ocarina_config
+#tests/test_ocarina_gpr
 tests/osate-flow-impls/FlowImpls.aadl
 tests/osate-flow-impl-modes/FlowImplModes.aadl
 tests/osate2-t02/t2.aadl
