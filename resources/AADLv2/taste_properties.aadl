@@ -224,6 +224,8 @@ Encoding : Taste::Encoding_type applies to (parameter);
 
 Ada_Package_Name : aadlstring applies to (data);
 
+Forbid_In_PI : aadlboolean applies to (data);
+
 interfaceView : aadlstring applies to (package);
 
 WCET : Time applies to (subprogram access);
