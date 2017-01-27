@@ -134,7 +134,7 @@ def getSourcePorts (feature_nodeId):
        parameter, in the case feature_nodeId participates in a
        connection.
     '''
-    return runOcarinaFunction (libocarina_python.getSourcePorts, nodeId)
+    return runOcarinaFunction (libocarina_python.getSourcePorts, feature_nodeId)
 
 ################################################################################
 
