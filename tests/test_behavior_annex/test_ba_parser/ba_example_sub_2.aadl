@@ -1,0 +1,58 @@
+-- This example gives a basic implementation of a stack data type associated 
+-- with its access methods. The various corresponding AADL component 
+-- specifications are encompassed within a same package to offer an Object-
+-- Oriented Class style.
+
+package BA_example2 public
+with Base_Types;
+
+  data stack
+    features
+      put : provides subprogram access push;
+      get : provides subprogram access pop;
+  end stack;
+
+  data implementation stack.default
+    subcomponents
+      elems : data Base_Types::Integer [100];
+      sp : data Base_Types::Integer;
+  end stack.default;
+
+  subprogram push
+    features
+      this : in out parameter stack.default;
+      v : in parameter Base_Types::Integer;
+      overflow : out event port;
+  end push;
+
+  subprogram pop
+    features
+      this : in out parameter stack.default;
+      v : out parameter Base_Types::Integer;
+      underflow : out event port;
+  end pop;
+
+
+  subprogram implementation push.default
+  annex behavior_specification {**
+    states
+      s0 : initial state;
+      s1 : final state;
+    transitions
+      s0 -[ this.sp <= 100 ]-> s1 { this.elems[this.sp] := v; this.sp := this.sp+1 };
+      s0 -[ this.sp > 100 ]-> s1 { overflow! };
+  **};
+  end push.default;
+
+  subprogram implementation pop.default
+  annex behavior_specification {**
+    states
+      s0 : initial state;
+      s1 : final state;
+    transitions
+      s0 -[ this.sp > 0 ]-> s1 { this.sp := this.sp - 1 ; v := this.elems[this.sp] };
+      s0 -[ this.sp = 0 ]-> s1 { underflow! };
+  **};
+  end pop.default;
+
+end BA_example2;

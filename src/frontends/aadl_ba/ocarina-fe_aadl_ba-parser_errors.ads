@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -46,13 +46,21 @@ package Ocarina.FE_AADL_BA.Parser_Errors is
       PC_Behavior_State,
       PC_Behavior_Transition,
       PC_Behavior_Condition,
+      PC_Execute_Condition,
+      PC_Mode_Condition,
+      PC_Trigger_Logical_Expression,
+      PC_Event_Trigger,
+      PC_Port_Component_Reference,
 
       PC_Dispatch_Condition,
       PC_Dispatch_Trigger,
       PC_Dispatch_Trigger_Event,
       PC_Dispatch_Trigger_Conjunction,
+      PC_Dispatch_Trigger_Condition,
+      PC_Dispatch_Conjunction,
       PC_Execute_Behavior_Transition,
 
+      PC_Behavior_Action_Block,
       PC_Behavior_Action,
       PC_Behavior_Actions,
       PC_Conditional_Statement,
@@ -61,33 +69,42 @@ package Ocarina.FE_AADL_BA.Parser_Errors is
       PC_Elsif_Cond_Statement,
       PC_Else_Cond_Statement,
       PC_For_Cond_Struct,
+      PC_Forall_Cond_Struct,
       PC_While_Cond_Struct,
       PC_While_Cond_Statement,
+      PC_DoUntil_Cond_Struct,
       PC_Basic_Action,
       PC_Timed_Action,
       PC_Assignment_Or_Communication_Action,
       PC_Range,
+      PC_Element_Values,
       PC_Parameter_Label,
       PC_Variable_Label,
+      PC_Array_Index,
 
       PC_Data_Component_Reference,
       PC_Unique_Component_Classifier_Ref,
+      PC_Component_Element_Ref,
 
-      PC_Value_Holder,
+      PC_Value_Variable,
       PC_Value_Expression,
       PC_Relation,
       PC_Simple_Expressions,
       PC_Simple_Expression,
       PC_Term,
       PC_Factor,
-      PC_Primary,
+      PC_Value,
       PC_Operator,
       PC_Property_Constant,
+      PC_Property_Reference,
+      PC_Property_Name,
+      PC_Property_Field,
       PC_Integer_Range,
       PC_Integer_Value,
       PC_Behavior_Time,
 
       PC_Id,
+      PC_Name,
       PC_Identifier_With_Value,
 
       PC_Defining_Identifier,
@@ -98,6 +115,7 @@ package Ocarina.FE_AADL_BA.Parser_Errors is
    type Error_Message_Code is
      (EMC_Error,
       EMC_Debug,
+      EMC_Annex_Empty,
       EMC_Execute_Or_Mode_Transition,
       EMC_Invalid_Range,
       EMC_List_Is_Empty,
@@ -109,45 +127,43 @@ package Ocarina.FE_AADL_BA.Parser_Errors is
       EMC_Trigger_Conjunction_Failed,
       EMC_Operator_Unknown,
       EMC_No_Defining_Identifier,
-      EMC_Illegal_Syntax);
+      EMC_Illegal_Syntax,
+      EMC_Missing_Unit);
 
    procedure Display_Parsing_Error
      (Code      : Parsing_Code;
       Error_Msg : Error_Message_Code;
-      Fatal     : Boolean := False;
-      Warning   : Boolean := False);
-   procedure DPE
-     (Code      : Parsing_Code;
-      Error_Msg : Error_Message_Code;
-      Fatal     : Boolean := False;
-      Warning   : Boolean := False) renames
-     Display_Parsing_Error;
+      Fatal     : Boolean            := False;
+      Warning   : Boolean            := False);
+   procedure DPE (Code      : Parsing_Code;
+                  Error_Msg : Error_Message_Code;
+                  Fatal     : Boolean            := False;
+                  Warning   : Boolean            := False)
+     renames Display_Parsing_Error;
    --  Display an output message:
    --     Location: parsing ..., <Msg>
 
    procedure Display_Parsing_Error
      (Code           : Parsing_Code;
       Expected_Token : BA_Token_Type;
-      Fatal          : Boolean := False;
-      Warning        : Boolean := False);
-   procedure DPE
-     (Code           : Parsing_Code;
-      Expected_Token : BA_Token_Type;
-      Fatal          : Boolean := False;
-      Warning        : Boolean := False) renames
-     Display_Parsing_Error;
+      Fatal          : Boolean       := False;
+      Warning        : Boolean       := False);
+   procedure DPE (Code           : Parsing_Code;
+                  Expected_Token : BA_Token_Type;
+                  Fatal          : Boolean       := False;
+                  Warning        : Boolean       := False)
+     renames Display_Parsing_Error;
 
    procedure Display_Parsing_Error
      (Code            : Parsing_Code;
       Expected_Tokens : BA_Token_List_Type;
-      Fatal           : Boolean := False;
-      Warning         : Boolean := False);
-   procedure DPE
-     (Code            : Parsing_Code;
-      Expected_Tokens : BA_Token_List_Type;
-      Fatal           : Boolean := False;
-      Warning         : Boolean := False) renames
-     Display_Parsing_Error;
+      Fatal           : Boolean             := False;
+      Warning         : Boolean             := False);
+   procedure DPE (Code            : Parsing_Code;
+                  Expected_Tokens : BA_Token_List_Type;
+                  Fatal           : Boolean            := False;
+                  Warning         : Boolean            := False)
+     renames Display_Parsing_Error;
 
    function Image (Code : Parsing_Code) return String;
    --  Return corresponding string of given parsing code

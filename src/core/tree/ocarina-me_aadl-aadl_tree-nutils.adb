@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -239,6 +239,21 @@ package body Ocarina.ME_AADL.AADL_Tree.Nutils is
          while Present (N) loop
             C := C + 1;
             N := Next_Node (N);
+         end loop;
+      end if;
+
+      return C;
+   end Length;
+
+   function Length (L : Node_List) return Natural is
+      N : Node_Id;
+      C : Natural := 0;
+   begin
+      if Present (L.First) then
+         N := L.First;
+         while Present (N) loop
+            C := C + 1;
+            N := Next_Entity (N);
          end loop;
       end if;
 

@@ -1,5 +1,3 @@
-example_018.aadl:29:41: Warning: Connection_Pattern is not a list while the corresponding property name at communication_properties.aadl:10:02 is a list.
-example_018.aadl:29:41: Warning: The value of Connection_Pattern has been converted into a list.
 
 
 
@@ -38,7 +36,7 @@ public
 
   connections
     port processing.Result -> voting.Input
-      {Connection_Pattern => One_To_One;};
+      {Connection_Pattern => (One_To_One);};
     port Input -> processing.Input;
     port voting.Output -> Result;
 

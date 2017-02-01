@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -64,9 +64,13 @@ package body Ocarina.BE_AADL.Annexes is
 
    procedure Print_Annex_Subclause (Node : Node_Id) is
       Content : constant Node_Id := Annex_Content (Node);
-      In_Mode : constant Node_Id := In_Modes (Node);
+      In_Mode :          Node_Id := In_Modes (Node);
 
    begin
+      if Kind (Node) = K_Annex_Subclause then
+         In_Mode := In_Modes (Node);
+      end if;
+
       Write_Indentation;
       Print_Token (T_Annex);
       Write_Space;
@@ -76,7 +80,13 @@ package body Ocarina.BE_AADL.Annexes is
 
       case AADL_Version is
          when AADL_V2 =>
-            if Present (Corresponding_Annex (Node)) then
+            if Present (Corresponding_Annex (Node))
+              and then Get_Backend (Name (Identifier (Node))) /= 0
+            then
+               --  Pretty print Annexe if we can parse them and if
+               --  there is a pretty printer. Should one of these two
+               --  condition fail, we fall back to dumping raw text.
+
                Print_Token (T_Begin_Annex);
                Generate_Code
                  (Corresponding_Annex (Node),

@@ -1,0 +1,529 @@
+------------------------------------------
+---------- Ocarina LNT Generator ---------
+------------------------------------------
+
+robot.aadl:133:03robot.aadl:133:03robot.aadl:140:03robot.aadl:141:03robot.aadl:151:03robot.aadl:151:03Begin Thread
+Begin Processor
+Begin Types
+Begin Port
+Begin Main
+"Main.bcg"=  divbranching reduction of "ROBOT_Main.lnt";
+property PROPERTY_Deadlock is
+   deadlock of "Main.bcg";
+   expected FALSE;
+end property;
+property Scheduling_Test (ID) is
+   "Main_$ID.bcg"="Main.bcg"|=
+   [ true* . "ACTIVATION_$ID !T_Error" ] false;
+   expected TRUE;
+end property;
+module ROBOT_Threads (ROBOT_Types) is 
+   process Thread_capteur_i [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_EVENEMENT: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_EVENEMENT (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_EVENEMENT (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Thread_controle_i [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_COMM_SERVO_OUT: LNT_Channel_Data, 
+   AADL_PORT_INFO_CAPTEUR_IN: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_INFO_CAPTEUR_IN (AADLDATA)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_COMM_SERVO_OUT (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_INFO_CAPTEUR_IN (AADLDATA); 
+               AADL_PORT_COMM_SERVO_OUT (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Thread_servomoteur_i [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_ORDRE: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_ORDRE (AADLDATA)
+               []
+               ACTIVATION (T_End)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_ORDRE (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+end module 
+module ROBOT_Ports (ROBOT_Types) is 
+   process Data_Port [
+   Input: LNT_Channel_Data, 
+   Output: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            Input (AADLDATA)
+            []
+            Output (AADLDATA)
+         end select 
+      end loop
+   end process 
+   
+   process Event_Port_Periodic [
+   Input: LNT_Channel_Data, 
+   Output: LNT_Channel_Data](
+   Queue_Size: Nat) 
+   is 
+      var 
+         Nb_Input : Nat
+      in 
+         Nb_Input := 0; 
+         loop 
+            select 
+               Input (AADLDATA); 
+               if (Nb_Input <  Queue_Size)
+               then 
+                  Nb_Input := Nb_Input + 1
+               end if
+               []
+               if (Nb_Input >  0)
+               then 
+                  Output (AADLDATA); 
+                  Nb_Input := Nb_Input - 1
+               end if
+            end select 
+         end loop
+      end var
+   end process 
+   
+   process Event_Port_Sporadic [
+   Input: LNT_Channel_Data, 
+   Output: LNT_Channel_Data, 
+   Notify: LNT_Channel_Event](
+   Queue_Size: Nat) 
+   is 
+      var 
+         Nb_Input : Nat, 
+         Is_New : bool
+      in 
+         Nb_Input := 0; 
+         Is_New := false; 
+         loop 
+            select 
+               Input (AADLDATA); 
+               if (Nb_Input <  Queue_Size)
+               then 
+                  Nb_Input := Nb_Input + 1
+               end if; 
+               Is_New := true
+               []
+               if (Nb_Input >  0)
+               then 
+                  Output (AADLDATA); 
+                  Nb_Input := Nb_Input - 1
+               end if
+               []
+               if (Is_New)
+               then 
+                  Notify (Incoming_Event); 
+                  Is_New := false
+               else 
+                  Notify (No_Event)
+               end if
+            end select 
+         end loop
+      end var
+   end process 
+   
+end module 
+module ROBOT_Types 
+with "==",  "eq" , "<",  "lt" , "<=",  "le" , ">",  "gt" , ">=",  "ge" is 
+   type LNT_Type_Data is 
+      AADLDATA
+   end type 
+   
+   channel LNT_Channel_Data is 
+      (LNT_Type_Data) 
+   end channel
+   type LNT_Type_Time_Constraint is 
+      range 0 .. 240 of Nat
+   end type 
+   
+   type LNT_Type_Thread is 
+      array [0 .. 11 ]of LNT_Type_Time_Constraint
+   end type 
+   
+   type LNT_Type_Thread_Array is 
+      array [1 .. 6 ]of LNT_Type_Thread
+   end type 
+   
+   type LNT_Type_Dispatch is 
+      T_Begin, T_End, T_All, T_Preempt, T_Stop, T_Error, T_Ok
+   end type 
+   
+   type LNT_Type_Event is 
+      Incoming_Event, No_Event
+   end type 
+   
+   channel LNT_Channel_Dispatch is 
+      (LNT_Type_Dispatch) 
+   end channel
+   channel LNT_Channel_Event is 
+      (LNT_Type_Event) 
+   end channel
+   function Thread_Number : Nat 
+   is 
+      return 6
+   end function 
+   
+   function PPCM_THREAD : LNT_Type_Time_Constraint 
+   is 
+      return LNT_Type_Time_Constraint ( 120)
+   end function 
+   
+   function _+_ (
+      n1: LNT_Type_Time_Constraint, 
+      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
+   is 
+      return LNT_Type_Time_Constraint (Nat (n1) + Nat (n2) mod 240)
+   end function 
+   
+   function _-_ (
+      n1: LNT_Type_Time_Constraint, 
+      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
+   is 
+      if (n1 <  n2)
+      then 
+         return LNT_Type_Time_Constraint (((240 - Nat (n2))  + Nat (n1))  mod 240)
+      else 
+         return LNT_Type_Time_Constraint (Nat (n1) - Nat (n2) mod 240)
+      end if
+   end function 
+   
+   function _*_ (
+      n1: LNT_Type_Time_Constraint, 
+      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
+   is 
+      return LNT_Type_Time_Constraint (Nat (n1) * Nat (n2) mod 240)
+   end function 
+   
+end module 
+module ROBOT_Processor (ROBOT_Types) is 
+   function Assign (
+      in var Threads: LNT_Type_Thread_Array, 
+      I: Nat, 
+      K: Nat, 
+      Val: LNT_Type_Time_Constraint) : LNT_Type_Thread_Array 
+   is 
+      var 
+         P : LNT_Type_Thread
+      in 
+         P := Threads[I]; 
+         P[K] := Val; 
+         Threads[I] := P
+      end var; 
+      return Threads
+   end function 
+   
+   function Update_Thread (
+      in var Aux_Threads: LNT_Type_Thread_Array, 
+      I: Nat, 
+      TODO: LNT_Type_Time_Constraint) : LNT_Type_Thread_Array 
+   is 
+      var 
+         P : LNT_Type_Thread
+      in 
+         P := Aux_Threads[I]; 
+         if (P[2] ==  LNT_Type_Time_Constraint (0))
+         then 
+            P[6] := LNT_Type_Time_Constraint (1)
+         end if; 
+         P[2] := P[2] + TODO; 
+         P[8] := LNT_Type_Time_Constraint (1); 
+         if ((P[11] ==  LNT_Type_Time_Constraint (1))  and  (P[2] ==  P[0]) )
+         then 
+            P[7] := LNT_Type_Time_Constraint (1); 
+            P[2] := LNT_Type_Time_Constraint (0); 
+            P[4] := P[5]; 
+            P[5] := PPCM_THREAD; 
+            P[10] := LNT_Type_Time_Constraint (0)
+         elsif ((P[11] ==  LNT_Type_Time_Constraint (0))  and  (P[2] ==  P[0]) )
+         then 
+         
+            P[7] := LNT_Type_Time_Constraint (1); 
+            P[2] := LNT_Type_Time_Constraint (0); 
+            P[3] := P[3] + LNT_Type_Time_Constraint (1); 
+            P[4] := P[4] + P[1]; 
+            P[5] := P[3] * P[1]
+         end if; 
+         Aux_Threads[I] := P
+      end var; 
+      return Aux_Threads
+   end function 
+   
+   process Sporadic_Notif [
+   INCOMING_EVENT_GATE: LNT_Channel_Event](
+   in out Threads: LNT_Type_Thread_Array,
+   k: Nat,
+   Counter: LNT_Type_Time_Constraint,
+   in out Is_Activated: bool) 
+   is 
+      select 
+         INCOMING_EVENT_GATE (Incoming_Event); 
+         Threads := Assign (Threads, K, 3, (Threads[k][3] + LNT_Type_Time_Constraint (1)) )
+         []
+         INCOMING_EVENT_GATE (No_Event)
+      end select ; 
+      if ((Counter >=  Threads[k][4])  and  (Threads[k][3] >  LNT_Type_Time_Constraint (0)) )
+      then 
+         Threads := Assign (Threads, k, 4, Counter); 
+         Threads := Assign (Threads, k, 5, (Counter + Threads[k][1]) ); 
+         Threads := Assign (Threads, k, 10, LNT_Type_Time_Constraint (1)); 
+         Threads := Assign (Threads, K, 3, (Threads[k][3] - LNT_Type_Time_Constraint (1)) ); 
+         Is_Activated := true
+      end if
+   end process 
+   
+   process Thread_Activation [
+   ACTIVATION: LNT_Channel_Dispatch](
+   in out Threads: LNT_Type_Thread_Array,
+   K: Nat) 
+   is 
+      if (Threads[K][8] ==  LNT_Type_Time_Constraint (1))
+      then 
+         if ((Threads[K][6] ==  LNT_Type_Time_Constraint (1))  and  (Threads[K][7] ==  LNT_Type_Time_Constraint (1)) )
+         then 
+            ACTIVATION (T_All); 
+            Threads := Assign (Threads, K, 6, LNT_Type_Time_Constraint (0)); 
+            Threads := Assign (Threads, K, 7, LNT_Type_Time_Constraint (0))
+         elsif (Threads[K][7] ==  LNT_Type_Time_Constraint (1))
+         then 
+         
+            ACTIVATION (T_End); 
+            Threads := Assign (Threads, K, 7, LNT_Type_Time_Constraint (0))
+         elsif (Threads[K][6] ==  LNT_Type_Time_Constraint (1))
+         then 
+         
+            ACTIVATION (T_Begin); 
+            Threads := Assign (Threads, K, 6, LNT_Type_Time_Constraint (0))
+         else 
+            ACTIVATION (T_Preempt)
+         end if; 
+         Threads := Assign (Threads, K, 8, LNT_Type_Time_Constraint (0)); 
+         ACTIVATION (T_Ok)
+      elsif (Threads[K][9] ==  LNT_Type_Time_Constraint (0))
+      then 
+      
+         ACTIVATION (T_ERROR)
+      end if
+   end process 
+   
+   process Processor [
+   ACTIVATION_1: LNT_Channel_Dispatch, 
+   ACTIVATION_2: LNT_Channel_Dispatch, 
+   ACTIVATION_3: LNT_Channel_Dispatch, 
+   ACTIVATION_4: LNT_Channel_Dispatch, 
+   ACTIVATION_5: LNT_Channel_Dispatch, 
+   INCOMING_EVENT_5: LNT_Channel_Event, 
+   ACTIVATION_6: LNT_Channel_Dispatch, 
+   INCOMING_EVENT_6: LNT_Channel_Event]
+   is 
+      var 
+         Threads : LNT_Type_Thread_Array, 
+         Counter : LNT_Type_Time_Constraint, 
+         I : Nat, 
+         k : Nat, 
+         Is_Activated : bool, 
+         Preempt : bool, 
+         TODO : LNT_Type_Time_Constraint, 
+         Nb_Active_Thread : Nat
+      in 
+         Counter := LNT_Type_Time_Constraint (0); 
+         Threads := LNT_Type_Thread_Array (LNT_Type_Thread (LNT_Type_Time_Constraint (0))); 
+         Threads[ 1] := LNT_Type_Thread (LNT_Type_Time_Constraint (2), LNT_Type_Time_Constraint (8), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (8), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 2] := LNT_Type_Thread (LNT_Type_Time_Constraint (2), LNT_Type_Time_Constraint (8), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (8), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 3] := LNT_Type_Thread (LNT_Type_Time_Constraint (5), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 4] := LNT_Type_Thread (LNT_Type_Time_Constraint (5), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 5] := LNT_Type_Thread (LNT_Type_Time_Constraint (2), LNT_Type_Time_Constraint (12), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (12), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1)); 
+         Threads[ 6] := LNT_Type_Thread (LNT_Type_Time_Constraint (2), LNT_Type_Time_Constraint (12), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (12), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1)); 
+         loop 
+            select 
+               if (Counter <  PPCM_THREAD)
+               then 
+                  Nb_Active_Thread := 0; 
+                  K := 1; 
+                  while (K <=  Thread_Number) loop
+                     if ((Counter >=  Threads[K][4])  and  (Counter >=  Threads[K][5]) )
+                     then 
+                        Threads := Assign (Threads, K, 9, LNT_Type_Time_Constraint (0))
+                     elsif ((Threads[K][10] ==  LNT_Type_Time_Constraint (1))  and  (Threads[K][9] ==  LNT_Type_Time_Constraint (1))  and  (Counter >=  Threads[K][4])  and  (Counter <  Threads[K][5]) )
+                     then 
+                     
+                        Preempt := true; 
+                        TODO := Threads[K][0] - Threads[K][2]; 
+                        I := 1; 
+                        while ((I <=  (K - 1) )  and  Preempt) loop
+                           if ((Threads[I][10] ==  LNT_Type_Time_Constraint (1))  and  (Threads[I][9] ==  LNT_Type_Time_Constraint (1))  and  (Counter + TODO >  Threads[I][4]) )
+                           then 
+                              TODO := Threads[I][4] - Counter; 
+                              Preempt := false
+                           else 
+                              I := I + 1
+                           end if
+                        end loop; 
+                        Counter := Counter + TODO; 
+                        Nb_Active_Thread := Nb_Active_Thread + 1; 
+                        Threads := Update_Thread (Threads, K, TODO); 
+                        Thread_Activation [ACTIVATION_1] (!?Threads,  1); 
+                        Thread_Activation [ACTIVATION_2] (!?Threads,  2); 
+                        Thread_Activation [ACTIVATION_3] (!?Threads,  3); 
+                        Thread_Activation [ACTIVATION_4] (!?Threads,  4); 
+                        Thread_Activation [ACTIVATION_5] (!?Threads,  5); 
+                        Thread_Activation [ACTIVATION_6] (!?Threads,  6); 
+                        Is_Activated := false; 
+                        Sporadic_Notif [INCOMING_EVENT_5] (!?Threads,  5, Counter, !?Is_Activated); 
+                        Sporadic_Notif [INCOMING_EVENT_6] (!?Threads,  6, Counter, !?Is_Activated); 
+                        if (Is_Activated)
+                        then 
+                           k := 1
+                        else 
+                           k := k + 1
+                        end if
+                     else 
+                        k := k + 1
+                     end if
+                  end loop; 
+                  if (Nb_Active_Thread ==  0)
+                  then 
+                     Counter := Counter + LNT_Type_Time_Constraint (1)
+                  end if
+               end if
+               []
+               if (Counter >=  PPCM_THREAD)
+               then 
+                  ACTIVATION_1 (T_Stop); 
+                  ACTIVATION_2 (T_Stop); 
+                  ACTIVATION_3 (T_Stop); 
+                  ACTIVATION_4 (T_Stop); 
+                  ACTIVATION_5 (T_Stop); 
+                  ACTIVATION_6 (T_Stop)
+               end if
+            end select 
+         end loop
+      end var
+   end process 
+   
+end module 
+module ROBOT_Main (ROBOT_Types, ROBOT_Processor, ROBOT_Threads, ROBOT_Ports) is 
+   process Main [
+   ACTIVATION_1: LNT_Channel_Dispatch, 
+   SEND_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit: LNT_Channel_Data, 
+   ACTIVATION_2: LNT_Channel_Dispatch, 
+   SEND_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche: LNT_Channel_Data, 
+   ACTIVATION_3: LNT_Channel_Dispatch, 
+   SEND_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre: LNT_Channel_Data, 
+   RECEIVE_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit: LNT_Channel_Data, 
+   ACTIVATION_4: LNT_Channel_Dispatch, 
+   SEND_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre: LNT_Channel_Data, 
+   RECEIVE_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche: LNT_Channel_Data, 
+   ACTIVATION_5: LNT_Channel_Dispatch, 
+   INCOMING_EVENT_5: LNT_Channel_Event, 
+   RECEIVE_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre: LNT_Channel_Data, 
+   ACTIVATION_6: LNT_Channel_Dispatch, 
+   INCOMING_EVENT_6: LNT_Channel_Event, 
+   RECEIVE_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre: LNT_Channel_Data]
+   is 
+      par 
+         ACTIVATION_1 , SEND_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit -> 
+         Thread_capteur_i [ACTIVATION_1, SEND_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit]
+         ||
+         ACTIVATION_2 , SEND_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche -> 
+         Thread_capteur_i [ACTIVATION_2, SEND_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche]
+         ||
+         ACTIVATION_3 , SEND_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre , SEND_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit -> 
+         par 
+            SEND_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit , RECEIVE_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit -> 
+            Event_Port_Periodic [SEND_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit, RECEIVE_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit] ( 5)
+            ||
+            ACTIVATION_3 , SEND_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre , RECEIVE_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit -> 
+            Thread_controle_i [ACTIVATION_3, SEND_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre, RECEIVE_proc_capteur_droit_evenement1__proc_controle_info_capteur_droit]
+         end par 
+         ||
+         ACTIVATION_4 , SEND_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre , SEND_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche -> 
+         par 
+            SEND_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche , RECEIVE_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche -> 
+            Event_Port_Periodic [SEND_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche, RECEIVE_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche] ( 5)
+            ||
+            ACTIVATION_4 , SEND_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre , RECEIVE_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche -> 
+            Thread_controle_i [ACTIVATION_4, SEND_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre, RECEIVE_proc_capteur_gauche_evenement1__proc_controle_info_capteur_gauche]
+         end par 
+         ||
+         ACTIVATION_5 , INCOMING_EVENT_5 , SEND_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre -> 
+         par 
+            SEND_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre , RECEIVE_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre , INCOMING_EVENT_5 -> 
+            Event_Port_Sporadic [SEND_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre, RECEIVE_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre, INCOMING_EVENT_5] ( 2)
+            ||
+            ACTIVATION_5 , RECEIVE_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre -> 
+            Thread_servomoteur_i [ACTIVATION_5, RECEIVE_proc_controle_comm_servo_droit__proc_servomoteur_droit_ordre]
+         end par 
+         ||
+         ACTIVATION_6 , INCOMING_EVENT_6 , SEND_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre -> 
+         par 
+            SEND_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre , RECEIVE_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre , INCOMING_EVENT_6 -> 
+            Event_Port_Sporadic [SEND_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre, RECEIVE_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre, INCOMING_EVENT_6] ( 2)
+            ||
+            ACTIVATION_6 , RECEIVE_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre -> 
+            Thread_servomoteur_i [ACTIVATION_6, RECEIVE_proc_controle_comm_servo_gauche__proc_servomoteur_gauche_ordre]
+         end par 
+         ||
+         ACTIVATION_1 , ACTIVATION_2 , ACTIVATION_3 , ACTIVATION_4 , ACTIVATION_5 , INCOMING_EVENT_5 , ACTIVATION_6 , INCOMING_EVENT_6 -> 
+         Processor [ACTIVATION_1, ACTIVATION_2, ACTIVATION_3, ACTIVATION_4, ACTIVATION_5, INCOMING_EVENT_5, ACTIVATION_6, INCOMING_EVENT_6]
+      end par 
+   end process 
+   
+end module 

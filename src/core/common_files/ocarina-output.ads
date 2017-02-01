@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 1992-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 1992-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -84,6 +84,9 @@ package Ocarina.Output is
 
    procedure Write_Line (S : String);
    --  Equivalent to Write_Str (S) followed by Write_Eol;
+
+   procedure Write_Quoted_Str (S : String);
+   --  Same as above but with S quoted between two '"'
 
    function Column return Nat;
    pragma Inline (Column);

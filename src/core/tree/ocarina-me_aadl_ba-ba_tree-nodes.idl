@@ -67,6 +67,11 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
     Node_Id  Last_Node;
   };
 
+  interface Node_Container : Node_Id {
+    Node_Id  Item;
+    Node_Id  Extra_Item;
+  };
+
   interface Behavior_Entity : Node_Id {
     Node_Id  BE_Container;   //  Behavior entity container, hierarchic parent
     Node_Id  Next_Entity;    // Used to build list of elements
@@ -82,6 +87,11 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
     Node_Id  Corresponding_Entity;
     Node_Id  Scope_Entity;           // not use
     Node_Id  Homonym;                // not use
+  };
+
+  interface Identifier_With_Value : Identifier {
+    boolean  Is_Others;
+    Node_Id  Value_Constant;
   };
 
 /**********************************************************************
@@ -105,9 +115,14 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
   //  behavior_variable ::=
   //    local_variable_identifier { , local_variable_identifier }*
-  //      [ : data_unique_component_classifier_reference ] ;
+  //    : data_unique_component_classifier_reference ] 
+  //    [ { { data_classifier_property_association }+ } ] ;
 
-  //  unique_component_classifier_reference ::= <core AADL rule>
+  //  unique_component_classifier_reference ::= 
+  //  { package_identifier :: }* component_type_identifier
+  //  [ . component_implementation_identifier ]
+
+  //  data_classifier_property_association : la syntaxe n'est pas claire
 
   interface Component_Classifier_Ref : Behavior_Entity {
     List_Id  Package_Name;
@@ -147,7 +162,7 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
   //    [ transition_identifier [ [ behavior_transition_priority ] : ]
   //        source_state_identifier { , source_state_identifier }*
   //           -[ [ behavior_condition ] ]->
-  //        destination_state_identifier [ { behavior_actions } ] ;
+  //        destination_state_identifier [ behavior_action_block ] ;
 
   //  behavior_transition_priority ::= numeral
   
@@ -155,7 +170,7 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
     List_Id  Sources;
     Node_Id  Destination;  // fixme only one destination ?
     Node_Id  Behavior_Condition;
-    List_Id  Behavior_Actions;
+    Node_Id  Behavior_Action_Block;
 
     Node_Id  Behavior_Transition_Idt;
     Node_Id  Behavior_Transition_Priority; 
@@ -163,21 +178,53 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
 
   //  behavior_condition ::=
-  //    execute_condition | dispatch_condition
+  //    execute_condition | dispatch_condition | mode_condition
 
   interface Behavior_Condition : Behavior_Entity {
     Node_Id  Condition;
   };
 
 
-  //  execute_condition ::= logical_value_expression
+  //  execute_condition ::= [ logical_value_expression |  behavior_action_block_timeout_catch | otherwise ]
+  //  behavior_action_block_timeout_catch : la syntaxe n'est pas claire
   
-  //  interface Execute_Condition : Behavior_Entity {
-  //    Node_Id  Logical_Expression;
-  //  };
-  //  fixme: for execute condition in Behavior_Condition see logical_expression
-  
+    interface Execute_Condition : Behavior_Entity {
+      Node_Id  Value_Expression;
+      boolean  Is_Otherwise;
+    };
 
+  // mode_condition ::= 
+  //  on trigger_logical_expression
+
+    interface Mode_Condition : Behavior_Entity {
+      Node_Id  Trigger_Logical_Expr;
+    };
+
+  // trigger_logical_expression ::=
+  //  event_trigger { logical_operator event_trigger }*
+
+    interface Trigger_Logical_Expression : Behavior_Entity {
+      List_Id  Event_Triggers;
+    };
+
+  // event_trigger ::=
+  //  in_event_port_component_reference
+  // | in_event_data_port_component_reference
+  // | ( trigger_logical_expression )
+
+    interface Event_Trigger : Behavior_Entity {
+      Node_Id  Port_Component_Ref;
+      Node_Id  Trigger_Log_Expr;
+    };
+
+  // port_component_reference ::=
+  //  subcomponent_name.port_identifier
+
+    interface Port_Component_Reference : Behavior_Entity {
+      Node_Id  Subcomponent_Name;
+      Node_Id  Port_Idt;
+    }; 
+  
   //  mode_transition ::=
   //    mode_transition_identifier :
   //        source_mode_identifier 
@@ -199,60 +246,50 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
  ** 4. Thread Dispatch Behavior Specification **
  ***********************************************/
 
-  //  dispatch_condition ::=
-  //    on dispatch dispatch_logical_expression [ frozen frozen_ports ]
 
-  //  dispatch_logical_expression ::=
-  //    dispatch_trigger { or dispatch_trigger }*
+  // dispatch_condition ::= 
+  //  on dispatch [ dispatch_trigger_condition ] [ frozen frozen_ports ]
 
-  //  frozen_ports ::=
-  //    in_port_identifier { , in_port_identifier }*
-
-  interface Dispatch_Condition : Behavior_Entity {
-    List_Id  Dispatch_Logical_Expressions;
+  interface Dispatch_Condition_Thread : Behavior_Entity {
+    Node_Id  Dispatch_Trigger_Condition;
     List_Id  Frozen_Ports;
   };
 
+  // dispatch_trigger_condition ::=
+  //    dispatch_trigger_logical_expression
+  //  | provides_subprogram_access_name
+  //  | stop
+  //  | completion_relative_timeout_condition_and_catch
+  //  | dispatch_relative_timeout_catch
 
+  //  completion_relative_timeout_condition_and_catch ::=
+  //    timeout [ (event_port_name*) ] behavior_time
+
+  //  dispatch_relative_timeout_catch ::=
+  //    timeout
+
+  //  frozen_ports ::=
+  //    in_port_name { , in_port_name }*
+
+  interface Dispatch_Trigger_Condition : Behavior_Entity {
+    List_Id  Dispatch_Conjunction;
+    Node_Id  Behavior_Time;
+    octet    Trigger_Kind;
+  };      
+
+  //  dispatch_trigger_logical_expression ::=
+  //    dispatch_conjunction { or dispatch_conjunction }*
+  
+  //  dispatch_conjunction ::=
+  //    dispatch_trigger { and dispatch_trigger }*
+ 
+  interface Dispatch_Conjunction : Behavior_Entity {
+    List_Id  Dispatch_Triggers;
+  }; 
+  
   //  dispatch_trigger ::=
-  //    dispatch_trigger_conjunction 
-  //  | timeout [ behavior_time ] 
-  //  | stop 
-  //  | abort
-
-  interface Dispatch_Trigger : Behavior_Entity {
-    Node_Id  Dispatch_Trigger_Conjunction;
-    octet    Trigger_Kind;  // timeout, stop or abort
-    Node_Id  Behavior_Time; 
-  };
-
-
-  //  dispatch_trigger_conjunction ::=
-  //    dispatch_trigger_event          --  fixme : todo, add in 2.9
-  //    ( dispatch_trigger_event { and dispatch_trigger_event } * )
-  //  | numeral [ ormore | orless ]
-  //      ( dispatch_trigger_event { , dispatch_trigger_event } * )
-
-  //  dispatch_trigger_event ::=
   //    in_event_port_identifier
   //  | in_event_data_port_identifier
-  //  | in_event_data_port_identifier ( ( value_constant | others ) )
-  //                                    --  fixme : todo, add in 2.9
-  //  | provides_subprogram_access_identifier
-
-  interface Dispatch_Trigger_Conjunction : Behavior_Entity {
-    Node_Id  Dispatch_Trigger_Event;
-    List_Id  Dispatch_Trigger_Events;
-    Node_Id  Numeral;
-    boolean  Is_Ormore;
-    boolean  Is_Orless;
-  };
-
-  interface Identifier_With_Value : Identifier {
-    boolean  Is_Others;
-    Node_Id  Value_Constant;
-  };
-  
 
 
 /***********************************************
@@ -280,27 +317,51 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
   interface Logical_Expression : Behavior_Entity { };
 
-  // behavior_actions ::= { behavior_action { ; behavior_action }*
+  // behavior_action_block ::= { behavior_actions } [ timeout behavior_time ]
+
+  interface Behavior_Action_Block : Behavior_Entity {
+    Node_Id  Behav_Acts;
+    Node_Id  Behavior_Time;
+  };
+
+  // behavior_actions ::=
+  //   behavior_action
+  //   | behavior_action_sequence
+  //   | behavior_action_set
+
+  // behavior_action_sequence ::=
+  //   behavior_action { ; behavior_action }+
+
+  // behavior_action_set ::=
+  //   behavior_action { & behavior_action }+
+
+
+  interface Behavior_Actions : Behavior_Entity {
+    Node_Id  Behavior_Action;
+    List_Id  Behavior_Action_Sequence;
+    List_Id  Behavior_Action_Set;
+ };
 
   //  behavior_action ::= 
-  //    basic_action ;
-  //  | if ( logical_expression ) behavior_actions
-  //    { elsif ( logical_expression ) behavior_actions
-  //    [ else behavior_actions ]
-  //    end if
-  //  | for ( loop_variable_identifier in range ) 
-  //           { behavior_actions }
-  //  | while ( logical_expression ) { behavior_actions }
+  //    basic_action
+  //  | if ( logical_value_expression ) behavior_actions
+  //    { elsif ( logical_value_expression ) behavior_actions }*
+  //    [ else behavior_actions ]   
+  //    end if 
+  //  | for ( element_identifier : data_unique_component_classifier_reference
+  //  in element_values ) { behavior_actions }
+  //  | forall ( element_identifier : data_unique_component_classifier_reference
+  //  in element_values ) { behavior_actions }
+  //  | while ( logical_value_expression ) { behavior_actions }
+  //  | do behavior_actions until ( logical_value_expression )
 
   interface Behavior_Action : Behavior_Entity {
     Node_Id  Action;
   };
-  //  fixme : homogenize syntax
-
 
   interface Conditional_Statement : Behavior_Entity {
     Node_Id  Logical_Expr;
-    List_Id  Behavior_Actions;
+    Node_Id  Behav_Acts;
   };
   //  fixme : this node is define by us not in the draft
 
@@ -311,24 +372,37 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
     Node_Id  Else_Statement;  //  i.e
   };
 
-  interface For_Cond_Struct : Behavior_Entity {
-    Node_Id  Var_Identifier;
-    Node_Id  In_Range;
-    List_Id  Behavior_Actions;
+  interface For_Cond_Structure : Behavior_Entity {
+    Node_Id  Element_Idt;
+    Node_Id  Classifier_Ref;
+    Node_Id  In_Element_Values;
+    Node_Id  Behav_Acts;
   };
 
-  interface While_Cond_Struct : Behavior_Entity {
-    Node_Id  While_Statement;  // node kind is Conditional_Statement
+  interface While_Cond_Structure : Behavior_Entity {
+    Node_Id  Logical_Expr;
+    Node_Id  Behav_Acts;
   };
 
+  interface ForAll_Cond_Structure : Behavior_Entity {
+    Node_Id  Element_Idt;
+    Node_Id  Classifier_Ref;
+    Node_Id  In_Element_Values;
+    Node_Id  Behav_Acts;
+  };
 
-  //  range ::=
+  interface DoUntil_Cond_Structure : Behavior_Entity {
+    Node_Id  Logical_Expr;
+    Node_Id  Behav_Acts;
+  };
+
+  //  element_values ::=
   //    integer_range
-  //  | event_data_port_id
+  //  | event_data
   //  | array_data_component_reference
 
-  interface Range : Behavior_Entity {
-    Node_Id  Entity;  //  kind of entity is K_Id or K_Integer_Range
+  interface Element_Values : Behavior_Entity {
+    Node_Id  Entity;  //  kind of entity is K_Identifier or K_Integer_Range
                       //  or K_Data_Component_Reference
   };
 
@@ -339,13 +413,14 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
   //  | timed_action 
 
   //  assignment_action::=
-  //    target := value_expression | any
+  //    target := ( value_expression | any )
 
   //  target ::=
-  //    local_variable_id 
-  //  | outgoing_port_id
-  //  | outgoing_parameter_id 
+  //    outgoing_port_name  
+  //  | internal_port_name
+  //  | outgoing_subprogram_parameter_identifier 
   //  | data_component_reference
+  //  | outgoing_port_prototype_name
   
   interface Assignment_Action : Behavior_Entity {
     Node_Id  Target;
@@ -356,11 +431,21 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
 
   //  communication_action ::=
-  //    required_subprogram_access_id ! [( subprogram_parameter_list )]
-  //  | subprogram_classifier_id ! [ ( subprogram_parameter_list ) ]
-  //  | output_port_identifier ! [ ( value_expression ) ] --  fixme : todo, 2.9
-  //  | input_port_identifier >>
-  //  | input_port_identifier ? [ ( target ) ]
+  //    subprogram_prototype_name ! [ ( subprogram_parameter_list ) ]
+  //  | required_subprogram_access_name ! [ ( subprogram_parameter_list ) ]
+  //  | subprogram_subcomponent_name ! [ ( subprogram_parameter_list ) ]
+  //  | output_port_name ! [ ( value_expression ) ]
+  //  | internal_port_name ! [ ( value_expression ) ]
+  //  | input_port_name >>
+  //  | input_port_name ? [ ( target ) ]
+  //  | required_data_access_name !<
+  //  | required_data_access_name !>
+  //  | required_data_access_name . provided_subprogram_access_name !
+  //    [ ( subprogram_parameter_list ) ]
+  //  | data_subcomponent_name . provided_subprogram_access_name !
+  //    [ ( subprogram_parameter_list ) ]
+  //  | local_variable_name . provided_subprogram_access_name !
+  //    [ ( subprogram_parameter_list ) ]
 
   //  subprogram_parameter_list ::=
   //    parameter_label { , parameter_label } *
@@ -370,22 +455,21 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
     List_Id  Subprogram_Parameter_List;
     Node_Id  Target;
 
-    octet    Comm_Kind; // ! , ? , >>
+    octet    Comm_Kind; // ! , ? , >> , !< , !>
   };
 
 
-  //  timed_action ::=
-  //    computation ( behavior_time [ , behavior_time [ , distribution ] ] )
-  //  | delay ( behavior_time [ , behavior_time [ , distribution ] ] )
+  //  timed_action ::= 
+  //    computation ( behavior_time [ .. behavior_time ] )
+  //    [ in binding ( processor_unique_component_classier_reference
+  //    { , processor_unique_component_classifier_reference }* ) ]
 
-  //  distribution ::= fixed | normal | poisson | random
-  
-  interface Timed_Action : Behavior_Entity {
-    boolean  Is_Computation; // if not it is delay
+
+  interface Timed_Act : Behavior_Entity {
     Node_Id  Fst_Behavior_Time;
     Node_Id  Scd_Behavior_Time;
-
-    octet    Distrib_Kind;
+    boolean  Is_InBinding;
+    List_Id  Processor_Idt;
   };
 
 
@@ -398,19 +482,30 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
 
   //  data_component_reference ::=
-  //    | data_subcomponent_identifier [ . data_subcomponent_identifier ]
-  //    | data_access_feature_identifier [ . data_subcomponent_identifier ]
-  //  fixme : add list_id identifiers in others interfaces
+  //   data_subcomponent_name { . data_subcomponent_name }*
+  // | data_access_feature_name { . data_field }*
+  // | local_variable_name { . data_field }* 
+  // | data_access_feature_prototype_name { . data_field }*
+
+  //  data_field ::=
+  //   data_subcomponent_name
+  // | data_access_feature_name
+  // | data_access_feature_prototype_name
 
   interface Data_Component_Reference : Behavior_Entity {
     List_Id  Identifiers;
   };
 
+  //  name ::= 
+  //    { identifier . }*
+  //    identifier { array_index }*
 
-  //  id ::= identifier { [ integer_value_holder ] }*
+  //  array_index ::=
+  //    [ integer_value ]
 
-  interface Id : Named_Behavior_Entity {
-    Node_Id  Int_Value_Holder;
+  interface Name : Behavior_Entity {
+    List_Id  Idt;
+    List_Id  Array_Index;
   };
 
 
@@ -419,21 +514,22 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
  ** 8. Behavior Expression Language **
  *************************************/
 
-  //  value_holder ::=
-  //    incoming_port_id
-  //  | incoming_port_id ? [ ( target ) ]
-  //  | subprogram_parameter_id
-  //  | local_variable_id
+  //  value_variable ::=
+  //    incoming_port_name
+  //  | incoming_port_name ? 
+  //  | incoming_subprogram_parameter_identifier
+  //  | incoming_port_prototype_name 
   //  | data_component_reference
-  //  | port_id ’ count
-  //  | port_id ’ fresh
+  //  | port_name ’ count
+  //  | port_name ’ fresh
+  //  | port_name ’ updated
 
-  interface Value_Holder : Behavior_Entity {
-    Node_Id  Identifier;  // kind K_Identifier or K_Data_Component_Reference
-    Node_Id  Target;      // kind K_Identifier or K_Data_Component_Reference
+  interface Value_Variable : Behavior_Entity {
+    Node_Id  Identifier;  // kind K_Identifier or K_Name or K_Data_Component_Reference
 
     boolean  Is_Count;
     boolean  Is_Fresh;
+    boolean  Is_Updated;
     boolean  Is_Interrogative;
   };
 
@@ -447,11 +543,9 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
  
   //  relation ::=
-  //    boolean_value |
   //    simple_expression [relational_operator simple_expression]
 
   interface Relation : Behavior_Entity {
-    boolean  Boolean_Value;
     List_Id  Simple_Exprs;
   };
 
@@ -470,18 +564,18 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
   };
 
 
-  //  factor ::= primary [** primary] | abs primary | not primary
+  //  factor ::= value [** value] | abs value | not value
 
-  //  primary ::=
-  //    value_holder | numeric_literal | string_literal | boolean_literal |
-  //    property_constant | (value_expression)
+  //  value ::=
+  //    value_variable | numeric_literal | string_literal | boolean_literal |
+  //    property_constant | property_reference | (value_expression)
 
   interface Factor : Behavior_Entity {
     boolean  Is_Abs;
     boolean  Is_Not;
 
-    Node_Id  Lower_Primary;
-    Node_Id  Upper_Primary;  //  **
+    Node_Id  Lower_Value;
+    Node_Id  Upper_Value;  //  **
   };
 
 
@@ -491,16 +585,61 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
   interface Property_Constant : Named_Behavior_Entity {
     Node_Id  Property_Set;
   };
-  
+
+  //  property_reference ::=
+  //  # [ property_set_identifier :: ] property_name 
+  //  | component_element_reference # property_name 
+  //  | unique_component_classifier_reference # property_name 
+
+
+  interface Property_Reference : Behavior_Entity {
+    Node_Id  Property_Set_Idt;
+    Node_Id  Entity;
+    Node_Id  Property_Name;
+  };
+
+  //  property_name ::=
+  //  property_identifier { property_field }*
+
+  interface Property_Name : Behavior_Entity {
+    Node_Id  Property_Idt;
+    List_Id  Property_Field;
+  };
+
+  //  component_element_reference ::=
+  //  subcomponent_identifier
+  //  | local_variable_identifier
+  //  | bound_prototype_identifier
+  //  | feature_identifier
+  //  | self
+ 
+  interface Component_Element_Reference : Behavior_Entity {
+    Node_Id  Ident;
+    boolean  Is_Self;
+  };
+
+  //  property_field ::=
+  //    [ integer_value ] 
+  //  | . field_identifier 
+  //  | . upper_bound 
+  //  | . lower_bound
+
+
+  interface Property_Field : Behavior_Entity {
+    boolean  Is_Upper_Bound;
+    boolean  Is_Lower_Bound;
+
+    Node_Id  Entity;
+  }; 
 
   //  -- operators in increasing order of precedence
-  //  logical_operator ::= and | or | xor | cand | cor
+  //  logical_operator ::= and | or | xor | and then | or else
 
-  //  relational_operator ::=  =       | !=    | <   | <= | > | >=
+  //  relational_operator ::=  =  | !=    | <   | <= | > | >=
 
-  //  binary_adding_operator ::=     +    | -    | &
+  //  binary_adding_operator ::=  +    | - 
 
-  //  unary_adding_operator ::=    +     | -
+  //  unary_adding_operator ::=   -
 
   //  multiplying_operator ::=   *      | /     | mod | rem
 
@@ -513,7 +652,7 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
   //  boolean_literal ::= true | false
 
-  interface Boolean_Literal : Node_Id {
+  interface Boolean_Literal : Behavior_Entity {
     boolean  Is_True;  //  if not false
   };
 
@@ -527,7 +666,7 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
 
   // integer_value ::=
-  //   integer_value_holder
+  //   integer_value_variable
   // | integer_numerical_literal
   // | integer_property_constant
 
@@ -547,5 +686,4 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
   interface Literal : Behavior_Entity {
     Value_Id  Value;
   };
-
 };

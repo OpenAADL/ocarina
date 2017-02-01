@@ -68,6 +68,8 @@ with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.BoundT;
 with Ocarina.Backends.REAL;
+with Ocarina.Backends.LNT;
+with Ocarina.Backends.Replication_Expander;
 with Ocarina.Backends.Xtratum_Conf;
 with Ocarina.Backends.ASN1_Tree.Nodes;
 with Ocarina.Backends.ASN1_Tree.Nutils;
@@ -113,25 +115,21 @@ package body Ocarina.Backends is
       --  given in the instance root system.
 
       if Backend_Name /= No_Name then
-         for B in Backend_Table.First .. Backend_Table.Last loop
-            if Backend_Table.Table (B).Name = Backend_Name then
-               Current_Backend      := B;
-               Current_Backend_Kind := Backend_Table.Table (B).Kind;
-               exit;
-            end if;
-         end loop;
+         Current_Backend :=  Get_Backend (Backend_Name);
+
+         if Current_Backend /= 0 then
+            Current_Backend_Kind := Backend_Table.Table (Current_Backend).Kind;
+         end if;
 
       elsif Current_Backend_Name = No_Name then
          Display_Error ("No backend name specified", Fatal => True);
 
       else
-         for B in Backend_Table.First .. Backend_Table.Last loop
-            if Backend_Table.Table (B).Name = Current_Backend_Name then
-               Current_Backend      := B;
-               Current_Backend_Kind := Backend_Table.Table (B).Kind;
-               exit;
-            end if;
-         end loop;
+         Current_Backend :=  Get_Backend (Current_Backend_Name);
+
+         if Current_Backend /= 0 then
+            Current_Backend_Kind := Backend_Table.Table (Current_Backend).Kind;
+         end if;
       end if;
 
       if Current_Backend = 0 then
@@ -148,6 +146,26 @@ package body Ocarina.Backends is
       when E : others =>
          Errors.Display_Bug_Box (E);
    end Generate_Code;
+
+   -----------------
+   -- Get_Backend --
+   -----------------
+
+   function Get_Backend (Backend_Name : Name_Id := No_Name) return Natural is
+      Current_Backend : Natural := 0;
+   begin
+      if Backend_Name /= No_Name then
+         for B in Backend_Table.First .. Backend_Table.Last loop
+
+            if Backend_Table.Table (B).Name = Backend_Name then
+               Current_Backend      := B;
+               exit;
+            end if;
+         end loop;
+      end if;
+
+      return Current_Backend;
+   end Get_Backend;
 
    ------------------------------
    -- Get_Current_Backend_Kind --
@@ -198,6 +216,8 @@ package body Ocarina.Backends is
       REAL.Init;
       ASN1.Init;
       Cheddar.Init;
+      LNT.Init;
+      Replication_Expander.Init;
       Connection_Matrix.Init;
       Functions_Matrix.Init;
       AADL_XML.Init;
@@ -284,6 +304,7 @@ package body Ocarina.Backends is
       XML_Values.Reset;
       BoundT.Reset;
       REAL.Reset;
+      LNT.Reset;
 
       ASN1_Tree.Nodes.Entries.Free;
       ASN1_Tree.Nodes.Entries.Init;

@@ -1,0 +1,2 @@
+test17.aadl:23:23: "r" (dispatch trigger) must refer to a provides subprogram access feature
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

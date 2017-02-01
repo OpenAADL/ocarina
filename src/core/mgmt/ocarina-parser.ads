@@ -37,13 +37,15 @@ package Ocarina.Parser is
    type Parser_Subprogram is access function
      (AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location) return Node_Id;
+      To        : Location := No_Location;
+      Container : Node_Id  := No_Node) return Node_Id;
 
    function Parse
      (Language  : Name_Id;
       AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location) return Node_Id;
+      To        : Location := No_Location;
+      Container : Node_Id  := No_Node) return Node_Id;
    --  Parse the file File_Name and return the Node_Id or the root of
    --  the resulting AADL tree, or No_Node if the parsing failed. If
    --  AADL_Root is not No_Node, then add the parsed entities to

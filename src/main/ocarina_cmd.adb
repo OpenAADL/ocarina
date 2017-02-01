@@ -143,6 +143,7 @@ procedure Ocarina_Cmd is
       Source_Files           : List_Id;
       Ref_Files              : List_Id;
       Needed_PS              : List_Id;
+      Enabled_Anx            : List_Id;
       Use_CL                 : Boolean := False;
       Used_Generator_Options : List_Id;
       Dirname                : Name_Id;
@@ -181,6 +182,8 @@ procedure Ocarina_Cmd is
         Get_String_Name (Ocarina_Config & "::aadl_version");
       Timeout_Property : constant Name_Id :=
         Get_String_Name (Ocarina_Config & "::timeout_property");
+      Enable_Annexes   : constant Name_Id
+        := Get_String_Name (Ocarina_Config & "::enable_annexes");
 
       -------------------------------
       -- Extract_Referencial_Files --
@@ -402,6 +405,58 @@ procedure Ocarina_Cmd is
       else
          Use_CL := False;
       end if;
+
+      --  See what annexes are enabled foir this model. If none are
+      --  given, assume the user want to disable them all.
+
+      if Is_Defined_List_Property (Root_System, Enable_Annexes) then
+         Enabled_Anx := Get_List_Property (Root_System, Enable_Annexes);
+      else
+         Enabled_Anx := No_List;
+      end if;
+
+      declare
+         N : Node_Id;
+      begin
+         if not Is_Empty (Enabled_Anx) then
+            N := First_Node (Enabled_Anx);
+
+            Reset_Annex_Action;
+
+            while Present (N) loop
+               declare
+                  A : constant String := Get_Name_String
+                    (Name (Identifier (N)));
+               begin
+                  if A = "annex_all" then
+                     Unset_Annex_Action (Disable_ALL);
+                     Unset_Annex_Action (Disable_REAL);
+                     Unset_Annex_Action (Disable_BA);
+                     Unset_Annex_Action (Disable_EMA);
+
+                  elsif A = "annex_none" then
+                     null;
+
+                  elsif A = "behavior_specification" then
+                     Unset_Annex_Action (Disable_BA);
+
+                  elsif A = "real_specification" then
+                     Unset_Annex_Action (Disable_REAL);
+
+                  elsif A = "emv2" then
+                     Unset_Annex_Action (Disable_EMA);
+
+                  else
+                     raise Program_Error
+                       with "Internal error : make sure you handle "
+                       & "with all annexes declared in ocarina_config.aadl";
+                  end if;
+               end;
+
+               N := Next_Node (N);
+            end loop;
+         end if;
+      end;
 
       --  Extract the generator options.
 

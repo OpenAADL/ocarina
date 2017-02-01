@@ -273,4 +273,13 @@ package body Ocarina.Output is
       end loop;
    end Write_Str;
 
+   ----------------------
+   -- Write_Quoted_Str --
+   ----------------------
+
+   procedure Write_Quoted_Str (S : String) is
+   begin
+      Write_Str ('"' & S & '"');
+   end Write_Quoted_Str;
+
 end Ocarina.Output;

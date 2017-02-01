@@ -409,11 +409,14 @@ package body Ocarina.FE_AADL.Parser is
    function Process
      (AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location) return Node_Id
+      To        : Location := No_Location;
+      Container : Node_Id  := No_Node) return Node_Id
    is
       New_Root  : Node_Id := AADL_Root;
       File_Name : Name_Id;
       Buffer    : Location;
+
+      pragma Unreferenced (Container);
 
    begin
       if First_Parsing then

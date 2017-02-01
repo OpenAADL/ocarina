@@ -1,4 +1,5 @@
 example_023.aadl:22:27: parsing Record_Term_Element, token '=>' is expected, found token ','
 example_023.aadl:22:46: parsing Property_Association, token ';' is expected, found token '}'
 example_023.aadl:20:01: parsing Connections, list is empty
+example_023.aadl:26:09: parsing Package_Specification, Empty packages are not allowed
 Cannot parse AADL specifications

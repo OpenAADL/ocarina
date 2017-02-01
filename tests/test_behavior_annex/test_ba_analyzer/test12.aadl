@@ -1,0 +1,40 @@
+
+package exemple
+public
+   with Base_Types ;
+
+thread th
+end th;
+
+
+thread implementation th.good
+
+annex behavior_specification {**
+
+states
+ uniqueState : initial complete final state ;
+
+transitions
+ uniqueState -[on dispatch]-> uniqueState ;  
+  
+**};
+
+end th.good;
+
+thread implementation th.error
+annex behavior_specification {**
+
+states
+ compState : initial complete state ;
+ exeState : state ;
+ finalState : final state ; 
+
+transitions
+-- Errors: 
+--          ** transitions out of complete states must have dispatch conditions.
+  compState -[]-> finalState ;
+ 
+**};
+end th.error;
+
+end exemple ;

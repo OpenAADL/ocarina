@@ -28,6 +28,8 @@ AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
 	$(srcdir)/AADLv2/pok_properties.aadl \
 	$(srcdir)/AADLv2/programming_properties.aadl \
 	$(srcdir)/AADLv2/base_types.aadl \
+	$(srcdir)/AADLv2/replication_properties.aadl \
+	$(srcdir)/AADLv2/errorlibrary.aadl \
 	$(srcdir)/AADLv2/taste_properties.aadl \
 	$(srcdir)/AADLv2/transformations.aadl
 

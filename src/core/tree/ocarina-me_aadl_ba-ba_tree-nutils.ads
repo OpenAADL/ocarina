@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -30,7 +30,7 @@
 ------------------------------------------------------------------------------
 
 with Locations;                        use Locations;
-with Ocarina.Types;                            use Ocarina.Types;
+with Ocarina.Types;                    use Ocarina.Types;
 with Ocarina.ME_AADL_BA.BA_Tree.Nodes; use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 package Ocarina.ME_AADL_BA.BA_Tree.Nutils is
@@ -87,8 +87,16 @@ package Ocarina.ME_AADL_BA.BA_Tree.Nutils is
      (Loc          : Location;
       Name         : Name_Id;
       Display_Name : Name_Id;
-      Entity       : Node_Id) return Node_Id;
+      Entity       : Node_Id)
+     return Node_Id;
    --  Make an identifier
+
+   function Make_Node_Container
+     (Item       : Node_Id;
+      Extra_Item : Node_Id := No_Node)
+     return Node_Id;
+   --  Creates a container for the nodes Item and Extra_Item to be able
+   --  to put one node in several lists
 
    procedure Reset_Nodes;
    --  Reset the table that contains the nodes. Beware that everything

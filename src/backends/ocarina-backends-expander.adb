@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -193,11 +193,11 @@ package body Ocarina.Backends.Expander is
                         end if;
 
                         Append_Node_To_List
-                          (Make_Node_Container (L),
+                          (Make_Node_Container (L, Extra_Item (K)),
                            Sources (N));
 
                         Append_Node_To_List
-                          (Make_Node_Container (N),
+                          (Make_Node_Container (N, Extra_Item (K)),
                            Destinations (L));
                      end if;
 
@@ -227,11 +227,11 @@ package body Ocarina.Backends.Expander is
                         end if;
 
                         Append_Node_To_List
-                          (Make_Node_Container (L),
+                          (Make_Node_Container (L, Extra_Item (K)),
                            Destinations (N));
 
                         Append_Node_To_List
-                          (Make_Node_Container (N),
+                          (Make_Node_Container (N, Extra_Item (K)),
                            Sources (L));
                      end if;
 

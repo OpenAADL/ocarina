@@ -1,0 +1,36 @@
+property set Replication_Properties is
+
+	-- description of the context, requirements and goal of the replication 
+	Description : aadlstring applies to (system, process, thread, processor, device);	
+
+	-- Specification of the replica number
+	Replica_Number : aadlinteger applies to ( system, process, thread, processor, device); 
+
+	-- Min_Nbr_Replica: A constant that represents the minimal number of replica.	
+	Min_Nbr_Replica : constant aadlinteger => 3 ;
+
+	-- Max_Nbr_Replica: A constant that represents the maximal number of replica.	
+	Max_Nbr_Replica : constant aadlinteger => 7 ;
+	
+	
+	-- Identifiers of the different generated replica	
+	Replica_Identifiers : list of aadlstring applies to (system, process, thread, processor, device); 
+	
+	
+	--Replication type
+	-- Passive Replication: one replica has two behaviors (primary and backup behaviors)
+	-- Active Replication: all replica have the same behavior and there is a consensus algorithm to vote between them
+	
+	Replication_Types: type enumeration (ACTIVE , PASSIVE);
+	Replica_Type : Replication_Properties::Replication_Types applies to (system, process, thread, processor, device);         
+	
+	-- the consensus algorithm source text 
+	Consensus_Algorithm_Source_Text: aadlString applies to (port, data access, system, processor, device);		     
+	
+	-- to refer to a subprogram or thread classifier 
+	Consensus_Algorithm_Class : classifier (subprogram) applies to (port, data access, system, processor, device);         
+	
+	-- to refera subprogram or a thread instance
+	Consensus_Algorithm_Ref : reference (subprogram) applies to (port, data access, system, processor, device); 
+	
+end Replication_Properties;

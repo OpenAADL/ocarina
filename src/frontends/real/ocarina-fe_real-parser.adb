@@ -1856,9 +1856,11 @@ package body Ocarina.FE_REAL.Parser is
    function Process
      (AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location) return Node_Id
+      To        : Location := No_Location;
+      Container : Node_Id  := No_Node) return Node_Id
    is
       pragma Unreferenced (AADL_Root);
+      pragma Unreferenced (Container);
 
       Buffer  : Location;
       Root    : constant Node_Id := New_Node (K_Root_Node, From);

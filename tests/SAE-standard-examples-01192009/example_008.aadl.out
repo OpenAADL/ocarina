@@ -1,5 +1,4 @@
 example_008.aadl:12:19: warning: no support provided for annex language error_model
-example_008.aadl:14:15: warning: negative exponent in integer literal
 example_008.aadl:10:29: Sampling::Sample (entity reference) qualified reference name not found in 'with' statements of Test (package specification) 
 example_008.aadl:11:32: Sampling::Sample (entity reference) qualified reference name not found in 'with' statements of Test (package specification) 
 Cannot analyze AADL specifications

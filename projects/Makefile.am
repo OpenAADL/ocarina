@@ -57,11 +57,14 @@ TREE_PIDL_SPECS = src/core/tree/ocarina-me_aadl-aadl_tree-nodes.idl	\
 	src/core/tree/ocarina-me_aadl-aadl_instances-nodes.idl		\
 	src/core/tree/ocarina-me_aadl_ba-ba_tree-nodes.idl		\
 	src/core/tree/ocarina-me_real-real_tree-nodes.idl		\
+	src/core/tree/ocarina-me_ao4aadl-ao4aadl_tree-nodes.idl		\
+	src/core/tree/ocarina-me_aadl_ema-ema_tree-nodes.idl            \
 	src/backends/ocarina-backends-ada_tree-nodes.idl		\
 	src/backends/ocarina-backends-c_tree-nodes.idl			\
 	src/backends/ocarina-backends-asn1_tree-nodes.idl		\
 	src/backends/ocarina-backends-xml_tree-nodes.idl		\
 	src/backends/ocarina-backends-pn-nodes.idl			\
+	src/backends/ocarina-backends-lnt-nodes.idl			\
 	src/backends/ocarina-backends-mast_tree-nodes.idl
 
 TREE_ADA_SPECS = ${addprefix $(top_builddir)/, $(TREE_PIDL_SPECS:.idl=.ads)}

@@ -1,0 +1,213 @@
+--  This AADL model illustrates how to model a simple interaction
+--  between tasks, in a local or distributed environment.
+--
+--  One task pings another, sending a data periodically.
+--
+--  $Id: software.aadl 5420 2008-09-23 16:17:56Z zalila $
+
+----------
+-- Data --
+----------
+
+data Simple_Type
+properties
+  Data_Model::Data_Representation => integer;
+end Simple_Type;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram VerifCard
+features
+  NumCard_in : in parameter Simple_Type;
+  Code_in : in parameter Simple_Type;
+  OK_out : out parameter Simple_Type;
+  RestoreCode_out : out parameter Simple_Type;
+  RejectedCard_out : out parameter Simple_Type;
+end VerifCard;
+
+
+subprogram implementation VerifCard.Impl
+properties
+  source_language => rtsj;
+  source_name     => "Bank.verifCard";
+end VerifCard.Impl;
+
+
+-------------
+-- Threads --
+-------------
+
+thread P
+features
+    NumCard_out_P:  out event data port Simple_Type;
+    Code_out_P: out event data port Simple_Type;
+end P;
+
+thread implementation P.Impl
+properties
+  Initialize_Entrypoint              => "Msgs.WelcomePinger";
+  Dispatch_Protocol                  => Periodic;
+  Period                             => 12 ms;
+  Compute_Execution_time             => 0 ms .. 3 ms;
+  Deadline                           => 12 ms;
+  Cheddar_Properties::Fixed_Priority => 1;
+end P.Impl;
+
+thread Q
+features
+    Port_in_G:  in event data port Simple_Type;
+    NumCard_out_G:  out event data port Simple_Type;
+    Code_out_G: out event data port Simple_Type;
+end Q;
+
+thread implementation Q.Impl
+properties
+  Initialize_Entrypoint              => "Msgs.WelcomeGUI";
+  Dispatch_Protocol                  => Sporadic;
+  Period                             => 5 ms;
+  Compute_Execution_time             => 0 ms .. 3 ms;
+  Deadline                           => 5 ms;
+  Cheddar_Properties::Fixed_Priority => 2;
+end Q.Impl;
+
+  THREAD ValidationThread
+  FEATURES
+    Port_in_V: IN EVENT DATA PORT Simple_Type;
+    OK_out_V: OUT EVENT DATA PORT Simple_Type;
+    RestoreCode_out_V: OUT EVENT DATA PORT Simple_Type;
+    RejectedCard_out_V: OUT EVENT DATA PORT Simple_Type;
+  END ValidationThread;
+  
+  
+  THREAD IMPLEMENTATION ValidationThread.impl
+  CALLS{
+    verifCard_Spg: subprogram VerifCard;
+    };
+    
+  CONNECTIONS
+    PARAMETER Port_in_V -> verifCard_Spg.NumCard_in;
+    PARAMETER Port_in_V -> verifCard_Spg.Code_in;
+    PARAMETER verifCard_Spg.Ok_out -> OK_out_V;
+    PARAMETER verifCard_Spg.RestoreCode_out -> RestoreCode_out_V;
+    PARAMETER verifCard_Spg.RejectedCard_out -> RejectedCard_out_V;
+    
+  PROPERTIES
+    Dispatch_protocol => Sporadic;
+    Period => 10 ms;
+    deadline => 10 ms;
+    Compute_Execution_Time => 0 ms..3 ms;
+    cheddar_Properties::Fixed_Priority => 2;
+  END ValidationThread.impl;
+
+thread R
+features
+    Port_in_V: in event data port Simple_Type;
+    OK_out_V: out event data port Simple_Type;
+    RestoreCode_out_V: out event data port Simple_Type;
+    RejectedCard_out_V: out event data port Simple_Type;
+end R;
+
+thread implementation R.Impl
+calls {
+  VerifCard_Spg : subprogram VerifCard;
+};
+connections
+    parameter Port_in_V -> verifCard_Spg.NumCard_in;
+    parameter Port_in_V -> verifCard_Spg.Code_in;
+    parameter verifCard_Spg.Ok_out -> OK_out_V;
+    parameter verifCard_Spg.RestoreCode_out -> RestoreCode_out_V;
+    parameter verifCard_Spg.RejectedCard_out -> RejectedCard_out_V;
+properties
+  Dispatch_Protocol                  => Sporadic;
+  Period                             => 5 ms;
+  deadline                           => 5 ms;
+  Compute_Execution_time             => 0 ms .. 3 ms;
+  Cheddar_Properties::Fixed_Priority => 3;
+
+annex ao4aadl {**
+           
+          aspect CheckCode {
+
+	    pointcut VerificationCode (): call (outport RestoreCode_out (..));
+	    advice around(): Verification(){
+
+		    variables{
+		         counter: Simple_Type;
+		         result: Simple_Type;
+		    }
+		
+                   initially{
+
+			counter:=1;
+			message:=3;
+		    }
+		
+		    if (counter = 3){
+			RejectedCard_out! (result);
+		    }
+		    else{
+			proceed();
+			counter := counter + 1;
+		    }
+	       }
+         }
+
+  **};
+end R.Impl;
+
+---------------
+-- Processor --
+---------------
+
+processor the_processor
+end the_processor;
+
+processor implementation the_processor.Impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
+end the_processor.Impl;
+
+---------------
+-- Processes --
+---------------
+
+process A
+end A;
+
+process implementation A.Impl
+subcomponents
+  Pinger        : thread P.Impl;
+  GUI           : thread Q.Impl;
+  Validation    : thread R.Impl;
+connections
+  event data port Pinger.NumCard_out_P -> Gui.Port_in_G;
+  event data port Pinger.Code_out_P -> Gui.Port_in_G;
+  event data port Gui.NumCard_out_G -> Validation.Port_in_V;
+  event data port Gui.Code_out_G -> Validation.Port_in_V;
+  event data port validation.OK_out_V -> Gui.Port_in_G;
+  event data port validation.RestoreCode_out_V -> Gui.Port_in_G;
+  event data port validation.RejectedCard_out_V -> Gui.Port_in_G;
+end A.Impl;
+
+------------
+-- System --
+------------
+
+system BANK
+end BANK;
+
+system implementation BANK.LEON
+subcomponents
+  Node_A : process A.Impl
+   {Deployment::Channel_Address => 2;
+    Deployment::Process_Id      => 1200;};
+
+  CPU : processor the_processor.Impl
+   {Deployment::Execution_Platform => LEON_ORK;};
+properties
+  actual_processor_binding => reference CPU applies to Node_A;
+end BANK.LEON;

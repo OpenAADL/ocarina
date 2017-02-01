@@ -1,0 +1,3 @@
+test14.aadl:19:14: "s2" is not found in States
+test14.aadl:19:24: "s3" is not found in States
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

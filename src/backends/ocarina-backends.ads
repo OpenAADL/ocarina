@@ -60,6 +60,7 @@ package Ocarina.Backends is
       Vxworks653_XML,
       Connection_Matrix_Analysis,
       Functions_Matrix_Analysis,
+      Lnt_S,
       MAST_Scheduling,
       Petri_Nets,
       PolyORB_HI_Ada,
@@ -70,6 +71,7 @@ package Ocarina.Backends is
       Xtratum_Configuration,
       REAL_PP,
       REAL_Theorem,
+      FT_Replication,
       Alloy_Backend);
    --  Supported code generators. For each kind, at most one generator
    --  must be implemented.
@@ -88,6 +90,10 @@ package Ocarina.Backends is
    --  Call the backend name if it is set or the current backend name
    --  set in the command line. If the backend name and the current
    --  backend name are set, backend name has the priority.
+
+   function Get_Backend (Backend_Name : Name_Id := No_Name) return Natural;
+   --  Return the index of the backend corresponding to the given
+   --  name. 0 means no backend was found.
 
    procedure Init;
    --  Initialize the Backends module by registering the several

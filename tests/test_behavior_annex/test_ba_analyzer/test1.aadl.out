@@ -1,0 +1,4 @@
+test1.aadl:30:02: sub.error1 ( Subprogram ) can't have more than one initial state.
+test1.aadl:31:02: sub.error1 ( Subprogram ) can't have complete state.
+test1.aadl:28:01: sub.error1 ( Subprogram ) has no final state.
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

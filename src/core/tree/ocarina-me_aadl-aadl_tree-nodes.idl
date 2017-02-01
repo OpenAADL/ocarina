@@ -4,7 +4,7 @@
 **                                                                          **
 **                        O C A R I N A . N O D E S                         **
 **                                                                          **
-**               Copyright (C) 2004-2009, GET-Telecom Paris.                **
+**    Copyright (C) 2004-2009, GET-Telecom Paris, 2010-2016 ESA & ISAE.     **
 **                                                                          **
 ** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
 ** it under terms of the GNU General Public License as published by the     **
@@ -1624,12 +1624,16 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
     Node_Id  In_Modes;
 
     Node_Id  Corresponding_Annex;
+    // Root of the parsed annex tree. This note is not an AADL tree node
   };
 
   interface Annex_Library : Named_AADL_Entity {
     boolean  Is_Private;
     Node_Id  Annex_Content;
     Node_Id  Container_Package;
+
+    Node_Id  Corresponding_Annex;
+    // Root of the parsed annex tree. This node is not an AADL tree node.
   };
 
   // annex_path ::=

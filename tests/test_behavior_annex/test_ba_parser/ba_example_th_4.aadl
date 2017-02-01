@@ -1,0 +1,52 @@
+package BA_example4 public
+
+with Base_Types;
+-- This is an example to specify the essence of multi-rate synchronous systems using up
+-- and down sampling adapters to interface a thread a “factor” times the periods of another.
+
+thread upsample
+  features
+    lo: in event data port aadlinteger;
+    hi: out data port aadlinteger;
+    factor: constant aadlinteger => 4;
+properties
+  Dispatch_Protocol => periodic;
+end upsample;
+
+thread implementation upsample.impl
+annex behavior_specification {**
+states
+s0: initial complete state;
+variables 
+data, count: aadlinteger => 0; -- initialization would be helpful here
+transitions
+s0 -[ on dispatch and count <= 0]-> s0 { count := factor-1; lo?data; hi!data };
+s0 -[ on dispatch and count > 0]-> s0 { count := count - 1; hi!data };
+**};
+end upsample.impl;
+
+-- This is a time triggered, synchronous, implementation of the above of down-sampling
+thread downsample
+features
+hi: in event data port aadlinteger;
+lo: out data port aadlinteger;
+factor: constant aadlinteger => 4;
+properties
+Dispatch_Protocol => periodic;
+end downsample;
+
+thread implementation downsample.impl
+annex behavior_specification {**
+states
+s0: initial complete state;
+variables 
+data, count: aadlinteger => 0; -- initialization would be helpful here
+transitions
+s0 -[ on dispatch and count <= 0]-> s0 { count := factor-1; hi?data };
+s0 -[ on dispatch and count > 0]-> s0 { count := count – 1; hi?data ; lo!data };
+**};
+
+end downsample.impl;
+end BA_example4;
+
+

@@ -1,0 +1,203 @@
+package radar
+public
+data radar_types
+end radar_types;
+SYSTEM radar
+END radar;
+SYSTEM IMPLEMENTATION radar.simple
+SUBCOMPONENTS
+  aerial : DEVICE antenna;
+  rotor : DEVICE motor;
+  monitor : DEVICE screen;
+  main : PROCESS processing.others;
+  cpu : PROCESSOR cpu_leon2;
+  VME : BUS VME;
+  RAM : MEMORY RAM;
+CONNECTIONS
+  A1:PORT aerial.antenna_out -> main.receive_pulse;
+  A2:PORT rotor.motor_out -> main.get_angle;
+  A3:PORT main.send_pulse -> aerial.antenna_in;
+  A4:PORT main.to_screen -> monitor.screen_in;
+  A5:BUS ACCESS VME -> aerial.VME;
+  A6:BUS ACCESS VME -> rotor.VME;
+  A7:BUS ACCESS VME -> monitor.VME;
+  A8:BUS ACCESS VME -> cpu.VME;
+  A9:BUS ACCESS VME -> RAM.VME;
+PROPERTIES
+  Actual_Memory_Binding => (reference (ram)) applies to main;
+  Actual_Processor_Binding => (reference (cpu)) applies to main;
+END radar.simple;
+DEVICE antenna
+FEATURES
+  antenna_in : IN EVENT PORT;
+  antenna_out : OUT DATA PORT radar_types;
+  VME : REQUIRES BUS ACCESS VME;
+PROPERTIES
+  Compute_Execution_Time => 1 ms .. 2 ms;
+  Deadline => 1 ms;
+  Period => 1 ms;
+END antenna;
+DEVICE motor
+FEATURES
+  motor_out : OUT DATA PORT radar_types;
+  VME : REQUIRES BUS ACCESS VME;
+PROPERTIES
+  Compute_Execution_Time => 1 ms .. 2 ms;
+  Deadline => 1 ms;
+  Period => 1 ms;
+END motor;
+DEVICE screen
+FEATURES
+  screen_in : IN EVENT PORT;
+  VME : REQUIRES BUS ACCESS VME;
+PROPERTIES
+  Compute_Execution_Time => 1 ms .. 2 ms;
+  Deadline => 1 ms;
+  Period => 1 ms;
+END screen;
+PROCESS processing
+FEATURES
+  to_screen : OUT EVENT PORT;
+  send_pulse : OUT EVENT PORT;
+  receive_pulse : IN DATA PORT radar_types;
+  get_angle : IN DATA PORT radar_types;
+END processing;
+PROCESS IMPLEMENTATION processing.others
+SUBCOMPONENTS
+  receive : THREAD receiver.impl;
+  analyse : THREAD analyser.impl;
+  display : THREAD display_panel.impl;
+  transmit : THREAD transmitter.impl;
+  control_angle : THREAD controller.impl;
+CONNECTIONS
+ A10:PORT receive_pulse -> receive.receiver_in;
+ A11:PORT display.display_out -> to_screen;
+ A12:PORT transmit.transmitter_out_1 -> send_pulse;
+ A13:PORT get_angle -> control_angle.controller_in;
+ A14:PORT receive.receiver_out -> analyse.from_receiver;
+ A15:PORT analyse.analyser_out -> display.display_in;
+ A16:PORT transmit.transmitter_out_2 -> analyse.from_transmitter;
+ A17:PORT control_angle.controller_out -> analyse.from_controller;
+END processing.others;
+THREAD receiver
+FEATURES
+  receiver_out : OUT DATA PORT radar_types;
+  receiver_in : IN DATA PORT radar_types;
+END receiver;
+
+THREAD IMPLEMENTATION receiver.impl
+CALLS CS : {
+  RS : SUBPROGRAM Receiver_Spg;
+};
+CONNECTIONS
+  A18:PARAMETER RS.receiver_out -> receiver_out;
+  A19:PARAMETER receiver_in -> RS.receiver_in;
+PROPERTIES
+  Dispatch_Protocol => Periodic;
+  Compute_Execution_Time => 1 ms .. 2 ms;
+  Deadline => 15 ms;
+  Period => 15 ms;
+END receiver.impl;
+SUBPROGRAM Receiver_Spg
+FEATURES
+  receiver_out : OUT PARAMETER radar_types;
+  receiver_in : IN PARAMETER radar_types;
+END Receiver_Spg;
+THREAD analyser
+FEATURES
+  from_transmitter : IN EVENT PORT;
+  from_receiver : IN DATA PORT radar_types;
+  analyser_out : OUT DATA PORT radar_types;
+  from_controller : IN DATA PORT radar_types;
+END analyser;
+
+THREAD IMPLEMENTATION analyser.impl
+CALLS CS : {
+  AS : SUBPROGRAM Analyser_Spg;
+};
+CONNECTIONS
+  A20:PARAMETER from_receiver -> AS.from_receiver;
+  A21:PARAMETER AS.analyser_out -> analyser_out;
+  A22:PARAMETER from_controller -> AS.from_controller;
+PROPERTIES
+  Dispatch_Protocol => Periodic;
+  Compute_Execution_Time => 4 ms .. 6 ms;
+  Deadline => 50 ms;
+  Period => 50 ms;
+END analyser.impl;
+SUBPROGRAM Analyser_Spg
+FEATURES
+  from_receiver : IN PARAMETER radar_types;
+  analyser_out : OUT PARAMETER radar_types;
+  from_controller : IN PARAMETER radar_types;
+END Analyser_Spg;
+THREAD display_panel
+FEATURES
+  display_in : IN DATA PORT radar_types;
+  display_out : OUT EVENT PORT;
+END display_panel;
+
+THREAD IMPLEMENTATION display_panel.impl
+CALLS CS : {
+  DS : SUBPROGRAM Display_Spg;
+};
+CONNECTIONS
+  A23:PARAMETER display_in -> DS.display_in;
+PROPERTIES
+  Dispatch_Protocol => Periodic;
+  Compute_Execution_Time => 1 ms .. 3 ms;
+  Deadline => 20 ms;
+  Period => 20 ms;
+END display_panel.impl;
+SUBPROGRAM Display_Spg
+FEATURES
+  display_in : IN PARAMETER radar_types;
+END Display_Spg;
+THREAD transmitter
+FEATURES
+  transmitter_out_1 : OUT EVENT PORT;
+  transmitter_out_2 : OUT EVENT PORT;
+END transmitter;
+THREAD IMPLEMENTATION transmitter.impl
+PROPERTIES
+  Dispatch_Protocol => Periodic;
+  Compute_Execution_Time => 1 ms .. 1 ms;
+  Compute_Entrypoint_Source_Text => "radar.transmitter";
+  Deadline => 5 ms;
+  Period => 5 ms;
+END transmitter.impl;
+THREAD controller
+FEATURES
+  controller_in : IN DATA PORT radar_types;
+  controller_out : OUT DATA PORT radar_types;
+END controller;
+
+THREAD IMPLEMENTATION controller.impl
+CALLS CS1 : {
+  CS : SUBPROGRAM Controller_Spg;
+};
+CONNECTIONS
+  A24:PARAMETER controller_in -> CS.controller_in;
+  A25:PARAMETER CS.controller_out -> controller_out;
+PROPERTIES
+  Dispatch_Protocol => Periodic;
+  Compute_Execution_Time => 1 ms .. 1 ms;
+  Deadline => 15 ms;
+  Period => 15 ms;
+END controller.impl;
+SUBPROGRAM Controller_Spg
+FEATURES
+  controller_in : IN PARAMETER radar_types;
+  controller_out : OUT PARAMETER radar_types;
+END Controller_Spg;
+PROCESSOR cpu_leon2
+FEATURES
+  VME : REQUIRES BUS ACCESS VME;
+END cpu_leon2;
+BUS VME
+END VME;
+MEMORY RAM
+FEATURES
+  VME : REQUIRES BUS ACCESS VME;
+END RAM;
+end radar;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -46,39 +46,46 @@ package Ocarina.FE_AADL_BA.Parser is
    function Process
      (AADL_Root : Node_Id;
       From      : Locations.Location;
-      To        : Locations.Location := Locations.No_Location) return Node_Id;
+      To        : Locations.Location := Locations.No_Location;
+      Container : Node_Id  := No_Node)
+     return Node_Id;
 
    procedure Init;
    --  Initialize the parser and register it to the general Ocarina
    --  parser.
 
    type P_Item_Function_Ptr is access function
-     (Container : Node_Id) return Node_Id;
+     (Container : Node_Id)
+     return Node_Id;
 
 private
 
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
-      Code      : Parsing_Code) return Integer;
+      Code      : Parsing_Code)
+     return Integer;
 
    function P_Items_List
      (Func      : P_Item_Function_Ptr;
       Container : Node_Id;
-      Code      : Parsing_Code) return List_Id;
+      Code      : Parsing_Code)
+     return List_Id;
    --  Parse list items of syntax: ( { Item }+ | none_statement )
 
    function P_Items_List
-     (Func      : P_Item_Function_Ptr;
-      Container : Node_Id;
-      Separator : Ocarina.ME_AADL_BA.Tokens.BA_Token_Type) return List_Id;
+     (Func         : P_Item_Function_Ptr;
+      Container    : Node_Id;
+      Separator    : Ocarina.ME_AADL_BA.Tokens.BA_Token_Type)
+     return List_Id;
    --  Parse ( { Item Separator }* Item )
 
    function P_Elements_List
-     (Func       : P_Item_Function_Ptr;
-      Container  : Node_Id;
-      Delimiters : Ocarina.ME_AADL_BA.Tokens.BA_Token_List_Type;
-      Code       : Parsing_Code) return List_Id;
+     (Func         : P_Item_Function_Ptr;
+      Container    : Node_Id;
+      Delimiters   : Ocarina.ME_AADL_BA.Tokens.BA_Token_List_Type;
+      Code         : Parsing_Code)
+     return List_Id;
    --  Parse ( { Element }* Element Delimiter )
 
 end Ocarina.FE_AADL_BA.Parser;

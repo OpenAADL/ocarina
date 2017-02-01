@@ -1,3 +1,4 @@
 test.aadl:3:11: parsing Component_Type, unexpected token ';'
 test.aadl:7:32: parsing Component_Implementation, unexpected token ';'
+test.aadl:10:07: parsing Package_Specification, Empty packages are not allowed
 Cannot parse AADL specifications

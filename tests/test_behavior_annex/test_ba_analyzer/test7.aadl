@@ -1,0 +1,53 @@
+
+package exemple
+public
+   with Base_Types ;
+
+process proc
+
+features
+  inPortA : in event port ;
+  inPortB : in event port ;
+  inPortC : in event port ;
+
+end proc;
+
+process implementation proc.good
+  
+modes
+  m1 : initial  mode ;
+  m2 : mode ;
+  m1 -[self.inPortA, self.inPortA, self.inPortB, self.inPortC]-> m2 ;
+   
+annex behavior_specification {**
+ -- No Errors : The state identifier m1(complete state)
+ --             represent a mode (exception of Naming rule N1)
+states
+  m1 : initial complete state ;
+  finalState : final state ;
+  
+**};
+end proc.good ;
+
+process implementation proc.error
+  
+modes
+  m1 : initial  mode ;
+  m2 : mode ;
+  m1 -[self.inPortA, self.inPortA, self.inPortB, self.inPortC]-> m2 ;
+   
+annex behavior_specification {**
+ --  Errors : The state identifier m2 (is not a complete state) must not
+ --          conflict with mode identifiers,
+ --          feature identifiers, or data
+ --          subcomponent identifiers of the component
+ --          for which the behavior annex subclause
+ --          is defined.(Naming rule N1)
+states
+  m1 : initial complete state ;
+  m2 : final state ;
+  
+**};
+end proc.error ;
+
+end exemple ;

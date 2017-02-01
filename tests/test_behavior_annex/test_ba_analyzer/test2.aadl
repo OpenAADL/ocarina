@@ -1,0 +1,36 @@
+package exemple2
+public
+   with Base_Types ;
+
+thread th
+end th;
+
+
+thread implementation th.good
+
+annex behavior_specification {**
+
+states
+ uniqueState : initial final state ;
+ finalState1 : final state ;
+ compState : complete state ; 
+  
+**};
+
+end th.good;
+
+thread implementation th.error 
+annex behavior_specification {**
+
+  -- Errors: The behavior annex of a thread
+  --          _ can't have more than one initial state.
+  --          _ must define one or more final states.
+  --          _ must define one or more complete states. 
+states
+ initState1 : initial state ;
+ initState2 : initial state ;
+ 
+**};
+end th.error;
+
+end exemple2 ;

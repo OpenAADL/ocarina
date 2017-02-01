@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -58,7 +58,8 @@ package Ocarina.Property_Sets is
       O_ARINC653,
       O_Taste_Properties,
       O_ASSERT_Types,
-      O_ASSERT_Properties);
+      O_ASSERT_Properties,
+      O_Replication_Properties);
    --  The Ocarina property sets
 
    type Standard_Property_Set_Array_Type is

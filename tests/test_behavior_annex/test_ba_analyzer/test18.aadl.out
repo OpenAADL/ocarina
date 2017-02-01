@@ -1,0 +1,2 @@
+test18.aadl:21:23: "k" (dispatch trigger) must refer to an IN event port or IN event data port
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

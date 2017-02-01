@@ -1,0 +1,203 @@
+
+
+
+
+
+
+
+
+property set Data_Model is
+  Base_Type : list of classifier (
+data)
+    applies to (data);
+
+  Code_Set : aadlinteger
+    applies to (data);
+
+  Data_Digits : aadlinteger
+    applies to (data);
+
+  Data_Scale : aadlinteger
+    applies to (data);
+
+  Data_Representation : enumeration (Array, Boolean, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
+    applies to (data);
+
+  Dimension : list of aadlinteger
+    applies to (data);
+
+  Indefinite_Dimension : constant aadlinteger => -1;
+  Infinite_Dimension : constant aadlinteger => -2;
+  Element_Names : list of aadlstring
+    applies to (data);
+
+  Enumerators : list of aadlstring
+    applies to (data);
+
+  IEEE754_Precision : enumeration (Simple, Double)
+    applies to (data);
+
+  Initial_Value : list of aadlstring
+    applies to (data, port, parameter);
+
+  Integer_Range : range of aadlinteger
+    applies to (data, port, parameter);
+
+  Measurement_Unit : aadlstring
+    applies to (data, port, parameter);
+
+  Number_Representation : enumeration (Signed, Unsigned)
+    applies to (data);
+
+  Real_Range : range of aadlreal
+    applies to (data, port, parameter);
+
+  Representation : list of aadlstring
+    applies to (data);
+
+end Data_Model;
+
+package Base_Types
+public
+  with data_model;
+
+  data Boolean
+  properties
+    Data_Model::Data_Representation => Boolean;
+
+  end Boolean;
+
+  data Integer
+  properties
+    Data_Model::Data_Representation => Integer;
+
+  end Integer;
+
+  data Integer_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 1 Bytes;
+
+  end Integer_8;
+
+  data Integer_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 2 Bytes;
+
+  end Integer_16;
+
+  data Integer_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 4 Bytes;
+
+  end Integer_32;
+
+  data Integer_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 8 Bytes;
+
+  end Integer_64;
+
+  data Unsigned_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 1 Bytes;
+
+  end Unsigned_8;
+
+  data Unsigned_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 2 Bytes;
+
+  end Unsigned_16;
+
+  data Unsigned_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 4 Bytes;
+
+  end Unsigned_32;
+
+  data Unsigned_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 8 Bytes;
+
+  end Unsigned_64;
+
+  data Natural extends Integer
+  properties
+    Data_Model::Integer_Range => 0 .. Max_Target_Integer;
+
+  end Natural;
+
+  data Float
+  properties
+    Data_Model::Data_Representation => Float;
+
+  end Float;
+
+  data Float_32 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Simple;
+    Source_Data_Size => 4 Bytes;
+
+  end Float_32;
+
+  data Float_64 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Double;
+    Source_Data_Size => 8 Bytes;
+
+  end Float_64;
+
+  data Character
+  properties
+    Data_Model::Data_Representation => Character;
+
+  end Character;
+
+  data String
+  properties
+    Data_Model::Data_Representation => String;
+
+  end String;
+
+end Base_Types;
+
+package BA_example1
+public
+  with Base_Types;
+
+  subprogram addition
+  features
+    x : in parameter Base_Types::Integer;
+    y : in parameter Base_Types::Integer;
+    r : out parameter Base_Types::Integer;
+    ovf : out parameter Base_Types::Boolean;
+
+  end addition;
+
+  subprogram implementation addition.default
+    annex behavior_specification {**
+    states
+      s0 : initial state;
+      s1 : final state;
+    transitions      
+      regular : s0 -[]-> s1 {
+        r  := x + y;
+        ovf  := false 
+        };      
+      overflow : s0 -[]-> s1 {
+        r  := 0;
+        ovf  := true 
+        };
+    **};
+  end addition.default;
+
+end BA_example1;
+

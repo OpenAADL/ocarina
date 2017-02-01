@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -74,7 +74,7 @@ package body Ocarina.FE_AADL.Parser.Annexes is
       In_Modes        : Node_Id           := No_Node;
       Loc             : Location;
       Loc_Start_Annex : Location;
-      Annex_Content   : Name_Id;
+      Annex_Content   : Name_Id           := No_Name;
       Annex_Location  : constant Location := Token_Location;
    begin
 
@@ -92,18 +92,20 @@ package body Ocarina.FE_AADL.Parser.Annexes is
       elsif Token = T_Begin_Annex then
          Save_Lexer (Loc_Start_Annex);
          if Perform_Annex_Action (Name (Identifier)) then
-            Annex_Root := Parse (Name (Identifier), No_Node, Loc_Start_Annex);
+            Annex_Root := Parse
+              (Name (Identifier),
+               No_Node,
+               Loc_Start_Annex,
+               No_Location,
+               Namespace);
          end if;
 
-         --  Do not display error message if No_Node because if there are
-         --  errors when annex parsing, errors messages were already displaying
-         --  so continue to parse AADL_Specification and just raise a warning
+         --  Keep the raw text of the annex in case we do not have a
+         --  pretty printer for the current annex.
 
-         if No (Annex_Root) then
-            Restore_Lexer (Loc_Start_Annex);
-            Scan_Raw_Text (T_End_Annex);
-            Annex_Content := Raw_Text_Value;
-         end if;
+         Restore_Lexer (Loc_Start_Annex);
+         Scan_Raw_Text (T_End_Annex);
+         Annex_Content := Raw_Text_Value;
 
          Scan_Token;
          if Token /= T_End_Annex then
@@ -158,10 +160,10 @@ package body Ocarina.FE_AADL.Parser.Annexes is
               In_Modes);
       end if;
 
-      if Annex /= No_Node
-        and then Set_Annex_Content (Annex, Annex_Content)
-      then
+      if Present (Annex) then
+         Set_Annex_Content (Annex, Annex_Content);
          Set_Corresponding_Annex (Annex, Annex_Root);
+
          return Annex;
       else
          return No_Node;

@@ -1,0 +1,2 @@
+test19.aadl:20:33: "k" (frozen port) does not point to any port
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

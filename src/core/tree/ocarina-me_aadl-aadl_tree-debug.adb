@@ -190,9 +190,11 @@ package body Ocarina.ME_AADL.AADL_Tree.Debug is
          Write_Line (V);
       end if;
 
-      --  XXX Why skipping these cases ?
+      --  We skip these cases to avoid infinite loop when dumping a tree.
+
       if A /= "Corresponding_Entity"
         and then A /= "Corresponding_Declaration"
+        and then A /= "Corresponding_Annex"
         and then A /= "Container_Component"
         and then A /= "Item"
         and then A /= "Extra_Item"

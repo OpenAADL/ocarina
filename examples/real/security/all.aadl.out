@@ -146,48 +146,48 @@ Evaluating theorem bell_lapadula
 
  * Iterate for variable: main.i_node1_partition_topsecret
 Content of set vp1 (lib.real:27:14) is 
-  main.i_node1_runtime_topsecret: 48 component instance all.aadl:156:04
+  main.i_node1_runtime_topsecret: 53 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
 Content of set p_dest (lib.real:31:17) is 
-  main.i_node2_partition_topsecret: 416 component instance all.aadl:138:04
+  main.i_node2_partition_topsecret: 465 component instance all.aadl:138:04
 Content of set vp2 (lib.real:33:14) is 
-  main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
+  main.i_node2_runtime_topsecret: 160 component instance all.aadl:156:04
 Content of set b_dst (lib.real:35:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_partition_secret
 Content of set vp1 (lib.real:27:14) is 
-  main.i_node1_runtime_secret: 28 component instance all.aadl:156:04
+  main.i_node1_runtime_secret: 30 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
 Content of set p_dest (lib.real:31:17) is 
-  main.i_node2_partition_secret: 483 component instance all.aadl:138:04
+  main.i_node2_partition_secret: 537 component instance all.aadl:138:04
 Content of set vp2 (lib.real:33:14) is 
-  main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
+  main.i_node2_runtime_secret: 142 component instance all.aadl:156:04
 Content of set b_dst (lib.real:35:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_partition_unclassified
 Content of set vp1 (lib.real:27:14) is 
-  main.i_node1_runtime_unclassified: 64 component instance all.aadl:156:04
+  main.i_node1_runtime_unclassified: 72 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
 Content of set p_dest (lib.real:31:17) is 
-  main.i_node2_partition_unclassified: 547 component instance all.aadl:138:04
+  main.i_node2_partition_unclassified: 606 component instance all.aadl:138:04
 Content of set vp2 (lib.real:33:14) is 
-  main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
+  main.i_node2_runtime_unclassified: 178 component instance all.aadl:156:04
 Content of set b_dst (lib.real:35:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_partition_topsecret
 Content of set vp1 (lib.real:27:14) is 
-  main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
+  main.i_node2_runtime_topsecret: 160 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
 Content of set p_dest (lib.real:31:17) is 
 Content of set vp2 (lib.real:33:14) is 
 Content of set b_dst (lib.real:35:16) is 
@@ -195,9 +195,9 @@ Content of set b_dst (lib.real:35:16) is
 
  * Iterate for variable: main.i_node2_partition_secret
 Content of set vp1 (lib.real:27:14) is 
-  main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
+  main.i_node2_runtime_secret: 142 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
 Content of set p_dest (lib.real:31:17) is 
 Content of set vp2 (lib.real:33:14) is 
 Content of set b_dst (lib.real:35:16) is 
@@ -205,9 +205,9 @@ Content of set b_dst (lib.real:35:16) is
 
  * Iterate for variable: main.i_node2_partition_unclassified
 Content of set vp1 (lib.real:27:14) is 
-  main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
+  main.i_node2_runtime_unclassified: 178 component instance all.aadl:156:04
 Content of set b_src (lib.real:29:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
 Content of set p_dest (lib.real:31:17) is 
 Content of set vp2 (lib.real:33:14) is 
 Content of set b_dst (lib.real:35:16) is 
@@ -221,48 +221,48 @@ Evaluating theorem biba
 
  * Iterate for variable: main.i_node1_partition_topsecret
 Content of set vp1 (lib.real:51:14) is 
-  main.i_node1_runtime_topsecret: 48 component instance all.aadl:156:04
+  main.i_node1_runtime_topsecret: 53 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
 Content of set p_dest (lib.real:55:17) is 
-  main.i_node2_partition_topsecret: 416 component instance all.aadl:138:04
+  main.i_node2_partition_topsecret: 465 component instance all.aadl:138:04
 Content of set vp2 (lib.real:57:14) is 
-  main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
+  main.i_node2_runtime_topsecret: 160 component instance all.aadl:156:04
 Content of set b_dst (lib.real:59:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_partition_secret
 Content of set vp1 (lib.real:51:14) is 
-  main.i_node1_runtime_secret: 28 component instance all.aadl:156:04
+  main.i_node1_runtime_secret: 30 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
 Content of set p_dest (lib.real:55:17) is 
-  main.i_node2_partition_secret: 483 component instance all.aadl:138:04
+  main.i_node2_partition_secret: 537 component instance all.aadl:138:04
 Content of set vp2 (lib.real:57:14) is 
-  main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
+  main.i_node2_runtime_secret: 142 component instance all.aadl:156:04
 Content of set b_dst (lib.real:59:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_partition_unclassified
 Content of set vp1 (lib.real:51:14) is 
-  main.i_node1_runtime_unclassified: 64 component instance all.aadl:156:04
+  main.i_node1_runtime_unclassified: 72 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
 Content of set p_dest (lib.real:55:17) is 
-  main.i_node2_partition_unclassified: 547 component instance all.aadl:138:04
+  main.i_node2_partition_unclassified: 606 component instance all.aadl:138:04
 Content of set vp2 (lib.real:57:14) is 
-  main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
+  main.i_node2_runtime_unclassified: 178 component instance all.aadl:156:04
 Content of set b_dst (lib.real:59:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_partition_topsecret
 Content of set vp1 (lib.real:51:14) is 
-  main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
+  main.i_node2_runtime_topsecret: 160 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
 Content of set p_dest (lib.real:55:17) is 
 Content of set vp2 (lib.real:57:14) is 
 Content of set b_dst (lib.real:59:16) is 
@@ -270,9 +270,9 @@ Content of set b_dst (lib.real:59:16) is
 
  * Iterate for variable: main.i_node2_partition_secret
 Content of set vp1 (lib.real:51:14) is 
-  main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
+  main.i_node2_runtime_secret: 142 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
 Content of set p_dest (lib.real:55:17) is 
 Content of set vp2 (lib.real:57:14) is 
 Content of set b_dst (lib.real:59:16) is 
@@ -280,9 +280,9 @@ Content of set b_dst (lib.real:59:16) is
 
  * Iterate for variable: main.i_node2_partition_unclassified
 Content of set vp1 (lib.real:51:14) is 
-  main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
+  main.i_node2_runtime_unclassified: 178 component instance all.aadl:156:04
 Content of set b_src (lib.real:53:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
 Content of set p_dest (lib.real:55:17) is 
 Content of set vp2 (lib.real:57:14) is 
 Content of set b_dst (lib.real:59:16) is 
@@ -296,48 +296,48 @@ Evaluating theorem mils_1
 
  * Iterate for variable: main.i_node1_partition_topsecret
 Content of set vp1 (lib.real:73:14) is 
-  main.i_node1_runtime_topsecret: 48 component instance all.aadl:156:04
+  main.i_node1_runtime_topsecret: 53 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
 Content of set p_dest (lib.real:77:17) is 
-  main.i_node2_partition_topsecret: 416 component instance all.aadl:138:04
+  main.i_node2_partition_topsecret: 465 component instance all.aadl:138:04
 Content of set vp2 (lib.real:79:14) is 
-  main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
+  main.i_node2_runtime_topsecret: 160 component instance all.aadl:156:04
 Content of set b_dst (lib.real:81:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_partition_secret
 Content of set vp1 (lib.real:73:14) is 
-  main.i_node1_runtime_secret: 28 component instance all.aadl:156:04
+  main.i_node1_runtime_secret: 30 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
 Content of set p_dest (lib.real:77:17) is 
-  main.i_node2_partition_secret: 483 component instance all.aadl:138:04
+  main.i_node2_partition_secret: 537 component instance all.aadl:138:04
 Content of set vp2 (lib.real:79:14) is 
-  main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
+  main.i_node2_runtime_secret: 142 component instance all.aadl:156:04
 Content of set b_dst (lib.real:81:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node1_partition_unclassified
 Content of set vp1 (lib.real:73:14) is 
-  main.i_node1_runtime_unclassified: 64 component instance all.aadl:156:04
+  main.i_node1_runtime_unclassified: 72 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
 Content of set p_dest (lib.real:77:17) is 
-  main.i_node2_partition_unclassified: 547 component instance all.aadl:138:04
+  main.i_node2_partition_unclassified: 606 component instance all.aadl:138:04
 Content of set vp2 (lib.real:79:14) is 
-  main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
+  main.i_node2_runtime_unclassified: 178 component instance all.aadl:156:04
 Content of set b_dst (lib.real:81:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
  => Result: TRUE
 
  * Iterate for variable: main.i_node2_partition_topsecret
 Content of set vp1 (lib.real:73:14) is 
-  main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
+  main.i_node2_runtime_topsecret: 160 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
 Content of set p_dest (lib.real:77:17) is 
 Content of set vp2 (lib.real:79:14) is 
 Content of set b_dst (lib.real:81:16) is 
@@ -345,9 +345,9 @@ Content of set b_dst (lib.real:81:16) is
 
  * Iterate for variable: main.i_node2_partition_secret
 Content of set vp1 (lib.real:73:14) is 
-  main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
+  main.i_node2_runtime_secret: 142 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
 Content of set p_dest (lib.real:77:17) is 
 Content of set vp2 (lib.real:79:14) is 
 Content of set b_dst (lib.real:81:16) is 
@@ -355,9 +355,9 @@ Content of set b_dst (lib.real:81:16) is
 
  * Iterate for variable: main.i_node2_partition_unclassified
 Content of set vp1 (lib.real:73:14) is 
-  main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
+  main.i_node2_runtime_unclassified: 178 component instance all.aadl:156:04
 Content of set b_src (lib.real:75:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
 Content of set p_dest (lib.real:77:17) is 
 Content of set vp2 (lib.real:79:14) is 
 Content of set b_dst (lib.real:81:16) is 
@@ -371,9 +371,9 @@ Evaluating theorem mils_2
 
  * Iterate for variable: main.i_node1_partition_topsecret
 Content of set vp1 (lib.real:98:14) is 
-  main.i_node1_runtime_topsecret: 48 component instance all.aadl:156:04
+  main.i_node1_runtime_topsecret: 53 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
 Content of set cnx (lib.real:102:14) is 
 Content of set p_dest (lib.real:104:17) is 
 Content of set vp2 (lib.real:106:14) is 
@@ -383,9 +383,9 @@ Content of set b_cnx (lib.real:110:16) is
 
  * Iterate for variable: main.i_node1_partition_secret
 Content of set vp1 (lib.real:98:14) is 
-  main.i_node1_runtime_secret: 28 component instance all.aadl:156:04
+  main.i_node1_runtime_secret: 30 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
 Content of set cnx (lib.real:102:14) is 
 Content of set p_dest (lib.real:104:17) is 
 Content of set vp2 (lib.real:106:14) is 
@@ -395,9 +395,9 @@ Content of set b_cnx (lib.real:110:16) is
 
  * Iterate for variable: main.i_node1_partition_unclassified
 Content of set vp1 (lib.real:98:14) is 
-  main.i_node1_runtime_unclassified: 64 component instance all.aadl:156:04
+  main.i_node1_runtime_unclassified: 72 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
 Content of set cnx (lib.real:102:14) is 
 Content of set p_dest (lib.real:104:17) is 
 Content of set vp2 (lib.real:106:14) is 
@@ -407,9 +407,9 @@ Content of set b_cnx (lib.real:110:16) is
 
  * Iterate for variable: main.i_node2_partition_topsecret
 Content of set vp1 (lib.real:98:14) is 
-  main.i_node2_runtime_topsecret: 139 component instance all.aadl:156:04
+  main.i_node2_runtime_topsecret: 160 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
-  main.i_rtbus_layer_topsecret: 727 component instance all.aadl:15:04
+  main.i_rtbus_layer_topsecret: 821 component instance all.aadl:15:04
 Content of set cnx (lib.real:102:14) is 
 Content of set p_dest (lib.real:104:17) is 
 Content of set vp2 (lib.real:106:14) is 
@@ -419,9 +419,9 @@ Content of set b_cnx (lib.real:110:16) is
 
  * Iterate for variable: main.i_node2_partition_secret
 Content of set vp1 (lib.real:98:14) is 
-  main.i_node2_runtime_secret: 124 component instance all.aadl:156:04
+  main.i_node2_runtime_secret: 142 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
-  main.i_rtbus_layer_secret: 735 component instance all.aadl:10:04
+  main.i_rtbus_layer_secret: 830 component instance all.aadl:10:04
 Content of set cnx (lib.real:102:14) is 
 Content of set p_dest (lib.real:104:17) is 
 Content of set vp2 (lib.real:106:14) is 
@@ -431,9 +431,9 @@ Content of set b_cnx (lib.real:110:16) is
 
  * Iterate for variable: main.i_node2_partition_unclassified
 Content of set vp1 (lib.real:98:14) is 
-  main.i_node2_runtime_unclassified: 154 component instance all.aadl:156:04
+  main.i_node2_runtime_unclassified: 178 component instance all.aadl:156:04
 Content of set b_src (lib.real:100:16) is 
-  main.i_rtbus_layer_unclassified: 743 component instance all.aadl:5:04
+  main.i_rtbus_layer_unclassified: 839 component instance all.aadl:5:04
 Content of set cnx (lib.real:102:14) is 
 Content of set p_dest (lib.real:104:17) is 
 Content of set vp2 (lib.real:106:14) is 

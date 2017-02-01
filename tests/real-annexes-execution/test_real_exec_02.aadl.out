@@ -5,8 +5,8 @@ set_declaration_is_bound_to execution
 Evaluating theorem set_declaration_is_bound_to
 
  * Iterate for variable: rma.erc32_cpu_rm
-Content of set proc_set (test_real_exec_02.aadl:148:19) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_02.aadl:130:01
+Content of set proc_set (test_real_exec_02.aadl:148:19) is
+  rma.erc32_node_a: 14 component instance test_real_exec_02.aadl:130:01
  => Result: TRUE
 
 theorem set_declaration_is_bound_to is: TRUE
@@ -17,21 +17,21 @@ set_declaration_is_connected_to execution
 Evaluating theorem set_declaration_is_connected_to
 
  * Iterate for variable: rma.erc32_node_a_task_1
-Content of set cnx_set (test_real_exec_02.aadl:160:14) is 
+Content of set cnx_set (test_real_exec_02.aadl:160:14) is
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_2
-Content of set cnx_set (test_real_exec_02.aadl:160:14) is 
-  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+Content of set cnx_set (test_real_exec_02.aadl:160:14) is
+  rma.erc32_node_a_task_1: 22 component instance test_real_exec_02.aadl:44:01
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_12
-Content of set cnx_set (test_real_exec_02.aadl:160:14) is 
+Content of set cnx_set (test_real_exec_02.aadl:160:14) is
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_22
-Content of set cnx_set (test_real_exec_02.aadl:160:14) is 
-  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+Content of set cnx_set (test_real_exec_02.aadl:160:14) is
+  rma.erc32_node_a_task_12: 152 component instance test_real_exec_02.aadl:59:01
  => Result: TRUE
 
 theorem set_declaration_is_connected_to is: TRUE
@@ -42,11 +42,11 @@ set_declaration_is_subcomponent_of execution
 Evaluating theorem set_declaration_is_subcomponent_of
 
  * Iterate for variable: rma.erc32_node_a
-Content of set threads (test_real_exec_02.aadl:172:14) is 
-  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
-  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
-  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
-  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
+Content of set threads (test_real_exec_02.aadl:172:14) is
+  rma.erc32_node_a_task_1: 22 component instance test_real_exec_02.aadl:44:01
+  rma.erc32_node_a_task_2: 86 component instance test_real_exec_02.aadl:79:01
+  rma.erc32_node_a_task_12: 152 component instance test_real_exec_02.aadl:59:01
+  rma.erc32_node_a_task_22: 207 component instance test_real_exec_02.aadl:96:01
  => Result: TRUE
 
 theorem set_declaration_is_subcomponent_of is: TRUE
@@ -57,7 +57,7 @@ set_declaration_is_accessed_by execution
 Evaluating theorem set_declaration_is_accessed_by
 
  * Iterate for variable: rma.erc32_node_a_task_2_obj
-Content of set accessors (test_real_exec_02.aadl:184:16) is 
+Content of set accessors (test_real_exec_02.aadl:184:16) is
  => Result: TRUE
 
 theorem set_declaration_is_accessed_by is: TRUE
@@ -68,7 +68,7 @@ set_declaration_is_accessing_to execution
 Evaluating theorem set_declaration_is_accessing_to
 
  * Iterate for variable: rma.erc32_node_a_task_2_obj
-Content of set accessors (test_real_exec_02.aadl:196:16) is 
+Content of set accessors (test_real_exec_02.aadl:196:16) is
  => Result: TRUE
 
 theorem set_declaration_is_accessing_to is: TRUE
@@ -79,23 +79,23 @@ set_declaration_is_called_by_1 execution
 Evaluating theorem set_declaration_is_called_by_1
 
  * Iterate for variable: rma.erc32_node_a_task_1_mycalls_p_spg
-Content of set callers (test_real_exec_02.aadl:211:19) is 
-  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+Content of set callers (test_real_exec_02.aadl:211:19) is
+  rma.erc32_node_a_task_1: 22 component instance test_real_exec_02.aadl:44:01
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_2_mycall_p_spg
-Content of set callers (test_real_exec_02.aadl:211:19) is 
-  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
+Content of set callers (test_real_exec_02.aadl:211:19) is
+  rma.erc32_node_a_task_2: 86 component instance test_real_exec_02.aadl:79:01
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_12_mycalls_p_spg
-Content of set callers (test_real_exec_02.aadl:211:19) is 
-  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+Content of set callers (test_real_exec_02.aadl:211:19) is
+  rma.erc32_node_a_task_12: 152 component instance test_real_exec_02.aadl:59:01
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_22_mycall_p_spg
-Content of set callers (test_real_exec_02.aadl:211:19) is 
-  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
+Content of set callers (test_real_exec_02.aadl:211:19) is
+  rma.erc32_node_a_task_22: 207 component instance test_real_exec_02.aadl:96:01
  => Result: TRUE
 
 theorem set_declaration_is_called_by_1 is: TRUE
@@ -106,15 +106,15 @@ set_declaration_is_called_by_2 execution
 Evaluating theorem set_declaration_is_called_by_2
 
  * Iterate for variable: test2_real_hello_spg_1
-Content of set callers (test_real_exec_02.aadl:226:19) is 
-  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
-  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+Content of set callers (test_real_exec_02.aadl:226:19) is
+  rma.erc32_node_a_task_1: 22 component instance test_real_exec_02.aadl:44:01
+  rma.erc32_node_a_task_12: 152 component instance test_real_exec_02.aadl:59:01
  => Result: TRUE
 
  * Iterate for variable: test2_real_hello_spg_2
-Content of set callers (test_real_exec_02.aadl:226:19) is 
-  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
-  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
+Content of set callers (test_real_exec_02.aadl:226:19) is
+  rma.erc32_node_a_task_2: 86 component instance test_real_exec_02.aadl:79:01
+  rma.erc32_node_a_task_22: 207 component instance test_real_exec_02.aadl:96:01
  => Result: TRUE
 
 theorem set_declaration_is_called_by_2 is: TRUE
@@ -125,21 +125,21 @@ set_declaration_is_connecting_to execution
 Evaluating theorem set_declaration_is_connecting_to
 
  * Iterate for variable: rma.erc32_node_a_task_1
-Content of set cnx_threads (test_real_exec_02.aadl:239:22) is 
+Content of set cnx_threads (test_real_exec_02.aadl:239:22) is
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_2
-Content of set cnx_threads (test_real_exec_02.aadl:239:22) is 
-  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
+Content of set cnx_threads (test_real_exec_02.aadl:239:22) is
+  rma.erc32_node_a_task_1: 22 component instance test_real_exec_02.aadl:44:01
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_12
-Content of set cnx_threads (test_real_exec_02.aadl:239:22) is 
+Content of set cnx_threads (test_real_exec_02.aadl:239:22) is
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_22
-Content of set cnx_threads (test_real_exec_02.aadl:239:22) is 
-  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
+Content of set cnx_threads (test_real_exec_02.aadl:239:22) is
+  rma.erc32_node_a_task_12: 152 component instance test_real_exec_02.aadl:59:01
  => Result: TRUE
 
 theorem set_declaration_is_connecting_to is: TRUE
@@ -150,23 +150,23 @@ set_declaration_is_passing_through execution
 Evaluating theorem set_declaration_is_passing_through
 
  * Iterate for variable: rma.erc32_node_a_task_1
-Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :3999 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is
+anonymous end to end flow :3999 end to end flow spec
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_2
-Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :3999 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is
+anonymous end to end flow :4013 end to end flow spec
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_12
-Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :4000 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is
+anonymous end to end flow :4000 end to end flow spec
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_22
-Content of set accessor_flows (test_real_exec_02.aadl:251:21) is 
-anonymous end to end flow :4000 end to end flow spec 
+Content of set accessor_flows (test_real_exec_02.aadl:251:21) is
+anonymous end to end flow :4014 end to end flow spec
  => Result: TRUE
 
 theorem set_declaration_is_passing_through is: TRUE
@@ -177,27 +177,27 @@ set_declaration_is_predecessor_of execution
 Evaluating theorem set_declaration_is_predecessor_of
 
  * Iterate for variable: rma.erc32_node_a_task_1
-Content of set pred (test_real_exec_02.aadl:264:13) is 
-Content of set inv_pred (test_real_exec_02.aadl:266:17) is 
-  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
+Content of set pred (test_real_exec_02.aadl:264:13) is
+Content of set inv_pred (test_real_exec_02.aadl:266:17) is
+  rma.erc32_node_a_task_2: 86 component instance test_real_exec_02.aadl:79:01
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_2
-Content of set pred (test_real_exec_02.aadl:264:13) is 
-  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
-Content of set inv_pred (test_real_exec_02.aadl:266:17) is 
+Content of set pred (test_real_exec_02.aadl:264:13) is
+  rma.erc32_node_a_task_1: 22 component instance test_real_exec_02.aadl:44:01
+Content of set inv_pred (test_real_exec_02.aadl:266:17) is
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_12
-Content of set pred (test_real_exec_02.aadl:264:13) is 
-Content of set inv_pred (test_real_exec_02.aadl:266:17) is 
-  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
+Content of set pred (test_real_exec_02.aadl:264:13) is
+Content of set inv_pred (test_real_exec_02.aadl:266:17) is
+  rma.erc32_node_a_task_22: 207 component instance test_real_exec_02.aadl:96:01
  => Result: TRUE
 
  * Iterate for variable: rma.erc32_node_a_task_22
-Content of set pred (test_real_exec_02.aadl:264:13) is 
-  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
-Content of set inv_pred (test_real_exec_02.aadl:266:17) is 
+Content of set pred (test_real_exec_02.aadl:264:13) is
+  rma.erc32_node_a_task_12: 152 component instance test_real_exec_02.aadl:59:01
+Content of set inv_pred (test_real_exec_02.aadl:266:17) is
  => Result: TRUE
 
 theorem set_declaration_is_predecessor_of is: TRUE
@@ -208,9 +208,9 @@ set_declaration_compare_property_value execution
 Evaluating theorem set_declaration_compare_property_value
 
  * Iterate for variable: rma.erc32_cpu_rm
-Content of set pure_subprograms (test_real_exec_02.aadl:280:24) is 
-  test2_real_hello_spg_1: 41 component instance test_real_exec_02.aadl:19:01
-  test2_real_hello_spg_2: 103 component instance test_real_exec_02.aadl:27:01
+Content of set pure_subprograms (test_real_exec_02.aadl:280:24) is
+  test2_real_hello_spg_1: 45 component instance test_real_exec_02.aadl:19:01
+  test2_real_hello_spg_2: 111 component instance test_real_exec_02.aadl:27:01
  => Result: TRUE
 
 theorem set_declaration_compare_property_value is: TRUE
@@ -221,13 +221,13 @@ set_declaration_set_composition execution
 Evaluating theorem set_declaration_set_composition
 
  * Iterate for variable: rma.erc32_cpu_rm
-Content of set proc_set (test_real_exec_02.aadl:295:19) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_02.aadl:130:01
-Content of set new_set (test_real_exec_02.aadl:297:15) is 
-  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
-  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
-  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
-  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
+Content of set proc_set (test_real_exec_02.aadl:295:19) is
+  rma.erc32_node_a: 14 component instance test_real_exec_02.aadl:130:01
+Content of set new_set (test_real_exec_02.aadl:297:15) is
+  rma.erc32_node_a_task_1: 22 component instance test_real_exec_02.aadl:44:01
+  rma.erc32_node_a_task_2: 86 component instance test_real_exec_02.aadl:79:01
+  rma.erc32_node_a_task_12: 152 component instance test_real_exec_02.aadl:59:01
+  rma.erc32_node_a_task_22: 207 component instance test_real_exec_02.aadl:96:01
  => Result: TRUE
 
 theorem set_declaration_set_composition is: TRUE
@@ -238,8 +238,8 @@ set_declaration_and_operator execution
 Evaluating theorem set_declaration_and_operator
 
  * Iterate for variable: rma.erc32_node_a
-Content of set protected_data (test_real_exec_02.aadl:309:21) is 
-  rma.erc32_node_a_task_2_obj: 92 component instance test_real_exec_02.aadl:10:01
+Content of set protected_data (test_real_exec_02.aadl:309:21) is
+  rma.erc32_node_a_task_2_obj: 99 component instance test_real_exec_02.aadl:10:01
  => Result: TRUE
 
 theorem set_declaration_and_operator is: TRUE
@@ -250,11 +250,11 @@ set_declaration_or_operator execution
 Evaluating theorem set_declaration_or_operator
 
  * Iterate for variable: rma.erc32_node_a
-Content of set a_set (test_real_exec_02.aadl:325:14) is 
-  rma.erc32_node_a_task_1: 20 component instance test_real_exec_02.aadl:44:01
-  rma.erc32_node_a_task_2: 80 component instance test_real_exec_02.aadl:79:01
-  rma.erc32_node_a_task_12: 142 component instance test_real_exec_02.aadl:59:01
-  rma.erc32_node_a_task_22: 194 component instance test_real_exec_02.aadl:96:01
+Content of set a_set (test_real_exec_02.aadl:325:14) is
+  rma.erc32_node_a_task_1: 22 component instance test_real_exec_02.aadl:44:01
+  rma.erc32_node_a_task_2: 86 component instance test_real_exec_02.aadl:79:01
+  rma.erc32_node_a_task_12: 152 component instance test_real_exec_02.aadl:59:01
+  rma.erc32_node_a_task_22: 207 component instance test_real_exec_02.aadl:96:01
  => Result: TRUE
 
 theorem set_declaration_or_operator is: TRUE

@@ -1,0 +1,2 @@
+test15.aadl:20:23: "p" (dispatch trigger) does not point to any event port or subprogram access feature
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

@@ -259,6 +259,11 @@ property set Ocarina_Config is
   Timeout_Property : Time
     applies to (system);
 
+  Annex_Type : type enumeration (annex_all, annex_none, behavior_specification, real_specification, emv2);
+
+  Enable_Annexes : list of Ocarina_Config::Annex_Type
+    applies to (system);
+
 end Ocarina_Config;
 
 property set Transformations is
@@ -917,6 +922,36 @@ system)
     applies to (system);
 
 end ASSERT_Properties;
+
+property set Replication_Properties is
+  Description : aadlstring
+    applies to (system, process, thread, processor, device);
+
+  Replica_Number : aadlinteger
+    applies to (system, process, thread, processor, device);
+
+  Min_Nbr_Replica : constant aadlinteger => 3;
+  Max_Nbr_Replica : constant aadlinteger => 7;
+  Replica_Identifiers : list of aadlstring
+    applies to (system, process, thread, processor, device);
+
+  Replication_Types : type enumeration (ACTIVE, PASSIVE);
+
+  Replica_Type : Replication_Properties::Replication_Types
+    applies to (system, process, thread, processor, device);
+
+  Consensus_Algorithm_Source_Text : aadlstring
+    applies to (port, data access, system, processor, device);
+
+  Consensus_Algorithm_Class : classifier (
+subprogram)
+    applies to (port, data access, system, processor, device);
+
+  Consensus_Algorithm_Ref : reference (
+subprogram)
+    applies to (port, data access, system, processor, device);
+
+end Replication_Properties;
 
 package PartitionedSystemExample
 public

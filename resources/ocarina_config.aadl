@@ -62,4 +62,18 @@ property set Ocarina_Config is
 
   Timeout_Property : Time applies to (system);
   --  The timeout used to stop an execution
+
+  Annex_Type : type enumeration
+   (annex_all,
+    annex_none,
+    behavior_specification,
+    real_specification,
+    emv2);
+    --  Designates the list of annexes supported in ocarina. annex_all
+    --  and annex_none designate respectively all supported annexes
+    --  and none of them for properties that accept this kind of
+    --  designation.
+
+  Enable_Annexes : list of Ocarina_Config::Annex_Type applies to (system);
+  --  List of annexes to be enabled in the parsed model
 end Ocarina_Config;

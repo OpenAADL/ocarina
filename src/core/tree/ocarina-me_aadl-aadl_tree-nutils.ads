@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -80,6 +80,7 @@ package Ocarina.ME_AADL.AADL_Tree.Nutils is
    --  mode.
 
    function Length (L : List_Id) return Natural;
+   function Length (L : Node_List) return Natural;
 
    function New_Node (Kind : Node_Kind; Loc : Location) return Node_Id;
    --  Create a new node

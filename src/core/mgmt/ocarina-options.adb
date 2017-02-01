@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -114,6 +114,15 @@ package body Ocarina.Options is
       Current_Annex_Action (Action) := 1;
    end Set_Annex_Action;
 
+   ------------------------
+   -- Unset_Annex_Action --
+   ------------------------
+
+   procedure Unset_Annex_Action (Action : Annex_Action_Kind) is
+   begin
+      Current_Annex_Action (Action) := 0;
+   end Unset_Annex_Action;
+
    ----------------------
    -- Get_Annex_Action --
    ----------------------
@@ -154,6 +163,8 @@ package body Ocarina.Options is
                Set_Annex_Action (Disable_REAL);
             elsif Tmp_Name = Get_String_Name ("behavior_specification") then
                Set_Annex_Action (Disable_BA);
+            elsif Tmp_Name = Get_String_Name ("emv2") then
+               Set_Annex_Action (Disable_EMA);
             elsif Tmp_Name = Get_String_Name ("all") then
                Set_Annex_Action (Disable_ALL);
                exit;
@@ -178,6 +189,8 @@ package body Ocarina.Options is
         Get_String_Name ("behavior_specification");
       Real_Language_Name : constant Name_Id :=
         Get_String_Name ("real_specification");
+      Error_Language_Name : constant Name_Id :=
+        Get_String_Name ("emv2");
       Perform : Boolean := True;
    begin
       if Current_Annex_Action (Disable_ALL) = 1 then
@@ -192,6 +205,12 @@ package body Ocarina.Options is
         and then Current_Annex_Action (Disable_REAL) = 1
       then
          Perform := False;
+
+      elsif Language = Error_Language_Name
+        and then Current_Annex_Action (Disable_EMA) = 1
+      then
+         Perform := False;
+
       end if;
 
       return Perform;

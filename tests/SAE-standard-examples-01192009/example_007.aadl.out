@@ -5,4 +5,5 @@ example_007.aadl:24:01: parsing Connections, list is empty
 example_007.aadl:39:13: parsing Component_Category, unexpected keyword 'event'
 example_007.aadl:40:15: parsing Prototype_Bindings, list is empty
 example_007.aadl:42:01: parsing Component_Type_Extension, unexpected keyword 'system'
+example_007.aadl:52:09: parsing Package_Specification, Empty packages are not allowed
 Cannot parse AADL specifications

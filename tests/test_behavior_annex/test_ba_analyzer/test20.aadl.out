@@ -1,0 +1,2 @@
+test20.aadl:20:33: "m" (frozen port) must refer to an IN port
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

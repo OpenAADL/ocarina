@@ -1,0 +1,48 @@
+
+package exemple1
+public
+   with Base_Types ;
+
+subprogram sub
+end sub;
+
+
+subprogram implementation sub.good
+
+annex behavior_specification {**
+
+states
+ uniqueState : initial final state ;
+  
+**};
+
+end sub.good;
+
+subprogram implementation sub.error1 
+annex behavior_specification {**
+
+  -- Errors: The behavior annex of a subprogram
+  --          _ can't have more than one initial state.
+  --          _ must define one final state.
+  --          _ can't have complete state. 
+states
+ initState1 : initial state ;
+ initState2 : initial state ;
+ compState : complete state ;
+ 
+**};
+end sub.error1;
+
+subprogram implementation sub.error2 
+annex behavior_specification {**
+
+  -- Errors: The behavior annex of a subprogram
+  --          _ can't have more than one final state.
+states
+ uniqueState : initial final state ;
+ finalState1 : final state ;
+  
+**};
+end sub.error2 ;
+
+end exemple1 ;

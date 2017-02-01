@@ -1,0 +1,2 @@
+AADL_VERSION=-aadlv2
+OCARINA_FLAGS=-g aadl data_model.aadl base_types.aadl

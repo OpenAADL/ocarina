@@ -1,0 +1,188 @@
+package FlightControlSystem
+public
+  data Alpha
+
+  end Alpha;
+thread NL
+  --  Navigation Law
+features
+  pos_c : in   event data port  Alpha;
+  pos_o : in   event data port  Alpha;
+  acc_c : out  event data port  Alpha;
+properties
+  Dispatch_Protocol      => Periodic;
+  Period                 => 120 ms;
+  Compute_Execution_Time => 0 ms .. 20 ms;
+  Deadline               => 120 ms;
+  Priority               => 2;
+end NL;
+thread NF
+  --  Navigation Filter
+features
+  pos_i : in   event data port  Alpha;
+  pos_o : out  event data port  Alpha;
+properties
+  Dispatch_Protocol      => Periodic;
+  Period                 => 120 ms;
+  Compute_Execution_Time => 0 ms .. 10 ms;
+  Deadline               => 120 ms;
+  Priority               => 1;
+end NF;
+thread PL
+  --  Piloting Law
+features
+  acc_c   : in   event data port  Alpha;
+  acc_o   : in   event data port  Alpha;
+  angle_c : out  event data port  Alpha;
+properties
+  Dispatch_Protocol      => Periodic;
+  Period                 => 40 ms;
+  Compute_Execution_Time => 0 ms .. 5 ms;
+  Deadline               => 40 ms;
+  Priority               => 4;
+end PL;
+thread PF
+  --  Piloting Filter
+features
+  acc_i : in   event data port  Alpha;
+  acc_o : out  event data port  Alpha;
+properties
+  Dispatch_Protocol      => Periodic;
+  Period                 => 40 ms;
+  Compute_Execution_Time => 0 ms .. 5 ms;
+  Deadline               => 40 ms;
+  Priority               => 3;
+end PF;
+thread FL
+  --  Feddback Law
+features
+  angle_c : in   event data port  Alpha;
+  angle_o : in   event data port  Alpha;
+  order   : out  event data port  Alpha;
+properties
+  Dispatch_Protocol      => Periodic;
+  Period                 => 10 ms;
+  Compute_Execution_Time => 0 ms .. 2 ms;
+  Deadline               => 10 ms;
+  Priority               => 7;
+end FL;
+thread FF
+  --  Feedback Filter
+features
+  angle_o : out  event data port  Alpha;
+  angle   : in   event data port  Alpha;
+properties
+  Dispatch_Protocol      => Periodic;
+  Period                 => 10 ms;
+  Compute_Execution_Time => 0 ms .. 1 ms;
+  Deadline               => 10 ms;
+  Priority               => 6;
+end FF;
+thread AP
+  --  Acceleration Position Acquisition
+features
+  position : in   event data port  Alpha;
+  acc      : in   event data port  Alpha;
+  acc_i    : out  event data port  Alpha;
+  pos_i    : out  event data port  Alpha;
+properties
+  Dispatch_Protocol      => Periodic;
+  Period                 => 10 ms;
+  Compute_Execution_Time => 0 ms .. 1 ms;
+  Deadline               => 10 ms;
+  Priority               => 5;
+end AP;
+processor cpu
+features
+  i2c   : requires bus access i2c_bus;
+end cpu;
+
+process node_a
+features
+  angle    : in   event data port  Alpha;
+  position : in   event data port  Alpha;
+  acc      : in   event data port  Alpha;
+  pos_c    : in   event data port  Alpha;
+  order    : out  event data port  Alpha;
+end node_a;
+process implementation node_a.impl
+subcomponents
+  FF : thread FF;
+  NL : thread NL;
+  NF : thread NF;
+  PL : thread PL;
+  PF : thread PF;
+  FL : thread FL;
+  AP : thread AP;
+connections
+  --  Inter-thread communication
+  V1:port NL.acc_c   -> PL.acc_c;
+  V2:port PL.angle_c -> FL.angle_c;
+  V3:port NF.pos_o   -> NL.pos_o;
+  V4:port PF.acc_o   -> PL.acc_o;
+  V5:port FF.angle_o -> FL.angle_o;
+  V6:port AP.acc_i   -> PF.acc_i;
+  V7:port AP.pos_i   -> NF.pos_i;
+  -- Process/thread communication
+   
+  V8:port pos_c     -> NL.pos_c;
+  V9:port FL.order -> order;
+  V10:port angle    -> FF.angle;
+  V11:port position -> AP.position;
+  V12:port acc       -> AP.acc;
+end node_a.impl;
+device Operator
+features
+  pos_c : out  event data port  Alpha;
+  i2c   : requires bus access i2c_bus;
+end Operator;
+device GPS
+features
+  position : out  event data port  Alpha;
+  i2c   : requires bus access i2c_bus;
+end GPS;
+device IMU
+features
+  angle : out  event data port  Alpha;
+  acc   : out  event data port  Alpha;
+  i2c   : requires bus access i2c_bus;
+end IMU;
+device Platform
+features
+  order : in  event data port  Alpha;
+  i2c   : requires bus access i2c_bus;
+end Platform;
+bus I2C_bus
+  --  I2C bus
+end I2C_bus;
+system fcs 
+end fcs;
+system implementation fcs.impl
+subcomponents
+   node_a   : process   node_a.impl;
+   cpu_rm   : processor cpu;
+   operator : device    Operator;
+   GPS      : device    GPS;
+   IMU      : device    IMU;
+   platform : device    Platform;
+   i2c      : bus       i2c_bus;
+connections
+  V13:port operator.pos_c -> node_a.pos_c
+  { Actual_Connection_Binding => (reference (i2c));};
+  V14:port node_a.order   -> platform.order
+  { Actual_Connection_Binding => (reference (i2c));};
+  V15:port GPS.position   -> node_a.position
+  { Actual_Connection_Binding => (reference (i2c));};
+  V16:port IMU.angle      -> node_a.angle
+  { Actual_Connection_Binding => (reference (i2c));};
+  V17:port IMU.acc        -> node_a.acc
+  { Actual_Connection_Binding => (reference (i2c));};
+
+  V18:bus access i2c -> GPS.i2c;
+  V19:bus access i2c -> IMU.i2c;
+  V20:bus access i2c -> platform.i2c;
+  V21:bus access i2c -> cpu_rm.i2c;
+properties
+   Actual_Processor_Binding => (reference (cpu_rm)) applies to node_a;
+end fcs.impl;
+end FlightControlSystem;

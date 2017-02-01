@@ -26,7 +26,7 @@ subcomponents
 processing: thread Processing [3];
 voting: thread voter;
 connections
-port processing.Result -> voting.Input {Connection_Pattern => One_To_One;};
+port processing.Result -> voting.Input {Connection_Pattern => (One_To_One);};
 port Input -> processing.Input;
 port voting.Output -> Result;
 end Redundant_Processing.basic;

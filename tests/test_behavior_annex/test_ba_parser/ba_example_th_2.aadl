@@ -1,0 +1,58 @@
+-- Execute conditions are used in the following example which merges sorted 
+-- data received from two ports. Initially, arrival on either port can 
+-- trigger a dispatch. Then arrival on one of the ports triggers the next 
+-- dispatch. Each dispatch consumes one data, which is transferred from one 
+-- of the two ports. Each transition to one of the two next states completes 
+-- the execution of the thread, but its memory is supposed to be preserved so 
+-- that it continues its execution at the next dispatch.
+
+package BA_example2 public
+with Base_Types;
+
+thread merger
+  features
+    p1 : in event data port Base_Types::Integer;
+    p2 : in event data port Base_Types::Integer;
+    m : out event data port Base_Types::Integer;
+end merger;
+
+thread implementation merger.twopersistentstates 
+subcomponents
+  x1 : data Base_Types::Integer;
+  x2 : data Base_Types::Integer;
+annex behavior_specification {**
+  states
+    s0 : initial complete state;
+    comp : state;
+    next1, next2 : complete final state;
+  transitions
+    s0 -[ on dispatch p1 ]-> next2 { x1 := p1 };
+    s0 -[ on dispatch p2 ]-> next1 { x2 := p2 };
+    next1 -[ on dispatch p1 ]-> comp { x1 := p1 };  
+    next2 -[ on dispatch p2 ]-> comp { x2 := p2 };
+    comp -[ x1 < x2 ]-> next1 { m!(x1) };
+    comp -[ x2 <= x1 ]-> next2 { m!(x2) };
+**};
+end merger.twopersistentstates;
+
+-- Next version of the example utilizes the fact that an incoming port holds 
+-- its previous value and only the port that triggers the dispatch has its 
+-- input value frozen (updated).
+thread implementation merger.portbased 
+annex behavior_specification {**
+  states
+    s0 : initial complete state;
+    comp : state;
+    next1 : complete final state; 
+    next2 : complete final state;
+  transitions
+    s0 -[ on dispatch p1 ]-> next2;
+    s0 -[ on dispatch p2 ]-> next1;
+    next1 -[ on dispatch p1 ]-> comp;  
+    next2 -[ on dispatch p2 ]-> comp;
+    comp -[ p1 < p2 ]-> next1 { m!(p1) };
+    comp -[ p2 <= p1 ]-> next2 { m!(p2) };
+**};
+end merger.portbased;
+
+end BA_example2;

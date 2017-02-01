@@ -1,0 +1,734 @@
+------------------------------------------
+---------- Ocarina LNT Generator ---------
+------------------------------------------
+
+FCS.aadl:110:03FCS.aadl:111:03FCS.aadl:112:03FCS.aadl:113:03FCS.aadl:114:03FCS.aadl:115:03FCS.aadl:116:03Begin Thread
+Begin Processor
+Begin Types
+Begin Port
+Begin Main
+FCS.aadl:73:03 FCS.aadl:9:03 FCS.aadl:10:03 FCS.aadl:22:03 FCS.aadl:34:03 FCS.aadl:35:03 FCS.aadl:47:03 FCS.aadl:59:03 FCS.aadl:60:03 FCS.aadl:84:03 FCS.aadl:85:03 "Main.bcg"=  divbranching reduction of "FLIGHTCONTROLSYSTEM_Main.lnt";
+property PROPERTY_Deadlock is
+   deadlock of "Main.bcg";
+   expected FALSE;
+end property;
+property Scheduling_Test (ID) is
+   "Main_$ID.bcg"="Main.bcg"|=
+   [ true* . "ACTIVATION_$ID !T_Error" ] false;
+   expected TRUE;
+end property;
+module FLIGHTCONTROLSYSTEM_Threads (FLIGHTCONTROLSYSTEM_Types) is 
+   process Thread_FF [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_ANGLE_O: LNT_Channel_Data, 
+   AADL_PORT_ANGLE: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_ANGLE (AADLDATA)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_ANGLE_O (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_ANGLE (AADLDATA); 
+               AADL_PORT_ANGLE_O (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Thread_NL [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_POS_C: LNT_Channel_Data, 
+   AADL_PORT_POS_O: LNT_Channel_Data, 
+   AADL_PORT_ACC_C: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_POS_C (AADLDATA); 
+               AADL_PORT_POS_O (AADLDATA)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_ACC_C (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_POS_C (AADLDATA); 
+               AADL_PORT_POS_O (AADLDATA); 
+               AADL_PORT_ACC_C (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Thread_NF [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_POS_I: LNT_Channel_Data, 
+   AADL_PORT_POS_O: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_POS_I (AADLDATA)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_POS_O (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_POS_I (AADLDATA); 
+               AADL_PORT_POS_O (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Thread_PL [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_ACC_C: LNT_Channel_Data, 
+   AADL_PORT_ACC_O: LNT_Channel_Data, 
+   AADL_PORT_ANGLE_C: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_ACC_C (AADLDATA); 
+               AADL_PORT_ACC_O (AADLDATA)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_ANGLE_C (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_ACC_C (AADLDATA); 
+               AADL_PORT_ACC_O (AADLDATA); 
+               AADL_PORT_ANGLE_C (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Thread_PF [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_ACC_I: LNT_Channel_Data, 
+   AADL_PORT_ACC_O: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_ACC_I (AADLDATA)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_ACC_O (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_ACC_I (AADLDATA); 
+               AADL_PORT_ACC_O (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Thread_FL [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_ANGLE_C: LNT_Channel_Data, 
+   AADL_PORT_ANGLE_O: LNT_Channel_Data, 
+   AADL_PORT_ORDER: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_ANGLE_C (AADLDATA); 
+               AADL_PORT_ANGLE_O (AADLDATA)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_ORDER (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_ANGLE_C (AADLDATA); 
+               AADL_PORT_ANGLE_O (AADLDATA); 
+               AADL_PORT_ORDER (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Thread_AP [
+   ACTIVATION: LNT_Channel_Dispatch, 
+   AADL_PORT_POSITION: LNT_Channel_Data, 
+   AADL_PORT_ACC: LNT_Channel_Data, 
+   AADL_PORT_ACC_I: LNT_Channel_Data, 
+   AADL_PORT_POS_I: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            select 
+               ACTIVATION (T_Begin); 
+               AADL_PORT_POSITION (AADLDATA); 
+               AADL_PORT_ACC (AADLDATA)
+               []
+               ACTIVATION (T_End); 
+               AADL_PORT_ACC_I (AADLDATA); 
+               AADL_PORT_POS_I (AADLDATA)
+               []
+               ACTIVATION (T_All); 
+               AADL_PORT_POSITION (AADLDATA); 
+               AADL_PORT_ACC (AADLDATA); 
+               AADL_PORT_ACC_I (AADLDATA); 
+               AADL_PORT_POS_I (AADLDATA)
+               []
+               ACTIVATION (T_Preempt)
+            end select ; 
+            ACTIVATION (T_Ok)
+            []
+            ACTIVATION (T_Error)
+            []
+            ACTIVATION (T_Stop)
+         end select 
+      end loop
+   end process 
+   
+   process Device_Operator [
+   AADL_PORT_POS_C: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            AADL_PORT_POS_C (AADLDATA)
+            []
+            null 
+         end select 
+      end loop
+   end process 
+   
+   process Device_GPS [
+   AADL_PORT_POSITION: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            AADL_PORT_POSITION (AADLDATA)
+            []
+            null 
+         end select 
+      end loop
+   end process 
+   
+   process Device_IMU [
+   AADL_PORT_ANGLE: LNT_Channel_Data, 
+   AADL_PORT_ACC: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            AADL_PORT_ANGLE (AADLDATA)
+            []
+            AADL_PORT_ACC (AADLDATA)
+         end select 
+      end loop
+   end process 
+   
+   process Device_Platform [
+   AADL_PORT_ORDER: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            AADL_PORT_ORDER (AADLDATA)
+            []
+            null 
+         end select 
+      end loop
+   end process 
+   
+end module 
+module FLIGHTCONTROLSYSTEM_Ports (FLIGHTCONTROLSYSTEM_Types) is 
+   process Data_Port [
+   Input: LNT_Channel_Data, 
+   Output: LNT_Channel_Data]
+   is 
+      loop 
+         select 
+            Input (AADLDATA)
+            []
+            Output (AADLDATA)
+         end select 
+      end loop
+   end process 
+   
+   process Event_Port_Periodic [
+   Input: LNT_Channel_Data, 
+   Output: LNT_Channel_Data](
+   Queue_Size: Nat) 
+   is 
+      var 
+         Nb_Input : Nat
+      in 
+         Nb_Input := 0; 
+         loop 
+            select 
+               Input (AADLDATA); 
+               if (Nb_Input <  Queue_Size)
+               then 
+                  Nb_Input := Nb_Input + 1
+               end if
+               []
+               if (Nb_Input >  0)
+               then 
+                  Output (AADLDATA); 
+                  Nb_Input := Nb_Input - 1
+               end if
+            end select 
+         end loop
+      end var
+   end process 
+   
+end module 
+module FLIGHTCONTROLSYSTEM_Types 
+with "==",  "eq" , "<",  "lt" , "<=",  "le" , ">",  "gt" , ">=",  "ge" is 
+   type LNT_Type_Data is 
+      AADLDATA
+   end type 
+   
+   channel LNT_Channel_Data is 
+      (LNT_Type_Data) 
+   end channel
+   type LNT_Type_Time_Constraint is 
+      range 0 .. 240 of Nat
+   end type 
+   
+   type LNT_Type_Thread is 
+      array [0 .. 11 ]of LNT_Type_Time_Constraint
+   end type 
+   
+   type LNT_Type_Thread_Array is 
+      array [1 .. 7 ]of LNT_Type_Thread
+   end type 
+   
+   type LNT_Type_Dispatch is 
+      T_Begin, T_End, T_All, T_Preempt, T_Stop, T_Error, T_Ok
+   end type 
+   
+   type LNT_Type_Event is 
+      Incoming_Event, No_Event
+   end type 
+   
+   channel LNT_Channel_Dispatch is 
+      (LNT_Type_Dispatch) 
+   end channel
+   channel LNT_Channel_Event is 
+      (LNT_Type_Event) 
+   end channel
+   function Thread_Number : Nat 
+   is 
+      return 7
+   end function 
+   
+   function PPCM_THREAD : LNT_Type_Time_Constraint 
+   is 
+      return LNT_Type_Time_Constraint ( 120)
+   end function 
+   
+   function _+_ (
+      n1: LNT_Type_Time_Constraint, 
+      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
+   is 
+      return LNT_Type_Time_Constraint (Nat (n1) + Nat (n2) mod 240)
+   end function 
+   
+   function _-_ (
+      n1: LNT_Type_Time_Constraint, 
+      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
+   is 
+      if (n1 <  n2)
+      then 
+         return LNT_Type_Time_Constraint (((240 - Nat (n2))  + Nat (n1))  mod 240)
+      else 
+         return LNT_Type_Time_Constraint (Nat (n1) - Nat (n2) mod 240)
+      end if
+   end function 
+   
+   function _*_ (
+      n1: LNT_Type_Time_Constraint, 
+      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
+   is 
+      return LNT_Type_Time_Constraint (Nat (n1) * Nat (n2) mod 240)
+   end function 
+   
+end module 
+module FLIGHTCONTROLSYSTEM_Processor (FLIGHTCONTROLSYSTEM_Types) is 
+   function Assign (
+      in var Threads: LNT_Type_Thread_Array, 
+      I: Nat, 
+      K: Nat, 
+      Val: LNT_Type_Time_Constraint) : LNT_Type_Thread_Array 
+   is 
+      var 
+         P : LNT_Type_Thread
+      in 
+         P := Threads[I]; 
+         P[K] := Val; 
+         Threads[I] := P
+      end var; 
+      return Threads
+   end function 
+   
+   function Update_Thread (
+      in var Aux_Threads: LNT_Type_Thread_Array, 
+      I: Nat, 
+      TODO: LNT_Type_Time_Constraint) : LNT_Type_Thread_Array 
+   is 
+      var 
+         P : LNT_Type_Thread
+      in 
+         P := Aux_Threads[I]; 
+         if (P[2] ==  LNT_Type_Time_Constraint (0))
+         then 
+            P[6] := LNT_Type_Time_Constraint (1)
+         end if; 
+         P[2] := P[2] + TODO; 
+         P[8] := LNT_Type_Time_Constraint (1); 
+         if ((P[11] ==  LNT_Type_Time_Constraint (1))  and  (P[2] ==  P[0]) )
+         then 
+            P[7] := LNT_Type_Time_Constraint (1); 
+            P[2] := LNT_Type_Time_Constraint (0); 
+            P[4] := P[5]; 
+            P[5] := PPCM_THREAD; 
+            P[10] := LNT_Type_Time_Constraint (0)
+         elsif ((P[11] ==  LNT_Type_Time_Constraint (0))  and  (P[2] ==  P[0]) )
+         then 
+         
+            P[7] := LNT_Type_Time_Constraint (1); 
+            P[2] := LNT_Type_Time_Constraint (0); 
+            P[3] := P[3] + LNT_Type_Time_Constraint (1); 
+            P[4] := P[4] + P[1]; 
+            P[5] := P[3] * P[1]
+         end if; 
+         Aux_Threads[I] := P
+      end var; 
+      return Aux_Threads
+   end function 
+   
+   process Sporadic_Notif [
+   INCOMING_EVENT_GATE: LNT_Channel_Event](
+   in out Threads: LNT_Type_Thread_Array,
+   k: Nat,
+   Counter: LNT_Type_Time_Constraint,
+   in out Is_Activated: bool) 
+   is 
+      select 
+         INCOMING_EVENT_GATE (Incoming_Event); 
+         Threads := Assign (Threads, K, 3, (Threads[k][3] + LNT_Type_Time_Constraint (1)) )
+         []
+         INCOMING_EVENT_GATE (No_Event)
+      end select ; 
+      if ((Counter >=  Threads[k][4])  and  (Threads[k][3] >  LNT_Type_Time_Constraint (0)) )
+      then 
+         Threads := Assign (Threads, k, 4, Counter); 
+         Threads := Assign (Threads, k, 5, (Counter + Threads[k][1]) ); 
+         Threads := Assign (Threads, k, 10, LNT_Type_Time_Constraint (1)); 
+         Threads := Assign (Threads, K, 3, (Threads[k][3] - LNT_Type_Time_Constraint (1)) ); 
+         Is_Activated := true
+      end if
+   end process 
+   
+   process Thread_Activation [
+   ACTIVATION: LNT_Channel_Dispatch](
+   in out Threads: LNT_Type_Thread_Array,
+   K: Nat) 
+   is 
+      if (Threads[K][8] ==  LNT_Type_Time_Constraint (1))
+      then 
+         if ((Threads[K][6] ==  LNT_Type_Time_Constraint (1))  and  (Threads[K][7] ==  LNT_Type_Time_Constraint (1)) )
+         then 
+            ACTIVATION (T_All); 
+            Threads := Assign (Threads, K, 6, LNT_Type_Time_Constraint (0)); 
+            Threads := Assign (Threads, K, 7, LNT_Type_Time_Constraint (0))
+         elsif (Threads[K][7] ==  LNT_Type_Time_Constraint (1))
+         then 
+         
+            ACTIVATION (T_End); 
+            Threads := Assign (Threads, K, 7, LNT_Type_Time_Constraint (0))
+         elsif (Threads[K][6] ==  LNT_Type_Time_Constraint (1))
+         then 
+         
+            ACTIVATION (T_Begin); 
+            Threads := Assign (Threads, K, 6, LNT_Type_Time_Constraint (0))
+         else 
+            ACTIVATION (T_Preempt)
+         end if; 
+         Threads := Assign (Threads, K, 8, LNT_Type_Time_Constraint (0)); 
+         ACTIVATION (T_Ok)
+      elsif (Threads[K][9] ==  LNT_Type_Time_Constraint (0))
+      then 
+      
+         ACTIVATION (T_ERROR)
+      end if
+   end process 
+   
+   process Processor [
+   ACTIVATION_1: LNT_Channel_Dispatch, 
+   ACTIVATION_2: LNT_Channel_Dispatch, 
+   ACTIVATION_3: LNT_Channel_Dispatch, 
+   ACTIVATION_4: LNT_Channel_Dispatch, 
+   ACTIVATION_5: LNT_Channel_Dispatch, 
+   ACTIVATION_6: LNT_Channel_Dispatch, 
+   ACTIVATION_7: LNT_Channel_Dispatch]
+   is 
+      var 
+         Threads : LNT_Type_Thread_Array, 
+         Counter : LNT_Type_Time_Constraint, 
+         I : Nat, 
+         k : Nat, 
+         Preempt : bool, 
+         TODO : LNT_Type_Time_Constraint, 
+         Nb_Active_Thread : Nat
+      in 
+         Counter := LNT_Type_Time_Constraint (0); 
+         Threads := LNT_Type_Thread_Array (LNT_Type_Thread (LNT_Type_Time_Constraint (0))); 
+         Threads[ 1] := LNT_Type_Thread (LNT_Type_Time_Constraint (2), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 2] := LNT_Type_Thread (LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 3] := LNT_Type_Thread (LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 4] := LNT_Type_Thread (LNT_Type_Time_Constraint (5), LNT_Type_Time_Constraint (40), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (40), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 5] := LNT_Type_Thread (LNT_Type_Time_Constraint (5), LNT_Type_Time_Constraint (40), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (40), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 6] := LNT_Type_Thread (LNT_Type_Time_Constraint (20), LNT_Type_Time_Constraint (120), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (120), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         Threads[ 7] := LNT_Type_Thread (LNT_Type_Time_Constraint (10), LNT_Type_Time_Constraint (120), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (120), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         loop 
+            select 
+               if (Counter <  PPCM_THREAD)
+               then 
+                  Nb_Active_Thread := 0; 
+                  K := 1; 
+                  while (K <=  Thread_Number) loop
+                     if ((Counter >=  Threads[K][4])  and  (Counter >=  Threads[K][5]) )
+                     then 
+                        Threads := Assign (Threads, K, 9, LNT_Type_Time_Constraint (0))
+                     elsif ((Threads[K][10] ==  LNT_Type_Time_Constraint (1))  and  (Threads[K][9] ==  LNT_Type_Time_Constraint (1))  and  (Counter >=  Threads[K][4])  and  (Counter <  Threads[K][5]) )
+                     then 
+                     
+                        Preempt := true; 
+                        TODO := Threads[K][0] - Threads[K][2]; 
+                        I := 1; 
+                        while ((I <=  (K - 1) )  and  Preempt) loop
+                           if ((Threads[I][10] ==  LNT_Type_Time_Constraint (1))  and  (Threads[I][9] ==  LNT_Type_Time_Constraint (1))  and  (Counter + TODO >  Threads[I][4]) )
+                           then 
+                              TODO := Threads[I][4] - Counter; 
+                              Preempt := false
+                           else 
+                              I := I + 1
+                           end if
+                        end loop; 
+                        Counter := Counter + TODO; 
+                        Nb_Active_Thread := Nb_Active_Thread + 1; 
+                        Threads := Update_Thread (Threads, K, TODO); 
+                        Thread_Activation [ACTIVATION_1] (!?Threads,  1); 
+                        Thread_Activation [ACTIVATION_2] (!?Threads,  2); 
+                        Thread_Activation [ACTIVATION_3] (!?Threads,  3); 
+                        Thread_Activation [ACTIVATION_4] (!?Threads,  4); 
+                        Thread_Activation [ACTIVATION_5] (!?Threads,  5); 
+                        Thread_Activation [ACTIVATION_6] (!?Threads,  6); 
+                        Thread_Activation [ACTIVATION_7] (!?Threads,  7)
+                     else 
+                        k := k + 1
+                     end if
+                  end loop; 
+                  if (Nb_Active_Thread ==  0)
+                  then 
+                     Counter := Counter + LNT_Type_Time_Constraint (1)
+                  end if
+               end if
+               []
+               if (Counter >=  PPCM_THREAD)
+               then 
+                  ACTIVATION_1 (T_Stop); 
+                  ACTIVATION_2 (T_Stop); 
+                  ACTIVATION_3 (T_Stop); 
+                  ACTIVATION_4 (T_Stop); 
+                  ACTIVATION_5 (T_Stop); 
+                  ACTIVATION_6 (T_Stop); 
+                  ACTIVATION_7 (T_Stop)
+               end if
+            end select 
+         end loop
+      end var
+   end process 
+   
+end module 
+module FLIGHTCONTROLSYSTEM_Main (FLIGHTCONTROLSYSTEM_Types, FLIGHTCONTROLSYSTEM_Processor, FLIGHTCONTROLSYSTEM_Threads, FLIGHTCONTROLSYSTEM_Ports) is 
+   process Main [
+   ACTIVATION_3: LNT_Channel_Dispatch, 
+   SEND_ff_angle_o__fl_angle_o: LNT_Channel_Data, 
+   RECEIVE_imu_angle__node_a_angle: LNT_Channel_Data, 
+   ACTIVATION_6: LNT_Channel_Dispatch, 
+   RECEIVE_operator_pos_c__node_a_pos_c: LNT_Channel_Data, 
+   RECEIVE_nf_pos_o__nl_pos_o: LNT_Channel_Data, 
+   SEND_nl_acc_c__pl_acc_c: LNT_Channel_Data, 
+   ACTIVATION_7: LNT_Channel_Dispatch, 
+   RECEIVE_ap_pos_i__nf_pos_i: LNT_Channel_Data, 
+   SEND_nf_pos_o__nl_pos_o: LNT_Channel_Data, 
+   ACTIVATION_5: LNT_Channel_Dispatch, 
+   RECEIVE_nl_acc_c__pl_acc_c: LNT_Channel_Data, 
+   RECEIVE_pf_acc_o__pl_acc_o: LNT_Channel_Data, 
+   SEND_pl_angle_c__fl_angle_c: LNT_Channel_Data, 
+   ACTIVATION_4: LNT_Channel_Dispatch, 
+   RECEIVE_ap_acc_i__pf_acc_i: LNT_Channel_Data, 
+   SEND_pf_acc_o__pl_acc_o: LNT_Channel_Data, 
+   ACTIVATION_1: LNT_Channel_Dispatch, 
+   RECEIVE_pl_angle_c__fl_angle_c: LNT_Channel_Data, 
+   RECEIVE_ff_angle_o__fl_angle_o: LNT_Channel_Data, 
+   SEND_node_a_order__platform_order: LNT_Channel_Data, 
+   ACTIVATION_2: LNT_Channel_Dispatch, 
+   RECEIVE_gps_position__node_a_position: LNT_Channel_Data, 
+   RECEIVE_imu_acc__node_a_acc: LNT_Channel_Data, 
+   SEND_ap_acc_i__pf_acc_i: LNT_Channel_Data, 
+   SEND_ap_pos_i__nf_pos_i: LNT_Channel_Data, 
+   SEND_operator_pos_c__node_a_pos_c: LNT_Channel_Data, 
+   SEND_gps_position__node_a_position: LNT_Channel_Data, 
+   SEND_imu_angle__node_a_angle: LNT_Channel_Data, 
+   SEND_imu_acc__node_a_acc: LNT_Channel_Data, 
+   RECEIVE_node_a_order__platform_order: LNT_Channel_Data]
+   is 
+      par 
+         ACTIVATION_3 , SEND_ff_angle_o__fl_angle_o , SEND_imu_angle__node_a_angle -> 
+         par 
+            SEND_imu_angle__node_a_angle , RECEIVE_imu_angle__node_a_angle -> 
+            Event_Port_Periodic [SEND_imu_angle__node_a_angle, RECEIVE_imu_angle__node_a_angle] ( 3)
+            ||
+            ACTIVATION_3 , SEND_ff_angle_o__fl_angle_o , RECEIVE_imu_angle__node_a_angle -> 
+            Thread_FF [ACTIVATION_3, SEND_ff_angle_o__fl_angle_o, RECEIVE_imu_angle__node_a_angle]
+         end par 
+         ||
+         ACTIVATION_6 , SEND_operator_pos_c__node_a_pos_c , SEND_nf_pos_o__nl_pos_o , SEND_nl_acc_c__pl_acc_c -> 
+         par 
+            SEND_operator_pos_c__node_a_pos_c , RECEIVE_operator_pos_c__node_a_pos_c -> 
+            Event_Port_Periodic [SEND_operator_pos_c__node_a_pos_c, RECEIVE_operator_pos_c__node_a_pos_c] ( 3)
+            ||
+            SEND_nf_pos_o__nl_pos_o , RECEIVE_nf_pos_o__nl_pos_o -> 
+            Event_Port_Periodic [SEND_nf_pos_o__nl_pos_o, RECEIVE_nf_pos_o__nl_pos_o] ( 3)
+            ||
+            ACTIVATION_6 , RECEIVE_operator_pos_c__node_a_pos_c , RECEIVE_nf_pos_o__nl_pos_o , SEND_nl_acc_c__pl_acc_c -> 
+            Thread_NL [ACTIVATION_6, RECEIVE_operator_pos_c__node_a_pos_c, RECEIVE_nf_pos_o__nl_pos_o, SEND_nl_acc_c__pl_acc_c]
+         end par 
+         ||
+         ACTIVATION_7 , SEND_ap_pos_i__nf_pos_i , SEND_nf_pos_o__nl_pos_o -> 
+         par 
+            SEND_ap_pos_i__nf_pos_i , RECEIVE_ap_pos_i__nf_pos_i -> 
+            Event_Port_Periodic [SEND_ap_pos_i__nf_pos_i, RECEIVE_ap_pos_i__nf_pos_i] ( 3)
+            ||
+            ACTIVATION_7 , RECEIVE_ap_pos_i__nf_pos_i , SEND_nf_pos_o__nl_pos_o -> 
+            Thread_NF [ACTIVATION_7, RECEIVE_ap_pos_i__nf_pos_i, SEND_nf_pos_o__nl_pos_o]
+         end par 
+         ||
+         ACTIVATION_5 , SEND_nl_acc_c__pl_acc_c , SEND_pf_acc_o__pl_acc_o , SEND_pl_angle_c__fl_angle_c -> 
+         par 
+            SEND_nl_acc_c__pl_acc_c , RECEIVE_nl_acc_c__pl_acc_c -> 
+            Event_Port_Periodic [SEND_nl_acc_c__pl_acc_c, RECEIVE_nl_acc_c__pl_acc_c] ( 3)
+            ||
+            SEND_pf_acc_o__pl_acc_o , RECEIVE_pf_acc_o__pl_acc_o -> 
+            Event_Port_Periodic [SEND_pf_acc_o__pl_acc_o, RECEIVE_pf_acc_o__pl_acc_o] ( 3)
+            ||
+            ACTIVATION_5 , RECEIVE_nl_acc_c__pl_acc_c , RECEIVE_pf_acc_o__pl_acc_o , SEND_pl_angle_c__fl_angle_c -> 
+            Thread_PL [ACTIVATION_5, RECEIVE_nl_acc_c__pl_acc_c, RECEIVE_pf_acc_o__pl_acc_o, SEND_pl_angle_c__fl_angle_c]
+         end par 
+         ||
+         ACTIVATION_4 , SEND_ap_acc_i__pf_acc_i , SEND_pf_acc_o__pl_acc_o -> 
+         par 
+            SEND_ap_acc_i__pf_acc_i , RECEIVE_ap_acc_i__pf_acc_i -> 
+            Event_Port_Periodic [SEND_ap_acc_i__pf_acc_i, RECEIVE_ap_acc_i__pf_acc_i] ( 3)
+            ||
+            ACTIVATION_4 , RECEIVE_ap_acc_i__pf_acc_i , SEND_pf_acc_o__pl_acc_o -> 
+            Thread_PF [ACTIVATION_4, RECEIVE_ap_acc_i__pf_acc_i, SEND_pf_acc_o__pl_acc_o]
+         end par 
+         ||
+         ACTIVATION_1 , SEND_pl_angle_c__fl_angle_c , SEND_ff_angle_o__fl_angle_o , SEND_node_a_order__platform_order -> 
+         par 
+            SEND_pl_angle_c__fl_angle_c , RECEIVE_pl_angle_c__fl_angle_c -> 
+            Event_Port_Periodic [SEND_pl_angle_c__fl_angle_c, RECEIVE_pl_angle_c__fl_angle_c] ( 3)
+            ||
+            SEND_ff_angle_o__fl_angle_o , RECEIVE_ff_angle_o__fl_angle_o -> 
+            Event_Port_Periodic [SEND_ff_angle_o__fl_angle_o, RECEIVE_ff_angle_o__fl_angle_o] ( 3)
+            ||
+            ACTIVATION_1 , RECEIVE_pl_angle_c__fl_angle_c , RECEIVE_ff_angle_o__fl_angle_o , SEND_node_a_order__platform_order -> 
+            Thread_FL [ACTIVATION_1, RECEIVE_pl_angle_c__fl_angle_c, RECEIVE_ff_angle_o__fl_angle_o, SEND_node_a_order__platform_order]
+         end par 
+         ||
+         ACTIVATION_2 , SEND_gps_position__node_a_position , SEND_imu_acc__node_a_acc , SEND_ap_acc_i__pf_acc_i , SEND_ap_pos_i__nf_pos_i -> 
+         par 
+            SEND_gps_position__node_a_position , RECEIVE_gps_position__node_a_position -> 
+            Event_Port_Periodic [SEND_gps_position__node_a_position, RECEIVE_gps_position__node_a_position] ( 3)
+            ||
+            SEND_imu_acc__node_a_acc , RECEIVE_imu_acc__node_a_acc -> 
+            Event_Port_Periodic [SEND_imu_acc__node_a_acc, RECEIVE_imu_acc__node_a_acc] ( 3)
+            ||
+            ACTIVATION_2 , RECEIVE_gps_position__node_a_position , RECEIVE_imu_acc__node_a_acc , SEND_ap_acc_i__pf_acc_i , SEND_ap_pos_i__nf_pos_i -> 
+            Thread_AP [ACTIVATION_2, RECEIVE_gps_position__node_a_position, RECEIVE_imu_acc__node_a_acc, SEND_ap_acc_i__pf_acc_i, SEND_ap_pos_i__nf_pos_i]
+         end par 
+         ||
+         SEND_operator_pos_c__node_a_pos_c -> 
+         Device_Operator [SEND_operator_pos_c__node_a_pos_c]
+         ||
+         SEND_gps_position__node_a_position -> 
+         Device_GPS [SEND_gps_position__node_a_position]
+         ||
+         SEND_imu_angle__node_a_angle , SEND_imu_acc__node_a_acc -> 
+         Device_IMU [SEND_imu_angle__node_a_angle, SEND_imu_acc__node_a_acc]
+         ||
+         SEND_node_a_order__platform_order -> 
+         par 
+            RECEIVE_node_a_order__platform_order , SEND_node_a_order__platform_order -> 
+            Data_Port [RECEIVE_node_a_order__platform_order, SEND_node_a_order__platform_order]
+            ||
+            RECEIVE_node_a_order__platform_order -> 
+            Device_Platform [RECEIVE_node_a_order__platform_order]
+         end par 
+         ||
+         ACTIVATION_1 , ACTIVATION_2 , ACTIVATION_3 , ACTIVATION_4 , ACTIVATION_5 , ACTIVATION_6 , ACTIVATION_7 -> 
+         Processor [ACTIVATION_1, ACTIVATION_2, ACTIVATION_3, ACTIVATION_4, ACTIVATION_5, ACTIVATION_6, ACTIVATION_7]
+      end par 
+   end process 
+   
+end module 

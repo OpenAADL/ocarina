@@ -4,7 +4,7 @@
 **                                                                          **
 **                  OCARINA.ME_AADL.AADL_INSTANCES.NODES                    **
 **                                                                          **
-**               Copyright (C) 2004-2008, GET-Telecom Paris.                **
+**    Copyright (C) 2004-2009, GET-Telecom Paris, 2010-2016 ESA & ISAE.     **
 **                                                                          **
 ** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
 ** it under terms of the GNU General Public License as published by the     **
@@ -67,8 +67,8 @@ module Ocarina::ME_AADL::AADL_Instances::Nodes {
   };
 
   interface AADL_Entity : Node_Id {
-    Node_Id  Next_Entity;// Used by the Ocarina core to build
-    // list of elements
+    Node_Id  Next_Entity;
+    // Used by the Ocarina core to build list of elements
   };
 
   interface Named_AADL_Entity : AADL_Entity {
@@ -309,4 +309,12 @@ module Ocarina::ME_AADL::AADL_Instances::Nodes {
     Node_Id  In_Modes;
   };
 
+  interface Annex_Instance : Named_AADL_Entity {
+    Node_Id  In_Modes;
+    
+    Node_Id  Corresponding_Annex;
+    // Root of the tree of the parsed annex. This node is not an AADL
+    // tree node.
+  };
+  
 };

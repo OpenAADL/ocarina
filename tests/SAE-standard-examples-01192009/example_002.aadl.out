@@ -1,3 +1,4 @@
 example_002.aadl:26:31: parsing Port_Spec, token ';' is expected, found identifier 'data_type'
 example_002.aadl:25:01: parsing Features, list is empty
+example_002.aadl:37:09: parsing Package_Specification, Empty packages are not allowed
 Cannot parse AADL specifications

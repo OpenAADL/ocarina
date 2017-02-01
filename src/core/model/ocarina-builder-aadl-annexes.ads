@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -37,13 +37,13 @@ with Locations;
 
 package Ocarina.Builder.AADL.Annexes is
 
-   function Set_Annex_Content
+   procedure Set_Annex_Content
      (Annex : Ocarina.Types.Node_Id;
-      Text  : Ocarina.Types.Name_Id) return Boolean;
+      Text  : Ocarina.Types.Name_Id);
    --  Set the text of the annex. Annex is the Node_Id of the annex
    --  library or subclause, returned by Add_New_Annex_Subclause or
    --  Add_New_Annex_Library. Text is the Name_Id referencing the text
-   --  of the annex. Return True is everything went right, else False.
+   --  of the annex.
 
    function Add_New_Annex_Subclause
      (Loc        : Locations.Location;

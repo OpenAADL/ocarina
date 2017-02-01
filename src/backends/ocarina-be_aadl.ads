@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -53,6 +53,14 @@ package Ocarina.BE_AADL is
       Criterion : Node_Id := No_Node);
    --  Print the AADL declarations for which the given Is_Printable
    --  (<Node>, Criterion) is True.
+
+   procedure Generate_AADL_Model
+     (Node       : Node_Id;
+      Whole_Tree : Boolean := True);
+   --  Prints all the AADL source corresponding to the subtree having
+   --  Node as a root. If given the absolute root of an AADL syntactic
+   --  tree, prints all the parsed AADL source. If the Whole_Tree is
+   --  True, disregards Node and prints the whole declarative tree.
 
 private
 

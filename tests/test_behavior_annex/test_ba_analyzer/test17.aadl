@@ -1,0 +1,29 @@
+
+package BA_example public
+with Base_Types;
+data d 
+end d;
+
+thread merger
+  features
+    p1 : in event data port Base_Types::Integer;
+    p2 : in event data port Base_Types::Integer;
+    m : out event data port Base_Types::Integer;
+    r : requires data access d;
+end merger;
+
+thread implementation merger.impl 
+annex behavior_specification {**
+  states
+    s0 : initial complete state;
+    comp : state;
+    next1, next2 : complete final state;
+  
+  transitions
+    s0 -[ on dispatch r ]-> next2 { x1 := p1 }; -- errors : "r" (dispatch trigger) must refer to a provides subprogram access feature
+    s0 -[ on dispatch p2 ]-> next1 { x2 := p2 };
+**};
+end merger.impl;
+
+
+end BA_example;

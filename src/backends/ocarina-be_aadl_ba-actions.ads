@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -31,10 +31,10 @@
 
 package Ocarina.BE_AADL_BA.Actions is
 
-   procedure Print_Behavior_Actions (List : List_Id);
+   procedure Print_Behavior_Action_Block    (Node : Node_Id);
 
    procedure Print_Data_Component_Reference (Node : Node_Id);
 
-   procedure Print_Id (Node : Node_Id);
+   procedure Print_Name                     (Node : Node_Id);
 
 end Ocarina.BE_AADL_BA.Actions;

@@ -56,12 +56,13 @@ package body Ocarina.Parser is
      (Language  : Name_Id;
       AADL_Root : Node_Id;
       From      : Location;
-      To        : Location := No_Location) return Node_Id
+      To        : Location := No_Location;
+      Container : Node_Id  := No_Node) return Node_Id
    is
    begin
       for P in Parsers.First .. Parsers.Last loop
          if Language = Parsers.Table (P).Language then
-            return Parsers.Table (P).Parser (AADL_Root, From, To);
+            return Parsers.Table (P).Parser (AADL_Root, From, To, Container);
          end if;
       end loop;
 

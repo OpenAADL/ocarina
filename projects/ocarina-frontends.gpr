@@ -6,7 +6,7 @@
 --                                                                          --
 --                              P r o j e c t                               --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -39,6 +39,8 @@ project Ocarina.Frontends is
    for Source_Dirs use 
      (Src_Dir & "/aadl", 
       Src_Dir & "/aadl_ba",
+      Src_Dir & "/aadl_ema",
+      Src_Dir & "/ao4aadl",
       Src_Dir & "/real");
    for Object_Dir use Build_Dir & "/objects";
    for Library_Dir use Build_Dir & "/libs";

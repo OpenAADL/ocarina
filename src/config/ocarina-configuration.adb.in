@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -39,6 +39,8 @@ with Ocarina.Transfo.Fusions;
 with Ocarina.FE_REAL;
 with Ocarina.FE_AADL;
 with Ocarina.FE_AADL_BA;
+with Ocarina.FE_AADL_EMA;
+with Ocarina.FE_AO4AADL;
 
 with Ocarina.Analyzer;
 
@@ -200,7 +202,9 @@ package body Ocarina.Configuration is
       Ocarina.Analyzer.Init_Analyzers;
       Ocarina.FE_AADL.Init;
       Ocarina.FE_AADL_BA.Init;
+      Ocarina.FE_AADL_EMA.Init;
       Ocarina.FE_REAL.Init;
+      Ocarina.FE_AO4AADL.Init;
       Ocarina.BE_AADL.Init;
       Ocarina.BE_AADL_BA.Init;
       Ocarina.BE_REAL.Init;
@@ -223,7 +227,9 @@ package body Ocarina.Configuration is
       Installation_Directory := No_Name;
       Ocarina.FE_AADL.Reset;
       Ocarina.FE_AADL_BA.Reset;
+      Ocarina.FE_AADL_EMA.Reset;
       Ocarina.FE_REAL.Reset;
+      Ocarina.FE_AO4AADL.Reset;
       Ocarina.Parser.Reset_Parsers;
       Ocarina.Analyzer.Reset_Analyzers;
       Ocarina.Backends.Reset;

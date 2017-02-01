@@ -36,7 +36,7 @@ Evaluating theorem test_env_subtheorem_call_multiple_parameters
 
  * Iterate for variable: rma.erc32_cpu_rm
 Content of set a_set (test_real_exec_env_01.aadl:102:12) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_env_01.aadl:72:01
+  rma.erc32_node_a: 14 component instance test_real_exec_env_01.aadl:72:01
      -> value for y is 3
    Evaluating x
    value for x after evaluating sub_theorem_3 is 4.00000E+00
@@ -51,8 +51,8 @@ Evaluating theorem test_env_subtheorem_call_with_domain
 
  * Iterate for variable: rma.erc32_node_a
 Content of set a_set (test_real_exec_env_01.aadl:112:12) is 
-  rma.erc32_node_a_task1: 20 component instance test_real_exec_env_01.aadl:27:01
-  rma.erc32_node_a_task2: 52 component instance test_real_exec_env_01.aadl:40:01
+  rma.erc32_node_a_task1: 22 component instance test_real_exec_env_01.aadl:27:01
+  rma.erc32_node_a_task2: 57 component instance test_real_exec_env_01.aadl:40:01
      -> value for y is 1
    Evaluating x
    value for x after evaluating sub_theorem_4 is 1.00000E+09
@@ -67,7 +67,7 @@ Evaluating theorem test_env_subtheorem_call_global_variable
 
  * Iterate for variable: rma.erc32_cpu_rm
 Content of set a_set (test_real_exec_env_01.aadl:122:12) is 
-  rma.erc32_node_a: 13 component instance test_real_exec_env_01.aadl:72:01
+  rma.erc32_node_a: 14 component instance test_real_exec_env_01.aadl:72:01
      -> value for y is 1
    Evaluating x
    value for x after evaluating sub_theorem_5 is 1.00000E+00

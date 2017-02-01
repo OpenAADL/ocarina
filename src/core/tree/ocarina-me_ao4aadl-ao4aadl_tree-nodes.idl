@@ -1,0 +1,600 @@
+// AO4AADL Tree
+
+module Ocarina::ME_AO4AADL::AO4AADL_Tree::Nodes {
+
+  /******************/
+  /* Internal types */
+  /******************/
+
+  typedef octet Mode_Id;
+  typedef long  Name_Id;
+  typedef long  Value_Id;
+
+  /******************/
+  /* Internal nodes */
+  /******************/
+
+  interface Node_Id {
+    Node_Id Next_Node;        // Link nodes together
+  };
+
+  interface Identifier : Node_Id {
+    Name_Id  Name;
+  };
+
+  interface List_Id {
+    Node_Id  First_Node;
+    Node_Id  Last_Node;
+  }; 
+
+  interface Node_Container : Node_Id {
+    Node_Id  Item;
+  };
+
+  interface Definition : Node_Id {
+    Node_Id  Identifier;
+  };
+
+  interface Wildcard : Node_Id {
+  };
+
+  interface Star : Wildcard {
+  };
+
+  interface Interval : Wildcard {
+  };
+
+  interface Literal : Node_Id {
+    Value_Id  Value;
+  };
+
+  /* 
+     Aspect_Annex ::= { Aspect_Expression }+  
+  */
+
+  interface Aspect_Annex : Node_Id {
+    List_Id Aspect_Expressions; 
+    // une annexe peut avoir 1 ou plusieurs "Aspect_Expression" 
+  };
+
+
+  /*
+    Aspect_Expression ::= aspect Aspect_Identifier {
+        [ Aspect_Precedence; ]
+    	[ Components_applied_to; ]
+    	{ Pointcut_Specification; }+
+    	{ Advice_Specification }+
+    }
+
+   */
+
+  interface Aspect_Expression : Definition {
+    Node_Id Components_Applied_Tos; 
+    // un aspect "Aspect_Expression" peut etre appliqué à plusieurs
+    // composants AADL
+
+    Node_Id Aspect_Precedence;
+    
+    List_Id Pointcut_Specification;
+    // un aspect "Aspect_Expression" peut avoir plusieurs pointcuts
+    
+    List_Id Advice_Specification;
+    // un aspect "Aspect_Expression" peut avoir plusieurs advices
+    
+  };
+
+  /*
+    Components_applied_to ::= applied to ListComponents
+
+    ListComponents ::= Component { ,Component }*
+
+   */
+
+  interface Components_Applied_To : Node_Id {
+    List_Id Components;
+    // un aspect "Aspect_Expression" peut etre appliqué à plusieurs
+    // composants AADL
+  };
+
+  /*
+    Component ::= Component_Category Component_Identifier
+    
+    Component_Category ::= thread | process | subprogram 
+
+   */
+
+  interface Component : Definition {
+    octet Component_Category;
+    // pour spécifier les composants aux quels est appliqué un aspect,
+    // il faut préciser pour chaque composant son
+    // identifiant(Definition) et sa category
+  };
+
+  /* 
+    Aspect_Precedence ::= precedence Aspect_Identifier { ,Aspect_Identifier }+
+  */
+
+  interface Aspect_Precedence : Node_Id {
+    List_Id Identifiers;// un "Aspect_Precedence" nécessite au moins deux identifiants d'aspects
+  };
+
+  /*
+    Pointcut_Specification ::= pointcut Pointcut_Identifier ( [ ParamList ] ) :
+                           Pointcut_Expression
+
+
+    ParamList ::= Parameter_Specification { ,Parameter_Specification }*
+   */
+
+
+  interface Pointcut_Specification : Definition {
+    // chaque pointcut doit avoir un identifiant (Definition)
+    List_Id   Parameters;
+    // une liste de paramètres
+    Node_Id   Pointcut_Expression;
+    // et une expression (pour préciser les points d'interception)
+  };
+
+  /*
+    Parameter_Specification ::= Parameter_Identifier : Type_Identifier
+   */
+
+  interface Parameter_Specification : Definition {
+    // la spécification d'un paramètre est composé d'un identifiant
+    // (Definition)
+    Node_Id  Type_Identifier;
+    // et un type
+  };
+
+  /*
+    Pointcut_Expression :=  Pointcut_Primitive
+                         | ( Pointcut_Expression ) 
+			 |  Pointcut_Expression && Pointcut_Expression 
+			 |  Pointcut_Expression || Pointcut_Expression
+   */
+
+  interface Pointcut_Expression : Node_Id {
+    Node_Id Caller;
+    Node_Id Operator;
+    Node_Id Pointcut_Expression;
+  };
+
+  /*
+    Pointcut_Primitive ::= Call | Execution | Args
+
+    Call ::= call Callee
+
+    Execution ::= execution Callee
+
+    Callee ::= subprogram ( Subprogram_Identifier ( [ Subprogram_Parameter_Types ] ) )
+             | inport ( Input_Port_Identifier ( [ Data_Type ] ) )
+             | outport ( Ouput_Port_Identifier ( [ Data_Type ] ) )
+             | inoutport ( InOuput_Port_Identifier ( [ Data_Type ] ) )
+
+    Subprogram_Parameter_Types ::= Type { ,Type }*
+
+    Data_Type ::= Type
+    
+    Type ::= .. | Type_Identifier 
+    Subprogram_Identifier ::= Identifier | *
+
+    Input_Port_Identifier ::= Identifier | *
+
+    Output_Port_Identifier ::= Identifier | *
+
+    InOutput_Port_Identifier ::= Identifier | *
+
+  */
+
+  interface Caller : Node_Id {
+    // Pour les primitives de type "call" et "execution": ils ont un
+    // appelant(call ou execution)
+    octet Caller_Kind; 
+    Node_Id  Callee;
+    // et un appelé (subprogram ou port)
+  };
+
+  interface Call : Caller {
+    // primitive de type "call"
+  };
+
+  interface Execution : Caller {
+    // primitive de type "execution"
+  };
+
+  interface Callee : Definition {
+    // chaque appelé (subprogram ou port) doit avoir un identifiant
+    // (Definition)
+    List_Id   Parameters;
+    // et une liste de types de paramètres
+  };
+
+  interface Subprogram_Call : Callee {
+    // appelé de type "subprogram"
+  };
+
+  interface Port_Call : Callee {
+    // appelé de type "port"
+    Mode_Id  Mode;
+    // pour ce dernier, il faut préciser son mode (inport, outport ou
+    // inoutport)
+  };
+
+  /*
+    Args ::= args (Arguments)
+
+    Arguments ::= Argument { ,Argument }*
+
+    Argument ::= .. | Argument_Identifier { ,Argument_Identifier }*
+
+   */
+
+  interface Args : Node_Id {
+    // La primitive de type "args" est combiné généralement avec une
+    // primitive de type "call ou
+    List_Id Arguments;
+    // "execution" pour préciser la liste des identifiants des
+    // paramètres que peut prendre un "subprogram" ou un "port"
+  };
+
+  /*
+   Advice_Specification ::= advice Advice_Declaration : Pointcut_Reference
+                         Advice_Action
+
+  */
+
+  interface Advice_Specification : Node_Id {
+    // chaque spécification d'un "advice" doit etre composé de:
+    Node_Id  Advice_Declaration;
+    // une "Advice_Declaration" (Before_Advice | After_Advice |
+    // Around_Advice)
+    Node_Id  Pointcut_Reference;
+    // une "Pointcut_Reference" pour référencer un pointcut déjà
+    // déclaré et sur lequel va agir cet advice
+    Node_Id  Advice_Action;
+    // une "Advice_Action" pour spécifier le code à
+	     	     // exécuter par l'adice
+  };
+
+  /*
+    Advice_Declaration ::= Before_Advice | After_Advice | Around_Advice
+    
+    Before_Advice::= before ([Paramlist])
+
+    After_Advice::= after ([Paramlist])
+
+    Around_Advice::= around ([Paramlist])
+   */
+
+  interface Advice_Declaration : Node_Id {
+    // "Advice_Declaration" est composé de deux parties:
+    octet  Advice_Category;
+    // le type de l'advice (before, after ou around)
+    List_Id    Parameters;
+    // la liste des paramètres (types+identifiants des paramètres)
+    // qu'un pointcut peut prendre en paramètre
+  };
+
+  interface Pointcut_Reference : Definition {
+    List_Id  Parameter_Profile;
+  };
+
+  /*
+    Advice_Action = {
+      [ Variables_Declaration ]
+      [ Initialisation ]
+      { Action }+
+  }
+
+    }
+   */
+   interface Advice_Action : Node_Id {
+     // chaque advice peut avoir trois parties:
+     Node_Id Variables_Declaration;
+     // la déclaration d'une liste de variables locales
+     Node_Id Initialisation;
+     // une initialisation des variables
+     List_Id Actions;
+     // une liste d'actions à exécuter 
+   };
+   
+   /*
+     Variables_Declaration::= variables { { Variable }+ }
+   */
+	
+  interface Variables_Declaration : Node_Id {
+    List_Id Variables;
+    // la déclaration d'une liste de variables locales pour l'advice
+  };
+
+  /*
+    Variable ::= Variable_Identifier {, Variable_Identifier}* : Type_Identifier ;
+  */
+	
+  interface Variable : Node_Id {
+    List_Id Identifiers;
+    // chaque variable déclaré doit avoir un identifiant
+    Node_Id Type_Identifier;
+    // et un type (Type_Identifier)
+  };
+	
+  /*
+    Initialisation ::= initially { { Assignment }+ }
+  */
+	
+  interface Initialisation : Node_Id {
+    List_Id Assignments;
+    // la partie d'initialisation contient une liste d'afféctations
+  };
+	
+  /*
+    Action ::= Basic_Action
+         | If_Statement
+         | For_Statement
+         | While_Statement
+
+    If_Statement ::= if ( Behavior_Expression) {
+                      { Action }+
+                 }
+               { else if ( Behavior_Expression ) {
+                      { Action }+
+                 }
+               }*
+              [ else {
+                     { Action }+
+                }]
+    For_Statement ::= for ( Loop_Variable_Identifier in Integer_Range )
+                    { { Action }+ }
+
+    While_Statement ::= while ( Behavior_Expression )
+                    { { Action }+ }
+
+	*/
+  interface Action: Node_Id {
+    Node_Id Action_Node;
+  };
+
+  interface Conditional_Statement : Node_Id {
+    Node_Id  Behavior_Expression;
+    List_Id  Actions;
+  };
+	
+  interface If_Statement : Node_Id { 
+    // un "If_Statement" doit avoir 
+    Node_Id If_Cond;
+    // une liste d'actions à exécuter si la condition est vérifiée
+    Node_Id Elsif_Cond;
+    // et peut éventuellement avoir une partie (else if)
+    Node_Id Else_Cond;
+    // et une partie (else)
+  };
+	
+  interface While_Statement : Node_Id { 
+    // un "While_Statement" doit avoir 
+    Node_Id Conditional_Statement;
+  };
+	
+  interface For_Statement : Node_Id {
+    // un "For_Statement" doit avoir
+    Node_Id Loop_Variable_Identifier;
+    // un compteur de la boucle
+    Node_Id Integer_Range;
+    // condition d'arrêt de la boucle (intervalle où varie le compteur)
+    List_Id Actions;
+    // une liste d'actions à exécuter tant que la condition d'arrêt
+    // n'est pas vérifiée
+  };
+  
+  /*
+    
+    Basic_Action ::= Assignment_Action
+               | Communication_Action
+               | Timed_Actions
+               | Proceed_Action
+
+    Assignment ::= Reference_Expression := Behavior_Expression
+	
+  */
+  
+  interface Assignment_Action : Node_Id {
+    Node_Id  Reference_Expression;
+    Node_Id  Behavior_Expression;
+
+  };
+
+
+  /*
+    Communication ::= Required_Subprogram_Identifier ! [ (Parameter_Profile ) ]
+                    | Output_Port_Identifier ! [ (Data_Identifier) ]
+                    | Input_Port_Identifier ? [ (Data_Identifier) ]
+
+
+    Parameter_Profile ::=
+    parameter { , parameter } */
+  
+  interface Communication_Action : Definition {
+    List_Id  Parameter_Profile;
+    octet    Com_Kind; // ! , ? 
+  };
+
+
+  /*  
+      Timed_Action ::=
+        computation ( behavior_time [ , behavior_time ] )
+      | delay ( behavior_time [ , behavior_time ] )
+  */
+  
+  interface Timed_Action : Node_Id {
+    boolean  Is_Computation; // if not it is delay
+    Node_Id  Fst_Behavior_Time;
+    Node_Id  Scd_Behavior_Time;
+    octet    Distrib_Kind;
+  };
+
+  /*
+    Reference_Expression ::= Loop_Variable_Identifier
+                       | Variable_Identifier
+                       | Parameter_Identifier
+		       | Argument_Identifier
+  */
+	
+  interface Reference_Expression : Definition {
+  };
+  
+  /*
+    
+    Behavior_Expression ::= Disjunction { or Disjunction } *
+                          | 'Character'
+			  | "String_Lateral"
+
+    Disjunction ::= Not_Conjunction { and Not_Conjunction } *
+
+    Not_Conjunction ::= [ not ] Conjunction
+
+    Conjunction ::= Arith_Expression [ (<|<=|=|>|>=|!=) Arith_Expression ]
+                  | Boolean_Literal
+
+    Arith_Expression ::= Add_Expression { ( + | - ) Add_Expression } *
+
+    Add_Expression ::= Basic_Expression { ( * | / ) Basic_Expression } *
+
+    Basic_Expression ::= Constant_Expression | Reference_Expression
+
+    Constant_Expression ::= Numeric_Literal
+                          | Port_Identifier ' count
+    
+   */
+
+  interface Behavior_Expression : Node_Id {
+    List_Id  Relations;
+    Node_Id String_Literal;
+    Node_Id Character_Literal;
+  };
+
+ 
+  /*
+    relation ::=
+      boolean_value |
+      simple_expression [relational_operator simple_expression]
+  */
+
+  interface Relation : Node_Id {
+    boolean  Boolean_Value;
+    List_Id  Simple_Exprs;
+  };
+
+  /*
+    simple_expression ::=
+      [unary_adding_operator] term {binary_adding_operator term}*
+  */
+
+  interface Simple_Expression : Node_Id {
+    List_Id  Term_And_Operator;
+  };
+  
+
+  //  term ::= factor {multiplying_operator factor}*
+
+  interface Term : Node_Id {
+    List_Id  Factors;
+  };
+
+
+  /*
+    factor ::= primary [** primary] | abs primary | not primary
+
+    primary ::=
+      value_holder | numeric_literal | string_literal | boolean_literal |
+      property_constant | (value_expression)
+  */
+
+  interface Factor : Node_Id {
+    boolean  Is_Not;
+    Node_Id  Lower_Primary;
+
+  };
+
+
+  /*
+    property_constant ::=
+     [ property_set_identifier :: ] property_constant_identifier
+  */
+
+  interface Property_Constant : Definition {
+    Node_Id  Property_Set;
+  };
+  
+
+  /*
+    -- operators in increasing order of precedence
+    logical_operator ::= and | or | xor | cand | cor
+
+    relational_operator ::=  =       | !=    | <   | <= | > | >=
+
+    binary_adding_operator ::=     +    | -    | &
+
+    unary_adding_operator ::=    +     | -
+
+    multiplying_operator ::=   *      | /     | mod | rem
+
+    highest_precedence_operator ::=       **   | abs | not
+
+  */
+
+  interface Operator : Node_Id {
+    octet  Operator_Kind;
+  };
+
+
+  /*  boolean_literal ::= true | false */
+
+  interface Boolean_Literal : Node_Id {
+    boolean  Is_True;  //  if not false
+  };
+
+
+  /*  integer_range ::= integer_value .. integer_value */
+
+  interface Integer_Range : Node_Id {
+    Node_Id  Lower_Int_Val;
+    Node_Id  Upper_Int_Val;
+  };
+
+
+  /* 
+     integer_value ::=
+        integer_value_holder
+      | integer_numerical_literal
+      | integer_property_constant
+
+  */
+
+  interface Integer_Value : Node_Id {
+    Node_Id  Entity;
+  };
+
+  /* behavior_time ::= integer_value unit_identifier */
+
+  interface Behavior_Time : Node_Id {
+    Node_Id  Integer_Value;
+    Node_Id  Unit_Identifier;
+  };
+
+/* 
+    Proceed_Action ::= proceed ( [ Parameter_Profile ] );
+
+    Parameter_Profile ::= Parameter { ,Parameter }*
+
+    Parameter ::= Parameter_Identifier | Behavior_Expression
+
+  */
+  
+  interface Proceed_Action : Node_Id {
+    List_Id Parameter_Profile;
+  };
+
+  interface Parameter_Profile : Node_Id {
+    Node_Id Behavior_Expression;
+  };
+
+};

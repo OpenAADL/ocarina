@@ -1,0 +1,4 @@
+test2.aadl:31:02: th.error ( Thread ) can't have more than one initial state.
+test2.aadl:29:01: th.error ( Thread ) must define one or more complete states.
+test2.aadl:29:01: th.error ( Thread ) must define one or more final states.
+Cannot analyze BEHAVIOR_SPECIFICATION specifications

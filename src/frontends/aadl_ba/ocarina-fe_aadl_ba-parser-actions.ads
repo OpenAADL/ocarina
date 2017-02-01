@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -31,14 +31,15 @@
 
 package Ocarina.FE_AADL_BA.Parser.Actions is
 
-   function P_Behavior_Actions (Container : Node_Id) return List_Id;
-   --  parse an Behavior_Action node list, current token is T_Left_Bracket
+   function P_Behavior_Action_Block (Container : Node_Id) return Node_Id;
+   --  parse an Behavior_Action-Block node
 
-   function P_Data_Component_Reference (Container : Node_Id) return Node_Id;
-   --  parse an data component reference node which is constituted by one or
-   --  two identifiers
+   function P_Data_Component_Reference
+     (Container : Node_Id)
+     return Node_Id;
+   --  parse an data component reference node
 
-   function P_Id (Container : Ocarina.Types.Node_Id) return Node_Id;
-   --  parse an Id node
+   function P_Name (Container : Types.Node_Id) return Node_Id;
+   --  parse a name node
 
 end Ocarina.FE_AADL_BA.Parser.Actions;

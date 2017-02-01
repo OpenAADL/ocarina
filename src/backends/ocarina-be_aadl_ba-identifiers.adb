@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -59,9 +59,8 @@ package body Ocarina.BE_AADL_BA.Identifiers is
    ---------------------------------
 
    procedure Print_Identifier_With_Value (Node : Node_Id) is
-      pragma Assert
-        (Kind (Node) = K_Identifier
-         or else Kind (Node) = K_Identifier_With_Value);
+      pragma Assert (Kind (Node) = K_Identifier
+                       or else Kind (Node) = K_Identifier_With_Value);
    begin
       Write_Name (Display_Name (Node));
 
@@ -70,14 +69,13 @@ package body Ocarina.BE_AADL_BA.Identifiers is
 
          if Present (Value_Constant (Node)) then
             case Kind (Value_Constant (Node)) is
-               when K_Literal =>
-                  Print_Literal (Value_Constant (Node));
-               when K_Property_Constant =>
-                  Print_Property_Constant (Value_Constant (Node));
-               when K_Identifier =>
-                  Print_Identifier (Value_Constant (Node));
-               when others =>
-                  Write_Line (Bug_Str);
+               when K_Literal           => Print_Literal
+                                                      (Value_Constant (Node));
+               when K_Property_Constant => Print_Property_Constant
+                                                      (Value_Constant (Node));
+               when K_Identifier        => Print_Identifier
+                                                      (Value_Constant (Node));
+               when others              => Write_Line (Bug_Str);
             end case;
 
          elsif Is_Others (Node) then

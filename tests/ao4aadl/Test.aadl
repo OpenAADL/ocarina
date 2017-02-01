@@ -1,0 +1,240 @@
+-----------
+-- Data --
+----------
+
+data Integer_Type
+properties
+  Data_Model::Data_Representation => integer;
+end Integer_Type;
+
+data String_Type
+properties
+  Data_Model::Data_Representation => string;
+  Data_Model::Dimension => (100);
+end String_Type;
+
+-----------------
+-- Subprograms --
+-----------------
+
+subprogram Check_Validity_Spg
+features
+  NumCard : in parameter Integer_Type;
+  Valid : out parameter String_Type;
+  NotValid : out parameter String_Type;
+end Check_Validity_Spg;
+
+subprogram Check_Code_Spg
+features
+  NumCard : in parameter Integer_Type;
+  Code : in parameter Integer_Type;
+  OK : out parameter String_Type;
+  RestoreCode : out parameter String_Type;
+  RejectedCard : out parameter String_Type;
+end Check_Code_Spg;
+
+subprogram Check_Spg
+features
+  NumCard : in parameter Integer_Type;
+  Valid : out parameter String_Type;
+  NotValid : out parameter String_Type;
+  Code : in parameter Integer_Type;
+  OK : out parameter String_Type;
+  RestoreCode : out parameter String_Type;
+  RejectedCard : out parameter String_Type;
+end Check_Spg;
+
+subprogram implementation Check_Validity_Spg.Impl
+properties
+  source_language => Ada95;
+  source_name     => "Bank.Check_Validity_Spg";
+end Check_Validity_Spg.Impl;
+
+subprogram implementation Check_Code_Spg.Impl
+properties
+  source_language => Ada95;
+  source_name     => "Bank.Check_Code_Spg";
+end Check_Code_Spg.Impl;
+
+subprogram implementation Check_Spg.Impl
+calls{
+   CV_Spg : subprogram Check_Validity_Spg.Impl;
+   CC_Spg : subprogram Check_Code_Spg.Impl;
+};
+connections 
+  parameter NumCard -> CV_Spg.NumCard;
+  parameter NumCard -> CC_Spg.NumCard;
+  parameter CV_Spg.Valid -> Valid;
+  parameter CV_Spg.NotValid -> NotValid;
+  parameter Code -> CC_Spg.Code;
+  parameter CC_Spg.OK -> OK;
+  parameter CC_Spg.RestoreCode -> RestoreCode;
+  parameter CC_Spg.RejectedCard -> RejectedCard;
+end Check_Spg.Impl;
+  
+
+-----------------
+-- Threads --
+-----------------
+
+thread ValidationTh
+features
+  NumCard_in_V : in event data port Integer_Type;
+  Code_in_V : in event data port Integer_Type;
+  NumCard_out_V : out event data port Integer_Type;
+  OK_out_V : out event data port String_Type;
+  RestoreCode_out_V : out event data port String_Type;
+  RejectedCard_out_V : out event data port String_Type;
+  Valid_out_V : out event data port String_Type;
+  NotValid_out_V : out event data port String_Type;
+end ValidationTh;
+
+thread implementation ValidationTh.Impl
+calls {
+  C_Spg : subprogram Check_Spg.Impl;
+};
+connections
+  parameter NumCard_in_V -> C_Spg.NumCard;
+  parameter C_Spg.Valid -> Valid_out_V;
+  parameter C_Spg.NotValid -> NotValid_out_V;
+  parameter Code_in_V -> C_Spg.Code;
+  parameter C_Spg.OK -> OK_out_V;
+  parameter C_Spg.RestoreCode -> RestoreCode_out_V;
+  parameter C_Spg.RejectedCard -> RejectedCard_out_V;
+
+properties
+  Initialize_Entrypoint              => "Msgs.Welcome_Validation_TH";
+  Dispatch_Protocol                  => Sporadic;
+  Period                             => 1000 Ms;
+  Compute_Execution_time             => 0 ms .. 3 ms;
+  Deadline                           => 1000 ms;
+  Cheddar_Properties::Fixed_Priority => 2;
+
+annex ao4aadl {**
+
+    aspect CheckCode {
+
+	    pointcut Verification (): call outport (RestoreCode_out_V (..));
+	    advice around(): Verification(){
+
+		   variables{
+		         counter: Integer_Type;
+		         message: String_Type;
+		    }
+		
+                   initially{
+
+			counter:=1;
+			message:="Card Rejected!";
+		    }
+				
+		    if (counter = 3){
+			
+			RejectedCard_out_V ? (message);
+			counter := 1;
+		    }
+		    else{
+			proceed ();
+			counter := counter + 1;
+		    }
+	       }
+         }
+           
+  aspect CheckConstraints {
+
+    pointcut VerificationAmount (session_id: Integer_Type, amount: Integer_Type):
+             call subprogram (C_Spg (..)) && args (session_id, amount, ..);
+	
+    advice around(session_id: IntegerType, amount: IntegerType):
+                             VerificationAmount(session_id, amount){
+
+           variables{
+		    amount_Day: Integer_Type;
+		    amount_Week: Integer_Type;
+		    message : String_Type;}
+	   initially { message := "";}
+
+	   getAmount_Day!(session_id, amount_Day);
+           if (amount_Day + amount > 100 ){
+	       message := "You can not debit more then 100 DT per day!";
+               RejectedCard_out_V !(message);
+           }
+           else{
+               getAmount_Week!(session_id, amount_Week);
+               if (amount_Week + amount > 400 ){
+                 message := "You can not debit more then 400 DT per week!";
+                 RejectedCard_out_V !(message);
+               }
+               else {
+                 proceed (session_id, amount);}}}}
+
+   aspect Logging {
+
+    pointcut Log (session_id: Integer_Type, amount: Integer_Type): 
+                             execution subprogram (Debit (..))
+                             && args (session_id,  amount, ..);
+	
+    advice after(session_id: Integer_Type, amount: Integer_Type):
+                             Log(session_id, amount){
+            sendSMS!(session_id, amount);
+}}
+
+  **};
+
+end ValidationTh.Impl;
+
+process Customer
+features
+  NumCard_in_C : in event data port Integer_Type;
+  Code_in_C : in event data port Integer_Type;
+  NumCard_out_C : out event data port Integer_Type;
+  OK_out_C : out event data port String_Type;
+  RestoreCode_out_C : out event data port String_Type;
+  RejectedCard_out_C : out event data port String_Type;
+  Valid_out_C : out event data port String_Type;
+  NotValid_out_C : out event data port String_Type;
+end Customer;
+
+process implementation Customer.Impl
+subcomponents
+  Validation : thread ValidationTh.Impl;
+connections
+  event data port NumCard_in_C -> Validation.NumCard_in_V;
+  event data port Code_in_C -> Validation.Code_in_V;
+  event data port Validation.NumCard_out_V -> NumCard_out_C;
+  event data port Validation.OK_out_V -> OK_out_C;
+  event data port Validation.RestoreCode_out_V -> RestoreCode_out_C;
+  event data port Validation.RejectedCard_out_V ->  RejectedCard_out_C;
+  event data port Validation.Valid_out_V -> Valid_out_C;
+  event data port Validation.NotValid_out_V -> NotValid_out_C;
+end Customer.Impl;
+
+---------------
+-- Processor --
+---------------
+
+processor the_processor
+end the_processor;
+
+processor implementation the_processor.Impl
+properties 
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
+end the_processor.Impl;
+
+system Bank
+end Bank;
+
+system implementation Bank.others
+subcomponents
+  node_customer : process Customer.Impl
+   {Deployment::Channel_Address => 2;
+    Deployment::Process_Id      => 1200;};
+
+  CPU : processor the_processor.Impl
+   {Deployment::Execution_Platform => LEON_ORK;};
+properties
+  actual_processor_binding => reference CPU applies to node_customer;
+END Bank.others;
+
