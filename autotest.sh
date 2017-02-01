@@ -461,8 +461,8 @@ if test ${dotests} = "true" ; then
 
 			else
 			    OCARINA_PATH="`which ocarina`" ./`basename ${file} .adb` >${actual_output} 2>&1
-                            result=$?
                             command="./`basename ${file} .adb`"
+                            result=$?
 
 			    if test -r ${expected_output} ; then
 				${scriptdir}/tools/compare.py \
