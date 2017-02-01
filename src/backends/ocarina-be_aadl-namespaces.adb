@@ -203,11 +203,16 @@ package body Ocarina.BE_AADL.Namespaces is
       Print_Identifier (Pack_Identifier);
       Write_Eol;
 
+      if Has_Public or else
+        not Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Annexes (Node))
+      then
+         Write_Eol;
+         Print_Token (T_Public);
+      end if;
+
       --  Public part
 
       if Has_Public then
-         Print_Token (T_Public);
-         Write_Eol;
 
          List_Node := First_Node (Declarations (Node));
 
