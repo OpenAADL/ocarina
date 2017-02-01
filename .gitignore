@@ -24,3 +24,17 @@ support/headers_ocarina*
 auto.cgpr
 compile
 *.pyc
+
+src/*/objects-stamp
+src/*/libs*
+**/*/objects
+**/*nodes.ad?
+
+ocarina-config
+projects/ocarina.gpr
+src/config/ocarina-configuration.adb
+src/main/ocarina
+support/strip_wrapper.sh
+tools/gendoc.py
+tools/mknodes/mknodes
+resources/sedscript
