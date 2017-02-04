@@ -77,9 +77,10 @@ deploy:
   provider: releases
   api_key:
     secure: JIs5VZq+T0m42jasHpuDHXjJwgmQNGDaNJos9xHG01b5tvrG9NRIPjB4AFh1RiJBQ8LYFRpcRkrEzbAHs9H4jh7zLrdaAGRo6v0G/h5aowWNGoTiT6sMy5ATX6cuMO/treCEWWEUpUsDy5GSebsRkGhbMjH3d2kZ3933SJIg+kI=
+  skip_cleanup: true
   file:
-    - build/OpenAADL/ocarina/ocarina-build/ocarina*.tar.gz
-    - build/OpenAADL/ocarina/ocarina-build/ocarina*.tgz
+    - build/OpenAADL/ocarina/ocarina-build/ocarina/ocarina*.tar.gz
+    - build/OpenAADL/ocarina/ocarina-build/ocarina/ocarina*.tgz
   on:
     tags: true
     all_branches: true
