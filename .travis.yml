@@ -27,13 +27,6 @@ os:
   - osx
 
 ################################################################################
-# Build only for the master branch + specific tags
-branches:
-  only:
-  - master
-  - v2017.1
-
-################################################################################
 # Install the build environment, derived from travis default installation
 
 # 1/ Cache directory that allows us to not download GNAT GPL every time,
@@ -89,4 +82,4 @@ deploy:
     - build/OpenAADL/ocarina/ocarina-build/ocarina*.tgz
   on:
     tags: true
-    repo: OpenAADL/ocarina
+    all_branches: true
