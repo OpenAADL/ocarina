@@ -48,6 +48,6 @@ Code coverage: |coverage|
   :target: https://codecov.io/gh/OpenAADL/ocarina
   :alt: Code Coverage
 
-.. |release| image:: https://img.shields.io/github/release/OpenAADL/ocarina-build.svg
-  :target: https://github.com/OpenAADL/ocarina-build/releases
+.. |release| image:: https://img.shields.io/github/release/OpenAADL/ocarina.svg
+  :target: https://github.com/OpenAADL/ocarina/releases
   :alt: GitHub Releases
