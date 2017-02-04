@@ -9,11 +9,12 @@ Ocarina is an AADL model processor, it acts as a "compiler" for AADL models.
 As a front-end, it supports
 
 * AADLv2 language from `AS5506C standard <http://standards.sae.org/as5506c/>`_, 
-* the ARINC653 and the EMV2 Annex from `AS5506/1A standard <http://standards.sae.org/as5506/1a/>`_
+* the Behavioral annex from `AS5506/1 standard <http://standards.sae.org/as5506/a/>`_
+* the ARINC653 and the EMV2 annexes from `AS5506/1A standard <http://standards.sae.org/as5506/1a/>`_
 
 As a back-end, it supports
 
-* Code generation towards the AADL runtime `PolyORB-HI/Ada <https://github.com/OpenAADL/polyorb-hi-ada>`_ and `PolyORB-HI/C <https://github.com/OpenAADL/polyorb-hi-c>`_, and ARINC653 compliant APEX.
+* Code generation towards the AADL runtime `PolyORB-HI/Ada <https://github.com/OpenAADL/polyorb-hi-ada>`_ and `PolyORB-HI/C <https://github.com/OpenAADL/polyorb-hi-c>`_, and ARINC653 compliant APEX, following recommendations from `AS5506/2 standard <http://standards.sae.org/as5506/2/>`_
 * WCET analysis, using `Bound-T <http://bound-t.com>`_
 * Scheduling analysis, using `Cheddar <http://beru.univ-brest.fr/~singhoff/cheddar/>`_ and `MAST <http://mast.unican.es>`_
 * Model checking, using Petri Net `Tina <http://projects.laas.fr/tina//>`_, and `LNT <http://cadp.inria.fr>`
@@ -24,7 +25,7 @@ It can be integrated with the `AADLib <https://github.com/OpenAADL/AADLib>`_ lib
 Installation:
 -------------
 
-Refer to the ocarina-build companion project for `details <https://github.com/openaadl/ocarina-build>`_
+Refer to the  `ocarina-build <https://github.com/openaadl/ocarina-build>`_ companion project for details.
 
 Q&A:
 ----
