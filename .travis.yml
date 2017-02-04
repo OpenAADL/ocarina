@@ -27,11 +27,11 @@ os:
   - osx
 
 ################################################################################
-# Build only for the master branch
+# Build only for the master branch + specific tags
 branches:
   only:
   - master
-  - /^v2*$/
+  - v2017.1
 
 ################################################################################
 # Install the build environment, derived from travis default installation
