@@ -73,14 +73,20 @@ after_success:
 ################################################################################
 #
 
+before_deploy:
+  - export OCARINA_SRC=$(find . -name "*tar.gz")
+  - echo $OCARINA_SRC
+  - export OCARINA_BIN=$(find . -name "*tgz")
+  - echo $OCARINA_BIN
+
 deploy:
   provider: releases
   api_key:
     secure: JIs5VZq+T0m42jasHpuDHXjJwgmQNGDaNJos9xHG01b5tvrG9NRIPjB4AFh1RiJBQ8LYFRpcRkrEzbAHs9H4jh7zLrdaAGRo6v0G/h5aowWNGoTiT6sMy5ATX6cuMO/treCEWWEUpUsDy5GSebsRkGhbMjH3d2kZ3933SJIg+kI=
   skip_cleanup: true
   file:
-    - build/OpenAADL/ocarina/ocarina-build/ocarina/ocarina*.tar.gz
-    - build/OpenAADL/ocarina/ocarina-build/ocarina/ocarina*.tgz
+    - "${OCARINA_SRC}"
+    - "${OCARINA_BIN}"
   on:
     tags: true
     all_branches: true
