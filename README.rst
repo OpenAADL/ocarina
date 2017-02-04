@@ -1,6 +1,8 @@
 Ocarina AADL toolset  |docs| 
 ====================
 
+Latest release: |release|
+
 About: 
 ------
 
@@ -17,7 +19,7 @@ As a back-end, it supports
 * Code generation towards the AADL runtime `PolyORB-HI/Ada <https://github.com/OpenAADL/polyorb-hi-ada>`_ and `PolyORB-HI/C <https://github.com/OpenAADL/polyorb-hi-c>`_, and ARINC653 compliant APEX, following recommendations from `AS5506/2 standard <http://standards.sae.org/as5506/2/>`_
 * WCET analysis, using `Bound-T <http://bound-t.com>`_
 * Scheduling analysis, using `Cheddar <http://beru.univ-brest.fr/~singhoff/cheddar/>`_ and `MAST <http://mast.unican.es>`_
-* Model checking, using Petri Net `Tina <http://projects.laas.fr/tina//>`_, and `LNT <http://cadp.inria.fr>`
+* Model checking, using Petri Net `Tina <http://projects.laas.fr/tina//>`_, and `LNT <http://cadp.inria.fr>`_
 * Constraint analysis, using the REAL annex language
 
 It can be integrated with the `AADLib <https://github.com/OpenAADL/AADLib>`_ library of AADL components, and through a `OSATE2 plugin <https://github.com/OpenAADL/osate2-ocarina>`_
@@ -45,3 +47,7 @@ Code coverage: |coverage|
 .. |coverage| image:: https://codecov.io/github/OpenAADL/ocarina/coverage.svg?branch=master
   :target: https://codecov.io/gh/OpenAADL/ocarina
   :alt: Code Coverage
+
+.. |release| image:: https://img.shields.io/github/release/OpenAADL/ocarina-build.svg
+  :target: https://github.com/OpenAADL/ocarina-build/releases
+  :alt: GitHub Releases
