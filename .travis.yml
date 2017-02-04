@@ -31,7 +31,7 @@ os:
 branches:
   only:
   - master
-  - 20*.?
+  - v20*.?
 
 ################################################################################
 # Install the build environment, derived from travis default installation
