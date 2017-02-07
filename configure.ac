@@ -1,5 +1,5 @@
 AC_PREREQ(2.57)
-AC_INIT(ocarina, 2017.1)
+AC_INIT(ocarina, 2017.x)
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_AUX_DIR(support)
 
