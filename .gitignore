@@ -12,6 +12,7 @@ aclocal.m4
 doc/ocarina.info
 doc/stamp-vti
 doc/version.texi
+resources/runtime/aadlib
 resources/runtime/polyorb-hi-ada
 resources/runtime/polyorb-hi-c
 resources/runtime/python/ocarina.pyc
