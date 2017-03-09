@@ -85,6 +85,8 @@ package body Ocarina.Python_Cmd is
       for Elt of Result loop
          Set_Return_Value (Data, Elt.all);
       end loop;
+
+      Free (Result);
    end Get_Property_Value;
 
    --------------------------------
