@@ -76,7 +76,6 @@ with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1_Values;
 with Ocarina.Backends.AADL_XML;
 with Ocarina.Backends.Alloy;
-with Ocarina.Backends.AADL_SpaceStudio;
 
 with Ocarina.Options; use Ocarina.Options;
 
@@ -221,7 +220,6 @@ package body Ocarina.Backends is
       Replication_Expander.Init;
       Connection_Matrix.Init;
       Functions_Matrix.Init;
-      AADL_SpaceStudio.Init;
       AADL_XML.Init;
       Alloy.Init;
    end Init;
