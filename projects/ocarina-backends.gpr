@@ -40,7 +40,9 @@ project Ocarina.Backends is
    Src_Dir & "/aadl_pp",
    Src_Dir & "/aadl_xml",
    Src_Dir & "/alloy",
+   Src_Dir & "/arinc653",
    Src_Dir & "/arinc653_conf",
+   Src_Dir & "/asn1_deployment",
    Src_Dir & "/ast_ada",
    Src_Dir & "/ast_asn1",
    Src_Dir & "/ast_c",
@@ -57,6 +59,7 @@ project Ocarina.Backends is
    Src_Dir & "/po_hi_c",
    Src_Dir & "/real",
    Src_Dir & "/stats",
+   Src_Dir & "/subprograms",
    Src_Dir & "/vxwork653_conf",
    Src_Dir & "/xtratum_conf"
    );
