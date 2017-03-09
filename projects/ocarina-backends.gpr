@@ -37,6 +37,7 @@ project Ocarina.Backends is
    Build_Dir := Ocarina.Top_Build_Dir & "/backends";
 
    for Source_Dirs use (Src_Dir, Build_Dir,
+   Src_Dir & "/aadl_pp",
    Src_Dir & "/aadl_xml",
    Src_Dir & "/alloy",
    Src_Dir & "/arinc653_conf",
@@ -54,6 +55,7 @@ project Ocarina.Backends is
    Src_Dir & "/petri_nets",
    Src_Dir & "/po_hi_ada",
    Src_Dir & "/po_hi_c",
+   Src_Dir & "/real",
    Src_Dir & "/stats",
    Src_Dir & "/vxwork653_conf",
    Src_Dir & "/xtratum_conf"
