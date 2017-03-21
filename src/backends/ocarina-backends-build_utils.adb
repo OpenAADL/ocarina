@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1423,7 +1423,9 @@ package body Ocarina.Backends.Build_Utils is
                Write_Line
                  ("###################################################");
                Write_Eol;
-               Write_Str ("SUBDIRS = $(filter-out Makefile, $(wildcard *))");
+               Write_Str
+                 ("SUBDIRS = " &
+                    "$(filter-out Makefile polyorb-hi-c, $(wildcard *))");
                Write_Eol;
                Write_Line ("all:");
                Write_Line
