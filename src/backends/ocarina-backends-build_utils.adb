@@ -1442,6 +1442,19 @@ package body Ocarina.Backends.Build_Utils is
 
                Close (Fd);
                Set_Standard_Output;
+
+               --  Copy the runtime directory
+
+               if Get_Current_Backend_Kind = PolyORB_HI_C then
+                  Copy_Directory
+                    (Get_Runtime_Path ("polyorb-hi-c"), "polyorb-hi-c");
+               else
+                  if Get_Current_Backend_Kind = PolyORB_HI_Ada then
+                     Copy_Directory
+                       (Get_Runtime_Path ("polyorb-hi-ada"), "polyorb-hi-ada");
+                  end if;
+               end if;
+
                Leave_Directory;
             end if;
 
