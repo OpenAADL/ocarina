@@ -1,0 +1,73 @@
+package pingpong
+public
+  with Deployment;
+
+  system t
+  end t;
+
+  system implementation t.i
+  subcomponents
+    subsys1: system s.i;
+    subsys2: system s.i;
+  end t.i;
+
+  system s
+  end s;
+
+  system implementation s.i
+  subcomponents
+    pingpong: process pp.i;
+    cpu1: processor cpu;
+  properties
+    Actual_Processor_Binding => (reference (cpu1)) applies to pingpong;
+  end s.i;
+
+  process pp
+  end pp;
+
+  process implementation pp.i
+  subcomponents
+    ping1: thread ping.i;
+    pong1: thread pong.i;
+  connections
+    c1: port ping1.output_ev -> pong1.input_ev;
+  end pp.i;
+
+  thread pong
+  features
+    input_ev: in event port {Compute_Entrypoint_Source_Text => "pong";};
+  end pong;
+
+  thread ping
+  features
+    output_ev: out event port;
+  end ping;
+
+  thread implementation ping.i
+  calls
+    entry: {first: subprogram main;};
+  properties
+    Dispatch_Protocol => Periodic;
+    Period => 1000 ms;
+  end ping.i;
+
+  thread implementation pong.i
+  properties
+    Dispatch_Protocol => Sporadic;
+    Period => 100 ms;
+  end pong.i;
+
+  subprogram main
+  properties
+    source_language => (C);
+    source_name => "ping";
+    source_text => ("pingmain.c");
+  end main;
+
+  processor cpu
+  properties
+    Deployment::Execution_Platform => native;
+    Priority_Range => 0 .. 255;
+  end cpu;
+
+end pingpong;
