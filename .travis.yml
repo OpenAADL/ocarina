@@ -13,6 +13,7 @@
 # GNAT GPL release to compile and run everything.
 
 language: generic
+osx_image: xcode8.3
 
 # Global variables
 env:
