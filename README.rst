@@ -3,7 +3,7 @@ Ocarina AADL toolset  |docs|
 
 Latest release: |release|
 
-About: 
+About (test): 
 ------
 
 Ocarina is an AADL model processor, it acts as a "compiler" for AADL models.
