@@ -72,7 +72,8 @@ package Ocarina.Backends is
       REAL_PP,
       REAL_Theorem,
       FT_Replication,
-      Alloy_Backend);
+      Alloy_Backend,
+      Ros_Backend);
    --  Supported code generators. For each kind, at most one generator
    --  must be implemented.
 
