@@ -115,8 +115,8 @@ package body Ocarina.Instances.Components.Modes is
                    ATN.Name (ATN.Item (Path_Element)));
 
                if No (N) then
-                  -- If the name is not a feature, we check wether it
-                  -- corresponds to a <subcomponent>.<feature>
+                  --  If the name is not a feature, we check wether it
+                  --  corresponds to a <subcomponent>.<feature>
 
                   N :=
                     Get_First_Homonym
