@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -116,7 +116,7 @@ package body Ocarina.Instances.Components.Modes is
 
                if No (N) then
                   -- If the name is not a feature, we check wether it
-                  -- corresponds to a subcomponent.feature
+                  -- corresponds to a <subcomponent>.<feature>
 
                   N :=
                     Get_First_Homonym
@@ -134,6 +134,7 @@ package body Ocarina.Instances.Components.Modes is
                end if;
 
             when K_Subcomponent =>
+
                --  This is a feature belonging to a subcomponent, we
                --  fetch the subcomponent instance, add it to the new
                --  path and then we continue the search with the
