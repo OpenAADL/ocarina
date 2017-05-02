@@ -564,6 +564,7 @@ package Ocarina.Backends.Properties is
       Platform_ERC32_ORK,
       Platform_ARM_DSLINUX,
       Platform_ARM_N770,
+      Platform_ARM_CrazyFlie,
       Platform_MARTE_OS,
       Platform_VxWorks,
       Platform_None); --  Unspecified

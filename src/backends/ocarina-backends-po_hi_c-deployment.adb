@@ -2279,6 +2279,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                     Platform_ARM_DSLINUX         |
                     Platform_ARM_N770            |
                     Platform_NDS_RTEMS           |
+                    Platform_ARM_CrazyFlie       |
                     Platform_NDS_RTEMS_POSIX     |
                     Platform_Gumstix_RTEMS       |
                     Platform_Gumstix_RTEMS_POSIX |

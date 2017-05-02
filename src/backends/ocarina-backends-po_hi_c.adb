@@ -229,6 +229,9 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_ARM_N770 =>
             Write_Str ("arm.n770");
 
+         when Platform_ARM_CrazyFlie =>
+            Write_Str ("arm.crazyflie");
+
          when Platform_LINUX64 =>
             Write_Str ("linux64");
 

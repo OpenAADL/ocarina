@@ -328,6 +328,7 @@ package body Ocarina.Backends.Properties is
    Platform_ERC32_ORK_Name              : Name_Id;
    Platform_ARM_DSLINUX_Name            : Name_Id;
    Platform_ARM_N770_Name               : Name_Id;
+   Platform_ARM_CrazyFlie_Name          : Name_Id;
    Platform_MARTE_OS_Name               : Name_Id;
    Platform_Vxworks_Name                : Name_Id;
 
@@ -2450,6 +2451,8 @@ package body Ocarina.Backends.Properties is
             return Platform_ARM_DSLINUX;
          elsif P_Name = Platform_ARM_N770_Name then
             return Platform_ARM_N770;
+         elsif P_Name = Platform_ARM_CrazyFlie_Name then
+            return Platform_ARM_CrazyFlie;
          elsif P_Name = Platform_MARTE_OS_Name then
             return Platform_MARTE_OS;
          elsif P_Name = Platform_Vxworks_Name then
@@ -2973,6 +2976,7 @@ package body Ocarina.Backends.Properties is
       Platform_LEON3_Xtratum_Name    := Get_String_Name ("leon3_xtratum");
       Platform_ERC32_ORK_Name        := Get_String_Name ("erc32_ork");
       Platform_ARM_DSLINUX_Name      := Get_String_Name ("arm_dslinux");
+      Platform_ARM_CrazyFlie_Name    := Get_String_Name ("arm_crazyflie");
       Platform_ARM_N770_Name         := Get_String_Name ("arm_n770");
       Platform_MARTE_OS_Name         := Get_String_Name ("marte_os");
       Platform_Vxworks_Name          := Get_String_Name ("vxworks");
