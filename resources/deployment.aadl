@@ -34,6 +34,7 @@ property set Deployment is
     LINUX32_XENOMAI_POSIX,    -- Linux 32 bits with Xenomai and POSIX skin
     LINUX64,                  -- Linux 64 bits
     ERC32_ORK,                -- ERC32 board or tsim-erc32 (ORK)
+    ARM_CORTEX,               -- ARM XXXX
     ARM_DSLINUX,              -- Nintendo DS (tm) (DSLinux)
     ARM_N770,                 -- Nokia N770 (tm)
     GUMSTIX_RTEMS,            -- Gumstix under RTEMS
