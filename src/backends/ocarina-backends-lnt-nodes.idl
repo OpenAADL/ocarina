@@ -550,7 +550,7 @@ module Ocarina::Backends::LNT::Nodes {
     Node_Id Identifier;
     List_Id Actual_Gates;// G0, ... ,Gn
     List_Id Actual_Parameters; // list of actual parameters
-    boolean Is_Sporadic;
+    boolean Is_Not_Periodic;
   };
 
   interface Communication_Statement : Node_Id {

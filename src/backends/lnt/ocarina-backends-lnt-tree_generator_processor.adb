@@ -226,25 +226,28 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
       Period : Natural;
       Thread_Identifier : constant Name_Id
         := AIN.Display_Name (AIN.Identifier (E));
+      Dispatch : constant Supported_Thread_Dispatch_Protocol :=
+        Get_Thread_Dispatch_Protocol (E);
    begin
       Th.Identifier := New_Identifier (Thread_Identifier, "Thread_");
-      if (((Get_Thread_Dispatch_Protocol (E) = Thread_Periodic) or else
-          (Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic)) and then
+      if (((Dispatch = Thread_Periodic) or else
+           (Dispatch = Thread_Sporadic) or else
+           (Dispatch = Thread_Timed) or else
+           (Dispatch = Thread_Hybrid)) and then
           (Get_Execution_Time (E) /= Empty_Time_Array))
       then
          Period := Natural (Get_Thread_Period (E).T);
          Th.Period := Period;
          Th.Capacity := Natural (Get_Execution_Time (E)(1).T);
-         if (Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic) then
-            Th.Is_Sporadic := true;
-         end if;
+         Th.Dispatch_Protocol := Dispatch;
          T (Counter) := Th;
          P (Counter) := Period;
          Counter := Counter + 1;
       else
          Display_Located_Error (AIN.Loc (E),
                 "LNT generation requires the definition " &
-                "of Dispatch_Protocol (Periodic or Sporadic), " &
+                "of Dispatch_Protocol (Periodic, Sporadic," &
+                " Timed or Hybrid), " &
                 "Execution_Time and Period properties.",
                 Fatal => True);
       end if;
@@ -257,19 +260,22 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
       N : Node_Id;
       N_Sort : Node_Id;
       L_While : List_Id;
-      L_Elsif_Then : List_Id;
+      L_Else_Running_State : List_Id;
       N_Act : Node_Id;
       N_Event : Node_Id;
       Aux_Act_1 : Node_Id;
       Aux_Act_2 : Node_Id;
+
+      Is_Not_Periodic : Boolean := true;
       Threads : Thread_Array := T;
       L_Processor_Gates   : List_Id;
+      L_Thread_Activation : List_Id;
       L_Threads_Array     : List_Id;
-      L_In_Select         : List_Id;
       L_Stop_Orders       : List_Id;
       L_Incoming_Event    : List_Id;
-
-      L_Thread_Activation : List_Id;
+      N_Ready_State      : Node_Id;
+      Thread_Activation : Node_Id;
+      Aux_Thread_Activation : Node_Id;
       L_In_Then           : List_Id;
       function Make_Var_declaration_List return List_Id;
       function Make_Var_declaration_List
@@ -295,7 +301,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
          (Make_Identifier ("k"),
           Make_Identifier ("Nat")), N_Var_Declarations);
 
-         if (Sporadic_Thread_Number > 0) then
+         if (Not_Periodic_Thread_Number > 0) then
             BLNu.Append_Node_To_List (Make_Var_Declaration
              (Make_Identifier ("Is_Activated"),
               Make_Identifier ("bool")), N_Var_Declarations);
@@ -321,8 +327,8 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
 
       Quick_Sort_Threads (Threads);
       L_Processor_Gates := New_List;
-      L_Stop_Orders  := New_List;
       L_Thread_Activation := New_List;
+      L_Stop_Orders  := New_List;
       L_Incoming_Event  := New_List;
 
       L_Threads_Array := New_List (
@@ -338,14 +344,9 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                 Make_Constructed_Pattern (
                   Make_Identifier ("LNT_Type_Thread"),
                   New_List (Make_Time_Const (0)))))));
-      for I in Threads'Range loop
-         --  instances list for Main generation
-         BLNu.Append_Node_To_List (
-           Make_Process_Instantiation_Statement (
-             Make_Identifier (Threads (I).Identifier),
-             No_List, No_List, Threads (I).Is_Sporadic),
-         LNT_Thread_Instance_List);
 
+      for I in Threads'Range loop
+         --  ACTIVATION_I identifier
          N_Act := New_Identifier (
            Remove_Prefix_From_Name (
            " ", Get_String_Name (Integer'Image (I))),
@@ -360,32 +361,8 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                N_Act),
              L_Processor_Gates);
 
-         if (Threads (I).Is_Sporadic) then
-            N_Event := New_Identifier (
-              Remove_Prefix_From_Name (
-              " ", Get_String_Name (Integer'Image (I))),
-              "INCOMING_EVENT_");
-            BLNu.Append_Node_To_List (
-              Make_Gate_Declaration (
-               Make_Identifier ("LNT_Channel_Event"),
-               N_Event),
-              L_Processor_Gates);
-
-            BLNu.Append_Node_To_List (
-             Make_Process_Instantiation_Statement
-             (Make_Identifier ("Sporadic_Notif"),
-              New_List (N_Event),
-              New_List (
-               Make_Actual_Parameter
-                (Make_Identifier ("Threads"), false, true),
-               Make_Actual_Parameter
-                (Make_Identifier (Integer'Image (I))),
-               Make_Actual_Parameter
-                (Make_Identifier ("Counter")),
-               Make_Actual_Parameter
-                (Make_Identifier ("Is_Activated"), false, true))),
-             L_Incoming_Event);
-         end if;
+         BLNu.Append_Node_To_List (Aux_Act_2,
+             L_Thread_Activation);
 
          BLNu.Append_Node_To_List (
            Make_Communication_Statement
@@ -393,49 +370,23 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
              false, No_Node),
              L_Stop_Orders);
 
-         BLNu.Append_Node_To_List (
-           Make_Process_Instantiation_Statement
-             (Make_Identifier ("Thread_Activation"),
-              New_List (Aux_Act_2),
-              New_List (
-               Make_Actual_Parameter
-                (Make_Identifier ("Threads"), false, true),
-               Make_Actual_Parameter
-                (Make_Identifier (Integer'Image (I))))),
-             L_Thread_Activation);
 --  ---------------------------------------------
 --  Thread ([0][1][2][3][4][5][6][7][8][9][10][11])
 --  Thread ([C][P][0][1][0][P][0][0][0][1][1 ][0 ]) P
 --  Thread ([C][P][0][0][0][P][0][0][0][1][0 ][1 ]) S
+--  Thread ([C][P][0][0][0][P][0][0][0][1][1 ][2 ]) T
+--  Thread ([C][P][0][0][0][P][0][0][0][1][1 ][3 ]) H
 --  ---------------------------------------------
-         if (Threads (I).Is_Sporadic) then
-            BLNu.Append_Node_To_List (
-              Make_Array_Element_Assignment_Statement
-               (Make_Identifier ("Threads"),
-                Make_Identifier (Integer'Image (I)),
-                Make_Constructed_Pattern
-                 (Make_Identifier ("LNT_Type_Thread"),
-                    New_List (
-                           Make_Time_Const (Threads (I).Capacity),
-                           Make_Time_Const (Threads (I).Period),
-                           Make_Time_Const (0),
-                           Make_Time_Const (0),
-                           Make_Time_Const (0),
-                           Make_Time_Const (Threads (I).Period),
-                           Make_Time_Const (0),
-                           Make_Time_Const (0),
-                           Make_Time_Const (0),
-                           Make_Time_Const (1),
-                           Make_Time_Const (0),
-                           Make_Time_Const (1)))),
-              L_Threads_Array);
-         else
-            BLNu.Append_Node_To_List (
-              Make_Array_Element_Assignment_Statement
-               (Make_Identifier ("Threads"),
-                Make_Identifier (Integer'Image (I)),
-                Make_Constructed_Pattern
-                 (Make_Identifier ("LNT_Type_Thread"),
+
+         case Threads (I).Dispatch_Protocol is
+            when Thread_Periodic =>
+               Is_Not_Periodic := false;
+               BLNu.Append_Node_To_List (
+                 Make_Array_Element_Assignment_Statement
+                 (Make_Identifier ("Threads"),
+                  Make_Identifier (Integer'Image (I)),
+                  Make_Constructed_Pattern
+                   (Make_Identifier ("LNT_Type_Thread"),
                     New_List (
                            Make_Time_Const (Threads (I).Capacity),
                            Make_Time_Const (Threads (I).Period),
@@ -449,11 +400,168 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                            Make_Time_Const (1),
                            Make_Time_Const (1),
                            Make_Time_Const (0)))),
-              L_Threads_Array);
-         end if;
-      end loop;
+                 L_Threads_Array);
+            when Thread_Sporadic =>
+               BLNu.Append_Node_To_List (
+                Make_Array_Element_Assignment_Statement
+                 (Make_Identifier ("Threads"),
+                  Make_Identifier (Integer'Image (I)),
+                  Make_Constructed_Pattern
+                   (Make_Identifier ("LNT_Type_Thread"),
+                    New_List (
+                           Make_Time_Const (Threads (I).Capacity),
+                           Make_Time_Const (Threads (I).Period),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (Threads (I).Period),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (1),
+                           Make_Time_Const (0),
+                           Make_Time_Const (1)))),
+                L_Threads_Array);
 
-      L_Elsif_Then :=  New_List (
+               N_Event := New_Identifier (
+                Remove_Prefix_From_Name (
+                " ", Get_String_Name (Integer'Image (I))),
+                "INCOMING_EVENT_");
+               BLNu.Append_Node_To_List (
+                Make_Gate_Declaration (
+                 Make_Identifier ("LNT_Channel_Event"),
+                 N_Event),
+                L_Processor_Gates);
+
+               BLNu.Append_Node_To_List (
+                 Make_Process_Instantiation_Statement
+                  (Make_Identifier ("Sporadic_Notif"),
+                   New_List (N_Event),
+                   New_List (
+                   Make_Actual_Parameter
+                    (Make_Identifier ("Threads"), false, true),
+                     Make_Actual_Parameter
+                    (Make_Identifier (Integer'Image (I))),
+                     Make_Actual_Parameter
+                   (Make_Identifier ("Counter")),
+                   Make_Actual_Parameter
+                  (Make_Identifier ("Is_Activated"), false, true))),
+                 L_Incoming_Event);
+            when Thread_Timed =>
+               BLNu.Append_Node_To_List (
+                Make_Array_Element_Assignment_Statement
+                 (Make_Identifier ("Threads"),
+                  Make_Identifier (Integer'Image (I)),
+                  Make_Constructed_Pattern
+                   (Make_Identifier ("LNT_Type_Thread"),
+                    New_List (
+                           Make_Time_Const (Threads (I).Capacity),
+                           Make_Time_Const (Threads (I).Period),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (Threads (I).Period),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (1),
+                           Make_Time_Const (1),
+                           Make_Time_Const (2)))),
+                L_Threads_Array);
+
+               N_Event := New_Identifier (
+                Remove_Prefix_From_Name (
+                " ", Get_String_Name (Integer'Image (I))),
+                "INCOMING_EVENT_");
+               BLNu.Append_Node_To_List (
+                Make_Gate_Declaration (
+                 Make_Identifier ("LNT_Channel_Event"),
+                 N_Event),
+                L_Processor_Gates);
+
+               BLNu.Append_Node_To_List (
+                 Make_Process_Instantiation_Statement
+                  (Make_Identifier ("Timed_Hybrid_Notif"),
+                   New_List (N_Event),
+                   New_List (
+                   Make_Actual_Parameter
+                    (Make_Identifier ("Threads"), false, true),
+                     Make_Actual_Parameter
+                    (Make_Identifier (Integer'Image (I))),
+                     Make_Actual_Parameter
+                   (Make_Identifier ("Counter")),
+                   Make_Actual_Parameter
+                  (Make_Identifier ("Is_Activated"), false, true))),
+                 L_Incoming_Event);
+            when Thread_Hybrid =>
+               BLNu.Append_Node_To_List (
+                Make_Array_Element_Assignment_Statement
+                 (Make_Identifier ("Threads"),
+                  Make_Identifier (Integer'Image (I)),
+                  Make_Constructed_Pattern
+                   (Make_Identifier ("LNT_Type_Thread"),
+                    New_List (
+                           Make_Time_Const (Threads (I).Capacity),
+                           Make_Time_Const (Threads (I).Period),
+                           Make_Time_Const (0),
+                           Make_Time_Const (1),
+                           Make_Time_Const (0),
+                           Make_Time_Const (Threads (I).Period),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (0),
+                           Make_Time_Const (1),
+                           Make_Time_Const (1),
+                           Make_Time_Const (3)))),
+                L_Threads_Array);
+
+               N_Event := New_Identifier (
+                Remove_Prefix_From_Name (
+                " ", Get_String_Name (Integer'Image (I))),
+                "INCOMING_EVENT_");
+               BLNu.Append_Node_To_List (
+                Make_Gate_Declaration (
+                 Make_Identifier ("LNT_Channel_Event"),
+                 N_Event),
+                L_Processor_Gates);
+
+               BLNu.Append_Node_To_List (
+                 Make_Process_Instantiation_Statement
+                  (Make_Identifier ("Timed_Hybrid_Notif"),
+                   New_List (N_Event),
+                   New_List (
+                   Make_Actual_Parameter
+                    (Make_Identifier ("Threads"), false, true),
+                     Make_Actual_Parameter
+                    (Make_Identifier (Integer'Image (I))),
+                     Make_Actual_Parameter
+                   (Make_Identifier ("Counter")),
+                   Make_Actual_Parameter
+                  (Make_Identifier ("Is_Activated"), false, true))),
+                 L_Incoming_Event);
+            when others =>
+               null;
+         end case;
+
+         --  instances list for Main generation
+         BLNu.Append_Node_To_List (
+            Make_Process_Instantiation_Statement (
+                Make_Identifier (Threads (I).Identifier),
+                No_List, No_List, Is_Not_Periodic),
+                LNT_Thread_Instance_List);
+
+      end loop;
+      Thread_Activation := Make_Process_Instantiation_Statement
+             (Make_Identifier ("Activate_k"),
+              L_Thread_Activation,
+              New_List (
+               Make_Actual_Parameter
+                (Make_Identifier ("Threads"), false, true),
+               Make_Actual_Parameter
+                (Make_Identifier ("k"))));
+      Aux_Thread_Activation := BLNu.Make_Node_Container (Thread_Activation);
+
+      L_Else_Running_State :=  New_List (
           Make_Assignment_Statement (
             Make_Identifier ("Preempt"),
             Make_Identifier ("true")),
@@ -576,52 +684,34 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                   Make_Identifier ("K"),
                   Make_Identifier ("TODO")))));
 
-      BLNu.Append_List_To_List (L_Thread_Activation, L_Elsif_Then);
-
-      if (Sporadic_Thread_Number > 0) then
-         BLNu.Append_Node_To_List (Make_Assignment_Statement
-                    (Make_Identifier ("Is_Activated"),
-                     Make_Identifier ("false")), L_Elsif_Then);
-         BLNu.Append_List_To_List (L_Incoming_Event, L_Elsif_Then);
-         BLNu.Append_Node_To_List (Make_If_Statement
-                    (Make_Identifier ("Is_Activated"),
+      BLNu.Append_Node_To_List (Aux_Thread_Activation, L_Else_Running_State);
+      BLNu.Append_Node_To_List (Make_If_Statement
+                    (Make_Identifier ("Preempt"),
                      New_List (Make_Assignment_Statement
                     (Make_Identifier ("k"),
-                     Make_Nat (1))),
+                     Make_Identifier ("I"))),
                      No_List,
                      New_List (Make_Assignment_Statement
                     (Make_Identifier ("k"),
                       Make_Infix_Function_Call_Expression
                           (Make_Identifier ("+"),
                            Make_Identifier ("k"),
-                           Make_Nat (1))))), L_Elsif_Then);
+                           Make_Nat (1))))),
+            L_Else_Running_State);
 
-      end if;
-
-      L_While := New_List (
-           Make_If_Statement (
-             Make_Infix_Function_Call_Expression
-               (Make_Predefined_Function (K_And),
-                Make_Parenthesized_Expression (
-                Make_Infix_Function_Call_Expression (
-                  Make_Predefined_Function (K_Greater_Than_Or_Equal_To, false),
+      N_Ready_State := Make_If_Statement
+              (Make_Infix_Function_Call_Expression (
+                    Make_Predefined_Function
+                     (K_Greater_Than_Or_Equal_To, false),
                     Make_Identifier ("Counter"),
                     Make_Array_Elt_Access_Expression (
-                      Make_Nat (4),
+                      Make_Nat (5),
                       Make_Array_Elt_Access_Expression (
                       Make_Identifier ("K"),
-                      Make_Identifier ("Threads"))))),
-                 Make_Parenthesized_Expression (
-                 Make_Infix_Function_Call_Expression (
-                  Make_Predefined_Function (K_Greater_Than_Or_Equal_To, false),
-                    Make_Identifier ("Counter"),
-                    Make_Array_Elt_Access_Expression (
-                    Make_Nat (5),
-                  Make_Array_Elt_Access_Expression (
-                    Make_Identifier ("K"),
-                    Make_Identifier ("Threads")))))),
-             New_List (
-                 Make_Assignment_Statement (
+                      Make_Identifier ("Threads")))),
+            --  then Missed_Deadline state
+            New_List (
+                Make_Assignment_Statement (
                    Make_Identifier ("Threads"),
                    Make_Function_Call_Expression
                      (Make_Identifier ("Assign"),
@@ -629,9 +719,20 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                         Make_Identifier ("Threads"),
                         Make_Identifier ("K"),
                         Make_Nat (9),
-                        Make_Time_Const (0))))),
-             New_List (
-              Make_Elsif_Statement (
+                        Make_Time_Const (0)))),
+                Thread_Activation,
+                Make_Assignment_Statement
+                    (Make_Identifier ("k"),
+                      Make_Infix_Function_Call_Expression
+                          (Make_Identifier ("+"),
+                           Make_Identifier ("k"),
+                           Make_Nat (1)))),
+            No_List,
+            --  else Running state
+            L_Else_Running_State);
+
+      L_While := New_List (
+           Make_If_Statement (
                Make_Infix_Function_Call_Expression
                (Make_Predefined_Function (K_And),
                 Make_Parenthesized_Expression (
@@ -655,36 +756,46 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                         Make_Identifier ("K"),
                         Make_Identifier ("Threads"))),
                        Make_Time_Const (1))),
-
-                  Make_Infix_Function_Call_Expression
-                    (Make_Predefined_Function (K_And),
-                    Make_Parenthesized_Expression (
-                    Make_Infix_Function_Call_Expression (
-                      Make_Predefined_Function (
-                         K_Greater_Than_Or_Equal_To, false),
-                        Make_Identifier ("Counter"),
-                        Make_Array_Elt_Access_Expression (
-                          Make_Nat (4),
-                          Make_Array_Elt_Access_Expression (
-                          Make_Identifier ("K"),
-                          Make_Identifier ("Threads"))))),
-                    Make_Parenthesized_Expression (
-                    Make_Infix_Function_Call_Expression (
-                      Make_Predefined_Function (K_Less_Than, false),
-                        Make_Identifier ("Counter"),
-                        Make_Array_Elt_Access_Expression (
-                          Make_Nat (5),
-                          Make_Array_Elt_Access_Expression (
-                          Make_Identifier ("K"),
-                          Make_Identifier ("Threads")))))
-                     ))),
-        L_Elsif_Then)),
+                   Make_Parenthesized_Expression (
+                   Make_Infix_Function_Call_Expression (
+                    Make_Predefined_Function
+                     (K_Greater_Than_Or_Equal_To, false),
+                    Make_Identifier ("Counter"),
+                    Make_Array_Elt_Access_Expression (
+                      Make_Nat (4),
+                      Make_Array_Elt_Access_Expression (
+                      Make_Identifier ("K"),
+                      Make_Identifier ("Threads")))))
+                     )),
+        --  test Missed_Deadline state
+        New_List (N_Ready_State),
+        No_List,
         New_List (Make_Assignment_Statement
                     (Make_Identifier ("k"),
                       Make_Infix_Function_Call_Expression
                           (Make_Identifier ("+"),
                            Make_Identifier ("k"),
                            Make_Nat (1))))));
+
+      if (Not_Periodic_Thread_Number > 0) then
+         BLNu.Append_Node_To_List (Make_Assignment_Statement
+                    (Make_Identifier ("Is_Activated"),
+                     Make_Identifier ("false")), L_While);
+         BLNu.Append_List_To_List (L_Incoming_Event, L_While);
+         BLNu.Append_Node_To_List (Make_If_Statement
+                    (Make_Identifier ("Is_Activated"),
+                     New_List (Make_Assignment_Statement
+                    (Make_Identifier ("k"),
+                     Make_Nat (1))),
+                     No_List,
+                     New_List (Make_Assignment_Statement
+                    (Make_Identifier ("k"),
+                      Make_Infix_Function_Call_Expression
+                          (Make_Identifier ("+"),
+                           Make_Identifier ("k"),
+                           Make_Nat (1))))), L_While);
+
+      end if;
 
       L_In_Then := New_List (
                    Make_Assignment_Statement
@@ -727,23 +838,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                    Make_Identifier ("PPCM_THREAD")),
                  L_In_Then,
                  No_List,
-                 No_List);
-
-      L_In_Select := New_List (
-         Make_Select_Statement_Alternative
-            (New_List (N_Sort)),
-
-         Make_Select_Statement_Alternative
-            (New_List (
-               Make_If_Statement
-                (Make_Infix_Function_Call_Expression
-                  (Make_Predefined_Function
-                     (K_Greater_Than_Or_Equal_To, false),
-                   Make_Identifier ("Counter"),
-                   Make_Identifier ("PPCM_THREAD")),
-                 L_Stop_Orders,
-                 No_List,
-                 No_List))));
+                 L_Stop_Orders);
 
       N := Make_Process_Definition
       (No_Node,
@@ -756,7 +851,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
          Make_Var_Loop_Select (
            Make_Var_declaration_List,
            L_Threads_Array,
-           L_In_Select)));
+           New_List (N_Sort), false)));
 
       BLNu.Append_Node_To_List (N, Definitions_List);
    end Make_LNT_RM_Processor;
@@ -808,6 +903,10 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
       N : Node_Id;
       L_Sts_S : List_Id;
       L_Sts_A : List_Id;
+      N_Case_Update : Node_Id;
+      Activate_K_Gates_List : List_Id;
+      Activate_K_Case_Sts_List : List_Id;
+      Activate_K_Case_St : Node_Id;
    begin
 
       N := Make_Function_Definition
@@ -856,6 +955,172 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
          );
       BLNu.Append_Node_To_List (N, Definitions_List);
 
+      N_Case_Update := Make_Case_Statement (
+         Make_Pattern (
+            Make_Array_Elt_Access_Expression (
+                 Make_Nat (11),
+                 Make_Identifier ("P")),
+            Make_Identifier ("LNT_Type_Time_Constraint"),
+            false,
+            true),
+          No_List,
+          New_List (
+           --  Sporadic
+           Make_Case_Statement_Alternative (
+              New_List (Make_Time_Const (1)),
+              New_List (Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (4),
+                      Make_Array_Elt_Access_Expression
+                         (Make_Nat (5),
+                          Make_Identifier ("P"))),
+                     Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (5),
+                      Make_Identifier ("PPCM_THREAD")),
+                     Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (10),
+                      Make_Time_Const (0)))),
+           --  Hybrid and Periodic
+           Make_Case_Statement_Alternative (
+              New_List (Make_Time_Const (0), Make_Time_Const (3)),
+              New_List (Make_If_Statement (
+                   Make_Infix_Function_Call_Expression (
+                   Make_Predefined_Function (K_And),
+                   Make_Parenthesized_Expression (
+                     Make_Infix_Function_Call_Expression
+                      (Make_Predefined_Function
+                       (K_Less_Than_Or_Equal_To, false),
+                       Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("*"),
+                       Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("+"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (3),
+                          Make_Identifier ("P")),
+                       Make_Time_Const (1)),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (1),
+                          Make_Identifier ("P"))),
+                       Make_Identifier ("PPCM_THREAD"))),
+                   Make_Parenthesized_Expression (
+                     Make_Infix_Function_Call_Expression
+                      (Make_Predefined_Function
+                       (K_Less_Than_Or_Equal_To, false),
+                       Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("+"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (4),
+                          Make_Identifier ("P")),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (1),
+                          Make_Identifier ("P"))),
+                          Make_Identifier ("PPCM_THREAD")))),
+                 New_List (
+                   Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (4),
+                      Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("*"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (3),
+                          Make_Identifier ("P")),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (1),
+                          Make_Identifier ("P")))),
+                   Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (3),
+                      Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("+"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (3),
+                          Make_Identifier ("P")),
+                       Make_Time_Const (1))),
+                   Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (5),
+                      Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("*"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (3),
+                          Make_Identifier ("P")),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (1),
+                          Make_Identifier ("P"))))
+                 ),  --  then
+                 No_List,
+                 New_List (Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (10),
+                      Make_Time_Const (0)))))),
+           --  Timed
+           Make_Case_Statement_Alternative (
+              New_List (Make_Time_Const (2)),
+              New_List (Make_If_Statement (
+                   Make_Infix_Function_Call_Expression (
+                   Make_Predefined_Function (K_And),
+                   Make_Parenthesized_Expression (
+                     Make_Infix_Function_Call_Expression
+                      (Make_Predefined_Function
+                       (K_Less_Than_Or_Equal_To, false),
+                       Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("+"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (4),
+                          Make_Identifier ("P")),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (1),
+                          Make_Identifier ("P"))),
+                          Make_Identifier ("PPCM_THREAD"))),
+                   Make_Parenthesized_Expression (
+                     Make_Infix_Function_Call_Expression
+                      (Make_Predefined_Function
+                       (K_Less_Than_Or_Equal_To, false),
+                       Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("+"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (5),
+                          Make_Identifier ("P")),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (1),
+                          Make_Identifier ("P"))),
+                          Make_Identifier ("PPCM_THREAD")))),
+                 New_List (
+                   Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (4),
+                      Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("+"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (4),
+                          Make_Identifier ("P")),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (1),
+                          Make_Identifier ("P")))),
+                   Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (5),
+                      Make_Infix_Function_Call_Expression
+                      (Make_Identifier ("+"),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (5),
+                          Make_Identifier ("P")),
+                       Make_Array_Elt_Access_Expression
+                         (Make_Nat (1),
+                          Make_Identifier ("P"))))
+                 ),  --  then
+                 No_List,
+                 New_List (Make_Array_Element_Assignment_Statement
+                     (Make_Identifier ("P"),
+                      Make_Nat (10),
+                      Make_Time_Const (0)))))),
+           --  Any
+           Make_Case_Statement_Alternative (
+              No_List,
+              New_List (Make_Null_Statement))));
+
       L_Sts_S := New_List (
                Make_Assignment_Statement
                (Make_Identifier ("P"),
@@ -891,71 +1156,17 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                    (Make_Identifier ("P"),
                     Make_Nat (8),
                     Make_Time_Const (1)),
-
+               --  if case statement for new period
                Make_If_Statement (
-                 Make_Infix_Function_Call_Expression (
-                   Make_Predefined_Function (K_And),
-                   Make_Parenthesized_Expression (
-                     Make_Infix_Function_Call_Expression
-                      (Make_Predefined_Function (K_Equality, false),
-                       Make_Array_Elt_Access_Expression (
-                          Make_Nat (11),
-                          Make_Identifier ("P")),
-                       Make_Time_Const (1))),
-                   Make_Parenthesized_Expression (
-                     Make_Infix_Function_Call_Expression
+                  Make_Infix_Function_Call_Expression
                       (Make_Predefined_Function (K_Equality, false),
                        Make_Array_Elt_Access_Expression
                          (Make_Nat (2),
                           Make_Identifier ("P")),
                           Make_Array_Elt_Access_Expression
                          (Make_Nat (0),
-                          Make_Identifier ("P"))))),
-                   New_List (
-                     Make_Array_Element_Assignment_Statement
-                     (Make_Identifier ("P"),
-                      Make_Nat (7),
-                      Make_Time_Const (1)),
-                     Make_Array_Element_Assignment_Statement
-                     (Make_Identifier ("P"),
-                      Make_Nat (2),
-                      Make_Time_Const (0)),
-
-                     Make_Array_Element_Assignment_Statement
-                     (Make_Identifier ("P"),
-                      Make_Nat (4),
-                      Make_Array_Elt_Access_Expression
-                         (Make_Nat (5),
                           Make_Identifier ("P"))),
-                     Make_Array_Element_Assignment_Statement
-                     (Make_Identifier ("P"),
-                      Make_Nat (5),
-                      Make_Identifier ("PPCM_THREAD")),
-                     Make_Array_Element_Assignment_Statement
-                     (Make_Identifier ("P"),
-                      Make_Nat (10),
-                      Make_Time_Const (0))),
-                 New_List (
-                 Make_Elsif_Statement (
-                  Make_Infix_Function_Call_Expression (
-                   Make_Predefined_Function (K_And),
-                   Make_Parenthesized_Expression (
-                     Make_Infix_Function_Call_Expression
-                      (Make_Predefined_Function (K_Equality, false),
-                       Make_Array_Elt_Access_Expression (
-                          Make_Nat (11),
-                          Make_Identifier ("P")),
-                       Make_Time_Const (0))),
-                   Make_Parenthesized_Expression (
-                     Make_Infix_Function_Call_Expression
-                      (Make_Predefined_Function (K_Equality, false),
-                       Make_Array_Elt_Access_Expression
-                         (Make_Nat (2),
-                          Make_Identifier ("P")),
-                          Make_Array_Elt_Access_Expression
-                         (Make_Nat (0),
-                          Make_Identifier ("P"))))),
-                   New_List (
+                  New_List (
                      Make_Array_Element_Assignment_Statement
                      (Make_Identifier ("P"),
                       Make_Nat (7),
@@ -963,40 +1174,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                      Make_Array_Element_Assignment_Statement
                      (Make_Identifier ("P"),
                       Make_Nat (2),
-                      Make_Time_Const (0)),
-                     Make_Array_Element_Assignment_Statement
-                     (Make_Identifier ("P"),
-                      Make_Nat (3),
-                      Make_Infix_Function_Call_Expression
-                      (Make_Identifier ("+"),
-                       Make_Array_Elt_Access_Expression
-                         (Make_Nat (3),
-                          Make_Identifier ("P")),
-                       Make_Time_Const (1))),
-
-                     Make_Array_Element_Assignment_Statement
-                     (Make_Identifier ("P"),
-                      Make_Nat (4),
-                      Make_Infix_Function_Call_Expression
-                      (Make_Identifier ("+"),
-                       Make_Array_Elt_Access_Expression
-                         (Make_Nat (4),
-                          Make_Identifier ("P")),
-                       Make_Array_Elt_Access_Expression
-                         (Make_Nat (1),
-                          Make_Identifier ("P")))),
-                     Make_Array_Element_Assignment_Statement
-                     (Make_Identifier ("P"),
-                      Make_Nat (5),
-                      Make_Infix_Function_Call_Expression
-                      (Make_Identifier ("*"),
-                       Make_Array_Elt_Access_Expression
-                         (Make_Nat (3),
-                          Make_Identifier ("P")),
-                       Make_Array_Elt_Access_Expression
-                         (Make_Nat (1),
-                          Make_Identifier ("P"))))))),
-                 No_List),
+                      Make_Time_Const (0)), N_Case_Update)),
 
                Make_Array_Element_Assignment_Statement
                    (Make_Identifier ("Aux_Threads"),
@@ -1032,6 +1210,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
          );
       BLNu.Append_Node_To_List (N, Definitions_List);
 
+      --  Sporadic_Notif
       N := Make_Process_Definition
         (No_Node,
          Make_Identifier ("Sporadic_Notif"),
@@ -1167,8 +1346,75 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                     (Make_Identifier ("Is_Activated"),
                      Make_Identifier ("true"))),
          No_List,
-         No_List)
-));
+         No_List)));
+
+      BLNu.Append_Node_To_List (N, Definitions_List);
+
+      --  Timed or Hybrid notif
+      N := Make_Process_Definition
+        (No_Node,
+         Make_Identifier ("Timed_Hybrid_Notif"),
+         New_List (
+          Make_Parameter_Specification
+             (Make_Identifier ("Threads"),
+              Make_Identifier ("LNT_Type_Thread_Array"),
+              Mode_Inout),
+          Make_Parameter_Specification
+             (Make_Identifier ("k"),
+              Make_Identifier ("Nat"),
+              Mode_In),
+          Make_Parameter_Specification
+             (Make_Identifier ("Counter"),
+              Make_Identifier ("LNT_Type_Time_Constraint"),
+              Mode_In),
+          Make_Parameter_Specification
+             (Make_Identifier ("Is_Activated"),
+              Make_Identifier ("bool"),
+              Mode_Inout)),
+         New_List (Make_Gate_Declaration
+            (Make_Identifier ("LNT_Channel_Event"),
+             Make_Identifier ("INCOMING_EVENT_GATE"))),
+         No_List,
+         No_List,
+         New_List (
+         --  select
+          Make_Select_Statement (New_List (
+            Make_Select_Statement_Alternative
+               (New_List (
+                 Make_Communication_Statement
+                  (Make_Identifier ("INCOMING_EVENT_GATE"),
+                   New_List (Make_Identifier ("Incoming_Event"))),
+                 Make_Assignment_Statement (
+                   Make_Identifier ("Threads"),
+                   Make_Function_Call_Expression
+                    (Make_Identifier ("Assign"),
+                     New_List (Make_Identifier ("Threads"),
+                       Make_Identifier ("k"),
+                       Make_Nat (4),
+                       Make_Identifier ("Counter")))),
+                 Make_Assignment_Statement
+                  (Make_Identifier ("Threads"),
+                   Make_Function_Call_Expression
+                   (Make_Identifier ("Assign"),
+                    New_List (Make_Identifier ("Threads"),
+                     Make_Identifier ("k"),
+                     Make_Nat (5),
+                     Make_Parenthesized_Expression (
+                     Make_Infix_Function_Call_Expression (
+                      Make_Identifier ("+"),
+                      Make_Identifier ("Counter"),
+                      Make_Array_Elt_Access_Expression (
+                        Make_Nat (1),
+                        Make_Array_Elt_Access_Expression (
+                          Make_Identifier ("k"),
+                          Make_Identifier ("Threads")))))))),
+                 Make_Assignment_Statement
+                    (Make_Identifier ("Is_Activated"),
+                     Make_Identifier ("true")))),
+          Make_Select_Statement_Alternative
+               (New_List (Make_Communication_Statement
+                  (Make_Identifier ("INCOMING_EVENT_GATE"),
+                   New_List (Make_Identifier ("No_Event")))))))));
 
       BLNu.Append_Node_To_List (N, Definitions_List);
 
@@ -1303,6 +1549,65 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                    New_List (Make_Identifier ("T_ERROR")),
                    false, No_Node)))),
           No_List));
+
+      Activate_K_Gates_List := New_List;
+      Activate_K_Case_Sts_List := New_List;
+
+      for I in 1 .. Thread_Number loop
+         BLNu.Append_Node_To_List (
+          Make_Gate_Declaration
+            (Make_Identifier ("LNT_Channel_Dispatch"),
+             New_Identifier (
+           Remove_Prefix_From_Name (
+           " ", Get_String_Name (Integer'Image (I))),
+           "ACTIVATION_")),
+          Activate_K_Gates_List);
+
+         BLNu.Append_Node_To_List (
+            Make_Case_Statement_Alternative (
+            New_List (Make_Identifier (Integer'Image (I))),
+            New_List (Make_Process_Instantiation_Statement (
+                Make_Identifier ("Thread_Activation"),
+                New_List (New_Identifier (
+           Remove_Prefix_From_Name (
+           " ", Get_String_Name (Integer'Image (I))),
+           "ACTIVATION_")),
+                New_List (
+               Make_Actual_Parameter
+                (Make_Identifier ("Threads"), false, true),
+               Make_Actual_Parameter
+                (Make_Identifier (Integer'Image (I))))))),
+          Activate_K_Case_Sts_List);
+      end loop;
+      BLNu.Append_Node_To_List (
+            Make_Case_Statement_Alternative (
+            No_List,
+            New_List (Make_Null_Statement)),
+          Activate_K_Case_Sts_List);
+
+      Activate_k_Case_St := Make_Case_Statement
+         (Make_Identifier ("k"),
+          No_List,
+          Activate_K_Case_Sts_List);
+
+      N := Make_Process_Definition
+        (No_Node,
+         Make_Identifier ("Activate_K"),
+         New_List (
+          Make_Parameter_Specification
+             (Make_Identifier ("Threads"),
+              Make_Identifier ("LNT_Type_Thread_Array"),
+              Mode_Inout),
+          Make_Parameter_Specification
+             (Make_Identifier ("K"),
+              Make_Identifier ("Nat"),
+              Mode_In)),
+         Activate_K_Gates_List,
+         No_List,
+         No_List,
+         New_List (Activate_k_Case_St));
+
+      BLNu.Append_Node_To_List (N, Definitions_List);
 
       N := Make_Process_Definition
         (No_Node,

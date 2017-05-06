@@ -78,8 +78,8 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
 
    procedure Find_Instance_By_Name (Key : Name_Id; Target : List_Id;
                        Instance : out Node_Id; Index : out Natural;
-                       Is_Sporadic : out boolean);
-   function Is_Sporadic (Index : Natural; Target : List_Id)
+                       Is_Not_Periodic : out boolean);
+   function Is_Not_Periodic (Index : Natural; Target : List_Id)
      return boolean;
 
    procedure Make_Process_Main;
@@ -114,7 +114,6 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
          L := Sources (S);
          --  port_out thread, first connection 1-1
          N_Connection := AIN.Item (AIN.First_Node (L));
-
          while (AIN.Is_In (N_Connection)) loop
             L := Sources (N_Connection);
             N_Connection := AIN.Item (AIN.First_Node (L));
@@ -155,6 +154,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                Connection);
 
       end if;
+      --  Put_Line (Image (Connection));
       return Connection;
    end Make_Gate_Identifier;
 
@@ -272,7 +272,13 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
             S := AIN.Next_Node (S);
          end loop;
       end if;
-
+      if not AINU.Is_Empty (Connections (E)) then
+         S := AIN.First_Node (Connections (E));
+         while Present (S) loop
+            Put_Line (Image (AIN.Display_Name (AIN.Identifier (S))));
+            S := AIN.Next_Node (S);
+         end loop;
+      end if;
    end Visit_System_Instance;
 
    ----------------------------
@@ -457,7 +463,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
       Aux_N_Port_4 : Node_Id;
       N_Send : Name_Id;
       Connection : Name_Id;
-      Is_Sporadic : boolean := false;
+      Is_Not_Periodic : boolean := false;
       Thread_Identifier : constant Name_Id
         := New_Identifier (AIN.Display_Name
         (AIN.Identifier (E)), "Thread_");
@@ -468,7 +474,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                              LNT_Thread_Instance_List,
                              Thread_Instance,
                              Index,
-                             Is_Sporadic);
+                             Is_Not_Periodic);
 
       N_Activation := New_Identifier (
            Remove_Prefix_From_Name (
@@ -484,7 +490,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
         Make_Gate_Declaration (
           Make_Identifier ("LNT_Channel_Dispatch"),
           Aux_N_Activation_2));
-      if Is_Sporadic then
+      if Is_Not_Periodic then
          N_Event := New_Identifier (
            Remove_Prefix_From_Name (
            " ", Get_String_Name (Integer'Image (Index))),
@@ -551,7 +557,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                             No_List);
                   elsif AIN.Is_Event (S) then
                      --  event port
-                     if Is_Sporadic then
+                     if Is_Not_Periodic then
                         Aux_N_Event := BLNu.Make_Node_Container (N_Event);
                         Port_Gates_List := New_List (
                           Make_Identifier (N_SEND), -- SEND_
@@ -635,7 +641,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
            " ", Get_String_Name (Integer'Image (I))),
            "ACTIVATION_");
          BLNu.Append_Node_To_List (N_Activation, Processor_Gates_List);
-         if (Is_Sporadic (I, LNT_Thread_Instance_List)) then
+         if (Is_Not_Periodic (I, LNT_Thread_Instance_List)) then
             N_Activation := New_Identifier (
               Remove_Prefix_From_Name (
               " ", Get_String_Name (Integer'Image (I))),
@@ -668,7 +674,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
    procedure Find_Instance_By_Name (Key : Name_Id; Target : List_Id;
                        Instance : out Node_Id;
                        Index : out Natural;
-                       Is_Sporadic : out boolean)
+                       Is_Not_Periodic : out boolean)
    is
       N  : Node_Id;
       Counter : Natural := 1;
@@ -682,7 +688,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
             if ((BLN.Name (BLN.Identifier (N)) = Key and then
                BLNu.Is_Empty (Actual_Gates (N))))
             then
-               Is_Sporadic := BLN.Is_Sporadic (N);
+               Is_Not_Periodic := BLN.Is_Not_Periodic (N);
                Instance := N;
                Index := Counter;
                exit;
@@ -693,7 +699,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
       end if;
    end Find_Instance_By_Name;
 
-   function Is_Sporadic (Index : Natural; Target : List_Id)
+   function Is_Not_Periodic (Index : Natural; Target : List_Id)
      return boolean is
       N  : Node_Id;
       Counter : Natural := 1;
@@ -705,13 +711,13 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
 
          while Present (N) loop
             if (Counter = Index) then
-               return BLN.Is_Sporadic (N);
+               return BLN.Is_Not_Periodic (N);
             end if;
             N := BLN.Next_Node (N);
             Counter := Counter + 1;
          end loop;
       end if;
       return false;
-   end Is_Sporadic;
+   end Is_Not_Periodic;
 
 end Ocarina.Backends.LNT.Tree_Generator_Main;

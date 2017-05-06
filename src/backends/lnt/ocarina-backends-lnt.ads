@@ -32,6 +32,7 @@
 --  This package generates a pn tree
 
 with Ocarina.Types;
+with Ocarina.Backends.Properties;
 
 package Ocarina.Backends.LNT is
 
@@ -47,7 +48,7 @@ package Ocarina.Backends.LNT is
       Identifier : Name_Id;
       Period : Natural;
       Capacity : Natural;
-      Is_Sporadic : boolean := false;
+      Dispatch_Protocol : Properties.Supported_Thread_Dispatch_Protocol;
    end record;
 
    type Thread_Array is array (Natural range <>) of Thread;
@@ -55,7 +56,7 @@ package Ocarina.Backends.LNT is
 
    System_Name   : Name_Id;
    Thread_Number : Natural := 0;
-   Sporadic_Thread_Number : Natural := 0;
+   Not_Periodic_Thread_Number : Natural := 0;
    Hyperperiod   : Integer := 0;
    LNT_Thread_Instance_List   : List_Id := No_List;
 

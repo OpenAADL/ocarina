@@ -98,7 +98,7 @@ package body Ocarina.Backends.LNT is
 
          Get_N_Thread (Root_System (Instance_Root),
                        Thread_Number,
-                       Sporadic_Thread_Number);
+                       Not_Periodic_Thread_Number);
          LNT_Thread_Instance_List := New_List;
          LNT_Threads := Generate_LNT_Thread (Instance_Root);
          LNT_Processor := Generate_LNT_Processor (Instance_Root);

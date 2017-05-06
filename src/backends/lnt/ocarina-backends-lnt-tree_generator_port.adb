@@ -271,7 +271,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Port is
       Definitions_List := New_List;
       Add_LNT_Data_Port (Definitions_List);
       Add_LNT_Event_Port (Definitions_List, false);
-      if (Sporadic_Thread_Number > 0) then
+      if (Not_Periodic_Thread_Number > 0) then
          Add_LNT_Event_Port (Definitions_List, true);
       end if;
 
