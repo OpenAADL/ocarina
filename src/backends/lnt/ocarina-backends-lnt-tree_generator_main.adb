@@ -275,7 +275,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
       if not AINU.Is_Empty (Connections (E)) then
          S := AIN.First_Node (Connections (E));
          while Present (S) loop
-            Put_Line (Image (AIN.Display_Name (AIN.Identifier (S))));
+            --  Put_Line (Image (AIN.Display_Name (AIN.Identifier (S))));
             S := AIN.Next_Node (S);
          end loop;
       end if;
@@ -346,7 +346,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                Aux_N_Port_3 := BLNu.Make_Node_Container (N_Port);
 
                BLNu.Append_Node_To_List (Make_Gate_Declaration
-                (Make_Identifier ("LNT_Channel_Data"),
+                (Make_Identifier ("LNT_Channel_Port"),
                  N_Port), L_Gates_Declaration);
 
                BLNu.Append_Node_To_List (Aux_N_Port_1, Device_Gates_List);
@@ -456,6 +456,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
 
       N_Event : Node_Id;
       Aux_N_Event : Node_Id;
+      Aux_N_Event_1 : Node_Id;
       N_Port : Node_Id;
       Aux_N_Port_1 : Node_Id;
       Aux_N_Port_2 : Node_Id;
@@ -513,7 +514,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                Aux_N_Port_4 := BLNu.Make_Node_Container (N_Port);
 
                BLNu.Append_Node_To_List (Make_Gate_Declaration
-                (Make_Identifier ("LNT_Channel_Data"),
+                (Make_Identifier ("LNT_Channel_Port"),
                  N_Port), L_Gates_Declaration);
 
                BLNu.Append_Node_To_List (Aux_N_Port_1, Thread_Gates_List);
@@ -558,7 +559,9 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                   elsif AIN.Is_Event (S) then
                      --  event port
                      if Is_Not_Periodic then
+
                         Aux_N_Event := BLNu.Make_Node_Container (N_Event);
+                        Aux_N_Event_1 := BLNu.Make_Node_Container (N_Event);
                         Port_Gates_List := New_List (
                           Make_Identifier (N_SEND), -- SEND_
                           Aux_N_Port_3,  --  RECEIVE_
@@ -569,7 +572,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                             New_List (Make_Identifier (Integer'Image
                               (Queue_Size))));
 
-                        BLNu.Append_Node_To_List (N_Event,
+                        BLNu.Append_Node_To_List (Aux_N_Event_1,
                           Interface_Connection_Gates_List);
                      else
                         Port_Gates_List := New_List (

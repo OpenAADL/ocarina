@@ -59,7 +59,7 @@ package Ocarina.Backends.LNT is
    Not_Periodic_Thread_Number : Natural := 0;
    Hyperperiod   : Integer := 0;
    LNT_Thread_Instance_List   : List_Id := No_List;
-
+   LNT_States_List   : List_Id := No_List;
 private
    Separator : Types.Name_Id;
    LNT_Threads  : Node_Id;

@@ -38,4 +38,19 @@ package Ocarina.Analyzer.AADL_BA is
    function Analyze_Model (Root : Node_Id) return Boolean;
    --  Proceed to BA analysis
 
+   function Is_Complete
+     (BA_Root : Node_Id;
+      State   : Node_Id)
+     return boolean;
+
+   function Is_Initial
+     (BA_Root : Node_Id;
+      State   : Node_Id)
+     return boolean;
+
+   function Is_Final
+     (BA_Root : Node_Id;
+      State   : Node_Id)
+     return boolean;
+
 end Ocarina.Analyzer.AADL_BA;

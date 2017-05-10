@@ -1454,7 +1454,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
               New_List (
                 Make_Communication_Statement
                   (Make_Identifier ("ACTIVATION"),
-                   New_List (Make_Identifier ("T_All")),
+                   New_List (Make_Identifier ("T_Dispatch_Completion")),
                    false, No_Node),
                 Make_Assignment_Statement (
                   Make_Identifier ("Threads"),
@@ -1485,7 +1485,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                   New_List (
                   Make_Communication_Statement
                   (Make_Identifier ("ACTIVATION"),
-                   New_List (Make_Identifier ("T_End")),
+                   New_List (Make_Identifier ("T_Preemption_Completion")),
                    false, No_Node),
                 Make_Assignment_Statement (
                   Make_Identifier ("Threads"),
@@ -1507,7 +1507,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                 New_List (
                 Make_Communication_Statement
                   (Make_Identifier ("ACTIVATION"),
-                   New_List (Make_Identifier ("T_Begin")),
+                   New_List (Make_Identifier ("T_Dispatch_Preemption")),
                    false, No_Node),
                 Make_Assignment_Statement (
                   Make_Identifier ("Threads"),
@@ -1520,7 +1520,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
 
               New_List (Make_Communication_Statement
                   (Make_Identifier ("ACTIVATION"),
-                   New_List (Make_Identifier ("T_Preempt")),
+                   New_List (Make_Identifier ("T_Preemption")),
                    false, No_Node))),
             Make_Assignment_Statement (
              Make_Identifier ("Threads"),
@@ -1532,7 +1532,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                        Make_Time_Const (0)))),
             Make_Communication_Statement
               (Make_Identifier ("ACTIVATION"),
-               New_List (Make_Identifier ("T_Ok")))),
+               New_List (Make_Identifier ("T_Complete")))),
           New_List (
             Make_Elsif_Statement
                  (Make_Infix_Function_Call_Expression (

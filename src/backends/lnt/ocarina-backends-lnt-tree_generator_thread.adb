@@ -40,6 +40,11 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
+--  with Ocarina.ME_AADL_BA.BA_Tree.Debug;
+with Ocarina.Analyzer.AADL_BA;
+with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+
 with Utils; use Utils;
 
 use Ocarina.Backends.LNT.Components;
@@ -62,6 +67,13 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
    package BLNu renames Ocarina.Backends.LNT.Nutils;
    use BLN;
    use BLNu;
+
+   package BATN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
+   package BANu renames Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+   --  package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   --  use ATN;
+   use BATN;
+   use BANu;
 
    procedure Visit (E : Node_Id);
    procedure Visit_Architecture_Instance (E : Node_Id);
@@ -190,9 +202,12 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
    ----------------------------
    procedure Visit_Thread_Instance (E : Node_Id) is
       S : Node_Id;
+      BA : Node_Id;
       N : Node_Id;
       N_Activation : Node_Id;
       N_Port : Node_Id;
+      N_Variable_Port : Node_Id;
+      Aux_N_Variable_Port : Node_Id;
       Gate : Node_Id;
       Communication : Node_Id;
       Aux_Communication : Node_Id;
@@ -203,19 +218,38 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
       L_All : List_Id;
       L_Gates : List_Id;
       L_Statements : List_Id;
-      N_Loop : Node_Id;
+      --  When BA
+      Has_BA : Boolean := false;
+      Si : Node_Id;
+      N_Si : Node_Id;
+      Vi : Node_Id;
+      N_Vi : Node_Id;
+      Var_Dec : List_Id;
+      Out_Loop : List_Id;
+      In_Select : List_Id;
+      Variable : Node_Id;
+
       Thread_Identifier : constant Name_Id
         := AIN.Display_Name (AIN.Identifier (E));
    begin
       N_Activation := Make_Identifier ("ACTIVATION");
+      LNT_States_List := New_List;
+      Var_Dec := New_List;
+      Out_Loop := New_List;
       L_Out_Port := New_List;
       L_In_Port := New_List;
       L_Begin := New_List (Make_Communication_Statement
-           (N_Activation, New_List (Make_Identifier ("T_Begin"))));
+           (N_Activation, New_List (Make_Identifier
+            ("T_Dispatch_Preemption"))));
       L_All := New_List (Make_Communication_Statement
-           (N_Activation, New_List (Make_Identifier ("T_All"))));
+           (N_Activation, New_List (Make_Identifier
+            ("T_Dispatch_Completion"))));
       L_End := New_List (Make_Communication_Statement
-           (N_Activation, New_List (Make_Identifier ("T_End"))));
+           (N_Activation, New_List (Make_Identifier
+            ("T_Preemption_Completion"))));
+      L_Gates := New_List (Make_Gate_Declaration
+       (Make_Identifier ("LNT_Channel_Dispatch"), N_Activation));
+
       --  Visit all the subcomponents of the thread
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := AIN.First_Node (Subcomponents (E));
@@ -224,37 +258,125 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
             S := AIN.Next_Node (S);
          end loop;
       end if;
-      L_Gates := New_List (
-      Make_Gate_Declaration
-       (Make_Identifier ("LNT_Channel_Dispatch"),
-        N_Activation));
+      --  BA mapping
+      if not AINU.Is_Empty (AIN.Annexes (E)) then
+         S := AIN.First_Node (AIN.Annexes (E));
+         loop
+            if (To_Upper (AIN.Display_Name (AIN.Identifier (S))) =
+                To_Upper (Get_String_Name ("behavior_specification")))
+               and then Present (AIN.Corresponding_Annex (S))
+            then
+               Has_BA := true;
+               BA := AIN.Corresponding_Annex (S);
+               if not BANu.Is_Empty (BATN.States (BA)) then
+                  Si := BATN.First_Node (BATN.States (BA));
+                  loop
+                     N_Si := BATN.First_Node (BATN.Identifiers (Si));
+                     loop
+                        if Analyzer.AADL_BA.Is_Initial (BA, N_Si) then
+                           Variable := Make_Var_Declaration (
+                            Make_Identifier ("STATE"),
+                            Make_Identifier ("LNT_Type_States"));
+                           BLNu.Append_Node_To_List (Variable, Var_Dec);
+                           BLNu.Append_Node_To_List (Make_Assignment_Statement
+                             (Make_Identifier ("STATE"), Make_Identifier (
+                             To_Upper (BATN.Display_Name (N_Si)))),
+                               Out_Loop);
+                        end if;
+                        BLNu.Append_Node_To_List (Make_Identifier (
+                          To_Upper (BATN.Display_Name (N_Si))),
+                         LNT_States_List);
+                        N_Si := BATN.Next_Node (N_Si);
+                        exit when No (N_Si);
+                     end loop;
+                     Si := BATN.Next_Node (Si);
+                     exit when No (Si);
+                  end loop;
+               end if;
+               if not BANu.Is_Empty (BATN.Variables (BA)) then
+                  Vi := BATN.First_Node (BATN.Variables (BA));
+                  loop
+                     N_Vi := BATN.First_Node (BATN.Identifiers (Vi));
+                     loop
+                        BLNu.Append_Node_To_List (Make_Identifier (
+                          To_Upper (BATN.Display_Name (N_Vi))),
+                         LNT_States_List);
+                        N_Vi := BATN.Next_Node (N_Vi);
+                        exit when No (N_Vi);
+                     end loop;
+                     Vi := BATN.Next_Node (Vi);
+                     exit when No (Vi);
+                  end loop;
+               end if;
+            end if;
+            S := AIN.Next_Node (S);
+            exit when No (S);
+         end loop;
+      end if;
+      --  end BA mapping
 
       if not AINU.Is_Empty (Features (E)) then
          S := AIN.First_Node (Features (E));
          loop
             if (AIN.Kind (S) = K_Port_Spec_Instance) then
+               --  gate identifier
                N_Port := New_Identifier (To_Upper (AIN.Name
-                  (AIN.Identifier (S))), "AADL_PORT_");
+                  (AIN.Identifier (S))), "PORT_");
+               --  variable identifier
+               N_Variable_Port := Make_Identifier (To_Upper (AIN.Name
+                      (AIN.Identifier (S))));
+               Aux_N_Variable_Port := BLNu.Make_Node_Container
+                (N_Variable_Port);
+               --  port variable
+               Variable := Make_Var_Declaration (N_Variable_Port,
+                    Make_Identifier ("LNT_Type_Data"));
+               BLNu.Append_Node_To_List (Variable, Var_Dec);
 
+               --  gate declaration
                Gate := Make_Gate_Declaration (
-                  Make_Identifier ("LNT_Channel_Data"), N_Port);
+                  Make_Identifier ("LNT_Channel_Port"), N_Port);
                BLNu.Append_Node_To_List (Gate, L_Gates);
-
-               Communication := Make_Communication_Statement
-                (N_Port, New_List (Make_Identifier ("AADLDATA")));
-               Aux_Communication := BLNu.Make_Node_Container (Communication);
+               --  gate communication
                if AIN.Is_Out (S) then
-                  BLNu.Append_Node_To_List (Communication, L_Out_Port);
-                  BLNu.Append_Node_To_List
-                      (Aux_Communication, L_End);
-               elsif AIN.Is_In (S) then
-                  BLNu.Append_Node_To_List (Communication, L_In_Port);
-                  BLNu.Append_Node_To_List
-                      (Aux_Communication, L_Begin);
-               end if;
+                  --  port variable initialization
+                  if Has_BA then
+                     BLNu.Append_Node_To_List (Make_Assignment_Statement
+                     (Aux_N_Variable_Port, Make_Identifier ("NONE")),
+                      Out_Loop);
+                  else
+                     BLNu.Append_Node_To_List (Make_Assignment_Statement
+                     (Aux_N_Variable_Port, Make_Identifier ("AADLDATA")),
+                      Out_Loop);
+                  end if;
+                  Communication := Make_Communication_Statement
+                   (N_Port, New_List (Make_Offer_Statement
+                       (No_Node, N_Variable_Port, false)));
+                  Aux_Communication := BLNu.Make_Node_Container
+                   (Communication);
 
+                  BLNu.Append_Node_To_List (Communication, L_Out_Port);
+                  BLNu.Append_Node_To_List (Aux_Communication, L_End);
+               elsif AIN.Is_In (S) then
+                  --  port variable initialization
+                  if Has_BA then
+                     BLNu.Append_Node_To_List (Make_Assignment_Statement
+                     (Aux_N_Variable_Port, Make_Identifier ("NONE")),
+                      Out_Loop);
+                  else
+                     BLNu.Append_Node_To_List (Make_Assignment_Statement
+                     (Aux_N_Variable_Port, Make_Identifier ("EMPTY")),
+                      Out_Loop);
+                  end if;
+                  Communication := Make_Communication_Statement
+                   (N_Port, New_List (Make_Offer_Statement
+                       (No_Node, N_Variable_Port, true)));
+                  Aux_Communication := BLNu.Make_Node_Container
+                   (Communication);
+
+                  BLNu.Append_Node_To_List (Communication, L_In_Port);
+                  BLNu.Append_Node_To_List (Aux_Communication, L_Begin);
+               end if;
             end if;
-            --  Visit (Corresponding_Instance (S));
             S := AIN.Next_Node (S);
             exit when No (S);
          end loop;
@@ -268,10 +390,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
          not BLNu.Is_Empty (L_End) or else
          not BLNu.Is_Empty (L_All))
       then
-         N_Loop := Make_Loop_Statement (
-          New_List (
-          Make_Select_Statement (
-          New_List (
+         In_Select := New_List (
            Make_Select_Statement_Alternative (New_List (
            Make_Select_Statement (
            New_List (
@@ -280,17 +399,21 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
             Make_Select_Statement_Alternative (L_All),
             Make_Select_Statement_Alternative (New_List (
              Make_Communication_Statement
-              (N_Activation, New_List (Make_Identifier ("T_Preempt"))))))),
+              (N_Activation, New_List (Make_Identifier ("T_Preemption"))))))),
             Make_Communication_Statement
-              (N_Activation, New_List (Make_Identifier ("T_Ok"))))),
+              (N_Activation, New_List (Make_Identifier ("T_Complete"))))),
 
             Make_Select_Statement_Alternative (New_List (
              Make_Communication_Statement
               (N_Activation, New_List (Make_Identifier ("T_Error"))))),
             Make_Select_Statement_Alternative (New_List (
              Make_Communication_Statement
-              (N_Activation, New_List (Make_Identifier ("T_Stop")))))))));
-         L_Statements := BLNu.New_List (N_Loop);
+              (N_Activation, New_List (Make_Identifier ("T_Stop"))))));
+         L_Statements := BLNu.New_List (
+             Make_Var_Loop_Select (
+                 Var_Dec,
+                 Out_Loop,
+                 In_Select));
       else
          L_Statements := BLNu.New_List (Make_Null_Statement);
       end if;
@@ -338,10 +461,10 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
          loop
             if (AIN.Kind (S) = K_Port_Spec_Instance) then
                N_Port := New_Identifier (To_Upper (AIN.Name
-                  (AIN.Identifier (S))), "AADL_PORT_");
+                  (AIN.Identifier (S))), "PORT_");
 
                Gate := Make_Gate_Declaration (
-                  Make_Identifier ("LNT_Channel_Data"), N_Port);
+                  Make_Identifier ("LNT_Channel_Port"), N_Port);
 
                Communication := Make_Communication_Statement
                 (N_Port, New_List (Make_Identifier ("AADLDATA")));

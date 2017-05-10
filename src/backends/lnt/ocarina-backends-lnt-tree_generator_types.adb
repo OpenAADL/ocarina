@@ -108,19 +108,19 @@ package body Ocarina.Backends.LNT.Tree_Generator_Types is
           Make_Type_Exp (
              No_Node,
              New_List (
-               Make_Type_Constructor (Make_Identifier ("T_Begin"),
-                                      No_List, No_List),
-               Make_Type_Constructor (Make_Identifier ("T_End"),
-                                      No_List, No_List),
-               Make_Type_Constructor (Make_Identifier ("T_All"),
-                                      No_List, No_List),
-               Make_Type_Constructor (Make_Identifier ("T_Preempt"),
-                                      No_List, No_List),
+               Make_Type_Constructor (Make_Identifier
+                ("T_Dispatch_Preemption"), No_List, No_List),
+               Make_Type_Constructor (Make_Identifier
+                ("T_Preemption_Completion"), No_List, No_List),
+               Make_Type_Constructor (Make_Identifier
+                ("T_Dispatch_Completion"), No_List, No_List),
+               Make_Type_Constructor (Make_Identifier
+                ("T_Preemption"), No_List, No_List),
                Make_Type_Constructor (Make_Identifier ("T_Stop"),
                                       No_List, No_List),
                Make_Type_Constructor (Make_Identifier ("T_Error"),
                                       No_List, No_List),
-               Make_Type_Constructor (Make_Identifier ("T_Ok"),
+               Make_Type_Constructor (Make_Identifier ("T_Complete"),
                                       No_List, No_List)),
              false, false, false, false, false, false),
         No_List,
@@ -140,7 +140,18 @@ package body Ocarina.Backends.LNT.Tree_Generator_Types is
         No_List,
         No_List);
       BLNu.Append_Node_To_List (N, L_Types);
-
+      --  When BA
+      if not Is_Empty (LNT_States_List) then
+         N := Make_Type_Def
+         (Make_Identifier ("LNT_Type_States"),
+          Make_Type_Exp (
+             No_Node,
+             LNT_States_List,
+             false, false, false, false, false, false),
+           No_List,
+           No_List);
+         BLNu.Append_Node_To_List (N, L_Types);
+      end if;
    end Add_LNT_Types;
 
    procedure Add_LNT_Channels (L_Channels : List_Id) is
@@ -161,6 +172,31 @@ package body Ocarina.Backends.LNT.Tree_Generator_Types is
          Make_Gate_Profile (New_List (Make_Identifier ("LNT_Type_Event")))));
 
       BLNu.Append_Node_To_List (N, L_Channels);
+      --  When BA
+      if not Is_Empty (LNT_States_List) then
+         N := Make_Channel (
+            Make_Identifier ("LNT_Channel_Event_Port"),
+            New_List (
+            Make_Gate_Profile (New_List (Make_Identifier
+                         ("Bool")))));
+         BLNu.Append_Node_To_List (N, L_Channels);
+
+         N := Make_Channel (
+            Make_Identifier ("LNT_Channel_Event_Data_Port"),
+            New_List (
+            Make_Gate_Profile (New_List (
+               Make_Identifier ("LNT_Type_Data"),
+               Make_Identifier ("Bool")
+               ))));
+         BLNu.Append_Node_To_List (N, L_Channels);
+
+         N := Make_Channel (
+            Make_Identifier ("LNT_Channel_Data_Port"),
+            New_List (
+            Make_Gate_Profile (New_List (Make_Identifier
+                         ("LNT_Type_Data")))));
+         BLNu.Append_Node_To_List (N, L_Channels);
+      end if;
    end Add_LNT_Channels;
 
    procedure Add_LNT_Functions (L_Functions : List_Id;
@@ -329,19 +365,42 @@ package body Ocarina.Backends.LNT.Tree_Generator_Types is
        (New_Identifier (Get_String_Name ("_Types"),
                         Get_Name_String (System_Name)));
       Definitions_List := New_List;
+      --  Data generic type
       N := Make_Type_Def
        (Make_Identifier ("LNT_Type_Data"),
-        Make_Identifier ("AADLDATA"),
+          Make_Type_Exp (
+             No_Node,
+             New_List (
+               Make_Type_Constructor (Make_Identifier ("AADLDATA"),
+                                      No_List, No_List),
+               Make_Type_Constructor (Make_Identifier ("EMPTY"),
+                                      No_List, No_List)),
+             false, false, false, false, false, false),
         No_List,
         No_List);
       BLNu.Append_Node_To_List (N, Definitions_List);
-
+      --  generic list of Data
+      N := Make_Type_Def
+       (Make_Identifier ("LNT_Type_Data_FIFO"),
+          Make_Type_Exp (
+             Make_Identifier ("LNT_Type_Data"),
+             No_List,
+             false, false, true, false, false, false),
+        No_List,
+        New_List (Make_Predefined_Function (K_Equality, true),
+           Make_Predefined_Function (K_Length, true),
+           Make_Predefined_Function (K_Append, true),
+           Make_Predefined_Function (K_Tail, true),
+           Make_Predefined_Function (K_Head, true),
+           Make_Predefined_Function (K_Inequality, true)
+        ));
+      BLNu.Append_Node_To_List (N, Definitions_List);
+      --  generic channel
       N := Make_Channel
-        (Make_Identifier ("LNT_Channel_Data"),
+        (Make_Identifier ("LNT_Channel_Port"),
          New_List (
          Make_Gate_Profile (New_List (
            Make_Identifier ("LNT_Type_Data")))));
-
       BLNu.Append_Node_To_List (N, Definitions_List);
 
       Add_LNT_Types (Definitions_List, Thread_Number, Hyperperiod);

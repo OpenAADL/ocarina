@@ -91,10 +91,10 @@ package body Ocarina.Backends.LNT.Tree_Generator_Port is
        No_List,
        New_List (
          Make_Gate_Declaration
-           (Make_Identifier ("LNT_Channel_Data"),
+           (Make_Identifier ("LNT_Channel_Port"),
             Make_Identifier ("Input")),
          Make_Gate_Declaration
-           (Make_Identifier ("LNT_Channel_Data"),
+           (Make_Identifier ("LNT_Channel_Port"),
             Make_Identifier ("Output"))),
        No_List,
        No_List,

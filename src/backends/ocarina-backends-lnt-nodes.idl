@@ -112,6 +112,13 @@ module Ocarina::Backends::LNT::Nodes {
 
   interface First_Element : Predefined_Function {}; // "first"
   interface Last_Element : Predefined_Function {}; // "last"
+  // predefined functions for LNT lists
+  interface Length : Predefined_Function {}; // "length"
+  interface Append : Predefined_Function {}; // "append"
+  interface Head : Predefined_Function {}; // "head"
+  interface Tail : Predefined_Function {}; // "tail"
+  interface Reverse : Predefined_Function {}; // "reverse"
+
   // Functions on Booleans and, and then, or, or else, xor, implies
   interface _And : Predefined_Function {};
   interface _Or : Predefined_Function {};
