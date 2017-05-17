@@ -1,0 +1,12 @@
+with Ada.Text_IO;
+
+package body Ever_XML.Node is
+
+   use Ada.Text_IO;
+
+   procedure Test is
+   begin
+      Put_Line ("Test");
+   end Test;
+
+end Ever_XML_Node;
