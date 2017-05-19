@@ -33,6 +33,6 @@ package Ocarina.Backends.LNT.Tree_Generator is
 
    procedure Get_N_Thread (Sys : Node_Id;
              Thread_Number : in out Natural;
-             Sporadic_Thread_Number : in out Natural);
+             Not_Periodic_Thread_Number : in out Natural);
 
 end Ocarina.Backends.LNT.Tree_Generator;

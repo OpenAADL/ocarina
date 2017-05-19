@@ -1569,6 +1569,12 @@ package body Ocarina.Backends.Properties is
 
             return Thread_Hybrid;
          elsif P_Name = Thread_Timed_Name then
+            if not Is_Defined_Integer_Property (T, Thread_Period) then
+               Display_Located_Error
+                 (AIN.Loc (T),
+                  "Timed threads must have a period",
+                  Fatal => True);
+            end if;
             return Thread_Timed;
 
          elsif P_Name = Thread_Background_Name then
@@ -1723,7 +1729,8 @@ package body Ocarina.Backends.Properties is
       pragma Assert (Is_Thread (T));
 
       case Get_Thread_Dispatch_Protocol (T) is
-         when Thread_Periodic | Thread_Sporadic | Thread_Hybrid | Thread_ISR =>
+         when Thread_Periodic | Thread_Sporadic | Thread_Hybrid |
+              Thread_Timed | Thread_ISR =>
             --  We are sure the thread has a period
 
             The_Period := Get_Time_Property_Value (T, Thread_Period);

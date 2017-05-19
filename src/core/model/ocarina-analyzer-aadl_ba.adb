@@ -120,21 +120,6 @@ package body Ocarina.Analyzer.AADL_BA is
       List_First_Node : in out Node_Id;
       List_Last_Node  : in out Node_Id);
 
-   function Is_Complete
-     (BA_Root : Node_Id;
-      State   : Node_Id)
-     return boolean;
-
-   function Is_Initial
-     (BA_Root : Node_Id;
-      State   : Node_Id)
-     return boolean;
-
-   function Is_Final
-     (BA_Root : Node_Id;
-      State   : Node_Id)
-     return boolean;
-
    function Exist_In_Modes
      (Component : Node_Id;
       State     : Node_Id)

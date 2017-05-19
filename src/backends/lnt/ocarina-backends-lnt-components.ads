@@ -244,7 +244,7 @@ package Ocarina.Backends.Lnt.Components is
      (Defining_Identifier : Node_Id;
       Actual_Gates : List_Id := No_List;
       Actual_Parameters : List_Id := No_List;
-      Is_Sporadic : boolean := false)
+      Is_Not_Periodic : Boolean := false)
      return Node_Id;
 
    function Make_Communication_Statement
@@ -290,6 +290,7 @@ package Ocarina.Backends.Lnt.Components is
 
    function Make_Var_Loop_Select (Var_Dec : List_Id;
                                  Out_Loop : List_Id;
-                                In_Select : List_Id)
+                                In_Select : List_Id;
+                                With_Select : Boolean := true)
      return Node_Id;
 end Ocarina.Backends.Lnt.Components;
