@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -926,57 +926,67 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
       procedure Runtime_Routine_Specs (E : Node_Id) is
          N : Node_Id;
       begin
-         --  Send_Output
+         if Has_Out_Ports (E) then
+            --  The following functions are made visible iff the
+            --  thread has *out* ports
 
-         N := Send_Output_Spec (E);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            --  Send_Output
 
-         --  Put_Value
+            N := Send_Output_Spec (E);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         N := Put_Value_Spec (E);
-         Bind_AADL_To_Put_Value (Identifier (E), N);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            --  Put_Value
 
-         --  Receive_Input
+            N := Put_Value_Spec (E);
+            Bind_AADL_To_Put_Value (Identifier (E), N);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+         end if;
 
-         N := Receive_Input_Spec (E);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+         if Has_In_Ports (E) then
+            --  The following functions are made visible iff the
+            --  thread has *in* ports
 
-         --  Get_Value
+            --  Receive_Input
 
-         N := Get_Value_Spec (E);
-         Bind_AADL_To_Get_Value (Identifier (E), N);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            N := Receive_Input_Spec (E);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         --  Get_Sender
+            --  Get_Value
 
-         N := Get_Sender_Spec (E);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            N := Get_Value_Spec (E);
+            Bind_AADL_To_Get_Value (Identifier (E), N);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         --  Get_Count
+            --  Get_Sender
 
-         N := Get_Count_Spec (E);
-         Bind_AADL_To_Get_Count (Identifier (E), N);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            N := Get_Sender_Spec (E);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         --  Get_Time_Stamp
+            --  Get_Count
 
-         N := Get_Time_Stamp_Spec (E);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            N := Get_Count_Spec (E);
+            Bind_AADL_To_Get_Count (Identifier (E), N);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         --  Next_Value
+            --  Get_Time_Stamp
 
-         N := Next_Value_Spec (E);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            N := Get_Time_Stamp_Spec (E);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         N := Store_Received_Message_Spec (E);
-         Bind_AADL_To_Store_Received_Message (Identifier (E), N);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            --  Next_Value
 
-         --  Wait_For_Incoming_Events
+            N := Next_Value_Spec (E);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         N := Wait_For_Incoming_Events_Spec (E);
-         Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+            N := Store_Received_Message_Spec (E);
+            Bind_AADL_To_Store_Received_Message (Identifier (E), N);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+            --  Wait_For_Incoming_Events
+
+            N := Wait_For_Incoming_Events_Spec (E);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+         end if;
       end Runtime_Routine_Specs;
 
       -----------
@@ -4100,25 +4110,33 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             --  per thread component.
 
             if Not_Handled then
-               Implement_Subprogram
-                 (Send_Output_Spec (E),
-                  RR_Send_Output,
-                  True);
-               Implement_Subprogram (Put_Value_Spec (E), RR_Put_Value);
-               Implement_Subprogram (Receive_Input_Spec (E), RR_Receive_Input);
-               Implement_Subprogram (Get_Value_Spec (E), RR_Get_Value);
-               Implement_Subprogram (Get_Sender_Spec (E), RR_Get_Sender);
-               Implement_Subprogram (Get_Count_Spec (E), RR_Get_Count);
-               Implement_Subprogram
-                 (Get_Time_Stamp_Spec (E),
-                  RR_Get_Time_Stamp);
-               Implement_Subprogram (Next_Value_Spec (E), RR_Next_Value);
-               Implement_Subprogram
-                 (Store_Received_Message_Spec (E),
-                  RR_Store_Received_Message);
-               Implement_Subprogram
-                 (Wait_For_Incoming_Events_Spec (E),
-                  RR_Wait_For_Incoming_Events);
+               if Has_Out_Ports (E) then
+                  Implement_Subprogram
+                    (Send_Output_Spec (E),
+                     RR_Send_Output,
+                     True);
+                  Implement_Subprogram (Put_Value_Spec (E), RR_Put_Value);
+               end if;
+
+               if Has_In_Ports (E) then
+                  Implement_Subprogram
+                    (Receive_Input_Spec (E),
+                     RR_Receive_Input);
+                  Implement_Subprogram (Get_Value_Spec (E), RR_Get_Value);
+                  Implement_Subprogram (Get_Sender_Spec (E), RR_Get_Sender);
+                  Implement_Subprogram (Get_Count_Spec (E), RR_Get_Count);
+                  Implement_Subprogram
+                    (Get_Time_Stamp_Spec (E),
+                     RR_Get_Time_Stamp);
+                  Implement_Subprogram (Next_Value_Spec (E), RR_Next_Value);
+                  Implement_Subprogram
+                    (Wait_For_Incoming_Events_Spec (E),
+                     RR_Wait_For_Incoming_Events);
+                  Implement_Subprogram
+                    (Store_Received_Message_Spec (E),
+                     RR_Store_Received_Message);
+               end if;
+
             else
                --  Complete the case alternatives corresponding to the
                --  current instance.
