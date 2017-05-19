@@ -29,8 +29,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ocarina.Namet; use Ocarina.Namet;
-
 with Ocarina.Backends;
 with Ocarina.Backends.LNT.Nutils;
 with Ocarina.Backends.LNT.Nodes;
@@ -362,8 +360,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Types is
    begin
       Put_Line ("Begin Types");
       Module_Node := Make_Module_Definition
-       (New_Identifier (Get_String_Name ("_Types"),
-                        Get_Name_String (System_Name)));
+       (Make_Identifier ("Types"));
       Definitions_List := New_List;
       --  Data generic type
       N := Make_Type_Def

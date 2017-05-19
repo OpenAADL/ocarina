@@ -74,35 +74,12 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
    procedure Visit_Thread_Instance (E : Node_Id);
    procedure Visit_Device_Instance (E : Node_Id);
 
-   function Build_Name_From_Path (Path : List_Id) return Name_Id;
-
    procedure Find_Instance_By_Name (Key : Name_Id; Target : List_Id;
                        Instance : out Node_Id; Index : out Natural;
                        Is_Not_Periodic : out boolean);
-   function Is_Not_Periodic (Index : Natural; Target : List_Id)
-     return boolean;
 
    procedure Make_Process_Main;
    function Make_Gate_Identifier (S : Node_Id) return Name_Id;
-
-   function Build_Name_From_Path (Path : List_Id) return Name_Id
-   is
-      N     : Node_Id := AIN.First_Node (Path);
-      First : Boolean := True;
-   begin
-      Set_Str_To_Name_Buffer ("");
-      while Present (N) loop
-         if First then
-            First := False;
-         else
-            Add_Str_To_Name_Buffer ("_");
-         end if;
-         Get_Name_String_And_Append (AIN.Name (AIN.Identifier (AIN.Item (N))));
-         N := AIN.Next_Node (N);
-      end loop;
-
-      return Name_Find;
-   end Build_Name_From_Path;
 
    function Make_Gate_Identifier (S : Node_Id) return Name_Id is
       N_Connection : Node_Id;
@@ -113,48 +90,41 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
          --  port_in thread
          L := Sources (S);
          --  port_out thread, first connection 1-1
-         N_Connection := AIN.Item (AIN.First_Node (L));
-         while (AIN.Is_In (N_Connection)) loop
-            L := Sources (N_Connection);
+         if Present (AIN.First_Node (L)) then
             N_Connection := AIN.Item (AIN.First_Node (L));
-         end loop;
-         N_Connection := AIN.Extra_Item (AIN.First_Node (L));
-
-         --  connection Path system
-         Connection := Add_Prefix_To_Name ("RECEIVE_",
-             Build_Name_From_Path (Path (Source (N_Connection))));
-
-         Connection := Add_Suffix_To_Name ("__", Connection);
-
-         Connection := Add_Suffix_To_Name (Get_Name_String (
-             Build_Name_From_Path (Path (Destination (N_Connection)))),
-                       Connection);
-
+            while (AIN.Is_In (N_Connection)) loop
+               L := Sources (N_Connection);
+               if Present (AIN.First_Node (L)) then
+                  N_Connection := AIN.Item (AIN.First_Node (L));
+               end if;
+            end loop;
+            N_Connection := AIN.Extra_Item (AIN.First_Node (L));
+            --  connection identifier at system level
+            Connection := Add_Prefix_To_Name
+             ("RECEIVE_", AIN.Display_Name (
+             AIN.Identifier (N_Connection)));
+         end if;
       elsif (AIN.Is_Out (S)) then
          --  port_in thread
          L := Destinations (S);
          --  port_out thread, first connection 1-1
-         N_Connection := AIN.Item (AIN.First_Node (L));
-
-         while (AIN.Is_Out (N_Connection)) loop
-         --  port_out process
-            L := Destinations (N_Connection);
+         if Present (AIN.First_Node (L)) then
             N_Connection := AIN.Item (AIN.First_Node (L));
-         end loop;
-         --  connection instance system/process
-         N_Connection := AIN.Extra_Item (AIN.First_Node (L));
 
-         Connection := Add_Prefix_To_Name ("SEND_",
-           Build_Name_From_Path (Path (Source (N_Connection))));
-
-         Connection := Add_Suffix_To_Name ("__", Connection);
-
-         Connection := Add_Suffix_To_Name (Get_Name_String (
-               Build_Name_From_Path (Path (Destination (N_Connection)))),
-               Connection);
-
+            while (AIN.Is_Out (N_Connection)) loop
+            --  port_out process
+               L := Destinations (N_Connection);
+               if Present (AIN.First_Node (L)) then
+                  N_Connection := AIN.Item (AIN.First_Node (L));
+               end if;
+            end loop;
+            --  connection instance system/process
+            N_Connection := AIN.Extra_Item (AIN.First_Node (L));
+            Connection := Add_Prefix_To_Name
+             ("SEND_", AIN.Display_Name (
+              AIN.Identifier (N_Connection)));
+         end if;
       end if;
-      --  Put_Line (Image (Connection));
       return Connection;
    end Make_Gate_Identifier;
 
@@ -167,6 +137,8 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
    --  Main_Hide_Declaration_List : List_Id := No_List;
    Main_Gate_Declaration_List : List_Id := No_List;
    Processor_Gates_List : List_Id := No_List;
+   Processor_Event_Gates_List : List_Id := No_List;
+   Processor_Event_Gate_Declaration_List : List_Id := No_List;
    Main_Interface_Synchronisation_List : List_Id := No_List;
 
    function Generate_LNT_Main (AADL_Tree : Node_Id)
@@ -176,6 +148,9 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
       Processor_Gates_List := New_List;
       Main_Gate_Declaration_List := New_List;
       Main_Interface_Synchronisation_List := New_List;
+      Processor_Event_Gate_Declaration_List := New_List;
+      Processor_Event_Gates_List := New_List;
+      LNT_Processor_Gate_Declaration_List := New_List;
       Visit (AADL_Tree);
       return Module_Node;
    end Generate_LNT_Main;
@@ -214,18 +189,24 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
       end if;
       Definitions_List := New_List;
       Modules_List := New_List (
-                        New_Identifier (
-                          Get_String_Name ("_Types"),
-                          Get_Name_String (System_Name)),
+                        Make_Identifier ("Types"),
                         New_Identifier (
                           Get_String_Name ("_Processor"),
                           Get_Name_String (System_Name)),
                         New_Identifier (
                           Get_String_Name ("_Threads"),
-                          Get_Name_String (System_Name)),
-                        New_Identifier (
-                          Get_String_Name ("_Ports"),
                           Get_Name_String (System_Name)));
+      if BLNu.Is_Empty (LNT_States_List) then
+         BLNu.Append_Node_To_List (
+          Make_Identifier (
+            "LNT_Generic_Process_For_Port_Connections"),
+          Modules_List);
+      else
+         BLNu.Append_Node_To_List (
+          Make_Identifier (
+           "LNT_Generic_Process_For_Port_Connections_BA"),
+          Modules_List);
+      end if;
 
       Predefined_Functions_List := New_List;
       Visit (N);
@@ -269,13 +250,6 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
          while Present (S) loop
             Cs := Corresponding_Instance (S);
             Visit (Cs);
-            S := AIN.Next_Node (S);
-         end loop;
-      end if;
-      if not AINU.Is_Empty (Connections (E)) then
-         S := AIN.First_Node (Connections (E));
-         while Present (S) loop
-            --  Put_Line (Image (AIN.Display_Name (AIN.Identifier (S))));
             S := AIN.Next_Node (S);
          end loop;
       end if;
@@ -359,8 +333,8 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
 
                   --  port
                   Port_Gates_List := New_List (
-                          Aux_N_Port_2,  --  RECEIVE_
-                          Make_Identifier (N_SEND)); -- SEND_
+                          Make_Identifier (N_SEND),  -- SEND_
+                          Aux_N_Port_2);  --  RECEIVE_
 
                   N_Port := Make_Process_Instantiation_Statement
                            (Make_Identifier ("Data_Port"),
@@ -446,17 +420,20 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
       S : Node_Id;
       Ni : Node_Id;
       P : Node_Id;
-
+      Event_Number : Natural := 0;
       Index : Natural;
       Queue_Size : Natural := 3;
       --  Overflow : Name_Id;
       N_Activation : Node_Id;
       Aux_N_Activation_1 : Node_Id;
       Aux_N_Activation_2 : Node_Id;
-
+      N_Event_Declaration : Node_Id;
+      Aux_N_Event_Declaration : Node_Id;
       N_Event : Node_Id;
+      N_Event_Name : Name_Id;
       Aux_N_Event : Node_Id;
       Aux_N_Event_1 : Node_Id;
+      Aux_N_Event_2 : Node_Id;
       N_Port : Node_Id;
       Aux_N_Port_1 : Node_Id;
       Aux_N_Port_2 : Node_Id;
@@ -492,14 +469,10 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
           Make_Identifier ("LNT_Channel_Dispatch"),
           Aux_N_Activation_2));
       if Is_Not_Periodic then
-         N_Event := New_Identifier (
-           Remove_Prefix_From_Name (
-           " ", Get_String_Name (Integer'Image (Index))),
-           "INCOMING_EVENT_");
-         BLNu.Append_Node_To_List (
-              Make_Gate_Declaration (
-               Make_Identifier ("LNT_Channel_Event"),
-               N_Event), L_Gates_Declaration);
+         N_Event_Name := New_Identifier (
+              Remove_Prefix_From_Name (
+              " ", Get_String_Name (Integer'Image (Index))),
+              "INCOMING_EVENT_");
       end if;
       if not AINU.Is_Empty (Features (E)) then
          S := AIN.First_Node (Features (E));
@@ -549,8 +522,9 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                   if ((AIN.Is_Data (S)) and then (not AIN.Is_Event (S))) then
                      --  data port
                      Port_Gates_List := New_List (
-                          Aux_N_Port_2,  --  RECEIVE_
-                          Make_Identifier (N_SEND)); -- SEND_
+                          Make_Identifier (N_SEND), -- SEND_
+                          Aux_N_Port_2 --  RECEIVE_
+                          );
 
                      N_Port := Make_Process_Instantiation_Statement
                            (Make_Identifier ("Data_Port"),
@@ -559,15 +533,39 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                   elsif AIN.Is_Event (S) then
                      --  event port
                      if Is_Not_Periodic then
-
+                        if (Event_Number > 0) then
+                           N_Event := New_Identifier (
+                             Remove_Prefix_From_Name (
+                             " ", Get_String_Name (
+                             Integer'Image (Event_Number))),
+                             Get_Name_String (N_Event_Name));
+                        else
+                           N_Event := Make_Identifier (N_Event_Name);
+                        end if;
                         Aux_N_Event := BLNu.Make_Node_Container (N_Event);
                         Aux_N_Event_1 := BLNu.Make_Node_Container (N_Event);
+                        Aux_N_Event_2 := BLNu.Make_Node_Container (N_Event);
+                        --  add to the Processor event gate list
+                        BLNu.Append_Node_To_List (N_Event,
+                          Processor_Event_Gates_List);
+                        --  for processor and main generation
+                        N_Event_Declaration := Make_Gate_Declaration (
+                           Make_Identifier ("LNT_Channel_Event"),
+                           Aux_N_Event);
+                        Aux_N_Event_Declaration :=
+                          BLNu.Make_Node_Container (N_Event_Declaration);
+                        BLNu.Append_Node_To_List (N_Event_Declaration,
+                           Processor_Event_Gate_Declaration_List);
+                        Event_Number := Event_Number + 1;
+                        BLNu.Append_Node_To_List (Aux_N_Event_Declaration,
+                         L_Gates_Declaration);
+
                         Port_Gates_List := New_List (
                           Make_Identifier (N_SEND), -- SEND_
                           Aux_N_Port_3,  --  RECEIVE_
-                          Aux_N_Event);  --  INCOMING_EVENT_
+                          Aux_N_Event_2);  --  INCOMING_EVENT_
                         N_Port := Make_Process_Instantiation_Statement
-                           (Make_Identifier ("Event_Port_Sporadic"),
+                           (Make_Identifier ("Event_Port"),
                             Port_Gates_List,
                             New_List (Make_Identifier (Integer'Image
                               (Queue_Size))));
@@ -580,7 +578,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                           Aux_N_Port_3  --  RECEIVE_
                         );
                         N_Port := Make_Process_Instantiation_Statement
-                           (Make_Identifier ("Event_Port_Periodic"),
+                           (Make_Identifier ("Event_Port_For_Periodic"),
                             Port_Gates_List,
                             New_List (Make_Identifier (Integer'Image
                               (Queue_Size))));
@@ -599,7 +597,6 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                   BLNu.Append_Node_To_List (Aux_N_Port_4,
                    Interface_Connection_Gates_List);
                end if;
-
             end if;
             S := AIN.Next_Node (S);
             exit when No (S);
@@ -635,6 +632,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
    procedure Make_Process_Main is
       N : Node_Id;
       N_Activation : Node_Id;
+      Aux_N_Activation : Node_Id;
 
    begin
       --  add processor
@@ -643,15 +641,20 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
            Remove_Prefix_From_Name (
            " ", Get_String_Name (Integer'Image (I))),
            "ACTIVATION_");
+         Aux_N_Activation := BLNu.Make_Node_Container (N_Activation);
          BLNu.Append_Node_To_List (N_Activation, Processor_Gates_List);
-         if (Is_Not_Periodic (I, LNT_Thread_Instance_List)) then
-            N_Activation := New_Identifier (
-              Remove_Prefix_From_Name (
-              " ", Get_String_Name (Integer'Image (I))),
-              "INCOMING_EVENT_");
-            BLNu.Append_Node_To_List (N_Activation, Processor_Gates_List);
-         end if;
+         BLNu.Append_Node_To_List (
+                           Make_Gate_Declaration (
+                            Make_Identifier ("LNT_Channel_Dispatch"),
+                            Aux_N_Activation),
+                           LNT_Processor_Gate_Declaration_List);
       end loop;
+      --  add  the set of Incoming_Event
+      BLNu.Append_List_To_List (Processor_Event_Gates_List,
+         Processor_Gates_List);
+      --  for processor generation
+      BLNu.Append_List_To_List (Processor_Event_Gate_Declaration_List,
+         LNT_Processor_Gate_Declaration_List);
       BLNu.Append_Node_To_List (
            Make_Interface_Synchronisation (
              Processor_Gates_List,
@@ -659,6 +662,8 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
                             Make_Identifier ("Processor"),
                             Processor_Gates_List, No_List))),
            Main_Interface_Synchronisation_List);
+      Set_Process_Gate_Declarations (BLN.Item (The_Processor),
+        LNT_Processor_Gate_Declaration_List);
       --  add threads
 
       N := Make_Process_Definition
@@ -701,26 +706,5 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
          end loop;
       end if;
    end Find_Instance_By_Name;
-
-   function Is_Not_Periodic (Index : Natural; Target : List_Id)
-     return boolean is
-      N  : Node_Id;
-      Counter : Natural := 1;
-   begin
-      if BLNu.Is_Empty (Target) then
-         return false;
-      else
-         N := BLN.First_Node (Target);
-
-         while Present (N) loop
-            if (Counter = Index) then
-               return BLN.Is_Not_Periodic (N);
-            end if;
-            N := BLN.Next_Node (N);
-            Counter := Counter + 1;
-         end loop;
-      end if;
-      return false;
-   end Is_Not_Periodic;
 
 end Ocarina.Backends.LNT.Tree_Generator_Main;

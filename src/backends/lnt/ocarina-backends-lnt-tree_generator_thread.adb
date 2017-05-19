@@ -123,9 +123,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
        (New_Identifier (Get_String_Name ("_Threads"),
                         Get_Name_String (System_Name)));
       Definitions_List := New_List;
-      Modules_List := New_List (New_Identifier (
-                        Get_String_Name ("_Types"),
-                        Get_Name_String (System_Name)));
+      Modules_List := New_List (Make_Identifier ("Types"));
       Predefined_Functions_List := New_List;
       Visit (N);
       Set_Definitions (Module_Node, Definitions_List);

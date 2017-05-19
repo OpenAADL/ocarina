@@ -421,6 +421,7 @@ AC_OUTPUT([
 	resources/runtime/aadl_xml/Makefile
 	resources/runtime/alloy/Makefile
 	resources/runtime/cheddar/Makefile
+	resources/runtime/lnt/Makefile
 	resources/runtime/python/Makefile
 	projects/ocarina.gpr
 	src/main/Makefile

@@ -83,10 +83,13 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
    procedure Make_LNT_RM_Processor (T : Thread_Array);
    procedure Make_LNT_RM_Processor_Functions;
    procedure Quick_Sort_Threads (Threads : in out Thread_Array);
-
+   function Connections_Number (Port : Node_Id) return Natural;
    function Threads_Hyperperiod (T : Period_Array)
     return Natural;
    function Make_Time_Const (A : Natural) return Node_Id;
+   procedure Make_Notif (Event_Port_Number : Natural;
+     I : Natural; Notif_Function : String;
+      L_Incoming_Event : List_Id);
    function Make_Time_Const (A : Natural) return Node_Id is
    begin
       return Make_Constructed_Pattern
@@ -148,9 +151,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                         Get_Name_String (System_Name)));
       Definitions_List := New_List;
       Make_LNT_RM_Processor_Functions;
-      Modules_List := New_List (New_Identifier (
-                        Get_String_Name ("_Types"),
-                        Get_Name_String (System_Name)));
+      Modules_List := New_List (Make_Identifier ("Types"));
       Predefined_Functions_List := New_List;
       Visit (N, T, P);
       --  Hyperperiod calculation
@@ -222,13 +223,34 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                                     T : in out Thread_Array;
                                     P : in out Period_Array)
    is
+      S : Node_Id;
       Th : Thread;
       Period : Natural;
+      Event_Port_Number : Natural := 0;
       Thread_Identifier : constant Name_Id
         := AIN.Display_Name (AIN.Identifier (E));
       Dispatch : constant Supported_Thread_Dispatch_Protocol :=
         Get_Thread_Dispatch_Protocol (E);
    begin
+      if not AINU.Is_Empty (Features (E)) then
+         S := AIN.First_Node (Features (E));
+         loop
+            if (AIN.Kind (S) = K_Port_Spec_Instance) then
+               if Connections_Number (S) > 1 then
+                  Display_Located_Error (AIN.Loc (S),
+                   "LNT generation requires 1 to 1 connections",
+                Fatal => True);
+               end if;
+               if (AIN.Is_In (S))  and then
+                  (AIN.Is_Event (S))
+               then
+                  Event_Port_Number := Event_Port_Number + 1;
+               end if;
+            end if;
+            S := AIN.Next_Node (S);
+            exit when No (S);
+         end loop;
+      end if;
       Th.Identifier := New_Identifier (Thread_Identifier, "Thread_");
       if (((Dispatch = Thread_Periodic) or else
            (Dispatch = Thread_Sporadic) or else
@@ -240,6 +262,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
          Th.Period := Period;
          Th.Capacity := Natural (Get_Execution_Time (E)(1).T);
          Th.Dispatch_Protocol := Dispatch;
+         Th.Event_Port_Number := Event_Port_Number;
          T (Counter) := Th;
          P (Counter) := Period;
          Counter := Counter + 1;
@@ -262,7 +285,6 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
       L_While : List_Id;
       L_Else_Running_State : List_Id;
       N_Act : Node_Id;
-      N_Event : Node_Id;
       Aux_Act_1 : Node_Id;
       Aux_Act_2 : Node_Id;
 
@@ -402,6 +424,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                            Make_Time_Const (0)))),
                  L_Threads_Array);
             when Thread_Sporadic =>
+               Is_Not_Periodic := true;
                BLNu.Append_Node_To_List (
                 Make_Array_Element_Assignment_Statement
                  (Make_Identifier ("Threads"),
@@ -423,31 +446,10 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                            Make_Time_Const (1)))),
                 L_Threads_Array);
 
-               N_Event := New_Identifier (
-                Remove_Prefix_From_Name (
-                " ", Get_String_Name (Integer'Image (I))),
-                "INCOMING_EVENT_");
-               BLNu.Append_Node_To_List (
-                Make_Gate_Declaration (
-                 Make_Identifier ("LNT_Channel_Event"),
-                 N_Event),
-                L_Processor_Gates);
-
-               BLNu.Append_Node_To_List (
-                 Make_Process_Instantiation_Statement
-                  (Make_Identifier ("Sporadic_Notif"),
-                   New_List (N_Event),
-                   New_List (
-                   Make_Actual_Parameter
-                    (Make_Identifier ("Threads"), false, true),
-                     Make_Actual_Parameter
-                    (Make_Identifier (Integer'Image (I))),
-                     Make_Actual_Parameter
-                   (Make_Identifier ("Counter")),
-                   Make_Actual_Parameter
-                  (Make_Identifier ("Is_Activated"), false, true))),
-                 L_Incoming_Event);
+               Make_Notif (Threads (I).Event_Port_Number,
+                 I, "Sporadic_Notif", L_Incoming_Event);
             when Thread_Timed =>
+               Is_Not_Periodic := true;
                BLNu.Append_Node_To_List (
                 Make_Array_Element_Assignment_Statement
                  (Make_Identifier ("Threads"),
@@ -468,32 +470,10 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                            Make_Time_Const (1),
                            Make_Time_Const (2)))),
                 L_Threads_Array);
-
-               N_Event := New_Identifier (
-                Remove_Prefix_From_Name (
-                " ", Get_String_Name (Integer'Image (I))),
-                "INCOMING_EVENT_");
-               BLNu.Append_Node_To_List (
-                Make_Gate_Declaration (
-                 Make_Identifier ("LNT_Channel_Event"),
-                 N_Event),
-                L_Processor_Gates);
-
-               BLNu.Append_Node_To_List (
-                 Make_Process_Instantiation_Statement
-                  (Make_Identifier ("Timed_Hybrid_Notif"),
-                   New_List (N_Event),
-                   New_List (
-                   Make_Actual_Parameter
-                    (Make_Identifier ("Threads"), false, true),
-                     Make_Actual_Parameter
-                    (Make_Identifier (Integer'Image (I))),
-                     Make_Actual_Parameter
-                   (Make_Identifier ("Counter")),
-                   Make_Actual_Parameter
-                  (Make_Identifier ("Is_Activated"), false, true))),
-                 L_Incoming_Event);
+               Make_Notif (Threads (I).Event_Port_Number,
+                 I, "Timed_Hybrid_Notif", L_Incoming_Event);
             when Thread_Hybrid =>
+               Is_Not_Periodic := true;
                BLNu.Append_Node_To_List (
                 Make_Array_Element_Assignment_Statement
                  (Make_Identifier ("Threads"),
@@ -514,31 +494,8 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                            Make_Time_Const (1),
                            Make_Time_Const (3)))),
                 L_Threads_Array);
-
-               N_Event := New_Identifier (
-                Remove_Prefix_From_Name (
-                " ", Get_String_Name (Integer'Image (I))),
-                "INCOMING_EVENT_");
-               BLNu.Append_Node_To_List (
-                Make_Gate_Declaration (
-                 Make_Identifier ("LNT_Channel_Event"),
-                 N_Event),
-                L_Processor_Gates);
-
-               BLNu.Append_Node_To_List (
-                 Make_Process_Instantiation_Statement
-                  (Make_Identifier ("Timed_Hybrid_Notif"),
-                   New_List (N_Event),
-                   New_List (
-                   Make_Actual_Parameter
-                    (Make_Identifier ("Threads"), false, true),
-                     Make_Actual_Parameter
-                    (Make_Identifier (Integer'Image (I))),
-                     Make_Actual_Parameter
-                   (Make_Identifier ("Counter")),
-                   Make_Actual_Parameter
-                  (Make_Identifier ("Is_Activated"), false, true))),
-                 L_Incoming_Event);
+               Make_Notif (Threads (I).Event_Port_Number,
+                 I, "Timed_Hybrid_Notif", L_Incoming_Event);
             when others =>
                null;
          end case;
@@ -844,7 +801,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
       (No_Node,
        Make_Identifier ("Processor"),
        No_List,
-       L_Processor_Gates,
+       No_List, -- to be added in main generation
        No_List,
        No_List,
        New_List (
@@ -852,7 +809,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
            Make_Var_declaration_List,
            L_Threads_Array,
            New_List (N_Sort), false)));
-
+      The_Processor := BLNu.Make_Node_Container (N);
       BLNu.Append_Node_To_List (N, Definitions_List);
    end Make_LNT_RM_Processor;
 
@@ -1674,4 +1631,83 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
       end if;
    end Quick_Sort_Threads;
 
+   procedure Make_Notif (
+      Event_Port_Number : Natural;
+      I : Natural;
+      Notif_Function : String;
+      L_Incoming_Event : List_Id)
+   is
+      N_Event_Name : Name_Id;
+      N_Event : Node_Id;
+   begin
+      N_Event_Name := New_Identifier (
+        Remove_Prefix_From_Name (
+        " ", Get_String_Name (Integer'Image (I))),
+        "INCOMING_EVENT_");
+
+      for P in 1 .. Event_Port_Number loop
+         if (P = 1) then
+            N_Event := Make_Identifier (N_Event_Name);
+         else
+            N_Event := New_Identifier (
+              Remove_Prefix_From_Name (
+              " ", Get_String_Name (
+              Integer'Image (P - 1))),
+              Get_Name_String (N_Event_Name));
+         end if;
+         BLNu.Append_Node_To_List (
+           Make_Process_Instantiation_Statement (
+             Make_Identifier (Notif_Function),
+               New_List (N_Event),
+               New_List (
+               Make_Actual_Parameter (
+                 Make_Identifier ("Threads"), false, true),
+                 Make_Actual_Parameter (
+                   Make_Identifier (Integer'Image (I))),
+                   Make_Actual_Parameter (
+                     Make_Identifier ("Counter")),
+                     Make_Actual_Parameter (
+                   Make_Identifier ("Is_Activated"), false, true))),
+           L_Incoming_Event);
+      end loop;
+   end Make_Notif;
+
+   function Connections_Number (Port : Node_Id) return Natural is
+      N, Parent : Node_Id;
+      Val_Left      : Natural          := 0;
+   begin
+            if AIN.Kind (Port) = K_Port_Spec_Instance then
+               if AIN.Is_In (Port) then
+                  N := AIN.First_Node (Sources (Port));
+                  while Present (N) loop
+                     Parent := AIN.Item (N);
+                     if AIN.Kind (Parent) = K_Port_Spec_Instance then
+                        Parent := AIN.Parent_Component (Parent);
+                        if Get_Category_Of_Component (Parent) =
+                          CC_Thread
+                        then
+                           Val_Left := Val_Left + 1;
+                        end if;
+                     end if;
+                     N := AIN.Next_Node (N);
+                  end loop;
+               end if;
+               if AIN.Is_Out (Port) then
+                  N := AIN.First_Node (Destinations (Port));
+                  while Present (N) loop
+                     Parent := AIN.Item (N);
+                     if AIN.Kind (Parent) = K_Port_Spec_Instance then
+                        Parent := AIN.Parent_Component (Parent);
+                        if Get_Category_Of_Component (Parent) =
+                          CC_Thread
+                        then
+                           Val_Left := Val_Left + 1;
+                        end if;
+                     end if;
+                     N := AIN.Next_Node (N);
+                  end loop;
+               end if;
+            end if;
+      return Val_Left;
+   end Connections_Number;
 end Ocarina.Backends.LNT.Tree_Generator_Processor;

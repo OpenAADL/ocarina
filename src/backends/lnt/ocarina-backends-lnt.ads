@@ -46,8 +46,9 @@ package Ocarina.Backends.LNT is
 
    type Thread is record
       Identifier : Name_Id;
-      Period : Natural;
-      Capacity : Natural;
+      Period : Natural := 0;
+      Capacity : Natural := 0;
+      Event_Port_Number : Natural := 0;
       Dispatch_Protocol : Properties.Supported_Thread_Dispatch_Protocol;
    end record;
 
@@ -55,10 +56,12 @@ package Ocarina.Backends.LNT is
    type Period_Array is array (Natural range <>) of Natural;
 
    System_Name   : Name_Id;
+   The_Processor : Node_Id;
    Thread_Number : Natural := 0;
    Not_Periodic_Thread_Number : Natural := 0;
    Hyperperiod   : Integer := 0;
    LNT_Thread_Instance_List   : List_Id := No_List;
+   LNT_Processor_Gate_Declaration_List   : List_Id := No_List;
    LNT_States_List   : List_Id := No_List;
 private
    Separator : Types.Name_Id;

@@ -103,7 +103,6 @@ package body Ocarina.Backends.LNT is
          LNT_Threads := Generate_LNT_Thread (Instance_Root);
          LNT_Processor := Generate_LNT_Processor (Instance_Root);
          LNT_Types := Generate_LNT_Types;
-         LNT_Port := Generate_LNT_Port;
          LNT_Main := Generate_LNT_Main (Instance_Root);
       end if;
       if No (LNT_Threads) then
@@ -112,11 +111,11 @@ package body Ocarina.Backends.LNT is
       Enter_Directory (Generated_Sources_Directory);
       --  Print_LNT_Generated (SVL);
       Make_Svl_File;
+      Generate_LNT_Port;
       Print_LNT_Generated (LNT_Threads);
-      Print_LNT_Generated (LNT_Port);
       Print_LNT_Generated (LNT_Types);
-      Print_LNT_Generated (LNT_Processor);
       Print_LNT_Generated (LNT_Main);
+      Print_LNT_Generated (LNT_Processor);
    end Generate;
 
    ----------
