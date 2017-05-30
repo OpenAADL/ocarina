@@ -36,7 +36,10 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Tree.Debug;
 
+--with Ada.Text_IO;
+
 package body Ocarina.ME_AADL.AADL_Tree.Entities is
+   --use Ada.Text_IO;
 
    --
    --  This following section is relative to Entities
@@ -163,11 +166,14 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
       if Kind (Entity) /= K_AADL_Specification
         and then Identifier (Entity) /= No_Node
       then
+         --Put_Line (Node_Kind'Image (Kind (Entity)));
+         --Put_Line ( Node_Id'Image (Entity) );
          if Get_Display_Name then
             Entity_Name := Display_Name (Identifier (Entity));
          else
             Entity_Name := Name (Identifier (Entity));
          end if;
+         --Put_Line ( Get_Name_String (Entity_Name));
       else
          return No_Name;
       end if;

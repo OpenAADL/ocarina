@@ -45,6 +45,9 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.Analyzer.AADL.Finder;
 
+with Ocarina.Instances.Queries;
+with Ocarina.AADL_Values;
+
 with Ocarina.Backends.Utils;
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
@@ -68,8 +71,11 @@ package body Ocarina.Backends.Ever_XML is
    use Ocarina.BE_AADL.Components;
    use ATE;
    use AIE;
+   use type ATN.Node_Kind;
    use Ocarina.Analyzer.AADL.Finder;
    use Ocarina.Options;
+   use Ocarina.Instances.Queries;
+   use Ocarina.AADL_Values;
 
    FD_System         : File_Type;
 
@@ -177,6 +183,8 @@ package body Ocarina.Backends.Ever_XML is
       Comp_Name   : constant Name_Id := Display_Name (Identifier (E));
       F           : Node_Id;
       Indent      : Integer;
+
+      AADL_Property_Value : Node_Id;
    begin
       Indent := Depth;
 
@@ -190,7 +198,7 @@ package body Ocarina.Backends.Ever_XML is
       -- Aggiungo il nome NON normalizzato con il tag <name>
       -- Questo vuol dire che il nome è lo stesso del file AADL e non vengono
       -- sostituiti i trattini . con i trattini _, ecc...
-      Put_Tag (FD_System, "name", Get_Name_String (Comp_Name), Indent);
+      Put_Tag (FD_System, "type", Get_Name_String (Comp_Name), Indent);
       Put_Tag (FD_System, "category", Get_Category_String (Category), Indent);
       Put_Tag (FD_System, "namespace", Get_Name_String (Display_Name (Identifier (Namespace (E)))), Indent);
 
@@ -307,20 +315,31 @@ package body Ocarina.Backends.Ever_XML is
       Close_Tag (FD_System, "features", Indent);
 
       Print_Title ("Properties");
-
+      Open_Tag (FD_System, "properties", Indent);
       if Present (Properties (E)) then
          Print_Func_Output ("Present (Properties (E))", "True");
 
          F := First_Node (Properties (E));
          while Present (F) loop
-
+            AADL_Property_Value := Get_Value_Of_Property_Association (E, Name (Identifier (F)));
             Print_Func_Output ("Display_Name (Identifier (F))", Get_Name_String (Display_Name (Identifier (F))));
+
+            Open_Tag (FD_System, "property", Indent);
+            Put_Tag (FD_System, "name", Get_Name_String (Display_Name (Identifier (F))), Indent + 1);
+            -- Source_Text
+
+            if Present (AADL_Property_Value) and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal then
+
+               Print_Func_Output ("ValueProp", Ocarina.AADL_Values.Image (ATN.Value (AADL_Property_Value), Quoted => False));
+               Put_Tag (FD_System, "value", Ocarina.AADL_Values.Image (ATN.Value (AADL_Property_Value), Quoted => False), Indent + 1);
+            end if;
+            Close_Tag (FD_System, "property", Indent);
             F := Next_Node (F);
          end loop;
       else
          Print_Func_Output ("Present (Properties (E))", "False");
       end if;
-
+      Close_Tag (FD_System, "properties", Indent);
       Print_Title ("Connections");
 
       if Present (Connections (E)) then
@@ -367,7 +386,7 @@ package body Ocarina.Backends.Ever_XML is
             -- Not working Print_Func_Output ("Corresponding_Declaration (E)", Get_Name_String (Display_Name (Corresponding_Declaration (Corresponding_Instance (F)))));
 
             Open_Tag (FD_System, "component", Depth);
-            Put_Tag (FD_System, "identifier", Get_Name_String (Display_Name (Identifier (F))), Depth);
+            Put_Tag (FD_System, "name", Get_Name_String (Display_Name (Identifier (F))), Depth);
             Visit (Corresponding_Instance (F), Depth + 1);
             Close_Tag (FD_System, "component", Depth);
 

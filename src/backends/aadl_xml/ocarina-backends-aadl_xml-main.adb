@@ -42,6 +42,8 @@ with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.AADL_XML.Mapping;
 with Ocarina.Backends.Utils;
 
+with Ada.Text_IO;
+
 package body Ocarina.Backends.AADL_XML.Main is
 
    use Ocarina.ME_AADL;
@@ -50,6 +52,7 @@ package body Ocarina.Backends.AADL_XML.Main is
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.AADL_XML.Mapping;
    use Ocarina.Backends.Utils;
+   use Ada.Text_IO;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
@@ -138,10 +141,12 @@ package body Ocarina.Backends.AADL_XML.Main is
    begin
       case Kind (E) is
          when K_Architecture_Instance =>
+            Put_Line ("Visit: Caso K_Architecture_Instance");
             Root_System_Node := Root_System (E);
             Visit (Root_System_Node);
 
          when K_Component_Instance =>
+            Put_Line ("Visit: Caso K_Component_Instance");
             Visit_Component (E);
 
          when others =>
@@ -172,11 +177,16 @@ package body Ocarina.Backends.AADL_XML.Main is
 
    begin
       if Category = CC_System then
+         Put_Line ("Visit_Component: category CC_System");
+         Put_Line ("Visit_Component - 1");
          P := Map_HI_Node (E);
+         Put_Line ("Visit_Component - 2");
          Push_Entity (P);
-
+         Put_Line ("Visit_Component - 3");
          U := Map_HI_Unit (E);
+         Put_Line ("Visit_Component - 4");
          Push_Entity (U);
+         Put_Line ("Visit_Component - 5");
 
          if AADL_XML_Node = No_Node then
             AADL_XML_Node := Make_XML_Node ("aadl_xml");
@@ -196,32 +206,35 @@ package body Ocarina.Backends.AADL_XML.Main is
               (Components_Node,
                XTN.Subitems (AADL_XML_Node));
          end if;
+         Put_Line ("Visit_Component - 6");
          Current_XML_Node := Components_Node;
       end if;
-
+      Put_Line ("Visit_Component - 10");
       --  First bits of the component node
 
       N := Map_Component (E);
       Append_Node_To_List (N, XTN.Subitems (Current_XML_Node));
-
+      Put_Line ("Visit_Component - 11");
       --  Features
 
       Features_Node := Make_XML_Node ("features");
       Append_Node_To_List (Features_Node, XTN.Subitems (N));
+      Put_Line ("Visit_Component - 12");
 
       if Present (Features (E)) then
+         Put_Line ("Visit_Component - Present (Features (E)) - 13");
          F := First_Node (Features (E));
          while Present (F) loop
             Feature_Node := Make_XML_Node ("feature");
 
             --  Identifier
-
+            Put_Line ("Visit_Component - While Present (F) - 14");
             Append_Node_To_List
               (Make_Assignement
                  (Make_Defining_Identifier (Get_String_Name ("identifier")),
                   Make_Defining_Identifier (Display_Name (Identifier (F)))),
                XTN.Items (Feature_Node));
-
+            Put_Line ("Visit_Component - While Present (F) - 15");
             --  Direction: in/out/inout
 
             declare
@@ -240,7 +253,7 @@ package body Ocarina.Backends.AADL_XML.Main is
                else
                   Direction_Kind := Get_String_Name ("none");
                end if;
-
+               Put_Line ("Visit_Component - While Present (F) - 16");
                Append_Node_To_List
                  (Make_Assignement
                     (Make_Defining_Identifier (Get_String_Name ("kind")),
@@ -251,6 +264,7 @@ package body Ocarina.Backends.AADL_XML.Main is
                  (Direction_Node,
                   XTN.Subitems (Feature_Node));
             end;
+            Put_Line ("Visit_Component - While Present (F) - 17");
 
             --  Type: event/data/event data
 
@@ -272,7 +286,7 @@ package body Ocarina.Backends.AADL_XML.Main is
                else
                   Type_Kind := Get_String_Name ("feature");
                end if;
-
+               Put_Line ("Visit_Component - While Present (F) - 18");
                Append_Node_To_List
                  (Make_Assignement
                     (Make_Defining_Identifier (Get_String_Name ("kind")),
@@ -280,27 +294,44 @@ package body Ocarina.Backends.AADL_XML.Main is
                   XTN.Items (Type_Node));
 
                Append_Node_To_List (Type_Node, XTN.Subitems (Feature_Node));
+               Put_Line ("Visit_Component - While Present (F) - 19");
             end;
 
             --  Classifier
-
+            Put_Line ("Visit_Component - While Present (F) - 20");
             declare
                Classifier_Node : Node_Id;
             begin
+               Put_Line ("[ISSUE] A");
                Classifier_Node := Make_XML_Node ("classifier");
+               Put_Line ("[ISSUE] B");
+               --XTN.Subitems (Classifier_Node);
+               Put_Line ("[ISSUE] B.112345678");
+               
+               Put_Line ("[ISSUE] B.2 - Kind " &  Node_Kind'Image (Kind (F)));
+               --Put_Line ("[ISSUE] B.2 - AAAA " &  (Types.Node_Id (F)).Kind);
+               Put_Line ("[ISSUE] B.2 - " & Get_Name_String (Display_Name (Identifier (Corresponding_Instance (F)))));
+
                Append_Node_To_List
                  (Make_Defining_Identifier
                     (Display_Name (Identifier (Corresponding_Instance (F)))),
                   XTN.Subitems (Classifier_Node));
+               Put_Line ("[ISSUE] C");
                Append_Node_To_List
                  (Classifier_Node,
                   XTN.Subitems (Feature_Node));
+               Put_Line ("[ISSUE] D");
+               exception
+                  when others =>
+                    Put_Line("Un bel casinoooooooooooo");
             end;
-
+            Put_Line ("Visit_Component - While Present (F) - 21");
             Append_Node_To_List (Feature_Node, XTN.Subitems (Features_Node));
             F := Next_Node (F);
          end loop;
       end if;
+
+      Put_Line ("Visit_Component - 22");
 
       --  Subcomponents
 
@@ -311,15 +342,18 @@ package body Ocarina.Backends.AADL_XML.Main is
       Current_XML_Node := Subcomponents_Node;
       Visit_Subcomponents_Of (E);
       Current_XML_Node := Old_XML_Node;
-
+      Put_Line ("Visit_Component - 23");
       --  Properties
 
       Properties_Node := Make_XML_Node ("properties");
       Append_Node_To_List (Properties_Node, XTN.Subitems (N));
+      Put_Line ("Visit_Component - 24");
 
       if Present (Properties (E)) then
+         Put_Line ("Visit_Component - Present (Properties (E)) - 25");
          F := First_Node (Properties (E));
          while Present (F) loop
+          Put_Line ("Visit_Component - Present (F) - 26");
             --  XXX Warning, if there are multiple values for a
             --  property (e.g. because of inheritance), then all
             --  values are dumped.
@@ -331,22 +365,22 @@ package body Ocarina.Backends.AADL_XML.Main is
                  (Make_Defining_Identifier (Get_String_Name ("name")),
                   Make_Defining_Identifier (Display_Name (Identifier (F)))),
                XTN.Items (Property_Node));
-
+            Put_Line ("Visit_Component - Present (F) - 27");
             Property_Value_Node := Make_XML_Node ("property_value");
             Append_Node_To_List
               (Property_Value_Node,
                XTN.Subitems (Property_Node));
-
+            Put_Line ("Visit_Component - Present (F) - 28");
             AADL_Property_Value :=
               Get_Value_Of_Property_Association (E, Name (Identifier (F)));
-
+            Put_Line ("Visit_Component - Present (F) - 29");
             if Present (AADL_Property_Value)
               and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
               and then Present (ATN.Unit_Identifier (AADL_Property_Value))
             then
                --  This property value denotes a property with a unit
                --  identifier.
-
+               Put_Line ("PROP1");
                declare
                   Unit_Node : Node_Id;
                begin
@@ -354,7 +388,7 @@ package body Ocarina.Backends.AADL_XML.Main is
                   Append_Node_To_List
                     (Unit_Node,
                      XTN.Subitems (Property_Value_Node));
-
+                  Put_Line ("Visit_Component - Present (F) - 30");
                   Append_Node_To_List
                     (Make_Assignement
                        (Make_Defining_Identifier (Get_String_Name ("value")),
@@ -381,7 +415,7 @@ package body Ocarina.Backends.AADL_XML.Main is
               (not Present (ATN.Unit_Identifier (AADL_Property_Value)))
             then
                --  This property value denotes a property without unit
-
+               Put_Line ("PROP2");
                declare
                   Unit_Node : Node_Id;
                begin
@@ -389,7 +423,7 @@ package body Ocarina.Backends.AADL_XML.Main is
                   Append_Node_To_List
                     (Unit_Node,
                      XTN.Subitems (Property_Value_Node));
-
+                  Put_Line ("Visit_Component - Present (F) - 31");
                   Append_Node_To_List
                     (Make_Assignement
                        (Make_Defining_Identifier (Get_String_Name ("value")),
@@ -406,7 +440,7 @@ package body Ocarina.Backends.AADL_XML.Main is
               and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal
             then
                --  This property value denotes a literal
-
+               Put_Line ("PROP3");
                declare
                   Unit_Node : Node_Id;
                begin
@@ -430,7 +464,7 @@ package body Ocarina.Backends.AADL_XML.Main is
               and then ATN.Kind (AADL_Property_Value) = ATN.K_Reference_Term
             then
                --  This property value denotes a reference term
-
+               Put_Line ("PROP4");
                declare
                   Unit_Node : Node_Id;
                begin
@@ -455,7 +489,7 @@ package body Ocarina.Backends.AADL_XML.Main is
               and then ATN.Kind (AADL_Property_Value) = ATN.K_Enumeration_Term
             then
                --  This property value denotes an enumeration term
-
+               Put_Line ("PROP5");
                declare
                   Unit_Node : Node_Id;
                begin
@@ -477,7 +511,7 @@ package body Ocarina.Backends.AADL_XML.Main is
               and then ATN.Kind (AADL_Property_Value) = ATN.K_Number_Range_Term
             then
                --  This property value denotes a number range term
-
+               Put_Line ("PROP6");
                declare
                   Unit_Node : Node_Id;
                begin
@@ -529,7 +563,7 @@ package body Ocarina.Backends.AADL_XML.Main is
 
             elsif Present (AADL_Property_Value) then
                --  XXX ICE
-
+               Put_Line ("PROP7");
                declare
                   Unit_Node : Node_Id;
                begin
@@ -540,7 +574,7 @@ package body Ocarina.Backends.AADL_XML.Main is
                      XTN.Subitems (Property_Value_Node));
                end;
             end if;
-
+            Put_Line ("Visit_Component - Present (F) - 50");
             Append_Node_To_List
               (Property_Node,
                XTN.Subitems (Properties_Node));
@@ -552,6 +586,8 @@ package body Ocarina.Backends.AADL_XML.Main is
          Pop_Entity;
          Pop_Entity; --  A
       end if;
+
+
    end Visit_Component;
 
 end Ocarina.Backends.AADL_XML.Main;

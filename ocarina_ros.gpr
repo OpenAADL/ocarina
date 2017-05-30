@@ -1,0 +1,10 @@
+project Ocarina_Ros is
+
+   for Source_Dirs use ("./**");
+
+   package Ide is
+      for Vcs_Kind use "Git";
+   end Ide;
+
+end Ocarina_Ros;
+

@@ -56,10 +56,10 @@ package body Ocarina.Backends.AADL_XML.Mapping is
    function Map_HI_Node (E : Node_Id) return Node_Id is
       N : constant Node_Id := New_Node (XTN.K_HI_Node);
    begin
-      pragma Assert
-        (AINU.Is_Process (E)
-         or else AINU.Is_System (E)
-         or else AINU.Is_Processor (E));
+      -- pragma Assert
+      --   (AINU.Is_Process (E)
+      --    or else AINU.Is_System (E)
+      --    or else AINU.Is_Processor (E));
 
       if AINU.Is_System (E) then
          Set_Str_To_Name_Buffer ("general");
@@ -90,10 +90,10 @@ package body Ocarina.Backends.AADL_XML.Mapping is
       P    : Node_Id;
       Root : Node_Id;
    begin
-      pragma Assert
-        (AINU.Is_System (E)
-         or else AINU.Is_Process (E)
-         or else AINU.Is_Processor (E));
+      -- pragma Assert
+      --   (AINU.Is_System (E)
+      --    or else AINU.Is_Process (E)
+      --    or else AINU.Is_Processor (E));
 
       U := New_Node (XTN.K_HI_Unit, Identifier (E));
 

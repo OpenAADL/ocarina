@@ -38,13 +38,16 @@ with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
 
+with Ada.Text_IO;
+
 package body Ocarina.Backends.AADL_XML is
 
    use Ocarina.Instances;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Expander;
-
+   use Ada.Text_IO;
+   
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
 
@@ -61,18 +64,19 @@ package body Ocarina.Backends.AADL_XML is
       Instance_Root : Node_Id;
 
    begin
+      Put_Line ("1");
       Instance_Root := Instantiate_Model (AADL_Root);
-
+      Put_Line ("2");
       if No (Instance_Root) then
          Display_Error ("Cannot instantiate the AADL model", Fatal => True);
       end if;
 
       --  Expand the AADL instance
-
+      Put_Line ("3");
       Expand (Instance_Root);
-
+      Put_Line ("4");
       Visit_Architecture_Instance (Instance_Root);
-
+      Put_Line ("5");
       --  Abort if the construction of the XML tree failed
 
       if No (XML_Root) then
@@ -112,16 +116,21 @@ package body Ocarina.Backends.AADL_XML is
 
    procedure Visit_Architecture_Instance (E : Node_Id) is
    begin
+      Put_Line ("V_A_I - 1");
       XML_Root := XTU.New_Node (XTN.K_HI_Distributed_Application);
+      Put_Line ("V_A_I - 2");
       XTN.Set_Name (XML_Root, No_Name);
+      Put_Line ("V_A_I - 3");
       XTN.Set_Units (XML_Root, XTU.New_List (XTN.K_List_Id));
+      Put_Line ("V_A_I - 4");
       XTN.Set_HI_Nodes (XML_Root, XTU.New_List (XTN.K_List_Id));
-
+      Put_Line ("V_A_I - 5");
       XTU.Push_Entity (XML_Root);
-
+      Put_Line ("V_A_I - 6");
       AADL_XML.Main.Visit (E);
-
+      Put_Line ("V_A_I - 7");
       XTU.Pop_Entity;
+      Put_Line ("V_A_I - 8");
    end Visit_Architecture_Instance;
 
 end Ocarina.Backends.AADL_XML;
