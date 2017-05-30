@@ -1,0 +1,90 @@
+package test
+public
+  with core;
+
+  system container
+  end container;
+
+  system implementation container.impl
+  subcomponents
+    test_pr: process core::node.impl;
+  end container.impl;
+
+end test;package core
+public
+  data state_data
+  end state_data;
+
+  data implementation state_data.impl
+  end state_data.impl;
+
+  thread main_loop
+  features
+    error_tr: out event port;
+    run_tr: out event port;
+    init_tr: out event port;
+    close_tr: out event port;
+    globalState: requires data access state_data.impl;
+    notify_state: requires subprogram access state_manager;
+  end main_loop;
+
+  thread implementation main_loop.impl
+  subcomponents
+    prepare: subprogram function;
+    spin: subprogram function;
+    tear_down: subprogram function;
+    error_handler: subprogram function;
+  connections
+    --transitions
+    run_sig_pr: port prepare.signal -> run_tr ;
+    error_sig_pr: port prepare.signal -> error_tr ;
+    error_sig_sp: port spin.signal -> error_tr ;
+    run_sig_sp: port spin.signal -> run_tr ;
+    close_sig_er: port error_handler.signal -> close_tr ;
+    run_sig_er: port error_handler.signal -> run_tr ;
+    init_sig_er: port error_handler.signal -> init_tr ;
+
+    --data access
+    da1: data access  prepare.state_access -> globalState ;
+    da2: data access  spin.state_access -> globalState ;
+    da3: data access  tear_down.state_access -> globalState ;
+    da4: data access  error_handler.state_access -> globalState ;
+  end main_loop.impl;
+
+  subprogram function
+  features
+    signal: out event port;
+    state_access: requires data access state_data.impl;
+  end function;
+
+  subprogram state_manager
+  end state_manager;
+
+  process node
+  features
+    close: in event port;
+    notify_state: requires subprogram access state_manager;
+  end node;
+
+  process implementation node.impl
+  subcomponents
+    main_thread: thread main_loop.impl in modes (init , running, closing, error);
+    state: data state_data.impl;
+  connections
+    da: data access  state -> main_thread.globalState;
+    sc: subprogram access main_thread.notify_state -> notify_state;
+  modes
+    init: initial mode;
+    running: mode;
+    closing: mode;
+    error: mode;
+    running -[close]-> closing;
+    running -[main_thread.run_tr]-> running;
+        init -[close]-> closing;
+    init -[main_thread.run_tr]-> running;
+    init -[main_thread.error_tr]-> error;
+    error -[main_thread.init_tr]-> init;
+    error -[main_thread.run_tr]-> running;
+    error -[main_thread.close_tr]-> closing;
+  end node.impl;
+end core;

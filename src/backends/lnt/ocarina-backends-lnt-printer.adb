@@ -573,6 +573,16 @@ package body Ocarina.Backends.LNT.Printer is
             L_Write ("and");
          when K_Or =>
             L_Write ("or");
+         when K_Head =>
+            L_Write ("head");
+         when K_Tail =>
+            L_Write ("tail");
+         when K_Append =>
+            L_Write ("append");
+         when K_Length =>
+            L_Write ("length");
+         when K_Reverse =>
+            L_Write ("reverse");
          when others =>
             null;
       end case;

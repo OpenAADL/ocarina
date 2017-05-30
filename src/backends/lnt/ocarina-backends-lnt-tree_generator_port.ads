@@ -31,6 +31,6 @@
 
 package Ocarina.Backends.LNT.Tree_Generator_Port is
    --  Additional LNT process for communication
-   function Generate_LNT_Port return Node_Id;  -- LNT Port process
+   procedure Generate_LNT_Port;  -- LNT Port process
 
 end Ocarina.Backends.LNT.Tree_Generator_Port;

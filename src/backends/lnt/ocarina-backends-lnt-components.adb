@@ -756,7 +756,7 @@ package body Ocarina.Backends.Lnt.Components is
      (Defining_Identifier : Node_Id;
       Actual_Gates : List_Id := No_List;
       Actual_Parameters : List_Id := No_List;
-      Is_Sporadic : boolean := false)
+      Is_Not_Periodic : Boolean := false)
      return Node_Id
    is
       pragma Assert (Defining_Identifier /= No_Node);
@@ -766,7 +766,7 @@ package body Ocarina.Backends.Lnt.Components is
       Set_Identifier (N, Defining_Identifier);
       Set_Actual_Gates (N, Actual_Gates);
       Set_Actual_Parameters (N, Actual_Parameters);
-      Set_Is_Sporadic (N, Is_Sporadic);
+      Set_Is_Not_Periodic (N, Is_Not_Periodic);
       return N;
    end Make_Process_Instantiation_Statement;
 
@@ -899,17 +899,21 @@ package body Ocarina.Backends.Lnt.Components is
    ---------------------------
    function Make_Var_Loop_Select (Var_Dec : List_Id;
                                  Out_Loop : List_Id;
-                                In_Select : List_Id)
+                                 In_Select : List_Id;
+                                 With_Select : Boolean := true)
      return Node_Id is
       N : Node_Id;
       N_Loop : Node_Id;
       L_Var : List_Id;
    begin
       L_Var := Out_Loop;
-      N_Loop := Make_Loop_Statement
-        (New_List (Make_Select_Statement (In_Select)));
+      if With_Select then
+         N_Loop := Make_Loop_Statement
+           (New_List (Make_Select_Statement (In_Select)));
+      else
+         N_Loop := Make_Loop_Statement (In_Select);
+      end if;
       Append_Node_To_List (N_Loop, L_Var);
-
       N := Make_Var_Statement (Var_Dec, L_Var);
       return N;
    end Make_Var_Loop_Select;

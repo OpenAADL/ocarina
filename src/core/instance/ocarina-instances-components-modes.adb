@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -52,10 +52,10 @@ package body Ocarina.Instances.Components.Modes is
    function Fetch_Port_Reference_Instance
      (Ref : Node_Id;
       C   : Node_Id) return Node_Id;
-   --  Return an reference to the instance corresponding to the port
+   --  Return a reference to the instance corresponding to the port
    --  declaration referenced by Ref. C is the AADL component in which
-   --  the search begins. Research can be continued inside the
-   --  subcomponent of C incase Ref references a subcomponent port
+   --  the search begins. The search can be continued inside the
+   --  subcomponent of C in case Ref references a subcomponent port
    --  (C.Th_1.Out_Port for example).
 
    -----------------------------------
@@ -112,9 +112,26 @@ package body Ocarina.Instances.Components.Modes is
                N :=
                  Get_First_Homonym_Instance
                    (AIN.Features (Component),
-                    ATN.Name (ATN.Item (Path_Element)));
+                   ATN.Name (ATN.Item (Path_Element)));
 
-               Add_Path_Element_To_Entity_Reference (Ref_Inst, N);
+               if No (N) then
+                  --  If the name is not a feature, we check wether it
+                  --  corresponds to a <subcomponent>.<feature>
+
+                  N :=
+                    Get_First_Homonym
+                      (ATN.Subcomponents (Component),
+                       ATN.Name (ATN.Item (Path_Element)));
+
+                  Add_Path_Element_To_Entity_Reference (Ref_Inst, N);
+
+                  Recursive_Path_Search
+                    (ATN.Next_Node (Path_Element),
+                     AIN.Corresponding_Instance (N));
+
+               else
+                  Add_Path_Element_To_Entity_Reference (Ref_Inst, N);
+               end if;
 
             when K_Subcomponent =>
 

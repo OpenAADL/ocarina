@@ -50,7 +50,7 @@ package body Ocarina.Backends.LNT.Tree_Generator is
 
    procedure Get_N_Thread (Sys : Node_Id;
              Thread_Number : in out Natural;
-             Sporadic_Thread_Number : in out Natural) is
+             Not_Periodic_Thread_Number : in out Natural) is
       Sys_N : Node_Id;
       Proc : Node_Id;
       Proc_N : Node_Id;
@@ -64,7 +64,7 @@ package body Ocarina.Backends.LNT.Tree_Generator is
                if Get_Category_Of_Component (Proc) = CC_System then
                   Get_N_Thread (Proc,
                                 Thread_Number,
-                                Sporadic_Thread_Number);
+                                Not_Periodic_Thread_Number);
                end if;
                if Get_Category_Of_Component (Proc) = CC_Process then
                   if not AINU.Is_Empty (Subcomponents (Proc)) then
@@ -73,11 +73,11 @@ package body Ocarina.Backends.LNT.Tree_Generator is
                         Thr := Corresponding_Instance (Proc_N);
                         if Get_Category_Of_Component (Thr) = CC_Thread then
                            Thread_Number := Thread_Number + 1;
-                           if (Get_Thread_Dispatch_Protocol (Thr) =
-                               Thread_Sporadic)
+                           if (Get_Thread_Dispatch_Protocol (Thr)
+                              /= Thread_Periodic)
                            then
-                              Sporadic_Thread_Number :=
-                                Sporadic_Thread_Number + 1;
+                              Not_Periodic_Thread_Number :=
+                                Not_Periodic_Thread_Number + 1;
                            end if;
                         end if;
                         Proc_N := AIN.Next_Node (Proc_N);
