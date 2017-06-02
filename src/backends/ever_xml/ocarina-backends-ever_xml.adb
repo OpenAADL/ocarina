@@ -91,6 +91,8 @@ package body Ocarina.Backends.Ever_XML is
    procedure Close_Tag (FD : File_Type; Tag : String; Indent : Integer);
    function Get_Tag_String (Tag : Tag_XML) return String;
 
+   procedure Generate_Tag_JSON_File;
+
    function Get_Category_String (Cat : Component_Category) return String;
 
    --  Debug
@@ -119,6 +121,7 @@ package body Ocarina.Backends.Ever_XML is
       Root_Systems  : Node_List;
       List_Node     : Node_Id;
    begin
+      Generate_Tag_JSON_File;
       if Root_System_Name /= No_Name then
          GenerateForSystem (AADL_Root, Get_Name_String (Root_System_Name));
       else
@@ -411,7 +414,7 @@ package body Ocarina.Backends.Ever_XML is
                      Get_Name_String (Display_Name (Identifier (F))),
                      Depth + 3);
 
-            Visit (Corresponding_Instance (F), Depth + 3);
+            Visit (Corresponding_Instance (F), Depth + 2);
 
             Close_Tag (FD_System,
                        Get_Tag_String (Tag_Subcomponent),
@@ -477,12 +480,38 @@ package body Ocarina.Backends.Ever_XML is
          when Tag_Subcomponents =>
             return "subcomponents";
          when Tag_Subcomponent =>
-            return "subcomponent";
+            return "component";
          when others =>
             return "unknown";
       end case;
 
    end Get_Tag_String;
+
+   ----------------------------
+   -- Generate_Tag_JSON_File --
+   ----------------------------
+   procedure Generate_Tag_JSON_File is
+      File_Content : Unbounded_String;
+      FD_JSON      : File_Type;
+   begin
+
+      Append (File_Content, "{");
+      for I in Tag_XML loop
+         Append (File_Content, ASCII.Quotation & Tag_XML'Image (I) & ASCII.Quotation);
+         Append (File_Content, ": ");
+         Append (File_Content, ASCII.Quotation & Get_Tag_String (I) & ASCII.Quotation);
+
+         if Tag_XML'Last /= I then
+            Append (File_Content, ",");
+            Append (File_Content, ASCII.LF);
+         end if;
+      end loop;
+      Append (File_Content, "}");
+      Create (File => FD_JSON, Name => "tag_ever_xml.json");
+      Put_Line (FD_JSON, To_String (File_Content));
+      Close (FD_JSON);
+
+   end Generate_Tag_JSON_File;
 
    -------------
    -- Put_Tag --

@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <Locations >
-  <Project>
-    <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_file>
+  <Project >
     <file_marker column=" 24" line=" 161" >
       <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.adb</vfs_file>
@@ -30,7 +29,7 @@
       <vfs_project />
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_file>
     </file_marker>
-    <file_marker column=" 58" line=" 488" >
+    <file_marker column=" 58" line=" 563" >
       <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.adb</vfs_file>
     </file_marker>
@@ -38,7 +37,7 @@
       <vfs_project />
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/core/tree/ocarina-me_aadl.ads</vfs_file>
     </file_marker>
-    <file_marker column=" 35" line=" 60" >
+    <file_marker column=" 35" line=" 58" >
       <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.adb</vfs_file>
     </file_marker>
@@ -62,7 +61,7 @@
       <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.adb</vfs_file>
     </file_marker>
-    <file_marker column=" 35" line=" 60" >
+    <file_marker column=" 35" line=" 58" >
       <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.adb</vfs_file>
     </file_marker>
@@ -70,9 +69,29 @@
       <vfs_project />
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_file>
     </file_marker>
-    <file_marker current="true" column=" 1" line=" 1" >
+    <file_marker column=" 1" line=" 1" >
       <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
       <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 8" line=" 123" >
+      <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
+      <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 9" line=" 1" >
+      <vfs_project />
+      <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_file>
+    </file_marker>
+    <file_marker column=" 58" line=" 563" >
+      <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
+      <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 9" line=" 53" >
+      <vfs_project />
+      <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/core/tree/ocarina-me_aadl.ads</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 1" line=" 1" >
+      <vfs_project>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/ocarina_ros.gpr</vfs_project>
+      <vfs_file>/Users/Andrea/Documents/Universita/Tesi/ocarina-ros/src/backends/ever_xml/ocarina-backends-ever_xml.ads</vfs_file>
     </file_marker>
   </Project>
 </Locations>
