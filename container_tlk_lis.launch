@@ -1,5 +1,0 @@
-<launch>
-	<node pkg="test" type="talker" name="talker_node" />
-	<node pkg="test" type="listener" name="listener_node" />
-	<node pkg="test" type="" name="overseer_node" />
-</launch>

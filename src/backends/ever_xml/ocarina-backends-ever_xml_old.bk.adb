@@ -77,31 +77,36 @@ package body Ocarina.Backends.Ever_XML is
    use Ocarina.Instances.Queries;
    use Ocarina.AADL_Values;
 
-   FD_System : File_Type;
 
-   procedure GenerateForSystem (AADL_Root : Node_Id; Name_System : String);
+   FD_System         : File_Type;
+
+   Foo_Bar_JSON : JSON_Value := Create_Object;
+
+   --------------------------------------
+   -- Procedura che visita i vari nodi --
+   --------------------------------------
 
    procedure Visit (E : Node_Id; Depth : Integer);
    procedure Visit_Component_Instance (E : Node_Id; Depth : Integer);
 
-   --  XML Helper
-
    procedure Put_Tag (FD : File_Type; Tag, Value : String; Indent : Integer);
    procedure Open_Tag (FD : File_Type; Tag : String; Indent : Integer);
    procedure Close_Tag (FD : File_Type; Tag : String; Indent : Integer);
-   function Get_Tag_String (Tag : Tag_XML) return String;
+
 
    function Get_Category_String (Cat : Component_Category) return String;
 
-   --  Debug
-   procedure Print_Title (Title : String);
-   procedure Print_Subtitle (Title : String);
+   procedure Print_Title ( Title : String );
+   procedure Print_Subtitle ( Title : String );
    procedure Print_Header (CharIn : String; Title : String);
    procedure Print_Func_Output (Func : String; Output : String);
+
+   procedure GenerateForSystem (AADL_Root : Node_Id; Name_System : String);
 
    ----------
    -- Init --
    ----------
+
    procedure Init is
    begin
       --  Registration of the generator
@@ -111,46 +116,36 @@ package body Ocarina.Backends.Ever_XML is
    --------------
    -- Generate --
    --------------
-   --  La funzione Generate avvia la procedura di visita dei vari system.
-   --  Se nessun system è speficicato con l'opzione -r quando si lancia
-   --  il backend, allora per ciascun system presente verrà generato
-   --  il relativo file XML
    procedure Generate (AADL_Root : Node_Id) is
+      Instance_Root : Node_Id;
       Root_Systems  : Node_List;
       List_Node     : Node_Id;
+
    begin
+
       if Root_System_Name /= No_Name then
          GenerateForSystem (AADL_Root, Get_Name_String (Root_System_Name));
       else
-         --  Genero un file per ogni system
+         -- Genero un file per ogni system
          Root_Systems := Find_All_Root_Systems (AADL_Root);
 
          List_Node := Root_Systems.First;
 
          while Present (List_Node) loop
 
-            Put_Line (ATE.Get_Name_Of_Entity (List_Node, True, True));
+            Put_Line ( ATE.Get_Name_Of_Entity (List_Node, True, True));
 
-            --  Varibale globale che va impostata per far instanziare un
-            --  sistema con questo particolare nome
-            Root_System_Name :=
-              ATE.Get_Name_Of_Entity (List_Node, False, True);
+            -- Varibale globale che va impostata per far instanziare un sistema
+            -- con questo particolare nome
+            Root_System_Name := ATE.Get_Name_Of_Entity (List_Node, False, True);
 
-            GenerateForSystem (AADL_Root,
-                               ATE.Get_Name_Of_Entity (List_Node, True, True));
+            GenerateForSystem(AADL_Root, ATE.Get_Name_Of_Entity (List_Node, True, True));
             List_Node := ATN.Next_Entity (List_Node);
          end loop;
 
       end if;
    end Generate;
 
-   -----------------------
-   -- GenerateForSystem --
-   -----------------------
-   --  Istanzia e lancia la procedura di visita per il il system che viene
-   --  passato come parametro. Il file di output che viene generato ha
-   --  la seguente struttura per il nome:
-   --  {nome_del_system}_ever_xml.xml
    procedure GenerateForSystem (AADL_Root : Node_Id; Name_System : String) is
       Instance_Root : Node_Id;
    begin
@@ -160,7 +155,6 @@ package body Ocarina.Backends.Ever_XML is
       if No (Instance_Root) then
          raise Program_Error;
       end if;
-
       Print_Title ("Inizio Ever XML");
 
       Create (File => FD_System, Name => Name_System & "_ever_xml.xml");
@@ -168,8 +162,6 @@ package body Ocarina.Backends.Ever_XML is
       Visit (Root_System (Instance_Root), 0);
 
       Close (FD_System);
-
-      Print_Title ("Fine Ever XML");
    end GenerateForSystem;
 
    -----------
@@ -189,82 +181,101 @@ package body Ocarina.Backends.Ever_XML is
       end case;
    end Visit;
 
-   ------------------------------
-   -- Visit_Component_Instance --
-   ------------------------------
+--     procedure Visit_Component_Instance (E : Node_Id; Depth : Integer) is
+--        Category    : constant Component_Category := AIE.Get_Category_Of_Component (E);
+--        Comp_Name   : constant Name_Id := Display_Name (Identifier (E));
+--        -- Variabili di supporto
+--        F           : Node_Id;
+--        AADL_Property_Value : Node_Id;
+--     begin
+--        -- Se sono un system apro il tag system, altrimenti apro il tag component
+--        -- quando trovo un subcomponent
+--        if Category = CC_System then
+--           Open_Tag (FD_System, "system", Depth);
+--        end if;
+--
+--        Put_Tag (FD_System, "type", Get_Name_String (Comp_Name), Depth + 1);
+--        Put_Tag (FD_System, "category", Get_Category_String (Category), Depth + 1);
+--        Put_Tag (FD_System, "namespace", Get_Name_String (Display_Name (Identifier (Namespace (E)))), Depth + 1);
+--
+--        -- Stessa cosa del tag di apertura. Un System chiude il tag system,
+--        -- mentre per tutto il resto il tag component viene chiudo dopo la sua
+--        -- visita in subcomponents
+--        if Category = CC_System then
+--           Close_Tag (FD_System, "system", Depth);
+--        end if;
+--
+--     end Visit_Component_Instance;
+
+
    procedure Visit_Component_Instance (E : Node_Id; Depth : Integer) is
-      Category    : constant Component_Category :=
-        AIE.Get_Category_Of_Component (E);
+      Category    : constant Component_Category := AIE.Get_Category_Of_Component (E);
       Comp_Name   : constant Name_Id := Display_Name (Identifier (E));
-      F                   : Node_Id;
+      F           : Node_Id;
+      Indent      : Integer;
+
       AADL_Property_Value : Node_Id;
    begin
+      Indent := Depth;
 
-      --  Se sono un system apro il tag system, altrimenti apro il tag
-      --  component quando trovo un subcomponent
-      --  OPEN SYSTEM
+      -- Se sono un system apro il tag system, altrimenti apro il tag component
       if Category = CC_System then
-         Open_Tag (FD_System,
-                   Get_Tag_String (Tag_System),
-                   Depth);
+         Open_Tag (FD_System, "system", Indent);
       end if;
 
-      --  TYPE
-      Put_Tag (FD_System,
-               Get_Tag_String (Tag_Type),
-               Get_Name_String (Comp_Name),
-               Depth + 1);
+      Indent := Depth + 1;
 
-      --  CATEGORY
-      Put_Tag (FD_System,
-               Get_Tag_String (Tag_Category),
-               Get_Category_String (Category),
-               Depth + 1);
+      -- Aggiungo il nome NON normalizzato con il tag <name>
+      -- Questo vuol dire che il nome è lo stesso del file AADL e non vengono
+      -- sostituiti i trattini . con i trattini _, ecc...
+      Put_Tag (FD_System, "type", Get_Name_String (Comp_Name), Indent);
+      Put_Tag (FD_System, "category", Get_Category_String (Category), Indent);
+      Put_Tag (FD_System, "namespace", Get_Name_String (Display_Name (Identifier (Namespace (E)))), Indent);
 
-      --  NAMESPACE
-      Put_Tag (FD_System,
-               Get_Tag_String (Tag_Namespace),
-               Get_Name_String (Display_Name (Identifier (Namespace (E)))),
-               Depth + 1);
+      -- La Normalize_Name sotituisce i punti . con dei trattini bassi _
+      -- Estremamante scomoda
+      Print_Func_Output ("Normalize_Name (Display_Name (Identifier (E)))", Get_Name_String (Normalize_Name (Comp_Name)));
+      Print_Func_Output ("Display_Name (Identifier (E))", Get_Name_String (Comp_Name));
 
-      --  OPEN FEATURES
-      Open_Tag (FD_System,
-                Get_Tag_String (Tag_Features),
-                Depth + 1);
+      Print_Func_Output ("Get_Category_Of_Component (E)", Component_Category'Image (Category));
+      Print_Func_Output ("Get_Category_String (E)", Get_Category_String (Category));
 
-      --------------
-      -- FEATURES --
-      --------------
+      Print_Func_Output ("Namespace", Get_Name_String (Display_Name (Identifier (Namespace (E)))));
+
+      Print_Title ("Features");
+
+      -- Se si usa la 'Image di ADA spesso si ottengono numeri, bisogna quindi usare
+      -- la funzione di Ocarina Get_Name_String che restituisce il nome effettivo usato nell'AADL
+
+      Open_Tag (FD_System, "features", Indent);
+
+      -- Features (E) ritorna un List_Id
+      -- First_Node converte da List_Id a Node_Id
       if Present (Features (E)) then
+         Print_Func_Output ("Present (Features (E))", "True");
 
          F := First_Node (Features (E));
 
-         --  Faccio un loop e fintanto che possiedo una feature F su cui
-         --  indagare vado avanti. Si passa alla Feature successiva con
-         --  la chiamata: F := Next_Node (F);
+         -- Faccio un loop e fintanto che possiedo una feature F su cui indagare
+         -- vado avanti. Si passa alla Feature successiva con la chiamata:
+         -- F := Next_Node (F);
 
+         Indent := Indent + 1;
          while Present (F) loop
-            --  OPEN FEATURE
-            Open_Tag (FD_System,
-                      Get_Tag_String (Tag_Feature),
-                      Depth + 2);
+            Open_Tag (FD_System, "feature", Indent);
+            Print_Func_Output ("Display_Name (Identifier (F))", Get_Name_String (Display_Name (Identifier (F))));
 
-            --  FEATURE NAME
-            Put_Tag (FD_System,
-                     Get_Tag_String (Tag_Feature_Name),
-                     Get_Name_String (Display_Name (Identifier (F))),
-                     Depth + 3);
+            Put_Tag (FD_System, "name", Get_Name_String (Display_Name (Identifier (F))), Indent + 1);
 
-            --  ###############################
-            --  ### Direction: in/out/inout ###
-            --  ###############################
+            -- ###############################
+            -- ### Direction: in/out/inout ###
+            -- ###############################
             declare
                Direction_Kind : Name_Id;
             begin
-               --  Verifico se la feature controllata (che è un nodo
-               --  dell'albero) è di tipo K_Port_Spec_Instance. I tipi sono
-               --  definiti nel file ocarina-me_aadl-aadl_instances-nodes.ads
-               --  come una enum chiamata NodeKind
+               -- Controllo se la feature controllata (che è un nodo dell'albero) è di tipo
+               -- K_Port_Spec_Instance. I tipi sono definiti nel file ocarina-me_aadl-aadl_instances-nodes.ads
+               -- come una enum chiama NodeKind
                if Kind (F) = K_Port_Spec_Instance then
 
                   if Is_In (F) and then not Is_Out (F) then
@@ -279,219 +290,162 @@ package body Ocarina.Backends.Ever_XML is
                   Direction_Kind := Get_String_Name ("none");
                end if;
 
-               --  FEATURE DIRECTION
-               Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Feature_Direction),
-                        Get_Name_String (Direction_Kind),
-                        Depth + 3);
+               Print_Func_Output ("Direction_Kind", Get_Name_String (Direction_Kind));
+               Put_Tag (FD_System, "direction", Get_Name_String (Direction_Kind), Indent + 1);
+
             end;
 
-            --  ###################################
-            --  ### Type: event/data/event data ###
-            --  ###################################
+            -- ###################################
+            -- ### Type: event/data/event data ###
+            -- ###################################
             declare
                Type_Kind : Name_Id;
                Name_F : Name_Id;
             begin
-               --  Controllo la tipologia di porta. Per le porte NON event
-               --  posso anche chiedere il nome del tipo associato, mentre
-               --  Ocarina va in crash se lo si chiede per quelle di tipo data
-               --  (ed infatti in AADL non lo si può neanche specificare).
+               -- Controllo la tipologia di porta. Per le porte NON event posso anche chiedere
+               -- il nome del tipo associato, mentre Ocarina va in crash se lo si chiede per
+               -- quelle di tipo data (ed infatti in AADL non lo si può neanche specificare).
                Name_F := Get_String_Name ("none");
                if Kind (F) = K_Port_Spec_Instance then
                   if Is_Event (F) and then not Is_Data (F) then
                      Type_Kind := Get_String_Name ("event");
                   elsif not Is_Event (F) and then Is_Data (F) then
                      Type_Kind := Get_String_Name ("data");
-                     Name_F := Display_Name (Identifier
-                                             (Corresponding_Instance (F)));
+                     Name_F := Display_Name (Identifier (Corresponding_Instance (F)));
                   elsif Is_Event (F) and then Is_Data (F) then
                      Type_Kind := Get_String_Name ("event_data");
-                     Name_F := Display_Name (Identifier
-                                             (Corresponding_Instance (F)));
+                     Name_F := Display_Name (Identifier (Corresponding_Instance (F)));
                   end if;
                elsif Kind (F) = K_Subcomponent_Access_Instance then
                   Type_Kind := Get_String_Name ("access");
-                  Name_F := Display_Name (Identifier
-                                          (Corresponding_Instance (F)));
+                  Name_F := Display_Name (Identifier (Corresponding_Instance (F)));
                else
                   Type_Kind := Get_String_Name ("feature");
-                  Name_F := Display_Name (Identifier
-                                          (Corresponding_Instance (F)));
+                  Name_F := Display_Name (Identifier (Corresponding_Instance (F)));
                end if;
-               --  FEATURE PORT TYPE
-               Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Feature_Port_Type),
-                        Get_Name_String (Type_Kind),
-                        Depth + 3);
 
-               --  FEATURE PORT NAME
-               Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Feature_Port_Name),
-                        Get_Name_String (Name_F),
-                        Depth + 3);
+               Print_Func_Output ("Type_Kind", Get_Name_String (Type_Kind));
+               Print_Func_Output ("Display_Name",  Get_Name_String (Name_F));
+
+               Put_Tag (FD_System, "type", Get_Name_String (Type_Kind), Indent + 1);
+               Put_Tag (FD_System, "name_f", Get_Name_String (Name_F), Indent + 1);
             end;
 
-            --  CLOSE FEATURE
-            Close_Tag (FD_System,
-                       Get_Tag_String (Tag_Feature),
-                       Depth + 2);
-
-            --  Passo alla Feature successiva
+            Close_Tag (FD_System, "feature", Indent);
+            Put_Line("");
+            -- Passo alla Feature successiva
             F := Next_Node (F);
          end loop;
 
+      else
+         Print_Func_Output ("Present (Feature (E))", "False");
       end if;
 
-      --  CLOSE FEATURES
-      Close_Tag (FD_System,
-                 Get_Tag_String (Tag_Features),
-                 Depth + 1);
+      Indent := Depth + 1;
+      Close_Tag (FD_System, "features", Indent);
 
-      ----------------
-      -- PROPERTIES --
-      ----------------
-      Open_Tag (FD_System,
-                Get_Tag_String (Tag_Properties),
-                Depth + 1);
+      Print_Title ("Properties");
+      Open_Tag (FD_System, "properties", Indent);
       if Present (Properties (E)) then
+         Print_Func_Output ("Present (Properties (E))", "True");
 
          F := First_Node (Properties (E));
-
          while Present (F) loop
-            AADL_Property_Value :=
-              Get_Value_Of_Property_Association (E, Name (Identifier (F)));
+            AADL_Property_Value := Get_Value_Of_Property_Association (E, Name (Identifier (F)));
+            Print_Func_Output ("Display_Name (Identifier (F))", Get_Name_String (Display_Name (Identifier (F))));
 
-            Open_Tag (FD_System,
-                      Get_Tag_String (Tag_Property),
-                      Depth + 2);
+            Open_Tag (FD_System, "property", Indent);
+            Put_Tag (FD_System, "name", Get_Name_String (Display_Name (Identifier (F))), Indent + 1);
+            -- Source_Text
 
-            Put_Tag (FD_System,
-                     Get_Tag_String (Tag_Property_Name),
-                     Get_Name_String (Display_Name (Identifier (F))),
-                     Depth + 3);
+            if Present (AADL_Property_Value) and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal then
 
-            --  Case of Source_Text
-            if Present (AADL_Property_Value)
-              and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal
-            then
+               Print_Func_Output ("ValueProp", Ocarina.AADL_Values.Image (ATN.Value (AADL_Property_Value), Quoted => False));
+               Put_Tag (FD_System, "value", Ocarina.AADL_Values.Image (ATN.Value (AADL_Property_Value), Quoted => False), Indent + 1);
+            end if;
+            Close_Tag (FD_System, "property", Indent);
+            F := Next_Node (F);
+         end loop;
+      else
+         Print_Func_Output ("Present (Properties (E))", "False");
+      end if;
+      Close_Tag (FD_System, "properties", Indent);
+      Print_Title ("Connections");
 
-               Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Property_Value),
-                        Ocarina.AADL_Values.Image
-                          (ATN.Value (AADL_Property_Value), Quoted => False),
-                        Depth + 3);
+      if Present (Connections (E)) then
+         Print_Func_Output ("Present (Connections (E))", "True");
+
+         F := First_Node (Connections (E));
+         while Present (F) loop
+
+            Print_Func_Output ("Display_Name (Identifier (F))", Get_Name_String (Display_Name (Identifier (F))));
+            Print_Func_Output ("Kind (F)", Node_Kind'Image (Kind (F)));
+            Print_Func_Output ("Get_Category_Of_Connection (F)", Port_Connection_Type'Image ( AIE.Get_Category_Of_Connection (F)) );
+
+            if AIE.Get_Category_Of_Connection (F) = CT_Port_Connection then
+
+               Print_Func_Output ("Source",  Get_Name_String (Display_Name (Identifier (AIE.Get_Referenced_Entity (Source (F))))));
+               Print_Func_Output ("Dest",  Get_Name_String (Display_Name (Identifier (AIE.Get_Referenced_Entity (Destination (F))))));
+
+               Print_Func_Output ("Parent Source",  Get_Name_String (Display_Name (Identifier (Parent_Component ((AIE.Get_Referenced_Entity (Source (F))))))));
+               Print_Func_Output ("Parent Source Name",  Get_Name_String (Display_Name (Identifier (Item (AIN.First_Node (Path (Source (F))))))));
+
+               Print_Func_Output ("Parent Dest",  Get_Name_String (Display_Name (Identifier (Parent_Component ((AIE.Get_Referenced_Entity (Destination (F))))))));
+               Print_Func_Output ("Parent Dest Name",  Get_Name_String (Display_Name (Identifier (Item (AIN.First_Node (Path (Destination (F))))))));
+
+
+
             end if;
 
-            Close_Tag (FD_System,
-                       Get_Tag_String (Tag_Property),
-                       Depth + 2);
 
             F := Next_Node (F);
          end loop;
+      else
+         Print_Func_Output ("Present (Connections (E))", "False");
       end if;
-      Close_Tag (FD_System,
-                 Get_Tag_String (Tag_Properties),
-                 Depth + 1);
 
-      Open_Tag (FD_System,
-                Get_Tag_String (Tag_Subcomponents),
-                Depth + 1);
+      Open_Tag (FD_System, "subcomponents", Indent);
 
+      Print_Title ("Subcomponents");
       if Present (Subcomponents (E)) then
+         Print_Func_Output ("Present (Subcomponents (E))", "True");
          F := First_Node (Subcomponents (E));
          while Present (F) loop
+            Print_Func_Output ("Display_Name (Identifier (F))", Get_Name_String (Display_Name (Identifier (F))));
 
-            Open_Tag (FD_System,
-                      Get_Tag_String (Tag_Subcomponent),
-                      Depth + 2);
+            -- Not working Print_Func_Output ("Corresponding_Declaration (E)", Get_Name_String (Display_Name (Corresponding_Declaration (Corresponding_Instance (F)))));
 
-            Put_Tag (FD_System,
-                     Get_Tag_String (Tag_Name),
-                     Get_Name_String (Display_Name (Identifier (F))),
-                     Depth + 3);
-
-            Visit (Corresponding_Instance (F), Depth + 3);
-
-            Close_Tag (FD_System,
-                       Get_Tag_String (Tag_Subcomponent),
-                       Depth + 2);
+            Open_Tag (FD_System, "component", Depth);
+            Put_Tag (FD_System, "name", Get_Name_String (Display_Name (Identifier (F))), Depth);
+            Visit (Corresponding_Instance (F), Depth + 1);
+            Close_Tag (FD_System, "component", Depth);
 
             F := Next_Node (F);
          end loop;
+      else
+         Print_Func_Output ("Present (Subcomponents (E))", "False");
       end if;
 
-      Close_Tag (FD_System,
-                 Get_Tag_String (Tag_Subcomponents),
-                 Depth + 1);
+      Close_Tag (FD_System, "subcomponents", Indent);
 
-      --  Stessa cosa del tag di apertura. Un System chiude il tag system,
-      --  mentre per tutto il resto il tag component viene chiudo dopo la sua
-      --  visita in subcomponents
-      --  CLOSE SYSTEM
+      Put_Line("");
+      Put_Line("------------------------");
+      Put_Line("");
+
+      -- Stessa cosa del tag di apertura. Un System chiude il tag system,
+      -- mentre tutto il resto chiudo il tag component
       if Category = CC_System then
-         Close_Tag (FD_System,
-                    Get_Tag_String (Tag_System),
-                    Depth);
+         Close_Tag (FD_System, "system", Depth);
       end if;
 
    end Visit_Component_Instance;
 
-   --------------------
-   -- Get_Tag_String --
-   --------------------
-   function Get_Tag_String (Tag : Tag_XML) return String is
-   begin
 
-      case Tag is
-         when Tag_System =>
-            return "system";
-         when Tag_Name =>
-            return "name";
-         when Tag_Type =>
-            return "type";
-         when Tag_Category =>
-            return "category";
-         when Tag_Namespace =>
-            return "namespace";
-         when Tag_Features =>
-            return "features";
-         when Tag_Feature =>
-            return "feature";
-         when Tag_Feature_Name =>
-            return "name";
-         when Tag_Feature_Direction =>
-            return "direction";
-         when Tag_Feature_Port_Name =>
-            return "name";
-         when Tag_Feature_Port_Type =>
-            return "type";
-         when Tag_Properties =>
-            return "properties";
-         when Tag_Property =>
-            return "property";
-         when Tag_Property_Name =>
-            return "name";
-         when Tag_Property_Value =>
-            return "value";
-         when Tag_Subcomponents =>
-            return "subcomponents";
-         when Tag_Subcomponent =>
-            return "subcomponent";
-         when others =>
-            return "unknown";
-      end case;
-
-   end Get_Tag_String;
-
-   -------------
-   -- Put_Tag --
-   -------------
    procedure Put_Tag (FD : File_Type; Tag, Value : String; Indent : Integer) is
       Temp_Tag : Unbounded_String;
    begin
       for I in 1 .. Indent loop
-         Append (Temp_Tag, ASCII.HT);
+         Append(Temp_Tag, ASCII.HT);
       end loop;
 
       Append (Temp_Tag, "<" & Tag & ">");
@@ -500,37 +454,29 @@ package body Ocarina.Backends.Ever_XML is
       Put_Line (FD, To_String (Temp_Tag));
    end Put_Tag;
 
-   --------------
-   -- Open_Tag --
-   --------------
    procedure Open_Tag (FD : File_Type; Tag : String; Indent : Integer) is
       Temp_Tag : Unbounded_String;
    begin
       for I in 1 .. Indent loop
-         Append (Temp_Tag, ASCII.HT);
+         Append(Temp_Tag, ASCII.HT);
       end loop;
 
       Append (Temp_Tag, "<" & Tag & ">");
       Put_Line (FD, To_String (Temp_Tag));
    end Open_Tag;
 
-   ---------------
-   -- Close_Tag --
-   ---------------
    procedure Close_Tag (FD : File_Type; Tag : String; Indent : Integer) is
       Temp_Tag : Unbounded_String;
    begin
       for I in 1 .. Indent loop
-         Append (Temp_Tag, ASCII.HT);
+         Append(Temp_Tag, ASCII.HT);
       end loop;
 
       Append (Temp_Tag, "</" & Tag & ">");
       Put_Line (FD, To_String (Temp_Tag));
    end Close_Tag;
 
-   -------------------------
-   -- Get_Category_String --
-   -------------------------
+
    function Get_Category_String (Cat : Component_Category) return String is
    begin
 
@@ -551,9 +497,6 @@ package body Ocarina.Backends.Ever_XML is
 
    end Get_Category_String;
 
-   -----------
-   -- DEBUG --
-   -----------
    procedure Print_Func_Output (Func : String; Output : String) is
       Temp_String : Unbounded_String;
    begin
@@ -563,6 +506,7 @@ package body Ocarina.Backends.Ever_XML is
       Append (Temp_String, Output);
       Put_Line (To_String (Temp_String));
    end Print_Func_Output;
+
 
    procedure Print_Subtitle (Title : String) is
    begin
@@ -604,9 +548,10 @@ package body Ocarina.Backends.Ever_XML is
       for I in 1 .. Title'Length + 8 loop
          Append (Temp_Title_String, CharIn);
       end loop;
-      Put_Line (To_String (Temp_Title_String));
+      Put_Line ( To_String (Temp_Title_String));
 
    end Print_Header;
+
 
    -----------
    -- Reset --

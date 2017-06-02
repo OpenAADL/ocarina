@@ -41,24 +41,4 @@ package Ocarina.Backends.Ever_XML is
    procedure Reset;
    --  Reset the internal data
 
-   type Tag_XML is
-     (Tag_System,
-      Tag_Name,
-      Tag_Type,
-      Tag_Category,
-      Tag_Namespace,
-      Tag_Features,
-      Tag_Feature,
-      Tag_Feature_Name,
-      Tag_Feature_Direction,
-      Tag_Feature_Port_Name,
-      Tag_Feature_Port_Type,
-      Tag_Properties,
-      Tag_Property,
-      Tag_Property_Name,
-      Tag_Property_Value,
-      Tag_Subcomponents,
-      Tag_Subcomponent
-     );
-
 end Ocarina.Backends.Ever_XML;
