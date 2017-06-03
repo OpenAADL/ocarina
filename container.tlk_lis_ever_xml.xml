@@ -57,6 +57,8 @@
 					<properties>
 						<property>
 							<name>Period</name>
+							<value>20</value>
+							<unit>ms</unit>
 						</property>
 					</properties>
 					<subcomponents>

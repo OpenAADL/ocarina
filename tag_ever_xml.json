@@ -13,5 +13,6 @@
 "TAG_PROPERTY": "property",
 "TAG_PROPERTY_NAME": "name",
 "TAG_PROPERTY_VALUE": "value",
+"TAG_PROPERTY_UNIT": "unit",
 "TAG_SUBCOMPONENTS": "subcomponents",
 "TAG_SUBCOMPONENT": "component"}

@@ -57,6 +57,7 @@ package Ocarina.Backends.Ever_XML is
       Tag_Property,
       Tag_Property_Name,
       Tag_Property_Value,
+      Tag_Property_Unit,
       Tag_Subcomponents,
       Tag_Subcomponent
      );

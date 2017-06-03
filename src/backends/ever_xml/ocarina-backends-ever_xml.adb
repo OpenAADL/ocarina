@@ -374,8 +374,29 @@ package body Ocarina.Backends.Ever_XML is
                      Get_Name_String (Display_Name (Identifier (F))),
                      Depth + 3);
 
-            --  Case of Source_Text
+            --  Case of Period
             if Present (AADL_Property_Value)
+              and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
+              and then Present (ATN.Unit_Identifier (AADL_Property_Value))
+            then
+               --  Aggiungo la value con il numero effettivo, mentre per
+               --  l'unità di misura devo fare una lettura separata
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Property_Value),
+                        Ocarina.AADL_Values.Image
+                                (ATN.Value
+                                   (ATN.Number_Value
+                                      (AADL_Property_Value))),
+                        Depth + 3);
+
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Property_Unit),
+                        Get_Name_String (ATN.Display_Name
+                             (ATN.Unit_Identifier (AADL_Property_Value))),
+                        Depth + 3);
+
+            --  Case of Source_Text
+            elsif Present (AADL_Property_Value)
               and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal
             then
 
@@ -477,6 +498,8 @@ package body Ocarina.Backends.Ever_XML is
             return "name";
          when Tag_Property_Value =>
             return "value";
+         when Tag_Property_Unit =>
+            return "unit";
          when Tag_Subcomponents =>
             return "subcomponents";
          when Tag_Subcomponent =>
@@ -497,9 +520,13 @@ package body Ocarina.Backends.Ever_XML is
 
       Append (File_Content, "{");
       for I in Tag_XML loop
-         Append (File_Content, ASCII.Quotation & Tag_XML'Image (I) & ASCII.Quotation);
+         Append (File_Content, ASCII.Quotation &
+                   Tag_XML'Image (I) &
+                   ASCII.Quotation);
          Append (File_Content, ": ");
-         Append (File_Content, ASCII.Quotation & Get_Tag_String (I) & ASCII.Quotation);
+         Append (File_Content, ASCII.Quotation &
+                   Get_Tag_String (I) &
+                   ASCII.Quotation);
 
          if Tag_XML'Last /= I then
             Append (File_Content, ",");
