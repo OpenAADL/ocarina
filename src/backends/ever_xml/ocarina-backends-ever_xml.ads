@@ -51,7 +51,9 @@ package Ocarina.Backends.Ever_XML is
       Tag_Feature,
       Tag_Feature_Name,
       Tag_Feature_Direction,
-      Tag_Feature_Port_Name,
+      Tag_Feature_Category,
+      Tag_Feature_Port_Data_Type,
+      Tag_Feature_Port_Data_Type_Namaspace,
       Tag_Feature_Port_Type,
       Tag_Properties,
       Tag_Property,
@@ -59,7 +61,19 @@ package Ocarina.Backends.Ever_XML is
       Tag_Property_Value,
       Tag_Property_Unit,
       Tag_Subcomponents,
-      Tag_Subcomponent
+      Tag_Subcomponent,
+      Tag_Connections,
+      Tag_Connection,
+      Tag_Connection_Name,
+      Tag_Connection_Kind,
+      Tag_Connection_Category,
+      Tag_Connection_Port_Info,
+      Tag_Connection_Port_Info_Source,
+      Tag_Connection_Port_Info_Parent_Source,
+      Tag_Connection_Port_Info_Parent_Source_Name,
+      Tag_Connection_Port_Info_Dest,
+      Tag_Connection_Port_Info_Parent_Dest,
+      Tag_Connection_Port_Info_Parent_Dest_Name
      );
 
 end Ocarina.Backends.Ever_XML;

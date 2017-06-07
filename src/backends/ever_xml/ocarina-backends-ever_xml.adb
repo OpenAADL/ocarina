@@ -283,10 +283,12 @@ package body Ocarina.Backends.Ever_XML is
                end if;
 
                --  FEATURE DIRECTION
-               Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Feature_Direction),
-                        Get_Name_String (Direction_Kind),
-                        Depth + 3);
+               if Direction_Kind /= Get_String_Name ("none") then
+                  Put_Tag (FD_System,
+                           Get_Tag_String (Tag_Feature_Direction),
+                           Get_Name_String (Direction_Kind),
+                           Depth + 3);
+               end if;
             end;
 
             --  ###################################
@@ -295,12 +297,14 @@ package body Ocarina.Backends.Ever_XML is
             declare
                Type_Kind : Name_Id;
                Name_F : Name_Id;
+               Namespace_F : Name_Id;
             begin
                --  Controllo la tipologia di porta. Per le porte NON event
                --  posso anche chiedere il nome del tipo associato, mentre
                --  Ocarina va in crash se lo si chiede per quelle di tipo data
                --  (ed infatti in AADL non lo si può neanche specificare).
                Name_F := Get_String_Name ("none");
+               Namespace_F := Get_String_Name ("none");
                if Kind (F) = K_Port_Spec_Instance then
                   if Is_Event (F) and then not Is_Data (F) then
                      Type_Kind := Get_String_Name ("event");
@@ -308,19 +312,35 @@ package body Ocarina.Backends.Ever_XML is
                      Type_Kind := Get_String_Name ("data");
                      Name_F := Display_Name (Identifier
                                              (Corresponding_Instance (F)));
+                     Namespace_F := Display_Name
+                       (Identifier
+                          (Namespace
+                               (Corresponding_Instance (F))));
                   elsif Is_Event (F) and then Is_Data (F) then
                      Type_Kind := Get_String_Name ("event_data");
                      Name_F := Display_Name (Identifier
                                              (Corresponding_Instance (F)));
+                     Namespace_F := Display_Name
+                       (Identifier
+                          (Namespace
+                               (Corresponding_Instance (F))));
                   end if;
                elsif Kind (F) = K_Subcomponent_Access_Instance then
                   Type_Kind := Get_String_Name ("access");
                   Name_F := Display_Name (Identifier
                                           (Corresponding_Instance (F)));
+                  Namespace_F := Display_Name
+                       (Identifier
+                          (Namespace
+                               (Corresponding_Instance (F))));
                else
                   Type_Kind := Get_String_Name ("feature");
                   Name_F := Display_Name (Identifier
                                           (Corresponding_Instance (F)));
+                  Namespace_F := Display_Name
+                       (Identifier
+                          (Namespace
+                               (Corresponding_Instance (F))));
                end if;
                --  FEATURE PORT TYPE
                Put_Tag (FD_System,
@@ -328,11 +348,24 @@ package body Ocarina.Backends.Ever_XML is
                         Get_Name_String (Type_Kind),
                         Depth + 3);
 
-               --  FEATURE PORT NAME
+               --  FEATURE PORT DATA TYPE
                Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Feature_Port_Name),
+                        Get_Tag_String (Tag_Feature_Port_Data_Type),
                         Get_Name_String (Name_F),
                         Depth + 3);
+
+               --  FEATURE PORT DATA TYPE NAMESPACE
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Feature_Port_Data_Type_Namaspace),
+                        Get_Name_String (Namespace_F),
+                        Depth + 3);
+
+               --  FEATURE CATEGORY
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Feature_Category),
+                        Node_Kind'Image (Kind (F)),
+                        Depth + 3);
+
             end;
 
             --  CLOSE FEATURE
@@ -418,6 +451,139 @@ package body Ocarina.Backends.Ever_XML is
                  Get_Tag_String (Tag_Properties),
                  Depth + 1);
 
+      -----------------
+      -- CONNECTIONS --
+      -----------------
+
+      Open_Tag (FD_System,
+                Get_Tag_String (Tag_Connections),
+                Depth + 1);
+
+      if Present (Connections (E)) then
+
+         F := First_Node (Connections (E));
+         while Present (F) loop
+
+            --  CONNECTION
+            Open_Tag (FD_System,
+                      Get_Tag_String (Tag_Connection),
+                      Depth + 2);
+
+            --  CONNECTION NAME
+            Put_Tag (FD_System,
+                     Get_Tag_String (Tag_Connection_Name),
+                     Get_Name_String (Display_Name (Identifier (F))),
+                     Depth + 3);
+
+            --  CONNECTION KIND
+            Put_Tag (FD_System,
+                     Get_Tag_String (Tag_Connection_Kind),
+                     Node_Kind'Image (Kind (F)),
+                     Depth + 3);
+
+            --  CONNECTION CATEGORY
+            Put_Tag (FD_System,
+                     Get_Tag_String (Tag_Connection_Category),
+                     Port_Connection_Type'Image
+                       (AIE.Get_Category_Of_Connection (F)),
+                     Depth + 3);
+
+            if AIE.Get_Category_Of_Connection (F) = CT_Port_Connection then
+
+               --  OPEN CONNECTION PORT INFO
+               Open_Tag (FD_System,
+                         Get_Tag_String (Tag_Connection_Port_Info),
+                         Depth + 3);
+
+               --  CONNECTION PORT INFO SOURCE
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Connection_Port_Info_Source),
+                        Get_Name_String
+                          (Display_Name
+                             (Identifier
+                                  (AIE.Get_Referenced_Entity
+                                       (Source (F))))),
+                        Depth + 4);
+
+               --  CONNECTION PORT INFO DESTINATION
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Connection_Port_Info_Dest),
+                        Get_Name_String
+                          (Display_Name
+                             (Identifier
+                                  (AIE.Get_Referenced_Entity
+                                       (Destination (F))))),
+                        Depth + 4);
+
+               --  CONNECTION PORT INFO PARENT SOURCE
+               Put_Tag (FD_System,
+                        Get_Tag_String
+                          (Tag_Connection_Port_Info_Parent_Source),
+                        Get_Name_String
+                          (Display_Name
+                             (Identifier
+                                  (Parent_Component
+                                       ((AIE.Get_Referenced_Entity
+                                        (Source (F))))))),
+                        Depth + 4);
+
+               --  CONNECTION PORT INFO PARENT SOURCE NAME
+               Put_Tag (FD_System,
+                        Get_Tag_String
+                          (Tag_Connection_Port_Info_Parent_Source_Name),
+                        Get_Name_String
+                          (Display_Name
+                             (Identifier
+                                  (Item
+                                       (AIN.First_Node
+                                          (Path (Source (F))))))),
+                        Depth + 4);
+
+               --  CONNECTION PORT INFO PARENT DESTINATION
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Connection_Port_Info_Parent_Dest),
+                        Get_Name_String
+                          (Display_Name
+                             (Identifier
+                                  (Parent_Component
+                                       ((AIE.Get_Referenced_Entity
+                                        (Destination (F))))))),
+                        Depth + 4);
+
+               --  CONNECTION PORT INFO PARENT DESTINATION NAME
+               Put_Tag (FD_System,
+                        Get_Tag_String
+                          (Tag_Connection_Port_Info_Parent_Dest_Name),
+                        Get_Name_String
+                          (Display_Name
+                             (Identifier
+                                  (Item
+                                       (AIN.First_Node
+                                          (Path (Destination (F))))))),
+                        Depth + 4);
+
+               --  CLOSE CONNECTION PORT INFO
+               Close_Tag (FD_System,
+                          Get_Tag_String (Tag_Connection_Port_Info),
+                          Depth + 3);
+
+            end if;
+
+            Close_Tag (FD_System,
+                       Get_Tag_String (Tag_Connection),
+                       Depth + 2);
+
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+      Close_Tag (FD_System,
+                 Get_Tag_String (Tag_Connections),
+                 Depth + 1);
+
+      -------------------
+      -- SUBCOMPONENTS --
+      -------------------
       Open_Tag (FD_System,
                 Get_Tag_String (Tag_Subcomponents),
                 Depth + 1);
@@ -486,10 +652,14 @@ package body Ocarina.Backends.Ever_XML is
             return "name";
          when Tag_Feature_Direction =>
             return "direction";
-         when Tag_Feature_Port_Name =>
-            return "name";
+         when Tag_Feature_Port_Data_Type =>
+            return "datatype";
+         when Tag_Feature_Port_Data_Type_Namaspace =>
+            return "datatype_namespace";
          when Tag_Feature_Port_Type =>
             return "type";
+         when Tag_Feature_Category =>
+            return "category";
          when Tag_Properties =>
             return "properties";
          when Tag_Property =>
@@ -504,6 +674,30 @@ package body Ocarina.Backends.Ever_XML is
             return "subcomponents";
          when Tag_Subcomponent =>
             return "component";
+         when Tag_Connections =>
+            return "connections";
+         when Tag_Connection =>
+            return "connection";
+         when Tag_Connection_Name =>
+            return "name";
+         when Tag_Connection_Kind =>
+            return "kind";
+         when Tag_Connection_Category =>
+            return "category";
+         when Tag_Connection_Port_Info =>
+            return "port_info";
+         when Tag_Connection_Port_Info_Source =>
+            return "source";
+         when Tag_Connection_Port_Info_Parent_Source =>
+            return "parent_source";
+         when Tag_Connection_Port_Info_Parent_Source_Name =>
+            return "parent_source_name";
+         when Tag_Connection_Port_Info_Dest =>
+            return "dest";
+         when Tag_Connection_Port_Info_Parent_Dest =>
+            return "parent_dest";
+         when Tag_Connection_Port_Info_Parent_Dest_Name =>
+            return "parent_dest_name";
          when others =>
             return "unknown";
       end case;

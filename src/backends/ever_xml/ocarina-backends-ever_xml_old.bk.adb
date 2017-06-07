@@ -80,8 +80,6 @@ package body Ocarina.Backends.Ever_XML is
 
    FD_System         : File_Type;
 
-   Foo_Bar_JSON : JSON_Value := Create_Object;
-
    --------------------------------------
    -- Procedura che visita i vari nodi --
    --------------------------------------
