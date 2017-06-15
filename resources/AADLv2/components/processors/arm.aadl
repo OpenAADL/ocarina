@@ -8,6 +8,19 @@ with Cheddar_Properties;
 processor arm
 end arm;
 
+processor cortex_m extends arm
+properties
+   Deployment::Execution_Platform => GNAT_Runtime;
+end cortex_m;
+
+processor implementation cortex_m.i
+properties
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+   Priority_Range => 0 .. 255;
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
+end cortex_m.i;
+
 processor nds extends arm
 end nds;
 
