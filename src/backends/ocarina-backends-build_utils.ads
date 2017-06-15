@@ -108,6 +108,7 @@ package Ocarina.Backends.Build_Utils is
             Node_Name          : Name_Id;
             Is_Server          : Boolean;
             Execution_Platform : Supported_Execution_Platform;
+            Ada_Runtime        : Name_Id;
             Transport_API      : Supported_Transport_APIs;
             Spec_Names         : Name_Tables.Instance;
             Custom_Spec_Names  : Name_Tables.Instance;

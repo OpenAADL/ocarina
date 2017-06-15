@@ -566,12 +566,16 @@ package Ocarina.Backends.Properties is
       Platform_ARM_N770,
       Platform_MARTE_OS,
       Platform_VxWorks,
+      Platform_GNAT_Runtime,
       Platform_None); --  Unspecified
 
    function Get_Execution_Platform
      (P : Node_Id) return Supported_Execution_Platform;
    function Get_Execution_Platform (P : Node_Id) return Name_Id;
    --  Return the execution platform of the given processor P
+
+   function Get_Ada_Runtime (P : Node_Id) return Name_Id;
+   --  return the name of the Ada runtime library for the processor P
 
    function Get_Location (P : Node_Id) return Name_Id;
    --  Return the location of the processor or device P. No_Name is

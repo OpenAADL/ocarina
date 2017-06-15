@@ -2301,6 +2301,9 @@ package body Ocarina.Backends.Build_Utils is
          --  The execution platform of the processor the current node
          --  is bound to.
 
+         Ada_Runtime        : Name_Id;
+         --  Ada runtime to be used
+
          Transport_API : Supported_Transport_APIs;
          --  The transport API used by the current node to
          --  communicate with other nodes.
@@ -2580,6 +2583,7 @@ package body Ocarina.Backends.Build_Utils is
          P.Execution_Platform :=
            Get_Execution_Platform (Get_Bound_Processor (E));
 
+         P.Ada_Runtime := Get_Ada_Runtime (Get_Bound_Processor (E));
          --  Get the transport API used by this node. It is
          --  important to ensure that the Namings package visitors
          --  have already been executed since they perform all
@@ -2896,6 +2900,7 @@ package body Ocarina.Backends.Build_Utils is
                P.Node_Name,
                P.Is_Server,
                P.Execution_Platform,
+               P.Ada_Runtime,
                P.Transport_API,
                P.Spec_Names,
                P.Custom_Spec_Names,

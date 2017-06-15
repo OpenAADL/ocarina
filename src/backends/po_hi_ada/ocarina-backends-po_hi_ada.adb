@@ -102,6 +102,7 @@ package body Ocarina.Backends.PO_HI_Ada is
       Node_Name          : Name_Id;
       Is_Server          : Boolean;
       Execution_Platform : Supported_Execution_Platform;
+      Ada_Runtime        : Name_Id;
       Transport_API      : Supported_Transport_APIs;
       Spec_Names         : Name_Tables.Instance;
       Custom_Spec_Names  : Name_Tables.Instance;
@@ -191,6 +192,10 @@ package body Ocarina.Backends.PO_HI_Ada is
             Change_If_Empty (String_Ptr (Target_Prefix), "m");
             Target := new String'("MARTEOS");
 
+         when Platform_GNAT_Runtime =>
+            Change_If_Empty (String_Ptr (Target_Prefix), "arm-eabi-");
+            Target := new String'("GNAT_Runtime");
+
          when Platform_LEON_RTEMS | Platform_LEON_RTEMS_POSIX =>
             --   Nothing to do: a special makefile is used for RTEMS
             null;
@@ -274,29 +279,48 @@ package body Ocarina.Backends.PO_HI_Ada is
 
          Write_Eol;
 
-         if Execution_Platform = Platform_LEON_GNAT then
-            --  Determine which portion of code is unused and recompile the
-            --  the application with Eliminate pragmas.
+         --  Use gnateliim to determine which portion of code is
+         --  unused and recompile the application with Eliminate
+         --  pragmas. Note: gnatelim is available in GNAT GPL/Pro,
+         --  but not GCC
 
-            Write_Char (ASCII.HT);
-            Write_Str ("  $(GNAT) elim -P$(PROJECT_FILE) ");
-            Write_Name (Node_Name);
-            Write_Str (" > local.adc");
-            Write_Eol;
+         Write_Eol;
+         Write_Line ("elim:");
+         Write_Char (ASCII.HT);
+         Write_Line
+           ("ADA_PROJECT_PATH=" &
+            Standard.Utils.Quoted
+              (Get_Runtime_Path ("polyorb-hi-ada") &
+               Path_Separator &
+               "$$ADA_PROJECT_PATH") &
+            " \");
+         Write_Char (ASCII.HT);
+         Write_Str ("  $(GNAT) elim -P$(PROJECT_FILE) ");
+         Write_Name (Node_Name);
+         Write_Str (" > local.adc");
+         Write_Eol;
 
-            Write_Char (ASCII.HT);
-            Write_Str
-              ("  $(GNATMAKE) -f -P$(PROJECT_FILE) -XTARGET=$(TARGET)" &
-               " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL)" &
-               " -cargs -gnatec=local.adc");
+         Write_Char (ASCII.HT);
+         Write_Line
+           ("ADA_PROJECT_PATH=" &
+            Standard.Utils.Quoted
+              (Get_Runtime_Path ("polyorb-hi-ada") &
+               Path_Separator &
+               "$$ADA_PROJECT_PATH") &
+            " \");
+         Write_Char (ASCII.HT);
+         Write_Str
+           ("  $(GNATMAKE) -f -P$(PROJECT_FILE) -XTARGET=$(TARGET)" &
+              " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL)" &
+              " -cargs -gnatec=local.adc");
 
-            --  If there are C source or C libraries, there will be more
-            --  options.
+         --  If there are C source or C libraries, there will be more
+         --  options.
 
-            Write_Str
-              (" -largs $(EXTERNAL_OBJECTS) ${C_OBJECTS} ${USER_LDFLAGS}");
-            Write_Eol;
-         end if;
+         Write_Str
+           (" -largs $(EXTERNAL_OBJECTS) ${C_OBJECTS} ${USER_LDFLAGS}");
+         Write_Eol;
+
       else
          Write_Str ("PROGRAM = ");
          Write_Name (Node_Name);
@@ -330,6 +354,7 @@ package body Ocarina.Backends.PO_HI_Ada is
       Node_Name          : Name_Id;
       Is_Server          : Boolean;
       Execution_Platform : Supported_Execution_Platform;
+      Ada_Runtime        : Name_Id;
       Transport_API      : Supported_Transport_APIs;
       Spec_Names         : Name_Tables.Instance;
       Custom_Spec_Names  : Name_Tables.Instance;
@@ -340,6 +365,12 @@ package body Ocarina.Backends.PO_HI_Ada is
       pragma Unreferenced (Appli_Name, Is_Server);
 
    begin
+      if Ada_Runtime /= No_Name then
+         Write_Str ("with """);
+         Write_Name (Ada_Runtime);
+         Write_Line (""";");
+      end if;
+
       Write_Line
         ("with """ &
          Get_Runtime_Path ("polyorb-hi-ada") &
@@ -401,6 +432,14 @@ package body Ocarina.Backends.PO_HI_Ada is
       Write_Name (Node_Name);
       Write_Line (".adb"");");
 
+      if Ada_Runtime /= No_Name then
+         Write_Eol;
+         Write_Indentation;
+         Write_Str ("for Runtime (""Ada"") use ");
+         Write_Name (Ada_Runtime);
+         Write_Line ("'Runtime (""Ada"");");
+      end if;
+
       --  The custom file names
 
       Write_Eol;
@@ -419,6 +458,12 @@ package body Ocarina.Backends.PO_HI_Ada is
             Write_Line
               ("for Body (""PolyORB_HI.Output_Low_Level"")" &
                " use ""polyorb_hi-output_low_level_leon.adb"";");
+
+         when Platform_GNAT_Runtime =>
+            Write_Indentation;
+            Write_Line
+              ("for Body (""PolyORB_HI.Output_Low_Level"")" &
+               " use ""polyorb_hi-output_low_level_gnatruntime.adb"";");
 
          when others =>
             Write_Indentation;
