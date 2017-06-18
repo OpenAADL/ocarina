@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2014-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2014-2017 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -86,7 +86,7 @@ package body Ocarina.Python_Cmd is
          Set_Return_Value (Data, Elt.all);
       end loop;
 
-      Free (Result);
+      --  XXX should free Result
    end Get_Property_Value;
 
    --------------------------------
@@ -107,7 +107,7 @@ package body Ocarina.Python_Cmd is
          Set_Return_Value (Data, Elt.all);
       end loop;
 
-      --  XXX shoudl free Result
+      --  XXX should free Result
    end Get_Property_Value_By_Name;
 
    -----------------
