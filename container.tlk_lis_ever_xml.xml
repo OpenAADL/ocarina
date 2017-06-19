@@ -14,11 +14,6 @@
 			<properties>
 				<property>
 					<namespace>topic_properties</namespace>
-					<name>Prova</name>
-					<value>tipregofunziona</value>
-				</property>
-				<property>
-					<namespace>topic_properties</namespace>
 					<name>Name</name>
 					<value>/chatter</value>
 				</property>
@@ -61,6 +56,8 @@
 					<datatype>Placeholder</datatype>
 					<datatype_namespace>placeholder_msgs</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+					</properties>
 				</feature>
 				<feature>
 					<name>close</name>
@@ -69,6 +66,8 @@
 					<datatype>none</datatype>
 					<datatype_namespace>none</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+					</properties>
 				</feature>
 				<feature>
 					<name>notify_state</name>
@@ -76,6 +75,8 @@
 					<datatype>state_manager</datatype>
 					<datatype_namespace>ros</datatype_namespace>
 					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+					<properties>
+					</properties>
 				</feature>
 			</features>
 			<properties>
@@ -125,6 +126,8 @@
 							<datatype>Placeholder</datatype>
 							<datatype_namespace>placeholder_msgs</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>param</name>
@@ -132,6 +135,8 @@
 							<datatype>parameters</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 					</features>
 					<properties>
@@ -167,6 +172,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -174,6 +181,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -202,6 +211,8 @@
 							<datatype>none</datatype>
 							<datatype_namespace>none</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>run_tr</name>
@@ -210,6 +221,8 @@
 							<datatype>none</datatype>
 							<datatype_namespace>none</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>init_tr</name>
@@ -218,6 +231,8 @@
 							<datatype>none</datatype>
 							<datatype_namespace>none</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>close_tr</name>
@@ -226,6 +241,8 @@
 							<datatype>none</datatype>
 							<datatype_namespace>none</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>param</name>
@@ -233,6 +250,8 @@
 							<datatype>parameters</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>notify_state</name>
@@ -240,6 +259,8 @@
 							<datatype>state_manager</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 					</features>
 					<properties>
@@ -393,6 +414,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -400,6 +423,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -422,6 +447,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -429,6 +456,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -451,6 +480,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -458,6 +489,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -480,6 +513,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -487,6 +522,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -527,6 +564,8 @@
 					<datatype>Placeholder</datatype>
 					<datatype_namespace>placeholder_msgs</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+					</properties>
 				</feature>
 				<feature>
 					<name>close</name>
@@ -535,6 +574,8 @@
 					<datatype>none</datatype>
 					<datatype_namespace>none</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+					</properties>
 				</feature>
 				<feature>
 					<name>notify_state</name>
@@ -542,6 +583,8 @@
 					<datatype>state_manager</datatype>
 					<datatype_namespace>ros</datatype_namespace>
 					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+					<properties>
+					</properties>
 				</feature>
 			</features>
 			<properties>
@@ -591,6 +634,12 @@
 							<datatype>Placeholder</datatype>
 							<datatype_namespace>placeholder_msgs</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+								<property>
+									<name>Queue_size</name>
+									<value>1</value>
+								</property>
+							</properties>
 						</feature>
 						<feature>
 							<name>param</name>
@@ -598,6 +647,8 @@
 							<datatype>parameters</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 					</features>
 					<properties>
@@ -628,6 +679,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -635,6 +688,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -663,6 +718,8 @@
 							<datatype>none</datatype>
 							<datatype_namespace>none</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>run_tr</name>
@@ -671,6 +728,8 @@
 							<datatype>none</datatype>
 							<datatype_namespace>none</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>init_tr</name>
@@ -679,6 +738,8 @@
 							<datatype>none</datatype>
 							<datatype_namespace>none</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>close_tr</name>
@@ -687,6 +748,8 @@
 							<datatype>none</datatype>
 							<datatype_namespace>none</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>param</name>
@@ -694,6 +757,8 @@
 							<datatype>parameters</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 						<feature>
 							<name>notify_state</name>
@@ -701,6 +766,8 @@
 							<datatype>state_manager</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
 						</feature>
 					</features>
 					<properties>
@@ -854,6 +921,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -861,6 +930,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -883,6 +954,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -890,6 +963,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -912,6 +987,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -919,6 +996,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -941,6 +1020,8 @@
 									<datatype>none</datatype>
 									<datatype_namespace>none</datatype_namespace>
 									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 								<feature>
 									<name>param</name>
@@ -948,6 +1029,8 @@
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
 								</feature>
 							</features>
 							<properties>
@@ -987,6 +1070,8 @@
 					<datatype>state_manager</datatype>
 					<datatype_namespace>ros</datatype_namespace>
 					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+					<properties>
+					</properties>
 				</feature>
 			</features>
 			<properties>

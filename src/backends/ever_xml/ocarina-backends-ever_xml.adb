@@ -368,6 +368,9 @@ package body Ocarina.Backends.Ever_XML is
 
             end;
 
+            --  PROPERTIES
+            Visit_Properties (F, Depth + 2);
+
             --  CLOSE FEATURE
             Close_Tag (FD_System,
                        Get_Tag_String (Tag_Feature),
@@ -656,6 +659,22 @@ package body Ocarina.Backends.Ever_XML is
                         Ocarina.AADL_Values.Image
                           (ATN.Value (AADL_Property_Value), Quoted => False),
                         Depth + 3);
+
+            --  Case of Queue_Size
+            elsif Present (AADL_Property_Value)
+              and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
+              and then
+              (not Present (ATN.Unit_Identifier (AADL_Property_Value)))
+            then
+
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Property_Value),
+                        Ocarina.AADL_Values.Image
+                                (ATN.Value
+                                   (ATN.Number_Value
+                                      (AADL_Property_Value))),
+                        Depth + 3);
+
             end if;
 
             Close_Tag (FD_System,
