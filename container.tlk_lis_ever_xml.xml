@@ -8,27 +8,26 @@
 	</properties>
 	<connections>
 		<connection>
-			<name>chatter_A</name>
+			<name>chatter</name>
 			<kind>K_CONNECTION_INSTANCE</kind>
 			<category>CT_PORT_CONNECTION</category>
+			<properties>
+				<property>
+					<namespace>topic_properties</namespace>
+					<name>Prova</name>
+					<value>tipregofunziona</value>
+				</property>
+				<property>
+					<namespace>topic_properties</namespace>
+					<name>Name</name>
+					<value>/chatter</value>
+				</property>
+			</properties>
 			<port_info>
 				<source>chat</source>
 				<dest>chat</dest>
 				<parent_source>talker.impl</parent_source>
-				<parent_source_name>talker_node_A</parent_source_name>
-				<parent_dest>listener.impl</parent_dest>
-				<parent_dest_name>listener_node</parent_dest_name>
-			</port_info>
-		</connection>
-		<connection>
-			<name>chatter_B</name>
-			<kind>K_CONNECTION_INSTANCE</kind>
-			<category>CT_PORT_CONNECTION</category>
-			<port_info>
-				<source>chat</source>
-				<dest>chat</dest>
-				<parent_source>talker.impl</parent_source>
-				<parent_source_name>talker_node_B</parent_source_name>
+				<parent_source_name>talker_node</parent_source_name>
 				<parent_dest>listener.impl</parent_dest>
 				<parent_dest_name>listener_node</parent_dest_name>
 			</port_info>
@@ -37,16 +36,20 @@
 			<name>state_talker</name>
 			<kind>K_CONNECTION_INSTANCE</kind>
 			<category>CT_ACCESS_SUBPROGRAM</category>
+			<properties>
+			</properties>
 		</connection>
 		<connection>
 			<name>state_listener</name>
 			<kind>K_CONNECTION_INSTANCE</kind>
 			<category>CT_ACCESS_SUBPROGRAM</category>
+			<properties>
+			</properties>
 		</connection>
 	</connections>
 	<subcomponents>
 		<component>
-			<name>talker_node_A</name>
+			<name>talker_node</name>
 			<type>talker.impl</type>
 			<category>process</category>
 			<namespace>example_node</namespace>
@@ -82,16 +85,22 @@
 					<name>da</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_ACCESS_DATA</category>
+					<properties>
+					</properties>
 				</connection>
 				<connection>
 					<name>sc</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_ACCESS_SUBPROGRAM</category>
+					<properties>
+					</properties>
 				</connection>
 				<connection>
 					<name>chatter</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_PORT_CONNECTION</category>
+					<properties>
+					</properties>
 					<port_info>
 						<source>msg</source>
 						<dest>chat</dest>
@@ -131,429 +140,41 @@
 							<value>10</value>
 							<unit>ms</unit>
 						</property>
-					</properties>
-					<connections>
-					</connections>
-					<subcomponents>
-						<component>
-							<name>function</name>
-							<type>sub_function</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-							</features>
-							<properties>
-								<property>
-									<name>Source_Text</name>
-									<value>talker.cpp</value>
-								</property>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-					</subcomponents>
-				</component>
-				<component>
-					<name>main_thread</name>
-					<type>main_loop.impl</type>
-					<category>thread</category>
-					<namespace>ros</namespace>
-					<features>
-						<feature>
-							<name>error_tr</name>
-							<direction>out</direction>
-							<type>event</type>
-							<datatype>none</datatype>
-							<datatype_namespace>none</datatype_namespace>
-							<category>K_PORT_SPEC_INSTANCE</category>
-						</feature>
-						<feature>
-							<name>run_tr</name>
-							<direction>out</direction>
-							<type>event</type>
-							<datatype>none</datatype>
-							<datatype_namespace>none</datatype_namespace>
-							<category>K_PORT_SPEC_INSTANCE</category>
-						</feature>
-						<feature>
-							<name>init_tr</name>
-							<direction>out</direction>
-							<type>event</type>
-							<datatype>none</datatype>
-							<datatype_namespace>none</datatype_namespace>
-							<category>K_PORT_SPEC_INSTANCE</category>
-						</feature>
-						<feature>
-							<name>close_tr</name>
-							<direction>out</direction>
-							<type>event</type>
-							<datatype>none</datatype>
-							<datatype_namespace>none</datatype_namespace>
-							<category>K_PORT_SPEC_INSTANCE</category>
-						</feature>
-						<feature>
-							<name>param</name>
-							<type>access</type>
-							<datatype>parameters</datatype>
-							<datatype_namespace>ros</datatype_namespace>
-							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-						</feature>
-						<feature>
-							<name>notify_state</name>
-							<type>access</type>
-							<datatype>state_manager</datatype>
-							<datatype_namespace>ros</datatype_namespace>
-							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-						</feature>
-					</features>
-					<properties>
-					</properties>
-					<connections>
-						<connection>
-							<name>run_sig_pr</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_PORT_CONNECTION</category>
-							<port_info>
-								<source>signal</source>
-								<dest>run_tr</dest>
-								<parent_source>function</parent_source>
-								<parent_source_name>prepare</parent_source_name>
-								<parent_dest>main_loop.impl</parent_dest>
-								<parent_dest_name>run_tr</parent_dest_name>
-							</port_info>
-						</connection>
-						<connection>
-							<name>error_sig_pr</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_PORT_CONNECTION</category>
-							<port_info>
-								<source>signal</source>
-								<dest>error_tr</dest>
-								<parent_source>function</parent_source>
-								<parent_source_name>prepare</parent_source_name>
-								<parent_dest>main_loop.impl</parent_dest>
-								<parent_dest_name>error_tr</parent_dest_name>
-							</port_info>
-						</connection>
-						<connection>
-							<name>error_sig_sp</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_PORT_CONNECTION</category>
-							<port_info>
-								<source>signal</source>
-								<dest>error_tr</dest>
-								<parent_source>function</parent_source>
-								<parent_source_name>spin</parent_source_name>
-								<parent_dest>main_loop.impl</parent_dest>
-								<parent_dest_name>error_tr</parent_dest_name>
-							</port_info>
-						</connection>
-						<connection>
-							<name>run_sig_sp</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_PORT_CONNECTION</category>
-							<port_info>
-								<source>signal</source>
-								<dest>run_tr</dest>
-								<parent_source>function</parent_source>
-								<parent_source_name>spin</parent_source_name>
-								<parent_dest>main_loop.impl</parent_dest>
-								<parent_dest_name>run_tr</parent_dest_name>
-							</port_info>
-						</connection>
-						<connection>
-							<name>close_sig_er</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_PORT_CONNECTION</category>
-							<port_info>
-								<source>signal</source>
-								<dest>close_tr</dest>
-								<parent_source>function</parent_source>
-								<parent_source_name>error_handler</parent_source_name>
-								<parent_dest>main_loop.impl</parent_dest>
-								<parent_dest_name>close_tr</parent_dest_name>
-							</port_info>
-						</connection>
-						<connection>
-							<name>run_sig_er</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_PORT_CONNECTION</category>
-							<port_info>
-								<source>signal</source>
-								<dest>run_tr</dest>
-								<parent_source>function</parent_source>
-								<parent_source_name>error_handler</parent_source_name>
-								<parent_dest>main_loop.impl</parent_dest>
-								<parent_dest_name>run_tr</parent_dest_name>
-							</port_info>
-						</connection>
-						<connection>
-							<name>init_sig_er</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_PORT_CONNECTION</category>
-							<port_info>
-								<source>signal</source>
-								<dest>init_tr</dest>
-								<parent_source>function</parent_source>
-								<parent_source_name>error_handler</parent_source_name>
-								<parent_dest>main_loop.impl</parent_dest>
-								<parent_dest_name>init_tr</parent_dest_name>
-							</port_info>
-						</connection>
-						<connection>
-							<name>da1</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_ACCESS_DATA</category>
-						</connection>
-						<connection>
-							<name>da2</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_ACCESS_DATA</category>
-						</connection>
-						<connection>
-							<name>da3</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_ACCESS_DATA</category>
-						</connection>
-						<connection>
-							<name>da4</name>
-							<kind>K_CONNECTION_INSTANCE</kind>
-							<category>CT_ACCESS_DATA</category>
-						</connection>
-					</connections>
-					<subcomponents>
-						<component>
-							<name>prepare</name>
-							<type>function</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-								<feature>
-									<name>signal</name>
-									<direction>out</direction>
-									<type>event</type>
-									<datatype>none</datatype>
-									<datatype_namespace>none</datatype_namespace>
-									<category>K_PORT_SPEC_INSTANCE</category>
-								</feature>
-								<feature>
-									<name>state_access</name>
-									<type>access</type>
-									<datatype>parameters</datatype>
-									<datatype_namespace>ros</datatype_namespace>
-									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-								</feature>
-							</features>
-							<properties>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-						<component>
-							<name>spin</name>
-							<type>function</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-								<feature>
-									<name>signal</name>
-									<direction>out</direction>
-									<type>event</type>
-									<datatype>none</datatype>
-									<datatype_namespace>none</datatype_namespace>
-									<category>K_PORT_SPEC_INSTANCE</category>
-								</feature>
-								<feature>
-									<name>state_access</name>
-									<type>access</type>
-									<datatype>parameters</datatype>
-									<datatype_namespace>ros</datatype_namespace>
-									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-								</feature>
-							</features>
-							<properties>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-						<component>
-							<name>tear_down</name>
-							<type>function</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-								<feature>
-									<name>signal</name>
-									<direction>out</direction>
-									<type>event</type>
-									<datatype>none</datatype>
-									<datatype_namespace>none</datatype_namespace>
-									<category>K_PORT_SPEC_INSTANCE</category>
-								</feature>
-								<feature>
-									<name>state_access</name>
-									<type>access</type>
-									<datatype>parameters</datatype>
-									<datatype_namespace>ros</datatype_namespace>
-									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-								</feature>
-							</features>
-							<properties>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-						<component>
-							<name>error_handler</name>
-							<type>function</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-								<feature>
-									<name>signal</name>
-									<direction>out</direction>
-									<type>event</type>
-									<datatype>none</datatype>
-									<datatype_namespace>none</datatype_namespace>
-									<category>K_PORT_SPEC_INSTANCE</category>
-								</feature>
-								<feature>
-									<name>state_access</name>
-									<type>access</type>
-									<datatype>parameters</datatype>
-									<datatype_namespace>ros</datatype_namespace>
-									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-								</feature>
-							</features>
-							<properties>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-					</subcomponents>
-				</component>
-				<component>
-					<name>parameters</name>
-					<type>parameters</type>
-					<category>data</category>
-					<namespace>ros</namespace>
-					<features>
-					</features>
-					<properties>
-					</properties>
-					<connections>
-					</connections>
-					<subcomponents>
-					</subcomponents>
-				</component>
-			</subcomponents>
-		</component>
-		<component>
-			<name>talker_node_B</name>
-			<type>talker.impl</type>
-			<category>process</category>
-			<namespace>example_node</namespace>
-			<features>
-				<feature>
-					<name>chat</name>
-					<direction>out</direction>
-					<type>data</type>
-					<datatype>Placeholder</datatype>
-					<datatype_namespace>placeholder_msgs</datatype_namespace>
-					<category>K_PORT_SPEC_INSTANCE</category>
-				</feature>
-				<feature>
-					<name>close</name>
-					<direction>in</direction>
-					<type>event</type>
-					<datatype>none</datatype>
-					<datatype_namespace>none</datatype_namespace>
-					<category>K_PORT_SPEC_INSTANCE</category>
-				</feature>
-				<feature>
-					<name>notify_state</name>
-					<type>access</type>
-					<datatype>state_manager</datatype>
-					<datatype_namespace>ros</datatype_namespace>
-					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-				</feature>
-			</features>
-			<properties>
-			</properties>
-			<connections>
-				<connection>
-					<name>da</name>
-					<kind>K_CONNECTION_INSTANCE</kind>
-					<category>CT_ACCESS_DATA</category>
-				</connection>
-				<connection>
-					<name>sc</name>
-					<kind>K_CONNECTION_INSTANCE</kind>
-					<category>CT_ACCESS_SUBPROGRAM</category>
-				</connection>
-				<connection>
-					<name>chatter</name>
-					<kind>K_CONNECTION_INSTANCE</kind>
-					<category>CT_PORT_CONNECTION</category>
-					<port_info>
-						<source>msg</source>
-						<dest>chat</dest>
-						<parent_source>publisher.impl</parent_source>
-						<parent_source_name>publisher</parent_source_name>
-						<parent_dest>talker.impl</parent_dest>
-						<parent_dest_name>chat</parent_dest_name>
-					</port_info>
-				</connection>
-			</connections>
-			<subcomponents>
-				<component>
-					<name>publisher</name>
-					<type>publisher.impl</type>
-					<category>thread</category>
-					<namespace>ros</namespace>
-					<features>
-						<feature>
-							<name>msg</name>
-							<direction>out</direction>
-							<type>data</type>
-							<datatype>Placeholder</datatype>
-							<datatype_namespace>placeholder_msgs</datatype_namespace>
-							<category>K_PORT_SPEC_INSTANCE</category>
-						</feature>
-						<feature>
-							<name>param</name>
-							<type>access</type>
-							<datatype>parameters</datatype>
-							<datatype_namespace>ros</datatype_namespace>
-							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-						</feature>
-					</features>
-					<properties>
 						<property>
-							<name>Period</name>
-							<value>50</value>
-							<unit>us</unit>
+							<name>Dispatch_Protocol</name>
 						</property>
 					</properties>
 					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+						</connection>
 					</connections>
 					<subcomponents>
 						<component>
 							<name>function</name>
-							<type>sub_function</type>
+							<type>function</type>
 							<category>subprogram</category>
 							<namespace>ros</namespace>
 							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<category>K_PORT_SPEC_INSTANCE</category>
+								</feature>
+								<feature>
+									<name>param</name>
+									<type>access</type>
+									<datatype>parameters</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+								</feature>
 							</features>
 							<properties>
 								<property>
@@ -628,6 +249,8 @@
 							<name>run_sig_pr</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>run_tr</dest>
@@ -641,6 +264,8 @@
 							<name>error_sig_pr</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>error_tr</dest>
@@ -654,6 +279,8 @@
 							<name>error_sig_sp</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>error_tr</dest>
@@ -667,6 +294,8 @@
 							<name>run_sig_sp</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>run_tr</dest>
@@ -680,6 +309,8 @@
 							<name>close_sig_er</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>close_tr</dest>
@@ -693,6 +324,8 @@
 							<name>run_sig_er</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>run_tr</dest>
@@ -706,6 +339,8 @@
 							<name>init_sig_er</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>init_tr</dest>
@@ -719,21 +354,29 @@
 							<name>da1</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
 						</connection>
 						<connection>
 							<name>da2</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
 						</connection>
 						<connection>
 							<name>da3</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
 						</connection>
 						<connection>
 							<name>da4</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
 						</connection>
 					</connections>
 					<subcomponents>
@@ -752,7 +395,7 @@
 									<category>K_PORT_SPEC_INSTANCE</category>
 								</feature>
 								<feature>
-									<name>state_access</name>
+									<name>param</name>
 									<type>access</type>
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
@@ -781,7 +424,7 @@
 									<category>K_PORT_SPEC_INSTANCE</category>
 								</feature>
 								<feature>
-									<name>state_access</name>
+									<name>param</name>
 									<type>access</type>
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
@@ -810,7 +453,7 @@
 									<category>K_PORT_SPEC_INSTANCE</category>
 								</feature>
 								<feature>
-									<name>state_access</name>
+									<name>param</name>
 									<type>access</type>
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
@@ -839,7 +482,7 @@
 									<category>K_PORT_SPEC_INSTANCE</category>
 								</feature>
 								<feature>
-									<name>state_access</name>
+									<name>param</name>
 									<type>access</type>
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
@@ -908,16 +551,22 @@
 					<name>da</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_ACCESS_DATA</category>
+					<properties>
+					</properties>
 				</connection>
 				<connection>
 					<name>sc</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_ACCESS_SUBPROGRAM</category>
+					<properties>
+					</properties>
 				</connection>
 				<connection>
 					<name>chatter</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_PORT_CONNECTION</category>
+					<properties>
+					</properties>
 					<port_info>
 						<source>chat</source>
 						<dest>msg</dest>
@@ -952,18 +601,47 @@
 						</feature>
 					</features>
 					<properties>
+						<property>
+							<name>Dispatch_Protocol</name>
+						</property>
 					</properties>
 					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+						</connection>
 					</connections>
 					<subcomponents>
 						<component>
 							<name>function</name>
-							<type>sub_function</type>
+							<type>function</type>
 							<category>subprogram</category>
 							<namespace>ros</namespace>
 							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<category>K_PORT_SPEC_INSTANCE</category>
+								</feature>
+								<feature>
+									<name>param</name>
+									<type>access</type>
+									<datatype>parameters</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+								</feature>
 							</features>
 							<properties>
+								<property>
+									<name>Source_Text</name>
+									<value>listener.cpp</value>
+								</property>
 							</properties>
 							<connections>
 							</connections>
@@ -1032,6 +710,8 @@
 							<name>run_sig_pr</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>run_tr</dest>
@@ -1045,6 +725,8 @@
 							<name>error_sig_pr</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>error_tr</dest>
@@ -1058,6 +740,8 @@
 							<name>error_sig_sp</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>error_tr</dest>
@@ -1071,6 +755,8 @@
 							<name>run_sig_sp</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>run_tr</dest>
@@ -1084,6 +770,8 @@
 							<name>close_sig_er</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>close_tr</dest>
@@ -1097,6 +785,8 @@
 							<name>run_sig_er</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>run_tr</dest>
@@ -1110,6 +800,8 @@
 							<name>init_sig_er</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_PORT_CONNECTION</category>
+							<properties>
+							</properties>
 							<port_info>
 								<source>signal</source>
 								<dest>init_tr</dest>
@@ -1123,21 +815,29 @@
 							<name>da1</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
 						</connection>
 						<connection>
 							<name>da2</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
 						</connection>
 						<connection>
 							<name>da3</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
 						</connection>
 						<connection>
 							<name>da4</name>
 							<kind>K_CONNECTION_INSTANCE</kind>
 							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
 						</connection>
 					</connections>
 					<subcomponents>
@@ -1156,7 +856,7 @@
 									<category>K_PORT_SPEC_INSTANCE</category>
 								</feature>
 								<feature>
-									<name>state_access</name>
+									<name>param</name>
 									<type>access</type>
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
@@ -1185,7 +885,7 @@
 									<category>K_PORT_SPEC_INSTANCE</category>
 								</feature>
 								<feature>
-									<name>state_access</name>
+									<name>param</name>
 									<type>access</type>
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
@@ -1214,7 +914,7 @@
 									<category>K_PORT_SPEC_INSTANCE</category>
 								</feature>
 								<feature>
-									<name>state_access</name>
+									<name>param</name>
 									<type>access</type>
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
@@ -1243,7 +943,7 @@
 									<category>K_PORT_SPEC_INSTANCE</category>
 								</feature>
 								<feature>
-									<name>state_access</name>
+									<name>param</name>
 									<type>access</type>
 									<datatype>parameters</datatype>
 									<datatype_namespace>ros</datatype_namespace>
@@ -1279,7 +979,7 @@
 			<name>overseer_node</name>
 			<type>overseer</type>
 			<category>process</category>
-			<namespace>example_node</namespace>
+			<namespace>templates</namespace>
 			<features>
 				<feature>
 					<name>notify_state</name>

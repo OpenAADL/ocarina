@@ -83,6 +83,7 @@ package body Ocarina.Backends.Ever_XML is
 
    procedure Visit (E : Node_Id; Depth : Integer);
    procedure Visit_Component_Instance (E : Node_Id; Depth : Integer);
+   procedure Visit_Properties (E : Node_Id; Depth : Integer);
 
    --  XML Helper
 
@@ -199,8 +200,7 @@ package body Ocarina.Backends.Ever_XML is
       Category    : constant Component_Category :=
         AIE.Get_Category_Of_Component (E);
       Comp_Name   : constant Name_Id := Display_Name (Identifier (E));
-      F                   : Node_Id;
-      AADL_Property_Value : Node_Id;
+      F           : Node_Id;
    begin
 
       --  Se sono un system apro il tag system, altrimenti apro il tag
@@ -356,7 +356,7 @@ package body Ocarina.Backends.Ever_XML is
 
                --  FEATURE PORT DATA TYPE NAMESPACE
                Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Feature_Port_Data_Type_Namaspace),
+                        Get_Tag_String (Tag_Feature_Port_Data_Type_Namespace),
                         Get_Name_String (Namespace_F),
                         Depth + 3);
 
@@ -387,69 +387,7 @@ package body Ocarina.Backends.Ever_XML is
       ----------------
       -- PROPERTIES --
       ----------------
-      Open_Tag (FD_System,
-                Get_Tag_String (Tag_Properties),
-                Depth + 1);
-      if Present (Properties (E)) then
-
-         F := First_Node (Properties (E));
-
-         while Present (F) loop
-            AADL_Property_Value :=
-              Get_Value_Of_Property_Association (E, Name (Identifier (F)));
-
-            Open_Tag (FD_System,
-                      Get_Tag_String (Tag_Property),
-                      Depth + 2);
-
-            Put_Tag (FD_System,
-                     Get_Tag_String (Tag_Property_Name),
-                     Get_Name_String (Display_Name (Identifier (F))),
-                     Depth + 3);
-
-            --  Case of Period
-            if Present (AADL_Property_Value)
-              and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
-              and then Present (ATN.Unit_Identifier (AADL_Property_Value))
-            then
-               --  Aggiungo la value con il numero effettivo, mentre per
-               --  l'unità di misura devo fare una lettura separata
-               Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Property_Value),
-                        Ocarina.AADL_Values.Image
-                                (ATN.Value
-                                   (ATN.Number_Value
-                                      (AADL_Property_Value))),
-                        Depth + 3);
-
-               Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Property_Unit),
-                        Get_Name_String (ATN.Display_Name
-                             (ATN.Unit_Identifier (AADL_Property_Value))),
-                        Depth + 3);
-
-            --  Case of Source_Text
-            elsif Present (AADL_Property_Value)
-              and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal
-            then
-
-               Put_Tag (FD_System,
-                        Get_Tag_String (Tag_Property_Value),
-                        Ocarina.AADL_Values.Image
-                          (ATN.Value (AADL_Property_Value), Quoted => False),
-                        Depth + 3);
-            end if;
-
-            Close_Tag (FD_System,
-                       Get_Tag_String (Tag_Property),
-                       Depth + 2);
-
-            F := Next_Node (F);
-         end loop;
-      end if;
-      Close_Tag (FD_System,
-                 Get_Tag_String (Tag_Properties),
-                 Depth + 1);
+      Visit_Properties (E, Depth);
 
       -----------------
       -- CONNECTIONS --
@@ -488,6 +426,10 @@ package body Ocarina.Backends.Ever_XML is
                        (AIE.Get_Category_Of_Connection (F)),
                      Depth + 3);
 
+            --  PROPERTIES
+            Visit_Properties (F, Depth + 2);
+
+            --  INFORMAZIONI SULLA PORTA
             if AIE.Get_Category_Of_Connection (F) = CT_Port_Connection then
 
                --  OPEN CONNECTION PORT INFO
@@ -627,6 +569,107 @@ package body Ocarina.Backends.Ever_XML is
 
    end Visit_Component_Instance;
 
+   procedure Visit_Properties (E : Node_Id; Depth : Integer) is
+      F                   : Node_Id;
+      AADL_Property_Value : Node_Id;
+   begin
+      ----------------
+      -- PROPERTIES --
+      ----------------
+      Open_Tag (FD_System,
+                Get_Tag_String (Tag_Properties),
+                Depth + 1);
+      if Present (Properties (E)) then
+
+         F := First_Node (Properties (E));
+
+         while Present (F) loop
+            AADL_Property_Value :=
+              Get_Value_Of_Property_Association (E, Name (Identifier (F)));
+
+            Open_Tag (FD_System,
+                      Get_Tag_String (Tag_Property),
+                      Depth + 2);
+
+            --  Name and Namespace
+            declare
+               Namespace_String    : Unbounded_String;
+               Name_String         : Unbounded_String;
+               Full_Name_String    : String := Get_Name_String
+                 (Display_Name (Identifier (F)));
+               Pos                 : Integer := Index (Full_Name_String, "::");
+            begin
+
+               if Pos > 0 then
+                  Name_String := To_Unbounded_String
+                    (Full_Name_String (Pos + 2 .. Full_Name_String'Last));
+
+                  Namespace_String := To_Unbounded_String
+                    (Full_Name_String (Full_Name_String'First .. Pos - 1));
+
+                  Put_Tag (FD_System,
+                           Get_Tag_String (Tag_Property_Namespace),
+                           To_String (Namespace_String),
+                           Depth + 3);
+
+                  Put_Tag (FD_System,
+                           Get_Tag_String (Tag_Property_Name),
+                           To_String (Name_String),
+                           Depth + 3);
+               else
+                  Put_Tag (FD_System,
+                           Get_Tag_String (Tag_Property_Name),
+                           Full_Name_String,
+                           Depth + 3);
+               end if;
+
+            end;
+
+            --  Case of Period
+            if Present (AADL_Property_Value)
+              and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
+              and then Present (ATN.Unit_Identifier (AADL_Property_Value))
+            then
+               --  Aggiungo la value con il numero effettivo, mentre per
+               --  l'unità di misura devo fare una lettura separata
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Property_Value),
+                        Ocarina.AADL_Values.Image
+                                (ATN.Value
+                                   (ATN.Number_Value
+                                      (AADL_Property_Value))),
+                        Depth + 3);
+
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Property_Unit),
+                        Get_Name_String (ATN.Display_Name
+                             (ATN.Unit_Identifier (AADL_Property_Value))),
+                        Depth + 3);
+
+            --  Case of Source_Text
+            elsif Present (AADL_Property_Value)
+              and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal
+            then
+
+               Put_Tag (FD_System,
+                        Get_Tag_String (Tag_Property_Value),
+                        Ocarina.AADL_Values.Image
+                          (ATN.Value (AADL_Property_Value), Quoted => False),
+                        Depth + 3);
+            end if;
+
+            Close_Tag (FD_System,
+                       Get_Tag_String (Tag_Property),
+                       Depth + 2);
+
+            F := Next_Node (F);
+         end loop;
+      end if;
+      Close_Tag (FD_System,
+                 Get_Tag_String (Tag_Properties),
+                 Depth + 1);
+   end Visit_Properties;
+
    --------------------
    -- Get_Tag_String --
    --------------------
@@ -654,7 +697,7 @@ package body Ocarina.Backends.Ever_XML is
             return "direction";
          when Tag_Feature_Port_Data_Type =>
             return "datatype";
-         when Tag_Feature_Port_Data_Type_Namaspace =>
+         when Tag_Feature_Port_Data_Type_Namespace =>
             return "datatype_namespace";
          when Tag_Feature_Port_Type =>
             return "type";
@@ -666,6 +709,8 @@ package body Ocarina.Backends.Ever_XML is
             return "property";
          when Tag_Property_Name =>
             return "name";
+         when Tag_Property_Namespace =>
+            return "namespace";
          when Tag_Property_Value =>
             return "value";
          when Tag_Property_Unit =>
