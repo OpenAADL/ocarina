@@ -70,6 +70,8 @@ package Ocarina.Backends.Build_Utils is
             Node_Name               : Name_Id;
             Execution_Platform : Supported_Execution_Platform := Platform_None;
             Execution_Platform_Name : Name_Id;
+            USER_CFLAGS             : Name_Id;
+            USER_LDFLAGS            : Name_Id;
             Transport_API           : Supported_Transport_APIs;
             Ada_Sources             : Name_Tables.Instance;
             Asn_Sources             : Name_Tables.Instance;

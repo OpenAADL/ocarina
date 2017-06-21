@@ -81,6 +81,8 @@ package body Ocarina.Backends.PO_HI_Ada is
       Node_Name               : Name_Id;
       Execution_Platform      : Supported_Execution_Platform := Platform_None;
       Execution_Platform_Name : Name_Id;
+      USER_CFLAGS             : Name_Id;
+      USER_LDFLAGS            : Name_Id;
       Transport_API           : Supported_Transport_APIs;
       Ada_Sources             : Name_Tables.Instance;
       Asn_Sources             : Name_Tables.Instance;
@@ -130,6 +132,8 @@ package body Ocarina.Backends.PO_HI_Ada is
       Node_Name               : Name_Id;
       Execution_Platform      : Supported_Execution_Platform := Platform_None;
       Execution_Platform_Name : Name_Id;
+      USER_CFLAGS             : Name_Id;
+      USER_LDFLAGS            : Name_Id;
       Transport_API           : Supported_Transport_APIs;
       Ada_Sources             : Name_Tables.Instance;
       Asn_Sources             : Name_Tables.Instance;
@@ -214,9 +218,15 @@ package body Ocarina.Backends.PO_HI_Ada is
          Write_Line ("TARGET = " & Target.all);
          Write_Line ("BUILD = Debug");
          Write_Line ("CGCTRL = No");
-
          Free (Target_Prefix);
          Free (Target);
+
+         Write_Str ("USER_CFLAGS =");
+         Write_Name (USER_CFLAGS);
+         Write_Eol;
+         Write_Str ("USER_LDFLAGS =");
+         Write_Name (USER_LDFLAGS);
+         Write_Eol;
 
          --  Project file
 

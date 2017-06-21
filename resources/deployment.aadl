@@ -54,6 +54,13 @@ property set Deployment is
   --  Execution platform of a processor
 
   Ada_Runtime : aadlstring applies to (processor);
+  --  If Execution_Platform is set to GNAT_Runtime, this property
+  --  points to the name of the GNAT Project file that configures the
+  --  Ada_Runtime, e.g. from the Ada Device Drivers project.
+
+  USER_CFLAGS : aadlstring applies to (processor);
+  USER_LDFLAGS : aadlstring applies to (processor);
+  --  User defined CFLAGS and LDFLAGS
 
   Supported_Execution_Platform : list of Deployment::Allowed_Execution_Platform
     applies to (device);

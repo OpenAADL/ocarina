@@ -57,8 +57,8 @@ ocarina: Total: 0 error and 33 warnings
 
 
 package Nav_Types
-public
 
+public
   data Integer
   properties
     Source_Data_Size => 32 bits;

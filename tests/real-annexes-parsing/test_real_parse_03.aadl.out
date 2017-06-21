@@ -86,6 +86,12 @@ property set Deployment is
   Ada_Runtime : aadlstring
     applies to (processor);
 
+  USER_CFLAGS : aadlstring
+    applies to (processor);
+
+  USER_LDFLAGS : aadlstring
+    applies to (processor);
+
   Supported_Execution_Platform : list of Deployment::Allowed_Execution_Platform
     applies to (device);
 
