@@ -214,6 +214,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Asn1_Buffer_T,                  --  __po_hi_asn1_buffer_t
       RE_Time_T,                         --  __po_hi_time_t
       RE_Byte_T,                         --  __po_hi_byte_t
+      RE_Port_Id_T,                      --  __po_hi_port_id_t
       RE_Uint64_T,                       --  __po_hi_uint64_t
       RE_Uint32_T,                       --  __po_hi_uint32_t
       RE_Uint16_T,                       --  __po_hi_uint16_t
@@ -376,6 +377,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Asn1_Buffer_T        => RH_PO_HI_Marshallers,
       RE_Bool_T               => RH_PO_HI_Types,
       RE_Port_Kind_T          => RH_PO_HI_Types,
+      RE_Port_Id_T            => RH_PO_HI_Types,
       RE_Uint8_T              => RH_PO_HI_Types,
       RE_Int8_T               => RH_PO_HI_Types,
       RE_Uint16_T             => RH_PO_HI_Types,

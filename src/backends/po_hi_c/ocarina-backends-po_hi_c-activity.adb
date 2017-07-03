@@ -1870,7 +1870,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                       Array_Size =>
                         Make_Defining_Identifier
                           (Map_C_Define_Name (S, Nb_Ports => True))),
-                 Used_Type => RE (RE_Uint8_T));
+                 Used_Type => RE (RE_Port_Id_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             N :=
@@ -1883,7 +1883,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                       Array_Size =>
                         Make_Defining_Identifier
                           (Map_C_Define_Name (S, Nb_Ports => True))),
-                 Used_Type => RE (RE_Uint8_T));
+                 Used_Type => RE (RE_Port_Id_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             N :=
@@ -1896,7 +1896,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                       Array_Size =>
                         Make_Defining_Identifier
                           (Map_C_Define_Name (S, Nb_Ports => True))),
-                 Used_Type => RE (RE_Uint8_T));
+                 Used_Type => RE (RE_Port_Id_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             N :=
@@ -1909,7 +1909,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                       Array_Size =>
                         Make_Defining_Identifier
                           (Map_C_Define_Name (S, Nb_Ports => True))),
-                 Used_Type => RE (RE_Uint8_T));
+                 Used_Type => RE (RE_Port_Id_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             N :=
@@ -1922,7 +1922,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                       Array_Size =>
                         Make_Defining_Identifier
                           (Map_C_Define_Name (S, Nb_Ports => True))),
-                 Used_Type => RE (RE_Uint8_T));
+                 Used_Type => RE (RE_Port_Id_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             N :=
@@ -1995,7 +1995,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                            Array_Size =>
                              Make_Defining_Identifier
                                (Map_C_Define_Name (S, Nb_Ports => True))),
-                      Used_Type => RE (RE_Uint8_T)),
+                      Used_Type => RE (RE_Port_Id_T)),
                  Operator   => Op_Equal,
                  Right_Expr => N_Dest_Values);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
@@ -2014,7 +2014,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                            Array_Size =>
                              Make_Defining_Identifier
                                (Map_C_Define_Name (S, Nb_Ports => True))),
-                      Used_Type => RE (RE_Int8_T)),
+                      Used_Type => RE (RE_Port_Id_T)),
                  Operator   => Op_Equal,
                  Right_Expr => Fifo_Size_Values);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
