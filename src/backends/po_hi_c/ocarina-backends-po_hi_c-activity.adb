@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -591,7 +591,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                           Make_Variable_Declaration
                             (Make_Defining_Identifier
                                (Map_C_Variable_Name (F, Port_Request => True)),
-                             RE (RE_Request_T));
+                             RE (RE_Request_T),
+                            Is_Static => True);
                         Append_Node_To_List (N, Declarations);
 
                         L :=
