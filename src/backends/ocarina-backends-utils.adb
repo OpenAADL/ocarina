@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -218,6 +218,41 @@ package body Ocarina.Backends.Utils is
       end if;
       return Name_Find;
    end Remove_Directory_Separator;
+
+   --------------------
+   -- Copy_Directory --
+   --------------------
+
+   procedure Copy_Directory (From : String; Dest : String) is
+
+      procedure Process_Entry (Directory_Entry : Directory_Entry_Type) is
+      begin
+         case Kind (Full_Name (Directory_Entry)) is
+            when Ordinary_File =>
+               Copy_File (Full_Name (Directory_Entry),
+                          Dest & "/"
+                            & Simple_Name (Simple_Name (Directory_Entry)));
+
+            when Directory =>
+               if  Simple_Name (Simple_Name (Directory_Entry)) /= "" then
+                  Copy_Directory
+                    (Full_Name (Directory_Entry),
+                     Compose (Dest, Simple_Name (Directory_Entry)));
+               end if;
+
+            when others => null;
+         end case;
+      end Process_Entry;
+
+   begin
+      if Kind (From) = Directory then
+         Create_Path (Dest);
+      else
+         raise Program_Error with "Invalid kind for " & From;
+      end if;
+
+      Search (From, "", Process => Process_Entry'Access);
+   end Copy_Directory;
 
    ----------------------------------
    -- May_Be_Append_Handling_Entry --

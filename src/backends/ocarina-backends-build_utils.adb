@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -319,6 +319,9 @@ package body Ocarina.Backends.Build_Utils is
          Execution_Platform_Name : Name_Id                      := No_Name;
          --  The execution platform of the processor the current node
          --  is bound to.
+
+         USER_CFLAGS             : Name_Id := No_Name;
+         USER_LDFLAGS            : Name_Id := No_Name;
 
          Transport_API : Supported_Transport_APIs;
          --  The transport API used by the current node to
@@ -960,6 +963,11 @@ package body Ocarina.Backends.Build_Utils is
          M.Execution_Platform_Name :=
            Get_Execution_Platform (Get_Bound_Processor (E));
 
+         M.USER_CFLAGS :=
+           Get_User_CFLAGS (Get_Bound_Processor (E));
+         M.USER_LDFLAGS :=
+           Get_User_LDFLAGS (Get_Bound_Processor (E));
+
          --  Get the transport API used by this node. It is
          --  important to ensure that the Namings package visitors
          --  have already been executed since they perform all
@@ -1423,7 +1431,9 @@ package body Ocarina.Backends.Build_Utils is
                Write_Line
                  ("###################################################");
                Write_Eol;
-               Write_Str ("SUBDIRS = $(filter-out Makefile, $(wildcard *))");
+               Write_Str
+                 ("SUBDIRS = " &
+                    "$(filter-out Makefile polyorb-hi-c, $(wildcard *))");
                Write_Eol;
                Write_Line ("all:");
                Write_Line
@@ -1440,6 +1450,19 @@ package body Ocarina.Backends.Build_Utils is
 
                Close (Fd);
                Set_Standard_Output;
+
+               --  Copy the runtime directory
+
+               if Get_Current_Backend_Kind = PolyORB_HI_C then
+                  Copy_Directory
+                    (Get_Runtime_Path ("polyorb-hi-c"), "polyorb-hi-c");
+               else
+                  if Get_Current_Backend_Kind = PolyORB_HI_Ada then
+                     Copy_Directory
+                       (Get_Runtime_Path ("polyorb-hi-ada"), "polyorb-hi-ada");
+                  end if;
+               end if;
+
                Leave_Directory;
             end if;
 
@@ -1547,6 +1570,8 @@ package body Ocarina.Backends.Build_Utils is
                M.Node_Name,
                M.Execution_Platform,
                M.Execution_Platform_Name,
+               M.USER_CFLAGS,
+               M.USER_LDFLAGS,
                M.Transport_API,
                M.Ada_Sources,
                M.Asn_Sources,
@@ -2286,6 +2311,9 @@ package body Ocarina.Backends.Build_Utils is
          --  The execution platform of the processor the current node
          --  is bound to.
 
+         Ada_Runtime        : Name_Id;
+         --  Ada runtime to be used
+
          Transport_API : Supported_Transport_APIs;
          --  The transport API used by the current node to
          --  communicate with other nodes.
@@ -2565,6 +2593,7 @@ package body Ocarina.Backends.Build_Utils is
          P.Execution_Platform :=
            Get_Execution_Platform (Get_Bound_Processor (E));
 
+         P.Ada_Runtime := Get_Ada_Runtime (Get_Bound_Processor (E));
          --  Get the transport API used by this node. It is
          --  important to ensure that the Namings package visitors
          --  have already been executed since they perform all
@@ -2881,6 +2910,7 @@ package body Ocarina.Backends.Build_Utils is
                P.Node_Name,
                P.Is_Server,
                P.Execution_Platform,
+               P.Ada_Runtime,
                P.Transport_API,
                P.Spec_Names,
                P.Custom_Spec_Names,

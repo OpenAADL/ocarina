@@ -1,0 +1,96 @@
+module LNT_Generic_Process_For_Port_Connections (Types) is 
+-- No Behavior Annex
+--  data port --
+   process Data_Port [
+   Input: LNT_Channel_Port, 
+   Output: LNT_Channel_Port] 
+   is 
+      var Data : LNT_Type_Data in
+         Data := EMPTY;
+         loop 
+            select 
+               Input (?Data)
+               [] 
+               Output (Data)
+            end select 
+         end loop
+      end var
+   end process
+   
+--  event port --
+--  for no periodic threads --
+   process Event_Port [
+   Input: LNT_Channel_Port, 
+   Output: LNT_Channel_Port, 
+   Notify: LNT_Channel_Event](
+   Queue_Size: Nat) 
+   is 
+      var 
+         Data : LNT_Type_Data,
+         FIFO : LNT_Type_Data_FIFO,
+         Is_New : bool
+      in 
+         FIFO := {};
+         Data := EMPTY;
+         Is_New := false; 
+         loop 
+            select 
+               Input (?Data); 
+               Is_New := true;
+               if length (FIFO) >= Queue_Size then
+                  FIFO := tail (FIFO)
+               end if;
+               FIFO := append (Data, FIFO)
+               []
+               if (FIFO != {}) then 
+                  Output (Head (FIFO));
+                  FIFO := tail (FIFO)
+               else
+                  Output (EMPTY)
+               end if
+               []
+               if (Is_New) then 
+                  Notify (Incoming_Event); 
+                  Is_New := false
+               else 
+                  Notify (No_Event)
+               end if
+            end select 
+         end loop
+      end var
+   end process
+
+-- for periodic threads
+   process Event_Port_For_Periodic [
+   Input: LNT_Channel_Port, 
+   Output: LNT_Channel_Port](
+   Queue_Size: Nat) 
+   is 
+      var 
+         Data : LNT_Type_Data,
+         FIFO : LNT_Type_Data_FIFO,
+         Is_New : bool
+      in 
+         FIFO := {};
+         Data := EMPTY;
+         Is_New := false; 
+         loop 
+            select 
+               Input (?Data); 
+               Is_New := true;
+               if length (FIFO) >= Queue_Size then
+                  FIFO := tail (FIFO)
+               end if;
+               FIFO := append (Data, FIFO)
+               []
+               if (FIFO != {}) then 
+                  Output (Head (FIFO));
+                  FIFO := tail (FIFO)
+               else
+                  Output (EMPTY)
+               end if
+            end select 
+         end loop
+      end var
+   end process
+end module

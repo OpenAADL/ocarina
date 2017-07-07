@@ -188,6 +188,9 @@ package body Ocarina.Backends.Properties is
    -- Processor component properties --
    ------------------------------------
 
+   Ada_Runtime               : Name_Id;
+   User_CFLAGS               : Name_Id;
+   User_LDFLAGS              : Name_Id;
    Location                  : Name_Id;
    Execution_Platform        : Name_Id;
    Scheduler_Quantum         : Name_Id;
@@ -331,6 +334,7 @@ package body Ocarina.Backends.Properties is
    Platform_ARM_CrazyFlie_Name          : Name_Id;
    Platform_MARTE_OS_Name               : Name_Id;
    Platform_Vxworks_Name                : Name_Id;
+   Platform_GNAT_Runtime_Name             : Name_Id;
 
    Transport_BSD_Sockets_Name : Name_Id;
    Transport_SpaceWire_Name   : Name_Id;
@@ -1570,6 +1574,12 @@ package body Ocarina.Backends.Properties is
 
             return Thread_Hybrid;
          elsif P_Name = Thread_Timed_Name then
+            if not Is_Defined_Integer_Property (T, Thread_Period) then
+               Display_Located_Error
+                 (AIN.Loc (T),
+                  "Timed threads must have a period",
+                  Fatal => True);
+            end if;
             return Thread_Timed;
 
          elsif P_Name = Thread_Background_Name then
@@ -1724,7 +1734,8 @@ package body Ocarina.Backends.Properties is
       pragma Assert (Is_Thread (T));
 
       case Get_Thread_Dispatch_Protocol (T) is
-         when Thread_Periodic | Thread_Sporadic | Thread_Hybrid | Thread_ISR =>
+         when Thread_Periodic | Thread_Sporadic | Thread_Hybrid |
+              Thread_Timed | Thread_ISR =>
             --  We are sure the thread has a period
 
             The_Period := Get_Time_Property_Value (T, Thread_Period);
@@ -2457,6 +2468,8 @@ package body Ocarina.Backends.Properties is
             return Platform_MARTE_OS;
          elsif P_Name = Platform_Vxworks_Name then
             return Platform_VxWorks;
+         elsif P_Name = Platform_GNAT_Runtime_Name then
+            return Platform_GNAT_Runtime;
          else
             return Platform_None;
          end if;
@@ -2464,6 +2477,39 @@ package body Ocarina.Backends.Properties is
          return Platform_None;
       end if;
    end Get_Execution_Platform;
+
+   ---------------------
+   -- Get_Ada_Runtime --
+   ---------------------
+
+   function Get_Ada_Runtime (P : Node_Id) return Name_Id is
+      pragma Assert
+        (AINU.Is_Processor (P) or else AINU.Is_Virtual_Processor (P));
+   begin
+      return Get_String_Property (P, Ada_Runtime);
+   end Get_Ada_Runtime;
+
+   ---------------------
+   -- Get_USER_CFLAGS --
+   ---------------------
+
+   function Get_USER_CFLAGS (P : Node_Id) return Name_Id is
+      pragma Assert
+        (AINU.Is_Processor (P) or else AINU.Is_Virtual_Processor (P));
+   begin
+      return Get_String_Property (P, USER_CFLAGS);
+   end Get_USER_CFLAGS;
+
+   ---------------------
+   -- Get_USER_LDFLAGS --
+   ---------------------
+
+   function Get_USER_LDFLAGS (P : Node_Id) return Name_Id is
+      pragma Assert
+        (AINU.Is_Processor (P) or else AINU.Is_Virtual_Processor (P));
+   begin
+      return Get_String_Property (P, USER_LDFLAGS);
+   end Get_USER_LDFLAGS;
 
    -----------------------
    -- Get_Transport_API --
@@ -2864,6 +2910,9 @@ package body Ocarina.Backends.Properties is
       Byte_Count     := Get_String_Name ("byte_count");
       Word_Size      := Get_String_Name ("word_size");
 
+      Ada_Runtime := Get_String_Name ("deployment::ada_runtime");
+      USER_CFLAGS := Get_String_Name ("deployment::user_cflags");
+      USER_LDFLAGS := Get_String_Name ("deployment::user_ldflags");
       Location                  := Get_String_Name ("deployment::location");
       Execution_Platform := Get_String_Name ("deployment::execution_platform");
       Scheduler_Quantum         := Get_String_Name ("scheduler_quantum");
@@ -2980,6 +3029,7 @@ package body Ocarina.Backends.Properties is
       Platform_ARM_N770_Name         := Get_String_Name ("arm_n770");
       Platform_MARTE_OS_Name         := Get_String_Name ("marte_os");
       Platform_Vxworks_Name          := Get_String_Name ("vxworks");
+      Platform_GNAT_Runtime_Name       := Get_String_Name ("gnat_runtime");
 
       Transport_BSD_Sockets_Name := Get_String_Name ("bsd_sockets");
       Transport_SpaceWire_Name   := Get_String_Name ("spacewire");

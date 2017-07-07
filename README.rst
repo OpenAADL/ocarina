@@ -22,7 +22,9 @@ As a back-end, it supports
 * Model checking, using Petri Net `Tina <http://projects.laas.fr/tina//>`_, and `LNT <http://cadp.inria.fr>`_
 * Constraint analysis, using the REAL annex language
 
-It can be integrated with the `AADLib <https://github.com/OpenAADL/AADLib>`_ library of AADL components, and through a `OSATE2 plugin <https://github.com/OpenAADL/osate2-ocarina>`_
+It can be integrated with the `AADLib <https://github.com/OpenAADL/AADLib>`_ library of AADL components.
+
+It can also be embedded in AADL editors: in `OSATE <http://osate.org>`_ using the `OSATE2 plugin <https://github.com/OpenAADL/osate2-ocarina>`_, and `AADL Inspector <http://www.ellidiss.fr/public/wiki/wiki/inspector>`_
 
 Installation:
 -------------
@@ -35,6 +37,8 @@ Q&A:
 Build status for Linux and OS X: |build-status|
 
 Code coverage: |coverage|
+
+CII Best practice: |cii|
 
 .. |build-status| image:: https://travis-ci.org/OpenAADL/ocarina.svg?branch=master 
   :target: https://travis-ci.org/OpenAADL/ocarina
@@ -51,3 +55,7 @@ Code coverage: |coverage|
 .. |release| image:: https://img.shields.io/github/release/OpenAADL/ocarina.svg
   :target: https://github.com/OpenAADL/ocarina/releases
   :alt: GitHub Releases
+  
+.. |cii| image:: https://bestpractices.coreinfrastructure.org/projects/1019/badge
+  :target: https://bestpractices.coreinfrastructure.org/projects/1019
+  :alt: CII Best practice

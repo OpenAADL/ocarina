@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -67,6 +67,9 @@ package Ocarina.Backends.Utils is
    function Remove_Directory_Separator (Path : Name_Id) return Name_Id;
    --  If there is a directory separator at the end of the path, then
    --  remove it and return the result. Else, return the same string.
+
+   procedure Copy_Directory (From : String; Dest : String);
+   --  Copy directory pointed by 'from' to 'dest'
 
    ----------
    -- Misc --

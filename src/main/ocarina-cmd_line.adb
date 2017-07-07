@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2015-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2015-2017 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -317,7 +317,7 @@ package body Ocarina.Cmd_Line is
                      "-ec", Help => "Compute coverage metrics");
 
       --  -er flag
-      Define_Switch (Ocarina_Options, Backends.Do_Coverage_Test'Access,
+      Define_Switch (Ocarina_Options, Backends.Do_Regression_Test'Access,
                      "-er", Help => "Execute system");
 
       --  -asn1 flag

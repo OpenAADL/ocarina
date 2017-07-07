@@ -1,5 +1,5 @@
 AC_PREREQ(2.57)
-AC_INIT(ocarina, 2017.1)
+AC_INIT(ocarina, 2017.x)
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_AUX_DIR(support)
 
@@ -421,6 +421,7 @@ AC_OUTPUT([
 	resources/runtime/aadl_xml/Makefile
 	resources/runtime/alloy/Makefile
 	resources/runtime/cheddar/Makefile
+	resources/runtime/lnt/Makefile
 	resources/runtime/python/Makefile
 	projects/ocarina.gpr
 	src/main/Makefile

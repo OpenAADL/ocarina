@@ -10,7 +10,7 @@ end arm;
 
 processor cortex_m extends arm
 properties
-   Deployment::Execution_Platform => ARM_CORTEX;
+   Deployment::Execution_Platform => GNAT_Runtime;
 end cortex_m;
 
 processor implementation cortex_m.i
