@@ -34,11 +34,13 @@ Refer to the  `ocarina-build <https://github.com/openaadl/ocarina-build>`_ compa
 Q&A:
 ----
 
-Build status for Linux and OS X: |build-status|
-
-Code coverage: |coverage|
-
-CII Best practice: |cii|
++----------------------------------+---------------+
+| Build status for Linux and OS X  ||build-status| |
++----------------------------------+---------------+
+| Code coverage                    | |coverage|    |
++----------------------------------+---------------+
+| CII Best practice                | |cii|         |
++----------------------------------+---------------+
 
 .. |build-status| image:: https://travis-ci.org/OpenAADL/ocarina.svg?branch=master 
   :target: https://travis-ci.org/OpenAADL/ocarina

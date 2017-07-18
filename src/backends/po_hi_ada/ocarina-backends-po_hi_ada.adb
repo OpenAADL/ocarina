@@ -221,12 +221,16 @@ package body Ocarina.Backends.PO_HI_Ada is
          Free (Target_Prefix);
          Free (Target);
 
-         Write_Str ("USER_CFLAGS =");
-         Write_Name (USER_CFLAGS);
-         Write_Eol;
-         Write_Str ("USER_LDFLAGS =");
-         Write_Name (USER_LDFLAGS);
-         Write_Eol;
+         if USER_CFLAGS /= No_Name then
+            Write_Str ("USER_CFLAGS += $(USER_CFLAGS)");
+            Write_Name (USER_CFLAGS);
+            Write_Eol;
+         end if;
+         if USER_LDFLAGS /= No_Name then
+            Write_Str ("USER_LDFLAGS += $(USER_LDFLAGS)");
+            Write_Name (USER_LDFLAGS);
+            Write_Eol;
+         end if;
 
          --  Project file
 
