@@ -14,13 +14,13 @@ properties
    Deployment::Ada_Runtime => "crazyflie_full";
 end crazyflie_v2;
 
-processor implementation crazyflie_v2.i
+processor implementation crazyflie_v2.gnat
 properties
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
    Priority_Range => 0 .. 255;
    Cheddar_Properties::Scheduler_Quantum => 0 Ms;
    Cheddar_Properties::Preemptive_Scheduler => true;
-end crazyflie_v2.i;
+end crazyflie_v2.gnat;
 
 
 processor stm32f4_discovery extends arm
@@ -29,13 +29,13 @@ properties
    Deployment::Ada_Runtime => "stm32f407_discovery";
 end stm32f4_discovery;
 
-processor implementation stm32f4_discovery.i
+processor implementation stm32f4_discovery.gnat
 properties
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
    Priority_Range => 0 .. 255;
    Cheddar_Properties::Scheduler_Quantum => 0 Ms;
    Cheddar_Properties::Preemptive_Scheduler => true;
-end stm32f4_discovery.i;
+end stm32f4_discovery.gnat;
 
 processor nds extends arm
 end nds;
