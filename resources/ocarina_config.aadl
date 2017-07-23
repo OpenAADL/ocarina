@@ -28,7 +28,6 @@ property set Ocarina_Config is
 
   Data_Model          : constant aadlstring => "Data_Model";
   Deployment          : constant aadlstring => "Deployment";
-  Cheddar_Properties  : constant aadlstring => "Cheddar_Properties";
   POK_Properties      : constant aadlstring => "pok_properties";
   ARINC653_Properties : constant aadlstring => "arinc653";
   ASSERT_Properties   : constant aadlstring => "ASSERT_Properties";
