@@ -26,6 +26,7 @@ property set Ocarina_Config is
   AADL_Files : list of aadlstring applies to (system);
   --  List of the AADL source files used by the current application
 
+  Cheddar_Properties  : constant aadlstring => "Cheddar_Properties";
   Data_Model          : constant aadlstring => "Data_Model";
   Deployment          : constant aadlstring => "Deployment";
   POK_Properties      : constant aadlstring => "pok_properties";
