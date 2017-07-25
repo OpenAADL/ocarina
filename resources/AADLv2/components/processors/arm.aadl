@@ -1,23 +1,41 @@
 package ocarina_processors_arm
+
 public
 
 with Deployment;
+with Cheddar_Properties;
 
 processor arm
 end arm;
 
-processor cortex_m extends arm
+processor crazyflie_v2 extends arm
 properties
    Deployment::Execution_Platform => GNAT_Runtime;
-end cortex_m;
+   Deployment::Ada_Runtime => "crazyflie_full";
+end crazyflie_v2;
 
-processor implementation cortex_m.i
+processor implementation crazyflie_v2.gnat
 properties
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
    Priority_Range => 0 .. 255;
-   Scheduler_Quantum => 0 Ms;
-   Preemptive_Scheduler => true;
-end cortex_m.i;
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
+end crazyflie_v2.gnat;
+
+
+processor stm32f4_discovery extends arm
+properties
+   Deployment::Execution_Platform => GNAT_Runtime;
+   Deployment::Ada_Runtime => "stm32f407_discovery";
+end stm32f4_discovery;
+
+processor implementation stm32f4_discovery.gnat
+properties
+   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
+   Priority_Range => 0 .. 255;
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
+end stm32f4_discovery.gnat;
 
 processor nds extends arm
 end nds;
@@ -26,8 +44,8 @@ processor implementation nds.rtems
 properties
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
    Priority_Range => 0 .. 255;
-   Scheduler_Quantum => 0 Ms;
-   Preemptive_Scheduler => true;
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
    Deployment::Execution_Platform => NDS_RTEMS;
 end nds.rtems;
 
@@ -39,8 +57,8 @@ processor implementation gumstix.rtems
 properties
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
    Priority_Range => 0 .. 255;
-   Scheduler_Quantum => 0 Ms;
-   Preemptive_Scheduler => true;
+   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
+   Cheddar_Properties::Preemptive_Scheduler => true;
    Deployment::Execution_Platform => GUMSTIX_RTEMS;
 end gumstix.rtems;
 
