@@ -282,6 +282,7 @@ package body Ocarina.Backends.Properties is
    Language_VDM_Name             : Name_Id;
    Language_QGenAda_Name         : Name_Id;
    Language_QGenC_Name           : Name_Id;
+   Language_MicroPython_Name     : Name_Id;
 
    Thread_Periodic_Name   : Name_Id;
    Thread_Aperiodic_Name  : Name_Id;
@@ -1226,6 +1227,9 @@ package body Ocarina.Backends.Properties is
       elsif Source_L = Language_QGenC_Name then
          return Language_QGenC;
 
+      elsif Source_L = Language_MicroPython_Name then
+         return Language_MicroPython;
+
       else
          Display_Located_Error
            (AIN.Loc (E),
@@ -1411,6 +1415,9 @@ package body Ocarina.Backends.Properties is
 
          when Language_Simulink | Language_QGenC | Language_QGenAda =>
             return Subprogram_Simulink;
+
+         when Language_MicroPython =>
+            return Subprogram_Unknown;
 
          when Language_Scade =>
             return Subprogram_Scade;
@@ -2979,6 +2986,7 @@ package body Ocarina.Backends.Properties is
       Language_System_C_Name        := Get_String_Name ("system_c");
       Language_QGenAda_Name         := Get_String_Name ("qgenada");
       Language_QGenC_Name           := Get_String_Name ("qgenc");
+      Language_MicroPython_Name     := Get_String_Name ("micropython");
 
       Thread_Periodic_Name   := Get_String_Name ("periodic");
       Thread_Aperiodic_Name  := Get_String_Name ("aperiodic");
