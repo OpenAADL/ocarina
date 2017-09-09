@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -107,6 +107,7 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Subprogram_Instance (E : Node_Id);
       procedure Visit_Data_Instance (E : Node_Id);
+      procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
       function Marshall_Spec (E : Node_Id) return Node_Id;
       --  Creates a spec for a Marshall procedure for a data type
@@ -324,7 +325,6 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
            ADN.Distributed_Application_Unit
              (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := ADN.Entity (U);
-         S : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -337,16 +337,7 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
 
          --  Visit all the subcomponents of the process
 
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          --  Unmark all the marked types
 
@@ -390,22 +381,12 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         S : Node_Id;
       begin
          Push_Entity (Ada_Root);
 
          --  Visit all the subcomponents of the system
 
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          Pop_Entity; --  Ada_Root
       end Visit_System_Instance;
@@ -502,6 +483,7 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Subprogram_Instance (E : Node_Id);
       procedure Visit_Data_Instance (E : Node_Id);
+      procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
       function Marshall_Implementation (E : Node_Id) return Node_Id;
       --  Creates an implementation for a Marshall procedure
@@ -1005,7 +987,6 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
            ADN.Distributed_Application_Unit
              (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P : constant Node_Id := ADN.Entity (U);
-         S : Node_Id;
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -1018,16 +999,7 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
 
          --  Visit all the subcomponents of the process
 
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          --  Unmark all the marked types
 
@@ -1071,23 +1043,12 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         S : Node_Id;
       begin
          Push_Entity (Ada_Root);
 
          --  Visit all the subcomponents of the system
 
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          Pop_Entity; --  Ada_Root
       end Visit_System_Instance;
