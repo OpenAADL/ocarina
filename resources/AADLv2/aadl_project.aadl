@@ -81,7 +81,8 @@ property set AADL_Project is
      VHDL,
      ACN,
      QGenC,
-     QGenAda);
+     QGenAda,
+     MicroPython);
 
   Supported_Distributions: type enumeration (Fixed, Poisson);
 
