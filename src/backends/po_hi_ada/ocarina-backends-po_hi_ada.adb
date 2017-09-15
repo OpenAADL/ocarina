@@ -356,7 +356,7 @@ package body Ocarina.Backends.PO_HI_Ada is
       Write_Eol;
       Write_Line ("generate-asn1-files: $(ASN_SOURCES)");
       Write_Char (ASCII.HT);
-      Write_Line (" asn1.exe -Ada -uPER $(ASN_SOURCES)");
+      Write_Line (" mono $(which asn1.exe) -Ada -uPER $(ASN_SOURCES)");
    end PolyORB_HI_Ada_Makefile;
 
    -------------------------------------
