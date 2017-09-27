@@ -1,2 +1,3 @@
 t12.aadl:18:02: d (subcomponent) points to datatype (entity reference), which does not exist. 
+t12.aadl:18:02: d (subcomponent) points to datatype (entity reference), which does not exist. 
 Cannot analyze AADL specifications
