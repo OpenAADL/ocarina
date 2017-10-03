@@ -34,9 +34,13 @@ Refer to the  `ocarina-build <https://github.com/openaadl/ocarina-build>`_ compa
 Q&A:
 ----
 
-Build status for Linux and OS X: |build-status|
-
-Code coverage: |coverage|
++----------------------------------+---------------+
+| Build status for Linux and OS X  ||build-status| |
++----------------------------------+---------------+
+| Code coverage                    | |coverage|    |
++----------------------------------+---------------+
+| CII Best practice                | |cii|         |
++----------------------------------+---------------+
 
 .. |build-status| image:: https://travis-ci.org/OpenAADL/ocarina.svg?branch=master 
   :target: https://travis-ci.org/OpenAADL/ocarina
@@ -53,3 +57,7 @@ Code coverage: |coverage|
 .. |release| image:: https://img.shields.io/github/release/OpenAADL/ocarina.svg
   :target: https://github.com/OpenAADL/ocarina/releases
   :alt: GitHub Releases
+  
+.. |cii| image:: https://bestpractices.coreinfrastructure.org/projects/1019/badge
+  :target: https://bestpractices.coreinfrastructure.org/projects/1019
+  :alt: CII Best practice

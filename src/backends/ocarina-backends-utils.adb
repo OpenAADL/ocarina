@@ -2872,6 +2872,15 @@ package body Ocarina.Backends.Utils is
    end To_Milliseconds;
 
    ---------------------
+   -- To_Microseconds --
+   ---------------------
+
+   function To_Microseconds (S : Time_Type) return Unsigned_Long_Long is
+   begin
+      return Unsigned_Long_Long (To_Seconds (S) * 1_000_000.0);
+   end To_Microseconds;
+
+   ---------------------
    -- To_Nanoseconds --
    ---------------------
 

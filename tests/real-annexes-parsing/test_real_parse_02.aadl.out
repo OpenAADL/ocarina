@@ -78,10 +78,19 @@ property set Deployment is
   Protocol : Deployment::Protocol_Type
     applies to (system);
 
-  Allowed_Execution_Platform : type enumeration (Native, Native_Compcert, bench, LEON_RTEMS, LEON_RTEMS_POSIX, LEON3_SCOC3, LEON3_XTRATUM, LEON3_XM3, LEON_ORK, LEON_GNAT, LINUX32, LINUX32_XENOMAI_NATIVE, LINUX32_XENOMAI_POSIX, LINUX64, ERC32_ORK, ARM_DSLINUX, ARM_N770, GUMSTIX_RTEMS, NDS_RTEMS, X86_RTEMS, X86_RTEMS_POSIX, X86_LINUXTASTE, MARTE_OS, WIN32, VXWORKS, FREERTOS);
+  Allowed_Execution_Platform : type enumeration (Native, Native_Compcert, bench, GNAT_Runtime, LEON_RTEMS, LEON_RTEMS_POSIX, LEON3_SCOC3, LEON3_XTRATUM, LEON3_XM3, LEON_ORK, LEON_GNAT, LINUX32, LINUX32_XENOMAI_NATIVE, LINUX32_XENOMAI_POSIX, LINUX64, ERC32_ORK, ARM_DSLINUX, ARM_N770, GUMSTIX_RTEMS, NDS_RTEMS, X86_RTEMS, X86_RTEMS_POSIX, X86_LINUXTASTE, MARTE_OS, WIN32, VXWORKS, FREERTOS);
 
   Execution_Platform : Deployment::Allowed_Execution_Platform
     applies to ( all);
+
+  Ada_Runtime : aadlstring
+    applies to (processor);
+
+  USER_CFLAGS : aadlstring
+    applies to (processor);
+
+  USER_LDFLAGS : aadlstring
+    applies to (processor);
 
   Supported_Execution_Platform : list of Deployment::Allowed_Execution_Platform
     applies to (device);
@@ -236,9 +245,9 @@ property set Ocarina_Config is
   AADL_Files : list of aadlstring
     applies to (system);
 
+  Cheddar_Properties : constant aadlstring => "Cheddar_Properties";
   Data_Model : constant aadlstring => "Data_Model";
   Deployment : constant aadlstring => "Deployment";
-  Cheddar_Properties : constant aadlstring => "Cheddar_Properties";
   POK_Properties : constant aadlstring => "pok_properties";
   ARINC653_Properties : constant aadlstring => "arinc653";
   ASSERT_Properties : constant aadlstring => "ASSERT_Properties";
@@ -400,8 +409,8 @@ virtual processor)
 end POK;
 
 package Base_Types
-public
-  with data_model;
+
+public  with data_model;
 
   data Boolean
   properties
@@ -958,8 +967,8 @@ subprogram)
 end Replication_Properties;
 
 package RMAAadl
-public
-  with Deployment;
+
+public  with Deployment;
 
   subprogram Hello_Spg_1
   properties

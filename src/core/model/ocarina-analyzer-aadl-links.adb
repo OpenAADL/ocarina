@@ -54,9 +54,6 @@ package body Ocarina.Analyzer.AADL.Links is
    use Ocarina.ME_AADL.AADL_Tree.Entities;
    use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
-   Global_Root : Node_Id := No_Node;
-   --  Store the root of the current AADL_Specification
-
    function Link_Declarations_Of_Package
      (Root : Node_Id;
       Node : Node_Id) return Boolean;
@@ -439,13 +436,22 @@ package body Ocarina.Analyzer.AADL.Links is
       Success           : Boolean := True;
       Subclause_Success : Boolean := True;
    begin
-      --  modes, connections and flows are linked only if
+      --  First, we resolve link for the parent node, as we may extend
+      --  its features, or refine its subcomponents.
+
+      if Present (Parent (Node)) then
+         Success := Link_Component_Implementation_Subclauses
+           (Root, Get_Referenced_Entity
+         (Corresponding_Entity (Identifier (Parent (Node)))));
+      end if;
+
+      --  Modes, connections and flows are linked only if
       --  subcomponents and features were correctly linked. Indeed,
       --  those subclauses may access elements pointed by
       --  subcomponents or features.
 
       if not Is_Empty
-          (Ocarina.ME_AADL.AADL_Tree.Nodes.Refines_Type (Node))
+        (Ocarina.ME_AADL.AADL_Tree.Nodes.Refines_Type (Node))
       then
          List_Node :=
            First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Refines_Type (Node));
@@ -504,15 +510,15 @@ package body Ocarina.Analyzer.AADL.Links is
            First_Node (Ocarina.ME_AADL.AADL_Tree.Nodes.Connections (Node));
 
          while Present (List_Node) loop
-            Global_Root := Root;
             Success     :=
               Link_Connection (Node, List_Node)
               and then Link_In_Modes_Statement (Node, In_Modes (List_Node))
               and then Success;
             List_Node   := Next_Node (List_Node);
-            Global_Root := No_Node;
          end loop;
       end if;
+
+      Subclause_Success := Success;
 
       if Subclause_Success
         and then not Is_Empty (Ocarina.ME_AADL.AADL_Tree.Nodes.Flows (Node))
@@ -1078,6 +1084,7 @@ package body Ocarina.Analyzer.AADL.Links is
                            DLTWN (Node, Component_Ref);
                            Success := False;
                         end if;
+
                      else
                         Pointed_Node := No_Node;
                         No_Ref_Given := True;
@@ -1103,6 +1110,7 @@ package body Ocarina.Analyzer.AADL.Links is
                      then
                         DLTWN (Node, Pointed_Node);
                         Success := False;
+
                      else
                         Set_Referenced_Entity (Component_Ref, Pointed_Node);
                         Success := True;
@@ -3476,6 +3484,25 @@ package body Ocarina.Analyzer.AADL.Links is
               Package_Identifier   => Pack_Identifier,
               Component_Identifier => Component_Identifier);
 
+         --  If no package name is given, we try again in the current
+         --  package forcing explictly the name of the package.
+
+         if No (Pointed_Node)
+           and then No (Pack_Identifier)
+           and then Present (Namespace (Container_Component (Node)))
+           and then Kind (Namespace (Container_Component (Node)))
+           /= K_AADL_Specification
+         then
+            Pack_Identifier := Identifier
+              (Namespace (Container_Component (Node)));
+
+            Pointed_Node :=
+              Find_Component_Classifier
+                (Root                 => Root,
+                 Package_Identifier   => Pack_Identifier,
+                 Component_Identifier => Component_Identifier);
+         end if;
+
          if No (Pointed_Node) then
             DLTWN (Node, Component_Ref, Non_Existent => True);
             Success := False;
@@ -3494,7 +3521,7 @@ package body Ocarina.Analyzer.AADL.Links is
 
          elsif not
            ((Kind (Pointed_Node) = K_Component_Type
-             or else Kind (Pointed_Node) = K_Component_Implementation))
+               or else Kind (Pointed_Node) = K_Component_Implementation))
          then
             DAE
               (Node1    => Node,
@@ -3514,8 +3541,8 @@ package body Ocarina.Analyzer.AADL.Links is
 
          elsif Category (Pointed_Node) /= Category (Node)
            and then
-             Category (Pointed_Node) /=
-             Component_Category'Pos (CC_Abstract)
+           Category (Pointed_Node) /=
+           Component_Category'Pos (CC_Abstract)
          then
             DAE
               (Node1    => Node,
@@ -3729,38 +3756,18 @@ package body Ocarina.Analyzer.AADL.Links is
             Corresponding_Node);
 
          if Present (Corresponding_Node) then
-            if Kind (Corresponding_Node) = K_Subcomponent then
-               if Present
-                   (Get_Referenced_Entity (Entity_Ref (Corresponding_Node)))
-               then
-                  Corresponding_Node :=
-                    Find_Feature
-                      (Component =>
-                         Get_Referenced_Entity
-                           (Entity_Ref (Corresponding_Node)),
-                       Feature_Identifier =>
-                         Item
-                           (Next_Node (First_Node (Path (Connection_End)))));
-               else
-                  --  If there is no Referenced_Entity, we try to find
-                  --  directly the corresponding component, and then
-                  --  its feature. XXX to be investigated, is this a
-                  --  hole in the instantiation process ?
-
-                  Corresponding_Node :=
-                    Find_Feature
-                      (Component =>
-                         Find_Component_Classifier
-                           (Root               => Global_Root,
-                            Package_Identifier =>
-                              Namespace_Identifier
-                                (Entity_Ref (Corresponding_Node)),
-                            Component_Identifier =>
-                              Identifier (Entity_Ref (Corresponding_Node))),
-                       Feature_Identifier =>
-                         Item
-                           (Next_Node (First_Node (Path (Connection_End)))));
-               end if;
+            if Kind (Corresponding_Node) = K_Subcomponent and then
+              Present
+                (Get_Referenced_Entity (Entity_Ref (Corresponding_Node)))
+            then
+               Corresponding_Node :=
+                 Find_Feature
+                   (Component =>
+                      Get_Referenced_Entity
+                        (Entity_Ref (Corresponding_Node)),
+                    Feature_Identifier =>
+                      Item
+                        (Next_Node (First_Node (Path (Connection_End)))));
 
             elsif Kind (Corresponding_Node) = K_Subprogram_Call
               and then Present
