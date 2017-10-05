@@ -1,0 +1,16 @@
+State DEFINITIONS ::= BEGIN
+	MyObject ::= OBJECT IDENTIFIER
+
+	Params ::= SET {
+		stringName STRING DEFAULT \"ciao\",
+		nodeName STRING DEFAULT NODE_NAME,
+		testReal REAL DEFAULT 0,
+		testNoDefault BOOLEAN
+	}
+
+	Vars ::= SET {
+		publisherFrequency REAL DEFAULT 0,
+		myObject MyObject
+	}
+
+END
