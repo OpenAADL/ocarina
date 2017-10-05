@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1738,7 +1738,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
                                  (Map_C_Variable_Name
                                     (F,
                                      Request_Variable => True)),
-                             Used_Type => M);
+                             Used_Type => M,
+                             Is_Static => True);
 
                         Append_Node_To_List (Declaration, Declarations);
 

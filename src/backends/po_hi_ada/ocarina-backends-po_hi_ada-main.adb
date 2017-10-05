@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -71,6 +71,8 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
       procedure Visit_Process_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
+
+      procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
       Has_Hybrid_Threads : Boolean := False;
 
@@ -203,7 +205,6 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
              (ADN.Deployment_Node (Backend_Node (Identifier (E))));
          P             : constant Node_Id                  := ADN.Entity (U);
          N             : Node_Id;
-         S             : Node_Id;
          Transport_API : constant Supported_Transport_APIs :=
            Fetch_Transport_API (E);
          The_System : constant Node_Id :=
@@ -232,16 +233,7 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
 
          --  Visit all the subcomponents of the process
 
-         if not AINU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          if Has_Hybrid_Threads then
             --  Unblock the hybrid task driver
@@ -321,22 +313,10 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         S : Node_Id;
       begin
          Push_Entity (Ada_Root);
 
-         --  Visit all the subcomponents of the system
-
-         if not AINU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          Pop_Entity; --  Ada_Root
       end Visit_System_Instance;

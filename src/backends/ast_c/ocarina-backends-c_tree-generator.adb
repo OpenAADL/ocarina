@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1197,11 +1197,11 @@ package body Ocarina.Backends.C_Tree.Generator is
 
    procedure Generate_Variable_Declaration (N : Node_Id) is
    begin
-      Generate (Used_Type (N));
       if Is_Static (N) then
-         Write_Space;
          Write (Tok_Static);
+         Write_Space;
       end if;
+      Generate (Used_Type (N));
       Write_Space;
       Generate (Defining_Identifier (N));
    end Generate_Variable_Declaration;

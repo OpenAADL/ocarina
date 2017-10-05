@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2017 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -207,7 +207,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
               Make_Defining_Identifier (Get_String_Name ("quantum"));
             Value : constant Node_Id :=
               Make_Literal
-                (XV.New_Numeric_Value (To_Milliseconds (Quantum), 1, 10));
+                (XV.New_Numeric_Value (To_Microseconds (Quantum), 1, 10));
          begin
             Append_Node_To_List
               (Make_Assignement (Name, Value),
@@ -327,7 +327,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
                      K :=
                        Make_Literal
                          (XV.New_Numeric_Value
-                            (To_Milliseconds
+                            (To_Microseconds
                                (Get_Execution_Time
                                   (Corresponding_Instance
                                      (Item
@@ -506,7 +506,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
          P :=
            Map_To_XML_Node
              ("capacity",
-              To_Milliseconds (Get_Execution_Time (E) (1)));
+              To_Microseconds (Get_Execution_Time (E) (1)));
       end if;
       Append_Node_To_List (P, XTN.Subitems (N));
 
@@ -514,7 +514,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
       P :=
         Map_To_XML_Node
           ("start_time",
-           To_Milliseconds (Get_Thread_First_Dispatch_Time (E)));
+           To_Microseconds (Get_Thread_First_Dispatch_Time (E)));
       Append_Node_To_List (P, XTN.Subitems (N));
 
       --  policy: computed from the POSIX_Scheduling_Policy properties
@@ -528,7 +528,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
          P :=
            Map_To_XML_Node
              ("deadline",
-              To_Milliseconds (Get_Thread_Deadline (E)));
+              To_Microseconds (Get_Thread_Deadline (E)));
          Append_Node_To_List (P, XTN.Subitems (N));
       end if;
 
@@ -554,7 +554,7 @@ package body Ocarina.Backends.Cheddar.Mapping is
       if Dispatch = Thread_Periodic or else Dispatch = Thread_Sporadic then
          --  period: computed from Period property, XXX check units
          P :=
-           Map_To_XML_Node ("period", To_Milliseconds (Get_Thread_Period (E)));
+           Map_To_XML_Node ("period", To_Microseconds (Get_Thread_Period (E)));
          Append_Node_To_List (P, XTN.Subitems (N));
       end if;
 

@@ -2,7 +2,6 @@ package validation
 public
   with Data_Model;
   with Deployment;
-  with Cheddar_Properties;
 
 -----------------
 -- Subprograms --
@@ -73,8 +72,8 @@ processor implementation native.i
 properties
    Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
    Priority_Range => 0 .. 255;
-   Cheddar_Properties::Scheduler_Quantum => 0 Ms;
-   Cheddar_Properties::Preemptive_Scheduler => true;
+   Scheduler_Quantum => 0 Ms;
+   Preemptive_Scheduler => true;
 end native.i;
 
 ---------------

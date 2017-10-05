@@ -389,6 +389,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
       procedure Visit_Process_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
+      procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
       procedure Cyclic_Task_Instantiation_Formals
         (E      : Node_Id;
@@ -1188,22 +1189,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         S : Node_Id;
       begin
          Push_Entity (Ada_Root);
 
          --  Visit all the subcomponents of the system
 
-         if not AINU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          Pop_Entity; --  Ada_Root
       end Visit_System_Instance;
@@ -1532,6 +1523,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
       procedure Visit_Process_Instance (E : Node_Id);
       procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
+      procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
       function Task_Job_Body (E : Node_Id) return Node_Id;
       --  Creates the parameterless subprogram body that does the
@@ -4306,16 +4298,15 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
       procedure Visit_Device_Instance (E : Node_Id) is
          Implementation : constant Node_Id := Get_Implementation (E);
-         S              : Node_Id;
+
       begin
          if Implementation /= No_Node then
-            if not AAU.Is_Empty (AAN.Subcomponents (Implementation)) then
-               S := First_Node (Subcomponents (Implementation));
-               while Present (S) loop
-                  Visit_Component_Instance (Corresponding_Instance (S));
-                  S := Next_Node (S);
-               end loop;
-            end if;
+
+            --  A device may be "implemented" using an abstract
+            --  component, representing its driver. We iterate on its
+            --  subcomponents to attach specific threads associated.
+
+            Visit_Subcomponents_Of (Implementation);
          end if;
       end Visit_Device_Instance;
 
@@ -4478,22 +4469,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         S : Node_Id;
       begin
          Push_Entity (Ada_Root);
 
          --  Visit all the subcomponents of the system
 
-         if not AINU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          Pop_Entity; --  Ada_Root
       end Visit_System_Instance;

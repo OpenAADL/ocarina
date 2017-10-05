@@ -208,12 +208,12 @@ package body Ocarina.BE_AADL.Namespaces is
       then
          Write_Eol;
          Print_Token (T_Public);
+         Write_Eol;
       end if;
 
       --  Public part
 
       if Has_Public then
-
          List_Node := First_Node (Declarations (Node));
 
          while Present (List_Node) loop
