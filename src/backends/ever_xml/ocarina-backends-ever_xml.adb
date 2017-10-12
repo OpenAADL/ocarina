@@ -433,7 +433,8 @@ package body Ocarina.Backends.Ever_XML is
             Visit_Properties (F, Depth + 2);
 
             --  INFORMAZIONI SULLA PORTA
-            if AIE.Get_Category_Of_Connection (F) = CT_Port_Connection then
+            if AIE.Get_Category_Of_Connection (F) = CT_Port_Connection or
+            else AIE.Get_Category_Of_Connection (F) = CT_Access_Subprogram then
 
                --  OPEN CONNECTION PORT INFO
                Open_Tag (FD_System,
