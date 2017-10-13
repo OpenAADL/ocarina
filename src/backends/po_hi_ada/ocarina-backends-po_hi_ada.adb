@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -282,7 +282,7 @@ package body Ocarina.Backends.PO_HI_Ada is
             " \");
          Write_Char (ASCII.HT);
          Write_Str
-           ("  $(GNATMAKE) -x -P$(PROJECT_FILE) -XTARGET=$(TARGET)" &
+           ("  $(GNATMAKE) -x -p -P$(PROJECT_FILE) -XTARGET=$(TARGET)" &
             " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL) ${USER_CFLAGS}");
 
          --  If there are C source or C libraries, there will be more
