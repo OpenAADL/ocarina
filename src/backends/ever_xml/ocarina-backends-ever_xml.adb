@@ -367,12 +367,18 @@ package body Ocarina.Backends.Ever_XML is
                --  si puo' fare e quando no, il comando viene lanciato sempre
                --  e se questo a sua volta lancia una eccezione viene catturata
                --  e NON gestita grazie al comando null che non fa niente.
+               --  L'if con la presenza delle properties serve per lanciare
+               --  l'eccezione prima che vengano scritti i tag di apertura
+               --  delle properties: in questo modo il file XML generato è
+               --  sintatticamente corretto.
                Open_Tag (FD_System,
                          Get_Tag_String (Tag_Data_Info),
                          Depth + 3);
                begin
+                  if Present (Properties (Corresponding_Instance (F))) then
                   Visit_Properties (Corresponding_Instance (F),
                                     Depth + 3);
+                  end if;
                exception
                   when others =>
                      null;

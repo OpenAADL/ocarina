@@ -79,18 +79,14 @@
 					<name>chat</name>
 					<direction>out</direction>
 					<type>data</type>
-					<datatype>Placeholder</datatype>
-					<datatype_namespace>placeholder_msgs</datatype_namespace>
+					<datatype>String</datatype>
+					<datatype_namespace>std_msgs</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
 					<properties>
 						<property>
 							<namespace>topic_properties</namespace>
 							<name>Default_Name</name>
 							<value>/out_topic</value>
-						</property>
-						<property>
-							<name>Source_Text</name>
-							<value>file_input.asn1</value>
 						</property>
 					</properties>
 				</feature>
@@ -140,7 +136,7 @@
 					<port_info>
 						<source>msg</source>
 						<dest>chat</dest>
-						<parent_source>publisher.impl</parent_source>
+						<parent_source>publisher_std_msgs_String.impl</parent_source>
 						<parent_source_name>publisher</parent_source_name>
 						<parent_dest>talker.impl</parent_dest>
 						<parent_dest_name>chat</parent_dest_name>
@@ -150,7 +146,7 @@
 			<subcomponents>
 				<component>
 					<name>publisher</name>
-					<type>publisher.impl</type>
+					<type>publisher_std_msgs_String.impl</type>
 					<category>thread</category>
 					<namespace>ros</namespace>
 					<features>
@@ -158,8 +154,8 @@
 							<name>msg</name>
 							<direction>out</direction>
 							<type>data</type>
-							<datatype>Placeholder</datatype>
-							<datatype_namespace>placeholder_msgs</datatype_namespace>
+							<datatype>String</datatype>
+							<datatype_namespace>std_msgs</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
 							<properties>
 							</properties>
@@ -221,6 +217,10 @@
 								</feature>
 							</features>
 							<properties>
+								<property>
+									<name>Source_Name</name>
+									<value>entry_point</value>
+								</property>
 								<property>
 									<name>Source_Text</name>
 									<value>talker.cpp</value>
@@ -596,18 +596,14 @@
 					<name>chat</name>
 					<direction>out</direction>
 					<type>data</type>
-					<datatype>Placeholder</datatype>
-					<datatype_namespace>placeholder_msgs</datatype_namespace>
+					<datatype>String</datatype>
+					<datatype_namespace>std_msgs</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
 					<properties>
 						<property>
 							<namespace>topic_properties</namespace>
 							<name>Default_Name</name>
 							<value>/out_topic</value>
-						</property>
-						<property>
-							<name>Source_Text</name>
-							<value>file_input.asn1</value>
 						</property>
 					</properties>
 				</feature>
@@ -657,7 +653,7 @@
 					<port_info>
 						<source>msg</source>
 						<dest>chat</dest>
-						<parent_source>publisher.impl</parent_source>
+						<parent_source>publisher_std_msgs_String.impl</parent_source>
 						<parent_source_name>publisher</parent_source_name>
 						<parent_dest>talker.impl</parent_dest>
 						<parent_dest_name>chat</parent_dest_name>
@@ -667,7 +663,7 @@
 			<subcomponents>
 				<component>
 					<name>publisher</name>
-					<type>publisher.impl</type>
+					<type>publisher_std_msgs_String.impl</type>
 					<category>thread</category>
 					<namespace>ros</namespace>
 					<features>
@@ -675,8 +671,8 @@
 							<name>msg</name>
 							<direction>out</direction>
 							<type>data</type>
-							<datatype>Placeholder</datatype>
-							<datatype_namespace>placeholder_msgs</datatype_namespace>
+							<datatype>String</datatype>
+							<datatype_namespace>std_msgs</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
 							<properties>
 							</properties>
@@ -1113,18 +1109,14 @@
 					<name>chat</name>
 					<direction>in</direction>
 					<type>event_data</type>
-					<datatype>Placeholder</datatype>
-					<datatype_namespace>placeholder_msgs</datatype_namespace>
+					<datatype>Point</datatype>
+					<datatype_namespace>geometry_msgs</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
 					<properties>
 						<property>
 							<namespace>topic_properties</namespace>
 							<name>Default_Name</name>
 							<value>/in_topic</value>
-						</property>
-						<property>
-							<name>Source_Text</name>
-							<value>file_output.asn1</value>
 						</property>
 					</properties>
 				</feature>
@@ -1176,7 +1168,7 @@
 						<dest>msg</dest>
 						<parent_source>listener.impl</parent_source>
 						<parent_source_name>chat</parent_source_name>
-						<parent_dest>callback.impl</parent_dest>
+						<parent_dest>callback_geometry_msgs_Point.impl</parent_dest>
 						<parent_dest_name>subscriber</parent_dest_name>
 					</port_info>
 				</connection>
@@ -1184,7 +1176,7 @@
 			<subcomponents>
 				<component>
 					<name>subscriber</name>
-					<type>callback.impl</type>
+					<type>callback_geometry_msgs_Point.impl</type>
 					<category>thread</category>
 					<namespace>ros</namespace>
 					<features>
@@ -1192,8 +1184,8 @@
 							<name>msg</name>
 							<direction>in</direction>
 							<type>event_data</type>
-							<datatype>Placeholder</datatype>
-							<datatype_namespace>placeholder_msgs</datatype_namespace>
+							<datatype>Point</datatype>
+							<datatype_namespace>geometry_msgs</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
 							<properties>
 								<property>
@@ -1620,29 +1612,6 @@
 			</subcomponents>
 		</component>
 		<component>
-			<name>overseer_node</name>
-			<type>overseer</type>
-			<category>process</category>
-			<namespace>templates</namespace>
-			<features>
-				<feature>
-					<name>notify_state</name>
-					<type>access</type>
-					<datatype>state_manager</datatype>
-					<datatype_namespace>ros</datatype_namespace>
-					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-					<properties>
-					</properties>
-				</feature>
-			</features>
-			<properties>
-			</properties>
-			<connections>
-			</connections>
-			<subcomponents>
-			</subcomponents>
-		</component>
-		<component>
 			<name>talk_list_node</name>
 			<type>talk_list.impl</type>
 			<category>process</category>
@@ -1652,8 +1621,8 @@
 					<name>msg_in</name>
 					<direction>in</direction>
 					<type>event_data</type>
-					<datatype>Placeholder</datatype>
-					<datatype_namespace>placeholder_msgs</datatype_namespace>
+					<datatype>String</datatype>
+					<datatype_namespace>std_msgs</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
 					<properties>
 						<property>
@@ -1661,28 +1630,20 @@
 							<name>Default_Name</name>
 							<value>/in_topic</value>
 						</property>
-						<property>
-							<name>Source_Text</name>
-							<value>file_input.asn1</value>
-						</property>
 					</properties>
 				</feature>
 				<feature>
 					<name>msg_out</name>
 					<direction>out</direction>
 					<type>data</type>
-					<datatype>Placeholder</datatype>
-					<datatype_namespace>placeholder_msgs</datatype_namespace>
+					<datatype>Point</datatype>
+					<datatype_namespace>geometry_msgs</datatype_namespace>
 					<category>K_PORT_SPEC_INSTANCE</category>
 					<properties>
 						<property>
 							<namespace>topic_properties</namespace>
 							<name>Default_Name</name>
 							<value>/out_topic</value>
-						</property>
-						<property>
-							<name>Source_Text</name>
-							<value>file_output.asn1</value>
 						</property>
 					</properties>
 				</feature>
@@ -1738,7 +1699,7 @@
 						<dest>msg_in</dest>
 						<parent_source>talk_list.impl</parent_source>
 						<parent_source_name>msg_in</parent_source_name>
-						<parent_dest>call_pub.impl</parent_dest>
+						<parent_dest>call_pub_std_msgs_String_geometry_msgs_Point.impl</parent_dest>
 						<parent_dest_name>call_pub</parent_dest_name>
 					</port_info>
 				</connection>
@@ -1751,7 +1712,7 @@
 					<port_info>
 						<source>msg_out</source>
 						<dest>msg_out</dest>
-						<parent_source>call_pub.impl</parent_source>
+						<parent_source>call_pub_std_msgs_String_geometry_msgs_Point.impl</parent_source>
 						<parent_source_name>call_pub</parent_source_name>
 						<parent_dest>talk_list.impl</parent_dest>
 						<parent_dest_name>msg_out</parent_dest_name>
@@ -1761,7 +1722,7 @@
 			<subcomponents>
 				<component>
 					<name>call_pub</name>
-					<type>call_pub.impl</type>
+					<type>call_pub_std_msgs_String_geometry_msgs_Point.impl</type>
 					<category>thread</category>
 					<namespace>ros</namespace>
 					<features>
@@ -1769,8 +1730,8 @@
 							<name>msg_in</name>
 							<direction>in</direction>
 							<type>event_data</type>
-							<datatype>Placeholder</datatype>
-							<datatype_namespace>placeholder_msgs</datatype_namespace>
+							<datatype>String</datatype>
+							<datatype_namespace>std_msgs</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
 							<properties>
 								<property>
@@ -1783,8 +1744,8 @@
 							<name>msg_out</name>
 							<direction>out</direction>
 							<type>data</type>
-							<datatype>Placeholder</datatype>
-							<datatype_namespace>placeholder_msgs</datatype_namespace>
+							<datatype>Point</datatype>
+							<datatype_namespace>geometry_msgs</datatype_namespace>
 							<category>K_PORT_SPEC_INSTANCE</category>
 							<properties>
 							</properties>

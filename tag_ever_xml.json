@@ -11,6 +11,7 @@
 "TAG_FEATURE_PORT_DATA_TYPE": "datatype",
 "TAG_FEATURE_PORT_DATA_TYPE_NAMESPACE": "datatype_namespace",
 "TAG_FEATURE_PORT_TYPE": "type",
+"TAG_DATA_INFO": "data_info",
 "TAG_PROPERTIES": "properties",
 "TAG_PROPERTY": "property",
 "TAG_PROPERTY_NAME": "name",
