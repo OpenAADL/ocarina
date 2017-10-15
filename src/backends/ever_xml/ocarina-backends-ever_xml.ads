@@ -55,6 +55,7 @@ package Ocarina.Backends.Ever_XML is
       Tag_Feature_Port_Data_Type,
       Tag_Feature_Port_Data_Type_Namespace,
       Tag_Feature_Port_Type,
+      Tag_Data_Info,
       Tag_Properties,
       Tag_Property,
       Tag_Property_Name,
