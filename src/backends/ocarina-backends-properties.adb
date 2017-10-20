@@ -2904,7 +2904,7 @@ package body Ocarina.Backends.Properties is
       Thread_Dispatch_Protocol := Get_String_Name ("dispatch_protocol");
       Thread_Cheddar_Priority  :=
         Get_String_Name ("cheddar_properties::fixed_priority");
-      Thread_Stack_Size := Get_String_Name ("source_stack_size");
+      Thread_Stack_Size := Get_String_Name ("stack_size");
 
       Port_Timing                := Get_String_Name ("timing");
       Port_Timing_Sampled_Name   := Get_String_Name ("sampled");
