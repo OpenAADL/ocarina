@@ -91,6 +91,9 @@ property set Deployment is
   Supported_Execution_Platform : list of Deployment::Allowed_Execution_Platform
     applies to (device);
 
+  USER_ENV : aadlstring
+    applies to (processor);
+
   Runtime : type enumeration (PolyORB_HI_C, PolyORB_HI_Ada, POK);
 
   Supported_Runtime : Deployment::Runtime
@@ -406,7 +409,8 @@ end POK;
 
 package Base_Types
 
-public  with data_model;
+public
+  with data_model;
 
   data Boolean
   properties
@@ -964,7 +968,8 @@ end Replication_Properties;
 
 package PartitionedSystemExample
 
-public  with ARINC653;
+public
+  with ARINC653;
 
   data integer
   end integer;

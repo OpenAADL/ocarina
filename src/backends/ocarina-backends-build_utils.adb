@@ -1585,6 +1585,19 @@ package body Ocarina.Backends.Build_Utils is
                M.Use_Scade,
                M.Scade_Directory);
 
+            --  Add user-defined environment variable
+
+            declare
+               Env : constant Name_Id := Get_USER_ENV
+                 (Get_Bound_Processor (E));
+            begin
+               if Env /= No_Name then
+                  Write_Str ("export ");
+                  Write_Name (Env);
+                  Write_Eol;
+               end if;
+            end;
+
             --  Add rule to compile the C files, if any
 
             Write_Eol;

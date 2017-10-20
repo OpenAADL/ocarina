@@ -189,8 +189,9 @@ package body Ocarina.Backends.Properties is
    ------------------------------------
 
    Ada_Runtime               : Name_Id;
-   User_CFLAGS               : Name_Id;
-   User_LDFLAGS              : Name_Id;
+   USER_CFLAGS               : Name_Id;
+   USER_LDFLAGS              : Name_Id;
+   USER_ENV                  : Name_Id;
    Location                  : Name_Id;
    Execution_Platform        : Name_Id;
    Scheduler_Quantum         : Name_Id;
@@ -2518,6 +2519,17 @@ package body Ocarina.Backends.Properties is
       return Get_String_Property (P, USER_LDFLAGS);
    end Get_USER_LDFLAGS;
 
+   ------------------
+   -- Get_USER_ENV --
+   ------------------
+
+   function Get_USER_ENV (P : Node_Id) return Name_Id is
+      pragma Assert
+        (AINU.Is_Processor (P) or else AINU.Is_Virtual_Processor (P));
+   begin
+      return Get_String_Property (P, USER_ENV);
+   end Get_USER_ENV;
+
    -----------------------
    -- Get_Transport_API --
    -----------------------
@@ -2920,6 +2932,7 @@ package body Ocarina.Backends.Properties is
       Ada_Runtime := Get_String_Name ("deployment::ada_runtime");
       USER_CFLAGS := Get_String_Name ("deployment::user_cflags");
       USER_LDFLAGS := Get_String_Name ("deployment::user_ldflags");
+      USER_ENV     := Get_String_Name ("deployment::user_env");
       Location                  := Get_String_Name ("deployment::location");
       Execution_Platform := Get_String_Name ("deployment::execution_platform");
       Scheduler_Quantum         := Get_String_Name ("scheduler_quantum");
