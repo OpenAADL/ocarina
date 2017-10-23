@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -133,7 +133,8 @@ package body Ocarina.Backends.Properties is
    Thread_Deadline                       : Name_Id;
    Thread_Dispatch_Protocol              : Name_Id;
    Thread_Cheddar_Priority               : Name_Id;
-   Thread_Stack_Size                     : Name_Id;
+   Source_Stack_Size                     : Name_Id;
+   Stack_Size                            : Name_Id;
    Activate_Entrypoint                   : Name_Id;
    Activate_Entrypoint_Source_Text       : Name_Id;
    Initialize_Entrypoint                 : Name_Id;
@@ -1970,10 +1971,15 @@ package body Ocarina.Backends.Properties is
    ---------------------------
 
    function Get_Thread_Stack_Size (T : Node_Id) return Size_Type is
-   begin
       pragma Assert (Is_Thread (T));
-
-      return (Get_Size_Property_Value (T, Thread_Stack_Size));
+      Source_Stack_Size_Value : constant Size_Type :=
+        Get_Size_Property_Value (T, Source_Stack_Size);
+   begin
+      if Source_Stack_Size_Value = Null_Size then
+         return Get_Size_Property_Value (T, Stack_Size);
+      else
+         return Source_Stack_Size_Value;
+      end if;
    end Get_Thread_Stack_Size;
 
    ------------------------------------
@@ -2894,7 +2900,8 @@ package body Ocarina.Backends.Properties is
       Thread_Dispatch_Protocol := Get_String_Name ("dispatch_protocol");
       Thread_Cheddar_Priority  :=
         Get_String_Name ("cheddar_properties::fixed_priority");
-      Thread_Stack_Size := Get_String_Name ("source_stack_size");
+      Source_Stack_Size := Get_String_Name ("source_stack_size");
+      Stack_Size := Get_String_Name ("stack_size");
 
       Port_Timing                := Get_String_Name ("timing");
       Port_Timing_Sampled_Name   := Get_String_Name ("sampled");
