@@ -67,6 +67,11 @@ property set Deployment is
     applies to (device);
   --  List execution platforms supported by a particular driver
 
+  USER_ENV: aadlstring applies to (processor);
+  --  Additional configuration parameters passed as environment
+  --  variables as part of the build phase. These env. variables are
+  --  passed in the generated makefiles.
+
   Runtime : type enumeration
     (PolyORB_HI_C,
      PolyORB_HI_Ada,

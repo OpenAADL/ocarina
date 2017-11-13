@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -68,6 +68,7 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
    ------------------
 
    package body Package_Spec is
+      procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
       procedure Visit_Architecture_Instance (E : Node_Id);
       procedure Visit_Component_Instance (E : Node_Id);
@@ -1410,22 +1411,11 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
 
       procedure Visit_System_Instance (E : Node_Id) is
          A : constant Node_Id := Map_Distributed_Application (E);
-         S : Node_Id;
+
       begin
          Push_Entity (A);
 
-         --  Visit all the subcomponents of the system
-
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
 
          Pop_Entity; --  A
       end Visit_System_Instance;

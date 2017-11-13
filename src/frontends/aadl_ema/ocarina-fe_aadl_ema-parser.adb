@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2015-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2015-2017 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1445,7 +1445,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
       Loc, Loc_Start : Location;
    begin
       Error_Behavior_State := New_Node (K_Error_Behavior_State,
-      Token_Location);
+                                        Token_Location);
 
       Identifier := P_Identifier;
       if No (Identifier) then
@@ -1460,7 +1460,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
       if Next /= T_Colon then
          Scan_Token;
          DPE (PC_Error_Behavior_State,
-         Expected_Token => T_Colon);
+              Expected_Token => T_Colon);
          return No_Node;
       else
          Scan_Token;
@@ -3584,10 +3584,6 @@ package body Ocarina.FE_AADL_EMA.Parser is
    --  | numeric_literal orless
    --  ( error_condition_trigger { , error_condition_trigger } + )
 
-   --  I have repeated "return Error_Condition" so the function
-   --  won't check the next condition (if the next node exists) in vain
-   --  => reduce complexity
-
    --  A revoir : lors du traîtement sémantique de
    --  error_condition_1 (and | or ) error_condition_2
    --  error_condition_1 sera un sous noeud de error_condition_2
@@ -3610,18 +3606,20 @@ package body Ocarina.FE_AADL_EMA.Parser is
       Next : Token_Type;
       Escape : Boolean := False;
    begin
-      Error_Condition := New_Node (K_Error_Condition,
-      Token_Location);
+      Error_Condition := New_Node
+        (K_Error_Condition, Token_Location);
 
       --  Error_Condition_Trigger
+
       Error_Condition_Trigger := P_Error_Condition_Trigger;
       if Present (Error_Condition_Trigger) then
-         Set_Error_Condition_Trigger (Error_Condition,
-         Error_Condition_Trigger);
+         Set_Error_Condition_Trigger
+           (Error_Condition, Error_Condition_Trigger);
          return Error_Condition;
       end if;
 
       --  ( Error_Condition_Node )
+
       Save_Lexer (Loc);
       Next := Next_Token;
       Restore_Lexer (Loc);
@@ -3630,16 +3628,20 @@ package body Ocarina.FE_AADL_EMA.Parser is
          Save_Lexer (Loc_Start);
          Error_Condition_Node := P_Error_Condition;
          Save_Lexer (Loc_End);
-         Set_Error_Condition_Node (Error_Condition,
-         Error_Condition_Node);
+         Set_Error_Condition_Node
+           (Error_Condition, Error_Condition_Node);
+
          if No (Error_Condition_Node) then
             if Loc_Start = Loc_End then
                Scan_Token;
-               DPE (PC_Error_Condition, PC_Error_Condition,
-               PC_Error_Condition_Trigger, Expected_Tokens =>
-               (T_Left_Paren, T_Numeric_Literal));
+               DPE (PC_Error_Condition,
+                    PC_Error_Condition,
+                    PC_Error_Condition_Trigger,
+                    Expected_Tokens =>
+                      (T_Left_Paren, T_Numeric_Literal));
             end if;
             return No_Node;
+
          else
             Save_Lexer (Loc);
             Next := Next_Token;
@@ -3647,7 +3649,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
             if Next /= T_Right_Paren then
                Scan_Token;
                DPE (PC_Error_Condition,
-               Expected_Token => T_Right_Paren);
+                    Expected_Token => T_Right_Paren);
                return No_Node;
             else
                Scan_Token;
@@ -3658,6 +3660,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
 
       --  error_condition and error_condition
       --  error_condition or error_condition
+
       Save_Lexer (Loc);
       Next := Next_Token;
       Restore_Lexer (Loc);
@@ -3756,10 +3759,12 @@ package body Ocarina.FE_AADL_EMA.Parser is
          Error_Condition_Trigger := P_Error_Condition_Trigger;
          Save_Lexer (Loc_End);
          if Present (Error_Condition_Trigger) then
-            Error_Condition_Trigger_List := New_List (K_List_Id,
-            Token_Location);
-            Set_Error_Condition_Trigger_List (Error_Condition
-            , Error_Condition_Trigger_List);
+            Error_Condition_Trigger_List :=
+              New_List (K_List_Id,
+                        Token_Location);
+            Set_Error_Condition_Trigger_List
+              (Error_Condition,
+               Error_Condition_Trigger_List);
             Append_Node_To_List
             (Error_Condition_Trigger, Error_Condition_Trigger_List);
 
@@ -3767,14 +3772,17 @@ package body Ocarina.FE_AADL_EMA.Parser is
             Save_Lexer (Loc);
             Next := Next_Token;
             Restore_Lexer (Loc);
+
+            --  If there is no additional error_condition_trigger,
+            --  then return immediately, else continue.
+
             if Next /= T_Comma then
                Scan_Token;
-               DPE (PC_Error_Condition,
-               Expected_Token => T_Comma);
-               return No_Node;
+               return Error_Condition_Trigger;
             else
                Scan_Token;
             end if;
+
             loop
                Save_Lexer (Loc_Start);
                Error_Condition_Trigger := P_Error_Condition_Trigger;
@@ -3815,19 +3823,21 @@ package body Ocarina.FE_AADL_EMA.Parser is
             else
                Scan_Token;
                DPE (PC_Error_Condition,
-               Expected_Token => T_Right_Paren);
+                    Expected_Token => T_Right_Paren);
                return No_Node;
             end if;
+
          else
             if Loc_Start = Loc_End then
                DPE (PC_Error_Condition, PC_Error_Condition_Trigger);
             end if;
             return No_Node;
          end if;
+
       else
          Scan_Token;
          DPE (PC_Error_Condition,
-         Expected_Token => T_Left_Paren);
+              Expected_Token => T_Left_Paren);
          return No_Node;
       end if;
 
@@ -4499,7 +4509,7 @@ package body Ocarina.FE_AADL_EMA.Parser is
                else
                   Scan_Token;
                   DPE (PC_Error_Model_Component_Constructs,
-                  Expected_Token => T_Semi_Colon);
+                       Expected_Token => T_Semi_Colon);
                   return No_Node;
                end if;
             end if;

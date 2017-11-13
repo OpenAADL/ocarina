@@ -581,7 +581,10 @@ package Ocarina.Backends.Properties is
 
    function Get_USER_CFLAGS (P : Node_Id) return Name_Id;
    function Get_USER_LDFLAGS (P : Node_Id) return Name_Id;
-   --  Return USER_CFLAGS and USER_LDFLGAS property for processor P
+   --  Return USER_CFLAGS and USER_LDFLAGS property for processor P
+
+   function Get_USER_ENV (P : Node_Id) return Name_Id;
+   --  Return USER_ENV property
 
    function Get_Location (P : Node_Id) return Name_Id;
    --  Return the location of the processor or device P. No_Name is

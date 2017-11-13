@@ -112,4 +112,12 @@ property set Deployment_Properties is
 
 	Priority_Range: range of aadlinteger
 		applies to (processor, virtual processor);
+
+        -- properties related to the setting of custom environment variables per deployment targe 
+        -- since AADL doesn't appear to have the notion of a board (e.g. GR712) we will for now
+        -- add multiple "pseudo-CPUs" (e.g. gr712, gr740, etc) and have a per-CPU EnvVar settings
+        -- (so that e.g. RTEMS_MAKEFILE_PATH is set properly)
+	EnvVars: aadlstring
+		applies to (processor);
+
 end Deployment_Properties;
