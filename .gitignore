@@ -38,4 +38,12 @@ src/main/ocarina
 support/strip_wrapper.sh
 tools/gendoc.py
 tools/mknodes/mknodes
+resources/sedscriptHEAD detached at d078c54
+
+src/python/ocarina-me_aadl-aadl_instances-nodes-python.adb
+src/python/ocarina-me_aadl-aadl_instances-nodes-python.ads
+src/python/ocarina-me_aadl-aadl_tree-nodes-python.adb
+src/python/ocarina-me_aadl-aadl_tree-nodes-python.ads
+src/python/ocarina_me_aadl_aadl_instances_nodes.py
+src/python/ocarina_me_aadl_aadl_tree_nodes.py
 resources/sedscript
