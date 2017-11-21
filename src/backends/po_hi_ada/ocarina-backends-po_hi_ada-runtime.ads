@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -73,6 +73,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RU_PolyORB_HI_Messages,
       RU_PolyORB_HI_Output_Low_Level,
       RU_PolyORB_HI_Output,
+      RU_PolyORB_HI_Port_Types,
       RU_PolyORB_HI_Protocols,
       RU_PolyORB_HI_Streams,
       RU_PolyORB_HI_Suspenders,
@@ -164,7 +165,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Naming_Entry,               --  PolyORB_HI.Transport.Naming_Entry
       RE_To_HI_String,               --  PolyORB_HI.Utils.To_HI_String
       RE_Naming_Table_Type,          --  PolyORB_HI.Utils.Naming_Table_Type
-      RE_Corresponding_Port,         --  PolyORB_HI.Utils.Corresponding_Port
+      RE_Corresponding_Port,         --  Po..HI.Port_Types.Corresponding_Port
       RE_Non_Blocking_Receive,       --  Po..HI.Protocols.Non_Blocking_Receive
       RE_Send_1,                     --  Po..HI.Protocols.Send
       RE_Initialize,                 --  Po..HI.Transport_Low_Level.Initialize
@@ -260,7 +261,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Naming_Entry               => RU_PolyORB_HI_Utils,
       RE_To_HI_String               => RU_PolyORB_HI_Utils,
       RE_Naming_Table_Type          => RU_PolyORB_HI_Utils,
-      RE_Corresponding_Port         => RU_PolyORB_HI_Utils,
+      RE_Corresponding_Port         => RU_PolyORB_HI_Port_Types,
       RE_Non_Blocking_Receive       => RU_PolyORB_HI_Protocols,
       RE_Send_1                     => RU_PolyORB_HI_Protocols,
       RE_Stream_Element_Array       => RU_PolyORB_HI_Streams,
