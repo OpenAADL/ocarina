@@ -73,8 +73,6 @@ package Ocarina.Backends is
       REAL_Theorem,
       FT_Replication,
       Alloy_Backend,
-      Ros_Backend,
-      Doc_Backend,
       Ever_XML_Backend);
    --  Supported code generators. For each kind, at most one generator
    --  must be implemented.

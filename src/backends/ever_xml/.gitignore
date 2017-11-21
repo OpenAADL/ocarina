@@ -1,3 +1,5 @@
+*.bk*
+
 .#*
 
 # Created by https://www.gitignore.io/api/ada,macos,linux,windows,pycharm,sublimetext

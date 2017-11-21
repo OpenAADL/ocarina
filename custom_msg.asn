@@ -1,5 +1,3 @@
 Message DEFINITIONS ::= BEGIN
-	CustomMessage ::= SEQUENCE {
-		x INTEGER
-	}
+	x ::= INTEGER
 END

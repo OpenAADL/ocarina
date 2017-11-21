@@ -1,16 +1,16 @@
-State DEFINITIONS ::= BEGIN
-	MyObject ::= OBJECT IDENTIFIER
-
-	Params ::= SET {
-		stringName STRING DEFAULT \"ciao\",
-		nodeName STRING DEFAULT NODE_NAME,
+InternalState DEFINITIONS ::= BEGIN
+	Parameters ::= SET {
+		stringName STRING DEFAULT "ciao",
 		testReal REAL DEFAULT 0,
-		testNoDefault BOOLEAN
+
+		traj SET {
+			test1 REAL DEFAULT 1.0,
+			test2 INTEGER DEFAULT 2
+		}
 	}
 
-	Vars ::= SET {
-		publisherFrequency REAL DEFAULT 0,
-		myObject MyObject
+	Variables ::= SET {
+		publisherFrequency REAL DEFAULT 0
 	}
 
 END
