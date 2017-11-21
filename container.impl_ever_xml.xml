@@ -1,97 +1,97 @@
 <system>
 	<type>container.impl</type>
 	<category>system</category>
-	<namespace>client_server_example</namespace>
+	<namespace>planners</namespace>
 	<features>
 	</features>
 	<properties>
 	</properties>
 	<connections>
-		<connection>
-			<name>call</name>
-			<kind>K_CONNECTION_INSTANCE</kind>
-			<category>CT_ACCESS_SUBPROGRAM</category>
-			<properties>
-				<property>
-					<namespace>topic_properties</namespace>
-					<name>Name</name>
-					<value>service_new</value>
-				</property>
-			</properties>
-			<port_info>
-				<source>srv_2</source>
-				<dest>srv_aba</dest>
-				<parent_source>client.impl</parent_source>
-				<parent_source_name>client</parent_source_name>
-				<parent_dest>server_node.impl</parent_dest>
-				<parent_dest_name>server_node</parent_dest_name>
-			</port_info>
-		</connection>
-		<connection>
-			<name>pubsub</name>
-			<kind>K_CONNECTION_INSTANCE</kind>
-			<category>CT_PORT_CONNECTION</category>
-			<properties>
-				<property>
-					<namespace>topic_properties</namespace>
-					<name>Name</name>
-					<value>/pubsub</value>
-				</property>
-			</properties>
-			<port_info>
-				<source>chat</source>
-				<dest>chat</dest>
-				<parent_source>client.impl</parent_source>
-				<parent_source_name>client</parent_source_name>
-				<parent_dest>server_node.impl</parent_dest>
-				<parent_dest_name>server_node</parent_dest_name>
-			</port_info>
-		</connection>
 	</connections>
 	<subcomponents>
 		<component>
-			<name>client</name>
-			<type>client.impl</type>
+			<name>sbpl_planner</name>
+			<type>global_planner.sbpl</type>
 			<category>process</category>
-			<namespace>client_server_example</namespace>
+			<namespace>planners</namespace>
 			<features>
 				<feature>
-					<name>srv_2</name>
-					<type>access</type>
-					<datatype>service</datatype>
-					<datatype_namespace>ros</datatype_namespace>
+					<name>goal</name>
+					<direction>in</direction>
+					<type>event_data</type>
+					<datatype>PoseStamped</datatype>
+					<datatype_namespace>geometry_msgs</datatype_namespace>
 					<data_info>
-					</data_info>
-					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-					<properties>
-						<property>
-							<namespace>topic_properties</namespace>
-							<name>Default_Name</name>
-							<value>service</value>
-						</property>
-					</properties>
-				</feature>
-				<feature>
-					<name>chat</name>
-					<direction>out</direction>
-					<type>data</type>
-					<datatype>Complex</datatype>
-					<datatype_namespace>custom_msgs</datatype_namespace>
-					<data_info>
-						<properties>
-							<property>
-								<name>Source_Text</name>
-								<value>complex.asn</value>
-							</property>
-						</properties>
 					</data_info>
 					<category>K_PORT_SPEC_INSTANCE</category>
 					<properties>
 						<property>
 							<namespace>topic_properties</namespace>
 							<name>Default_Name</name>
-							<value>/out_topic</value>
+							<value>/goal</value>
 						</property>
+					</properties>
+				</feature>
+				<feature>
+					<name>costmap</name>
+					<direction>in</direction>
+					<type>event_data</type>
+					<datatype>OccupancyGrid</datatype>
+					<datatype_namespace>nav_msgs</datatype_namespace>
+					<data_info>
+					</data_info>
+					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+						<property>
+							<namespace>topic_properties</namespace>
+							<name>Default_Name</name>
+							<value>/global/grid</value>
+						</property>
+					</properties>
+				</feature>
+				<feature>
+					<name>costmap_up</name>
+					<direction>in</direction>
+					<type>event_data</type>
+					<datatype>OccupancyGridUpdate</datatype>
+					<datatype_namespace>map_msgs</datatype_namespace>
+					<data_info>
+					</data_info>
+					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+						<property>
+							<namespace>topic_properties</namespace>
+							<name>Default_Name</name>
+							<value>/global/grid_updates</value>
+						</property>
+					</properties>
+				</feature>
+				<feature>
+					<name>path_out</name>
+					<direction>out</direction>
+					<type>data</type>
+					<datatype>Path0</datatype>
+					<datatype_namespace>nav_msgs</datatype_namespace>
+					<data_info>
+					</data_info>
+					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+						<property>
+							<namespace>topic_properties</namespace>
+							<name>Default_Name</name>
+							<value>/path</value>
+						</property>
+					</properties>
+				</feature>
+				<feature>
+					<name>tf</name>
+					<type>access</type>
+					<datatype>tf</datatype>
+					<datatype_namespace>ros</datatype_namespace>
+					<data_info>
+					</data_info>
+					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+					<properties>
 					</properties>
 				</feature>
 				<feature>
@@ -119,14 +119,26 @@
 				</feature>
 			</features>
 			<properties>
+				<property>
+					<name>Source_Text</name>
+					<value>global_planner_sbpl.asn</value>
+				</property>
 			</properties>
 			<connections>
 				<connection>
-					<name>da</name>
+					<name>ist</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_ACCESS_DATA</category>
 					<properties>
 					</properties>
+					<port_info>
+						<source>internal_state</source>
+						<dest>ist</dest>
+						<parent_source>global_planner.sbpl</parent_source>
+						<parent_source_name>internal_state</parent_source_name>
+						<parent_dest>main_loop.impl</parent_dest>
+						<parent_dest_name>main_thread</parent_dest_name>
+					</port_info>
 				</connection>
 				<connection>
 					<name>sc</name>
@@ -139,150 +151,124 @@
 						<dest>notify_state</dest>
 						<parent_source>main_loop.impl</parent_source>
 						<parent_source_name>main_thread</parent_source_name>
-						<parent_dest>client.impl</parent_dest>
+						<parent_dest>global_planner.sbpl</parent_dest>
 						<parent_dest_name>notify_state</parent_dest_name>
 					</port_info>
 				</connection>
 				<connection>
-					<name>call_1</name>
+					<name>goalc</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
-					<category>CT_ACCESS_SUBPROGRAM</category>
+					<category>CT_PORT_CONNECTION</category>
 					<properties>
 					</properties>
 					<port_info>
-						<source>srv</source>
-						<dest>srv_2</dest>
-						<parent_source>client.impl</parent_source>
-						<parent_source_name>caller</parent_source_name>
-						<parent_dest>client.impl</parent_dest>
-						<parent_dest_name>srv_2</parent_dest_name>
+						<source>goal</source>
+						<dest>msg</dest>
+						<parent_source>global_planner.sbpl</parent_source>
+						<parent_source_name>goal</parent_source_name>
+						<parent_dest>callback_geometry_msgs_PoseStamped.impl</parent_dest>
+						<parent_dest_name>goal_cb</parent_dest_name>
 					</port_info>
 				</connection>
 				<connection>
-					<name>chatter</name>
+					<name>costmapc</name>
+					<kind>K_CONNECTION_INSTANCE</kind>
+					<category>CT_PORT_CONNECTION</category>
+					<properties>
+					</properties>
+					<port_info>
+						<source>costmap</source>
+						<dest>msg</dest>
+						<parent_source>global_planner.sbpl</parent_source>
+						<parent_source_name>costmap</parent_source_name>
+						<parent_dest>callback_nav_msgs_OccupancyGrid.impl</parent_dest>
+						<parent_dest_name>costmap_cb</parent_dest_name>
+					</port_info>
+				</connection>
+				<connection>
+					<name>costmap_upc</name>
+					<kind>K_CONNECTION_INSTANCE</kind>
+					<category>CT_PORT_CONNECTION</category>
+					<properties>
+					</properties>
+					<port_info>
+						<source>costmap_up</source>
+						<dest>msg</dest>
+						<parent_source>global_planner.sbpl</parent_source>
+						<parent_source_name>costmap_up</parent_source_name>
+						<parent_dest>callback_map_msgs_OccupancyGridUpdate.impl</parent_dest>
+						<parent_dest_name>costmap_up_cb</parent_dest_name>
+					</port_info>
+				</connection>
+				<connection>
+					<name>path_outc</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_PORT_CONNECTION</category>
 					<properties>
 					</properties>
 					<port_info>
 						<source>msg</source>
-						<dest>chat</dest>
-						<parent_source>publisher_custom_msgs_Complex.impl</parent_source>
-						<parent_source_name>publisher</parent_source_name>
-						<parent_dest>client.impl</parent_dest>
-						<parent_dest_name>chat</parent_dest_name>
+						<dest>path_out</dest>
+						<parent_source>publisher_nav_msgs_Path0.impl</parent_source>
+						<parent_source_name>path_out_pub</parent_source_name>
+						<parent_dest>global_planner.sbpl</parent_dest>
+						<parent_dest_name>path_out</parent_dest_name>
+					</port_info>
+				</connection>
+				<connection>
+					<name>tf_access</name>
+					<kind>K_CONNECTION_INSTANCE</kind>
+					<category>CT_ACCESS_DATA</category>
+					<properties>
+					</properties>
+					<port_info>
+						<source>tf</source>
+						<dest>tf</dest>
+						<parent_source>publisher_nav_msgs_Path0.impl</parent_source>
+						<parent_source_name>path_out_pub</parent_source_name>
+						<parent_dest>global_planner.sbpl</parent_dest>
+						<parent_dest_name>tf</parent_dest_name>
 					</port_info>
 				</connection>
 			</connections>
 			<subcomponents>
 				<component>
-					<name>caller</name>
-					<type>client.impl</type>
-					<category>thread</category>
-					<namespace>ros</namespace>
-					<features>
-						<feature>
-							<name>srv</name>
-							<type>access</type>
-							<datatype>service</datatype>
-							<datatype_namespace>ros</datatype_namespace>
-							<data_info>
-							</data_info>
-							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-							<properties>
-							</properties>
-						</feature>
-					</features>
-					<properties>
-					</properties>
-					<connections>
-					</connections>
-					<subcomponents>
-						<component>
-							<name>caller</name>
-							<type>service</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-							</features>
-							<properties>
-								<property>
-									<name>Source_Text</name>
-									<value>custom_service.asn</value>
-								</property>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-						<component>
-							<name>function</name>
-							<type>function</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-								<feature>
-									<name>signal</name>
-									<direction>out</direction>
-									<type>event</type>
-									<datatype>none</datatype>
-									<datatype_namespace>none</datatype_namespace>
-									<data_info>
-									</data_info>
-									<category>K_PORT_SPEC_INSTANCE</category>
-									<properties>
-									</properties>
-								</feature>
-								<feature>
-									<name>param</name>
-									<type>access</type>
-									<datatype>parameters</datatype>
-									<datatype_namespace>ros</datatype_namespace>
-									<data_info>
-									</data_info>
-									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-									<properties>
-									</properties>
-								</feature>
-							</features>
-							<properties>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-					</subcomponents>
-				</component>
-				<component>
-					<name>publisher</name>
-					<type>publisher_custom_msgs_Complex.impl</type>
+					<name>goal_cb</name>
+					<type>callback_geometry_msgs_PoseStamped.impl</type>
 					<category>thread</category>
 					<namespace>ros</namespace>
 					<features>
 						<feature>
 							<name>msg</name>
-							<direction>out</direction>
-							<type>data</type>
-							<datatype>Complex</datatype>
-							<datatype_namespace>custom_msgs</datatype_namespace>
+							<direction>in</direction>
+							<type>event_data</type>
+							<datatype>PoseStamped</datatype>
+							<datatype_namespace>geometry_msgs</datatype_namespace>
 							<data_info>
-								<properties>
-									<property>
-										<name>Source_Text</name>
-										<value>complex.asn</value>
-									</property>
-								</properties>
 							</data_info>
 							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+								<property>
+									<name>Queue_size</name>
+									<value>1</value>
+								</property>
+							</properties>
+						</feature>
+						<feature>
+							<name>ist</name>
+							<type>access</type>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
 							<properties>
 							</properties>
 						</feature>
 						<feature>
-							<name>param</name>
+							<name>tf</name>
 							<type>access</type>
-							<datatype>parameters</datatype>
+							<datatype>tf</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<data_info>
 							</data_info>
@@ -292,11 +278,6 @@
 						</feature>
 					</features>
 					<properties>
-						<property>
-							<name>Period</name>
-							<value>10</value>
-							<unit>ms</unit>
-						</property>
 						<property>
 							<name>Dispatch_Protocol</name>
 						</property>
@@ -308,6 +289,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>callback_geometry_msgs_PoseStamped.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 					</connections>
 					<subcomponents>
@@ -330,9 +319,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -343,8 +332,462 @@
 							</features>
 							<properties>
 								<property>
+									<name>Source_Name</name>
+									<value>saveGoal</value>
+								</property>
+								<property>
 									<name>Source_Text</name>
-									<value>publisher.cpp</value>
+									<value>global_planner_utils.h</value>
+								</property>
+							</properties>
+							<connections>
+							</connections>
+							<subcomponents>
+							</subcomponents>
+						</component>
+					</subcomponents>
+				</component>
+				<component>
+					<name>costmap_cb</name>
+					<type>callback_nav_msgs_OccupancyGrid.impl</type>
+					<category>thread</category>
+					<namespace>ros</namespace>
+					<features>
+						<feature>
+							<name>msg</name>
+							<direction>in</direction>
+							<type>event_data</type>
+							<datatype>OccupancyGrid</datatype>
+							<datatype_namespace>nav_msgs</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+								<property>
+									<name>Queue_size</name>
+									<value>1</value>
+								</property>
+							</properties>
+						</feature>
+						<feature>
+							<name>ist</name>
+							<type>access</type>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>tf</name>
+							<type>access</type>
+							<datatype>tf</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+					</features>
+					<properties>
+						<property>
+							<name>Dispatch_Protocol</name>
+						</property>
+					</properties>
+					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>callback_nav_msgs_OccupancyGrid.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
+						</connection>
+					</connections>
+					<subcomponents>
+						<component>
+							<name>function</name>
+							<type>function</type>
+							<category>subprogram</category>
+							<namespace>ros</namespace>
+							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+								<feature>
+									<name>ist</name>
+									<type>access</type>
+									<datatype>internal_state</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+							</features>
+							<properties>
+								<property>
+									<name>Source_Name</name>
+									<value>saveCostmap</value>
+								</property>
+								<property>
+									<name>Source_Text</name>
+									<value>costmap_utils.h</value>
+								</property>
+							</properties>
+							<connections>
+							</connections>
+							<subcomponents>
+							</subcomponents>
+						</component>
+					</subcomponents>
+				</component>
+				<component>
+					<name>costmap_up_cb</name>
+					<type>callback_map_msgs_OccupancyGridUpdate.impl</type>
+					<category>thread</category>
+					<namespace>ros</namespace>
+					<features>
+						<feature>
+							<name>msg</name>
+							<direction>in</direction>
+							<type>event_data</type>
+							<datatype>OccupancyGridUpdate</datatype>
+							<datatype_namespace>map_msgs</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+								<property>
+									<name>Queue_size</name>
+									<value>1</value>
+								</property>
+							</properties>
+						</feature>
+						<feature>
+							<name>ist</name>
+							<type>access</type>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>tf</name>
+							<type>access</type>
+							<datatype>tf</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+					</features>
+					<properties>
+						<property>
+							<name>Dispatch_Protocol</name>
+						</property>
+					</properties>
+					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>callback_map_msgs_OccupancyGridUpdate.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
+						</connection>
+					</connections>
+					<subcomponents>
+						<component>
+							<name>function</name>
+							<type>function</type>
+							<category>subprogram</category>
+							<namespace>ros</namespace>
+							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+								<feature>
+									<name>ist</name>
+									<type>access</type>
+									<datatype>internal_state</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+							</features>
+							<properties>
+								<property>
+									<name>Source_Name</name>
+									<value>updateCostmap</value>
+								</property>
+								<property>
+									<name>Source_Text</name>
+									<value>costmap_utils.h</value>
+								</property>
+							</properties>
+							<connections>
+							</connections>
+							<subcomponents>
+							</subcomponents>
+						</component>
+					</subcomponents>
+				</component>
+				<component>
+					<name>path_out_pub</name>
+					<type>publisher_nav_msgs_Path0.impl</type>
+					<category>thread</category>
+					<namespace>ros</namespace>
+					<features>
+						<feature>
+							<name>msg</name>
+							<direction>out</direction>
+							<type>data</type>
+							<datatype>Path0</datatype>
+							<datatype_namespace>nav_msgs</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>ist</name>
+							<type>access</type>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>tf</name>
+							<type>access</type>
+							<datatype>tf</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+					</features>
+					<properties>
+						<property>
+							<name>Period</name>
+							<value>200</value>
+							<unit>ms</unit>
+						</property>
+						<property>
+							<name>Dispatch_Protocol</name>
+						</property>
+					</properties>
+					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>publisher_nav_msgs_Path0.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
+						</connection>
+					</connections>
+					<subcomponents>
+						<component>
+							<name>function</name>
+							<type>function</type>
+							<category>subprogram</category>
+							<namespace>ros</namespace>
+							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+								<feature>
+									<name>ist</name>
+									<type>access</type>
+									<datatype>internal_state</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+							</features>
+							<properties>
+								<property>
+									<name>Source_Name</name>
+									<value>sbplPlan</value>
+								</property>
+								<property>
+									<name>Source_Text</name>
+									<value>sbpl_planner.h</value>
+								</property>
+							</properties>
+							<connections>
+							</connections>
+							<subcomponents>
+							</subcomponents>
+						</component>
+					</subcomponents>
+				</component>
+				<component>
+					<name>replan_cb</name>
+					<type>timer.impl</type>
+					<category>thread</category>
+					<namespace>ros</namespace>
+					<features>
+						<feature>
+							<name>tf</name>
+							<type>access</type>
+							<datatype>tf</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>ist</name>
+							<type>access</type>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+					</features>
+					<properties>
+						<property>
+							<name>Period</name>
+							<value>1</value>
+							<unit>sec</unit>
+						</property>
+						<property>
+							<name>Dispatch_Protocol</name>
+						</property>
+					</properties>
+					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>timer.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
+						</connection>
+					</connections>
+					<subcomponents>
+						<component>
+							<name>function</name>
+							<type>function</type>
+							<category>subprogram</category>
+							<namespace>ros</namespace>
+							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+								<feature>
+									<name>ist</name>
+									<type>access</type>
+									<datatype>internal_state</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+							</features>
+							<properties>
+								<property>
+									<name>Source_Name</name>
+									<value>setReplan</value>
+								</property>
+								<property>
+									<name>Source_Text</name>
+									<value>global_planner_utils.h</value>
 								</property>
 							</properties>
 							<connections>
@@ -409,9 +852,9 @@
 							</properties>
 						</feature>
 						<feature>
-							<name>param</name>
+							<name>ist</name>
 							<type>access</type>
-							<datatype>parameters</datatype>
+							<datatype>internal_state</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<data_info>
 							</data_info>
@@ -545,6 +988,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>prepare</parent_source_name>
+								<parent_dest>main_loop.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 						<connection>
 							<name>da2</name>
@@ -552,6 +1003,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>spin</parent_source_name>
+								<parent_dest>main_loop.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 						<connection>
 							<name>da3</name>
@@ -559,6 +1018,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>tear_down</parent_source_name>
+								<parent_dest>main_loop.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 						<connection>
 							<name>da4</name>
@@ -566,6 +1033,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>error_handler</parent_source_name>
+								<parent_dest>main_loop.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 					</connections>
 					<subcomponents>
@@ -588,9 +1063,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -600,6 +1075,10 @@
 								</feature>
 							</features>
 							<properties>
+								<property>
+									<name>Source_Text</name>
+									<value>sbpl_planner.h</value>
+								</property>
 							</properties>
 							<connections>
 							</connections>
@@ -625,9 +1104,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -662,9 +1141,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -699,9 +1178,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -720,8 +1199,8 @@
 					</subcomponents>
 				</component>
 				<component>
-					<name>parameters</name>
-					<type>parameters</type>
+					<name>internal_state</name>
+					<type>internal_state</type>
 					<category>data</category>
 					<namespace>ros</namespace>
 					<features>
@@ -736,48 +1215,88 @@
 			</subcomponents>
 		</component>
 		<component>
-			<name>server_node</name>
-			<type>server_node.impl</type>
+			<name>dwa_planner</name>
+			<type>local_planner.dwa</type>
 			<category>process</category>
-			<namespace>client_server_example</namespace>
+			<namespace>planners</namespace>
 			<features>
 				<feature>
-					<name>srv_aba</name>
-					<type>access</type>
-					<datatype>service</datatype>
-					<datatype_namespace>ros</datatype_namespace>
-					<data_info>
-					</data_info>
-					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-					<properties>
-						<property>
-							<namespace>topic_properties</namespace>
-							<name>Default_Name</name>
-							<value>service</value>
-						</property>
-					</properties>
-				</feature>
-				<feature>
-					<name>chat</name>
+					<name>path_in</name>
 					<direction>in</direction>
 					<type>event_data</type>
-					<datatype>Complex</datatype>
-					<datatype_namespace>custom_msgs</datatype_namespace>
+					<datatype>Path0</datatype>
+					<datatype_namespace>nav_msgs</datatype_namespace>
 					<data_info>
-						<properties>
-							<property>
-								<name>Source_Text</name>
-								<value>complex.asn</value>
-							</property>
-						</properties>
 					</data_info>
 					<category>K_PORT_SPEC_INSTANCE</category>
 					<properties>
 						<property>
 							<namespace>topic_properties</namespace>
 							<name>Default_Name</name>
-							<value>/out_topic</value>
+							<value>/path</value>
 						</property>
+					</properties>
+				</feature>
+				<feature>
+					<name>costmap</name>
+					<direction>in</direction>
+					<type>event_data</type>
+					<datatype>OccupancyGrid</datatype>
+					<datatype_namespace>nav_msgs</datatype_namespace>
+					<data_info>
+					</data_info>
+					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+						<property>
+							<namespace>topic_properties</namespace>
+							<name>Default_Name</name>
+							<value>/local/grid</value>
+						</property>
+					</properties>
+				</feature>
+				<feature>
+					<name>costmap_up</name>
+					<direction>in</direction>
+					<type>event_data</type>
+					<datatype>OccupancyGridUpdate</datatype>
+					<datatype_namespace>map_msgs</datatype_namespace>
+					<data_info>
+					</data_info>
+					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+						<property>
+							<namespace>topic_properties</namespace>
+							<name>Default_Name</name>
+							<value>/local/grid_updates</value>
+						</property>
+					</properties>
+				</feature>
+				<feature>
+					<name>cmd_vel</name>
+					<direction>out</direction>
+					<type>data</type>
+					<datatype>Twist</datatype>
+					<datatype_namespace>geometry_msgs</datatype_namespace>
+					<data_info>
+					</data_info>
+					<category>K_PORT_SPEC_INSTANCE</category>
+					<properties>
+						<property>
+							<namespace>topic_properties</namespace>
+							<name>Default_Name</name>
+							<value>/cmd_vel</value>
+						</property>
+					</properties>
+				</feature>
+				<feature>
+					<name>tf</name>
+					<type>access</type>
+					<datatype>tf</datatype>
+					<datatype_namespace>ros</datatype_namespace>
+					<data_info>
+					</data_info>
+					<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+					<properties>
 					</properties>
 				</feature>
 				<feature>
@@ -805,14 +1324,26 @@
 				</feature>
 			</features>
 			<properties>
+				<property>
+					<name>Source_Text</name>
+					<value>local_planner_dwa.asn</value>
+				</property>
 			</properties>
 			<connections>
 				<connection>
-					<name>da</name>
+					<name>ist</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_ACCESS_DATA</category>
 					<properties>
 					</properties>
+					<port_info>
+						<source>internal_state</source>
+						<dest>ist</dest>
+						<parent_source>local_planner.dwa</parent_source>
+						<parent_source_name>internal_state</parent_source_name>
+						<parent_dest>main_loop.impl</parent_dest>
+						<parent_dest_name>main_thread</parent_dest_name>
+					</port_info>
 				</connection>
 				<connection>
 					<name>sc</name>
@@ -825,129 +1356,105 @@
 						<dest>notify_state</dest>
 						<parent_source>main_loop.impl</parent_source>
 						<parent_source_name>main_thread</parent_source_name>
-						<parent_dest>server_node.impl</parent_dest>
+						<parent_dest>local_planner.dwa</parent_dest>
 						<parent_dest_name>notify_state</parent_dest_name>
 					</port_info>
 				</connection>
 				<connection>
-					<name>call_2</name>
-					<kind>K_CONNECTION_INSTANCE</kind>
-					<category>CT_ACCESS_SUBPROGRAM</category>
-					<properties>
-					</properties>
-					<port_info>
-						<source>srv</source>
-						<dest>srv_aba</dest>
-						<parent_source>service_provider.impl</parent_source>
-						<parent_source_name>receiver</parent_source_name>
-						<parent_dest>server_node.impl</parent_dest>
-						<parent_dest_name>srv_aba</parent_dest_name>
-					</port_info>
-				</connection>
-				<connection>
-					<name>chatter</name>
+					<name>path_inc</name>
 					<kind>K_CONNECTION_INSTANCE</kind>
 					<category>CT_PORT_CONNECTION</category>
 					<properties>
 					</properties>
 					<port_info>
-						<source>chat</source>
+						<source>path_in</source>
 						<dest>msg</dest>
-						<parent_source>server_node.impl</parent_source>
-						<parent_source_name>chat</parent_source_name>
-						<parent_dest>callback_custom_msgs_Complex.impl</parent_dest>
-						<parent_dest_name>subscriber</parent_dest_name>
+						<parent_source>local_planner.dwa</parent_source>
+						<parent_source_name>path_in</parent_source_name>
+						<parent_dest>callback_nav_msgs_Path0.impl</parent_dest>
+						<parent_dest_name>path_cb</parent_dest_name>
+					</port_info>
+				</connection>
+				<connection>
+					<name>costmapc</name>
+					<kind>K_CONNECTION_INSTANCE</kind>
+					<category>CT_PORT_CONNECTION</category>
+					<properties>
+					</properties>
+					<port_info>
+						<source>costmap</source>
+						<dest>msg</dest>
+						<parent_source>local_planner.dwa</parent_source>
+						<parent_source_name>costmap</parent_source_name>
+						<parent_dest>callback_nav_msgs_OccupancyGrid.impl</parent_dest>
+						<parent_dest_name>costmap_cb</parent_dest_name>
+					</port_info>
+				</connection>
+				<connection>
+					<name>costmap_upc</name>
+					<kind>K_CONNECTION_INSTANCE</kind>
+					<category>CT_PORT_CONNECTION</category>
+					<properties>
+					</properties>
+					<port_info>
+						<source>costmap_up</source>
+						<dest>msg</dest>
+						<parent_source>local_planner.dwa</parent_source>
+						<parent_source_name>costmap_up</parent_source_name>
+						<parent_dest>callback_map_msgs_OccupancyGridUpdate.impl</parent_dest>
+						<parent_dest_name>costmap_up_cb</parent_dest_name>
+					</port_info>
+				</connection>
+				<connection>
+					<name>cmd_vel_pubc</name>
+					<kind>K_CONNECTION_INSTANCE</kind>
+					<category>CT_PORT_CONNECTION</category>
+					<properties>
+					</properties>
+					<port_info>
+						<source>msg</source>
+						<dest>cmd_vel</dest>
+						<parent_source>publisher_geometry_msgs_Twist.impl</parent_source>
+						<parent_source_name>cmd_vel_pub</parent_source_name>
+						<parent_dest>local_planner.dwa</parent_dest>
+						<parent_dest_name>cmd_vel</parent_dest_name>
+					</port_info>
+				</connection>
+				<connection>
+					<name>tf_access0</name>
+					<kind>K_CONNECTION_INSTANCE</kind>
+					<category>CT_ACCESS_DATA</category>
+					<properties>
+					</properties>
+					<port_info>
+						<source>tf</source>
+						<dest>tf</dest>
+						<parent_source>callback_nav_msgs_Path0.impl</parent_source>
+						<parent_source_name>path_cb</parent_source_name>
+						<parent_dest>local_planner.dwa</parent_dest>
+						<parent_dest_name>tf</parent_dest_name>
+					</port_info>
+				</connection>
+				<connection>
+					<name>tf_access1</name>
+					<kind>K_CONNECTION_INSTANCE</kind>
+					<category>CT_ACCESS_DATA</category>
+					<properties>
+					</properties>
+					<port_info>
+						<source>tf</source>
+						<dest>tf</dest>
+						<parent_source>publisher_geometry_msgs_Twist.impl</parent_source>
+						<parent_source_name>cmd_vel_pub</parent_source_name>
+						<parent_dest>local_planner.dwa</parent_dest>
+						<parent_dest_name>tf</parent_dest_name>
 					</port_info>
 				</connection>
 			</connections>
 			<subcomponents>
 				<component>
-					<name>receiver</name>
-					<type>service_provider.impl</type>
-					<category>thread</category>
-					<namespace>ros</namespace>
-					<features>
-						<feature>
-							<name>srv</name>
-							<type>access</type>
-							<datatype>service</datatype>
-							<datatype_namespace>ros</datatype_namespace>
-							<data_info>
-							</data_info>
-							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-							<properties>
-							</properties>
-						</feature>
-					</features>
-					<properties>
-					</properties>
-					<connections>
-					</connections>
-					<subcomponents>
-						<component>
-							<name>called</name>
-							<type>service</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-							</features>
-							<properties>
-								<property>
-									<name>Source_Text</name>
-									<value>custom_service.asn</value>
-								</property>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-						<component>
-							<name>function</name>
-							<type>function</type>
-							<category>subprogram</category>
-							<namespace>ros</namespace>
-							<features>
-								<feature>
-									<name>signal</name>
-									<direction>out</direction>
-									<type>event</type>
-									<datatype>none</datatype>
-									<datatype_namespace>none</datatype_namespace>
-									<data_info>
-									</data_info>
-									<category>K_PORT_SPEC_INSTANCE</category>
-									<properties>
-									</properties>
-								</feature>
-								<feature>
-									<name>param</name>
-									<type>access</type>
-									<datatype>parameters</datatype>
-									<datatype_namespace>ros</datatype_namespace>
-									<data_info>
-									</data_info>
-									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
-									<properties>
-									</properties>
-								</feature>
-							</features>
-							<properties>
-								<property>
-									<name>Source_Text</name>
-									<value>service_source.cpp</value>
-								</property>
-							</properties>
-							<connections>
-							</connections>
-							<subcomponents>
-							</subcomponents>
-						</component>
-					</subcomponents>
-				</component>
-				<component>
-					<name>subscriber</name>
-					<type>callback_custom_msgs_Complex.impl</type>
+					<name>path_cb</name>
+					<type>callback_nav_msgs_Path0.impl</type>
 					<category>thread</category>
 					<namespace>ros</namespace>
 					<features>
@@ -955,15 +1462,9 @@
 							<name>msg</name>
 							<direction>in</direction>
 							<type>event_data</type>
-							<datatype>Complex</datatype>
-							<datatype_namespace>custom_msgs</datatype_namespace>
+							<datatype>Path0</datatype>
+							<datatype_namespace>nav_msgs</datatype_namespace>
 							<data_info>
-								<properties>
-									<property>
-										<name>Source_Text</name>
-										<value>complex.asn</value>
-									</property>
-								</properties>
 							</data_info>
 							<category>K_PORT_SPEC_INSTANCE</category>
 							<properties>
@@ -974,9 +1475,20 @@
 							</properties>
 						</feature>
 						<feature>
-							<name>param</name>
+							<name>ist</name>
 							<type>access</type>
-							<datatype>parameters</datatype>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>tf</name>
+							<type>access</type>
+							<datatype>tf</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<data_info>
 							</data_info>
@@ -997,6 +1509,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>callback_nav_msgs_Path0.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 					</connections>
 					<subcomponents>
@@ -1019,9 +1539,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -1032,8 +1552,358 @@
 							</features>
 							<properties>
 								<property>
+									<name>Source_Name</name>
+									<value>savePath</value>
+								</property>
+								<property>
 									<name>Source_Text</name>
-									<value>subscriber.cpp</value>
+									<value>save_path.h</value>
+								</property>
+							</properties>
+							<connections>
+							</connections>
+							<subcomponents>
+							</subcomponents>
+						</component>
+					</subcomponents>
+				</component>
+				<component>
+					<name>costmap_cb</name>
+					<type>callback_nav_msgs_OccupancyGrid.impl</type>
+					<category>thread</category>
+					<namespace>ros</namespace>
+					<features>
+						<feature>
+							<name>msg</name>
+							<direction>in</direction>
+							<type>event_data</type>
+							<datatype>OccupancyGrid</datatype>
+							<datatype_namespace>nav_msgs</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+								<property>
+									<name>Queue_size</name>
+									<value>1</value>
+								</property>
+							</properties>
+						</feature>
+						<feature>
+							<name>ist</name>
+							<type>access</type>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>tf</name>
+							<type>access</type>
+							<datatype>tf</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+					</features>
+					<properties>
+						<property>
+							<name>Dispatch_Protocol</name>
+						</property>
+					</properties>
+					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>callback_nav_msgs_OccupancyGrid.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
+						</connection>
+					</connections>
+					<subcomponents>
+						<component>
+							<name>function</name>
+							<type>function</type>
+							<category>subprogram</category>
+							<namespace>ros</namespace>
+							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+								<feature>
+									<name>ist</name>
+									<type>access</type>
+									<datatype>internal_state</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+							</features>
+							<properties>
+								<property>
+									<name>Source_Name</name>
+									<value>saveCostmap</value>
+								</property>
+								<property>
+									<name>Source_Text</name>
+									<value>costmap_utils.h</value>
+								</property>
+							</properties>
+							<connections>
+							</connections>
+							<subcomponents>
+							</subcomponents>
+						</component>
+					</subcomponents>
+				</component>
+				<component>
+					<name>costmap_up_cb</name>
+					<type>callback_map_msgs_OccupancyGridUpdate.impl</type>
+					<category>thread</category>
+					<namespace>ros</namespace>
+					<features>
+						<feature>
+							<name>msg</name>
+							<direction>in</direction>
+							<type>event_data</type>
+							<datatype>OccupancyGridUpdate</datatype>
+							<datatype_namespace>map_msgs</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+								<property>
+									<name>Queue_size</name>
+									<value>1</value>
+								</property>
+							</properties>
+						</feature>
+						<feature>
+							<name>ist</name>
+							<type>access</type>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>tf</name>
+							<type>access</type>
+							<datatype>tf</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+					</features>
+					<properties>
+						<property>
+							<name>Dispatch_Protocol</name>
+						</property>
+					</properties>
+					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>callback_map_msgs_OccupancyGridUpdate.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
+						</connection>
+					</connections>
+					<subcomponents>
+						<component>
+							<name>function</name>
+							<type>function</type>
+							<category>subprogram</category>
+							<namespace>ros</namespace>
+							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+								<feature>
+									<name>ist</name>
+									<type>access</type>
+									<datatype>internal_state</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+							</features>
+							<properties>
+								<property>
+									<name>Source_Name</name>
+									<value>updateCostmap</value>
+								</property>
+								<property>
+									<name>Source_Text</name>
+									<value>costmap_utils.h</value>
+								</property>
+							</properties>
+							<connections>
+							</connections>
+							<subcomponents>
+							</subcomponents>
+						</component>
+					</subcomponents>
+				</component>
+				<component>
+					<name>cmd_vel_pub</name>
+					<type>publisher_geometry_msgs_Twist.impl</type>
+					<category>thread</category>
+					<namespace>ros</namespace>
+					<features>
+						<feature>
+							<name>msg</name>
+							<direction>out</direction>
+							<type>data</type>
+							<datatype>Twist</datatype>
+							<datatype_namespace>geometry_msgs</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_PORT_SPEC_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>ist</name>
+							<type>access</type>
+							<datatype>internal_state</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+						<feature>
+							<name>tf</name>
+							<type>access</type>
+							<datatype>tf</datatype>
+							<datatype_namespace>ros</datatype_namespace>
+							<data_info>
+							</data_info>
+							<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+							<properties>
+							</properties>
+						</feature>
+					</features>
+					<properties>
+						<property>
+							<name>Period</name>
+							<value>50</value>
+							<unit>ms</unit>
+						</property>
+						<property>
+							<name>Dispatch_Protocol</name>
+						</property>
+					</properties>
+					<connections>
+						<connection>
+							<name>pc</name>
+							<kind>K_CONNECTION_INSTANCE</kind>
+							<category>CT_ACCESS_DATA</category>
+							<properties>
+							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>function</parent_source_name>
+								<parent_dest>publisher_geometry_msgs_Twist.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
+						</connection>
+					</connections>
+					<subcomponents>
+						<component>
+							<name>function</name>
+							<type>function</type>
+							<category>subprogram</category>
+							<namespace>ros</namespace>
+							<features>
+								<feature>
+									<name>signal</name>
+									<direction>out</direction>
+									<type>event</type>
+									<datatype>none</datatype>
+									<datatype_namespace>none</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_PORT_SPEC_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+								<feature>
+									<name>ist</name>
+									<type>access</type>
+									<datatype>internal_state</datatype>
+									<datatype_namespace>ros</datatype_namespace>
+									<data_info>
+									</data_info>
+									<category>K_SUBCOMPONENT_ACCESS_INSTANCE</category>
+									<properties>
+									</properties>
+								</feature>
+							</features>
+							<properties>
+								<property>
+									<name>Source_Name</name>
+									<value>dwaPlan</value>
+								</property>
+								<property>
+									<name>Source_Text</name>
+									<value>dwa_planner.h</value>
 								</property>
 							</properties>
 							<connections>
@@ -1098,9 +1968,9 @@
 							</properties>
 						</feature>
 						<feature>
-							<name>param</name>
+							<name>ist</name>
 							<type>access</type>
-							<datatype>parameters</datatype>
+							<datatype>internal_state</datatype>
 							<datatype_namespace>ros</datatype_namespace>
 							<data_info>
 							</data_info>
@@ -1234,6 +2104,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>prepare</parent_source_name>
+								<parent_dest>main_loop.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 						<connection>
 							<name>da2</name>
@@ -1241,6 +2119,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>spin</parent_source_name>
+								<parent_dest>main_loop.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 						<connection>
 							<name>da3</name>
@@ -1248,6 +2134,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>tear_down</parent_source_name>
+								<parent_dest>main_loop.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 						<connection>
 							<name>da4</name>
@@ -1255,6 +2149,14 @@
 							<category>CT_ACCESS_DATA</category>
 							<properties>
 							</properties>
+							<port_info>
+								<source>ist</source>
+								<dest>ist</dest>
+								<parent_source>function</parent_source>
+								<parent_source_name>error_handler</parent_source_name>
+								<parent_dest>main_loop.impl</parent_dest>
+								<parent_dest_name>ist</parent_dest_name>
+							</port_info>
 						</connection>
 					</connections>
 					<subcomponents>
@@ -1277,9 +2179,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -1289,6 +2191,10 @@
 								</feature>
 							</features>
 							<properties>
+								<property>
+									<name>Source_Text</name>
+									<value>dwa_planner.h</value>
+								</property>
 							</properties>
 							<connections>
 							</connections>
@@ -1314,9 +2220,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -1351,9 +2257,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -1388,9 +2294,9 @@
 									</properties>
 								</feature>
 								<feature>
-									<name>param</name>
+									<name>ist</name>
 									<type>access</type>
-									<datatype>parameters</datatype>
+									<datatype>internal_state</datatype>
 									<datatype_namespace>ros</datatype_namespace>
 									<data_info>
 									</data_info>
@@ -1409,8 +2315,8 @@
 					</subcomponents>
 				</component>
 				<component>
-					<name>parameters</name>
-					<type>parameters</type>
+					<name>internal_state</name>
+					<type>internal_state</type>
 					<category>data</category>
 					<namespace>ros</namespace>
 					<features>

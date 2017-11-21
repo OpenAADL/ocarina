@@ -62,8 +62,6 @@ project Ocarina.Backends is
    Src_Dir & "/subprograms",
    Src_Dir & "/vxwork653_conf",
    Src_Dir & "/xtratum_conf",
-   Src_Dir & "/ros",
-   Src_Dir & "/doc",
    Src_Dir & "/ever_xml"
    );
 

@@ -76,8 +76,6 @@ with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1_Values;
 with Ocarina.Backends.AADL_XML;
 with Ocarina.Backends.Alloy;
-with Ocarina.Backends.Ros;
-with Ocarina.Backends.Doc;
 with Ocarina.Backends.Ever_XML;
 
 with Ocarina.Options; use Ocarina.Options;
@@ -225,8 +223,6 @@ package body Ocarina.Backends is
       Functions_Matrix.Init;
       AADL_XML.Init;
       Alloy.Init;
-      Ros.Init;
-      Doc.Init;
       Ever_XML.Init;
    end Init;
 
@@ -321,8 +317,6 @@ package body Ocarina.Backends is
       MAST_Values.Reset;
 
       Alloy.Reset;
-      Ros.Reset;
-      Doc.Reset;
 
       Ever_XML.Reset;
 
