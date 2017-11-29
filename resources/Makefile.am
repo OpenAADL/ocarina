@@ -56,6 +56,8 @@ install-data-local:
 	for file in $(AADL_V1_PROPERTIES); do \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv1 || exit 1; \
 	done
+
+build_ocarina_components:
 	rm -f $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl
 	for file in $(srcdir)/AADLv2/components/*.aadl; do \
 	  cat $$file >> $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl || exit 1; \
