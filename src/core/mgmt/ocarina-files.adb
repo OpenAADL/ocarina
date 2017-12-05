@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,11 +29,11 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Ada.Directories;   use Ada.Directories;
 with GNAT.OS_Lib;
 
 with Errors;
 with Ocarina.Namet;
-
 with Ocarina.Options; use Ocarina.Options;
 
 package body Ocarina.Files is
@@ -206,15 +206,25 @@ package body Ocarina.Files is
 
       --  Check in the library paths
 
-      for Path in Library_Paths.First .. Library_Paths.Last loop
-         Get_Name_String (Library_Paths.Table (Path));
-         Add_Char_To_Name_Buffer (Directory_Separator);
-         Get_Name_String_And_Append (File_Name);
+      declare
+         --  Build simple name from File_Name, in case we have an
+         --  invalid full path. This is a last resort case
 
-         if Is_Regular_File (Name_Buffer (1 .. Name_Len)) then
-            return Name_Find;
-         end if;
-      end loop;
+         Base_File_Name_S : constant String
+           := Simple_Name (Get_Name_String (File_Name));
+         Base_File_Name_N : constant Name_Id
+           := Get_String_Name (Base_File_Name_S);
+      begin
+         for Path in Library_Paths.First .. Library_Paths.Last loop
+            Get_Name_String (Library_Paths.Table (Path));
+            Add_Char_To_Name_Buffer (Directory_Separator);
+            Get_Name_String_And_Append (Base_File_Name_N);
+
+            if Is_Regular_File (Name_Buffer (1 .. Name_Len)) then
+               return Name_Find;
+            end if;
+         end loop;
+      end;
 
       return No_Name;
    end Search_File;

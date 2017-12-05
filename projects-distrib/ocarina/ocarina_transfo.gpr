@@ -37,7 +37,7 @@ project Ocarina_Transfo is
    for Source_files use ();
    for Library_Name use "ocarina-transfo";
    for Library_Dir use "../..";
-   for Library_Kind use "static";
+   for Library_Kind use Ocarina_Core'Library_Kind;
    for Externally_Built use "true";
 
 end Ocarina_Transfo;
