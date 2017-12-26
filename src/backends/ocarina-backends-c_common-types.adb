@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -713,6 +713,53 @@ package body Ocarina.Backends.C_Common.Types is
                        Type_Definition =>
                          Map_C_Defining_Identifier
                            (ATN.Entity (ATN.First_Node (Get_Base_Type (E)))));
+                  Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+               when Data_Bounded_Array =>
+                  Visit_Data_Instance
+                    (ATN.Entity (ATN.First_Node (Get_Base_Type (E))));
+
+                  --  In the case of a bounded array, we generate a C
+                  --  struct whose member are
+                  --
+                  --  1) an anonymous array whose size is the upper
+                  --     bound of the array, from "Dimension" property
+
+                  N :=
+                    Make_Member_Declaration
+                      (Defining_Identifier =>
+                         Make_Array_Declaration
+                           (Defining_Identifier =>
+                              Make_Defining_Identifier (PN (P_Data)),
+                            Array_Size =>
+                              Make_Literal
+                                (CV.New_Int_Value
+                                   (Data_Array_Size (1),
+                                    0,
+                                    10))),
+                       Used_Type =>
+                         Map_C_Defining_Identifier
+                           (ATN.Entity (ATN.First_Node (Get_Base_Type (E)))));
+                  Append_Node_To_List (N, Struct_Members);
+
+                  --  2) length, giving the actual size used as a
+                  --     32bits integer
+
+                  N :=
+                    Make_Member_Declaration
+                      (Defining_Identifier =>
+                         Make_Defining_Identifier (PN (P_Length)),
+                       Used_Type =>
+                         PHR.RE (RE_Int32_T));
+                  Append_Node_To_List (N, Struct_Members);
+
+                  N :=
+                    Make_Full_Type_Declaration
+                    (Defining_Identifier =>
+                       Map_C_Defining_Identifier (E),
+                     Type_Definition =>
+                       Make_Struct_Aggregate
+                       (Members => Struct_Members));
                   Append_Node_To_List (N, CTN.Declarations (Current_File));
 
                when Data_String =>
