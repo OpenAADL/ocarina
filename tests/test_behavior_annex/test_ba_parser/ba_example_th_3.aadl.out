@@ -20,7 +20,7 @@ data)
   Data_Scale : aadlinteger
     applies to (data);
 
-  Data_Representation : enumeration (Array, Boolean, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
+  Data_Representation : enumeration (Array, Boolean, Bounded_Array, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
     applies to (data);
 
   Dimension : list of aadlinteger
@@ -58,6 +58,7 @@ data)
 end Data_Model;
 
 package Base_Types
+
 public
   with data_model;
 
@@ -176,6 +177,7 @@ property set Behavior_Properties is
 end Behavior_Properties;
 
 package BA_example3
+
 public
   with Base_Types;
   with Behavior_Properties;
