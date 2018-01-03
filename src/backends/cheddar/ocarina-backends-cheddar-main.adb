@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -36,6 +36,7 @@ with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Cheddar.Mapping;
 with Ocarina.Backends.Utils;
+with Ocarina.Backends.Helper;
 
 package body Ocarina.Backends.Cheddar.Main is
 
@@ -45,6 +46,7 @@ package body Ocarina.Backends.Cheddar.Main is
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.Cheddar.Mapping;
    use Ocarina.Backends.Utils;
+   use Ocarina.Backends.Helper;
 
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
 
@@ -117,26 +119,21 @@ package body Ocarina.Backends.Cheddar.Main is
    ------------------
 
    procedure Visit_Thread (E : Node_Id) is
-      F : Node_Id;
    begin
       Append_Node_To_List (Map_Thread (E), XTN.Subitems (Tasks_Node));
 
-      if Present (Features (E)) then
-         F := First_Node (Features (E));
-         while Present (F) loop
-            if Kind (F) = K_Port_Spec_Instance and then Is_Event (F) then
-               if Is_In (F) then
-                  Append_Node_To_List
-                    (Map_Buffer (E, F),
-                     XTN.Subitems (Buffers_Node));
-               end if;
+      for F of Features_Of (E) loop
+         if Kind (F) = K_Port_Spec_Instance and then Is_Event (F) then
+            if Is_In (F) then
                Append_Node_To_List
-                 (Map_Dependency (E, F),
-                  XTN.Subitems (Dependencies_Node));
+                 (Map_Buffer (E, F),
+                  XTN.Subitems (Buffers_Node));
             end if;
-            F := Next_Node (F);
-         end loop;
-      end if;
+            Append_Node_To_List
+              (Map_Dependency (E, F),
+               XTN.Subitems (Dependencies_Node));
+         end if;
+      end loop;
 
       Visit_Subcomponents_Of (E);
    end Visit_Thread;
