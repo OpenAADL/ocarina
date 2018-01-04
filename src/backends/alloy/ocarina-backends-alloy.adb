@@ -250,7 +250,7 @@ package body Ocarina.Backends.Alloy is
       Put_Line (FD, "// Mapping of the AADL instance tree");
       New_Line (FD);
 
-      Visit_Architecture_Instance (Instance_Root);
+      Visit (Instance_Root);
 
       --  Add global contract
 
