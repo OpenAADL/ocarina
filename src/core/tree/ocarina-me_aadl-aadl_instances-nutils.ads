@@ -85,6 +85,9 @@ package Ocarina.ME_AADL.AADL_Instances.Nutils is
    function To_Node_Array (L : List_Id) return Node_Array;
    --  Conver List_Id L into a Node_Array
 
+   function Is_In (N : Node_Id; N_Array : Node_Array) return Boolean is
+      (for some E of N_Array => N = E);
+
    function New_Node (Kind : Node_Kind; Loc : Location) return Node_Id;
    --  Create a new node
 
