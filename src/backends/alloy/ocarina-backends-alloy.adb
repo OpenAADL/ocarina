@@ -95,24 +95,6 @@ package body Ocarina.Backends.Alloy is
    ------------------------------
 
    procedure Visit_Component_Instance (E : Node_Id) is
-      Category_Name_String : constant array
-      (Component_Category'Range) of Name_Id :=
-        (CC_Abstract          => Get_String_Name ("abstract"),
-         CC_Bus               => Get_String_Name ("bus"),
-         CC_Data              => Get_String_Name ("data"),
-         CC_Device            => Get_String_Name ("device"),
-         CC_Memory            => Get_String_Name ("memory"),
-         CC_Process           => Get_String_Name ("process"),
-         CC_Processor         => Get_String_Name ("processor"),
-         CC_Subprogram        => Get_String_Name ("subprogram"),
-         CC_Subprogram_Group  => Get_String_Name ("subprogram group"),
-         CC_System            => Get_String_Name ("system"),
-         CC_Thread            => Get_String_Name ("thread"),
-         CC_Thread_Group      => Get_String_Name ("thread group"),
-         CC_Unknown           => No_Name,
-         CC_Virtual_Bus       => Get_String_Name ("virtual_bus"),
-         CC_Virtual_Processor => Get_String_Name ("virtual_processor"));
-
       Category : constant Component_Category := Get_Category_Of_Component (E);
 
       E_Subcomponents : constant Node_Array := Subcomponents_Of (E);
@@ -143,11 +125,7 @@ package body Ocarina.Backends.Alloy is
             " extends Component{}{");
       end if;
 
-      Put_Line
-        (FD,
-         ASCII.HT &
-         "type=" &
-         Get_Name_String (Category_Name_String (Category)));
+      Put_Line (FD, ASCII.HT & "type=" & Category_Name (Category));
 
       --  Rule #2: list subcomponents
 
