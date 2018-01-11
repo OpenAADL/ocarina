@@ -63,6 +63,10 @@ package Ocarina.Backends.Helper is
 
    function Subcomponents_Of (E : Node_Id) return Node_Array;
 
+   function Connections_Of (E : Node_Id) return Node_Array is
+     (if No (Connections (E)) then No_Nodes
+      else To_Node_Array (Connections (E)));
+
    --------------------------
    -- Component categories --
    --------------------------
@@ -116,5 +120,27 @@ package Ocarina.Backends.Helper is
    function Systems (Root : Node_Id) return Node_Array is
       (Filter_Instance_By_Category
          (Find_All_Component_Instances (Root), CC_System));
+
+   ---------------------
+   -- Pretty printing --
+   ---------------------
+
+   function Category_Name (C : Component_Category) return String is
+      (case C is
+        when CC_Abstract          => "abstract",
+         when CC_Bus               => "bus",
+         when CC_Data              => "data",
+         when CC_Device            => "device",
+         when CC_Memory            => "memory",
+         when CC_Process           => "process",
+         when CC_Processor         => "processor",
+         when CC_Subprogram        => "subprogram",
+         when CC_Subprogram_Group  => "subprogram_group",
+         when CC_System            => "system",
+         when CC_Thread            => "thread",
+         when CC_Thread_Group      => "thread_group",
+         when CC_Unknown           => raise Program_Error,
+         when CC_Virtual_Bus       => "virtual_bus",
+         when CC_Virtual_Processor => "virtual_processor");
 
 end Ocarina.Backends.Helper;
