@@ -138,9 +138,9 @@ package body Ocarina.Backends.Cheddar.Main is
       Visit_Subcomponents_Of (E);
    end Visit_Thread;
 
-   ------------------
+   ----------------
    -- Visit_Data --
-   ------------------
+   ----------------
 
    procedure Visit_Data (E : Node_Id) is
    begin
