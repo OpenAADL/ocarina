@@ -53,19 +53,37 @@ package Ocarina.Backends.Helper is
    -- Component subclauses --
    --------------------------
 
+   --  For a component instance, the following accessors return the
+   --  elements from the corresponding subclause as a Node_Array.
+
    function Features_Of (E : Node_Id) return Node_Array is
-      (if No (Features (E)) then No_Nodes
-      else To_Node_Array (Features (E)));
+     (if No (Features (E)) then No_Nodes
+     else To_Node_Array (Features (E)))
+     with Pre => (Kind (E) = K_Component_Instance),
+          Post => (Features_Of'Result = No_Nodes or else
+                   (for all E of Features_Of'Result =>
+                    Kind (E) in K_Feature_Instance |
+                                K_Port_Spec_Instance |
+                                K_Subcomponent_Access_Instance));
 
    function Properties_Of (E : Node_Id) return Node_Array is
-      (if No (Properties (E)) then No_Nodes
-      else To_Node_Array (Properties (E)));
+     (if No (Properties (E)) then No_Nodes
+      else To_Node_Array (Properties (E)))
+      with Pre => (Kind (E) = K_Component_Instance),
+           Post => (for all E of Properties_Of'Result =>
+                    Kind (E) = K_Property_Association_Instance);
 
-   function Subcomponents_Of (E : Node_Id) return Node_Array;
+   function Subcomponents_Of (E : Node_Id) return Node_Array
+      with Pre => (Kind (E) = K_Component_Instance),
+           Post => (for all E of Subcomponents_Of'Result =>
+                    Kind (E) = K_Subcomponent_Instance);
 
    function Connections_Of (E : Node_Id) return Node_Array is
      (if No (Connections (E)) then No_Nodes
-      else To_Node_Array (Connections (E)));
+      else To_Node_Array (Connections (E)))
+      with Pre => (Kind (E) = K_Component_Instance),
+           Post => (for all E of Connections_Of'Result =>
+                    Kind (E) = K_Connection_Instance);
 
    --------------------------
    -- Component categories --
@@ -127,7 +145,7 @@ package Ocarina.Backends.Helper is
 
    function Category_Name (C : Component_Category) return String is
       (case C is
-        when CC_Abstract          => "abstract",
+         when CC_Abstract          => "abstract",
          when CC_Bus               => "bus",
          when CC_Data              => "data",
          when CC_Device            => "device",
