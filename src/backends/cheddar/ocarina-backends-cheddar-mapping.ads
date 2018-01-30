@@ -73,9 +73,9 @@ package Ocarina.Backends.Cheddar.Mapping is
                AINU.Is_Thread (E) and then
 
                --  2/ Property requirements
-               --  The thread is a) periodic, b) has
-               --  compute_execution_time specified, if it is either
-               --  periodic or sporadic, then it has a period
+               --  The thread a) has dispatch protocol specified, b)
+               --  has compute_execution_time specified, if it is
+               --  either periodic or sporadic, then it has a period
 
                (Get_Thread_Dispatch_Protocol (E) /= Thread_None) and then
                (Get_Execution_Time (E) /= Empty_Time_Array) and then
