@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2017 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -33,15 +33,10 @@ with GNAT.OS_Lib;   use GNAT.OS_Lib;
 with Ocarina.Namet; use Ocarina.Namet;
 with Utils;         use Utils;
 
-with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Build_Utils;
-with Ocarina.Backends.Helper;
 with Ocarina.Backends.Messages;
-with Ocarina.Backends.Properties;
-with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Common.Mapping;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -49,21 +44,15 @@ with Ocarina.Backends.XML_Values;
 
 package body Ocarina.Backends.Cheddar.Mapping is
 
-   use Ocarina.ME_AADL;
-   use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
-   use Ocarina.Backends.Helper;
    use Ocarina.Backends.Build_Utils;
    use Ocarina.Backends.Messages;
-   use Ocarina.Backends.Properties;
-   use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Common.Mapping;
    use Ocarina.Backends.XML_Tree.Nodes;
    use Ocarina.Backends.XML_Tree.Nutils;
 
-   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   --   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XV renames Ocarina.Backends.XML_Values;
 
