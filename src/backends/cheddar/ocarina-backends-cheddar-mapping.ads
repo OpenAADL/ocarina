@@ -74,13 +74,13 @@ package Ocarina.Backends.Cheddar.Mapping is
 
                --  2/ Property requirements
                --  The thread is a) periodic, b) has
-               --  compute_execution_time specified, is either
-               --  periodic or sporadic, and has a period
+               --  compute_execution_time specified, if it is either
+               --  periodic or sporadic, then it has a period
 
                (Get_Thread_Dispatch_Protocol (E) /= Thread_None) and then
                (Get_Execution_Time (E) /= Empty_Time_Array) and then
                (if Get_Thread_Dispatch_Protocol (E) = Thread_Periodic or else
-                  Get_Thread_Dispatch_Protocol (E) = Thread_Periodic then
+                  Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic then
                     Get_Thread_Period (E) /= Null_Time) and then
 
               --  3/ Architecture requirements
