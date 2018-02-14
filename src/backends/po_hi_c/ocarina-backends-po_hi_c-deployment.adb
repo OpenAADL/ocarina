@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1771,7 +1771,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
 
                      if Is_Data (F) then
                         Append_Node_To_List
-                          (Get_Data_Size (Corresponding_Instance (F)),
+                          (Get_Data_Size (Corresponding_Instance (F),
+                                          Maximum_Size => True),
                            CTN.Values (Global_Port_Data_Size));
                      end if;
 

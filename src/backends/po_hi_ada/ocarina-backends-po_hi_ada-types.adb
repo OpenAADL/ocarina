@@ -401,6 +401,9 @@ package body Ocarina.Backends.PO_HI_Ada.Types is
                           Type_Definition =>
                             Make_Derived_Type_Definition (RE (RE_Boolean)));
 
+                  when Data_Bounded_Array =>
+                     raise Program_Error; --  XXX
+
                   when Data_Character =>
                      N :=
                        Make_Full_Type_Declaration

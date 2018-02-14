@@ -24,7 +24,7 @@ property set Data_Model is
    --  types (10**(-scale) is the precision).
 
    Data_Representation : enumeration
-     (Array, Boolean, Character, Enum, Float,
+     (Array, Boolean, Bounded_Array, Character, Enum, Float,
       Fixed, Integer, String, Struct, Union)
       applies to ( data );
    --  The Data_Representation property may be used to specify the

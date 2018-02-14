@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -157,6 +157,8 @@ package Ocarina.Backends.C_Tree.Nutils is
       P_Msg,
       P_Request,
       P_Buffer,
+      P_Data,
+      P_Length,
       P_Status,
       P_Entity,
       P_Task,
@@ -179,6 +181,8 @@ package Ocarina.Backends.C_Tree.Nutils is
       M_Entry,
       M_Entry_Point,
       M_Kind,
+      M_Data,
+      M_Length,
       M_Msg,
       M_Name,
       M_Base_Priority,
@@ -556,9 +560,15 @@ package Ocarina.Backends.C_Tree.Nutils is
      (Array_Name : Node_Id;
       Array_Item : Node_Id) return Node_Id;
 
-   function Get_Data_Size (Data : Node_Id) return Node_Id;
-   --  Returns a node that represent an expression with the size
-   --  (in bytes) of a data.
+   function Get_Data_Size (Data : Node_Id;
+                           Is_Pointer : Boolean := False;
+                           Maximum_Size : Boolean := False)
+                          return Node_Id;
+   --  Returns a node that represent an expression with the size (in
+   --  bytes) of a data.
+   --  Note: for some types like Bounded_Array, this expression is dynamic.
+   --  - Is_Pointer controls wether we build a pointer-like expresison;
+   --  - Maximum_Size returns the maximum size (static value).
 
    procedure Add_Return_Variable_In_Parameters (Parameters : List_Id);
    --  Add the name of the return variable in the list.

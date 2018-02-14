@@ -24,7 +24,7 @@ data)
   Data_Scale : aadlinteger
     applies to (data);
 
-  Data_Representation : enumeration (Array, Boolean, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
+  Data_Representation : enumeration (Array, Boolean, Bounded_Array, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
     applies to (data);
 
   Dimension : list of aadlinteger
