@@ -5,6 +5,9 @@ property set Taste is
 		(system, package, device, memory, processor, process, access,
        subprogram access, connection, bus, virtual bus, feature group);
 
+   Fill_Color : aadlstring applies to 
+		(system, device, processor, process, bus); 
+
    HWLibraries : list of aadlstring applies to(package);
 
    Data_Transport : enumeration (legacy,asn1) applies to (device, abstract);
