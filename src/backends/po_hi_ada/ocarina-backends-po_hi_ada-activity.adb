@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -81,6 +81,32 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
    function Wait_For_Incoming_Events_Spec (E : Node_Id) return Node_Id;
    --  Runtime routines provided for each AADL thread
 
+   function Runtime_Spec_Aspect_Definition return Node_Id;
+   --  Build aspect definition for runtime services
+
+   ------------------------------------
+   -- Runtime_Spec_Aspect_Definition --
+   ------------------------------------
+
+   function Runtime_Spec_Aspect_Definition return Node_Id is
+   begin
+      if Add_SPARK2014_Annotations then
+         return Make_Aspect_Specification
+           (Make_List_Id
+              (Make_Aspect (ASN (A_Volatile_Function)),
+               Make_Aspect
+                 (ASN (A_Global),
+                  Make_Global_Specification
+                    (Make_List_Id
+                       (Make_Moded_Global_List
+                          (Mode_In,
+                           Make_Defining_Identifier
+                             (PN (P_Elaborated_Variables))))))));
+      else
+         return No_Node;
+      end if;
+   end Runtime_Spec_Aspect_Definition;
+
    ----------------------
    -- Send_Output_Spec --
    ----------------------
@@ -105,7 +131,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                    Subtype_Mark =>
                      Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
                    Parameter_Mode => Mode_In)),
-           Return_Type => RE (RE_Error_Kind));
+           Return_Type => RE (RE_Error_Kind),
+           Aspect_Specification => Runtime_Spec_Aspect_Definition);
 
       return N;
    end Send_Output_Spec;
@@ -191,8 +218,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                      Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
                    Parameter_Mode => Mode_In)),
            Return_Type =>
-             Make_Defining_Identifier (Map_Port_Interface_Name (E)));
-
+             Make_Defining_Identifier (Map_Port_Interface_Name (E)),
+           Aspect_Specification => Runtime_Spec_Aspect_Definition);
       return N;
    end Get_Value_Spec;
 
@@ -219,7 +246,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                    Subtype_Mark =>
                      Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
                    Parameter_Mode => Mode_In)),
-           Return_Type => RE (RE_Entity_Type));
+           Return_Type => RE (RE_Entity_Type),
+           Aspect_Specification => Runtime_Spec_Aspect_Definition);
 
       return N;
    end Get_Sender_Spec;
@@ -247,7 +275,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                    Subtype_Mark =>
                      Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
                    Parameter_Mode => Mode_In)),
-           Return_Type => RE (RE_Integer));
+           Return_Type => RE (RE_Integer),
+           Aspect_Specification => Runtime_Spec_Aspect_Definition);
 
       return N;
    end Get_Count_Spec;
@@ -276,7 +305,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                    Subtype_Mark =>
                      Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
                    Parameter_Mode => Mode_In)),
-           Return_Type => RE (RE_Time));
+           Return_Type => RE (RE_Time),
+           Aspect_Specification => Runtime_Spec_Aspect_Definition);
 
       return N;
    end Get_Time_Stamp_Spec;
@@ -903,20 +933,33 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
            or else P = Thread_Hybrid
            or else P = Thread_Aperiodic
          then
-            N :=
-              Make_Parameter_Specification
-                (Defining_Identifier => Make_Defining_Identifier (PN (P_Port)),
-                 Subtype_Mark        =>
-                   Make_Defining_Identifier (Map_Port_Enumeration_Name (E)));
+            Param_List := Make_List_Id
+              (Make_Parameter_Specification
+                 (Defining_Identifier =>
+                    Make_Defining_Identifier (PN (P_Port)),
+                  Subtype_Mark        =>
+                    Make_Defining_Identifier (Map_Port_Enumeration_Name (E))),
+               Make_Parameter_Specification
+                 (Defining_Identifier => Make_Defining_Identifier
+                    (PN (P_Result)),
+                  Subtype_Mark        => RE (RE_Error_Kind),
+                  Parameter_Mode => Mode_Out));
 
-            Param_List := Make_List_Id (N);
+         elsif P = Thread_Periodic
+           or else P = Thread_Background
+         then
+            Param_List := Make_List_Id
+              (Make_Parameter_Specification
+                 (Defining_Identifier => Make_Defining_Identifier
+                    (PN (P_Result)),
+                  Subtype_Mark        => RE (RE_Error_Kind),
+                  Parameter_Mode => Mode_Out));
          end if;
 
          N :=
            Make_Subprogram_Specification
              (Defining_Identifier => Map_Task_Job_Identifier (E),
-              Parameter_Profile   => Param_List,
-              Return_Type         => RE (RE_Error_Kind));
+              Parameter_Profile   => Param_List);
          return N;
       end Task_Job_Spec;
 
@@ -1055,6 +1098,31 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
            Get_Scheduling_Protocol (Get_Bound_Processor (E));
          The_System : constant Node_Id :=
            Parent_Component (Parent_Subcomponent (E));
+
+         function Package_Spec_Aspect_Definition return Node_Id is
+         begin
+            if Add_SPARK2014_Annotations then
+               return Make_Aspect_Specification
+                 (Make_List_Id
+                    (Make_Aspect (ASN (A_Initializes),
+                                  Make_Initialization_Spec
+                                    (Make_List_Id
+                                       (Make_Defining_Identifier
+                                          (PN (P_Elaborated_Variables))))),
+                     Make_Aspect
+                       (ASN (A_Abstract_State),
+                        Make_Abstract_State_List
+                          (Make_List_Id
+                             (Make_State_Name_With_Option
+                                (Make_Defining_Identifier
+                                   (PN (P_Elaborated_Variables)),
+                                 Synchronous => True,
+                                 External => True))))));
+            else
+               return No_Node;
+            end if;
+         end Package_Spec_Aspect_Definition;
+
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -1089,6 +1157,9 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             --  XXX In case of Round robin, we should also check that
             --  the scheduler is set to non-preemptive mode.
          end if;
+
+         ADN.Set_Aspect_Specification (Current_Package,
+                                       Package_Spec_Aspect_Definition);
 
          --  Visit all the subcomponents of the process
 
@@ -1587,6 +1658,40 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
       --  are appended after all entities generated for threads since
       --  they need visibility on these entities.
 
+      Package_Body_Refined_States : List_Id := No_List;
+
+      function Runtime_Body_Aspect_Definition
+        (E : Node_Id; RR : Runtime_Routine) return Node_Id;
+      --  Build aspect definition for runtime services
+
+      ------------------------------------
+      -- Runtime_Body_Aspect_Definition --
+      ------------------------------------
+
+      function Runtime_Body_Aspect_Definition
+        (E : Node_Id; RR : Runtime_Routine) return Node_Id is
+      begin
+         if Add_SPARK2014_Annotations and then
+           (RR = RR_Send_Output or else
+              RR = RR_Get_Value or else
+              RR = RR_Get_Sender or else
+              RR = RR_Get_Count or else
+              RR = Rr_Get_Time_Stamp)
+         then
+            return Make_Aspect_Specification
+              (Make_List_Id
+                 (Make_Aspect
+                    (ASN (A_Refined_Global),
+                     Make_Global_Specification
+                       (Make_List_Id
+                          (Make_Moded_Global_List
+                             (Mode_In,
+                              Map_Refined_Global_Name (E)))))));
+         else
+            return No_Node;
+         end if;
+      end Runtime_Body_Aspect_Definition;
+
       -------------------
       -- Task_Job_Body --
       -------------------
@@ -1714,14 +1819,9 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             --  The condition of validity is that the return value of
             --  Get_Count is different from -1.
 
-            N :=
-              Make_Subprogram_Call
-                (Get_Fully_Qualified_Subprogram (SN (S_Get_Count)),
-                 Make_List_Id (Map_Ada_Defining_Identifier (F)));
-
             Condition :=
               Make_Expression
-                (N,
+                (Map_Ada_Defining_Identifier (F, "C"),
                  Op_Not_Equal,
                  Make_Literal (New_Integer_Value (1, -1, 10)));
 
@@ -2030,6 +2130,18 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                        Object_Definition =>
                          Map_Ada_Data_Type_Designator
                            (Corresponding_Instance (F)));
+                  Append_Node_To_List (N, Declarations);
+
+                  N :=
+                    Make_Object_Declaration
+                      (Defining_Identifier =>
+                         Map_Ada_Defining_Identifier (F, "C"),
+                       Constant_Present  => True,
+                       Object_Definition => RE (RE_Integer),
+                       Expression        =>
+                         Make_Subprogram_Call
+                           (Get_Fully_Qualified_Subprogram (SN (S_Get_Count)),
+                            Make_List_Id (Map_Ada_Defining_Identifier (F))));
                   Append_Node_To_List (N, Declarations);
 
                   --  Assign the port value
@@ -2562,6 +2674,19 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                                   Map_Ada_Data_Type_Designator
                                     (Corresponding_Instance (F)));
                            Append_Node_To_List (N, Declarations);
+                           N :=
+                             Make_Object_Declaration
+                               (Defining_Identifier =>
+                                  Map_Ada_Defining_Identifier (F, "C"),
+                                Constant_Present  => True,
+                                Object_Definition => RE (RE_Integer),
+                                Expression        =>
+                                  Make_Subprogram_Call
+                                    (Get_Fully_Qualified_Subprogram
+                                       (SN (S_Get_Count)),
+                                     Make_List_Id
+                                       (Map_Ada_Defining_Identifier (F))));
+                           Append_Node_To_List (N, Declarations);
 
                            --  Assign the port value
 
@@ -2665,7 +2790,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                   Append_Node_To_List (N, Declarations);
                end if;
             end if;
-
          end Make_Ports_Compute_Entrypoint;
 
          --------------------------------------
@@ -2825,26 +2949,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                              Expression => N);
                         Append_Node_To_List (N, Statements);
                         Need_Error_Initialization := False;
-
-                        declare
-                           Then_Statements : constant List_Id :=
-                             New_List (ADN.K_Statement_List);
-                        begin
-                           N :=
-                             Make_Return_Statement
-                               (Make_Defining_Identifier (VN (V_Error)));
-                           Append_Node_To_List (N, Then_Statements);
-
-                           N :=
-                             Make_If_Statement
-                               (Condition =>
-                                  Make_Expression
-                                    (Make_Defining_Identifier (VN (V_Error)),
-                                     Op_Not_Equal,
-                                     RE (RE_Error_None)),
-                                Then_Statements => Then_Statements);
-                           Append_Node_To_List (N, Statements);
-                        end;
                      end if;
                   end;
                end if;
@@ -2956,26 +3060,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                        Expression => N);
                   Append_Node_To_List (N, Statements);
                   Need_Error_Initialization := False;
-
-                  declare
-                     Then_Statements : constant List_Id :=
-                       New_List (ADN.K_Statement_List);
-                  begin
-                     N :=
-                       Make_Return_Statement
-                         (Make_Defining_Identifier (VN (V_Error)));
-                     Append_Node_To_List (N, Then_Statements);
-
-                     N :=
-                       Make_If_Statement
-                         (Condition =>
-                            Make_Expression
-                              (Make_Defining_Identifier (VN (V_Error)),
-                               Op_Not_Equal,
-                               RE (RE_Error_None)),
-                          Then_Statements => Then_Statements);
-                     Append_Node_To_List (N, Statements);
-                  end;
                end if;
 
                F := Next_Node (F);
@@ -3124,7 +3208,11 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          N := Message_Comment ("Return error code");
          Append_Node_To_List (N, Statements);
 
-         N := Make_Return_Statement (Make_Defining_Identifier (VN (V_Error)));
+         N :=
+           Make_Assignment_Statement
+             (Variable_Identifier =>
+                Make_Defining_Identifier (PN (P_Result)),
+              Expression => Make_Defining_Identifier (VN (V_Error)));
          Append_Node_To_List (N, Statements);
 
          N := Make_Subprogram_Implementation (Spec, Declarations, Statements);
@@ -3992,7 +4080,8 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                  Make_Subprogram_Implementation
                    (Spec,
                     Declarations,
-                    Statements);
+                    Statements,
+                    Runtime_Body_Aspect_Definition (E, RR));
                Append_Node_To_List (N, Interrogation_Routine_List);
             end Implement_Subprogram;
 
@@ -4098,6 +4187,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             end Add_Alternative;
 
          begin
+            --  Add the current interrogator to the package refined state
+
+            Append_Node_To_List
+              (Map_Refined_Global_Name (E),
+               Package_Body_Refined_States);
+
             --  All the runtime routines below are also generated once
             --  per thread component.
 
@@ -4323,6 +4418,25 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          N          : Node_Id;
          The_System : constant Node_Id :=
            Parent_Component (Parent_Subcomponent (E));
+
+         function Package_Body_Aspect_Definition return Node_Id is
+         begin
+            if Add_SPARK2014_Annotations then
+               return Make_Aspect_Specification
+                 (Make_List_Id
+                    (Make_Aspect
+                       (ASN (A_Refined_State),
+                        Make_Refinement_List
+                          (Make_List_Id
+                             (Make_Refinement_Clause
+                                (Make_Defining_Identifier
+                                   (PN (P_Elaborated_Variables)),
+                                 Package_Body_Refined_States))))));
+            else
+               return No_Node;
+            end if;
+         end Package_Body_Aspect_Definition;
+
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -4342,6 +4456,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          --  Initialize the runtime routine list
 
          Interrogation_Routine_List := New_List (ADN.K_Statement_List);
+         Package_Body_Refined_States := New_List (ADN.K_List_Id);
 
          --  Visit all the subcomponents of the process
 
@@ -4455,6 +4570,10 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                S := Next_Node (S);
             end loop;
          end if;
+
+         ADN.Set_Aspect_Specification
+           (Current_Package,
+            Package_Body_Aspect_Definition);
 
          --  Unmark all the marked types
 
@@ -4661,9 +4780,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
          --  Create the body of the parameterless subprogram that
          --  executes the thread job.
+         --
+         --  Note it is added in the Interrogation_Routine_List to
+         --  avoid issues with Ada 2012 freezing rules.
 
          N := Task_Job_Body (E);
-         Append_Node_To_List (N, ADN.Statements (Current_Package));
+         Append_Node_To_List (N, Interrogation_Routine_List);
       end Visit_Thread_Instance;
 
       ----------------------------

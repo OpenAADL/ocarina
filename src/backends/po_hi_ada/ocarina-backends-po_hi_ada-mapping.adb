@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1288,6 +1288,20 @@ package body Ocarina.Backends.PO_HI_Ada.Mapping is
           (Parent_Subcomponent (E),
            "Interrogators");
    end Map_Interrogators_Name;
+
+   -----------------------------
+   -- Map_Refined_Global_Name --
+   -----------------------------
+
+   function Map_Refined_Global_Name (E : Node_Id) return Node_Id is
+   begin
+      pragma Assert (AAU.Is_Thread (E));
+
+      Get_Name_String (Map_Interrogators_Name (E));
+      Add_Char_To_Name_Buffer ('.');
+      Get_Name_String_And_Append (PN (P_Elaborated_Variables));
+      return Make_Defining_Identifier (Name_Find, False);
+   end Map_Refined_Global_Name;
 
    ----------------------
    -- Map_Deliver_Name --
