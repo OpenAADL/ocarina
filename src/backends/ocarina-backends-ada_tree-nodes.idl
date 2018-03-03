@@ -125,6 +125,7 @@ module Ocarina::Backends::Ada_Tree::Nodes {
   interface Package_Specification : Node_Id {
     Node_Id    Package_Declaration;
     List_Id    Withed_Packages;
+    Node_Id    Aspect_Specification;
     List_Id    Visible_Part;
     List_Id    Private_Part;
     boolean    Is_Runtime_Package;
@@ -137,6 +138,7 @@ module Ocarina::Backends::Ada_Tree::Nodes {
   interface Package_Implementation : Node_Id {
     Node_Id    Package_Declaration;
     List_Id    Withed_Packages;
+    Node_Id    Aspect_Specification;
     List_Id    Declarations;
     List_Id    Statements;
     List_Id    Package_Initialization;
@@ -157,6 +159,145 @@ module Ocarina::Backends::Ada_Tree::Nodes {
     Node_Id    Subprogram_Implementation;
     boolean    Has_Custom_File_Name;
     Name_Id    File_Name;
+  };
+
+  /**********/
+  /* Aspect */
+  /**********/
+
+  /* Ada 2012 Aspect, see Ada RM 13.1.1
+
+    aspect_specification ::=
+      with aspect_mark [=> aspect_definition] {,
+           aspect_mark [=> aspect_definition] }
+
+    aspect_mark ::= aspect_identifier['Class]
+
+    aspect_definition ::= name | expression | identifier
+
+  */
+
+  interface Aspect_Specification : Node_Id {
+    List_Id    Aspect;
+  };
+
+  interface Aspect : Node_Id {
+    Name_Id    Aspect_Mark;
+    Node_Id    Aspect_Definition;
+  };
+
+  /* Ada 2012 Pre Aspect, see Ada RM 6.1.1
+
+     Note: here, we reduce the aspect_definition to a subprogram call,
+     enough for PolyORB-HI/Ada.
+
+   */
+
+  interface Pre_Definition : Node_Id {
+    Node_Id Subprogram_Call;
+  };
+
+  /* SPARK 2014 Global Aspect, see SPARK RM 6.1.4
+
+    global_specification        ::= (moded_global_list {, moded_global_list})
+    | global_list
+    | null_global_specification
+
+    moded_global_list           ::= mode_selector => global_list
+    global_list                 ::= global_item
+    | (global_item {, global_item})
+
+    mode_selector               ::= Input | Output | In_Out | Proof_In
+    global_item                 ::= name
+    null_global_specification   ::= null
+  */
+
+  interface Global_Specification : Node_Id {
+    List_Id Moded_Global_List;
+  };
+
+  interface Moded_Global_List : Node_Id {
+    Mode_Id    Mode_Selector;
+    Node_Id    Defining_Identifier;
+    /* Note: in the following, we support only list of one identifier,
+       as this is enough for PolyORB-HI/Ada
+    */
+
+  };
+
+  /* SPARK 2014 Initilalizes Aspect, see SPARK RM 7.1.5
+
+     initialization_spec ::= initialization_list
+                      | null
+
+     initialization_list ::= initialization_item
+                      | ( initialization_item { , initialization_item } )
+
+     initialization_item ::= name [ => input_list]
+   */
+
+  interface Initialization_Spec : Node_Id {
+    List_Id Initialization_List;
+  };
+
+  interface Initialization_List : Node_Id {
+    Node_Id Defining_Identifier;
+  };
+
+  /* SPARK 2014 Abstract_State Aspect, see SPARK RM 7.1.4
+
+     abstract_state_list      ::= null
+                           | state_name_with_options
+                           | ( state_name_with_options { ,
+                               state_name_with_options } )
+     state_name_with_options  ::= state_name
+                           | ( state_name with option_list )
+     option_list              ::= option { , option }
+     option                   ::= simple_option
+                           | name_value_option
+     simple_option            ::= Ghost | Synchronous
+     name_value_option        ::= Part_Of => abstract_state
+                           | External [=> external_property_list]
+     external_property_list   ::= external_property
+                           | ( external_property {, external_property} )
+     external_property        ::= Async_Readers [=> expression]
+                           | Async_Writers [=> expression]
+                           | Effective_Writes [=> expression]
+                           | Effective_Reads  [=> expression]
+                           | others => expression
+     state_name               ::= defining_identifier
+     abstract_state           ::= name
+
+   */
+
+  interface Abstract_State_List : Node_Id {
+    List_Id State_Name_With_Option;
+  };
+
+  interface State_Name_With_Option : Node_Id {
+    Node_Id Defining_Identifier;
+    boolean Synchronous;
+    boolean External;
+    /* Note: incomplete, enough for PolyORB-HI/Ada */
+  };
+
+  /* SPARK 2014 Refined_State Aspect, see SPARK RM 7.2.2
+
+     refinement_list   ::= ( refinement_clause { , refinement_clause } )
+     refinement_clause ::= state_name => constituent_list
+     constituent_list  ::= null
+                    | constituent
+                    | ( constituent { , constituent } )
+
+  */
+
+  interface Refinement_List : Node_Id {
+    List_Id Refinement_Clause;
+  };
+
+  interface Refinement_Clause : Node_Id {
+    Node_Id  State_Name;
+    List_Id  Constituent;
   };
 
   interface Packages : List_Id {};
@@ -243,6 +384,7 @@ module Ocarina::Backends::Ada_Tree::Nodes {
     List_Id    Withed_Packages;
     List_Id    Parameter_Profile;
     Node_Id    Return_Type;
+    Node_Id    Aspect_Specification;
     Node_Id    Renamed_Entity;
     Node_Id    Instantiated_Entity;
     Node_Id    Main_Subprogram_Unit;
@@ -253,7 +395,7 @@ module Ocarina::Backends::Ada_Tree::Nodes {
 
   interface Subprogram_Implementation : Node_Id {
     List_Id    Withed_Packages;
-    Node_Id    Specification;
+    Node_Id    Specification; /*  points to subprogram_specification */
     List_Id    Declarations;
     List_Id    Statements;
     Node_Id    Main_Subprogram_Unit;
@@ -275,7 +417,6 @@ module Ocarina::Backends::Ada_Tree::Nodes {
      Node_Id  Prefix;
      Node_Id  Selector_Name;
   };
-
 
   interface Full_Type_Declaration : Definition {
     Node_Id    Type_Definition;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -42,9 +42,9 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    type Token_Type is
      (
-   --   Token name      Token type
-   --   Keywords
-   Tok_Mod,             -- MOD   **** First Keyword
+      --   Token name      Token type
+      --   Keywords
+      Tok_Mod,             -- MOD   **** First Keyword
       Tok_Rem,             -- REM
       Tok_New,             -- NEW
       Tok_Abs,             -- ABS
@@ -118,7 +118,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Tok_With,            -- WITH
       Tok_Separate,        -- SEPARATE **** Last Keyword
 
-   --  Graphic Characters
+      --  Graphic Characters
       Tok_Double_Asterisk, -- **
       Tok_Ampersand,       -- &
       Tok_Minus,           -- -
@@ -146,8 +146,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Tok_Vertical_Bar,    -- |
       Tok_Dot_Dot,         -- ..
       Tok_Minus_Minus      -- --
-
-);
+     );
 
    Token_Image : array (Token_Type) of Name_Id;
 
@@ -204,6 +203,7 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       P_Dispatch_Offset,
       P_E_Req,
       P_Elaboration_Check,
+      P_Elaborated_Variables,
       P_Entity,
       P_Entity_Table,
       P_Entity_Image,
@@ -431,6 +431,18 @@ package Ocarina.Backends.Ada_Tree.Nutils is
 
    EN : array (Error_Id) of Name_Id;
 
+   type Aspect_Id is
+     (A_Abstract_State,
+      A_Global,
+      A_Initializes,
+      A_Pre,
+      A_Refined_Global,
+      A_Refined_State,
+      A_Volatile_Function
+     );
+
+   ASN : array (Aspect_Id) of Name_Id;
+
    procedure Add_With_Package
      (E            : Node_Id;
       Used         : Boolean := False;
@@ -514,6 +526,40 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Aliased_Present      : Boolean := False) return Node_Id;
    --  Usually used with Make_Full_Type_Declaration
 
+   function Make_Aspect_Specification
+     (Aspects : List_Id) return Node_Id;
+
+   function Make_Aspect
+     (Aspect_Mark : Name_Id;
+      Aspect_Definition : Node_Id := No_Node) return Node_Id;
+
+   function Make_Pre
+     (Subprogram_Call : Node_Id) return Node_Id;
+
+   function Make_Global_Specification
+     (Moded_Global_List : List_Id) return Node_Id;
+
+   function Make_Moded_Global_List
+     (Mode : Mode_Id; Identifier : Node_Id) return Node_Id;
+
+   function Make_Initialization_Spec
+     (Initialization_List : List_Id) return Node_Id;
+
+   function Make_Abstract_State_List
+     (State_Name_With_Option : List_Id) return Node_Id;
+
+   function Make_State_Name_With_Option
+     (Defining_Identifier : Node_Id;
+      Synchronous : Boolean;
+      External : Boolean) return Node_Id;
+
+   function Make_Refinement_List
+     (Refinement_Clause : List_Id) return Node_Id;
+
+   function Make_Refinement_Clause
+     (State_Name : Node_Id;
+      Constituent : List_Id) return Node_Id;
+
    function Make_Assignment_Statement
      (Variable_Identifier : Node_Id;
       Expression          : Node_Id) return Node_Id;
@@ -557,7 +603,8 @@ package Ocarina.Backends.Ada_Tree.Nutils is
      (D_Digits : Unsigned_Long_Long;
       D_Scale  : Unsigned_Long_Long) return Node_Id;
 
-   function Make_Defining_Identifier (Name : Name_Id) return Node_Id;
+   function Make_Defining_Identifier
+     (Name : Name_Id; Normalize : Boolean := True) return Node_Id;
 
    function Make_Delay_Statement
      (Expression : Node_Id;
@@ -728,14 +775,16 @@ package Ocarina.Backends.Ada_Tree.Nutils is
       Selector_Name : Node_Id) return Node_Id;
 
    function Make_Subprogram_Implementation
-     (Specification : Node_Id;
-      Declarations  : List_Id;
-      Statements    : List_Id) return Node_Id;
+     (Specification        : Node_Id;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Aspect_Specification : Node_Id := No_Node) return Node_Id;
 
    function Make_Subprogram_Specification
      (Defining_Identifier     : Node_Id;
       Parameter_Profile       : List_Id;
       Return_Type             : Node_Id := No_Node;
+      Aspect_Specification    : Node_Id := No_Node;
       Parent                  : Node_Id := Current_Package;
       Renamed_Subprogram      : Node_Id := No_Node;
       Instantiated_Subprogram : Node_Id := No_Node) return Node_Id;
