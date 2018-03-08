@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -221,6 +221,28 @@ package body Ocarina.ME_AADL.AADL_Instances.Nutils is
 
       return C;
    end Length;
+
+   -------------------
+   -- To_Node_Array --
+   -------------------
+
+   function To_Node_Array (L : List_Id) return Node_Array is
+      N : Node_Id;
+      J : Natural := 1;
+      Result : Node_Array (1 .. Length (L));
+   begin
+      if not Is_Empty (L) then
+         N := First_Node (L);
+
+         while Present (N) loop
+            Result (J) := N;
+            J := J + 1;
+            N := Next_Node (N);
+         end loop;
+      end if;
+
+      return Result;
+   end To_Node_Array;
 
    --------------------
    -- Make_Container --

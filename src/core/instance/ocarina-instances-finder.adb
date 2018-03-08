@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -32,7 +32,6 @@
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
-with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.Instances.Components.Subprogram_Calls;
 with Errors;
 with Locations;
@@ -49,6 +48,8 @@ package body Ocarina.Instances.Finder is
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package AIE renames Ocarina.ME_AADL.AADL_Instances.Entities;
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
 
    procedure Select_Nodes
      (Decl_List  :        List_Id;
@@ -64,8 +65,8 @@ package body Ocarina.Instances.Finder is
       Kinds      :        Node_Kind_Array;
       First_Node : in out Node_Id;
       Last_Node  : in out Node_Id);
-   --  Same as previous select_nodes, yet only appends a single node if
-   --  its kind belong to the kinds array
+   --  Similar to Select_Nodes, but only appends a single node if its
+   --  kind belong to the kinds array
 
    -------------------
    -- Find_Instance --
@@ -156,8 +157,6 @@ package body Ocarina.Instances.Finder is
       First_Node    : in out Node_Id;
       Last_Node     : in out Node_Id)
    is
-      use Ocarina.ME_AADL.AADL_Instances.Nutils;
-
       pragma Assert (AIN.Kind (Instance_Root) = K_Architecture_Instance);
 
       R : constant Node_Id := AIN.Root_System (Instance_Root);
@@ -200,8 +199,6 @@ package body Ocarina.Instances.Finder is
       First_Node    : in out Node_Id;
       Last_Node     : in out Node_Id)
    is
-      use Ocarina.ME_AADL.AADL_Instances.Nutils;
-
       pragma Assert
         (Kind (Instance_Root) = K_Architecture_Instance
          or else Kind (Instance_Root) = K_Component_Instance
@@ -473,10 +470,9 @@ package body Ocarina.Instances.Finder is
       First_Node : in out Node_Id;
       Last_Node  : in out Node_Id)
    is
-      use Ocarina.ME_AADL.AADL_Instances.Nutils;
-
       Success         : Boolean;
       Local_List_Node : Node_Id;
+
    begin
       if not Is_Empty (Decl_List) then
          Local_List_Node := AIN.First_Node (Decl_List);
@@ -515,9 +511,8 @@ package body Ocarina.Instances.Finder is
       First_Node : in out Node_Id;
       Last_Node  : in out Node_Id)
    is
-      use Ocarina.ME_AADL.AADL_Instances.Nutils;
-
       Success : Boolean;
+
    begin
       if Present (Node) then
          Success := False;
@@ -538,5 +533,63 @@ package body Ocarina.Instances.Finder is
          end if;
       end if;
    end Select_Single_Node;
+
+   ----------------------------------
+   -- Find_All_Component_Instances --
+   ----------------------------------
+
+   function Find_All_Component_Instances
+     (Root      : Node_Id) return Node_List
+   is
+      EL      : Node_List;
+   begin
+      Ocarina.Instances.Finder.Find_All_Instances
+        (Root,
+         (1 => AIN.K_Component_Instance),
+         EL.First,
+         EL.Last);
+      return EL;
+   end Find_All_Component_Instances;
+
+   ---------------------------------
+   -- Filter_Instance_By_Category --
+   ---------------------------------
+
+   function Filter_Instance_By_Category
+     (Components : Node_List;
+      Category : Ocarina.ME_AADL.Component_Category)
+     return Node_Array
+   is
+      List_Node : Node_Id;
+      List_Node2 : Node_Id;
+      EL : Node_List;
+      Count : Natural := 0;
+   begin
+      EL.First := No_Node;
+      EL.Last := No_Node;
+      List_Node := Components.First;
+      while Present (List_Node) loop
+         List_Node2 := AIN.Next_Entity (List_Node);
+         if AIE.Get_Category_Of_Component (List_Node) = Category then
+            AINU.Append_Node_To_Node_List (List_Node, EL);
+            Count := Count + 1;
+         end if;
+         List_Node := List_Node2;
+      end loop;
+
+      declare
+         Result : Node_Array (1 .. Count);
+         J : Natural := 1;
+      begin
+         List_Node := EL.First;
+         loop
+            Result (J) := List_Node;
+            List_Node := AIN.Next_Entity (List_Node);
+            J := J + 1;
+            exit when J > Count;
+         end loop;
+         return Result;
+      end;
+   end Filter_Instance_By_Category;
 
 end Ocarina.Instances.Finder;

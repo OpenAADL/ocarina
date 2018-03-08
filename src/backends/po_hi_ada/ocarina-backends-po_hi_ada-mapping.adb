@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1451,6 +1451,7 @@ package body Ocarina.Backends.PO_HI_Ada.Mapping is
       Data_Character      => 8,   --  Unique size
       Data_Wide_Character => 16,  --  Unique size
       Data_Array          => 0,   --  Initial size
+      Data_Bounded_Array  => 0,   --  Initial size
       Data_Struct         => 0,   --  Initial size
       Data_Union          => 0,   --  Initial size
       Data_With_Accessors => 0,   --  Unsupported
@@ -1468,6 +1469,7 @@ package body Ocarina.Backends.PO_HI_Ada.Mapping is
       Data_Character      => 1,
       Data_Wide_Character => 2,
       Data_Array          => 4,
+      Data_Bounded_Array  => 4,
       Data_Struct         => 4,
       Data_Union          => 4,
       Data_With_Accessors => 1,    --  Unsupported
@@ -1541,7 +1543,7 @@ package body Ocarina.Backends.PO_HI_Ada.Mapping is
                     Result);
             end;
 
-         when Data_Array =>
+         when Data_Array | Data_Bounded_Array =>
             declare
                Dimension : constant ULL_Array := Get_Dimension (E);
                Elt       : constant Node_Id   :=

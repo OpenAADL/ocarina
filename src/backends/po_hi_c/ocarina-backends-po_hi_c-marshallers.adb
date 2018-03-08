@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -706,6 +706,50 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                N := Make_Call_Profile (RE (RE_Marshall_Array), Parameters);
                Append_Node_To_List (N, Statements);
 
+            when Data_Bounded_Array =>
+               --  In the case of a bounded array, we marshall first
+               --  the length of the array, then the actual buffer
+
+               --  1/ Marshall buffer length
+
+               Parameters := New_List (CTN.K_Parameter_List);
+               Append_Node_To_List
+                 (Make_Member_Designator
+                    (Defining_Identifier =>
+                       Make_Defining_Identifier (MN (M_Length)),
+                     Aggregate_Name =>
+                       Make_Defining_Identifier (PN (P_Value))),
+                  Parameters);
+               Append_Node_To_List
+                 (Make_Defining_Identifier (PN (P_Message)),
+                  Parameters);
+               Append_Node_To_List
+                 (Make_Defining_Identifier (PN (P_Offset)),
+                  Parameters);
+               N := Make_Call_Profile (RE (RE_Marshall_Int32), Parameters);
+               Append_Node_To_List (N, Statements);
+
+               --  2/ Marshall buffer data
+
+               Parameters := New_List (CTN.K_Parameter_List);
+               Append_Node_To_List
+                 (Make_Member_Designator
+                    (Defining_Identifier =>
+                       Make_Defining_Identifier (MN (M_Data)),
+                     Aggregate_Name =>
+                       Make_Defining_Identifier (PN (P_Value))),
+                  Parameters);
+               Append_Node_To_List
+                 (Make_Defining_Identifier (PN (P_Message)),
+                  Parameters);
+               Append_Node_To_List
+                 (CTU.Get_Data_Size (E, Is_Pointer => False), Parameters);
+               Append_Node_To_List
+                 (Make_Defining_Identifier (PN (P_Offset)),
+                  Parameters);
+               N := Make_Call_Profile (RE (RE_Marshall_Array), Parameters);
+               Append_Node_To_List (N, Statements);
+
             when Data_Enum =>
                --  In C, an enumeration constant is equivalent to an
                --  int constant, therefore we marshall the value as an
@@ -837,10 +881,53 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                N := Make_Call_Profile (RE (RE_Unmarshall_Array), Parameters);
                Append_Node_To_List (N, Statements);
 
+            when Data_Bounded_Array =>
+               Parameters := New_List (CTN.K_Parameter_List);
+               Append_Node_To_List
+                 (Make_Variable_Address
+                    (Make_Member_Designator
+                       (Defining_Identifier =>
+                          Make_Defining_Identifier (MN (M_Length)),
+                        Aggregate_Name =>
+                          Make_Defining_Identifier (PN (P_Value)),
+                        Is_Pointer => True)),
+                  Parameters);
+               Append_Node_To_List
+                 (Make_Defining_Identifier (PN (P_Message)),
+                  Parameters);
+               Append_Node_To_List
+                 (Make_Defining_Identifier (PN (P_Offset)),
+                  Parameters);
+               N := Make_Call_Profile (RE (RE_Unmarshall_Int32), Parameters);
+               Append_Node_To_List (N, Statements);
+
+               --  2/
+               Parameters := New_List (CTN.K_Parameter_List);
+               Append_Node_To_List
+                 (Make_Variable_Address
+                    (Make_Member_Designator
+                       (Defining_Identifier =>
+                          Make_Defining_Identifier (MN (M_Data)),
+                        Aggregate_Name =>
+                          Make_Defining_Identifier (PN (P_Value)),
+                        Is_Pointer => True)),
+                  Parameters);
+               Append_Node_To_List
+                 (Make_Defining_Identifier (PN (P_Message)),
+                  Parameters);
+               Append_Node_To_List (CTU.Get_Data_Size (E, Is_Pointer => True),
+                                    Parameters);
+               Append_Node_To_List
+                 (Make_Defining_Identifier (PN (P_Offset)),
+                  Parameters);
+               N := Make_Call_Profile (RE (RE_Unmarshall_Array), Parameters);
+               Append_Node_To_List (N, Statements);
+
             when Data_Enum =>
                --  In C, an enumeration constant is equivalent to an
                --  int constant, therefore we unmarshall the value as
-               --  an __po_hi_int32 parameter.
+               --  a __po_hi_int32 parameter.
+               --  XXX should be changed to an INT
 
                Parameters := New_List (CTN.K_Parameter_List);
                Append_Node_To_List
