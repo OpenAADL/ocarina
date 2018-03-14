@@ -31,11 +31,13 @@ AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
 	$(srcdir)/AADLv2/replication_properties.aadl \
 	$(srcdir)/AADLv2/errorlibrary.aadl \
 	$(srcdir)/AADLv2/taste_properties.aadl \
+	$(srcdir)/AADLv2/TASTE_IV_Properties.aadl \
+	$(srcdir)/AADLv2/TASTE_DV_Properties.aadl \
 	$(srcdir)/AADLv2/transformations.aadl
 
 AADL_V2_COMPONENTS = $(srcdir)/AADLv2/components/*.aadl \
-                     $(srcdir)/AADLv2/components/devices/*.aadl \
-                     $(srcdir)/AADLv2/components/processors/*.aadl
+		     $(srcdir)/AADLv2/components/devices/*.aadl \
+		     $(srcdir)/AADLv2/components/processors/*.aadl
 
 EXTRA_DIST = $(AADL_COMMON_PROPERTIES) \
 	$(AADL_V1_PROPERTIES) \

@@ -1,0 +1,15 @@
+-- mapping TASTE : AADL
+-- Node : System
+-- Processor : Processor
+-- Process : Function
+-- Bus : Bus
+-- Device : Device
+-- Driver : Driver
+property set TASTE_DV_Properties is
+--  MyBoolean: aadlboolean applies to (System, Processor, Process);
+    CoverageEnabled: aadlboolean applies to (Process);
+    Comment: aadlstring applies to (Device, Bus);
+--  MyInt: aadlinteger applies to (System);
+--  MyReal: aadlreal applies to (Bus);
+--  MyEnum: enumeration  (val1, val2, val3, val4) applies to (Device);
+end TASTE_DV_Properties;
