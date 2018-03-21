@@ -45,6 +45,9 @@ examples::
 gnatcheck::
 	@$(MAKE) -C projects gnatcheck
 
+gnatmetric::
+	@$(MAKE) -C projects gnatmetric
+
 check-local: install
 	@$(MAKE) test-suite
 	@$(MAKE) -C resources/runtime maybe-check-runtimes

@@ -107,6 +107,12 @@ gnatcheck: %-build:
 	  -XABS_SRC_DIR="$(PL_DEP_ABS_SRC_DIR)" \
 	  -XABS_BUILD_DIR="$(PL_DEP_ABS_BUILD_DIR)"
 
+gnatmetric: %-build:
+	ADA_PROJECT_PATH=$(top_srcdir)/projects:$(ADA_PROJECT_PATH) \
+	gnat metric -Pocarina-main.gpr -U $(GNATFLAGS)  \
+	  -XABS_SRC_DIR="$(PL_DEP_ABS_SRC_DIR)" \
+	  -XABS_BUILD_DIR="$(PL_DEP_ABS_BUILD_DIR)"
+
 clean-local: $(BUILD_DIRS) $(CLEAN_STAMPS) clean-mknodes
 
 # XXX creating/deleting ocarina-configuration.adb is to please
