@@ -30,6 +30,11 @@
 ------------------------------------------------------------------------------
 
 project Ocarina is
+
+   -- This is Ocarina top project file. It is included by all
+   -- components project file and configure the main compilation,
+   -- linking and analysis phases of the tool.
+
    Top_Src_Dir := External ("ABS_SRC_DIR", "../src");
    Top_Build_Dir := External ("ABS_BUILD_DIR", "../src");
    --  The absolute source dir and build dir are given through
@@ -44,9 +49,14 @@ project Ocarina is
    type Lib_Kinds is ("relocatable", "static");
    Lib_Type : Lib_Kinds := External ("LIBRARY_TYPE", "static");
 
+   --------------
+   -- Compiler --
+   --------------
+
    package Compiler is
       for  Local_Configuration_Pragmas use Top_Src_Dir
          & "/../projects/restrictions.adc";
+
       case Build is
         when "debug" =>
            for Default_Switches ("Ada") use
@@ -74,6 +84,10 @@ project Ocarina is
       end case;
    end Compiler;
 
+   ------------
+   -- Binder --
+   ------------
+
    package Binder is
       case Build is
         when "debug" =>
@@ -87,10 +101,14 @@ project Ocarina is
       end case;
    end Binder;
 
+   ------------
+   -- Linker --
+   ------------
+
    package Linker is
       case Build is
         when "debug" =>
-        for Default_Switches ("Ada") use (
+          for Default_Switches ("Ada") use (
                                           @GCOV@"-g",
                                           @GCOV@"-fprofile-arcs",
                                           @GCOV@"-ftest-coverage"
@@ -99,6 +117,10 @@ project Ocarina is
            for Default_Switches ("Ada") use ();
       end case;
    end Linker;
+
+   -------------
+   -- Builder --
+   -------------
 
    package Builder is
       case Build is
