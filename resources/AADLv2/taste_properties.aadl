@@ -217,9 +217,9 @@ RCMperiod: Time applies to (event port, event data port, access, subprogram acce
 
 RCMpartition: reference (system) applies to (system);
 
-dataview : list of aadlstring applies to (package);
+dataview : list of aadlstring applies to (package, system);
 
-dataviewpath : list of aadlstring applies to (package);
+dataviewpath : list of aadlstring applies to (package, system);
 
 Encoding_type : type enumeration (native, uper, acn);
 
