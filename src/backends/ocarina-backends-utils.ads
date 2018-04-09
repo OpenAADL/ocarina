@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -35,9 +35,9 @@ package Ocarina.Backends.Utils is
 
    type Browsing_Kind is (By_Source, By_Destination, Default);
 
-   ------------------
-   --  AST visitor --
-   ------------------
+   -----------------
+   -- AST visitor --
+   -----------------
 
    generic
       with procedure Visit (E : Node_Id);

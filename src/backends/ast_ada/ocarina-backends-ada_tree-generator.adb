@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -50,6 +50,7 @@ package body Ocarina.Backends.Ada_Tree.Generator is
 
    procedure Generate_Access_Type_Definition (N : Node_Id);
    procedure Generate_Ada_Comment (N : Node_Id);
+   procedure Generate_Aspect (N : Node_Id);
    procedure Generate_HI_Distributed_Application (N : Node_Id);
    procedure Generate_HI_Node (N : Node_Id);
    procedure Generate_Unit_Packages (N : Node_Id);
@@ -1603,6 +1604,9 @@ package body Ocarina.Backends.Ada_Tree.Generator is
       Write_Space;
       Generate (Defining_Identifier (Package_Declaration (N)));
       Write_Space;
+
+      Generate_Aspect (Aspect_Specification (N));
+
       Write (Tok_Is);
       Write_Eol (2);
 
@@ -1733,6 +1737,8 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          Write (Tok_Package);
          Write_Space;
          Generate (Defining_Identifier (Package_Declaration (N)));
+
+         Generate_Aspect (Aspect_Specification (N));
          Write_Space;
          Write (Tok_Is);
          Write_Eol (2);
@@ -2392,7 +2398,170 @@ package body Ocarina.Backends.Ada_Tree.Generator is
          Generate (G);
          Decrement_Indentation;
       end if;
+
+      Generate_Aspect (Aspect_Specification (N));
    end Generate_Subprogram_Specification;
+
+   ---------------------
+   -- Generate_Aspect --
+   ---------------------
+
+   procedure Generate_Aspect (N : Node_Id) is
+      W : Node_Id;
+   begin
+      if Present (N) and then
+        not Is_Empty (Aspect (N))
+      then
+         Write_Eol;
+         Increment_Indentation;
+         Write_Indentation;
+         Write (Tok_With);
+         Write_Space;
+
+         W := First_Node (Aspect (N));
+         while Present (W) loop
+            Write_Name (Aspect_Mark (W));
+            if Present (Aspect_Definition (W)) then
+               if Kind (Aspect_Definition (W)) = K_Pre_Definition then
+                  Write_Space;
+                  Write (Tok_Arrow);
+                  Write_Space;
+                  Write (Tok_Left_Paren);
+                  Generate (Subprogram_Call (Aspect_Definition (W)));
+                  Write (Tok_Right_Paren);
+
+               elsif Kind (Aspect_Definition (W)) = K_Global_Specification then
+                  declare
+                     X : Node_Id;
+                  begin
+                     X := First_Node (Moded_Global_List
+                                        (Aspect_Definition (W)));
+                     while (Present (X)) loop
+                        Write_Space;
+                        Write (Tok_Arrow);
+                        Write_Space;
+                        Write (Tok_Left_Paren);
+                        if Mode_Selector (X) = Mode_In then
+                           Write_Str ("Input => ");
+                        else
+                           raise Program_Error;
+                        end if;
+                        Write (Tok_Left_Paren);
+                        Generate (Defining_Identifier (X));
+                        Write (Tok_Right_Paren);
+                        Write (Tok_Right_Paren);
+                        X := Next_Node (X);
+                     end loop;
+                  end;
+
+               elsif Kind (Aspect_Definition (W)) = K_Initialization_Spec then
+                  declare
+                     X : Node_Id;
+                  begin
+                     X := First_Node (Initialization_List
+                                        (Aspect_Definition (W)));
+                     while (Present (X)) loop
+                        Write_Space;
+                        Write (Tok_Arrow);
+                        Write_Space;
+                        Write (Tok_Left_Paren);
+                        Generate (X);
+                        Write (Tok_Right_Paren);
+                        X := Next_Node (X);
+                        exit when No (W);
+                     end loop;
+                  end;
+
+               elsif Kind (Aspect_Definition (W)) = K_Abstract_State_List then
+                  declare
+                     X : Node_Id;
+                  begin
+                     X := First_Node (State_Name_With_Option
+                                        (Aspect_Definition (W)));
+                     while (Present (X)) loop
+                        Write_Space;
+                        Write (Tok_Arrow);
+                        Write_Space;
+                        Write (Tok_Left_Paren);
+                        Generate (Defining_Identifier (X));
+
+                        if Synchronous (X) or else External (X) then
+                           Write_Space;
+                           Write (Tok_With);
+                           Write_Space;
+
+                           if Synchronous (X) then
+                              Write_Str ("Synchronous");
+                           end if;
+                           if Synchronous (X) and then External (X) then
+                              Write_Str (", ");
+                           end if;
+                           if External (X) then
+                              Write_Str ("External");
+                           end if;
+                        end if;
+
+                        Write (Tok_Right_Paren);
+                        X := Next_Node (X);
+                        exit when No (W);
+                     end loop;
+                  end;
+
+               elsif Kind (Aspect_Definition (W)) = K_Refinement_List then
+                  declare
+                     X : Node_Id;
+                  begin
+                     X := First_Node (Refinement_Clause
+                                        (Aspect_Definition (W)));
+                     while (Present (X)) loop
+                        Write_Space;
+                        Write (Tok_Arrow);
+                        Write_Space;
+                        Write (Tok_Left_Paren);
+                        Generate (State_Name (X));
+
+                        declare
+                           Y : Node_Id;
+                        begin
+                           Y := First_Node (Constituent (X));
+                           if Present (Y) then
+                              Write_Space;
+                              Write (Tok_Arrow);
+                              Write_Eol;
+                              Write_Indentation (9);
+                              Write (Tok_Left_Paren);
+                           end if;
+
+                           while (Present (Y)) loop
+                              Generate (Y);
+                              Y := Next_Node (Y);
+                              exit when No (Y);
+                              Write (Tok_Comma);
+                              Write_Eol;
+                              Write_Indentation (10);
+                           end loop;
+                        end;
+
+                        Write (Tok_Right_Paren);
+                        X := Next_Node (X);
+                        exit when No (W);
+                     end loop;
+                     Write (Tok_Right_Paren);
+                  end;
+
+               end if;
+            end if;
+            W := Next_Node (W);
+
+            exit when No (W);
+            Write (Tok_Comma);
+            Write_Eol;
+            Write_Indentation (5);
+         end loop;
+         Decrement_Indentation;
+         Write_Space;
+      end if;
+   end Generate_Aspect;
 
    ------------------------------
    -- Generate_Type_Conversion --

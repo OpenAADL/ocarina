@@ -1,4 +1,3 @@
-
 .. _installation:
 
 ============
@@ -171,16 +170,13 @@ testing and running regression testing. Such setting is unusual for
 Windows and requires additional tools.
 
 The recommended set of tools for compiling Ocarina under Windows
-(tested on Windows 7) is to
+(tested on Windows 7, as of 2018/02/27) is to
 
-* install Cygwin, and use its terminal for running all compilation scripts
+* install MSYS2, and use its terminal for running all compilation scripts
 
-* install autoconf, automake and GNU Make
+* install autoconf, automake, Python and GNU Make
 
-* install native gcc, this compiler is used for compiling `mknodes`
-
-* install `x86_64-w64-mingw32` gcc tool-chain, this compiler is used
-  to "cross-compile" from cygwin to regular Windows.
+* install `mingw-w64-x86_64-gcc-ada` package, it has GNAT front-end
 
 .. note:: It is highly recommended to rely on the `build_ocarina.sh`
    script for the Windows platform.

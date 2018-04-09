@@ -3,20 +3,81 @@
 -------------------------------------------------
 
 --  pragma Restrictions (No_Obsolescent_Features);        -- 13.12 (4)
---  Disabled for now
-
-pragma Restriction_Warnings (No_Direct_Boolean_Operators);    -- GNAT specific
---  For the use of "and then" and "or else" in boolean operations
+-- Disabled for now, several restriction below are actually obsolete
+-- features :(
 
 pragma Initialize_Scalars;
-
---pragma Profile_Warnings (Ravenscar);
---pragma Restrictions (No_Task_Allocators);
---pragma Restrictions (No_Protected_Types);
 
 --  pragma Restrictions (No_Fixed_Point);
 --  violated by use of GNATColl
 
 --  pragma Restrictions (No_Wide_Characters);
 --  violated in ocarina-backends-utils.adb:2505
---pragma Restrictions (No_Implicit_Heap_Allocations);
+
+pragma Restriction_Warnings (No_Direct_Boolean_Operators);    -- GNAT specific
+--  For the use of "and then" and "or else" in boolean operations
+
+-------------------------------------------------------------------------------
+-- Memory management
+
+pragma Restrictions (Immediate_Reclamation);                     -- [RM H.4]
+pragma Restrictions (No_Access_Parameter_Allocators);            -- [RM H.4]
+pragma Restrictions (No_Coextensions);
+
+-------------------------------------------------------------------------------
+-- Input/Outputs
+
+pragma Restrictions (No_Fixed_Io);                               -- ???
+
+-- Ocarina does not require Ada.Streams
+
+pragma Restrictions (No_Stream_Optimizations);                   -- [GNAT]
+
+-------------------------------------------------------------------------------
+-- Exception-related restriction
+
+-- Note: Ocarina does use exception handlers to recover from internal
+-- errors. The following restrictions apply
+
+pragma Restrictions (No_Exception_Registration);                 -- [GNAT]
+
+-------------------------------------------------------------------------------
+-- Tasking-related restrictions
+
+-- Ocarina does not require tasking
+
+pragma Restrictions (No_Tasking);                                -- [GNAT]
+
+-- As a direct consequence, the following restrictions also apply
+
+pragma Restrictions (Max_Asynchronous_Select_Nesting => 0);     -- [RM D.7]
+pragma Restrictions (Max_Protected_Entries => 0);               -- [RM D.7]
+pragma Restrictions (Max_Select_Alternatives => 0);             -- [RM D.7]
+pragma Restrictions (Max_Task_Entries => 0);                    -- [RM D.7]
+pragma Restrictions (Max_Tasks => 0);                           -- [RM D.7]
+pragma Restrictions (No_Abort_Statements);                      -- [RM D.7]
+pragma Restrictions (No_Asynchronous_Control);                  -- [RM J.13]
+pragma Restrictions (No_Dynamic_Attachment);                    -- [RM D.7]
+pragma Restrictions (No_Dynamic_Priorities);                    -- [RM D.7]
+pragma Restrictions (No_Entry_Calls_In_Elaboration_Code);       -- [GNAT]
+pragma Restrictions (No_Entry_Queue);                           -- [GNAT]
+pragma Restrictions (No_Implicit_Task_Allocations);             -- [GNAT]
+pragma Restrictions (No_Implicit_Protected_Object_Allocations); -- [RM D.7]
+pragma Restrictions (No_Local_Protected_Objects);               -- [RM D.7]
+pragma Restrictions (No_Local_Timing_Events);                   -- [RM D.7]
+pragma Restrictions (No_Protected_Type_Allocators);             -- [RM D.7]
+pragma Restrictions (No_Protected_Types);                       -- [RM D.7]
+pragma Restrictions (No_Relative_Delay);                        -- [RM D.7]
+pragma Restrictions (No_Requeue_Statements);                    -- [RM D.7]
+pragma Restrictions (No_Select_Statements);                     -- [RM D.7]
+pragma Restrictions (No_Task_Allocators);                       -- [RM D.7]
+pragma Restrictions (No_Task_Attributes_Package);               -- [GNAT]
+pragma Restrictions (No_Task_At_Interrupt_Priority);            -- [GNAT]
+pragma Restrictions (No_Task_Hierarchy);                        -- [RM D.7]
+pragma Restrictions (No_Task_Termination);                      -- [RM D.7]
+pragma Restrictions (No_Terminate_Alternatives);                -- [RM D.7]
+pragma Restrictions (No_Specific_Termination_Handlers);         -- [RM D.7]
+pragma Restrictions (Pure_Barriers);                            -- [GNAT]
+pragma Restrictions (Simple_Barriers);                          -- [RM D.7]
+pragma Restrictions (Static_Priorities);                        -- [GNAT]
+pragma Restrictions (Static_Storage_Size);                      -- [GNAT]

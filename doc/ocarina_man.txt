@@ -18,11 +18,12 @@ Usage: ocarina [switches] <aadl_files>
  -x                   Parse AADL file as an AADL scenario file
  -g ARG               Generate code using Ocarina backend 'ARG'
  --list-backends      List available backends
+ --spark2014          Generate SPARK2014 annotations
  -b                   Compile generated code
  -z                   Clean code generated
  -k ARG               Set POK flavor (arinc653/deos/pok/vxworks)
  -t                   Run Ocarina in terminal interactive mode
- -real_theorem ARG    Name of the main theorem to evaluate
+ -real_theorem ARG    Name of the main REAL theorem to evaluate
  -real_lib ARG        Add external library of REAL theorems
  -real_continue_eval  Continue evaluation of REAL theorems after first failure (REAL backend)
  -boundt_process ARG  Generate .tpo file for process ARG (Bound-T backend)

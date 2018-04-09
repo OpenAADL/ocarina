@@ -1,12 +1,12 @@
 property set Taste is
    Interface_Coordinates : aadlstring applies to (subprogram access, bus access);
 
-   Coordinates : aadlstring applies to 
+   Coordinates : aadlstring applies to
 		(system, package, device, memory, processor, process, access,
        subprogram access, connection, bus, virtual bus, feature group);
 
-   Fill_Color : aadlstring applies to 
-		(system, device, processor, process, bus); 
+   Fill_Color : aadlstring applies to
+   (system, device, processor, process, bus);
 
    HWLibraries : list of aadlstring applies to(package);
 
@@ -33,16 +33,16 @@ property set Taste is
        achoice,
        aoctetstring,
        astring);
-         
+
    ASN1_Basic_Type : Taste::ASN1_types applies to (data);
 
 FS_Default_Value : aadlstring applies to (data);
 
 	Deadline : inherit Time => Period
-	applies to (thread, 
+	applies to (thread,
               thread group,
-              process, 
-              system, 
+              process,
+              system,
               device,
 				  subprogram access);
 
@@ -71,7 +71,7 @@ Max_Interrupt_Priority_Value : constant aadlinteger => 31;
 --     process);
 
 --  Interrupt_Priority :  aadlinteger
---    value(Min_Interrupt_Priority_Value) .. value 
+--    value(Min_Interrupt_Priority_Value) .. value
 --        (Max_Interrupt_Priority_Value) applies to
 --    (thread,
 --     thread group,
@@ -99,7 +99,7 @@ Frequency : type aadlinteger 0 Hz .. Max_Aadlinteger
 ---------------
 
 Criticality : Taste::Criticality_Level_Type applies to (process, system);
-Local_Scheduling_Policy : Supported_Scheduling_Protocols 
+Local_Scheduling_Policy : Supported_Scheduling_Protocols
   applies to (process, system);
 Time_Budget : aadlinteger applies to (process, system);
 Budget_Replenishment_Period : Time applies to (process, system);
@@ -195,22 +195,22 @@ Access_Bandwidth : Data_Volume applies to (bus);
 
 RCMoperation:  classifier(subprogram) applies to (event port, event data port);
 
-RCMoperationKind_list: type enumeration 
-  (cyclic, 
-   sporadic, 
-   variator, 
-   protected, 
-   transaction, 
-   barrier, 
-   unprotected, 
-   deferred, 
-   immediate, 
+RCMoperationKind_list: type enumeration
+  (cyclic,
+   sporadic,
+   variator,
+   protected,
+   transaction,
+   barrier,
+   unprotected,
+   deferred,
+   immediate,
    any);
 
-RCMoperationKind: Taste::RCMoperationKind_list 
+RCMoperationKind: Taste::RCMoperationKind_list
   applies to (event port, event data port, access, subprogram access);
 
-RCMceiling: aadlinteger 
+RCMceiling: aadlinteger
   applies to (event port, event data port);
 
 RCMperiod: Time applies to (event port, event data port, access, subprogram access);

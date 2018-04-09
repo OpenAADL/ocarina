@@ -18,6 +18,7 @@ Usage: ocarina [switches] <aadl_files>
  -x                   Parse AADL file as an AADL scenario file
  -g ARG               Generate code using Ocarina backend 'ARG'
  --list-backends      List available backends
+ --spark2014          Generate SPARK2014 annotations
  -b                   Compile generated code
  -z                   Clean code generated
  -k ARG               Set POK flavor (arinc653/deos/pok/vxworks)

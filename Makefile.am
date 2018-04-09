@@ -19,20 +19,20 @@ test-suite-internal:
 	    && path_conv="@CYGPATH_W@" path_sep="@PATH_SEP@" \
 	       $(top_srcdir)/autotest.sh --tests \
 	    && (test '$(CLEAR_AT_TEST_END)' = yes \
-	        && clear \
-	        && echo "TESTSUITE SUCCESSFULLY PASSED" \
-	        && echo "TESTED: `which ocarina`" \
-                && sleep 5 || true) || exit 1;\
+		&& clear \
+		&& echo "TESTSUITE SUCCESSFULLY PASSED" \
+		&& echo "TESTED: `which ocarina`" \
+		&& sleep 5 || true) || exit 1;\
 	  fi; \
 	  if test -x '$(top_srcdir)/../autotest.sh'; then \
 	    PATH="$(DESTDIR)$(bindir):$$PATH" \
 	    && path_conv="@CYGPATH_W@" path_sep="@PATH_SEP@" \
 	       $(top_srcdir)/../autotest.sh --tests \
 	    && (test '$(CLEAR_AT_TEST_END)' = yes \
-	        && clear \
-	        && echo "TESTSUITE SUCCESSFULLY PASSED" \
-	        && echo "TESTED: `which ocarina`"\
-	        && sleep 5 || true) || exit 1;\
+		&& clear \
+		&& echo "TESTSUITE SUCCESSFULLY PASSED" \
+		&& echo "TESTED: `which ocarina`"\
+		&& sleep 5 || true) || exit 1;\
 	  fi; \
 	fi
 
@@ -41,6 +41,12 @@ tests::
 
 examples::
 	@$(MAKE) -C resources/runtime maybe-check-runtimes
+
+gnatcheck::
+	@$(MAKE) -C projects gnatcheck
+
+gnatmetric::
+	@$(MAKE) -C projects gnatmetric
 
 check-local: install
 	@$(MAKE) test-suite
@@ -66,4 +72,4 @@ release:
 
 # We disable checking of the distclean rule, it is a nuisance
 distcleancheck:
-        @:
+	@:

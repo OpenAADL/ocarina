@@ -36,8 +36,8 @@ AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
 	$(srcdir)/AADLv2/transformations.aadl
 
 AADL_V2_COMPONENTS = $(srcdir)/AADLv2/components/*.aadl \
-                     $(srcdir)/AADLv2/components/devices/*.aadl \
-                     $(srcdir)/AADLv2/components/processors/*.aadl
+		     $(srcdir)/AADLv2/components/devices/*.aadl \
+		     $(srcdir)/AADLv2/components/processors/*.aadl
 
 EXTRA_DIST = $(AADL_COMMON_PROPERTIES) \
 	$(AADL_V1_PROPERTIES) \

@@ -6,7 +6,7 @@
 --                                                                          --
 --                              P r o j e c t                               --
 --                                                                          --
---    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2007-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -50,10 +50,12 @@ project Ocarina.Main is
    package Compiler renames Ocarina.Compiler;
    package Binder renames Ocarina.Binder;
    package Linker renames Ocarina.Linker;
+   package Check renames Ocarina.Check;
 
    package Builder is
       for Executable ("ocarina_cmd.adb") use "ocarina";
       for Default_Switches ("Ada") use
         Ocarina.Builder'Default_Switches ("Ada");
    end Builder;
+
 end Ocarina.Main;
