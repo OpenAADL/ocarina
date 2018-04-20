@@ -14,7 +14,8 @@ public
   with ocarina_drivers_rasta_serial;
   with ocarina_drivers_rasta_spacewire;
   with ocarina_drivers_rtems_ne2000;
-
+  with ocarina_drivers_grspw_packet;
+  
   with ocarina_drivers_star_dundee_spacewire_brick;
 
   with ocarina_drivers_udp_exarm;
@@ -202,6 +203,14 @@ public
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end rasta_spacewire.pohic;
 
+  device implementation rasta_spacewire.grspw_pohic
+  properties
+    Deployment::Driver_Name       => "spacewire_rasta";
+    Device_Driver                 => classifier (ocarina_drivers_grspw_packet::grspw_packet_driver.rasta);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_grspw_packet::spg_grspw_packet_init_rasta);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end rasta_spacewire.grspw_pohic;
+
   device implementation rasta_spacewire.pohiada
   properties
     Deployment::Driver_Name       => "spacewire_rasta";
@@ -209,7 +218,6 @@ public
     Initialize_Entrypoint => classifier (GRSPW::Initialize);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end rasta_spacewire.pohiada;
-
 
   ---------------------
   -- SCOC3 SPACEWIRE --
