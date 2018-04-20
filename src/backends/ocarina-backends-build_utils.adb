@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -293,6 +293,7 @@ package body Ocarina.Backends.Build_Utils is
       procedure Visit_Virtual_Bus_Instance (E : Node_Id);
       procedure Visit_Data_Instance (E : Node_Id);
       procedure Visit_Abstract_Instance (E : Node_Id);
+      procedure Visit_Device_Instance (E : Node_Id);
 
       procedure Build_Architecture_Instance (E : Node_Id);
       procedure Build_Component_Instance (E : Node_Id);
@@ -587,11 +588,30 @@ package body Ocarina.Backends.Build_Utils is
 
                   Get_Name_String (Source_Files (J));
 
+                  --  The path to the source file is deduced from the
+                  --  path of the AADL entity definition
+
                   Split_Path
                     (Source_Files (J),
                      Loc (E).Dir_Name,
                      Source_Basename,
                      Source_Dirname);
+
+                  --  If the directory points to the default AADL
+                  --  property set directory (case of PolyORB-HI/C
+                  --  provided driver), then we adjust the path to
+                  --  point to the corresponding default installation
+                  --  directory: PolyORB-HI/C runtime directory.
+
+                  if Source_Dirname = Default_Library_Path then
+                     Source_Dirname := Get_String_Name
+                       (Get_Runtime_Path ("polyorb-hi-c"));
+                     Source_Dirname :=
+                       Add_Directory_Separator (Source_Dirname);
+                     Get_Name_String (Source_Dirname);
+                     Add_Str_To_Name_Buffer ("src/");
+                     Source_Dirname := Name_Find;
+                  end if;
 
                   if Custom_Source_Dir /= No_Name then
                      Source_Dirname := Custom_Source_Dir;
@@ -822,6 +842,9 @@ package body Ocarina.Backends.Build_Utils is
             when CC_Virtual_Bus =>
                Visit_Virtual_Bus_Instance (E);
 
+            when CC_Device =>
+               Visit_Device_Instance (E);
+
             when CC_Data =>
                Visit_Data_Instance (E);
 
@@ -897,6 +920,30 @@ package body Ocarina.Backends.Build_Utils is
             Name_Tables.Append (M.Asn_Sources, Source);
          end if;
       end Visit_Data_Instance;
+
+      ---------------------------
+      -- Visit_Device_Instance --
+      ---------------------------
+
+      procedure Visit_Device_Instance (E : Node_Id) is
+         SC : Node_Id;
+      begin
+         if Get_Implementation (E) /= No_Node then
+            Visit (Get_Implementation (E));
+         end if;
+
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            SC := First_Node (Subcomponents (E));
+
+            while Present (SC) loop
+               --  Visit the corresponding instance of SC
+
+               Visit (Corresponding_Instance (SC));
+
+               SC := Next_Node (SC);
+            end loop;
+         end if;
+      end Visit_Device_Instance;
 
       --------------------------------
       -- Visit_Virtual_Bus_Instance --
@@ -1055,6 +1102,8 @@ package body Ocarina.Backends.Build_Utils is
          --  than the current process to find the file
          --  that contains the configuration of the device.
 
+         --  XXX dubious, we do not check processor bindings
+
          if not AAU.Is_Empty (Subcomponents (The_System)) then
             C := First_Node (Subcomponents (The_System));
             while Present (C) loop
@@ -1112,9 +1161,9 @@ package body Ocarina.Backends.Build_Utils is
       ---------------------------
 
       procedure Visit_Thread_Instance (E : Node_Id) is
-         Parent_Process : constant Node_Id :=
-           Corresponding_Instance (Get_Container_Process (E));
-         M : constant Makefile_Type := Makefiles.Get (Parent_Process);
+         Parent_Process : Node_Id;
+
+         M : Makefile_Type;
          Compute_Entrypoint    : Name_Id;
          Initialize_Entrypoint : constant Name_Id       :=
            Get_Thread_Initialize_Entrypoint (E);
@@ -1124,6 +1173,15 @@ package body Ocarina.Backends.Build_Utils is
          Spg_Call     : Node_Id;
          F            : Node_Id;
       begin
+         if Present (Get_Container_Process (E)) then
+            Parent_Process :=
+              Corresponding_Instance (Get_Container_Process (E));
+         else
+            Parent_Process := Current_Process; --  XXX
+         end if;
+
+         M := Makefiles.Get (Parent_Process);
+
          --  If the thread implementation is in C, we need to update
          --  the makefile structure.
 
@@ -1199,8 +1257,12 @@ package body Ocarina.Backends.Build_Utils is
          if Force_Parent /= No_Node then
             Parent_Process := Force_Parent;
          else
-            Parent_Process :=
-              Corresponding_Instance (Get_Container_Process (E));
+            if Present (Get_Container_Process (E)) then
+               Parent_Process :=
+                 Corresponding_Instance (Get_Container_Process (E));
+            else
+               Parent_Process := Current_Process; --  XXX
+            end if;
          end if;
 
          M := Makefiles.Get (Parent_Process);
@@ -1953,7 +2015,8 @@ package body Ocarina.Backends.Build_Utils is
                   end if;
 
                   Write_Char (ASCII.HT);
-                  Write_Str ("$(CC) -c $(INCLUDE) $(CFLAGS) ");
+                  Write_Str ("$(CC) -c $(INCLUDE) $(CFLAGS) " &
+                               "-I$(RUNTIME_PATH)/include");
 
                   if Include_Dir /= No_Name then
                      Write_Str ("-I");
