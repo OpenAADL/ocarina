@@ -35,6 +35,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.Backends.Ada_Values;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Properties;
@@ -54,6 +55,7 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
    use Ocarina.Backends.Ada_Tree.Nutils;
    use Ocarina.Backends.PO_HI_Ada.Mapping;
    use Ocarina.Backends.PO_HI_Ada.Runtime;
+   use Ocarina.Backends.Ada_Values;
 
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package ADN renames Ocarina.Backends.Ada_Tree.Nodes;
@@ -510,6 +512,8 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
          Alternatives : constant List_Id := New_List (ADN.K_List_Id);
          N            : Node_Id;
          T            : Node_Id;
+         Msg_T : Node_Id;
+
       begin
          pragma Assert (AAU.Is_Process (E));
 
@@ -540,20 +544,36 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
             Append_Node_To_List (N, Declarations);
 
             N :=
+              Make_Range_Constraint
+                (Make_Literal (New_Integer_Value (1, 1, 10)),
+                 Make_Subprogram_Call
+                   (RE (RE_Size),
+                   Make_List_Id (Make_Defining_Identifier (PN (P_Message)))));
+
+            Msg_T :=
+              Make_Subprogram_Call
+                (RE (RE_Stream_Element_Array),
+                 Make_List_Id (N));
+
+            N :=
               Make_Object_Declaration
                 (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
-                 Constant_Present    => True,
-                 Object_Definition   => RE (RE_Stream_Element_Array),
-                 Expression          =>
-                   Make_Subprogram_Call
-                     (RE (RE_Encapsulate),
-                      Make_List_Id
-                        (Make_Defining_Identifier (PN (P_Message)),
-                         Make_Defining_Identifier (PN (P_From)),
-                         Make_Defining_Identifier (PN (P_Entity)))));
+                 Constant_Present    => False,
+                 Object_Definition   => Msg_T);
             Append_Node_To_List (N, Declarations);
 
             --  Statements
+
+            --  Call Encapsulate
+
+            N := Make_Subprogram_Call
+              (RE (RE_Encapsulate),
+               Make_List_Id
+                 (Make_Defining_Identifier (PN (P_Message)),
+                  Make_Defining_Identifier (PN (P_From)),
+                  Make_Defining_Identifier (PN (P_Entity)),
+                  Make_Defining_Identifier (PN (P_Msg))));
+            Append_Node_To_List (N, Statements);
 
             --  The if/elsif statement: for each thread of the current
             --  process, we generate a case statement alternative to
