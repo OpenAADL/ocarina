@@ -1,28 +1,39 @@
 package ocarina_drivers_grspw_packet
 public
 
+  -- This driver works for RTEMS 5 (presumably RTEMS 4.11) based on
+  -- drvmgr driver subsystem, using GRSPW Packet driver.
+  --
+  -- See Chapter 18 of RCC 1.3 manual
+
   with ocarina_buses;
   with Deployment;
 
   subprogram spg_grspw_packet_poller_rasta
   properties
     Source_Language => (C);
-    Source_Name => "__po_hi_c_driver_grspw_packet_rasta_poller";
-    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c", "config.c", "grspw_pkt_lib.c");
+    Source_Name => "__po_hi_c_driver_drvmgr_grspw_poller";
+    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c",
+    "po_hi_driver_drvmgr_common.c", "grspw_pkt_lib.c",
+    "po_hi_driver_rtems_drvmgr_spacewire.c");
   end spg_grspw_packet_poller_rasta;
 
   subprogram spg_grspw_packet_sender_rasta
   properties
     Source_Language => (C);
-    Source_Name => "__po_hi_c_driver_grspw_packet_rasta_sender";
-    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c", "config.c", "grspw_pkt_lib.c");
+    Source_Name => "__po_hi_c_driver_drvmgr_grspw_sender";
+    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c",
+    "po_hi_driver_drvmgr_common.c", "grspw_pkt_lib.c",
+    "po_hi_driver_rtems_drvmgr_spacewire.c");
   end spg_grspw_packet_sender_rasta;
 
   subprogram spg_grspw_packet_init_rasta
   properties
     Source_Language => (C);
-    Source_Name => "__po_hi_c_driver_grspw_packet_rasta_init";
-    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c", "config.c", "grspw_pkt_lib.c");
+    Source_Name => "__po_hi_c_driver_drvmgr_grspw_init";
+    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c",
+    "po_hi_driver_drvmgr_common.c", "grspw_pkt_lib.c",
+    "po_hi_driver_rtems_drvmgr_spacewire.c");
   end spg_grspw_packet_init_rasta;
 
   thread grspw_packet_poller
