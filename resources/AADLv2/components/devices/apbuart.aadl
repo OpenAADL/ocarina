@@ -1,0 +1,63 @@
+package ocarina_drivers_apbuart_serial
+public
+
+  -- This driver works for RTEMS 5 (presumably RTEMS 4.11) based on
+  -- drvmgr driver subsystem, using APBUART driver.
+  --
+  -- See Chapter 33 of RCC 1.3 manual
+
+   with Deployment;
+   with ocarina_buses;
+   with ocarina_drivers;
+
+   subprogram spg_serial_poller
+   properties
+     Source_Language => (C);
+     Source_Name => "__po_hi_c_driver_rtems_drvmgr_serial_poller";
+     Source_Text => ("po_hi_driver_drvmgr_common.c",
+                     "po_hi_driver_rtems_drvmgr_serial.c");
+   end spg_serial_poller;
+
+   subprogram spg_serial_sender
+   properties
+     Source_Language => (C);
+     Source_Name => "__po_hi_c_driver_rtems_drvmgr_serial_sender";
+     Source_Text => ("po_hi_driver_drvmgr_common.c",
+                     "po_hi_driver_rtems_drvmgr_serial.c");
+   end spg_serial_sender;
+
+   subprogram spg_serial_init
+   properties
+     Source_Language => (C);
+     Source_Name => "__po_hi_c_driver_rtems_drvmgr_serial_init";
+     Source_Text => ("po_hi_driver_drvmgr_common.c",
+                     "po_hi_driver_rtems_drvmgr_serial.c");
+   end spg_serial_init;
+
+   thread serial_poller
+   end serial_poller;
+
+   thread implementation serial_poller.impl
+   calls
+     mycall : {
+      pspg : subprogram spg_serial_poller;
+    };
+   properties
+     Period => 1ms;
+     Dispatch_Protocol => Background;
+   end serial_poller.impl;
+
+abstract serial_driver
+properties
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_serial);
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
+end serial_driver;
+
+abstract implementation serial_driver.impl
+subcomponents
+   receiver_apbuart_serial : thread serial_poller.impl;
+   sender                : subprogram spg_serial_sender;
+end serial_driver.impl;
+
+end ocarina_drivers_apbuart_serial;

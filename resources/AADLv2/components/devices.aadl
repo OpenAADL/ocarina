@@ -15,6 +15,8 @@ public
   with ocarina_drivers_rasta_spacewire;
   with ocarina_drivers_rtems_ne2000;
   with ocarina_drivers_grspw_packet;
+  with ocarina_drivers_apbuart_serial;
+  with ocarina_drivers_greth;
 
   with ocarina_drivers_star_dundee_spacewire_brick;
 
@@ -95,6 +97,13 @@ public
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end leon_ethernet.raw;
 
+  device implementation leon_ethernet.greth
+  properties
+    Deployment::Driver_Name    => "greth";
+    Device_Driver              => classifier (ocarina_drivers_greth::eth_driver.leon);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_greth::spg_greth_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end leon_ethernet.greth;
 
   ------------------
   -- RASTA SERIAL --
@@ -160,6 +169,14 @@ public
     Initialize_Entrypoint      => classifier (ocarina_drivers_rasta_serial::spg_serial_init_rasta);
     Provided_Virtual_Bus_Class => (classifier (ocarina_buses::raw.i));
   end rasta_serial.raw;
+
+  device implementation rasta_serial.apbuart_drvmgr
+  properties
+    Deployment::Driver_Name    => "apbuart_serial";
+    Device_Driver              => classifier (ocarina_drivers_apbuart_serial::serial_driver.impl);
+    Initialize_Entrypoint      => classifier (ocarina_drivers_apbuart_serial::spg_serial_init);
+    Provided_Virtual_Bus_Class => (classifier (ocarina_buses::raw.i));
+  end rasta_serial.apbuart_drvmgr;
 
   device implementation rasta_serial.pohiada
   properties
