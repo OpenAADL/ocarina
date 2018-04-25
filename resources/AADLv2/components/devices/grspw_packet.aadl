@@ -1,0 +1,65 @@
+package ocarina_drivers_grspw_packet
+public
+
+  -- This driver works for RTEMS 5 (presumably RTEMS 4.11) based on
+  -- drvmgr driver subsystem, using GRSPW Packet driver.
+  --
+  -- See Chapter 18 of RCC 1.3 manual
+
+  with ocarina_buses;
+  with Deployment;
+
+  subprogram spg_grspw_packet_poller_rasta
+  properties
+    Source_Language => (C);
+    Source_Name => "__po_hi_c_driver_drvmgr_grspw_poller";
+    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c",
+    "po_hi_driver_drvmgr_common.c", "grspw_pkt_lib.c",
+    "po_hi_driver_rtems_drvmgr_spacewire.c");
+  end spg_grspw_packet_poller_rasta;
+
+  subprogram spg_grspw_packet_sender_rasta
+  properties
+    Source_Language => (C);
+    Source_Name => "__po_hi_c_driver_drvmgr_grspw_sender";
+    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c",
+    "po_hi_driver_drvmgr_common.c", "grspw_pkt_lib.c",
+    "po_hi_driver_rtems_drvmgr_spacewire.c");
+  end spg_grspw_packet_sender_rasta;
+
+  subprogram spg_grspw_packet_init_rasta
+  properties
+    Source_Language => (C);
+    Source_Name => "__po_hi_c_driver_drvmgr_grspw_init";
+    Source_Text => ("grspw_api.c", "spwrouter_custom_config.c",
+    "po_hi_driver_drvmgr_common.c", "grspw_pkt_lib.c",
+    "po_hi_driver_rtems_drvmgr_spacewire.c");
+  end spg_grspw_packet_init_rasta;
+
+  thread grspw_packet_poller
+  end grspw_packet_poller;
+
+  thread implementation grspw_packet_poller.rasta
+  calls
+    mycall : {
+    pspg : subprogram spg_grspw_packet_poller_rasta;
+    };
+  properties
+    Period => 1 ms;
+    Dispatch_Protocol => Background;
+  end grspw_packet_poller.rasta;
+
+  abstract grspw_packet_driver
+  properties
+    Deployment::Version  => "0.1beta";
+    Deployment::Help     => "Write your ASN.1 configuration here";
+    Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_spacewire);
+  end grspw_packet_driver;
+
+  abstract implementation grspw_packet_driver.rasta
+  subcomponents
+    receiver_rasta_grspw_packet : thread grspw_packet_poller.rasta;
+    sender                   : subprogram spg_grspw_packet_sender_rasta;
+  end grspw_packet_driver.rasta;
+
+end ocarina_drivers_grspw_packet;
