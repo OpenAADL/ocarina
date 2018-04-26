@@ -47,3 +47,4 @@ src/python/ocarina-me_aadl-aadl_tree-nodes-python.ads
 src/python/ocarina_me_aadl_aadl_instances_nodes.py
 src/python/ocarina_me_aadl_aadl_tree_nodes.py
 resources/sedscript
+projects-distrib/ocarina/ocarina_core.gpr
