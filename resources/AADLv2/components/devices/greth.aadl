@@ -1,0 +1,69 @@
+package ocarina_drivers_greth
+public
+
+with Deployment;
+with ocarina_buses;
+with ocarina_drivers;
+
+  -- This driver works for RTEMS 5 (presumably RTEMS 4.11) based on
+  -- drvmgr driver subsystem, using GRETH driver.
+  --
+  -- No chapter in RCC 1.3 manual
+
+subprogram spg_greth_poller
+properties
+	Source_Language => (C);
+	Source_Name => "__po_hi_c_driver_rtems_drvmgr_ethernet_poller";
+     Source_Text => ("po_hi_driver_drvmgr_common.c",
+                     "po_hi_driver_rtems_drvmgr_ethernet.c");
+end spg_greth_poller;
+
+
+subprogram spg_greth_sender
+properties
+	Source_Language => (C);
+	Source_Name => "__po_hi_c_driver_rtems_drvmgr_ethernet_sender";
+     Source_Text => ("po_hi_driver_drvmgr_common.c",
+                     "po_hi_driver_rtems_drvmgr_ethernet.c");
+end spg_greth_sender;
+
+subprogram spg_greth_init
+properties
+	Source_Language => (C);
+	Source_Name => "__po_hi_c_driver_rtems_drvmgr_ethernet_init";
+     Source_Text => ("po_hi_driver_drvmgr_common.c",
+                     "po_hi_driver_rtems_drvmgr_ethernet.c");
+end spg_greth_init;
+
+thread thr_poller
+end thr_poller;
+
+
+thread implementation thr_poller.i
+calls
+	mycall : {
+	  pspg : subprogram spg_greth_poller;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end thr_poller.i;
+
+abstract eth_driver
+properties
+   Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_ip);
+   Deployment::Version  => "0.1beta";
+   Deployment::Help     => "Write your ASN.1 configuration here";
+end eth_driver;
+
+abstract implementation eth_driver.leon
+subcomponents
+   sender                : subprogram spg_greth_sender;
+end eth_driver.leon;
+
+abstract implementation eth_driver.leon_sender
+subcomponents
+   sender                : subprogram spg_greth_sender;
+end eth_driver.leon_sender;
+
+end ocarina_drivers_greth;
