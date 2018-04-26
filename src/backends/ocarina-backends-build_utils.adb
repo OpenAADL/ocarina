@@ -2016,7 +2016,7 @@ package body Ocarina.Backends.Build_Utils is
 
                   Write_Char (ASCII.HT);
                   Write_Str ("$(CC) -c $(INCLUDE) $(CFLAGS) " &
-                               "-I$(RUNTIME_PATH)/include");
+                               "-I$(RUNTIME_PATH)/include ");
 
                   if Include_Dir /= No_Name then
                      Write_Str ("-I");
