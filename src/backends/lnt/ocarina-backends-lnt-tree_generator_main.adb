@@ -469,7 +469,6 @@ package body Ocarina.Backends.LNT.Tree_Generator_Main is
           Make_Identifier ("LNT_Channel_Dispatch"),
           Aux_N_Activation_2));
       if Is_Not_Periodic then
-         Put_Line ("I am sporadic ");
          N_Event_Name := New_Identifier (
               Remove_Prefix_From_Name (
               " ", Get_String_Name (Integer'Image (Index))),
