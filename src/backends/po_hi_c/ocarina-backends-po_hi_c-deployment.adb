@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1650,7 +1650,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                       (CTN.Global_Port_Node (Backend_Node (Identifier (F))))
                   then
 
-                     N := (Make_Literal (CV.New_Int_Value (0, 0, 10)));
+                     N := (Make_Literal (CV.New_Int_Value (-1, 0, 10)));
 
                      Used_Bus := Get_Associated_Bus (F);
 

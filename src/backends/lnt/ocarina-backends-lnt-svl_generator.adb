@@ -66,6 +66,9 @@ package body Ocarina.Backends.LNT.Svl_Generator is
 
    procedure Make_Demo_Svl is
    begin
+      Write_Str ("% DEFAULT_MCL_LIBRARIES=");
+      Write_Quoted_Str ("standard.mcl");
+      Write_Line ("");
       --  LTS generation
       Write_Quoted_Str ("Main.bcg");
       Write_Str ("=  divbranching reduction of ");
@@ -83,28 +86,118 @@ package body Ocarina.Backends.LNT.Svl_Generator is
       Decrement_Indentation;
       Write_Indentation;
       Write_Line ("end property;");
-      --  adding deadlock property
-      Write_Line ("property Scheduling_Test (ID) is");
+
+      --  adding Scheduling_Test property
+      Write_Line ("property Scheduling_Test (ID)");
       Increment_Indentation;
       Write_Indentation;
-      Write_Quoted_Str ("Main_$ID.bcg");
-      Write_Str ("=");
+      Write_Quoted_Str ("Scheduling Test ");
+      Write_Line ("is");
       Write_Quoted_Str ("Main.bcg");
-      Write_Line ("|=");
+      Write_Line ("|= with evaluator3");
       Write_Indentation;
-      Write_Str ("[ true* . ");
+      Write_Str ("NEVER (");
       Write_Quoted_Str ("ACTIVATION_$ID !T_Error");
-      Write_Line (" ] false;");
+      Write_Line (");");
       Write_Indentation;
       Write_Line ("expected TRUE;");
       Decrement_Indentation;
       Write_Indentation;
       Write_Line ("end property;");
 
-      --  for I in 1 .. Thread_Number loop
-      --  Write_Line ("check Scheduling_Test (" & Integer'Image (I) & ");");
-      --  end loop;
+      for I in 1 .. Thread_Number loop
+         Write_Line ("check Scheduling_Test (" & Integer'Image (I) & ");");
+      end loop;
 
+      --  adding Connection property
+      Write_Line ("property Connection (ID)");
+      Increment_Indentation;
+      Write_Indentation;
+      Write_Quoted_Str ("Connection Test ");
+      Write_Line ("is");
+      Write_Quoted_Str ("Main.bcg");
+      Write_Line ("|= with evaluator3");
+      Write_Indentation;
+      Write_Str ("AFTER_1_INEVITABLE_2 ");
+      Write_Str ("('SEND_$ID !*' , 'RECEIVE_$ID !*')");
+      Write_Line (";");
+      Write_Indentation;
+      Write_Line ("expected TRUE;");
+      Decrement_Indentation;
+      Write_Indentation;
+      Write_Line ("end property;");
+
+      --  adding Is_Preempted property
+      Write_Line ("property Is_Preempted (ID)");
+      Increment_Indentation;
+      Write_Indentation;
+      Write_Quoted_Str ("Is_Preempted Test ");
+      Write_Line ("is");
+      Write_Quoted_Str ("Main.bcg");
+      Write_Line ("|= with evaluator3");
+      Write_Indentation;
+      Write_Str ("SOME (");
+      Write_Str ("true* .");
+      Write_Quoted_Str ("ACTIVATION_$ID !T_DISPATCH_PREEMPTION");
+      Write_Str (". true* . (");
+      Write_Quoted_Str ("ACTIVATION_$ID !T_PREEMPTION");
+      Write_Str (")* . true* . ");
+      Write_Quoted_Str ("ACTIVATION_$ID !T_PREEMPTION_COMPLETION");
+      Write_Line (");");
+      Write_Indentation;
+      Write_Line ("expected TRUE;");
+      Decrement_Indentation;
+      Write_Indentation;
+      Write_Line ("end property;");
+
+      for I in 1 .. Thread_Number loop
+         Write_Line ("check Is_Preempted (" & Integer'Image (I) & ");");
+      end loop;
+
+      --  adding Data_Loss property
+      Write_Line ("property Data_Loss (ID)");
+      Increment_Indentation;
+      Write_Indentation;
+      Write_Quoted_Str ("Between two consecutive SEND_$ID actions," &
+         " there is a RECEIVE_$ID");
+      Write_Line (" is");
+      Write_Quoted_Str ("Main.bcg");
+      Write_Line ("|= with evaluator3");
+      Write_Indentation;
+      Write_Str ("NEVER (");
+      Write_Str ("true* .");
+      Write_Quoted_Str ("SEND_$ID !AADLDATA");
+      Write_Str (". (not");
+      Write_Quoted_Str ("RECEIVE_$ID !AADLDATA");
+      Write_Str (")* .");
+      Write_Quoted_Str ("SEND_$ID !AADLDATA");
+      Write_Line (");");
+      Write_Indentation;
+      Write_Line ("expected TRUE;");
+      Decrement_Indentation;
+      Write_Indentation;
+      Write_Line ("end property;");
+
+      --  adding Transition property
+      Write_Line ("property Transition (TH_NAME, Si, Sj)");
+      Increment_Indentation;
+      Write_Indentation;
+      Write_Quoted_Str ("Thread $TH_NAME, being in state $Si," &
+         " the corresponding $Sj state is eventually reachable");
+      Write_Line (" is");
+      Write_Quoted_Str ("Main.bcg");
+      Write_Line ("|= with evaluator3");
+      Write_Indentation;
+      Write_Str ("AFTER_1_INEVITABLE_2 (");
+      Write_Quoted_Str ("DISPLAY_STATE !$TH_NAME !$Si");
+      Write_Str (",");
+      Write_Quoted_Str ("DISPLAY_STATE !$TH_NAME !$Sj");
+      Write_Line (");");
+      Write_Indentation;
+      Write_Line ("expected TRUE;");
+      Decrement_Indentation;
+      Write_Indentation;
+      Write_Line ("end property;");
    end Make_Demo_Svl;
 
 end Ocarina.Backends.LNT.Svl_Generator;

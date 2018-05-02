@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -3318,7 +3318,8 @@ package body Ocarina.Backends.Utils is
 
          while Present (S) loop
             if Kind (S) = K_Connection_Instance
-              and then Get_Category_Of_Connection (S) = CT_Access_Bus
+              and then (Get_Category_Of_Connection (S) = CT_Access_Bus
+                          or else Get_Category_Of_Connection (S) = CT_Access)
             then
                Device := Item (First_Node (Path (Destination (S))));
 
@@ -3377,7 +3378,8 @@ package body Ocarina.Backends.Utils is
 
          while Present (S) loop
             if Kind (S) = K_Connection_Instance
-              and then Get_Category_Of_Connection (S) = CT_Access_Bus
+              and then (Get_Category_Of_Connection (S) = CT_Access_Bus
+                          or else Get_Category_Of_Connection (S) = CT_Access)
             then
                if True
                   --  This device is connected to the bus
