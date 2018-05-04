@@ -80,6 +80,7 @@ package Ocarina.Backends.Properties is
       Language_System_C,
       Language_VDM,
       Language_VHDL,
+      Language_MicroPython,
       Language_None);
 
    type Supported_Scheduling_Protocol is
