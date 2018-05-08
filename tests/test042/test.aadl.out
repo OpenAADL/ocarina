@@ -254,6 +254,7 @@ property set Ocarina_Config is
   Needed_Property_Sets : list of aadlstring
     applies to (system);
 
+  Ocarina_Driver_Library : constant list of aadlstring => ("devices.aadl", "buses", "base_types", "exarm-ni-6071e-analog.aadl", "grspw.aadl", "rasta-serial.aadl", "sockets-rtems-ne2000.aadl", "exarm-ni-6071e-digital.aadl", "gruart.aadl", "rasta-spacewire.aadl", "tcp_protocol.aadl", "generic-keyboard.aadl", "leon-eth.aadl", "scoc3-spacewire.aadl", "udp-exarm.aadl", "generic_bus.aadl", "leon-serial.aadl", "sd-spw-usb.aadl", "generic_native.aadl", "native_uart.aadl", "serial-raw.aadl", "gr_cpci_x4cv.aadl", "rasta-1553.aadl", "sockets-raw.aadl", "grspw_packet.aadl", "apbuart.aadl", "greth.aadl");
   Root_System_Name : aadlstring
     applies to (system);
 
