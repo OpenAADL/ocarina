@@ -46,8 +46,6 @@ with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
 with Ocarina.Processor.Properties;
 
-with Ada.Text_IO;
-
 package body Ocarina.Analyzer.AADL.Semantics is
 
    use Errors;
@@ -62,8 +60,6 @@ package body Ocarina.Analyzer.AADL.Semantics is
    use Ocarina.ME_AADL.AADL_Tree.Entities;
    use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
    use Ocarina.Processor.Properties;
-
-   use Ada.Text_IO;
 
    function Check_Classifier_Matching_Rule
      (Source_Type      : Node_Id;
@@ -1178,18 +1174,12 @@ package body Ocarina.Analyzer.AADL.Semantics is
             if Source_Type = Destination_Type then
                Success := True;
             else
-               Put_Line ("Source_Type");
-               Put_Line (Get_Name_String
-                         (Display_Name (Identifier (Source_Type))));
-               Put_Line ("Destination_Type");
-               Put_Line (Get_Name_String
-                         (Display_Name (Identifier (Destination_Type))));
                DAE
                  (Loc      => Loc (Node),
                   Node1    => Source (Node),
                   Message1 => " and ",
                   Node2    => Destination (Node),
-                  Message2 => " do not have compatible types 1");
+                  Message2 => " do not have compatible types");
                Success := False;
             end if;
 
@@ -1218,7 +1208,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                   Node1    => Source (Node),
                   Message1 => " and ",
                   Node2    => Destination (Node),
-                  Message2 => " do not have compatible types 2");
+                  Message2 => " do not have compatible types");
                Success := False;
             end if;
 
@@ -1236,7 +1226,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
                   Node1    => Source (Node),
                   Message1 => " and ",
                   Node2    => Destination (Node),
-                  Message2 => " do not have compatible types 3");
+                  Message2 => " do not have compatible types");
             end if;
       end case;
 
