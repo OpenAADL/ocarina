@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -309,6 +309,10 @@ procedure Ocarina_Cmd is
 
       AADL_Root := Process_Predefined_Property_Sets (AADL_Root);
 
+      if Ocarina.AADL_Version = AADL_V2 then
+         Sources.Append (Get_String_Name ("ocarina_library.aadl"));
+      end if;
+
       F := Sources.First;
 
       loop
@@ -323,16 +327,15 @@ procedure Ocarina_Cmd is
               new String'(Get_Name_String (Current_Scenario_Dirname));
          end if;
 
-         --  All scenario files have to be located in the same directory
-
-         Exit_On_Error
-           (Current_Scenario_Dirname /= Dirname,
-            "Cannot locate scenario files in the directory");
          File_Name := Search_File (Sources.Table (F));
          Exit_On_Error
            ((File_Name = No_Name),
             "Cannot find file " & Get_Name_String (Sources.Table (F)));
          Buffer := Load_File (File_Name);
+         if Verbose then
+            Write_Line ("Loading file " & Get_Name_String (Sources.Table (F)));
+         end if;
+
          Exit_On_Error
            ((File_Name = No_Name),
             "Cannot read file " & Get_Name_String (Sources.Table (F)));
@@ -406,7 +409,7 @@ procedure Ocarina_Cmd is
          Use_CL := False;
       end if;
 
-      --  See what annexes are enabled foir this model. If none are
+      --  See what annexes are enabled for this model. If none are
       --  given, assume the user want to disable them all.
 
       if Is_Defined_List_Property (Root_System, Enable_Annexes) then

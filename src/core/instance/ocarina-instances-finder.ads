@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -30,8 +30,12 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
+with Ocarina.ME_AADL.AADL_Instances.Nutils;
 
 package Ocarina.Instances.Finder is
+
+   use Ocarina.ME_AADL;
+   use Ocarina.ME_AADL.AADL_Instances.Nutils;
 
    type Node_Kind_Array is
      array
@@ -66,6 +70,16 @@ package Ocarina.Instances.Finder is
       Last_Node     : in out Node_Id);
    --  Search recursively in the instance hierarchy for instances entity
    --  within a provided set of kinds
+
+   function Find_All_Component_Instances
+     (Root      : Node_Id) return Node_List;
+
+   function Filter_Instance_By_Category
+     (Components : Node_List;
+      Category : Component_Category)
+     return Node_Array;
+   --  Filter a Node_List made of component instances and by a given
+   --  category.
 
    procedure Find_All_Flows
      (Instance_Root :        Node_Id;

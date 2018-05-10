@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1141,8 +1141,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                null;
          end case;
 
-         Make_Activate_Entrypoint;
-
          Check_Thread_Consistency (E);
 
          if Has_Ports (E) then
@@ -1223,6 +1221,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             N := Make_Call_Profile (RE (RE_Gqueue_Init), Call_Parameters);
             Append_Node_To_List (N, Statements);
          end if;
+
+         Make_Activate_Entrypoint;
 
          --  If the thread is sporadic or aperiodic, we generate the
          --  call to block waiting for events.

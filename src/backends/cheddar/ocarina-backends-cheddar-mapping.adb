@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2017 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -33,14 +33,10 @@ with GNAT.OS_Lib;   use GNAT.OS_Lib;
 with Ocarina.Namet; use Ocarina.Namet;
 with Utils;         use Utils;
 
-with Ocarina.ME_AADL.AADL_Instances.Nodes;
-with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
 with Ocarina.Backends.Build_Utils;
 with Ocarina.Backends.Messages;
-with Ocarina.Backends.Properties;
-with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Common.Mapping;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -48,20 +44,15 @@ with Ocarina.Backends.XML_Values;
 
 package body Ocarina.Backends.Cheddar.Mapping is
 
-   use Ocarina.ME_AADL;
-   use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
    use Ocarina.Backends.Build_Utils;
    use Ocarina.Backends.Messages;
-   use Ocarina.Backends.Properties;
-   use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Common.Mapping;
    use Ocarina.Backends.XML_Tree.Nodes;
    use Ocarina.Backends.XML_Tree.Nutils;
 
-   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
+   --   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XV renames Ocarina.Backends.XML_Values;
 
@@ -290,60 +281,54 @@ package body Ocarina.Backends.Cheddar.Mapping is
       --  enclosing process.
       P := Make_XML_Node ("resource_used_by");
       declare
-         Access_List : constant List_Id :=
-           Connections
+         Access_List : constant AINU.Node_Array :=
+           Connections_Of
              (Corresponding_Instance
                 (Get_Container_Process (Parent_Subcomponent (E))));
-         Connection : Node_Id;
          K, M       : Node_Id;
       begin
-         if not AINU.Is_Empty (Access_List) then
-            Connection := AIN.First_Node (Access_List);
-            while Present (Connection) loop
-               if Kind (Connection) = K_Connection_Instance
-                 and then
-                   Get_Category_Of_Connection (Connection) =
-                   CT_Access_Data
+         for Connection of Access_List loop
+            if Kind (Connection) = K_Connection_Instance
+              and then Get_Category_Of_Connection (Connection) =
+              CT_Access_Data
+            then
+               if Item (AIN.First_Node (Path (Source (Connection)))) =
+                 Parent_Subcomponent (E)
                then
-                  if Item (AIN.First_Node (Path (Source (Connection)))) =
-                    Parent_Subcomponent (E)
-                  then
-                     M := Make_XML_Node ("resource_user");
-                     K :=
-                       Make_Defining_Identifier
-                         (Fully_Qualified_Instance_Name
-                            (Corresponding_Instance
-                               (Item
-                                  (AIN.First_Node
-                                     (Path (Destination (Connection)))))));
-                     Append_Node_To_List (K, XTN.Subitems (M));
+                  M := Make_XML_Node ("resource_user");
+                  K :=
+                    Make_Defining_Identifier
+                      (Fully_Qualified_Instance_Name
+                         (Corresponding_Instance
+                            (Item
+                               (AIN.First_Node
+                                  (Path (Destination (Connection)))))));
+                  Append_Node_To_List (K, XTN.Subitems (M));
 
-                     --  For now, we assume all tasks take the
-                     --  resource at the beginning, and release it at
-                     --  the end of their dispatch.
+                  --  For now, we assume all tasks take the
+                  --  resource at the beginning, and release it at
+                  --  the end of their dispatch.
 
-                     K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
-                     Append_Node_To_List (K, XTN.Subitems (M));
-                     K :=
-                       Make_Literal
-                         (XV.New_Numeric_Value
-                            (To_Microseconds
-                               (Get_Execution_Time
-                                  (Corresponding_Instance
-                                     (Item
-                                        (AIN.First_Node
-                                           (Path (Destination (Connection))))))
-                                  (1)),
-                             1,
-                             10));
-                     Append_Node_To_List (K, XTN.Subitems (M));
+                  K := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
+                  Append_Node_To_List (K, XTN.Subitems (M));
+                  K :=
+                    Make_Literal
+                      (XV.New_Numeric_Value
+                         (To_Microseconds
+                            (Get_Execution_Time
+                               (Corresponding_Instance
+                                  (Item
+                                     (AIN.First_Node
+                                        (Path (Destination (Connection))))))
+                               (1)),
+                          1,
+                          10));
+                  Append_Node_To_List (K, XTN.Subitems (M));
 
-                     Append_Node_To_List (M, XTN.Subitems (P));
-                  end if;
+                  Append_Node_To_List (M, XTN.Subitems (P));
                end if;
-               Connection := AIN.Next_Node (Connection);
-            end loop;
-         end if;
+            end if;
+         end loop;
       end;
 
       Append_Node_To_List (P, XTN.Subitems (N));

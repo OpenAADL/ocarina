@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -48,6 +48,8 @@ package Ocarina.Backends.PO_HI_Ada is
    --  Reset the internal units of the PO_HI_Ada generator
 
    procedure Set_ASN1_Deployment (Use_It : Boolean);
+
+   Add_SPARK2014_Annotations : aliased Boolean := False;
 
 private
    Ada_Root : Node_Id;

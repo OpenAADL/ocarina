@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -35,6 +35,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.Backends.Ada_Values;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.Properties;
@@ -54,9 +55,131 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
    use Ocarina.Backends.Ada_Tree.Nutils;
    use Ocarina.Backends.PO_HI_Ada.Mapping;
    use Ocarina.Backends.PO_HI_Ada.Runtime;
+   use Ocarina.Backends.Ada_Values;
 
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package ADN renames Ocarina.Backends.Ada_Tree.Nodes;
+
+   function Deliver_Spec (E : Node_Id; With_Aspect : Boolean) return Node_Id;
+   --  Create a subprogram specification corresponding to the
+   --  message delivery routine.
+
+   function Send_Spec (E : Node_Id; With_Aspect : Boolean) return Node_Id;
+   --  Create the subprogram specification corresponding to the
+   --  transport layer Send routine.
+
+   ------------------
+   -- Deliver_Spec --
+   ------------------
+
+   function Deliver_Spec (E : Node_Id; With_Aspect : Boolean) return Node_Id is
+      pragma Unreferenced (E);
+
+      Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
+      N       : Node_Id;
+      Aspect : Node_Id := No_Node;
+   begin
+      --  Entity
+
+      N :=
+        Make_Parameter_Specification
+          (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
+           Subtype_Mark        => RE (RE_Entity_Type),
+           Parameter_Mode      => Mode_In);
+      Append_Node_To_List (N, Profile);
+
+      --  Message
+
+      N :=
+        Make_Parameter_Specification
+          (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
+           Subtype_Mark        => RE (RE_Stream_Element_Array),
+           Parameter_Mode      => Mode_In);
+      Append_Node_To_List (N, Profile);
+
+      --  Pre-condition
+
+      if Add_SPARK2014_Annotations and then With_Aspect then
+         Aspect := Make_Aspect_Specification
+           (Make_List_Id
+              (Make_Aspect (ASN (A_Pre),
+                            Make_Pre
+                              (Make_Subprogram_Call
+                                 (RE (RE_Valid),
+                                  Make_List_Id (Make_Defining_Identifier
+                                                  (PN (P_Message))))))));
+      end if;
+
+      N :=
+        Make_Subprogram_Specification
+          (Defining_Identifier => Make_Defining_Identifier (SN (S_Deliver)),
+           Parameter_Profile   => Profile,
+           Return_Type         => No_Node,
+           Aspect_Specification => Aspect);
+
+      return N;
+   end Deliver_Spec;
+
+   ---------------
+   -- Send_Spec --
+   ---------------
+
+   function Send_Spec (E : Node_Id; With_Aspect : Boolean) return Node_Id is
+      pragma Unreferenced (E);
+
+      Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
+      Aspect  : Node_Id := No_Node;
+      N       : Node_Id;
+   begin
+      --  From
+
+      N :=
+        Make_Parameter_Specification
+          (Defining_Identifier => Make_Defining_Identifier (PN (P_From)),
+           Subtype_Mark        => RE (RE_Entity_Type),
+           Parameter_Mode      => Mode_In);
+      Append_Node_To_List (N, Profile);
+
+      --  Entity
+
+      N :=
+        Make_Parameter_Specification
+          (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
+           Subtype_Mark        => RE (RE_Entity_Type),
+           Parameter_Mode      => Mode_In);
+      Append_Node_To_List (N, Profile);
+
+      --  Message
+
+      N :=
+        Make_Parameter_Specification
+          (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
+           Subtype_Mark        => RE (RE_Message_Type),
+           Parameter_Mode      => Mode_In);
+      Append_Node_To_List (N, Profile);
+
+      --  Pre-condition
+      if Add_SPARK2014_Annotations and then With_Aspect then
+         Aspect := Make_Aspect_Specification
+           (Make_List_Id
+              (Make_Aspect
+                 (ASN (A_Pre),
+                  Make_Pre
+                    (Make_Subprogram_Call
+                       (RE (Re_Not_Empty),
+                        Make_List_Id (Make_Defining_Identifier
+                                     (PN (P_Message))))))));
+      end if;
+
+      N :=
+        Make_Subprogram_Specification
+          (Defining_Identifier => Make_Defining_Identifier (SN (S_Send)),
+           Parameter_Profile   => Profile,
+           Return_Type         => RE (RE_Error_Kind),
+           Aspect_Specification => Aspect);
+
+      return N;
+   end Send_Spec;
 
    ------------------
    -- Package_Spec --
@@ -69,97 +192,6 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       procedure Visit_System_Instance (E : Node_Id);
       procedure Visit_Process_Instance (E : Node_Id);
       procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
-
-      function Deliver_Spec (E : Node_Id) return Node_Id;
-      --  Create a subprogram specification corresponding to the
-      --  message delivery routine.
-
-      function Send_Spec (E : Node_Id) return Node_Id;
-      --  Create the subprogram specification corresponding to the
-      --  transport layer Send routine.
-
-      ------------------
-      -- Deliver_Spec --
-      ------------------
-
-      function Deliver_Spec (E : Node_Id) return Node_Id is
-         pragma Unreferenced (E);
-
-         Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
-         N       : Node_Id;
-      begin
-         --  Entity
-
-         N :=
-           Make_Parameter_Specification
-             (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
-              Subtype_Mark        => RE (RE_Entity_Type),
-              Parameter_Mode      => Mode_In);
-         Append_Node_To_List (N, Profile);
-
-         --  Message
-
-         N :=
-           Make_Parameter_Specification
-             (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
-              Subtype_Mark        => RE (RE_Stream_Element_Array),
-              Parameter_Mode      => Mode_In);
-         Append_Node_To_List (N, Profile);
-
-         N :=
-           Make_Subprogram_Specification
-             (Defining_Identifier => Make_Defining_Identifier (SN (S_Deliver)),
-              Parameter_Profile   => Profile,
-              Return_Type         => No_Node);
-
-         return N;
-      end Deliver_Spec;
-
-      ---------------
-      -- Send_Spec --
-      ---------------
-
-      function Send_Spec (E : Node_Id) return Node_Id is
-         pragma Unreferenced (E);
-
-         Profile : constant List_Id := New_List (ADN.K_Parameter_Profile);
-         N       : Node_Id;
-      begin
-         --  From
-
-         N :=
-           Make_Parameter_Specification
-             (Defining_Identifier => Make_Defining_Identifier (PN (P_From)),
-              Subtype_Mark        => RE (RE_Entity_Type),
-              Parameter_Mode      => Mode_In);
-         Append_Node_To_List (N, Profile);
-
-         --  Entity
-
-         N :=
-           Make_Parameter_Specification
-             (Defining_Identifier => Make_Defining_Identifier (PN (P_Entity)),
-              Subtype_Mark        => RE (RE_Entity_Type),
-              Parameter_Mode      => Mode_In);
-         Append_Node_To_List (N, Profile);
-
-         --  Message
-
-         N :=
-           Make_Parameter_Specification
-             (Defining_Identifier => Make_Defining_Identifier (PN (P_Message)),
-              Subtype_Mark        => RE (RE_Message_Type),
-              Parameter_Mode      => Mode_In);
-         Append_Node_To_List (N, Profile);
-
-         N :=
-           Make_Subprogram_Specification
-             (Defining_Identifier => Make_Defining_Identifier (SN (S_Send)),
-              Parameter_Profile   => Profile,
-              Return_Type         => RE (RE_Error_Kind));
-
-         return N;
-      end Send_Spec;
 
       -----------
       -- Visit --
@@ -225,13 +257,13 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
 
          --  Generate a delivery spec
 
-         N := Deliver_Spec (E);
+         N := Deliver_Spec (E, With_Aspect => True);
          Bind_AADL_To_Deliver (Identifier (E), N);
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
          --  Generate the message sending spec if necessary
 
-         N := Send_Spec (E);
+         N := Send_Spec (E, With_Aspect => True);
          Bind_AADL_To_Send (Identifier (E), N);
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
@@ -292,8 +324,8 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       ------------------
 
       function Deliver_Body (E : Node_Id) return Node_Id is
-         Spec : constant Node_Id :=
-           ADN.Deliver_Node (Backend_Node (Identifier (E)));
+         Spec : constant Node_Id := Deliver_Spec (E, With_Aspect => False);
+
          Declarations : constant List_Id := New_List (ADN.K_Declaration_List);
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Alternatives : constant List_Id := New_List (ADN.K_List_Id);
@@ -341,7 +373,7 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
             Append_Node_To_List (N, Declarations);
 
             --  Add a use clause for the
-            --  Ada.Streams.Stream_Element_Offse type to have
+            --  Ada.Streams.Stream_Element_Offset type to have
             --  visibility on its operators.
 
             N := Make_Used_Type (RE (RE_Stream_Element_Offset));
@@ -473,13 +505,15 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
       ---------------
 
       function Send_Body (E : Node_Id) return Node_Id is
-         Spec : constant Node_Id :=
-           ADN.Send_Node (Backend_Node (Identifier (E)));
+         Spec : constant Node_Id := Send_Spec (E, With_Aspect => False);
+
          Declarations : constant List_Id := New_List (ADN.K_Declaration_List);
          Statements   : constant List_Id := New_List (ADN.K_Statement_List);
          Alternatives : constant List_Id := New_List (ADN.K_List_Id);
          N            : Node_Id;
          T            : Node_Id;
+         Msg_T : Node_Id;
+
       begin
          pragma Assert (AAU.Is_Process (E));
 
@@ -510,20 +544,36 @@ package body Ocarina.Backends.PO_HI_Ada.Transport is
             Append_Node_To_List (N, Declarations);
 
             N :=
+              Make_Range_Constraint
+                (Make_Literal (New_Integer_Value (1, 1, 10)),
+                 Make_Subprogram_Call
+                   (RE (RE_Size),
+                   Make_List_Id (Make_Defining_Identifier (PN (P_Message)))));
+
+            Msg_T :=
+              Make_Subprogram_Call
+                (RE (RE_Stream_Element_Array),
+                 Make_List_Id (N));
+
+            N :=
               Make_Object_Declaration
                 (Defining_Identifier => Make_Defining_Identifier (PN (P_Msg)),
-                 Constant_Present    => True,
-                 Object_Definition   => RE (RE_Stream_Element_Array),
-                 Expression          =>
-                   Make_Subprogram_Call
-                     (RE (RE_Encapsulate),
-                      Make_List_Id
-                        (Make_Defining_Identifier (PN (P_Message)),
-                         Make_Defining_Identifier (PN (P_From)),
-                         Make_Defining_Identifier (PN (P_Entity)))));
+                 Constant_Present    => False,
+                 Object_Definition   => Msg_T);
             Append_Node_To_List (N, Declarations);
 
             --  Statements
+
+            --  Call Encapsulate
+
+            N := Make_Subprogram_Call
+              (RE (RE_Encapsulate),
+               Make_List_Id
+                 (Make_Defining_Identifier (PN (P_Message)),
+                  Make_Defining_Identifier (PN (P_From)),
+                  Make_Defining_Identifier (PN (P_Entity)),
+                  Make_Defining_Identifier (PN (P_Msg))));
+            Append_Node_To_List (N, Statements);
 
             --  The if/elsif statement: for each thread of the current
             --  process, we generate a case statement alternative to

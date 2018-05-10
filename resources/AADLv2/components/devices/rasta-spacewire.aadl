@@ -1,5 +1,4 @@
 package ocarina_drivers_rasta_spacewire
-
 public
 
 with ocarina_buses;

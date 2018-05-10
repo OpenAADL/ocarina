@@ -12,30 +12,33 @@ AADL_V1_PROPERTIES = $(srcdir)/AADLv1/aadl_properties.aadl \
 	$(srcdir)/AADLv1/aadl_project.aadl \
 	$(srcdir)/AADLv1/base_types.aadl
 
-AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl \
-	$(srcdir)/AADLv2/arinc653.aadl \
-	$(srcdir)/AADLv2/assert_types.aadl \
-	$(srcdir)/AADLv2/assert_properties.aadl \
-	$(srcdir)/AADLv2/behavior_properties.aadl \
-	$(srcdir)/AADLv2/deployment_properties.aadl \
-	$(srcdir)/AADLv2/emv2.aadl \
-	$(srcdir)/AADLv2/Cheddar_Properties.aadl \
-	$(srcdir)/AADLv2/thread_properties.aadl \
-	$(srcdir)/AADLv2/communication_properties.aadl \
-	$(srcdir)/AADLv2/memory_properties.aadl \
-	$(srcdir)/AADLv2/modeling_properties.aadl \
-	$(srcdir)/AADLv2/timing_properties.aadl \
-	$(srcdir)/AADLv2/pok_properties.aadl \
-	$(srcdir)/AADLv2/programming_properties.aadl \
-	$(srcdir)/AADLv2/base_types.aadl \
-	$(srcdir)/AADLv2/replication_properties.aadl \
-	$(srcdir)/AADLv2/errorlibrary.aadl \
-	$(srcdir)/AADLv2/taste_properties.aadl \
-	$(srcdir)/AADLv2/transformations.aadl
+AADL_V2_PROPERTIES = $(srcdir)/AADLv2/aadl_project.aadl	\
+	$(srcdir)/AADLv2/arinc653.aadl			\
+	$(srcdir)/AADLv2/assert_types.aadl		\
+	$(srcdir)/AADLv2/assert_properties.aadl		\
+	$(srcdir)/AADLv2/behavior_properties.aadl	\
+	$(srcdir)/AADLv2/deployment_properties.aadl	\
+	$(srcdir)/AADLv2/emv2.aadl			\
+	$(srcdir)/AADLv2/Cheddar_Properties.aadl	\
+	$(srcdir)/AADLv2/thread_properties.aadl		\
+	$(srcdir)/AADLv2/communication_properties.aadl	\
+	$(srcdir)/AADLv2/memory_properties.aadl		\
+	$(srcdir)/AADLv2/modeling_properties.aadl	\
+	$(srcdir)/AADLv2/timing_properties.aadl		\
+	$(srcdir)/AADLv2/pok_properties.aadl		\
+	$(srcdir)/AADLv2/programming_properties.aadl	\
+	$(srcdir)/AADLv2/base_types.aadl		\
+	$(srcdir)/AADLv2/replication_properties.aadl	\
+	$(srcdir)/AADLv2/errorlibrary.aadl		\
+	$(srcdir)/AADLv2/taste_properties.aadl		\
+	$(srcdir)/AADLv2/TASTE_IV_Properties.aadl	\
+	$(srcdir)/AADLv2/TASTE_DV_Properties.aadl	\
+	$(srcdir)/AADLv2/transformations.aadl		\
+	$(srcdir)/AADLv2/ocarina_library.aadl
 
 AADL_V2_COMPONENTS = $(srcdir)/AADLv2/components/*.aadl \
-                     $(srcdir)/AADLv2/components/devices/*.aadl \
-                     $(srcdir)/AADLv2/components/processors/*.aadl
+		     $(srcdir)/AADLv2/components/devices/*.aadl \
+		     $(srcdir)/AADLv2/components/processors/*.aadl
 
 EXTRA_DIST = $(AADL_COMMON_PROPERTIES) \
 	$(AADL_V1_PROPERTIES) \
@@ -50,12 +53,14 @@ install-data-local:
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv1 || exit 1; \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv2 || exit 1; \
 	done
-	for file in $(AADL_V2_PROPERTIES); do \
+	for file in $(AADL_V2_PROPERTIES) $(AADL_V2_COMPONENTS); do \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv2 || exit 1; \
 	done
 	for file in $(AADL_V1_PROPERTIES); do \
 	  $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/ocarina/AADLv1 || exit 1; \
 	done
+
+build_ocarina_components:
 	rm -f $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl
 	for file in $(srcdir)/AADLv2/components/*.aadl; do \
 	  cat $$file >> $(DESTDIR)$(datadir)/ocarina/AADLv2/ocarina_components.aadl || exit 1; \

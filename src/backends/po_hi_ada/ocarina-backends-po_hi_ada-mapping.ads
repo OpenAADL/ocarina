@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -56,6 +56,8 @@ package Ocarina.Backends.PO_HI_Ada.Mapping is
 
    function Map_Ada_Priority (P : Unsigned_Long_Long) return Node_Id;
    --  Maps the given AADL priority into an Ada priority
+
+   function Map_Refined_Global_Name (E : Node_Id) return Node_Id;
 
    function Map_Marshallers_Name (E : Node_Id) return Name_Id;
    --  Maps a name for the marshallers package instantiation generated

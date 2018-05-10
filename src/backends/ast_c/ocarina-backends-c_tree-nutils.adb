@@ -2165,7 +2165,11 @@ package body Ocarina.Backends.C_Tree.Nutils is
    -- Get_Data_Size --
    -------------------
 
-   function Get_Data_Size (Data : Node_Id) return Node_Id is
+   function Get_Data_Size (Data : Node_Id;
+                           Is_Pointer : Boolean := False;
+                           Maximum_Size : Boolean := False)
+                          return Node_Id
+   is
       Data_Representation : Supported_Data_Representation;
       Value_UUL           : Unsigned_Long_Long;
       Value_Node          : Node_Id            := No_Node;
@@ -2216,6 +2220,33 @@ package body Ocarina.Backends.C_Tree.Nutils is
                  Right_Expr =>
                    Get_Data_Size
                      (ATN.Entity (ATN.First_Node (Get_Base_Type (Data)))));
+
+         when Data_Bounded_Array =>
+            if Maximum_Size then
+               Value_Node :=
+                 Make_Expression
+                 (Left_Expr =>
+                    Make_Literal (New_Int_Value (Dimension (1), 1, 10)),
+                  Operator   => Op_Asterisk,
+                  Right_Expr =>
+                    Get_Data_Size
+                    (ATN.Entity (ATN.First_Node (Get_Base_Type (Data)))));
+
+            else
+               Value_Node :=
+                 Make_Expression
+                 (Left_Expr =>
+                    Make_Member_Designator
+                    (Defining_Identifier =>
+                       Make_Defining_Identifier (MN (M_length)),
+                     Aggregate_Name =>
+                       Make_Defining_Identifier (PN (P_Value)),
+                     Is_Pointer => Is_Pointer),
+                  Operator   => Op_Asterisk,
+                  Right_Expr =>
+                    Get_Data_Size
+                    (ATN.Entity (ATN.First_Node (Get_Base_Type (Data)))));
+            end if;
 
          when Data_None =>
             Value_Node :=

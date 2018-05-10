@@ -148,9 +148,11 @@ AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
 
 define(SHARED_LIBRARY_OPTIONS, [dnl
   GNAT_LIB_FLAGS="-XLIBRARY_TYPE=relocatable"
+  PRJ_LIBRARY_KIND="shared"
   shared=true])
 define(NO_SHARED_LIBRARY_OPTIONS, [dnl
   GNAT_LIB_FLAGS="-XLIBRARY_TYPE=static"
+  PRJ_LIBRARY_KIND="static"
   shared=false])
 
 AC_ARG_ENABLE(shared,
@@ -424,6 +426,7 @@ AC_OUTPUT([
 	resources/runtime/lnt/Makefile
 	resources/runtime/python/Makefile
 	projects/ocarina.gpr
+	projects-distrib/ocarina/ocarina_core.gpr
 	src/main/Makefile
 	src/config/ocarina-configuration.adb
 	src/frontends/Makefile

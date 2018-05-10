@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2015-2017 ESA & ISAE.                    --
+--                   Copyright (C) 2015-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -48,6 +48,7 @@ with Ocarina.FE_REAL.Parser;    use Ocarina.FE_REAL.Parser;
 with Ocarina.Scripts;           use Ocarina.Scripts;
 with Ocarina.Analyzer.REAL;     use Ocarina.Analyzer.REAL;
 with Ocarina.Backends.POK_C;
+with Ocarina.Backends.PO_HI_Ada;
 
 package body Ocarina.Cmd_Line is
 
@@ -273,6 +274,13 @@ package body Ocarina.Cmd_Line is
       --  --list-backends flag
       Define_Switch (Ocarina_Options, Long_Switch => "--list-backends",
                      Help => "List available backends");
+
+      --  --spark2014 flag
+      Define_Switch
+        (Ocarina_Options,
+         Ocarina.Backends.PO_HI_Ada.Add_SPARK2014_Annotations'Access,
+         Long_Switch => "--spark2014",
+         Help => "Generate SPARK2014 annotations");
 
       --  -b flag
       Define_Switch (Ocarina_Options,

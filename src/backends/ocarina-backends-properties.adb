@@ -242,6 +242,7 @@ package body Ocarina.Backends.Properties is
 
    Data_Array_Name     : Name_Id;
    Data_Boolean_Name   : Name_Id;
+   Data_Bounded_Array_Name   : Name_Id;
    Data_Character_Name : Name_Id;
    Data_Enum_Name      : Name_Id;
    Data_Float_Name     : Name_Id;
@@ -714,7 +715,9 @@ package body Ocarina.Backends.Properties is
          --  case since the <..>_Name global variables are not (and
          --  cannot be) static.
 
-         if T_Name = Data_Array_Name then
+         if T_Name = Data_Array_Name or else
+           T_Name = Data_Bounded_Array_Name
+         then
             if not Is_Defined_List_Property (D, Dimension) then
                Display_Located_Error
                  (ATN.Loc (D),
@@ -729,7 +732,11 @@ package body Ocarina.Backends.Properties is
                   Fatal => True);
             end if;
 
-            return Data_Array;
+            if T_Name = Data_Array_Name then
+               return Data_Array;
+            else
+               return Data_Bounded_Array;
+            end if;
 
          elsif T_Name = Data_Boolean_Name then
             return Data_Boolean;
@@ -2953,6 +2960,7 @@ package body Ocarina.Backends.Properties is
       Memory_Size         := Get_String_Name ("memory_size");
       Data_Array_Name     := Get_String_Name ("array");
       Data_Boolean_Name   := Get_String_Name ("boolean");
+      Data_Bounded_Array_Name := Get_String_Name ("bounded_array");
       Data_Character_Name := Get_String_Name ("character");
       Data_Enum_Name      := Get_String_Name ("enum");
       Data_Float_Name     := Get_String_Name ("float");

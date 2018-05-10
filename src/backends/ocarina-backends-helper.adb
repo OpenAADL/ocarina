@@ -2,11 +2,11 @@
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
 --                                                                          --
---                         O C A R I N A _ C O R E                          --
+--              O C A R I N A . B A C K E N D S . H E L P E R               --
 --                                                                          --
---                              P r o j e c t                               --
+--                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--                     Copyright (C) 2018 ESA & ISAE.                       --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,12 +29,16 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-project Ocarina_Core is
+package body Ocarina.Backends.Helper is
 
-   for Source_files use ();
-   for Library_Name use "ocarina";
-   for Library_Dir use "../..";
-   for Library_Kind use "static";
-   for Externally_Built use "true";
+   function Subcomponents_Of (E : Node_Id) return Node_Array is
+   begin
+      if No (Subcomponents (E)) then
+         return No_Nodes;
+      else
+         return To_Node_Array (Subcomponents (E));
+      end if;
 
-end Ocarina_Core;
+   end Subcomponents_Of;
+
+end Ocarina.Backends.Helper;

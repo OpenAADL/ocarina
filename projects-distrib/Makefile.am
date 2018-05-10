@@ -1,5 +1,5 @@
 INTERNAL_PROJECTS = \
-	$(srcdir)/ocarina/ocarina_core.gpr \
+	$(srcdir)/ocarina/ocarina_core.gpr.in \
 	$(srcdir)/ocarina/ocarina_frontends.gpr \
 	$(srcdir)/ocarina/ocarina_backends.gpr \
 	$(srcdir)/ocarina/ocarina_transfo.gpr \

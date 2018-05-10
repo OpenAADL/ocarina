@@ -226,6 +226,9 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
       Out_Loop : List_Id;
       In_Select : List_Id;
       Variable : Node_Id;
+      Ti : Node_Id;
+      Source_Transition_List : List_Id;
+      Destination_Transition : Node_Id;
 
       Thread_Identifier : constant Name_Id
         := AIN.Display_Name (AIN.Identifier (E));
@@ -304,6 +307,23 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
                      end loop;
                      Vi := BATN.Next_Node (Vi);
                      exit when No (Vi);
+                  end loop;
+               end if;
+               if not BANu.Is_Empty (BATN.Transitions (BA)) then
+                  Ti := BATN.First_Node (BATN.Transitions (BA));
+                  loop
+                     Ti := BATN.Transition (Ti);
+                     Source_Transition_List := BATN.Sources (Ti);
+                     Destination_Transition := BATN.Destination (Ti);
+                     --  if (STATE == S1) and (not (INPUT))
+                     --  then STATE := S1; ... end if;
+                     Put_Line (Image (BATN.Display_Name
+                     (Destination_Transition)));
+                     Put_Line (Image (BATN.Display_Name
+                     (BATN.First_Node (Source_Transition_List))));
+                     --  --- ----- --- --- ---
+                     Ti := BATN.Next_Node (Ti);
+                     exit when No (Ti);
                   end loop;
                end if;
             end if;

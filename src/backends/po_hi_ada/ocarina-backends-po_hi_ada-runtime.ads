@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -156,12 +156,15 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Error,                      --  Po..HI.Port_Kinds.Error
       RE_Stream_Element_Array,       --  Po..HI.Streams.Stream_Element_Array
       RE_Stream_Element_Offset,      --  Po..HI.Stream_Element_Offset
-      RE_Write,                      --  Polyorb_HI.Messages.Write
-      RE_Header_Size,                --  Polyorb_HI.Messages.Header_Size
-      RE_Message_Type,               --  Polyorb_HI.Messages.Message_Type
-      RE_Reallocate,                 --  Polyorb_HI.Messages.Reallocate
-      RE_Sender,                     --  Polyorb_HI.Messages.Sender
-      RE_Encapsulate,                --  Polyorb_HI.Messages.Encapsulate
+      RE_Write,                      --  PolyORB_HI.Messages.Write
+      RE_Header_Size,                --  PolyORB_HI.Messages.Header_Size
+      RE_Message_Type,               --  PolyORB_HI.Messages.Message_Type
+      RE_Reallocate,                 --  PolyORB_HI.Messages.Reallocate
+      RE_Sender,                     --  PolyORB_HI.Messages.Sender
+      RE_Encapsulate,                --  PolyORB_HI.Messages.Encapsulate
+      RE_Not_Empty,                  --  PolyORB_HI.Messages.Not_Empty
+      RE_Valid,                      --  PolyORB_HI.Messages.Valid
+      RE_Size,                       --  PolyORB_HI.Messages.Size
       RE_Naming_Entry,               --  PolyORB_HI.Transport.Naming_Entry
       RE_To_HI_String,               --  PolyORB_HI.Utils.To_HI_String
       RE_Naming_Table_Type,          --  PolyORB_HI.Utils.Naming_Table_Type
@@ -258,6 +261,9 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Reallocate                 => RU_PolyORB_HI_Messages,
       RE_Sender                     => RU_PolyORB_HI_Messages,
       RE_Encapsulate                => RU_PolyORB_HI_Messages,
+      RE_Not_Empty                  => RU_PolyORB_HI_Messages,
+      RE_Valid                      => RU_PolyORB_HI_Messages,
+      RE_Size                       => RU_PolyORB_HI_Messages,
       RE_Naming_Entry               => RU_PolyORB_HI_Utils,
       RE_To_HI_String               => RU_PolyORB_HI_Utils,
       RE_Naming_Table_Type          => RU_PolyORB_HI_Utils,

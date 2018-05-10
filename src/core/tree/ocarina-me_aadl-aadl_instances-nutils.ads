@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -77,6 +77,16 @@ package Ocarina.ME_AADL.AADL_Instances.Nutils is
    --  Return true when L is empty
 
    function Length (L : List_Id) return Natural;
+   --  Return the length of list L
+
+   type Node_Array is array (Natural range <>) of Node_Id;
+   No_Nodes : constant Node_Array (1 .. 0) := (others => No_Node);
+
+   function To_Node_Array (L : List_Id) return Node_Array;
+   --  Conver List_Id L into a Node_Array
+
+   function Is_In (N : Node_Id; N_Array : Node_Array) return Boolean is
+      (for some E of N_Array => N = E);
 
    function New_Node (Kind : Node_Kind; Loc : Location) return Node_Id;
    --  Create a new node

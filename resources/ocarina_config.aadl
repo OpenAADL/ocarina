@@ -20,7 +20,8 @@ property set Ocarina_Config is
    (gprof,
     ASN1);
 
-  Generator_Options : list of Ocarina_Config::Generator_Options_Type applies to (system);
+  Generator_Options : list of Ocarina_Config::Generator_Options_Type
+    applies to (system);
   --  Code generation options.
 
   AADL_Files : list of aadlstring applies to (system);
@@ -46,6 +47,35 @@ property set Ocarina_Config is
   --  the user property sey file name and provided that this property
   --  set file is located in the same directory as the Ocarina
   --  non-standard property sets.
+
+  Ocarina_Driver_Library : constant list of aadlstring =>
+  ("devices.aadl",
+   "buses",
+   "base_types",
+   "exarm-ni-6071e-analog.aadl",
+   "grspw.aadl",
+   "rasta-serial.aadl",
+   "sockets-rtems-ne2000.aadl",
+   "exarm-ni-6071e-digital.aadl",
+   "gruart.aadl",
+   "rasta-spacewire.aadl",
+   "tcp_protocol.aadl",
+   "generic-keyboard.aadl",
+   "leon-eth.aadl",
+   "scoc3-spacewire.aadl",
+   "udp-exarm.aadl",
+   "generic_bus.aadl",
+   "leon-serial.aadl",
+   "sd-spw-usb.aadl",
+   "generic_native.aadl",
+   "native_uart.aadl",
+   "serial-raw.aadl",
+   "gr_cpci_x4cv.aadl",
+   "rasta-1553.aadl",
+   "sockets-raw.aadl",
+   "grspw_packet.aadl",
+   "apbuart.aadl",
+   "greth.aadl");
 
   Root_System_Name : aadlstring applies to (system);
   --  If present, indicates the name of the root of the instance tree

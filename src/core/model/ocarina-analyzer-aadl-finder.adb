@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -819,6 +819,7 @@ package body Ocarina.Analyzer.AADL.Finder is
 
       while Present (List_Node) loop
          if Component_Category'Val (Category (List_Node)) = CC_System
+           and then Kind (List_Node) = K_Component_Implementation
            and then Is_Empty
              (Features
                 (Corresponding_Entity (Component_Type_Identifier (List_Node))))

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -923,6 +923,13 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
          GNAT.Case_Util.To_Mixed (Name_Buffer (1 .. Name_Len));
          EN (E) := Name_Find;
       end loop;
+
+      for A in Aspect_Id loop
+         Set_Str_To_Name_Buffer (Aspect_Id'Image (A));
+         Set_Str_To_Name_Buffer (Name_Buffer (3 .. Name_Len));
+         GNAT.Case_Util.To_Mixed (Name_Buffer (1 .. Name_Len));
+         ASN (A) := Name_Find;
+      end loop;
    end Initialize;
 
    -----------
@@ -1070,6 +1077,148 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Set_Aliased_Present (N, Aliased_Present);
       return N;
    end Make_Array_Type_Definition;
+
+   -------------------------------
+   -- Make_Aspect_Specification --
+   -------------------------------
+
+   function Make_Aspect_Specification (Aspects : List_Id) return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (ADN.K_Aspect_Specification);
+      Set_Aspect (N, Aspects);
+      return N;
+   end Make_Aspect_Specification;
+
+   --------------
+   -- Make_Pre --
+   --------------
+
+   function Make_Pre (Subprogram_Call : Node_Id) return Node_Id is
+      N : Node_Id;
+   begin
+      N := New_Node (ADN.K_Pre_Definition);
+      Set_Subprogram_Call (N, Subprogram_Call);
+      return N;
+   end Make_Pre;
+
+   -------------------------------
+   -- Make_Global_Specification --
+   -------------------------------
+
+   function Make_Global_Specification
+     (Moded_Global_List : List_Id)
+     return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (ADN.K_Global_Specification);
+      Set_Moded_Global_List (N, Moded_Global_List);
+      return N;
+   end Make_Global_Specification;
+
+   function Make_Moded_Global_List
+   (Mode : Mode_Id; Identifier : Node_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (ADN.K_Moded_Global_List);
+      Set_Mode_Selector (N, Mode);
+      Set_Defining_Identifier (N, Identifier);
+      return N;
+   end Make_Moded_Global_List;
+
+   -----------------
+   -- Make_Aspect --
+   -----------------
+
+   function Make_Aspect
+     (Aspect_Mark : Name_Id;
+      Aspect_Definition : Node_Id := No_Node) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (ADN.K_Aspect);
+      Set_Aspect_Mark (N, Aspect_Mark);
+      Set_Aspect_Definition (N, Aspect_Definition);
+      return N;
+   end Make_Aspect;
+
+   ------------------------------
+   -- Make_Initialization_Spec --
+   ------------------------------
+
+   function Make_Initialization_Spec
+     (Initialization_List : List_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (ADN.K_Initialization_Spec);
+      Set_Initialization_List (N, Initialization_List);
+      return N;
+   end Make_Initialization_Spec;
+
+   ------------------------------
+   -- Make_Abstract_State_List --
+   ------------------------------
+
+   function Make_Abstract_State_List
+     (State_Name_With_Option : List_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (ADN.K_Abstract_State_List);
+      Set_State_Name_With_Option (N, State_Name_With_Option);
+      return N;
+   end Make_Abstract_State_List;
+
+   ---------------------------------
+   -- Make_State_Name_With_Option --
+   ---------------------------------
+
+   function Make_State_Name_With_Option
+     (Defining_Identifier : Node_Id;
+      Synchronous : Boolean;
+      External : Boolean) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (ADN.K_State_Name_With_Option);
+      Set_Defining_Identifier (N, Defining_Identifier);
+      Set_Synchronous (N, Synchronous);
+      Set_External (N, External);
+      return N;
+   end Make_State_Name_With_Option;
+
+   --------------------------
+   -- Make_Refinement_List --
+   --------------------------
+
+   function Make_Refinement_List
+     (Refinement_Clause : List_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (Adn.K_Refinement_List);
+      Set_Refinement_Clause (N, Refinement_Clause);
+      return N;
+   end Make_Refinement_List;
+
+   ----------------------------
+   -- Make_Refinement_Clause --
+   ----------------------------
+
+   function Make_Refinement_Clause
+     (State_Name : Node_Id;
+      Constituent : List_Id) return Node_Id
+   is
+      N : Node_Id;
+   begin
+      N := New_Node (Adn.K_Refinement_Clause);
+      Set_State_Name (N, State_Name);
+      Set_Constituent (N, Constituent);
+      return N;
+   end Make_Refinement_Clause;
 
    -------------------------------
    -- Make_Assignment_Statement --
@@ -1257,12 +1406,19 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    -- Make_Defining_Identifier --
    ------------------------------
 
-   function Make_Defining_Identifier (Name : Name_Id) return Node_Id is
+   function Make_Defining_Identifier
+     (Name : Name_Id; Normalize : Boolean := True) return Node_Id
+   is
       N : Node_Id;
 
    begin
       N := New_Node (K_Defining_Identifier);
-      Set_Name (N, To_Ada_Name (Name));
+      if Normalize then
+         Set_Name (N, To_Ada_Name (Name));
+      else
+         Set_Name (N, Name);
+      end if;
+
       return N;
    end Make_Defining_Identifier;
 
@@ -2099,15 +2255,21 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
    ------------------------------------
 
    function Make_Subprogram_Implementation
-     (Specification : Node_Id;
-      Declarations  : List_Id;
-      Statements    : List_Id) return Node_Id
+     (Specification        : Node_Id;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Aspect_Specification : Node_Id := No_Node) return Node_Id
    is
       N : Node_Id;
 
    begin
       N := New_Node (K_Subprogram_Implementation);
       Set_Specification (N, Specification);
+      if Present (Aspect_Specification) then
+         Set_Aspect_Specification (ADN.Specification (N),
+                                   Aspect_Specification);
+      end if;
+
       Set_Declarations (N, Declarations);
       Set_Statements (N, Statements);
       return N;
@@ -2121,6 +2283,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
      (Defining_Identifier     : Node_Id;
       Parameter_Profile       : List_Id;
       Return_Type             : Node_Id := No_Node;
+      Aspect_Specification    : Node_Id := No_Node;
       Parent                  : Node_Id := Current_Package;
       Renamed_Subprogram      : Node_Id := No_Node;
       Instantiated_Subprogram : Node_Id := No_Node) return Node_Id
@@ -2131,6 +2294,7 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Set_Defining_Identifier (N, Defining_Identifier);
       Set_Parameter_Profile (N, Parameter_Profile);
       Set_Return_Type (N, Return_Type);
+      Set_Aspect_Specification (N, Aspect_Specification);
       Set_Parent (N, Parent);
       Set_Renamed_Entity (N, Renamed_Subprogram);
       Set_Instantiated_Entity (N, Instantiated_Subprogram);

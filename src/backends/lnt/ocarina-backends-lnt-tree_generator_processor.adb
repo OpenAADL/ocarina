@@ -288,7 +288,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
       Aux_Act_1 : Node_Id;
       Aux_Act_2 : Node_Id;
 
-      Is_Not_Periodic : Boolean := true;
+      Is_Not_Periodic : Boolean := false;
       Threads : Thread_Array := T;
       L_Processor_Gates   : List_Id;
       L_Thread_Activation : List_Id;
@@ -733,7 +733,6 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                           (Make_Identifier ("+"),
                            Make_Identifier ("k"),
                            Make_Nat (1))))));
-
       if (Not_Periodic_Thread_Number > 0) then
          BLNu.Append_Node_To_List (Make_Assignment_Statement
                     (Make_Identifier ("Is_Activated"),
@@ -745,12 +744,7 @@ package body Ocarina.Backends.LNT.Tree_Generator_Processor is
                     (Make_Identifier ("k"),
                      Make_Nat (1))),
                      No_List,
-                     New_List (Make_Assignment_Statement
-                    (Make_Identifier ("k"),
-                      Make_Infix_Function_Call_Expression
-                          (Make_Identifier ("+"),
-                           Make_Identifier ("k"),
-                           Make_Nat (1))))), L_While);
+                     No_List), L_While);
 
       end if;
 
