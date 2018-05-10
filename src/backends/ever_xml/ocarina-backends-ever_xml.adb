@@ -114,10 +114,9 @@ package body Ocarina.Backends.Ever_XML is
    --------------
    -- Generate --
    --------------
-   --  La funzione Generate avvia la procedura di visita dei vari system.
-   --  Se nessun system è speficicato con l'opzione -r quando si lancia
-   --  il backend, allora per ciascun system presente verrà generato
-   --  il relativo file XML
+   --  procedure Generate explores all the systems
+   --  if no system is specified using -r
+   --  then an XML file is generated for each system
    procedure Generate (AADL_Root : Node_Id) is
       Root_Systems  : Node_List;
       List_Node     : Node_Id;
@@ -126,7 +125,7 @@ package body Ocarina.Backends.Ever_XML is
       if Root_System_Name /= No_Name then
          GenerateForSystem (AADL_Root, Get_Name_String (Root_System_Name));
       else
-         --  Genero un file per ogni system
+         --  It generates a file for each syste,
          Root_Systems := Find_All_Root_Systems (AADL_Root);
 
          List_Node := Root_Systems.First;
@@ -135,8 +134,6 @@ package body Ocarina.Backends.Ever_XML is
 
             Put_Line (ATE.Get_Name_Of_Entity (List_Node, True, True));
 
-            --  Varibale globale che va impostata per far instanziare un
-            --  sistema con questo particolare nome
             Root_System_Name :=
               ATE.Get_Name_Of_Entity (List_Node, False, True);
 
@@ -151,10 +148,9 @@ package body Ocarina.Backends.Ever_XML is
    -----------------------
    -- GenerateForSystem --
    -----------------------
-   --  Istanzia e lancia la procedura di visita per il il system che viene
-   --  passato come parametro. Il file di output che viene generato ha
-   --  la seguente struttura per il nome:
-   --  {nome_del_system}_ever_xml.xml
+   --  Instantiate and start the visiting procedure for the selected
+   --  system. The output file has the following naming convention:
+   --  {system_name}_ever_xml.xml
    procedure GenerateForSystem (AADL_Root : Node_Id; Name_System : String) is
       Instance_Root : Node_Id;
    begin
@@ -203,8 +199,8 @@ package body Ocarina.Backends.Ever_XML is
       F           : Node_Id;
    begin
 
-      --  Se sono un system apro il tag system, altrimenti apro il tag
-      --  component quando trovo un subcomponent
+      --  In a system open the system tag, otherwise open the 
+      --  component tag when a subcomponent is found
       --  OPEN SYSTEM
       if Category = CC_System then
          Open_Tag (FD_System,
@@ -242,9 +238,8 @@ package body Ocarina.Backends.Ever_XML is
 
          F := First_Node (Features (E));
 
-         --  Faccio un loop e fintanto che possiedo una feature F su cui
-         --  indagare vado avanti. Si passa alla Feature successiva con
-         --  la chiamata: F := Next_Node (F);
+         --  Loop on all the existing features using:
+         --  F := Next_Node (F);
 
          while Present (F) loop
             --  OPEN FEATURE
@@ -264,10 +259,7 @@ package body Ocarina.Backends.Ever_XML is
             declare
                Direction_Kind : Name_Id;
             begin
-               --  Verifico se la feature controllata (che è un nodo
-               --  dell'albero) è di tipo K_Port_Spec_Instance. I tipi sono
-               --  definiti nel file ocarina-me_aadl-aadl_instances-nodes.ads
-               --  come una enum chiamata NodeKind
+               --  Check if the feature type is K_Port_Spec_Instance
                if Kind (F) = K_Port_Spec_Instance then
 
                   if Is_In (F) and then not Is_Out (F) then
@@ -299,10 +291,6 @@ package body Ocarina.Backends.Ever_XML is
                Name_F : Name_Id;
                Namespace_F : Name_Id;
             begin
-               --  Controllo la tipologia di porta. Per le porte NON event
-               --  posso anche chiedere il nome del tipo associato, mentre
-               --  Ocarina va in crash se lo si chiede per quelle di tipo data
-               --  (ed infatti in AADL non lo si può neanche specificare).
                Name_F := Get_String_Name ("none");
                Namespace_F := Get_String_Name ("none");
                if Kind (F) = K_Port_Spec_Instance then
@@ -362,15 +350,8 @@ package body Ocarina.Backends.Ever_XML is
                         Depth + 3);
 
                --  DATA PROPERTIES
-               --  Controllo tutte le properties associate ad un certo data
-               --  Siccome sembra non esserci un modo per capire quando questo
-               --  si puo' fare e quando no, il comando viene lanciato sempre
-               --  e se questo a sua volta lancia una eccezione viene catturata
-               --  e NON gestita grazie al comando null che non fa niente.
-               --  L'if con la presenza delle properties serve per lanciare
-               --  l'eccezione prima che vengano scritti i tag di apertura
-               --  delle properties: in questo modo il file XML generato è
-               --  sintatticamente corretto.
+               --  Check all the properties of a specific data
+               --  Handle the exception for data without properties
                Open_Tag (FD_System,
                          Get_Tag_String (Tag_Data_Info),
                          Depth + 3);
@@ -459,7 +440,7 @@ package body Ocarina.Backends.Ever_XML is
             --  PROPERTIES
             Visit_Properties (F, Depth + 2);
 
-            --  INFORMAZIONI SULLA PORTA
+            --  PORT INFORMATION
             if AIE.Get_Category_Of_Connection (F) = CT_Port_Connection or
             else AIE.Get_Category_Of_Connection (F) = CT_Access_Subprogram or
             else AIE.Get_Category_Of_Connection (F) = CT_Access_Data
@@ -590,9 +571,6 @@ package body Ocarina.Backends.Ever_XML is
                  Get_Tag_String (Tag_Subcomponents),
                  Depth + 1);
 
-      --  Stessa cosa del tag di apertura. Un System chiude il tag system,
-      --  mentre per tutto il resto il tag component viene chiudo dopo la sua
-      --  visita in subcomponents
       --  CLOSE SYSTEM
       if Category = CC_System then
          Close_Tag (FD_System,
@@ -663,8 +641,6 @@ package body Ocarina.Backends.Ever_XML is
               and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
               and then Present (ATN.Unit_Identifier (AADL_Property_Value))
             then
-               --  Aggiungo la value con il numero effettivo, mentre per
-               --  l'unità di misura devo fare una lettura separata
                Put_Tag (FD_System,
                         Get_Tag_String (Tag_Property_Value),
                         Ocarina.AADL_Values.Image
@@ -921,8 +897,7 @@ package body Ocarina.Backends.Ever_XML is
    end Print_Title;
 
    -----------------------------------------
-   -- Stampa a schermo un titolo visibile --
-   -- nell'output a terminale             --
+   -- Print the name                      --
    -----------------------------------------
    procedure Print_Header (CharIn : String; Title : String) is
       Temp_Title_String : Unbounded_String;
