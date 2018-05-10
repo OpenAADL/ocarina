@@ -61,7 +61,8 @@ project Ocarina.Backends is
    Src_Dir & "/stats",
    Src_Dir & "/subprograms",
    Src_Dir & "/vxwork653_conf",
-   Src_Dir & "/xtratum_conf"
+   Src_Dir & "/xtratum_conf",
+   Src_Dir & "/ever_xml"
    );
 
    for Object_Dir use Build_Dir & "/objects";
