@@ -46,3 +46,5 @@ src/python/ocarina-me_aadl-aadl_tree-nodes-python.adb
 src/python/ocarina-me_aadl-aadl_tree-nodes-python.ads
 src/python/ocarina_me_aadl_aadl_instances_nodes.py
 src/python/ocarina_me_aadl_aadl_tree_nodes.py
+
+.DS_Store
