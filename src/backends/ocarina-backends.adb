@@ -224,7 +224,7 @@ package body Ocarina.Backends is
       AADL_XML.Init;
       Alloy.Init;
       Ever_XML.Init;
-      
+
    end Init;
 
    ----------------------
