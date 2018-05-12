@@ -1,0 +1,40 @@
+package FMI
+
+   --  This package defines data types to match FMI2.0 type definiion
+
+public
+  with Base_Types;
+
+  --  fmi2Real    : double precision floating-point data type
+
+  data fmi2Real extends Base_Types::Float_64
+  end fmi2Real;
+
+  --  fmi2Integer : basic signed integer data type
+
+  data fmi2Integer extends Base_Types::Integer
+  end fmi2Integer;
+
+  --  fmi2Boolean : basic signed integer data type
+
+  data fmi2Boolean extends Base_Types::Boolean
+  end fmi2Boolean;
+
+  --  fmi2Char    : character data type
+
+  data fmi2Char extends Base_Types::Character
+  end fmi2Char;
+
+  --  fmi2String  : a pointer to a vector of fmi2Char characters
+  --                             ('\0' terminated, UTF8 encoded)
+
+  data fmi2String extends Base_Types::String
+  end fmi2String;
+
+  --  fmi2Byte   : smallest addressable unit of the machine, typically
+  --  one byte.
+
+  data fmi2Byte extends Base_Types::Unsigned_8
+  end fmi2Byte;
+
+end FMI;
