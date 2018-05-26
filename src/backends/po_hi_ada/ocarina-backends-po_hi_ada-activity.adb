@@ -73,6 +73,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
    function Put_Value_Spec (E : Node_Id) return Node_Id;
    function Receive_Input_Spec (E : Node_Id) return Node_Id;
    function Get_Value_Spec (E : Node_Id) return Node_Id;
+   function Get_Value_Spec_2 (E : Node_Id) return Node_Id;
    function Get_Sender_Spec (E : Node_Id) return Node_Id;
    function Get_Count_Spec (E : Node_Id) return Node_Id;
    function Get_Time_Stamp_Spec (E : Node_Id) return Node_Id;
@@ -216,12 +217,42 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                      Make_Defining_Identifier (PN (P_Port)),
                    Subtype_Mark =>
                      Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
+                   Parameter_Mode => Mode_In),
+                Make_Parameter_Specification
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (PN (P_Result)),
+                   Subtype_Mark =>
+                     Make_Defining_Identifier (Map_Port_Interface_Name (E)),
+                   Parameter_Mode => Mode_Inout)
+               ),
+           Aspect_Specification => Runtime_Spec_Aspect_Definition);
+      return N;
+   end Get_Value_Spec;
+
+   function Get_Value_Spec_2 (E : Node_Id) return Node_Id is
+      N : Node_Id;
+   begin
+      N :=
+        Make_Subprogram_Specification
+          (Defining_Identifier => Make_Defining_Identifier (SN (S_Get_Value)),
+           Parameter_Profile   =>
+             Make_List_Id
+               (Make_Parameter_Specification
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (PN (P_Entity)),
+                   Subtype_Mark   => RE (RE_Entity_Type),
+                   Parameter_Mode => Mode_In),
+                Make_Parameter_Specification
+                  (Defining_Identifier =>
+                     Make_Defining_Identifier (PN (P_Port)),
+                   Subtype_Mark =>
+                     Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
                    Parameter_Mode => Mode_In)),
            Return_Type =>
              Make_Defining_Identifier (Map_Port_Interface_Name (E)),
            Aspect_Specification => Runtime_Spec_Aspect_Definition);
       return N;
-   end Get_Value_Spec;
+   end Get_Value_Spec_2;
 
    ---------------------
    -- Get_Sender_Spec --
@@ -998,6 +1029,10 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             --  Get_Value
 
             N := Get_Value_Spec (E);
+            Bind_AADL_To_Get_Value (Identifier (E), N);
+            Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+            N := Get_Value_Spec_2 (E);
             Bind_AADL_To_Get_Value (Identifier (E), N);
             Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
@@ -1827,12 +1862,16 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
             --  Then
 
-            N :=
-              Make_Selected_Component
-                (Make_Subprogram_Call
-                   (Get_Fully_Qualified_Subprogram (SN (S_Get_Value)),
-                    Make_List_Id (Map_Ada_Defining_Identifier (F))),
-                 Make_Defining_Identifier (Map_Ada_Component_Name (F)));
+            N := Make_Subprogram_Call
+              (Get_Fully_Qualified_Subprogram (SN (S_Get_Value)),
+               Make_List_Id
+                 (Map_Ada_Defining_Identifier (F),
+                  Map_Ada_Defining_Identifier (F, "I")));
+            Append_Node_To_List (N, Then_Statements);
+
+            N := Make_Selected_Component
+              (Map_Ada_Defining_Identifier (F, "I"),
+               Make_Defining_Identifier (Map_Ada_Component_Name (F)));
 
             N :=
               Make_Assignment_Statement
@@ -2130,6 +2169,14 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                        Object_Definition =>
                          Map_Ada_Data_Type_Designator
                            (Corresponding_Instance (F)));
+                  Append_Node_To_List (N, Declarations);
+
+                  N :=
+                    Make_Object_Declaration
+                      (Defining_Identifier =>
+                         Map_Ada_Defining_Identifier (F, "I"),
+                       Object_Definition =>
+                       Make_Defining_Identifier (Map_Port_Interface_Name (E)));
                   Append_Node_To_List (N, Declarations);
 
                   N :=
@@ -2686,6 +2733,15 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                                        (SN (S_Get_Count)),
                                      Make_List_Id
                                        (Map_Ada_Defining_Identifier (F))));
+                           Append_Node_To_List (N, Declarations);
+
+                           N :=
+                             Make_Object_Declaration
+                               (Defining_Identifier =>
+                                  Map_Ada_Defining_Identifier (F, "I"),
+                                Object_Definition =>
+                                  Make_Defining_Identifier
+                                    (Map_Port_Interface_Name (E)));
                            Append_Node_To_List (N, Declarations);
 
                            --  Assign the port value
@@ -4210,6 +4266,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                     (Receive_Input_Spec (E),
                      RR_Receive_Input);
                   Implement_Subprogram (Get_Value_Spec (E), RR_Get_Value);
+                  Implement_Subprogram (Get_Value_Spec_2 (E), RR_Get_Value);
                   Implement_Subprogram (Get_Sender_Spec (E), RR_Get_Sender);
                   Implement_Subprogram (Get_Count_Spec (E), RR_Get_Count);
                   Implement_Subprogram
@@ -4232,6 +4289,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                Add_Alternative (Put_Value_Spec (E), RR_Put_Value);
                Add_Alternative (Receive_Input_Spec (E), RR_Receive_Input);
                Add_Alternative (Get_Value_Spec (E), RR_Get_Value);
+               Add_Alternative (Get_Value_Spec_2 (E), RR_Get_Value);
                Add_Alternative (Get_Sender_Spec (E), RR_Get_Sender);
                Add_Alternative (Get_Count_Spec (E), RR_Get_Count);
                Add_Alternative (Get_Time_Stamp_Spec (E), RR_Get_Time_Stamp);
