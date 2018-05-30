@@ -229,7 +229,7 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
       --  c) XXX hard-coded configuration parameters
 
       XTU.Add_Attribute ("Criticiality", "LEVEL_A", Partition_Node);
-      XTU.Add_Attribute ("Entrypoint", "entry_func", Partition_Node);
+      XTU.Add_Attribute ("EntryPoint", "entry_func", Partition_Node);
       XTU.Add_Attribute ("SystemPartition", "false", Partition_Node);
 
       --  Now, handle the ports of the partition.
