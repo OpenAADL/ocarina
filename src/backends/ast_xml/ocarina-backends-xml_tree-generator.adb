@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -292,8 +292,9 @@ package body Ocarina.Backends.XML_Tree.Generator is
 
          --  We consume 4 colums
 
+         Write_Eol;
          Used_Columns := Used_Columns + 2;
-         Write_Str ("/*");
+         Write_Str ("<!-- ");
 
          Used_Columns := Used_Columns + Next_Word_Length;
          Write_Str (Get_Next_Word);
@@ -304,7 +305,7 @@ package body Ocarina.Backends.XML_Tree.Generator is
             Used_Columns := Used_Columns + Next_Word_Length;
             Write_Str (Get_Next_Word);
          end loop;
-         Write_Str ("*/");
+         Write_Str (" -->");
 
          if Are_There_More_Words then
             Write_Eol;
