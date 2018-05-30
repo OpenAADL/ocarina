@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -173,6 +173,7 @@ package body Ocarina.Backends.Xtratum_Conf.System_Description is
    ------------------------------
    -- Visit_Processor_Instance --
    ------------------------------
+
    procedure Visit_Processor_Instance (E : Node_Id) is
       N         : Node_Id;
       Processes : List_Id;
