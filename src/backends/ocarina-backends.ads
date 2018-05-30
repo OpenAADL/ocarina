@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -72,7 +72,9 @@ package Ocarina.Backends is
       REAL_PP,
       REAL_Theorem,
       FT_Replication,
-      Alloy_Backend);
+      Alloy_Backend,
+      AIR_Configuration_Backend
+     );
    --  Supported code generators. For each kind, at most one generator
    --  must be implemented.
 

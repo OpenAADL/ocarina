@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -71,6 +71,7 @@ with Ocarina.Backends.REAL;
 with Ocarina.Backends.LNT;
 with Ocarina.Backends.Replication_Expander;
 with Ocarina.Backends.Xtratum_Conf;
+with Ocarina.Backends.AIR_Conf;
 with Ocarina.Backends.ASN1_Tree.Nodes;
 with Ocarina.Backends.ASN1_Tree.Nutils;
 with Ocarina.Backends.ASN1_Values;
@@ -222,6 +223,7 @@ package body Ocarina.Backends is
       Functions_Matrix.Init;
       AADL_XML.Init;
       Alloy.Init;
+      AIR_Conf.Init;
    end Init;
 
    ----------------------
