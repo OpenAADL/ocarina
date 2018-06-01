@@ -23,6 +23,7 @@ property set Deployment is
     Native_Compcert,          -- Native platforms using the Compcert compiler
     bench,                    -- Benchmark platform (native with instrumentation).
     GNAT_Runtime,             -- Use a GNAT Runtime, e.g. from the Ada_Drivers_Library
+    LEON_ORK,
     LEON_RTEMS,               -- LEON2 board or tsim-leon (RTEMS)
     LEON_RTEMS_POSIX,         -- LEON2 board or tsim-leon (RTEMS)
     LEON3_SCOC3,              -- LEON3 with RTEMS for SCOC3
