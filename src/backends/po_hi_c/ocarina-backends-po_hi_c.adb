@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -209,18 +209,6 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_Native_Compcert =>
             Write_Str ("compcert");
 
-         when Platform_NDS_RTEMS =>
-            Write_Str ("nds.rtems");
-
-         when Platform_NDS_RTEMS_POSIX =>
-            Write_Str ("nds.rtems_posix");
-
-         when Platform_Gumstix_RTEMS =>
-            Write_Str ("gumstix.rtems");
-
-         when Platform_Gumstix_RTEMS_POSIX =>
-            Write_Str ("gumstix.rtems_posix");
-
          when Platform_Bench =>
             Write_Str ("bench");
 
@@ -232,18 +220,6 @@ package body Ocarina.Backends.PO_HI_C is
 
          when Platform_X86_LINUXTASTE =>
             Write_Str ("x86.linuxtaste");
-
-         when Platform_X86_RTEMS =>
-            Write_Str ("x86.rtems");
-
-         when Platform_X86_RTEMS_POSIX =>
-            Write_Str ("x86.rtems_posix");
-
-         when Platform_ARM_DSLINUX =>
-            Write_Str ("arm.dslinux");
-
-         when Platform_ARM_N770 =>
-            Write_Str ("arm.n770");
 
          when Platform_LINUX64 =>
             Write_Str ("linux64");

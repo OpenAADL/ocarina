@@ -2262,8 +2262,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                case Execution_Platform is
                   when Platform_Native              |
                     Platform_None                   |
-                    Platform_X86_RTEMS              |
-                    Platform_X86_RTEMS_POSIX        |
                     Platform_LINUX32_XENOMAI_NATIVE |
                     Platform_Native_Compcert        |
                     Platform_LINUX32_XENOMAI_POSIX  |
@@ -2277,12 +2275,6 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                   when Platform_LEON_RTEMS       |
                     Platform_LEON_RTEMS_POSIX    |
                     Platform_LEON_ORK            |
-                    Platform_ARM_DSLINUX         |
-                    Platform_ARM_N770            |
-                    Platform_NDS_RTEMS           |
-                    Platform_NDS_RTEMS_POSIX     |
-                    Platform_Gumstix_RTEMS       |
-                    Platform_Gumstix_RTEMS_POSIX |
                     Platform_LEON3_XM3           =>
                      Append_Node_To_List
                        (RE (RE_Bigendian),

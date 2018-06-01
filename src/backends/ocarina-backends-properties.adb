@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -317,23 +317,15 @@ package body Ocarina.Backends.Properties is
    Platform_LINUX32_Xenomai_Native_Name : Name_Id;
    Platform_LINUX32_Xenomai_Posix_Name  : Name_Id;
    Platform_LINUX64_Name                : Name_Id;
-   Platform_NDS_RTEMS_Name              : Name_Id;
-   Platform_NDS_RTEMS_POSIX_Name        : Name_Id;
-   Platform_Gumstix_RTEMS_Name          : Name_Id;
-   Platform_Gumstix_RTEMS_POSIX_Name    : Name_Id;
    Platform_LEON_RTEMS_Name             : Name_Id;
    Platform_LEON_RTEMS_POSIX_Name       : Name_Id;
    Platform_X86_LINUXTASTE_Name         : Name_Id;
-   Platform_X86_RTEMS_Name              : Name_Id;
-   Platform_X86_RTEMS_POSIX_Name        : Name_Id;
    Platform_LEON_GNAT_Name              : Name_Id;
    Platform_LEON_ORK_Name               : Name_Id;
    Platform_LEON3_SCOC3_Name            : Name_Id;
    Platform_LEON3_XM3_Name              : Name_Id;
    Platform_LEON3_Xtratum_Name          : Name_Id;
    Platform_ERC32_ORK_Name              : Name_Id;
-   Platform_ARM_DSLINUX_Name            : Name_Id;
-   Platform_ARM_N770_Name               : Name_Id;
    Platform_MARTE_OS_Name               : Name_Id;
    Platform_Vxworks_Name                : Name_Id;
    Platform_GNAT_Runtime_Name             : Name_Id;
@@ -2431,14 +2423,6 @@ package body Ocarina.Backends.Properties is
             return Platform_Bench;
          elsif P_Name = Platform_Native_Compcert_Name then
             return Platform_Native_Compcert;
-         elsif P_Name = Platform_Gumstix_RTEMS_POSIX_Name then
-            return Platform_Gumstix_RTEMS_POSIX;
-         elsif P_Name = Platform_Gumstix_RTEMS_Name then
-            return Platform_Gumstix_RTEMS;
-         elsif P_Name = Platform_NDS_RTEMS_POSIX_Name then
-            return Platform_NDS_RTEMS_POSIX;
-         elsif P_Name = Platform_NDS_RTEMS_Name then
-            return Platform_NDS_RTEMS;
          elsif P_Name = Platform_LEON_RTEMS_POSIX_Name then
             return Platform_LEON_RTEMS_POSIX;
          elsif P_Name = Platform_LEON_RTEMS_Name then
@@ -2455,10 +2439,6 @@ package body Ocarina.Backends.Properties is
             return Platform_LINUX32_XENOMAI_POSIX;
          elsif P_Name = Platform_LINUX64_Name then
             return Platform_LINUX64;
-         elsif P_Name = Platform_X86_RTEMS_POSIX_Name then
-            return Platform_X86_RTEMS_POSIX;
-         elsif P_Name = Platform_X86_RTEMS_Name then
-            return Platform_X86_RTEMS;
          elsif P_Name = Platform_LEON_GNAT_Name then
             return Platform_LEON_GNAT;
          elsif P_Name = Platform_LEON_ORK_Name then
@@ -2471,10 +2451,6 @@ package body Ocarina.Backends.Properties is
             return Platform_LEON3_XTRATUM;
          elsif P_Name = Platform_ERC32_ORK_Name then
             return Platform_ERC32_ORK;
-         elsif P_Name = Platform_ARM_DSLINUX_Name then
-            return Platform_ARM_DSLINUX;
-         elsif P_Name = Platform_ARM_N770_Name then
-            return Platform_ARM_N770;
          elsif P_Name = Platform_MARTE_OS_Name then
             return Platform_MARTE_OS;
          elsif P_Name = Platform_Vxworks_Name then
@@ -3024,15 +3000,6 @@ package body Ocarina.Backends.Properties is
       Platform_Native_Name              := Get_String_Name ("native");
       Platform_Bench_Name               := Get_String_Name ("bench");
       Platform_Native_Compcert_Name     := Get_String_Name ("native_compcert");
-      Platform_Gumstix_RTEMS_Name       := Get_String_Name ("gumstix_rtems");
-      Platform_Gumstix_RTEMS_POSIX_Name :=
-        Get_String_Name ("gumstix_rtems_posix");
-
-      Platform_NDS_RTEMS_Name       := Get_String_Name ("nds_rtems");
-      Platform_NDS_RTEMS_POSIX_Name := Get_String_Name ("nds_rtems_posix");
-
-      Platform_X86_RTEMS_Name              := Get_String_Name ("x86_rtems");
-      Platform_X86_RTEMS_POSIX_Name := Get_String_Name ("x86_rtems_posix");
       Platform_LINUX32_Name                := Get_String_Name ("linux32");
       Platform_Win32_Name                  := Get_String_Name ("win32");
       Platform_LINUX32_Xenomai_Native_Name :=
@@ -3049,8 +3016,6 @@ package body Ocarina.Backends.Properties is
       Platform_LEON3_XM3_Name        := Get_String_Name ("leon3_xm3");
       Platform_LEON3_Xtratum_Name    := Get_String_Name ("leon3_xtratum");
       Platform_ERC32_ORK_Name        := Get_String_Name ("erc32_ork");
-      Platform_ARM_DSLINUX_Name      := Get_String_Name ("arm_dslinux");
-      Platform_ARM_N770_Name         := Get_String_Name ("arm_n770");
       Platform_MARTE_OS_Name         := Get_String_Name ("marte_os");
       Platform_Vxworks_Name          := Get_String_Name ("vxworks");
       Platform_GNAT_Runtime_Name       := Get_String_Name ("gnat_runtime");
