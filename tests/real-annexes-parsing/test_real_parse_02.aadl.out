@@ -78,7 +78,7 @@ property set Deployment is
   Protocol : Deployment::Protocol_Type
     applies to (system);
 
-  Allowed_Execution_Platform : type enumeration (Native, Native_Compcert, bench, GNAT_Runtime, LEON_RTEMS, LEON_RTEMS_POSIX, LEON3_SCOC3, LEON3_XTRATUM, LEON3_XM3, LEON_ORK, LEON_GNAT, LINUX32, LINUX32_XENOMAI_NATIVE, LINUX32_XENOMAI_POSIX, LINUX64, ERC32_ORK, ARM_CORTEX, ARM_DSLINUX, ARM_N770, GUMSTIX_RTEMS, NDS_RTEMS, X86_RTEMS, X86_RTEMS_POSIX, X86_LINUXTASTE, MARTE_OS, WIN32, VXWORKS, FREERTOS);
+  Allowed_Execution_Platform : type enumeration (Native, Native_Compcert, bench, GNAT_Runtime, LEON_RTEMS, LEON_RTEMS_POSIX, LEON3_SCOC3, LEON3_XTRATUM, LEON3_XM3, LEON_GNAT, LINUX32, LINUX32_XENOMAI_NATIVE, LINUX32_XENOMAI_POSIX, LINUX64, ERC32_ORK, X86_RTEMS_POSIX, X86_LINUXTASTE, MARTE_OS, WIN32, VXWORKS, FREERTOS);
 
   Execution_Platform : Deployment::Allowed_Execution_Platform
     applies to ( all);
@@ -685,10 +685,10 @@ system)
     applies to (system);
 
   dataview : list of aadlstring
-    applies to (package, system);
+    applies to (package);
 
   dataviewpath : list of aadlstring
-    applies to (package, system);
+    applies to (package);
 
   Encoding_type : type enumeration (native, uper, acn);
 
