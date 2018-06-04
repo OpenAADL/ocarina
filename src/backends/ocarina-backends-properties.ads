@@ -560,6 +560,7 @@ package Ocarina.Backends.Properties is
       Platform_MARTE_OS,
       Platform_VxWorks,
       Platform_GNAT_Runtime,
+      Platform_AIR,
       Platform_None); --  Unspecified
 
    function Get_Execution_Platform

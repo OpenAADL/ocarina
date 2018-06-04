@@ -328,7 +328,8 @@ package body Ocarina.Backends.Properties is
    Platform_ERC32_ORK_Name              : Name_Id;
    Platform_MARTE_OS_Name               : Name_Id;
    Platform_Vxworks_Name                : Name_Id;
-   Platform_GNAT_Runtime_Name             : Name_Id;
+   Platform_GNAT_Runtime_Name           : Name_Id;
+   Platform_AIR_Name                    : Name_Id;
 
    Transport_BSD_Sockets_Name : Name_Id;
    Transport_SpaceWire_Name   : Name_Id;
@@ -2457,6 +2458,8 @@ package body Ocarina.Backends.Properties is
             return Platform_VxWorks;
          elsif P_Name = Platform_GNAT_Runtime_Name then
             return Platform_GNAT_Runtime;
+         elsif P_Name = Platform_AIR_Name then
+            return Platform_AIR;
          else
             return Platform_None;
          end if;
@@ -3018,7 +3021,8 @@ package body Ocarina.Backends.Properties is
       Platform_ERC32_ORK_Name        := Get_String_Name ("erc32_ork");
       Platform_MARTE_OS_Name         := Get_String_Name ("marte_os");
       Platform_Vxworks_Name          := Get_String_Name ("vxworks");
-      Platform_GNAT_Runtime_Name       := Get_String_Name ("gnat_runtime");
+      Platform_GNAT_Runtime_Name     := Get_String_Name ("gnat_runtime");
+      Platform_AIR_Name              := Get_String_Name ("air");
 
       Transport_BSD_Sockets_Name := Get_String_Name ("bsd_sockets");
       Transport_SpaceWire_Name   := Get_String_Name ("spacewire");

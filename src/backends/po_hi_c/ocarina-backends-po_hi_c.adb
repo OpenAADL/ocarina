@@ -242,6 +242,9 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_LINUX32_XENOMAI_POSIX =>
             Write_Str ("linux32-xenomai-posix");
 
+         when Platform_AIR =>
+            Write_Str ("air");
+
          when others =>
             Display_Error
               ("Unsupported platform " & Execution_Platform'Img,

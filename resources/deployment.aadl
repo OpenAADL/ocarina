@@ -39,7 +39,8 @@ property set Deployment is
     MARTE_OS,                 -- MaRTE OS
     WIN32,                    -- WIN32
     VXWORKS,                  -- VXWORKS
-    FREERTOS                  -- FREERTOS
+    FREERTOS,                 -- FREERTOS
+    AIR                       -- AIR Hypervisor, by GMV
     );
   --  Supported platforms
 
