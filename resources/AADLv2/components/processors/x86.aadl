@@ -47,16 +47,6 @@ properties
    Deployment::Execution_Platform => Native_Compcert;
 end x86.native_compcert;
 
-processor implementation x86.rtems
-properties
-   Deployment::Execution_Platform => X86_RTEMS;
-end x86.rtems;
-
-processor implementation x86.rtems_posix
-properties
-   Deployment::Execution_Platform => X86_RTEMS_POSIX;
-end x86.rtems_posix;
-
 processor implementation x86.xenomai_posix
 properties
    Deployment::Execution_Platform => linux32_xenomai_posix;

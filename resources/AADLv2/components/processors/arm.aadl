@@ -19,29 +19,4 @@ properties
    Preemptive_Scheduler => true;
 end cortex_m.i;
 
-processor nds extends arm
-end nds;
-
-processor implementation nds.rtems
-properties
-   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
-   Priority_Range => 0 .. 255;
-   Scheduler_Quantum => 0 Ms;
-   Preemptive_Scheduler => true;
-   Deployment::Execution_Platform => NDS_RTEMS;
-end nds.rtems;
-
-
-processor gumstix extends arm
-end gumstix;
-
-processor implementation gumstix.rtems
-properties
-   Scheduling_Protocol => (Posix_1003_Highest_Priority_First_Protocol);
-   Priority_Range => 0 .. 255;
-   Scheduler_Quantum => 0 Ms;
-   Preemptive_Scheduler => true;
-   Deployment::Execution_Platform => GUMSTIX_RTEMS;
-end gumstix.rtems;
-
 end ocarina_processors_arm;
