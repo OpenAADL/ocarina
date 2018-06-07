@@ -50,12 +50,7 @@ package body Ocarina.Backends.AIR_Conf is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.Backends.Expander;
    use Ocarina.Backends.Messages;
-   use Ocarina.Backends.XML_Tree.Generator;
    use Ocarina.Backends.Utils;
-
-   use Ocarina.Backends.AIR_Conf.Module;
-   use Ocarina.Backends.AIR_Conf.AIR_Configuration;
-   use Ocarina.Backends.AIR_Conf.Partitions;
 
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;

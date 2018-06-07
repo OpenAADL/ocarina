@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -181,7 +181,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
       use Locations;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.Builder.AADL.Namespaces;
 
       Declaration   : Node_Id;
@@ -298,7 +297,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
       use Parser.Annexes;
@@ -485,7 +483,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Entities;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -682,7 +679,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
-      use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Identifiers;
       use Ocarina.Builder.AADL.Namespaces;
@@ -942,7 +938,6 @@ package body Ocarina.FE_AADL.Parser.Namespaces is
       use Components;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.Builder.AADL.Namespaces;
-      use Ocarina.ME_AADL.AADL_Tree.Entities;
 
       Loc, Loc2      : Location;
       Is_All         : Boolean                         := False;

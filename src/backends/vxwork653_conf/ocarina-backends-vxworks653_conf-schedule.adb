@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2015-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2015-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -43,12 +43,10 @@ with Ocarina.Backends.XML_Values;
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
---  with Ocarina.Backends.Vxworks653_Conf.Mapping;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 package body Ocarina.Backends.Vxworks653_Conf.Schedule is
 
---   use Locations;
    use Ocarina.ME_AADL;
 
    use Ocarina.Instances.Queries;
@@ -58,9 +56,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Schedule is
 
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Properties.ARINC653;
-   use Ocarina.Backends.XML_Values;
---   use Ocarina.Backends.Properties;
---   use Ocarina.Backends.Vxworks653_Conf.Mapping;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;

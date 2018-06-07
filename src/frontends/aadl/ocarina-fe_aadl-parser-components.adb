@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -387,7 +387,6 @@ package body Ocarina.FE_AADL.Parser.Components is
    is
       use Ocarina.Namet;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.Builder.AADL.Components;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
@@ -803,7 +802,6 @@ package body Ocarina.FE_AADL.Parser.Components is
       Private_Declaration : Boolean) return Node_Id
    is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
       use Parser.Identifiers;
@@ -1074,8 +1072,6 @@ package body Ocarina.FE_AADL.Parser.Components is
 
    function P_Unique_Component_Impl_Name return Node_Id is
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
-      use Lexer;
       use Ocarina.ME_AADL.Tokens;
       use Parser.Identifiers;
 

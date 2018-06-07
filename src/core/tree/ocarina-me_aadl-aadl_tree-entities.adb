@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -153,7 +153,6 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
          or else Kind (Entity) = K_Annex_Subclause
          or else Kind (Entity) = K_Annex_Library
          or else DNKE (Entity));
-      use Ocarina.ME_AADL.AADL_Tree.Debug;
 
       Entity_Name : Name_Id := No_Name;
       Package_Name : Name_Id;
@@ -344,7 +343,6 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities is
    is
       use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
-      use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
       pragma Assert
         (Entity_Ref /= No_Node

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -50,7 +50,6 @@ package body Ocarina.Analyzer.AADL is
    use Ocarina.Analyzer.AADL.Names;
    use Ocarina.Analyzer.AADL.Links;
    use Ocarina.Analyzer.AADL.Semantics;
-   use Ocarina.Analyzer.AADL.Naming_Rules;
    use Ocarina.Analyzer.AADL.Annexes;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;

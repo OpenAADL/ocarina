@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -288,8 +288,6 @@ package body Ocarina.Backends.PN.Iutils is
       Aadl_P  : Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.Backends.PN.Nutils;
-      use Ocarina.AADL_Values;
 
    begin
 
@@ -361,8 +359,6 @@ package body Ocarina.Backends.PN.Iutils is
       Aadl_P : Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.Backends.PN.Nutils;
-      use Ocarina.AADL_Values;
 
    begin
 
@@ -397,10 +393,6 @@ package body Ocarina.Backends.PN.Iutils is
      (PN_DP   : Types.Node_Id;
       Aadl_DP : Types.Node_Id)
    is
-      use Ocarina.Backends.PN.Nodes;
-      use Ocarina.Backends.PN.Nutils;
-      use Ocarina.AADL_Values;
-
    begin
 
       if PN_DP /= No_Node and then Aadl_DP /= No_Node then
@@ -430,7 +422,6 @@ package body Ocarina.Backends.PN.Iutils is
       Aadl_DEP : Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.Backends.PN.Nutils;
       use Ocarina.AADL_Values;
 
    begin
@@ -532,7 +523,7 @@ package body Ocarina.Backends.PN.Iutils is
       Aadl_Spg_Par : Types.Node_Id)
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.Backends.PN.Nutils;
+
    begin
       if PN_Spg_Par /= No_Node and then Aadl_Spg_Par /= No_Node then
          PN_Init_PN_Component (PN_Spg_Par, Aadl_Spg_Par);
@@ -744,7 +735,6 @@ package body Ocarina.Backends.PN.Iutils is
    is
       pragma Assert (Present (T));
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.AADL_Values;
 
    begin
       Set_Lower_Value (Guard (T), Low);
@@ -777,9 +767,6 @@ package body Ocarina.Backends.PN.Iutils is
       From     : Boolean := False)
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.AADL_Values;
-      use Ocarina.Namet;
-      use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
 
       New_Arc : Types.Node_Id;
@@ -808,7 +795,6 @@ package body Ocarina.Backends.PN.Iutils is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.AADL_Values;
       use Ocarina.Namet;
-      use Ocarina.Instances.Queries;
 
    begin
       if A /= No_Node then
@@ -1080,7 +1066,6 @@ package body Ocarina.Backends.PN.Iutils is
       M    : Unsigned_Long_Long)
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.AADL_Values;
       use Ocarina.Backends.PN.Nutils;
       pragma Unreferenced (M);
 
@@ -1123,11 +1108,8 @@ package body Ocarina.Backends.PN.Iutils is
       K    : Unsigned_Long_Long)
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.AADL_Values;
       use Ocarina.Namet;
-      use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
-      use OPND;
       use Ocarina.Backends.Utils;
 
       Val : Node_Id := New_Node (K_CPN_Arc_Valuation);
@@ -1213,9 +1195,6 @@ package body Ocarina.Backends.PN.Iutils is
       From     : Boolean := False)
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.AADL_Values;
-      use Ocarina.Namet;
-      use Ocarina.Instances.Queries;
       use Ocarina.Backends.PN.Nutils;
 
       New_Arc : Types.Node_Id;

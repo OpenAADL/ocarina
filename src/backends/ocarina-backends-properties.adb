@@ -3633,7 +3633,7 @@ package body Ocarina.Backends.Properties is
       Res            : Time_Array (0 .. 1);
       Property_Value : Node_Id;
       Range_Node     : Node_Id;
-      use Ocarina.AADL_Values;
+
    begin
       if Is_Defined_Property (E, Compute_Execution_Time) then
          --  CRAP !!

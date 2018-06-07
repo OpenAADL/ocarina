@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2016 ESA & ISAE.                       --
+--                   Copyright (C) 2016-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -61,7 +61,6 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINu renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    use AIN;
-   use AINu;
 
    package BLN renames Ocarina.Backends.LNT.Nodes;
    package BLNu renames Ocarina.Backends.LNT.Nutils;
@@ -70,10 +69,6 @@ package body Ocarina.Backends.LNT.Tree_Generator_Thread is
 
    package BATN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
    package BANu renames Ocarina.ME_AADL_BA.BA_Tree.Nutils;
-   --  package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   --  use ATN;
-   use BATN;
-   use BANu;
 
    procedure Visit (E : Node_Id);
    procedure Visit_Architecture_Instance (E : Node_Id);

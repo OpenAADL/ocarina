@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -40,7 +40,6 @@ package body Ocarina.Instances.REAL_Checker.Queries.Call_Predicates is
    use Ocarina.ME_AADL;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
-   use AINU;
 
    -------------------------
    -- Is_Called_Predicate --

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -142,7 +142,6 @@ package body Ocarina.Backends.PN.Components is
    is
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       use Ocarina.Backends.PN.Iutils;
-      use Ocarina.ME_AADL.AADL_Instances.Nutils;
       use Ocarina.AADL_Values;
       use Ocarina.Backends.PN.Nodes;
 
@@ -244,9 +243,6 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.AADL_Values;
       use Ocarina.Backends.PN.Iutils;
       use Ocarina.Backends.Utils;
-
-      use Ocarina.ME_AADL.AADL_Instances.Entities;
-      use Ocarina.ME_AADL;
 
       Thread_Iter : Node_Id;
    begin
@@ -1585,11 +1581,8 @@ package body Ocarina.Backends.PN.Components is
       PN_Generated : Types.Node_Id) return Boolean
    is
       use Ocarina.ME_AADL.AADL_Instances.Entities;
-      use Ocarina.Backends.PN.Nodes;
       use Ocarina.ME_AADL.AADL_Instances.Nodes;
       use Ocarina.ME_AADL;
-      use OPU;
-      use Ocarina.Backends.Properties;
 
       Success   : Boolean := False;
       List_Node : Node_Id := No_Node;
@@ -1638,7 +1631,6 @@ package body Ocarina.Backends.PN.Components is
       PN_Generated  : Types.Node_Id) return Boolean
    is
       use Ocarina.Backends.PN.Nodes;
-      use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Iutils;
       use Ocarina.AADL_Values;
 
@@ -1715,7 +1707,6 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.Properties;
       use Ocarina.Namet;
       use AIN;
-      use OPND;
 
       V_Formalism : constant Value_Type :=
         Get_Value_Type (Formalism (PN_Generated));
@@ -2514,10 +2505,7 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Iutils;
-      use Ocarina.AADL_Values;
-      use Ocarina.Backends.Properties;
       use Ocarina.Namet;
-      use AIN;
 
       PN_Spg_Par    : Node_Id;
       Dest_F        : Node_Id;
@@ -2621,13 +2609,10 @@ package body Ocarina.Backends.PN.Components is
       PN_Thread     : Types.Node_Id;
       F             : Types.Value_Id)
    is
-
-      use Ocarina.Namet;
       use AIN;
       use Ocarina.AADL_Values;
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
-      use Ocarina.ME_AADL.AADL_Instances.Entities;
       use Ocarina.Backends.Properties;
       use Ocarina.Backends.PN.Iutils;
 
@@ -2727,7 +2712,6 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Iutils;
       use Ocarina.AADL_Values;
-      use Ocarina.Backends.Properties;
       use Ocarina.Namet;
       use AIN;
       use Ocarina.Backends.Utils;
@@ -2863,7 +2847,6 @@ package body Ocarina.Backends.PN.Components is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
       use Ocarina.Backends.PN.Iutils;
-      use Ocarina.AADL_Values;
       use Ocarina.Backends.Properties;
       use Ocarina.Namet;
       use AIN;
@@ -3174,8 +3157,6 @@ package body Ocarina.Backends.PN.Components is
    is
       use Ocarina.Backends.PN.Nodes;
       use Ocarina.Backends.PN.Nutils;
-      use Ocarina.Backends.PN.Iutils;
-      use Ocarina.AADL_Values;
       use Ocarina.Namet;
 
       type Thread_Pattern is array (Integer range <>) of Name_Id;

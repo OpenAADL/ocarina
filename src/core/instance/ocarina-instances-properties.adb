@@ -51,7 +51,6 @@ package body Ocarina.Instances.Properties is
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Entities;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
-   use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
 
    use Ocarina.Instances.Components;

@@ -74,22 +74,11 @@ package body Ocarina.Backends.PO_HI_C is
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
-   use Ocarina.Backends.PO_HI_C.Activity;
-   use Ocarina.Backends.PO_HI_C.Deployment;
-   use Ocarina.Backends.PO_HI_C.Main;
-   use Ocarina.Backends.PO_HI_C.Naming;
-   use Ocarina.Backends.PO_HI_C.Request;
-   use Ocarina.Backends.C_Common.Types;
-   use Ocarina.Backends.C_Common.Subprograms;
-   use Ocarina.Backends.PO_HI_C.Marshallers;
    use Ocarina.Backends.Messages;
-   use Ocarina.Backends.C_Tree.Generator;
-   use Ocarina.Backends.ASN1;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Expander;
    use Ocarina.Instances;
    use Ocarina.Backends.Build_Utils;
-   use Ocarina.Backends.Execution_Utils;
    use Ocarina.Backends.Execution_Tests;
 
    package AAN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -343,7 +332,6 @@ package body Ocarina.Backends.PO_HI_C is
    ------------------------------------
 
    procedure Generate_Doxygen_Configuration (My_System : Node_Id) is
-      use Ocarina.Backends.C_Tree.Nodes;
       procedure Visit_Architecture_Instance (E : Node_Id);
       procedure Visit_Component_Instance (E : Node_Id);
       procedure Visit_System_Instance (E : Node_Id);

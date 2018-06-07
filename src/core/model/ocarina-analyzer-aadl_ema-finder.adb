@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2016 ESA & ISAE.                       --
+--                   Copyright (C) 2016-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -282,8 +282,6 @@ package body Ocarina.Analyzer.AADL_EMA.Finder is
       Pckg_Original_Name           : out Node_Id;
       Not_Allowed_Reference_Itself : out Boolean)
    is
-      use ATN;
-      use EMAT;
 
       Package_Node : Node_Id;
       Package_Specif : Node_List;
@@ -476,8 +474,6 @@ package body Ocarina.Analyzer.AADL_EMA.Finder is
        Package_Container : Node_Id)
    return Boolean
    is
-      use ATN;
-
       Pckg_Name : Node_Id;
       Identifier_1 : Node_Id;
       Identifier_2 : Node_Id;
@@ -593,7 +589,6 @@ package body Ocarina.Analyzer.AADL_EMA.Finder is
                                  List_Last_Node  : in out Node_Id;
                                  Pckg_Name : Node_Id)
    is
-      use ATN;
    begin
 
       if No (List_First_Node) then
@@ -718,8 +713,6 @@ package body Ocarina.Analyzer.AADL_EMA.Finder is
         List_Last_Node          : in out Node_Id;
         Record_Identifier       : Boolean := True)
    is
-      use Naming_Rules;
-
       Element_Node : Node_Id;
       Node : Node_Id;
    begin
@@ -774,8 +767,6 @@ package body Ocarina.Analyzer.AADL_EMA.Finder is
         List_Last_Node          : in out Node_Id;
         Is_Set                  : Boolean)
    is
-      use Naming_Rules;
-
       Element_Node : Node_Id;
       Node : Node_Id;
    begin
@@ -951,8 +942,6 @@ package body Ocarina.Analyzer.AADL_EMA.Finder is
        Id_2 : Node_Id)
      return Boolean
    is
-      use ATN;
-
       Success : Boolean := False;
       Identifier_1 : Node_Id;
       Identifier_2 : Node_Id;
@@ -1012,8 +1001,6 @@ package body Ocarina.Analyzer.AADL_EMA.Finder is
        List_First_Node : in out Node_Id;
        List_Last_Node  : in out Node_Id)
    is
-      use Naming_Rules;
-
       Error_Type_Library_Node : Node_Id;
       Element_List : List_Id;
       Element_Node : Node_Id;
@@ -1090,8 +1077,6 @@ package body Ocarina.Analyzer.AADL_EMA.Finder is
        List_First_Node : in out Node_Id;
        List_Last_Node  : in out Node_Id)
    is
-      use Naming_Rules;
-
       Error_Type_Library_Node : Node_Id;
       Element_List : List_Id;
       Element_Node : Node_Id;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -50,7 +50,6 @@ package body Ocarina.Backends.ARINC653_Conf.Scheduling is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Properties;
-   use Ocarina.Backends.XML_Values;
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.ARINC653_Conf.Mapping;
 

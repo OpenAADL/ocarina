@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -64,7 +64,6 @@ with Ocarina.Instances.Queries;
 with Ocarina.Backends.Messages;
 
 package body Ocarina.Transfo.Fusions is
-   use Ocarina.Transfo;
 
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -706,8 +705,6 @@ package body Ocarina.Transfo.Fusions is
       New_Thread                        : out Node_Id;
       Success                           : out Boolean)
    is
-      use Ocarina.ME_AADL.AADL_Tree.Entities;
-
       Proc_Str        : constant String := Get_Name_String (Owner_Process);
       Proc            : Node_Id;
       Th_1            : Node_Id;
@@ -842,9 +839,8 @@ package body Ocarina.Transfo.Fusions is
          --  3.2/ Create the corresponding implementation
 
          declare
-            use Ocarina.Builder.AADL.Components.Subprogram_Calls;
-
             Impl_Id : Node_Id;
+
          begin
             --  3.2.1/ Build the identifier and link to the component type
 
@@ -1662,8 +1658,6 @@ package body Ocarina.Transfo.Fusions is
                      end if;
                      Cnx_Num := Cnx_Num + 1;
                      declare
-                        use Ocarina.Builder.AADL.Components.Connections;
-
                         Cnx_Num_Name : constant Name_Id :=
                           Get_String_Name ("cnx_" & Image (Cnx_Num));
                         Src_Path_2 : List_Id := No_List;
@@ -1781,8 +1775,6 @@ package body Ocarina.Transfo.Fusions is
 
                      Cnx_Num := Cnx_Num + 1;
                      declare
-                        use Ocarina.Builder.AADL.Components.Connections;
-
                         Cnx_Num_Name : constant Name_Id :=
                           Get_String_Name ("cnx_" & Image (Cnx_Num));
                         Src_Path_2 : List_Id := No_List;
@@ -1887,8 +1879,6 @@ package body Ocarina.Transfo.Fusions is
                      end if;
                      Cnx_Num := Cnx_Num + 1;
                      declare
-                        use Ocarina.Builder.AADL.Components.Connections;
-
                         Cnx_Num_Name : constant Name_Id :=
                           Get_String_Name ("cnx_" & Image (Cnx_Num));
                         Src_Path_2 : List_Id := No_List;
@@ -1996,8 +1986,6 @@ package body Ocarina.Transfo.Fusions is
 
                      Cnx_Num := Cnx_Num + 1;
                      declare
-                        use Ocarina.Builder.AADL.Components.Connections;
-
                         Cnx_Num_Name : constant Name_Id :=
                           Get_String_Name ("cnx_" & Image (Cnx_Num));
                         Src_Path_2 : List_Id := No_List;
@@ -2120,9 +2108,7 @@ package body Ocarina.Transfo.Fusions is
          --  4/ We add the period to the call sequence
 
          declare
-            use Ocarina.Builder.AADL.Properties;
             use Ocarina.Transfo.Fusions.Scheduler;
-            use Ocarina.AADL_Values;
 
             CSP : Natural;
          begin
@@ -2523,7 +2509,6 @@ package body Ocarina.Transfo.Fusions is
          Call_Seq : Node_Id) return Int
       is
          use Node_Priorities;
-         use Utils;
 
          It : Natural := First;
       begin
@@ -2549,7 +2534,6 @@ package body Ocarina.Transfo.Fusions is
          P    : Int) return Node_Id
       is
          use Node_Priorities;
-         use Utils;
 
          It : Natural := First;
       begin
@@ -2571,7 +2555,6 @@ package body Ocarina.Transfo.Fusions is
          N    : Node_Id) return Node_Id
       is
          use Node_Priorities;
-         use Utils;
 
          It : Natural := First;
       begin
@@ -2709,7 +2692,6 @@ package body Ocarina.Transfo.Fusions is
          Minimum :        Int)
       is
          use Node_Priorities;
-         use Utils;
 
          function Declare_Object_With_Priority
            (New_Thread : Node_Id;
@@ -2832,7 +2814,6 @@ package body Ocarina.Transfo.Fusions is
             P          : Int) return Node_Id
          is
             use Ocarina.Builder.AADL.Components;
-            use Ocarina.Builder.AADL.Components.Features;
             use Ocarina.Builder.AADL.Components.Subcomponents;
             use Ocarina.Builder.AADL.Properties;
             use Ocarina.Analyzer.AADL.Finder;
@@ -3176,7 +3157,6 @@ package body Ocarina.Transfo.Fusions is
            (Object, Wrapper_Call, Thread : Node_Id)
          is
             use Ocarina.Builder.AADL.Components.Features;
-            use Ocarina.Builder.AADL.Components.Subcomponents;
             use Ocarina.Builder.AADL.Components.Connections;
 
             pragma Assert (Kind (Wrapper_Call) = K_Subprogram_Call);
@@ -3312,8 +3292,6 @@ package body Ocarina.Transfo.Fusions is
                end if;
             end;
          end Add_Subprogram_To_Data;
-
-         use Ocarina.Transfo.Fusions.Scheduler;
 
          New_Call_Seq : Node_Id;
          Call_Seq     : Node_Id;
@@ -3537,9 +3515,6 @@ package body Ocarina.Transfo.Fusions is
             Call_Seq := Next_Node (Call_Seq);
          end loop;
       end Copy_All_Call_Sequences;
-
-      use Ocarina.Builder.AADL.Components;
-      use AIN;
 
       Th1_Impl : constant Node_Id := AIN.Corresponding_Declaration (Th_Inst_1);
       Th2_Impl : constant Node_Id := AIN.Corresponding_Declaration (Th_Inst_2);
@@ -3807,7 +3782,6 @@ package body Ocarina.Transfo.Fusions is
    procedure Set_Deadline (S : Node_Id; Value : Natural) is
       use Ocarina.AADL_Values;
       use Ocarina.Builder.AADL.Properties;
-      use Ocarina.ME_AADL.AADL_Tree.Entities;
 
       pragma Assert
         (Kind (S) = K_Component_Implementation
@@ -3971,7 +3945,6 @@ package body Ocarina.Transfo.Fusions is
      (Owner_Thread : Node_Id) return Node_Id
    is
       use Ocarina.Builder.AADL.Components;
-      use Ocarina.Builder.AADL.Components.Subcomponents;
 
       Decl         : Node_Id;
       Impl         : Node_Id;
@@ -4045,8 +4018,6 @@ package body Ocarina.Transfo.Fusions is
       procedure Copy_All_Others_Priorities
         (Old_Thread, New_Thread : Node_Id)
       is
-         use Ocarina.Transfo.Fusions.Scheduler;
-
          pragma Assert
            (Kind (Old_Thread) = K_Component_Implementation
             or else Kind (Old_Thread) = K_Component_Type);
@@ -4212,7 +4183,6 @@ package body Ocarina.Transfo.Fusions is
 
          declare
             use Ocarina.Transfo.Fusions.Scheduler;
-            use Ocarina.AADL_Values;
 
             Gcd : Unsigned_Long_Long;
          begin
@@ -4318,7 +4288,6 @@ package body Ocarina.Transfo.Fusions is
      (System, Old_Proc_Subcomponent, New_Proc :     Node_Id;
       Success                                 : out Boolean)
    is
-      use Ocarina.Builder.AADL.Components;
       use Ocarina.Analyzer.AADL.Naming_Rules;
 
       pragma Assert (ATN.Kind (Old_Proc_Subcomponent) = ATN.K_Subcomponent);
@@ -4821,8 +4790,6 @@ package body Ocarina.Transfo.Fusions is
       Thread_Component :        Node_Id;
       Owner_Thread     :        Node_Id)
    is
-      use Ocarina.ME_AADL.AADL_Tree.Entities;
-
       pragma Assert (Kind (Thread_Component) = K_Component_Type);
 
       function Find_Feature_By_Name

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2014-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2014-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,9 +29,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  with Ada.Strings; use Ada.Strings;
---  with Ada.Strings.Fixed; use Ada.Strings.Fixed;
-with Ada.Text_IO;
 with Ada.Integer_Text_IO;
 with Ocarina.Backends.Messages;
 with Ocarina.ME_AADL;
@@ -47,7 +44,6 @@ with Ocarina.Backends.Deos_Conf.Mapping;
 
 package body Ocarina.Backends.Deos_Conf.Partitions is
 
-   use Ada.Text_IO;
    use Ada.Integer_Text_IO;
    use Ocarina.ME_AADL;
 

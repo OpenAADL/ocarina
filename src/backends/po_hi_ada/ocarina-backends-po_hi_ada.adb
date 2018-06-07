@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -61,14 +61,11 @@ package body Ocarina.Backends.PO_HI_Ada is
    use GNAT.OS_Lib;
    use Ocarina.Output;
    use Ocarina.Instances;
-   use Ocarina.Backends.Ada_Tree.Generator;
    use Ocarina.Backends.Expander;
    use Ocarina.Backends.Messages;
-   use Ocarina.Backends.PO_HI_Ada.Runtime;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Build_Utils;
-   use Ocarina.Backends.Execution_Utils;
    use Ocarina.Backends.Execution_Tests;
 
    procedure Visit_Architecture_Instance (E : Node_Id);

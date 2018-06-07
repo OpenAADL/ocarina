@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -44,7 +44,6 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
    -----------------------------
 
    function Make_Current_Identifier (Entity  : Node_Id) return Node_Id is
-      use Ocarina.ME_AADL_BA.Tokens;
       use Ocarina.FE_AADL_BA.Lexer;
       use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
       use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
@@ -67,7 +66,6 @@ package body Ocarina.FE_AADL_BA.Parser.Identifiers is
       use Locations;
       use Ocarina.ME_AADL_BA.Tokens;
       use Ocarina.FE_AADL_BA.Lexer;
-      use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
       Loc : Location;
    begin

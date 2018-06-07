@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2016 ESA & ISAE.                       --
+--                   Copyright (C) 2016-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -45,8 +45,6 @@ package body Ocarina.Backends.Replication_Properties is
    use Ocarina.Namet;
    use Utils;
 
-   use Ocarina.ME_AADL;
-   use Ocarina.AADL_Values;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Ocarina.ME_AADL.AADL_Tree.Entities;

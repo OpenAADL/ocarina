@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -47,9 +47,8 @@ package body Ocarina.Backends.Execution_Utils is
    use GNAT.Directory_Operations;
    use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
-   use Ocarina.ME_AADL.AADL_Instances.Nutils;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
-   use Ocarina.Backends;
+
    use Ocarina.Backends.Utils;
 
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;

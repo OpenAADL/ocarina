@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -54,7 +54,7 @@ package body Ocarina.Analyzer.REAL is
    use Ocarina.Analyzer.REAL.Finder;
    use Ocarina.Analyzer.Messages;
    use Ocarina.Builder.REAL;
-   use Ocarina.ME_REAL;
+
    use Ocarina.ME_REAL.REAL_Tree.Nodes;
    use Ocarina.ME_REAL.REAL_Tree.Utils;
    use Ocarina.ME_REAL.REAL_Tree.Nutils;
@@ -236,8 +236,6 @@ package body Ocarina.Analyzer.REAL is
 
    function Analyze_Model (Root : Node_Id) return Boolean is
       use AIN;
-      use ATN;
-      use Ocarina.Analyzer.REAL;
       use Ocarina.REAL_Expander;
       use Ocarina.REAL_Expander.Flow_Analysis;
 
@@ -357,8 +355,6 @@ package body Ocarina.Analyzer.REAL is
       Success : out Boolean)
    is
       pragma Assert (Kind (E) = K_Theorem);
-
-      use Ocarina.REAL_Expander;
 
       R      : constant List_Id := Required_Theorems (E);
       N, T   : Node_Id;
@@ -2771,7 +2767,6 @@ package body Ocarina.Analyzer.REAL is
       Result  : out Return_Type)
    is
       use ATN;
-      use Ocarina.REAL_Values;
 
       Packages : Node_Id := ATN.First_Node (ATN.Declarations (AADL_Tree));
       Fully_Qualified_Property_Name : Name_Id;

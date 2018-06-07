@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -59,14 +59,8 @@ package body Ocarina.Backends.POK_C is
    use Ocarina.Instances;
    use Ocarina.Backends.Expander;
    use Ocarina.Backends.Messages;
-   use Ocarina.Backends.C_Tree.Generator;
    use Ocarina.Backends.Utils;
-   use Ocarina.Backends.Execution_Utils;
    use Ocarina.Backends.Execution_Tests;
-   use Ocarina.Backends.POK_C.Deployment;
-   use Ocarina.Backends.POK_C.Naming;
-   use Ocarina.Backends.XML_Tree.Generator;
-   use Ocarina.Backends.ARINC653_Conf;
 
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;

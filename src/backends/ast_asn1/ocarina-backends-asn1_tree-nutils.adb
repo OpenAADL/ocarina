@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -61,8 +61,6 @@ package body Ocarina.Backends.ASN1_Tree.Nutils is
       No_Depth + 1,
       10,
       10);
-
-   use Entity_Stack;
 
    procedure New_Operator (O : Operator_Type; I : String := "");
 

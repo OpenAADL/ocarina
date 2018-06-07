@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -41,7 +41,6 @@ package body Ocarina.Backends.Functions_Matrix is
    use Ocarina.Instances;
    use Ocarina.Backends.Expander;
    use Ocarina.Backends.Messages;
-   use Ocarina.Backends.XML_Tree.Generator;
    use Ocarina.Backends.Utils;
 
    procedure Visit_Architecture_Instance (E : Node_Id);

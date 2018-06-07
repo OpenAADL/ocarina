@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2016 ESA & ISAE.                       --
+--                   Copyright (C) 2016-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -508,8 +508,6 @@ package body Ocarina.Analyzer.AADL_EMA.Naming_Rules is
    procedure Affiche (Pckg_Name : Node_Id;
                       Is_AADL   : Boolean)
    is
-      use ATN;
-
       Identifier_Node : Node_Id;
       Pckg : Node_Id;
    begin
@@ -675,8 +673,6 @@ package body Ocarina.Analyzer.AADL_EMA.Naming_Rules is
        Package_Renamed_First : Node_Id)
       return Boolean
    is
-      use ATN;
-
       Package_Spec : Node_Id;
       Pckg_Name : Node_Id;
       Id : Node_Id;
@@ -1112,8 +1108,6 @@ package body Ocarina.Analyzer.AADL_EMA.Naming_Rules is
        Is_Set             : Boolean)
       return Boolean
    is
-      use ATN;
-
       Success : Boolean := True;
 
       Parent_Node : Node_Id;

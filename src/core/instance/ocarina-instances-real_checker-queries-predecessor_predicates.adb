@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2012-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2012-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -47,8 +47,6 @@ package body Ocarina.Instances.REAL_Checker.Queries.Predecessor_Predicates is
       C      : Node_Id;
       Option : Predicates_Search_Options := PSO_Direct) return Boolean
    is
-      use ATN;
-
       pragma Unreferenced (Option);
 
       P, P2  : Node_Id;

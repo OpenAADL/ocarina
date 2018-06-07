@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2014 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -203,8 +203,6 @@ package body Ocarina.Processor.Properties is
 
    function Resolve_Type (Root, Property : Node_Id) return Boolean is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
-      use Ocarina.ME_AADL.AADL_Tree.Entities;
-      use Ocarina.Analyzer.AADL.Queries;
 
       pragma Assert (Present (Root));
       pragma Assert (Kind (Root) = K_AADL_Specification);
@@ -370,7 +368,6 @@ package body Ocarina.Processor.Properties is
 
    function Resolve_Value (Root, Property : Node_Id) return Boolean is
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
-      use Ocarina.Analyzer.AADL.Queries;
 
       pragma Assert (Present (Root));
       pragma Assert (Kind (Root) = K_AADL_Specification);
@@ -1541,7 +1538,6 @@ package body Ocarina.Processor.Properties is
 
    function Convert_To_Base (L : Node_Id; U : Node_Id) return Node_Id is
       use Ocarina.AADL_Values;
-      use Utils;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.Analyzer.Messages;
 

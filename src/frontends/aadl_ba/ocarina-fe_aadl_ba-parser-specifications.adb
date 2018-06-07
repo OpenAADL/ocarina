@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -128,10 +128,9 @@ package body Ocarina.FE_AADL_BA.Parser.Specifications is
      (Annex_Subcl_Node : Types.Node_Id)
      return Node_Id
    is
-      use ATN;
-
       Loc           : Location;
       Behavior_Spec : Node_Id := No_Node;
+
    begin
 
       if Present (Annex_Subcl_Node) then

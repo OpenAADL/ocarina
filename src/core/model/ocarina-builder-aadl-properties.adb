@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -351,14 +351,6 @@ package body Ocarina.Builder.AADL.Properties is
       Check_For_Conflicts : Boolean := False;
       Override            : Boolean := False) return Node_Id
    is
-      use Ocarina.Builder.AADL.Components;
-      use Ocarina.Builder.AADL.Components.Features;
-      use Ocarina.Builder.AADL.Components.Connections;
-      use Ocarina.Builder.AADL.Components.Flows;
-      use Ocarina.Builder.AADL.Components.Modes;
-      use Ocarina.Builder.AADL.Components.Subprogram_Calls;
-      use Ocarina.Builder.AADL.Components.Subcomponents;
-      use Ocarina.Builder.AADL.Namespaces;
       use Ocarina.ME_AADL.AADL_Tree.Nutils;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
       use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;

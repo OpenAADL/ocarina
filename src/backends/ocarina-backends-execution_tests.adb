@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -49,7 +49,6 @@ package body Ocarina.Backends.Execution_Tests is
 
    use Ocarina.Output;
    use Ocarina.Namet;
-   use Ada.Command_Line;
    use Ada.Text_IO;
    use Ada.Strings.Unbounded.Text_IO;
    use Ada.Strings.Unbounded;

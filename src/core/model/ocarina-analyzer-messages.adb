@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -214,7 +214,7 @@ package body Ocarina.Analyzer.Messages is
       Kind : Ocarina.ME_AADL.AADL_Tree.Nodes.Node_Kind)
    is
       use Ocarina.Output;
-      use Ocarina.ME_AADL.AADL_Tree.Debug;
+
    begin
       Write_Str (Image (Loc));
       Write_Str (": ");

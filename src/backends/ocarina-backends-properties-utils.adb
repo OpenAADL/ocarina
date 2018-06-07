@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2014-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2014-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -44,7 +44,6 @@ package body Ocarina.Backends.Properties.Utils is
    use Ocarina.Instances.Queries;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.Namet;
-   use Standard.Utils;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;

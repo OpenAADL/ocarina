@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -112,7 +112,6 @@ package body Ocarina.Backends.PN.Nutils is
    --------------
 
    function New_List (Kind : OPN.Node_Kind) return Types.List_Id is
-      use Ocarina.Backends.PN.Nodes;
    begin
       return List_Id (New_Node (Kind));
    end New_List;

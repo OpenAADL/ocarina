@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1575,9 +1575,8 @@ package body Ocarina.FE_REAL.Parser is
    ------------------
 
    function P_Identifier return Node_Id is
-      use Ocarina.REAL_Values;
-
       Identifier : Node_Id;
+
    begin
       Scan_Token;
 

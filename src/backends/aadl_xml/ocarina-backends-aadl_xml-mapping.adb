@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -39,7 +39,6 @@ with Ocarina.Backends.XML_Tree.Nutils;
 
 package body Ocarina.Backends.AADL_XML.Mapping is
 
-   use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
 
    use Ocarina.Backends.XML_Tree.Nodes;

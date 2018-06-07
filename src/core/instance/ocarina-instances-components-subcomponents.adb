@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -49,7 +49,6 @@ package body Ocarina.Instances.Components.Subcomponents is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.ME_AADL.AADL_Instances.Nutils;
 
-   use Ocarina.Instances.Components;
    use Ocarina.Instances.Messages;
 
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2016 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -141,7 +141,6 @@ package body Ocarina.Builder.AADL.Annexes is
       Namespace  : Ocarina.Types.Node_Id;
       In_Modes   : Ocarina.Types.Node_Id) return Ocarina.Types.Node_Id
    is
-      use Ocarina.Types;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
    begin

@@ -2549,14 +2549,13 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                Append_Node_To_List (N, Statements);
             else
                declare
-                  use ATN;
-
                   Alternatives : constant List_Id := New_List (ADN.K_List_Id);
                   Alt_Sts      : List_Id;
                   CEP_Name     : Name_Id;
                   Default      : Boolean          := False;
                   M            : Node_Id := AIN.First_Node (AIN.Modes (E));
                   Mode_Name    : Name_Id;
+
                begin
                   while Present (M) loop
                      Alt_Sts := New_List (ADN.K_Statement_List);

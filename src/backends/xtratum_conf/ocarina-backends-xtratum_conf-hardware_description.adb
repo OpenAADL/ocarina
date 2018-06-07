@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -59,7 +59,6 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Properties.ARINC653;
-   use Ocarina.Backends.XML_Values;
    use Ocarina.Backends.XML_Tree.Nutils;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;

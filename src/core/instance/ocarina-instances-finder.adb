@@ -41,7 +41,6 @@ package body Ocarina.Instances.Finder is
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
-   use Locations;
    use Errors;
 
    use Ocarina.Instances.Components.Subprogram_Calls;

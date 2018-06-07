@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -39,7 +39,7 @@ with Ada.Text_IO;
 with Ocarina.Transfo.Fusions;
 
 package body Ocarina.Transfo.Fusions.Scheduler is
-   use Ocarina.ME_AADL;
+
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Tree.Nutils;
    use Errors;
@@ -201,12 +201,11 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    function Get_Call_Sequence_Period
      (Call_Sequence : Node_Id) return Natural
    is
-      use Ocarina.Transfo.Fusions;
-
       pragma Assert (Kind (Call_Sequence) = K_Subprogram_Call_Sequence);
 
       Per     : Natural;
       Wrapper : Node_Id;
+
    begin
       if Is_Empty (Subprogram_Calls (Call_Sequence)) then
          raise Program_Error;
@@ -235,13 +234,12 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    function Get_Call_Sequence_Priority
      (Call_Sequence : Node_Id) return Natural
    is
-      use Ocarina.Transfo.Fusions;
-
       pragma Assert (Kind (Call_Sequence) = K_Subprogram_Call_Sequence);
 
       Per     : Natural;
       Wrapper : Node_Id;
       Data    : Node_Id;
+
    begin
       if Is_Empty (Subprogram_Calls (Call_Sequence)) then
          raise Program_Error;
@@ -277,12 +275,11 @@ package body Ocarina.Transfo.Fusions.Scheduler is
    ------------------------
 
    procedure Get_Thread_Quantum (Thr : Node_Id; GCD, LCM : out Natural) is
-      use Ocarina.Transfo.Fusions;
-
       C       : Node_Id;
       Tmp_GCD : Int := 0;
       Tmp_LCM : Int := 0;
       Current : Int := -1;
+
    begin
       LCM := 0;
       if Is_Empty (Calls (Thr)) then
