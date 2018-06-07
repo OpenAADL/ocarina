@@ -29,15 +29,22 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Utils;         use Utils;
 with Ocarina.Namet; use Ocarina.Namet;
 
 with Ocarina.ME_AADL;
-with Ocarina.ME_AADL.AADL_Instances.Nodes;
+
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.ME_AADL.AADL_Instances.Nodes;
+with Ocarina.ME_AADL.AADL_Instances.Nutils;
+
+with Ocarina.Backends.Properties;
+with Ocarina.Backends.Properties.ARINC653;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
+with Ocarina.Backends.XML_Values;
 
 package body Ocarina.Backends.AIR_Conf.AIR_Configuration is
 
@@ -45,10 +52,16 @@ package body Ocarina.Backends.AIR_Conf.AIR_Configuration is
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
+   use Ocarina.Backends.Properties;
+   use Ocarina.Backends.Properties.ARINC653;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Tree.Nutils;
 
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
+   package XTU renames Ocarina.Backends.XML_Tree.Nutils;
+   package XV renames Ocarina.Backends.XML_Values;
 
    procedure Visit_Architecture_Instance (E : Node_Id);
    procedure Visit_Component_Instance (E : Node_Id);
@@ -102,6 +115,189 @@ package body Ocarina.Backends.AIR_Conf.AIR_Configuration is
       end case;
    end Visit_Component_Instance;
 
+   --------------------------
+   -- Map_Connection_Table --
+   --------------------------
+
+   procedure Map_Connection_Table (E : Node_Id)
+     with Pre => (Get_Category_Of_Component (E) = CC_System);
+
+   procedure Map_Connection_Table (E : Node_Id) is
+      Channel_Identifier : Unsigned_Long_Long := 0;
+      C                     : Node_Id;
+      P                     : Node_Id;
+      Q                     : Node_Id;
+      Source_Port_Name      : Name_Id;
+      Destination_Port_Name : Name_Id;
+      Destination_Partition : Node_Id;
+      Source_Partition      : Node_Id;
+      Connection_Table_Node : Node_Id;
+      Channel_Node          : Node_Id;
+      Source_Node           : Node_Id;
+      Destination_Node      : Node_Id;
+      Standard_Partition_Node : Node_Id;
+
+   begin
+      if not AINU.Is_Empty (Connections (E)) then
+
+         Append_Node_To_List
+           (Make_XML_Comment (Get_String_Name ("Connection Table")),
+            XTN.Subitems (Current_XML_Node));
+
+         Connection_Table_Node := Make_XML_Node ("Connection_Table");
+
+         C := First_Node (Connections (E));
+         while Present (C) loop
+
+            if Kind (C) = K_Connection_Instance then
+
+               Source_Port_Name :=
+                 AIN.Name
+                   (AIN.Identifier
+                      (AIN.Item
+                         (AIN.Next_Node
+                            (AIN.First_Node (AIN.Path (AIN.Source (C)))))));
+
+               Destination_Port_Name :=
+                 AIN.Name
+                   (AIN.Identifier
+                      (AIN.Item
+                         (AIN.Next_Node
+                            (AIN.First_Node
+                               (AIN.Path (AIN.Destination (C)))))));
+
+               Source_Partition :=
+                 AIN.Corresponding_Instance
+                   (AIN.Item (AIN.First_Node (AIN.Path (AIN.Source (C)))));
+
+               Destination_Partition :=
+                 AIN.Corresponding_Instance
+                   (AIN.Item
+                      (AIN.First_Node (AIN.Path (AIN.Destination (C)))));
+
+               --  Channel node
+
+               Channel_Node := Make_XML_Node ("Channel");
+               Append_Node_To_List
+                 (Channel_Node,
+                  XTN.Subitems (Connection_Table_Node));
+
+               --  Channel identifier
+
+               Set_Str_To_Name_Buffer ("ChannelIdentifier");
+               P := Make_Defining_Identifier (Name_Find);
+               Set_Str_To_Name_Buffer ("");
+               Add_ULL_To_Name_Buffer (Channel_Identifier, 10);
+               Q := Make_Defining_Identifier (Remove_Char (Name_Find, ' '));
+
+               Append_Node_To_List (Make_Assignement (P, Q),
+                                    XTN.Items (Channel_Node));
+               Channel_Identifier := Channel_Identifier + 1;
+
+               --  Channel name
+
+               XTU.Add_Attribute ("ChannelName",
+                                  Get_Name_String
+                                    (To_Lower
+                                       (Display_Name
+                                          (Identifier (C)))), Channel_Node);
+
+               --  Mapping of the source
+
+               Source_Node := Make_XML_Node ("Source");
+               Append_Node_To_List (Source_Node, XTN.Subitems (Channel_Node));
+
+               Standard_Partition_Node := Make_XML_Node ("Standard_Partition");
+               Append_Node_To_List (Standard_Partition_Node,
+                                    XTN.Subitems (Source_Node));
+
+               Set_Str_To_Name_Buffer ("PartitionIdentifier");
+               P := Make_Defining_Identifier (Name_Find);
+               Q :=
+                 Make_Literal
+                   (XV.New_Numeric_Value
+                      (Get_Partition_Identifier
+                         (Get_Bound_Processor (Source_Partition)),
+                       0,
+                       10));
+               Append_Node_To_List
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Standard_Partition_Node));
+
+               Set_Str_To_Name_Buffer ("PartitionName");
+               P := Make_Defining_Identifier (Name_Find);
+               Get_Name_String
+                 (To_Lower
+                    (Display_Name
+                       (Identifier
+                          (Parent_Subcomponent (Source_Partition)))));
+               Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Standard_Partition_Node));
+
+               Set_Str_To_Name_Buffer ("PortName");
+               P := Make_Defining_Identifier (Name_Find);
+               Get_Name_String (Source_Port_Name);
+               Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Standard_Partition_Node));
+
+               --  Mapping of the destination
+
+               Destination_Node := Make_XML_Node ("Destination");
+               Append_Node_To_List
+                 (Destination_Node,
+                  XTN.Subitems (Channel_Node));
+
+               Standard_Partition_Node := Make_XML_Node ("Standard_Partition");
+               Append_Node_To_List (Standard_Partition_Node,
+                                    XTN.Subitems (Destination_Node));
+
+               Set_Str_To_Name_Buffer ("PartitionIdentifier");
+               P := Make_Defining_Identifier (Name_Find);
+               Q :=
+                 Make_Literal
+                   (XV.New_Numeric_Value
+                      (Get_Partition_Identifier
+                         (Get_Bound_Processor
+                         (Destination_Partition)),
+                       0,
+                       10));
+               Append_Node_To_List
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Standard_Partition_Node));
+
+               Set_Str_To_Name_Buffer ("PartitionName");
+               P := Make_Defining_Identifier (Name_Find);
+               Get_Name_String
+                 (To_Lower
+                    (Display_Name
+                       (Identifier
+                          (Parent_Subcomponent (Destination_Partition)))));
+               Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Standard_Partition_Node));
+
+               Set_Str_To_Name_Buffer ("PortName");
+               P := Make_Defining_Identifier (Name_Find);
+               Get_Name_String (Destination_Port_Name);
+               Q := Make_Defining_Identifier (Name_Find);
+               Append_Node_To_List
+                 (Make_Assignement (P, Q),
+                  XTN.Items (Standard_Partition_Node));
+            end if;
+
+            C := Next_Node (C);
+         end loop;
+
+         Append_Node_To_List (Connection_Table_Node,
+                              XTN.Subitems (Current_XML_Node));
+      end if;
+   end Map_Connection_Table;
+
    ---------------------------
    -- Visit_System_Instance --
    ---------------------------
@@ -118,6 +314,7 @@ package body Ocarina.Backends.AIR_Conf.AIR_Configuration is
       Push_Entity (U);
       Push_Entity (R);
 
+      Map_Connection_Table (E);
       Visit_Subcomponents_Of (E);
 
       Pop_Entity;
