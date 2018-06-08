@@ -167,6 +167,9 @@ package body Ocarina.Backends.Properties.ARINC653 is
 
    function Get_Partition_Identifier (P : Node_Id) return Unsigned_Long_Long is
    begin
+      if not Is_Initialized then
+         Init;
+      end if;
       return Check_And_Get_Property (P, Partition_Identifier_Name);
    end Get_Partition_Identifier;
 

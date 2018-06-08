@@ -198,7 +198,8 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
       Q :=
         Make_Literal
           (XV.New_Numeric_Value
-             (Get_Partition_Identifier (E),
+             (Get_Partition_Identifier
+                (Associated_Processor),
               0,
               10));
       Append_Node_To_List
@@ -265,7 +266,7 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
 
                --  Port name
 
-               Set_Str_To_Name_Buffer ("name");
+               Set_Str_To_Name_Buffer ("Name");
                P := Make_Defining_Identifier (Name_Find);
 
                Get_Name_String (Display_Name (Identifier (F)));
