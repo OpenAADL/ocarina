@@ -2329,30 +2329,42 @@ package body Ocarina.Backends.Properties is
 
       if not Is_System (Parent_Component (C)) then
          return No_Node;
+
       elsif Is_System (Parent_Component (C))
         and then Is_Process
           (Parent_Component (Get_Referenced_Entity (AIN.Source (C))))
         and then Is_Process
           (Parent_Component (Get_Referenced_Entity (AIN.Destination (C))))
         and then
-          Get_Execution_Platform
+        ((Get_Execution_Platform
             (Get_Bound_Processor
                (Parent_Component (Get_Referenced_Entity (AIN.Source (C))))) =
-          Platform_LEON3_XM3
+            Platform_LEON3_XM3
+            and then
+            Get_Execution_Platform
+              (Get_Bound_Processor
+                 (Parent_Component
+                    (Get_Referenced_Entity (AIN.Destination (C))))) =
+            Platform_LEON3_XM3)
+           or else
+           (Get_Execution_Platform
+              (Get_Bound_Processor
+                 (Parent_Component (Get_Referenced_Entity (AIN.Source (C))))) =
+              Platform_AIR
+              and then
+              Get_Execution_Platform
+                (Get_Bound_Processor
+                   (Parent_Component
+                      (Get_Referenced_Entity (AIN.Destination (C))))) =
+              Platform_AIR))
         and then
-          Get_Execution_Platform
-            (Get_Bound_Processor
-               (Parent_Component
-                  (Get_Referenced_Entity (AIN.Destination (C))))) =
-          Platform_LEON3_XM3
-        and then
-          Parent_Component
-            (Parent_Subcomponent
-               (Parent_Component
-                  (Get_Referenced_Entity (AIN.Destination (C))))) =
-          Parent_Component
-            (Parent_Subcomponent
-               (Parent_Component (Get_Referenced_Entity (AIN.Source (C)))))
+        Parent_Component
+          (Parent_Subcomponent
+             (Parent_Component
+                (Get_Referenced_Entity (AIN.Destination (C))))) =
+        Parent_Component
+        (Parent_Subcomponent
+           (Parent_Component (Get_Referenced_Entity (AIN.Source (C)))))
       then
          return No_Node;
 
@@ -2362,6 +2374,7 @@ package body Ocarina.Backends.Properties is
               (AIN.Loc (C),
                "This connection has to be bound to a bus",
                Fatal => True);
+
          else
             --  We do not enforce connection binding for the remaining
             --  generators.

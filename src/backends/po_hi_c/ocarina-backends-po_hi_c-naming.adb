@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -410,7 +410,7 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                            C := Extra_Item (C_End);
 
                            if No (C) then
-                              --  There hasbeen definitly a bug while
+                              --  There has been definitly a bug while
                               --  expanding connections.
 
                               raise Program_Error
@@ -418,23 +418,30 @@ package body Ocarina.Backends.PO_HI_C.Naming is
                            end if;
 
                            --  Get the bus of the connection
-                           if Get_Execution_Platform
-                               (Get_Bound_Processor (E)) =
-                             Platform_LEON3_XM3
+
+                           if ((Get_Execution_Platform
+                                  (Get_Bound_Processor (Parent)) =
+                                  Platform_Air)
+                                 or else
+                                 (Get_Execution_Platform
+                                    (Get_Bound_Processor (E)) =
+                                    Platform_LEON3_XM3
+                                    and then
+                                    Get_Execution_Platform
+                                      (Get_Bound_Processor (Parent)) =
+                                    Platform_LEON3_XM3))
                              and then
-                               Get_Execution_Platform
-                                 (Get_Bound_Processor (Parent)) =
-                               Platform_LEON3_XM3
-                             and then
-                               Parent_Component
-                                 (Parent_Subcomponent
-                                    (Get_Bound_Processor (E))) =
-                               Parent_Component
-                                 (Parent_Subcomponent
-                                    (Get_Bound_Processor (Parent)))
+                             Parent_Component
+                               (Parent_Subcomponent
+                                  (Get_Bound_Processor (E))) =
+                             Parent_Component
+                             (Parent_Subcomponent
+                                (Get_Bound_Processor (Parent)))
+
                            then
                               B             := No_Node;
                               Transport_API := Transport_None;
+
                            else
                               B := Get_Bound_Bus (C);
                            end if;
