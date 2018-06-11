@@ -294,13 +294,15 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
                --  MaxMessageSize
 
                if Get_Data_Size (Corresponding_Instance (F)) /= Null_Size then
-                  Q :=
-                    Make_Literal
-                      (XV.New_Numeric_Value
-                         (To_Bytes
-                            (Get_Data_Size (Corresponding_Instance (F))),
-                          1,
-                          10));
+                  Q := Make_Literal (XV.New_Numeric_Value (1024, 1, 10));
+
+                  --  Q :=
+                  --    Make_Literal
+                  --      (XV.New_Numeric_Value
+                  --         (To_Bytes
+                  --            (Get_Data_Size (Corresponding_Instance (F))),
+                  --          1,
+                  --          10));
                else
                   Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
                end if;
@@ -311,12 +313,37 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
                Append_Node_To_List
                  (Make_Assignement (P, Q), XTN.Items (Port_Node));
 
-               --  RefreshRateSeconds
+               --  MaxNbMessages
 
-               XTU.Add_Attribute ("RefreshRateSeconds", "1.0", Port_Node);
-               --  XXX hardcoded
+               if Is_Event (F) then
+                  if Get_Queue_Size (F) /= -1 then
+                     Q :=
+                       Make_Literal
+                       (XV.New_Numeric_Value
+                          (Unsigned_Long_Long (Get_Queue_Size (F)),
+                           1,
+                           10));
+                  else
+                     Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
+                  end if;
 
-               Append_Node_To_List (Port_Node, XTN.Subitems (Partition_Node));
+                  Set_Str_To_Name_Buffer ("MaxNbMessages");
+                  P := Make_Defining_Identifier (Name_Find);
+
+                  Append_Node_To_List
+                    (Make_Assignement (P, Q), XTN.Items (Port_Node));
+               end if;
+
+               if Is_Data (F) then
+                  --  RefreshRateSeconds
+
+                  XTU.Add_Attribute ("RefreshRateSeconds", "1.0", Port_Node);
+                  --  XXX hardcoded
+
+                  Append_Node_To_List
+                    (Port_Node, XTN.Subitems (Partition_Node));
+               end if;
+
             end if;
             F := Next_Node (F);
          end loop;
@@ -341,7 +368,7 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
 
       Append_Node_To_List
         (Make_Defining_Identifier
-           (Get_String_Name ("LIBAIR; LIBPRINTF")),
+           (Get_String_Name ("LIBAIR; IMASPEX; LIBPRINTF")),
          XTN.Subitems (Libs_Node));
 
       --  Devices node, child of PartitionConfiguration
