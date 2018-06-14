@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                   Copyright (C) 2011-2015 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,36 +29,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Ocarina.Backends.Properties; use Ocarina.Backends.Properties;
-
 package Ocarina.Backends.Xtratum_Conf.Mapping is
 
-   function Map_Distributed_Application (E : Node_Id) return Node_Id;
    function Map_HI_Node (E : Node_Id) return Node_Id;
    function Map_HI_Unit (E : Node_Id) return Node_Id;
-   function Map_Port (F : Node_Id) return Node_Id;
-   function Map_Data (E : Node_Id) return Node_Id;
-   function Map_Data_Access (E : Node_Id) return Node_Id;
-   function Map_Bus_Access (E : Node_Id) return Node_Id;
-   function Map_System (E : Node_Id) return Node_Id;
-   function Map_Process
-     (E                    : Node_Id;
-      Partition_Identifier : Unsigned_Long_Long) return Node_Id;
-   function Map_Data_Size (T : Size_Type) return Unsigned_Long_Long;
-   function Map_Virtual_Processor (E : Node_Id) return Node_Id;
-   function Map_Processor (E : Node_Id) return Node_Id;
-   function Map_Bus (E : Node_Id) return Node_Id;
-   function Map_Port_Connection (E : Node_Id) return Node_Id;
-   function Map_Process_Memory (Process : Node_Id) return Node_Id;
-   function Map_System_Description (System : Node_Id) return Node_Id;
-   function Map_Connection
-     (Connection         : Node_Id;
-      Channel_Identifier : Unsigned_Long_Long) return Node_Id;
-
-   function Map_Process_HM_Table (Process : Node_Id) return Node_Id;
-
-   function Map_Processor_HM_Table (Processor : Node_Id) return Node_Id;
-
-   function Map_System_HM_Table (System : Node_Id) return Node_Id;
 
 end Ocarina.Backends.Xtratum_Conf.Mapping;
