@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -397,6 +397,7 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                   elsif Transport_API = Transport_User
                     and then AAU.Is_Device (Corresponding_Instance (S))
                     and then Is_Connected (Bus, S)
+                    and then Is_Added (Corresponding_Instance (S), Bus, E)
                   then
                      N := Naming_Information (Corresponding_Instance (S));
                      Append_Node_To_List (N, Naming_Table_List);
