@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -961,7 +961,7 @@ package body Ocarina.Backends.PO_HI_Ada.Deployment is
                 Make_Array_Aggregate (Node_Enumerator_Pos_List));
          Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
 
-         --  Fix the size of type Node_Type to Node_Type_Size bit
+         --  Fix the size of type Node_Type to Node_Type_Size bits
          --  because the message stream allocates one byte for it for
          --  now. This implies a maximum value of 256 nodes per
          --  application.
