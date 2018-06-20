@@ -1649,13 +1649,11 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                     or else No
                       (CTN.Global_Port_Node (Backend_Node (Identifier (F))))
                   then
-
-                     N := (Make_Literal (CV.New_Int_Value (-1, 0, 10)));
+                     N := (Make_Literal (CV.New_Int_Value (1, -1, 10)));
 
                      Used_Bus := Get_Associated_Bus (F);
 
                      if Used_Bus /= No_Node then
-
                         if AAU.Is_Virtual_Bus (Used_Bus) then
                            Used_Bus :=
                              Parent_Component (Parent_Subcomponent (Used_Bus));
