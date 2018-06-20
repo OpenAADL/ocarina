@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -47,6 +47,7 @@ with Ocarina.Backends.Ada_Tree.Nutils;
 with Ocarina.Backends.Ada_Tree.Nodes;
 
 with Ocarina.Backends.Ada_Values;
+with Ocarina.AADL_Values;
 
 package body Ocarina.Backends.PO_HI_Ada.Naming is
 
@@ -63,7 +64,6 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
    use Ocarina.Backends.Ada_Values;
    use Ocarina.Instances.Queries;
 
-   package ADV renames Ocarina.Backends.Ada_Values;
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package ADN renames Ocarina.Backends.Ada_Tree.Nodes;
 
@@ -187,7 +187,7 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                  Make_List_Id (Make_Literal (New_String_Value (Location))));
          end if;
 
-         if Port_Number = ADV.No_Value then
+         if Port_Number = Ocarina.AADL_Values.No_Value then
             P := Make_Literal (New_Integer_Value (0, 1, 10));
          else
             P := Make_Literal (To_Ada_Value (Port_Number));
@@ -391,14 +391,25 @@ package body Ocarina.Backends.PO_HI_Ada.Naming is
                     and then AAU.Is_Process (Corresponding_Instance (S))
                     and then Is_Added (Corresponding_Instance (S), Bus, E)
                   then
+                     --  For default transport API, the configuration
+                     --  is captured at the level of the process
+
                      N := Naming_Information (Corresponding_Instance (S));
                      Append_Node_To_List (N, Naming_Table_List);
 
                   elsif Transport_API = Transport_User
-                    and then AAU.Is_Device (Corresponding_Instance (S))
-                    and then Is_Connected (Bus, S)
+                    and then AAU.Is_Process (Corresponding_Instance (S))
+                    and then Is_Added (Corresponding_Instance (S), Bus, E)
                   then
-                     N := Naming_Information (Corresponding_Instance (S));
+                     --  For user-defined transport, the configuration
+                     --  is captured in the device that supports the
+                     --  communication
+
+                     N := Naming_Information
+                       (Corresponding_Instance
+                          (Get_Device_Of_Process
+                             (Bus, Corresponding_Instance (S))));
+
                      Append_Node_To_List (N, Naming_Table_List);
                   end if;
 
