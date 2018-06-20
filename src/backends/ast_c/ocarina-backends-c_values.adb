@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -332,16 +332,12 @@ package body Ocarina.Backends.C_Values is
             if V.Sign < 0 then
                Add_Char_To_Name_Buffer ('-');
             elsif V.Base = 16 then
-               Add_Str_To_Name_Buffer ("16#");
+               Add_Str_To_Name_Buffer ("0x");
             elsif V.Base = 8 then
-               Add_Str_To_Name_Buffer ("8#");
+               Add_Str_To_Name_Buffer ("0");
             end if;
 
             Add_ULL_To_Name_Buffer (V.IVal, ULL (V.Base));
-
-            if V.Base = 16 or else V.Base = 8 then
-               Add_Char_To_Name_Buffer ('#');
-            end if;
 
          when K_Float =>
             Add_Str_To_Name_Buffer (Long_Double'Image (V.FVal));
