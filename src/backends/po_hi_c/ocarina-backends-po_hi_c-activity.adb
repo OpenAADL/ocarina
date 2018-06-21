@@ -1947,16 +1947,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         Make_Defining_Identifier
                           (Map_C_Variable_Name (S, Port_Queue => True)),
                       Array_Size =>
-                        Make_Expression
-                          (Left_Expr =>
-                             Make_Literal
-                               (CV.New_Int_Value (Fifo_Size, 0, 10)),
-                           Operator   => Op_Asterisk,
-                           Right_Expr =>
-                             Make_Call_Profile
-                               (Make_Defining_Identifier (FN (F_Sizeof)),
-                                Make_List_Id (RE (RE_Request_T))))),
-                 Used_Type => RE (RE_Port_T));
+                        Make_Literal
+                          (CV.New_Int_Value (Fifo_Size, 0, 10))),
+                 Used_Type => RE (RE_Request_T));
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             N :=
