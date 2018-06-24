@@ -1493,7 +1493,7 @@ package body Ocarina.Backends.Build_Utils is
                Write_Line
                  ("###################################################");
                Write_Eol;
-               Write_Str
+               Write_Line
                  ("SUBDIRS = " &
                     "$(filter-out Makefile polyorb-hi-c, $(wildcard *))");
                Write_Eol;
@@ -1501,6 +1501,25 @@ package body Ocarina.Backends.Build_Utils is
                Write_Line
                  (ASCII.HT &
                   "set -e; for d in $(SUBDIRS); do $(MAKE) -C $$d ; done");
+               Write_Eol;
+
+               Write_Line ("coverage:");
+               Write_Line (ASCII.HT & "-rm lcov.args");
+               Write_Line (ASCII.HT & "touch lcov.args");
+               Write_Line (ASCII.HT & "for d in $(SUBDIRS); do \");
+               Write_Line (ASCII.HT & ASCII.HT &
+               "lcov -c -i -d $$d -o coverage.$$d ;\");
+               Write_Line (ASCII.HT & ASCII.HT &
+               "lcov -c -d $$d -o coverage.$$d ;\");
+               Write_Line (ASCII.HT & ASCII.HT &
+               "echo ""-a coverage.$$d "" >> lcov.args ;\");
+               Write_Line (ASCII.HT & "done");
+               Write_Line (ASCII.HT
+                             & "lcov `cat lcov.args` -o coverage.total");
+               Write_Line (ASCII.HT &
+                             "genhtml --no-branch-coverage " &
+                             "-o ../gcov_output coverage.total");
+               Write_Line (ASCII.HT & "rm lcov.args coverage.*");
                Write_Eol;
                Write_Line ("clean:");
                Write_Line
