@@ -2,610 +2,117 @@
 ---------- Ocarina LNT Generator ---------
 ------------------------------------------
 
-radar.aadl:67:03radar.aadl:68:03radar.aadl:69:03radar.aadl:70:03radar.aadl:71:03Begin Thread
+radar.aadl:9:03: warning: aerial references a component type
+radar.aadl:10:03: warning: rotor references a component type
+radar.aadl:11:03: warning: monitor references a component type
+radar.aadl:13:03: warning: cpu references a component type
+radar.aadl:14:03: warning: VME references a component type
+radar.aadl:15:03: warning: RAM references a component type
+ocarina: Total: 0 error and 6 warnings
+Begin Thread
 Begin Processor
 Begin Types
-Begin Port
 Begin Main
-radar.aadl:85:03 radar.aadl:108:03 radar.aadl:109:03 radar.aadl:111:03 radar.aadl:136:03 radar.aadl:171:03 "Main.bcg"=  divbranching reduction of "RADAR_Main.lnt";
-property PROPERTY_Deadlock is
-   deadlock of "Main.bcg";
-   expected FALSE;
-end property;
-property Scheduling_Test (ID) is
-   "Main_$ID.bcg"="Main.bcg"|=
-   [ true* . "ACTIVATION_$ID !T_Error" ] false;
-   expected TRUE;
-end property;
-module RADAR_Threads (RADAR_Types) is 
-   process Device_antenna [
-   AADL_PORT_ANTENNA_IN: LNT_Channel_Data, 
-   AADL_PORT_ANTENNA_OUT: LNT_Channel_Data]
-   is 
-      loop 
-         select 
-            AADL_PORT_ANTENNA_IN (AADLDATA)
-            []
-            AADL_PORT_ANTENNA_OUT (AADLDATA)
-         end select 
-      end loop
-   end process 
-   
-   process Device_motor [
-   AADL_PORT_MOTOR_OUT: LNT_Channel_Data]
-   is 
-      loop 
-         select 
-            AADL_PORT_MOTOR_OUT (AADLDATA)
-            []
-            null 
-         end select 
-      end loop
-   end process 
-   
-   process Device_screen [
-   AADL_PORT_SCREEN_IN: LNT_Channel_Data]
-   is 
-      loop 
-         select 
-            AADL_PORT_SCREEN_IN (AADLDATA)
-            []
-            null 
-         end select 
-      end loop
-   end process 
-   
-   process Thread_receiver_impl [
-   ACTIVATION: LNT_Channel_Dispatch, 
-   AADL_PORT_RECEIVER_OUT: LNT_Channel_Data, 
-   AADL_PORT_RECEIVER_IN: LNT_Channel_Data]
-   is 
-      loop 
-         select 
-            select 
-               ACTIVATION (T_Begin); 
-               AADL_PORT_RECEIVER_IN (AADLDATA)
-               []
-               ACTIVATION (T_End); 
-               AADL_PORT_RECEIVER_OUT (AADLDATA)
-               []
-               ACTIVATION (T_All); 
-               AADL_PORT_RECEIVER_IN (AADLDATA); 
-               AADL_PORT_RECEIVER_OUT (AADLDATA)
-               []
-               ACTIVATION (T_Preempt)
-            end select ; 
-            ACTIVATION (T_Ok)
-            []
-            ACTIVATION (T_Error)
-            []
-            ACTIVATION (T_Stop)
-         end select 
-      end loop
-   end process 
-   
-   process Thread_analyser_impl [
-   ACTIVATION: LNT_Channel_Dispatch, 
-   AADL_PORT_FROM_TRANSMITTER: LNT_Channel_Data, 
-   AADL_PORT_FROM_RECEIVER: LNT_Channel_Data, 
-   AADL_PORT_ANALYSER_OUT: LNT_Channel_Data, 
-   AADL_PORT_FROM_CONTROLLER: LNT_Channel_Data]
-   is 
-      loop 
-         select 
-            select 
-               ACTIVATION (T_Begin); 
-               AADL_PORT_FROM_TRANSMITTER (AADLDATA); 
-               AADL_PORT_FROM_RECEIVER (AADLDATA); 
-               AADL_PORT_FROM_CONTROLLER (AADLDATA)
-               []
-               ACTIVATION (T_End); 
-               AADL_PORT_ANALYSER_OUT (AADLDATA)
-               []
-               ACTIVATION (T_All); 
-               AADL_PORT_FROM_TRANSMITTER (AADLDATA); 
-               AADL_PORT_FROM_RECEIVER (AADLDATA); 
-               AADL_PORT_FROM_CONTROLLER (AADLDATA); 
-               AADL_PORT_ANALYSER_OUT (AADLDATA)
-               []
-               ACTIVATION (T_Preempt)
-            end select ; 
-            ACTIVATION (T_Ok)
-            []
-            ACTIVATION (T_Error)
-            []
-            ACTIVATION (T_Stop)
-         end select 
-      end loop
-   end process 
-   
-   process Thread_display_panel_impl [
-   ACTIVATION: LNT_Channel_Dispatch, 
-   AADL_PORT_DISPLAY_IN: LNT_Channel_Data, 
-   AADL_PORT_DISPLAY_OUT: LNT_Channel_Data]
-   is 
-      loop 
-         select 
-            select 
-               ACTIVATION (T_Begin); 
-               AADL_PORT_DISPLAY_IN (AADLDATA)
-               []
-               ACTIVATION (T_End); 
-               AADL_PORT_DISPLAY_OUT (AADLDATA)
-               []
-               ACTIVATION (T_All); 
-               AADL_PORT_DISPLAY_IN (AADLDATA); 
-               AADL_PORT_DISPLAY_OUT (AADLDATA)
-               []
-               ACTIVATION (T_Preempt)
-            end select ; 
-            ACTIVATION (T_Ok)
-            []
-            ACTIVATION (T_Error)
-            []
-            ACTIVATION (T_Stop)
-         end select 
-      end loop
-   end process 
-   
-   process Thread_transmitter_impl [
-   ACTIVATION: LNT_Channel_Dispatch, 
-   AADL_PORT_TRANSMITTER_OUT_1: LNT_Channel_Data, 
-   AADL_PORT_TRANSMITTER_OUT_2: LNT_Channel_Data]
-   is 
-      loop 
-         select 
-            select 
-               ACTIVATION (T_Begin)
-               []
-               ACTIVATION (T_End); 
-               AADL_PORT_TRANSMITTER_OUT_1 (AADLDATA); 
-               AADL_PORT_TRANSMITTER_OUT_2 (AADLDATA)
-               []
-               ACTIVATION (T_All); 
-               AADL_PORT_TRANSMITTER_OUT_1 (AADLDATA); 
-               AADL_PORT_TRANSMITTER_OUT_2 (AADLDATA)
-               []
-               ACTIVATION (T_Preempt)
-            end select ; 
-            ACTIVATION (T_Ok)
-            []
-            ACTIVATION (T_Error)
-            []
-            ACTIVATION (T_Stop)
-         end select 
-      end loop
-   end process 
-   
-   process Thread_controller_impl [
-   ACTIVATION: LNT_Channel_Dispatch, 
-   AADL_PORT_CONTROLLER_IN: LNT_Channel_Data, 
-   AADL_PORT_CONTROLLER_OUT: LNT_Channel_Data]
-   is 
-      loop 
-         select 
-            select 
-               ACTIVATION (T_Begin); 
-               AADL_PORT_CONTROLLER_IN (AADLDATA)
-               []
-               ACTIVATION (T_End); 
-               AADL_PORT_CONTROLLER_OUT (AADLDATA)
-               []
-               ACTIVATION (T_All); 
-               AADL_PORT_CONTROLLER_IN (AADLDATA); 
-               AADL_PORT_CONTROLLER_OUT (AADLDATA)
-               []
-               ACTIVATION (T_Preempt)
-            end select ; 
-            ACTIVATION (T_Ok)
-            []
-            ACTIVATION (T_Error)
-            []
-            ACTIVATION (T_Stop)
-         end select 
-      end loop
-   end process 
-   
-end module 
-module RADAR_Ports (RADAR_Types) is 
+radar.aadl:85:03 Backends: warning : LNT generation requires the definition of Queue_Size property. For this generation, the default  value (Queue_Size = 3) is used.
+radar.aadl:108:03 Backends: warning : LNT generation requires the definition of Queue_Size property. For this generation, the default  value (Queue_Size = 3) is used.
+radar.aadl:109:03 Backends: warning : LNT generation requires the definition of Queue_Size property. For this generation, the default  value (Queue_Size = 3) is used.
+radar.aadl:111:03 Backends: warning : LNT generation requires the definition of Queue_Size property. For this generation, the default  value (Queue_Size = 3) is used.
+radar.aadl:136:03 Backends: warning : LNT generation requires the definition of Queue_Size property. For this generation, the default  value (Queue_Size = 3) is used.
+radar.aadl:171:03 Backends: warning : LNT generation requires the definition of Queue_Size property. For this generation, the default  value (Queue_Size = 3) is used.
+Begin Port
+module LNT_Generic_Process_For_Port_Connections (Types) is 
+-- No Behavior Annex
+--  data port --
    process Data_Port [
-   Input: LNT_Channel_Data, 
-   Output: LNT_Channel_Data]
+   Input: LNT_Channel_Port, 
+   Output: LNT_Channel_Port] 
    is 
-      loop 
-         select 
-            Input (AADLDATA)
-            []
-            Output (AADLDATA)
-         end select 
-      end loop
-   end process 
+      var Data : LNT_Type_Data in
+         Data := EMPTY;
+         loop 
+            select 
+               Input (?Data)
+               [] 
+               Output (Data)
+            end select 
+         end loop
+      end var
+   end process
    
-   process Event_Port_Periodic [
-   Input: LNT_Channel_Data, 
-   Output: LNT_Channel_Data](
+--  event port --
+--  for no periodic threads --
+   process Event_Port [
+   Input: LNT_Channel_Port, 
+   Output: LNT_Channel_Port, 
+   Notify: LNT_Channel_Event](
    Queue_Size: Nat) 
    is 
       var 
-         Nb_Input : Nat
+         Data : LNT_Type_Data,
+         FIFO : LNT_Type_Data_FIFO,
+         Is_New : bool
       in 
-         Nb_Input := 0; 
+         FIFO := {};
+         Data := EMPTY;
+         Is_New := false; 
          loop 
             select 
-               Input (AADLDATA); 
-               if (Nb_Input <  Queue_Size)
-               then 
-                  Nb_Input := Nb_Input + 1
+               Input (?Data); 
+               Is_New := true;
+               if length (FIFO) >= Queue_Size then
+                  FIFO := tail (FIFO)
+               end if;
+               FIFO := append (Data, FIFO)
+               []
+               if (FIFO != {}) then 
+                  Output (Head (FIFO));
+                  FIFO := tail (FIFO)
+               else
+                  Output (EMPTY)
                end if
                []
-               if (Nb_Input >  0)
-               then 
-                  Output (AADLDATA); 
-                  Nb_Input := Nb_Input - 1
+               if (Is_New) then 
+                  Notify (Incoming_Event); 
+                  Is_New := false
+               else 
+                  Notify (No_Event)
                end if
             end select 
          end loop
       end var
-   end process 
-   
-end module 
-module RADAR_Types 
-with "==",  "eq" , "<",  "lt" , "<=",  "le" , ">",  "gt" , ">=",  "ge" is 
-   type LNT_Type_Data is 
-      AADLDATA
-   end type 
-   
-   channel LNT_Channel_Data is 
-      (LNT_Type_Data) 
-   end channel
-   type LNT_Type_Time_Constraint is 
-      range 0 .. 600 of Nat
-   end type 
-   
-   type LNT_Type_Thread is 
-      array [0 .. 11 ]of LNT_Type_Time_Constraint
-   end type 
-   
-   type LNT_Type_Thread_Array is 
-      array [1 .. 5 ]of LNT_Type_Thread
-   end type 
-   
-   type LNT_Type_Dispatch is 
-      T_Begin, T_End, T_All, T_Preempt, T_Stop, T_Error, T_Ok
-   end type 
-   
-   type LNT_Type_Event is 
-      Incoming_Event, No_Event
-   end type 
-   
-   channel LNT_Channel_Dispatch is 
-      (LNT_Type_Dispatch) 
-   end channel
-   channel LNT_Channel_Event is 
-      (LNT_Type_Event) 
-   end channel
-   function Thread_Number : Nat 
-   is 
-      return 5
-   end function 
-   
-   function PPCM_THREAD : LNT_Type_Time_Constraint 
-   is 
-      return LNT_Type_Time_Constraint ( 300)
-   end function 
-   
-   function _+_ (
-      n1: LNT_Type_Time_Constraint, 
-      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
-   is 
-      return LNT_Type_Time_Constraint (Nat (n1) + Nat (n2) mod 600)
-   end function 
-   
-   function _-_ (
-      n1: LNT_Type_Time_Constraint, 
-      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
-   is 
-      if (n1 <  n2)
-      then 
-         return LNT_Type_Time_Constraint (((600 - Nat (n2))  + Nat (n1))  mod 600)
-      else 
-         return LNT_Type_Time_Constraint (Nat (n1) - Nat (n2) mod 600)
-      end if
-   end function 
-   
-   function _*_ (
-      n1: LNT_Type_Time_Constraint, 
-      n2: LNT_Type_Time_Constraint) : LNT_Type_Time_Constraint 
-   is 
-      return LNT_Type_Time_Constraint (Nat (n1) * Nat (n2) mod 600)
-   end function 
-   
-end module 
-module RADAR_Processor (RADAR_Types) is 
-   function Assign (
-      in var Threads: LNT_Type_Thread_Array, 
-      I: Nat, 
-      K: Nat, 
-      Val: LNT_Type_Time_Constraint) : LNT_Type_Thread_Array 
+   end process
+
+-- for periodic threads
+   process Event_Port_For_Periodic [
+   Input: LNT_Channel_Port, 
+   Output: LNT_Channel_Port](
+   Queue_Size: Nat) 
    is 
       var 
-         P : LNT_Type_Thread
+         Data : LNT_Type_Data,
+         FIFO : LNT_Type_Data_FIFO,
+         Is_New : bool
       in 
-         P := Threads[I]; 
-         P[K] := Val; 
-         Threads[I] := P
-      end var; 
-      return Threads
-   end function 
-   
-   function Update_Thread (
-      in var Aux_Threads: LNT_Type_Thread_Array, 
-      I: Nat, 
-      TODO: LNT_Type_Time_Constraint) : LNT_Type_Thread_Array 
-   is 
-      var 
-         P : LNT_Type_Thread
-      in 
-         P := Aux_Threads[I]; 
-         if (P[2] ==  LNT_Type_Time_Constraint (0))
-         then 
-            P[6] := LNT_Type_Time_Constraint (1)
-         end if; 
-         P[2] := P[2] + TODO; 
-         P[8] := LNT_Type_Time_Constraint (1); 
-         if ((P[11] ==  LNT_Type_Time_Constraint (1))  and  (P[2] ==  P[0]) )
-         then 
-            P[7] := LNT_Type_Time_Constraint (1); 
-            P[2] := LNT_Type_Time_Constraint (0); 
-            P[4] := P[5]; 
-            P[5] := PPCM_THREAD; 
-            P[10] := LNT_Type_Time_Constraint (0)
-         elsif ((P[11] ==  LNT_Type_Time_Constraint (0))  and  (P[2] ==  P[0]) )
-         then 
-         
-            P[7] := LNT_Type_Time_Constraint (1); 
-            P[2] := LNT_Type_Time_Constraint (0); 
-            P[3] := P[3] + LNT_Type_Time_Constraint (1); 
-            P[4] := P[4] + P[1]; 
-            P[5] := P[3] * P[1]
-         end if; 
-         Aux_Threads[I] := P
-      end var; 
-      return Aux_Threads
-   end function 
-   
-   process Sporadic_Notif [
-   INCOMING_EVENT_GATE: LNT_Channel_Event](
-   in out Threads: LNT_Type_Thread_Array,
-   k: Nat,
-   Counter: LNT_Type_Time_Constraint,
-   in out Is_Activated: bool) 
-   is 
-      select 
-         INCOMING_EVENT_GATE (Incoming_Event); 
-         Threads := Assign (Threads, K, 3, (Threads[k][3] + LNT_Type_Time_Constraint (1)) )
-         []
-         INCOMING_EVENT_GATE (No_Event)
-      end select ; 
-      if ((Counter >=  Threads[k][4])  and  (Threads[k][3] >  LNT_Type_Time_Constraint (0)) )
-      then 
-         Threads := Assign (Threads, k, 4, Counter); 
-         Threads := Assign (Threads, k, 5, (Counter + Threads[k][1]) ); 
-         Threads := Assign (Threads, k, 10, LNT_Type_Time_Constraint (1)); 
-         Threads := Assign (Threads, K, 3, (Threads[k][3] - LNT_Type_Time_Constraint (1)) ); 
-         Is_Activated := true
-      end if
-   end process 
-   
-   process Thread_Activation [
-   ACTIVATION: LNT_Channel_Dispatch](
-   in out Threads: LNT_Type_Thread_Array,
-   K: Nat) 
-   is 
-      if (Threads[K][8] ==  LNT_Type_Time_Constraint (1))
-      then 
-         if ((Threads[K][6] ==  LNT_Type_Time_Constraint (1))  and  (Threads[K][7] ==  LNT_Type_Time_Constraint (1)) )
-         then 
-            ACTIVATION (T_All); 
-            Threads := Assign (Threads, K, 6, LNT_Type_Time_Constraint (0)); 
-            Threads := Assign (Threads, K, 7, LNT_Type_Time_Constraint (0))
-         elsif (Threads[K][7] ==  LNT_Type_Time_Constraint (1))
-         then 
-         
-            ACTIVATION (T_End); 
-            Threads := Assign (Threads, K, 7, LNT_Type_Time_Constraint (0))
-         elsif (Threads[K][6] ==  LNT_Type_Time_Constraint (1))
-         then 
-         
-            ACTIVATION (T_Begin); 
-            Threads := Assign (Threads, K, 6, LNT_Type_Time_Constraint (0))
-         else 
-            ACTIVATION (T_Preempt)
-         end if; 
-         Threads := Assign (Threads, K, 8, LNT_Type_Time_Constraint (0)); 
-         ACTIVATION (T_Ok)
-      elsif (Threads[K][9] ==  LNT_Type_Time_Constraint (0))
-      then 
-      
-         ACTIVATION (T_ERROR)
-      end if
-   end process 
-   
-   process Processor [
-   ACTIVATION_1: LNT_Channel_Dispatch, 
-   ACTIVATION_2: LNT_Channel_Dispatch, 
-   ACTIVATION_3: LNT_Channel_Dispatch, 
-   ACTIVATION_4: LNT_Channel_Dispatch, 
-   ACTIVATION_5: LNT_Channel_Dispatch]
-   is 
-      var 
-         Threads : LNT_Type_Thread_Array, 
-         Counter : LNT_Type_Time_Constraint, 
-         I : Nat, 
-         k : Nat, 
-         Preempt : bool, 
-         TODO : LNT_Type_Time_Constraint, 
-         Nb_Active_Thread : Nat
-      in 
-         Counter := LNT_Type_Time_Constraint (0); 
-         Threads := LNT_Type_Thread_Array (LNT_Type_Thread (LNT_Type_Time_Constraint (0))); 
-         Threads[ 1] := LNT_Type_Thread (LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (5), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (5), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
-         Threads[ 2] := LNT_Type_Thread (LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (15), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (15), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
-         Threads[ 3] := LNT_Type_Thread (LNT_Type_Time_Constraint (2), LNT_Type_Time_Constraint (15), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (15), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
-         Threads[ 4] := LNT_Type_Thread (LNT_Type_Time_Constraint (3), LNT_Type_Time_Constraint (20), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (20), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
-         Threads[ 5] := LNT_Type_Thread (LNT_Type_Time_Constraint (6), LNT_Type_Time_Constraint (50), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (50), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (0), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (1), LNT_Type_Time_Constraint (0)); 
+         FIFO := {};
+         Data := EMPTY;
+         Is_New := false; 
          loop 
             select 
-               if (Counter <  PPCM_THREAD)
-               then 
-                  Nb_Active_Thread := 0; 
-                  K := 1; 
-                  while (K <=  Thread_Number) loop
-                     if ((Counter >=  Threads[K][4])  and  (Counter >=  Threads[K][5]) )
-                     then 
-                        Threads := Assign (Threads, K, 9, LNT_Type_Time_Constraint (0))
-                     elsif ((Threads[K][10] ==  LNT_Type_Time_Constraint (1))  and  (Threads[K][9] ==  LNT_Type_Time_Constraint (1))  and  (Counter >=  Threads[K][4])  and  (Counter <  Threads[K][5]) )
-                     then 
-                     
-                        Preempt := true; 
-                        TODO := Threads[K][0] - Threads[K][2]; 
-                        I := 1; 
-                        while ((I <=  (K - 1) )  and  Preempt) loop
-                           if ((Threads[I][10] ==  LNT_Type_Time_Constraint (1))  and  (Threads[I][9] ==  LNT_Type_Time_Constraint (1))  and  (Counter + TODO >  Threads[I][4]) )
-                           then 
-                              TODO := Threads[I][4] - Counter; 
-                              Preempt := false
-                           else 
-                              I := I + 1
-                           end if
-                        end loop; 
-                        Counter := Counter + TODO; 
-                        Nb_Active_Thread := Nb_Active_Thread + 1; 
-                        Threads := Update_Thread (Threads, K, TODO); 
-                        Thread_Activation [ACTIVATION_1] (!?Threads,  1); 
-                        Thread_Activation [ACTIVATION_2] (!?Threads,  2); 
-                        Thread_Activation [ACTIVATION_3] (!?Threads,  3); 
-                        Thread_Activation [ACTIVATION_4] (!?Threads,  4); 
-                        Thread_Activation [ACTIVATION_5] (!?Threads,  5)
-                     else 
-                        k := k + 1
-                     end if
-                  end loop; 
-                  if (Nb_Active_Thread ==  0)
-                  then 
-                     Counter := Counter + LNT_Type_Time_Constraint (1)
-                  end if
-               end if
+               Input (?Data); 
+               Is_New := true;
+               if length (FIFO) >= Queue_Size then
+                  FIFO := tail (FIFO)
+               end if;
+               FIFO := append (Data, FIFO)
                []
-               if (Counter >=  PPCM_THREAD)
-               then 
-                  ACTIVATION_1 (T_Stop); 
-                  ACTIVATION_2 (T_Stop); 
-                  ACTIVATION_3 (T_Stop); 
-                  ACTIVATION_4 (T_Stop); 
-                  ACTIVATION_5 (T_Stop)
+               if (FIFO != {}) then 
+                  Output (Head (FIFO));
+                  FIFO := tail (FIFO)
+               else
+                  Output (EMPTY)
                end if
             end select 
          end loop
       end var
-   end process 
-   
-end module 
-module RADAR_Main (RADAR_Types, RADAR_Processor, RADAR_Threads, RADAR_Ports) is 
-!nat_bits 16
-   process Main [
-   RECEIVE_main_send_pulse__aerial_antenna_in: LNT_Channel_Data, 
-   SEND_aerial_antenna_out__main_receive_pulse: LNT_Channel_Data, 
-   SEND_rotor_motor_out__main_get_angle: LNT_Channel_Data, 
-   RECEIVE_main_to_screen__monitor_screen_in: LNT_Channel_Data, 
-   ACTIVATION_3: LNT_Channel_Dispatch, 
-   SEND_receive_receiver_out__analyse_from_receiver: LNT_Channel_Data, 
-   RECEIVE_aerial_antenna_out__main_receive_pulse: LNT_Channel_Data, 
-   ACTIVATION_5: LNT_Channel_Dispatch, 
-   RECEIVE_transmit_transmitter_out_2__analyse_from_transmitter: LNT_Channel_Data, 
-   RECEIVE_receive_receiver_out__analyse_from_receiver: LNT_Channel_Data, 
-   SEND_analyse_analyser_out__display_display_in: LNT_Channel_Data, 
-   RECEIVE_control_angle_controller_out__analyse_from_controller: LNT_Channel_Data, 
-   ACTIVATION_4: LNT_Channel_Dispatch, 
-   RECEIVE_analyse_analyser_out__display_display_in: LNT_Channel_Data, 
-   SEND_main_to_screen__monitor_screen_in: LNT_Channel_Data, 
-   ACTIVATION_1: LNT_Channel_Dispatch, 
-   SEND_main_send_pulse__aerial_antenna_in: LNT_Channel_Data, 
-   SEND_transmit_transmitter_out_2__analyse_from_transmitter: LNT_Channel_Data, 
-   ACTIVATION_2: LNT_Channel_Dispatch, 
-   RECEIVE_rotor_motor_out__main_get_angle: LNT_Channel_Data, 
-   SEND_control_angle_controller_out__analyse_from_controller: LNT_Channel_Data]
-   is 
-      par 
-         SEND_main_send_pulse__aerial_antenna_in , SEND_aerial_antenna_out__main_receive_pulse -> 
-         par 
-            RECEIVE_main_send_pulse__aerial_antenna_in , SEND_main_send_pulse__aerial_antenna_in -> 
-            Data_Port [RECEIVE_main_send_pulse__aerial_antenna_in, SEND_main_send_pulse__aerial_antenna_in]
-            ||
-            RECEIVE_main_send_pulse__aerial_antenna_in , SEND_aerial_antenna_out__main_receive_pulse -> 
-            Device_antenna [RECEIVE_main_send_pulse__aerial_antenna_in, SEND_aerial_antenna_out__main_receive_pulse]
-         end par 
-         ||
-         SEND_rotor_motor_out__main_get_angle -> 
-         Device_motor [SEND_rotor_motor_out__main_get_angle]
-         ||
-         SEND_main_to_screen__monitor_screen_in -> 
-         par 
-            RECEIVE_main_to_screen__monitor_screen_in , SEND_main_to_screen__monitor_screen_in -> 
-            Data_Port [RECEIVE_main_to_screen__monitor_screen_in, SEND_main_to_screen__monitor_screen_in]
-            ||
-            RECEIVE_main_to_screen__monitor_screen_in -> 
-            Device_screen [RECEIVE_main_to_screen__monitor_screen_in]
-         end par 
-         ||
-         ACTIVATION_3 , SEND_receive_receiver_out__analyse_from_receiver , SEND_aerial_antenna_out__main_receive_pulse -> 
-         par 
-            RECEIVE_aerial_antenna_out__main_receive_pulse , SEND_aerial_antenna_out__main_receive_pulse -> 
-            Data_Port [RECEIVE_aerial_antenna_out__main_receive_pulse, SEND_aerial_antenna_out__main_receive_pulse]
-            ||
-            ACTIVATION_3 , SEND_receive_receiver_out__analyse_from_receiver , RECEIVE_aerial_antenna_out__main_receive_pulse -> 
-            Thread_receiver_impl [ACTIVATION_3, SEND_receive_receiver_out__analyse_from_receiver, RECEIVE_aerial_antenna_out__main_receive_pulse]
-         end par 
-         ||
-         ACTIVATION_5 , SEND_transmit_transmitter_out_2__analyse_from_transmitter , SEND_receive_receiver_out__analyse_from_receiver , SEND_analyse_analyser_out__display_display_in , SEND_control_angle_controller_out__analyse_from_controller -> 
-         par 
-            SEND_transmit_transmitter_out_2__analyse_from_transmitter , RECEIVE_transmit_transmitter_out_2__analyse_from_transmitter -> 
-            Event_Port_Periodic [SEND_transmit_transmitter_out_2__analyse_from_transmitter, RECEIVE_transmit_transmitter_out_2__analyse_from_transmitter] ( 3)
-            ||
-            RECEIVE_receive_receiver_out__analyse_from_receiver , SEND_receive_receiver_out__analyse_from_receiver -> 
-            Data_Port [RECEIVE_receive_receiver_out__analyse_from_receiver, SEND_receive_receiver_out__analyse_from_receiver]
-            ||
-            RECEIVE_control_angle_controller_out__analyse_from_controller , SEND_control_angle_controller_out__analyse_from_controller -> 
-            Data_Port [RECEIVE_control_angle_controller_out__analyse_from_controller, SEND_control_angle_controller_out__analyse_from_controller]
-            ||
-            ACTIVATION_5 , RECEIVE_transmit_transmitter_out_2__analyse_from_transmitter , RECEIVE_receive_receiver_out__analyse_from_receiver , SEND_analyse_analyser_out__display_display_in , RECEIVE_control_angle_controller_out__analyse_from_controller -> 
-            Thread_analyser_impl [ACTIVATION_5, RECEIVE_transmit_transmitter_out_2__analyse_from_transmitter, RECEIVE_receive_receiver_out__analyse_from_receiver, SEND_analyse_analyser_out__display_display_in, RECEIVE_control_angle_controller_out__analyse_from_controller]
-         end par 
-         ||
-         ACTIVATION_4 , SEND_analyse_analyser_out__display_display_in , SEND_main_to_screen__monitor_screen_in -> 
-         par 
-            RECEIVE_analyse_analyser_out__display_display_in , SEND_analyse_analyser_out__display_display_in -> 
-            Data_Port [RECEIVE_analyse_analyser_out__display_display_in, SEND_analyse_analyser_out__display_display_in]
-            ||
-            ACTIVATION_4 , RECEIVE_analyse_analyser_out__display_display_in , SEND_main_to_screen__monitor_screen_in -> 
-            Thread_display_panel_impl [ACTIVATION_4, RECEIVE_analyse_analyser_out__display_display_in, SEND_main_to_screen__monitor_screen_in]
-         end par 
-         ||
-         ACTIVATION_1 , SEND_main_send_pulse__aerial_antenna_in , SEND_transmit_transmitter_out_2__analyse_from_transmitter -> 
-         Thread_transmitter_impl [ACTIVATION_1, SEND_main_send_pulse__aerial_antenna_in, SEND_transmit_transmitter_out_2__analyse_from_transmitter]
-         ||
-         ACTIVATION_2 , SEND_rotor_motor_out__main_get_angle , SEND_control_angle_controller_out__analyse_from_controller -> 
-         par 
-            RECEIVE_rotor_motor_out__main_get_angle , SEND_rotor_motor_out__main_get_angle -> 
-            Data_Port [RECEIVE_rotor_motor_out__main_get_angle, SEND_rotor_motor_out__main_get_angle]
-            ||
-            ACTIVATION_2 , RECEIVE_rotor_motor_out__main_get_angle , SEND_control_angle_controller_out__analyse_from_controller -> 
-            Thread_controller_impl [ACTIVATION_2, RECEIVE_rotor_motor_out__main_get_angle, SEND_control_angle_controller_out__analyse_from_controller]
-         end par 
-         ||
-         ACTIVATION_1 , ACTIVATION_2 , ACTIVATION_3 , ACTIVATION_4 , ACTIVATION_5 -> 
-         Processor [ACTIVATION_1, ACTIVATION_2, ACTIVATION_3, ACTIVATION_4, ACTIVATION_5]
-      end par 
-   end process 
-   
-end module 
+   end process
+end module
