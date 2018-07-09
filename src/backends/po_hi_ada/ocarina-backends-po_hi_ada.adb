@@ -280,7 +280,7 @@ package body Ocarina.Backends.PO_HI_Ada is
          Write_Char (ASCII.HT);
          Write_Str
            ("  $(GNATMAKE) -x -p -P$(PROJECT_FILE) -XTARGET=$(TARGET)" &
-            " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL) ${USER_CFLAGS}");
+            " -XBUILD=$(BUILD) -XCGCTRL=$(CGCTRL) -cargs ${USER_CFLAGS}");
 
          --  If there are C source or C libraries, there will be more
          --  options.
@@ -290,7 +290,7 @@ package body Ocarina.Backends.PO_HI_Ada is
 
          Write_Eol;
 
-         --  Use gnateliim to determine which portion of code is
+         --  Use gnatelim to determine which portion of code is
          --  unused and recompile the application with Eliminate
          --  pragmas. Note: gnatelim is available in GNAT GPL/Pro,
          --  but not GCC
