@@ -216,11 +216,8 @@ package body Ocarina.Backends.PO_HI_C is
          when Platform_LINUX32 =>
             Write_Str ("linux32");
 
-         when Platform_LINUX64_DLL =>
-            Write_Str ("linux64_dll");
-
-         when Platform_LINUX32_DLL =>
-            Write_Str ("linux32_dll");
+         when Platform_LINUX_DLL =>
+            Write_Str ("linux_dll");
 
          when Platform_WIN32 =>
             Write_Str ("win32");

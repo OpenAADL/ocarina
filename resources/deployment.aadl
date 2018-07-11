@@ -31,11 +31,10 @@ property set Deployment is
     LEON3_XM3,                -- RTEMS for XTRATUM/LEON3
     LEON_GNAT,                -- LEON2 board or qemu (GNATPRO/HI-E)
     LINUX32,                  -- Linux 32 bits
-    LINUX32_DLL,              -- Linux 32 bits/Dynamic Library
+    LINUX_DLL,                -- Linux Dynamic Library
     LINUX32_XENOMAI_NATIVE,   -- Linux 32 bits with native Xenomai
     LINUX32_XENOMAI_POSIX,    -- Linux 32 bits with Xenomai and POSIX skin
     LINUX64,                  -- Linux 64 bits
-    LINUX64_DLL,              -- Linux 64 bits/Dynamic Library
     ERC32_ORK,                -- ERC32 board or tsim-erc32 (ORK)
     X86_RTEMS_POSIX,          -- x86 under RTEMS with POSIX layer
     X86_LINUXTASTE,           -- TASTE-specific linux distribution
