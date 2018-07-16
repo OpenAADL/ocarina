@@ -179,8 +179,8 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit memory subcomponents
+
             if AINU.Is_Memory (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -200,8 +200,8 @@ package body Ocarina.Backends.Xtratum_Conf.Hardware_Description is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit processor subcomponents
+
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;

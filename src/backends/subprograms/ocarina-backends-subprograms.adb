@@ -93,6 +93,7 @@ package body Ocarina.Backends.Subprograms is
       procedure Visit_Thread_Instance (E : Node_Id);
       procedure Visit_Subprogram_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
+      procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
       -------------------------
       -- Map_Subprogram_Spec --
@@ -338,20 +339,11 @@ package body Ocarina.Backends.Subprograms is
 
       procedure Visit_Device_Instance (E : Node_Id) is
          Implementation : Node_Id;
-         S              : Node_Id;
       begin
          Implementation := Get_Classifier_Property (E, "implemented_as");
 
          if Implementation /= No_Node then
-            if not AINU.Is_Empty (AIN.Subcomponents (Implementation)) then
-               S := AAN.First_Node (Subcomponents (Implementation));
-               while Present (S) loop
-                  Visit (Corresponding_Instance (S));
-
-                  S := AIN.Next_Node (S);
-               end loop;
-            end if;
-
+            Visit_Subcomponents_Of (Implementation);
          end if;
       end Visit_Device_Instance;
 
@@ -360,21 +352,8 @@ package body Ocarina.Backends.Subprograms is
       ----------------------------
 
       procedure Visit_Process_Instance (E : Node_Id) is
-         S : Node_Id;
       begin
-         --  Visit all the subcomponents of the process
-
-         if not AINU.Is_Empty (Subcomponents (E)) then
-            S := AIN.First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-
-               S := AIN.Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
       end Visit_Process_Instance;
 
       -------------------------------
@@ -426,17 +405,8 @@ package body Ocarina.Backends.Subprograms is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         S : Node_Id;
       begin
-         --  Visit all the subcomponents of the system
-
-         if not AINU.Is_Empty (Subcomponents (E)) then
-            S := AIN.First_Node (Subcomponents (E));
-            while Present (S) loop
-               Visit (Corresponding_Instance (S));
-               S := AIN.Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
       end Visit_System_Instance;
 
       ---------------------------

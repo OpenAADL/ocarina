@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2015 ESA & ISAE.                       --
+--                   Copyright (C) 2015-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -76,6 +76,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    -----------
    -- Visit --
@@ -182,18 +183,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      S : Node_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Process_Instance;
 
    ---------------------------
@@ -206,8 +197,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit processor subcomponents
+
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -245,19 +236,15 @@ package body Ocarina.Backends.Vxworks653_Conf.Partitions is
 
       Current_XML_Node := XTN.Root_Node (XTN.XML_File (U));
 
-      Partitions_Node := Make_XML_Node ("Partitions");
-
-      Append_Node_To_List (Partitions_Node, XTN.Subitems (Current_XML_Node));
-
-      --
       --  First, make the <Partition/> nodes
-      --
+
+      Partitions_Node := Make_XML_Node ("Partitions");
+      Append_Node_To_List (Partitions_Node, XTN.Subitems (Current_XML_Node));
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit virtual processor subcomponents
 
             if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));

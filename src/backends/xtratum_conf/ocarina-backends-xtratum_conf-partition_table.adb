@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2011-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2011-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -72,6 +72,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
    procedure Visit_Process_Instance (E : Node_Id);
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    Current_System : Node_Id := No_Node;
 
@@ -408,8 +409,8 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit processor subcomponents
+
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -426,7 +427,6 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S                    : Node_Id;
       Partition_Table_Node : Node_Id;
    begin
       --  Create the main PartitionTable node.
@@ -439,17 +439,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
 
       Current_XML_Node := Partition_Table_Node;
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
-
+      Visit_Subcomponents_Of (E);
    end Visit_Processor_Instance;
 
    --------------------------------------
@@ -462,8 +452,8 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
       if not AINU.Is_Empty (Subcomponents (Current_System)) then
          S := First_Node (Subcomponents (Current_System));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit process subcomponents bound to E
+
             if AINU.Is_Process (Corresponding_Instance (S))
               and then Get_Bound_Processor (Corresponding_Instance (S)) = E
             then
@@ -473,16 +463,7 @@ package body Ocarina.Backends.Xtratum_Conf.Partition_Table is
          end loop;
       end if;
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Virtual_Processor_Instance;
 
 end Ocarina.Backends.Xtratum_Conf.Partition_Table;

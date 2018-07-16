@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2015 ESA & ISAE.                       --
+--                   Copyright (C) 2015-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -69,6 +69,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    procedure Visit_Process (E : Node_Id);
    procedure Visit_Processor (E : Node_Id);
    procedure Visit_Virtual_Processor (E : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    procedure Add_Applications (AADL_Processor : Node_Id; XML_Node : Node_Id);
    procedure Add_Shared_Data_Regions
@@ -166,7 +167,6 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
    ---------------------
 
    procedure Visit_Processor (E : Node_Id) is
-      S         : Node_Id;
       P         : Node_Id;
       U         : Node_Id;
       N         : Node_Id;
@@ -178,16 +178,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       U := Map_HI_Unit (E);
       Push_Entity (U);
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
 
       N := New_Node (XTN.K_HI_Tree_Bindings);
 
@@ -232,8 +223,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit process subcomponents
+
             if AINU.Is_Process_Or_Device (Corresponding_Instance (S)) then
                Visit_Process (Corresponding_Instance (S));
             end if;
@@ -406,8 +397,7 @@ package body Ocarina.Backends.Vxworks653_Conf.Naming is
       if not AINU.Is_Empty (Subcomponents (AADL_Processor)) then
          S := First_Node (Subcomponents (AADL_Processor));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit virtual processor subcomponents
 
             if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
                Add_Application (Corresponding_Instance (S), Applications_Node);

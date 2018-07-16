@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -74,6 +74,7 @@ package body Ocarina.Backends.Stats.Main is
    procedure Visit_Subprogram_Instance (E : Node_Id);
    procedure Look_For_Ports (AADL_Node : Node_Id; XML_Node : Node_Id);
    procedure Look_For_Connections (E : Node_Id; N : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    System_Nb_Processes : Unsigned_Long_Long := 0;
    System_Nb_Threads   : Unsigned_Long_Long := 0;
@@ -256,7 +257,6 @@ package body Ocarina.Backends.Stats.Main is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      S                  : Node_Id;
       P                  : Node_Id;
       Q                  : Node_Id;
       N                  : Node_Id;
@@ -289,16 +289,7 @@ package body Ocarina.Backends.Stats.Main is
       Old_Current_Parent  := Current_Parent_Node;
       Current_Parent_Node := Process_Node;
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
 
       Look_For_Connections (E, Process_Node);
 
@@ -393,16 +384,7 @@ package body Ocarina.Backends.Stats.Main is
       --  node.
       N := Map_Thread (E);
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
 
       if not AINU.Is_Empty (Calls (E)) then
          R := Make_XML_Node ("calls");
@@ -468,7 +450,6 @@ package body Ocarina.Backends.Stats.Main is
    ------------------------
 
    procedure Visit_Bus_Instance (E : Node_Id) is
-      S : Node_Id;
       N : Node_Id;
       O : Node_Id;
    begin
@@ -476,16 +457,8 @@ package body Ocarina.Backends.Stats.Main is
       N                   := Map_Bus (E);
       O                   := Current_Parent_Node;
       Current_Parent_Node := N;
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+      Visit_Subcomponents_Of (E);
 
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
       Current_Parent_Node := O;
 
       Append_Node_To_List (N, XTN.Subitems (Current_Parent_Node));
@@ -497,7 +470,6 @@ package body Ocarina.Backends.Stats.Main is
    ------------------------------
 
    procedure Visit_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
       N : Node_Id;
       O : Node_Id;
    begin
@@ -505,16 +477,8 @@ package body Ocarina.Backends.Stats.Main is
       N                   := Map_Processor (E);
       O                   := Current_Parent_Node;
       Current_Parent_Node := N;
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
 
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
       Current_Parent_Node := O;
 
       Append_Node_To_List (N, XTN.Subitems (Current_Parent_Node));
@@ -526,22 +490,12 @@ package body Ocarina.Backends.Stats.Main is
    --------------------------------------
 
    procedure Visit_Virtual_Processor_Instance (E : Node_Id) is
-      S : Node_Id;
       N : Node_Id;
    begin
       --  Create the main node and set its name as an item
       N := Map_Virtual_Processor (E);
 
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
 
       Append_Node_To_List (N, XTN.Subitems (Current_Parent_Node));
 

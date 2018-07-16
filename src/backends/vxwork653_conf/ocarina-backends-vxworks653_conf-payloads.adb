@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2015 ESA & ISAE.                       --
+--                   Copyright (C) 2015-2018 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -38,18 +38,18 @@ with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.Vxworks653_Conf.Mapping;
+with Ocarina.Backends.Utils;
 
 package body Ocarina.Backends.Vxworks653_Conf.Payloads is
 
---   use Locations;
    use Ocarina.ME_AADL;
 
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
    use Ocarina.Backends.XML_Tree.Nutils;
 
---   use Ocarina.Backends.Properties;
    use Ocarina.Backends.Vxworks653_Conf.Mapping;
+   use Ocarina.Backends.Utils;
 
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
@@ -63,6 +63,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
    procedure Visit_Processor_Instance (E : Node_Id);
    procedure Visit_Bus_Instance (E : Node_Id);
    procedure Visit_Virtual_Processor_Instance (E : Node_Id);
+   procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
+
    -----------
    -- Visit --
    -----------
@@ -124,18 +126,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
    ----------------------------
 
    procedure Visit_Process_Instance (E : Node_Id) is
-      S : Node_Id;
    begin
-      if not AINU.Is_Empty (Subcomponents (E)) then
-         S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
-
-            Visit (Corresponding_Instance (S));
-            S := Next_Node (S);
-         end loop;
-      end if;
+      Visit_Subcomponents_Of (E);
    end Visit_Process_Instance;
 
    ---------------------------
@@ -148,8 +140,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit processor subcomponents
+
             if AINU.Is_Processor (Corresponding_Instance (S)) then
                Visit (Corresponding_Instance (S));
             end if;
@@ -211,10 +203,8 @@ package body Ocarina.Backends.Vxworks653_Conf.Payloads is
 
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
-         while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
 
+         while Present (S) loop
             if AINU.Is_Virtual_Processor (Corresponding_Instance (S)) then
                Partition_Payload_Node := Make_XML_Node ("PartitionPayload");
                Add_Attribute
