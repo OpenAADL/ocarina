@@ -19,8 +19,8 @@ AO4AADL Front-end, contributed by ENIS
 - Rahma BOUAZIZ
 
 Initial design team and student contributors from TelecomParisTech for
-the AADL front-end, middle-end, PolyORB-HI/C and PolyORB-HI/Ada
-backends:
+the AADL and BA front-end; middle-end; PolyORB-HI/Ada, PolyORB-HI/C,
+REAL, Petri Net backends:
 
 - David Abad-Garcia
 - Thomas Autret
