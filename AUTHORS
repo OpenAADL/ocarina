@@ -2,9 +2,26 @@ Current maintainer is
 - Jerome Hugues
 
 Contributors
-- Hana Mkaouar (LNT Back-end)
 
-Initial design team and student contributors
+LNT Back-end, contributed by ENIS
+
+- Hana Mkaouar
+
+EMV2 Front-end, contributed by ENIS
+
+- Wafa GABSI
+- Fatma KACEM
+- Yousra REKIK
+
+AO4AADL Front-end, contributed by ENIS
+
+- Sihem LOUKIL
+- Rahma BOUAZIZ
+
+Initial design team and student contributors from TelecomParisTech for
+the AADL front-end, middle-end, PolyORB-HI/C and PolyORB-HI/Ada
+backends:
+
 - David Abad-Garcia
 - Thomas Autret
 - Julien Delange
@@ -19,4 +36,3 @@ Initial design team and student contributors
 - Thomas Vergnaud
 - Vo Ngoc Minh
 - Bechir Zalila
-
