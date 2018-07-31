@@ -18,6 +18,7 @@ public
   with ocarina_drivers_apbuart_serial;
   with ocarina_drivers_greth;
 
+  with ocarina_drivers_stardundee;
   with ocarina_drivers_star_dundee_spacewire_brick;
 
   with ocarina_drivers_udp_exarm;
@@ -202,6 +203,23 @@ public
     Initialize_Entrypoint         => classifier (ocarina_drivers_star_dundee_spacewire_brick::spg_init);
     Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
   end usb_brick_spacewire.pohic;
+
+  ------------------------------------------
+  -- STAR DUNDEE Mk3 DEVICE FOR SPACEWIRE --
+  ------------------------------------------
+
+  device star_dundee_mk3_spacewire
+  features
+    link : requires bus access ocarina_buses::spacewire.generic;
+  end star_dundee_mk3_spacewire;
+
+  device implementation star_dundee_mk3_spacewire.pohic
+  properties
+    Deployment::Driver_Name       => "spacewire_star_dundee_mk3";
+    Device_Driver                 => classifier (ocarina_drivers_stardundee::stardundee_driver.impl);
+    Initialize_Entrypoint         => classifier (ocarina_drivers_stardundee::spg_stardundee_init);
+    Provided_Virtual_Bus_Class    => (classifier (ocarina_buses::pohi.c));
+  end star_dundee_mk3_spacewire.pohic;
 
   ---------------------
   -- RASTA SPACEWIRE --

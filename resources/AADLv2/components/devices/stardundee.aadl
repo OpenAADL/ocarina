@@ -1,0 +1,56 @@
+package ocarina_drivers_stardundee
+public
+
+  -- This driver wraps StarDundee Mk3 API
+
+  with ocarina_buses;
+  with Deployment;
+
+  subprogram spg_stardundee_poller
+  properties
+    Source_Language => (C);
+    Source_Name => "__po_hi_c_driver_stardundee_poller";
+    Source_Text => ("star_dundee_api.c", "po_hi_driver_stardundee.c");
+  end spg_stardundee_poller;
+
+  subprogram spg_stardundee_sender
+  properties
+    Source_Language => (C);
+    Source_Name => "__po_hi_c_driver_stardundee_sender";
+    Source_Text => ("star_dundee_api.c", "po_hi_driver_stardundee.c");
+  end spg_stardundee_sender;
+
+  subprogram spg_stardundee_init
+  properties
+    Source_Language => (C);
+    Source_Name => "__po_hi_c_driver_stardundee_init";
+    Source_Text => ("star_dundee_api.c", "po_hi_driver_stardundee.c");
+  end spg_stardundee_init;
+
+  thread stardundee_poller
+  end stardundee_poller;
+
+  thread implementation stardundee_poller.impl
+  calls
+    mycall : {
+    pspg : subprogram spg_stardundee_poller;
+    };
+  properties
+    Period => 1 ms;
+    Dispatch_Protocol => Background;
+  end stardundee_poller.impl;
+
+  abstract stardundee_driver
+  properties
+    Deployment::Version  => "0.1beta";
+    Deployment::Help     => "Write your ASN.1 configuration here";
+    Deployment::Configuration_Type => classifier (ocarina_drivers::configuration_type_spacewire);
+  end stardundee_driver;
+
+  abstract implementation stardundee_driver.impl
+  subcomponents
+    receiver_stardundee : thread stardundee_poller.impl;
+    sender              : subprogram spg_stardundee_sender;
+  end stardundee_driver.impl;
+
+end ocarina_drivers_stardundee;

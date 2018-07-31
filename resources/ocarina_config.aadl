@@ -75,7 +75,8 @@ property set Ocarina_Config is
    "sockets-raw.aadl",
    "grspw_packet.aadl",
    "apbuart.aadl",
-   "greth.aadl");
+   "greth.aadl",
+   "stardundee.aadl");
 
   Root_System_Name : aadlstring applies to (system);
   --  If present, indicates the name of the root of the instance tree
