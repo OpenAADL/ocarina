@@ -352,8 +352,7 @@ package body Ocarina.Backends.Stats.Main is
       if not AINU.Is_Empty (Subcomponents (E)) then
          S := First_Node (Subcomponents (E));
          while Present (S) loop
-            --  Visit the component instance corresponding to the
-            --  subcomponent S.
+            --  Visit subcomponents
 
             Visit (Corresponding_Instance (S));
             Current_Parent_Node := My_Current;
