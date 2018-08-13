@@ -1,22 +1,30 @@
 package Ocarina_Library
+
+--  This package provides a default scenario files that can be
+--  inherited by others.
+
 public
   with Ocarina_Config;
 
   system Default_PolyORB_HI_C_Config
   properties
+    Ocarina_Config::AADL_Version         => AADLv2;
+    --  Default AADL version
+
+    Ocarina_Config::Generator            => PolyORB_HI_C;
+    --  Use the PolyORB-HI/C backend
+
+    Ocarina_Config::Needed_Property_Sets =>
+    (Ocarina_Config::Data_Model,
+     Ocarina_Config::ARINC653_Properties,
+     Ocarina_Config::Deployment,
+     Ocarina_Config::Cheddar_Properties);
+    --  Additional property sets
+
     Ocarina_Config::Timeout_Property     => 4000ms;
 
     Ocarina_Config::AADL_Files =>
     (Ocarina_Config::Ocarina_Driver_Library);
-
-    Ocarina_Config::Generator            => PolyORB_HI_C;
-
-    Ocarina_Config::Needed_Property_Sets =>
-    (Ocarina_Config::Data_Model,
-    Ocarina_Config::ARINC653_Properties,
-    Ocarina_Config::Deployment,
-    Ocarina_Config::Cheddar_Properties);
-    Ocarina_Config::AADL_Version         => AADLv2;
 
   end Default_PolyORB_HI_C_Config;
 
