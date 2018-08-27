@@ -14,11 +14,11 @@ Ocarina User's Guide
    introduction
    installation
    usage
+   scenario
+   polyorb-hi-c
    osate-ocarina
    python
    editors
-   bug
+   ocarina_config
    gfdl
    annexes
-
-

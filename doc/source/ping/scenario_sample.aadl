@@ -1,0 +1,11 @@
+system mysystem
+properties
+  Ocarina_Config::AADL_Files           => 
+    ("mymodel1.aadl", "mymodel2.aadl");
+  Ocarina_Config::Generator            => polyorb_hi_c;
+  Ocarina_Config::Needed_Property_Sets => 
+    (ARAO, Cheddar_Properties);
+end mysystem;
+
+system implementation mysystem.Impl
+end  mysystem.Impl;

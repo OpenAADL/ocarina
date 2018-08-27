@@ -1,0 +1,16 @@
+thread P
+features
+  Data_Source : event out data port Simple_Type;
+end P;
+
+thread implementation P.Impl
+calls {
+  P_Spg : subprogram Do_Ping_Spg;
+};
+connections
+  parameter P_Spg.Data_Source -> Data_Source;
+properties
+  Dispatch_Protocol => Periodic;
+  Period            => 1000 Ms;
+end P.Impl;
+

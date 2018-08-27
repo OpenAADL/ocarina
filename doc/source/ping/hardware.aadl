@@ -1,0 +1,5 @@
+processor the_processor
+properties
+  ARAO::location           => "127.0.0.1";
+  ARAO::Execution_Platform => Native;
+end the_processor;

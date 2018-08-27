@@ -261,7 +261,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'ocarina.tex', u'Ocarina Documentation',
-   u'Jerome Hugues', 'manual'),
+   u'Julien Delange, Jerome Hugues, Bechir Zalila', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -320,4 +320,11 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {'https://docs.python.org/': None}
+
+
+def setup(sphinx):
+    sys.path.append(os.path.abspath('.'))
+    sys.path.append(os.path.abspath('./util/'))
+    from AADLLexer import AADLLexer
+    sphinx.add_lexer("aadl", AADLLexer())

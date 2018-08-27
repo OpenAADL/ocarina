@@ -1,0 +1,77 @@
+package devices
+
+device serial_port_raw
+features
+   serial_line : requires bus access buses::serial.i;
+properties
+   Provided_Virtual_Bus_Class => (classifier (protocols::dummy.i));
+end serial_port_raw;
+
+device implementation serial_port_raw.linux
+properties
+   Deployment::Driver_Name => "serial_linux";
+   Device_Driver => classifier (devices::serial_driver.linux);
+   Initialize_Entrypoint => classifier (devices::spg_serial_init_linux);
+end serial_port_raw.linux;
+
+
+subprogram spg_serial_poller_linux
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_linux_poller";
+end spg_serial_poller_linux;
+
+subprogram spg_serial_sender_linux
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_linux_sender";
+end spg_serial_sender_linux;
+
+subprogram spg_serial_init_linux
+features
+   data_source : out parameter types::int.i;
+properties
+	Source_Language => C;
+	Source_Name => "__po_hi_c_driver_serial_linux_init";
+end spg_serial_init_linux;
+
+thread serial_poller
+end serial_poller;
+
+thread implementation serial_poller.linux
+calls
+	mycall : {
+	  pspg : subprogram spg_serial_poller_linux;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end serial_poller.linux;
+
+
+thread implementation serial_poller.rasta
+calls
+	mycall : {
+	  pspg : subprogram spg_serial_poller_rasta;
+	};
+properties
+   Period => 1000ms;
+   Dispatch_Protocol => Periodic;
+end serial_poller.rasta;
+
+abstract serial_driver
+end serial_driver;
+
+abstract implementation serial_driver.linux
+subcomponents
+   receiver : thread serial_poller.linux;
+   sender   : subprogram spg_serial_sender_linux;
+end serial_driver.linux;
+
+abstract implementation serial_driver.rasta
+subcomponents
+   receiver : thread serial_poller.rasta;
+   sender   : subprogram spg_serial_sender_rasta;
+end serial_driver.rasta;
+
+end devices;

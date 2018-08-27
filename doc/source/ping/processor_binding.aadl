@@ -1,0 +1,19 @@
+system PING
+end PING;
+
+system implementation PING.Impl
+subcomponents
+  --  Nodes
+  Node_A : process A.Impl;
+  Node_B : process B.Impl {ARAO::port_number => 12002;};
+
+  --  Processors
+  CPU_A  : processor the_processor;
+  CPU_B  : processor the_processor;
+connections
+  --  ...
+properties
+  --  Processor bindings
+  actual_processor_binding => reference CPU_A applies to Node_A;
+  actual_processor_binding => reference CPU_B applies to Node_B;
+end PING.Impl;

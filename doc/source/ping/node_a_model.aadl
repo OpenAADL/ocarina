@@ -1,0 +1,11 @@
+process A
+features
+  Out_Port : out event data port Simple_Type;
+end A;
+
+process implementation A.Impl
+subcomponents
+  Pinger : thread P.Impl;
+connections
+  C1 : event data port Pinger.Data_Source -> Out_Port;
+end A.Impl;

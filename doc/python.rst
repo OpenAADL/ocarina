@@ -21,7 +21,8 @@ At run-time, the following environment variables must be set up::
 Example
 #######
 
-Here is a small examples illustrating Python API capabilities
+The following example illustrates the capabilities of the Python API,
+it implements a visitor that iterates of the AADL model elements:
 
 .. literalinclude:: ../resources/runtime/python/test/visitor.py
    :language: python
@@ -34,8 +35,5 @@ The following lists all functions defined in the `ocarina` module
 .. automodule:: ocarina.ocarina
    :members:
 
-.. automodule:: lmp
-   :members:
-
-.. automodule:: ocarina_common_tools
+.. automodule:: ocarina.lmp
    :members:

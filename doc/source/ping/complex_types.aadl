@@ -1,0 +1,42 @@
+-- Bounded string type
+
+data String_Data
+properties
+  ARAO::Data_Type  => String;
+  ARAO::Max_Length => <User_Defined_Length>;
+end String_Data;
+
+-- Bounded wide string type
+
+data W_String_Data
+properties
+  ARAO::Data_Type  => Wide_String;
+  ARAO::Max_Length => <User_Defined_Length>;
+end W_String_Data;
+
+-- Bounded array type: Only the component implementation should be
+-- used in the ports or parameters!
+
+data Data_Array
+properties
+  ARAO::Length => <User_Defined_Length>;
+end Data_Array;
+
+data implementation Data_Array.i;
+subcomponents
+  -- Only one subcomponent
+  Element : data String_Data;
+end Data_Array.i;
+
+-- Data structure type: Only the component implementation should be
+-- used in the ports or parameters!
+
+data Data_Structure
+end Data_Structure;
+
+data implementation Data_Structure.i;
+subcomponents
+  Component_1 : data String_Data;
+  Component_2 : data W_String_Data;
+  Component_3 : data Data_Array.i;
+end Data_Structure.i;

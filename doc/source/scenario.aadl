@@ -1,0 +1,19 @@
+package Scenario
+public
+  with Ocarina_Config;
+  with Ocarina_Library;
+
+  system producer_consumer extends Ocarina_Library::Default_PolyORB_HI_C_Config
+  properties
+    Ocarina_Config::Referencial_Files    =>
+    ("pr_a", "pr_a.ref",
+    "pr_b", "pr_b.ref");
+    Ocarina_Config::AADL_Files           +=>
+    ("producer_consumer.aadl", "software.aadl");
+    Ocarina_Config::Root_System_Name => "PC_Simple.impl";
+  end producer_consumer;
+
+  system implementation producer_consumer.Impl
+  end  producer_consumer.Impl;
+
+end scenario;

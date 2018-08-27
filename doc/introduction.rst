@@ -1,4 +1,3 @@
-
 .. _introduction:
 
 ============
@@ -169,3 +168,16 @@ a complete model.
    :align: center
 
    ASSERT MPC Case study
+
+Ocarina concepts
+################
+
+Ocarina uses the following set of definitions :
+
+.. index:: scenario files
+
+* A *scenario file* is a specific AADL system that controls the behavior of Ocarina through various properties, see :ref:`scenariofiles`.
+
+.. index:: root system
+
+* A *root system* is the root of an AADL model; it is a system implementation without feature. As a closed system, it has definitions required for complete processing by Ocarina: processors, threads, processes, etc.

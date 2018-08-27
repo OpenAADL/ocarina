@@ -1,0 +1,13 @@
+package foo_pkg
+public
+  -- sample AADL model
+  thread foo
+  features
+    a : in event data port;
+  properties
+    Dispatch_Protocol => Periodic;
+    Compute_Execution_Time => 5 ms .. 10 ms;
+    Source_Text => "foobar";
+  end foo;
+
+end foo_pkg;

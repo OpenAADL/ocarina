@@ -1,0 +1,8 @@
+subprogram Do_Ping_Spg
+features
+  Data_Source : out parameter Simple_Type;
+properties
+  source_language => C;
+  source_name     => "user_ping";
+end Do_Ping_Spg;
+

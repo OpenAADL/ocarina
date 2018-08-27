@@ -1,0 +1,41 @@
+--  Boolean type
+
+data Boolean_Data
+properties
+  ARAO::Data_Type  => Boolean;
+end Boolean_Data;
+
+--  Integer type
+
+data Integer_Data
+properties
+  ARAO::Data_Type  => Integer;
+end Integer_Data;
+
+--  Fixed point type
+
+data Fixed_Point_Type
+properties
+  ARAO::Data_Type    => Fixed;
+
+  ARAO::Data_Digits  => 10;
+  --  The total number of digits is 10
+
+  ARAO::Data_Scale   => 4;
+  --  The precision is 10**(-4)
+end Fixed_Point_Type;
+
+--  Character type
+
+data Character_Data
+properties
+  ARAO::Data_Type  => Character;
+end Character_Data;
+
+--  Wide character type
+
+data W_Character_Data
+properties
+  ARAO::Data_Type  => Wide_Character;
+end W_Character_Data;
+

@@ -1,0 +1,46 @@
+--  Data type of object field
+
+data Field_Type
+properties
+  ARAO::Data_Type  => Integer;
+end Field_Type;
+
+--  Protected data type
+
+data Protected_Object
+features
+  Update : subprogram Protected_Update;
+  Read   : subprogram Protected_Read;
+properties
+  ARAO::Object_Kind => Protected;
+  --  This property tells that we have a protected object type
+end Protected_Object;
+
+--  The implementation of the protected object
+
+data implementation Protected_Object.Impl
+subcomponents
+  Field : data Field_Type;
+end Protected_Object.Impl;
+
+--  Subprograms
+
+subprogram Protected_Update
+features
+  this : requires data access Protected_Object.Impl 
+  {required_access => access Read_Write;}; --  Mandatory
+  P    : in parameter Field_Type;
+properties
+  source_language => Ada95;
+  source_name     => "Repository";
+end Protected_Update;
+
+subprogram Protected_Read
+features
+  this : requires data access Protected_Object.Impl
+  {required_access => access Read_Only;}; --  Mandatory
+  P    : out parameter Field_Type;
+properties
+  source_language => Ada95;
+  source_name     => "Repository";
+end Protected_Read;

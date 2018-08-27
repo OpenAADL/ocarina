@@ -1,5 +1,3 @@
-
-
 .. _about:
 
 ================
@@ -65,4 +63,3 @@ Copyright Information
 If you have any questions regarding this document, its
 copyright, or publishing this document in non-electronic form,
 please contact us.
-
