@@ -129,10 +129,6 @@ package body Ocarina.FE_AADL.Parser.Properties.Values is
    function P_Reference_Type return Node_Id;
    --  Current token must be 'reference'
 
-   function P_Unique_Property_Identifier_Or_Term
-     (Code : Parsing_Code) return Node_Id;
-   --  Current token must be 'value'
-
    function P_Unit_Definition (Container : Node_Id) return Node_Id;
 
    function P_Units_Type return Node_Id;

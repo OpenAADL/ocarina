@@ -93,7 +93,6 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
       Set_Array_List_Dim (Node_Array, List_Array_Dim);
 
       return Node_Array;
-
    end P_Array_Dimensions;
 
    ----------------------------
@@ -103,6 +102,7 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
    --  AADL_V2
    --  array_dimensions ::= { [ [ array_dimension_size ] ] }*
    --  array_dimension_size ::= numeral | unique_property_constant_identifier
+   --                                   | unique_property_identifier
 
    function P_Array_Dimension_Size
      (Container : Types.Node_Id) return Node_Id
@@ -110,7 +110,6 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
       use Locations;
       use Ocarina.ME_AADL.Tokens;
       use Lexer;
-      use Parser.Identifiers;
       use Parser.Properties.Values;
       use Builder.AADL.Components.Arrays;
 
@@ -125,7 +124,9 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
       case Token is
          when T_Identifier =>
             Restore_Lexer (Loc);
-            Size := P_Identifier (Container);
+            --  Size := P_Entity_Reference (Container);
+            Size := P_Unique_Property_Identifier_Or_Term
+              (PC_Unique_Property_Constant_Identifier);
 
          when T_Integer_Literal =>
             Restore_Lexer (Loc);
@@ -152,7 +153,6 @@ package body Ocarina.FE_AADL.Parser.Components.Arrays is
       end if;
 
       return Node;
-
    end P_Array_Dimension_Size;
 
    -----------------------

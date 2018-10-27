@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -43,6 +43,10 @@ package Ocarina.FE_AADL.Parser.Properties.Values is
      (Identifier   : Node_Id;
       Property_Set : Node_Id) return Node_Id;
    --  Current token must be 'constant'
+
+   function P_Unique_Property_Identifier_Or_Term
+     (Code : Parsing_Code) return Node_Id;
+   --  Current token must be 'value'
 
    function P_Property_Expression (Container : Node_Id) return Node_Id;
 

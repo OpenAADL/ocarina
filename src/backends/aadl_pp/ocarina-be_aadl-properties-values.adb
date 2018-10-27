@@ -68,7 +68,6 @@ package body Ocarina.BE_AADL.Properties.Values is
    procedure Print_Record_Type_Element (Node : Node_Id);
    procedure Print_Reference_Term (Node : Node_Id);
    procedure Print_Minus_Numeric_Term (Node : Node_Id);
-   procedure Print_Unique_Property_Constant_Identifier (Node : Node_Id);
    procedure Print_Unit_Definition (Node : Node_Id);
    procedure Print_Component_Classifier_Term (Node : Node_Id);
    procedure Print_Named_Element_Identifier (N : Named_Element);

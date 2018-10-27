@@ -59,7 +59,14 @@ package body Ocarina.BE_AADL.Components.Arrays is
          Print_Token (T_Left_Square_Bracket);
 
          if Present (Size (List_Node)) then
-            Print_Signed_AADLNumber (Size (List_Node));
+            case Kind (Size (List_Node)) is
+               when K_Signed_AADLNumber =>
+                  Print_Signed_AADLNumber (Size (List_Node));
+               when K_Unique_Property_Const_Identifier =>
+                  Print_Unique_Property_Constant_Identifier (Size (List_Node));
+               when others =>
+                  raise Constraint_Error;
+            end case;
          end if;
 
          Print_Token (T_Right_Square_Bracket);

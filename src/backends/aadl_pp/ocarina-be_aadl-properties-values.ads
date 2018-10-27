@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -30,6 +30,8 @@
 ------------------------------------------------------------------------------
 
 package Ocarina.BE_AADL.Properties.Values is
+
+   procedure Print_Unique_Property_Constant_Identifier (Node : Node_Id);
 
    procedure Print_Or_Boolean_Term (Node : Node_Id);
    procedure Print_Computed_Term (Node : Node_Id);
